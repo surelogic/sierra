@@ -63,6 +63,7 @@ public class Run {
 	private List<Artifact> artifacts;
 
 	public Run() {
+		// Nothing to do
 	}
 
 	public Run(Builder builder) {
@@ -122,5 +123,4 @@ public class Run {
 		this.artifacts = artifacts;
 	}
 
-	
 }

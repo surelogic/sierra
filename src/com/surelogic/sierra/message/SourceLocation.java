@@ -69,6 +69,8 @@ public class SourceLocation {
 	private IdentifierType identifierType;
 
 	public SourceLocation() {
+
+		// Nothing to do
 	}
 
 	SourceLocation(Builder builder) {

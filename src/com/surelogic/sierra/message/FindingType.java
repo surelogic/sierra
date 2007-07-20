@@ -8,6 +8,7 @@ public class FindingType {
 	private String mnemonic;
 
 	public FindingType() {
+		// Nothing to do
 	}
 
 	public FindingType(String tool, String mnemonic) {

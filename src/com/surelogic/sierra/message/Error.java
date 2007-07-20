@@ -29,6 +29,8 @@ public class Error {
 	private String message;
 
 	public Error() {
+
+		// Nothing to do
 	}
 
 	public Error(Builder builder) {

@@ -65,6 +65,7 @@ public class Artifact {
 	private String message;
 
 	public Artifact() {
+		// Nothing to do
 	}
 
 	public Artifact(Builder builder) {

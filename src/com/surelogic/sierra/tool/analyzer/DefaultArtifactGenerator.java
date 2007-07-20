@@ -14,7 +14,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 	public static class DefaultArtifactBuilder implements ArtifactBuilder {
 
 		public void build() {
-
+			// Nothing to do
 		}
 
 		public ArtifactBuilder findingType(String tool, String mnemonic) {
@@ -52,7 +52,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 	public static class DefaultSourceBuilder implements SourceLocationBuilder {
 
 		public void build() {
-
+			// Nothing to do
 		}
 
 		public SourceLocationBuilder className(String className) {
@@ -104,6 +104,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 	public static class DefaultErrorBuilder implements ErrorBuilder {
 
 		public void build() {
+			// Nothing to do
 		}
 
 		public ErrorBuilder message(String message) {

@@ -84,7 +84,6 @@ public class Launcher {
 		String resultsPath = TIGER_RESULTS + File.separator
 				+ findBugsToolConfig.getProjectName();
 		String pluginDirectory = getPluginDirectory();
-		log.info("___________" + pluginDirectory);
 
 		File resultDirectory = new File(resultsPath);
 
@@ -104,8 +103,8 @@ public class Launcher {
 			findbugsTask.createJvmarg().setLine("-Xmx1024M");
 			findbugsTask.setTimeout(TIMEOUT);
 
-			// TODO: Fix this along with FindBugs. The execution of findbugs
-			// must be changed from the current way.
+			// TODO: [Bug 777] Fix this along with FindBugs. The execution of
+			// findbugs must be changed from the current way.
 
 			findBugsHome = pluginDirectory + "Tools" + File.separator + "FB";
 
@@ -122,7 +121,7 @@ public class Launcher {
 			addArg("-xml:withMessages");
 			addArg(baseDirectory);
 
-			log.info("Running FindBugs...");
+			// log.info("Running FindBugs...");
 
 			// log.info(findbugsTask.getCommandLine().describeCommand());
 
@@ -135,8 +134,8 @@ public class Launcher {
 				log.info("Classes needed for analysis were missing");
 			}
 
-			log.info("Output saved to " + resultDirectory + File.separator
-					+ "FB--" + findBugsToolConfig.getProjectName() + ".xml");
+			// log.info("Output saved to " + resultDirectory + File.separator
+			// + "FB--" + findBugsToolConfig.getProjectName() + ".xml");
 
 			log.info("FindBugs tool has finished, now parsing file.");
 			MessageArtifactGenerator generator = new MessageArtifactGenerator();
@@ -207,7 +206,8 @@ public class Launcher {
 				pmdTask.addFileset(fs);
 				pmdTask.setTargetJDK(pmdToolConfig.getJdkVersion());
 
-				pmdTask.setRuleSetFiles(SierraToolActivator.getPMDRulesAll().toString());
+				pmdTask.setRuleSetFiles(SierraToolActivator.getPMDRulesAll()
+						.toString());
 
 				pmdTask.execute();
 				log.info("PMD tool has finished, now parsing "
@@ -250,7 +250,8 @@ public class Launcher {
 
 		String commonDirectory = "";
 
-		URL relativeURL = SierraToolActivator.getDefault().getBundle().getEntry("");
+		URL relativeURL = SierraToolActivator.getDefault().getBundle()
+				.getEntry("");
 
 		try {
 
