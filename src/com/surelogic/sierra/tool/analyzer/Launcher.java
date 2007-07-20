@@ -87,7 +87,7 @@ public abstract class Launcher {
 	 * @param findBugsToolConfig
 	 */
 	public void launchFB() {
-		log.info("Launching FindBugs tool.");
+		log.info("Launching FindBugs...");
 
 		String baseDirectory = baseConfig.getBaseDirectory();
 		String resultsPath = resultsFolder + File.separator
@@ -169,7 +169,7 @@ public abstract class Launcher {
 	 * @param pmdToolConfig
 	 */
 	public void launchPMD() {
-		log.info("Launching PMD tool.");
+		log.info("Launching PMD...");
 		String[] sourceDirectories = baseConfig.getSourceDirectories();
 		String resultsPath = resultsFolder + File.separator
 				+ baseConfig.getProjectName();
