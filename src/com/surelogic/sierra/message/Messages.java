@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
+import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ErrorBuilder;
 
 /**
  * General utility class for working with the sps message layer.
@@ -12,6 +13,12 @@ import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
  * 
  */
 public class Messages {
+
+	public static void readToolOutput(ToolOutput output,
+			ArtifactGenerator generator) {
+		readArtifacts(output.getArtifacts(), generator);
+		readErrors(output.getErrors(), generator);
+	}
 
 	public static void readArtifacts(Collection<Artifact> artifacts,
 			ArtifactGenerator generator) {
@@ -29,6 +36,17 @@ public class Messages {
 						readSource(aBuilder, sl, generator);
 					}
 				}
+				aBuilder.build();
+			}
+		}
+	}
+
+	public static void readErrors(Collection<Error> errors,
+			ArtifactGenerator generator) {
+		if (errors != null) {
+			ErrorBuilder eBuilder = generator.error();
+			for (Error e : errors) {
+				eBuilder.message(e.getMessage()).tool(e.getTool()).build();
 			}
 		}
 	}
@@ -39,7 +57,7 @@ public class Messages {
 				s.getClassName()).packageName(s.getPackageName()).endLine(
 				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
 				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
-				s.getHash());
+				s.getHash()).build();
 	}
 
 }
