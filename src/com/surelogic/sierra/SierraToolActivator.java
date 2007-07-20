@@ -26,6 +26,7 @@ public class SierraToolActivator extends Plugin {
 	 * The constructor
 	 */
 	public SierraToolActivator() {
+		// Nothing to do
 	}
 
 	/*
@@ -33,6 +34,7 @@ public class SierraToolActivator extends Plugin {
 	 * 
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -43,6 +45,7 @@ public class SierraToolActivator extends Plugin {
 	 * 
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
