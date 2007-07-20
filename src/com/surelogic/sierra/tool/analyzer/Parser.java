@@ -393,8 +393,6 @@ public class Parser {
 						String superClass = fileName.substring(0, fileName
 								.length() - 5);
 
-						log.info("________" + completeFileName);
-
 						if (superClass.equals(className)) {
 
 							primarySourceLocation.className(className)
