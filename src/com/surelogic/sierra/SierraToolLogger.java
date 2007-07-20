@@ -78,8 +78,8 @@ public class SierraToolLogger extends Formatter {
 					resultLogger.addHandler(consoleHandler);
 
 					try {
-						Handler fileHandler = new FileHandler("sierraLog.txt",
-								true);
+						Handler fileHandler = new FileHandler(
+								"sierraToolLog.txt", true);
 						fileHandler.setFormatter(f_fluidFormatter);
 						resultLogger.addHandler(fileHandler);
 
