@@ -29,7 +29,8 @@ public class Messages {
 						.message(a.getMessage());
 				aBuilder.findingType(a.getFindingType().getTool(), a
 						.getFindingType().getMnemonic());
-				readSource(aBuilder, a.getPrimarySourceLocation(), generator);
+				readPrimarySource(aBuilder, a.getPrimarySourceLocation(),
+						generator);
 				Collection<SourceLocation> sources = a.getAdditionalSources();
 				if (sources != null) {
 					for (SourceLocation sl : sources) {
@@ -51,9 +52,18 @@ public class Messages {
 		}
 	}
 
+	private static void readPrimarySource(ArtifactBuilder aBuilder,
+			SourceLocation s, ArtifactGenerator generator) {
+		aBuilder.primarySourceLocation().path(s.getPathName()).className(
+				s.getClassName()).packageName(s.getPackageName()).endLine(
+				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
+				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
+				s.getHash()).build();
+	}
+
 	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s,
 			ArtifactGenerator generator) {
-		aBuilder.primarySourceLocation().path(s.getPathName()).className(
+		aBuilder.sourceLocation().path(s.getPathName()).className(
 				s.getClassName()).packageName(s.getPackageName()).endLine(
 				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
 				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
