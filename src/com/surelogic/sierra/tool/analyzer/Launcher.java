@@ -48,6 +48,8 @@ public abstract class Launcher {
 
 	private static final String FINDBUGS_JAR = "findbugs.jar";
 
+	private static final String PARSED_FILE_SUFFIX = ".parsed";
+
 	public Launcher(String Name, BaseConfig baseConfig) {
 		log.info("\nSTARTING LAUNCHER...\n");
 
@@ -149,9 +151,10 @@ public abstract class Launcher {
 			log.info("FindBugs tool has finished, now parsing file.");
 			MessageArtifactGenerator generator = new MessageArtifactGenerator();
 			Parser parser = new Parser(generator);
-			parser.parseFB(resultDirectory + File.separator + "FB--"
-					+ baseConfig.getProjectName() + ".xml", baseConfig
-					.getSourceDirectories());
+			String toolFile = resultDirectory + File.separator + "FB--"
+					+ baseConfig.getProjectName() + ".xml";
+			parser.parseFB(toolFile, baseConfig.getSourceDirectories());
+			generator.write(toolFile + PARSED_FILE_SUFFIX);
 			log.info("Findbugs file parsed.");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to run findbugs" + e);
@@ -222,8 +225,10 @@ public abstract class Launcher {
 						+ intermediate + "--" + i + ".xml");
 				MessageArtifactGenerator generator = new MessageArtifactGenerator();
 				Parser parser = new Parser(generator);
-				parser.parsePMD(resultDirectory + File.separator + "PMD--"
-						+ intermediate + "--" + i + ".xml");
+				String toolFile = resultDirectory + File.separator + "PMD--"
+						+ intermediate + "--" + i + ".xml";
+				parser.parsePMD(toolFile);
+				generator.write(toolFile + PARSED_FILE_SUFFIX);
 				log.info("PMD file parsed.");
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to run PMD" + e);
