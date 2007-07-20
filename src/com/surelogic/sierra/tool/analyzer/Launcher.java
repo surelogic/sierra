@@ -117,7 +117,7 @@ public abstract class Launcher {
 
 			findBugsHome = pluginDirectory + "Tools" + File.separator + "FB";
 
-			log.info("______" + findBugsHome);
+			// log.info("______" + findBugsHome);
 
 			File findBugsJar = new File(findBugsHome + File.separator + "lib"
 					+ File.separator + FINDBUGS_JAR);

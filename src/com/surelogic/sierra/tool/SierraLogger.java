@@ -122,7 +122,7 @@ public class SierraLogger extends Formatter {
 		buf.append(record.getLevel().getName());
 		buf.append(" \"");
 		buf.append(Thread.currentThread().getName());
-		buf.append("\"");
+		buf.append("\" ");
 		buf.append(Calendar.getInstance().getTime().toString());
 		buf.append("]");
 		buf.append(formatMessage(record));
