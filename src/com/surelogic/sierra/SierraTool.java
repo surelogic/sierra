@@ -8,7 +8,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class SierraToolActivator extends Plugin {
+public class SierraTool extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.surelogic.sierra.tool";
@@ -20,12 +20,12 @@ public class SierraToolActivator extends Plugin {
 	private static final String FB_HOME_DIR = "/Tools/FB";
 
 	// The shared instance
-	private static SierraToolActivator plugin;
+	private static SierraTool plugin;
 
 	/**
 	 * The constructor
 	 */
-	public SierraToolActivator() {
+	public SierraTool() {
 		// Nothing to do
 	}
 
@@ -56,22 +56,22 @@ public class SierraToolActivator extends Plugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static SierraToolActivator getDefault() {
+	public static SierraTool getDefault() {
 		return plugin;
 	}
 
 	public static URL getPMDRulesAll() {
-		final URL result = SierraToolActivator.class.getResource(PMD_RULES_ALL);
+		final URL result = SierraTool.class.getResource(PMD_RULES_ALL);
 		return result;
 	}
 
 	public static URL getFBHome() {
-		final URL result = SierraToolActivator.class.getResource(FB_HOME);
+		final URL result = SierraTool.class.getResource(FB_HOME);
 		return result;
 	}
 
 	public static URL getFBHomeDir() {
-		final URL result = SierraToolActivator.class.getResource(FB_HOME_DIR);
+		final URL result = SierraTool.class.getResource(FB_HOME_DIR);
 		return result;
 	}
 

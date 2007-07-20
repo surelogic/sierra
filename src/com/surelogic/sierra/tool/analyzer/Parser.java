@@ -13,7 +13,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.SierraToolLogger;
+import com.surelogic.sierra.SierraLogger;
 import com.surelogic.sierra.message.IdentifierType;
 import com.surelogic.sierra.message.Priority;
 import com.surelogic.sierra.message.Severity;
@@ -34,7 +34,7 @@ public class Parser {
 
 	private ArtifactGenerator generator;
 
-	private static final Logger log = SierraToolLogger.getLogger("Sierra");
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	Parser(ArtifactGenerator generator) {
 		this.generator = generator;

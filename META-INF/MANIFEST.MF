@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Tool
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: com.surelogic.sierra.SierraToolActivator
+Bundle-Activator: com.surelogic.sierra.SierraTool
 Require-Bundle: org.eclipse.core.runtime,
  org.apache.ant
 Eclipse-LazyStart: true

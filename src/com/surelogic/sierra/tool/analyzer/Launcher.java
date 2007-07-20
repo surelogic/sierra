@@ -1,8 +1,6 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,11 +13,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.FileSet;
-import org.eclipse.core.runtime.FileLocator;
 
-import com.surelogic.sierra.SierraToolActivator;
-import com.surelogic.sierra.SierraToolLogger;
+import com.surelogic.sierra.SierraTool;
+import com.surelogic.sierra.SierraLogger;
 import com.surelogic.sierra.message.MessageArtifactGenerator;
+import com.surelogic.sierra.tool.config.BaseConfig;
 import com.surelogic.sierra.tool.config.ToolConfig;
 
 import edu.umd.cs.findbugs.ExitCodes;
@@ -30,13 +28,19 @@ import edu.umd.cs.findbugs.ExitCodes;
  * @author Tanmay.Sinha
  * 
  */
-public class Launcher {
+public abstract class Launcher {
 
 	private Java findbugsTask;
 
 	private String findBugsHome;
 
-	private static final Logger log = SierraToolLogger.getLogger("Sierra");
+	private BaseConfig baseConfig;
+
+	private String tmpDir;
+
+	private String resultsFolder;
+
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private static final String TIGER_RESULTS = ".TigerResult";
 
@@ -44,10 +48,13 @@ public class Launcher {
 
 	private static final String FINDBUGS_JAR = "findbugs.jar";
 
-	public Launcher(String name) {
-
+	public Launcher(String Name, BaseConfig baseConfig) {
 		log.info("\nSTARTING LAUNCHER...\n");
-		File resultRoot = new File(TIGER_RESULTS);
+
+		tmpDir = System.getProperty("java.io.tmpdir");
+		resultsFolder = tmpDir + File.separator + TIGER_RESULTS;
+		File resultRoot = new File(resultsFolder);
+		this.baseConfig = baseConfig;
 
 		if ((!resultRoot.exists()) || (resultRoot.exists())
 				&& (!resultRoot.isDirectory())) {
@@ -77,13 +84,13 @@ public class Launcher {
 	 * 
 	 * @param findBugsToolConfig
 	 */
-	public void launchFB(ToolConfig findBugsToolConfig) {
+	public void launchFB() {
 		log.info("Launching FindBugs tool.");
 
-		String baseDirectory = findBugsToolConfig.getBaseDirectory();
-		String resultsPath = TIGER_RESULTS + File.separator
-				+ findBugsToolConfig.getProjectName();
-		String pluginDirectory = getPluginDirectory();
+		String baseDirectory = baseConfig.getBaseDirectory();
+		String resultsPath = resultsFolder + File.separator
+				+ baseConfig.getProjectName();
+		String pluginDirectory = baseConfig.getToolsDirectory();
 
 		File resultDirectory = new File(resultsPath);
 
@@ -108,6 +115,8 @@ public class Launcher {
 
 			findBugsHome = pluginDirectory + "Tools" + File.separator + "FB";
 
+			log.info("______" + findBugsHome);
+
 			File findBugsJar = new File(findBugsHome + File.separator + "lib"
 					+ File.separator + FINDBUGS_JAR);
 
@@ -117,7 +126,7 @@ public class Launcher {
 			addArg(findBugsHome);
 			addArg("-outputFile");
 			addArg(resultDirectory + File.separator + "FB--"
-					+ findBugsToolConfig.getProjectName() + ".xml");
+					+ baseConfig.getProjectName() + ".xml");
 			addArg("-xml:withMessages");
 			addArg(baseDirectory);
 
@@ -141,8 +150,8 @@ public class Launcher {
 			MessageArtifactGenerator generator = new MessageArtifactGenerator();
 			Parser parser = new Parser(generator);
 			parser.parseFB(resultDirectory + File.separator + "FB--"
-					+ findBugsToolConfig.getProjectName() + ".xml",
-					findBugsToolConfig.getSourceDirectories());
+					+ baseConfig.getProjectName() + ".xml", baseConfig
+					.getSourceDirectories());
 			log.info("Findbugs file parsed.");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to run findbugs" + e);
@@ -156,11 +165,11 @@ public class Launcher {
 	 * 
 	 * @param pmdToolConfig
 	 */
-	public void launchPMD(ToolConfig pmdToolConfig) {
+	public void launchPMD() {
 		log.info("Launching PMD tool.");
-		String[] sourceDirectories = pmdToolConfig.getSourceDirectories();
-		String resultsPath = TIGER_RESULTS + File.separator
-				+ pmdToolConfig.getProjectName();
+		String[] sourceDirectories = baseConfig.getSourceDirectories();
+		String resultsPath = resultsFolder + File.separator
+				+ baseConfig.getProjectName();
 
 		File resultDirectory = new File(resultsPath);
 
@@ -168,9 +177,8 @@ public class Launcher {
 			resultDirectory.mkdir();
 		}
 
-		int holder = pmdToolConfig.getBaseDirectory().lastIndexOf(
-				File.separator);
-		String intermediate = pmdToolConfig.getBaseDirectory().substring(
+		int holder = baseConfig.getBaseDirectory().lastIndexOf(File.separator);
+		String intermediate = baseConfig.getBaseDirectory().substring(
 				holder + 1);
 
 		log.info("Checked directory for results from PMD. Now launching task.");
@@ -204,10 +212,9 @@ public class Launcher {
 				pmdTask.setProject(p);
 				pmdTask.addFormatter(formatter);
 				pmdTask.addFileset(fs);
-				pmdTask.setTargetJDK(pmdToolConfig.getJdkVersion());
+				pmdTask.setTargetJDK(baseConfig.getJdkVersion());
 
-				pmdTask.setRuleSetFiles(SierraToolActivator.getPMDRulesAll()
-						.toString());
+				pmdTask.setRuleSetFiles(SierraTool.getPMDRulesAll().toString());
 
 				pmdTask.execute();
 				log.info("PMD tool has finished, now parsing "
@@ -246,28 +253,6 @@ public class Launcher {
 	 * 
 	 * @return
 	 */
-	private String getPluginDirectory() {
-
-		String commonDirectory = "";
-
-		URL relativeURL = SierraToolActivator.getDefault().getBundle()
-				.getEntry("");
-
-		try {
-
-			URL commonPathURL = FileLocator.resolve(relativeURL);
-			commonDirectory = commonPathURL.getPath();
-			commonDirectory = commonDirectory.replace("/", File.separator);
-			// commonDirectory = commonDirectory.substring(1);
-
-			return commonDirectory;
-
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Error getting plugin directory.", e);
-		}
-
-		return commonDirectory;
-
-	}
+	public abstract String getToolsDirectory();
 
 }

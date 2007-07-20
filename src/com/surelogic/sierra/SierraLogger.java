@@ -1,5 +1,6 @@
 package com.surelogic.sierra;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -13,28 +14,28 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class SierraToolLogger extends Formatter {
-	public static final boolean f_useFluidLog = System
+public class SierraLogger extends Formatter {
+	public static final boolean useFluidLog = System
 			.getProperty("no-fluid-logger") == null;
 
 	/**
 	 * Everyone can reuse the same instance of this formatter because the
 	 * format() method uses no instance state.
 	 */
-	public static final SierraToolLogger f_fluidFormatter;
+	public static final SierraLogger sierraFormatter;
 
 	/**
 	 * A simple cache of loggers we have already configured.
 	 */
-	public static final Map<String, Logger> f_nameToLogger;
+	public static final Map<String, Logger> nameToLogger;
 
 	static {
-		if (f_useFluidLog) {
-			f_fluidFormatter = new SierraToolLogger();
-			f_nameToLogger = new HashMap<String, Logger>();
+		if (useFluidLog) {
+			sierraFormatter = new SierraLogger();
+			nameToLogger = new HashMap<String, Logger>();
 		} else {
-			f_fluidFormatter = null;
-			f_nameToLogger = null;
+			sierraFormatter = null;
+			nameToLogger = null;
 		}
 	}
 
@@ -65,22 +66,24 @@ public class SierraToolLogger extends Formatter {
 		if (name == null)
 			throw new NullPointerException("name must be non-null");
 
-		if (f_useFluidLog) {
-			synchronized (f_nameToLogger) {
-				Logger resultLogger = f_nameToLogger.get(name); // lookup in
+		if (useFluidLog) {
+			synchronized (nameToLogger) {
+				Logger resultLogger = nameToLogger.get(name); // lookup in
 				// cache
 				if (resultLogger == null) {
 					resultLogger = Logger.getLogger(name);
 					resultLogger.setUseParentHandlers(false);
 
 					Handler consoleHandler = new ConsoleHandler();
-					consoleHandler.setFormatter(f_fluidFormatter);
+					consoleHandler.setFormatter(sierraFormatter);
 					resultLogger.addHandler(consoleHandler);
 
+					// Output the log to a file in temp directory
 					try {
-						Handler fileHandler = new FileHandler(
-								"sierraToolLog.txt", true);
-						fileHandler.setFormatter(f_fluidFormatter);
+						String tempDir = System.getProperty("java.io.tmpdir");
+						Handler fileHandler = new FileHandler(tempDir
+								+ File.separator + "sierraLog.txt", true);
+						fileHandler.setFormatter(sierraFormatter);
 						resultLogger.addHandler(fileHandler);
 
 					} catch (SecurityException e) {
@@ -89,7 +92,7 @@ public class SierraToolLogger extends Formatter {
 						e.printStackTrace();
 					}
 
-					f_nameToLogger.put(name, resultLogger); // add to cache
+					nameToLogger.put(name, resultLogger); // add to cache
 				}
 				return resultLogger;
 			}

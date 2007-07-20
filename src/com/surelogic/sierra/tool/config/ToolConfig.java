@@ -10,4 +10,6 @@ public interface ToolConfig {
 
 	public String getJdkVersion();
 
+	public String getToolsDirectory();
+
 }

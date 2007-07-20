@@ -38,6 +38,9 @@ public class BaseConfig implements ToolConfig {
 	/** The name of the project */
 	private String projectName;
 
+	/** The location of tools */
+	private String toolsDirectory;
+
 	public static List<BaseConfig> generateToolConfigs(InputStream in) {
 		BaseConfigHandler h = new BaseConfigHandler();
 		try {
@@ -156,4 +159,13 @@ public class BaseConfig implements ToolConfig {
 
 		}
 	}
+
+	public String getToolsDirectory() {
+		return toolsDirectory;
+	}
+
+	public void setToolsDirectory(String toolsDirectory) {
+		this.toolsDirectory = toolsDirectory;
+	}
+
 }

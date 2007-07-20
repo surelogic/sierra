@@ -10,14 +10,14 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.surelogic.sierra.SierraToolLogger;
+import com.surelogic.sierra.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
 public class MessageArtifactGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
 
-	private static final Logger log = SierraToolLogger
+	private static final Logger log = SierraLogger
 			.getLogger(MessageArtifactGenerator.class.getName());
 
 	private ArtifactBuilderAdapter artifactAdapter = new ArtifactBuilderAdapter();
