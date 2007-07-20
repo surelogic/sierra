@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.FileLocator;
 
-import com.surelogic.sierra.SierraTool;
-import com.surelogic.sierra.SierraLogger;
+import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.BaseConfig;
 
 public class EclipseLauncher extends Launcher {

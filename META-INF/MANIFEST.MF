@@ -3,14 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Tool
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: com.surelogic.sierra.SierraTool
+Bundle-Activator: com.surelogic.sierra.tool.SierraTool
 Require-Bundle: org.eclipse.core.runtime,
  org.apache.ant
 Eclipse-LazyStart: true
-Export-Package: com.surelogic.sierra,
- com.surelogic.sierra.message,
+Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
- com.surelogic.sierra.tool.config
+ com.surelogic.sierra.tool.config,
+ com.surelogic.sierra.tool.message
 Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.jar,
  Tools/FB/lib/asm-3.0.jar,
  Tools/FB/lib/asm-analysis-3.0.jar,

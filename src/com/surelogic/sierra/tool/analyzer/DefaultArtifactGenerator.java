@@ -1,8 +1,8 @@
 package com.surelogic.sierra.tool.analyzer;
 
-import com.surelogic.sierra.message.IdentifierType;
-import com.surelogic.sierra.message.Priority;
-import com.surelogic.sierra.message.Severity;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
 
 public class DefaultArtifactGenerator implements ArtifactGenerator {
 

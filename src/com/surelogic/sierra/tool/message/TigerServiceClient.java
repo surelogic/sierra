@@ -1,4 +1,4 @@
-package com.surelogic.sierra.message;
+package com.surelogic.sierra.tool.message;
 
 import java.net.MalformedURLException;
 import java.net.URL;

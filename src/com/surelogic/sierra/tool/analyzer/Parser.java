@@ -13,10 +13,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.SierraLogger;
-import com.surelogic.sierra.message.IdentifierType;
-import com.surelogic.sierra.message.Priority;
-import com.surelogic.sierra.message.Severity;
+import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
 
 /**
  * XML Parser for results from the tools. Uses SAX parser.

@@ -1,4 +1,4 @@
-package com.surelogic.sierra;
+package com.surelogic.sierra.tool;
 
 import java.net.URL;
 

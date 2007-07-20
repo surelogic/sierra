@@ -14,11 +14,11 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.FileSet;
 
-import com.surelogic.sierra.SierraTool;
-import com.surelogic.sierra.SierraLogger;
-import com.surelogic.sierra.message.MessageArtifactGenerator;
+import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.BaseConfig;
 import com.surelogic.sierra.tool.config.ToolConfig;
+import com.surelogic.sierra.tool.message.MessageArtifactGenerator;
 
 import edu.umd.cs.findbugs.ExitCodes;
 

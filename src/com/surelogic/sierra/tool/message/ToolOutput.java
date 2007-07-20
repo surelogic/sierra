@@ -1,4 +1,4 @@
-package com.surelogic.sierra.message;
+package com.surelogic.sierra.tool.message;
 
 import java.util.List;
 
