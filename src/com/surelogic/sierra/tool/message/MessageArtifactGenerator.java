@@ -1,24 +1,13 @@
 package com.surelogic.sierra.tool.message;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
 public class MessageArtifactGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
-
-	private static final Logger log = SierraLogger
-			.getLogger(MessageArtifactGenerator.class.getName());
 
 	private ArtifactBuilderAdapter artifactAdapter = new ArtifactBuilderAdapter();
 
@@ -34,19 +23,7 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 	public void write(String dest) {
 		ToolOutput to = new ToolOutput();
 		to.setArtifacts(getArtifacts());
-		FileWriter out;
-		try {
-			out = new FileWriter(dest);
-			JAXBContext.newInstance(ToolOutput.class).createMarshaller()
-					.marshal(to, out);
-			out.close();
-		} catch (IOException e) {
-			log.log(Level.SEVERE,
-					"Error writing parser output to file " + dest, e);
-		} catch (JAXBException e) {
-			log.log(Level.SEVERE, "Error marshalling parser output to file "
-					+ dest, e);
-		}
+		MessageWarehouse.getInstance().writeToolOutput(to, dest);
 	}
 
 	private static class ArtifactBuilderAdapter implements ArtifactBuilder {
