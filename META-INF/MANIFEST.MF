@@ -23,7 +23,7 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jaxen-1.1.1/jaxen-1.1.1.jar,
  Tools/JDepend/jdepend-2.9.jar,
  Tools/pmd-3.9/pmd-3.9.jar,
- .,
+ Tools/jax-ws/streambuffer.jar,
  Tools/jax-ws/activation.jar,
  Tools/jax-ws/FastInfoset.jar,
  Tools/jax-ws/http.jar,
@@ -33,7 +33,6 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jax-ws/jaxws-api.jar,
  Tools/jax-ws/jaxws-rt.jar,
  Tools/jax-ws/jaxws-tools.jar,
- Tools/jax-ws/jsr173_1.0_api.jar,
  Tools/jax-ws/jsr173_api.jar,
  Tools/jax-ws/jsr181-api.jar,
  Tools/jax-ws/jsr250-api.jar,
@@ -41,5 +40,4 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jax-ws/saaj-api.jar,
  Tools/jax-ws/saaj-impl.jar,
  Tools/jax-ws/sjsxp.jar,
- Tools/jax-ws/stax-ex.jar,
- Tools/jax-ws/streambuffer.jar
+ .
