@@ -123,4 +123,65 @@ public class Run {
 		this.artifacts = artifacts;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((artifacts == null) ? 0 : artifacts.hashCode());
+		result = prime * result
+				+ ((javaVendor == null) ? 0 : javaVendor.hashCode());
+		result = prime * result
+				+ ((javaVersion == null) ? 0 : javaVersion.hashCode());
+		result = prime * result + ((project == null) ? 0 : project.hashCode());
+		result = prime * result
+				+ ((qualifiers == null) ? 0 : qualifiers.hashCode());
+		result = prime * result
+				+ ((runDateTime == null) ? 0 : runDateTime.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Run other = (Run) obj;
+		if (artifacts == null) {
+			if (other.artifacts != null)
+				return false;
+		} else if (!artifacts.equals(other.artifacts))
+			return false;
+		if (javaVendor == null) {
+			if (other.javaVendor != null)
+				return false;
+		} else if (!javaVendor.equals(other.javaVendor))
+			return false;
+		if (javaVersion == null) {
+			if (other.javaVersion != null)
+				return false;
+		} else if (!javaVersion.equals(other.javaVersion))
+			return false;
+		if (project == null) {
+			if (other.project != null)
+				return false;
+		} else if (!project.equals(other.project))
+			return false;
+		if (qualifiers == null) {
+			if (other.qualifiers != null)
+				return false;
+		} else if (!qualifiers.equals(other.qualifiers))
+			return false;
+		if (runDateTime == null) {
+			if (other.runDateTime != null)
+				return false;
+		} else if (!runDateTime.equals(other.runDateTime))
+			return false;
+		return true;
+	}
+
+	
 }

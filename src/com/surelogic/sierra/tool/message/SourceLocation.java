@@ -149,4 +149,70 @@ public class SourceLocation {
 		this.identifierType = locationType;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result + endLineOfCode;
+		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
+		result = prime * result
+				+ ((identifier == null) ? 0 : identifier.hashCode());
+		result = prime * result
+				+ ((identifierType == null) ? 0 : identifierType.hashCode());
+		result = prime * result + lineOfCode;
+		result = prime * result
+				+ ((packageName == null) ? 0 : packageName.hashCode());
+		result = prime * result
+				+ ((pathName == null) ? 0 : pathName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final SourceLocation other = (SourceLocation) obj;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
+			return false;
+		if (endLineOfCode != other.endLineOfCode)
+			return false;
+		if (hash == null) {
+			if (other.hash != null)
+				return false;
+		} else if (!hash.equals(other.hash))
+			return false;
+		if (identifier == null) {
+			if (other.identifier != null)
+				return false;
+		} else if (!identifier.equals(other.identifier))
+			return false;
+		if (identifierType == null) {
+			if (other.identifierType != null)
+				return false;
+		} else if (!identifierType.equals(other.identifierType))
+			return false;
+		if (lineOfCode != other.lineOfCode)
+			return false;
+		if (packageName == null) {
+			if (other.packageName != null)
+				return false;
+		} else if (!packageName.equals(other.packageName))
+			return false;
+		if (pathName == null) {
+			if (other.pathName != null)
+				return false;
+		} else if (!pathName.equals(other.pathName))
+			return false;
+		return true;
+	}
+
 }

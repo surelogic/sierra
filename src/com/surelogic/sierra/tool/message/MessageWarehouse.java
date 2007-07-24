@@ -1,8 +1,11 @@
 package com.surelogic.sierra.tool.message;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -113,10 +116,18 @@ public class MessageWarehouse {
 	 */
 	public ToolOutput fetchToolOutput(String src) {
 		try {
+			return fetchToolOutput(new FileInputStream(src));
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public ToolOutput fetchToolOutput(InputStream in) {
+		try {
 			Unmarshaller unmarshaller = ctx.createUnmarshaller();
-			return (ToolOutput) unmarshaller.unmarshal(new File(src));
+			return (ToolOutput) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fetch " + src, e);
+			log.log(Level.WARNING, "Could not fetch tool output.", e);
 		}
 		return null;
 	}
@@ -162,7 +173,7 @@ public class MessageWarehouse {
 			throw new IllegalStateException(e);
 		}
 	}
-	
+
 	private static void readPrimarySource(ArtifactBuilder aBuilder,
 			SourceLocation s, ArtifactGenerator generator) {
 		aBuilder.primarySourceLocation().path(s.getPathName()).className(

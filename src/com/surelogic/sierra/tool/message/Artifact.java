@@ -129,4 +129,68 @@ public class Artifact {
 		this.message = message;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((additionalSources == null) ? 0 : additionalSources
+						.hashCode());
+		result = prime * result
+				+ ((findingType == null) ? 0 : findingType.hashCode());
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		result = prime
+				* result
+				+ ((primarySourceLocation == null) ? 0 : primarySourceLocation
+						.hashCode());
+		result = prime * result
+				+ ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result
+				+ ((severity == null) ? 0 : severity.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Artifact other = (Artifact) obj;
+		if (additionalSources == null) {
+			if (other.additionalSources != null)
+				return false;
+		} else if (!additionalSources.equals(other.additionalSources))
+			return false;
+		if (findingType == null) {
+			if (other.findingType != null)
+				return false;
+		} else if (!findingType.equals(other.findingType))
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
+			return false;
+		if (primarySourceLocation == null) {
+			if (other.primarySourceLocation != null)
+				return false;
+		} else if (!primarySourceLocation.equals(other.primarySourceLocation))
+			return false;
+		if (priority == null) {
+			if (other.priority != null)
+				return false;
+		} else if (!priority.equals(other.priority))
+			return false;
+		if (severity == null) {
+			if (other.severity != null)
+				return false;
+		} else if (!severity.equals(other.severity))
+			return false;
+		return true;
+	}
+
 }
