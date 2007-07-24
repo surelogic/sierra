@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.surelogic.sierra.tool.SierraLogger;
 
 /**
  * The instance hash generator calculates the 30 alphanumeric characters before
@@ -14,6 +18,8 @@ import java.io.IOException;
  * 
  */
 public class HashGenerator {
+
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	/**
 	 * For testing
@@ -79,7 +85,8 @@ public class HashGenerator {
 							valueUp += holder;
 							if (valueUp.length() > 30) {
 								int extraChars = valueUp.length() - 30;
-								valueUp = valueUp.substring(extraChars, valueUp.length());
+								valueUp = valueUp.substring(extraChars, valueUp
+										.length());
 							}
 						}
 						if (lineCounter > lineNumber) {
@@ -108,10 +115,10 @@ public class HashGenerator {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.err.println("The file " + fileName + " was not found.");
-			e.printStackTrace();
+			log.log(Level.SEVERE, "The file " + fileName + " was not found."
+					+ e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, "I/O exception while hash generation." + e);
 		}
 
 		return hash;
