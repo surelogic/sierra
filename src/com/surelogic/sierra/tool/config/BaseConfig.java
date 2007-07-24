@@ -14,9 +14,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This is an abstract class that allows to create tool specific run
- * configurations. The Launcher will accept objects of this class or its
- * subclasses.
+ * Represents a general configuration setup for a tool. The Launcher will accept
+ * objects of this class or its subclasses.
  * 
  * @author Tanmay.Sinha
  * 
