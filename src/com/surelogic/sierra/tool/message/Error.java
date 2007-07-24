@@ -9,6 +9,10 @@ public class Error {
 		private String tool;
 		private String message;
 
+		Builder() {
+			clear();
+		}
+
 		public Builder message(String message) {
 			this.message = message;
 			return this;
@@ -20,7 +24,14 @@ public class Error {
 		}
 
 		public Error builder() {
-			return new Error(this);
+			Error e = new Error(this);
+			clear();
+			return e;
+		}
+
+		private void clear() {
+			this.tool = null;
+			this.message = null;
 		}
 
 	}

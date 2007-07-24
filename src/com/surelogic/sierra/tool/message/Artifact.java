@@ -21,6 +21,10 @@ public class Artifact {
 
 		private SourceLocation primarySourceLocation;
 
+		Builder() {
+			clear();
+		}
+
 		public Builder findingType(String tool, String mnemonic) {
 			this.findingType = new FindingType(tool, mnemonic);
 			return this;
@@ -53,7 +57,18 @@ public class Artifact {
 		}
 
 		public Artifact build() {
-			return new Artifact(this);
+			Artifact a = new Artifact(this);
+			clear();
+			return a;
+		}
+
+		private void clear() {
+			this.findingType = null;
+			this.priority = null;
+			this.severity = null;
+			this.sources.clear();
+			this.message = null;
+			this.primarySourceLocation = null;
 		}
 	}
 

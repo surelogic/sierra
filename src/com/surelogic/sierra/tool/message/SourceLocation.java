@@ -14,6 +14,10 @@ public class SourceLocation {
 		private int endLine;
 		private String hash;
 
+		Builder() {
+			clear();
+		}
+
 		public Builder type(IdentifierType type) {
 			this.type = type;
 			return this;
@@ -54,8 +58,21 @@ public class SourceLocation {
 			return this;
 		}
 
+		private void clear() {
+			this.type = null;
+			this.identifier = null;
+			this.className = null;
+			this.packageName = null;
+			this.path = null;
+			this.lineOfCode = 0;
+			this.endLine = 0;
+			this.hash = null;
+		}
+
 		public SourceLocation build() {
-			return new SourceLocation(this);
+			SourceLocation s = new SourceLocation(this);
+			clear();
+			return s;
 		}
 	}
 
@@ -69,7 +86,6 @@ public class SourceLocation {
 	private IdentifierType identifierType;
 
 	public SourceLocation() {
-
 		// Nothing to do
 	}
 
@@ -82,7 +98,6 @@ public class SourceLocation {
 		this.endLineOfCode = builder.endLine;
 		this.identifier = builder.identifier;
 		this.identifierType = builder.type;
-
 	}
 
 	public String getPathName() {

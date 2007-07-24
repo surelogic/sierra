@@ -27,25 +27,25 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 	}
 
 	private static class ArtifactBuilderAdapter implements ArtifactBuilder {
-		private Artifact.Builder builder;
+		private final Artifact.Builder artBuilder;
 
 		private List<Artifact> artifacts = new ArrayList<Artifact>();
 
 		public ArtifactBuilderAdapter() {
-			builder = new Artifact.Builder();
+			artBuilder = new Artifact.Builder();
 		}
 
 		public void build() {
-			artifacts.add(builder.build());
+			artifacts.add(artBuilder.build());
 		}
 
 		public ArtifactBuilder findingType(String tool, String mnemonic) {
-			builder.findingType(tool, mnemonic);
+			artBuilder.findingType(tool, mnemonic);
 			return this;
 		}
 
 		public ArtifactBuilder message(String message) {
-			builder.message(message);
+			artBuilder.message(message);
 			return this;
 		}
 
@@ -54,12 +54,12 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 		}
 
 		public ArtifactBuilder priority(Priority priority) {
-			builder.priority(priority);
+			artBuilder.priority(priority);
 			return this;
 		}
 
 		public ArtifactBuilder severity(Severity severity) {
-			builder.severity(severity);
+			artBuilder.severity(severity);
 			return this;
 		}
 
@@ -69,59 +69,58 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 
 		private class SourceLocationAdapter implements SourceLocationBuilder {
 			private final boolean isPrimary;
-
-			SourceLocation.Builder sBuilder;
+			private final SourceLocation.Builder sourceBuilder;
 
 			public SourceLocationAdapter(boolean isPrimary) {
 				this.isPrimary = isPrimary;
-				sBuilder = new SourceLocation.Builder();
+				this.sourceBuilder = new SourceLocation.Builder();
 			}
 
 			public void build() {
 				if (isPrimary) {
-					builder.primarySourceLocation(sBuilder.build());
+					artBuilder.primarySourceLocation(sourceBuilder.build());
 				} else {
-					builder.sourceLocation(sBuilder.build());
+					artBuilder.sourceLocation(sourceBuilder.build());
 				}
 			}
 
 			public SourceLocationBuilder className(String className) {
-				sBuilder.className(className);
+				sourceBuilder.className(className);
 				return this;
 			}
 
 			public SourceLocationBuilder endLine(int line) {
-				sBuilder.endLine(line);
+				sourceBuilder.endLine(line);
 				return this;
 			}
 
 			public SourceLocationBuilder hash(String hash) {
-				sBuilder.hash(hash);
+				sourceBuilder.hash(hash);
 				return this;
 			}
 
 			public SourceLocationBuilder identifier(String name) {
-				sBuilder.identifier(name);
+				sourceBuilder.identifier(name);
 				return this;
 			}
 
 			public SourceLocationBuilder lineOfCode(int line) {
-				sBuilder.lineOfCode(line);
+				sourceBuilder.lineOfCode(line);
 				return this;
 			}
 
 			public SourceLocationBuilder packageName(String packageName) {
-				sBuilder.packageName(packageName);
+				sourceBuilder.packageName(packageName);
 				return this;
 			}
 
 			public SourceLocationBuilder path(String path) {
-				sBuilder.path(path);
+				sourceBuilder.path(path);
 				return this;
 			}
 
 			public SourceLocationBuilder type(IdentifierType type) {
-				sBuilder.type(type);
+				sourceBuilder.type(type);
 				return this;
 			}
 
