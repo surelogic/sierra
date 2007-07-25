@@ -7,11 +7,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 
-@WebServiceClient(name = "TigerService", targetNamespace = "http://server.sps.surelogic.com/", wsdlLocation = "http://localhost:8080/TigerServiceBeanService/TigerServiceBean?wsdl")
+@WebServiceClient(name = "TigerService", targetNamespace = "http://services.sierra.surelogic.com/", wsdlLocation = "http://localhost:8080/TigerServiceBeanService/TigerServiceBean?wsdl")
 public class TigerServiceClient extends Service {
 
 	public TigerServiceClient() {
-		super(createUrl(), new QName("http://server.sps.surelogic.com/",
+		super(createUrl(), new QName("http://services.sierra.surelogic.com/",
 				"TigerServiceBeanService"));
 	}
 
@@ -20,7 +20,7 @@ public class TigerServiceClient extends Service {
 	}
 
 	public TigerService getTigerServicePort() {
-		return super.getPort(new QName("http://server.sps.surelogic.com/",
+		return super.getPort(new QName("http://services.sierra.surelogic.com/",
 				"TigerServiceBeanPort"), TigerService.class);
 	}
 
