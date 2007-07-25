@@ -1,11 +1,13 @@
 package com.surelogic.sierra.tool.message;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
+//TODO implement error generation
 public class MessageArtifactGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
 
@@ -18,6 +20,10 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 
 	public List<Artifact> getArtifacts() {
 		return artifactAdapter.artifacts;
+	}
+
+	public List<Error> getErrors() {
+		return new LinkedList<Error>();
 	}
 
 	public void write(String dest) {

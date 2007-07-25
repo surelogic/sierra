@@ -18,6 +18,7 @@ public class Run {
 		private String javaVendor;
 		private List<String> qualifiers;
 		private List<Artifact> artifacts;
+		private List<Error> errors;
 
 		public Builder runDateTime(Date runDateTime) {
 			this.runDateTime = runDateTime;
@@ -49,6 +50,11 @@ public class Run {
 			return this;
 		}
 
+		public Builder errors(List<Error> errors) {
+			this.errors = errors;
+			return this;
+		}
+
 		public Run build() {
 			return new Run(this);
 		}
@@ -61,6 +67,7 @@ public class Run {
 	private String javaVendor;
 	private Date runDateTime;
 	private List<Artifact> artifacts;
+	private List<Error> errors;
 
 	public Run() {
 		// Nothing to do
@@ -73,6 +80,7 @@ public class Run {
 		this.javaVersion = builder.javaVersion;
 		this.artifacts = Collections.unmodifiableList(builder.artifacts);
 		this.qualifiers = Collections.unmodifiableList(builder.qualifiers);
+		this.errors = Collections.unmodifiableList(builder.errors);
 	}
 
 	public String getProject() {
@@ -99,6 +107,10 @@ public class Run {
 		return artifacts;
 	}
 
+	public List<Error> getErrors() {
+		return errors;
+	}
+
 	public void setProject(String project) {
 		this.project = project;
 	}
@@ -121,6 +133,10 @@ public class Run {
 
 	public void setArtifacts(List<Artifact> artifacts) {
 		this.artifacts = artifacts;
+	}
+
+	public void setErrors(List<Error> errors) {
+		this.errors = errors;
 	}
 
 	@Override
@@ -183,5 +199,4 @@ public class Run {
 		return true;
 	}
 
-	
 }
