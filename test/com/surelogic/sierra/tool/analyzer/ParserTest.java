@@ -2,8 +2,6 @@ package com.surelogic.sierra.tool.analyzer;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,5 +34,4 @@ public class ParserTest {
 				new String[] {});
 		
 	}
-
 }
