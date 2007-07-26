@@ -97,7 +97,7 @@ public class Parser {
 
 		private boolean inField;
 
-		private String elementValueHolder;
+		// private String elementValueHolder;
 
 		private String fileName;
 
@@ -106,6 +106,10 @@ public class Parser {
 		private boolean inClass;
 
 		private String relativePath;
+
+		private boolean inLongMessage = false;
+
+		private StringBuffer message;
 
 		@Override
 		public void startElement(String uri, String localName, String qName,
@@ -240,6 +244,11 @@ public class Parser {
 					}
 
 				}
+			}
+
+			if ("LongMessage".equals(eName)) {
+				inLongMessage = true;
+				message = new StringBuffer();
 			}
 
 			if ("SourceLine".equals(eName)) {
@@ -474,8 +483,8 @@ public class Parser {
 			}
 
 			if ("LongMessage".equals(eName)) {
-				String message = elementValueHolder;
-				artifact.message(message);
+				artifact.message(message.toString());
+				inLongMessage = false;
 			}
 
 			if ("Field".equals(eName)) {
@@ -499,8 +508,8 @@ public class Parser {
 				throws SAXException {
 			String data = new String(ch, start, length);
 
-			if (data.length() != 1) {
-				elementValueHolder = data;
+			if (inLongMessage) {
+				message.append(data);
 			}
 		}
 	}
@@ -518,6 +527,10 @@ public class Parser {
 		private String fileName;
 
 		private boolean hasPackage = false;
+
+		private boolean inViolation;
+
+		private StringBuffer message;
 
 		@Override
 		public void startElement(String namespaceURI, String lName,
@@ -551,6 +564,8 @@ public class Parser {
 				sourceLocation = artifact.primarySourceLocation();
 				String method = "";
 				String className = "";
+				inViolation = true;
+				message = new StringBuffer();
 
 				if (attrs != null) {
 					for (int i = 0; i < attrs.getLength(); i++) {
@@ -687,6 +702,8 @@ public class Parser {
 
 			if ("violation".equals(eName)) {
 
+				artifact.message(message.toString());
+
 				if (!hasClassName) {
 					int lastSlash = fileName.lastIndexOf(File.separator);
 					String fileNameHolder = fileName.substring(lastSlash + 1,
@@ -716,12 +733,13 @@ public class Parser {
 		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
-			String data = new String(ch, start, length);
 
-			if (data.length() != 1) {
-				data = data.substring(1, data.length() - 1);
-				artifact.message(data);
+			// start and length are added and reduced by 1 because PMD messages
+			// contain "/p" before and after each message
+			String data = new String(ch, start + 1, length - 1);
 
+			if (inViolation) {
+				message.append(data);
 			}
 		}
 	}
