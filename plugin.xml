@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+      <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="Sierra.popupMenu"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <menu
+               id="Sierra.SierraMenu"
+               label="Sierra"
+               path="additions">
+            <separator name="group1"/>
+         </menu>
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.RunTools"
+               enablesFor="1"
+               id="Sierra.runToolsAction"
+               label="Run Sierra"
+               menubarPath="Sierra.SierraMenu/group1"/>
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
+               enablesFor="1"
+               id="Sierra.runAnalysisAction"
+               label="Run Analysis on this Project"
+               menubarPath="Sierra.SierraMenu/group1"/>
+      </objectContribution>
+      
+      <objectContribution
+            id="AppendToFile.popupMenu"
+            objectClass="com.surelogic.sierra.entity.Artifact">
+            <action
+               class="com.surelogic.sierra.client.eclipse.actions.AppendToFile"
+               enablesFor="+"
+               id="Sierra.appendToFileAction"
+               label="Append to file...">
+         	</action>
+      </objectContribution>
+      <objectContribution
+            id="MarkIntersting.popupMenu"
+            objectClass="com.surelogic.sierra.entity.Artifact">
+         
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkInteresting"
+               enablesFor="+"
+               id="Sierra.MarkInterestingAction1"
+               label="Mark/Unmark Interesting">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="MarkIntersting.popupMenu"
+            objectClass="com.surelogic.sierra.client.eclipse.model.CategoryHolder">     
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkInteresting"
+               enablesFor="+"
+               id="Sierra.MarkInterestingAction2"
+               label="Mark/Unmark Interesting">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="MarkIntersting.popupMenu"
+            objectClass="com.surelogic.sierra.client.eclipse.model.PriorityHolder">     
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkInteresting"
+               enablesFor="+"
+               id="Sierra.MarkInterestingAction3"
+               label="Mark/Unmark Interesting">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="MarkIntersting.popupMenu"
+            objectClass="com.surelogic.sierra.client.eclipse.model.ClassHolder">     
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkInteresting"
+               enablesFor="+"
+               id="Sierra.MarkInterestingAction4"
+               label="Mark/Unmark Interesting">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="MarkIntersting.popupMenu"
+            objectClass="com.surelogic.sierra.client.eclipse.model.PackageHolder">     
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkInteresting"
+               enablesFor="+"
+               id="Sierra.MarkInterestingAction5"
+               label="Mark/Unmark Interesting">
+         </action>
+      </objectContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.views">
+         
+      <category
+            name="Sierra"
+            id="com.surelogic.sierra.client.eclipse">
+      </category>
+
+      <view
+            allowMultiple="false"
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.adhoc.views.AdHocQueryView"
+             id="com.surelogic.sierra.client.eclipse.AdHocQueryView"
+            name="Query Sierra">
+      </view>
+   
+      <view
+            allowMultiple="true"
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.adhoc.views.AdHocQueryResultsView"
+            id="com.surelogic.sierra.client.eclipse.AdHocQueryView.Results"
+            name="Query Results">
+      </view>
+      <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            name="Findings"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="com.surelogic.sierra.client.eclipse.views.SierraRunsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   
+   <extension
+         point="com.surelogic.adhoc.query">
+      <instance
+            adHocQueryViewId="com.surelogic.sierra.client.eclipse.AdHocQueryView"
+            class="com.surelogic.sierra.client.eclipse.AdHocGlue">
+      </instance>
+   </extension>
+   
+</plugin>
