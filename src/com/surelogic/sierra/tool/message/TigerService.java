@@ -16,5 +16,8 @@ public interface TigerService {
 
 	public Qualifiers getQualifiers();
 	
+	public String getTrail(Match m);
+	
+	public void commitTransactions(CommitTransactions transactions);
 
 }
