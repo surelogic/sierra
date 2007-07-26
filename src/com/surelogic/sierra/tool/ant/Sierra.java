@@ -49,45 +49,62 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Execute;
+import org.apache.tools.ant.taskdefs.ExecuteWatchdog;
+import org.apache.tools.ant.taskdefs.Redirector;
+import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.DirSet;
+import org.apache.tools.ant.types.Environment;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.RedirectorElement;
 
 /**
  * @author ethan
  * 
  */
 public class Sierra extends Task {
+	protected Redirector redirector = new Redirector(this);
+	protected RedirectorElement redirectorElement;
+	private Environment env = new Environment();
+	private Long timeout = 300L;
+	private CommandlineJava cmdl = new CommandlineJava();
+
 	private org.apache.tools.ant.Project proj = getProject();
-	
+
 	// Optional attribute, if present, we send the WSDL file to this server
-	private String serverURL = null; 										
-	
+	private String serverURL = null;
+
 	// Optional, if omitted, the system's tmp folder is used
-	private File destDir= new File(System.getProperty("java.io.tmp")); 		
-	
+	private File destDir = new File(System.getProperty("java.io.tmpdir"));
+
 	// Required
-	private Project project = null; 	
-	
+	private Project project = null;
+
 	// Optional, defaults to false
-	private boolean clean = false; 		
-	
-    // Optional, if omitted, all tools are run and PMD's java version is set to 1.5
-	private Tools tools = null;    		
-	
-    // Optional
-	private File srcdir = null;			
-	
-    // Optional
-	private File bindir = null;			
-	
-	/* *********************** CONSTANTS *******************************/
-	private final static String[] toolList = new String[]{"findbugs", "pmd"};
+	private boolean clean = false;
+
+	// Optional, if omitted, all tools are run and PMD's java version is set to
+	// 1.5
+	private Tools tools = null;
+
+	// Optional
+	private Path srcdir = new Path(proj);
+
+	// Optional
+	private Path bindir = new Path(proj);
+
+	/* *********************** CONSTANTS ****************************** */
+	private final static String[] toolList = new String[] { "findbugs", "pmd" };
 	private static final String DEFAULT_PMD_JAVA_VERSION = "1.5";
-	
-	static{
+
+	static {
 		Arrays.sort(toolList);
 	}
 
@@ -98,10 +115,10 @@ public class Sierra extends Task {
 		validateParameters();
 		runTools();
 		generateWSDL();
-		if (serverURL != null) {
+		if (serverURL != null && !"".equals(serverURL)) {
 			uploadWSDL();
 		}
-		
+
 		if (clean) {
 			cleanup();
 		}
@@ -112,44 +129,49 @@ public class Sierra extends Task {
 	 */
 	private void runTools() {
 		log("Running tools...", org.apache.tools.ant.Project.MSG_INFO);
+		/*
 		Process pmdProcess = null;
 		Process fbProcess = null;
-		
-		if(Arrays.binarySearch(tools.getExclude(), "pmd") < 0){
-			//run PMD
-			ProcessBuilder pb = new ProcessBuilder("java", "-cp", "pmd-4.0.jar, asm-3.0.jar, jaxen-1.1.jar");
+
+		String classpath = System.getProperty("java.class.path");
+		log("Classpath: " + classpath, org.apache.tools.ant.Project.MSG_DEBUG);
+
+		if (Arrays.binarySearch(tools.getExclude(), "pmd") < 0) {
+			// run PMD
 			try {
-				pmdProcess = pb.start();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				fork(cmdl.getCommandline());
+			} catch (BuildException e) {
+				log("Failed to start PMD process.", e,
+						org.apache.tools.ant.Project.MSG_ERR);
 			}
 		}
-		
-		if(Arrays.binarySearch(tools.getExclude(), "findbugs") < 0){
-			//run FindBugs
-			ProcessBuilder pb = new ProcessBuilder("java", "");
+
+		if (Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) {
+			// run FindBugs
 			try {
-				fbProcess = pb.start();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				fork(cmdl.getCommandline());
+			} catch (BuildException e) {
+				log("Failed to start FindBugs process.", e,
+						org.apache.tools.ant.Project.MSG_ERR);
 			}
 		}
+		*/
 	}
 
 	/**
 	 * Generates a WSDL file from the updated database
 	 */
 	private void generateWSDL() {
-		log("Generating the WSDL file...", org.apache.tools.ant.Project.MSG_INFO);
+		log("Generating the WSDL file...",
+				org.apache.tools.ant.Project.MSG_INFO);
 	}
 
 	/**
 	 * Optional action. Uploads the generated WSDL file to the desired server.
 	 */
 	private void uploadWSDL() {
-		log("Uploading the WSDL file to " + serverURL + "...", org.apache.tools.ant.Project.MSG_INFO);
+		log("Uploading the WSDL file to " + serverURL + "...",
+				org.apache.tools.ant.Project.MSG_INFO);
 	}
 
 	/**
@@ -164,24 +186,30 @@ public class Sierra extends Task {
 	 * invalid, this method will throw a BuildException
 	 */
 	public void validateParameters() {
-		if(destDir != null && !destDir.isDirectory()){
-			throw new BuildException(
-					"'destdir' must be a valid directory.");
-		}
-		
-		if(srcdir == null){
-			// TODO ensure that there are source directories defined later
-		}
-		
-		if (bindir == null){
-			// TODO ensure that there are binary directories defined
+		if (destDir != null && !destDir.isDirectory()) {
+			throw new BuildException("'destdir' must be a valid directory.");
 		}
 
+		// Check this before the srcdir/bindir so that we know whether the
+		// project object is null or not
 		if (project == null) {
 			throw new BuildException(
-					"No project was defined. The <projects> sub-tag is required.");
+					"No project was defined. The <project> sub-tag is required.");
 		} else {
 			project.validate();
+		}
+
+		if (srcdir == null) {
+			if (project.getSources().isEmpty()) {
+				throw new BuildException(
+						"Either 'srcdir' or 'sources' must be defined.");
+			}
+		}
+
+		if (bindir == null) {
+			if (project.getBinaries().isEmpty()) {
+				log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
+			}
 		}
 
 		if (tools != null) {
@@ -190,6 +218,7 @@ public class Sierra extends Task {
 
 	}
 
+
 	/**
 	 * A collection for information pertaining to the tools (i.e., FindBugs,
 	 * PMD)
@@ -197,74 +226,75 @@ public class Sierra extends Task {
 	 * @author ethan
 	 * 
 	 */
-	public class Tools {
+	public static class Tools {
 		private PmdConfig pmdConfig = null;
 		private String[] exclude = null;
 
 		public void validate() {
-			if(exclude != null){
+			if (exclude != null) {
 				for (String tool : exclude) {
-					if(Arrays.binarySearch(toolList, tool) < 0){
+					if (Arrays.binarySearch(toolList, tool) < 0) {
 						StringBuffer buf = new StringBuffer();
 						buf.append(tool);
-						buf.append(" is not a valid tool name. Valid tool names are: \n");
+						buf
+								.append(" is not a valid tool name. Valid tool names are: \n");
 						for (String toolName : toolList) {
 							buf.append(toolName);
 							buf.append("\n");
 						}
-        				throw new BuildException(buf.toString());
+						throw new BuildException(buf.toString());
 					}
 				}
 			}
-			if(pmdConfig == null){
+			if (pmdConfig == null) {
 				pmdConfig = new PmdConfig();
 				pmdConfig.setJavaVersion(DEFAULT_PMD_JAVA_VERSION);
-			}
-			else{
+			} else {
 				pmdConfig.validate();
 			}
 		}
-		
-		public void setExclude(String list){
+
+		public void setExclude(String list) {
 			exclude = list.split(",");
-			for (int i = 0; i < exclude.length; i++){
+			for (int i = 0; i < exclude.length; i++) {
 				exclude[i] = exclude[i].trim().toLowerCase();
 			}
 		}
-		
-		public String[] getExclude(){
+
+		public String[] getExclude() {
 			return exclude;
 		}
-		
-		public void addConfiguredPmdConfig(PmdConfig config){
+
+		public void addConfiguredPmdConfig(PmdConfig config) {
 			this.pmdConfig = config;
 		}
 
-		public PmdConfig getPmdConfig(){
+		public PmdConfig getPmdConfig() {
 			return pmdConfig;
 		}
 	}
-	
+
 	/**
 	 * Represents a configuration attribute for the PMD tool
+	 * 
 	 * @author ethan
-	 *
+	 * 
 	 */
-	public class PmdConfig {
+	public static class PmdConfig {
 		private String javaVersion = null;
-		
-		public void validate(){
-			if(!javaVersion.matches("\\d+\\.\\d+(\\.\\d+)*")){
+
+		public void validate() {
+			if (!javaVersion.matches("\\d\\.\\d")) {
 				throw new BuildException(
-					"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be of the form: XX.XX.XX where X is a number, such as 1.4.2.");
+						"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be one of the following: 1.3, 1.4, 1.5, 1.6 ");
 			}
 		}
-		
-		public void setJavaVersion(String version){
+
+		public void setJavaVersion(String version) {
 			this.javaVersion = version;
 		}
-		
-		public String getJavaVersion(){
+
+		public String getJavaVersion() {
 			return javaVersion;
 		}
 	}
@@ -275,13 +305,16 @@ public class Sierra extends Task {
 	 * @author ethan
 	 * 
 	 */
-	public class Project {
+	public static class Project {
 		private String name = null;
-
-		// If set, this will override the baseDir value set in the Projects
 		private File dir = null;
 		private Vector<Source> sources = new Vector<Source>();
 		private Vector<Binary> binaries = new Vector<Binary>();
+		private org.apache.tools.ant.Project proj = null;
+		
+		public Project(org.apache.tools.ant.Project proj){
+			this.proj = proj;
+		}
 
 		public void validate() {
 
@@ -291,13 +324,43 @@ public class Sierra extends Task {
 			}
 			if (dir == null) {
 				throw new BuildException(
-						"Parameter 'baseDir' is required if it is not defined for the enclosing <projects> tag.");
+						"Parameter 'baseDir' is required for 'project'.");
 			} else if (dir != null) {
 				if (!dir.isDirectory()) {
 					throw new BuildException(
-							"Parameter 'baseDir' must be a valid directory. "
+							"Parameter 'dir' must be a valid directory. "
 									+ dir.getAbsolutePath()
 									+ " is not a valid directory.");
+				}
+			}
+			if (!sources.isEmpty()) {
+				for (Source source : sources) {
+					String[] list = source.getDirectoryScanner()
+							.getIncludedDirectories();
+					for (String string : list) {
+						File srcDir = proj.resolveFile(string);
+						if (!srcDir.exists()) {
+							throw new BuildException("srcDir \"" 
+									+ srcDir.getPath()
+									+ "\" does not exist.");
+						}
+//						srcdir.append(new Path(proj, srcDir.getAbsolutePath()));
+					}
+				}
+			}
+			if (!binaries.isEmpty()) {
+				for (Binary binary : binaries) {
+					String[] list = binary.getDirectoryScanner()
+							.getIncludedDirectories();
+					for (String string : list) {
+						File binDir = proj.resolveFile(string);
+						if (!binDir.exists()) {
+							throw new BuildException("binDir \"" 
+									+ binDir.getPath()
+									+ "\" does not exist.");
+						}
+//						bindir.append(new Path(proj, binDir.getAbsolutePath()));
+					}
 				}
 			}
 		}
@@ -310,12 +373,12 @@ public class Sierra extends Task {
 			this.name = name;
 		}
 
-		public final File getBaseDir() {
+		public final File getDir() {
 			return dir;
 		}
 
-		public final void setBaseDir(File baseDir) {
-			this.dir = baseDir;
+		public final void setDir(File dir) {
+			this.dir = dir;
 		}
 
 		public void addConfiguredSource(Source src) {
@@ -335,21 +398,16 @@ public class Sierra extends Task {
 		}
 	}
 
-	public class Source {
-		
-
+	public static class Source extends DirSet {
 	}
 
-	public class Binary {
-
+	public static class Binary extends DirSet {
 	}
-	
-	
-	
-	/******************************************************
+
+	/***************************************************************************
 	 * Getters and Setters for attributes
-	 ******************************************************/
-	
+	 **************************************************************************/
+
 	public void setServerURL(String serverURL) {
 		this.serverURL = serverURL;
 	}
@@ -357,11 +415,14 @@ public class Sierra extends Task {
 	public String getServerURL() {
 		return serverURL;
 	}
+	
+	public void addConfiguredProject(Project project){
+		this.project = project;
+	}
 
 	public void addConfiguredTools(Tools tools) {
 		this.tools = tools;
 	}
-
 
 	/**
 	 * @return the destDir
@@ -371,7 +432,8 @@ public class Sierra extends Task {
 	}
 
 	/**
-	 * @param destDir the destDir to set
+	 * @param destDir
+	 *            the destDir to set
 	 */
 	public final void setDestDir(File destDir) {
 		this.destDir = destDir;
@@ -385,7 +447,8 @@ public class Sierra extends Task {
 	}
 
 	/**
-	 * @param clean the clean to set
+	 * @param clean
+	 *            the clean to set
 	 */
 	public final void setClean(boolean clean) {
 		this.clean = clean;
@@ -394,29 +457,169 @@ public class Sierra extends Task {
 	/**
 	 * @return the srcdir
 	 */
-	public final File getSrcdir() {
+	public final Path getSrcdir() {
 		return srcdir;
 	}
 
 	/**
-	 * @param srcdir the srcdir to set
+	 * @param srcdir
+	 *            the srcdir to set
 	 */
-	public final void setSrcdir(File srcdir) {
-		this.srcdir = srcdir;
+	public final void setSrcdir(Path srcdir) {
+		this.srcdir.append(srcdir);
 	}
 
 	/**
 	 * @return the bindir
 	 */
-	public final File getBindir() {
+	public final Path getBindir() {
 		return bindir;
 	}
 
 	/**
-	 * @param bindir the bindir to set
+	 * @param bindir
+	 *            the bindir to set
 	 */
-	public final void setBindir(File bindir) {
-		this.bindir = bindir;
+	public final void setBindir(Path bindir) {
+		this.bindir.append(bindir);
+	}
+
+	/***************************************************************************
+	 * Helper methods taken from Ant's Java task
+	 **************************************************************************/
+
+	/**
+	 * Executes the given classname with the given arguments in a separate VM.
+	 * 
+	 * @param command
+	 *            String[] of command-line arguments.
+	 */
+	private int fork(String[] command) throws BuildException {
+		Execute exe = new Execute(redirector.createHandler(), createWatchdog());
+		setupExecutable(exe, command);
+
+		try {
+			int rc = exe.execute();
+			redirector.complete();
+			if (exe.killedProcess()) {
+				throw new BuildException("Timeout: killed the sub-process");
+			}
+			return rc;
+		} catch (IOException e) {
+			throw new BuildException(e, getLocation());
+		}
+	}
+
+	/**
+	 * Executes the given classname with the given arguments in a separate VM.
+	 * 
+	 * @param command
+	 *            String[] of command-line arguments.
+	 */
+	private void spawn(String[] command) throws BuildException {
+		Execute exe = new Execute();
+		setupExecutable(exe, command);
+		try {
+			exe.spawn();
+		} catch (IOException e) {
+			throw new BuildException(e, getLocation());
+		}
+	}
+
+	/**
+	 * Do all configuration for an executable that is common across the
+	 * {@link #fork(String[])} and {@link #spawn(String[])} methods.
+	 * 
+	 * @param exe
+	 *            executable.
+	 * @param command
+	 *            command to execute.
+	 */
+	private void setupExecutable(Execute exe, String[] command) {
+		exe.setAntRun(getProject());
+		setupWorkingDir(exe);
+		setupEnvironment(exe);
+		setupCommandLine(exe, command);
+	}
+
+	/**
+	 * Set up our environment variables.
+	 * 
+	 * @param exe
+	 *            executable.
+	 */
+	private void setupEnvironment(Execute exe) {
+		String[] environment = env.getVariables();
+		if (environment != null) {
+			for (int i = 0; i < environment.length; i++) {
+				log("Setting environment variable: " + environment[i],
+						org.apache.tools.ant.Project.MSG_VERBOSE);
+			}
+		}
+		exe.setNewenvironment(false);
+		exe.setEnvironment(environment);
+	}
+
+	/**
+	 * Set the working dir of the new process.
+	 * 
+	 * @param exe
+	 *            executable.
+	 * @throws BuildException
+	 *             if the dir doesn't exist.
+	 */
+	private void setupWorkingDir(Execute exe) {
+		if (project.getDir() == null) {
+			project.setDir(getProject().getBaseDir());
+		} else if (!project.getDir().exists()
+				|| !project.getDir().isDirectory()) {
+			throw new BuildException(project.getDir().getAbsolutePath()
+					+ " is not a valid directory", getLocation());
+		}
+		exe.setWorkingDirectory(project.getDir());
+	}
+
+	/**
+	 * Set the command line for the exe. On VMS, hands off to
+	 * {@link #setupCommandLineForVMS(Execute, String[])}.
+	 * 
+	 * @param exe
+	 *            executable.
+	 * @param command
+	 *            command to execute.
+	 */
+	private void setupCommandLine(Execute exe, String[] command) {
+		exe.setCommandline(command);
+	}
+
+	/**
+	 * Create the Watchdog to kill a runaway process.
+	 * 
+	 * @return new watchdog.
+	 * 
+	 * @throws BuildException
+	 *             under unknown circumstances.
+	 * 
+	 * @since Ant 1.5
+	 */
+	protected ExecuteWatchdog createWatchdog() throws BuildException {
+		if (timeout == null) {
+			return null;
+		}
+		return new ExecuteWatchdog(timeout.longValue());
+	}
+
+	public CommandlineJava getCommandLine() {
+		return cmdl;
+	}
+
+	/**
+	 * Add a path to the classpath.
+	 * 
+	 * @return created classpath.
+	 */
+	public Path createClasspath() {
+		return getCommandLine().createClasspath(getProject()).createPath();
 	}
 
 }
