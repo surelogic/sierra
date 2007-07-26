@@ -1,0 +1,9 @@
+<antlib>
+	<!-- For ant < 1.6 -->
+	<taskdef resource="com/surelogic/sierra/tool/ant/ant.properties"/>
+	
+	<taskdef
+		name="sierra-analysis"
+		classname="com.surelogic.sierra.tool.ant.Sierra"
+		onerror="ignore" />
+</antlib>
