@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,8 +12,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,7 +20,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.sierra.client.eclipse.jobs.SierraJobs;
-import com.surelogic.sierra.client.eclipse.views.BalloonUtility;
 import com.surelogic.sierra.entity.ClientRunWriter;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.EclipseLauncher;
@@ -44,17 +40,15 @@ public class RunTools implements IObjectActionDelegate {
 
 	private IJavaProject project;
 
-	private Vector<String> sourceDirectory;
+	private static final ILock tigerFBLock = Job.getJobManager().newLock();
 
-	private static final ILock toolFindBugsLock = Job.getJobManager().newLock();
+	private static final ILock tigerPMDLock = Job.getJobManager().newLock();
 
-	private static final ILock toolPMDLock = Job.getJobManager().newLock();
+	private boolean successFB = false;
 
-	private volatile boolean successFB = false;
+	private boolean successPMD = false;
 
-	private volatile boolean successPMD = false;
-
-	private volatile boolean finished = false;
+	private boolean finished = false;
 
 	private Launcher launcher;
 
@@ -102,37 +96,49 @@ public class RunTools implements IObjectActionDelegate {
 					projectPath = project.getResource().getLocation()
 							.toOSString();
 
+					// File root = new File(projectPath);
+					// JavaFilter filter = new JavaFilter();
+					// filterdirs(root, filter);
+					//
+					// Iterator<File> dirIterator = filter.dirs.iterator();
+					//
+					// while (dirIterator.hasNext()) {
+					//
+					// File holder = dirIterator.next();
+					// System.out.println(holder.getPath());
+					// sourceDirectory = new Vector<String>();
+					// sourceDirectory.add(holder.getPath());
+					// }
+
 					// Getting the source directories for the project
-					try {
-						int sourceFolders = 0;
-						sourceDirectory = new Vector<String>();
-						IPackageFragment pf[] = project.getPackageFragments();
-
-						for (int i = 0; i < pf.length; i++) {
-							if (pf[i].containsJavaResources()) {
-
-								if (pf[i].getResource() != null) {
-									String path = pf[i].getResource()
-											.getLocation().toOSString();
-									if ((!path.endsWith(".jar"))
-											&& (!path.endsWith(".zip"))) {
-										sourceFolders++;
-										// System.out.println(pf[i].getPath().removeFirstSegments(1));
-										sourceDirectory.add(path);
-									}
-								}
-							}
-						}
-
-					} catch (JavaModelException jme) {
-						log
-								.log(Level.SEVERE,
-										"Error in identifying source directories"
-												+ jme);
-					}
-
-					final String[] sourceDirectories = sourceDirectory
-							.toArray(new String[sourceDirectory.size()]);
+					// try {
+					// int sourceFolders = 0;
+					// sourceDirectory = new Vector<String>();
+					// IPackageFragment pf[] = project.getPackageFragments();
+					//
+					// for (int i = 0; i < pf.length; i++) {
+					// if (pf[i].containsJavaResources()) {
+					//
+					// if (pf[i].getResource() != null) {
+					// String path = pf[i].getResource()
+					// .getLocation().toOSString();
+					// if ((!path.endsWith(".jar"))
+					// && (!path.endsWith(".zip"))) {
+					// sourceFolders++;
+					// //
+					// System.out.println(pf[i].getPath().removeFirstSegments(1));
+					// sourceDirectory.add(path);
+					// }
+					// }
+					// }
+					// }
+					//
+					// } catch (JavaModelException jme) {
+					// log
+					// .log(Level.SEVERE,
+					// "Error in identifying source directories"
+					// + jme);
+					// }
 
 					try {
 
@@ -140,12 +146,11 @@ public class RunTools implements IObjectActionDelegate {
 						baseConfig.setBaseDirectory(projectPath);
 						baseConfig.setJdkVersion("1.5");
 						baseConfig.setProjectName(project.getElementName());
-						baseConfig.setSourceDirectories(sourceDirectories);
 
 						launcher = new EclipseLauncher(project.getProject()
 								.getDescription().getName(), baseConfig);
 
-						Job launchFB = new SierraJobs(SierraJobs.SIERRA,
+						Job launchFB = new SierraJobs("Tiger",
 								"Running FindBugs") {
 
 							@Override
@@ -154,9 +159,9 @@ public class RunTools implements IObjectActionDelegate {
 								try {
 									monitor.beginTask("Running FindBugs",
 											IProgressMonitor.UNKNOWN);
-									toolFindBugsLock.acquire();
+									tigerFBLock.acquire();
 									launcher.launchFB();
-
+									// launcher.parseFB();
 									// TODO: [Bug 783] The cancel does not
 									// cancel the ANT run
 									// once it has been triggered
@@ -164,7 +169,7 @@ public class RunTools implements IObjectActionDelegate {
 								} catch (Exception e) {
 									e.printStackTrace();
 								} finally {
-									toolFindBugsLock.release();
+									tigerFBLock.release();
 									monitor.done();
 								}
 
@@ -172,7 +177,7 @@ public class RunTools implements IObjectActionDelegate {
 							}
 						};
 
-						Job launchPMD = new SierraJobs(SierraJobs.SIERRA, "PMD") {
+						Job launchPMD = new SierraJobs("Tiger", "PMD") {
 
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
@@ -181,13 +186,14 @@ public class RunTools implements IObjectActionDelegate {
 
 									monitor.beginTask("Running PMD",
 											IProgressMonitor.UNKNOWN);
-									toolPMDLock.acquire();
+									tigerPMDLock.acquire();
 									launcher.launchPMD();
+									// launcher.parsePMD();
 
 								} catch (Exception e) {
 									e.printStackTrace();
 								} finally {
-									toolPMDLock.release();
+									tigerPMDLock.release();
 									monitor.done();
 								}
 
@@ -196,20 +202,15 @@ public class RunTools implements IObjectActionDelegate {
 
 						};
 
-						/*
-						 * Notify the user we are starting the analysis in the
-						 * background.
-						 */
-						BalloonUtility
-								.showMessage(
-										"Sierra Analysis Started",
-										"You may continue to work as the analysis runs. "
-												+ "You will be notified when the analysis has been completed.");
+						launchFB.setUser(true);
+						launchFB.setPriority(Job.SHORT);
 						launchFB
 								.addJobChangeListener(new TigerJobChangeAdapter(
 										"FindBugs"));
 						launchFB.schedule();
 
+						launchPMD.setUser(true);
+						launchPMD.setPriority(Job.SHORT);
 						launchPMD
 								.addJobChangeListener(new TigerJobChangeAdapter(
 										"PMD"));
@@ -259,16 +260,18 @@ public class RunTools implements IObjectActionDelegate {
 				}
 
 				if (successFB && successPMD) {
-					Job finishRuns = new SierraJobs(SierraJobs.SIERRA,
-							"Finishing Run") {
+					Job finishRuns = new SierraJobs("Tiger", "Finishing Run") {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 
 							try {
 
-								monitor.beginTask("Generating findings",
+								monitor.beginTask("Generating findings...",
 										IProgressMonitor.UNKNOWN);
+								monitor.subTask("Parsing results");
+								launcher.parseFiles();
+								monitor.subTask("Calculating findings");
 								new ClientRunWriter(project.getProject()
 										.getDescription().getName()).write();
 							} catch (CoreException e) {
@@ -283,6 +286,7 @@ public class RunTools implements IObjectActionDelegate {
 
 					};
 
+					finishRuns.setUser(true);
 					finishRuns.setPriority(Job.SHORT);
 					finishRuns.addJobChangeListener(new TigerJobChangeAdapter(
 							"Finishing"));
@@ -294,9 +298,8 @@ public class RunTools implements IObjectActionDelegate {
 				}
 
 				if (finished) {
-					BalloonUtility.showMessage("Sierra Analysis Completed",
-							"You may now examine the analysis results.");
 					finished = false;
+
 				}
 			}
 		}
