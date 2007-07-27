@@ -112,8 +112,12 @@ public class SierraAnalysis extends Task {
 	private Path bindir = new Path(proj);
 
 	/* *********************** CONSTANTS ****************************** */
-	private final static String[] toolList = new String[] { "findbugs", "pmd" };
-	private static final String DEFAULT_PMD_JAVA_VERSION = "1.5";
+	private final static String FINDBUGS = "findbugs";
+	private final static String PMD = "pmd";
+	private final static String[] toolList = new String[] { FINDBUGS, PMD };
+	private final static String DEFAULT_PMD_JAVA_VERSION = "1.5";
+	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs";
+	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 
 	static {
 		Arrays.sort(toolList);
@@ -152,10 +156,10 @@ public class SierraAnalysis extends Task {
 			classpath.append(new Path(getProject(), ((AntClassLoader)loader).getClasspath()));
 		}
 
-		if (tools == null || Arrays.binarySearch(tools.getExclude(), "pmd") < 0) {
+		if (tools == null || Arrays.binarySearch(tools.getExclude(), PMD) < 0) {
 			// run PMD
 			CommandlineJava cmdj = new CommandlineJava();
-			cmdj.setClassname("net.sourceforge.pmd.PMD");
+			cmdj.setClassname(PMD_CLASS);
 			cmdj.createClasspath(getProject()).createPath().append(classpath);
 			
     		log("Classpath: " + cmdj.getClasspath().toString(),
@@ -176,12 +180,12 @@ public class SierraAnalysis extends Task {
 		}
 
 		if (tools == null
-				|| Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) {
+				|| Arrays.binarySearch(tools.getExclude(), FINDBUGS) < 0) {
 			// run FindBugs
 			CommandlineJava cmdj = new CommandlineJava();
-			cmdj.setClassname("edu.umd.cs.FindBugs");
-			// cmdj.createArgument().setValue("-cp");
-			// cmdj.createArgument().setValue(classpath);
+			cmdj.setClassname(FINDBUGS_CLASS);
+			cmdj.createClasspath(getProject()).createPath().append(classpath);
+			
 			cmdj.createArgument().setPath(bindir);
 
 			log("Executing FindBugs with the commandline: " + cmdj.toString(),
@@ -269,6 +273,7 @@ public class SierraAnalysis extends Task {
 		private String[] exclude = null;
 
 		public void validate() {
+			// TODO should validate the tool names against valid tools
 			if (exclude != null) {
 				for (String tool : exclude) {
 					if (Arrays.binarySearch(toolList, tool) < 0) {
