@@ -231,7 +231,7 @@ public class ModelCreators {
 		Set<Priority> priorities = priorityMap.keySet();
 
 		prioritizedFindings = new ArrayList<PriorityHolder>();
-
+		
 		Iterator<Priority> prioritiesIterator = priorities.iterator();
 
 		while (prioritiesIterator.hasNext()) {
@@ -244,7 +244,6 @@ public class ModelCreators {
 			priorityHolder.setFindings(artifacts);
 
 			prioritizedFindings.add(priorityHolder);
-
 		}
 	}
 
