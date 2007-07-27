@@ -39,7 +39,6 @@ class FindingsLabelProvider implements ILabelProvider {
 	}
 
 	public String getText(Object element) {
-
 		if (element instanceof PackageHolder) {
 			PackageHolder ph = (PackageHolder) element;
 
