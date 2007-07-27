@@ -53,9 +53,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
+import org.apache.tools.ant.taskdefs.ExecuteJava;
 import org.apache.tools.ant.taskdefs.ExecuteWatchdog;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
@@ -81,14 +83,14 @@ public class SierraAnalysis extends Task {
 
 	// Optional attribute, if present, we send the WSDL file to this server
 	private String serverURL = null;
-	
+
 	// Optional, but req'd if URL is set
 	// TODO - getters/setters and validation
 	private String serverQualifier = null;
 
 	// Optional, if omitted, the system's tmp folder is used
 	private File destDir = new File(System.getProperty("java.io.tmpdir"));
-	
+
 	// Req'd name for the WSDL (run document)
 	// TODO
 	private String runDocumentName = null;
@@ -142,18 +144,29 @@ public class SierraAnalysis extends Task {
 		log("Binary path: " + bindir, org.apache.tools.ant.Project.MSG_DEBUG);
 		log("Results will be saved to: " + destDir,
 				org.apache.tools.ant.Project.MSG_DEBUG);
+
+		Path classpath = new Path(getProject());
 		
-		String classpath = System.getProperty("java.class.path");
-		log("Classpath: " + classpath, org.apache.tools.ant.Project.MSG_DEBUG);
-		
-		if (Arrays.binarySearch(tools.getExclude(), "pmd") < 0) { 
+		ClassLoader loader = this.getClass().getClassLoader();
+		if(loader != null && loader instanceof AntClassLoader){
+			classpath.append(new Path(getProject(), ((AntClassLoader)loader).getClasspath()));
+		}
+
+		if (tools == null || Arrays.binarySearch(tools.getExclude(), "pmd") < 0) {
 			// run PMD
 			CommandlineJava cmdj = new CommandlineJava();
-//			cmdj.setClassname("PMD");
-			cmdj.setJar("pmd-3.9.jar");
+			cmdj.setClassname("net.sourceforge.pmd.PMD");
+			cmdj.createClasspath(getProject()).createPath().append(classpath);
+			
+    		log("Classpath: " + cmdj.getClasspath().toString(),
+				org.apache.tools.ant.Project.MSG_DEBUG);
+
 			cmdj.createArgument().setPath(srcdir);
-			cmdj.createArgument().setValue("/Users/ethan/sierra-workspace/sierra-tool/Tools/pmd-3.9/all.xml");
-			log("Executing PMD with the commandline: " + cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
+			cmdj.createArgument()
+				.setValue("/Users/ethan/sierra-workspace/sierra-tool/Tools/pmd-3.9/all.xml");
+
+			log("Executing PMD with the commandline: " + cmdj.toString(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
@@ -162,13 +175,17 @@ public class SierraAnalysis extends Task {
 			}
 		}
 
-		if (Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) {
+		if (tools == null
+				|| Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) {
 			// run FindBugs
 			CommandlineJava cmdj = new CommandlineJava();
-			cmdj.setClassname("FindBugs");
-//			cmdj.createArgument()
-			
-			log("Executing FindBugs with the commandline: " + cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
+			cmdj.setClassname("edu.umd.cs.FindBugs");
+			// cmdj.createArgument().setValue("-cp");
+			// cmdj.createArgument().setValue(classpath);
+			cmdj.createArgument().setPath(bindir);
+
+			log("Executing FindBugs with the commandline: " + cmdj.toString(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
