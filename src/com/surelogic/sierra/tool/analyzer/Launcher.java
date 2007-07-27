@@ -1,6 +1,10 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +44,12 @@ public abstract class Launcher {
 
 	private String resultsFolder;
 
+	private File resultDirectory;
+
+	private final String[] sourceDirectories;
+
+	private String intermediate;
+
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private static final String TIGER_RESULTS = ".TigerResult";
@@ -63,6 +73,22 @@ public abstract class Launcher {
 
 			resultRoot.mkdir();
 		}
+
+		// This code computes the source directories from the given base
+		// directory
+		File root = new File(baseConfig.getBaseDirectory());
+		JavaFilter filter = new JavaFilter();
+		filterdirs(root, filter);
+
+		Iterator<File> dirIterator = filter.dirs.iterator();
+		Vector<String> sourceDirectory = new Vector<String>();
+		while (dirIterator.hasNext()) {
+			File holder = dirIterator.next();
+			sourceDirectory.add(holder.getPath());
+		}
+
+		sourceDirectories = sourceDirectory.toArray(new String[sourceDirectory
+				.size()]);
 	}
 
 	private static Project createProject() {
@@ -94,7 +120,7 @@ public abstract class Launcher {
 				+ baseConfig.getProjectName();
 		String pluginDirectory = baseConfig.getToolsDirectory();
 
-		File resultDirectory = new File(resultsPath);
+		resultDirectory = new File(resultsPath);
 
 		if (!resultDirectory.exists()) {
 			resultDirectory.mkdir();
@@ -149,16 +175,19 @@ public abstract class Launcher {
 			// + "FB--" + findBugsToolConfig.getProjectName() + ".xml");
 
 			log.info("FindBugs tool has finished, now parsing file.");
-			MessageArtifactGenerator generator = new MessageArtifactGenerator();
-			Parser parser = new Parser(generator);
-			String toolFile = resultDirectory + File.separator + "FB--"
-					+ baseConfig.getProjectName() + ".xml";
-			parser.parseFB(toolFile, baseConfig.getSourceDirectories());
-			generator.write(toolFile + PARSED_FILE_SUFFIX);
-			log.info("Findbugs file parsed.");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to run findbugs" + e);
 		}
+	}
+
+	public void parseFB() {
+		MessageArtifactGenerator generator = new MessageArtifactGenerator();
+		Parser parser = new Parser(generator);
+		String toolFile = resultDirectory + File.separator + "FB--"
+				+ baseConfig.getProjectName() + ".xml";
+		parser.parseFB(toolFile, sourceDirectories);
+		generator.write(toolFile + PARSED_FILE_SUFFIX);
+		log.info("Findbugs file parsed.");
 
 		log.info("Completed Findbugs execution.");
 	}
@@ -170,7 +199,6 @@ public abstract class Launcher {
 	 */
 	public void launchPMD() {
 		log.info("Launching PMD...");
-		String[] sourceDirectories = baseConfig.getSourceDirectories();
 		String resultsPath = resultsFolder + File.separator
 				+ baseConfig.getProjectName();
 
@@ -181,8 +209,7 @@ public abstract class Launcher {
 		}
 
 		int holder = baseConfig.getBaseDirectory().lastIndexOf(File.separator);
-		String intermediate = baseConfig.getBaseDirectory().substring(
-				holder + 1);
+		intermediate = baseConfig.getBaseDirectory().substring(holder + 1);
 
 		log.info("Checked directory for results from PMD. Now launching task.");
 
@@ -220,16 +247,10 @@ public abstract class Launcher {
 				pmdTask.setRuleSetFiles(SierraTool.getPMDRulesAll().toString());
 
 				pmdTask.execute();
-				log.info("PMD tool has finished, now parsing "
-						+ resultDirectory + File.separator + "PMD--"
-						+ intermediate + "--" + i + ".xml");
-				MessageArtifactGenerator generator = new MessageArtifactGenerator();
-				Parser parser = new Parser(generator);
-				String toolFile = resultDirectory + File.separator + "PMD--"
-						+ intermediate + "--" + i + ".xml";
-				parser.parsePMD(toolFile);
-				generator.write(toolFile + PARSED_FILE_SUFFIX);
-				log.info("PMD file parsed.");
+				log.info("PMD has generated \"" + resultDirectory
+						+ File.separator + "PMD--" + intermediate + "--" + i
+						+ ".xml\"");
+
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to run PMD" + e);
 			}
@@ -238,6 +259,20 @@ public abstract class Launcher {
 
 		log.info("Completed PMD execution");
 
+	}
+
+	public void parsePMD() {
+		for (int i = 0; i < sourceDirectories.length; i++) {
+			log.info("Parsing file " + resultDirectory + File.separator
+					+ "PMD--" + intermediate + "--" + i + ".xml");
+			MessageArtifactGenerator generator = new MessageArtifactGenerator();
+			Parser parser = new Parser(generator);
+			String toolFile = resultDirectory + File.separator + "PMD--"
+					+ intermediate + "--" + i + ".xml";
+			parser.parsePMD(toolFile);
+			generator.write(toolFile + PARSED_FILE_SUFFIX);
+			log.info("PMD file parsed.");
+		}
 	}
 
 	public void launchJDepend(ToolConfig jDependToolConfig) {
@@ -253,11 +288,64 @@ public abstract class Launcher {
 	}
 
 	/**
+	 * Code for getting the source directories
+	 * 
+	 * @author nathan
+	 * 
+	 */
+	private static class JavaFilter implements FilenameFilter {
+
+		HashSet<File> dirs = new HashSet<File>();
+
+		public boolean accept(File dir, String name) {
+			if (name.endsWith(".java")) {
+				dirs.add(dir);
+			}
+			return false;
+		}
+	}
+
+	private static void filterdirs(File root, FilenameFilter filter) {
+		root.list(filter);
+		for (File f : root.listFiles()) {
+			if (f.isDirectory()) {
+				filterdirs(f, filter);
+			}
+		}
+	}
+
+	/**
 	 * Helper method to get the current plugin directory, change the relativeURL
 	 * to <your-plugin-activator>.getDefault().getBundle().getEntry("");
 	 * 
 	 * @return
 	 */
 	public abstract String getToolsDirectory();
+
+	public void parseFiles() {
+		MessageArtifactGenerator generator = new MessageArtifactGenerator();
+		Parser parser = new Parser(generator);
+		String toolFile = resultDirectory + File.separator + "FB--"
+				+ baseConfig.getProjectName() + ".xml";
+		parser.parseFB(toolFile, sourceDirectories);
+		log.info("Findbugs file parsed.");
+
+		log.info("Completed Findbugs execution.");
+
+		for (int i = 0; i < sourceDirectories.length; i++) {
+			log.info("Parsing file " + resultDirectory + File.separator
+					+ "PMD--" + intermediate + "--" + i + ".xml");
+			toolFile = resultDirectory + File.separator + "PMD--"
+					+ intermediate + "--" + i + ".xml";
+			parser.parsePMD(toolFile);
+
+		}
+
+		generator.write(resultDirectory + File.separator
+				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX);
+		// parseFB();
+		// parsePMD();
+
+	}
 
 }

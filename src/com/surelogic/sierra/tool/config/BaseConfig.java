@@ -28,9 +28,6 @@ public class BaseConfig implements ToolConfig {
 	 */
 	private String baseDirectory;
 
-	/** The relative location of the source directories of the project */
-	private String[] sourceDirectories;
-
 	/** The JDK version */
 	private String jdkVersion;
 
@@ -78,19 +75,9 @@ public class BaseConfig implements ToolConfig {
 		this.jdkVersion = string;
 	}
 
-	public String[] getSourceDirectories() {
-		return sourceDirectories;
-	}
-
-	public void setSourceDirectories(String[] sourceDirectories) {
-		this.sourceDirectories = sourceDirectories;
-
-	}
-
 	@Override
 	public String toString() {
-		return "Base Config: baseDirectory=" + baseDirectory
-				+ ", sourceDirectories=" + sourceDirectories + ", jdkVersion="
+		return "Base Config: baseDirectory=" + baseDirectory + ", jdkVersion="
 				+ jdkVersion + ", projectName=" + projectName;
 	}
 
@@ -112,8 +99,6 @@ public class BaseConfig implements ToolConfig {
 
 		private StringBuilder builder = new StringBuilder();
 
-		private static final String[] sourceArrayType = new String[0];
-
 		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
@@ -134,8 +119,6 @@ public class BaseConfig implements ToolConfig {
 				config.setBaseDirectory(builder.toString());
 			} else if (SOURCE.equals(name)) {
 				sources.add(builder.toString());
-			} else if (SOURCES.equals(name)) {
-				config.setSourceDirectories(sources.toArray(sourceArrayType));
 			}
 
 		}
