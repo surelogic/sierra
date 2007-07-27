@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -64,6 +63,7 @@ import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
+import org.apache.tools.ant.util.FileUtils;
 
 /**
  * @author ethan
@@ -75,6 +75,7 @@ public class Sierra extends Task {
 	private Environment env = new Environment();
 	private Long timeout = 300L;
 	private CommandlineJava cmdl = new CommandlineJava();
+	private static final FileUtils fileUtils = FileUtils.getFileUtils();
 
 	private org.apache.tools.ant.Project proj = getProject();
 
@@ -114,9 +115,9 @@ public class Sierra extends Task {
 	public void execute() {
 		validateParameters();
 		runTools();
-		generateWSDL();
+		generateRunDocument();
 		if (serverURL != null && !"".equals(serverURL)) {
-			uploadWSDL();
+			uploadRunDocument();
 		}
 
 		if (clean) {
@@ -129,48 +130,36 @@ public class Sierra extends Task {
 	 */
 	private void runTools() {
 		log("Running tools...", org.apache.tools.ant.Project.MSG_INFO);
+		log("Source path: " + srcdir, org.apache.tools.ant.Project.MSG_DEBUG);
+		log("Binary path: " + bindir, org.apache.tools.ant.Project.MSG_DEBUG);
+		log("Results will be saved to: " + destDir, org.apache.tools.ant.Project.MSG_DEBUG);
 		/*
-		Process pmdProcess = null;
-		Process fbProcess = null;
-
-		String classpath = System.getProperty("java.class.path");
-		log("Classpath: " + classpath, org.apache.tools.ant.Project.MSG_DEBUG);
-
-		if (Arrays.binarySearch(tools.getExclude(), "pmd") < 0) {
-			// run PMD
-			try {
-				fork(cmdl.getCommandline());
-			} catch (BuildException e) {
-				log("Failed to start PMD process.", e,
-						org.apache.tools.ant.Project.MSG_ERR);
-			}
-		}
-
-		if (Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) {
-			// run FindBugs
-			try {
-				fork(cmdl.getCommandline());
-			} catch (BuildException e) {
-				log("Failed to start FindBugs process.", e,
-						org.apache.tools.ant.Project.MSG_ERR);
-			}
-		}
-		*/
+		 * 
+		 * if (Arrays.binarySearch(tools.getExclude(), "pmd") < 0) { // run PMD
+		 * try { fork(cmdl.getCommandline()); } catch (BuildException e) {
+		 * log("Failed to start PMD process.", e,
+		 * org.apache.tools.ant.Project.MSG_ERR); } }
+		 * 
+		 * if (Arrays.binarySearch(tools.getExclude(), "findbugs") < 0) { // run
+		 * FindBugs try { fork(cmdl.getCommandline()); } catch (BuildException
+		 * e) { log("Failed to start FindBugs process.", e,
+		 * org.apache.tools.ant.Project.MSG_ERR); } }
+		 */
 	}
 
 	/**
 	 * Generates a WSDL file from the updated database
 	 */
-	private void generateWSDL() {
-		log("Generating the WSDL file...",
+	private void generateRunDocument() {
+		log("Generating the Run document...",
 				org.apache.tools.ant.Project.MSG_INFO);
 	}
 
 	/**
 	 * Optional action. Uploads the generated WSDL file to the desired server.
 	 */
-	private void uploadWSDL() {
-		log("Uploading the WSDL file to " + serverURL + "...",
+	private void uploadRunDocument() {
+		log("Uploading the Run document to " + serverURL + "...",
 				org.apache.tools.ant.Project.MSG_INFO);
 	}
 
@@ -200,16 +189,16 @@ public class Sierra extends Task {
 		}
 
 		if (srcdir == null) {
-			if (project.getSources().isEmpty()) {
-				throw new BuildException(
-						"Either 'srcdir' or 'sources' must be defined.");
-			}
+			throw new BuildException(
+					"Either 'srcdir' or 'sources' must be defined.");
+		} else {
+			// TODO run through the path and verify all directories are valid
 		}
 
 		if (bindir == null) {
-			if (project.getBinaries().isEmpty()) {
-				log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
-			}
+			log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
+		} else {
+			// TODO run through the path and verify all directories are valid
 		}
 
 		if (tools != null) {
@@ -217,7 +206,6 @@ public class Sierra extends Task {
 		}
 
 	}
-
 
 	/**
 	 * A collection for information pertaining to the tools (i.e., FindBugs,
@@ -308,12 +296,16 @@ public class Sierra extends Task {
 	public static class Project {
 		private String name = null;
 		private File dir = null;
-		private Vector<Source> sources = new Vector<Source>();
-		private Vector<Binary> binaries = new Vector<Binary>();
+		private List<Source> sources = new ArrayList<Source>();
+		private List<Binary> binaries = new ArrayList<Binary>();
+		private Path src = null;
+		private Path bin = null;
 		private org.apache.tools.ant.Project proj = null;
-		
-		public Project(org.apache.tools.ant.Project proj){
+
+		public Project(org.apache.tools.ant.Project proj) {
 			this.proj = proj;
+			src = new Path(proj);
+			bin = new Path(proj);
 		}
 
 		public void validate() {
@@ -335,31 +327,40 @@ public class Sierra extends Task {
 			}
 			if (!sources.isEmpty()) {
 				for (Source source : sources) {
+    				System.out.println("Sources in Project element: " + source.toString());//, org.apache.tools.ant.Project.MSG_DEBUG);
+    				
 					String[] list = source.getDirectoryScanner()
 							.getIncludedDirectories();
+					
+					File basedir = source.getDir();
+					
 					for (String string : list) {
-						File srcDir = proj.resolveFile(string);
+						File srcDir = fileUtils.resolveFile(basedir, string);
 						if (!srcDir.exists()) {
-							throw new BuildException("srcDir \"" 
-									+ srcDir.getPath()
-									+ "\" does not exist.");
+							throw new BuildException("srcDir \""
+									+ srcDir.getPath() + "\" does not exist.");
 						}
-//						srcdir.append(new Path(proj, srcDir.getAbsolutePath()));
+						src.append(new Path(proj,
+    						srcDir.getAbsolutePath()));
 					}
 				}
 			}
 			if (!binaries.isEmpty()) {
 				for (Binary binary : binaries) {
+    				System.out.println("Binaries in Project element: " + binary.toString());//, org.apache.tools.ant.Project.MSG_DEBUG);
+    				
 					String[] list = binary.getDirectoryScanner()
 							.getIncludedDirectories();
+					File basedir = binary.getDir();
+					
 					for (String string : list) {
-						File binDir = proj.resolveFile(string);
+						File binDir = fileUtils.resolveFile(basedir, string);
 						if (!binDir.exists()) {
-							throw new BuildException("binDir \"" 
-									+ binDir.getPath()
-									+ "\" does not exist.");
+							throw new BuildException("binDir \""
+									+ binDir.getPath() + "\" does not exist.");
 						}
-//						bindir.append(new Path(proj, binDir.getAbsolutePath()));
+						bin.append(new Path(proj,
+    						binDir.getAbsolutePath()));
 					}
 				}
 			}
@@ -389,19 +390,26 @@ public class Sierra extends Task {
 			binaries.add(bin);
 		}
 
-		public Vector<Source> getSources() {
-			return sources;
+		public Path getSources() {
+			return src;
 		}
 
-		public Vector<Binary> getBinaries() {
-			return binaries;
+		public Path getBinaries() {
+			return bin;
 		}
+		
 	}
 
 	public static class Source extends DirSet {
+		public Source(){
+			super();
+		}
 	}
 
 	public static class Binary extends DirSet {
+		public Binary(){
+			super();
+		}
 	}
 
 	/***************************************************************************
@@ -415,8 +423,8 @@ public class Sierra extends Task {
 	public String getServerURL() {
 		return serverURL;
 	}
-	
-	public void addConfiguredProject(Project project){
+
+	public void addConfiguredProject(Project project) {
 		this.project = project;
 	}
 
