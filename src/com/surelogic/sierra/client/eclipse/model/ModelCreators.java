@@ -1,10 +1,11 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import com.surelogic.sierra.entity.Artifact;
 import com.surelogic.sierra.entity.CompilationUnit;
@@ -13,14 +14,14 @@ import com.surelogic.sps.client.facade.SPSClient;
 
 public class ModelCreators {
 
-	private static Vector<CategoryHolder> categoryHolders;
-	private static Vector<CategoryHolder> uninterestingFindingsByCategory;
+	private static List<CategoryHolder> categoryHolders;
+	private static List<CategoryHolder> uninterestingFindingsByCategory;
 
-	private static Vector<PackageHolder> packageHolders;
-	private static Vector<PackageHolder> uninterestingFindingsByPackage;
+	private static List<PackageHolder> packageHolders;
+	private static List<PackageHolder> uninterestingFindingsByPackage;
 
-	private static Vector<PriorityHolder> uninterestingFindingsByPriority;
-	private static Vector<PriorityHolder> prioritizedFindings;
+	private static List<PriorityHolder> uninterestingFindingsByPriority;
+	private static List<PriorityHolder> prioritizedFindings;
 
 	private final static SPSClient spsClient;
 
@@ -36,7 +37,7 @@ public class ModelCreators {
 		Set<String> paths = pathMap.keySet();
 		Iterator<String> pathIterator = paths.iterator();
 
-		packageHolders = new Vector<PackageHolder>();
+		packageHolders = new ArrayList<PackageHolder>();
 
 		while (pathIterator.hasNext()) {
 
@@ -53,7 +54,7 @@ public class ModelCreators {
 				String packageName = packageIterator.next();
 				PackageHolder packageHolder = new PackageHolder(packageName);
 
-				Vector<ClassHolder> classHolders = new Vector<ClassHolder>();
+				List<ClassHolder> classHolders = new ArrayList<ClassHolder>();
 
 				Map<CompilationUnit, Collection<Artifact>> classMap = packageMap
 						.get(packageName);
@@ -95,7 +96,7 @@ public class ModelCreators {
 		Set<String> paths = pathMap.keySet();
 		Iterator<String> pathIterator = paths.iterator();
 
-		uninterestingFindingsByPackage = new Vector<PackageHolder>();
+		uninterestingFindingsByPackage = new ArrayList<PackageHolder>();
 
 		while (pathIterator.hasNext()) {
 
@@ -112,7 +113,7 @@ public class ModelCreators {
 				String packageName = packageIterator.next();
 				PackageHolder packageHolder = new PackageHolder(packageName);
 
-				Vector<ClassHolder> classHolders = new Vector<ClassHolder>();
+				List<ClassHolder> classHolders = new ArrayList<ClassHolder>();
 
 				Map<CompilationUnit, Collection<Artifact>> classMap = packageMap
 						.get(packageName);
@@ -152,7 +153,7 @@ public class ModelCreators {
 
 		Set<String> categories = categoryMap.keySet();
 
-		categoryHolders = new Vector<CategoryHolder>();
+		categoryHolders = new ArrayList<CategoryHolder>();
 
 		Iterator<String> categoriesIterator = categories.iterator();
 
@@ -178,7 +179,7 @@ public class ModelCreators {
 
 		Set<String> categories = categoryMap.keySet();
 
-		uninterestingFindingsByCategory = new Vector<CategoryHolder>();
+		uninterestingFindingsByCategory = new ArrayList<CategoryHolder>();
 
 		Iterator<String> categoriesIterator = categories.iterator();
 
@@ -204,7 +205,7 @@ public class ModelCreators {
 
 		Set<Priority> priorities = priorityMap.keySet();
 
-		uninterestingFindingsByPriority = new Vector<PriorityHolder>();
+		uninterestingFindingsByPriority = new ArrayList<PriorityHolder>();
 
 		Iterator<Priority> prioritiesIterator = priorities.iterator();
 
@@ -229,7 +230,7 @@ public class ModelCreators {
 
 		Set<Priority> priorities = priorityMap.keySet();
 
-		prioritizedFindings = new Vector<PriorityHolder>();
+		prioritizedFindings = new ArrayList<PriorityHolder>();
 
 		Iterator<Priority> prioritiesIterator = priorities.iterator();
 
@@ -247,31 +248,6 @@ public class ModelCreators {
 		}
 	}
 
-	// private static void createRunsByProjectModel() {
-	// Map<String, Collection<Run>> runsMap = spsClient
-	// .retrieveRunsByProject();
-	//
-	// Set<String> projects = runsMap.keySet();
-	//
-	// runsByProject = new Vector<ProjectHolder>();
-	//
-	// Iterator<String> projectsIterator = projects.iterator();
-	//
-	// while (projectsIterator.hasNext()) {
-	//
-	// ProjectHolder projectHolder = new ProjectHolder();
-	// String projectName = projectsIterator.next();
-	// Collection<Run> runs = runsMap.get(projectName);
-	//
-	// projectHolder.setProjectName(projectName);
-	// projectHolder.setRuns(runs);
-	//
-	// runsByProject.add(projectHolder);
-	//
-	// }
-	//
-	// }
-
 	public static void destroyModels() {
 		packageHolders = null;
 		categoryHolders = null;
@@ -282,41 +258,36 @@ public class ModelCreators {
 		// runsByProject = null;
 	}
 
-	public static Vector<PackageHolder> getPackageModel(String projectName) {
+	public static List<PackageHolder> getPackageModel(String projectName) {
 		createFindingsPackageModel(projectName);
 		return packageHolders;
 	}
 
-	public static Vector<PackageHolder> getUninterestingPackageModel(
+	public static List<PackageHolder> getUninterestingPackageModel(
 			String projectName) {
 		createUninterestingFindingsPackageModel(projectName);
 		return uninterestingFindingsByPackage;
 	}
 
-	public static Vector<CategoryHolder> getCategoryModel(String projectName) {
+	public static List<CategoryHolder> getCategoryModel(String projectName) {
 		createCategoryModel(projectName);
 		return categoryHolders;
 	}
 
-	public static Vector<CategoryHolder> getUninterestingCategoryModel(
+	public static List<CategoryHolder> getUninterestingCategoryModel(
 			String projectName) {
 		createUnintersetingFindingsCategoryModel(projectName);
 		return uninterestingFindingsByCategory;
 	}
 
-	public static Vector<PriorityHolder> getPrioritizedModel(String projectName) {
+	public static List<PriorityHolder> getPrioritizedModel(String projectName) {
 		createPriorityModel(projectName);
 		return prioritizedFindings;
 	}
 
-	public static Vector<PriorityHolder> getUninterestingPrioritizedModel(
+	public static List<PriorityHolder> getUninterestingPrioritizedModel(
 			String projectName) {
 		createUnintersetingFindingsPriorityModel(projectName);
 		return uninterestingFindingsByPriority;
 	}
-
-	// public static Vector<ProjectHolder> getRunsByProject() {
-	// createRunsByProjectModel();
-	// return runsByProject;
-	// }
 }

@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -43,7 +43,7 @@ class FindingsLabelProvider implements ILabelProvider {
 		if (element instanceof PackageHolder) {
 			PackageHolder ph = (PackageHolder) element;
 
-			Vector<ClassHolder> classHolder = ph.getClasses();
+			List<ClassHolder> classHolder = ph.getClasses();
 
 			int numberOfFindings = 0;
 			for (ClassHolder ch : classHolder) {

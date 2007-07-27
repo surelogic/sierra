@@ -2,7 +2,6 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import java.io.File;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,11 +93,11 @@ public class FindingsView extends ViewPart {
 
 	private Artifact selectedArtifact;
 
-	private Vector<CategoryHolder> categoryHolder;
+	private List<CategoryHolder> categoryHolder;
 
-	private Vector<PackageHolder> packageHolder;
+	private List<PackageHolder> packageHolder;
 
-	private Vector<PriorityHolder> priorityHolder;
+	private List<PriorityHolder> priorityHolder;
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
@@ -623,7 +622,7 @@ public class FindingsView extends ViewPart {
 				int result = prd.open();
 
 				if (result == 0) {
-					Vector<String> qualifierNames = prd.getNames();
+					List<String> qualifierNames = prd.getNames();
 					spsClient.publishRun(spsClient.getLatestRun(RunTools
 							.getProjectName()), qualifierNames);
 				}

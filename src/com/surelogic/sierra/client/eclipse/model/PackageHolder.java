@@ -1,12 +1,12 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-import java.util.Vector;
+import java.util.List;
 
 public class PackageHolder {
 
 	private String name;
 
-	private Vector<ClassHolder> classes;
+	private List<ClassHolder> classes;
 
 	private String path;
 
@@ -15,11 +15,11 @@ public class PackageHolder {
 
 	}
 
-	public Vector<ClassHolder> getClasses() {
+	public List<ClassHolder> getClasses() {
 		return classes;
 	}
 
-	public void setClasses(Vector<ClassHolder> classes) {
+	public void setClasses(List<ClassHolder> classes) {
 		this.classes = classes;
 	}
 
