@@ -235,9 +235,14 @@ class PMDHandler extends DefaultHandler {
 			throws SAXException {
 
 		// start and length are added and reduced by 1 because PMD messages
-		// contain "/p" before and after each message
+		// contain "\n" before and after each message
 		if (inViolation) {
-			message.append(ch, start + 1, length - 1);
+			char c = ch[start];
+			if (c == '\n') {
+				message.append(ch, start + 1, length - 1);
+			} else {
+				message.append(ch, start, length - 1);
+			}
 		}
 	}
 }
