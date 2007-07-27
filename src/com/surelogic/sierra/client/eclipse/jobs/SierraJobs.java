@@ -5,16 +5,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-public class TigerJobs extends Job {
+/**
+ * TODO: Consider dumping this class or being more clear what the design intent
+ * is?
+ */
+public class SierraJobs extends Job {
 
-	String toolName = null;
+	public static final String SIERRA = "Sierra";
 
 	@Override
 	public boolean belongsTo(Object family) {
-		return "Tiger".equals(family);
+		return SIERRA.equals(family);
 	}
 
-	public TigerJobs(String familyName, String toolName) {
+	public SierraJobs(String familyName, String toolName) {
 		super(toolName);
 	}
 
@@ -22,5 +26,4 @@ public class TigerJobs extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		return Status.OK_STATUS;
 	}
-
 }

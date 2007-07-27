@@ -22,7 +22,8 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.surelogic.sierra.client.eclipse.jobs.TigerJobs;
+import com.surelogic.sierra.client.eclipse.jobs.SierraJobs;
+import com.surelogic.sierra.client.eclipse.views.BalloonUtility;
 import com.surelogic.sierra.entity.ClientRunWriter;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.EclipseLauncher;
@@ -45,15 +46,15 @@ public class RunTools implements IObjectActionDelegate {
 
 	private Vector<String> sourceDirectory;
 
-	private static final ILock tigerFBLock = Job.getJobManager().newLock();
+	private static final ILock toolFindBugsLock = Job.getJobManager().newLock();
 
-	private static final ILock tigerPMDLock = Job.getJobManager().newLock();
+	private static final ILock toolPMDLock = Job.getJobManager().newLock();
 
-	private boolean successFB = false;
+	private volatile boolean successFB = false;
 
-	private boolean successPMD = false;
+	private volatile boolean successPMD = false;
 
-	private boolean finished = false;
+	private volatile boolean finished = false;
 
 	private Launcher launcher;
 
@@ -144,7 +145,7 @@ public class RunTools implements IObjectActionDelegate {
 						launcher = new EclipseLauncher(project.getProject()
 								.getDescription().getName(), baseConfig);
 
-						Job launchFB = new TigerJobs("Tiger",
+						Job launchFB = new SierraJobs(SierraJobs.SIERRA,
 								"Running FindBugs") {
 
 							@Override
@@ -153,7 +154,7 @@ public class RunTools implements IObjectActionDelegate {
 								try {
 									monitor.beginTask("Running FindBugs",
 											IProgressMonitor.UNKNOWN);
-									tigerFBLock.acquire();
+									toolFindBugsLock.acquire();
 									launcher.launchFB();
 
 									// TODO: [Bug 783] The cancel does not
@@ -163,7 +164,7 @@ public class RunTools implements IObjectActionDelegate {
 								} catch (Exception e) {
 									e.printStackTrace();
 								} finally {
-									tigerFBLock.release();
+									toolFindBugsLock.release();
 									monitor.done();
 								}
 
@@ -171,7 +172,7 @@ public class RunTools implements IObjectActionDelegate {
 							}
 						};
 
-						Job launchPMD = new TigerJobs("Tiger", "PMD") {
+						Job launchPMD = new SierraJobs(SierraJobs.SIERRA, "PMD") {
 
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
@@ -180,13 +181,13 @@ public class RunTools implements IObjectActionDelegate {
 
 									monitor.beginTask("Running PMD",
 											IProgressMonitor.UNKNOWN);
-									tigerPMDLock.acquire();
+									toolPMDLock.acquire();
 									launcher.launchPMD();
 
 								} catch (Exception e) {
 									e.printStackTrace();
 								} finally {
-									tigerPMDLock.release();
+									toolPMDLock.release();
 									monitor.done();
 								}
 
@@ -195,15 +196,20 @@ public class RunTools implements IObjectActionDelegate {
 
 						};
 
-						launchFB.setUser(true);
-						launchFB.setPriority(Job.SHORT);
+						/*
+						 * Notify the user we are starting the analysis in the
+						 * background.
+						 */
+						BalloonUtility
+								.showMessage(
+										"Sierra Analysis Started",
+										"You may continue to work as the analysis runs. "
+												+ "You will be notified when the analysis has been completed.");
 						launchFB
 								.addJobChangeListener(new TigerJobChangeAdapter(
 										"FindBugs"));
 						launchFB.schedule();
 
-						launchPMD.setUser(true);
-						launchPMD.setPriority(Job.SHORT);
 						launchPMD
 								.addJobChangeListener(new TigerJobChangeAdapter(
 										"PMD"));
@@ -253,7 +259,8 @@ public class RunTools implements IObjectActionDelegate {
 				}
 
 				if (successFB && successPMD) {
-					Job finishRuns = new TigerJobs("Tiger", "Finishing Run") {
+					Job finishRuns = new SierraJobs(SierraJobs.SIERRA,
+							"Finishing Run") {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
@@ -276,7 +283,6 @@ public class RunTools implements IObjectActionDelegate {
 
 					};
 
-					finishRuns.setUser(true);
 					finishRuns.setPriority(Job.SHORT);
 					finishRuns.addJobChangeListener(new TigerJobChangeAdapter(
 							"Finishing"));
@@ -288,8 +294,9 @@ public class RunTools implements IObjectActionDelegate {
 				}
 
 				if (finished) {
+					BalloonUtility.showMessage("Sierra Analysis Completed",
+							"You may now examine the analysis results.");
 					finished = false;
-
 				}
 			}
 		}
