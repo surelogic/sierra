@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
@@ -19,6 +22,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
+
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private ArtifactBuilderAdapter artifactAdapter;
 
@@ -39,11 +44,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			artOut = new FileOutputStream(new File(dest), true);
 			artifactAdapter = new ArtifactBuilderAdapter(artOut);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
 		}
 
 	}
@@ -72,11 +75,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.close();
 			artOut.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
 		}
 
 		// ToolOutput to = new ToolOutput();
