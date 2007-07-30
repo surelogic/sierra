@@ -30,6 +30,8 @@ class PMDHandler extends DefaultHandler {
 
 	private StringBuilder message;
 
+	private String messageHolder;
+
 	public PMDHandler(ArtifactGenerator generator) {
 		super();
 		this.generator = generator;
@@ -203,7 +205,11 @@ class PMDHandler extends DefaultHandler {
 
 		if ("violation".equals(eName)) {
 
-			artifact.message(message.toString());
+			messageHolder = message.toString();
+			messageHolder = messageHolder.replace('\n', ' ');
+			messageHolder = messageHolder.trim();
+
+			artifact.message(messageHolder);
 
 			if (!hasClassName) {
 				int lastSlash = fileName.lastIndexOf(File.separator);
@@ -243,7 +249,8 @@ class PMDHandler extends DefaultHandler {
 			// if ((s == '\n') && (e == '\n')) {
 			// message.append(ch, start + 1, length - 2);
 			// } else if ((s == '\n') && (e != '\n')) {
-			message.append(ch, start + 1, length - 1);
+			message.append(ch, start, length);
+
 			// } else if ((s != '\n') && (e == '\n')) {
 			// message.append(ch, start, length - 2);
 			// } else {
