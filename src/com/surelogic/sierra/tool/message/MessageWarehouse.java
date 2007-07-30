@@ -163,7 +163,7 @@ public class MessageWarehouse {
 						// Unmarshal artifacts
 						ArtifactBuilder aBuilder = generator.artifact();
 						while (xmlr.getEventType() == START_ELEMENT
-								&& xmlr.getLocalName().equals("artifacts")) {
+								&& xmlr.getLocalName().equals("artifact")) {
 							readArtifact(um.unmarshal(xmlr, Artifact.class)
 									.getValue(), aBuilder);
 							if (xmlr.getEventType() == CHARACTERS) {
