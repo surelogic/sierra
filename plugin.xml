@@ -115,7 +115,7 @@
       </view>
       <view
             category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsClassicView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsView"
             name="Findings"/>
    </extension>

@@ -13,7 +13,7 @@ import com.surelogic.sierra.client.eclipse.model.PackageHolder;
 import com.surelogic.sierra.client.eclipse.model.PriorityHolder;
 import com.surelogic.sierra.entity.Artifact;
 
-class FindingsLabelProvider implements ILabelProvider {
+class FindingsClassicLabelProvider implements ILabelProvider {
 
 	public Image getImage(Object element) {
 		if (element instanceof PackageHolder) {

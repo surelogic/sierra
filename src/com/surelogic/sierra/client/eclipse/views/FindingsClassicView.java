@@ -65,7 +65,7 @@ import com.surelogic.sps.client.facade.SPSClient;
  * @author Tanmay.Sinha
  * 
  */
-public class FindingsView extends ViewPart {
+public class FindingsClassicView extends ViewPart {
 
 	private Action categorySort;
 
@@ -115,8 +115,8 @@ public class FindingsView extends ViewPart {
 		leftSideGridData.grabExcessVerticalSpace = true;
 
 		findingsTree.getTree().setLayoutData(leftSideGridData);
-		findingsTree.setContentProvider(new FindingsTreeContentProvider());
-		findingsTree.setLabelProvider(new FindingsLabelProvider());
+		findingsTree.setContentProvider(new FindingsClassicTreeContentProvider());
+		findingsTree.setLabelProvider(new FindingsClassicLabelProvider());
 
 		findingsTree.getTree().addMouseListener(new MouseListener() {
 

@@ -10,7 +10,7 @@ import com.surelogic.sierra.client.eclipse.model.ClassHolder;
 import com.surelogic.sierra.client.eclipse.model.PackageHolder;
 import com.surelogic.sierra.client.eclipse.model.PriorityHolder;
 
-class FindingsTreeContentProvider implements ITreeContentProvider {
+class FindingsClassicTreeContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof PackageHolder) {
