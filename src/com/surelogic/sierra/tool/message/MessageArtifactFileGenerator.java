@@ -13,7 +13,7 @@ import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
 //TODO implement error generation
-public class MessageArtifactGenerator extends DefaultArtifactGenerator
+public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
 
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
@@ -26,7 +26,7 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 
 	private String parsedFile;
 
-	public MessageArtifactGenerator(String dest) {
+	public MessageArtifactFileGenerator(String dest) {
 
 		parsedFile = dest;
 
