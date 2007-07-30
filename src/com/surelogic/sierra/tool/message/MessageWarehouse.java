@@ -5,6 +5,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,6 +77,27 @@ public class MessageWarehouse {
 		} catch (JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ dest, e);
+		}
+	}
+
+	/**
+	 * Write a {@link Artifact} object to the specified file destination.
+	 * 
+	 * @param to
+	 * @param dest
+	 *            a path name
+	 */
+	public void writeArtifact(Artifact a, FileOutputStream artOut) {
+
+		try {
+			Marshaller marshaller = ctx.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					new Boolean(true));
+			marshaller.marshal(a, artOut);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
 		}
 	}
 

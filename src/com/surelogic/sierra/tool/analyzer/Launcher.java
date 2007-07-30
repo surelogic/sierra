@@ -180,17 +180,17 @@ public abstract class Launcher {
 		}
 	}
 
-	public void parseFB() {
-		MessageArtifactGenerator generator = new MessageArtifactGenerator();
-		Parser parser = new Parser(generator);
-		String toolFile = resultDirectory + File.separator + "FB--"
-				+ baseConfig.getProjectName() + ".xml";
-		parser.parseFB(toolFile, sourceDirectories);
-		generator.write(toolFile + PARSED_FILE_SUFFIX);
-		log.info("Findbugs file parsed.");
-
-		log.info("Completed Findbugs execution.");
-	}
+	// public void parseFB() {
+	// MessageArtifactGenerator generator = new MessageArtifactGenerator();
+	// Parser parser = new Parser(generator);
+	// String toolFile = resultDirectory + File.separator + "FB--"
+	// + baseConfig.getProjectName() + ".xml";
+	// parser.parseFB(toolFile, sourceDirectories);
+	// generator.write(toolFile + PARSED_FILE_SUFFIX);
+	// log.info("Findbugs file parsed.");
+	//
+	// log.info("Completed Findbugs execution.");
+	// }
 
 	/**
 	 * Launch PMD
@@ -261,19 +261,19 @@ public abstract class Launcher {
 
 	}
 
-	public void parsePMD() {
-		for (int i = 0; i < sourceDirectories.length; i++) {
-			log.info("Parsing file " + resultDirectory + File.separator
-					+ "PMD--" + intermediate + "--" + i + ".xml");
-			MessageArtifactGenerator generator = new MessageArtifactGenerator();
-			Parser parser = new Parser(generator);
-			String toolFile = resultDirectory + File.separator + "PMD--"
-					+ intermediate + "--" + i + ".xml";
-			parser.parsePMD(toolFile);
-			generator.write(toolFile + PARSED_FILE_SUFFIX);
-			log.info("PMD file parsed.");
-		}
-	}
+	// public void parsePMD() {
+	// for (int i = 0; i < sourceDirectories.length; i++) {
+	// log.info("Parsing file " + resultDirectory + File.separator
+	// + "PMD--" + intermediate + "--" + i + ".xml");
+	// MessageArtifactGenerator generator = new MessageArtifactGenerator();
+	// Parser parser = new Parser(generator);
+	// String toolFile = resultDirectory + File.separator + "PMD--"
+	// + intermediate + "--" + i + ".xml";
+	// parser.parsePMD(toolFile);
+	// generator.write(toolFile + PARSED_FILE_SUFFIX);
+	// log.info("PMD file parsed.");
+	// }
+	// }
 
 	public void launchJDepend(ToolConfig jDependToolConfig) {
 
@@ -323,10 +323,13 @@ public abstract class Launcher {
 	public abstract String getToolsDirectory();
 
 	public void parseFiles() {
-		MessageArtifactGenerator generator = new MessageArtifactGenerator();
-		Parser parser = new Parser(generator);
 		String toolFile = resultDirectory + File.separator + "FB--"
 				+ baseConfig.getProjectName() + ".xml";
+		String parsedFileName = resultDirectory + File.separator
+				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX;
+		MessageArtifactGenerator generator = new MessageArtifactGenerator(
+				parsedFileName);
+		Parser parser = new Parser(generator);
 		parser.parseFB(toolFile, sourceDirectories);
 		log.info("Findbugs file parsed.");
 
@@ -341,11 +344,9 @@ public abstract class Launcher {
 
 		}
 
-		generator.write(resultDirectory + File.separator
-				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX);
+		generator.write();
 		// parseFB();
 		// parsePMD();
 
 	}
-
 }

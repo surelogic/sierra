@@ -12,11 +12,11 @@ public class ToolOutput {
 	private List<Artifact> artifacts;
 	private List<Error> errors;
 
-	public List<Artifact> getArtifacts() {
+	public List<Artifact> getArtifact() {
 		return artifacts;
 	}
 
-	public void setArtifacts(List<Artifact> artifacts) {
+	public void setArtifact(List<Artifact> artifacts) {
 		this.artifacts = artifacts;
 	}
 

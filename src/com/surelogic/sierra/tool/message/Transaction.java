@@ -1,7 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
 import java.util.Date;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlType;
 

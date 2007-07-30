@@ -237,12 +237,18 @@ class PMDHandler extends DefaultHandler {
 		// start and length are added and reduced by 1 because PMD messages
 		// contain "\n" before and after each message
 		if (inViolation) {
-			char c = ch[start];
-			if (c == '\n') {
-				message.append(ch, start + 1, length - 1);
-			} else {
-				message.append(ch, start, length - 1);
-			}
+			// char s = ch[start];
+			// char e = ch[start + length - 1];
+			//
+			// if ((s == '\n') && (e == '\n')) {
+			// message.append(ch, start + 1, length - 2);
+			// } else if ((s == '\n') && (e != '\n')) {
+			message.append(ch, start + 1, length - 1);
+			// } else if ((s != '\n') && (e == '\n')) {
+			// message.append(ch, start, length - 2);
+			// } else {
+			// message.append(ch, start, length);
+			// }
 		}
 	}
 }
