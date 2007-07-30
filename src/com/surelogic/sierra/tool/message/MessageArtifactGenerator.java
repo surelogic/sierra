@@ -1,54 +1,25 @@
 package com.surelogic.sierra.tool.message;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 
-//TODO implement error generation
-public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
+/**
+ * Generator for use in building an in-memory message.
+ * 
+ * @author nathan
+ * 
+ */
+public class MessageArtifactGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
-
-	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
-	private static final String TOOL_OUTPUT_START = "<toolOutput>";
-	private static final String TOOL_OUTPUT_END = "</toolOutput>";
-
-	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private ArtifactBuilderAdapter artifactAdapter;
 
-	private FileOutputStream artOut;
-
-	private String parsedFile;
-
-	public MessageArtifactFileGenerator(String dest) {
-
-		parsedFile = dest;
-
-		try {
-			FileWriter finalFile = new FileWriter(new File(dest));
-			finalFile.write(XML_START);
-			finalFile.write('\n');
-			finalFile.write(TOOL_OUTPUT_START);
-			finalFile.flush();
-			artOut = new FileOutputStream(new File(dest), true);
-			artifactAdapter = new ArtifactBuilderAdapter(artOut);
-		} catch (FileNotFoundException e) {
-			log.log(Level.SEVERE, "Unable to locate the file" + e);
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
-		}
-
+	public MessageArtifactGenerator() {
+		artifactAdapter = new ArtifactBuilderAdapter();
 	}
 
 	@Override
@@ -56,40 +27,27 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		return artifactAdapter;
 	}
 
-	public void write() {
-		FileWriter finalFile;
+	public List<Artifact> getArtifacts() {
+		return artifactAdapter.artifacts;
+	}
 
-		try {
-			finalFile = new FileWriter(new File(parsedFile), true);
-			finalFile.write(TOOL_OUTPUT_END);
-			finalFile.flush();
-
-			finalFile.close();
-			artOut.close();
-		} catch (FileNotFoundException e) {
-			log.log(Level.SEVERE, "Unable to locate the file" + e);
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
-		}
-
-		// ToolOutput to = new ToolOutput();
-		// to.setArtifact(getArtifacts());
-		// MessageWarehouse.getInstance().writeToolOutput(to, dest);
+	public List<Error> getErrors() {
+		return new LinkedList<Error>();
 	}
 
 	private static class ArtifactBuilderAdapter implements ArtifactBuilder {
 		private final Artifact.Builder artBuilder;
 
-		private FileOutputStream artOut;
+		private List<Artifact> artifacts = new ArrayList<Artifact>();
 
-		public ArtifactBuilderAdapter(FileOutputStream artOut) {
-			this.artOut = artOut;
+		public ArtifactBuilderAdapter() {
 			artBuilder = new Artifact.Builder();
 		}
 
 		public void build() {
+
 			Artifact a = artBuilder.build();
-			MessageWarehouse.getInstance().writeArtifact(a, artOut);
+			artifacts.add(a);
 		}
 
 		public ArtifactBuilder findingType(String tool, String mnemonic) {

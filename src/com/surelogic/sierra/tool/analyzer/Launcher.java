@@ -22,7 +22,7 @@ import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.BaseConfig;
 import com.surelogic.sierra.tool.config.ToolConfig;
-import com.surelogic.sierra.tool.message.MessageArtifactGenerator;
+import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 
 import edu.umd.cs.findbugs.ExitCodes;
 
@@ -327,7 +327,7 @@ public abstract class Launcher {
 				+ baseConfig.getProjectName() + ".xml";
 		String parsedFileName = resultDirectory + File.separator
 				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX;
-		MessageArtifactGenerator generator = new MessageArtifactGenerator(
+		MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
 				parsedFileName);
 		Parser parser = new Parser(generator);
 		parser.parseFB(toolFile, sourceDirectories);
