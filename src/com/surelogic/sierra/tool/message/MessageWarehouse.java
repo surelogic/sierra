@@ -1,18 +1,26 @@
 package com.surelogic.sierra.tool.message;
 
-import java.io.File;
+import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
@@ -42,44 +50,6 @@ public class MessageWarehouse {
 		}
 	}
 
-	public static void readToolOutput(ToolOutput output,
-			ArtifactGenerator generator) {
-		readArtifacts(output.getArtifacts(), generator);
-		readErrors(output.getErrors(), generator);
-	}
-
-	public static void readArtifacts(Collection<Artifact> artifacts,
-			ArtifactGenerator generator) {
-		if (artifacts != null) {
-			ArtifactBuilder aBuilder = generator.artifact();
-			for (Artifact a : artifacts) {
-				aBuilder.severity(a.getSeverity()).priority(a.getPriority())
-						.message(a.getMessage());
-				aBuilder.findingType(a.getFindingType().getTool(), a
-						.getFindingType().getMnemonic());
-				readPrimarySource(aBuilder, a.getPrimarySourceLocation(),
-						generator);
-				Collection<SourceLocation> sources = a.getAdditionalSources();
-				if (sources != null) {
-					for (SourceLocation sl : sources) {
-						readSource(aBuilder, sl, generator);
-					}
-				}
-				aBuilder.build();
-			}
-		}
-	}
-
-	public static void readErrors(Collection<Error> errors,
-			ArtifactGenerator generator) {
-		if (errors != null) {
-			ErrorBuilder eBuilder = generator.error();
-			for (Error e : errors) {
-				eBuilder.message(e.getMessage()).tool(e.getTool()).build();
-			}
-		}
-	}
-
 	public static MessageWarehouse getInstance() {
 		return INSTANCE;
 	}
@@ -95,7 +65,10 @@ public class MessageWarehouse {
 		FileWriter out;
 		try {
 			out = new FileWriter(dest);
-			ctx.createMarshaller().marshal(to, out);
+			Marshaller m = ctx.createMarshaller();
+			m.setProperty("jaxb.formatted.output", true);// TODO make this
+			// configurable
+			m.marshal(to, out);
 			out.close();
 		} catch (IOException e) {
 			log.log(Level.SEVERE,
@@ -138,17 +111,7 @@ public class MessageWarehouse {
 	 * @param src
 	 */
 	public void parseToolOutput(String src, ArtifactGenerator generator) {
-		try {
-			Unmarshaller unmarshaller = ctx.createUnmarshaller();
-			try {
-				readToolOutput((ToolOutput) unmarshaller
-						.unmarshal(new File(src)), generator);
-			} catch (JAXBException e) {
-				log.log(Level.WARNING, "Could not unmarshal " + src, e);
-			}
-		} catch (JAXBException e) {
-			throw new IllegalStateException(e);
-		}
+		parseToolOutput(Collections.singleton(src), generator);
 	}
 
 	/**
@@ -158,24 +121,106 @@ public class MessageWarehouse {
 	 */
 	public void parseToolOutput(Collection<String> sources,
 			ArtifactGenerator generator) {
-		Unmarshaller unmarshaller;
 		try {
-			unmarshaller = ctx.createUnmarshaller();
+			Unmarshaller um = ctx.createUnmarshaller();
+
 			for (String src : sources) {
 				try {
-					readToolOutput((ToolOutput) unmarshaller
-							.unmarshal(new File(src)), generator);
-				} catch (JAXBException e) {
-					log.log(Level.WARNING, "Could not unmarshal " + src, e);
+
+					// set up a parser
+					XMLInputFactory xmlif = XMLInputFactory.newInstance();
+					XMLStreamReader xmlr = xmlif
+							.createXMLStreamReader(new FileReader(src));
+
+					try {
+						// move to the root element and check its name.
+						xmlr.nextTag();
+						xmlr.require(START_ELEMENT, null, "toolOutput");
+						xmlr.nextTag(); // move to the first <contact> element.
+
+						// Unmarshal artifacts
+						ArtifactBuilder aBuilder = generator.artifact();
+						while (xmlr.getEventType() == START_ELEMENT
+								&& xmlr.getLocalName().equals("artifacts")) {
+							readArtifact(um.unmarshal(xmlr, Artifact.class)
+									.getValue(), aBuilder);
+							if (xmlr.getEventType() == CHARACTERS) {
+								xmlr.next(); // skip the whitespace between
+								// <artifacts>s.
+							}
+						}
+						// Unmarshal errors
+						ErrorBuilder eBuilder = generator.error();
+						while (xmlr.getEventType() == START_ELEMENT
+								&& xmlr.getLocalName().equals("errors")) {
+							readError(um.unmarshal(xmlr, Error.class)
+									.getValue(), eBuilder);
+							if (xmlr.getEventType() == CHARACTERS) {
+								xmlr.next(); // skip the whitespace between
+								// <event>s.
+							}
+						}
+					} catch (JAXBException e) {
+						throw new IllegalArgumentException("File with name"
+								+ src + " is not a valid document", e);
+					}
+				} catch (FileNotFoundException e) {
+					throw new IllegalArgumentException("File with name" + src
+							+ " does not exist.", e);
+				} catch (XMLStreamException e) {
+					throw new IllegalArgumentException(e);
 				}
 			}
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		}
+
+	}
+
+	// TODO Having these methods be public static is probably not the best way
+	// to do this for RunManager, we need rework MessageWarehouse to work on
+	// in-memory runs as well.
+	public static void readArtifacts(Collection<Artifact> artifacts,
+			ArtifactGenerator generator) {
+		if (artifacts != null) {
+			ArtifactBuilder aBuilder = generator.artifact();
+			for (Artifact a : artifacts) {
+				readArtifact(a, aBuilder);
+			}
+		}
+	}
+
+	public static void readErrors(Collection<Error> errors,
+			ArtifactGenerator generator) {
+		if (errors != null) {
+			ErrorBuilder eBuilder = generator.error();
+			for (Error e : errors) {
+				readError(e, eBuilder);
+			}
+		}
+	}
+
+	private static void readArtifact(Artifact artifact, ArtifactBuilder builder) {
+		builder.severity(artifact.getSeverity()).priority(
+				artifact.getPriority()).message(artifact.getMessage());
+		builder.findingType(artifact.getFindingType().getTool(), artifact
+				.getFindingType().getMnemonic());
+		readPrimarySource(builder, artifact.getPrimarySourceLocation());
+		Collection<SourceLocation> sources = artifact.getAdditionalSources();
+		if (sources != null) {
+			for (SourceLocation sl : sources) {
+				readSource(builder, sl);
+			}
+		}
+		builder.build();
+	}
+
+	private static void readError(Error e, ErrorBuilder builder) {
+		builder.message(e.getMessage()).tool(e.getTool()).build();
 	}
 
 	private static void readPrimarySource(ArtifactBuilder aBuilder,
-			SourceLocation s, ArtifactGenerator generator) {
+			SourceLocation s) {
 		aBuilder.primarySourceLocation().path(s.getPathName()).className(
 				s.getClassName()).packageName(s.getPackageName()).endLine(
 				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
@@ -183,8 +228,7 @@ public class MessageWarehouse {
 				s.getHash()).build();
 	}
 
-	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s,
-			ArtifactGenerator generator) {
+	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s) {
 		aBuilder.sourceLocation().path(s.getPathName()).className(
 				s.getClassName()).packageName(s.getPackageName()).endLine(
 				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
