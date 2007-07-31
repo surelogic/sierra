@@ -124,7 +124,7 @@ public class SierraAnalysis extends Task {
 	public final static String[] toolList = new String[] { FINDBUGS, PMD };
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
-	private static final String MAX_MEMORY = "1024";
+	private static final String MAX_MEMORY = "1024m";
 
 	static {
 		Arrays.sort(toolList);
@@ -173,6 +173,18 @@ public class SierraAnalysis extends Task {
 
 			// Set the Java command's classpath
 			cmdj.createClasspath(getProject()).createPath().append(classpath);
+			
+			// Add the output file
+			cmdj.createArgument().setValue("-reportfile");
+			
+			pmdOutput = new File(tmpFolder, "pmd.xml");
+			try {
+				pmdOutput.createNewFile();
+			} catch (IOException e1) {
+				log("Error creating PMD output file: " + pmdOutput.getAbsolutePath(), 
+						org.apache.tools.ant.Project.MSG_ERR);
+			}
+			cmdj.createArgument().setValue(pmdOutput.getAbsolutePath());
 
 			log("Classpath: " + cmdj.getClasspath().toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
@@ -183,7 +195,7 @@ public class SierraAnalysis extends Task {
 			log("Source path: " + csv, org.apache.tools.ant.Project.MSG_DEBUG);
 			
 			cmdj.createArgument().setValue(csv);
-
+			
 			// Add the output format
 			cmdj.createArgument().setValue("xml");
 
@@ -203,8 +215,6 @@ public class SierraAnalysis extends Task {
 			log("Executing PMD with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
-				pmdOutput = new File(tmpFolder, "pmd.xml");
-				redirector.setOutput(pmdOutput);
 				
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
@@ -235,7 +245,6 @@ public class SierraAnalysis extends Task {
 			log("Executing FindBugs with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
-				redirector.setOutput((File)null);
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
 				log("Failed to start FindBugs process.", e,
