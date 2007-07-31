@@ -29,7 +29,7 @@ public class Parser {
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
-	Parser(ArtifactGenerator generator) {
+	public Parser(ArtifactGenerator generator) {
 		this.generator = generator;
 	}
 
