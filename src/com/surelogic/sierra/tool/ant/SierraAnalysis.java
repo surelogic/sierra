@@ -75,7 +75,7 @@ public class SierraAnalysis extends Task {
 	protected Redirector redirector = new Redirector(this);
 	protected RedirectorElement redirectorElement;
 	private Environment env = new Environment();
-	private Long timeout = 300L;
+	private Long timeout = 5000L;
 	private CommandlineJava cmdl = new CommandlineJava();
 	private static final FileUtils fileUtils = FileUtils.getFileUtils();
 
@@ -114,8 +114,7 @@ public class SierraAnalysis extends Task {
 	/* *********************** CONSTANTS ****************************** */
 	private final static String FINDBUGS = "findbugs";
 	private final static String PMD = "pmd";
-	private final static String[] toolList = new String[] { FINDBUGS, PMD };
-	private final static String DEFAULT_PMD_JAVA_VERSION = "1.5";
+	public final static String[] toolList = new String[] { FINDBUGS, PMD };
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 
@@ -150,24 +149,46 @@ public class SierraAnalysis extends Task {
 				org.apache.tools.ant.Project.MSG_DEBUG);
 
 		Path classpath = new Path(getProject());
-		
+
 		ClassLoader loader = this.getClass().getClassLoader();
-		if(loader != null && loader instanceof AntClassLoader){
-			classpath.append(new Path(getProject(), ((AntClassLoader)loader).getClasspath()));
+		if (loader != null && loader instanceof AntClassLoader) {
+			classpath.append(new Path(getProject(), ((AntClassLoader) loader)
+					.getClasspath()));
 		}
 
 		if (tools == null || Arrays.binarySearch(tools.getExclude(), PMD) < 0) {
 			// run PMD
 			CommandlineJava cmdj = new CommandlineJava();
-			cmdj.setClassname(PMD_CLASS);
-			cmdj.createClasspath(getProject()).createPath().append(classpath);
-			
-    		log("Classpath: " + cmdj.getClasspath().toString(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
 
-			cmdj.createArgument().setPath(srcdir);
-			cmdj.createArgument()
-				.setValue("/Users/ethan/sierra-workspace/sierra-tool/Tools/pmd-3.9/all.xml");
+			// Add the class to run
+			cmdj.setClassname(PMD_CLASS);
+
+			// Set the Java command's classpath
+			cmdj.createClasspath(getProject()).createPath().append(classpath);
+
+			log("Classpath: " + cmdj.getClasspath().toString(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
+
+			// Add the source directories to scan
+			// TODO make this a comma-delimited list
+			String[] paths = srcdir.list();
+			log("Source path: " + paths[0], org.apache.tools.ant.Project.MSG_DEBUG);
+			cmdj.createArgument().setValue(paths[0]);
+
+			// Add the output format
+			cmdj.createArgument().setValue("xml");
+
+			// Add the ruleset file
+			cmdj
+					.createArgument()
+					.setValue(
+							"/Users/ethan/sierra-workspace/sierra-tool/Tools/pmd-3.9/all.xml");
+
+			// Add optional arguments
+			if (tools != null && tools.getPmdConfig() != null) {
+				cmdj.createArgument().setValue("-targetjdk");
+				cmdj.createArgument().setValue(tools.getPmdConfig().getJavaVersion());
+			}
 
 			log("Executing PMD with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
@@ -185,7 +206,7 @@ public class SierraAnalysis extends Task {
 			CommandlineJava cmdj = new CommandlineJava();
 			cmdj.setClassname(FINDBUGS_CLASS);
 			cmdj.createClasspath(getProject()).createPath().append(classpath);
-			
+
 			cmdj.createArgument().setPath(bindir);
 
 			log("Executing FindBugs with the commandline: " + cmdj.toString(),
@@ -260,214 +281,8 @@ public class SierraAnalysis extends Task {
 		}
 
 	}
+	
 
-	/**
-	 * A collection for information pertaining to the tools (i.e., FindBugs,
-	 * PMD)
-	 * 
-	 * @author ethan
-	 * 
-	 */
-	public static class Tools {
-		private PmdConfig pmdConfig = null;
-		private String[] exclude = null;
-
-		public void validate() {
-			// TODO should validate the tool names against valid tools
-			if (exclude != null) {
-				for (String tool : exclude) {
-					if (Arrays.binarySearch(toolList, tool) < 0) {
-						StringBuffer buf = new StringBuffer();
-						buf.append(tool);
-						buf
-								.append(" is not a valid tool name. Valid tool names are: \n");
-						for (String toolName : toolList) {
-							buf.append(toolName);
-							buf.append("\n");
-						}
-						throw new BuildException(buf.toString());
-					}
-				}
-			}
-			if (pmdConfig == null) {
-				pmdConfig = new PmdConfig();
-				pmdConfig.setJavaVersion(DEFAULT_PMD_JAVA_VERSION);
-			} else {
-				pmdConfig.validate();
-			}
-		}
-
-		public void setExclude(String list) {
-			exclude = list.split(",");
-			for (int i = 0; i < exclude.length; i++) {
-				exclude[i] = exclude[i].trim().toLowerCase();
-			}
-		}
-
-		public String[] getExclude() {
-			return exclude;
-		}
-
-		public void addConfiguredPmdConfig(PmdConfig config) {
-			this.pmdConfig = config;
-		}
-
-		public PmdConfig getPmdConfig() {
-			return pmdConfig;
-		}
-	}
-
-	/**
-	 * Represents a configuration attribute for the PMD tool
-	 * 
-	 * @author ethan
-	 * 
-	 */
-	public static class PmdConfig {
-		private String javaVersion = null;
-
-		public void validate() {
-			if (!javaVersion.matches("\\d\\.\\d")) {
-				throw new BuildException(
-						"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be one of the following: 1.3, 1.4, 1.5, 1.6 ");
-			}
-		}
-
-		public void setJavaVersion(String version) {
-			this.javaVersion = version;
-		}
-
-		public String getJavaVersion() {
-			return javaVersion;
-		}
-	}
-
-	/**
-	 * Class representing the definition of a single project
-	 * 
-	 * @author ethan
-	 * 
-	 */
-	public static class Project {
-		private String name = null;
-		private File dir = null;
-		private List<Source> sources = new ArrayList<Source>();
-		private List<Binary> binaries = new ArrayList<Binary>();
-		private Path src = null;
-		private Path bin = null;
-		private org.apache.tools.ant.Project proj = null;
-
-		public Project(org.apache.tools.ant.Project proj) {
-			this.proj = proj;
-			src = new Path(proj);
-			bin = new Path(proj);
-		}
-
-		public void validate() {
-
-			if (name == null) {
-				throw new BuildException(
-						"Parameter 'name' is required for 'project'.");
-			}
-			if (dir == null) {
-				throw new BuildException(
-						"Parameter 'baseDir' is required for 'project'.");
-			} else if (dir != null) {
-				if (!dir.isDirectory()) {
-					throw new BuildException(
-							"Parameter 'dir' must be a valid directory. "
-									+ dir.getAbsolutePath()
-									+ " is not a valid directory.");
-				}
-			}
-			if (!sources.isEmpty()) {
-				for (Source source : sources) {
-					System.out.println("Sources in Project element: "
-							+ source.toString());// ,
-					// org.apache.tools.ant.Project.MSG_DEBUG);
-
-					String[] list = source.getDirectoryScanner()
-							.getIncludedDirectories();
-
-					File basedir = source.getDir();
-
-					for (String string : list) {
-						File srcDir = fileUtils.resolveFile(basedir, string);
-						if (!srcDir.exists()) {
-							throw new BuildException("srcDir \""
-									+ srcDir.getPath() + "\" does not exist.");
-						}
-						src.append(new Path(proj, srcDir.getAbsolutePath()));
-					}
-				}
-			}
-			if (!binaries.isEmpty()) {
-				for (Binary binary : binaries) {
-					System.out.println("Binaries in Project element: "
-							+ binary.toString());// ,
-					// org.apache.tools.ant.Project.MSG_DEBUG);
-
-					String[] list = binary.getDirectoryScanner()
-							.getIncludedDirectories();
-					File basedir = binary.getDir();
-
-					for (String string : list) {
-						File binDir = fileUtils.resolveFile(basedir, string);
-						if (!binDir.exists()) {
-							throw new BuildException("binDir \""
-									+ binDir.getPath() + "\" does not exist.");
-						}
-						bin.append(new Path(proj, binDir.getAbsolutePath()));
-					}
-				}
-			}
-		}
-
-		public final String getName() {
-			return name;
-		}
-
-		public final void setName(String name) {
-			this.name = name;
-		}
-
-		public final File getDir() {
-			return dir;
-		}
-
-		public final void setDir(File dir) {
-			this.dir = dir;
-		}
-
-		public void addConfiguredSource(Source src) {
-			sources.add(src);
-		}
-
-		public void addConfiguredBinary(Binary bin) {
-			binaries.add(bin);
-		}
-
-		public Path getSources() {
-			return src;
-		}
-
-		public Path getBinaries() {
-			return bin;
-		}
-
-	}
-
-	public static class Source extends DirSet {
-		public Source() {
-			super();
-		}
-	}
-
-	public static class Binary extends DirSet {
-		public Binary() {
-			super();
-		}
-	}
 
 	/***************************************************************************
 	 * Getters and Setters for attributes
