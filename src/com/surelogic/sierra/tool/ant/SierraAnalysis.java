@@ -75,7 +75,7 @@ public class SierraAnalysis extends Task {
 	protected Redirector redirector = new Redirector(this);
 	protected RedirectorElement redirectorElement;
 	private Environment env = new Environment();
-	private Long timeout = 5000L;
+	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
 	private static final FileUtils fileUtils = FileUtils.getFileUtils();
 	private File pmdOutput = null;
@@ -122,8 +122,9 @@ public class SierraAnalysis extends Task {
 	private final static String FINDBUGS = "findbugs";
 	private final static String PMD = "pmd";
 	public final static String[] toolList = new String[] { FINDBUGS, PMD };
-	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs";
+	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
+	private static final String MAX_MEMORY = "1024";
 
 	static {
 		Arrays.sort(toolList);
@@ -217,9 +218,19 @@ public class SierraAnalysis extends Task {
 			// run FindBugs
 			CommandlineJava cmdj = new CommandlineJava();
 			cmdj.setClassname(FINDBUGS_CLASS);
+			cmdj.setMaxmemory(MAX_MEMORY);
 			cmdj.createClasspath(getProject()).createPath().append(classpath);
 
-			cmdj.createArgument().setPath(bindir);
+//			cmdj.createArgument().setValue("-textui");
+			cmdj.createArgument().setValue("-xml");
+			cmdj.createArgument().setValue("-outputFile");
+			cmdj.createArgument().setValue(tmpFolder.getAbsolutePath() + File.separator + "findbugs.xml");
+			cmdj.createArgument().setValue("-home");
+			cmdj.createArgument().setPath(new Path(proj, "/Users/ethan/sierra-workspace/sierra-tool/Tools/FB"));
+			String[] paths = bindir.list();
+			for (String string : paths) {
+    			cmdj.createArgument().setValue(string);
+			}
 
 			log("Executing FindBugs with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
@@ -237,7 +248,7 @@ public class SierraAnalysis extends Task {
 		StringBuilder csv = new StringBuilder();
 		for (int i = 0; i < paths.length - 1; i++) {
 			csv.append(paths[i]);
-			csv.append(",");
+			csv.append(", ");
 		}
 		// add the last item at the end w/o a trailing comma
 		csv.append(paths[paths.length - 1]);
