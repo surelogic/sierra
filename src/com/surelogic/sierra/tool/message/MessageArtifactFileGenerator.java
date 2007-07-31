@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
+import com.surelogic.sierra.tool.config.Config;
 
 //TODO implement error generation
 public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
@@ -21,24 +22,31 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
+	private static final String RUN_START = "<Run>";
+	private static final String RUN_END = "</Run>";
 
 	private ArtifactBuilderAdapter artifactAdapter;
 
 	private FileOutputStream artOut;
 
 	private String parsedFile;
+	private Config config;
 
-	public MessageArtifactFileGenerator(String dest) {
+	public MessageArtifactFileGenerator(String parsedFile, Config config) {
 
-		parsedFile = dest;
+		this.parsedFile = parsedFile;
+		this.config = config;
 
 		try {
-			FileWriter finalFile = new FileWriter(new File(dest));
+
+			artOut = new FileOutputStream(new File(parsedFile), true);
+			FileWriter finalFile = new FileWriter(new File(parsedFile));
 			finalFile.write(XML_START);
+			finalFile.write('\n');
+			finalFile.write(RUN_START);
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
 			finalFile.flush();
-			artOut = new FileOutputStream(new File(dest), true);
 			artifactAdapter = new ArtifactBuilderAdapter(artOut);
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
@@ -61,6 +69,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(TOOL_OUTPUT_END);
 			finalFile.flush();
 
+			MessageWarehouse.getInstance().writeConfig(config, artOut);
+
+			finalFile.write(RUN_END);
+			finalFile.flush();
 			finalFile.close();
 			artOut.close();
 		} catch (FileNotFoundException e) {

@@ -21,6 +21,7 @@ import org.apache.tools.ant.types.FileSet;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.BaseConfig;
+import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.config.ToolConfig;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 
@@ -323,12 +324,14 @@ public abstract class Launcher {
 	public abstract String getToolsDirectory();
 
 	public void parseFiles() {
+
+		Config config = new Config(baseConfig);
 		String toolFile = resultDirectory + File.separator + "FB--"
 				+ baseConfig.getProjectName() + ".xml";
 		String parsedFileName = resultDirectory + File.separator
 				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX;
 		MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
-				parsedFileName);
+				parsedFileName, config);
 		Parser parser = new Parser(generator);
 		parser.parseFB(toolFile, sourceDirectories);
 		log.info("Findbugs file parsed.");

@@ -27,6 +27,7 @@ import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ErrorBuilder;
+import com.surelogic.sierra.tool.config.Config;
 
 /**
  * General utility class for working with the sps message layer.
@@ -45,7 +46,7 @@ public class MessageWarehouse {
 
 	private MessageWarehouse() {
 		try {
-			this.ctx = JAXBContext.newInstance(ToolOutput.class);
+			this.ctx = JAXBContext.newInstance(Run.class);
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		}
@@ -99,6 +100,20 @@ public class MessageWarehouse {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
+	}
+
+	public void writeConfig(Config config, FileOutputStream artOut) {
+		try {
+			Marshaller marshaller = ctx.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					new Boolean(true));
+			marshaller.marshal(config, artOut);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+
 	}
 
 	/**
@@ -157,9 +172,9 @@ public class MessageWarehouse {
 					try {
 						// move to the root element and check its name.
 						xmlr.nextTag();
-						xmlr.require(START_ELEMENT, null, "toolOutput");
-						xmlr.nextTag(); // move to the first <contact> element.
-
+						xmlr.require(START_ELEMENT, null, "Run");
+						xmlr.nextTag(); // move to toolOutput element.
+						xmlr.nextTag(); // move to artifacts
 						// Unmarshal artifacts
 						ArtifactBuilder aBuilder = generator.artifact();
 						while (xmlr.getEventType() == START_ELEMENT

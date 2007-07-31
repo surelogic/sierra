@@ -1,30 +1,28 @@
 package com.surelogic.sierra.tool.message;
 
-import java.util.List;
+import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
-@XmlRootElement
 public class ToolOutput {
 
-	private List<Artifact> artifacts;
-	private List<Error> errors;
+	private Collection<Artifact> artifacts;
+	private Collection<Error> errors;
 
-	public List<Artifact> getArtifact() {
+	public Collection<Artifact> getArtifact() {
 		return artifacts;
 	}
 
-	public void setArtifact(List<Artifact> artifacts) {
+	public void setArtifact(Collection<Artifact> artifacts) {
 		this.artifacts = artifacts;
 	}
 
-	public List<Error> getErrors() {
+	public Collection<Error> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(Collection<Error> errors) {
 		this.errors = errors;
 	}
 
