@@ -78,6 +78,8 @@ public class SierraAnalysis extends Task {
 	private Long timeout = 5000L;
 	private CommandlineJava cmdl = new CommandlineJava();
 	private static final FileUtils fileUtils = FileUtils.getFileUtils();
+	private File pmdOutput = null;
+	private File fbOutput = null;
 
 	private org.apache.tools.ant.Project proj = getProject();
 
@@ -94,6 +96,11 @@ public class SierraAnalysis extends Task {
 	// Req'd name for the WSDL (run document)
 	// TODO
 	private String runDocumentName = null;
+
+	// Optional file attribute.
+	// Where to store the temp files
+	// TODO
+	private File tmpFolder = null;
 
 	// Required
 	private Project project = null;
@@ -145,11 +152,11 @@ public class SierraAnalysis extends Task {
 		log("Running tools...", org.apache.tools.ant.Project.MSG_INFO);
 		log("Source path: " + srcdir, org.apache.tools.ant.Project.MSG_DEBUG);
 		log("Binary path: " + bindir, org.apache.tools.ant.Project.MSG_DEBUG);
-		log("Results will be saved to: " + destDir,
+		log("Results will be saved to: " + tmpFolder,
 				org.apache.tools.ant.Project.MSG_DEBUG);
 
 		Path classpath = new Path(getProject());
-
+		
 		ClassLoader loader = this.getClass().getClassLoader();
 		if (loader != null && loader instanceof AntClassLoader) {
 			classpath.append(new Path(getProject(), ((AntClassLoader) loader)
@@ -170,10 +177,11 @@ public class SierraAnalysis extends Task {
 					org.apache.tools.ant.Project.MSG_DEBUG);
 
 			// Add the source directories to scan
-			// TODO make this a comma-delimited list
 			String[] paths = srcdir.list();
-			log("Source path: " + paths[0], org.apache.tools.ant.Project.MSG_DEBUG);
-			cmdj.createArgument().setValue(paths[0]);
+			String csv = arrayToCSV(paths);
+			log("Source path: " + csv, org.apache.tools.ant.Project.MSG_DEBUG);
+			
+			cmdj.createArgument().setValue(csv);
 
 			// Add the output format
 			cmdj.createArgument().setValue("xml");
@@ -187,12 +195,16 @@ public class SierraAnalysis extends Task {
 			// Add optional arguments
 			if (tools != null && tools.getPmdConfig() != null) {
 				cmdj.createArgument().setValue("-targetjdk");
-				cmdj.createArgument().setValue(tools.getPmdConfig().getJavaVersion());
+				cmdj.createArgument().setValue(
+						tools.getPmdConfig().getJavaVersion());
 			}
 
 			log("Executing PMD with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
+				pmdOutput = new File(tmpFolder, "pmd.xml");
+				redirector.setOutput(pmdOutput);
+				
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
 				log("Failed to start PMD process.", e,
@@ -212,12 +224,24 @@ public class SierraAnalysis extends Task {
 			log("Executing FindBugs with the commandline: " + cmdj.toString(),
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
+				redirector.setOutput((File)null);
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
 				log("Failed to start FindBugs process.", e,
 						org.apache.tools.ant.Project.MSG_ERR);
 			}
 		}
+	}
+
+	private String arrayToCSV(String[] paths) {
+		StringBuilder csv = new StringBuilder();
+		for (int i = 0; i < paths.length - 1; i++) {
+			csv.append(paths[i]);
+			csv.append(",");
+		}
+		// add the last item at the end w/o a trailing comma
+		csv.append(paths[paths.length - 1]);
+		return csv.toString();
 	}
 
 	/**
@@ -250,6 +274,13 @@ public class SierraAnalysis extends Task {
 	public void validateParameters() {
 		if (destDir != null && !destDir.isDirectory()) {
 			throw new BuildException("'destdir' must be a valid directory.");
+		} else {
+			tmpFolder = new File(destDir, "Sierra-analysis-"
+					+ System.currentTimeMillis());
+			if (!tmpFolder.mkdir()) {
+				throw new BuildException(
+						"Could not create temporary output directory");
+			}
 		}
 
 		// Check this before the srcdir/bindir so that we know whether the
@@ -281,8 +312,6 @@ public class SierraAnalysis extends Task {
 		}
 
 	}
-	
-
 
 	/***************************************************************************
 	 * Getters and Setters for attributes
