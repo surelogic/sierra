@@ -32,9 +32,7 @@ public class HashGenerator {
 
 	}
 
-	public String getHash(String fileName, int lineNumber) {
-
-		String hash = "CANNOT_CALCULATE";
+	public Long getHash(String fileName, int lineNumber) {
 
 		try {
 
@@ -52,7 +50,7 @@ public class HashGenerator {
 
 			if (lineNumber > count || lineNumber < 0) {
 				System.err.println("Incorrect line number");
-				return hash;
+				return null;
 			} else {
 				in = new BufferedReader(new FileReader(originalFile));
 
@@ -105,12 +103,7 @@ public class HashGenerator {
 				int hashUp = valueUp.hashCode();
 				int hashDown = valueDown.hashCode();
 
-				// System.out.println("Up :" + valueUp + " " + valueUp.length()
-				// + " HS :" + hashUp);
-				// System.out.println("Down :" + valueDown + " "
-				// + valueDown.length() + " HS :" + hashDown);
-
-				return String.valueOf(hashDown + hashUp);
+				return (((long)hashDown) << 32) + hashUp;
 
 			}
 
@@ -121,7 +114,7 @@ public class HashGenerator {
 			log.log(Level.SEVERE, "I/O exception while hash generation." + e);
 		}
 
-		return hash;
+		return null;
 
 	}
 }

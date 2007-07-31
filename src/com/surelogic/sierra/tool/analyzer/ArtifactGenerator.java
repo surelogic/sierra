@@ -47,7 +47,7 @@ public interface ArtifactGenerator {
 
 		SourceLocationBuilder endLine(int line);
 
-		SourceLocationBuilder hash(String hash);
+		SourceLocationBuilder hash(Long hash);
 
 		void build();
 

@@ -105,7 +105,7 @@ public class MessageArtifactGenerator extends DefaultArtifactGenerator
 				return this;
 			}
 
-			public SourceLocationBuilder hash(String hash) {
+			public SourceLocationBuilder hash(Long hash) {
 				sourceBuilder.hash(hash);
 				return this;
 			}

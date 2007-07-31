@@ -12,7 +12,7 @@ public class SourceLocation {
 		private String path;
 		private int lineOfCode;
 		private int endLine;
-		private String hash;
+		private Long hash;
 
 		Builder() {
 			clear();
@@ -53,7 +53,7 @@ public class SourceLocation {
 			return this;
 		}
 
-		public Builder hash(String hash) {
+		public Builder hash(Long hash) {
 			this.hash = hash;
 			return this;
 		}
@@ -78,7 +78,7 @@ public class SourceLocation {
 
 	private String pathName;
 	private String className;
-	private String hash;
+	private Long hash;
 	private String packageName;
 	private int lineOfCode;
 	private int endLineOfCode;
@@ -128,7 +128,7 @@ public class SourceLocation {
 		return identifierType;
 	}
 
-	public String getHash() {
+	public Long getHash() {
 		return hash;
 	}
 
@@ -140,7 +140,7 @@ public class SourceLocation {
 		this.className = className;
 	}
 
-	public void setHash(String hash) {
+	public void setHash(Long hash) {
 		this.hash = hash;
 	}
 

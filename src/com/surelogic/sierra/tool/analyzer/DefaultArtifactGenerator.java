@@ -65,7 +65,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			return this;
 		}
 
-		public SourceLocationBuilder hash(String hash) {
+		public SourceLocationBuilder hash(Long hash) {
 
 			return this;
 		}

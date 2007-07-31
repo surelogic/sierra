@@ -309,9 +309,8 @@ class FindBugsHandler extends DefaultHandler {
 								File holderFile = new File(completePath);
 
 								if (holderFile.exists()) {
-									String hash = hashGenerator.getHash(
-											completePath, s);
-									primarySourceLocation.hash(hash);
+									primarySourceLocation.hash(hashGenerator
+											.getHash(completePath, s));
 
 									completeFileName = sourceDirectories[i];
 									fileFound = true;

@@ -11,13 +11,38 @@ import javax.jws.soap.SOAPBinding.Use;
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.BARE)
 public interface TigerService {
 
-	public String publishRun(@WebParam(name = "run")
+	/**
+	 * Publish a run to the server.
+	 * 
+	 * @param run
+	 * @return whether or not the run was successfully generated on the server.
+	 */
+	String publishRun(@WebParam(name = "run")
 	Run run);
 
-	public Qualifiers getQualifiers();
-	
-	public String getTrail(Match m);
-	
-	public void commitTransactions(CommitTransactions transactions);
+	/**
+	 * Get the set of available qualifier names.
+	 * 
+	 * @return
+	 */
+	Qualifiers getQualifiers();
+
+	/**
+	 * Return the uid of an audit trail with this match, qualified by the set of
+	 * qualifiers.
+	 * 
+	 * @param m
+	 * @return
+	 */
+	String getAuditTrailUID(Match m, Qualifiers q);
+
+	/**
+	 * Commit a list of transactions.
+	 * 
+	 * @param transactions
+	 */
+	void commitTransactions(Transactions transactions);
+
+	Transactions getTransactions(Qualifiers q);
 
 }

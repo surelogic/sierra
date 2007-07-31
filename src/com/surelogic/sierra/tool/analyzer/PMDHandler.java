@@ -86,11 +86,9 @@ class PMDHandler extends DefaultHandler {
 
 						// The hash code generation
 						HashGenerator hashGenerator = new HashGenerator();
-						String hash = hashGenerator.getHash(fileName,
-								lineNumber);
-
-						sourceLocation = sourceLocation.hash(hash).lineOfCode(
-								lineNumber);
+						sourceLocation = sourceLocation.hash(
+								hashGenerator.getHash(fileName, lineNumber))
+								.lineOfCode(lineNumber);
 
 					}
 
