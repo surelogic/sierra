@@ -113,10 +113,18 @@
             id="com.surelogic.sierra.client.eclipse.AdHocQueryView.Results"
             name="Query Results">
       </view>
+
       <view
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsClassicView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsClassicView"
+            name="Findings Classic"/>
+
+      <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
             name="Findings"/>
    </extension>
 
