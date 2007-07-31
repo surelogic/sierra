@@ -5,21 +5,12 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
-public class Transaction {
+public class Audit {
 
-	private String trail;
 	private Match match;
 	private Date timestamp;
 	private String comment;
 	private TransactionType type;
-
-	public String getTrail() {
-		return trail;
-	}
-
-	public void setTrail(String trail) {
-		this.trail = trail;
-	}
 
 	public Match getMatch() {
 		return match;

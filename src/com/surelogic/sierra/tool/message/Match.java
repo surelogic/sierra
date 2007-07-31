@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Match {
 	private String packageName;
 	private String className;
-	private String hash;
+	private Long hash;
 	private FindingType findingType;
 
 	public String getPackageName() {
@@ -25,11 +25,11 @@ public class Match {
 		this.className = className;
 	}
 
-	public String getHash() {
+	public Long getHash() {
 		return hash;
 	}
 
-	public void setHash(String hash) {
+	public void setHash(Long hash) {
 		this.hash = hash;
 	}
 

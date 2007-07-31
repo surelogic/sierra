@@ -28,21 +28,27 @@ public interface TigerService {
 	Qualifiers getQualifiers();
 
 	/**
-	 * Return the uid of an audit trail with this match, qualified by the set of
-	 * qualifiers.
+	 * Return the uid of an audit trail that matches the given seed. If none
+	 * matches, a new audit trail will be created.
 	 * 
-	 * @param m
+	 * @param seed
 	 * @return
 	 */
-	String getAuditTrailUID(Match m, Qualifiers q);
+	String getAuditTrail(AuditTrailSeed seed);
 
 	/**
-	 * Commit a list of transactions.
+	 * Commit a trail of transactions.
 	 * 
 	 * @param transactions
 	 */
-	void commitTransactions(Transactions transactions);
+	void commitAuditTrail(AuditTrail transactions);
 
-	Transactions getTransactions(Qualifiers q);
+	/**
+	 * Get all of the auditing events for a set of qualifiers.
+	 * 
+	 * @param q
+	 * @return
+	 */
+	AuditTrails getAuditTrails(Qualifiers q);
 
 }
