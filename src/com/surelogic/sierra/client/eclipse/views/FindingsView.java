@@ -69,42 +69,46 @@ public final class FindingsView extends ViewPart {
 		final Composite topSash = new Composite(sf, SWT.NONE);
 		topSash.setLayout(new GridLayout());
 
+		final Composite findingsBar = new Composite(topSash, SWT.NONE);
+		final GridLayout findingsBarLayout = new GridLayout();
+		findingsBarLayout.numColumns = 4;
+		findingsBar.setLayout(findingsBarLayout);
+		findingsBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false));
+
+		final ToolBar groupByBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
+		final ToolItem groupings = new ToolItem(groupByBar, SWT.PUSH);
+		groupings.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
+		groupings
+				.setToolTipText("Define how findings are organized within this view");
+
+		final Label groupBy = new Label(findingsBar, SWT.NONE);
+		groupBy.setText("by");
+		final Combo groupByCombo = new Combo(findingsBar, SWT.DROP_DOWN
+				| SWT.READ_ONLY);
+		groupByCombo.setItems(new String[] { "Package", "Priority", "Category",
+				"Category and Sub-Category" });
+		groupByCombo.select(0);
+
 		/*
 		 * Toolbar for analysis findings
 		 */
 
-		final ToolBar toolBar = new ToolBar(topSash, SWT.HORIZONTAL
-				| SWT.SHADOW_OUT);
+		final ToolBar toolBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
 		toolBar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 
-		Label groupBy = new Label(toolBar, SWT.NONE);
-		groupBy.setText("Group by:");
-
-		ToolItem sep = new ToolItem(toolBar, SWT.SEPARATOR);
-		sep.setControl(groupBy);
-		sep.setWidth(groupBy.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
-
-		final ToolItem byPriority = new ToolItem(toolBar, SWT.RADIO);
-		byPriority.setImage(SLImages.getImage(SLImages.IMG_PRIORITY));
-		byPriority.setText("Priority");
-
-		final ToolItem byPackage = new ToolItem(toolBar, SWT.RADIO);
-		byPackage
-				.setImage(SLImages
-						.getJDTImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE));
-		byPackage.setText("Package");
-
-		final ToolItem byCategory = new ToolItem(toolBar, SWT.RADIO);
-		byCategory.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
-		byCategory.setText("Category");
-
-		new ToolItem(toolBar, SWT.SEPARATOR);
-
-		final ToolItem filter = new ToolItem(toolBar, SWT.PUSH);
+		final ToolItem filter = new ToolItem(toolBar, SWT.DROP_DOWN);
 		filter.setImage(SLImages.getImage(SLImages.IMG_FILTER));
 		filter
 				.setToolTipText("Configure the filters to be applied to this view");
-		filter.setText("Filter");
+		filter.setText("Filters");
+
+		new ToolItem(toolBar, SWT.SEPARATOR);
+
+		final ToolItem export = new ToolItem(toolBar, SWT.PUSH);
+		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		export.setToolTipText("Export findings to a file");
+		export.setText("Export");
 
 		final Menu toolBarMenu = new Menu(parent.getShell(), SWT.POP_UP);
 		final MenuItem showText = new MenuItem(toolBarMenu, SWT.CHECK);
@@ -113,20 +117,17 @@ public final class FindingsView extends ViewPart {
 		showText.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (showText.getSelection()) {
-					byPriority.setText("Priority");
-					byPackage.setText("Package");
-					byCategory.setText("Category");
-					filter.setText("Filter");
+					filter.setText("Filters");
+					export.setText("Export");
 				} else {
-					byPriority.setText("");
-					byPackage.setText("");
-					byCategory.setText("");
 					filter.setText("");
+					export.setText("");
 				}
-
-				parent.layout();
+				topSash.layout();
 			}
 		});
+		findingsBar.setMenu(toolBarMenu);
+		groupByBar.setMenu(toolBarMenu);
 		toolBar.setMenu(toolBarMenu);
 		groupBy.setMenu(toolBarMenu);
 
