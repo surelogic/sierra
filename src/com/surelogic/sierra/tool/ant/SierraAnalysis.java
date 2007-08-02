@@ -320,15 +320,16 @@ public class SierraAnalysis extends Task {
 		// FIXME
 //		config.setToolsDirectory("/Users/ethan/sierra-workspace/sierra-tool/Tools");
 		
-		if(runDocumentName != null){
-			runDocumentName = destDir.getAbsolutePath() + File.separator + project.getName() + ".xml" + PARSED_FILE_SUFFIX;
+		if(runDocumentName == null || runDocumentName.equals("")){
+			runDocumentName = tmpFolder.getAbsolutePath() + File.separator + project.getName() + ".xml" + PARSED_FILE_SUFFIX;
 		}
 		else
 		{
 			// TODO should this require that runDocumentName have the PARSED_FILE_SUFFIX extension
-			runDocumentName = destDir.getAbsolutePath() + File.separator + runDocumentName;
+			runDocumentName = tmpFolder.getAbsolutePath() + File.separator + runDocumentName;
 		}
 		
+		log("Generating the run document: " + runDocumentName, org.apache.tools.ant.Project.MSG_INFO);
 		MessageArtifactFileGenerator generator = 
 			new MessageArtifactFileGenerator(runDocumentName, config);
 		Parser parser = new Parser(generator);
@@ -339,7 +340,7 @@ public class SierraAnalysis extends Task {
 		}
 		
 		if(pmdOutput != null && pmdOutput.exists()){
-			log("Parsing PMD results file: " + fbOutput, org.apache.tools.ant.Project.MSG_INFO);
+			log("Parsing PMD results file: " + pmdOutput, org.apache.tools.ant.Project.MSG_INFO);
     		parser.parsePMD(pmdOutput.getAbsolutePath());
 		}
 	}
