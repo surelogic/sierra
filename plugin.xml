@@ -103,7 +103,7 @@
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.adhoc.views.AdHocQueryView"
             id="com.surelogic.sierra.client.eclipse.AdHocQueryView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/query.gif"
             name="Query Sierra">
       </view>
    
