@@ -141,6 +141,32 @@ public class MessageWarehouse {
 		}
 		return null;
 	}
+	
+	/**
+	 * Return the {@link Run} object located at src.
+	 * 
+	 * @param src
+	 *            a path name
+	 * @return a {@link Run} object, or null if none can be parsed at
+	 *         src.
+	 */
+	public Run fetchRun(String src) {
+		try {
+			return fetchRun(new FileInputStream(src));
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	public Run fetchRun(InputStream in) {
+		try {
+			Unmarshaller unmarshaller = ctx.createUnmarshaller();
+			return (Run) unmarshaller.unmarshal(in);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fetch tool output.", e);
+		}
+		return null;
+	}
 
 	/**
 	 * Parse the tool output at the specified source.
