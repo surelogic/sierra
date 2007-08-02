@@ -12,15 +12,8 @@ public enum TransactionType {
 	 */
 	COMMENT,
 	/**
-	 * The user has marked a finding as interesting/uninteresting
+	 * The user has changed the importance of a finding.
 	 */
-	INTEREST,
-	/**
-	 * The user has changed the priority of a finding.
-	 */
-	PRIORITY,
-	/**
-	 * The user has changed the severity of a finding.
-	 */
-	SEVERITY
+	IMPORTANCE
+
 }
