@@ -11,6 +11,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
+import com.surelogic.sierra.tool.analyzer.Parser;
+
 /**
  * @author ethan
  * 
@@ -74,6 +76,17 @@ public class FindBugsConfig extends ToolConfig {
 	@Override
 	public void validate() {
 		//do nothing
+	}
+
+
+	@Override
+	public void parseOutput(Parser parser) {
+		if (output != null && output.exists()) {
+			antProject.log("Parsing FindBugs results file: " + output,
+					org.apache.tools.ant.Project.MSG_INFO);
+			parser.parseFB(output.getAbsolutePath(), analysis.getSrcdir().list());
+		}
+		
 	}
 
 }

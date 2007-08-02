@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 
+import com.surelogic.sierra.tool.analyzer.Parser;
+
 /**
  * A collection for information pertaining to the tools (i.e., FindBugs, PMD)
  * 
@@ -60,13 +62,11 @@ public class Tools {
 	private void addAllToolDefaults() {
 		PmdConfig pmd = new PmdConfig(antProject);
 		tools.put(pmd.getToolName(), pmd);
-		antProject.log("Added " + pmd.getToolName());
+		antProject.log("Added " + pmd.getToolName(), org.apache.tools.ant.Project.MSG_INFO);
 		
 		FindBugsConfig findbugs = new FindBugsConfig(antProject);
 		tools.put(findbugs.getToolName(), findbugs);
-		antProject.log("Added " + findbugs.getToolName());
-		
-		antProject.log("Tools has " + tools.size() + " items.");
+		antProject.log("Added " + findbugs.getToolName(), org.apache.tools.ant.Project.MSG_INFO);
 	}
 
 
@@ -146,13 +146,28 @@ public class Tools {
 		
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
-		antProject.log("toolNames has " + toolNames.size() + " items.");
 		for (String toolName : toolNames) {
 			antProject.log("Running tool: " + toolName, org.apache.tools.ant.Project.MSG_DEBUG);
 			tool = tools.get(toolName);
 			tool.runTool();
 		}
 	}
+	
+	/**
+	 * Tells each tool to parse their own output
+	 * @param parser
+	 */
+	public void parseOutput(Parser parser) {
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		for (String toolName : toolNames) {
+			antProject.log("Parsing " + toolName + " output.", 
+				org.apache.tools.ant.Project.MSG_DEBUG);
+			tool = tools.get(toolName);
+			tool.parseOutput(parser);
+		}
+	}
+
 	
 	
 	/* **********************************************************
@@ -172,5 +187,6 @@ public class Tools {
 		tools.remove(config.getToolName());
 		tools.put(config.getToolName(), config);
 	}
+
 
 }

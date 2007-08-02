@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.CommandlineJava;
 
+import com.surelogic.sierra.tool.analyzer.Parser;
+
 /**
  * Represents a configuration attribute for the PMD tool
  * 
@@ -110,5 +112,15 @@ public class PmdConfig extends ToolConfig {
 					org.apache.tools.ant.Project.MSG_ERR);
 		}
 
+	}
+
+
+	@Override
+	public void parseOutput(Parser parser) {
+		if (output != null && output.exists()) {
+			antProject.log("Parsing PMD results file: " + output,
+					org.apache.tools.ant.Project.MSG_INFO);
+			parser.parsePMD(output.getAbsolutePath());
+		}
 	}
 }

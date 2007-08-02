@@ -16,6 +16,8 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
 import org.apache.tools.ant.util.FileUtils;
 
+import com.surelogic.sierra.tool.analyzer.Parser;
+
 /**
  * @author ethan
  *
@@ -56,6 +58,9 @@ public abstract class ToolConfig {
 		redirector =  new Redirector(analysis);
 	}
 
+	/* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	 * 								START ABSTRACT METHODS
+	 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 	/**
 	 * Runs the tool
 	 */
@@ -65,6 +70,16 @@ public abstract class ToolConfig {
 	 * Validates any attributes of the element
 	 */
 	public abstract void validate();
+	
+	/**
+	 * Override to parse the output of the specific tools.
+	 * @param parser
+	 */
+	public abstract void parseOutput(Parser parser);
+	
+	/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	 * 								END ABSTRACT METHODS
+	 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 	
 	/**
 	 * Returns the name of the tool that the config represents
@@ -210,4 +225,5 @@ public abstract class ToolConfig {
 	public Path createClasspath() {
 		return getCommandLine().createClasspath(analysis.getProject()).createPath();
 	}
+
 }

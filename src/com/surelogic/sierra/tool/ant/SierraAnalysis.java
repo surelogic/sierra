@@ -147,7 +147,6 @@ public class SierraAnalysis extends Task {
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
 
-
 	/**
 	 * Constructor
 	 */
@@ -163,7 +162,7 @@ public class SierraAnalysis extends Task {
 	public void execute() {
 		runDateTime = Calendar.getInstance().getTime();
 		validateParameters();
-		runTools();
+		tools.runTools();
 		generateRunDocument();
 		if (serverURL != null && !"".equals(serverURL)) {
 			uploadRunDocument();
@@ -175,113 +174,11 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
-	 * Runs the tools
+	 * Converts an array of strings into a string of comma-separated values
+	 * 
+	 * @param paths
+	 * @return
 	 */
-	private void runTools() {
-		
-		tools.runTools();
-
-		/**
-		getClasspath();
-
-		if (tools == null || Arrays.binarySearch(tools.getExclude(), PMD) < 0) {
-			// run PMD
-			CommandlineJava cmdj = new CommandlineJava();
-
-			// Add the class to run
-			cmdj.setClassname(PMD_CLASS);
-
-			// Set the Java command's classpath
-			cmdj.createClasspath(getProject()).createPath().append(classpath);
-
-			// Add the output file
-			cmdj.createArgument().setValue("-reportfile");
-
-			pmdOutput = new File(tmpFolder, "pmd.xml");
-			try {
-				pmdOutput.createNewFile();
-			} catch (IOException e1) {
-				log("Error creating PMD output file: "
-						+ pmdOutput.getAbsolutePath(),
-						org.apache.tools.ant.Project.MSG_ERR);
-			}
-			cmdj.createArgument().setValue(pmdOutput.getAbsolutePath());
-
-			log("Classpath: " + cmdj.getClasspath().toString(),
-					org.apache.tools.ant.Project.MSG_DEBUG);
-
-			// Add the source directories to scan
-			String[] paths = srcdir.list();
-			String csv = arrayToCSV(paths);
-			log("Source path: " + csv, org.apache.tools.ant.Project.MSG_DEBUG);
-
-			cmdj.createArgument().setValue(csv);
-
-			// Add the output format
-			cmdj.createArgument().setValue("xml");
-
-			// Add the ruleset file
-			cmdj
-					.createArgument()
-					.setValue(
-							"/Users/ethan/sierra-workspace/sierra-tool/Tools/pmd-3.9/all.xml");
-
-			// Add optional arguments
-			if (tools != null && tools.getPmdConfig() != null) {
-				cmdj.createArgument().setValue("-targetjdk");
-				cmdj.createArgument().setValue(
-						tools.getPmdConfig().getJavaVersion());
-			}
-
-			log("Executing PMD with the commandline: " + cmdj.toString(),
-					org.apache.tools.ant.Project.MSG_DEBUG);
-			try {
-
-				fork(cmdj.getCommandline());
-			} catch (BuildException e) {
-				log("Failed to start PMD process.", e,
-						org.apache.tools.ant.Project.MSG_ERR);
-			}
-		}
-
-		if (tools == null
-				|| Arrays.binarySearch(tools.getExclude(), FINDBUGS) < 0) {
-			// run FindBugs
-			CommandlineJava cmdj = new CommandlineJava();
-			cmdj.setClassname(FINDBUGS_CLASS);
-			cmdj.setMaxmemory(MAX_MEMORY);
-			cmdj.createClasspath(getProject()).createPath().append(classpath);
-
-			// cmdj.createArgument().setValue("-textui");
-			cmdj.createArgument().setValue("-xml");
-			cmdj.createArgument().setValue("-outputFile");
-			fbOutput = new File(tmpFolder, "findbugs.xml");
-			cmdj.createArgument().setPath(
-					new Path(proj, fbOutput.getAbsolutePath()));
-			cmdj.createArgument().setValue("-home");
-			// TODO automatically find the FB home
-			cmdj
-					.createArgument()
-					.setPath(
-							new Path(proj,
-									"/Users/ethan/sierra-workspace/sierra-tool/Tools/FB"));
-			String[] paths = bindir.list();
-			for (String string : paths) {
-				cmdj.createArgument().setValue(string);
-			}
-
-			log("Executing FindBugs with the commandline: " + cmdj.toString(),
-					org.apache.tools.ant.Project.MSG_DEBUG);
-			try {
-				fork(cmdj.getCommandline());
-			} catch (BuildException e) {
-				log("Failed to start FindBugs process.", e,
-						org.apache.tools.ant.Project.MSG_ERR);
-			}
-		}
-		*/
-	}
-
 	String arrayToCSV(String[] paths) {
 		StringBuilder csv = new StringBuilder();
 		for (int i = 0; i < paths.length - 1; i++) {
@@ -304,14 +201,9 @@ public class SierraAnalysis extends Task {
 
 		printClasspath();
 
-		try {
-			Thread.currentThread().setContextClassLoader(
-					this.getClass().getClassLoader());
-			JAXBContext cxt = JAXBContext.newInstance(Run.class);
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Fixes a ClassDefNotFoundError on ContextFactory via JAXBContext
+		Thread.currentThread().setContextClassLoader(
+				this.getClass().getClassLoader());
 
 		Config config = new Config();
 		config.setBaseDirectory(project.getDir().getAbsolutePath());
@@ -320,8 +212,6 @@ public class SierraAnalysis extends Task {
 		config.setJavaVersion(System.getProperty("java.version"));
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setQualifiers(serverQualifiers);
-		// FIXME
-		// config.setToolsDirectory("/Users/ethan/sierra-workspace/sierra-tool/Tools");
 
 		if (runDocumentName == null || runDocumentName.equals("")) {
 			runDocumentName = project.getName() + ".xml" + PARSED_FILE_SUFFIX;
@@ -336,17 +226,8 @@ public class SierraAnalysis extends Task {
 				runDocument.getAbsolutePath(), config);
 		Parser parser = new Parser(generator);
 
-		if (fbOutput != null && fbOutput.exists()) {
-			log("Parsing FindBugs results file: " + fbOutput,
-					org.apache.tools.ant.Project.MSG_INFO);
-			parser.parseFB(fbOutput.getAbsolutePath(), srcdir.list());
-		}
+		tools.parseOutput(parser);
 
-		if (pmdOutput != null && pmdOutput.exists()) {
-			log("Parsing PMD results file: " + pmdOutput,
-					org.apache.tools.ant.Project.MSG_INFO);
-			parser.parsePMD(pmdOutput.getAbsolutePath());
-		}
 	}
 
 	private void printClasspath() {
@@ -680,8 +561,10 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
-	 * Returns the file representing the dynamically created, unique folder on the disk where this run's output is placed. It
-	 * is inside the destDir folder.
+	 * Returns the file representing the dynamically created, unique folder on
+	 * the disk where this run's output is placed. It is inside the destDir
+	 * folder.
+	 * 
 	 * @return the tmpFolder
 	 */
 	final File getTmpFolder() {
@@ -689,7 +572,9 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
-	 * Returns the classpath of this Task, retrieved from the AntClassLoader that loaded our SierraAnalysis
+	 * Returns the classpath of this Task, retrieved from the AntClassLoader
+	 * that loaded our SierraAnalysis
+	 * 
 	 * @return the classpath
 	 */
 	final Path getClasspath() {
