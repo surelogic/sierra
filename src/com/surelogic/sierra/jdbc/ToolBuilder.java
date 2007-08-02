@@ -36,10 +36,6 @@ public class ToolBuilder {
 		return new FindingTypeBuilder(set.getLong(1));
 	}
 
-	public static ToolBuilder getBuilder(Connection conn) {
-		return new ToolBuilder(conn);
-	}
-
 	public class FindingTypeBuilder {
 		private final long toolId;
 		private String mnemonic;
@@ -80,6 +76,7 @@ public class ToolBuilder {
 			insertFindingType.setString(i++, categoryDisplay);
 			insertFindingType.setString(i++, link);
 			insertFindingType.setString(i++, info);
+			insertFindingType.executeUpdate();
 			clear();
 		}
 
@@ -117,6 +114,10 @@ public class ToolBuilder {
 			this.toolId = toolId;
 		}
 
+	}
+
+	public static ToolBuilder getBuilder(Connection conn) {
+		return new ToolBuilder(conn);
 	}
 
 }
