@@ -4,5 +4,6 @@ Bundle-Name: Sierra JDBC Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.jdbc
 Bundle-Version: 1.0.0
 Bundle-Vendor: SureLogic, Inc.
-Bundle-ClassPath: lib/derby.jar,
- .
+Bundle-ClassPath: .
+Require-Bundle: com.surelogic.sierra.tool,
+ com.surelogic.common
