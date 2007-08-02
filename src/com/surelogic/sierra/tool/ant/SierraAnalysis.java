@@ -49,23 +49,31 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
-import org.apache.tools.ant.taskdefs.ExecuteJava;
 import org.apache.tools.ant.taskdefs.ExecuteWatchdog;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
-import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
 import org.apache.tools.ant.util.FileUtils;
+
+import com.sun.xml.bind.v2.ContextFactory;
+import com.surelogic.sierra.tool.analyzer.Launcher;
+import com.surelogic.sierra.tool.analyzer.Parser;
+import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
+import com.surelogic.sierra.tool.message.Run;
 
 /**
  * @author ethan
@@ -78,10 +86,20 @@ public class SierraAnalysis extends Task {
 	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
 	private static final FileUtils fileUtils = FileUtils.getFileUtils();
+	
+	//The output file for PMD
 	private File pmdOutput = null;
+	
+	//The output file for FindBugs
 	private File fbOutput = null;
+	
+	//The Date of this run
+	private Date runDateTime = null;
+	
+	// The classpath created by the Taskdef in the Ant build.xml file
+	private Path classpath = null;
 
-	private org.apache.tools.ant.Project proj = getProject();
+	private org.apache.tools.ant.Project proj = null;
 
 	// Optional attribute, if present, we send the WSDL file to this server
 	private String serverURL = null;
@@ -125,15 +143,24 @@ public class SierraAnalysis extends Task {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 	private static final String MAX_MEMORY = "1024m";
+	private static final String PARSED_FILE_SUFFIX = ".parsed";
 
 	static {
 		Arrays.sort(toolList);
+	}
+	
+	/**
+	 * Constructor
+	 */
+	public SierraAnalysis(){
+		proj = getProject();
 	}
 
 	/**
 	 * @see Task
 	 */
 	public void execute() {
+		runDateTime = Calendar.getInstance().getTime();
 		validateParameters();
 		runTools();
 		generateRunDocument();
@@ -156,7 +183,7 @@ public class SierraAnalysis extends Task {
 		log("Results will be saved to: " + tmpFolder,
 				org.apache.tools.ant.Project.MSG_DEBUG);
 
-		Path classpath = new Path(getProject());
+		classpath = new Path(getProject());
 		
 		ClassLoader loader = this.getClass().getClassLoader();
 		if (loader != null && loader instanceof AntClassLoader) {
@@ -234,8 +261,10 @@ public class SierraAnalysis extends Task {
 //			cmdj.createArgument().setValue("-textui");
 			cmdj.createArgument().setValue("-xml");
 			cmdj.createArgument().setValue("-outputFile");
-			cmdj.createArgument().setValue(tmpFolder.getAbsolutePath() + File.separator + "findbugs.xml");
+			fbOutput = new File( tmpFolder, "findbugs.xml");
+			cmdj.createArgument().setPath(new Path(proj, fbOutput.getAbsolutePath()));
 			cmdj.createArgument().setValue("-home");
+			//TODO automatically find the FB home
 			cmdj.createArgument().setPath(new Path(proj, "/Users/ethan/sierra-workspace/sierra-tool/Tools/FB"));
 			String[] paths = bindir.list();
 			for (String string : paths) {
@@ -266,10 +295,62 @@ public class SierraAnalysis extends Task {
 
 	/**
 	 * Generates a WSDL file from the updated database
+	 * @see {@link Launcher#parseFiles()}
 	 */
 	private void generateRunDocument() {
 		log("Generating the Run document...",
 				org.apache.tools.ant.Project.MSG_INFO);
+		
+		printClasspath();
+		
+		try {
+			Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+			JAXBContext cxt = JAXBContext.newInstance(Run.class);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Config config = new Config();
+		config.setBaseDirectory(project.getDir().getAbsolutePath());
+		config.setProject(project.getName());
+		config.setRunDateTime(runDateTime);
+//		config.setJavaVersion(System.getProperty("java.version"));
+//		config.setJavaVendor(System.getProperty("java.vendor"));
+		// FIXME
+//		config.setToolsDirectory("/Users/ethan/sierra-workspace/sierra-tool/Tools");
+		
+		if(runDocumentName != null){
+			runDocumentName = destDir.getAbsolutePath() + File.separator + project.getName() + ".xml" + PARSED_FILE_SUFFIX;
+		}
+		else
+		{
+			// TODO should this require that runDocumentName have the PARSED_FILE_SUFFIX extension
+			runDocumentName = destDir.getAbsolutePath() + File.separator + runDocumentName;
+		}
+		
+		MessageArtifactFileGenerator generator = 
+			new MessageArtifactFileGenerator(runDocumentName, config);
+		Parser parser = new Parser(generator);
+		
+		if(fbOutput != null && fbOutput.exists()){
+			log("Parsing FindBugs results file: " + fbOutput, org.apache.tools.ant.Project.MSG_INFO);
+    		parser.parseFB(fbOutput.getAbsolutePath(), srcdir.list());
+		}
+		
+		if(pmdOutput != null && pmdOutput.exists()){
+			log("Parsing PMD results file: " + fbOutput, org.apache.tools.ant.Project.MSG_INFO);
+    		parser.parsePMD(pmdOutput.getAbsolutePath());
+		}
+	}
+
+	private void printClasspath() {
+		String[] classpathList = classpath.list();
+		
+		log("---------- CLASSPATH ----------", org.apache.tools.ant.Project.MSG_DEBUG);
+		for (String path : classpathList) {
+			log(path, org.apache.tools.ant.Project.MSG_DEBUG);
+		}
 	}
 
 	/**
@@ -295,14 +376,14 @@ public class SierraAnalysis extends Task {
 		if (destDir != null && !destDir.isDirectory()) {
 			throw new BuildException("'destdir' must be a valid directory.");
 		} else {
-			tmpFolder = new File(destDir, "Sierra-analysis-"
+			tmpFolder = new File(destDir, "Sierra-analysis-" + project.getName() + "-"+
 					+ System.currentTimeMillis());
 			if (!tmpFolder.mkdir()) {
 				throw new BuildException(
 						"Could not create temporary output directory");
 			}
 		}
-
+		
 		// Check this before the srcdir/bindir so that we know whether the
 		// project object is null or not
 		if (project == null) {
@@ -332,6 +413,7 @@ public class SierraAnalysis extends Task {
 		}
 
 	}
+	
 
 	/***************************************************************************
 	 * Getters and Setters for attributes
@@ -549,6 +631,34 @@ public class SierraAnalysis extends Task {
 	 */
 	public Path createClasspath() {
 		return getCommandLine().createClasspath(getProject()).createPath();
+	}
+
+	/**
+	 * @return the serverQualifier
+	 */
+	public final String getServerQualifier() {
+		return serverQualifier;
+	}
+
+	/**
+	 * @param serverQualifier the serverQualifier to set
+	 */
+	public final void setServerQualifier(String serverQualifier) {
+		this.serverQualifier = serverQualifier;
+	}
+
+	/**
+	 * @return the runDocumentName
+	 */
+	public final String getRunDocumentName() {
+		return runDocumentName;
+	}
+
+	/**
+	 * @param runDocumentName the runDocumentName to set
+	 */
+	public final void setRunDocumentName(String runDocumentName) {
+		this.runDocumentName = runDocumentName;
 	}
 
 }
