@@ -17,7 +17,7 @@ public class AuditTrail {
 		return transaction;
 	}
 
-	public void setTransactions(List<Audit> transaction) {
+	public void setTransaction(List<Audit> transaction) {
 		this.transaction = transaction;
 	}
 

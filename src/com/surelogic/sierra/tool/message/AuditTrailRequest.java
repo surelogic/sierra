@@ -1,22 +1,20 @@
 package com.surelogic.sierra.tool.message;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType
 @XmlRootElement
-public class AuditTrailSeed {
-	List<Match> match;
-	Qualifiers qualifiers;
+@XmlType
+public class AuditTrailRequest {
+	private Long revision;
+	private Qualifiers qualifiers;
 
-	public List<Match> getMatch() {
-		return match;
+	public Long getRevision() {
+		return revision;
 	}
 
-	public void setMatch(List<Match> match) {
-		this.match = match;
+	public void setRevision(Long revision) {
+		this.revision = revision;
 	}
 
 	public Qualifiers getQualifiers() {

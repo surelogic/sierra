@@ -32,23 +32,26 @@ public interface TigerService {
 	 * matches, a new audit trail will be created.
 	 * 
 	 * @param seed
-	 * @return
+	 * @return the unique identifier of a global audit trail.
 	 */
-	String getAuditTrail(AuditTrailSeed seed);
+	String getAuditTrail(AuditTrailFind seed);
 
 	/**
 	 * Commit a trail of transactions.
 	 * 
-	 * @param transactions
+	 * @param audits
+	 * @return the server revision containing the new audits
 	 */
-	void commitAuditTrail(AuditTrail transactions);
+	Long commitAuditTrail(AuditTrail audits);
 
 	/**
-	 * Get all of the auditing events for a set of qualifiers.
+	 * Get all of the auditing events for a set of qualifiers, after the
+	 * specified revision.
 	 * 
-	 * @param q
-	 * @return
+	 * @param request
+	 * @return all audit trails and the audits they contain after the specified
+	 *         revision
 	 */
-	AuditTrails getAuditTrails(Qualifiers q);
+	AuditTrails getAuditTrails(AuditTrailRequest request);
 
 }
