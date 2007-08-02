@@ -1,9 +1,13 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,13 +24,25 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.surelogic.adhoc.AHLog;
+import com.surelogic.adhoc.views.AdHocQueryResultsView;
+import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.SLog;
+import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
+import com.surelogic.sierra.client.eclipse.model.FindingsOrganizationManager;
+import com.surelogic.sierra.db.Data;
 
 public final class FindingsView extends ViewPart {
 
 	private FindingsMediator f_mediator = null;
+
+	private FindingsOrganizationManager f_manager = new FindingsOrganizationManager();
+
+	private Composite results = null;
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -49,8 +65,8 @@ public final class FindingsView extends ViewPart {
 
 		final Combo projectCombo = new Combo(projectSelector, SWT.DROP_DOWN
 				| SWT.READ_ONLY);
-		projectCombo.setItems(new String[] { "Project 1", "Project 2",
-				"Project 3", "Project 4" });
+		projectCombo.setItems(new String[] { "Test", "JEdit", "Project 3",
+				"Project 4" });
 		projectCombo.select(0);
 		projectCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
@@ -86,9 +102,83 @@ public final class FindingsView extends ViewPart {
 		groupBy.setText("by");
 		final Combo groupByCombo = new Combo(findingsBar, SWT.DROP_DOWN
 				| SWT.READ_ONLY);
-		groupByCombo.setItems(new String[] { "Package", "Priority", "Category",
-				"Category and Sub-Category" });
+		groupByCombo.setItems(f_manager.getKeys());
 		groupByCombo.select(0);
+
+		groupByCombo.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				String key = groupByCombo.getItem(groupByCombo
+						.getSelectionIndex());
+				if (key == null)
+					return;
+				FindingsOrganization org = f_manager.get(key);
+				if (org == null) {
+					SLog.logWarning("no FindingsOrganization for key " + key);
+					return;
+				}
+				String project = projectCombo.getItem(projectCombo
+						.getSelectionIndex());
+				if (project == null) {
+					SLog.logWarning("no project to qualify key " + key);
+					return;
+				}
+				String query = org.getQuery(project);
+				System.out.println(key + " selected");
+				System.out.println("query \"" + query + "\"");
+				try {
+					final Connection c = Data.getConnection();
+					try {
+						final Statement st = c.createStatement();
+						try {
+							boolean hasResultSet = st.execute(query);
+							if (hasResultSet) {
+								// result set
+								final ResultSet rs = st.getResultSet();
+								final String[] columnLabels = QueryUtility
+										.getColumnLabels(rs);
+								final String[][] rows = QueryUtility.getRows(
+										rs, 20000);
+								PlatformUI.getWorkbench().getDisplay()
+										.asyncExec(new Runnable() {
+											public void run() {
+												if (results != null) {
+													results.dispose();
+													results = QueryUtility
+															.construct(
+																	topSash,
+																	columnLabels,
+																	rows);
+													results
+															.setLayoutData(new GridData(
+																	SWT.FILL,
+																	SWT.FILL,
+																	true, true));
+													topSash.layout();
+												}
+											}
+										});
+								// do stuff with result set
+								System.out.println("got a result set");
+
+							} else {
+								// update count or no results
+								int updateCount = st.getUpdateCount();
+							}
+						} catch (SQLException e) {
+							// an error occurred with the query
+							SLog.logError("SQL problem in findings view", e);
+						} finally {
+							st.close();
+						}
+					} finally {
+						c.close();
+					}
+				} catch (SQLException e) {
+					SLog.logError("Could not work with the embedded database",
+							e);
+				}
+			}
+		});
 
 		/*
 		 * Toolbar for analysis findings
@@ -138,6 +228,7 @@ public final class FindingsView extends ViewPart {
 		Tree tree = new Tree(topSash, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.FULL_SELECTION);
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		results = tree;
 
 		ExpandBar bar = new ExpandBar(sf, SWT.V_SCROLL);
 		int barIndex = 0;
