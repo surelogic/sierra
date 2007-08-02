@@ -1,9 +1,23 @@
 /**
- * 
+ *  Represents the
+ *  <tools />
+ *  Sub-element in the Ant build file.
+ *  
+ *  To add support for a new Tool, you need to:
+ *  <nl>
+ *  <li> Create a sub-class of ToolConfig </li>
+ *  <li> Add a default object of that class to this class' tools Map via the {@link #addAllToolDefaults()}</li>
+ *  <li> Add a addConfigured method for the class at the bottom of this. Use the existing ones for inspiration </li>
+ *  </nl>
  */
 package com.surelogic.sierra.tool.ant;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 
@@ -14,21 +28,70 @@ import org.apache.tools.ant.BuildException;
  * 
  */
 public class Tools {
-	private final static String DEFAULT_PMD_JAVA_VERSION = "1.5";
+	private final static String FINDBUGS = "findbugs";
+	private final static String PMD = "pmd";
+	public final static String[] toolList = new String[] { FINDBUGS, PMD };
 	
-	private PmdConfig pmdConfig = null;
-	private String[] exclude = new String[0];;
+	private org.apache.tools.ant.Project antProject = null;
+	private List<String> exclude = new ArrayList<String>();
+	private Map<String, ToolConfig> tools = new HashMap<String, ToolConfig>();
+
+	private SierraAnalysis analysis = null;
+	
+	static {
+		Arrays.sort(toolList);
+	}
+	
+	/**
+	 * Constructor used by Ant when creating one of these
+	 * @param project
+	 */
+	public Tools(org.apache.tools.ant.Project project){
+		this.antProject = project;
+		addAllToolDefaults();
+	}
+	
+	
+	/**
+	 * Adds the default ToolConfig objects to ensure that you don't have to have a sub-element in your build file.
+	 * 
+	 * XXX Add a default object for ALL tools
+	 */
+	private void addAllToolDefaults() {
+		PmdConfig pmd = new PmdConfig(antProject);
+		tools.put(pmd.getToolName(), pmd);
+		antProject.log("Added " + pmd.getToolName());
+		
+		FindBugsConfig findbugs = new FindBugsConfig(antProject);
+		tools.put(findbugs.getToolName(), findbugs);
+		antProject.log("Added " + findbugs.getToolName());
+		
+		antProject.log("Tools has " + tools.size() + " items.");
+	}
+
+
+	/**
+	 * Must be called before execute()
+	 * @param analysis
+	 */
+	public void initialize(final SierraAnalysis analysis){
+		this.analysis = analysis;
+	}
 
 	public void validate() {
+		if(analysis == null){
+			throw new BuildException("Error: initialize() must be called before execute(). Error in Ant Task implementation.");
+		}
+		
 		// TODO should validate the tool names against valid tools
 		if (exclude != null) {
 			for (String tool : exclude) {
-				if (Arrays.binarySearch(SierraAnalysis.toolList, tool) < 0) {
+				if (Arrays.binarySearch(toolList, tool) < 0) {
 					StringBuffer buf = new StringBuffer();
 					buf.append(tool);
 					buf
 							.append(" is not a valid tool name. Valid tool names are: \n");
-					for (String toolName : SierraAnalysis.toolList) {
+					for (String toolName : toolList) {
 						buf.append(toolName);
 						buf.append("\n");
 					}
@@ -36,55 +99,78 @@ public class Tools {
 				}
 			}
 		}
-		if (pmdConfig == null) {
-			pmdConfig = new PmdConfig();
-			pmdConfig.setJavaVersion(DEFAULT_PMD_JAVA_VERSION);
-		} else {
-			pmdConfig.validate();
+		
+		ToolConfig tool;
+		for (String toolName : tools.keySet()) {
+			tool = tools.get(toolName);
+    		tool.initialize(analysis);
+    		tool.validate();
 		}
-	}
-
-	public void setExclude(String list) {
-		exclude = list.split(",");
-		for (int i = 0; i < exclude.length; i++) {
-			exclude[i] = exclude[i].trim().toLowerCase();
-		}
-	}
-
-	public String[] getExclude() {
-		return exclude;
-	}
-
-	public void addConfiguredPmdConfig(PmdConfig config) {
-		this.pmdConfig = config;
-	}
-
-	public PmdConfig getPmdConfig() {
-		return pmdConfig;
 	}
 
 	/**
-	 * Represents a configuration attribute for the PMD tool
-	 * 
-	 * @author ethan
-	 * 
+	 * Setter for excludes list
+	 * @param list
 	 */
-	public static class PmdConfig {
-		private String javaVersion = null;
-
-		public void validate() {
-			if (!javaVersion.matches("\\d\\.\\d")) {
-				throw new BuildException(
-						"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be one of the following: 1.3, 1.4, 1.5, 1.6 ");
+	public void setExclude(String list) {
+		String[] excludeA = list.split(",");
+		String tmp;
+		for (int i = 0; i < excludeA.length; i++) {
+			tmp = excludeA[i].trim().toLowerCase();
+			exclude.add(tmp);
+			if(tools.remove(tmp) == null){
+            	// This assumes that someone will not add the same tool name twice
+				antProject.log("Warning: " + tmp + " is not a valid tool name.", org.apache.tools.ant.Project.MSG_WARN);
 			}
 		}
+	}
 
-		public void setJavaVersion(String version) {
-			this.javaVersion = version;
-		}
+	/**
+	 * Getter for the excludes list
+	 * @return
+	 */
+	public List<String> getExclude() {
+		return exclude;
+	}
 
-		public String getJavaVersion() {
-			return javaVersion;
+	
+	/**
+	 * Runs all of the included tools
+	 */
+	public void runTools(){
+		antProject.log("Running tools...", org.apache.tools.ant.Project.MSG_INFO);
+		antProject.log("Source path: " + analysis.getSrcdir(), org.apache.tools.ant.Project.MSG_DEBUG);
+		antProject.log("Binary path: " + analysis.getBindir(), org.apache.tools.ant.Project.MSG_DEBUG);
+		antProject.log("Results will be saved to: " + analysis.getTmpFolder(),
+				org.apache.tools.ant.Project.MSG_DEBUG);
+		
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		antProject.log("toolNames has " + toolNames.size() + " items.");
+		for (String toolName : toolNames) {
+			antProject.log("Running tool: " + toolName, org.apache.tools.ant.Project.MSG_DEBUG);
+			tool = tools.get(toolName);
+			tool.runTool();
 		}
 	}
+	
+	
+	/* **********************************************************
+	 * 
+	 * Specific ToolConfig methods
+	 * 
+	 * XXX Add methods for all new tools here of the form: addConfigured<ToolConfigClassName>(<ToolConfigClassName> config)
+	 * 
+	 ************************************************************/
+	
+	public void addConfiguredPmdConfig(PmdConfig config) {
+		tools.remove(config.getToolName());
+		tools.put(config.getToolName(), config);
+	}
+	
+	public void addConfiguredFindBugsConfig(FindBugsConfig config){
+		tools.remove(config.getToolName());
+		tools.put(config.getToolName(), config);
+	}
+
 }
