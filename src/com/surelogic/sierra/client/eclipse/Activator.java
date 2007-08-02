@@ -10,6 +10,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.sierra.db.Data;
+import com.surelogic.sierra.entity.EM;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -56,7 +57,7 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			Data.closeEntityManager();
+			EM.closeEntityManager();
 		} finally {
 			plugin = null;
 			super.stop(context);
