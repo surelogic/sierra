@@ -7,3 +7,4 @@ Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
 Require-Bundle: com.surelogic.sierra.tool,
  com.surelogic.common.eclipse
+Export-Package: com.surelogic.sierra.db
