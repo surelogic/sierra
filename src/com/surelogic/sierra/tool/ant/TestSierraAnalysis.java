@@ -5,6 +5,7 @@ package com.surelogic.sierra.tool.ant;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -59,8 +60,14 @@ public class TestSierraAnalysis {
 		config.setJavaVersion("1.4");
 		config.setProject("sierra-tool");
 		config.setQualifiers(new ArrayList<String>());
-		config.setRunDateTime(null);
+//		config.setRunDateTime(null);
 		config.setToolsDirectory("/Users/ethan/sierra-workspace/sierra-tool/Tools");
+		config.setBinDirs(config.getBaseDirectory() + File.separator + "bin");
+		config.setSourceDirs(config.getBaseDirectory() + File.separator + "src");
+//		config.setClasspath();
+//		config.setExcludedToolsList("");
+//		config.setRunDocumentName("");
+		config.setDestDirectory(new File("/Users/ethan/test-sandbox-3.2"));
 		SierraAnalysis sa = new SierraAnalysis(config);
 		sa.execute();
 	}
