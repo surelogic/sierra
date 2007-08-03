@@ -14,19 +14,20 @@ public final class FindingsMediator {
 
 	private final Composite f_detailsComp;
 
-	private final ExpandItem f_commentsItem;
+	private final ExpandItem f_logItem;
 
-	private final Composite f_commentsComp;
+	private final Composite f_logComp;
 
 	FindingsMediator(Combo projectCombo, Composite topSash,
 			ExpandItem detailsItem, Composite detailsComp,
-			ExpandItem commentsItem, Composite commentsComp) {
+			ExpandItem logItem,
+			Composite logComp) {
 		f_projectCombo = projectCombo;
 		f_topSash = topSash;
 		f_detailsItem = detailsItem;
 		f_detailsComp = detailsComp;
-		f_commentsItem = commentsItem;
-		f_commentsComp = commentsComp;
+		f_logItem = logItem;
+		f_logComp = logComp;
 	}
 
 	public void setFocus() {

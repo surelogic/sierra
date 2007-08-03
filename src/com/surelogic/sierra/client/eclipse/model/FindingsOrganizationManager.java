@@ -9,7 +9,7 @@ public final class FindingsOrganizationManager {
 
 	public FindingsOrganizationManager() {
 		FindingsOrganization p = new FindingsOrganization();
-		p.getMutableTreePart().add(FindingsColumn.PRIORITY);
+		p.getMutableTreePart().add(FindingsColumn.IMPORTANCE);
 		p.getMutableTreePart().add(FindingsColumn.PACKAGE_NAME);
 		p.getMutableTreePart().add(FindingsColumn.CLASS_NAME);
 		p.getMutableTreePart().add(FindingsColumn.SUMMARY);
@@ -17,17 +17,27 @@ public final class FindingsOrganizationManager {
 		p.getMutableTablePart().add(FindingsColumn.TOOL);
 		p.getMutableTablePart().add(FindingsColumn.CATEGORY);
 		p.getMutableTablePart().add(FindingsColumn.MNEMONIC);
-		f_organizations.put("Priority", p);
+		f_organizations.put("Importance", p);
 		p = new FindingsOrganization();
 		p.getMutableTreePart().add(FindingsColumn.PACKAGE_NAME);
 		p.getMutableTreePart().add(FindingsColumn.CLASS_NAME);
 		p.getMutableTreePart().add(FindingsColumn.SUMMARY);
-		p.getMutableTablePart().add(FindingsColumn.PRIORITY);
+		p.getMutableTablePart().add(FindingsColumn.IMPORTANCE);
 		p.getMutableTablePart().add(FindingsColumn.LOC);
 		p.getMutableTablePart().add(FindingsColumn.TOOL);
 		p.getMutableTablePart().add(FindingsColumn.CATEGORY);
 		p.getMutableTablePart().add(FindingsColumn.MNEMONIC);
 		f_organizations.put("Package", p);
+		p = new FindingsOrganization();
+		p.getMutableTreePart().add(FindingsColumn.TOOL);
+		p.getMutableTreePart().add(FindingsColumn.IMPORTANCE);
+		p.getMutableTreePart().add(FindingsColumn.PACKAGE_NAME);
+		p.getMutableTreePart().add(FindingsColumn.CLASS_NAME);
+		p.getMutableTreePart().add(FindingsColumn.SUMMARY);
+		p.getMutableTablePart().add(FindingsColumn.LOC);
+		p.getMutableTablePart().add(FindingsColumn.CATEGORY);
+		p.getMutableTablePart().add(FindingsColumn.MNEMONIC);
+		f_organizations.put("Tool", p);
 	}
 
 	public FindingsOrganization get(final String key) {

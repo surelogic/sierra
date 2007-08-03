@@ -240,18 +240,18 @@ public final class FindingsView extends ViewPart {
 		detailsItem.setImage(SLImages.getImage(SLImages.IMG_DETAILS));
 
 		// Second item
-		final Composite commentsComp = new Composite(bar, SWT.NONE);
-		final ExpandItem commentsItem = new ExpandItem(bar, SWT.NONE,
+		final Composite logComp = new Composite(bar, SWT.NONE);
+		final ExpandItem logItem = new ExpandItem(bar, SWT.NONE,
 				barIndex++);
-		commentsItem.setText("Comments");
-		commentsItem.setControl(commentsComp);
-		commentsItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
+		logItem.setText("Log");
+		logItem.setControl(logComp);
+		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
 
 		sf.setWeights(new int[] { 3, 1 });
 		bar.setSpacing(2);
 
 		f_mediator = new FindingsMediator(projectCombo, topSash, detailsItem,
-				detailsComp, commentsItem, commentsComp);
+				detailsComp, logItem, logComp);
 	}
 
 	@Override

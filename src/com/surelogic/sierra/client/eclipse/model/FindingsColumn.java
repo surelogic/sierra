@@ -12,7 +12,7 @@ public enum FindingsColumn {
 
 	PACKAGE_NAME("PACKAGE_NAME \"Package__PACKAGE", "PACKAGE_NAME"),
 
-	PRIORITY("PRIORITY \"Priority", "PRIORITY_CODE"),
+	IMPORTANCE("IMPORTANCE \"Importance", "IMPORTANCE_CODE"),
 
 	SUMMARY("SUMMARY \"Summary", "SUMMARY"),
 
