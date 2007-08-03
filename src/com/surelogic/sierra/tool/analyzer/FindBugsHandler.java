@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -40,9 +41,22 @@ class FindBugsHandler extends DefaultHandler {
 
 	private StringBuilder message;
 
+	@SuppressWarnings("unused")
+	private Map<String, Map<Integer, Long>> hashHolder;
+
 	public FindBugsHandler(ArtifactGenerator generator,
 			String[] sourceDirectories) {
 		super();
+		this.generator = generator;
+		this.sourceDirectories = sourceDirectories;
+		message = new StringBuilder();
+	}
+
+	public FindBugsHandler(ArtifactGenerator generator,
+			String[] sourceDirectories,
+			Map<String, Map<Integer, Long>> hashHolder) {
+		super();
+		this.hashHolder = hashHolder;
 		this.generator = generator;
 		this.sourceDirectories = sourceDirectories;
 		message = new StringBuilder();
@@ -291,9 +305,9 @@ class FindBugsHandler extends DefaultHandler {
 					// the bug else it is not a bug that can assigned a line
 					// number and assume the lineStart as the line number
 
-					int s = Integer.parseInt(start);
+					int lineNumber = Integer.parseInt(start);
 
-					HashGenerator hashGenerator = new HashGenerator();
+					 HashGenerator hashGenerator = HashGenerator.getInstance();
 					boolean fileFound = false;
 
 					for (int i = 0; i < sourceDirectories.length; i++) {
@@ -309,8 +323,16 @@ class FindBugsHandler extends DefaultHandler {
 								File holderFile = new File(completePath);
 
 								if (holderFile.exists()) {
-									primarySourceLocation.hash(hashGenerator
-											.getHash(completePath, s));
+
+									 Long hashValue = hashGenerator.getHash(
+									 completePath, lineNumber);
+
+									// Long hashValue = hashHolder.get(
+									// completePath).get(
+									// (Integer) lineNumber);
+									primarySourceLocation.hash(hashValue);
+
+									// System.out.println(hashValue);
 
 									completeFileName = sourceDirectories[i];
 									fileFound = true;

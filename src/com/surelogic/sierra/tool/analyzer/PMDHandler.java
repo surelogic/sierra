@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -32,8 +33,19 @@ class PMDHandler extends DefaultHandler {
 
 	private String messageHolder;
 
+	@SuppressWarnings("unused")
+	private Map<String, Map<Integer, Long>> hashHolder;
+
 	public PMDHandler(ArtifactGenerator generator) {
 		super();
+		this.generator = generator;
+		message = new StringBuilder();
+	}
+
+	public PMDHandler(ArtifactGenerator generator,
+			Map<String, Map<Integer, Long>> hashHolder) {
+		super();
+		this.hashHolder = hashHolder;
 		this.generator = generator;
 		message = new StringBuilder();
 	}
@@ -85,9 +97,16 @@ class PMDHandler extends DefaultHandler {
 						int lineNumber = Integer.parseInt(attrs.getValue(i));
 
 						// The hash code generation
-						HashGenerator hashGenerator = new HashGenerator();
-						sourceLocation = sourceLocation.hash(
-								hashGenerator.getHash(fileName, lineNumber))
+						HashGenerator hashGenerator = HashGenerator
+								.getInstance();
+						Long hashValue = hashGenerator.getHash(fileName,
+								lineNumber);
+						// Long hashValue = hashHolder.get(fileName).get(
+						// (Integer) lineNumber);
+
+						// System.out.println(hashValue);
+
+						sourceLocation = sourceLocation.hash(hashValue)
 								.lineOfCode(lineNumber);
 
 					}

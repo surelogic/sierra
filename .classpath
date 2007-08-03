@@ -27,10 +27,10 @@
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs.jar" sourcepath="C:/work/FindBugs/findbugs"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs-ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/backport-util-concurrent-3.0/backport-util-concurrent.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/pmd-3.9/pmd-3.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/jaxen-1.1.1/jaxen-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="Tools/pmd-3.9/lib/pmd-3.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

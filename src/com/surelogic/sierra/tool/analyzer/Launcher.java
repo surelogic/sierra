@@ -37,8 +37,6 @@ public abstract class Launcher {
 
 	private Java findbugsTask;
 
-	private String findBugsHome;
-
 	private BaseConfig baseConfig;
 
 	private String tmpDir;
@@ -51,6 +49,8 @@ public abstract class Launcher {
 
 	private String intermediate;
 
+	private Java pmdTask;
+
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private static final String TIGER_RESULTS = ".TigerResult";
@@ -60,6 +60,8 @@ public abstract class Launcher {
 	private static final String FINDBUGS_JAR = "findbugs.jar";
 
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
+
+	private static final String PMD_JAR = "pmd-3.9.jar";
 
 	public Launcher(String Name, BaseConfig baseConfig) {
 		log.info("\nSTARTING LAUNCHER...\n");
@@ -104,8 +106,8 @@ public abstract class Launcher {
 	 * @param arg
 	 *            the argument
 	 */
-	private void addArg(String arg) {
-		findbugsTask.createArg().setValue(arg);
+	private void addArg(Java task, String arg) {
+		task.createArg().setValue(arg);
 	}
 
 	/**
@@ -142,7 +144,8 @@ public abstract class Launcher {
 			// TODO: [Bug 777] Fix this along with FindBugs. The execution of
 			// findbugs must be changed from the current way.
 
-			findBugsHome = pluginDirectory + "Tools" + File.separator + "FB";
+			String findBugsHome = pluginDirectory + "Tools" + File.separator
+					+ "FB";
 
 			// log.info("______" + findBugsHome);
 
@@ -151,13 +154,13 @@ public abstract class Launcher {
 
 			findbugsTask.setJar(findBugsJar);
 
-			addArg("-home");
-			addArg(findBugsHome);
-			addArg("-outputFile");
-			addArg(resultDirectory + File.separator + "FB--"
+			addArg(findbugsTask, "-home");
+			addArg(findbugsTask, findBugsHome);
+			addArg(findbugsTask, "-outputFile");
+			addArg(findbugsTask, resultDirectory + File.separator + "FB--"
 					+ baseConfig.getProjectName() + ".xml");
-			addArg("-xml:withMessages");
-			addArg(baseDirectory);
+			addArg(findbugsTask, "-xml:withMessages");
+			addArg(findbugsTask, baseDirectory);
 
 			// log.info("Running FindBugs...");
 
@@ -192,6 +195,55 @@ public abstract class Launcher {
 	//
 	// log.info("Completed Findbugs execution.");
 	// }
+
+	public void launchPMDANT() {
+		log.info("Launching PMD ANT...");
+
+		String baseDirectory = baseConfig.getBaseDirectory();
+		String resultsPath = resultsFolder + File.separator
+				+ baseConfig.getProjectName();
+
+		String pluginDirectory = baseConfig.getToolsDirectory();
+		resultDirectory = new File(resultsPath);
+
+		if (!resultDirectory.exists()) {
+			resultDirectory.mkdir();
+		}
+
+		log
+				.info("Checked directory for results from PMD ANT. Now launching task.");
+
+		try {
+			Project p = createProject();
+			pmdTask = (Java) p.createTask("java");
+
+			pmdTask.setTaskName("PMDANT");
+			pmdTask.setFork(true);
+			pmdTask.createJvmarg().setLine("-Xmx1024M");
+			pmdTask.setTimeout(TIMEOUT);
+
+			String pmdDir = pluginDirectory + "Tools" + File.separator
+					+ "pmd-3.9";
+			File pmdJar = new File(pmdDir + File.separator + "lib"
+					+ File.separator + PMD_JAR);
+			File rulesXML = new File(pmdDir + File.separator + "all.xml");
+
+			pmdTask.setJar(pmdJar);
+
+			addArg(pmdTask, baseDirectory);
+			addArg(pmdTask, "xml");
+			addArg(pmdTask, rulesXML.getAbsolutePath());
+			addArg(pmdTask, "-reportfile");
+			addArg(pmdTask, resultDirectory + File.separator + "PMD--"
+					+ baseConfig.getProjectName() + ".xml");
+
+			pmdTask.executeJava();
+
+			log.info("PMD ANT has finished, now parsing file.");
+		} catch (BuildException e) {
+			log.log(Level.SEVERE, "Unable to run PMD ANT" + e);
+		}
+	}
 
 	/**
 	 * Launch PMD
@@ -326,26 +378,72 @@ public abstract class Launcher {
 	public void parseFiles() {
 
 		Config config = new Config(baseConfig);
-		String toolFile = resultDirectory + File.separator + "FB--"
+		String toolFileFB = resultDirectory + File.separator + "FB--"
 				+ baseConfig.getProjectName() + ".xml";
+		String toolFilePMD = resultDirectory + File.separator + "PMD--"
+				+ baseConfig.getProjectName() + ".xml";
+
 		String parsedFileName = resultDirectory + File.separator
 				+ baseConfig.getProjectName() + ".xml" + PARSED_FILE_SUFFIX;
 		MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
 				parsedFileName, config);
 		Parser parser = new Parser(generator);
-		parser.parseFB(toolFile, sourceDirectories);
+
+		// log.info("Starting parse of results FOR HASH...");
+		// Map<String, Map<Integer, Long>> hashHolder = new HashMap<String,
+		// Map<Integer, Long>>();
+		// parser.parseForHash(toolFileFB, hashHolder, sourceDirectories);
+		// parser.parseForHash(toolFilePMD, hashHolder, sourceDirectories);
+		// log.info("Finished parse of results FOR HASH.");
+		//
+		// log.info("Generating hash...");
+		// HashGenerator hashGenerator = HashGenerator.getInstance();
+		// hashGenerator.generateHash(hashHolder);
+		// log.info("Finished hash generation.");
+
+		// Set<String> fileNames = hashHolder.keySet();
+		//
+		// Iterator<String> files = fileNames.iterator();
+		//
+		// while (files.hasNext()) {
+		// String temp = files.next();
+		// System.out.println(temp);
+		//
+		// Map<Integer, Long> lineHashMap = hashHolder.get(temp);
+		// Set<Integer> lineNumbers = lineHashMap.keySet();
+		//
+		// Iterator<Integer> lineNumberIterator = lineNumbers.iterator();
+		//
+		// while (lineNumberIterator.hasNext()) {
+		// Integer lineNumber = lineNumberIterator.next();
+		//
+		// Long hash = lineHashMap.get(lineNumber);
+		// System.out.println("\tLine number :" + lineNumber + " Hash :"
+		// + hash);
+		// }
+		//
+		// }
+
+		log.info("Starting parse of FindBugs results...");
+		parser.parseFB(toolFileFB, sourceDirectories);
 		log.info("Findbugs file parsed.");
 
 		log.info("Completed Findbugs execution.");
 
-		for (int i = 0; i < sourceDirectories.length; i++) {
-			log.info("Parsing file " + resultDirectory + File.separator
-					+ "PMD--" + intermediate + "--" + i + ".xml");
-			toolFile = resultDirectory + File.separator + "PMD--"
-					+ intermediate + "--" + i + ".xml";
-			parser.parsePMD(toolFile);
+		log.info("Starting parse of PMD results...");
+		 parser.parsePMD(toolFilePMD);
 
-		}
+		// for (int i = 0; i < sourceDirectories.length; i++) {
+		// log.info("Parsing file " + resultDirectory + File.separator
+		// + "PMD--" + intermediate + "--" + i + ".xml");
+		// toolFilePMD = resultDirectory + File.separator + "PMD--"
+		// + intermediate + "--" + i + ".xml";
+		// parser.parsePMD(toolFilePMD);
+		//
+		// }
+
+		log.info("PMD file parsed.");
+		log.info("Completed PMD execution.");
 
 		generator.write();
 		// parseFB();
