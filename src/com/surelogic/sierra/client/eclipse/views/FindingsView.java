@@ -31,10 +31,10 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.model.FindingsModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
-import com.surelogic.sierra.db.Data;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsView extends ViewPart {
