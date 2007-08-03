@@ -182,11 +182,11 @@ AS SELECT
    LATEST_RUNS.PROJECT, CU.PACKAGE_NAME, CU.CLASS_NAME, S.LINE_OF_CODE, A.MESSAGE,
    F.IMPORTANCE,
    case
-     when F.IMPORTANCE=0 then 'IGNORE'
-     when F.IMPORTANCE=1 then 'LOW'
-     when F.IMPORTANCE=2 then 'MEDIUM'
-     when F.IMPORTANCE=3 then 'HIGH'
-     when F.IMPORTANCE=4 then 'CRITICAL'
+     when F.IMPORTANCE=0 then 'Irrelevant'
+     when F.IMPORTANCE=1 then 'Low'
+     when F.IMPORTANCE=2 then 'Medium'
+     when F.IMPORTANCE=3 then 'High'
+     when F.IMPORTANCE=4 then 'Critical'
    end,
    T.NAME, FT.CATEGORY_DISPLAY, FT.MNEMONIC_DISPLAY,F.ID
 FROM
