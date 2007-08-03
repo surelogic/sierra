@@ -355,7 +355,11 @@ public class SierraAnalysis extends Task {
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		tools.cleanup();
-		tmpFolder.delete();
+		if(serverURL != null){
+    		// FIXME should not delete rundocument if it didn't send to the server or the upload was unsuccessful
+			runDocument.delete();
+    		tmpFolder.delete();
+		}
 	}
 
 	/**
