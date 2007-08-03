@@ -209,6 +209,18 @@ public class Tools {
 	}
 	
 	/**
+	 * Makes all of the tools clean up their files
+	 */
+	public void cleanup() {
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		for (String toolName : toolNames) {
+			tool = tools.get(toolName);
+			tool.cleanup();
+		}
+	}
+	
+	/**
 	 * Getter for the Tools folder
 	 * @return
 	 */
@@ -252,6 +264,5 @@ public class Tools {
 		tools.remove(config.getToolName());
 		tools.put(config.getToolName(), config);
 	}
-
 
 }

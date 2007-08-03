@@ -96,6 +96,12 @@ public abstract class ToolConfig {
 	 */
 	abstract void configure(final Config config);
 	
+	/**
+	 * clean up output files
+	 */
+	abstract void cleanup();
+
+	
 	/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	 * 								END ABSTRACT METHODS
 	 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/

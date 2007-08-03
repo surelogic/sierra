@@ -138,6 +138,11 @@ public class PmdConfig extends ToolConfig {
 		setJavaVersion(config.getJavaVersion());
 		setRulesFile(config.getPmdRulesFile());
 	}
+	
+	@Override 
+	void cleanup(){
+		output.delete();
+	}
 
 	/**
 	 * @return the rulesFile

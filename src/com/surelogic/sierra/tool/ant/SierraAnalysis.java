@@ -61,13 +61,9 @@ package com.surelogic.sierra.tool.ant;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -79,9 +75,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
-import org.apache.tools.ant.util.FileUtils;
 
-import com.sun.xml.bind.v2.ContextFactory;
 import com.surelogic.sierra.tool.analyzer.Launcher;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
@@ -101,9 +95,9 @@ public class SierraAnalysis extends Task {
 	private Environment env = new Environment();
 	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
-	private static final FileUtils fileUtils = FileUtils.getFileUtils();
-	
-	// Used to populate this class and supporting classes, if this class is instantiated from the Sierra client
+
+	// Used to populate this class and supporting classes, if this class is
+	// instantiated from the Sierra client
 	private Config config = null;
 
 	// The file containing the artifacts from the run
@@ -116,11 +110,10 @@ public class SierraAnalysis extends Task {
 	private Path classpath = null;
 
 	private org.apache.tools.ant.Project antProject = null;
-	
-	
-	/* **************************************************************************
-	 * 							Ant Task Attributes
-	 ****************************************************************************/
+
+	/***************************************************************************
+	 * Ant Task Attributes
+	 **************************************************************************/
 
 	// Optional attribute, if present, we send the WSDL file to this server
 	private String serverURL = null;
@@ -153,20 +146,19 @@ public class SierraAnalysis extends Task {
 
 	// Optional
 	private Path bindir = null;
-	
 
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
 	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
-	
-	static{
+
+	static {
 		DEPENDENCIES.add("jaxb-api.jar");
 		DEPENDENCIES.add("jaxb-impl.jar");
 		DEPENDENCIES.add("jsr173_api.jar");
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
-	
-	//Common initializer code
+
+	// Common initializer code
 	{
 		antProject = getProject();
 		srcdir = new Path(antProject);
@@ -179,13 +171,14 @@ public class SierraAnalysis extends Task {
 	public SierraAnalysis() {
 		super();
 	}
-	
+
 	/**
-	 * Constructor used to create this task programmatically from inside the sierra client
-	 * NOT CURRENTLY USED.
+	 * Constructor used to create this task programmatically from inside the
+	 * sierra client NOT CURRENTLY USED.
+	 * 
 	 * @param config
 	 */
-	public SierraAnalysis(Config config){
+	public SierraAnalysis(Config config) {
 		super();
 		this.config = config;
 		destDir = config.getDestDirectory();
@@ -202,8 +195,8 @@ public class SierraAnalysis extends Task {
 	 * @see Task
 	 */
 	public void execute() {
-		if(runDateTime == null){
-    		runDateTime = Calendar.getInstance().getTime();
+		if (runDateTime == null) {
+			runDateTime = Calendar.getInstance().getTime();
 		}
 		validateParameters();
 		verifyDependencies();
@@ -234,60 +227,61 @@ public class SierraAnalysis extends Task {
 		csv.append(paths[paths.length - 1]);
 		return csv.toString();
 	}
-	
+
 	/**
 	 * Helper method for {@link }
+	 * 
 	 * @param jar
 	 * @return
 	 */
-	boolean isJarInClasspath(String jar){
-		List<String> list =  new ArrayList<String>(1);
+	boolean isJarInClasspath(String jar) {
+		List<String> list = new ArrayList<String>(1);
 		list.add(jar);
 		return isJarInClasspath(list);
 	}
-	
+
 	/**
 	 * Scans the classpath for a specific jar
+	 * 
 	 * @param jar
 	 * @return
 	 */
-	boolean isJarInClasspath(List<String> jars){
-		
+	boolean isJarInClasspath(List<String> jars) {
+
 		String[] paths = getClasspath().list();
 		boolean found = false;
-		outer:
-		for (String path : paths) {
+		outer: for (String path : paths) {
 			for (String jar : jars) {
-    			if(path.endsWith(jar)){
-    				found = true;
-    				break outer;
-    			}
+				if (path.endsWith(jar)) {
+					found = true;
+					break outer;
+				}
 			}
 		}
 		return found;
 	}
-	
+
 	/**
 	 * 
 	 * @param jars
 	 * @return The name of the 1st missing jar or null if none are missing
 	 */
-	String findMissingJarFromClasspath(List<String> jars){
+	String findMissingJarFromClasspath(List<String> jars) {
 		String[] paths = getClasspath().list();
 		boolean found = false;
 		String missing = null;
 		for (String jar : jars) {
 			found = false;
-    		for (String path : paths) {
-    			if(path.endsWith(jar)){
-    				found = true;
-    				break;
-    			}
+			for (String path : paths) {
+				if (path.endsWith(jar)) {
+					found = true;
+					break;
+				}
 			}
-    		if(!found){
-    			missing = jar;
-    			break;
-    		}
+			if (!found) {
+				missing = jar;
+				break;
+			}
 		}
 		return missing;
 	}
@@ -307,19 +301,19 @@ public class SierraAnalysis extends Task {
 		Thread.currentThread().setContextClassLoader(
 				this.getClass().getClassLoader());
 
-		Config config = new Config();
-		config.setBaseDirectory(project.getDir().getAbsolutePath());
-		config.setProject(project.getName());
-		config.setRunDateTime(runDateTime);
-		config.setJavaVersion(System.getProperty("java.version"));
-		config.setJavaVendor(System.getProperty("java.vendor"));
-		config.setQualifiers(serverQualifiers);
+		if (config == null) {
+			config = new Config();
+			config.setBaseDirectory(project.getDir().getAbsolutePath());
+			config.setProject(project.getName());
+			config.setRunDateTime(runDateTime);
+			config.setJavaVersion(System.getProperty("java.version"));
+			config.setJavaVendor(System.getProperty("java.vendor"));
+			config.setQualifiers(serverQualifiers);
+		}
 
 		if (runDocumentName == null || runDocumentName.equals("")) {
 			runDocumentName = project.getName() + ".xml" + PARSED_FILE_SUFFIX;
 		}
-		// TODO should this require that runDocumentName have the
-		// PARSED_FILE_SUFFIX extension?
 		runDocument = new File(tmpFolder.getAbsolutePath(), runDocumentName);
 
 		log("Generating the run document: " + runDocument,
@@ -360,17 +354,18 @@ public class SierraAnalysis extends Task {
 	 */
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
-		// TODO
+		tools.cleanup();
+		tmpFolder.delete();
 	}
-	
+
 	/**
 	 * Verifies that all of the appropriate jars exist on the classpath
 	 */
-	private void verifyDependencies(){
+	private void verifyDependencies() {
 		tools.verifyToolDependencies();
-		
+
 		String missing = findMissingJarFromClasspath(DEPENDENCIES);
-		if(missing != null){
+		if (missing != null) {
 			throw new BuildException("Missing dependency: " + missing);
 		}
 	}
@@ -390,16 +385,15 @@ public class SierraAnalysis extends Task {
 						"Could not create temporary output directory");
 			}
 		}
-		
-		if(serverURL != null){
-			if("".equals(serverURL)){
-				//TODO see if the URL is a valid URL
+
+		if (serverURL != null) {
+			if ("".equals(serverURL)) {
+				// TODO see if the URL is a valid URL
 				throw new BuildException("serverURL must be a valid URL");
-			}
-			else
-			{
-				if(serverQualifiers.isEmpty()){
-					throw new BuildException("serverQualifiers must contain one or more, comma-separated qualifiers.");
+			} else {
+				if (serverQualifiers.isEmpty()) {
+					throw new BuildException(
+							"serverQualifiers must contain one or more, comma-separated qualifiers.");
 				}
 			}
 		}
@@ -723,14 +717,14 @@ public class SierraAnalysis extends Task {
 	final Project getSierraProject() {
 		return project;
 	}
-	
+
 	/**
 	 * Returns the Tools object
+	 * 
 	 * @return the tools object
 	 */
-	final Tools getSierraTools(){
+	final Tools getSierraTools() {
 		return tools;
 	}
-	
 
 }

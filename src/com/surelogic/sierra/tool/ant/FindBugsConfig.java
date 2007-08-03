@@ -58,8 +58,7 @@ public class FindBugsConfig extends ToolConfig {
 		cmdj.createArgument().setValue("-home");
 		// TODO automatically find the FB home
 		cmdj.createArgument().setPath(
-				new Path(antProject,
-						"/Users/ethan/sierra-workspace/sierra-tool/Tools/FB"));
+				new Path(antProject, getHome().getAbsolutePath()));
 		String[] paths = analysis.getBindir().list();
 		for (String string : paths) {
 			cmdj.createArgument().setValue(string);
@@ -111,6 +110,11 @@ public class FindBugsConfig extends ToolConfig {
 	@Override
 	void configure(Config config) {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override 
+	void cleanup(){
+		output.delete();
 	}
 
 
