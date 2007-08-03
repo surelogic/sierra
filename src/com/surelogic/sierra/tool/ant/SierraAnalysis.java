@@ -146,6 +146,14 @@ public class SierraAnalysis extends Task {
 
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
+	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
+	
+	static{
+		DEPENDENCIES.add("jaxb-api.jar");
+		DEPENDENCIES.add("jaxb-impl.jar");
+		DEPENDENCIES.add("jsr173_api.jar");
+		DEPENDENCIES.add("backport-util-concurrent.jar");
+	}
 
 	/**
 	 * Constructor
@@ -162,6 +170,7 @@ public class SierraAnalysis extends Task {
 	public void execute() {
 		runDateTime = Calendar.getInstance().getTime();
 		validateParameters();
+		verifyDependencies();
 		tools.runTools();
 		generateRunDocument();
 		if (serverURL != null && !"".equals(serverURL)) {
@@ -188,6 +197,63 @@ public class SierraAnalysis extends Task {
 		// add the last item at the end w/o a trailing comma
 		csv.append(paths[paths.length - 1]);
 		return csv.toString();
+	}
+	
+	/**
+	 * Helper method for {@link }
+	 * @param jar
+	 * @return
+	 */
+	boolean isJarInClasspath(String jar){
+		List<String> list =  new ArrayList<String>(1);
+		list.add(jar);
+		return isJarInClasspath(list);
+	}
+	
+	/**
+	 * Scans the classpath for a specific jar
+	 * @param jar
+	 * @return
+	 */
+	boolean isJarInClasspath(List<String> jars){
+		
+		String[] paths = getClasspath().list();
+		boolean found = false;
+		outer:
+		for (String path : paths) {
+			for (String jar : jars) {
+    			if(path.endsWith(jar)){
+    				found = true;
+    				break outer;
+    			}
+			}
+		}
+		return found;
+	}
+	
+	/**
+	 * 
+	 * @param jars
+	 * @return The name of the 1st missing jar or null if none are missing
+	 */
+	String findMissingJarFromClasspath(List<String> jars){
+		String[] paths = getClasspath().list();
+		boolean found = false;
+		String missing = null;
+		for (String jar : jars) {
+			found = false;
+    		for (String path : paths) {
+    			if(path.endsWith(jar)){
+    				found = true;
+    				break;
+    			}
+			}
+    		if(!found){
+    			missing = jar;
+    			break;
+    		}
+		}
+		return missing;
 	}
 
 	/**
@@ -260,12 +326,24 @@ public class SierraAnalysis extends Task {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		// TODO
 	}
+	
+	/**
+	 * Verifies that all of the appropriate jars exist on the classpath
+	 */
+	private void verifyDependencies(){
+		tools.verifyToolDependencies();
+		
+		String missing = findMissingJarFromClasspath(DEPENDENCIES);
+		if(missing != null){
+			throw new BuildException("Missing dependency: " + missing);
+		}
+	}
 
 	/**
 	 * Ensures all properties/parameters are set and valid If any parameters are
 	 * invalid, this method will throw a BuildException
 	 */
-	public void validateParameters() {
+	private void validateParameters() {
 		if (destDir != null && !destDir.isDirectory()) {
 			throw new BuildException("'destdir' must be a valid directory.");
 		} else {
@@ -274,6 +352,19 @@ public class SierraAnalysis extends Task {
 			if (!tmpFolder.mkdir()) {
 				throw new BuildException(
 						"Could not create temporary output directory");
+			}
+		}
+		
+		if(serverURL != null){
+			if("".equals(serverURL)){
+				//TODO see if the URL is a valid URL
+				throw new BuildException("serverURL must be a valid URL");
+			}
+			else
+			{
+				if(serverQualifiers.isEmpty()){
+					throw new BuildException("serverQualifiers must contain one or more, comma-separated qualifiers.");
+				}
 			}
 		}
 

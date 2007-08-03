@@ -20,6 +20,7 @@ import com.surelogic.sierra.tool.analyzer.Parser;
 public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private static final String MAX_MEMORY = "1024m";
+	private static final String FINDBUGS_JAR = "findbugs.jar";
 
 	/**
 	 * @param project
@@ -89,4 +90,13 @@ public class FindBugsConfig extends ToolConfig {
 		
 	}
 
+
+	@Override
+	void verifyDependencies() {
+		assert(analysis != null);
+		
+		if(!analysis.isJarInClasspath(FINDBUGS_JAR)){
+			throw new BuildException("FindBugs is missing dependency: " + FINDBUGS_JAR);
+		}
+	}
 }

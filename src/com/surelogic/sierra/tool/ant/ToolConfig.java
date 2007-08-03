@@ -77,6 +77,11 @@ public abstract class ToolConfig {
 	 */
 	public abstract void parseOutput(Parser parser);
 	
+	/**
+	 * Verifies that all of this tool's dependencies are in the classpath before we can throw a NoClassDefFoundError
+	 */
+	abstract void verifyDependencies();
+	
 	/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	 * 								END ABSTRACT METHODS
 	 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
@@ -225,5 +230,6 @@ public abstract class ToolConfig {
 	public Path createClasspath() {
 		return getCommandLine().createClasspath(analysis.getProject()).createPath();
 	}
+
 
 }

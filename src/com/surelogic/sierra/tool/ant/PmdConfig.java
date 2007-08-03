@@ -15,6 +15,7 @@ import com.surelogic.sierra.tool.analyzer.Parser;
  * 
  */
 public class PmdConfig extends ToolConfig {
+	private final static String PMD_JAR = "pmd-3.9.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 	private final static String DEFAULT_PMD_JAVA_VERSION = "1.5";
 
@@ -122,5 +123,16 @@ public class PmdConfig extends ToolConfig {
 					org.apache.tools.ant.Project.MSG_INFO);
 			parser.parsePMD(output.getAbsolutePath());
 		}
+	}
+
+
+	@Override
+	void verifyDependencies() {
+		assert(analysis != null);
+		
+		if(!analysis.isJarInClasspath(PMD_JAR)){
+			throw new BuildException("PMD is missing dependency: " + PMD_JAR);
+		}
+		
 	}
 }

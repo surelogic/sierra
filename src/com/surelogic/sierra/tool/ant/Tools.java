@@ -74,11 +74,11 @@ public class Tools {
 	 * Must be called before execute()
 	 * @param analysis
 	 */
-	public void initialize(final SierraAnalysis analysis){
+	void initialize(final SierraAnalysis analysis){
 		this.analysis = analysis;
 	}
 
-	public void validate() {
+	void validate() {
 		if(analysis == null){
 			throw new BuildException("Error: initialize() must be called before execute(). Error in Ant Task implementation.");
 		}
@@ -132,12 +132,24 @@ public class Tools {
 	public List<String> getExclude() {
 		return exclude;
 	}
+	
+	/**
+	 * Verifies that all tool dependencies exist in the <taskdef>'s classpath
+	 */
+	void verifyToolDependencies() {
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		for (String toolName : toolNames) {
+			tool = tools.get(toolName);
+			tool.verifyDependencies();
+		}
+	}
 
 	
 	/**
 	 * Runs all of the included tools
 	 */
-	public void runTools(){
+	void runTools(){
 		antProject.log("Running tools...", org.apache.tools.ant.Project.MSG_INFO);
 		antProject.log("Source path: " + analysis.getSrcdir(), org.apache.tools.ant.Project.MSG_DEBUG);
 		antProject.log("Binary path: " + analysis.getBindir(), org.apache.tools.ant.Project.MSG_DEBUG);
@@ -157,7 +169,7 @@ public class Tools {
 	 * Tells each tool to parse their own output
 	 * @param parser
 	 */
-	public void parseOutput(Parser parser) {
+	void parseOutput(Parser parser) {
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
