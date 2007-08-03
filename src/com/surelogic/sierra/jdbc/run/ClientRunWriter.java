@@ -80,7 +80,7 @@ public class ClientRunWriter {
 				}
 			})) {
 				log.log(Level.INFO, "Writing out file " + f);
-				mw.parseToolOutput(f.getPath(), generator);
+				mw.parseRunDocument(f, generator);
 			}
 			generator.finish();
 			log.log(Level.INFO, "All artifacts for run " + run.getId()
