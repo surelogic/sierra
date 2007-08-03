@@ -12,6 +12,8 @@ import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.FileUtils;
 
+import com.surelogic.sierra.tool.config.Config;
+
 /**
  * Class representing the definition of a single project
  * 
@@ -32,6 +34,18 @@ public class Project {
 		this.proj = proj;
 		src = new Path(proj);
 		bin = new Path(proj);
+	}
+	
+	public Project(org.apache.tools.ant.Project proj, Config config) {
+		this.proj = proj;
+		src = new Path(proj);
+		bin = new Path(proj);
+		
+		name = config.getProject();
+		dir = new File(config.getBaseDirectory());
+		
+		Source srcs = new Source();
+		Binary bins = new Binary();
 	}
 
 	public void validate() {

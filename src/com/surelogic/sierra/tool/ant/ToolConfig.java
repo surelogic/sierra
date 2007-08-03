@@ -17,6 +17,7 @@ import org.apache.tools.ant.types.RedirectorElement;
 import org.apache.tools.ant.util.FileUtils;
 
 import com.surelogic.sierra.tool.analyzer.Parser;
+import com.surelogic.sierra.tool.config.Config;
 
 /**
  * @author ethan
@@ -57,6 +58,17 @@ public abstract class ToolConfig {
 		this.analysis = analysis;
 		redirector =  new Redirector(analysis);
 	}
+	
+	/**
+	 * Validates any attributes of the element
+	 * Should be overridden, but called by subclasses
+	 */
+	protected void validate(){
+		if(name == null || analysis == null){
+			throw new BuildException(
+					"ToolConfig.initialize() must be called before executing this task.");
+		}
+	}
 
 	/* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 * 								START ABSTRACT METHODS
@@ -64,23 +76,25 @@ public abstract class ToolConfig {
 	/**
 	 * Runs the tool
 	 */
-	public abstract void runTool();
+	abstract void runTool();
 	
-	/**
-	 * Validates any attributes of the element
-	 */
-	public abstract void validate();
 	
 	/**
 	 * Override to parse the output of the specific tools.
 	 * @param parser
 	 */
-	public abstract void parseOutput(Parser parser);
+	abstract void parseOutput(Parser parser);
 	
 	/**
 	 * Verifies that all of this tool's dependencies are in the classpath before we can throw a NoClassDefFoundError
 	 */
 	abstract void verifyDependencies();
+	
+	
+	/**
+	 * Configures the tool from a Config object
+	 */
+	abstract void configure(final Config config);
 	
 	/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	 * 								END ABSTRACT METHODS

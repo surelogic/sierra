@@ -1,10 +1,11 @@
 /**
  * 
 <sierra-analysis  
-    resultsdir="/tool/results/output/dir"
+    destDir="/tool/results/output/dir"
     srcdir="/source/directory"  
     bindir="/path/to/.class/files"
     serverURL=" http://server.url"  
+    serverQualifier="comma, separated, list, of, qualifiers"
     clean="true">
 
     <project  name="project"  dir="/project/directory">
@@ -19,8 +20,8 @@
         </binary>       
     </project>
 
-    <tools  exclude="FindBugs">
-        <pmd-config javaVersion=Ó1.5Ó/>
+    <tools  exclude="comma, separated, list, of, tool, names, to, not, run">
+        <pmd-config javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
     </tools>
 </sierra-analysis>
 
@@ -91,14 +92,9 @@ public class SierraAnalysis extends Task {
 	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
 	private static final FileUtils fileUtils = FileUtils.getFileUtils();
-
-	// The output file for PMD
-	// TODO remove
-	private File pmdOutput = null;
-
-	// The output file for FindBugs
-	// TODO remove
-	private File fbOutput = null;
+	
+	// Used to populate this class and supporting classes, if this class is instantiated from the Sierra client
+	private Config config = null;
 
 	// The file containing the artifacts from the run
 	private File runDocument = null;
@@ -110,6 +106,11 @@ public class SierraAnalysis extends Task {
 	private Path classpath = null;
 
 	private org.apache.tools.ant.Project antProject = null;
+	
+	
+	/* **************************************************************************
+	 * 							Ant Task Attributes
+	 ****************************************************************************/
 
 	// Optional attribute, if present, we send the WSDL file to this server
 	private String serverURL = null;
@@ -125,7 +126,6 @@ public class SierraAnalysis extends Task {
 
 	// Optional file attribute.
 	// Where to store the temp files
-	// TODO
 	private File tmpFolder = null;
 
 	// Required
@@ -143,6 +143,7 @@ public class SierraAnalysis extends Task {
 
 	// Optional
 	private Path bindir = null;
+	
 
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
@@ -154,21 +155,45 @@ public class SierraAnalysis extends Task {
 		DEPENDENCIES.add("jsr173_api.jar");
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
-
-	/**
-	 * Constructor
-	 */
-	public SierraAnalysis() {
+	
+	//Common initializer code
+	{
 		antProject = getProject();
 		srcdir = new Path(antProject);
 		bindir = new Path(antProject);
 	}
 
 	/**
+	 * Constructor
+	 */
+	public SierraAnalysis() {
+		super();
+	}
+	
+	/**
+	 * Constructor used to create this task programmatically from inside the sierra client
+	 * @param config
+	 */
+	public SierraAnalysis(Config config){
+		super();
+		this.config = config;
+		destDir = config.getDestDirectory();
+		runDocumentName = config.getRunDocumentName();
+		classpath = new Path(antProject, config.getClasspath());
+		clean = config.isCleanTempFiles();
+		srcdir = new Path(antProject, config.getSourceDirs());
+		bindir = new Path(antProject, config.getBinDirs());
+		tools = new Tools(antProject, config);
+		project = new Project(antProject, config);
+	}
+
+	/**
 	 * @see Task
 	 */
 	public void execute() {
-		runDateTime = Calendar.getInstance().getTime();
+		if(runDateTime == null){
+    		runDateTime = Calendar.getInstance().getTime();
+		}
 		validateParameters();
 		verifyDependencies();
 		tools.runTools();
@@ -687,5 +712,14 @@ public class SierraAnalysis extends Task {
 	final Project getSierraProject() {
 		return project;
 	}
+	
+	/**
+	 * Returns the Tools object
+	 * @return the tools object
+	 */
+	final Tools getSierraTools(){
+		return tools;
+	}
+	
 
 }

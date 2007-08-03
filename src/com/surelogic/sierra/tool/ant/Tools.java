@@ -12,6 +12,7 @@
  */
 package com.surelogic.sierra.tool.ant;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 
 import com.surelogic.sierra.tool.analyzer.Parser;
+import com.surelogic.sierra.tool.config.Config;
 
 /**
  * A collection for information pertaining to the tools (i.e., FindBugs, PMD)
@@ -39,10 +41,12 @@ public class Tools {
 	private Map<String, ToolConfig> tools = new HashMap<String, ToolConfig>();
 
 	private SierraAnalysis analysis = null;
+	private File toolsFolder = null;
 	
 	static {
 		Arrays.sort(toolList);
 	}
+	
 	
 	/**
 	 * Constructor used by Ant when creating one of these
@@ -53,6 +57,25 @@ public class Tools {
 		addAllToolDefaults();
 	}
 	
+	/**
+	 * Constructor used by Sierra when invoking this Ant Task programmatically
+	 * @param project
+	 * @param config
+	 */
+	public Tools(org.apache.tools.ant.Project project, Config config){
+		this.antProject = project;
+		addAllToolDefaults();
+		
+		setExclude(config.getExcludedToolsList());
+		
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		toolsFolder = new File(config.getToolsDirectory());
+		for (String toolName : toolNames) {
+			tools.get(toolName).configure(config);
+		}
+		
+	}
 	
 	/**
 	 * Adds the default ToolConfig objects to ensure that you don't have to have a sub-element in your build file.
@@ -99,6 +122,11 @@ public class Tools {
 				}
 			}
 		}
+		
+		if(toolsFolder != null && !toolsFolder.isDirectory()){
+			throw new BuildException("toolsFolder must be an existing directory.");
+		}
+		//TODO check to make sure it *is* our Tools folder
 		
 		ToolConfig tool;
 		for (String toolName : tools.keySet()) {
@@ -179,6 +207,31 @@ public class Tools {
 			tool.parseOutput(parser);
 		}
 	}
+	
+	/**
+	 * Getter for the Tools folder
+	 * @return
+	 */
+	public File getToolsFolder() {
+		if(toolsFolder == null || !toolsFolder.isDirectory()){
+			String[] paths = analysis.getClasspath().list();
+			for (String path : paths) {
+				if(path.endsWith("findbugs.jar")){
+					int index = path.indexOf("FB");
+					toolsFolder = new File(path.substring(0, index - 1));
+				}
+			}
+		}
+		return toolsFolder;
+	}
+
+	/**
+	 * Setter for the Tools folder
+	 * @param toolsFolder
+	 */
+	public void setToolsFolder(File toolsFolder) {
+		this.toolsFolder = toolsFolder;
+	}
 
 	
 	
@@ -186,16 +239,16 @@ public class Tools {
 	 * 
 	 * Specific ToolConfig methods
 	 * 
-	 * XXX Add methods for all new tools here of the form: addConfigured<ToolConfigClassName>(<ToolConfigClassName> config)
+	 * XXX Add methods for all new tools here of the form: add<ToolConfigClassName>(<ToolConfigClassName> config)
 	 * 
 	 ************************************************************/
 	
-	public void addConfiguredPmdConfig(PmdConfig config) {
+	public void addPmdConfig(PmdConfig config) {
 		tools.remove(config.getToolName());
 		tools.put(config.getToolName(), config);
 	}
 	
-	public void addConfiguredFindBugsConfig(FindBugsConfig config){
+	public void addFindBugsConfig(FindBugsConfig config){
 		tools.remove(config.getToolName());
 		tools.put(config.getToolName(), config);
 	}

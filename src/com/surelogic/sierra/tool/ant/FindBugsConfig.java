@@ -12,6 +12,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
 import com.surelogic.sierra.tool.analyzer.Parser;
+import com.surelogic.sierra.tool.config.Config;
 
 /**
  * @author ethan
@@ -21,6 +22,12 @@ public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private static final String MAX_MEMORY = "1024m";
 	private static final String FINDBUGS_JAR = "findbugs.jar";
+	
+	// The path to the findbugs location, relative to the tools directory
+	private static final String FB_HOME = "FB";
+	
+	//The folder to set as findbugs.home
+	private File home = null;
 
 	/**
 	 * @param project
@@ -76,7 +83,7 @@ public class FindBugsConfig extends ToolConfig {
 	 */
 	@Override
 	public void validate() {
-		//do nothing
+		super.validate();
 	}
 
 
@@ -98,5 +105,32 @@ public class FindBugsConfig extends ToolConfig {
 		if(!analysis.isJarInClasspath(FINDBUGS_JAR)){
 			throw new BuildException("FindBugs is missing dependency: " + FINDBUGS_JAR);
 		}
+	}
+
+
+	@Override
+	void configure(Config config) {
+		// TODO Auto-generated method stub
+	}
+
+
+	/**
+	 * Make this public to let Ant set it
+	 * @return the home
+	 */
+	final File getHome() {
+		if(home == null){
+			home = new File(analysis.getSierraTools().getToolsFolder(), FB_HOME);
+		}
+		return home;
+	}
+
+
+	/**
+	 * Make this public to let Ant set it
+	 * @param home the home to set
+	 */
+	final void setHome(File home) {
+		this.home = home;
 	}
 }
