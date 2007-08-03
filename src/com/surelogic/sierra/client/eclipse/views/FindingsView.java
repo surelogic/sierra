@@ -9,6 +9,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -218,7 +219,8 @@ public final class FindingsView extends ViewPart {
 		}
 		filter.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				Point p = new Point(event.x, event.y);
+				Rectangle r = filter.getBounds();
+				Point p = new Point(r.x, r.y + r.height);
 				p = filter.getDisplay().map(toolBar, null, p);
 				filterMenu.setLocation(p);
 				filterMenu.setVisible(true);
