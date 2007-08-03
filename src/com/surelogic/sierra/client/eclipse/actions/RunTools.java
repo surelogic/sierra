@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.jobs.SierraJobs;
-import com.surelogic.sierra.entity.ClientRunWriter;
+import com.surelogic.sierra.jdbc.run.ClientRunWriter;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.EclipseLauncher;
 import com.surelogic.sierra.tool.analyzer.Launcher;
