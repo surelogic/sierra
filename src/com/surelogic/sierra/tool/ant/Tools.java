@@ -7,7 +7,7 @@
  *  <nl>
  *  <li> Create a sub-class of ToolConfig </li>
  *  <li> Add a default object of that class to this class' tools Map via the {@link #addAllToolDefaults()}</li>
- *  <li> Add a addConfigured method for the class at the bottom of this. Use the existing ones for inspiration </li>
+ *  <li> Add an add() method for the class at the bottom of this. Use the existing ones for inspiration </li>
  *  </nl>
  */
 package com.surelogic.sierra.tool.ant;

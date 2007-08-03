@@ -1,49 +1,59 @@
 /**
  * 
-<sierra-analysis  
-    destDir="/tool/results/output/dir"
-    srcdir="/source/directory"  
-    bindir="/path/to/.class/files"
-    serverURL=" http://server.url"  
-    serverQualifier="comma, separated, list, of, qualifiers"
-    clean="true">
-
-    <project  name="project"  dir="/project/directory">
-        <source  path="source dir">  
-            <include  name="package/p1/**"/>
-            <exclude  name="package/p1/** /test* />
-        </source>
-
-        <binary  path="binary  dir">
-            <include  name="package/p1/**"/>  
-            <exclude  name="package/p1/** /test* />
-        </binary>       
-    </project>
-
-    <tools  exclude="comma, separated, list, of, tool, names, to, not, run">
-        <pmd-config javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
-    </tools>
-</sierra-analysis>
-
-The following attributes are optional:
-resultsdir - defaults to /tmp
-Srcdir - required unless nested <source> elements are defined
-BinDir - required unless nested <binary> elements are defined
-ServerURL - if set, will attempt to send the WSDL file
-Clean - if set to true, will clean the tool result files and the WSDL (if it
-was sent to the server successfully)
-
-Source -multiple can be defined
-    - include - same setup as in most ant tasks
-    - exclude - ditto
-
-Binary - multiple can be defined
-    - if this is not defined, it will use the source settings
-
-Tools - if not defined, will run all of the tools
-
-The tools' jar files will be included in the <taskdef> that loads this
-task's jar.
+ * <sierra-analysis  
+ *     destDir="/tool/results/output/dir"
+ *     srcdir="/source/directory"  
+ *     bindir="/path/to/.class/files"
+ *     serve * rURL=" http://server.url"  
+ *     serverQualifier="comma, separated, list, of, qualifiers"
+ *     clean="true">
+ * 
+ *     <project  name="project"  dir="/directory/for/project">
+ *         <source  dir="/path/to/directory/containing/directories/containing/.java/files">
+ *             <include  name="package/p1/**"/>
+ *             <exclude  name="package/p1/** /test* />
+ *         </source>
+ * 
+ *         <binary  dir="/path/to/directory/containing/directories/containing/.class/files">
+ *             <include  name="package/p1/**"/>  
+ *             <exclude  name="package/p1/** /test* />
+ *         </binary>       
+ *     </project>
+ * 
+ *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run">
+ *         <pmd-config javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
+ *     </tools>
+ * </sierra-analysis>
+ * 
+ * The following attributes are optional:
+ * destDir - defaults to /tmp
+ * Srcdir - required unless nested <source> elements are defined
+ * BinDir - required unless nested <binary> elements are defined
+ * ServerURL - if set, will attempt to send the WSDL file to this URL
+ * Clean - if set to true, will clean the tool result files and the WSDL (if it
+ * was sent to the server successfully)
+ * 
+ * Source - actually a DirSet
+ * 	- multiple can be defined
+ *     - include - same setup as in most ant tasks
+ *     - exclude - ditto
+ * 
+ * Binary - actually a DirSet
+ * 	- multiple can be defined
+ *     - if this is not defined, it will use the source settings
+ * 
+ * Tools - if not defined, will run all of the tools
+ * 	- exclude - optional
+ * 	- pmdconfig - optional
+ * 		- javaVersion - optional, PMD defaults to 1.5
+ * 		- rulefile - optional, defaults to ${tools directory}/pmd-3.9/all.xml
+ * 
+ * The tools' jar files will be included in the <taskdef> that loads this
+ * task's jar.
+ *
+ *
+ * <b>NOTE</b>
+ * To add support for more tools, see {@link Tools}.
  *
  */
 package com.surelogic.sierra.tool.ant;
@@ -172,6 +182,7 @@ public class SierraAnalysis extends Task {
 	
 	/**
 	 * Constructor used to create this task programmatically from inside the sierra client
+	 * NOT CURRENTLY USED.
 	 * @param config
 	 */
 	public SierraAnalysis(Config config){
