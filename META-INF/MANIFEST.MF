@@ -7,5 +7,5 @@ Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
 Require-Bundle: com.surelogic.sierra.tool,
  org.apache.ant
-Export-Package: com.surelogic.sierra.db,
- com.surelogic.sierra.jdbc.run
+Export-Package: com.surelogic.sierra.jdbc.run,
+ com.surelogic.sierra.schema
