@@ -13,8 +13,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.jdbc.ToolBuilder;
-import com.surelogic.sierra.jdbc.ToolBuilder.FindingTypeBuilder;
+import com.surelogic.sierra.jdbc.tool.ToolBuilder;
+import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
 
 public class FindBugsToolInfoGenerator {
 

@@ -8,4 +8,4 @@ Bundle-ClassPath: .
 Require-Bundle: com.surelogic.sierra.tool,
  com.surelogic.common.eclipse
 Export-Package: com.surelogic.sierra.db,
- com.surelogic.sierra.jdbc
+ com.surelogic.sierra.jdbc.run

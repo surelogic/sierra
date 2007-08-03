@@ -10,7 +10,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.jdbc.ToolBuilder.FindingTypeBuilder;
+import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
 
 /**
  * @author nathan

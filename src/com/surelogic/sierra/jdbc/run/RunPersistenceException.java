@@ -1,4 +1,4 @@
-package com.surelogic.sierra.jdbc;
+package com.surelogic.sierra.jdbc.run;
 
 public class RunPersistenceException extends RuntimeException {
 
