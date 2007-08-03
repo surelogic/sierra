@@ -41,7 +41,6 @@ public class FindingGenerator {
 			+ " A.FINDING_ID IS NULL AND A.RUN_ID = ? AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID";
 
 	public static final String MATCH_INSERT = "INSERT INTO SIERRA_MATCH (HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID, TRAIL_ID) VALUES (?,?,?,?,?,?)";
-	public static final String MATCH_SELECT_FINDING = "SELECT FINDING_ID FROM SIERRA_MATCH WHERE HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	public static final String FINDING_INSERT = "INSERT INTO FINDING (TRAIL_ID, IMPORTANCE) VALUES (?,?)";
 	public static final String TRAIL_INSERT = "INSERT INTO TRAIL (UID) VALUES (?)";
 	public static final String ARTIFACT_FINDING_SET = "UPDATE ARTIFACT SET FINDING_ID = ? WHERE ID = ?";
@@ -49,7 +48,7 @@ public class FindingGenerator {
 	private final PreparedStatement updateArtifactsWithExistingMatch;
 	private final PreparedStatement unassignedArtifacts;
 	private final PreparedStatement insertMatch;
-	private final PreparedStatement selectMatchFinding;
+
 	private final PreparedStatement insertFinding;
 	private final PreparedStatement insertTrail;
 	private final PreparedStatement updateArtifact;
@@ -60,7 +59,6 @@ public class FindingGenerator {
 		try {
 			insertMatch = conn.prepareStatement(MATCH_INSERT,
 					Statement.RETURN_GENERATED_KEYS);
-			selectMatchFinding = conn.prepareStatement(MATCH_SELECT_FINDING);
 			insertTrail = conn.prepareStatement(TRAIL_INSERT,
 					Statement.RETURN_GENERATED_KEYS);
 			insertFinding = conn.prepareStatement(FINDING_INSERT,

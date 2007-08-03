@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.surelogic.sierra.jdbc
 Bundle-Version: 1.0.0
 Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
-Require-Bundle: com.surelogic.sierra.tool
+Require-Bundle: com.surelogic.sierra.tool,
+ org.apache.ant
 Export-Package: com.surelogic.sierra.db,
  com.surelogic.sierra.jdbc.run
