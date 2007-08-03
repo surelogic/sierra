@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.adhoc.IAdHoc;
-import com.surelogic.sierra.db.Data;
 
 public final class AdHocGlue implements IAdHoc {
 
