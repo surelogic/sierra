@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +22,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.common.eclipse.BalloonUtility;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.SierraJobs;
 import com.surelogic.sierra.jdbc.run.ClientRunWriter;
 import com.surelogic.sierra.tool.SierraLogger;
@@ -267,8 +270,16 @@ public class RunTools implements IObjectActionDelegate {
 								monitor.beginTask("Generating findings",
 										IProgressMonitor.UNKNOWN);
 								launcher.parseFiles();
-								new ClientRunWriter(project.getProject()
-										.getDescription().getName()).write();
+								try {
+									Connection conn = Data.getConnection();
+									new ClientRunWriter(conn, project
+											.getProject().getDescription()
+											.getName()).write();
+									conn.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							} catch (CoreException e) {
 								log.log(Level.SEVERE, "Unable to finish run.",
 										e);
