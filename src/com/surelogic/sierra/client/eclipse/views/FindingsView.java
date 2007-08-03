@@ -8,6 +8,7 @@ import java.sql.Statement;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,20 +28,19 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import com.surelogic.adhoc.AHLog;
-import com.surelogic.adhoc.views.AdHocQueryResultsView;
 import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.SLog;
+import com.surelogic.sierra.client.eclipse.model.FindingsModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
-import com.surelogic.sierra.client.eclipse.model.FindingsOrganizationManager;
 import com.surelogic.sierra.db.Data;
+import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsView extends ViewPart {
 
 	private FindingsMediator f_mediator = null;
 
-	private FindingsOrganizationManager f_manager = new FindingsOrganizationManager();
+	private FindingsModel f_manager = new FindingsModel();
 
 	private Composite results = null;
 
@@ -63,8 +63,7 @@ public final class FindingsView extends ViewPart {
 		label.setAlignment(SWT.RIGHT);
 		label.setText("Project:");
 
-		final Combo projectCombo = new Combo(projectSelector, SWT.DROP_DOWN
-				| SWT.READ_ONLY);
+		final Combo projectCombo = new Combo(projectSelector, SWT.DROP_DOWN);
 		projectCombo.setItems(new String[] { "Test", "JEdit", "Project 3",
 				"Project 4" });
 		projectCombo.select(0);
@@ -105,7 +104,7 @@ public final class FindingsView extends ViewPart {
 		groupByCombo.setItems(f_manager.getKeys());
 		groupByCombo.select(0);
 
-		groupByCombo.addListener(SWT.Selection, new Listener() {
+		final Listener updateFindingsOverview = new Listener() {
 			public void handleEvent(Event event) {
 				String key = groupByCombo.getItem(groupByCombo
 						.getSelectionIndex());
@@ -122,7 +121,7 @@ public final class FindingsView extends ViewPart {
 					SLog.logWarning("no project to qualify key " + key);
 					return;
 				}
-				String query = org.getQuery(project);
+				String query = org.getQuery(project, f_manager.getFilter());
 				System.out.println(key + " selected");
 				System.out.println("query \"" + query + "\"");
 				try {
@@ -178,7 +177,8 @@ public final class FindingsView extends ViewPart {
 							e);
 				}
 			}
-		});
+		};
+		groupByCombo.addListener(SWT.Selection, updateFindingsOverview);
 
 		/*
 		 * Toolbar for analysis findings
@@ -192,6 +192,38 @@ public final class FindingsView extends ViewPart {
 		filter
 				.setToolTipText("Configure the filters to be applied to this view");
 		filter.setText("Filters");
+
+		final Listener filterCheckListener = new Listener() {
+			public void handleEvent(Event event) {
+				MenuItem item = (MenuItem) event.widget;
+				Importance i = Importance.valueOf(item.getText());
+				if (i != null) {
+					if (item.getSelection()) {
+						f_manager.getFilter().add(i);
+						System.out.println("add:" + i);
+					} else {
+						f_manager.getFilter().remove(i);
+						System.out.println("remove:" + i);
+
+					}
+					updateFindingsOverview.handleEvent(null);
+				}
+			}
+		};
+		final Menu filterMenu = new Menu(parent.getShell(), SWT.POP_UP);
+		for (Importance i : Importance.values()) {
+			MenuItem item = new MenuItem(filterMenu, SWT.CHECK);
+			item.setText(i.toString());
+			item.addListener(SWT.Selection, filterCheckListener);
+		}
+		filter.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				Point p = new Point(event.x, event.y);
+				p = filter.getDisplay().map(toolBar, null, p);
+				filterMenu.setLocation(p);
+				filterMenu.setVisible(true);
+			}
+		});
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
@@ -241,8 +273,7 @@ public final class FindingsView extends ViewPart {
 
 		// Second item
 		final Composite logComp = new Composite(bar, SWT.NONE);
-		final ExpandItem logItem = new ExpandItem(bar, SWT.NONE,
-				barIndex++);
+		final ExpandItem logItem = new ExpandItem(bar, SWT.NONE, barIndex++);
 		logItem.setText("Log");
 		logItem.setControl(logComp);
 		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
@@ -252,6 +283,7 @@ public final class FindingsView extends ViewPart {
 
 		f_mediator = new FindingsMediator(projectCombo, topSash, detailsItem,
 				detailsComp, logItem, logComp);
+		updateFindingsOverview.handleEvent(null);
 	}
 
 	@Override

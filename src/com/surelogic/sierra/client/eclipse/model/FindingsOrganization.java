@@ -71,12 +71,24 @@ public final class FindingsOrganization {
 		}
 	}
 
-	public String getQuery(final String projectName) {
+	/**
+	 * 
+	 * @param projectName
+	 * @param filter
+	 *            a filter for the query, may be <code>null</code>.
+	 * @return
+	 */
+	public String getQuery(final String projectName, final FindingsFilter filter) {
+		if (f_treePart.isEmpty() && f_tablePart.isEmpty())
+			throw new IllegalStateException(
+					"Cannot generate a query from an empty organization");
 		StringBuilder b = new StringBuilder();
 		b.append("select ");
 		addColumnList(b);
 		b.append(" from FINDINGS_OVERVIEW");
 		b.append(" where PROJECT='" + projectName + "'");
+		if (filter != null)
+			filter.addFilter(b);
 		addOrderBy(b);
 		return b.toString();
 	}

@@ -1,8 +1,21 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ExpandItem;
+import org.eclipse.ui.PlatformUI;
+
+import com.surelogic.adhoc.views.QueryUtility;
+import com.surelogic.sierra.client.eclipse.SLog;
+import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
+import com.surelogic.sierra.db.Data;
 
 public final class FindingsMediator {
 
@@ -19,8 +32,7 @@ public final class FindingsMediator {
 	private final Composite f_logComp;
 
 	FindingsMediator(Combo projectCombo, Composite topSash,
-			ExpandItem detailsItem, Composite detailsComp,
-			ExpandItem logItem,
+			ExpandItem detailsItem, Composite detailsComp, ExpandItem logItem,
 			Composite logComp) {
 		f_projectCombo = projectCombo;
 		f_topSash = topSash;
