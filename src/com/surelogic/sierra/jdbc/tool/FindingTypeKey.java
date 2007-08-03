@@ -6,8 +6,6 @@ package com.surelogic.sierra.jdbc.tool;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
-
 public class FindingTypeKey {
 	private Long id;
 	private final String tool;
