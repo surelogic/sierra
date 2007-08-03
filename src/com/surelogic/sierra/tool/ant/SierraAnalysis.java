@@ -311,7 +311,7 @@ public class SierraAnalysis extends Task {
 			config.setQualifiers(serverQualifiers);
 		}
 
-		if (runDocumentName == null || runDocumentName.equals("")) {
+		if (runDocumentName == null || "".equals(runDocumentName)) {
 			runDocumentName = project.getName() + ".xml" + PARSED_FILE_SUFFIX;
 		}
 		runDocument = new File(tmpFolder.getAbsolutePath(), runDocumentName);
