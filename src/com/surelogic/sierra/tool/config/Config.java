@@ -19,13 +19,31 @@ import org.apache.tools.ant.Project;
 @XmlRootElement
 public class Config {
 
-	private String project;
-	private List<String> qualifiers;
-	private String javaVersion;
-	private String javaVendor;
-	private Date runDateTime;
-	private String baseDirectory;
-	private String toolsDirectory;
+	private String project = null;
+	private List<String> qualifiers = null;
+	private String javaVersion = null;
+	private String javaVendor = null;
+	private Date runDateTime = null;
+	private String baseDirectory = null;
+	private String toolsDirectory = null;
+	// directory to store tool output in
+	private String destDirectory = null;
+	// Comma-separated list of tool names that won't be run
+	private String excludedToolsList = null;
+	// The name of the run document
+	private String runDocumentName = null;
+	// True if the temp directory inside the destDir should be deleted when done
+	private boolean cleanTempFiles = false;
+	// Path string containing all source directories to be scanned
+	private String sourceDirs = null;
+	// Path string containing all binary directories to be scanned
+	private String binDirs = null;
+	// Path string containing the classpath for Sierra client, the Ant task and Tools
+	private String classpath = null;
+	// File object for the PMD rules file
+	private File pmdRulesFile = null;
+	
+	
 
 	public Config() {
 		// Nothing to do
@@ -165,80 +183,168 @@ public class Config {
 				return false;
 		} else if (!toolsDirectory.equals(other.toolsDirectory))
 			return false;
+		
+		if(destDirectory == null && other.toolsDirectory != null){
+			return false;
+		}
+		else if(!destDirectory.equals(other.getDestDirectory())){
+			return false;
+		}
+		else if(excludedToolsList == null && other.getExcludedToolsList() != null){
+			return false;
+		}
+		else if(!excludedToolsList.equals(other.getExcludedToolsList())){
+			return false;
+		}
+		else if(runDocumentName == null && other.getRunDocumentName() != null){
+			return false;
+		}
+		else if(!runDocumentName.equals(other.getRunDocumentName())){
+			return false;
+		}
+		else if(cleanTempFiles != other.isCleanTempFiles()){
+			return false;
+		}
+		else if(sourceDirs == null && other.getSourceDirs() != null){
+			return false;
+		}
+		else if(!sourceDirs.equals(other.getSourceDirs())){
+			return false;
+		}
+		else if(binDirs == null && other.getBinDirs() != null){
+			return false;
+		}
+		else if(!binDirs.equals(other.getBinDirs())){
+			return false;
+		}
+		else if(classpath == null && other.getClasspath() != null){
+			return false;
+		}
+		else if(!classpath.equals(other.getClasspath())){
+			return false;
+		}
+		else if(pmdRulesFile == null && other.getPmdRulesFile() != null){
+			return false;
+		}
+		else if(!pmdRulesFile.equals(other.getPmdRulesFile())){
+			return false;
+		}
+		
+		
 		return true;
 	}
 
 	/**
-	 * Returns a list of comma-separated tool names that will not be run
-	 * @return
+	 * @return the destDirectory
 	 */
-	public String getExcludedTools() {
-		// TODO Auto-generated method stub
-		return null;
+	public final String getDestDirectory() {
+		return destDirectory;
 	}
 
 	/**
-	 * Returns the File object for where to store the tool results and run document.
-	 * 
-	 * @return
+	 * @param destDirectory the destDirectory to set
 	 */
-	public File getDestDirectory() {
-		// TODO Auto-generated method stub
-		return null;
+	public final void setDestDirectory(String destDirectory) {
+		this.destDirectory = destDirectory;
 	}
 
 	/**
-	 * Returns the name that the run document should have.
-	 * @return
+	 * @return the excludedToolsList
 	 */
-	public String getRunDocumentName() {
-		// TODO Auto-generated method stub
-		return null;
+	public final String getExcludedToolsList() {
+		return excludedToolsList;
 	}
 
 	/**
-	 * Returns a boolean indicating whether or not the tool result files (and run document, if it was successfully sent to the server) should be erased when done.
-	 * @return
+	 * @param excludedToolsList the excludedToolsList to set
 	 */
-	public boolean cleanTempFiles() {
-		// TODO Auto-generated method stub
-		return false;
+	public final void setExcludedToolsList(String excludedToolsList) {
+		this.excludedToolsList = excludedToolsList;
 	}
 
 	/**
-	 * Returns the path string containing all the necessary source directories for a given project
-	 * @return
+	 * @return the runDocumentName
 	 */
-	public String getSourceDirectories() {
-		// TODO Auto-generated method stub
-		return null;
+	public final String getRunDocumentName() {
+		return runDocumentName;
 	}
 
 	/**
-	 * Returns the path string containing all the necessary binary directories for a given project
-	 * @return
+	 * @param runDocumentName the runDocumentName to set
 	 */
-	public String getBinDirectories() {
-		// TODO Auto-generated method stub
-		return null;
+	public final void setRunDocumentName(String runDocumentName) {
+		this.runDocumentName = runDocumentName;
 	}
 
 	/**
-	 * Returns the path string containing all the libraries necessary to run the sierra client, ant task, and tools 
-	 * @return
+	 * @return the cleanTempFiles
 	 */
-	public String getClasspath() {
-		// TODO Auto-generated method stub
-		return null;
+	public final boolean isCleanTempFiles() {
+		return cleanTempFiles;
 	}
 
 	/**
-	 * Returns the rules File used by PMD
-	 * @return
+	 * @param cleanTempFiles the cleanTempFiles to set
 	 */
-	public File getPMDRulesFile() {
-		// TODO Auto-generated method stub
-		return null;
+	public final void setCleanTempFiles(boolean cleanTempFiles) {
+		this.cleanTempFiles = cleanTempFiles;
 	}
+
+	/**
+	 * @return the sourceDirs
+	 */
+	public final String getSourceDirs() {
+		return sourceDirs;
+	}
+
+	/**
+	 * @param sourceDirs the sourceDirs to set
+	 */
+	public final void setSourceDirs(String sourceDirs) {
+		this.sourceDirs = sourceDirs;
+	}
+
+	/**
+	 * @return the binDirs
+	 */
+	public final String getBinDirs() {
+		return binDirs;
+	}
+
+	/**
+	 * @param binDirs the binDirs to set
+	 */
+	public final void setBinDirs(String binDirs) {
+		this.binDirs = binDirs;
+	}
+
+	/**
+	 * @return the classpath
+	 */
+	public final String getClasspath() {
+		return classpath;
+	}
+
+	/**
+	 * @param classpath the classpath to set
+	 */
+	public final void setClasspath(String classpath) {
+		this.classpath = classpath;
+	}
+
+	/**
+	 * @return the pmdRulesFile
+	 */
+	public final File getPmdRulesFile() {
+		return pmdRulesFile;
+	}
+
+	/**
+	 * @param pmdRulesFile the pmdRulesFile to set
+	 */
+	public final void setPmdRulesFile(File pmdRulesFile) {
+		this.pmdRulesFile = pmdRulesFile;
+	}
+
 
 }
