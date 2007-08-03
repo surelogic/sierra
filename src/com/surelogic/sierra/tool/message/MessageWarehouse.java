@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool.message;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -141,14 +142,13 @@ public class MessageWarehouse {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return the {@link Run} object located at src.
 	 * 
 	 * @param src
 	 *            a path name
-	 * @return a {@link Run} object, or null if none can be parsed at
-	 *         src.
+	 * @return a {@link Run} object, or null if none can be parsed at src.
 	 */
 	public Run fetchRun(String src) {
 		try {
@@ -157,7 +157,7 @@ public class MessageWarehouse {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	public Run fetchRun(InputStream in) {
 		try {
 			Unmarshaller unmarshaller = ctx.createUnmarshaller();
@@ -168,76 +168,59 @@ public class MessageWarehouse {
 		return null;
 	}
 
-	/**
-	 * Parse the tool output at the specified source.
-	 * 
-	 * @param src
-	 */
-	public void parseToolOutput(String src, ArtifactGenerator generator) {
-		parseToolOutput(Collections.singleton(src), generator);
-	}
-
-	/**
-	 * Parse the tool output at the specified sources.
-	 * 
-	 * @param src
-	 */
-	public void parseToolOutput(Collection<String> sources,
+	public void parseRunDocument(final File runDocument,
 			ArtifactGenerator generator) {
+		// TODO Check for null
 		try {
 			Unmarshaller um = ctx.createUnmarshaller();
+			try {
+				// set up a parser
+				XMLInputFactory xmlif = XMLInputFactory.newInstance();
+				XMLStreamReader xmlr = xmlif
+						.createXMLStreamReader(new FileReader(runDocument));
 
-			for (String src : sources) {
 				try {
-
-					// set up a parser
-					XMLInputFactory xmlif = XMLInputFactory.newInstance();
-					XMLStreamReader xmlr = xmlif
-							.createXMLStreamReader(new FileReader(src));
-
-					try {
-						// move to the root element and check its name.
-						xmlr.nextTag();
-						xmlr.require(START_ELEMENT, null, "Run");
-						xmlr.nextTag(); // move to toolOutput element.
-						xmlr.nextTag(); // move to artifacts
-						// Unmarshal artifacts
-						ArtifactBuilder aBuilder = generator.artifact();
-						while (xmlr.getEventType() == START_ELEMENT
-								&& xmlr.getLocalName().equals("artifact")) {
-							readArtifact(um.unmarshal(xmlr, Artifact.class)
-									.getValue(), aBuilder);
-							if (xmlr.getEventType() == CHARACTERS) {
-								xmlr.next(); // skip the whitespace between
-								// <artifacts>s.
-							}
+					// move to the root element and check its name.
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "Run");
+					xmlr.nextTag(); // move to toolOutput element.
+					xmlr.nextTag(); // move to artifacts
+					// Unmarshal artifacts
+					ArtifactBuilder aBuilder = generator.artifact();
+					while (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("artifact")) {
+						readArtifact(um.unmarshal(xmlr, Artifact.class)
+								.getValue(), aBuilder);
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <artifacts>s.
 						}
-						// Unmarshal errors
-						ErrorBuilder eBuilder = generator.error();
-						while (xmlr.getEventType() == START_ELEMENT
-								&& xmlr.getLocalName().equals("errors")) {
-							readError(um.unmarshal(xmlr, Error.class)
-									.getValue(), eBuilder);
-							if (xmlr.getEventType() == CHARACTERS) {
-								xmlr.next(); // skip the whitespace between
-								// <event>s.
-							}
-						}
-					} catch (JAXBException e) {
-						throw new IllegalArgumentException("File with name"
-								+ src + " is not a valid document", e);
 					}
-				} catch (FileNotFoundException e) {
-					throw new IllegalArgumentException("File with name" + src
-							+ " does not exist.", e);
-				} catch (XMLStreamException e) {
-					throw new IllegalArgumentException(e);
+					// Unmarshal errors
+					ErrorBuilder eBuilder = generator.error();
+					while (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("errors")) {
+						readError(um.unmarshal(xmlr, Error.class).getValue(),
+								eBuilder);
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <event>s.
+						}
+					}
+				} catch (JAXBException e) {
+					throw new IllegalArgumentException("File with name"
+							+ runDocument.getName()
+							+ " is not a valid document", e);
 				}
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("File with name"
+						+ runDocument.getName() + " does not exist.", e);
+			} catch (XMLStreamException e) {
+				throw new IllegalArgumentException(e);
 			}
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		}
-
 	}
 
 	// TODO Having these methods be public static is probably not the best way
