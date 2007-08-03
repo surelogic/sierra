@@ -178,7 +178,8 @@ public class RunTools implements IObjectActionDelegate {
 									monitor.beginTask("Running PMD",
 											IProgressMonitor.UNKNOWN);
 									toolPMDLock.acquire();
-									launcher.launchPMD();
+									// launcher.launchPMD();
+									launcher.launchPMDANT();
 
 								} catch (Exception e) {
 									e.printStackTrace();
