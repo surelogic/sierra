@@ -9,8 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.surelogic.sierra.db.Data;
-import com.surelogic.sierra.entity.EM;
+import com.surelogic.sierra.schema.SchemaScriptUtility;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -43,14 +42,13 @@ public class Activator extends AbstractUIPlugin {
 				.getStateLocation().toOSString());
 		System.setProperty("sierra.db.name", "db");
 		// find the schema file within this plug-in
-		final URL schemaURL = Data.getDatabaseSQL();
+		final URL schemaURL = SchemaScriptUtility.getDatabaseSQL();
 		if (schemaURL != null) {
 			// startup the database and (if necessary) load its schema
 			Data.bootAndCheckSchema(schemaURL);
 		} else {
 			throw new CoreException(SLog
-					.createErrorStatus("Unable to find the Tiger schema file: "
-							+ Data.DATABASE_SQL));
+					.createErrorStatus("Unable to find the Tiger schema file"));
 		}
 	}
 
