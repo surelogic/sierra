@@ -107,8 +107,7 @@ public final class FindingsView extends ViewPart {
 
 		final Listener updateFindingsOverview = new Listener() {
 			public void handleEvent(Event event) {
-				String key = groupByCombo.getItem(groupByCombo
-						.getSelectionIndex());
+				String key = groupByCombo.getText();
 				if (key == null)
 					return;
 				FindingsOrganization org = f_manager.get(key);

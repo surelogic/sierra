@@ -15,7 +15,6 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.surelogic.sierra.entity.Artifact;
 import com.surelogic.sierra.tool.SierraTool;
 
 public class AppendToFile implements IObjectActionDelegate {
@@ -56,28 +55,29 @@ public class AppendToFile implements IObjectActionDelegate {
 			while (selectionIterator.hasNext()) {
 
 				Object o = selectionIterator.next();
-				if (o instanceof Artifact) {
-					Artifact a = (Artifact) o;
-					String toWrite = a.getPrimarySourceLocation()
-							.getCompilationUnit().getClassName()
-							+ ","
-							+ a.getPrimarySourceLocation().getLineOfCode()
-							+ ","
-							+ String.valueOf(a.getFinding().getId() + ","
-									+ a.getFindingType().getTool().getName()
-									+ ","
-									+ a.getRun().getRunDateTime().toString());
-					if (!DEFAULT_PACKAGE.equals(a.getPrimarySourceLocation()
-							.getCompilationUnit().getPackageName())) {
-						toWrite = a.getPrimarySourceLocation()
-								.getCompilationUnit().getPackageName()
-								+ "." + toWrite;
-					}
-
-					writer.write(toWrite);
-					writer.newLine();
-
-				}
+				//TODO we need to re-implement this section
+//				if (o instanceof Artifact) {
+//					Artifact a = (Artifact) o;
+//					String toWrite = a.getPrimarySourceLocation()
+//							.getCompilationUnit().getClassName()
+//							+ ","
+//							+ a.getPrimarySourceLocation().getLineOfCode()
+//							+ ","
+//							+ String.valueOf(a.getFinding().getId() + ","
+//									+ a.getFindingType().getTool().getName()
+//									+ ","
+//									+ a.getRun().getRunDateTime().toString());
+//					if (!DEFAULT_PACKAGE.equals(a.getPrimarySourceLocation()
+//							.getCompilationUnit().getPackageName())) {
+//						toWrite = a.getPrimarySourceLocation()
+//								.getCompilationUnit().getPackageName()
+//								+ "." + toWrite;
+//					}
+//
+//					writer.write(toWrite);
+//					writer.newLine();
+//
+//				}
 			}
 			writer.close();
 
