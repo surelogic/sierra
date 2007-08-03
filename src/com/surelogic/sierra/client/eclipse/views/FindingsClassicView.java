@@ -263,10 +263,10 @@ public class FindingsClassicView extends ViewPart {
 		manager.add(packageSort);
 		manager.add(prioritySort);
 		manager.add(new Separator());
-		manager.add(uninterestingSortCategory);
-		manager.add(uninterestingSortPackage);
-		manager.add(uninterestingSortPriority);
-		manager.add(new Separator());
+		// manager.add(uninterestingSortCategory);
+		// manager.add(uninterestingSortPackage);
+		// manager.add(uninterestingSortPriority);
+		// manager.add(new Separator());
 		manager.add(publishRun);
 	}
 

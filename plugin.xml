@@ -37,6 +37,8 @@
                label="Append to file...">
          	</action>
       </objectContribution>
+      
+      <!--
       <objectContribution
             id="MarkIntersting.popupMenu"
             objectClass="com.surelogic.sierra.entity.Artifact">
@@ -88,6 +90,7 @@
                label="Mark/Unmark Interesting">
          </action>
       </objectContribution>
+      -->
    </extension>
    
    <extension
