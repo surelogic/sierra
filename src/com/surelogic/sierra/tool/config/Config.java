@@ -38,12 +38,11 @@ public class Config {
 	private String sourceDirs = null;
 	// Path string containing all binary directories to be scanned
 	private String binDirs = null;
-	// Path string containing the classpath for Sierra client, the Ant task and Tools
+	// Path string containing the classpath for Sierra client, the Ant task and
+	// Tools
 	private String classpath = null;
 	// File object for the PMD rules file
 	private File pmdRulesFile = null;
-	
-	
 
 	public Config() {
 		// Nothing to do
@@ -148,89 +147,69 @@ public class Config {
 		if (getClass() != obj.getClass())
 			return false;
 		final Config other = (Config) obj;
-		if (javaVendor == null) {
-			if (other.javaVendor != null)
-				return false;
-		} else if (!javaVendor.equals(other.javaVendor))
+
+		if (javaVendor == null && other.javaVendor != null) {
 			return false;
-		if (javaVersion == null) {
-			if (other.javaVersion != null)
-				return false;
-		} else if (!javaVersion.equals(other.javaVersion))
+		} else if (!javaVendor.equals(other.javaVendor)) {
 			return false;
-		if (project == null) {
-			if (other.project != null)
-				return false;
-		} else if (!project.equals(other.project))
+		} else if (javaVersion == null && other.javaVersion != null) {
 			return false;
-		if (qualifiers == null) {
-			if (other.qualifiers != null)
-				return false;
-		} else if (!qualifiers.equals(other.qualifiers))
+		} else if (!javaVersion.equals(other.javaVersion)) {
 			return false;
-		if (runDateTime == null) {
-			if (other.runDateTime != null)
-				return false;
-		} else if (!runDateTime.equals(other.runDateTime))
+		} else if (project == null && other.project != null) {
 			return false;
-		if (baseDirectory == null) {
-			if (other.baseDirectory != null)
-				return false;
-		} else if (!baseDirectory.equals(other.baseDirectory))
+		} else if (!project.equals(other.project)) {
 			return false;
-		if (toolsDirectory == null) {
-			if (other.toolsDirectory != null)
-				return false;
-		} else if (!toolsDirectory.equals(other.toolsDirectory))
+		} else if (qualifiers == null && other.qualifiers != null) {
 			return false;
-		
-		if(destDirectory == null && other.toolsDirectory != null){
+		} else if (!qualifiers.equals(other.qualifiers)) {
 			return false;
-		}
-		else if(!destDirectory.equals(other.getDestDirectory())){
+		} else if (runDateTime == null && other.runDateTime != null) {
 			return false;
-		}
-		else if(excludedToolsList == null && other.getExcludedToolsList() != null){
+		} else if (!runDateTime.equals(other.runDateTime)) {
 			return false;
-		}
-		else if(!excludedToolsList.equals(other.getExcludedToolsList())){
+		} else if (baseDirectory == null & other.baseDirectory != null) {
 			return false;
-		}
-		else if(runDocumentName == null && other.getRunDocumentName() != null){
+		} else if (!baseDirectory.equals(other.baseDirectory)) {
 			return false;
-		}
-		else if(!runDocumentName.equals(other.getRunDocumentName())){
+		} else if (toolsDirectory == null && other.toolsDirectory != null) {
 			return false;
-		}
-		else if(cleanTempFiles != other.isCleanTempFiles()){
+		} else if (!toolsDirectory.equals(other.toolsDirectory)) {
 			return false;
-		}
-		else if(sourceDirs == null && other.getSourceDirs() != null){
+		} else if (destDirectory == null && other.toolsDirectory != null) {
 			return false;
-		}
-		else if(!sourceDirs.equals(other.getSourceDirs())){
+		} else if (!destDirectory.equals(other.getDestDirectory())) {
 			return false;
-		}
-		else if(binDirs == null && other.getBinDirs() != null){
+		} else if (excludedToolsList == null
+				&& other.getExcludedToolsList() != null) {
+			return false;
+		} else if (!excludedToolsList.equals(other.getExcludedToolsList())) {
+			return false;
+		} else if (runDocumentName == null
+				&& other.getRunDocumentName() != null) {
+			return false;
+		} else if (!runDocumentName.equals(other.getRunDocumentName())) {
+			return false;
+		} else if (cleanTempFiles != other.isCleanTempFiles()) {
+			return false;
+		} else if (sourceDirs == null && other.getSourceDirs() != null) {
+			return false;
+		} else if (!sourceDirs.equals(other.getSourceDirs())) {
+			return false;
+		} else if (binDirs == null && other.getBinDirs() != null) {
+			return false;
+		} else if (!binDirs.equals(other.getBinDirs())) {
+			return false;
+		} else if (classpath == null && other.getClasspath() != null) {
+			return false;
+		} else if (!classpath.equals(other.getClasspath())) {
+			return false;
+		} else if (pmdRulesFile == null && other.getPmdRulesFile() != null) {
+			return false;
+		} else if (!pmdRulesFile.equals(other.getPmdRulesFile())) {
 			return false;
 		}
-		else if(!binDirs.equals(other.getBinDirs())){
-			return false;
-		}
-		else if(classpath == null && other.getClasspath() != null){
-			return false;
-		}
-		else if(!classpath.equals(other.getClasspath())){
-			return false;
-		}
-		else if(pmdRulesFile == null && other.getPmdRulesFile() != null){
-			return false;
-		}
-		else if(!pmdRulesFile.equals(other.getPmdRulesFile())){
-			return false;
-		}
-		
-		
+
 		return true;
 	}
 
@@ -242,7 +221,8 @@ public class Config {
 	}
 
 	/**
-	 * @param destDirectory the destDirectory to set
+	 * @param destDirectory
+	 *            the destDirectory to set
 	 */
 	public final void setDestDirectory(String destDirectory) {
 		this.destDirectory = destDirectory;
@@ -256,7 +236,8 @@ public class Config {
 	}
 
 	/**
-	 * @param excludedToolsList the excludedToolsList to set
+	 * @param excludedToolsList
+	 *            the excludedToolsList to set
 	 */
 	public final void setExcludedToolsList(String excludedToolsList) {
 		this.excludedToolsList = excludedToolsList;
@@ -270,7 +251,8 @@ public class Config {
 	}
 
 	/**
-	 * @param runDocumentName the runDocumentName to set
+	 * @param runDocumentName
+	 *            the runDocumentName to set
 	 */
 	public final void setRunDocumentName(String runDocumentName) {
 		this.runDocumentName = runDocumentName;
@@ -284,7 +266,8 @@ public class Config {
 	}
 
 	/**
-	 * @param cleanTempFiles the cleanTempFiles to set
+	 * @param cleanTempFiles
+	 *            the cleanTempFiles to set
 	 */
 	public final void setCleanTempFiles(boolean cleanTempFiles) {
 		this.cleanTempFiles = cleanTempFiles;
@@ -298,7 +281,8 @@ public class Config {
 	}
 
 	/**
-	 * @param sourceDirs the sourceDirs to set
+	 * @param sourceDirs
+	 *            the sourceDirs to set
 	 */
 	public final void setSourceDirs(String sourceDirs) {
 		this.sourceDirs = sourceDirs;
@@ -312,7 +296,8 @@ public class Config {
 	}
 
 	/**
-	 * @param binDirs the binDirs to set
+	 * @param binDirs
+	 *            the binDirs to set
 	 */
 	public final void setBinDirs(String binDirs) {
 		this.binDirs = binDirs;
@@ -326,7 +311,8 @@ public class Config {
 	}
 
 	/**
-	 * @param classpath the classpath to set
+	 * @param classpath
+	 *            the classpath to set
 	 */
 	public final void setClasspath(String classpath) {
 		this.classpath = classpath;
@@ -340,11 +326,11 @@ public class Config {
 	}
 
 	/**
-	 * @param pmdRulesFile the pmdRulesFile to set
+	 * @param pmdRulesFile
+	 *            the pmdRulesFile to set
 	 */
 	public final void setPmdRulesFile(File pmdRulesFile) {
 		this.pmdRulesFile = pmdRulesFile;
 	}
-
 
 }
