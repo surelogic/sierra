@@ -1,10 +1,13 @@
 package com.surelogic.sierra.tool.config;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.tools.ant.Project;
 
 /**
  * The config object for the run document.
@@ -163,6 +166,79 @@ public class Config {
 		} else if (!toolsDirectory.equals(other.toolsDirectory))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Returns a list of comma-separated tool names that will not be run
+	 * @return
+	 */
+	public String getExcludedTools() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns the File object for where to store the tool results and run document.
+	 * 
+	 * @return
+	 */
+	public File getDestDirectory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns the name that the run document should have.
+	 * @return
+	 */
+	public String getRunDocumentName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns a boolean indicating whether or not the tool result files (and run document, if it was successfully sent to the server) should be erased when done.
+	 * @return
+	 */
+	public boolean cleanTempFiles() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Returns the path string containing all the necessary source directories for a given project
+	 * @return
+	 */
+	public String getSourceDirectories() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns the path string containing all the necessary binary directories for a given project
+	 * @return
+	 */
+	public String getBinDirectories() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns the path string containing all the libraries necessary to run the sierra client, ant task, and tools 
+	 * @return
+	 */
+	public String getClasspath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns the rules File used by PMD
+	 * @return
+	 */
+	public File getPMDRulesFile() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
