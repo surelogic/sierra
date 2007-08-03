@@ -107,7 +107,8 @@ public final class FindingsView extends ViewPart {
 
 		final Listener updateFindingsOverview = new Listener() {
 			public void handleEvent(Event event) {
-				String key = groupByCombo.getText();
+				String key = groupByCombo.getItem(groupByCombo
+						.getSelectionIndex());
 				if (key == null)
 					return;
 				FindingsOrganization org = f_manager.get(key);
@@ -115,8 +116,7 @@ public final class FindingsView extends ViewPart {
 					SLog.logWarning("no FindingsOrganization for key " + key);
 					return;
 				}
-				String project = projectCombo.getItem(projectCombo
-						.getSelectionIndex());
+				String project = projectCombo.getText();
 				if (project == null) {
 					SLog.logWarning("no project to qualify key " + key);
 					return;
