@@ -27,7 +27,7 @@ public class Config {
 	private String baseDirectory = null;
 	private String toolsDirectory = null;
 	// directory to store tool output in
-	private String destDirectory = null;
+	private File destDirectory = null;
 	// Comma-separated list of tool names that won't be run
 	private String excludedToolsList = null;
 	// The name of the run document
@@ -216,7 +216,7 @@ public class Config {
 	/**
 	 * @return the destDirectory
 	 */
-	public final String getDestDirectory() {
+	public final File getDestDirectory() {
 		return destDirectory;
 	}
 
@@ -224,7 +224,7 @@ public class Config {
 	 * @param destDirectory
 	 *            the destDirectory to set
 	 */
-	public final void setDestDirectory(String destDirectory) {
+	public final void setDestDirectory(File destDirectory) {
 		this.destDirectory = destDirectory;
 	}
 
