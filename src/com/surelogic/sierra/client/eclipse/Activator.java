@@ -1,15 +1,10 @@
 package com.surelogic.sierra.client.eclipse;
 
-import java.net.URL;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
-import com.surelogic.sierra.schema.SchemaScriptUtility;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -37,19 +32,8 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		// Set the location for the database.
-		System.setProperty("sierra.db.location", Activator.getDefault()
-				.getStateLocation().toOSString());
-		System.setProperty("sierra.db.name", "db");
-		// find the schema file within this plug-in
-		final URL schemaURL = SchemaScriptUtility.getDatabaseSQL();
-		if (schemaURL != null) {
-			// startup the database and (if necessary) load its schema
-			Data.bootAndCheckSchema(schemaURL);
-		} else {
-			throw new CoreException(SLog
-					.createErrorStatus("Unable to find the Tiger schema file"));
-		}
+		// startup the database and ensure its schema is up to date
+		Data.bootAndCheckSchema();
 	}
 
 	@Override
