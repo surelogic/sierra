@@ -2,6 +2,8 @@ package com.surelogic.sierra.client.eclipse.data;
 
 import java.io.File;
 
+import com.surelogic.common.SLProgressMonitor;
+
 public final class RunDocumentUtility {
 
 	private RunDocumentUtility() {
@@ -15,8 +17,11 @@ public final class RunDocumentUtility {
 	 * 
 	 * @param runDocument
 	 *            the run document.
+	 * @param monitor
+	 *            a progress monitor, may be <code>null</code> if progress is
+	 *            not tracked.
 	 */
-	public static void loadRunDocument(final File runDocument) {
-		// TODO
+	public static void loadRunDocument(final File runDocument,
+			final SLProgressMonitor monitor) {
 	}
 }
