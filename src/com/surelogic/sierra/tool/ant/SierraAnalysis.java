@@ -21,7 +21,7 @@
  *     </project>
  * 
  *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run">
- *         <pmd-config javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
+ *         <pmdconfig javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
  *     </tools>
  * </sierra-analysis>
  * 
