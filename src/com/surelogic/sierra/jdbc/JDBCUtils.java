@@ -33,13 +33,21 @@ public class JDBCUtils {
 		}
 	}
 
-	public static void insert(PreparedStatement st, Record<Long> record)
+	/**
+	 * Insert a record, and read it's generated id.
+	 * 
+	 * @param st
+	 * @param record
+	 * @throws SQLException
+	 */
+	public static void insert(PreparedStatement st, Record<?> record)
 			throws SQLException {
 		ResultSet keys;
 		record.fill(st, 1);
 		st.executeUpdate();
 		keys = st.getGeneratedKeys();
 		keys.next();
-		record.setId(keys.getLong(1));
+		record.readPk(keys, 1);
 	}
+
 }

@@ -1,30 +1,22 @@
 package com.surelogic.sierra.jdbc.run;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.surelogic.sierra.jdbc.Record;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import com.surelogic.sierra.jdbc.LongRecord;
 
-public class RunRecord implements Record<Long> {
+public class RunRecord extends LongRecord {
 
-	private Long id;
 	private Long userId;
 	private Long projectId;
 	private String javaVersion;
 	private String javaVendor;
 	private Date timestamp;
 	private RunStatus status;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Long getUserId() {
 		return userId;

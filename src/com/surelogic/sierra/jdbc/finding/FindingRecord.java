@@ -1,15 +1,15 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableInt;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
+import com.surelogic.sierra.jdbc.LongRecord;
 import com.surelogic.sierra.tool.message.Importance;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
-public class FindingRecord implements Record<Long> {
+public class FindingRecord extends LongRecord {
 
-	private Long id;
 	private TrailRecord trail;
 	private Importance importance;
 
@@ -17,14 +17,6 @@ public class FindingRecord implements Record<Long> {
 		st.setLong(idx++, trail.getId());
 		setNullableInt(idx++, st, importance.ordinal());
 		return idx;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public TrailRecord getTrail() {

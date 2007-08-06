@@ -41,7 +41,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 		return idx;
 	}
 
-	public int fillWithPK(PreparedStatement st, int idx) throws SQLException {
+	public int fillWithPk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id.getHash());
 		st.setString(idx++, id.getClassName());
 		st.setString(idx++, id.getPackageName());
@@ -49,7 +49,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 		return idx;
 	}
 
-	public int readPK(ResultSet set, int idx) throws SQLException {
+	public int readPk(ResultSet set, int idx) throws SQLException {
 		id = new PK();
 		id.setHash(set.getLong(idx++));
 		id.setClassName(set.getString(idx++));

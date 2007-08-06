@@ -85,8 +85,8 @@ public class FindingGenerator {
 				art.p = Priority.values()[result.getInt(idx++)];
 				art.s = Severity.values()[result.getInt(idx++)];
 				art.m = new MatchRecord();
-				idx = art.m.readPK(result, idx);
-				art.m.fillWithPK(selectMatch, 1);
+				idx = art.m.readPk(result, idx);
+				art.m.fillWithPk(selectMatch, 1);
 				ResultSet match = selectMatch.executeQuery();
 				if (!match.next()) {
 					counter++;

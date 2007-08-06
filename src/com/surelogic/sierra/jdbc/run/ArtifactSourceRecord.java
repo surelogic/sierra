@@ -6,9 +6,7 @@ package com.surelogic.sierra.jdbc.run;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
-
-class ArtifactSourceRecord implements Record<Long> {
+class ArtifactSourceRecord {
 	private ArtifactRecord artifact;
 	private SourceRecord source;
 
@@ -22,15 +20,6 @@ class ArtifactSourceRecord implements Record<Long> {
 		st.setLong(idx++, artifact.getId());
 		st.setLong(idx++, source.getId());
 		return idx;
-	}
-
-	public Long getId() {
-		// No-op, since we don't need this id
-		return 0L;
-	}
-
-	public void setId(Long id) {
-		// No-op, since we don't need this id
 	}
 
 	@Override

@@ -3,28 +3,19 @@
  */
 package com.surelogic.sierra.jdbc.run;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import com.surelogic.sierra.jdbc.LongRecord;
 
-class CompilationUnitRecord implements Record<Long> {
-
-	private Long id;
+class CompilationUnitRecord extends LongRecord {
 	private String path;
 	private String className;
 	private String packageName;
 
 	CompilationUnitRecord() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getPath() {

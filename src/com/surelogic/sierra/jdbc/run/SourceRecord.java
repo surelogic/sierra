@@ -10,12 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import com.surelogic.sierra.jdbc.Record;
+import com.surelogic.sierra.jdbc.LongRecord;
 import com.surelogic.sierra.tool.message.IdentifierType;
 
-class SourceRecord implements Record<Long> {
+class SourceRecord extends LongRecord {
 
-	private Long id;
 	private Long hash;
 	private Integer lineOfCode;
 	private Integer endLineOfCode;
@@ -25,14 +24,6 @@ class SourceRecord implements Record<Long> {
 	private CompilationUnitRecord compUnit;
 
 	SourceRecord() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Long getHash() {

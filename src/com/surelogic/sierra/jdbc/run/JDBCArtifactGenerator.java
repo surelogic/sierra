@@ -19,6 +19,7 @@ import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 public class JDBCArtifactGenerator implements ArtifactGenerator {
 
@@ -91,7 +92,10 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		sources.clear();
 		executeAndGenerateIds(artifactInsert, artifacts);
 		artifacts.clear();
-		executeAndGenerateIds(artifactSourceInsert, relations);
+		for (ArtifactSourceRecord rec : relations) {
+			rec.fill(artifactSourceInsert, 1);
+			artifactSourceInsert.executeUpdate();
+		}
 		relations.clear();
 		conn.commit();
 	}
@@ -117,13 +121,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private void executeAndGenerateIds(PreparedStatement st,
 			Collection<? extends Record<Long>> objects) throws SQLException {
-		int idx = 1;
-		for (Record<Long> i : objects) {
-			i.fill(st, idx);
-			st.executeUpdate();
-			ResultSet set = st.getGeneratedKeys();
-			set.next();
-			i.setId(set.getLong(1));
+		for (Record<?> rec : objects) {
+			insert(st, rec);
 		}
 	}
 

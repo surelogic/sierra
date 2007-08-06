@@ -1,22 +1,14 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import com.surelogic.sierra.jdbc.LongRecord;
 
-public class TrailRecord implements Record<Long> {
-	private Long id;
+public class TrailRecord extends LongRecord {
 	private String uid;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getUid() {
 		return uid;
@@ -30,5 +22,4 @@ public class TrailRecord implements Record<Long> {
 		setNullableString(idx++, st, uid);
 		return idx;
 	}
-
 }

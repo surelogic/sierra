@@ -3,16 +3,16 @@
  */
 package com.surelogic.sierra.jdbc.run;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
+import com.surelogic.sierra.jdbc.LongRecord;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
-class ArtifactRecord implements Record<Long> {
-	private Long id;
+class ArtifactRecord extends LongRecord {
 
 	private Long runId;
 	private Long findingTypeId;
@@ -80,14 +80,6 @@ class ArtifactRecord implements Record<Long> {
 		st.setInt(idx++, severity.ordinal());
 		setNullableString(idx++, st, message);
 		return idx;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override
