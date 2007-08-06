@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 import com.surelogic.common.jdbc.SchemaUtility;
 
-public final class SchemaScriptUtility {
+public final class SierraSchemaUtility {
 
-	private SchemaScriptUtility() {
+	private SierraSchemaUtility() {
 		// no instances
 	}
 
@@ -27,7 +27,7 @@ public final class SchemaScriptUtility {
 
 		final URL[] scripts = new URL[arrayLength];
 		for (int i = 0; i < scripts.length; i++) {
-			scripts[i] = SchemaScriptUtility.class
+			scripts[i] = SierraSchemaUtility.class
 					.getResource(SQL_SCRIPT_PREFIX + getZeroPadded(i) + ".sql");
 		}
 		SchemaUtility.checkAndUpdate(c, scripts, null);
