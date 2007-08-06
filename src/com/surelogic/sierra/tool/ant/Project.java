@@ -28,18 +28,18 @@ public class Project {
 	private List<Binary> binaries = new ArrayList<Binary>();
 	private Path src = null;
 	private Path bin = null;
-	private org.apache.tools.ant.Project proj = null;
+	private org.apache.tools.ant.Project antProject = null;
 
-	public Project(org.apache.tools.ant.Project proj) {
-		this.proj = proj;
-		src = new Path(proj);
-		bin = new Path(proj);
+	public Project(org.apache.tools.ant.Project antProject) {
+		this.antProject = antProject;
+		src = new Path(antProject);
+		bin = new Path(antProject);
 	}
 	
-	public Project(org.apache.tools.ant.Project proj, Config config) {
-		this.proj = proj;
-		src = new Path(proj);
-		bin = new Path(proj);
+	public Project(org.apache.tools.ant.Project antProject, Config config) {
+		this.antProject = antProject;
+		src = new Path(antProject);
+		bin = new Path(antProject);
 		
 		name = config.getProject();
 		dir = new File(config.getBaseDirectory());
@@ -67,9 +67,9 @@ public class Project {
 		}
 		if (!sources.isEmpty()) {
 			for (Source source : sources) {
-				System.out.println("Sources in Project element: "
-						+ source.toString());// ,
-				// org.apache.tools.ant.Project.MSG_DEBUG);
+				antProject.log("Sources in Project element: "
+						+ source.toString(),
+    				org.apache.tools.ant.Project.MSG_DEBUG);
 
 				String[] list = source.getDirectoryScanner()
 						.getIncludedDirectories();
@@ -82,15 +82,15 @@ public class Project {
 						throw new BuildException("srcDir \"" + srcDir.getPath()
 								+ "\" does not exist.");
 					}
-					src.append(new Path(proj, srcDir.getAbsolutePath()));
+					src.append(new Path(antProject, srcDir.getAbsolutePath()));
 				}
 			}
 		}
 		if (!binaries.isEmpty()) {
 			for (Binary binary : binaries) {
-				System.out.println("Binaries in Project element: "
-						+ binary.toString());// ,
-				// org.apache.tools.ant.Project.MSG_DEBUG);
+				antProject.log("Binaries in Project element: "
+						+ binary.toString(),
+    				org.apache.tools.ant.Project.MSG_DEBUG);
 
 				String[] list = binary.getDirectoryScanner()
 						.getIncludedDirectories();
@@ -102,7 +102,7 @@ public class Project {
 						throw new BuildException("binDir \"" + binDir.getPath()
 								+ "\" does not exist.");
 					}
-					bin.append(new Path(proj, binDir.getAbsolutePath()));
+					bin.append(new Path(antProject, binDir.getAbsolutePath()));
 				}
 			}
 		}
