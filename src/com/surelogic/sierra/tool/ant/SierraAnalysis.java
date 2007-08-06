@@ -20,8 +20,9 @@
  *         </binary>       
  *     </project>
  * 
- *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run">
+ *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run" multithreaded="true">
  *         <pmdconfig javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
+ *         <findbugsconfig memory="1024m"/>
  *     </tools>
  * </sierra-analysis>
  * 
@@ -44,16 +45,20 @@
  * 
  * Tools - if not defined, will run all of the tools
  * 	- exclude - optional
+ *  - multithreaded - optional, defaults to false
  * 	- pmdconfig - optional
  * 		- javaVersion - optional, PMD defaults to 1.5
  * 		- rulefile - optional, defaults to ${tools directory}/pmd-3.9/all.xml
+ *  - findbugsconfig - optional
+ *      - memory - optional, the string to send to Java's -Xmx commandline option, defaults to '1024m'
+ *      - home - optional, the value to set for the findbugs.home variable
  * 
  * The tools' jar files will be included in the <taskdef> that loads this
  * task's jar.
  *
  *
  * <b>NOTE</b>
- * To add support for more tools, see {@link Tools}.
+ * To add support for more tools, see the comments at the top of {@link Tools}.
  *
  */
 package com.surelogic.sierra.tool.ant;
