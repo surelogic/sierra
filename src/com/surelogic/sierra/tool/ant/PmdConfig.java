@@ -22,7 +22,7 @@ public class PmdConfig extends ToolConfig {
 	//The path to the default rules file, relative to the Tools folder
 	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator + "all.xml";
 
-	private String javaVersion = null;
+	private String targetJDK = null;
 	private File rulesFile = null;
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
@@ -36,7 +36,7 @@ public class PmdConfig extends ToolConfig {
 	public void validate() {
 		super.validate();
 
-		if (javaVersion != null && !javaVersion.matches("\\d\\.\\d")) {
+		if (targetJDK != null && !targetJDK.matches("\\d\\.\\d")) {
 			throw new BuildException(
 					"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be one of the following: 1.3, 1.4, 1.5, 1.6 ");
 		}
@@ -62,6 +62,12 @@ public class PmdConfig extends ToolConfig {
 		// Set the Java command's classpath
 		cmdj.createClasspath(antProject).createPath().append(
 				analysis.getClasspath());
+		
+		// Add optional arguments
+		if (targetJDK != null && !"".equals(targetJDK)) {
+			cmdj.createArgument().setValue("-targetjdk");
+			cmdj.createArgument().setValue(getTargetJDK());
+		}
 
 		// Add the output file
 		cmdj.createArgument().setValue("-reportfile");
@@ -78,6 +84,7 @@ public class PmdConfig extends ToolConfig {
 
 		antProject.log("Classpath: " + cmdj.getClasspath().toString(),
 				org.apache.tools.ant.Project.MSG_DEBUG);
+		
 
 		// Add the source directories to scan
 		String[] paths = analysis.getSrcdir().list();
@@ -93,11 +100,6 @@ public class PmdConfig extends ToolConfig {
 		// Add the ruleset file
 		cmdj.createArgument().setValue(rulesFile.getAbsolutePath());
 
-		// Add optional arguments
-		if (javaVersion != null && !"".equals(javaVersion)) {
-			cmdj.createArgument().setValue("-targetjdk");
-			cmdj.createArgument().setValue(getJavaVersion());
-		}
 
 		antProject.log(
 				"Executing PMD with the commandline: " + cmdj.toString(),
@@ -133,7 +135,7 @@ public class PmdConfig extends ToolConfig {
 
 	@Override
 	void configure(final Config config) {
-		setJavaVersion(config.getJavaVersion());
+		setTargetJDK(config.getJavaVersion());
 		setRulesFile(config.getPmdRulesFile());
 	}
 	
@@ -145,7 +147,7 @@ public class PmdConfig extends ToolConfig {
 	/**
 	 * @return the rulesFile
 	 */
-	final File getRulesFile() {
+	public final File getRulesFile() {
 		return rulesFile;
 	}
 
@@ -153,15 +155,15 @@ public class PmdConfig extends ToolConfig {
 	 * @param rulesFile
 	 *            the rulesFile to set
 	 */
-	final void setRulesFile(File rulesFile) {
+	public final void setRulesFile(File rulesFile) {
 		this.rulesFile = rulesFile;
 	}
 
-	public void setJavaVersion(String version) {
-		this.javaVersion = version;
+	public void setTargetJDK(String version) {
+		this.targetJDK = version;
 	}
 
-	public String getJavaVersion() {
-		return javaVersion;
+	public String getTargetJDK() {
+		return targetJDK;
 	}
 }
