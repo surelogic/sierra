@@ -18,7 +18,6 @@ import com.surelogic.sierra.tool.config.Config;
 public class PmdConfig extends ToolConfig {
 	private final static String PMD_JAR = "pmd-3.9.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
-	private final static String DEFAULT_PMD_JAVA_VERSION = "1.5";
 	
 	//The path to the default rules file, relative to the Tools folder
 	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator + "all.xml";

@@ -3,11 +3,10 @@
  */
 package com.surelogic.sierra.tool.ant;
 
-import org.apache.tools.ant.Project;
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 

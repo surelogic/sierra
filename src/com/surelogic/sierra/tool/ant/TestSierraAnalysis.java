@@ -3,8 +3,6 @@
  */
 package com.surelogic.sierra.tool.ant;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.util.ArrayList;
 

@@ -77,7 +77,6 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
-import org.apache.tools.ant.util.FileUtils;
 
 import com.surelogic.sierra.tool.analyzer.Launcher;
 import com.surelogic.sierra.tool.analyzer.Parser;

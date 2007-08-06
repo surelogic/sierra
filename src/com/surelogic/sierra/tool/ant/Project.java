@@ -44,8 +44,8 @@ public class Project {
 		name = config.getProject();
 		dir = new File(config.getBaseDirectory());
 		
-		Source srcs = new Source();
-		Binary bins = new Binary();
+		sources.add(new Source());
+		binaries.add(new Binary());
 	}
 
 	public void validate() {
