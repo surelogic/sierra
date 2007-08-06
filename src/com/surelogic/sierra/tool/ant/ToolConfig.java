@@ -23,7 +23,7 @@ import com.surelogic.sierra.tool.config.Config;
  * @author ethan
  *
  */
-public abstract class ToolConfig {
+public abstract class ToolConfig implements Runnable {
 	protected Redirector redirector;
 	protected RedirectorElement redirectorElement;
 	private Environment env = new Environment();
@@ -73,11 +73,6 @@ public abstract class ToolConfig {
 	/* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 * 								START ABSTRACT METHODS
 	 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-	/**
-	 * Runs the tool
-	 */
-	abstract void runTool();
-	
 	
 	/**
 	 * Override to parse the output of the specific tools.

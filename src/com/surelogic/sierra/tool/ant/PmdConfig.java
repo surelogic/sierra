@@ -50,9 +50,9 @@ public class PmdConfig extends ToolConfig {
 	}
 
 	/**
-	 * @see {@link ToolConfig#runTool()}
+	 * @see {@link Runnable#run()}
 	 */
-	public void runTool() {
+	public void run() {
 		// run PMD
 		CommandlineJava cmdj = new CommandlineJava();
 

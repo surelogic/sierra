@@ -195,7 +195,7 @@ public class Tools {
 		for (String toolName : toolNames) {
 			antProject.log("Running tool: " + toolName, org.apache.tools.ant.Project.MSG_DEBUG);
 			tool = tools.get(toolName);
-			tool.runTool();
+			tool.run();
 		}
 	}
 	

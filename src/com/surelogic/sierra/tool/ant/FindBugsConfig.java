@@ -43,8 +43,7 @@ public class FindBugsConfig extends ToolConfig {
 	 * 
 	 * @see com.surelogic.sierra.tool.ant.ToolConfig#runTool()
 	 */
-	@Override
-	public void runTool() {
+	public void run() {
 		// run FindBugs
 		CommandlineJava cmdj = new CommandlineJava();
 		cmdj.setClassname(FINDBUGS_CLASS);
