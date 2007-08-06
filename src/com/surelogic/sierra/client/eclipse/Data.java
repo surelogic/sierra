@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.common.eclipse.Derby;
-import com.surelogic.sierra.schema.SchemaScriptUtility;
+import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 public final class Data {
 
@@ -28,7 +28,7 @@ public final class Data {
 		final String connectionURL = getConnectionURL() + ";create=true";
 		final Connection c = DriverManager.getConnection(connectionURL);
 		try {
-			SchemaScriptUtility.checkAndUpdate(c);
+			SierraSchemaUtility.checkAndUpdate(c);
 		} finally {
 			c.close();
 		}
