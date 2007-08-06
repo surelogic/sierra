@@ -20,7 +20,6 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
-	private static final String MAX_MEMORY = "1024m";
 	private static final String FINDBUGS_JAR = "findbugs.jar";
 	
 	// The path to the findbugs location, relative to the tools directory
@@ -28,6 +27,9 @@ public class FindBugsConfig extends ToolConfig {
 	
 	//The folder to set as findbugs.home
 	private File home = null;
+	
+	//String passed to Java's -Xmx flag
+	private String memory = "1024m";
 
 	/**
 	 * @param project
@@ -47,7 +49,7 @@ public class FindBugsConfig extends ToolConfig {
 		// run FindBugs
 		CommandlineJava cmdj = new CommandlineJava();
 		cmdj.setClassname(FINDBUGS_CLASS);
-		cmdj.setMaxmemory(MAX_MEMORY);
+		cmdj.setMaxmemory(memory);
 		cmdj.createClasspath(antProject).createPath().append(analysis.getClasspath());
 
 		cmdj.createArgument().setValue("-xml");
@@ -56,7 +58,6 @@ public class FindBugsConfig extends ToolConfig {
 		cmdj.createArgument().setPath(
 				new Path(antProject, output.getAbsolutePath()));
 		cmdj.createArgument().setValue("-home");
-		// TODO automatically find the FB home
 		cmdj.createArgument().setPath(
 				new Path(antProject, getHome().getAbsolutePath()));
 		String[] paths = analysis.getBindir().list();
@@ -109,7 +110,7 @@ public class FindBugsConfig extends ToolConfig {
 
 	@Override
 	void configure(Config config) {
-		// TODO Auto-generated method stub
+		//nothing to do
 	}
 	
 	@Override 
@@ -119,10 +120,10 @@ public class FindBugsConfig extends ToolConfig {
 
 
 	/**
-	 * Make this public to let Ant set it
+	 * Return the value for findbugs.home
 	 * @return the home
 	 */
-	final File getHome() {
+	public final File getHome() {
 		if(home == null){
 			home = new File(analysis.getSierraTools().getToolsFolder(), FB_HOME);
 		}
@@ -131,10 +132,26 @@ public class FindBugsConfig extends ToolConfig {
 
 
 	/**
-	 * Make this public to let Ant set it
+	 * Set the value for findbugs.home
 	 * @param home the home to set
 	 */
-	final void setHome(File home) {
+	public final void setHome(File home) {
 		this.home = home;
+	}
+
+
+	/**
+	 * @return the memory
+	 */
+	public final String getMemory() {
+		return memory;
+	}
+
+
+	/**
+	 * @param memory the memory to set
+	 */
+	public final void setMemory(String memory) {
+		this.memory = memory;
 	}
 }

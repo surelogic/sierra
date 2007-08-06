@@ -23,7 +23,6 @@ public class PmdConfig extends ToolConfig {
 	//The path to the default rules file, relative to the Tools folder
 	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator + "all.xml";
 
-	// TODO add optional rules file
 	private String javaVersion = null;
 	private File rulesFile = null;
 

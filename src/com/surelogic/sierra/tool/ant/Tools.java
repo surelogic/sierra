@@ -32,20 +32,12 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  */
 public class Tools {
-	private final static String FINDBUGS = "findbugs";
-	private final static String PMD = "pmd";
-	public final static String[] toolList = new String[] { FINDBUGS, PMD };
-	
 	private org.apache.tools.ant.Project antProject = null;
 	private List<String> exclude = new ArrayList<String>();
 	private Map<String, ToolConfig> tools = new HashMap<String, ToolConfig>();
 
 	private SierraAnalysis analysis = null;
 	private File toolsFolder = null;
-	
-	static {
-		Arrays.sort(toolList);
-	}
 	
 	
 	/**
@@ -68,7 +60,6 @@ public class Tools {
 		
 		setExclude(config.getExcludedToolsList());
 		
-		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		toolsFolder = new File(config.getToolsDirectory());
 		for (String toolName : toolNames) {
@@ -106,7 +97,10 @@ public class Tools {
 			throw new BuildException("Error: initialize() must be called before execute(). Error in Ant Task implementation.");
 		}
 		
-		// TODO should validate the tool names against valid tools
+		Set<String> toolnames = tools.keySet();
+		String[] toolList = toolnames.toArray(new String[0]);
+		Arrays.sort(toolList);
+		
 		if (exclude != null) {
 			for (String tool : exclude) {
 				if (Arrays.binarySearch(toolList, tool) < 0) {
@@ -126,7 +120,13 @@ public class Tools {
 		if(toolsFolder != null && !toolsFolder.isDirectory()){
 			throw new BuildException("toolsFolder must be an existing directory.");
 		}
-		//TODO check to make sure it *is* our Tools folder
+		else
+		{
+			if(!"Tools".equals(toolsFolder.getName())){
+				throw new BuildException("toolsFolder is not the Sierra tools folder.");
+			}
+    		//may want to ensure that the directory structure is correct
+		}
 		
 		ToolConfig tool;
 		for (String toolName : tools.keySet()) {
