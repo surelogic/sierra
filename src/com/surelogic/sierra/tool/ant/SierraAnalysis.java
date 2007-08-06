@@ -60,6 +60,8 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,6 +77,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
+import org.apache.tools.ant.util.FileUtils;
 
 import com.surelogic.sierra.tool.analyzer.Launcher;
 import com.surelogic.sierra.tool.analyzer.Parser;
@@ -350,15 +353,35 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
+	 * Returns true if all folders in the given path are valid
+	 * @param path
+	 * @throws BuildException if a path element is not a valid directory
+	 */
+	private void validatePath(Path path) throws BuildException{
+		String[] list = path.list();
+		
+		for (String string : list) {
+			File dir = new File(string);
+			if (!dir.exists()) {
+				throw new BuildException("Path element \"" + dir.getPath()
+						+ "\" does not exist.");
+			}
+		}
+	}
+
+	/**
 	 * Cleans up after the task
 	 */
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		tools.cleanup();
-		if(serverURL != null){
-    		// FIXME should not delete rundocument if it didn't send to the server or the upload was unsuccessful
+		if (serverURL != null) {
+			// FIXME should not delete rundocument if it didn't send to the
+			// server or the upload was unsuccessful
+			// This is currently a feature lacking in the Sierra code so we
+			// can't check if the send was successful
 			runDocument.delete();
-    		tmpFolder.delete();
+			tmpFolder.delete();
 		}
 	}
 
@@ -392,9 +415,15 @@ public class SierraAnalysis extends Task {
 
 		if (serverURL != null) {
 			if ("".equals(serverURL)) {
-				// TODO see if the URL is a valid URL
 				throw new BuildException("serverURL must be a valid URL");
 			} else {
+				try {
+					//ensure the URL is well-formed
+					new URL(serverURL);
+				} catch (MalformedURLException e) {
+					throw new BuildException("serverURL must be a valid URL");
+				}
+
 				if (serverQualifiers.isEmpty()) {
 					throw new BuildException(
 							"serverQualifiers must contain one or more, comma-separated qualifiers.");
@@ -415,14 +444,14 @@ public class SierraAnalysis extends Task {
 			throw new BuildException(
 					"Either 'srcdir' or 'sources' must be defined.");
 		} else {
-			// TODO run through the path and verify all directories are valid
+			validatePath(srcdir); //throws BuildException if it has an non-valid path element
 			srcdir.append(project.getSources());
 		}
 
 		if (bindir == null) {
 			log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
 		} else {
-			// TODO run through the path and verify all directories are valid
+			validatePath(bindir); //throws BuildException if it has an non-valid path element
 			bindir.append(project.getBinaries());
 		}
 
