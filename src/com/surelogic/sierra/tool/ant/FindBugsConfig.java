@@ -70,6 +70,10 @@ public class FindBugsConfig extends ToolConfig {
 		} catch (BuildException e) {
 			antProject.log("Failed to start FindBugs process.", e,
 					org.apache.tools.ant.Project.MSG_ERR);
+		} finally{
+			if(latch != null){
+				latch.countDown();
+			}
 		}
 
 	}

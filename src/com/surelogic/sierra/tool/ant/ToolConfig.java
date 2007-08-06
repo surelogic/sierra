@@ -5,6 +5,7 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Execute;
@@ -43,6 +44,9 @@ public abstract class ToolConfig implements Runnable {
 	
 	//Output file for the tool
 	protected File output = null;
+	
+	//Latch used to make sure all tools are done running before the main thread tries to parse their outputs
+	protected CountDownLatch latch = null;
 	
 	protected ToolConfig(String name, org.apache.tools.ant.Project project){
 		antProject = project;
@@ -244,6 +248,14 @@ public abstract class ToolConfig implements Runnable {
 	 */
 	public Path createClasspath() {
 		return getCommandLine().createClasspath(analysis.getProject()).createPath();
+	}
+
+	/**
+	 * Sets the latch, if any, that each tool should touch when it is done.
+	 * @param latch
+	 */
+	public void setLatch(CountDownLatch latch) {
+		this.latch = latch;
 	}
 
 

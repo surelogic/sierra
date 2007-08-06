@@ -110,6 +110,10 @@ public class PmdConfig extends ToolConfig {
 		} catch (BuildException e) {
 			antProject.log("Failed to start PMD process.", e,
 					org.apache.tools.ant.Project.MSG_ERR);
+		} finally {
+			if(latch != null){
+				latch.countDown();
+			}
 		}
 
 	}
