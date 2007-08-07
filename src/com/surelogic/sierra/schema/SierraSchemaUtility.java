@@ -22,7 +22,7 @@ public final class SierraSchemaUtility {
 	public static final int schemaVersion = 0;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/schema_";
-	public static final String RUNNABLE_PREFIX = "com.surelogic.sierra.schema.Schema_";
+	public static final String SCHEMA_ACTION_PREFIX = "com.surelogic.sierra.schema.Schema_";
 
 	public static void checkAndUpdate(final Connection c) throws SQLException,
 			IOException {
@@ -35,7 +35,7 @@ public final class SierraSchemaUtility {
 					.getResource(SQL_SCRIPT_PREFIX + getZeroPadded(i) + ".sql");
 			try {
 				schemaActions[i] = (SchemaAction) Class.forName(
-						RUNNABLE_PREFIX + getZeroPadded(i)).newInstance();
+						SCHEMA_ACTION_PREFIX + getZeroPadded(i)).newInstance();
 			} catch (InstantiationException e) {
 				throw new IllegalStateException(e);
 			} catch (IllegalAccessException e) {
