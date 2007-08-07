@@ -55,7 +55,7 @@ public interface Record<T> {
 	 * @throws SQLException
 	 */
 	int fillWithPk(PreparedStatement st, int idx) throws SQLException;
-
+	
 	/**
 	 * Read the record's primary key from a result set.
 	 * 
