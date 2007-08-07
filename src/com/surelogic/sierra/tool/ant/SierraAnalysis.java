@@ -67,11 +67,15 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -84,7 +88,6 @@ import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
 
-import com.surelogic.sierra.tool.analyzer.Launcher;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
@@ -103,6 +106,8 @@ public class SierraAnalysis extends Task {
 	private Environment env = new Environment();
 	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
+
+	private String[] sourceDirectories = null;
 
 	// Used to populate this class and supporting classes, if this class is
 	// instantiated from the Sierra client
@@ -203,6 +208,7 @@ public class SierraAnalysis extends Task {
 		if (runDateTime == null) {
 			runDateTime = Calendar.getInstance().getTime();
 		}
+
 		validateParameters();
 		verifyDependencies();
 		tools.runTools();
@@ -317,6 +323,22 @@ public class SierraAnalysis extends Task {
 			config.setJavaVersion(System.getProperty("java.version"));
 			config.setJavaVendor(System.getProperty("java.vendor"));
 			config.setQualifiers(qualifiers);
+
+			// This code computes the source directories from the given base
+			// directory
+			File root = new File(config.getBaseDirectory());
+			JavaFilter filter = new JavaFilter();
+			filterdirs(root, filter);
+
+			Iterator<File> dirIterator = filter.dirs.iterator();
+			Vector<String> sourceDirectory = new Vector<String>();
+			while (dirIterator.hasNext()) {
+				File holder = dirIterator.next();
+				sourceDirectory.add(holder.getPath());
+			}
+
+			sourceDirectories = sourceDirectory
+					.toArray(new String[sourceDirectory.size()]);
 		}
 
 		if (runDocument == null || "".equals(runDocument)) {
@@ -338,6 +360,7 @@ public class SierraAnalysis extends Task {
 		Parser parser = new Parser(generator);
 
 		tools.parseOutput(parser);
+		generator.write();
 
 	}
 
@@ -362,16 +385,16 @@ public class SierraAnalysis extends Task {
 		TigerService ts = new TigerServiceClient(server).getTigerServicePort();
 		
 		//Verify the qualifiers
-		List<String> list = ts.getQualifiers().getQualifier();
-		if (!list.containsAll(qualifiers)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Invalid qualifiers. Valid qualifiers are:\n");
-			for (String string : list) {
-				sb.append(string);
-				sb.append("\n");
-			}
-			throw new BuildException(sb.toString());
-		}
+		// List<String> list = ts.getQualifiers().getQualifier();
+		// if (!list.containsAll(qualifiers)) {
+		// StringBuilder sb = new StringBuilder();
+		// sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+		// for (String string : list) {
+		// sb.append(string);
+		// sb.append("\n");
+		// }
+		// throw new BuildException(sb.toString());
+		//		}
 		// FIXME utilize the return value once Bug 867 is resolved
 		ts.publishRun(run);
 	}
@@ -790,6 +813,37 @@ public class SierraAnalysis extends Task {
 	 */
 	final Tools getSierraTools() {
 		return tools;
+	}
+
+	/**
+	 * Code for getting the source directories
+	 * 
+	 * @author nathan
+	 * 
+	 */
+	private static class JavaFilter implements FilenameFilter {
+
+		HashSet<File> dirs = new HashSet<File>();
+
+		public boolean accept(File dir, String name) {
+			if (name.endsWith(".java")) {
+				dirs.add(dir);
+			}
+			return false;
+		}
+	}
+
+	private static void filterdirs(File root, FilenameFilter filter) {
+		root.list(filter);
+		for (File f : root.listFiles()) {
+			if (f.isDirectory()) {
+				filterdirs(f, filter);
+			}
+		}
+	}
+
+	public String[] getSourceDirectories() {
+		return sourceDirectories;
 	}
 
 }

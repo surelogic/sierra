@@ -76,6 +76,7 @@ public class Parser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void parseForHash(String fileName,
 			Map<String, Map<Integer, Long>> hashHolder,
 			String[] sourceDirectories) {

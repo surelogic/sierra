@@ -41,6 +41,8 @@ class FindBugsHandler extends DefaultHandler {
 
 	private StringBuilder message;
 
+	// private static final Logger log = SierraLogger.getLogger("Sierra");
+
 	@SuppressWarnings("unused")
 	private Map<String, Map<Integer, Long>> hashHolder;
 
@@ -307,7 +309,7 @@ class FindBugsHandler extends DefaultHandler {
 
 					int lineNumber = Integer.parseInt(start);
 
-					 HashGenerator hashGenerator = HashGenerator.getInstance();
+					HashGenerator hashGenerator = HashGenerator.getInstance();
 					boolean fileFound = false;
 
 					for (int i = 0; i < sourceDirectories.length; i++) {
@@ -324,8 +326,8 @@ class FindBugsHandler extends DefaultHandler {
 
 								if (holderFile.exists()) {
 
-									 Long hashValue = hashGenerator.getHash(
-									 completePath, lineNumber);
+									Long hashValue = hashGenerator.getHash(
+											completePath, lineNumber);
 
 									// Long hashValue = hashHolder.get(
 									// completePath).get(

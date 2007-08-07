@@ -46,20 +46,6 @@ public class Config {
 		// Nothing to do
 	}
 
-	// TODO: Fix this to map to the ANT lauch config
-	public Config(BaseConfig baseconfig) {
-		// this.runDateTime = baseconfig.runDateTime;
-		this.project = baseconfig.getProjectName();
-
-		// FIX THIS: HARDCODED
-		this.javaVendor = "Sun";
-
-		this.javaVersion = baseconfig.getJdkVersion();
-		this.baseDirectory = baseconfig.getBaseDirectory();
-		this.toolsDirectory = baseconfig.getToolsDirectory();
-		// this.qualifiers = Collections.unmodifiableList(builder.qualifiers);
-	}
-
 	public String getProject() {
 		return project;
 	}

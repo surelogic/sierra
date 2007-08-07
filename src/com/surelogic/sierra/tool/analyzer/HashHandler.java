@@ -8,6 +8,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * This class was built to test the hash calculation using double parsing
+ * method. It is no longer used
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
+@Deprecated
 public class HashHandler extends DefaultHandler {
 
 	private Map<String, Map<Integer, Long>> hashHolder;

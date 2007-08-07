@@ -20,13 +20,13 @@ import com.surelogic.sierra.tool.config.Config;
 public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
 	private static final String FINDBUGS_JAR = "findbugs.jar";
-	
+
 	// The path to the findbugs location, relative to the tools directory
 	private static final String FB_HOME = "FB";
-	
+
 	// The folder to set as findbugs.home
 	private File home = null;
-	
+
 	// String passed to Java's -Xmx flag
 	private String memory = "1024m";
 
@@ -36,7 +36,6 @@ public class FindBugsConfig extends ToolConfig {
 	public FindBugsConfig(Project project) {
 		super("findbugs", project);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -48,11 +47,12 @@ public class FindBugsConfig extends ToolConfig {
 		CommandlineJava cmdj = new CommandlineJava();
 		cmdj.setClassname(FINDBUGS_CLASS);
 		cmdj.setMaxmemory(memory);
-		cmdj.createClasspath(antProject).createPath().append(analysis.getClasspath());
+		cmdj.createClasspath(antProject).createPath().append(
+				analysis.getClasspath());
 
 		cmdj.createArgument().setValue("-xml:withMessages");
 		cmdj.createArgument().setValue("-outputFile");
-		output = new File[]{new File(analysis.getTmpFolder(), "findbugs.xml")};
+		output = new File[] { new File(analysis.getTmpFolder(), "findbugs.xml") };
 		cmdj.createArgument().setPath(
 				new Path(antProject, output[0].getAbsolutePath()));
 		cmdj.createArgument().setValue("-home");
@@ -63,15 +63,15 @@ public class FindBugsConfig extends ToolConfig {
 			cmdj.createArgument().setValue(string);
 		}
 
-		antProject.log("Executing FindBugs with the commandline: " + cmdj.toString(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
+		antProject.log("Executing FindBugs with the commandline: "
+				+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 		try {
 			fork(cmdj.getCommandline());
 		} catch (BuildException e) {
 			antProject.log("Failed to start FindBugs process.", e,
 					org.apache.tools.ant.Project.MSG_ERR);
-		} finally{
-			if(latch != null){
+		} finally {
+			if (latch != null) {
 				latch.countDown();
 			}
 		}
@@ -88,43 +88,41 @@ public class FindBugsConfig extends ToolConfig {
 		super.validate();
 	}
 
-
 	@Override
 	public void parseOutput(Parser parser) {
 		if (output != null) {
 			for (File file : output) {
 				if (file.isFile()) {
-			antProject.log("Parsing FindBugs results file: " + output,
-					org.apache.tools.ant.Project.MSG_INFO);
-			parser.parseFB(file.getAbsolutePath(), analysis.getSrcdir().list());
+					antProject.log("Parsing FindBugs results file: " + output,
+							org.apache.tools.ant.Project.MSG_INFO);
+					parser.parseFB(file.getAbsolutePath(), analysis
+							.getSourceDirectories());
 				}
 			}
 		}
 	}
 
-
 	@Override
 	void verifyDependencies() {
-		assert(analysis != null);
-		
-		if(!analysis.isJarInClasspath(FINDBUGS_JAR)){
-			throw new BuildException("FindBugs is missing dependency: " + FINDBUGS_JAR);
+		assert (analysis != null);
+
+		if (!analysis.isJarInClasspath(FINDBUGS_JAR)) {
+			throw new BuildException("FindBugs is missing dependency: "
+					+ FINDBUGS_JAR);
 		}
 	}
-
 
 	@Override
 	void configure(Config config) {
 		// nothing to do
 	}
-	
-	@Override 
-	void cleanup(){
+
+	@Override
+	void cleanup() {
 		for (File file : output) {
-    		file.delete();
+			file.delete();
 		}
 	}
-
 
 	/**
 	 * Return the value for findbugs.home
@@ -132,12 +130,11 @@ public class FindBugsConfig extends ToolConfig {
 	 * @return the home
 	 */
 	public final File getHome() {
-		if(home == null){
+		if (home == null) {
 			home = new File(analysis.getSierraTools().getToolsFolder(), FB_HOME);
 		}
 		return home;
 	}
-
 
 	/**
 	 * Set the value for findbugs.home
@@ -149,14 +146,12 @@ public class FindBugsConfig extends ToolConfig {
 		this.home = home;
 	}
 
-
 	/**
 	 * @return the memory
 	 */
 	public final String getMemory() {
 		return memory;
 	}
-
 
 	/**
 	 * @param memory
