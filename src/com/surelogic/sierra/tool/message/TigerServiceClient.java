@@ -5,13 +5,18 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceClient;
 
-@WebServiceClient(name = "TigerService", targetNamespace = "http://services.sierra.surelogic.com/", wsdlLocation = "http://fluid.surelogic.com:13376/TigerServiceBeanService/TigerServiceBean?wsdl")
 public class TigerServiceClient extends Service {
 
 	public TigerServiceClient() {
-		super(createUrl(), new QName("http://services.sierra.surelogic.com/",
+		super(createUrl(null), new QName(
+				"http://services.sierra.surelogic.com/",
+				"TigerServiceBeanService"));
+	}
+
+	public TigerServiceClient(String host) {
+		super(createUrl(host), new QName(
+				"http://services.sierra.surelogic.com/",
 				"TigerServiceBeanService"));
 	}
 
@@ -24,10 +29,21 @@ public class TigerServiceClient extends Service {
 				"TigerServiceBeanPort"), TigerService.class);
 	}
 
-	private static URL createUrl() {
+	/**
+	 * Create a url that points to the appropriate WSDL document on the target
+	 * host.
+	 * 
+	 * @param host
+	 *            a String of type <em>host</em> or <em>host</em>:<em>port</em>
+	 * @return
+	 */
+	private static URL createUrl(String host) {
+		if (host == null) {
+			host = "localhost:8080";
+		}
 		try {
-			return new URL(
-					"http://fluid.surelogic.com:13376/TigerServiceBeanService/TigerServiceBean?wsdl");
+			return new URL("http://" + host
+					+ "/TigerServiceBeanService/TigerServiceBean?wsdl");
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
