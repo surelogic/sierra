@@ -284,10 +284,18 @@ public class MessageWarehouse {
 		}
 	}
 
+	public static void readRun(Run run, RunGenerator generator) {
+		readConfig(run.getConfig(), generator);
+		ArtifactGenerator aGen = generator.build();
+		readArtifacts(run.getToolOutput().getArtifact(), aGen);
+		readErrors(run.getToolOutput().getErrors(), aGen);
+		aGen.finished();
+	}
+
 	// TODO Having these methods be public static is probably not the best way
 	// to do this for RunManager, we need rework MessageWarehouse to work on
 	// in-memory runs as well.
-	public static void readArtifacts(Collection<Artifact> artifacts,
+	private static void readArtifacts(Collection<Artifact> artifacts,
 			ArtifactGenerator generator) {
 		if (artifacts != null) {
 			ArtifactBuilder aBuilder = generator.artifact();
@@ -297,7 +305,7 @@ public class MessageWarehouse {
 		}
 	}
 
-	public static void readErrors(Collection<Error> errors,
+	private static void readErrors(Collection<Error> errors,
 			ArtifactGenerator generator) {
 		if (errors != null) {
 			ErrorBuilder eBuilder = generator.error();
