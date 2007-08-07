@@ -8,8 +8,7 @@ Bundle-ClassPath: .
 Require-Bundle: com.surelogic.sierra.tool,
  com.surelogic.common,
  org.apache.ant
-Export-Package: com.surelogic.sierra.ant,
- com.surelogic.sierra.findbugs,
+Export-Package: com.surelogic.sierra.findbugs,
  com.surelogic.sierra.jdbc,
  com.surelogic.sierra.jdbc.finding,
  com.surelogic.sierra.jdbc.run,
