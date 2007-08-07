@@ -5,7 +5,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+/**
+ * A collection of utility methods specific to SIERRA to help w/ using JDBC.
+ * 
+ * @author nathan
+ * 
+ */
 public class JDBCUtils {
+
+	/**
+	 * Set a paramter to the specified String, or to null if none is supplied.
+	 * 
+	 * @param idx
+	 * @param st
+	 * @param string
+	 * @throws SQLException
+	 */
 	public static void setNullableString(int idx, PreparedStatement st,
 			String string) throws SQLException {
 		if (string == null) {
@@ -15,6 +30,14 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * Set a paramter to the specified Long, or to null if none is supplied.
+	 * 
+	 * @param idx
+	 * @param st
+	 * @param longValue
+	 * @throws SQLException
+	 */
 	public static void setNullableLong(int idx, PreparedStatement st,
 			Long longValue) throws SQLException {
 		if (longValue == null) {
@@ -24,6 +47,14 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * Set a paramter to the specified Integer, or to null if none is supplied.
+	 * 
+	 * @param idx
+	 * @param st
+	 * @param intValue
+	 * @throws SQLException
+	 */
 	public static void setNullableInt(int idx, PreparedStatement st,
 			Integer intValue) throws SQLException {
 		if (intValue == null) {
@@ -34,7 +65,8 @@ public class JDBCUtils {
 	}
 
 	/**
-	 * Insert a record, and read it's generated id.
+	 * Insert a record, and read it's generated id. This method is only for use
+	 * with statements that return a generated id.
 	 * 
 	 * @param st
 	 * @param record
@@ -51,7 +83,8 @@ public class JDBCUtils {
 	}
 
 	/**
-	 * Find a record by it's full set of values.
+	 * Find a record by it's full set of values (the same set of values it was
+	 * inserted by).
 	 * 
 	 * @param st
 	 * @param record

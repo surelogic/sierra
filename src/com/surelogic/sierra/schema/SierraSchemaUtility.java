@@ -35,22 +35,17 @@ public final class SierraSchemaUtility {
 					.getResource(SQL_SCRIPT_PREFIX + getZeroPadded(i) + ".sql");
 			try {
 				schemaActions[i] = (SchemaAction) Class.forName(
-						RUNNABLE_PREFIX + getZeroPadded(i)).getConstructor(
-						Connection.class).newInstance(c);
+						RUNNABLE_PREFIX + getZeroPadded(i)).newInstance();
 			} catch (InstantiationException e) {
 				throw new IllegalStateException(e);
 			} catch (IllegalAccessException e) {
 				throw new IllegalStateException(e);
 			} catch (ClassNotFoundException e) {
-				// It is okay to not have any jobs to do this version, do
+				// It is okay to not have any jobs for this version, do
 				// nothing.
 			} catch (IllegalArgumentException e) {
 				throw new IllegalStateException(e);
 			} catch (SecurityException e) {
-				throw new IllegalStateException(e);
-			} catch (InvocationTargetException e) {
-				throw new IllegalStateException(e);
-			} catch (NoSuchMethodException e) {
 				throw new IllegalStateException(e);
 			}
 		}
