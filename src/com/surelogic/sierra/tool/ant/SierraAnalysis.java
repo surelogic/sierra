@@ -226,12 +226,14 @@ public class SierraAnalysis extends Task {
 	 */
 	String arrayToCSV(String[] paths) {
 		StringBuilder csv = new StringBuilder();
-		for (int i = 0; i < paths.length - 1; i++) {
-			csv.append(paths[i]);
-			csv.append(", ");
+		if (paths != null) {
+			for (int i = 0; i < paths.length - 1; i++) {
+				csv.append(paths[i]);
+				csv.append(", ");
+			}
+			// add the last item at the end w/o a trailing comma
+			csv.append(paths[paths.length - 1]);
 		}
-		// add the last item at the end w/o a trailing comma
-		csv.append(paths[paths.length - 1]);
 		return csv.toString();
 	}
 
@@ -358,12 +360,14 @@ public class SierraAnalysis extends Task {
 
 	/**
 	 * Returns true if all folders in the given path are valid
+	 * 
 	 * @param path
-	 * @throws BuildException if a path element is not a valid directory
+	 * @throws BuildException
+	 *             if a path element is not a valid directory
 	 */
-	private void validatePath(Path path) throws BuildException{
+	private void validatePath(Path path) throws BuildException {
 		String[] list = path.list();
-		
+
 		for (String string : list) {
 			File dir = new File(string);
 			if (!dir.exists()) {
@@ -422,7 +426,7 @@ public class SierraAnalysis extends Task {
 				throw new BuildException("serverURL must be a valid URL");
 			} else {
 				try {
-					//ensure the URL is well-formed
+					// ensure the URL is well-formed
 					new URL(serverURL);
 				} catch (MalformedURLException e) {
 					throw new BuildException("serverURL must be a valid URL");
@@ -448,14 +452,16 @@ public class SierraAnalysis extends Task {
 			throw new BuildException(
 					"Either 'srcdir' or 'sources' must be defined.");
 		} else {
-			validatePath(srcdir); //throws BuildException if it has an non-valid path element
+			validatePath(srcdir); // throws BuildException if it has an
+									// non-valid path element
 			srcdir.append(project.getSources());
 		}
 
 		if (bindir == null) {
 			log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
 		} else {
-			validatePath(bindir); //throws BuildException if it has an non-valid path element
+			validatePath(bindir); // throws BuildException if it has an
+									// non-valid path element
 			bindir.append(project.getBinaries());
 		}
 
@@ -536,7 +542,7 @@ public class SierraAnalysis extends Task {
 	 * @return the bindir
 	 */
 	public final Path getBindir() {
-		if(bindir.list().length == 0){
+		if (bindir.list().length == 0) {
 			return srcdir;
 		}
 		return bindir;
