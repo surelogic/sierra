@@ -227,9 +227,9 @@ public class SierraAnalysis extends Task {
 		if (paths != null) {
 			for (int i = 0; i < paths.length; i++) {
 				csv.append(paths[i]);
-				//append a comma if we are not on the last element
-				if(i < paths.length - 1){
-    				csv.append(", ");
+				// append a comma if we are not on the last element
+				if (i < paths.length - 1) {
+					csv.append(", ");
 				}
 			}
 		}
@@ -320,11 +320,15 @@ public class SierraAnalysis extends Task {
 		}
 
 		if (runDocument == null || "".equals(runDocument)) {
-			runDocument = new File(tmpFolder, project.getName() + ".xml" + PARSED_FILE_SUFFIX);
-		} else if (runDocument.isDirectory()){
-			runDocument = new File(runDocument, project.getName() + ".xml" + PARSED_FILE_SUFFIX);
-		} else if(!runDocument.getName().endsWith(".xml" + PARSED_FILE_SUFFIX)){
-			runDocument = new File(runDocument.getParentFile(), runDocument.getName() + ".xml" + PARSED_FILE_SUFFIX);
+			runDocument = new File(tmpFolder, project.getName() + ".xml"
+					+ PARSED_FILE_SUFFIX);
+		} else if (runDocument.isDirectory()) {
+			runDocument = new File(runDocument, project.getName() + ".xml"
+					+ PARSED_FILE_SUFFIX);
+		} else if (!runDocument.getName().endsWith(".xml" + PARSED_FILE_SUFFIX)) {
+			runDocument = new File(runDocument.getParentFile(), runDocument
+					.getName()
+					+ ".xml" + PARSED_FILE_SUFFIX);
 		}
 
 		log("Generating the run document: " + runDocument,
@@ -355,7 +359,19 @@ public class SierraAnalysis extends Task {
 				org.apache.tools.ant.Project.MSG_INFO);
 		MessageWarehouse warehouse = MessageWarehouse.getInstance();
 		Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
-		TigerService ts = new TigerServiceClient().getTigerServicePort();
+		TigerService ts = new TigerServiceClient(server).getTigerServicePort();
+		
+		//Verify the qualifiers
+		List<String> list = ts.getQualifiers().getQualifier();
+		if (!list.containsAll(qualifiers)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+			for (String string : list) {
+				sb.append(string);
+				sb.append("\n");
+			}
+			throw new BuildException(sb.toString());
+		}
 		// FIXME utilize the return value once Bug 867 is resolved
 		ts.publishRun(run);
 	}
@@ -427,25 +443,13 @@ public class SierraAnalysis extends Task {
 			if ("".equals(server)) {
 				throw new BuildException("server must not be blank");
 			} else {
-				if(!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")){
-    				throw new BuildException("The server address must be in the form: server.address.com[:port]");
+				if (!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")) {
+					throw new BuildException(
+							"The server address must be in the form: server.address.com[:port]");
 				}
 				if (qualifiers.isEmpty()) {
 					throw new BuildException(
 							"serverQualifiers must contain one or more, comma-separated qualifiers.");
-				}
-				else{
-            		TigerService ts = new TigerServiceClient().getTigerServicePort();
-            		List<String> list = ts.getQualifiers().getQualifier();
-					if(!list.containsAll(qualifiers)){
-						StringBuilder sb = new StringBuilder();
-						sb.append("Invalid qualifiers. Valid qualifiers are:\n");
-						for (String string : list) {
-							sb.append(string);
-							sb.append("\n");
-						}
-						throw new BuildException(sb.toString());
-					}
 				}
 			}
 		}
@@ -464,7 +468,7 @@ public class SierraAnalysis extends Task {
 					"Either 'srcdir' or 'sources' must be defined.");
 		} else {
 			validatePath(srcdir); // throws BuildException if it has an
-									// non-valid path element
+			// non-valid path element
 			srcdir.append(project.getSources());
 		}
 
@@ -472,7 +476,7 @@ public class SierraAnalysis extends Task {
 			log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
 		} else {
 			validatePath(bindir); // throws BuildException if it has an
-									// non-valid path element
+			// non-valid path element
 			bindir.append(project.getBinaries());
 		}
 
@@ -503,8 +507,8 @@ public class SierraAnalysis extends Task {
 	public void addConfiguredTools(Tools tools) {
 		this.tools = tools;
 	}
-	
-	Tools getTools(){
+
+	Tools getTools() {
 		return tools;
 	}
 
