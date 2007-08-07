@@ -4,7 +4,7 @@
  *     destDir="/tool/results/output/dir"
  *     srcdir="/source/directory"  
  *     bindir="/path/to/.class/files"
- *     serve * rURL=" http://server.url"  
+ *     server="sierra.server.address:port"  
  *     serverQualifier="comma, separated, list, of, qualifiers"
  *     clean="true">
  * 
@@ -30,7 +30,7 @@
  * destDir - defaults to /tmp
  * Srcdir - required unless nested <source> elements are defined
  * BinDir - required unless nested <binary> elements are defined
- * ServerURL - if set, will attempt to send the WSDL file to this URL
+ * Server - if set, will attempt to send the WSDL file to this address. The port is optional
  * Clean - if set to true, will clean the tool result files and the WSDL (if it
  * was sent to the server successfully)
  * 
@@ -123,7 +123,7 @@ public class SierraAnalysis extends Task {
 	 **************************************************************************/
 
 	// Optional attribute, if present, we send the WSDL file to this server
-	private String serverURL = null;
+	private String server = null;
 
 	// Optional, but req'd if URL is set. Comma-separated list of qualifiers
 	private final List<String> serverQualifiers = new ArrayList<String>();
@@ -209,7 +209,7 @@ public class SierraAnalysis extends Task {
 		verifyDependencies();
 		tools.runTools();
 		generateRunDocument();
-		if (serverURL != null && !"".equals(serverURL)) {
+		if (server != null && !"".equals(server)) {
 			uploadRunDocument();
 		}
 
@@ -350,7 +350,7 @@ public class SierraAnalysis extends Task {
 	 * Optional action. Uploads the generated WSDL file to the desired server.
 	 */
 	private void uploadRunDocument() {
-		log("Uploading the Run document to " + serverURL + "...",
+		log("Uploading the Run document to " + server + "...",
 				org.apache.tools.ant.Project.MSG_INFO);
 		MessageWarehouse warehouse = MessageWarehouse.getInstance();
 		Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
@@ -384,7 +384,7 @@ public class SierraAnalysis extends Task {
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		tools.cleanup();
-		if (serverURL != null) {
+		if (server != null) {
 			// FIXME should not delete rundocument if it didn't send to the
 			// server or the upload was unsuccessful
 			// This is currently a feature lacking in the Sierra code so we
@@ -422,17 +422,13 @@ public class SierraAnalysis extends Task {
 			}
 		}
 
-		if (serverURL != null) {
-			if ("".equals(serverURL)) {
-				throw new BuildException("serverURL must be a valid URL");
+		if (server != null) {
+			if ("".equals(server)) {
+				throw new BuildException("server must not be blank");
 			} else {
-				try {
-					// ensure the URL is well-formed
-					new URL(serverURL);
-				} catch (MalformedURLException e) {
-					throw new BuildException("serverURL must be a valid URL");
+				if(!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")){
+    				throw new BuildException("The server address must be in the form: server.address.com[:port]");
 				}
-
 				if (serverQualifiers.isEmpty()) {
 					throw new BuildException(
 							"serverQualifiers must contain one or more, comma-separated qualifiers.");
@@ -478,12 +474,12 @@ public class SierraAnalysis extends Task {
 	 * Getters and Setters for attributes
 	 **************************************************************************/
 
-	public void setServerURL(String serverURL) {
-		this.serverURL = serverURL;
+	public void setServer(String server) {
+		this.server = server;
 	}
 
-	public String getServerURL() {
-		return serverURL;
+	public String getServer() {
+		return server;
 	}
 
 	public void addConfiguredProject(Project project) {
