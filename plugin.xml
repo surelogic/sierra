@@ -17,7 +17,7 @@
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
                enablesFor="1"
                id="Sierra.runAnalysisAction"
-               label="Run Analysis on this Project"
+               label="Run Analysis"
                menubarPath="Sierra.SierraMenu/group1"/>
       </objectContribution>
       

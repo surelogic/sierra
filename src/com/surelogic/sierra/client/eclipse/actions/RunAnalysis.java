@@ -103,7 +103,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				// properly, output from ant task is also lost
 				if (buildFile != null) {
 
-					Job runBuildfile = new Job("Running ANT...") {
+					Job runBuildfile = new Job("Running Sierra...") {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
