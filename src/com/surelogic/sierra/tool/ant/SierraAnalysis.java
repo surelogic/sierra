@@ -5,7 +5,8 @@
  *     srcdir="/source/directory"  
  *     bindir="/path/to/.class/files"
  *     server="sierra.server.address:port"  
- *     serverQualifier="comma, separated, list, of, qualifiers"
+ *     qualifiers="comma, separated, list, of, qualifiers"
+ *     runDocument="/path/to/run/document.xml.parsed"
  *     clean="true">
  * 
  *     <project  name="project"  dir="/directory/for/project">
@@ -27,11 +28,13 @@
  * </sierra-analysis>
  * 
  * The following attributes are optional:
- * destDir - defaults to /tmp
+ * destDir - defaults to /tmp, the directory to store tools' results
  * Srcdir - required unless nested <source> elements are defined
  * BinDir - required unless nested <binary> elements are defined
  * Server - if set, will attempt to send the WSDL file to this address. The port is optional
+ * qualifiers - comma-separated list of qualifiers, must be valid as per the {@link Qualifier} class.
  * Clean - if set to true, will clean the tool result files and the WSDL (if it
+ * runDocument - the full path to the desired run document
  * was sent to the server successfully)
  * 
  * Source - actually a DirSet
@@ -65,8 +68,6 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -126,13 +127,10 @@ public class SierraAnalysis extends Task {
 	private String server = null;
 
 	// Optional, but req'd if URL is set. Comma-separated list of qualifiers
-	private final List<String> serverQualifiers = new ArrayList<String>();
+	private final List<String> qualifiers = new ArrayList<String>();
 
 	// Optional, if omitted, the system's tmp folder is used
 	private File destDir = new File(System.getProperty("java.io.tmpdir"));
-
-	// Req'd name for the WSDL (run document)
-	private String runDocumentName = null;
 
 	// Optional file attribute.
 	// Where to store the temp files
@@ -189,7 +187,7 @@ public class SierraAnalysis extends Task {
 		super();
 		this.config = config;
 		destDir = config.getDestDirectory();
-		runDocumentName = config.getRunDocumentName();
+		runDocument = config.getRunDocument();
 		classpath = new Path(antProject, config.getClasspath());
 		clean = config.isCleanTempFiles();
 		srcdir = new Path(antProject, config.getSourceDirs());
@@ -318,13 +316,16 @@ public class SierraAnalysis extends Task {
 			config.setRunDateTime(runDateTime);
 			config.setJavaVersion(System.getProperty("java.version"));
 			config.setJavaVendor(System.getProperty("java.vendor"));
-			config.setQualifiers(serverQualifiers);
+			config.setQualifiers(qualifiers);
 		}
 
-		if (runDocumentName == null || "".equals(runDocumentName)) {
-			runDocumentName = project.getName() + ".xml" + PARSED_FILE_SUFFIX;
+		if (runDocument == null || "".equals(runDocument)) {
+			runDocument = new File(tmpFolder, project.getName() + ".xml" + PARSED_FILE_SUFFIX);
+		} else if (runDocument.isDirectory()){
+			runDocument = new File(runDocument, project.getName() + ".xml" + PARSED_FILE_SUFFIX);
+		} else if(!runDocument.getName().endsWith(".xml" + PARSED_FILE_SUFFIX)){
+			runDocument = new File(runDocument.getParentFile(), runDocument.getName() + ".xml" + PARSED_FILE_SUFFIX);
 		}
-		runDocument = new File(tmpFolder.getAbsolutePath(), runDocumentName);
 
 		log("Generating the run document: " + runDocument,
 				org.apache.tools.ant.Project.MSG_INFO);
@@ -429,9 +430,22 @@ public class SierraAnalysis extends Task {
 				if(!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")){
     				throw new BuildException("The server address must be in the form: server.address.com[:port]");
 				}
-				if (serverQualifiers.isEmpty()) {
+				if (qualifiers.isEmpty()) {
 					throw new BuildException(
 							"serverQualifiers must contain one or more, comma-separated qualifiers.");
+				}
+				else{
+            		TigerService ts = new TigerServiceClient().getTigerServicePort();
+            		List<String> list = ts.getQualifiers().getQualifier();
+					if(!list.containsAll(qualifiers)){
+						StringBuilder sb = new StringBuilder();
+						sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+						for (String string : list) {
+							sb.append(string);
+							sb.append("\n");
+						}
+						throw new BuildException(sb.toString());
+					}
 				}
 			}
 		}
@@ -698,34 +712,34 @@ public class SierraAnalysis extends Task {
 	/**
 	 * @return the serverQualifier
 	 */
-	public final List<String> getServerQualifiers() {
-		return serverQualifiers;
+	public final List<String> getQualifiers() {
+		return qualifiers;
 	}
 
 	/**
 	 * @param serverQualifier
 	 *            the serverQualifier to set
 	 */
-	public final void setServerQualifiers(String serverQualifiers) {
-		String[] qualifiers = serverQualifiers.split(",");
-		for (String qualifier : qualifiers) {
-			this.serverQualifiers.add(qualifier.trim());
+	public final void setQualifiers(String qualifiers) {
+		String[] q = qualifiers.split(",");
+		for (String qualifier : q) {
+			this.qualifiers.add(qualifier.trim());
 		}
 	}
 
 	/**
-	 * @return the runDocumentName
+	 * @return the runDocument file
 	 */
-	public final String getRunDocumentName() {
-		return runDocumentName;
+	public final File getRunDocument() {
+		return runDocument;
 	}
 
 	/**
-	 * @param runDocumentName
-	 *            the runDocumentName to set
+	 * @param runDocument
+	 *            the runDocument to set
 	 */
-	public final void setRunDocumentName(String runDocumentName) {
-		this.runDocumentName = runDocumentName;
+	public final void setRunDocument(File runDocument) {
+		this.runDocument = runDocument;
 	}
 
 	/**
