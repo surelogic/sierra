@@ -50,7 +50,7 @@ public class FindBugsConfig extends ToolConfig {
 		cmdj.setMaxmemory(memory);
 		cmdj.createClasspath(antProject).createPath().append(analysis.getClasspath());
 
-		cmdj.createArgument().setValue("-xml");
+		cmdj.createArgument().setValue("-xml:withMessages");
 		cmdj.createArgument().setValue("-outputFile");
 		output = new File(analysis.getTmpFolder(), "findbugs.xml");
 		cmdj.createArgument().setPath(
