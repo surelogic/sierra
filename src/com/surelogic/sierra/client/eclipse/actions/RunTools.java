@@ -270,16 +270,19 @@ public class RunTools implements IObjectActionDelegate {
 								monitor.beginTask("Generating findings",
 										IProgressMonitor.UNKNOWN);
 								launcher.parseFiles();
+								Connection conn = Data.getConnection();
 								try {
-									Connection conn = Data.getConnection();
 									new ClientRunWriter(conn, project
 											.getProject().getDescription()
 											.getName()).write();
+								} finally {
 									conn.close();
-								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+
 								}
+							} catch (SQLException e) {
+								log.log(Level.SEVERE,
+										"Error creating or closing connection",
+										e);
 							} catch (CoreException e) {
 								log.log(Level.SEVERE, "Unable to finish run.",
 										e);
@@ -309,6 +312,5 @@ public class RunTools implements IObjectActionDelegate {
 				}
 			}
 		}
-
 	}
 }

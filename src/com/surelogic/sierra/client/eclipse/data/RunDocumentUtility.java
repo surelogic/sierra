@@ -35,12 +35,19 @@ public final class RunDocumentUtility {
 			final SLProgressMonitor monitor) {
 		try {
 			Connection conn = Data.getConnection();
-			conn.setAutoCommit(false);
-			RunGenerator gen = JDBCRunGenerator.getInstance(conn);
-			MessageWarehouse.getInstance().parseRunDocument(runDocument, gen, monitor);
-			conn.close();
+			try {
+				conn.setAutoCommit(false);
+				RunGenerator gen = JDBCRunGenerator.getInstance(conn);
+				MessageWarehouse.getInstance().parseRunDocument(runDocument,
+						gen, monitor);
+			} catch (SQLException e) {
+				log.severe(e.getMessage());
+			} finally {
+				conn.close();
+			}
 		} catch (SQLException e) {
 			log.severe(e.getMessage());
 		}
 	}
+
 }
