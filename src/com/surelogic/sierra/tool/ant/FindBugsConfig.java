@@ -24,10 +24,10 @@ public class FindBugsConfig extends ToolConfig {
 	// The path to the findbugs location, relative to the tools directory
 	private static final String FB_HOME = "FB";
 	
-	//The folder to set as findbugs.home
+	// The folder to set as findbugs.home
 	private File home = null;
 	
-	//String passed to Java's -Xmx flag
+	// String passed to Java's -Xmx flag
 	private String memory = "1024m";
 
 	/**
@@ -52,9 +52,9 @@ public class FindBugsConfig extends ToolConfig {
 
 		cmdj.createArgument().setValue("-xml:withMessages");
 		cmdj.createArgument().setValue("-outputFile");
-		output = new File(analysis.getTmpFolder(), "findbugs.xml");
+		output = new File[]{new File(analysis.getTmpFolder(), "findbugs.xml")};
 		cmdj.createArgument().setPath(
-				new Path(antProject, output.getAbsolutePath()));
+				new Path(antProject, output[0].getAbsolutePath()));
 		cmdj.createArgument().setValue("-home");
 		cmdj.createArgument().setPath(
 				new Path(antProject, getHome().getAbsolutePath()));
@@ -91,12 +91,15 @@ public class FindBugsConfig extends ToolConfig {
 
 	@Override
 	public void parseOutput(Parser parser) {
-		if (output != null && output.exists()) {
+		if (output != null) {
+			for (File file : output) {
+				if (file.isFile()) {
 			antProject.log("Parsing FindBugs results file: " + output,
 					org.apache.tools.ant.Project.MSG_INFO);
-			parser.parseFB(output.getAbsolutePath(), analysis.getSrcdir().list());
+			parser.parseFB(file.getAbsolutePath(), analysis.getSrcdir().list());
+				}
+			}
 		}
-		
 	}
 
 
@@ -112,17 +115,20 @@ public class FindBugsConfig extends ToolConfig {
 
 	@Override
 	void configure(Config config) {
-		//nothing to do
+		// nothing to do
 	}
 	
 	@Override 
 	void cleanup(){
-		output.delete();
+		for (File file : output) {
+    		file.delete();
+		}
 	}
 
 
 	/**
 	 * Return the value for findbugs.home
+	 * 
 	 * @return the home
 	 */
 	public final File getHome() {
@@ -135,7 +141,9 @@ public class FindBugsConfig extends ToolConfig {
 
 	/**
 	 * Set the value for findbugs.home
-	 * @param home the home to set
+	 * 
+	 * @param home
+	 *            the home to set
 	 */
 	public final void setHome(File home) {
 		this.home = home;
@@ -151,7 +159,8 @@ public class FindBugsConfig extends ToolConfig {
 
 
 	/**
-	 * @param memory the memory to set
+	 * @param memory
+	 *            the memory to set
 	 */
 	public final void setMemory(String memory) {
 		this.memory = memory;

@@ -2,6 +2,9 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.CommandlineJava;
@@ -18,9 +21,10 @@ import com.surelogic.sierra.tool.config.Config;
 public class PmdConfig extends ToolConfig {
 	private final static String PMD_JAR = "pmd-3.9.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
-	
-	//The path to the default rules file, relative to the Tools folder
-	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator + "all.xml";
+
+	// The path to the default rules file, relative to the Tools folder
+	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator
+			+ "all.xml";
 
 	private String targetJDK = null;
 	private File rulesFile = null;
@@ -43,75 +47,43 @@ public class PmdConfig extends ToolConfig {
 		if (rulesFile != null && !rulesFile.isFile()) {
 			throw new BuildException(
 					"rulesfile must be a valid PMD rules XML file.");
-			//TODO can we check and make sure it is a valid PMD xml file?
+			// TODO can we check and make sure it is a valid PMD xml file?
 		} else {
-			rulesFile = new File(analysis.getSierraTools().getToolsFolder(), RULES_FILE_PATH);
+			rulesFile = new File(analysis.getSierraTools().getToolsFolder(),
+					RULES_FILE_PATH);
 		}
 	}
 
 	/**
+	 * Spins off a PMD process for each element in the source path since PMD
+	 * cannot accept multiple directories
+	 * 
 	 * @see {@link Runnable#run()}
 	 */
 	public void run() {
-		// run PMD
-		CommandlineJava cmdj = new CommandlineJava();
+		String[] pathDirs = analysis.getSrcdir().list();
+		int clientCount = pathDirs.length;
+		CountDownLatch pmdLatch = new CountDownLatch(clientCount);
+		output = new File[clientCount];
 
-		// Add the class to run
-		cmdj.setClassname(PMD_CLASS);
-
-		// Set the Java command's classpath
-		cmdj.createClasspath(antProject).createPath().append(
-				analysis.getClasspath());
-		
-		// Add optional arguments
-		if (targetJDK != null && !"".equals(targetJDK)) {
-			cmdj.createArgument().setValue("-targetjdk");
-			cmdj.createArgument().setValue(getTargetJDK());
+		ExecutorService executor;
+		if (analysis.getTools().isMultithreaded()) {
+			executor = Executors.newCachedThreadPool();
+		} else {
+			executor = Executors.newSingleThreadExecutor();
 		}
 
-		// Add the output file
-		cmdj.createArgument().setValue("-reportfile");
-
-		output = new File(analysis.getTmpFolder(), "pmd.xml");
 		try {
-			output.createNewFile();
-		} catch (IOException e1) {
-			antProject.log("Error creating PMD output file: "
-					+ output.getAbsolutePath(),
-					org.apache.tools.ant.Project.MSG_ERR);
-		}
-		cmdj.createArgument().setValue(output.getAbsolutePath());
-
-		antProject.log("Classpath: " + cmdj.getClasspath().toString(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
-		
-
-		// Add the source directories to scan
-		String[] paths = analysis.getSrcdir().list();
-		String csv = analysis.arrayToCSV(paths);
-		antProject.log("Source path: " + csv,
-				org.apache.tools.ant.Project.MSG_DEBUG);
-
-		cmdj.createArgument().setValue(csv);
-
-		// Add the output format
-		cmdj.createArgument().setValue("xml");
-
-		// Add the ruleset file
-		cmdj.createArgument().setValue(rulesFile.getAbsolutePath());
-
-
-		antProject.log(
-				"Executing PMD with the commandline: " + cmdj.toString(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
-		try {
-
-			fork(cmdj.getCommandline());
-		} catch (BuildException e) {
-			antProject.log("Failed to start PMD process.", e,
+			for (int i = 0; i < clientCount; i++) {
+				executor.execute(new PmdRunner(i, pathDirs[i], pmdLatch));
+			}
+			pmdLatch.await();
+		} catch (InterruptedException e) {
+			antProject.log(
+					"Error while waiting for all PMD processes to finish.", e,
 					org.apache.tools.ant.Project.MSG_ERR);
 		} finally {
-			if(latch != null){
+			if (latch != null) {
 				latch.countDown();
 			}
 		}
@@ -120,10 +92,14 @@ public class PmdConfig extends ToolConfig {
 
 	@Override
 	public void parseOutput(Parser parser) {
-		if (output != null && output.exists()) {
-			antProject.log("Parsing PMD results file: " + output,
-					org.apache.tools.ant.Project.MSG_INFO);
-			parser.parsePMD(output.getAbsolutePath());
+		if (output != null) {
+			for (File file : output) {
+				if (file.isFile()) {
+					antProject.log("Parsing PMD results file: " + file,
+							org.apache.tools.ant.Project.MSG_INFO);
+					parser.parsePMD(file.getAbsolutePath());
+				}
+			}
 		}
 	}
 
@@ -142,10 +118,12 @@ public class PmdConfig extends ToolConfig {
 		setTargetJDK(config.getJavaVersion());
 		setRulesFile(config.getPmdRulesFile());
 	}
-	
-	@Override 
-	void cleanup(){
-		output.delete();
+
+	@Override
+	void cleanup() {
+		for (File file : output) {
+			file.delete();
+		}
 	}
 
 	/**
@@ -169,5 +147,85 @@ public class PmdConfig extends ToolConfig {
 
 	public String getTargetJDK() {
 		return targetJDK;
+	}
+
+	/**
+	 * Runs PMD - this is required for running PMD on multiple directories
+	 * 
+	 * @author ethan
+	 * 
+	 */
+	protected class PmdRunner implements Runnable {
+		private final String sourceDir;
+		private final CountDownLatch pmdLatch;
+		private final int id;
+
+		public PmdRunner(int id, final String sourceDir,
+				final CountDownLatch pmdLatch) {
+			this.sourceDir = sourceDir;
+			this.pmdLatch = pmdLatch;
+			this.id = id;
+		}
+
+		public void run() {
+			// run PMD
+			CommandlineJava cmdj = new CommandlineJava();
+
+			// Add the class to run
+			cmdj.setClassname(PMD_CLASS);
+
+			// Set the Java command's classpath
+			cmdj.createClasspath(antProject).createPath().append(
+					analysis.getClasspath());
+
+			// Add optional arguments
+			if (targetJDK != null && !"".equals(targetJDK)) {
+				cmdj.createArgument().setValue("-targetjdk");
+				cmdj.createArgument().setValue(getTargetJDK());
+			}
+
+			// Add the output file
+			cmdj.createArgument().setValue("-reportfile");
+
+			output[id] = new File(analysis.getTmpFolder(), "pmd-" + id + ".xml");
+			try {
+				output[id].createNewFile();
+			} catch (IOException e1) {
+				antProject.log("Error creating PMD output file: "
+						+ output[id].getAbsolutePath(),
+						org.apache.tools.ant.Project.MSG_ERR);
+			}
+			cmdj.createArgument().setValue(output[id].getAbsolutePath());
+
+			antProject.log("Classpath: " + cmdj.getClasspath().toString(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
+
+			// Add the source directories to scan
+			antProject.log("Source path: " + sourceDir,
+					org.apache.tools.ant.Project.MSG_DEBUG);
+
+			cmdj.createArgument().setValue(sourceDir);
+
+			// Add the output format
+			cmdj.createArgument().setValue("xml");
+
+			// Add the ruleset file
+			cmdj.createArgument().setValue(rulesFile.getAbsolutePath());
+
+			antProject.log("Executing PMD with the commandline: "
+					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
+			try {
+
+				fork(cmdj.getCommandline());
+			} catch (BuildException e) {
+				antProject.log("Failed to start PMD process.", e,
+						org.apache.tools.ant.Project.MSG_ERR);
+			} finally {
+				if (pmdLatch != null) {
+					pmdLatch.countDown();
+				}
+			}
+
+		}
 	}
 }

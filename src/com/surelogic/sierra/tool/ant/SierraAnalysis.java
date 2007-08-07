@@ -493,6 +493,10 @@ public class SierraAnalysis extends Task {
 	public void addConfiguredTools(Tools tools) {
 		this.tools = tools;
 	}
+	
+	Tools getTools(){
+		return tools;
+	}
 
 	/**
 	 * @return the destDir

@@ -42,8 +42,8 @@ public abstract class ToolConfig implements Runnable {
 	//To get project information
 	protected SierraAnalysis analysis;
 	
-	//Output file for the tool
-	protected File output = null;
+	//Output file(s) for the tool
+	protected File[] output = null;
 	
 	//Latch used to make sure all tools are done running before the main thread tries to parse their outputs
 	protected CountDownLatch latch = null;

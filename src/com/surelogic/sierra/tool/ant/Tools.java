@@ -254,7 +254,7 @@ public class Tools {
 	/**
 	 * Makes all of the tools clean up their files
 	 */
-	public void cleanup() {
+	void cleanup() {
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
@@ -268,7 +268,7 @@ public class Tools {
 	 * 
 	 * @return
 	 */
-	public File getToolsFolder() {
+	File getToolsFolder() {
 		if (toolsFolder == null || !toolsFolder.isDirectory()) {
 			String[] paths = analysis.getClasspath().list();
 			for (String path : paths) {
@@ -293,7 +293,7 @@ public class Tools {
 	/**
 	 * @return the multithreaded
 	 */
-	public final boolean isMultithreaded() {
+	final boolean isMultithreaded() {
 		return multithreaded;
 	}
 
