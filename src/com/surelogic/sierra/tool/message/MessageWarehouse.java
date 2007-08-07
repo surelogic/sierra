@@ -183,10 +183,20 @@ public class MessageWarehouse {
 					xmlr.nextTag();
 					xmlr.require(START_ELEMENT, null, "Run");
 					xmlr.nextTag(); // move to toolOutput element.
-					xmlr.nextTag(); // move to artifacts
+					xmlr.nextTag(); // move to artifacts (or config, if no
+					// artifacts or errors)
+					// Count artifacts, so that we can estimate time until
+					// completion
+					int counter = 0;
 					while ((xmlr.getEventType() != START_ELEMENT)
 							|| !xmlr.getLocalName().equals("config")) {
+						if (xmlr.getEventType() == START_ELEMENT) {
+							counter++;
+						}
 						xmlr.next();
+					}
+					if (monitor != null) {
+						monitor.beginTask("Generating Artifacts", counter);
 					}
 					readConfig(um.unmarshal(xmlr, Config.class).getValue(),
 							generator);
@@ -211,7 +221,6 @@ public class MessageWarehouse {
 
 	public void parseRunDocument(final File runDocument,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
-		// TODO Check for null
 		try {
 			Unmarshaller um = ctx.createUnmarshaller();
 			try {
@@ -232,6 +241,9 @@ public class MessageWarehouse {
 							&& xmlr.getLocalName().equals("artifact")) {
 						readArtifact(um.unmarshal(xmlr, Artifact.class)
 								.getValue(), aBuilder);
+						if (monitor != null) {
+							monitor.worked(1);
+						}
 						if (xmlr.getEventType() == CHARACTERS) {
 							xmlr.next(); // skip the whitespace between
 							// <artifacts>s.
@@ -243,12 +255,18 @@ public class MessageWarehouse {
 							&& xmlr.getLocalName().equals("errors")) {
 						readError(um.unmarshal(xmlr, Error.class).getValue(),
 								eBuilder);
+						if (monitor != null) {
+							monitor.worked(1);
+						}
 						if (xmlr.getEventType() == CHARACTERS) {
 							xmlr.next(); // skip the whitespace between
 							// <event>s.
 						}
 					}
 					generator.finished();
+					if (monitor != null) {
+						monitor.done();
+					}
 				} catch (JAXBException e) {
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
