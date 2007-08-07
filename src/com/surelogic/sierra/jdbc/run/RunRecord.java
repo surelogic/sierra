@@ -9,7 +9,7 @@ import java.util.Date;
 
 import com.surelogic.sierra.jdbc.LongRecord;
 
-public class RunRecord extends LongRecord {
+class RunRecord extends LongRecord {
 
 	private Long userId;
 	private Long projectId;

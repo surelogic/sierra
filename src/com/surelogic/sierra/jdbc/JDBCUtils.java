@@ -50,4 +50,22 @@ public class JDBCUtils {
 		record.readPk(keys, 1);
 	}
 
+	/**
+	 * Find a record by it's full set of values.
+	 * 
+	 * @param st
+	 * @param record
+	 * @return
+	 * @throws SQLException
+	 */
+	public static boolean find(PreparedStatement st, Record<?> record)
+			throws SQLException {
+		record.fill(st, 1);
+		ResultSet set = st.executeQuery();
+		boolean found = set.next();
+		if (found) {
+			record.readPk(set, 1);
+		}
+		return found;
+	}
 }

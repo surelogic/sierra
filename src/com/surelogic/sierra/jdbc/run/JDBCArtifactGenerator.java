@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.surelogic.sierra.jdbc.Record;
+import com.surelogic.sierra.jdbc.finding.FindingGenerator;
 import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
@@ -30,6 +31,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private static final String SOURCE_LOCATION_SELECT = "SELECT ID FROM SIERRA.SOURCE_LOCATION SL WHERE SL.COMPILATION_UNIT_ID = ? AND SL.HASH = ? AND SL.LINE_OF_CODE = ? AND SL.END_LINE_OF_CODE = ? AND SL.LOCATION_TYPE = ? AND SL.IDENTIFIER = ?";
 	private static final String ARTIFACT_INSERT = "INSERT INTO SIERRA.ARTIFACT (RUN_ID,FINDING_TYPE_ID,PRIMARY_SOURCE_LOCATION_ID,PRIORITY,SEVERITY,MESSAGE) VALUES (?,?,?,?,?,?)";
 	private static final String ARTIFACT_SOURCE_RELATION_INSERT = "INSERT INTO SIERRA.ARTIFACT_SOURCE_LOCATION_RELTN (ARTIFACT_ID,SOURCE_LOCATION_ID) VALUES (?,?)";
+	private static final String RUN_FINISH = "UPDATE RUN SET STATUS='FINISHED' WHERE ID = ?";
 
 	private static final int COMMIT_SIZE = 700;
 
@@ -42,6 +44,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final PreparedStatement sourceInsert;
 	private final PreparedStatement artifactInsert;
 	private final PreparedStatement artifactSourceInsert;
+	private final PreparedStatement finishRun;
 
 	private final List<ArtifactRecord> artifacts;
 	private final Map<SourceRecord, SourceRecord> sources;
@@ -49,6 +52,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Set<ArtifactSourceRecord> relations;
 
 	private final ArtifactBuilder builder;
+	private final Long runId;
 
 	public JDBCArtifactGenerator(Connection conn, Long runId)
 			throws SQLException {
@@ -65,6 +69,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		artifactSourceInsert = conn.prepareStatement(
 				ARTIFACT_SOURCE_RELATION_INSERT,
 				Statement.RETURN_GENERATED_KEYS);
+		finishRun = conn.prepareStatement(RUN_FINISH);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
 		this.sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
@@ -72,17 +77,27 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
 
 		this.builder = new JDBCArtifactBuilder(runId);
+		this.runId = runId;
 	}
 
-	public void finish() throws SQLException {
-		persist();
-		toolIdSelect.close();
-		compUnitInsert.close();
-		compUnitSelect.close();
-		sourceSelect.close();
-		sourceInsert.close();
-		artifactInsert.close();
-		artifactSourceInsert.close();
+	public void finished() {
+		try {
+			persist();
+			finishRun.setLong(1, runId);
+			finishRun.executeUpdate();
+			conn.commit();
+			finishRun.close();
+			toolIdSelect.close();
+			compUnitInsert.close();
+			compUnitSelect.close();
+			sourceSelect.close();
+			sourceInsert.close();
+			artifactInsert.close();
+			artifactSourceInsert.close();
+			new FindingGenerator(conn).generate(runId);
+		} catch (SQLException e) {
+			throw new RunPersistenceException(e);
+		}
 	}
 
 	private void persist() throws SQLException {
@@ -103,18 +118,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private void lookupOrGenerateIds(PreparedStatement lookup,
 			PreparedStatement generate,
 			Collection<? extends Record<Long>> objects) throws SQLException {
-		int idx = 1;
 		for (Record<Long> ins : objects) {
-			ins.fill(lookup, idx);
-			ResultSet set = lookup.executeQuery();
-			if (set.next()) {
-				ins.setId(set.getLong(1));
-			} else {
-				ins.fill(generate, idx);
-				generate.executeUpdate();
-				set = generate.getGeneratedKeys();
-				set.next();
-				ins.setId(set.getLong(1));
+			if (!find(lookup, ins)) {
+				insert(generate, ins);
 			}
 		}
 	}

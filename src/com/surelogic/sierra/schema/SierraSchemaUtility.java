@@ -1,6 +1,7 @@
 package com.surelogic.sierra.schema;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,17 +21,39 @@ public final class SierraSchemaUtility {
 	public static final int schemaVersion = 0;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/schema_";
+	public static final String RUNNABLE_PREFIX = "com.surelogic.sierra.schema.Schema_";
 
 	public static void checkAndUpdate(final Connection c) throws SQLException,
 			IOException {
 		final int arrayLength = schemaVersion + 1;
 
 		final URL[] scripts = new URL[arrayLength];
+		final Runnable[] runnables = new Runnable[arrayLength];
 		for (int i = 0; i < scripts.length; i++) {
 			scripts[i] = SierraSchemaUtility.class
 					.getResource(SQL_SCRIPT_PREFIX + getZeroPadded(i) + ".sql");
+			try {
+				runnables[i] = (Runnable) Class.forName(
+						RUNNABLE_PREFIX + getZeroPadded(i)).getConstructor(
+						Connection.class).newInstance(c);
+			} catch (InstantiationException e) {
+				throw new IllegalStateException(e);
+			} catch (IllegalAccessException e) {
+				throw new IllegalStateException(e);
+			} catch (ClassNotFoundException e) {
+				// It is okay to not have any jobs to do this version, do
+				// nothing.
+			} catch (IllegalArgumentException e) {
+				throw new IllegalStateException(e);
+			} catch (SecurityException e) {
+				throw new IllegalStateException(e);
+			} catch (InvocationTargetException e) {
+				throw new IllegalStateException(e);
+			} catch (NoSuchMethodException e) {
+				throw new IllegalStateException(e);
+			}
 		}
-		SchemaUtility.checkAndUpdate(c, scripts, null);
+		SchemaUtility.checkAndUpdate(c, scripts, runnables);
 	}
 
 	/**
