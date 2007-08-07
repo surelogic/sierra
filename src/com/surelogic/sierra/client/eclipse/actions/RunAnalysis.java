@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 import com.surelogic.sierra.tool.SierraLogger;
@@ -46,7 +47,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	// The default location for storing results
-	private static final String SIERRA_RESULTS = "SierraResults";
+	private static final String SIERRA_RESULTS = ".SierraResults";
 
 	private static final String PARSED_FILE_SUFFIX = ".xml.parsed";
 
@@ -79,7 +80,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				}
 			}
 			for (IJavaProject project : selectedProjects) {
-				log.info("Generating XML...");
+				// log.info("Generating XML...");
 
 				String projectPath = project.getResource().getLocation()
 						.toString();
@@ -102,7 +103,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				// properly, output from ant task is also lost
 				if (buildFile != null) {
 
-					Job runBuildfile = new Job(projectPath) {
+					Job runBuildfile = new Job("Running ANT...") {
 
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
@@ -110,6 +111,8 @@ public final class RunAnalysis implements IObjectActionDelegate {
 								AntRunner runner = new AntRunner();
 								runner.setBuildFileLocation(buildFile
 										.getAbsolutePath());
+								runner
+										.setArguments("-Dmessage=Building -verbose");
 								runner.run();
 
 							} catch (CoreException e) {
@@ -127,20 +130,23 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 						@Override
 						public void done(IJobChangeEvent event) {
-							if (event.getResult().equals(Status.OK_STATUS)) {
+							RunDocumentUtility.loadRunDocument(runDocument,
+									null);
+							BalloonUtility
+									.showMessage("Sierra Analysis Completed",
+											"You may now examine the analysis results.");
 
-								RunDocumentUtility.loadRunDocument(runDocument,
-										null);
-							}
-							super.done(event);
 						}
 
 					});
 					runBuildfile.schedule();
+					BalloonUtility
+							.showMessage(
+									"Sierra Analysis Started",
+									"You may continue to work as the analysis runs. "
+											+ "You will be notified when the analysis has been completed.");
 
 				}
-
-				System.out.println("Run on " + project.getProject().getName());
 
 			}
 		}
