@@ -14,12 +14,6 @@
             <separator name="group1"/>
          </menu>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.RunTools"
-               enablesFor="1"
-               id="Sierra.runToolsAction"
-               label="Run Sierra"
-               menubarPath="Sierra.SierraMenu/group1"/>
-         <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
                enablesFor="1"
                id="Sierra.runAnalysisAction"
@@ -27,6 +21,7 @@
                menubarPath="Sierra.SierraMenu/group1"/>
       </objectContribution>
       
+      <!--
       <objectContribution
             id="AppendToFile.popupMenu"
             objectClass="com.surelogic.sierra.entity.Artifact">
@@ -38,7 +33,6 @@
          	</action>
       </objectContribution>
       
-      <!--
       <objectContribution
             id="MarkIntersting.popupMenu"
             objectClass="com.surelogic.sierra.entity.Artifact">
@@ -118,14 +112,7 @@
             name="Query Results">
       </view>
 
-      <view
-            category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.FindingsClassicView"
-            id="com.surelogic.sierra.client.eclipse.views.FindingsClassicView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            name="Findings Classic"/>
-
-      <view
+          <view
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsView"
