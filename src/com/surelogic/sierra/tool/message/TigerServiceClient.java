@@ -8,12 +8,19 @@ import javax.xml.ws.Service;
 
 public class TigerServiceClient extends Service {
 
+	/**
+	 * Construct a client that points to localhost:8080
+	 */
 	public TigerServiceClient() {
 		super(createUrl(null), new QName(
 				"http://services.sierra.surelogic.com/",
 				"TigerServiceBeanService"));
 	}
 
+	/**
+	 * Construct a client pointing to the specified host.
+	 * @param host a String of type <em>server</em> or <em>server</em>:<em>port</em>
+	 */
 	public TigerServiceClient(String host) {
 		super(createUrl(host), new QName(
 				"http://services.sierra.surelogic.com/",
