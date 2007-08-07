@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 
-@WebServiceClient(name = "TigerService", targetNamespace = "http://services.sierra.surelogic.com/", wsdlLocation = "http://localhost:8080/TigerServiceBeanService/TigerServiceBean?wsdl")
+@WebServiceClient(name = "TigerService", targetNamespace = "http://services.sierra.surelogic.com/", wsdlLocation = "http://fluid.surelogic.com:13376/TigerServiceBeanService/TigerServiceBean?wsdl")
 public class TigerServiceClient extends Service {
 
 	public TigerServiceClient() {
@@ -27,7 +27,7 @@ public class TigerServiceClient extends Service {
 	private static URL createUrl() {
 		try {
 			return new URL(
-					"http://localhost:8080/TigerServiceBeanService/TigerServiceBean?wsdl");
+					"http://fluid.surelogic.com:13376/TigerServiceBeanService/TigerServiceBean?wsdl");
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}

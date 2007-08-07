@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<run>
+<toolOutput>
+<artifact>
+    <findingType>
+        <mnemonic>AtLeastOneConstructor</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Each class should declare at least one constructor</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>1445359208007313019</hash>
+        <identifier></identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>21</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>DefaultPackage</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Use explicit scoping instead of the default package private level</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>6747889535729624378</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>23</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>ShortVariable</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Avoid variables with short names like em</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>2909768561861622999</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>24</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>BeanMembersShouldSerialize</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Found non-transient, non-static member. Please mark as transient or provide accessors.</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>2909768561861622999</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>24</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>MethodArgumentCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Parameter 'run' is not assigned and could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>-4868551124808602053</hash>
+        <identifier>publishRun</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>26</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>LocalVariableCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Local variable 'runs' could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>1787537367120819156</hash>
+        <identifier>publishRun</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>27</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>LocalVariableCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Local variable 'eRun' could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>5233461121659908203</hash>
+        <identifier>publishRun</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>28</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>ShortVariable</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Avoid variables with short names like q</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>-8378474904563068088</hash>
+        <identifier>getQualifiers</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>37</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>LocalVariableCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Local variable 'q' could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>-8378474904563068088</hash>
+        <identifier>getQualifiers</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>37</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>DataflowAnomalyAnalysis</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Found 'DU'-anomaly for variable 'audits' (lines '47'-'50').</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762516158815122</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>47</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>LOW</priority>
+    <severity>INFO</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>MethodArgumentCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Parameter 'audits' is not assigned and could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762516158815122</hash>
+        <identifier>commitAuditTrail</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>47</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>DataflowAnomalyAnalysis</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Found 'DU'-anomaly for variable 'seed' (lines '52'-'55').</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762514744501584</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>52</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>LOW</priority>
+    <severity>INFO</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>MethodArgumentCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Parameter 'seed' is not assigned and could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762514744501584</hash>
+        <identifier>getAuditTrail</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>52</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>DataflowAnomalyAnalysis</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Found 'DU'-anomaly for variable 'request' (lines '57'-'60').</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762514744501584</hash>
+        <identifier>TigerServiceBean</identifier>
+        <identifierType>CLASS</identifierType>
+        <lineOfCode>57</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>LOW</priority>
+    <severity>INFO</severity>
+</artifact>
+
+<artifact>
+    <findingType>
+        <mnemonic>MethodArgumentCouldBeFinal</mnemonic>
+        <tool>PMD</tool>
+    </findingType>
+    <message>Parameter 'request' is not assigned and could be declared final</message>
+    <primarySourceLocation>
+        <className>TigerServiceBean</className>
+        <endLineOfCode>0</endLineOfCode>
+        <hash>7074762514744501584</hash>
+        <identifier>getAuditTrails</identifier>
+        <identifierType>METHOD</identifierType>
+        <lineOfCode>57</lineOfCode>
+        <packageName>com.surelogic.sierra.services</packageName>
+        <pathName>/home/nathan/runtime-EclipseApplication/sierra-ejb/src/com/surelogic/sierra/services</pathName>
+    </primarySourceLocation>
+    <priority>HIGH</priority>
+    <severity>WARNING</severity>
+</artifact>
+</toolOutput>
+<config>
+    <baseDirectory>/home/nathan/runtime-EclipseApplication/sierra-ejb</baseDirectory>
+    <cleanTempFiles>false</cleanTempFiles>
+    <javaVendor>Sun</javaVendor>
+    <javaVersion>1.5</javaVersion>
+    <project>sierra-ejb</project>
+    <toolsDirectory>/home/nathan/myeclipse/workspace/sierra-tool/</toolsDirectory>
+</config>
+</run>

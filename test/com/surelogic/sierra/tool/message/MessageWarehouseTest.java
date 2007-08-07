@@ -22,9 +22,9 @@ public class MessageWarehouseTest {
 	@Test
 	public final void testEquality() {
 		ToolOutput t = mw.fetchToolOutput(MessageWarehouseTest.class
-				.getResourceAsStream("FB--jEdit-4.3pre6.xml.parsed"));
+				.getResourceAsStream("jasen-0.9.xml.parsed"));
 		try {
-			File f = File.createTempFile("FB-temp-file", "parsed");
+			File f = File.createTempFile("some-temp-file", "parsed");
 			f.deleteOnExit();
 			mw.writeToolOutput(t, f.getPath());
 			assertEquals(t, mw.fetchToolOutput(new FileInputStream(f)));

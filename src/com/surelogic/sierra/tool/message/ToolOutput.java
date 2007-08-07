@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlType;
