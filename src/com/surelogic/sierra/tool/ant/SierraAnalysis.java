@@ -227,12 +227,13 @@ public class SierraAnalysis extends Task {
 	String arrayToCSV(String[] paths) {
 		StringBuilder csv = new StringBuilder();
 		if (paths != null) {
-			for (int i = 0; i < paths.length - 1; i++) {
+			for (int i = 0; i < paths.length; i++) {
 				csv.append(paths[i]);
-				csv.append(", ");
+				//append a comma if we are not on the last element
+				if(i < paths.length - 1){
+    				csv.append(", ");
+				}
 			}
-			// add the last item at the end w/o a trailing comma
-			csv.append(paths[paths.length - 1]);
 		}
 		return csv.toString();
 	}
