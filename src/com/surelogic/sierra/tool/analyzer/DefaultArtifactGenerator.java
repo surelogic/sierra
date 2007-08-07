@@ -117,4 +117,9 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 
 	}
 
+	public void finished() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

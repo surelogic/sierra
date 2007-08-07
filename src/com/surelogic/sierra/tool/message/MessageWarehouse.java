@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,8 +23,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.RunGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ErrorBuilder;
 import com.surelogic.sierra.tool.config.Config;
@@ -169,7 +170,47 @@ public class MessageWarehouse {
 	}
 
 	public void parseRunDocument(final File runDocument,
-			ArtifactGenerator generator) {
+			RunGenerator generator, SLProgressMonitor monitor) {
+		try {
+			Unmarshaller um = ctx.createUnmarshaller();
+			try {
+				// set up a parser
+				XMLInputFactory xmlif = XMLInputFactory.newInstance();
+				XMLStreamReader xmlr = xmlif
+						.createXMLStreamReader(new FileReader(runDocument));
+				try {
+					// move to the root element and check its name.
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "Run");
+					xmlr.nextTag(); // move to toolOutput element.
+					xmlr.nextTag(); // move to artifacts
+					while ((xmlr.getEventType() != START_ELEMENT)
+							|| !xmlr.getLocalName().equals("config")) {
+						xmlr.next();
+					}
+					readConfig(um.unmarshal(xmlr, Config.class).getValue(),
+							generator);
+
+				} catch (JAXBException e) {
+					throw new IllegalArgumentException("File with name"
+							+ runDocument.getName()
+							+ " is not a valid document", e);
+				}
+				xmlr.close();
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("File with name"
+						+ runDocument.getName() + " does not exist.", e);
+			} catch (XMLStreamException e) {
+				throw new IllegalArgumentException(e);
+			}
+		} catch (JAXBException e) {
+			throw new IllegalStateException(e);
+		}
+		parseRunDocument(runDocument, generator.build(), monitor);
+	}
+
+	public void parseRunDocument(final File runDocument,
+			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		// TODO Check for null
 		try {
 			Unmarshaller um = ctx.createUnmarshaller();
@@ -207,11 +248,13 @@ public class MessageWarehouse {
 							// <event>s.
 						}
 					}
+					generator.finished();
 				} catch (JAXBException e) {
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
 							+ " is not a valid document", e);
 				}
+				xmlr.close();
 			} catch (FileNotFoundException e) {
 				throw new IllegalArgumentException("File with name"
 						+ runDocument.getName() + " does not exist.", e);
@@ -244,6 +287,13 @@ public class MessageWarehouse {
 				readError(e, eBuilder);
 			}
 		}
+	}
+
+	private static void readConfig(Config config, RunGenerator builder) {
+		builder.javaVendor(config.getJavaVendor());
+		builder.javaVersion(config.getJavaVersion());
+		builder.project(config.getProject());
+		// TODO read all config attributes
 	}
 
 	private static void readArtifact(Artifact artifact, ArtifactBuilder builder) {

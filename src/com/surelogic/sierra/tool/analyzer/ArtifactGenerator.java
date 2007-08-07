@@ -15,6 +15,8 @@ public interface ArtifactGenerator {
 
 	public ErrorBuilder error();
 
+	public void finished();
+	
 	public interface ArtifactBuilder {
 		public SourceLocationBuilder sourceLocation();
 
