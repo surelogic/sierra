@@ -22,8 +22,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
-	private static final String RUN_START = "<Run>";
-	private static final String RUN_END = "</Run>";
+	private static final String RUN_START = "<run>";
+	private static final String RUN_END = "</run>";
 
 	private ArtifactBuilderAdapter artifactAdapter;
 
