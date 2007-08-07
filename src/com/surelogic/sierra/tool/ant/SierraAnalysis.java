@@ -106,6 +106,7 @@ public class SierraAnalysis extends Task {
 	private Environment env = new Environment();
 	private Long timeout = null;
 	private CommandlineJava cmdl = new CommandlineJava();
+	private boolean uploadSuccessful = false;
 
 	private String[] sourceDirectories = null;
 
@@ -396,7 +397,11 @@ public class SierraAnalysis extends Task {
 		// throw new BuildException(sb.toString());
 		//		}
 		// FIXME utilize the return value once Bug 867 is resolved
-		ts.publishRun(run);
+		if(ts.publishRun(run).equalsIgnoreCase("failure")){
+			log("Failed to upload run document, " + runDocument.getAbsolutePath() + " to the server: " + server, org.apache.tools.ant.Project.MSG_ERR);
+			uploadSuccessful = false;
+		}
+		uploadSuccessful = true;
 	}
 
 	/**
@@ -424,11 +429,8 @@ public class SierraAnalysis extends Task {
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		tools.cleanup();
-		if (server != null) {
-			// FIXME should not delete rundocument if it didn't send to the
-			// server or the upload was unsuccessful
-			// This is currently a feature lacking in the Sierra code so we
-			// can't check if the send was successful
+		// If we uploaded successfully, delete our run document and temp directory
+		if (uploadSuccessful) {
 			runDocument.delete();
 			tmpFolder.delete();
 		}
