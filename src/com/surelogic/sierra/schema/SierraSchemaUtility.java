@@ -6,6 +6,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaUtility;
 
 public final class SierraSchemaUtility {
@@ -28,12 +29,12 @@ public final class SierraSchemaUtility {
 		final int arrayLength = schemaVersion + 1;
 
 		final URL[] scripts = new URL[arrayLength];
-		final Runnable[] runnables = new Runnable[arrayLength];
+		final SchemaAction[] schemaActions = new SchemaAction[arrayLength];
 		for (int i = 0; i < scripts.length; i++) {
 			scripts[i] = SierraSchemaUtility.class
 					.getResource(SQL_SCRIPT_PREFIX + getZeroPadded(i) + ".sql");
 			try {
-				runnables[i] = (Runnable) Class.forName(
+				schemaActions[i] = (SchemaAction) Class.forName(
 						RUNNABLE_PREFIX + getZeroPadded(i)).getConstructor(
 						Connection.class).newInstance(c);
 			} catch (InstantiationException e) {
@@ -53,7 +54,7 @@ public final class SierraSchemaUtility {
 				throw new IllegalStateException(e);
 			}
 		}
-		SchemaUtility.checkAndUpdate(c, scripts, runnables);
+		SchemaUtility.checkAndUpdate(c, scripts, schemaActions);
 	}
 
 	/**
