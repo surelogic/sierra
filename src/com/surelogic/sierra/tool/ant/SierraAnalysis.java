@@ -536,6 +536,9 @@ public class SierraAnalysis extends Task {
 	 * @return the bindir
 	 */
 	public final Path getBindir() {
+		if(bindir.list().length == 0){
+			return srcdir;
+		}
 		return bindir;
 	}
 
