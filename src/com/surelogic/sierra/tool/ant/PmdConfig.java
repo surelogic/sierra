@@ -87,9 +87,9 @@ public class PmdConfig extends ToolConfig {
 		
 
 		// Add the source directories to scan
-		String[] paths = analysis.getSrcdir().list();
+		String[] paths = analysis.getBindir().list();
 		String csv = analysis.arrayToCSV(paths);
-		antProject.log("Source path: " + csv,
+		antProject.log("Binary path: " + csv,
 				org.apache.tools.ant.Project.MSG_DEBUG);
 
 		cmdj.createArgument().setValue(csv);
