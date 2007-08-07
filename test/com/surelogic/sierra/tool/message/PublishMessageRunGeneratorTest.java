@@ -17,7 +17,7 @@ public class PublishMessageRunGeneratorTest {
 		try {
 			JAXBContext context = JAXBContext.newInstance(Run.class);
 			Unmarshaller um = context.createUnmarshaller();
-			InputStream in = getResource("ad-hoc-query.xml.parsed");
+			InputStream in = getResource("sierra-entity.xml.parsed");
 			Run run = (Run) um.unmarshal(in);
 			PublishMessageRunGenerator generator = new PublishMessageRunGenerator();
 			MessageWarehouse.readRun(run, generator);
