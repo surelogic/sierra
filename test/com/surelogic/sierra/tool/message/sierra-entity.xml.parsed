@@ -6830,6 +6830,7 @@
     <javaVendor>Sun</javaVendor>
     <javaVersion>1.5</javaVersion>
     <project>sierra-entity</project>
+    <qualifiers>Default</qualifiers>
     <toolsDirectory>/home/nathan/myeclipse/workspace/sierra-tool/</toolsDirectory>
 </config>
 </run>
