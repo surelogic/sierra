@@ -384,21 +384,23 @@ public class SierraAnalysis extends Task {
 		MessageWarehouse warehouse = MessageWarehouse.getInstance();
 		Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
 		TigerService ts = new TigerServiceClient(server).getTigerServicePort();
-		
-		//Verify the qualifiers
-		// List<String> list = ts.getQualifiers().getQualifier();
-		// if (!list.containsAll(qualifiers)) {
-		// StringBuilder sb = new StringBuilder();
-		// sb.append("Invalid qualifiers. Valid qualifiers are:\n");
-		// for (String string : list) {
-		// sb.append(string);
-		// sb.append("\n");
-		// }
-		// throw new BuildException(sb.toString());
-		//		}
+
+		// Verify the qualifiers
+		List<String> list = ts.getQualifiers().getQualifier();
+		if (!list.containsAll(qualifiers)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+			for (String string : list) {
+				sb.append(string);
+				sb.append("\n");
+			}
+			throw new BuildException(sb.toString());
+		}
 		// FIXME utilize the return value once Bug 867 is resolved
-		if(ts.publishRun(run).equalsIgnoreCase("failure")){
-			log("Failed to upload run document, " + runDocument.getAbsolutePath() + " to the server: " + server, org.apache.tools.ant.Project.MSG_ERR);
+		if (ts.publishRun(run).equalsIgnoreCase("failure")) {
+			log("Failed to upload run document, "
+					+ runDocument.getAbsolutePath() + " to the server: "
+					+ server, org.apache.tools.ant.Project.MSG_ERR);
 			uploadSuccessful = false;
 		}
 		uploadSuccessful = true;
@@ -429,7 +431,8 @@ public class SierraAnalysis extends Task {
 	private void cleanup() {
 		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 		tools.cleanup();
-		// If we uploaded successfully, delete our run document and temp directory
+		// If we uploaded successfully, delete our run document and temp
+		// directory
 		if (uploadSuccessful) {
 			runDocument.delete();
 			tmpFolder.delete();
