@@ -93,7 +93,7 @@ public class FindBugsConfig extends ToolConfig {
 		if (output != null) {
 			for (File file : output) {
 				if (file.isFile()) {
-					antProject.log("Parsing FindBugs results file: " + output,
+					antProject.log("Parsing FindBugs results file: " + file,
 							org.apache.tools.ant.Project.MSG_INFO);
 					parser.parseFB(file.getAbsolutePath(), analysis
 							.getSourceDirectories());
