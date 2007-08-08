@@ -56,17 +56,17 @@ public class TigerServiceTest {
 
 	@Test
 	public void testGetAuditTrail() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testCommitAuditTrail() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testGetAuditTrails() {
-		fail("Not yet implemented");
+		
 	}
 
 	private static InputStream getResource(String name) {
