@@ -79,7 +79,6 @@ import java.util.Vector;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.launch.Launcher;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
@@ -299,7 +298,6 @@ public class SierraAnalysis extends Task {
 	/**
 	 * Generates a WSDL file from the updated database
 	 * 
-	 * @see {@link Launcher#parseFiles()}
 	 */
 	private void generateRunDocument() {
 		log("Generating the Run document...",
