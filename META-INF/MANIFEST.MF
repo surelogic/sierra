@@ -6,7 +6,8 @@ Bundle-Version: 1.4.0
 Bundle-Activator: com.surelogic.sierra.tool.SierraTool
 Require-Bundle: org.eclipse.core.runtime,
  org.apache.ant,
- com.surelogic.common
+ com.surelogic.common,
+ org.junit4
 Eclipse-LazyStart: true
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
