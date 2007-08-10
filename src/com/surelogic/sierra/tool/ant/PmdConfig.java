@@ -19,11 +19,15 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  */
 public class PmdConfig extends ToolConfig {
-	private final static String PMD_JAR = "pmd-3.9.jar";
+	// private final static String PMD_39_JAR = "pmd-3.9.jar";
+	private final static String PMD_40_JAR = "pmd-4.0.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 
 	// The path to the default rules file, relative to the Tools folder
-	private static final String RULES_FILE_PATH = "pmd-3.9" + File.separator
+	// private static final String RULES_FILE_PATH_39 = "pmd-3.9" +
+	// File.separator
+	// + "all.xml";
+	private static final String RULES_FILE_PATH_40 = "pmd-4.0" + File.separator
 			+ "all.xml";
 
 	private String targetJDK = null;
@@ -50,7 +54,7 @@ public class PmdConfig extends ToolConfig {
 			// TODO can we check and make sure it is a valid PMD xml file?
 		} else {
 			rulesFile = new File(analysis.getSierraTools().getToolsFolder(),
-					RULES_FILE_PATH);
+					RULES_FILE_PATH_40);
 		}
 	}
 
@@ -97,7 +101,7 @@ public class PmdConfig extends ToolConfig {
 				if (file.isFile()) {
 					antProject.log("Parsing PMD results file: " + file,
 							org.apache.tools.ant.Project.MSG_INFO);
-					parser.parsePMD(file.getAbsolutePath());
+					parser.parsePMD40(file.getAbsolutePath());
 				}
 			}
 		}
@@ -107,8 +111,8 @@ public class PmdConfig extends ToolConfig {
 	void verifyDependencies() {
 		assert (analysis != null);
 
-		if (!analysis.isJarInClasspath(PMD_JAR)) {
-			throw new BuildException("PMD is missing dependency: " + PMD_JAR);
+		if (!analysis.isJarInClasspath(PMD_40_JAR)) {
+			throw new BuildException("PMD is missing dependency: " + PMD_40_JAR);
 		}
 
 	}
@@ -174,7 +178,7 @@ public class PmdConfig extends ToolConfig {
 			// Add the class to run
 			cmdj.setClassname(PMD_CLASS);
 
-			// Set the Java command's classpath
+			// // Set the Java command's classpath
 			cmdj.createClasspath(antProject).createPath().append(
 					analysis.getClasspath());
 

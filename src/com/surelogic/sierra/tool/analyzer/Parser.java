@@ -34,8 +34,29 @@ public class Parser {
 		this.generator = generator;
 	}
 
-	public void parsePMD(String fileName) {
-		PMDHandler handler = new PMDHandler(generator);
+	public void parsePMD39(String fileName) {
+		PMD39Handler handler = new PMD39Handler(generator);
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+			// Parse the input
+			SAXParser saxParser = factory.newSAXParser();
+			saxParser.parse(new File(fileName), handler);
+		} catch (SAXException se) {
+			log.log(Level.SEVERE,
+					"Could not parse the PMD file. Possible errors in the generated file"
+							+ se);
+		} catch (ParserConfigurationException e) {
+			log.log(Level.SEVERE,
+					"Could not parse the PMD file. Parser configuration error."
+							+ e);
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not parse the PMD file. I/O Error."
+					+ e);
+		}
+	}
+
+	public void parsePMD40(String fileName) {
+		PMD40Handler handler = new PMD40Handler(generator);
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			// Parse the input
@@ -125,7 +146,7 @@ public class Parser {
 
 	public void parsePMD(String toolFilePMD,
 			Map<String, Map<Integer, Long>> hashHolder) {
-		PMDHandler handler = new PMDHandler(generator, hashHolder);
+		PMD39Handler handler = new PMD39Handler(generator, hashHolder);
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			// Parse the input
