@@ -26,6 +26,7 @@ import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
+import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.config.Config;
@@ -233,13 +234,23 @@ public final class RunAnalysis implements IObjectActionDelegate {
 							log.info("Starting database entry...");
 							while (!runDocuments.isEmpty()) {
 								File runDocumentHolder = runDocuments.pop();
-								RunDocumentUtility.loadRunDocument(
-										runDocumentHolder, null);
+								try {
+									RunDocumentUtility.loadRunDocument(
+											runDocumentHolder, null);
+									BalloonUtility
+											.showMessage(
+													"Sierra Analysis Completed",
+													"You may now examine the analysis results.");
+									log.info("Finished everything");
+
+								} catch (RunPersistenceException rpe) {
+									log.severe(rpe.getMessage());
+									BalloonUtility
+											.showMessage(
+													"Sierra Analysis Completed with errors",
+													"Check the logs.");
+								}
 							}
-							BalloonUtility
-									.showMessage("Sierra Analysis Completed",
-											"You may now examine the analysis results.");
-							log.info("Finished everything");
 						} else {
 							BalloonUtility.showMessage(
 									"Sierra Analysis Completed with errors",

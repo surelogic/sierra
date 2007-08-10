@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.run.JDBCRunGenerator;
+import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public final class RunDocumentUtility {
-	private static final Logger log = SierraLogger
-			.getLogger(RunDocumentUtility.class.getName());
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private RunDocumentUtility() {
 		// no instances
@@ -30,9 +30,10 @@ public final class RunDocumentUtility {
 	 * @param monitor
 	 *            a progress monitor, may be <code>null</code> if progress is
 	 *            not tracked.
+	 * @throws RunPersistenceException
 	 */
 	public static void loadRunDocument(final File runDocument,
-			final SLProgressMonitor monitor) {
+			final SLProgressMonitor monitor) throws RunPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
 			try {
