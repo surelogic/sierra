@@ -9,17 +9,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class AuditTrail {
 
-	String trail;
-	
-	private List<Audit> transaction;
+	private String trail;
 
-	public List<Audit> getTransaction() {
-		return transaction;
-	}
+	private String project;
 
-	public void setTransaction(List<Audit> transaction) {
-		this.transaction = transaction;
-	}
+	private List<Audit> audits;
+
+	private List<Match> matches;
 
 	public String getTrail() {
 		return trail;
@@ -27,6 +23,30 @@ public class AuditTrail {
 
 	public void setTrail(String trail) {
 		this.trail = trail;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public void setProject(String project) {
+		this.project = project;
+	}
+
+	public List<Audit> getAudits() {
+		return audits;
+	}
+
+	public void setAudits(List<Audit> audits) {
+		this.audits = audits;
+	}
+
+	public List<Match> getMatches() {
+		return matches;
+	}
+
+	public void setMatches(List<Match> matches) {
+		this.matches = matches;
 	}
 
 }

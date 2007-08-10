@@ -34,10 +34,12 @@ public interface TigerService {
 	 * @param seed
 	 * @return the unique identifier of a global audit trail.
 	 */
-	String getAuditTrail(AuditTrailFind seed);
+	String getAuditTrail(FindAuditTrail seed);
 
 	/**
-	 * Commit a trail of transactions.
+	 * Commit an audit trail of transactions. The audit trail consists of any
+	 * new match locations that have been added to the trail, as well as any new
+	 * auditing events.
 	 * 
 	 * @param audits
 	 * @return the server revision containing the new audits
@@ -45,8 +47,8 @@ public interface TigerService {
 	Long commitAuditTrail(AuditTrail audits);
 
 	/**
-	 * Get all of the auditing events for a set of qualifiers, after the
-	 * specified revision.
+	 * Get all of the auditing events for the given qualifier and project
+	 * occurring after the specified revision.
 	 * 
 	 * @param request
 	 * @return all audit trails and the audits they contain after the specified
