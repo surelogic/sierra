@@ -16,10 +16,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.surelogic.sierra.jdbc.tool.ToolBuilder;
 import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
 
-public class FindBugsToolInfoGenerator {
+public class FindBugs1_2_1ToolInfoGenerator {
 
 	private static final Logger log = Logger
-			.getLogger(FindBugsToolInfoGenerator.class.getName());
+			.getLogger(FindBugs1_2_1ToolInfoGenerator.class.getName());
 
 	/**
 	 * Load the rulesets and persist them to the embedded database.
