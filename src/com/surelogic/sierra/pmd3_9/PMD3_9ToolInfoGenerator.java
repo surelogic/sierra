@@ -26,7 +26,7 @@ import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
  * @author nathan
  * 
  */
-public class PMDToolInfoGenerator extends DefaultHandler {
+public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 
 	private static final String PMD_URI = "http://pmd.sf.net/ruleset/1.0.0";
 
@@ -50,14 +50,14 @@ public class PMDToolInfoGenerator extends DefaultHandler {
 	private StringBuilder info;
 
 	private static final Logger log = Logger
-			.getLogger(PMDToolInfoGenerator.class.getName());
+			.getLogger(PMD3_9ToolInfoGenerator.class.getName());
 
 	/**
 	 * Load the rulesets and persist them to the embedded database.
 	 * 
 	 */
 	public static void generateTool(Connection conn) {
-		PMDToolInfoGenerator handler = new PMDToolInfoGenerator(conn);
+		PMD3_9ToolInfoGenerator handler = new PMD3_9ToolInfoGenerator(conn);
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setValidating(true);
 		spf.setNamespaceAware(true);
@@ -98,7 +98,7 @@ public class PMDToolInfoGenerator extends DefaultHandler {
 		}
 	}
 
-	private PMDToolInfoGenerator(Connection conn) {
+	private PMD3_9ToolInfoGenerator(Connection conn) {
 		try {
 			rule = ToolBuilder.getBuilder(conn).name("PMD");
 		} catch (SQLException e) {
