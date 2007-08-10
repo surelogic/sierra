@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class ToolBuilder {
 
-	private static final String INSERT_TOOL = "INSERT INTO TOOL (NAME) VALUES (?)";
+	private static final String INSERT_TOOL = "INSERT INTO TOOL (NAME,VERSION) VALUES (?,?)";
 
 	private static final String INSERT_FINDING_TYPE = "INSERT INTO FINDING_TYPE (TOOL_ID, MNEMONIC, MNEMONIC_DISPLAY, CATEGORY, CATEGORY_DISPLAY, LINK, INFO) VALUES (?,?,?,?,?,?,?)";
 
@@ -28,8 +28,10 @@ public class ToolBuilder {
 		}
 	}
 
-	public FindingTypeBuilder build(String name, String version) throws SQLException {
+	public FindingTypeBuilder build(String name, String version)
+			throws SQLException {
 		insertTool.setString(1, name);
+		insertTool.setString(2, version);
 		insertTool.executeUpdate();
 		ResultSet set = insertTool.getGeneratedKeys();
 		set.next();

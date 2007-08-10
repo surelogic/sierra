@@ -133,9 +133,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	}
 
 	// TODO We may be able to speed up here by keeping a map of recent ids
-	private long getFindingTypeId(String tool, String mnemonic)
+	private long getFindingTypeId(String tool, String version, String mnemonic)
 			throws SQLException {
-		FindingTypeKey ins = new FindingTypeKey(tool, mnemonic);
+		FindingTypeKey ins = new FindingTypeKey(tool, version, mnemonic);
 		ins.fill(toolIdSelect, 1);
 		ResultSet set = toolIdSelect.executeQuery();
 		set.next();
@@ -191,9 +191,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			clear();
 		}
 
-		public ArtifactBuilder findingType(String tool, String mnemonic) {
+		public ArtifactBuilder findingType(String tool, String version, String mnemonic) {
 			try {
-				artifact.setFindingTypeId(getFindingTypeId(tool, mnemonic));
+				artifact.setFindingTypeId(getFindingTypeId(tool, version, mnemonic));
 			} catch (SQLException e) {
 				throw new RunPersistenceException(e);
 			}

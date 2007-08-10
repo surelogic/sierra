@@ -9,15 +9,18 @@ import java.sql.SQLException;
 public class FindingTypeKey {
 	private Long id;
 	private final String tool;
+	private final String version;
 	private final String mnemonic;
 
-	public FindingTypeKey(String tool, String mnemonic) {
+	public FindingTypeKey(String tool, String version, String mnemonic) {
 		this.tool = tool;
+		this.version = version;
 		this.mnemonic = mnemonic;
 	}
 
 	public int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setString(idx++, tool);
+		st.setString(idx++, version);
 		st.setString(idx++, mnemonic);
 		return idx;
 	}

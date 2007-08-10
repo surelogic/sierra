@@ -44,11 +44,11 @@ public class FindBugs1_2_1ToolInfoGenerator {
 			throw new IllegalStateException("Could not build FindBugs tool.", e);
 		}
 		FindBugsMessageParser messageParser = new FindBugsMessageParser();
-		parseResource(sp, "com/surelogic/sierra/findbugs/messages.xml",
+		parseResource(sp, "com/surelogic/sierra/findbugs1_2_1/messages.xml",
 				messageParser);
 		FindBugsParser findingParser = new FindBugsParser(t, messageParser
 				.getInfoMap());
-		parseResource(sp, "com/surelogic/sierra/findbugs/findbugs.xml",
+		parseResource(sp, "com/surelogic/sierra/findbugs1_2_1/findbugs.xml",
 				findingParser);
 	}
 

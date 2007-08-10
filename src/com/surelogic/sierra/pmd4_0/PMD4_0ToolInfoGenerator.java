@@ -1,4 +1,4 @@
-package com.surelogic.sierra.pmd3_9;
+package com.surelogic.sierra.pmd4_0;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -26,7 +26,7 @@ import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
  * @author nathan
  * 
  */
-public class PMD3_9ToolInfoGenerator extends DefaultHandler {
+public class PMD4_0ToolInfoGenerator extends DefaultHandler {
 
 	private static final String PMD_URI = "http://pmd.sf.net/ruleset/1.0.0";
 
@@ -50,14 +50,14 @@ public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 	private StringBuilder info;
 
 	private static final Logger log = Logger
-			.getLogger(PMD3_9ToolInfoGenerator.class.getName());
+			.getLogger(PMD4_0ToolInfoGenerator.class.getName());
 
 	/**
 	 * Load the rulesets and persist them to the embedded database.
 	 * 
 	 */
 	public static void generateTool(Connection conn) {
-		PMD3_9ToolInfoGenerator handler = new PMD3_9ToolInfoGenerator(conn);
+		PMD4_0ToolInfoGenerator handler = new PMD4_0ToolInfoGenerator(conn);
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setValidating(true);
 		spf.setNamespaceAware(true);
@@ -73,7 +73,7 @@ public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 		try {
 			props.load(Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream(
-							"com/surelogic/sierra/pmd3_9/rulesets.properties"));
+							"com/surelogic/sierra/pmd4_0/rulesets.properties"));
 		} catch (IOException e) {
 			// TODO we probably want to throw an exception here
 			log
@@ -88,7 +88,7 @@ public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 			try {
 				sp.parse(Thread.currentThread().getContextClassLoader()
 						.getResourceAsStream(
-								"com/surelogic/sierra/pmd3_9/" + fileName),
+								"com/surelogic/sierra/pmd4_0/" + fileName),
 						handler);
 			} catch (SAXException e) {
 				log.log(Level.WARNING, "Could not parse a PMD ruleset", e);
@@ -98,9 +98,9 @@ public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 		}
 	}
 
-	private PMD3_9ToolInfoGenerator(Connection conn) {
+	private PMD4_0ToolInfoGenerator(Connection conn) {
 		try {
-			rule = ToolBuilder.getBuilder(conn).build("PMD", "3.9");
+			rule = ToolBuilder.getBuilder(conn).build("PMD", "4.0");
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not build PMD tool info.", e);
 		}
