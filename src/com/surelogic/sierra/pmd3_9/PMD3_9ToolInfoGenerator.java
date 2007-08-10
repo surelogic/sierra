@@ -100,7 +100,7 @@ public class PMD3_9ToolInfoGenerator extends DefaultHandler {
 
 	private PMD3_9ToolInfoGenerator(Connection conn) {
 		try {
-			rule = ToolBuilder.getBuilder(conn).name("PMD");
+			rule = ToolBuilder.getBuilder(conn).build("PMD", "3.9");
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not build PMD tool info.", e);
 		}

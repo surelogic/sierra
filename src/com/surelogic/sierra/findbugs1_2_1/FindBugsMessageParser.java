@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.surelogic.sierra.findbugs;
+package com.surelogic.sierra.findbugs1_2_1;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -28,7 +28,7 @@ public class ToolBuilder {
 		}
 	}
 
-	public FindingTypeBuilder name(String name) throws SQLException {
+	public FindingTypeBuilder build(String name, String version) throws SQLException {
 		insertTool.setString(1, name);
 		insertTool.executeUpdate();
 		ResultSet set = insertTool.getGeneratedKeys();

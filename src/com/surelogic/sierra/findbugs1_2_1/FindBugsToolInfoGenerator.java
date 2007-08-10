@@ -1,4 +1,4 @@
-package com.surelogic.sierra.findbugs;
+package com.surelogic.sierra.findbugs1_2_1;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -39,7 +39,7 @@ public class FindBugsToolInfoGenerator {
 		}
 		FindingTypeBuilder t;
 		try {
-			t = ToolBuilder.getBuilder(conn).name("FindBugs");
+			t = ToolBuilder.getBuilder(conn).build("FindBugs", "1.2.1");
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not build FindBugs tool.", e);
 		}
