@@ -32,6 +32,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 	}
 
 	public int fill(PreparedStatement st, int idx) throws SQLException {
+		st.setLong(idx++, id.getProjectId());
 		st.setLong(idx++, id.getHash());
 		st.setString(idx++, id.getClassName());
 		st.setString(idx++, id.getPackageName());
@@ -42,6 +43,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 	}
 
 	public int fillWithPk(PreparedStatement st, int idx) throws SQLException {
+		st.setLong(idx++, id.getProjectId());
 		st.setLong(idx++, id.getHash());
 		st.setString(idx++, id.getClassName());
 		st.setString(idx++, id.getPackageName());
@@ -51,6 +53,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 
 	public int readPk(ResultSet set, int idx) throws SQLException {
 		id = new PK();
+		id.setProjectId(set.getLong(idx++));
 		id.setHash(set.getLong(idx++));
 		id.setClassName(set.getString(idx++));
 		id.setPackageName(set.getString(idx++));
@@ -67,6 +70,7 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 	}
 
 	public static class PK {
+		private Long projectId;
 		private String className;
 		private String packageName;
 		private Long findingTypeId;
@@ -104,6 +108,14 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 			this.hash = hash;
 		}
 
+		public Long getProjectId() {
+			return projectId;
+		}
+
+		public void setProjectId(Long projectId) {
+			this.projectId = projectId;
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -115,6 +127,8 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 			result = prime * result + ((hash == null) ? 0 : hash.hashCode());
 			result = prime * result
 					+ ((packageName == null) ? 0 : packageName.hashCode());
+			result = prime * result
+					+ ((projectId == null) ? 0 : projectId.hashCode());
 			return result;
 		}
 
@@ -146,6 +160,11 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 				if (other.packageName != null)
 					return false;
 			} else if (!packageName.equals(other.packageName))
+				return false;
+			if (projectId == null) {
+				if (other.projectId != null)
+					return false;
+			} else if (!projectId.equals(other.projectId))
 				return false;
 			return true;
 		}
