@@ -1,4 +1,4 @@
-package com.surelogic.sierra.pmd;
+package com.surelogic.sierra.pmd3_9;
 
 import java.io.IOException;
 import java.sql.Connection;

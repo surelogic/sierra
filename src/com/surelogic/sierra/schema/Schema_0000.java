@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.sierra.findbugs.FindBugsToolInfoGenerator;
-import com.surelogic.sierra.pmd.PMDToolInfoGenerator;
+import com.surelogic.sierra.pmd3_9.PMDToolInfoGenerator;
 
 public class Schema_0000 implements SchemaAction {
 
