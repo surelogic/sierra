@@ -5,13 +5,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class FindingType {
 	private String tool;
+	private String version;
 	private String mnemonic;
 
 	public FindingType() {
 		// Nothing to do
 	}
 
-	public FindingType(String tool, String mnemonic) {
+	public FindingType(String tool, String version, String mnemonic) {
 		this.tool = tool;
 		this.mnemonic = mnemonic;
 	}
@@ -32,6 +33,14 @@ public class FindingType {
 		this.mnemonic = mnemonic;
 	}
 
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -39,6 +48,7 @@ public class FindingType {
 		result = prime * result
 				+ ((mnemonic == null) ? 0 : mnemonic.hashCode());
 		result = prime * result + ((tool == null) ? 0 : tool.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -60,6 +70,11 @@ public class FindingType {
 			if (other.tool != null)
 				return false;
 		} else if (!tool.equals(other.tool))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
 			return false;
 		return true;
 	}

@@ -17,7 +17,8 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			// Nothing to do
 		}
 
-		public ArtifactBuilder findingType(String tool, String mnemonic) {
+		public ArtifactBuilder findingType(String tool, String version,
+				String mnemonic) {
 
 			return this;
 		}
@@ -119,7 +120,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 
 	public void finished() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

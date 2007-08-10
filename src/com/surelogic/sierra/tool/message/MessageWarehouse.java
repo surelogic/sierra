@@ -327,7 +327,8 @@ public class MessageWarehouse {
 		builder.severity(artifact.getSeverity()).priority(
 				artifact.getPriority()).message(artifact.getMessage());
 		builder.findingType(artifact.getFindingType().getTool(), artifact
-				.getFindingType().getMnemonic());
+				.getFindingType().getVersion(), artifact.getFindingType()
+				.getMnemonic());
 		readPrimarySource(builder, artifact.getPrimarySourceLocation());
 		Collection<SourceLocation> sources = artifact.getAdditionalSources();
 		if (sources != null) {

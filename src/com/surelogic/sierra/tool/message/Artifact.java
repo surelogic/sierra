@@ -25,8 +25,8 @@ public class Artifact {
 			clear();
 		}
 
-		public Builder findingType(String tool, String mnemonic) {
-			this.findingType = new FindingType(tool, mnemonic);
+		public Builder findingType(String tool, String version, String mnemonic) {
+			this.findingType = new FindingType(tool, version, mnemonic);
 			return this;
 		}
 

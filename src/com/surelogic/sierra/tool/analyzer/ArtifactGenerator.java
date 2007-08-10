@@ -22,7 +22,7 @@ public interface ArtifactGenerator {
 
 		public SourceLocationBuilder primarySourceLocation();
 
-		public ArtifactBuilder findingType(String tool, String mnemonic);
+		public ArtifactBuilder findingType(String tool, String version, String mnemonic);
 
 		public ArtifactBuilder priority(Priority priority);
 

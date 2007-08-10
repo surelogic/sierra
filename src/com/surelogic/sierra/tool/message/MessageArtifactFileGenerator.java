@@ -101,8 +101,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			MessageWarehouse.getInstance().writeArtifact(a, artOut);
 		}
 
-		public ArtifactBuilder findingType(String tool, String mnemonic) {
-			artBuilder.findingType(tool, mnemonic);
+		public ArtifactBuilder findingType(String tool, String version,
+				String mnemonic) {
+			artBuilder.findingType(tool, version, mnemonic);
 			return this;
 		}
 

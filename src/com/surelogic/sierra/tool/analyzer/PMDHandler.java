@@ -16,6 +16,7 @@ class PMDHandler extends DefaultHandler {
 	private ArtifactGenerator generator;
 
 	private static final String PMD = "PMD";
+	private static final String PMD_VERSION = "3.9";
 
 	private ArtifactGenerator.SourceLocationBuilder sourceLocation;
 
@@ -154,7 +155,8 @@ class PMDHandler extends DefaultHandler {
 					}
 
 					if ("rule".equals(aName)) {
-						artifact.findingType(PMD, attrs.getValue(i));
+						artifact.findingType(PMD, PMD_VERSION, attrs
+								.getValue(i));
 					}
 
 					if (Parser.PRIORITY.equals(aName)) {

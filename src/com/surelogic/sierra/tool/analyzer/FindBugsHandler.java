@@ -14,6 +14,7 @@ import com.surelogic.sierra.tool.message.Severity;
 class FindBugsHandler extends DefaultHandler {
 
 	private static final String FINDBUGS = "FindBugs";
+	private static final String FINDBUGS_VERSION = "1.2.1";
 
 	private ArtifactGenerator.SourceLocationBuilder sourceLocation;
 
@@ -86,7 +87,8 @@ class FindBugsHandler extends DefaultHandler {
 
 					if ("type".equals(aName)) {
 
-						artifact.findingType(FINDBUGS, attributes.getValue(i));
+						artifact.findingType(FINDBUGS, FINDBUGS_VERSION,
+								attributes.getValue(i));
 					}
 
 					if (Parser.PRIORITY.equals(aName)) {

@@ -53,8 +53,9 @@ class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 			artifacts.add(a);
 		}
 
-		public ArtifactBuilder findingType(String tool, String mnemonic) {
-			artBuilder.findingType(tool, mnemonic);
+		public ArtifactBuilder findingType(String tool, String version,
+				String mnemonic) {
+			artBuilder.findingType(tool, version, mnemonic);
 			return this;
 		}
 
