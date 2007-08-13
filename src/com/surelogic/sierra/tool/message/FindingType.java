@@ -14,6 +14,7 @@ public class FindingType {
 
 	public FindingType(String tool, String version, String mnemonic) {
 		this.tool = tool;
+		this.version = version;
 		this.mnemonic = mnemonic;
 	}
 
