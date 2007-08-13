@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.data;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -42,12 +43,15 @@ public final class RunDocumentUtility {
 				MessageWarehouse.getInstance().parseRunDocument(runDocument,
 						gen, monitor);
 			} catch (SQLException e) {
-				log.severe(e.getMessage());
+				log.log(Level.SEVERE, "SQL Exception while persisting run.", e);
+			} catch (Exception e) {
+				log.log(Level.SEVERE,
+						"Exception occurred while persisting run.", e);
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e) {
-			log.severe(e.getMessage());
+			log.log(Level.SEVERE, "SQL Exception while persisting run.", e);
 		}
 	}
 

@@ -249,6 +249,12 @@ public final class RunAnalysis implements IObjectActionDelegate {
 											.showMessage(
 													"Sierra Analysis Completed with errors",
 													"Check the logs.");
+								} catch (Exception e) {
+									log
+											.log(
+													Level.SEVERE,
+													"Exception ocurred while persisting run to the database.",
+													e);
 								}
 							}
 						} else {
