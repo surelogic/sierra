@@ -8,7 +8,7 @@ import java.util.Date;
 
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.Importance;
-import com.surelogic.sierra.tool.message.TransactionType;
+import com.surelogic.sierra.tool.message.AuditEvent;
 import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 public class AuditManager {
@@ -38,7 +38,7 @@ public class AuditManager {
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
 		insert(insertAudit, newAudit(f.getTrailId(), comment,
-				TransactionType.COMMENT));
+				AuditEvent.COMMENT));
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -47,7 +47,7 @@ public class AuditManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		insert(insertAudit, newAudit(f.getTrailId(), importance.toString(), TransactionType.IMPORTANCE));
+		insert(insertAudit, newAudit(f.getTrailId(), importance.toString(), AuditEvent.IMPORTANCE));
 	}
 
 	private FindingView getFinding(Long findingId) throws SQLException {
@@ -63,7 +63,7 @@ public class AuditManager {
 	}
 
 	private AuditRecord newAudit(Long trailId, String value,
-			TransactionType event) throws SQLException {
+			AuditEvent event) throws SQLException {
 		AuditRecord record = new AuditRecord();
 		record.setUserId(User.getUser(conn).getId());
 		record.setTimestamp(new Date());

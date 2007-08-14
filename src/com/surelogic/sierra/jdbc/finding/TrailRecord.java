@@ -9,6 +9,7 @@ import com.surelogic.sierra.jdbc.LongRecord;
 
 public class TrailRecord extends LongRecord {
 	private String uid;
+	private Long projectId;
 
 	public String getUid() {
 		return uid;
@@ -18,7 +19,16 @@ public class TrailRecord extends LongRecord {
 		this.uid = uid;
 	}
 
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+
 	public int fill(PreparedStatement st, int idx) throws SQLException {
+		st.setLong(idx++, projectId);
 		setNullableString(idx++, st, uid);
 		return idx;
 	}

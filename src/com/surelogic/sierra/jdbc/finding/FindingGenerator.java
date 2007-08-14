@@ -35,12 +35,12 @@ public class FindingGenerator {
 			+ " WHERE"
 			+ " A.FINDING_ID IS NULL AND A.RUN_ID = ? AND R.ID = A.RUN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID";
 
-	public static final String MATCH_SELECT = "SELECT FINDING_ID, TRAIL_ID FROM SIERRA_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	public static final String MATCH_INSERT = "INSERT INTO SIERRA_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID, TRAIL_ID) VALUES (?,?,?,?,?,?,?)";
-	public static final String MATCH_UPDATE_FINDING = "UPDATE SIERRA_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	public static final String FINDING_INSERT = "INSERT INTO FINDING (TRAIL_ID, IMPORTANCE) VALUES (?,?)";
-	public static final String TRAIL_INSERT = "INSERT INTO TRAIL (UID) VALUES (?)";
-	public static final String ARTIFACT_FINDING_SET = "UPDATE ARTIFACT SET FINDING_ID = ? WHERE ID = ?";
+	private static final String MATCH_SELECT = "SELECT FINDING_ID, TRAIL_ID FROM SIERRA_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
+	private static final String MATCH_INSERT = "INSERT INTO SIERRA_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID, TRAIL_ID) VALUES (?,?,?,?,?,?,?)";
+	private static final String MATCH_UPDATE_FINDING = "UPDATE SIERRA_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
+	private static final String FINDING_INSERT = "INSERT INTO FINDING (TRAIL_ID, IMPORTANCE) VALUES (?,?)";
+	private static final String TRAIL_INSERT = "INSERT INTO TRAIL (PROJECT_ID,UID) VALUES (?,?)";
+	private static final String PROJECT_RUN_SELECT = "SELECT PROJECT_ID FROM RUN WHERE ID = ?";
 
 	private final PreparedStatement updateArtifactsWithExistingMatch;
 	private final PreparedStatement unassignedArtifacts;
@@ -49,6 +49,7 @@ public class FindingGenerator {
 	private final PreparedStatement selectMatch;
 	private final PreparedStatement insertFinding;
 	private final PreparedStatement insertTrail;
+	private final PreparedStatement selectProjectRun;
 	private final Connection conn;
 
 	public FindingGenerator(Connection conn) {
@@ -67,6 +68,7 @@ public class FindingGenerator {
 					.prepareStatement(UPDATE_ARTIFACTS_WITH_EXISTING_MATCH);
 			unassignedArtifacts = conn
 					.prepareStatement(UNASSIGNED_ARTIFACTS_SELECT);
+			selectProjectRun = conn.prepareStatement(PROJECT_RUN_SELECT);
 		} catch (SQLException e) {
 			throw new FindingGenerationException(e);
 		}
@@ -74,11 +76,16 @@ public class FindingGenerator {
 
 	public void generate(Long runId) {
 		try {
+			selectProjectRun.setLong(1, runId);
+			ResultSet projectSet = selectProjectRun.executeQuery();
+			projectSet.next();
+			Long projectId = projectSet.getLong(1);
 			updateArtifactsWithExistingMatch.setLong(1, runId);
 			updateArtifactsWithExistingMatch.executeUpdate();
 			conn.commit();
 			unassignedArtifacts.setLong(1, runId);
 			ResultSet result = unassignedArtifacts.executeQuery();
+
 			int counter = 0;
 			while (result.next()) {
 				ArtifactResult art = new ArtifactResult();
@@ -95,6 +102,7 @@ public class FindingGenerator {
 					counter++;
 					MatchRecord m = art.m;
 					TrailRecord t = new TrailRecord();
+					t.setProjectId(projectId);
 					FindingRecord f = new FindingRecord();
 					f.setTrail(t);
 					f.setImportance(calculateImportance(art.s, art.p));

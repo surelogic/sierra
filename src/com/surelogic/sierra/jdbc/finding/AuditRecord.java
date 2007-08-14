@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.surelogic.sierra.jdbc.LongRecord;
-import com.surelogic.sierra.tool.message.TransactionType;
+import com.surelogic.sierra.tool.message.AuditEvent;
 
 public class AuditRecord extends LongRecord {
 
@@ -14,7 +14,7 @@ public class AuditRecord extends LongRecord {
 	private Long trailId;
 	private Date timestamp;
 	private String value;
-	private TransactionType event;
+	private AuditEvent event;
 
 	public int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, userId);
@@ -57,11 +57,11 @@ public class AuditRecord extends LongRecord {
 		this.value = value;
 	}
 
-	public TransactionType getEvent() {
+	public AuditEvent getEvent() {
 		return event;
 	}
 
-	public void setEvent(TransactionType event) {
+	public void setEvent(AuditEvent event) {
 		this.event = event;
 	}
 
