@@ -41,7 +41,7 @@ public class TigerServiceTest {
 			Unmarshaller um = context.createUnmarshaller();
 			InputStream in = getResource("sierra-entity.xml.parsed");
 			Run run = (Run) um.unmarshal(in);
-			service.publishRun(run);
+			assertEquals("SUCCESS",service.publishRun(run));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -54,19 +54,9 @@ public class TigerServiceTest {
 		assertTrue(service.getQualifiers().getQualifier().contains("Default"));
 	}
 
-	@Test
-	public void testGetAuditTrail() {
-		
-	}
-
-	@Test
-	public void testCommitAuditTrail() {
-		
-	}
-
-	@Test
-	public void testGetAuditTrails() {
-		
+	public void testSingleComment() {
+		MergeAuditTrailRequest mergeReq = new MergeAuditTrailRequest();
+		mergeReq.setProject("hello");
 	}
 
 	private static InputStream getResource(String name) {

@@ -7,17 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class Audit {
 
-	private Match match;
 	private Date timestamp;
-	private String comment;
-	private TransactionType type;
+	private String value;
+	private AuditEvent event;
 
-	public Match getMatch() {
-		return match;
+	public Audit() {
+		// Do nothing
 	}
 
-	public void setMatch(Match match) {
-		this.match = match;
+	public Audit(Date timestamp, String value, AuditEvent event) {
+		this.timestamp = timestamp;
+		this.value = value;
+		this.event = event;
 	}
 
 	public Date getTimestamp() {
@@ -28,20 +29,20 @@ public class Audit {
 		this.timestamp = timestamp;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getValue() {
+		return value;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setValue(String comment) {
+		this.value = comment;
 	}
 
-	public TransactionType getType() {
-		return type;
+	public AuditEvent getEvent() {
+		return event;
 	}
 
-	public void setType(TransactionType type) {
-		this.type = type;
+	public void setType(AuditEvent event) {
+		this.event = event;
 	}
 
 }

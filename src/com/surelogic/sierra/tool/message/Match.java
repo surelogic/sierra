@@ -9,6 +9,18 @@ public class Match {
 	private Long hash;
 	private FindingType findingType;
 
+	public Match() {
+		// Do nothing
+	}
+
+	public Match(String packageName, String className, Long hash, String tool,
+			String version, String mnemonic) {
+		this.packageName = packageName;
+		this.className = className;
+		this.hash = hash;
+		this.findingType = new FindingType(tool, version, mnemonic);
+	}
+
 	public String getPackageName() {
 		return packageName;
 	}

@@ -1,14 +1,16 @@
 package com.surelogic.sierra.tool.message;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlRootElement
-public class FindAuditTrail {
-	String project;
-	Match match;
-	String qualifier;
+public class MergeAuditTrailRequest {
+	private String project;
+	private String qualifier;
+	private List<Merge> merge;
 
 	public String getProject() {
 		return project;
@@ -18,12 +20,12 @@ public class FindAuditTrail {
 		this.project = project;
 	}
 
-	public Match getMatch() {
-		return match;
+	public List<Merge> getMerge() {
+		return merge;
 	}
 
-	public void setMatch(Match match) {
-		this.match = match;
+	public void setMerge(List<Merge> merge) {
+		this.merge = merge;
 	}
 
 	public String getQualifier() {

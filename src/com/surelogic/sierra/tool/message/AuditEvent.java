@@ -6,7 +6,7 @@ package com.surelogic.sierra.tool.message;
  * @author nathan
  * 
  */
-public enum TransactionType {
+public enum AuditEvent {
 	/**
 	 * A user-applied comment to a finding.
 	 */
