@@ -21,7 +21,7 @@
  *         </binary>       
  *     </project>
  * 
- *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run" multithreaded="true">
+ *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run" multithreaded="true" toolsfolder="/path/to/Tools">
  *         <pmdconfig javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
  *         <findbugsconfig memory="1024m"/>
  *     </tools>
@@ -49,6 +49,7 @@
  * Tools - if not defined, will run all of the tools
  * 	- exclude - optional
  *  - multithreaded - optional, defaults to false
+ *  - toolsfolder - optional, defaults to the path to the jaxb-api.jar/../../ which should be the Tools folder
  * 	- pmdconfig - optional
  * 		- javaVersion - optional, PMD defaults to 1.5
  * 		- rulefile - optional, defaults to ${tools directory}/pmd-3.9/all.xml
