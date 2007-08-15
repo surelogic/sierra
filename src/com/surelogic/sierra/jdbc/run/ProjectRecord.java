@@ -1,11 +1,9 @@
 package com.surelogic.sierra.jdbc.run;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.surelogic.sierra.jdbc.LongRecord;
-import com.surelogic.sierra.jdbc.Record;
 
 class ProjectRecord extends LongRecord {
 	private String name;
