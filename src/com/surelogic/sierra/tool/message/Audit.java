@@ -41,7 +41,7 @@ public class Audit {
 		return event;
 	}
 
-	public void setType(AuditEvent event) {
+	public void setEvent(AuditEvent event) {
 		this.event = event;
 	}
 
