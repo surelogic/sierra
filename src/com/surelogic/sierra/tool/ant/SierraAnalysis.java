@@ -151,6 +151,7 @@ public class SierraAnalysis extends Task {
 
 	// Optional
 	private Path bindir = null;
+	
 
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
@@ -240,24 +241,26 @@ public class SierraAnalysis extends Task {
 	/**
 	 * Helper method for {@link }
 	 * 
+	 * @param cp
 	 * @param jar
 	 * @return
 	 */
-	boolean isJarInClasspath(String jar) {
+	boolean isJarInClasspath(Path cp, String jar) {
 		List<String> list = new ArrayList<String>(1);
 		list.add(jar);
-		return isJarInClasspath(list);
+		return isJarInClasspath(cp, list);
 	}
 
 	/**
 	 * Scans the classpath for a specific jar
 	 * 
+	 * @param cp
 	 * @param jar
 	 * @return
 	 */
-	boolean isJarInClasspath(List<String> jars) {
+	boolean isJarInClasspath(Path cp, List<String> jars) {
 
-		String[] paths = getClasspath().list();
+		String[] paths = cp.list();
 		boolean found = false;
 		outer: for (String path : paths) {
 			for (String jar : jars) {
@@ -303,7 +306,7 @@ public class SierraAnalysis extends Task {
 		log("Generating the Run document...",
 				org.apache.tools.ant.Project.MSG_INFO);
 
-		printClasspath();
+		printClasspath(classpath);
 
 		// Fixes a ClassDefNotFoundError on ContextFactory via JAXBContext
 		Thread.currentThread().setContextClassLoader(
@@ -358,13 +361,13 @@ public class SierraAnalysis extends Task {
 
 	}
 
-	private void printClasspath() {
-		String[] classpathList = classpath.list();
+	void printClasspath(Path path) {
+		String[] classpathList = path.list();
 
 		log("---------- CLASSPATH ----------",
-				org.apache.tools.ant.Project.MSG_DEBUG);
-		for (String path : classpathList) {
-			log(path, org.apache.tools.ant.Project.MSG_DEBUG);
+				org.apache.tools.ant.Project.MSG_VERBOSE);
+		for (String string : classpathList) {
+			log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
 		}
 	}
 

@@ -4,6 +4,8 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -19,7 +21,7 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
-	private static final String FINDBUGS_JAR = "findbugs.jar";
+	private final static String FINDBUGS_JAR = "findbugs.jar";
 
 	// The path to the findbugs location, relative to the tools directory
 	private static final String FB_HOME = "FB";
@@ -30,6 +32,8 @@ public class FindBugsConfig extends ToolConfig {
 	// String passed to Java's -Xmx flag
 	private String memory = "1024m";
 
+	private Path classpath = null;
+	
 	/**
 	 * @param project
 	 */
@@ -43,12 +47,12 @@ public class FindBugsConfig extends ToolConfig {
 	 * @see com.surelogic.sierra.tool.ant.ToolConfig#runTool()
 	 */
 	public void run() {
+		analysis.printClasspath(getClasspath());
 		// run FindBugs
 		CommandlineJava cmdj = new CommandlineJava();
 		cmdj.setClassname(FINDBUGS_CLASS);
 		cmdj.setMaxmemory(memory);
-		cmdj.createClasspath(antProject).createPath().append(
-				analysis.getClasspath());
+		cmdj.createClasspath(antProject).createPath().append(getClasspath());
 
 		cmdj.createArgument().setValue("-xml:withMessages");
 		cmdj.createArgument().setValue("-outputFile");
@@ -78,6 +82,18 @@ public class FindBugsConfig extends ToolConfig {
 
 	}
 
+	/**
+	 * creates the classpath for FindBugs
+	 */
+	protected Path getClasspath() {
+		if (classpath == null) {
+			File lib = new File(analysis.getTools().getToolsFolder(), "FB" + File.separator + "lib" + File.separator + FINDBUGS_JAR);
+			classpath = new Path(antProject);
+			classpath.append(new Path(antProject, lib.getAbsolutePath()));
+		}
+		return classpath;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -105,8 +121,7 @@ public class FindBugsConfig extends ToolConfig {
 	@Override
 	void verifyDependencies() {
 		assert (analysis != null);
-
-		if (!analysis.isJarInClasspath(FINDBUGS_JAR)) {
+		if (!analysis.isJarInClasspath(getClasspath(), FINDBUGS_JAR)) {
 			throw new BuildException("FindBugs is missing dependency: "
 					+ FINDBUGS_JAR);
 		}

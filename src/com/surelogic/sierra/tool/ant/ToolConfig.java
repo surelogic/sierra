@@ -242,13 +242,11 @@ public abstract class ToolConfig implements Runnable {
 	}
 
 	/**
-	 * Add a path to the classpath.
+	 * creates the classpath for a specific tool
 	 * 
 	 * @return created classpath.
 	 */
-	public Path createClasspath() {
-		return getCommandLine().createClasspath(analysis.getProject()).createPath();
-	}
+	protected abstract Path getClasspath();
 
 	/**
 	 * Sets the latch, if any, that each tool should touch when it is done.

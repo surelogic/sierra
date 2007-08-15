@@ -135,8 +135,8 @@ public class Tools {
 					"toolsFolder must be an existing directory.");
 		} else {
 			if (!"Tools".equals(getToolsFolder().getName())) {
-				throw new BuildException(
-						"toolsFolder is not the Sierra tools folder.");
+				throw new BuildException(getToolsFolder().getAbsolutePath()
+						+ " is not the Sierra tools folder.");
 			}
 			// may want to ensure that the directory structure is correct
 		}
@@ -271,12 +271,14 @@ public class Tools {
 		if (toolsFolder == null || !toolsFolder.isDirectory()) {
 			String[] paths = analysis.getClasspath().list();
 			for (String path : paths) {
-				if (path.endsWith("findbugs.jar")) {
-					int index = path.indexOf("FB");
+				if (path.endsWith("jaxb-api.jar")) {
+					int index = path.indexOf("jax-ws");
 					toolsFolder = new File(path.substring(0, index - 1));
 				}
 			}
 		}
+		antProject.log("The toolsfolder points to: " + toolsFolder,
+				org.apache.tools.ant.Project.MSG_VERBOSE);
 		return toolsFolder;
 	}
 
@@ -286,6 +288,8 @@ public class Tools {
 	 * @param toolsFolder
 	 */
 	public void setToolsFolder(File toolsFolder) {
+		antProject.log("Setting the toolsfolder to point to: " + toolsFolder,
+				org.apache.tools.ant.Project.MSG_VERBOSE);
 		this.toolsFolder = toolsFolder;
 	}
 
@@ -301,6 +305,8 @@ public class Tools {
 	 *            the multithreaded to set
 	 */
 	public final void setMultithreaded(boolean multithreaded) {
+		antProject.log("Setting multithreaded to: " + multithreaded,
+				org.apache.tools.ant.Project.MSG_VERBOSE);
 		this.multithreaded = multithreaded;
 	}
 

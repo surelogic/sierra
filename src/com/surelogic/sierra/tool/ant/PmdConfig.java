@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Path;
 
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
@@ -19,16 +20,14 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  */
 public class PmdConfig extends ToolConfig {
-	// private final static String PMD_39_JAR = "pmd-3.9.jar";
-	private final static String PMD_40_JAR = "pmd-4.0.jar";
+	private final static String PMD_JAR = "pmd-4.0.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 
 	// The path to the default rules file, relative to the Tools folder
-	// private static final String RULES_FILE_PATH_39 = "pmd-3.9" +
-	// File.separator
-	// + "all.xml";
-	private static final String RULES_FILE_PATH_40 = "pmd-4.0" + File.separator
+	private static final String RULES_FILE_PATH = "pmd-4.0" + File.separator
 			+ "all.xml";
+	
+	private Path classpath = null;
 
 	private String targetJDK = null;
 	private File rulesFile = null;
@@ -54,7 +53,7 @@ public class PmdConfig extends ToolConfig {
 			// TODO can we check and make sure it is a valid PMD xml file?
 		} else {
 			rulesFile = new File(analysis.getSierraTools().getToolsFolder(),
-					RULES_FILE_PATH_40);
+					RULES_FILE_PATH);
 		}
 	}
 
@@ -65,10 +64,14 @@ public class PmdConfig extends ToolConfig {
 	 * @see {@link Runnable#run()}
 	 */
 	public void run() {
+		
+		analysis.printClasspath(getClasspath());
+		
 		String[] pathDirs = analysis.getSrcdir().list();
 		int clientCount = pathDirs.length;
 		CountDownLatch pmdLatch = new CountDownLatch(clientCount);
 		output = new File[clientCount];
+		
 
 		ExecutorService executor;
 		if (analysis.getTools().isMultithreaded()) {
@@ -111,8 +114,9 @@ public class PmdConfig extends ToolConfig {
 	void verifyDependencies() {
 		assert (analysis != null);
 
-		if (!analysis.isJarInClasspath(PMD_40_JAR)) {
-			throw new BuildException("PMD is missing dependency: " + PMD_40_JAR);
+		if (!analysis.isJarInClasspath(getClasspath(), PMD_JAR)) {
+			throw new BuildException("PMD is missing dependency: " + PMD_JAR);
+
 		}
 
 	}
@@ -152,6 +156,20 @@ public class PmdConfig extends ToolConfig {
 	public String getTargetJDK() {
 		return targetJDK;
 	}
+	
+	
+	protected Path getClasspath(){
+		if(classpath == null){
+			File libDir = new File(analysis.getTools().getToolsFolder(), "pmd"
+					+ File.separator + "lib");
+			File[] jars = libDir.listFiles(new JarFileFilter());
+			classpath = new Path(antProject);
+			for (File file : jars) {
+				classpath.append(new Path(antProject, file.getAbsolutePath()));
+			}
+		}
+		return classpath;
+	}
 
 	/**
 	 * Runs PMD - this is required for running PMD on multiple directories
@@ -179,8 +197,7 @@ public class PmdConfig extends ToolConfig {
 			cmdj.setClassname(PMD_CLASS);
 
 			// // Set the Java command's classpath
-			cmdj.createClasspath(antProject).createPath().append(
-					analysis.getClasspath());
+			cmdj.createClasspath(antProject).createPath().append(getClasspath());
 
 			// Add optional arguments
 			if (targetJDK != null && !"".equals(targetJDK)) {
