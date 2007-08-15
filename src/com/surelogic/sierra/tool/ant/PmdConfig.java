@@ -24,7 +24,7 @@ public class PmdConfig extends ToolConfig {
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 
 	// The path to the default rules file, relative to the Tools folder
-	private static final String RULES_FILE_PATH = "pmd-4.0" + File.separator
+	private static final String RULES_FILE_PATH = "pmd" + File.separator
 			+ "all.xml";
 	
 	private Path classpath = null;
