@@ -143,7 +143,7 @@ class FindBugsHandler extends DefaultHandler {
 						// location of the file for the double click in the
 						// eclipse view
 						sourceLocation.className(className).packageName(
-								packageName).path("");
+								packageName);
 					}
 
 				}
@@ -152,7 +152,41 @@ class FindBugsHandler extends DefaultHandler {
 		}
 
 		if ("Class".equals(eName)) {
+			sourceLocation = artifact.sourceLocation();
 			inClass = true;
+			if (attributes != null) {
+				String className = "";
+				String packageName = "";
+
+				for (int i = 0; i < attributes.getLength(); i++) {
+					String aName = attributes.getLocalName(i);
+					if ("".equals(aName)) {
+						aName = attributes.getQName(i);
+					}
+
+					if ("classname".equals(aName)) {
+
+						className = attributes.getValue(i);
+						sourceLocation.type(IdentifierType.CLASS);
+
+						int lastPeriod = className.lastIndexOf(".");
+						if (lastPeriod == -1) {
+							packageName = Parser.DEFAULT_PACKAGE;
+						} else {
+
+							packageName = className.substring(0, lastPeriod);
+							className = className.substring(lastPeriod + 1);
+						}
+
+						sourceLocation.className(className).packageName(
+								packageName).identifier(className);
+
+					}
+
+				}
+
+			}
+
 		}
 		if ("Field".equals(eName)) {
 			sourceLocation = artifact.sourceLocation();
@@ -188,7 +222,7 @@ class FindBugsHandler extends DefaultHandler {
 						}
 
 						sourceLocation.className(className).packageName(
-								packageName).path("");
+								packageName);
 
 					}
 
@@ -204,7 +238,7 @@ class FindBugsHandler extends DefaultHandler {
 
 		if ("SourceLine".equals(eName)) {
 
-			if (inMethod || inField) {
+			if (inMethod || inField || inClass) {
 				String start = "";
 				String end = "";
 
@@ -228,23 +262,10 @@ class FindBugsHandler extends DefaultHandler {
 							sourceLocation.endLine(Integer.parseInt(end));
 						}
 
-						// if ("sourceFile".equals(aName)) {
-						// superClassName = attributes.getValue(i);
-						// }
-
-					}
-				}
-			} else if (inClass) {
-				if (attributes != null) {
-					for (int i = 0; i < attributes.getLength(); i++) {
-						String aName = attributes.getLocalName(i);
-						if ("".equals(aName)) {
-							aName = attributes.getQName(i);
+						if ("sourcepath".equals(aName)) {
+							String relativePath = attributes.getValue(i);
+							sourceLocation.path(relativePath);
 						}
-
-						// if ("sourceFile".equals(aName)) {
-						// superClassName = attributes.getValue(i);
-						// }
 
 					}
 				}
