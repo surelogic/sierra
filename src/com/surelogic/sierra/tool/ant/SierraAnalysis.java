@@ -120,8 +120,8 @@ public class SierraAnalysis extends Task {
 
 	// Used for when we want to stop the run
 	volatile boolean keepRunning = true;
-	
-	//Check for classpath dependencies
+
+	// Check for classpath dependencies
 	private boolean checkCP = true;
 
 	/***************************************************************************
@@ -194,10 +194,10 @@ public class SierraAnalysis extends Task {
 	public SierraAnalysis(Config config) {
 		super();
 		checkCP = false;
-		
+
 		antProject = new org.apache.tools.ant.Project();
-//		antProject.addBuildListener(new CommonsLoggingListener());
-//		setProject(antProject);
+		// antProject.addBuildListener(new CommonsLoggingListener());
+		// setProject(antProject);
 
 		this.config = config;
 		destDir = config.getDestDirectory();
@@ -389,21 +389,26 @@ public class SierraAnalysis extends Task {
 	}
 
 	void printClasspath(Path path) {
-		String[] classpathList = path.list();
 
-		log("---------- CLASSPATH ----------",
-				org.apache.tools.ant.Project.MSG_VERBOSE);
-		for (String string : classpathList) {
-			log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
+		if (path != null) {
+			String[] classpathList = path.list();
+
+			log("---------- CLASSPATH ----------",
+					org.apache.tools.ant.Project.MSG_VERBOSE);
+			for (String string : classpathList) {
+				log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
+			}
 		}
 	}
 
 	void printClasspathToStdOut(Path path) {
-		String[] classpathList = path.list();
+		if (path != null) {
+			String[] classpathList = path.list();
 
-		System.out.println("---------- CLASSPATH ----------");
-		for (String string : classpathList) {
-			System.out.println(string);
+			System.out.println("---------- CLASSPATH ----------");
+			for (String string : classpathList) {
+				System.out.println(string);
+			}
 		}
 	}
 
