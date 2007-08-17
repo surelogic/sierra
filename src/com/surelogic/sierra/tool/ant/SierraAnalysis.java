@@ -337,6 +337,22 @@ public class SierraAnalysis extends Task {
 			Thread.currentThread().setContextClassLoader(
 					this.getClass().getClassLoader());
 
+			// This code computes the source directories from the given base
+			// directory
+			File root = config.getBaseDirectory();
+			JavaFilter filter = new JavaFilter();
+			filterdirs(root, filter);
+
+			Iterator<File> dirIterator = filter.dirs.iterator();
+			Vector<String> sourceDirectory = new Vector<String>();
+			while (dirIterator.hasNext()) {
+				File holder = dirIterator.next();
+				sourceDirectory.add(holder.getPath());
+			}
+
+			sourceDirectories = sourceDirectory
+					.toArray(new String[sourceDirectory.size()]);
+
 			if (config == null) {
 				config = new Config();
 				config.setBaseDirectory(project.getDir());
@@ -345,22 +361,6 @@ public class SierraAnalysis extends Task {
 				config.setJavaVersion(System.getProperty("java.version"));
 				config.setJavaVendor(System.getProperty("java.vendor"));
 				config.setQualifiers(qualifiers);
-
-				// This code computes the source directories from the given base
-				// directory
-				File root = config.getBaseDirectory();
-				JavaFilter filter = new JavaFilter();
-				filterdirs(root, filter);
-
-				Iterator<File> dirIterator = filter.dirs.iterator();
-				Vector<String> sourceDirectory = new Vector<String>();
-				while (dirIterator.hasNext()) {
-					File holder = dirIterator.next();
-					sourceDirectory.add(holder.getPath());
-				}
-
-				sourceDirectories = sourceDirectory
-						.toArray(new String[sourceDirectory.size()]);
 			}
 
 			if (runDocument == null || "".equals(runDocument)) {

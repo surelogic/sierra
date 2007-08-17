@@ -32,7 +32,8 @@ public class BuildFileGenerator {
 	private static final String INCLUDE_ALL = "**/*";
 	// private static final String FINDBUGS_LIB_LOCATION = "Tools/FB/lib";
 	// private static final String FINDBUGS_JAR = "findbugs.jar";
-	// private static final String PMD_39_LIB_LOCATION =i love  "Tools/pmd-3.9/lib";
+	// private static final String PMD_39_LIB_LOCATION =i love
+	// "Tools/pmd-3.9/lib";
 	// private static final String PMD_40_LIB_LOCATION = "Tools/pmd-4.0/lib";
 	private static final String INCLUDE_ALL_JARS = "**/*.jar";
 	private static final String BUC_LIB_LOCATION = "Tools/backport-util-concurrent-3.0";
@@ -152,8 +153,10 @@ public class BuildFileGenerator {
 				// Start Sierra analysis tag
 				attributeMap.put("destDir", config.getDestDirectory()
 						.getAbsolutePath());
-				attributeMap.put("srcdir", config.getBaseDirectory().getAbsolutePath());
-				attributeMap.put("bindir", config.getBaseDirectory().getAbsolutePath());
+				attributeMap.put("srcdir", config.getBaseDirectory()
+						.getAbsolutePath());
+				attributeMap.put("bindir", config.getBaseDirectory()
+						.getAbsolutePath());
 				attributeMap.put("runDocument", config.getRunDocument()
 						.getAbsolutePath());
 				writeAttributes(attributeMap);
@@ -161,7 +164,8 @@ public class BuildFileGenerator {
 
 				// Start project tag
 				attributeMap.put("name", config.getProject());
-				attributeMap.put("dir", config.getBaseDirectory().getAbsolutePath());
+				attributeMap.put("dir", config.getBaseDirectory()
+						.getAbsolutePath());
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
 
@@ -234,7 +238,7 @@ public class BuildFileGenerator {
 
 	}
 
-	private String getToolsDirectory() {
+	public static String getToolsDirectory() {
 		String commonDirectory = "";
 
 		URL relativeURL = SierraTool.getDefault().getBundle().getEntry("");
@@ -312,7 +316,7 @@ public class BuildFileGenerator {
 			// writeAttributes(attributeMap);
 			// hd.startElement("", "", "include", atts);
 			// hd.endElement("", "", "include");
-			//			hd.endElement("", "", "fileset");
+			// hd.endElement("", "", "fileset");
 
 			// Backport util concurrent (for FindBugs)
 			attributeMap.put("dir", toolDirectory + BUC_LIB_LOCATION);
