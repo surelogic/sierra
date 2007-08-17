@@ -26,7 +26,7 @@ public class PmdConfig extends ToolConfig {
 	// The path to the default rules file, relative to the Tools folder
 	private static final String RULES_FILE_PATH = "pmd" + File.separator
 			+ "all.xml";
-	
+
 	private Path classpath = null;
 
 	private String targetJDK = null;
@@ -64,37 +64,41 @@ public class PmdConfig extends ToolConfig {
 	 * @see {@link Runnable#run()}
 	 */
 	public void run() {
-		
-		analysis.printClasspath(getClasspath());
-		
-		String[] pathDirs = analysis.getSrcdir().list();
-		int clientCount = pathDirs.length;
-		CountDownLatch pmdLatch = new CountDownLatch(clientCount);
-		output = new File[clientCount];
-		
+		if (analysis.keepRunning) {
 
-		ExecutorService executor;
-		if (analysis.getTools().isMultithreaded()) {
-			executor = Executors.newCachedThreadPool();
-		} else {
-			executor = Executors.newSingleThreadExecutor();
-		}
+			analysis.printClasspath(getClasspath());
 
-		try {
-			for (int i = 0; i < clientCount; i++) {
-				executor.execute(new PmdRunner(i, pathDirs[i], pmdLatch));
+			String[] pathDirs = analysis.getSrcdir().list();
+			int clientCount = pathDirs.length;
+			CountDownLatch pmdLatch = new CountDownLatch(clientCount);
+			output = new File[clientCount];
+
+			ExecutorService executor;
+			if (analysis.getTools().isMultithreaded()) {
+				executor = Executors.newCachedThreadPool();
+			} else {
+				executor = Executors.newSingleThreadExecutor();
 			}
-			pmdLatch.await();
-		} catch (InterruptedException e) {
-			antProject.log(
-					"Error while waiting for all PMD processes to finish.", e,
-					org.apache.tools.ant.Project.MSG_ERR);
-		} finally {
+
+			try {
+				for (int i = 0; i < clientCount; i++) {
+					executor.execute(new PmdRunner(i, pathDirs[i], pmdLatch));
+				}
+				pmdLatch.await();
+			} catch (InterruptedException e) {
+				antProject.log(
+						"Error while waiting for all PMD processes to finish.",
+						e, org.apache.tools.ant.Project.MSG_ERR);
+			} finally {
+				if (latch != null) {
+					latch.countDown();
+				}
+			}
+		} else {
 			if (latch != null) {
 				latch.countDown();
 			}
 		}
-
 	}
 
 	@Override
@@ -156,10 +160,9 @@ public class PmdConfig extends ToolConfig {
 	public String getTargetJDK() {
 		return targetJDK;
 	}
-	
-	
-	protected Path getClasspath(){
-		if(classpath == null){
+
+	protected Path getClasspath() {
+		if (classpath == null) {
 			File libDir = new File(analysis.getTools().getToolsFolder(), "pmd"
 					+ File.separator + "lib");
 			File[] jars = libDir.listFiles(new JarFileFilter());
@@ -197,7 +200,8 @@ public class PmdConfig extends ToolConfig {
 			cmdj.setClassname(PMD_CLASS);
 
 			// // Set the Java command's classpath
-			cmdj.createClasspath(antProject).createPath().append(getClasspath());
+			cmdj.createClasspath(antProject).createPath()
+					.append(getClasspath());
 
 			// Add optional arguments
 			if (targetJDK != null && !"".equals(targetJDK)) {

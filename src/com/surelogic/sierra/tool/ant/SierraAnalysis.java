@@ -80,6 +80,7 @@ import java.util.Vector;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.listener.CommonsLoggingListener;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
@@ -109,9 +110,6 @@ public class SierraAnalysis extends Task {
 	// instantiated from the Sierra client
 	private Config config = null;
 
-	// The file containing the artifacts from the run
-	private File runDocument = null;
-
 	// The Date of this run
 	private Date runDateTime = null;
 
@@ -119,6 +117,9 @@ public class SierraAnalysis extends Task {
 	private Path classpath = null;
 
 	private org.apache.tools.ant.Project antProject = null;
+
+	// Used for when we want to stop the run
+	volatile boolean keepRunning = true;
 
 	/***************************************************************************
 	 * Ant Task Attributes
@@ -132,6 +133,9 @@ public class SierraAnalysis extends Task {
 
 	// Optional, if omitted, the system's tmp folder is used
 	private File destDir = new File(System.getProperty("java.io.tmpdir"));
+
+	// The file containing the artifacts from the run
+	private File runDocument = null;
 
 	// Optional file attribute.
 	// Where to store the temp files
@@ -152,7 +156,6 @@ public class SierraAnalysis extends Task {
 
 	// Optional
 	private Path bindir = null;
-	
 
 	/* *********************** CONSTANTS ****************************** */
 	private static final String PARSED_FILE_SUFFIX = ".parsed";
@@ -187,13 +190,19 @@ public class SierraAnalysis extends Task {
 	 */
 	public SierraAnalysis(Config config) {
 		super();
+		antProject = new org.apache.tools.ant.Project();
+//		antProject.addBuildListener(new CommonsLoggingListener());
+//		setProject(antProject);
+
 		this.config = config;
 		destDir = config.getDestDirectory();
 		runDocument = config.getRunDocument();
-		classpath = new Path(antProject, config.getClasspath());
+		if (config.getClasspath() != null) {
+			classpath = new Path(antProject, config.getClasspath());
+		}
 		clean = config.isCleanTempFiles();
-		srcdir = new Path(antProject, config.getSourceDirs());
-		bindir = new Path(antProject, config.getBinDirs());
+		srcdir.append(new Path(antProject, config.getSourceDirs()));
+		bindir.append(new Path(antProject, config.getBinDirs()));
 		tools = new Tools(antProject, config);
 		project = new Project(antProject, config);
 	}
@@ -217,6 +226,15 @@ public class SierraAnalysis extends Task {
 		if (clean) {
 			cleanup();
 		}
+	}
+
+	/**
+	 * Used by direct access of this class - not via Ant. Halts the running of
+	 * this task and any sub-processes it spawned.
+	 */
+	public void stop() {
+		keepRunning = false;
+		tools.stop();
 	}
 
 	/**
@@ -304,62 +322,65 @@ public class SierraAnalysis extends Task {
 	 * 
 	 */
 	private void generateRunDocument() {
-		log("Generating the Run document...",
-				org.apache.tools.ant.Project.MSG_INFO);
+		if (keepRunning) {
+			log("Generating the Run document...",
+					org.apache.tools.ant.Project.MSG_INFO);
 
-		printClasspath(classpath);
+			printClasspath(classpath);
 
-		// Fixes a ClassDefNotFoundError on ContextFactory via JAXBContext
-		Thread.currentThread().setContextClassLoader(
-				this.getClass().getClassLoader());
+			// Fixes a ClassDefNotFoundError on ContextFactory via JAXBContext
+			Thread.currentThread().setContextClassLoader(
+					this.getClass().getClassLoader());
 
-		if (config == null) {
-			config = new Config();
-			config.setBaseDirectory(project.getDir().getAbsolutePath());
-			config.setProject(project.getName());
-			config.setRunDateTime(runDateTime);
-			config.setJavaVersion(System.getProperty("java.version"));
-			config.setJavaVendor(System.getProperty("java.vendor"));
-			config.setQualifiers(qualifiers);
+			if (config == null) {
+				config = new Config();
+				config.setBaseDirectory(project.getDir().getAbsolutePath());
+				config.setProject(project.getName());
+				config.setRunDateTime(runDateTime);
+				config.setJavaVersion(System.getProperty("java.version"));
+				config.setJavaVendor(System.getProperty("java.vendor"));
+				config.setQualifiers(qualifiers);
 
-			// This code computes the source directories from the given base
-			// directory
-			File root = new File(config.getBaseDirectory());
-			JavaFilter filter = new JavaFilter();
-			filterdirs(root, filter);
+				// This code computes the source directories from the given base
+				// directory
+				File root = new File(config.getBaseDirectory());
+				JavaFilter filter = new JavaFilter();
+				filterdirs(root, filter);
 
-			Iterator<File> dirIterator = filter.dirs.iterator();
-			Vector<String> sourceDirectory = new Vector<String>();
-			while (dirIterator.hasNext()) {
-				File holder = dirIterator.next();
-				sourceDirectory.add(holder.getPath());
+				Iterator<File> dirIterator = filter.dirs.iterator();
+				Vector<String> sourceDirectory = new Vector<String>();
+				while (dirIterator.hasNext()) {
+					File holder = dirIterator.next();
+					sourceDirectory.add(holder.getPath());
+				}
+
+				sourceDirectories = sourceDirectory
+						.toArray(new String[sourceDirectory.size()]);
 			}
 
-			sourceDirectories = sourceDirectory
-					.toArray(new String[sourceDirectory.size()]);
+			if (runDocument == null || "".equals(runDocument)) {
+				runDocument = new File(tmpFolder, project.getName() + ".xml"
+						+ PARSED_FILE_SUFFIX);
+			} else if (runDocument.isDirectory()) {
+				runDocument = new File(runDocument, project.getName() + ".xml"
+						+ PARSED_FILE_SUFFIX);
+			} else if (!runDocument.getName().endsWith(
+					".xml" + PARSED_FILE_SUFFIX)) {
+				runDocument = new File(runDocument.getParentFile(), runDocument
+						.getName()
+						+ ".xml" + PARSED_FILE_SUFFIX);
+			}
+
+			log("Generating the run document: " + runDocument,
+					org.apache.tools.ant.Project.MSG_INFO);
+			MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
+					runDocument.getAbsolutePath(), config);
+			Parser parser = new Parser(generator);
+
+			tools.parseOutput(parser);
+			generator.write();
+
 		}
-
-		if (runDocument == null || "".equals(runDocument)) {
-			runDocument = new File(tmpFolder, project.getName() + ".xml"
-					+ PARSED_FILE_SUFFIX);
-		} else if (runDocument.isDirectory()) {
-			runDocument = new File(runDocument, project.getName() + ".xml"
-					+ PARSED_FILE_SUFFIX);
-		} else if (!runDocument.getName().endsWith(".xml" + PARSED_FILE_SUFFIX)) {
-			runDocument = new File(runDocument.getParentFile(), runDocument
-					.getName()
-					+ ".xml" + PARSED_FILE_SUFFIX);
-		}
-
-		log("Generating the run document: " + runDocument,
-				org.apache.tools.ant.Project.MSG_INFO);
-		MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
-				runDocument.getAbsolutePath(), config);
-		Parser parser = new Parser(generator);
-
-		tools.parseOutput(parser);
-		generator.write();
-
 	}
 
 	void printClasspath(Path path) {
@@ -372,35 +393,47 @@ public class SierraAnalysis extends Task {
 		}
 	}
 
+	void printClasspathToStdOut(Path path) {
+		String[] classpathList = path.list();
+
+		System.out.println("---------- CLASSPATH ----------");
+		for (String string : classpathList) {
+			System.out.println(string);
+		}
+	}
+
 	/**
 	 * Optional action. Uploads the generated WSDL file to the desired server.
 	 */
 	private void uploadRunDocument() {
-		log("Uploading the Run document to " + server + "...",
-				org.apache.tools.ant.Project.MSG_INFO);
-		MessageWarehouse warehouse = MessageWarehouse.getInstance();
-		Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
-		TigerService ts = new TigerServiceClient(server).getTigerServicePort();
+		if (keepRunning) {
+			log("Uploading the Run document to " + server + "...",
+					org.apache.tools.ant.Project.MSG_INFO);
+			MessageWarehouse warehouse = MessageWarehouse.getInstance();
+			Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
+			TigerService ts = new TigerServiceClient(server)
+					.getTigerServicePort();
 
-		// Verify the qualifiers
-		List<String> list = ts.getQualifiers().getQualifier();
-		if (!list.containsAll(qualifiers)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Invalid qualifiers. Valid qualifiers are:\n");
-			for (String string : list) {
-				sb.append(string);
-				sb.append("\n");
+			// Verify the qualifiers
+			List<String> list = ts.getQualifiers().getQualifier();
+			if (!list.containsAll(qualifiers)) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+				for (String string : list) {
+					sb.append(string);
+					sb.append("\n");
+				}
+				throw new BuildException(sb.toString());
 			}
-			throw new BuildException(sb.toString());
+			// FIXME utilize the return value once Bug 867 is resolved
+			if (ts.publishRun(run).equalsIgnoreCase("failure")) {
+				log("Failed to upload run document, "
+						+ runDocument.getAbsolutePath() + " to the server: "
+						+ server, org.apache.tools.ant.Project.MSG_ERR);
+				uploadSuccessful = false;
+			}
+			uploadSuccessful = true;
 		}
-		// FIXME utilize the return value once Bug 867 is resolved
-		if (ts.publishRun(run).equalsIgnoreCase("failure")) {
-			log("Failed to upload run document, "
-					+ runDocument.getAbsolutePath() + " to the server: "
-					+ server, org.apache.tools.ant.Project.MSG_ERR);
-			uploadSuccessful = false;
-		}
-		uploadSuccessful = true;
 	}
 
 	/**
@@ -426,13 +459,15 @@ public class SierraAnalysis extends Task {
 	 * Cleans up after the task
 	 */
 	private void cleanup() {
-		log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
-		tools.cleanup();
-		// If we uploaded successfully, delete our run document and temp
-		// directory
-		if (uploadSuccessful) {
-			runDocument.delete();
-			tmpFolder.delete();
+		if (keepRunning) {
+			log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
+			tools.cleanup();
+			// If we uploaded successfully, delete our run document and temp
+			// directory
+			if (uploadSuccessful) {
+				runDocument.delete();
+				tmpFolder.delete();
+			}
 		}
 	}
 
@@ -440,11 +475,13 @@ public class SierraAnalysis extends Task {
 	 * Verifies that all of the appropriate jars exist on the classpath
 	 */
 	private void verifyDependencies() {
-		tools.verifyToolDependencies();
+		if (keepRunning) {
+			tools.verifyToolDependencies();
 
-		String missing = findMissingJarFromClasspath(DEPENDENCIES);
-		if (missing != null) {
-			throw new BuildException("Missing dependency: " + missing);
+			String missing = findMissingJarFromClasspath(DEPENDENCIES);
+			if (missing != null) {
+				throw new BuildException("Missing dependency: " + missing);
+			}
 		}
 	}
 
@@ -453,63 +490,68 @@ public class SierraAnalysis extends Task {
 	 * invalid, this method will throw a BuildException
 	 */
 	private void validateParameters() {
-		if (destDir != null && !destDir.isDirectory()) {
-			throw new BuildException("'destdir' must be a valid directory.");
-		} else {
-			tmpFolder = new File(destDir, "Sierra-analysis-"
-					+ project.getName() + "-" + +System.currentTimeMillis());
-			if (!tmpFolder.mkdir()) {
-				throw new BuildException(
-						"Could not create temporary output directory");
-			}
-		}
-
-		if (server != null) {
-			if ("".equals(server)) {
-				throw new BuildException("server must not be blank");
+		if (keepRunning) {
+			if (destDir != null && !destDir.isDirectory()) {
+				throw new BuildException("'destdir' must be a valid directory.");
 			} else {
-				if (!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")) {
+				tmpFolder = new File(destDir, "Sierra-analysis-"
+						+ project.getName() + "-" + +System.currentTimeMillis());
+				if (!tmpFolder.mkdir()) {
 					throw new BuildException(
-							"The server address must be in the form: server.address.com[:port]");
-				}
-				if (qualifiers.isEmpty()) {
-					throw new BuildException(
-							"serverQualifiers must contain one or more, comma-separated qualifiers.");
+							"Could not create temporary output directory");
 				}
 			}
-		}
 
-		// Check this before the srcdir/bindir so that we know whether the
-		// project object is null or not
-		if (project == null) {
-			throw new BuildException(
-					"No project was defined. The <project> sub-tag is required.");
-		} else {
-			project.validate();
-		}
+			if (server != null) {
+				if ("".equals(server)) {
+					throw new BuildException("server must not be blank");
+				} else {
+					if (!server.matches("(\\w)+(\\.(\\w)+)*(:\\d+)?")) {
+						throw new BuildException(
+								"The server address must be in the form: server.address.com[:port]");
+					}
+					if (qualifiers.isEmpty()) {
+						throw new BuildException(
+								"serverQualifiers must contain one or more, comma-separated qualifiers.");
+					}
+				}
+			}
 
-		if (srcdir == null) {
-			throw new BuildException(
-					"Either 'srcdir' or 'sources' must be defined.");
-		} else {
-			validatePath(srcdir); // throws BuildException if it has an
-			// non-valid path element
-			srcdir.append(project.getSources());
-		}
+			// Check this before the srcdir/bindir so that we know whether the
+			// project object is null or not
+			if (project == null) {
+				throw new BuildException(
+						"No project was defined. The <project> sub-tag is required.");
+			} else {
+				project.validate();
+			}
 
-		if (bindir == null) {
-			log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
-		} else {
-			validatePath(bindir); // throws BuildException if it has an
-			// non-valid path element
-			bindir.append(project.getBinaries());
-		}
+			if (srcdir.size() == 0) {
+				// We can do this w/o checking b/c the project was validated
+				// previously
+				srcdir.append(new Path(antProject, project.getDir()
+						.getAbsolutePath()));
+			} else {
+				validatePath(srcdir); // throws BuildException if it has an
+				// non-valid path element
+				srcdir.append(project.getSources());
+			}
 
-		if (tools == null) {
-			tools = new Tools(getProject());
+			if (bindir.size() == 0) {
+				log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
+				bindir.append(srcdir);
+			} else {
+				validatePath(bindir); // throws BuildException if it has an
+				// non-valid path element
+				bindir.append(project.getBinaries());
+			}
+
+			if (tools == null) {
+				tools = new Tools(getProject());
+			}
+			tools.initialize(this);
+			tools.validate();
 		}
-		tools.initialize(this);
-		tools.validate();
 
 	}
 
@@ -600,7 +642,6 @@ public class SierraAnalysis extends Task {
 		this.bindir.append(bindir);
 	}
 
-
 	public CommandlineJava getCommandLine() {
 		return cmdl;
 	}
@@ -670,8 +711,11 @@ public class SierraAnalysis extends Task {
 
 			ClassLoader loader = this.getClass().getClassLoader();
 			if (loader != null && loader instanceof AntClassLoader) {
-				classpath.append(new Path(getProject(),
-						((AntClassLoader) loader).getClasspath()));
+				classpath.append(new Path(antProject, ((AntClassLoader) loader)
+						.getClasspath()));
+			} else {
+				classpath.append(new Path(antProject, System
+						.getProperty("java.class.path")));
 			}
 		}
 		return classpath;

@@ -74,11 +74,12 @@ public class Tools {
 		setExclude(config.getExcludedToolsList());
 
 		Set<String> toolNames = tools.keySet();
-		toolsFolder = new File(config.getToolsDirectory());
+		toolsFolder = config.getToolsDirectory();
 		for (String toolName : toolNames) {
 			tools.get(toolName).configure(config);
 		}
 
+		setMultithreaded(config.isMultithreaded());
 	}
 
 	/**
@@ -155,17 +156,19 @@ public class Tools {
 	 * @param list
 	 */
 	public void setExclude(String list) {
-		String[] excludeA = list.split(",");
-		String tmp;
-		for (int i = 0; i < excludeA.length; i++) {
-			tmp = excludeA[i].trim().toLowerCase();
-			exclude.add(tmp);
-			if (tools.remove(tmp) == null) {
-				// This assumes that someone will not add the same tool name
-				// twice
-				antProject.log(
-						"Warning: " + tmp + " is not a valid tool name.",
-						org.apache.tools.ant.Project.MSG_WARN);
+		if (list != null) {
+			String[] excludeA = list.split(",");
+			String tmp;
+			for (int i = 0; i < excludeA.length; i++) {
+				tmp = excludeA[i].trim().toLowerCase();
+				exclude.add(tmp);
+				if (tools.remove(tmp) == null) {
+					// This assumes that someone will not add the same tool name
+					// twice
+					antProject.log("Warning: " + tmp
+							+ " is not a valid tool name.",
+							org.apache.tools.ant.Project.MSG_WARN);
+				}
 			}
 		}
 	}
@@ -196,41 +199,63 @@ public class Tools {
 	 * ThreadPoolExecutor
 	 */
 	void runTools() {
-		antProject.log("Running tools...",
-				org.apache.tools.ant.Project.MSG_INFO);
-		antProject.log("Source path: " + analysis.getSrcdir(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
-		antProject.log("Binary path: " + analysis.getBindir(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
-		antProject.log("Results will be saved to: " + analysis.getTmpFolder(),
-				org.apache.tools.ant.Project.MSG_DEBUG);
+		if (analysis.keepRunning) {
+			antProject.log("Running tools...",
+					org.apache.tools.ant.Project.MSG_INFO);
+			antProject.log("Source path: " + analysis.getSrcdir(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
+			antProject.log("Binary path: " + analysis.getBindir(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
+			antProject.log("Results will be saved to: "
+					+ analysis.getTmpFolder(),
+					org.apache.tools.ant.Project.MSG_DEBUG);
 
-		ExecutorService executor;
-		if (multithreaded) {
-			executor = Executors.newCachedThreadPool();
-		} else {
-			executor = Executors.newSingleThreadExecutor();
+			ExecutorService executor;
+			if (multithreaded) {
+				executor = Executors.newCachedThreadPool();
+			} else {
+				executor = Executors.newSingleThreadExecutor();
+			}
+
+			CountDownLatch latch = new CountDownLatch(tools.size());
+
+			ToolConfig tool;
+			Set<String> toolNames = tools.keySet();
+			for (String toolName : toolNames) {
+				if (!analysis.keepRunning) {
+					break;
+				}
+				antProject.log("Running tool: " + toolName,
+						org.apache.tools.ant.Project.MSG_DEBUG);
+				tool = tools.get(toolName);
+				// tool.run();
+				tool.setLatch(latch);
+				executor.execute(tool);
+			}
+
+			try {
+				if (analysis.keepRunning) {
+					latch.await();
+				}
+			} catch (InterruptedException e) {
+				// FIXME what is the proper behavior?
+				// Continue trying to parse the tool files
+				e.printStackTrace();
+			}
 		}
+	}
 
-		CountDownLatch latch = new CountDownLatch(tools.size());
-
+	/**
+	 * stops any running tools
+	 */
+	public void stop() {
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
-			antProject.log("Running tool: " + toolName,
+			antProject.log("Stopping " + toolName, 
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			tool = tools.get(toolName);
-			// tool.run();
-			tool.setLatch(latch);
-			executor.execute(tool);
-		}
-
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			// FIXME what is the proper behaviour?
-			// Continue trying to parse the tool files
-			e.printStackTrace();
+			tool.stop();
 		}
 	}
 
@@ -286,6 +311,7 @@ public class Tools {
 	 * Setter for the Tools folder
 	 * 
 	 * @param toolsFolder
+	 * 
 	 */
 	public void setToolsFolder(File toolsFolder) {
 		antProject.log("Setting the toolsfolder to point to: " + toolsFolder,

@@ -33,7 +33,7 @@ public class FindBugsConfig extends ToolConfig {
 	private String memory = "1024m";
 
 	private Path classpath = null;
-	
+
 	/**
 	 * @param project
 	 */
@@ -47,34 +47,42 @@ public class FindBugsConfig extends ToolConfig {
 	 * @see com.surelogic.sierra.tool.ant.ToolConfig#runTool()
 	 */
 	public void run() {
-		analysis.printClasspath(getClasspath());
-		// run FindBugs
-		CommandlineJava cmdj = new CommandlineJava();
-		cmdj.setClassname(FINDBUGS_CLASS);
-		cmdj.setMaxmemory(memory);
-		cmdj.createClasspath(antProject).createPath().append(getClasspath());
+		if (analysis.keepRunning) {
+			analysis.printClasspath(getClasspath());
+			// run FindBugs
+			CommandlineJava cmdj = new CommandlineJava();
+			cmdj.setClassname(FINDBUGS_CLASS);
+			cmdj.setMaxmemory(memory);
+			cmdj.createClasspath(antProject).createPath()
+					.append(getClasspath());
 
-		cmdj.createArgument().setValue("-xml:withMessages");
-		cmdj.createArgument().setValue("-outputFile");
-		output = new File[] { new File(analysis.getTmpFolder(), "findbugs.xml") };
-		cmdj.createArgument().setPath(
-				new Path(antProject, output[0].getAbsolutePath()));
-		cmdj.createArgument().setValue("-home");
-		cmdj.createArgument().setPath(
-				new Path(antProject, getHome().getAbsolutePath()));
-		String[] paths = analysis.getBindir().list();
-		for (String string : paths) {
-			cmdj.createArgument().setValue(string);
-		}
+			cmdj.createArgument().setValue("-xml:withMessages");
+			cmdj.createArgument().setValue("-outputFile");
+			output = new File[] { new File(analysis.getTmpFolder(),
+					"findbugs.xml") };
+			cmdj.createArgument().setPath(
+					new Path(antProject, output[0].getAbsolutePath()));
+			cmdj.createArgument().setValue("-home");
+			cmdj.createArgument().setPath(
+					new Path(antProject, getHome().getAbsolutePath()));
+			String[] paths = analysis.getBindir().list();
+			for (String string : paths) {
+				cmdj.createArgument().setValue(string);
+			}
 
-		antProject.log("Executing FindBugs with the commandline: "
-				+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
-		try {
-			fork(cmdj.getCommandline());
-		} catch (BuildException e) {
-			antProject.log("Failed to start FindBugs process.", e,
-					org.apache.tools.ant.Project.MSG_ERR);
-		} finally {
+			antProject.log("Executing FindBugs with the commandline: "
+					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
+			try {
+				fork(cmdj.getCommandline());
+			} catch (BuildException e) {
+				antProject.log("Failed to start FindBugs process.", e,
+						org.apache.tools.ant.Project.MSG_ERR);
+			} finally {
+				if (latch != null) {
+					latch.countDown();
+				}
+			}
+		} else {
 			if (latch != null) {
 				latch.countDown();
 			}
@@ -87,7 +95,8 @@ public class FindBugsConfig extends ToolConfig {
 	 */
 	protected Path getClasspath() {
 		if (classpath == null) {
-			File lib = new File(analysis.getTools().getToolsFolder(), "FB" + File.separator + "lib" + File.separator + FINDBUGS_JAR);
+			File lib = new File(analysis.getTools().getToolsFolder(), "FB"
+					+ File.separator + "lib" + File.separator + FINDBUGS_JAR);
 			classpath = new Path(antProject);
 			classpath.append(new Path(antProject, lib.getAbsolutePath()));
 		}

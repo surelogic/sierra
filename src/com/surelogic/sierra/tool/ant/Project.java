@@ -41,11 +41,15 @@ public class Project {
 		src = new Path(antProject);
 		bin = new Path(antProject);
 		
-		name = config.getProject();
-		dir = new File(config.getBaseDirectory());
+		if(config.getBinDirs() != null){
+			bin.append(new Path(antProject, config.getBinDirs()));
+		}
+		if(config.getSourceDirs() != null){
+			src.append(new Path(antProject, config.getSourceDirs()));
+		}
 		
-		sources.add(new Source());
-		binaries.add(new Binary());
+		name = config.getProject();
+		dir = config.getProjectDir();
 	}
 
 	public void validate() {
@@ -56,7 +60,7 @@ public class Project {
 		}
 		if (dir == null) {
 			throw new BuildException(
-					"Parameter 'baseDir' is required for 'project'.");
+					"Parameter 'dir' is required for 'project'.");
 		} else if (dir != null) {
 			if (!dir.isDirectory()) {
 				throw new BuildException(
