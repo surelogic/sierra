@@ -30,10 +30,10 @@ public class BuildFileGenerator {
 	private static final String ANTLIB_DIR = "com/surelogic/sierra/tool/ant/antlib.xml";
 	private static final String SIERRA_TOOL_SRC = "src";
 	private static final String INCLUDE_ALL = "**/*";
-	private static final String FINDBUGS_LIB_LOCATION = "Tools/FB/lib";
-	private static final String FINDBUGS_JAR = "findbugs.jar";
-	// private static final String PMD_39_LIB_LOCATION = "Tools/pmd-3.9/lib";
-	private static final String PMD_40_LIB_LOCATION = "Tools/pmd-4.0/lib";
+	// private static final String FINDBUGS_LIB_LOCATION = "Tools/FB/lib";
+	// private static final String FINDBUGS_JAR = "findbugs.jar";
+	// private static final String PMD_39_LIB_LOCATION =i love  "Tools/pmd-3.9/lib";
+	// private static final String PMD_40_LIB_LOCATION = "Tools/pmd-4.0/lib";
 	private static final String INCLUDE_ALL_JARS = "**/*.jar";
 	private static final String BUC_LIB_LOCATION = "Tools/backport-util-concurrent-3.0";
 	private static final String JAX_LIB_LOCATION = "Tools/jax-ws";
@@ -118,7 +118,7 @@ public class BuildFileGenerator {
 				// writeAttributes(attributeMap);
 				// hd.startElement("", "", "include", atts);
 				// hd.endElement("", "", "include");
-				//				hd.endElement("", "", "fileset");
+				// hd.endElement("", "", "fileset");
 
 				// Backport util concurrent (for FindBugs)
 				attributeMap.put("dir", toolDirectory + BUC_LIB_LOCATION);
@@ -294,25 +294,25 @@ public class BuildFileGenerator {
 			hd.startElement("", "", "dirset", atts);
 			hd.endElement("", "", "dirset");
 
-			// Findbugs fileset
-			attributeMap.put("dir", toolDirectory + FINDBUGS_LIB_LOCATION);
-			writeAttributes(attributeMap);
-			hd.startElement("", "", "fileset", atts);
-			attributeMap.put("name", FINDBUGS_JAR);
-			writeAttributes(attributeMap);
-			hd.startElement("", "", "include", atts);
-			hd.endElement("", "", "include");
-			hd.endElement("", "", "fileset");
-
-			// PMD fileset location
-			attributeMap.put("dir", toolDirectory + PMD_40_LIB_LOCATION);
-			writeAttributes(attributeMap);
-			hd.startElement("", "", "fileset", atts);
-			attributeMap.put("name", INCLUDE_ALL_JARS);
-			writeAttributes(attributeMap);
-			hd.startElement("", "", "include", atts);
-			hd.endElement("", "", "include");
-			hd.endElement("", "", "fileset");
+			// // Findbugs fileset
+			// attributeMap.put("dir", toolDirectory + FINDBUGS_LIB_LOCATION);
+			// writeAttributes(attributeMap);
+			// hd.startElement("", "", "fileset", atts);
+			// attributeMap.put("name", FINDBUGS_JAR);
+			// writeAttributes(attributeMap);
+			// hd.startElement("", "", "include", atts);
+			// hd.endElement("", "", "include");
+			// hd.endElement("", "", "fileset");
+			//
+			// // PMD fileset location
+			// attributeMap.put("dir", toolDirectory + PMD_40_LIB_LOCATION);
+			// writeAttributes(attributeMap);
+			// hd.startElement("", "", "fileset", atts);
+			// attributeMap.put("name", INCLUDE_ALL_JARS);
+			// writeAttributes(attributeMap);
+			// hd.startElement("", "", "include", atts);
+			// hd.endElement("", "", "include");
+			//			hd.endElement("", "", "fileset");
 
 			// Backport util concurrent (for FindBugs)
 			attributeMap.put("dir", toolDirectory + BUC_LIB_LOCATION);
