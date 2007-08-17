@@ -120,6 +120,9 @@ public class SierraAnalysis extends Task {
 
 	// Used for when we want to stop the run
 	volatile boolean keepRunning = true;
+	
+	//Check for classpath dependencies
+	private boolean checkCP = true;
 
 	/***************************************************************************
 	 * Ant Task Attributes
@@ -190,6 +193,8 @@ public class SierraAnalysis extends Task {
 	 */
 	public SierraAnalysis(Config config) {
 		super();
+		checkCP = false;
+		
 		antProject = new org.apache.tools.ant.Project();
 //		antProject.addBuildListener(new CommonsLoggingListener());
 //		setProject(antProject);
@@ -475,7 +480,7 @@ public class SierraAnalysis extends Task {
 	 * Verifies that all of the appropriate jars exist on the classpath
 	 */
 	private void verifyDependencies() {
-		if (keepRunning) {
+		if (keepRunning && checkCP) {
 			tools.verifyToolDependencies();
 
 			String missing = findMissingJarFromClasspath(DEPENDENCIES);
