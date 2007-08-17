@@ -18,12 +18,11 @@ import javax.xml.bind.annotation.XmlType;
 public class Config {
 
 	private String project = null;
-	private File projectDir = null;
 	private List<String> qualifiers = null;
 	private String javaVersion = null;
 	private String javaVendor = null;
 	private Date runDateTime = null;
-	private String baseDirectory = null;
+	private File baseDirectory = null;
 	private File toolsDirectory = null;
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -90,11 +89,11 @@ public class Config {
 		this.runDateTime = runDateTime;
 	}
 
-	public String getBaseDirectory() {
+	public File getBaseDirectory() {
 		return baseDirectory;
 	}
 
-	public void setBaseDirectory(String baseDirectory) {
+	public void setBaseDirectory(File baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
 
@@ -118,8 +117,6 @@ public class Config {
 				+ ((baseDirectory == null) ? 0 : baseDirectory.hashCode());
 		result = prime * result
 				+ ((toolsDirectory == null) ? 0 : toolsDirectory.hashCode());
-		result = prime * result
-				+ ((toolsDirectory == null) ? 0 : projectDir.hashCode());
 		result = prime * result + ((project == null) ? 0 : project.hashCode());
 		result = prime * result
 				+ ((qualifiers == null) ? 0 : qualifiers.hashCode());
@@ -197,10 +194,6 @@ public class Config {
 		} else if (pmdRulesFile == null && other.getPmdRulesFile() != null) {
 			return false;
 		} else if (!pmdRulesFile.equals(other.getPmdRulesFile())) {
-			return false;
-		} else if (projectDir == null && other.projectDir != null) {
-			return false;
-		} else if (!projectDir.equals(other.getProjectDir())) {
 			return false;
 		} else if (multithreaded != other.isMultithreaded()) {
 			return false;
@@ -327,14 +320,6 @@ public class Config {
 	 */
 	public final void setPmdRulesFile(File pmdRulesFile) {
 		this.pmdRulesFile = pmdRulesFile;
-	}
-
-	public void setProjectDir(File dir) {
-		this.projectDir = dir;
-	}
-	
-	public File getProjectDir(){
-		return projectDir;
 	}
 
 	/**
