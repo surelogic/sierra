@@ -107,7 +107,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 				Config config = new Config();
 
-				config.setBaseDirectory(projectPath);
+				config.setBaseDirectory(new File(projectPath));
 				config.setProject(project.getProject().getName());
 				config.setDestDirectory(resultRoot);
 				config.setRunDocument(runDocument);
