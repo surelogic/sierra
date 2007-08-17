@@ -152,8 +152,8 @@ public class BuildFileGenerator {
 				// Start Sierra analysis tag
 				attributeMap.put("destDir", config.getDestDirectory()
 						.getAbsolutePath());
-				attributeMap.put("srcdir", config.getBaseDirectory());
-				attributeMap.put("bindir", config.getBaseDirectory());
+				attributeMap.put("srcdir", config.getBaseDirectory().getAbsolutePath());
+				attributeMap.put("bindir", config.getBaseDirectory().getAbsolutePath());
 				attributeMap.put("runDocument", config.getRunDocument()
 						.getAbsolutePath());
 				writeAttributes(attributeMap);
@@ -161,7 +161,7 @@ public class BuildFileGenerator {
 
 				// Start project tag
 				attributeMap.put("name", config.getProject());
-				attributeMap.put("dir", config.getBaseDirectory());
+				attributeMap.put("dir", config.getBaseDirectory().getAbsolutePath());
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
 
