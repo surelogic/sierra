@@ -28,9 +28,10 @@ public class TestSierraAnalysis {
 		config = new Config();
 		config.setProject("fluid");
 		config.setDestDirectory(new File("/Users/ethan/test-sandbox-3.2"));
-		config.setProjectDir(new File("/Users/ethan/workspace/fluid"));
+		config.setBaseDirectory(new File("/Users/ethan/workspace/fluid"));
 		config.setToolsDirectory(new File("/Users/ethan/sierra-workspace/sierra-tool/Tools"));
 		config.setRunDocument(new File(config.getDestDirectory(), "testRun.xml.parsed"));
+		config.setMultithreaded(true);
 	}
 
 	@After

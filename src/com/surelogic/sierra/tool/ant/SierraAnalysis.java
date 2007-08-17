@@ -334,7 +334,7 @@ public class SierraAnalysis extends Task {
 
 			if (config == null) {
 				config = new Config();
-				config.setBaseDirectory(project.getDir().getAbsolutePath());
+				config.setBaseDirectory(project.getDir());
 				config.setProject(project.getName());
 				config.setRunDateTime(runDateTime);
 				config.setJavaVersion(System.getProperty("java.version"));
@@ -343,7 +343,7 @@ public class SierraAnalysis extends Task {
 
 				// This code computes the source directories from the given base
 				// directory
-				File root = new File(config.getBaseDirectory());
+				File root = config.getBaseDirectory();
 				JavaFilter filter = new JavaFilter();
 				filterdirs(root, filter);
 

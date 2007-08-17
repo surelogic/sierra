@@ -49,7 +49,7 @@ public class Project {
 		}
 		
 		name = config.getProject();
-		dir = config.getProjectDir();
+		dir = config.getBaseDirectory();
 	}
 
 	public void validate() {
