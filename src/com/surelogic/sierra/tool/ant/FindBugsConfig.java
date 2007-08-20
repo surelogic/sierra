@@ -4,8 +4,6 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

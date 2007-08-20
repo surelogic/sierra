@@ -80,7 +80,6 @@ import java.util.Vector;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.listener.CommonsLoggingListener;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
@@ -187,7 +186,7 @@ public class SierraAnalysis extends Task {
 
 	/**
 	 * Constructor used to create this task programmatically from inside the
-	 * sierra client NOT CURRENTLY USED.
+	 * sierra client used from within eclipse tool run.
 	 * 
 	 * @param config
 	 */
@@ -339,7 +338,23 @@ public class SierraAnalysis extends Task {
 
 			// This code computes the source directories from the given base
 			// directory
-			File root = config.getBaseDirectory();
+
+			File root = null;
+
+			if (config == null) {
+				config = new Config();
+				config.setBaseDirectory(project.getDir());
+				config.setProject(project.getName());
+				config.setRunDateTime(runDateTime);
+				config.setJavaVersion(System.getProperty("java.version"));
+				config.setJavaVendor(System.getProperty("java.vendor"));
+				config.setQualifiers(qualifiers);
+
+				root = project.getDir();
+			} else {
+				root = config.getBaseDirectory();
+			}
+
 			JavaFilter filter = new JavaFilter();
 			filterdirs(root, filter);
 
@@ -352,16 +367,6 @@ public class SierraAnalysis extends Task {
 
 			sourceDirectories = sourceDirectory
 					.toArray(new String[sourceDirectory.size()]);
-
-			if (config == null) {
-				config = new Config();
-				config.setBaseDirectory(project.getDir());
-				config.setProject(project.getName());
-				config.setRunDateTime(runDateTime);
-				config.setJavaVersion(System.getProperty("java.version"));
-				config.setJavaVendor(System.getProperty("java.vendor"));
-				config.setQualifiers(qualifiers);
-			}
 
 			if (runDocument == null || "".equals(runDocument)) {
 				runDocument = new File(tmpFolder, project.getName() + ".xml"
