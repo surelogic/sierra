@@ -132,8 +132,15 @@ public class Tools {
 		}
 
 		if (getToolsFolder() == null || !getToolsFolder().isDirectory()) {
-			throw new BuildException(
-					"toolsFolder must be an existing directory.");
+
+			if (getToolsFolder() == null) {
+				throw new BuildException(
+						"toolsFolder is null must be an existing directory.");
+			} else {
+
+				throw new BuildException(
+						"toolsFolder must be an existing directory.");
+			}
 		} else {
 			if (!"Tools".equals(getToolsFolder().getName())) {
 				throw new BuildException(getToolsFolder().getAbsolutePath()
@@ -252,7 +259,7 @@ public class Tools {
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
-			antProject.log("Stopping " + toolName, 
+			antProject.log("Stopping " + toolName,
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			tool = tools.get(toolName);
 			tool.stop();

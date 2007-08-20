@@ -779,6 +779,11 @@ public class SierraAnalysis extends Task {
 		}
 	}
 
+	/**
+	 * Get the source directories for FindBugs parsing
+	 * 
+	 * @return
+	 */
 	public String[] getSourceDirectories() {
 		return sourceDirectories;
 	}
