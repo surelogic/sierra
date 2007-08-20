@@ -52,7 +52,7 @@ public class DeploySchemaTask extends Task {
 				+ ((user == null) ? "" : ";user=" + user) + ";create=true";
 		try {
 			Connection conn = DriverManager.getConnection(url);
-			SierraSchemaUtility.checkAndUpdate(conn);
+			SierraSchemaUtility.checkAndUpdate(conn, true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
