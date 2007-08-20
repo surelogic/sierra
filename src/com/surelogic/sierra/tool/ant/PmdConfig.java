@@ -87,8 +87,8 @@ public class PmdConfig extends ToolConfig {
 				pmdLatch.await();
 			} catch (InterruptedException e) {
 				antProject.log(
-						"Error while waiting for all PMD processes to finish.",
-						e, org.apache.tools.ant.Project.MSG_ERR);
+						"Error while waiting for all PMD processes to finish." +
+						e.getLocalizedMessage(), org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (latch != null) {
 					latch.countDown();
@@ -243,7 +243,7 @@ public class PmdConfig extends ToolConfig {
 
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
-				antProject.log("Failed to start PMD process.", e,
+				antProject.log("Failed to start PMD process."+ e.getLocalizedMessage(),
 						org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (pmdLatch != null) {

@@ -73,7 +73,7 @@ public class FindBugsConfig extends ToolConfig {
 			try {
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
-				antProject.log("Failed to start FindBugs process.", e,
+				antProject.log("Failed to start FindBugs process." + e.getLocalizedMessage(),
 						org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (latch != null) {

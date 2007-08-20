@@ -75,10 +75,10 @@ public class Project {
 						+ source.toString(),
     				org.apache.tools.ant.Project.MSG_DEBUG);
 
-				String[] list = source.getDirectoryScanner()
+				String[] list = source.getDirectoryScanner(antProject)
 						.getIncludedDirectories();
 
-				File basedir = source.getDir();
+				File basedir = source.getDir(antProject);
 
 				for (String string : list) {
 					File srcDir = fileUtils.resolveFile(basedir, string);
@@ -96,9 +96,9 @@ public class Project {
 						+ binary.toString(),
     				org.apache.tools.ant.Project.MSG_DEBUG);
 
-				String[] list = binary.getDirectoryScanner()
+				String[] list = binary.getDirectoryScanner(antProject)
 						.getIncludedDirectories();
-				File basedir = binary.getDir();
+				File basedir = binary.getDir(antProject);
 
 				for (String string : list) {
 					File binDir = fileUtils.resolveFile(basedir, string);
