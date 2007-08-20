@@ -34,19 +34,19 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	/** The status for properly terminated task */
 	private static final Status PROPER_TERMINATION = new Status(IStatus.OK,
-			Activator.PLUGIN_ID, "Proper termination");
+			Activator.PLUGIN_ID, 0, "Proper termination", null);
 
 	/** The status for task that completed with errors */
 	private static final Status IMPROPER_TERMINATION = new Status(
-			IStatus.ERROR, Activator.PLUGIN_ID, "Error in execution");
+			IStatus.ERROR, Activator.PLUGIN_ID, 0, "Error in execution", null);
 
 	/** The status for cancelled task */
 	private static final Status TASK_CANCELLED = new Status(IStatus.CANCEL,
-			Activator.PLUGIN_ID, "Task cancelled");
+			Activator.PLUGIN_ID, 0, "Task cancelled", null);
 
 	/** The status for already running task - currently uses cancel */
 	private static final Status TASK_ALREADY_RUNNING = new Status(
-			IStatus.CANCEL, Activator.PLUGIN_ID, "Task cancelled");
+			IStatus.CANCEL, Activator.PLUGIN_ID, 0, "Task cancelled", null);
 
 	/** The Sierra Logger */
 	private static final Logger log = SierraLogger.getLogger("Sierra");
@@ -259,7 +259,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	}
 
 	// Handles ANT run using antrunner
-	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	// private class RunSierraAntJob extends Job {
 	//
 	// private AntRunner runner;
@@ -336,12 +336,12 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	//
 	// }
 	//
-	//			monitor.done();
-	//			return IMPROPER_TERMINATION;
+	// monitor.done();
+	// return IMPROPER_TERMINATION;
 	//
-	//		}
+	// }
 	//
-	//	}
+	// }
 
 	private class RunSierraAdapter extends JobChangeAdapter {
 		@Override
