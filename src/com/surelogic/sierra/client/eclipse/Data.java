@@ -28,7 +28,7 @@ public final class Data {
 		final String connectionURL = getConnectionURL() + ";create=true";
 		final Connection c = DriverManager.getConnection(connectionURL);
 		try {
-			SierraSchemaUtility.checkAndUpdate(c);
+			SierraSchemaUtility.checkAndUpdate(c, false);
 		} finally {
 			c.close();
 		}
