@@ -7,8 +7,6 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,11 +57,12 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	/** The default extension for run document */
 	private static final String PARSED_FILE_SUFFIX = ".xml.parsed";
 
-	/** The log file for ant task results */
-	private static final String ANT_LOG_FILE = "sierra-ant.log";
-
-	/** The default logger being used */
-	private static final String ANT_LOGGER_DEFAULT = "org.apache.tools.ant.DefaultLogger";
+	// /** The log file for ant task results */
+	// private static final String ANT_LOG_FILE = "sierra-ant.log";
+	//
+	// /** The default logger being used */
+	// private static final String ANT_LOGGER_DEFAULT =
+	// "org.apache.tools.ant.DefaultLogger";
 
 	/** The location of tools folder */
 	private static final String TOOLS_FOLDER = "Tools";
@@ -261,88 +260,88 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	// Handles ANT run using antrunner
 	@SuppressWarnings("unused")
-	private class RunSierraAntJob extends Job {
-
-		private AntRunner runner;
-
-		public RunSierraAntJob(String name) {
-			super(name);
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-
-			Thread antThread;
-
-			try {
-
-				monitor.beginTask("Running analysis...",
-						IProgressMonitor.UNKNOWN);
-
-				if (!AntRunner.isBuildRunning()) {
-					antThread = new Thread(new Runnable() {
-
-						public void run() {
-
-							try {
-								runner = new AntRunner();
-								runner.setBuildFileLocation(buildFile
-										.getAbsolutePath());
-								runner.addBuildLogger(ANT_LOGGER_DEFAULT);
-
-								runner.setArguments("-logfile " + resultRoot
-										+ File.separator + ANT_LOG_FILE);
-								runner.run();
-							} catch (CoreException e) {
-								log.log(Level.SEVERE,
-										"Core exception while trying to excute ant build task"
-												+ e);
-							}
-
-						}
-
-					});
-					antThread.start();
-					BalloonUtility
-							.showMessage(
-									"Sierra Analysis Started",
-									"You may continue to work as the analysis runs. "
-											+ "You will be notified when the analysis has been completed.");
-
-				} else {
-					monitor.done();
-					return TASK_ALREADY_RUNNING;
-
-				}
-
-				while (!monitor.isCanceled()) {
-					Thread.sleep(500);
-					if (!AntRunner.isBuildRunning()) {
-						break;
-					}
-				}
-
-				if (monitor.isCanceled()) {
-					monitor.done();
-					antThread.interrupt();
-					return TASK_CANCELLED;
-				} else {
-					monitor.done();
-					return PROPER_TERMINATION;
-				}
-
-			} catch (Exception e) {
-				log.log(Level.SEVERE,
-						"Exception while trying to excute ant build task" + e);
-
-			}
-
-			monitor.done();
-			return IMPROPER_TERMINATION;
-
-		}
-
-	}
+	// private class RunSierraAntJob extends Job {
+	//
+	// private AntRunner runner;
+	//
+	// public RunSierraAntJob(String name) {
+	// super(name);
+	// }
+	//
+	// @Override
+	// protected IStatus run(IProgressMonitor monitor) {
+	//
+	// Thread antThread;
+	//
+	// try {
+	//
+	// monitor.beginTask("Running analysis...",
+	// IProgressMonitor.UNKNOWN);
+	//
+	// if (!AntRunner.isBuildRunning()) {
+	// antThread = new Thread(new Runnable() {
+	//
+	// public void run() {
+	//
+	// try {
+	// runner = new AntRunner();
+	// runner.setBuildFileLocation(buildFile
+	// .getAbsolutePath());
+	// runner.addBuildLogger(ANT_LOGGER_DEFAULT);
+	//
+	// runner.setArguments("-logfile " + resultRoot
+	// + File.separator + ANT_LOG_FILE);
+	// runner.run();
+	// } catch (CoreException e) {
+	// log.log(Level.SEVERE,
+	// "Core exception while trying to excute ant build task"
+	// + e);
+	// }
+	//
+	// }
+	//
+	// });
+	// antThread.start();
+	// BalloonUtility
+	// .showMessage(
+	// "Sierra Analysis Started",
+	// "You may continue to work as the analysis runs. "
+	// + "You will be notified when the analysis has been completed.");
+	//
+	// } else {
+	// monitor.done();
+	// return TASK_ALREADY_RUNNING;
+	//
+	// }
+	//
+	// while (!monitor.isCanceled()) {
+	// Thread.sleep(500);
+	// if (!AntRunner.isBuildRunning()) {
+	// break;
+	// }
+	// }
+	//
+	// if (monitor.isCanceled()) {
+	// monitor.done();
+	// antThread.interrupt();
+	// return TASK_CANCELLED;
+	// } else {
+	// monitor.done();
+	// return PROPER_TERMINATION;
+	// }
+	//
+	// } catch (Exception e) {
+	// log.log(Level.SEVERE,
+	// "Exception while trying to excute ant build task" + e);
+	//
+	// }
+	//
+	//			monitor.done();
+	//			return IMPROPER_TERMINATION;
+	//
+	//		}
+	//
+	//	}
 
 	private class RunSierraAdapter extends JobChangeAdapter {
 		@Override

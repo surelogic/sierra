@@ -18,12 +18,5 @@ Require-Bundle: org.eclipse.ui,
  com.surelogic.sierra.jdbc,
  com.surelogic.common.eclipse,
  com.surelogic.common,
- org.eclipse.ant.core,
- org.eclipse.ant.ui,
- org.eclipse.debug.core,
- org.eclipse.debug.ui,
- org.eclipse.jdt.launching,
- org.eclipse.ui.externaltools,
- org.apache.ant,
- org.apache.ant.source
+ org.eclipse.jdt.launching
 Eclipse-LazyStart: true
