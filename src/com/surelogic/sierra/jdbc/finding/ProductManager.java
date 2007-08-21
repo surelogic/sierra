@@ -6,16 +6,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.run.ProjectRecord;
 
 public class ProductManager {
 
 	private final Connection conn;
 	private final PreparedStatement insert;
+	private final PreparedStatement findProject;
 
 	private ProductManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		insert = conn.prepareStatement(ProductRecord.getInsertSql(),
+				Statement.RETURN_GENERATED_KEYS);
+		findProject = conn.prepareStatement(ProjectRecord.getFindSql(),
 				Statement.RETURN_GENERATED_KEYS);
 	}
 
@@ -28,9 +32,9 @@ public class ProductManager {
 			throws SQLException {
 		ProductRecord product = new ProductRecord();
 		product.setName(name);
-		insert(insert, product);
+		JDBCUtils.insert(insert, product);
 		for (String project : projects) {
-			// TODO
+			ProjectRecord proj = new ProjectRecord();
 		}
 		return product.getId();
 	}

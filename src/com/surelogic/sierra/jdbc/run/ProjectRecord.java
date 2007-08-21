@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.jdbc.LongRecord;
 
-class ProjectRecord extends LongRecord {
+public class ProjectRecord extends LongRecord {
 	private String name;
 
 	public String getName() {
@@ -45,5 +45,8 @@ class ProjectRecord extends LongRecord {
 		st.setString(idx++, name);
 		return idx;
 	}
-
+	
+	public static String getFindSql() {
+		return null;
+	}
 }

@@ -33,7 +33,7 @@ public class ProductRecord extends LongRecord {
 		return DELETE;
 	}
 
-	static String getSelectSql() {
+	static String getFindSql() {
 		return FIND;
 	}
 }
