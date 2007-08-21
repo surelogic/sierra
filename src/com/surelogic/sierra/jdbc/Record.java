@@ -16,7 +16,7 @@ import java.sql.SQLException;
  *            the type of this record's primary key
  */
 public interface Record<T> {
-
+	
 	/**
 	 * Return the primary key of the record.
 	 * 

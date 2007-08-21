@@ -82,6 +82,12 @@ public class JDBCUtils {
 		record.readPk(keys, 1);
 	}
 
+	public static void delete(PreparedStatement st, Record<?> record)
+			throws SQLException {
+		record.fillWithPk(st, 1);
+		st.executeUpdate();
+	}
+
 	/**
 	 * Find a record by it's full set of values (the same set of values it was
 	 * inserted by).
