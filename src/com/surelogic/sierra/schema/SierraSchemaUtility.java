@@ -46,7 +46,9 @@ public final class SierraSchemaUtility {
 						.getResource(SQL_SERVER + num + ".sql");
 				final SchemaAction serverAction = getSchemaAction(ACTION_SERVER
 						+ num);
-				if (serverScript != null || serverAction != null)
+				final boolean serverScriptOrAction = serverScript != null
+						|| serverAction != null;
+				if (serverScriptOrAction) {
 					schemaActions[i] = new SchemaAction() {
 						public void run(Connection c) throws SQLException {
 							/*
@@ -63,10 +65,10 @@ public final class SierraSchemaUtility {
 								try {
 									SchemaUtility.runScript(serverScript, st);
 								} catch (IOException e) {
-									// this is bit of a hack to handle the fact
-									// that
-									// actions don't expect IO problems
-									throw new SQLException(e.toString());
+									throw new SQLException(
+											"IOException reading server script file "
+													+ serverScript.getFile()
+													+ " : " + e.toString());
 								} finally {
 									st.close();
 								}
@@ -74,10 +76,9 @@ public final class SierraSchemaUtility {
 
 							if (serverAction != null)
 								serverAction.run(c);
-
 						}
 					};
-
+				}
 			}
 		}
 		SchemaUtility.checkAndUpdate(c, scripts, schemaActions);
