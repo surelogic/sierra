@@ -21,10 +21,10 @@ public final class SierraSchemaUtility {
 	 */
 	public static final int schemaVersion = 0;
 
-	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/schema_";
+	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/";
 	public static final String SQL_COMMON = SQL_SCRIPT_PREFIX + "schema_";
 	public static final String SQL_SERVER = SQL_SCRIPT_PREFIX + "server_";
-	public static final String ACTION_PREFIX = "com.surelogic.sierra.schema.Schema_";
+	public static final String ACTION_PREFIX = "com.surelogic.sierra.schema.";
 	public static final String ACTION_COMMON = ACTION_PREFIX + "Schema_";
 	public static final String ACTION_SERVER = ACTION_PREFIX + "Server_";
 
