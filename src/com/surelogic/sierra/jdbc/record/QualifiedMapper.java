@@ -6,16 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class QualifiedMapper {
+public class QualifiedMapper implements RecordMapper {
 
 	private final PreparedStatement insert;
 	private final PreparedStatement select;
 	private final PreparedStatement delete;
-	private final Long qualifier;
+	protected final Long qualifier;
 
-	protected QualifiedMapper(Connection conn, String insertSql,
-			String selectSql, String deleteSql, Long qualifier)
-			throws SQLException {
+	public QualifiedMapper(Connection conn, String insertSql, String selectSql,
+			String deleteSql, Long qualifier) throws SQLException {
 		this.insert = conn.prepareStatement(insertSql,
 				Statement.RETURN_GENERATED_KEYS);
 		this.select = conn.prepareStatement(selectSql);

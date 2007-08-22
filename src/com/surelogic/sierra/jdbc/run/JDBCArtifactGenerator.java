@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.surelogic.sierra.jdbc.finding.ClientFindingRecordFactory;
-import com.surelogic.sierra.jdbc.finding.FindingGenerator;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
@@ -36,16 +34,14 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private static final String TOOL_ID_SELECT = "SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?";
 
-	private static final String RUN_FINISH = "UPDATE RUN SET STATUS='FINISHED' WHERE ID = ?";
-
 	private static final int COMMIT_SIZE = 700;
 
 	private final Connection conn;
 
 	private final RunRecordFactory factory;
+	private final Runnable callback;
 
 	private final PreparedStatement toolIdSelect;
-	private final PreparedStatement finishRun;
 
 	private final List<ArtifactRecord> artifacts;
 	private final Map<SourceRecord, SourceRecord> sources;
@@ -53,16 +49,15 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Set<ArtifactSourceRecord> relations;
 
 	private final ArtifactBuilder builder;
-	private final RunRecord run;
 
 	public JDBCArtifactGenerator(Connection conn, RunRecordFactory factory,
-			RunRecord run) throws SQLException {
+			RunRecord run, Runnable callback) throws SQLException {
 		log.info("Now persisting artifacts to database for run " + run.getId());
 		this.conn = conn;
-		this.run = run;
 		this.factory = factory;
+		this.callback = callback;
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
-		finishRun = conn.prepareStatement(RUN_FINISH);
+
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
 		this.sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
@@ -74,16 +69,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	public void finished() {
 		try {
 			persist();
-			finishRun.setLong(1, run.getId());
-			finishRun.executeUpdate();
-			conn.commit();
-			finishRun.close();
 			toolIdSelect.close();
-			// TODO trigger finding generation here
-			log.info("Run " + run.getId()
-					+ " persisted to database, starting finding generation.");
-			new FindingGenerator(conn, ClientFindingRecordFactory
-					.getInstance(conn)).generate(run);
+			callback.run();
 		} catch (SQLException e) {
 			throw new RunPersistenceException(e);
 		}

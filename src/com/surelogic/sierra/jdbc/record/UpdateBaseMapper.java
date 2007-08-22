@@ -4,11 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class UpdateRecordMapper extends BaseMapper {
+public class UpdateBaseMapper extends BaseMapper implements UpdateRecordMapper  {
 
 	private final PreparedStatement update;
 
-	public UpdateRecordMapper(Connection conn, String insertSql,
+	public UpdateBaseMapper(Connection conn, String insertSql,
 			String selectSql, String deleteSql, String updateSql)
 			throws SQLException {
 		super(conn, insertSql, selectSql, deleteSql);

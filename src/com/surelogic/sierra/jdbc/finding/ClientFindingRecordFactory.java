@@ -7,7 +7,9 @@ import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
+import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.TrailRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
 public class ClientFindingRecordFactory implements FindingRecordFactory {
@@ -21,13 +23,13 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	// private final BaseMapper findingMap;
 	// private final BaseMapper auditMap;
 	private final UpdateRecordMapper matchMap;
-	private final BaseMapper trailMap;
-	private final BaseMapper findingMap;
+	private final RecordMapper trailMap;
+	private final RecordMapper findingMap;
 
 	// private final BaseMapper trailMap;
 
 	private ClientFindingRecordFactory(Connection conn) throws SQLException {
-		this.matchMap = new UpdateRecordMapper(conn, MATCH_INSERT,
+		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT,
 				MATCH_SELECT, null, MATCH_UPDATE);
 		this.trailMap = new BaseMapper(conn, TRAIL_INSERT, null, null);
 		this.findingMap = new BaseMapper(conn, FINDING_INSERT, null, null);

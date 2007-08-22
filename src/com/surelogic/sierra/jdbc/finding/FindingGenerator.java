@@ -22,41 +22,28 @@ public class FindingGenerator {
 
 	private static final int CHUNK_SIZE = 1000;
 
-	private static final String UPDATE_ARTIFACTS_WITH_EXISTING_MATCH = "INSERT INTO ARTIFACT_FINDING_RELTN"
-			+ " SELECT UNASSIGNED.ID, SM.FINDING_ID"
-			+ " FROM"
-			+ " (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID WHERE U.RUN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, ARTIFACT A, RUN R, SOURCE_LOCATION S, COMPILATION_UNIT CU, SIERRA_MATCH SM"
-			+ " WHERE"
-			+ " A.ID = UNASSIGNED.ID AND R.ID = A.RUN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID AND"
-			+ " SM.PROJECT_ID = R.PROJECT_ID AND"
-			+ " SM.HASH = S.HASH AND"
-			+ " SM.CLASS_NAME = CU.CLASS_NAME AND"
-			+ " SM.PACKAGE_NAME = CU.PACKAGE_NAME AND"
-			+ " SM.FINDING_TYPE_ID = A.FINDING_TYPE_ID AND"
-			+ " SM.FINDING_ID IS NOT NULL";
-
-	private static final String UNASSIGNED_ARTIFACTS_SELECT = "SELECT A.PRIORITY,A.SEVERITY,R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID"
+	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
+	private static final String UNASSIGNED_ARTIFACTS_SELECT = "SELECT A.ID,A.PRIORITY,A.SEVERITY,R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID"
 			+ " FROM (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID WHERE U.RUN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, "
 			+ " ARTIFACT A, RUN R, SOURCE_LOCATION S, COMPILATION_UNIT CU"
 			+ " WHERE"
 			+ " A.ID = UNASSIGNED.ID AND R.ID = A.RUN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID";
 
-	private final PreparedStatement updateArtifactsWithExistingMatch;
+	// private final PreparedStatement updateArtifactsWithExistingMatch;
 	private final PreparedStatement unassignedArtifacts;
-	
+	private final PreparedStatement insertArtifactFindingRelation;
 	private final FindingRecordFactory factory;
 	private final Connection conn;
 
-	public FindingGenerator(Connection conn, FindingRecordFactory factory) {
-		this.factory = factory;
+	public FindingGenerator(Connection conn) {
 		this.conn = conn;
 		try {
+			this.factory = ClientFindingRecordFactory.getInstance(conn);
 			// THese queries stay
-			updateArtifactsWithExistingMatch = conn
-					.prepareStatement(UPDATE_ARTIFACTS_WITH_EXISTING_MATCH);
 			unassignedArtifacts = conn
 					.prepareStatement(UNASSIGNED_ARTIFACTS_SELECT);
-
+			insertArtifactFindingRelation = conn
+					.prepareStatement(INSERT_ARTIFACT_FINDING_RELATION);
 		} catch (SQLException e) {
 			throw new FindingGenerationException(e);
 		}
@@ -65,9 +52,6 @@ public class FindingGenerator {
 	public void generate(RunRecord run) {
 		try {
 			Long projectId = run.getProjectId();
-			updateArtifactsWithExistingMatch.setLong(1, run.getId());
-			updateArtifactsWithExistingMatch.executeUpdate();
-			conn.commit();
 			unassignedArtifacts.setLong(1, run.getId());
 			ResultSet result = unassignedArtifacts.executeQuery();
 
@@ -75,6 +59,7 @@ public class FindingGenerator {
 			while (result.next()) {
 				ArtifactResult art = new ArtifactResult();
 				int idx = 1;
+				art.id = result.getLong(idx++);
 				art.p = Priority.values()[result.getInt(idx++)];
 				art.s = Severity.values()[result.getInt(idx++)];
 				art.m = factory.newMatch();
@@ -86,10 +71,11 @@ public class FindingGenerator {
 				pk.setPackageName(result.getString(idx++));
 				pk.setFindingTypeId(result.getLong(idx++));
 				art.m.setId(pk);
+				Long findingId;
 				if (!art.m.select()) {
 					// We don't have a match, so we need to produce an entirely
 					// new finding and trail.
-					counter++;
+
 					MatchRecord m = art.m;
 					TrailRecord t = factory.newTrail();
 					t.setProjectId(projectId);
@@ -101,6 +87,7 @@ public class FindingGenerator {
 					m.setFindingId(f.getId());
 					m.setTrailId(t.getId());
 					m.insert();
+					findingId = f.getId();
 				} else if (art.m.getFindingId() == null) {
 					// If we have a match with a trail, but no finding, we
 					// generate a finding and give it that trail.
@@ -111,10 +98,16 @@ public class FindingGenerator {
 					f.setTrail(t);
 					f.setImportance(calculateImportance(art.s, art.p));
 					f.insert();
-					m.setFindingId(f.getId());
+					findingId = f.getId();
+					m.setFindingId(findingId);
 					m.update();
+					findingId = f.getId();
+				} else {
+					findingId = art.m.getFindingId();
 				}
-				if (counter == CHUNK_SIZE) {
+				insertArtifactFindingRelation.setLong(1, art.id);
+				insertArtifactFindingRelation.setLong(2, findingId);
+				if (++counter == CHUNK_SIZE) {
 					conn.commit();
 					counter = 0;
 				}
@@ -122,15 +115,13 @@ public class FindingGenerator {
 			conn.commit();
 			result.close();
 			log.info("All new findings persisted.");
-			updateArtifactsWithExistingMatch.executeUpdate();
-			log.info("Finished finding generation");
-			conn.commit();
 		} catch (SQLException e) {
 			sqlError(e);
 		}
 	}
 
 	private static class ArtifactResult {
+		Long id;
 		Priority p;
 		Severity s;
 		MatchRecord m;

@@ -1,23 +1,32 @@
 package com.surelogic.sierra.jdbc.run;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.surelogic.sierra.jdbc.finding.FindingGenerator;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.user.User;
+import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 
 public class JDBCRunGenerator implements RunGenerator {
+
+	private static final Logger log = SierraLogger
+			.getLogger(JDBCRunGenerator.class.getName());
+
+	private static final String RUN_FINISH = "UPDATE RUN SET STATUS='FINISHED' WHERE ID = ?";
 
 	private final Connection conn;
 	private final RunRecordFactory factory;
@@ -27,10 +36,13 @@ public class JDBCRunGenerator implements RunGenerator {
 	private String javaVersion;
 	private List<String> qualifiers;
 
+	private final PreparedStatement finishRun;
+
 	private JDBCRunGenerator(Connection conn) {
 		this.conn = conn;
 		try {
 			this.factory = RunRecordFactory.getInstance(conn);
+			finishRun = conn.prepareStatement(RUN_FINISH);
 		} catch (SQLException e) {
 			throw new RunPersistenceException(e);
 		}
@@ -44,7 +56,7 @@ public class JDBCRunGenerator implements RunGenerator {
 			if (!p.select()) {
 				p.insert();
 			}
-			RunRecord run = factory.newRun();
+			final RunRecord run = factory.newRun();
 			run.setProjectId(p.getId());
 			run.setTimestamp(new Date());
 			run.setJavaVersion(javaVersion);
@@ -66,7 +78,26 @@ public class JDBCRunGenerator implements RunGenerator {
 				}
 			}
 			conn.commit();
-			return new JDBCArtifactGenerator(conn, factory, run);
+			return new JDBCArtifactGenerator(conn, factory, run,
+					new Runnable() {
+						public void run() {
+							try {
+								finishRun.setLong(1, run.getId());
+								finishRun.executeUpdate();
+								conn.commit();
+								finishRun.close();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							// TODO trigger finding generation here
+							log
+									.info("Run "
+											+ run.getId()
+											+ " persisted to database, starting finding generation.");
+							new FindingGenerator(conn).generate(run);
+						}
+					});
 
 		} catch (SQLException e) {
 			throw new RunPersistenceException(e);
