@@ -11,6 +11,7 @@ public class ProjectRecordFactory {
 	private static final String PROJECT_SELECT = "SELECT ID FROM PROJECT WHERE NAME = ?";
 	private static final String PROJECT_INSERT = "INSERT INTO PROJECT (NAME,REVISION) VALUES (?,0)";
 	
+	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private final BaseMapper projectMapper;

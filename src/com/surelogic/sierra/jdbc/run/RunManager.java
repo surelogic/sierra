@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 public class RunManager {
 
+	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private RunManager(Connection conn) throws SQLException {

@@ -16,6 +16,7 @@ public class ProductRecordFactory {
 	private static final String PRODUCT_DELETE = "DELETE FROM PRODUCT WHERE ID = ?";
 	private static final String PRODUCT_SELECT = "SELECT NAME FROM PRODUCT WHERE ID = ?";
 	
+	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private final BaseMapper productMapper;
@@ -23,6 +24,7 @@ public class ProductRecordFactory {
 	private ProductRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 		
+		/** XXX Is this the correct Product_select? */
 		productMapper = new BaseMapper(conn, PRODUCT_INSERT, PRODUCT_SELECT,
 				PRODUCT_DELETE);
 	}
