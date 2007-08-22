@@ -8,6 +8,7 @@ public class FindingGenerationException extends RuntimeException {
 	private static final long serialVersionUID = -5558171214177305062L;
 
 	public FindingGenerationException() {
+		// Empty constructor
 	}
 
 	public FindingGenerationException(String message) {

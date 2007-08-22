@@ -71,6 +71,7 @@ public final class RunRecord extends LongRecord {
 		this.status = status;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, userId);
 		st.setLong(idx++, projectId);

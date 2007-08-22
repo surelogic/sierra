@@ -20,6 +20,7 @@ public class QualifierRecord extends LongRecord {
 		this.name = name;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setString(idx++, name);
 		return idx;

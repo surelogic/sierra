@@ -75,6 +75,7 @@ public final class SourceRecord extends LongRecord {
 		this.compUnit = compUnit;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, compUnit.getId());
 		setNullableLong(idx++, st, hash);

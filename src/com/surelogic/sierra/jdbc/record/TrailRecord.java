@@ -30,6 +30,7 @@ public final class TrailRecord extends LongRecord {
 		this.projectId = projectId;
 	}
 
+	@Override
 	public int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, projectId);
 		setNullableString(idx++, st, uid);

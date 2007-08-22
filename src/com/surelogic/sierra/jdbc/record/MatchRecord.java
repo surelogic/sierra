@@ -19,6 +19,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 		super(mapper);
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithPk(st, idx);
 		setNullableLong(idx++, st, findingId);
@@ -26,6 +27,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 		return idx;
 	}
 
+	@Override
 	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id.getProjectId());
 		st.setLong(idx++, id.getHash());
@@ -35,6 +37,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 		return idx;
 	}
 
+	@Override
 	protected int readPk(ResultSet set, int idx) throws SQLException {
 		// pk is the same as the nk
 		return idx;

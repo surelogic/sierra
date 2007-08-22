@@ -23,11 +23,13 @@ public abstract class LongRecord extends AbstractRecord<Long> {
 		return id;
 	}
 
+	@Override
 	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id);
 		return idx;
 	}
 
+	@Override
 	protected int readPk(ResultSet set, int idx) throws SQLException {
 		this.id = set.getLong(idx++);
 		return idx;

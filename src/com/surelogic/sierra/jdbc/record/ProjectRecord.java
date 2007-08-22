@@ -44,6 +44,7 @@ public final class ProjectRecord extends LongRecord {
 		return true;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setString(idx++, name);
 		return idx;

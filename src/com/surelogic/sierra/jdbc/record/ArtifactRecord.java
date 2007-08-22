@@ -70,6 +70,7 @@ public final class ArtifactRecord extends LongRecord {
 		this.primary = primary;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, runId);
 		st.setLong(idx++, findingTypeId);

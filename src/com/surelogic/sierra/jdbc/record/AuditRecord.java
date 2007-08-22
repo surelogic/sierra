@@ -32,6 +32,7 @@ public final class AuditRecord extends LongRecord {
 		return idx;
 	}
 
+	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithNk(st, idx);
 		st.setLong(idx++, revision);

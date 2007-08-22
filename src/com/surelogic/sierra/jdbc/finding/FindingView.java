@@ -11,6 +11,7 @@ public class FindingView extends LongView {
 	private Long trailId;
 	private Importance importance;
 
+	@Override
 	protected int readRest(ResultSet set, int idx) throws SQLException {
 		idx = super.read(set, idx);
 		trailId = set.getLong(idx++);
