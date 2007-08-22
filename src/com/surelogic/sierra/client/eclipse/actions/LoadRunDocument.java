@@ -10,17 +10,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.sierra.client.eclipse.jobs.LoadRunDocumentJob;
 
 public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
-		System.out.println("dispose");
+		// System.out.println("dispose");
 
 	}
 
 	public void init(IWorkbenchWindow window) {
-		System.out.println("init");
+		// System.out.println("init");
 
 	}
 
@@ -31,8 +32,10 @@ public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Load Analysis Run Document");
-			fd.setFilterExtensions(new String[] { "*.xml", "*.*" });
-			fd.setFilterNames(new String[] { "XML Files (*.xml)",
+			System.out.println(SierraConstants.SIERRA_RESULTS_PATH);
+			fd.setFilterPath(SierraConstants.SIERRA_RESULTS_PATH);
+			fd.setFilterExtensions(new String[] { "*.PARSED", "*.*" });
+			fd.setFilterNames(new String[] { "Parsed Files (*.PARSED)",
 					"All Files (*.*)" });
 		}
 		final String selectedFilename = fd.open();
@@ -47,7 +50,7 @@ public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		System.out.println("selectionChanged");
+		// System.out.println("selectionChanged");
 
 	}
 

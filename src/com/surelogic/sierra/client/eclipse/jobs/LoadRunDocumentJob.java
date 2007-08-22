@@ -7,10 +7,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import com.surelogic.adhoc.DatabaseJob;
+import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 
 public final class LoadRunDocumentJob extends DatabaseJob {
 
 	private final File f_runDocument;
+
+	// private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	public LoadRunDocumentJob(File runDocument) {
 		super("Loading " + runDocument.getName());
@@ -19,13 +23,17 @@ public final class LoadRunDocumentJob extends DatabaseJob {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
+				monitor);
+
+		RunDocumentUtility.loadRunDocument(f_runDocument,
+				slProgressMonitorWrapper);
+
+		if (slProgressMonitorWrapper.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		} else {
+			return Status.OK_STATUS;
 		}
-		return Status.OK_STATUS;
 	}
 
 }

@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -21,7 +20,8 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
@@ -39,31 +39,6 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public final class RunAnalysis implements IObjectActionDelegate {
 
-	/** The status for properly terminated task */
-	private static final Status PROPER_TERMINATION = new Status(IStatus.OK,
-			Activator.PLUGIN_ID, 0, "Proper termination", null);
-
-	/** The status for task that completed with errors */
-	private static final Status IMPROPER_TERMINATION = new Status(
-			IStatus.ERROR, Activator.PLUGIN_ID, 0, "Error in execution", null);
-
-	/** The status for cancelled task */
-	private static final Status TASK_CANCELLED = new Status(IStatus.CANCEL,
-			Activator.PLUGIN_ID, 0, "Task cancelled", null);
-
-	/** The status for already running task - currently uses cancel */
-	private static final Status TASK_ALREADY_RUNNING = new Status(
-			IStatus.CANCEL, Activator.PLUGIN_ID, 0, "Task cancelled", null);
-
-	/** The Sierra Logger */
-	private static final Logger log = SierraLogger.getLogger("Sierra");
-
-	/** The default location for storing results */
-	private static final String SIERRA_RESULTS = ".SierraResults";
-
-	/** The default extension for run document */
-	private static final String PARSED_FILE_SUFFIX = ".xml.parsed";
-
 	// /** The log file for ant task results */
 	// private static final String ANT_LOG_FILE = "sierra-ant.log";
 	//
@@ -71,8 +46,8 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	// private static final String ANT_LOGGER_DEFAULT =
 	// "org.apache.tools.ant.DefaultLogger";
 
-	/** The location of tools folder */
-	private static final String TOOLS_FOLDER = "Tools";
+	/** The Sierra Logger */
+	private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	private IStructuredSelection currentSelection = null;
 
@@ -94,12 +69,10 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 		// Get the plugin directory that has tools folder and append the
 		// directory
-		String tools = BuildFileGenerator.getToolsDirectory() + TOOLS_FOLDER;
+		String tools = BuildFileGenerator.getToolsDirectory()
+				+ SierraConstants.TOOLS_FOLDER;
 		toolsDirectory = new File(tools);
-
-		String tmpDir = System.getProperty("java.io.tmpdir");
-		String resultsFolder = tmpDir + File.separator + SIERRA_RESULTS;
-		resultRoot = new File(resultsFolder);
+		resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
 
 		if ((!resultRoot.exists()) || (resultRoot.exists())
 				&& (!resultRoot.isDirectory())) {
@@ -133,7 +106,8 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 				File baseDir = new File(projectPath);
 				File runDocument = new File(resultRoot + File.separator
-						+ project.getProject().getName() + PARSED_FILE_SUFFIX);
+						+ project.getProject().getName()
+						+ SierraConstants.PARSED_FILE_SUFFIX);
 				runDocuments.push(runDocument);
 
 				config = new Config();
@@ -146,7 +120,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				// Get the plugin directory that has tools folder and append the
 				// directory
 				String tools = BuildFileGenerator.getToolsDirectory();
-				tools = tools + TOOLS_FOLDER;
+				tools = tools + SierraConstants.TOOLS_FOLDER;
 				config.setToolsDirectory(new File(tools));
 
 				bfg = new BuildFileGenerator(config);
@@ -267,11 +241,11 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				if (monitor.isCanceled()) {
 					monitor.done();
 					antRunnable.stopAll();
-					return TASK_CANCELLED;
+					return SierraConstants.TASK_CANCELLED;
 				} else {
 					monitor.done();
 					log.info("Completed analysis");
-					return PROPER_TERMINATION;
+					return SierraConstants.PROPER_TERMINATION;
 				}
 
 			} catch (Exception e) {
@@ -281,7 +255,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 			}
 
 			monitor.done();
-			return IMPROPER_TERMINATION;
+			return SierraConstants.IMPROPER_TERMINATION;
 
 		}
 	}
@@ -374,7 +348,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	private class RunSierraAdapter extends JobChangeAdapter {
 		@Override
 		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(PROPER_TERMINATION)) {
+			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
 
 				Job databaseEntryJob = new DatabaseEntryJob("Finshing analysis");
 				databaseEntryJob.setPriority(Job.SHORT);
@@ -382,11 +356,12 @@ public final class RunAnalysis implements IObjectActionDelegate {
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
 				databaseEntryJob.schedule();
 
-			} else if (event.getResult().equals(TASK_CANCELLED)) {
+			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
 
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
-			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
+			} else if (event.getResult().equals(
+					SierraConstants.TASK_ALREADY_RUNNING)) {
 				BalloonUtility.showMessage(
 						"An instance of Sierra analysis is already running",
 						"Please wait for it to finish before restarting");
@@ -476,16 +451,16 @@ public final class RunAnalysis implements IObjectActionDelegate {
 							"Sierra Analysis Completed with errors",
 							"Check the logs.");
 					slProgressMonitorWrapper.done();
-					return IMPROPER_TERMINATION;
+					return SierraConstants.IMPROPER_TERMINATION;
 				}
 			}
 
 			if (slProgressMonitorWrapper.isCanceled()) {
-				return TASK_CANCELLED;
+				return SierraConstants.TASK_CANCELLED;
 			} else {
 				log.info("Finished everything");
 				slProgressMonitorWrapper.done();
-				return PROPER_TERMINATION;
+				return SierraConstants.PROPER_TERMINATION;
 			}
 		}
 	}
@@ -494,11 +469,11 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 		@Override
 		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(PROPER_TERMINATION)) {
+			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
 				BalloonUtility.showMessage("Sierra Analysis Completed",
 						"You may now examine the analysis results.");
 
-			} else if (event.getResult().equals(TASK_CANCELLED)) {
+			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
 			} else {
