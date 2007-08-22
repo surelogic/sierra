@@ -60,7 +60,7 @@ public class BuildFileGenerator {
 	public File writeBuildFile() {
 
 		String fileName = config.getBaseDirectory() + File.separator
-				+ SIERRA_BUILD_FILE + "-" + config.getProject() + ".xml";
+				+ SIERRA_BUILD_FILE + ".xml";
 		String toolDirectory = getToolsDirectory();
 
 		File buildFile = new File(fileName);

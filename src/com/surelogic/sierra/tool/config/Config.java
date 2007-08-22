@@ -41,8 +41,8 @@ public class Config {
 	private String classpath = null;
 	// File object for the PMD rules file
 	private File pmdRulesFile = null;
-	
-	//Whether the tools are run in multiple threads
+
+	// Whether the tools are run in multiple threads
 	private boolean multithreaded = false;
 
 	public Config() {
@@ -172,8 +172,7 @@ public class Config {
 			return false;
 		} else if (!excludedToolsList.equals(other.getExcludedToolsList())) {
 			return false;
-		} else if (runDocument == null
-				&& other.getRunDocument() != null) {
+		} else if (runDocument == null && other.getRunDocument() != null) {
 			return false;
 		} else if (!runDocument.equals(other.getRunDocument())) {
 			return false;
@@ -330,7 +329,8 @@ public class Config {
 	}
 
 	/**
-	 * @param multithreaded the multithreaded to set
+	 * @param multithreaded
+	 *            the multithreaded to set
 	 */
 	public final void setMultithreaded(boolean multithreaded) {
 		this.multithreaded = multithreaded;

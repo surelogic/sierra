@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +14,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.sierra.tool.config.Config;
 
 /**
  * XML Parser for results from the tools. Uses SAX parser.
@@ -30,8 +32,45 @@ public class Parser {
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 
+	/**
+	 * Constructor only for build file parsing
+	 */
+	public Parser() {
+		// Nothing to do
+	}
+
 	public Parser(ArtifactGenerator generator) {
 		this.generator = generator;
+	}
+
+	/**
+	 * For parsing Sierra build files, returns all the configs that can be
+	 * created from the build file
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	public List<Config> parseBuildFile(String fileName) {
+		BuildFileHandler handler = new BuildFileHandler();
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+			// Parse the input
+			SAXParser saxParser = factory.newSAXParser();
+			saxParser.parse(new File(fileName), handler);
+		} catch (SAXException se) {
+			log.log(Level.SEVERE,
+					"Could not parse the PMD file. Possible errors in the generated file"
+							+ se);
+		} catch (ParserConfigurationException e) {
+			log.log(Level.SEVERE,
+					"Could not parse the PMD file. Parser configuration error."
+							+ e);
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not parse the PMD file. I/O Error."
+					+ e);
+		}
+
+		return handler.getConfigs();
 	}
 
 	public void parsePMD39(String fileName) {
