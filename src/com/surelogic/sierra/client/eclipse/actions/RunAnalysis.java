@@ -57,7 +57,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	private BuildFileGenerator bfg;
 
-	private Stack<File> runDocuments;
+	// private Stack<File> runDocuments;
 
 	private Config config;
 
@@ -96,7 +96,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 			}
 
 			buildFiles = new ArrayList<File>();
-			runDocuments = new Stack<File>();
+			Stack<File> runDocuments = new Stack<File>();
 
 			for (IJavaProject project : selectedProjects) {
 				// log.info("Generating XML...");
@@ -133,13 +133,12 @@ public final class RunAnalysis implements IObjectActionDelegate {
 			// buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
 			// }
 
-			// TODO: FIX THIS - Currently progress monitors are not handled
-			// properly, output from ant task is also lost
 			if (buildFile != null) {
 
 				Job runSierraAnalysis = new RunSierraJob("Running Sierra...");
 				runSierraAnalysis.setPriority(Job.SHORT);
-				runSierraAnalysis.addJobChangeListener(new RunSierraAdapter());
+				runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
+						runDocuments));
 				runSierraAnalysis.schedule();
 
 				// Job runBuildfile = new RunSierraAntJob("Running Sierra...");
@@ -346,11 +345,19 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	// }
 
 	private class RunSierraAdapter extends JobChangeAdapter {
+
+		private Stack<File> runDocs;
+
+		public RunSierraAdapter(Stack<File> runDocs) {
+			this.runDocs = runDocs;
+		}
+
 		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
 
-				Job databaseEntryJob = new DatabaseEntryJob("Finshing analysis");
+				Job databaseEntryJob = new DatabaseEntryJob(
+						"Finshing analysis", runDocs);
 				databaseEntryJob.setPriority(Job.SHORT);
 				databaseEntryJob
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
@@ -392,8 +399,11 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	private class DatabaseEntryJob extends Job {
 
-		public DatabaseEntryJob(String name) {
+		private Stack<File> runDocs;
+
+		public DatabaseEntryJob(String name, Stack<File> runDocs) {
 			super(name);
+			this.runDocs = runDocs;
 		}
 
 		@Override
@@ -402,46 +412,13 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 			SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 					monitor);
-			// DataEntryRunnable dataEntryRunnable = new DataEntryRunnable();
-			// Thread dataEntryThread = new Thread(dataEntryRunnable);
-			// dataEntryThread.start();
-			//
-			// while (!monitor.isCanceled()) {
-			// try {
-			// Thread.sleep(500);
-			// if (dataEntryRunnable.isCompleted()) {
-			// break;
-			// }
-			//
-			// } catch (InterruptedException e) {
-			// log.log(Level.SEVERE,
-			// "Interrupted exception in database entry " + e);
-			// }
-			//
-			// }
-			//			
-			//			
-			// if (monitor.isCanceled()) {
-			// monitor.done();
-			// dataEntryThread.interrupt();
-			// return TASK_CANCELLED;
-			// } else {
-			// monitor.done();
-			// log.info("Completed analysis");
-			// return PROPER_TERMINATION;
-			// }
-			while (!runDocuments.isEmpty()) {
 
-				File runDocumentHolder = runDocuments.pop();
-				// monitor.beginTask("Loading run document...", runDocuments
-				// .size());
+			while (!runDocs.isEmpty()) {
+
+				File runDocumentHolder = runDocs.pop();
 				log.info("Currently loading..."
 						+ runDocumentHolder.getAbsolutePath());
 				try {
-					// monitor.subTask(runDocumentHolder.getName());
-					// monitor.worked(1);
-
-					// TODO: Add feedback here, add cancel
 					RunDocumentUtility.loadRunDocument(runDocumentHolder,
 							slProgressMonitorWrapper);
 
