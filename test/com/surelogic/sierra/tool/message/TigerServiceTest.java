@@ -63,6 +63,7 @@ public class TigerServiceTest {
 	@Test
 	public void testSingleComment() {
 		MergeAuditTrailRequest mergeReq = new MergeAuditTrailRequest();
+		mergeReq.setQualifier("Default");
 		mergeReq.setProject("sierra-entity");
 		List<Merge> merges = new ArrayList<Merge>();
 		mergeReq.setMerge(merges);

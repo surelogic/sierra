@@ -53,4 +53,55 @@ public class Match {
 		this.findingType = findingType;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result
+				+ ((findingType == null) ? 0 : findingType.hashCode());
+		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
+		result = prime * result
+				+ ((packageName == null) ? 0 : packageName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Match other = (Match) obj;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
+			return false;
+		if (findingType == null) {
+			if (other.findingType != null)
+				return false;
+		} else if (!findingType.equals(other.findingType))
+			return false;
+		if (hash == null) {
+			if (other.hash != null)
+				return false;
+		} else if (!hash.equals(other.hash))
+			return false;
+		if (packageName == null) {
+			if (other.packageName != null)
+				return false;
+		} else if (!packageName.equals(other.packageName))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Match(" + packageName + "," + className + "," + hash + ","
+				+ findingType + ")";
+	}
 }

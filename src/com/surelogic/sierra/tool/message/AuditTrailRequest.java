@@ -10,6 +10,16 @@ public class AuditTrailRequest {
 	private Long revision;
 	private String qualifier;
 
+	public AuditTrailRequest() {
+		// Do Nothing
+	}
+
+	public AuditTrailRequest(String project, String qualifier, Long revision) {
+		this.project = project;
+		this.qualifier = qualifier;
+		this.revision = revision;
+	}
+
 	public String getProject() {
 		return project;
 	}

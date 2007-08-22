@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class AuditTrailResponse {
 
+	private Long revision;
 	private List<TrailObsoletion> obsolete;
 	private List<AuditTrailUpdate> update;
 
@@ -27,7 +28,13 @@ public class AuditTrailResponse {
 	public void setObsolete(List<TrailObsoletion> obsolete) {
 		this.obsolete = obsolete;
 	}
-	
-	
-	
+
+	public Long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Long revision) {
+		this.revision = revision;
+	}
+
 }
