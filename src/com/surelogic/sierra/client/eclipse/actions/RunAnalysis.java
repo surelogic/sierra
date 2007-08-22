@@ -27,9 +27,16 @@ import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
+import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
+/**
+ * The action that runs the Sierra Analysis
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public final class RunAnalysis implements IObjectActionDelegate {
 
 	/** The status for properly terminated task */
@@ -79,7 +86,16 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	private Config config;
 
+	private ArrayList<File> buildFiles;
+
+	private final File toolsDirectory;
+
 	public RunAnalysis() {
+
+		// Get the plugin directory that has tools folder and append the
+		// directory
+		String tools = BuildFileGenerator.getToolsDirectory() + TOOLS_FOLDER;
+		toolsDirectory = new File(tools);
 
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String resultsFolder = tmpDir + File.separator + SIERRA_RESULTS;
@@ -106,7 +122,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				}
 			}
 
-			List<File> buildFiles = new ArrayList<File>();
+			buildFiles = new ArrayList<File>();
 			runDocuments = new Stack<File>();
 
 			for (IJavaProject project : selectedProjects) {
@@ -131,7 +147,6 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				// directory
 				String tools = BuildFileGenerator.getToolsDirectory();
 				tools = tools + TOOLS_FOLDER;
-
 				config.setToolsDirectory(new File(tools));
 
 				bfg = new BuildFileGenerator(config);
@@ -140,9 +155,9 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 			}
 
-			if (buildFiles.size() > 1) {
-				buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
-			}
+			// if (buildFiles.size() > 1) {
+			// buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
+			// }
 
 			// TODO: FIX THIS - Currently progress monitors are not handled
 			// properly, output from ant task is also lost
@@ -162,6 +177,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 								"Sierra Analysis Started",
 								"You may continue to work as the analysis runs. "
 										+ "You will be notified when the analysis has been completed.");
+				log.info("Started analysis..");
 
 			}
 
@@ -184,15 +200,27 @@ public final class RunAnalysis implements IObjectActionDelegate {
 	private class AntRunnable implements Runnable {
 
 		private boolean complete;
-		SierraAnalysis sa;
+		private SierraAnalysis sa;
+		private List<File> buildFileList;
+
+		public AntRunnable(List<File> buildFiles) {
+			this.buildFileList = buildFiles;
+		}
 
 		public void run() {
 
-			sa = new SierraAnalysis(config);
 			complete = false;
-			sa.execute();
+			for (File f : buildFileList) {
+				Parser buildFileParser = new Parser();
+				List<Config> configs = buildFileParser.parseBuildFile(f
+						.getAbsolutePath());
+				for (Config c : configs) {
+					c.setToolsDirectory(toolsDirectory);
+					sa = new SierraAnalysis(c);
+					sa.execute();
+				}
+			}
 			complete = true;
-
 		}
 
 		public void stopAll() {
@@ -217,10 +245,9 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 			try {
 
-				monitor.beginTask("Starting analysis...",
-						IProgressMonitor.UNKNOWN);
+				monitor.beginTask("Running tools...", IProgressMonitor.UNKNOWN);
 
-				AntRunnable antRunnable = new AntRunnable();
+				AntRunnable antRunnable = new AntRunnable(buildFiles);
 				antThread = new Thread(antRunnable);
 				antThread.start();
 
@@ -243,6 +270,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 					return TASK_CANCELLED;
 				} else {
 					monitor.done();
+					log.info("Completed analysis");
 					return PROPER_TERMINATION;
 				}
 
@@ -373,6 +401,20 @@ public final class RunAnalysis implements IObjectActionDelegate {
 		}
 	}
 
+	@SuppressWarnings("unused")
+	private class DataEntryRunnable implements Runnable {
+		private boolean complete = false;
+
+		public void run() {
+			// TODO Auto-generated method stub
+
+		}
+
+		public boolean isCompleted() {
+			return complete;
+		}
+	}
+
 	private class DatabaseEntryJob extends Job {
 
 		public DatabaseEntryJob(String name) {
@@ -382,33 +424,70 @@ public final class RunAnalysis implements IObjectActionDelegate {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			log.info("Starting database entry...");
+
+			SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
+					monitor);
+			// DataEntryRunnable dataEntryRunnable = new DataEntryRunnable();
+			// Thread dataEntryThread = new Thread(dataEntryRunnable);
+			// dataEntryThread.start();
+			//
+			// while (!monitor.isCanceled()) {
+			// try {
+			// Thread.sleep(500);
+			// if (dataEntryRunnable.isCompleted()) {
+			// break;
+			// }
+			//
+			// } catch (InterruptedException e) {
+			// log.log(Level.SEVERE,
+			// "Interrupted exception in database entry " + e);
+			// }
+			//
+			// }
+			//			
+			//			
+			// if (monitor.isCanceled()) {
+			// monitor.done();
+			// dataEntryThread.interrupt();
+			// return TASK_CANCELLED;
+			// } else {
+			// monitor.done();
+			// log.info("Completed analysis");
+			// return PROPER_TERMINATION;
+			// }
 			while (!runDocuments.isEmpty()) {
 
 				File runDocumentHolder = runDocuments.pop();
-				monitor.beginTask("Loading run document...", runDocuments
-						.size());
+				// monitor.beginTask("Loading run document...", runDocuments
+				// .size());
+				log.info("Currently loading..."
+						+ runDocumentHolder.getAbsolutePath());
 				try {
-					monitor.subTask(runDocumentHolder.getName());
-					monitor.worked(1);
+					// monitor.subTask(runDocumentHolder.getName());
+					// monitor.worked(1);
 
 					// TODO: Add feedback here, add cancel
-					RunDocumentUtility.loadRunDocument(runDocumentHolder, null);
+					RunDocumentUtility.loadRunDocument(runDocumentHolder,
+							slProgressMonitorWrapper);
 
 				} catch (RunPersistenceException rpe) {
 					log.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
 							"Sierra Analysis Completed with errors",
 							"Check the logs.");
-					monitor.done();
+					slProgressMonitorWrapper.done();
 					return IMPROPER_TERMINATION;
 				}
 			}
 
-			log.info("Finished everything");
-			monitor.done();
-			return PROPER_TERMINATION;
+			if (slProgressMonitorWrapper.isCanceled()) {
+				return TASK_CANCELLED;
+			} else {
+				log.info("Finished everything");
+				slProgressMonitorWrapper.done();
+				return PROPER_TERMINATION;
+			}
 		}
-
 	}
 
 	private class DatabaseEntryJobAdapter extends JobChangeAdapter {
