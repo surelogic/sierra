@@ -6,9 +6,6 @@ import java.sql.SQLException;
 
 public final class ProductRecord extends LongRecord {
 
-	private static final String INSERT = "INSERT INTO PRODUCT (NAME) VALUES (?)";
-	private static final String DELETE = "DELETE FROM PRODUCT WHERE ID = ?";
-	private static final String FIND = "SELECT NAME FROM PRODUCT WHERE ID = ?";
 	private String name;
 
 	public ProductRecord(RecordMapper mapper) {
@@ -40,15 +37,4 @@ public final class ProductRecord extends LongRecord {
 		return idx;
 	}
 
-	public static String getInsertSql() {
-		return INSERT;
-	}
-
-	public static String getDeleteSql() {
-		return DELETE;
-	}
-
-	public static String getFindSql() {
-		return FIND;
-	}
 }
