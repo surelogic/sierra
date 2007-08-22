@@ -19,6 +19,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.Config;
@@ -26,21 +27,6 @@ import com.surelogic.sierra.tool.config.Config;
 public class BuildFileGenerator {
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");
-	private static final String SIERRA_BUILD_FILE = "sierra";
-	private static final String ANTLIB_DIR = "com/surelogic/sierra/tool/ant/antlib.xml";
-	private static final String SIERRA_TOOL_SRC = "src";
-	private static final String INCLUDE_ALL = "**/*";
-	// private static final String FINDBUGS_LIB_LOCATION = "Tools/FB/lib";
-	// private static final String FINDBUGS_JAR = "findbugs.jar";
-	// private static final String PMD_39_LIB_LOCATION =i love
-	// "Tools/pmd-3.9/lib";
-	// private static final String PMD_40_LIB_LOCATION = "Tools/pmd-4.0/lib";
-	private static final String INCLUDE_ALL_JARS = "**/*.jar";
-	private static final String BUC_LIB_LOCATION = "Tools/backport-util-concurrent-3.0";
-	private static final String JAX_LIB_LOCATION = "Tools/jax-ws";
-	private static final String SIERRA_RESULTS = ".SierraResults";
-	private static final String MULTIPLE_SIERRA_PROJECTS = "multiple-sierra-projects.xml";
-
 	private Config config;
 	private AttributesImpl atts;
 
@@ -60,7 +46,7 @@ public class BuildFileGenerator {
 	public File writeBuildFile() {
 
 		String fileName = config.getBaseDirectory() + File.separator
-				+ SIERRA_BUILD_FILE + ".xml";
+				+ SierraConstants.SIERRA_BUILD_FILE;
 		String toolDirectory = getToolsDirectory();
 
 		File buildFile = new File(fileName);
@@ -81,13 +67,14 @@ public class BuildFileGenerator {
 				// Start the task
 				Map<String, String> attributeMap = new HashMap<String, String>();
 				attributeMap.put("default", "Sierra-Ant");
-				attributeMap.put("basedir", toolDirectory + SIERRA_TOOL_SRC);
+				attributeMap.put("basedir", toolDirectory
+						+ SierraConstants.SIERRA_TOOL_SRC);
 				attributeMap.put("name", "SIERRA");
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
 
 				// Include antlib.xml
-				attributeMap.put("resource", ANTLIB_DIR);
+				attributeMap.put("resource", SierraConstants.ANTLIB_DIR);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "taskdef", atts);
 
@@ -95,7 +82,7 @@ public class BuildFileGenerator {
 
 				// Dirset to include everything in project
 				attributeMap.put("dir", toolDirectory);
-				attributeMap.put("includes", INCLUDE_ALL);
+				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "dirset", atts);
 				hd.endElement("", "", "dirset");
@@ -122,20 +109,22 @@ public class BuildFileGenerator {
 				// hd.endElement("", "", "fileset");
 
 				// Backport util concurrent (for FindBugs)
-				attributeMap.put("dir", toolDirectory + BUC_LIB_LOCATION);
+				attributeMap.put("dir", toolDirectory
+						+ SierraConstants.BUC_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
-				attributeMap.put("name", INCLUDE_ALL_JARS);
+				attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "include", atts);
 				hd.endElement("", "", "include");
 				hd.endElement("", "", "fileset");
 
 				// JAXB file set
-				attributeMap.put("dir", toolDirectory + JAX_LIB_LOCATION);
+				attributeMap.put("dir", toolDirectory
+						+ SierraConstants.JAX_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
-				attributeMap.put("name", INCLUDE_ALL_JARS);
+				attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "include", atts);
 				hd.endElement("", "", "include");
@@ -257,11 +246,13 @@ public class BuildFileGenerator {
 		return commonDirectory;
 	}
 
+	@Deprecated
 	public File writeMultipleProjectBuildFile(List<File> buildFiles) {
 		String tmpDir = System.getProperty("java.io.tmpdir");
-		String resultsFolder = tmpDir + File.separator + SIERRA_RESULTS;
+		String resultsFolder = tmpDir + File.separator
+				+ SierraConstants.SIERRA_RESULTS;
 		String fileName = resultsFolder + File.separator
-				+ MULTIPLE_SIERRA_PROJECTS;
+				+ SierraConstants.MULTIPLE_SIERRA_PROJECTS;
 		String toolDirectory = getToolsDirectory();
 		File buildFile = new File(fileName);
 
@@ -279,13 +270,14 @@ public class BuildFileGenerator {
 			// Start the task
 			Map<String, String> attributeMap = new HashMap<String, String>();
 			attributeMap.put("default", "Sierra-Ant-Multiple");
-			attributeMap.put("basedir", toolDirectory + SIERRA_TOOL_SRC);
+			attributeMap.put("basedir", toolDirectory
+					+ SierraConstants.SIERRA_TOOL_SRC);
 			attributeMap.put("name", "SIERRA");
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "project", atts);
 
 			// Include antlib.xml
-			attributeMap.put("resource", ANTLIB_DIR);
+			attributeMap.put("resource", SierraConstants.ANTLIB_DIR);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "taskdef", atts);
 
@@ -293,7 +285,7 @@ public class BuildFileGenerator {
 
 			// Dirset to include everything in project
 			attributeMap.put("dir", toolDirectory);
-			attributeMap.put("includes", INCLUDE_ALL);
+			attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "dirset", atts);
 			hd.endElement("", "", "dirset");
@@ -319,20 +311,22 @@ public class BuildFileGenerator {
 			// hd.endElement("", "", "fileset");
 
 			// Backport util concurrent (for FindBugs)
-			attributeMap.put("dir", toolDirectory + BUC_LIB_LOCATION);
+			attributeMap.put("dir", toolDirectory
+					+ SierraConstants.BUC_LIB_LOCATION);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "fileset", atts);
-			attributeMap.put("name", INCLUDE_ALL_JARS);
+			attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "include", atts);
 			hd.endElement("", "", "include");
 			hd.endElement("", "", "fileset");
 
 			// JAXB file set
-			attributeMap.put("dir", toolDirectory + JAX_LIB_LOCATION);
+			attributeMap.put("dir", toolDirectory
+					+ SierraConstants.JAX_LIB_LOCATION);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "fileset", atts);
-			attributeMap.put("name", INCLUDE_ALL_JARS);
+			attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
 			writeAttributes(attributeMap);
 			hd.startElement("", "", "include", atts);
 			hd.endElement("", "", "include");

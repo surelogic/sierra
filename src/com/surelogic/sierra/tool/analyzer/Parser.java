@@ -24,10 +24,6 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public class Parser {
 
-	public static final String PRIORITY = "priority";
-
-	public static final String DEFAULT_PACKAGE = "Default Package";
-
 	private ArtifactGenerator generator;
 
 	private static final Logger log = SierraLogger.getLogger("Sierra");

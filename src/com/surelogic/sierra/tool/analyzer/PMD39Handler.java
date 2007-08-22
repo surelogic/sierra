@@ -7,10 +7,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
+/**
+ * The parser for PMD 3.9 results
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 class PMD39Handler extends DefaultHandler {
 
 	private ArtifactGenerator generator;
@@ -159,7 +166,7 @@ class PMD39Handler extends DefaultHandler {
 								.getValue(i));
 					}
 
-					if (Parser.PRIORITY.equals(aName)) {
+					if (SierraConstants.PRIORITY.equals(aName)) {
 
 						int priority = Integer.valueOf(attrs.getValue(i));
 
@@ -243,7 +250,7 @@ class PMD39Handler extends DefaultHandler {
 			// Populate package name as default package if there is no
 			// package associated with it
 			if (!hasPackage) {
-				String packageName = Parser.DEFAULT_PACKAGE;
+				String packageName = SierraConstants.DEFAULT_PACKAGE;
 				int lastSlash = fileName.lastIndexOf(File.separator);
 				String sourceDirectory = fileName.substring(0, lastSlash);
 				sourceLocation.packageName(packageName).path(sourceDirectory);
