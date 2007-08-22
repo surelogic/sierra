@@ -1,4 +1,4 @@
-package com.surelogic.sierra.jdbc;
+package com.surelogic.sierra.jdbc.record;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,20 +11,24 @@ import java.sql.SQLException;
  * @author nathan
  * 
  */
-public abstract class LongRecord implements Record<Long> {
+public abstract class LongRecord extends AbstractRecord<Long> {
 
 	protected Long id;
+
+	protected LongRecord(RecordMapper mapper) {
+		super(mapper);
+	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public int fillWithPk(PreparedStatement st, int idx) throws SQLException {
+	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id);
 		return idx;
 	}
 
-	public int readPk(ResultSet set, int idx) throws SQLException {
+	protected int readPk(ResultSet set, int idx) throws SQLException {
 		this.id = set.getLong(idx++);
 		return idx;
 	}

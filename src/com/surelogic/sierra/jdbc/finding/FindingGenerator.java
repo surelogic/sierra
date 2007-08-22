@@ -1,27 +1,35 @@
 package com.surelogic.sierra.jdbc.finding;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.insert;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.logging.Logger;
 
+import com.surelogic.sierra.jdbc.record.FindingRecord;
+import com.surelogic.sierra.jdbc.record.MatchRecord;
+import com.surelogic.sierra.jdbc.record.RunRecord;
+import com.surelogic.sierra.jdbc.record.TrailRecord;
+import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
 public class FindingGenerator {
 
+	private static final Logger log = SierraLogger
+			.getLogger(FindingGenerator.class.getName());
+
 	private static final int CHUNK_SIZE = 1000;
 
 	private static final String UPDATE_ARTIFACTS_WITH_EXISTING_MATCH = "UPDATE ARTIFACT A"
 			+ " SET A.FINDING_ID =("
 			+ " SELECT SM.FINDING_ID"
-			+ " FROM SOURCE_LOCATION S, COMPILATION_UNIT CU, SIERRA_MATCH SM"
-			+ " WHERE S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+			+ " FROM RUN R, SOURCE_LOCATION S, COMPILATION_UNIT CU, SIERRA_MATCH SM"
+			+ " WHERE R.ID = A.RUN_ID AND"
+			+ " S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
 			+ " CU.ID = S.COMPILATION_UNIT_ID AND"
+			+ " SM.PROJECT_ID = R.PROJECT_ID AND"
 			+ " SM.HASH = S.HASH AND"
 			+ " SM.CLASS_NAME = CU.CLASS_NAME AND"
 			+ " SM.PACKAGE_NAME = CU.PACKAGE_NAME AND"
@@ -35,55 +43,34 @@ public class FindingGenerator {
 			+ " WHERE"
 			+ " A.FINDING_ID IS NULL AND A.RUN_ID = ? AND R.ID = A.RUN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID";
 
-	private static final String MATCH_SELECT = "SELECT FINDING_ID, TRAIL_ID FROM SIERRA_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	private static final String MATCH_INSERT = "INSERT INTO SIERRA_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID, TRAIL_ID) VALUES (?,?,?,?,?,?,?)";
-	private static final String MATCH_UPDATE_FINDING = "UPDATE SIERRA_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	private static final String FINDING_INSERT = "INSERT INTO FINDING (TRAIL_ID, IMPORTANCE) VALUES (?,?)";
-	private static final String TRAIL_INSERT = "INSERT INTO TRAIL (PROJECT_ID,UID) VALUES (?,?)";
-	private static final String PROJECT_RUN_SELECT = "SELECT PROJECT_ID FROM RUN WHERE ID = ?";
-
 	private final PreparedStatement updateArtifactsWithExistingMatch;
 	private final PreparedStatement unassignedArtifacts;
-	private final PreparedStatement insertMatch;
-	private final PreparedStatement updateMatchFinding;
-	private final PreparedStatement selectMatch;
-	private final PreparedStatement insertFinding;
-	private final PreparedStatement insertTrail;
-	private final PreparedStatement selectProjectRun;
+
+	private final FindingRecordFactory factory;
 	private final Connection conn;
 
-	public FindingGenerator(Connection conn) {
+	public FindingGenerator(Connection conn, FindingRecordFactory factory) {
+		this.factory = factory;
 		this.conn = conn;
 		try {
-			insertMatch = conn.prepareStatement(MATCH_INSERT,
-					Statement.RETURN_GENERATED_KEYS);
-			updateMatchFinding = conn.prepareStatement(MATCH_UPDATE_FINDING);
-			selectMatch = conn.prepareStatement(MATCH_SELECT,
-					Statement.RETURN_GENERATED_KEYS);
-			insertTrail = conn.prepareStatement(TRAIL_INSERT,
-					Statement.RETURN_GENERATED_KEYS);
-			insertFinding = conn.prepareStatement(FINDING_INSERT,
-					Statement.RETURN_GENERATED_KEYS);
+			// THese queries stay
 			updateArtifactsWithExistingMatch = conn
 					.prepareStatement(UPDATE_ARTIFACTS_WITH_EXISTING_MATCH);
 			unassignedArtifacts = conn
 					.prepareStatement(UNASSIGNED_ARTIFACTS_SELECT);
-			selectProjectRun = conn.prepareStatement(PROJECT_RUN_SELECT);
+
 		} catch (SQLException e) {
 			throw new FindingGenerationException(e);
 		}
 	}
 
-	public void generate(Long runId) {
+	public void generate(RunRecord run) {
 		try {
-			selectProjectRun.setLong(1, runId);
-			ResultSet projectSet = selectProjectRun.executeQuery();
-			projectSet.next();
-			Long projectId = projectSet.getLong(1);
-			updateArtifactsWithExistingMatch.setLong(1, runId);
+			Long projectId = run.getProjectId();
+			updateArtifactsWithExistingMatch.setLong(1, run.getId());
 			updateArtifactsWithExistingMatch.executeUpdate();
 			conn.commit();
-			unassignedArtifacts.setLong(1, runId);
+			unassignedArtifacts.setLong(1, run.getId());
 			ResultSet result = unassignedArtifacts.executeQuery();
 
 			int counter = 0;
@@ -92,42 +79,42 @@ public class FindingGenerator {
 				int idx = 1;
 				art.p = Priority.values()[result.getInt(idx++)];
 				art.s = Severity.values()[result.getInt(idx++)];
-				art.m = new MatchRecord();
-				idx = art.m.readPk(result, idx);
-				art.m.fillWithPk(selectMatch, 1);
-				ResultSet match = selectMatch.executeQuery();
-				if (!match.next()) {
+				art.m = factory.newMatch();
+				// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
+				MatchRecord.PK pk = new MatchRecord.PK();
+				pk.setProjectId(result.getLong(idx++));
+				pk.setHash(result.getLong(idx++));
+				pk.setClassName(result.getString(idx++));
+				pk.setPackageName(result.getString(idx++));
+				pk.setFindingTypeId(result.getLong(idx++));
+				art.m.setId(pk);
+				if (!art.m.select()) {
 					// We don't have a match, so we need to produce an entirely
 					// new finding and trail.
 					counter++;
 					MatchRecord m = art.m;
-					TrailRecord t = new TrailRecord();
+					TrailRecord t = factory.newTrail();
 					t.setProjectId(projectId);
-					FindingRecord f = new FindingRecord();
+					FindingRecord f = factory.newFinding();
 					f.setTrail(t);
 					f.setImportance(calculateImportance(art.s, art.p));
-					m.setFinding(f);
-					m.setTrail(t);
-					insert(insertTrail, t);
-					insert(insertFinding, f);
-					m.fill(insertMatch, 1);
-					insertMatch.executeUpdate();
-				} else {
+					t.insert();
+					f.insert();
+					m.setFindingId(f.getId());
+					m.setTrailId(t.getId());
+					m.insert();
+				} else if (art.m.getFindingId() == null) {
 					// If we have a match with a trail, but no finding, we
 					// generate a finding and give it that trail.
-					match.getLong(1);
-					if (match.wasNull()) {
-						MatchRecord m = art.m;
-						FindingRecord f = new FindingRecord();
-						TrailRecord t = new TrailRecord();
-						t.setId(match.getLong(2));
-						f.setTrail(t);
-						f.setImportance(calculateImportance(art.s, art.p));
-						insert(insertFinding, f);
-						updateMatchFinding.setLong(1, f.getId());
-						m.fill(updateMatchFinding, 2);
-						updateMatchFinding.executeUpdate();
-					}
+					MatchRecord m = art.m;
+					FindingRecord f = factory.newFinding();
+					TrailRecord t = factory.newTrail();
+					t.setId(m.getTrailId());
+					f.setTrail(t);
+					f.setImportance(calculateImportance(art.s, art.p));
+					f.insert();
+					m.setFindingId(f.getId());
+					m.update();
 				}
 				if (counter == CHUNK_SIZE) {
 					conn.commit();
@@ -135,7 +122,10 @@ public class FindingGenerator {
 				}
 			}
 			conn.commit();
+			result.close();
+			log.info("All new findings persisted.");
 			updateArtifactsWithExistingMatch.executeUpdate();
+			log.info("Finished finding generation");
 			conn.commit();
 		} catch (SQLException e) {
 			sqlError(e);

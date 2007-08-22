@@ -1,15 +1,18 @@
-package com.surelogic.sierra.jdbc.finding;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.LongRecord;
-
-public class TrailRecord extends LongRecord {
+public final class TrailRecord extends LongRecord {
 	private String uid;
 	private Long projectId;
+
+	public TrailRecord(RecordMapper mapper) {
+		super(mapper);
+	}
 
 	public String getUid() {
 		return uid;
@@ -32,4 +35,17 @@ public class TrailRecord extends LongRecord {
 		setNullableString(idx++, st, uid);
 		return idx;
 	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fillWithPk(st, idx);
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		projectId = set.getLong(idx++);
+		uid = set.getString(idx++);
+		return idx;
+	}
+
 }

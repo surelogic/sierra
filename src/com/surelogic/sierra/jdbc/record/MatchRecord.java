@@ -1,4 +1,4 @@
-package com.surelogic.sierra.jdbc.finding;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
 
@@ -6,43 +6,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.Record;
-
-public class MatchRecord implements Record<MatchRecord.PK> {
+public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
+		implements Record<MatchRecord.PK> {
 
 	private PK id;
 
-	private FindingRecord finding;
-	private TrailRecord trail;
+	private Long findingId;
 
-	public FindingRecord getFinding() {
-		return finding;
+	private Long trailId;
+
+	public MatchRecord(UpdateRecordMapper mapper) {
+		super(mapper);
 	}
 
-	public void setFinding(FindingRecord finding) {
-		this.finding = finding;
-	}
-
-	public TrailRecord getTrail() {
-		return trail;
-	}
-
-	public void setTrail(TrailRecord trail) {
-		this.trail = trail;
-	}
-
-	public int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, id.getProjectId());
-		st.setLong(idx++, id.getHash());
-		st.setString(idx++, id.getClassName());
-		st.setString(idx++, id.getPackageName());
-		st.setLong(idx++, id.getFindingTypeId());
-		setNullableLong(idx++, st, finding.getId());
-		setNullableLong(idx++, st, trail.getId());
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
+		idx = fillWithPk(st, idx);
+		setNullableLong(idx++, st, findingId);
+		setNullableLong(idx++, st, trailId);
 		return idx;
 	}
 
-	public int fillWithPk(PreparedStatement st, int idx) throws SQLException {
+	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id.getProjectId());
 		st.setLong(idx++, id.getHash());
 		st.setString(idx++, id.getClassName());
@@ -51,14 +35,29 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 		return idx;
 	}
 
-	public int readPk(ResultSet set, int idx) throws SQLException {
-		id = new PK();
-		id.setProjectId(set.getLong(idx++));
-		id.setHash(set.getLong(idx++));
-		id.setClassName(set.getString(idx++));
-		id.setPackageName(set.getString(idx++));
-		id.setFindingTypeId(set.getLong(idx++));
+	protected int readPk(ResultSet set, int idx) throws SQLException {
+		// pk is the same as the nk
 		return idx;
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		this.findingId = set.getLong(idx++);
+		this.trailId = set.getLong(idx++);
+		return 0;
+	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fillWithPk(st, idx);
+	}
+
+	@Override
+	protected int fillWithAttributes(PreparedStatement st, int idx)
+			throws SQLException {
+		setNullableLong(idx++, st, findingId);
+		setNullableLong(idx++, st, trailId);
+		return 0;
 	}
 
 	public PK getId() {
@@ -69,6 +68,28 @@ public class MatchRecord implements Record<MatchRecord.PK> {
 		this.id = id;
 	}
 
+	public Long getFindingId() {
+		return findingId;
+	}
+
+	public void setFindingId(Long findingId) {
+		this.findingId = findingId;
+	}
+
+	public Long getTrailId() {
+		return trailId;
+	}
+
+	public void setTrailId(Long trailId) {
+		this.trailId = trailId;
+	}
+
+	/**
+	 * Represents a match record's primary key.
+	 * 
+	 * @author nathan
+	 * 
+	 */
 	public static class PK {
 		private Long projectId;
 		private String className;

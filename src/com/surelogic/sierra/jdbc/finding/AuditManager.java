@@ -6,10 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.surelogic.sierra.jdbc.record.AuditRecord;
+import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import com.surelogic.sierra.tool.message.AuditTrailRequest;
+import com.surelogic.sierra.tool.message.AuditTrailResponse;
+import com.surelogic.sierra.tool.message.AuditTrailUpdate;
+import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.Match;
+import com.surelogic.sierra.tool.message.TigerServiceClient;
+import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public class AuditManager {
 
@@ -17,15 +25,35 @@ public class AuditManager {
 
 	private static final String FINDING_SELECT = "SELECT ID,TRAIL_ID,IMPORTANCE FROM FINDING WHERE ID = ?";
 
+	private static final String PROJECT_SELECT = "SELECT ID,REVISION FROM PROJECT WHERE NAME = ?";
+	private static final String UPDATE_PROJECT_REVISION = "UPDATE PROJECT SET REVISION = ? WHERE NAME = ?";
+
+	private static final String TRAIL_SELECT = "SELECT ID FROM TRAIL WHERE UID = ? AND PROJECT_ID = ?";
+	private static final String UPDATE_OBSOLETE_TRAIL = "UPDATE SIERRA_MATCH SET TRAIL_ID = (SELECT ID FROM TRAIL WHERE UID = ?) WHERE TRAIL_ID = (SELECT ID FROM TRAIL WHERE UID = ?)";
+
 	private final Connection conn;
 
 	private final PreparedStatement selectFinding;
 	private final PreparedStatement insertAudit;
+	private final PreparedStatement selectProject;
+	private final PreparedStatement updateRevision;
+	private final PreparedStatement selectTrail;
+	private final PreparedStatement updateObsoleteTrail;
+
+	private final Long userId;
+
+	private final FindingRecordFactory fact;
 
 	private AuditManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.selectFinding = conn.prepareStatement(FINDING_SELECT);
 		this.insertAudit = conn.prepareStatement(AUDIT_INSERT);
+		this.selectProject = conn.prepareStatement(PROJECT_SELECT);
+		this.selectTrail = conn.prepareStatement(TRAIL_SELECT);
+		this.updateRevision = conn.prepareStatement(UPDATE_PROJECT_REVISION);
+		this.updateObsoleteTrail = conn.prepareStatement(UPDATE_OBSOLETE_TRAIL);
+		this.fact = ClientFindingRecordFactory.getInstance(conn);
+		userId = User.getUser(conn).getId();
 	}
 
 	public static AuditManager getInstance(Connection conn) throws SQLException {
@@ -37,8 +65,7 @@ public class AuditManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		insert(insertAudit, newAudit(f.getTrailId(), comment,
-				AuditEvent.COMMENT));
+		newAudit(f.getTrailId(), comment, AuditEvent.COMMENT).insert();
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -47,7 +74,53 @@ public class AuditManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		insert(insertAudit, newAudit(f.getTrailId(), importance.toString(), AuditEvent.IMPORTANCE));
+		newAudit(f.getTrailId(), importance.toString(), AuditEvent.IMPORTANCE)
+				.insert();
+	}
+
+	public void commit(String project, String qualifier) throws SQLException {
+
+	}
+
+	public void update(String project, String qualifier) throws SQLException {
+		selectProject.setString(1, project);
+		ResultSet set = selectProject.executeQuery();
+		if (!set.next()) {
+			throw new IllegalArgumentException(project
+					+ " is not a valid project name");
+		}
+		Long projectId = set.getLong(1);
+		AuditTrailRequest request = new AuditTrailRequest(project, qualifier,
+				set.getLong(2));
+		AuditTrailResponse response = new TigerServiceClient()
+				.getTigerServicePort().getAuditTrails(request);
+		for (TrailObsoletion obsoletion : response.getObsolete()) {
+			updateObsoleteTrail.setString(1, obsoletion.getTrail());
+			updateObsoleteTrail.setString(2, obsoletion.getObsoletedTrail());
+			updateObsoleteTrail.executeUpdate();
+		}
+		for (AuditTrailUpdate update : response.getUpdate()) {
+			String trail = update.getTrail();
+			selectTrail.setString(1, trail);
+			selectTrail.setLong(2, projectId);
+			set = selectTrail.executeQuery();
+			Long trailId = set.getLong(1);
+			for (Match m : update.getMatch()) {
+				MatchRecord mRec = fact.newMatch();
+
+			}
+			for (Audit a : update.getAudit()) {
+				AuditRecord aRec = fact.newAudit();
+				aRec.setEvent(a.getEvent());
+				aRec.setTimestamp(a.getTimestamp());
+				aRec.setTrailId(trailId);
+				aRec.setUserId(userId);
+				aRec.setValue(a.getValue());
+			}
+		}
+		updateRevision.setLong(1, response.getRevision());
+		updateRevision.setString(2, project);
+		conn.commit();
 	}
 
 	private FindingView getFinding(Long findingId) throws SQLException {
@@ -62,13 +135,14 @@ public class AuditManager {
 		}
 	}
 
-	private AuditRecord newAudit(Long trailId, String value,
-			AuditEvent event) throws SQLException {
-		AuditRecord record = new AuditRecord();
+	private AuditRecord newAudit(Long trailId, String value, AuditEvent event)
+			throws SQLException {
+		AuditRecord record = fact.newAudit();
 		record.setUserId(User.getUser(conn).getId());
 		record.setTimestamp(new Date());
 		record.setEvent(event);
 		record.setValue(value);
 		return record;
 	}
+
 }

@@ -1,19 +1,19 @@
 /**
  * 
  */
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import com.surelogic.sierra.jdbc.LongRecord;
 import com.surelogic.sierra.tool.message.IdentifierType;
 
-class SourceRecord extends LongRecord {
+public final class SourceRecord extends LongRecord {
 
 	private Long hash;
 	private Integer lineOfCode;
@@ -23,7 +23,8 @@ class SourceRecord extends LongRecord {
 
 	private CompilationUnitRecord compUnit;
 
-	SourceRecord() {
+	public SourceRecord(RecordMapper mapper) {
+		super(mapper);
 	}
 
 	public Long getHash() {
@@ -74,8 +75,7 @@ class SourceRecord extends LongRecord {
 		this.compUnit = compUnit;
 	}
 
-	// COMPILATION_UNIT_ID,HASH,LINE_OF_CODE,END_LINE_OF_CODE,LOCATION_TYPE,IDENTIFIER
-	public int fill(PreparedStatement st, int idx) throws SQLException {
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, compUnit.getId());
 		setNullableLong(idx++, st, hash);
 		st.setInt(idx++, lineOfCode);
@@ -86,6 +86,16 @@ class SourceRecord extends LongRecord {
 			st.setNull(idx++, Types.VARCHAR);
 		}
 		setNullableString(idx++, st, identifier);
+		return idx;
+	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fill(st, idx);
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		return idx;
 	}
 

@@ -1,21 +1,21 @@
 /**
  * 
  */
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.LongRecord;
-
-class CompilationUnitRecord extends LongRecord {
+public final class CompilationUnitRecord extends LongRecord {
 	private String path;
 	private String className;
 	private String packageName;
 
-	CompilationUnitRecord() {
+	public CompilationUnitRecord(RecordMapper mapper) {
+		super(mapper);
 	}
 
 	public String getPath() {
@@ -42,13 +42,21 @@ class CompilationUnitRecord extends LongRecord {
 		this.packageName = packageName;
 	}
 
-	// PATH,CLASS_NAME,PACKAGE_NAME
-	public int fill(PreparedStatement st, int idx) throws SQLException {
+	@Override
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		setNullableString(idx++, st, path);
-		assert className != null;
-		assert packageName != null;
 		st.setString(idx++, className);
 		st.setString(idx++, packageName);
+		return idx;
+	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fill(st, idx);
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		return idx;
 	}
 

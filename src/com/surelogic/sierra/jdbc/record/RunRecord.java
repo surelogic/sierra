@@ -1,15 +1,16 @@
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.surelogic.sierra.jdbc.LongRecord;
+import com.surelogic.sierra.jdbc.run.RunStatus;
 
-class RunRecord extends LongRecord {
+public final class RunRecord extends LongRecord {
 
 	private Long userId;
 	private Long projectId;
@@ -17,6 +18,10 @@ class RunRecord extends LongRecord {
 	private String javaVendor;
 	private Date timestamp;
 	private RunStatus status;
+
+	public RunRecord(RecordMapper mapper) {
+		super(mapper);
+	}
 
 	public Long getUserId() {
 		return userId;
@@ -66,13 +71,29 @@ class RunRecord extends LongRecord {
 		this.status = status;
 	}
 
-	public int fill(PreparedStatement st, int idx) throws SQLException {
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, userId);
 		st.setLong(idx++, projectId);
 		setNullableString(idx++, st, javaVersion);
 		setNullableString(idx++, st, javaVendor);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
 		st.setString(idx++, status.toString());
+		return idx;
+	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fillWithPk(st, idx);
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		this.userId = set.getLong(idx++);
+		this.projectId = set.getLong(idx++);
+		this.javaVendor = set.getString(idx++);
+		this.javaVendor = set.getString(idx++);
+		this.timestamp = set.getTimestamp(idx++);
+		this.status = RunStatus.valueOf(set.getString(idx++));
 		return idx;
 	}
 

@@ -1,18 +1,15 @@
-/**
- * 
- */
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.record;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.LongRecord;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
-class ArtifactRecord extends LongRecord {
+public final class ArtifactRecord extends LongRecord {
 
 	private Long runId;
 	private Long findingTypeId;
@@ -21,7 +18,8 @@ class ArtifactRecord extends LongRecord {
 	private String message;
 	private SourceRecord primary;
 
-	ArtifactRecord() {
+	public ArtifactRecord(RecordMapper mapper) {
+		super(mapper);
 	}
 
 	public Long getRunId() {
@@ -72,7 +70,7 @@ class ArtifactRecord extends LongRecord {
 		this.primary = primary;
 	}
 
-	public int fill(PreparedStatement st, int idx) throws SQLException {
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, runId);
 		st.setLong(idx++, findingTypeId);
 		st.setLong(idx++, primary.getId());
@@ -80,6 +78,21 @@ class ArtifactRecord extends LongRecord {
 		st.setInt(idx++, severity.ordinal());
 		setNullableString(idx++, st, message);
 		return idx;
+	}
+
+	@Override
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		runId = set.getLong(idx++);
+		findingTypeId = set.getLong(idx++);
+		priority = Priority.values()[set.getInt(idx++)];
+		severity = Severity.values()[set.getInt(idx++)];
+		message = set.getString(idx++);
+		return idx;
+	}
+
+	@Override
+	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+		return fillWithPk(st, idx);
 	}
 
 	@Override
