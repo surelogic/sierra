@@ -27,7 +27,7 @@ public class QualifierManager {
 		findAllQualifierNames = conn.prepareStatement(FIND_ALL);
 	}
 
-	public Collection<String> getQualifierNames() throws SQLException {
+	public Collection<String> getAllQualifierNames() throws SQLException {
 		ResultSet rs = findAllQualifierNames.executeQuery();
 		Collection<String> qualifierNames = new ArrayList<String>();
 		while(rs.next()) {

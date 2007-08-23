@@ -29,7 +29,7 @@ public class ProjectManager {
 		findAllprojectNames = conn.prepareStatement(FIND_ALL);
 	}
 
-	public Collection<String> getprojectNames() throws SQLException {
+	public Collection<String> getAllProjectNames() throws SQLException {
 		ResultSet rs = findAllprojectNames.executeQuery();
 		Collection<String> projectNames = new ArrayList<String>();
 		while(rs.next()) {
@@ -38,7 +38,7 @@ public class ProjectManager {
 		return projectNames;
 	}
 	
-	public Long newproject(String name) throws SQLException {
+	public Long newProject(String name) throws SQLException {
 		ProjectRecord project = projectFactory.newProject();
 		project.setName(name);
 		

@@ -52,6 +52,7 @@ public class ProductManager {
 
 	public Collection<String> getProjectNames(String product)
 			throws SQLException {
+		// XXX Check to ensure product exists
 		return ppManager.getProjectNames(product);
 	}
 

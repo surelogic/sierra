@@ -8,6 +8,7 @@ import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 
 public class ProductProjectRecordFactory {
 
+	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private final BaseMapper pprMapper;
