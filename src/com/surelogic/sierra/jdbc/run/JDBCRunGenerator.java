@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.surelogic.sierra.jdbc.finding.FindingGenerator;
@@ -58,6 +59,7 @@ public class JDBCRunGenerator implements RunGenerator {
 			}
 			final RunRecord run = factory.newRun();
 			run.setProjectId(p.getId());
+			run.setUid(UUID.randomUUID().toString());
 			run.setTimestamp(new Date());
 			run.setJavaVersion(javaVersion);
 			run.setJavaVendor(javaVendor);

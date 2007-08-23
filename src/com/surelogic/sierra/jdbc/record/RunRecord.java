@@ -14,6 +14,7 @@ public final class RunRecord extends LongRecord {
 
 	private Long userId;
 	private Long projectId;
+	private String uid;
 	private String javaVersion;
 	private String javaVendor;
 	private Date timestamp;
@@ -71,10 +72,19 @@ public final class RunRecord extends LongRecord {
 		this.status = status;
 	}
 
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, userId);
 		st.setLong(idx++, projectId);
+		st.setString(idx++, uid);
 		setNullableString(idx++, st, javaVersion);
 		setNullableString(idx++, st, javaVendor);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
@@ -84,7 +94,8 @@ public final class RunRecord extends LongRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		return fillWithPk(st, idx);
+		st.setString(idx++, uid);
+		return idx;
 	}
 
 	@Override

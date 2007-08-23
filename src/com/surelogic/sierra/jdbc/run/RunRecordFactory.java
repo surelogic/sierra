@@ -23,7 +23,9 @@ public class RunRecordFactory {
 	private static final String ARTIFACT_SOURCE_RELATION_INSERT = "INSERT INTO SIERRA.ARTIFACT_SOURCE_LOCATION_RELTN (ARTIFACT_ID,SOURCE_LOCATION_ID) VALUES (?,?)";
 	private static final String PROJECT_SELECT = "SELECT ID FROM PROJECT WHERE NAME = ?";
 	private static final String PROJECT_INSERT = "INSERT INTO PROJECT (NAME,REVISION) VALUES (?,0)";
-	private static final String RUN_INSERT = "INSERT INTO RUN (USER_ID,PROJECT_ID,JAVA_VERSION,JAVA_VENDOR,RUN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?)";
+	private static final String RUN_INSERT = "INSERT INTO RUN (USER_ID,PROJECT_ID,UID,JAVA_VERSION,JAVA_VENDOR,RUN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?,?)";
+	private static final String RUN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, RUN_DATE_TIME, STATUS FROM RUN WHERE UID = ?";
+	private static final String RUN_DELETE = "DELETE FROM RUN WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String RUN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_RUN_RELTN (QUALIFIER_ID,RUN_ID) VALUES(?,?)";
 
@@ -49,7 +51,7 @@ public class RunRecordFactory {
 				null, null);
 		projectMapper = new BaseMapper(conn, PROJECT_INSERT, PROJECT_SELECT,
 				null);
-		runMapper = new BaseMapper(conn, RUN_INSERT, null, null);
+		runMapper = new BaseMapper(conn, RUN_INSERT, RUN_SELECT, RUN_DELETE);
 	}
 
 	static RunRecordFactory getInstance(Connection conn) throws SQLException {
