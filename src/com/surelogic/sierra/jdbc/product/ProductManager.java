@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.surelogic.sierra.jdbc.productProject.ProductProjectRecordFactory;
-import com.surelogic.sierra.jdbc.project.ProductProjectManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
