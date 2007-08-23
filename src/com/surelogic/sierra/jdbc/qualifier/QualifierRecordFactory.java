@@ -24,8 +24,8 @@ public class QualifierRecordFactory {
 			throws SQLException {
 		return new QualifierRecordFactory(conn);
 	}
-
-	QualifierRecord newQualifier() throws SQLException {
+	
+	public QualifierRecord newQualifier() throws SQLException {
 		if (qualifierMapper == null) {
 			qualifierMapper = new BaseMapper(conn, QUALIFIER_INSERT,
 					QUALIFIER_SELECT, QUALIFIER_DELETE);

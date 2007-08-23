@@ -22,7 +22,7 @@ import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 
-public class JDBCRunGenerator implements RunGenerator {
+class JDBCRunGenerator implements RunGenerator {
 
 	private static final Logger log = SierraLogger
 			.getLogger(JDBCRunGenerator.class.getName());
@@ -121,7 +121,7 @@ public class JDBCRunGenerator implements RunGenerator {
 		return this;
 	}
 
-	public static RunGenerator getInstance(Connection conn) {
+	static RunGenerator getInstance(Connection conn) {
 		return new JDBCRunGenerator(conn);
 	}
 

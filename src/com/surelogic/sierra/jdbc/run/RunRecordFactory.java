@@ -54,42 +54,42 @@ public class RunRecordFactory {
 		runMapper = new BaseMapper(conn, RUN_INSERT, RUN_SELECT, RUN_DELETE);
 	}
 
-	static RunRecordFactory getInstance(Connection conn) throws SQLException {
+	public static RunRecordFactory getInstance(Connection conn) throws SQLException {
 		return new RunRecordFactory(conn);
 	}
 
-	CompilationUnitRecord newCompilationUnit() {
+	public CompilationUnitRecord newCompilationUnit() {
 		return new CompilationUnitRecord(compUnitMapper);
 	}
 
-	SourceRecord newSource() {
+	public SourceRecord newSource() {
 		return new SourceRecord(sourceMapper);
 	}
 
-	ArtifactRecord newArtifact() {
+	public ArtifactRecord newArtifact() {
 		return new ArtifactRecord(artMapper);
 	}
 
-	ArtifactSourceRecord newArtifactSourceRelation() {
+	public ArtifactSourceRecord newArtifactSourceRelation() {
 		return new ArtifactSourceRecord(artSourceMapper);
 	}
 
-	ProjectRecord newProject() {
+	public ProjectRecord newProject() {
 		return new ProjectRecord(projectMapper);
 	}
 
-	RunRecord newRun() {
+	public RunRecord newRun() {
 		return new RunRecord(runMapper);
 	}
 
-	QualifierRecord newQualifier() throws SQLException {
+	public QualifierRecord newQualifier() throws SQLException {
 		if (qualifierMapper == null) {
 			qualifierMapper = new BaseMapper(conn, null, QUALIFIER_SELECT, null);
 		}
 		return new QualifierRecord(qualifierMapper);
 	}
 
-	RunQualifierRecord newRunQualiferRelation() throws SQLException {
+	public RunQualifierRecord newRunQualiferRelation() throws SQLException {
 		if (runQualMapper == null) {
 			runQualMapper = new BaseMapper(conn, RUN_QUALIFIER_INSERT, null,
 					null);
