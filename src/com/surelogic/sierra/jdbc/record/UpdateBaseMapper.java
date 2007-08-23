@@ -16,7 +16,7 @@ public class UpdateBaseMapper extends BaseMapper implements UpdateRecordMapper  
 	}
 
 	public void update(UpdatableRecord<?> record) throws SQLException {
-		int idx = record.fillWithAttributes(update, 1);
+		int idx = record.fillUpdatedFields(update, 1);
 		record.fillWithPk(update, idx);
 		update.executeUpdate();
 	}

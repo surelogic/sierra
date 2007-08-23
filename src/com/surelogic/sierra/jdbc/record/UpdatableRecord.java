@@ -17,7 +17,7 @@ public abstract class UpdatableRecord<R> extends AbstractRecord<R> {
 	}
 
 	/**
-	 * Fill a statement with the record's primary key.
+	 * Fill a statement with the updatable fields from this record
 	 * 
 	 * @param st
 	 * @param idx
@@ -25,6 +25,6 @@ public abstract class UpdatableRecord<R> extends AbstractRecord<R> {
 	 * @return the next index value for this prepared statement
 	 * @throws SQLException
 	 */
-	protected abstract int fillWithAttributes(PreparedStatement st, int idx)
+	protected abstract int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException;
 }

@@ -3,17 +3,17 @@ package com.surelogic.sierra.jdbc.record;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class LongRelationRecord<R extends LongRecord, S extends LongRecord>
-		extends RelationRecord<R, S> {
+public class LongRelationRecord extends RelationRecord<Long, Long> {
 
-	protected LongRelationRecord(RecordMapper mapper) {
+	public LongRelationRecord(RecordMapper mapper) {
 		super(mapper);
 	}
 
 	@Override
 	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, id.a.getId());
-		st.setLong(idx++, id.b.getId());
+		st.setLong(idx++, id.a);
+		st.setLong(idx++, id.b);
 		return idx;
 	}
+
 }

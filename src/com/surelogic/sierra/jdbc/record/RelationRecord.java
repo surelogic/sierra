@@ -4,22 +4,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Models a relation table between two entities in a database.
- * 
- * @author nathan
- * 
- * @param <R>
- * @param <S>
- */
-public abstract class RelationRecord<R extends Record<?>, S extends Record<?>>
-		extends AbstractRecord<RelationRecord.PK<R, S>> {
+public abstract class RelationRecord<U, V> extends
+		AbstractRecord<RelationRecord.PK<U, V>> {
+
+	protected PK<U, V> id;
 
 	protected RelationRecord(RecordMapper mapper) {
 		super(mapper);
 	}
-
-	protected PK<R, S> id;
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
@@ -43,11 +35,11 @@ public abstract class RelationRecord<R extends Record<?>, S extends Record<?>>
 		return idx;
 	}
 
-	public PK<R, S> getId() {
+	public PK<U, V> getId() {
 		return id;
 	}
 
-	public void setId(PK<R, S> id) {
+	public void setId(PK<U, V> id) {
 		this.id = id;
 	}
 

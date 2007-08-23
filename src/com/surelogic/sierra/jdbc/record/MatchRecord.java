@@ -56,7 +56,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	}
 
 	@Override
-	protected int fillWithAttributes(PreparedStatement st, int idx)
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
 		setNullableLong(idx++, st, findingId);
 		setNullableLong(idx++, st, trailId);

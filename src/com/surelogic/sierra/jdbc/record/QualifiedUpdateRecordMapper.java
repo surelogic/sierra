@@ -18,7 +18,7 @@ public class QualifiedUpdateRecordMapper extends QualifiedMapper implements Upda
 	 * @see com.surelogic.sierra.jdbc.record.UpdateRecordMapper#update(com.surelogic.sierra.jdbc.record.UpdatableRecord)
 	 */
 	public void update(UpdatableRecord<?> record) throws SQLException {
-		int idx = record.fillWithAttributes(update, 1);
+		int idx = record.fillUpdatedFields(update, 1);
 		update.setLong(idx++, qualifier);
 		record.fillWithPk(update, idx);
 		update.executeUpdate();
