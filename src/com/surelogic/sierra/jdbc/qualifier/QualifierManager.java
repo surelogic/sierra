@@ -36,10 +36,23 @@ public class QualifierManager {
 		return qualifierNames;
 	}
 	
+	public void deleteQualifier(String name) throws SQLException {
+		QualifierRecord qualifier = qualifierFactory.newQualifier();
+		qualifier.setName(name);
+		
+		/** If this qualifier does not exist, throw an error */
+		if(!qualifier.select()) {
+			// XXX Throw error
+		}
+		
+		qualifier.delete();
+	}
+	
 	public Long newQualifier(String name) throws SQLException {
 		QualifierRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(name);
 		
+		/** If this qualifier already exists, throw an error */
 		if(qualifier.select()) {
 			// XXX Throw error
 		}
