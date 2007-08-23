@@ -11,7 +11,7 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.RelationRecord;
+import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 
 public class ProductManager {
 
@@ -73,7 +73,7 @@ public class ProductManager {
 
 			/** Add a relation between this project and product to the DB */
 			ProductProjectRecord rec = pprFactory.newProductProject();
-			rec.setId(new RelationRecord.PK<ProductRecord, ProjectRecord>(
+			rec.setId(new RecordRelationRecord.PK<ProductRecord, ProjectRecord>(
 					product, project));
 			rec.insert();
 		}

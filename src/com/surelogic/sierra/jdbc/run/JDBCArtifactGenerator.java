@@ -17,7 +17,7 @@ import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.Record;
-import com.surelogic.sierra.jdbc.record.RelationRecord;
+import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
@@ -233,7 +233,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 					ArtifactSourceRecord rel = factory
 							.newArtifactSourceRelation();
 					rel
-							.setId(new RelationRecord.PK<ArtifactRecord, SourceRecord>(
+							.setId(new RecordRelationRecord.PK<ArtifactRecord, SourceRecord>(
 									artifact, currentSource));
 					relations.add(rel);
 				}

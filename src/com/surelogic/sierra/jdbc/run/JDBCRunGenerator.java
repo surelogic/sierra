@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import com.surelogic.sierra.jdbc.finding.FindingGenerator;
+import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
+import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
-import com.surelogic.sierra.jdbc.record.RelationRecord;
+import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.user.User;
@@ -42,7 +43,7 @@ class JDBCRunGenerator implements RunGenerator {
 	private JDBCRunGenerator(Connection conn) {
 		this.conn = conn;
 		try {
-			this.factory = RunRecordFactory.getInstance(conn);
+			factory = RunRecordFactory.getInstance(conn);
 			finishRun = conn.prepareStatement(RUN_FINISH);
 		} catch (SQLException e) {
 			throw new RunPersistenceException(e);
@@ -71,8 +72,9 @@ class JDBCRunGenerator implements RunGenerator {
 				q.setName(name);
 				if (q.select()) {
 					RunQualifierRecord rq = factory.newRunQualiferRelation();
-					rq.setId(new RelationRecord.PK<RunRecord, QualifierRecord>(
-							run, q));
+					rq
+							.setId(new RecordRelationRecord.PK<RunRecord, QualifierRecord>(
+									run, q));
 					rq.insert();
 				} else {
 					throw new IllegalArgumentException(
@@ -89,15 +91,28 @@ class JDBCRunGenerator implements RunGenerator {
 								conn.commit();
 								finishRun.close();
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								throw new RunPersistenceException(e);
 							}
 							// TODO trigger finding generation here
 							log
 									.info("Run "
 											+ run.getId()
 											+ " persisted to database, starting finding generation.");
-							new FindingGenerator(conn).generate(run);
+							try {
+								if (qualifiers.isEmpty()) {
+									// This is a client run
+									FindingManager.getInstance(conn)
+											.generateFindings(run.getUid());
+								} else {
+									for (String qualifier : qualifiers) {
+										FindingManager.getInstance(conn,
+												qualifier).generateFindings(
+												run.getUid());
+									}
+								}
+							} catch (SQLException e) {
+								throw new FindingGenerationException(e);
+							}
 						}
 					});
 

@@ -1,13 +1,14 @@
 package com.surelogic.sierra.jdbc.finding;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import com.surelogic.sierra.jdbc.record.FindingRecord;
+import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
+import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.TrailRecord;
 import com.surelogic.sierra.jdbc.run.RunRecordFactory;
@@ -21,17 +22,11 @@ public abstract class FindingManager {
 	protected static final Logger log = SierraLogger
 			.getLogger(FindingManager.class.getName());
 
-	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-
 	private static final int CHUNK_SIZE = 1000;
-	
+
 	protected final Connection conn;
 
-	private final PreparedStatement insertArtifactFindingRelation;
-
 	FindingManager(Connection conn) throws SQLException {
-		insertArtifactFindingRelation = conn
-				.prepareStatement(INSERT_ARTIFACT_FINDING_RELATION);
 		this.conn = conn;
 	}
 
@@ -79,7 +74,6 @@ public abstract class FindingManager {
 				if (!art.m.select()) {
 					// We don't have a match, so we need to produce an entirely
 					// new finding and trail.
-
 					MatchRecord m = art.m;
 					TrailRecord t = factory.newTrail();
 					t.setProjectId(projectId);
@@ -109,8 +103,9 @@ public abstract class FindingManager {
 				} else {
 					findingId = art.m.getFindingId();
 				}
-				insertArtifactFindingRelation.setLong(1, art.id);
-				insertArtifactFindingRelation.setLong(2, findingId);
+				LongRelationRecord afr = factory.newArtifactFinding();
+				afr.setId(new RelationRecord.PK<Long, Long>(art.id, findingId));
+				afr.insert();
 				if (++counter == CHUNK_SIZE) {
 					conn.commit();
 					counter = 0;
@@ -133,18 +128,19 @@ public abstract class FindingManager {
 	private void sqlError(SQLException e) {
 		throw new FindingGenerationException(e);
 	}
-	
+
 	private static class ArtifactResult {
 		Long id;
 		Priority p;
 		Severity s;
 		MatchRecord m;
 	}
-	
-	public static FindingManager getInstance(Connection conn) throws SQLException {
+
+	public static FindingManager getInstance(Connection conn)
+			throws SQLException {
 		return new ClientFindingManager(conn);
 	}
-	
+
 	public static FindingManager getInstance(Connection conn, String qualifier)
 			throws SQLException {
 		return new QualifiedFindingManager(conn, qualifier);

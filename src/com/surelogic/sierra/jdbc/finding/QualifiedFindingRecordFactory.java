@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
+import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.QualifiedMapper;
 import com.surelogic.sierra.jdbc.record.QualifiedUpdateRecordMapper;
@@ -19,10 +20,11 @@ public class QualifiedFindingRecordFactory implements FindingRecordFactory {
 	private static final String MATCH_UPDATE = "UPDATE SIERRA_MATCH SET FINDING_ID = ?, TRAIL_ID = ? WHERE QUALIFIER_ID = ? AND PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (QUALIFIER_ID, TRAIL_ID, IMPORTANCE) VALUES (?,?)";
 	private static final String TRAIL_INSERT = "INSERT INTO TRAIL (QUALIFIER_ID, PROJECT_ID,UID) VALUES (?,?)";
-
+	private static final String ARTIFACT_FINDING_RELATION_INSERT = "INSERT INTO ARTIFACT_FINDING_RELTN (QUALIFIER_ID,ARTIFACT_ID,FINDING_ID) VALUES (?,?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper trailMap;
 	private final RecordMapper findingMap;
+	private final RecordMapper artifactFindingMap;
 
 	private QualifiedFindingRecordFactory(Connection conn, Long qualifier)
 			throws SQLException {
@@ -32,6 +34,8 @@ public class QualifiedFindingRecordFactory implements FindingRecordFactory {
 				qualifier);
 		this.findingMap = new QualifiedMapper(conn, FINDING_INSERT, null, null,
 				qualifier);
+		this.artifactFindingMap = new QualifiedMapper(conn,
+				ARTIFACT_FINDING_RELATION_INSERT, null, null, qualifier);
 	}
 
 	public AuditRecord newAudit() {
@@ -49,6 +53,10 @@ public class QualifiedFindingRecordFactory implements FindingRecordFactory {
 
 	public TrailRecord newTrail() {
 		return new TrailRecord(trailMap);
+	}
+
+	public LongRelationRecord newArtifactFinding() {
+		return new LongRelationRecord(artifactFindingMap);
 	}
 
 	public static QualifiedFindingRecordFactory getInstance(Connection conn,

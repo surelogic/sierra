@@ -12,7 +12,7 @@ import com.surelogic.sierra.jdbc.record.RunRecord;
 public class QualifiedFindingManager extends FindingManager {
 
 	private static final String UNASSIGNED_ARTIFACTS_SELECT = "SELECT A.ID,A.PRIORITY,A.SEVERITY,R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID"
-			+ " FROM (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID WHERE U.RUN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, "
+			+ " FROM (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID AND AFR.QUALIFIER_ID = ? WHERE U.RUN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, "
 			+ " ARTIFACT A, RUN R, SOURCE_LOCATION S, COMPILATION_UNIT CU"
 			+ " WHERE"
 			+ " A.ID = UNASSIGNED.ID AND R.ID = A.RUN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID";
@@ -47,7 +47,8 @@ public class QualifiedFindingManager extends FindingManager {
 	@Override
 	protected ResultSet getUnassignedArtifacts(RunRecord run)
 			throws SQLException {
-		unassignedArtifacts.setLong(1, run.getId());
+		unassignedArtifacts.setLong(1, qualifierId);
+		unassignedArtifacts.setLong(2, run.getId());
 		return unassignedArtifacts.executeQuery();
 	}
 
