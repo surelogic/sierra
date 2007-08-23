@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.run.JDBCRunGenerator;
+import com.surelogic.sierra.jdbc.run.RunManager;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
@@ -39,7 +39,8 @@ public final class RunDocumentUtility {
 			Connection conn = Data.getConnection();
 			try {
 				conn.setAutoCommit(false);
-				RunGenerator gen = JDBCRunGenerator.getInstance(conn);
+				RunGenerator gen = RunManager.getInstance(conn)
+						.getRunGenerator();
 				MessageWarehouse.getInstance().parseRunDocument(runDocument,
 						gen, monitor);
 			} catch (SQLException e) {
