@@ -1,4 +1,4 @@
-package com.surelogic.sierra.jdbc.productProject;
+package com.surelogic.sierra.jdbc.project;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
