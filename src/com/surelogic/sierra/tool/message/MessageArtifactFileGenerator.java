@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +25,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final Logger log = SierraLogger.getLogger("Sierra");
 	private static final String RUN_START = "<run>";
 	private static final String RUN_END = "</run>";
-
+	private static final String UID_START = "<uid>";
+	private static final String UID_END = "</uid>";
 	private ArtifactBuilderAdapter artifactAdapter;
 
 	private FileOutputStream artOut;
@@ -44,6 +46,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(XML_START);
 			finalFile.write('\n');
 			finalFile.write(RUN_START);
+			finalFile.write('\n');
+			finalFile.write(UID_START);
+			finalFile.write(UUID.randomUUID().toString());
+			finalFile.write(UID_END);
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
 			finalFile.flush();

@@ -14,6 +14,8 @@ import java.util.Collection;
  */
 public interface RunGenerator {
 
+	RunGenerator uid(String uid);
+	
 	RunGenerator javaVersion(String version);
 
 	RunGenerator javaVendor(String vendor);

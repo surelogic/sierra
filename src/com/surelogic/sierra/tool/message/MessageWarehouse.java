@@ -182,6 +182,9 @@ public class MessageWarehouse {
 					// move to the root element and check its name.
 					xmlr.nextTag();
 					xmlr.require(START_ELEMENT, null, "run");
+					xmlr.nextTag(); // move to uid element
+					xmlr.require(START_ELEMENT, null, "uid");
+					generator.uid(um.unmarshal(xmlr, String.class).getValue());
 					xmlr.nextTag(); // move to toolOutput element.
 					xmlr.nextTag(); // move to artifacts (or config, if no
 					// artifacts or errors)
@@ -233,6 +236,9 @@ public class MessageWarehouse {
 					// move to the root element and check its name.
 					xmlr.nextTag();
 					xmlr.require(START_ELEMENT, null, "run");
+					xmlr.nextTag(); // move to uid element
+					xmlr.require(START_ELEMENT, null, "uid");
+					xmlr.nextTag(); // end of uid element
 					xmlr.nextTag(); // move to toolOutput element.
 					xmlr.nextTag(); // move to artifacts
 					// Unmarshal artifacts

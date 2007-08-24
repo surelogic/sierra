@@ -6,29 +6,10 @@ import javax.xml.bind.annotation.XmlType;
 import com.surelogic.sierra.tool.config.Config;
 
 @XmlRootElement
-@XmlType
+@XmlType(propOrder = { "uid", "toolOutput", "config" })
 public class Run {
 
-	public static class Builder {
-		private Config config;
-		private ToolOutput toolOutput;
-
-		public Builder toolOutput(ToolOutput toolOutput) {
-			this.toolOutput = toolOutput;
-			return this;
-		}
-
-		public Builder config(Config config) {
-			this.config = config;
-			return this;
-		}
-
-		public Run build() {
-			return new Run(this);
-		}
-
-	}
-
+	private String uid;
 	private Config config;
 	private ToolOutput toolOutput;
 
@@ -36,9 +17,12 @@ public class Run {
 		// Nothing to do
 	}
 
-	public Run(Builder builder) {
-		this.toolOutput = builder.toolOutput;
-		this.config = builder.config;
+	public Config getConfig() {
+		return config;
+	}
+
+	public void setConfig(Config config) {
+		this.config = config;
 	}
 
 	public ToolOutput getToolOutput() {
@@ -49,12 +33,12 @@ public class Run {
 		this.toolOutput = toolOutput;
 	}
 
-	public Config getConfig() {
-		return config;
+	public String getUid() {
+		return uid;
 	}
 
-	public void setConfig(Config config) {
-		this.config = config;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	@Override

@@ -21,13 +21,14 @@ public class PublishMessageRunGenerator implements RunGenerator {
 	private String javaVersion;
 	private String project;
 	private List<String> qualifiers;
+	private String uid;
 
 	public PublishMessageRunGenerator() {
-
 	}
 
 	public ArtifactGenerator build() {
 		Run r = new Run();
+		r.setUid(uid);
 		Config config = new Config();
 		config.setJavaVendor(javaVendor);
 		config.setJavaVersion(javaVersion);
@@ -56,6 +57,12 @@ public class PublishMessageRunGenerator implements RunGenerator {
 		if (qualifiers != null) {
 			this.qualifiers = new ArrayList<String>(qualifiers);
 		}
+		return this;
+	}
+
+
+	public RunGenerator uid(String uid) {
+		this.uid = uid;
 		return this;
 	}
 
