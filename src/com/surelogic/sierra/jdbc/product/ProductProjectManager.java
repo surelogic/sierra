@@ -12,7 +12,7 @@ public class ProductProjectManager {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM PRODUCT PD, PRODUCT_PROJECT_RELTN PPR, PROJECT PR WHERE PD.NAME = ? AND PPR.PRODUCT_ID = PD.ID AND PD.ID = PPR.PROJECT_ID";
+	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM PRODUCT PD, PRODUCT_PROJECT_RELTN PPR, PROJECT PR WHERE PD.NAME = ? AND PPR.PRODUCT_ID = PD.ID AND PR.NAME = PPR.PROJECT_NAME";
 	private final PreparedStatement ps;
 
 	private ProductProjectManager(Connection conn) throws SQLException {

@@ -14,7 +14,7 @@ public class ProductRecordFactory {
 
 	private static final String PRODUCT_INSERT = "INSERT INTO PRODUCT (NAME) VALUES (?)";
 	private static final String PRODUCT_DELETE = "DELETE FROM PRODUCT WHERE ID = ?";
-	private static final String PRODUCT_SELECT = "SELECT NAME FROM PRODUCT WHERE ID = ?";
+	private static final String PRODUCT_SELECT = "SELECT ID FROM PRODUCT WHERE NAME = ?";
 
 	@SuppressWarnings("unused")
 	private final Connection conn;

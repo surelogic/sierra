@@ -20,7 +20,7 @@ public class ProductManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM PRODUCT";
 	private final PreparedStatement findAllStatement;
-	
+
 	private final ProductRecordFactory productFactory;
 	private final ProjectRecordFactory projectFactory;
 	private final ProductProjectRecordFactory pprFactory;
@@ -28,25 +28,25 @@ public class ProductManager {
 
 	private ProductManager(Connection conn) throws SQLException {
 		this.conn = conn;
-		
+
 		productFactory = ProductRecordFactory.getInstance(conn);
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		pprFactory = ProductProjectRecordFactory.getInstance(conn);
 		ppManager = ProductProjectManager.getInstance(conn);
-		
+
 		findAllStatement = conn.prepareStatement(FIND_ALL);
 	}
 
 	public Collection<String> getAllProductNames() throws SQLException {
-		
+
 		ResultSet rs = findAllStatement.executeQuery();
-		
+
 		Collection<String> productNames = new ArrayList<String>();
-		
-		while(rs.next()) {
+
+		while (rs.next()) {
 			productNames.add(rs.getString(1));
 		}
-		
+
 		return productNames;
 	}
 
@@ -58,6 +58,10 @@ public class ProductManager {
 
 	public Long newProduct(String name, Collection<String> projects)
 			throws SQLException {
+
+		if (name == null)
+			throw new SQLException();
+
 		ProductRecord product = productFactory.newProduct();
 		product.setName(name);
 
@@ -65,21 +69,35 @@ public class ProductManager {
 		if (!product.select())
 			product.insert();
 
-		for (String projectName : projects) {
-			ProjectRecord project = projectFactory.newProject();
-			project.setName(projectName);
-			if (!project.select()) {
-				// XXX Throw error
-			}
+		if (projects != null) {
+			for (String projectName : projects) {
+				ProjectRecord project = projectFactory.newProject();
+				project.setName(projectName);
+				if (!project.select()) {
+					// XXX Throw error
+				}
 
-			/** Add a relation between this project and product to the DB */
-			ProductProjectRecord rec = pprFactory.newProductProject();
-			rec.setId(new RecordRelationRecord.PK<ProductRecord, ProjectRecord>(
-					product, project));
-			rec.insert();
+				/** Add a relation between this project and product to the DB */
+				ProductProjectRecord rec = pprFactory.newProductProject();
+				rec
+						.setId(new RecordRelationRecord.PK<ProductRecord, ProjectRecord>(
+								product, project));
+				rec.insert();
+			}
+		}
+		return product.getId();
+	}
+
+	public void deleteProduct(String name) throws SQLException {
+		ProductRecord product = productFactory.newProduct();
+		product.setName(name);
+
+		/** If this qualifier does not exist, throw an error */
+		if (!product.select()) {
+			// XXX Throw error
 		}
 
-		return product.getId();
+		product.delete();
 	}
 
 	public static ProductManager getInstance(Connection conn)
