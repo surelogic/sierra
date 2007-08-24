@@ -1,14 +1,12 @@
 package com.surelogic.sierra.jdbc.run;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
@@ -28,26 +26,17 @@ class JDBCRunGenerator implements RunGenerator {
 	private static final Logger log = SierraLogger
 			.getLogger(JDBCRunGenerator.class.getName());
 
-	private static final String RUN_FINISH = "UPDATE RUN SET STATUS='FINISHED' WHERE ID = ?";
-
 	private final Connection conn;
 	private final RunRecordFactory factory;
-
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
+	private String uid;
 	private List<String> qualifiers;
 
-	private final PreparedStatement finishRun;
-
-	private JDBCRunGenerator(Connection conn) {
+	JDBCRunGenerator(Connection conn, RunRecordFactory factory) {
 		this.conn = conn;
-		try {
-			factory = RunRecordFactory.getInstance(conn);
-			finishRun = conn.prepareStatement(RUN_FINISH);
-		} catch (SQLException e) {
-			throw new RunPersistenceException(e);
-		}
+		this.factory = factory;
 		this.qualifiers = Collections.emptyList();
 	}
 
@@ -60,7 +49,7 @@ class JDBCRunGenerator implements RunGenerator {
 			}
 			final RunRecord run = factory.newRun();
 			run.setProjectId(p.getId());
-			run.setUid(UUID.randomUUID().toString());
+			run.setUid(uid);
 			run.setTimestamp(new Date());
 			run.setJavaVersion(javaVersion);
 			run.setJavaVendor(javaVendor);
@@ -86,10 +75,8 @@ class JDBCRunGenerator implements RunGenerator {
 					new Runnable() {
 						public void run() {
 							try {
-								finishRun.setLong(1, run.getId());
-								finishRun.executeUpdate();
-								conn.commit();
-								finishRun.close();
+								run.setStatus(RunStatus.FINISHED);
+								run.update();
 							} catch (SQLException e) {
 								throw new RunPersistenceException(e);
 							}
@@ -115,10 +102,14 @@ class JDBCRunGenerator implements RunGenerator {
 							}
 						}
 					});
-
 		} catch (SQLException e) {
 			throw new RunPersistenceException(e);
 		}
+	}
+
+	public RunGenerator uid(String uid) {
+		this.uid = uid;
+		return this;
 	}
 
 	public RunGenerator javaVendor(String vendor) {
@@ -134,10 +125,6 @@ class JDBCRunGenerator implements RunGenerator {
 	public RunGenerator project(String projectName) {
 		this.projectName = projectName;
 		return this;
-	}
-
-	static RunGenerator getInstance(Connection conn) {
-		return new JDBCRunGenerator(conn);
 	}
 
 	public RunGenerator qualifiers(Collection<String> qualifiers) {

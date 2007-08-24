@@ -10,7 +10,7 @@ import java.util.Date;
 
 import com.surelogic.sierra.jdbc.run.RunStatus;
 
-public final class RunRecord extends LongRecord {
+public final class RunRecord extends LongUpdatableRecord {
 
 	private Long userId;
 	private Long projectId;
@@ -20,7 +20,7 @@ public final class RunRecord extends LongRecord {
 	private Date timestamp;
 	private RunStatus status;
 
-	public RunRecord(RecordMapper mapper) {
+	public RunRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -106,6 +106,13 @@ public final class RunRecord extends LongRecord {
 		this.javaVendor = set.getString(idx++);
 		this.timestamp = set.getTimestamp(idx++);
 		this.status = RunStatus.valueOf(set.getString(idx++));
+		return idx;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, status.toString());
 		return idx;
 	}
 

@@ -3,7 +3,7 @@ package com.surelogic.sierra.jdbc.record;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class LongRecordRelationRecord<R extends LongRecord, S extends LongRecord>
+public class LongRecordRelationRecord<R extends Record<Long>, S extends Record<Long>>
 		extends RecordRelationRecord<R, S> {
 
 	protected LongRecordRelationRecord(RecordMapper mapper) {

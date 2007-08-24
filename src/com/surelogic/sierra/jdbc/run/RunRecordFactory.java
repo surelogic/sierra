@@ -9,9 +9,12 @@ import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
+import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
 public class RunRecordFactory {
 
@@ -26,19 +29,20 @@ public class RunRecordFactory {
 	private static final String RUN_INSERT = "INSERT INTO RUN (USER_ID,PROJECT_ID,UID,JAVA_VERSION,JAVA_VENDOR,RUN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?,?)";
 	private static final String RUN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, RUN_DATE_TIME, STATUS FROM RUN WHERE UID = ?";
 	private static final String RUN_DELETE = "DELETE FROM RUN WHERE ID = ?";
+	private static final String RUN_UPDATE = "UPDATE RUN SET STATUS = ? WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String RUN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_RUN_RELTN (QUALIFIER_ID,RUN_ID) VALUES(?,?)";
 
 	private final Connection conn;
 
-	private final BaseMapper compUnitMapper;
-	private final BaseMapper sourceMapper;
-	private final BaseMapper artMapper;
-	private final BaseMapper artSourceMapper;
-	private final BaseMapper projectMapper;
-	private final BaseMapper runMapper;
-	private BaseMapper qualifierMapper;
-	private BaseMapper runQualMapper;
+	private final RecordMapper compUnitMapper;
+	private final RecordMapper sourceMapper;
+	private final RecordMapper artMapper;
+	private final RecordMapper artSourceMapper;
+	private final RecordMapper projectMapper;
+	private final UpdateRecordMapper runMapper;
+	private RecordMapper qualifierMapper;
+	private RecordMapper runQualMapper;
 
 	private RunRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -51,10 +55,12 @@ public class RunRecordFactory {
 				null, null);
 		projectMapper = new BaseMapper(conn, PROJECT_INSERT, PROJECT_SELECT,
 				null);
-		runMapper = new BaseMapper(conn, RUN_INSERT, RUN_SELECT, RUN_DELETE);
+		runMapper = new UpdateBaseMapper(conn, RUN_INSERT, RUN_SELECT,
+				RUN_DELETE, RUN_UPDATE);
 	}
 
-	public static RunRecordFactory getInstance(Connection conn) throws SQLException {
+	public static RunRecordFactory getInstance(Connection conn)
+			throws SQLException {
 		return new RunRecordFactory(conn);
 	}
 

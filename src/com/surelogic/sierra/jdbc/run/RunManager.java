@@ -9,10 +9,6 @@ import com.surelogic.sierra.tool.analyzer.RunGenerator;
 
 public class RunManager {
 
-	@SuppressWarnings("unused")
-	private final Connection conn;
-	private final RunRecordFactory factory;
-
 	private static final String DELETE_UNUSED_SOURCES = "DELETE FROM SOURCE_LOCATION WHERE ID IN ("
 			+ " SELECT NO_PRIMARY.ID FROM ("
 			+ " SELECT SL.ID \"ID\""
@@ -29,6 +25,8 @@ public class RunManager {
 			+ " LEFT OUTER JOIN SOURCE_LOCATION SL ON SL.COMPILATION_UNIT_ID = CU.ID"
 			+ " WHERE SL.COMPILATION_UNIT_ID IS NULL)";
 
+	private final Connection conn;
+	private final RunRecordFactory factory;
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 
@@ -41,7 +39,7 @@ public class RunManager {
 	}
 
 	public RunGenerator getRunGenerator() {
-		return JDBCRunGenerator.getInstance(conn);
+		return new JDBCRunGenerator(conn, factory);
 	}
 
 	public void deleteRun(String uid) throws SQLException {
