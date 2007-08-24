@@ -58,7 +58,7 @@ public final class SierraSchemaUtility {
 							 * exist.
 							 */
 							if (commonAction != null)
-								commonAction.run(c);
+								SchemaUtility.runAction(commonAction, c);
 
 							if (serverScript != null) {
 								final Statement st = c.createStatement();
@@ -75,7 +75,7 @@ public final class SierraSchemaUtility {
 							}
 
 							if (serverAction != null)
-								serverAction.run(c);
+								SchemaUtility.runAction(serverAction, c);
 						}
 					};
 				}
