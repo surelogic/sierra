@@ -56,7 +56,7 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 			throws SQLException {
 		return new ClientFindingRecordFactory(conn);
 	}
-
+	
 	public LongRelationRecord newArtifactFinding() {
 		return new LongRelationRecord(artifactFindingMap);
 	}
