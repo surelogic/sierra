@@ -57,7 +57,6 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 		return new ClientFindingRecordFactory(conn);
 	}
 
-	@Override
 	public LongRelationRecord newArtifactFinding() {
 		return new LongRelationRecord(artifactFindingMap);
 	}
