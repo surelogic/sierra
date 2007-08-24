@@ -238,7 +238,7 @@ public class MessageWarehouse {
 					xmlr.require(START_ELEMENT, null, "run");
 					xmlr.nextTag(); // move to uid element
 					xmlr.require(START_ELEMENT, null, "uid");
-					xmlr.nextTag(); // end of uid element
+					um.unmarshal(xmlr, String.class);
 					xmlr.nextTag(); // move to toolOutput element.
 					xmlr.nextTag(); // move to artifacts
 					// Unmarshal artifacts
