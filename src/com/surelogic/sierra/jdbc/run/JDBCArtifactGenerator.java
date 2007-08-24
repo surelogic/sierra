@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
@@ -21,7 +22,6 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
@@ -29,8 +29,8 @@ import com.surelogic.sierra.tool.message.Severity;
 
 public class JDBCArtifactGenerator implements ArtifactGenerator {
 
-	private static final Logger log = SierraLogger
-			.getLogger(JDBCArtifactGenerator.class.getName());
+	private static final Logger log = SLLogger
+			.getLoggerFor(JDBCArtifactGenerator.class);
 
 	private static final String TOOL_ID_SELECT = "SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?";
 

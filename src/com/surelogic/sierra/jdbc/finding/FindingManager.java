@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
@@ -12,15 +13,14 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.TrailRecord;
 import com.surelogic.sierra.jdbc.run.RunRecordFactory;
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
 public abstract class FindingManager {
 
-	protected static final Logger log = SierraLogger
-			.getLogger(FindingManager.class.getName());
+	protected static final Logger log = SLLogger
+			.getLoggerFor(FindingManager.class);
 
 	private static final int CHUNK_SIZE = 1000;
 

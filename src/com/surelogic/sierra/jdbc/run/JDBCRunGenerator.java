@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -17,14 +18,13 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 
 class JDBCRunGenerator implements RunGenerator {
 
-	private static final Logger log = SierraLogger
-			.getLogger(JDBCRunGenerator.class.getName());
+	private static final Logger log = SLLogger
+			.getLoggerFor(JDBCRunGenerator.class);
 
 	private final Connection conn;
 	private final RunRecordFactory factory;
