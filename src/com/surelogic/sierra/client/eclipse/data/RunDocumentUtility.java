@@ -7,15 +7,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.run.RunManager;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
-import com.surelogic.sierra.tool.SierraLogger;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public final class RunDocumentUtility {
-	private static final Logger log = SierraLogger.getLogger("Sierra");
+	private static final Logger log = SLLogger.getLogger("sierra");
 
 	private RunDocumentUtility() {
 		// no instances
