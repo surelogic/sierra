@@ -13,7 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -26,7 +26,7 @@ public class Parser {
 
 	private ArtifactGenerator generator;
 
-	private static final Logger log = SierraLogger.getLogger("Sierra");
+	private static final Logger log = SLLogger.getLogger("sierra");
 
 	/**
 	 * Constructor only for build file parsing
@@ -40,8 +40,8 @@ public class Parser {
 	}
 
 	/**
-	 * For parsing Sierra build files, returns all the configs that can be
-	 * created from the build file
+	 * For parsing Sierra build files, returns all the configurations that can
+	 * be created from the build file
 	 * 
 	 * @param fileName
 	 * @return

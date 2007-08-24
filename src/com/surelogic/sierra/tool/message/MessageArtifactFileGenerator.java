@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 import com.surelogic.sierra.tool.config.Config;
@@ -22,7 +22,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
 
-	private static final Logger log = SierraLogger.getLogger("Sierra");
+	private static final Logger log = SLLogger.getLogger("sierra");
 	private static final String RUN_START = "<run>";
 	private static final String RUN_END = "</run>";
 	private static final String UID_START = "<uid>";

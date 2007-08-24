@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
@@ -39,8 +39,8 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public class MessageWarehouse {
 
-	private static final Logger log = SierraLogger
-			.getLogger(MessageWarehouse.class.getName());
+	private static final Logger log = SLLogger.getLogger(MessageWarehouse.class
+			.getName());
 
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
 

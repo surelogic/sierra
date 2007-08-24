@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.sierra.tool.SierraLogger;
+import com.surelogic.common.logging.SLLogger;
 
 /**
  * The instance hash generator calculates the 30 alphanumeric characters before
@@ -24,7 +24,7 @@ import com.surelogic.sierra.tool.SierraLogger;
 @Deprecated
 public class DifferentHashGenerator {
 
-	private static final Logger log = SierraLogger.getLogger("Sierra");
+	private static final Logger log = SLLogger.getLogger("sierra");
 
 	private static final String FIRST = "FIRST";
 
