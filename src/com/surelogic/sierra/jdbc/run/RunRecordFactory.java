@@ -10,7 +10,7 @@ import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.RecordMapper;
-import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
+import com.surelogic.sierra.jdbc.record.QualifierRunRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
@@ -95,11 +95,11 @@ public class RunRecordFactory {
 		return new QualifierRecord(qualifierMapper);
 	}
 
-	public RunQualifierRecord newRunQualiferRelation() throws SQLException {
+	public QualifierRunRecord newRunQualiferRelation() throws SQLException {
 		if (runQualMapper == null) {
 			runQualMapper = new BaseMapper(conn, RUN_QUALIFIER_INSERT, null,
 					null);
 		}
-		return new RunQualifierRecord(runQualMapper);
+		return new QualifierRunRecord(runQualMapper);
 	}
 }

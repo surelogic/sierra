@@ -15,7 +15,7 @@ import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
-import com.surelogic.sierra.jdbc.record.RunQualifierRecord;
+import com.surelogic.sierra.jdbc.record.QualifierRunRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
@@ -60,10 +60,10 @@ class JDBCRunGenerator implements RunGenerator {
 				QualifierRecord q = factory.newQualifier();
 				q.setName(name);
 				if (q.select()) {
-					RunQualifierRecord rq = factory.newRunQualiferRelation();
+					QualifierRunRecord rq = factory.newRunQualiferRelation();
 					rq
-							.setId(new RecordRelationRecord.PK<RunRecord, QualifierRecord>(
-									run, q));
+							.setId(new RecordRelationRecord.PK<QualifierRecord, RunRecord>(
+									q, run));
 					rq.insert();
 				} else {
 					throw new IllegalArgumentException(

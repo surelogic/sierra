@@ -15,10 +15,22 @@ public class QualifiedMapper implements RecordMapper {
 
 	public QualifiedMapper(Connection conn, String insertSql, String selectSql,
 			String deleteSql, Long qualifier) throws SQLException {
-		this.insert = conn.prepareStatement(insertSql,
-				Statement.RETURN_GENERATED_KEYS);
-		this.select = conn.prepareStatement(selectSql);
-		this.delete = conn.prepareStatement(deleteSql);
+		if (insertSql != null) {
+			this.insert = conn.prepareStatement(insertSql,
+					Statement.RETURN_GENERATED_KEYS);
+		} else {
+			this.insert = null;
+		}
+		if (selectSql != null) {
+			this.select = conn.prepareStatement(selectSql);
+		} else {
+			this.select = null;
+		}
+		if (deleteSql != null) {
+			this.delete = conn.prepareStatement(deleteSql);
+		} else {
+			this.delete = null;
+		}
 		this.qualifier = qualifier;
 	}
 
