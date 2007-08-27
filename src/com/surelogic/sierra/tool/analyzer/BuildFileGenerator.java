@@ -49,6 +49,15 @@ public class BuildFileGenerator {
 				+ SierraConstants.SIERRA_BUILD_FILE;
 		String toolDirectory = getToolsDirectory();
 
+		// FIXME: The implementation below assumes that the common project is at
+		// the same level as the sierra-tool project
+		File commonFolder = new File(toolDirectory);
+		String commonDirectory = File.separator + commonFolder.getParent()
+				+ File.separator + "common" + File.separator;
+
+		// For Windows machines - Not required only for consistency
+		commonDirectory = commonDirectory.replace(File.separator, "/");
+
 		File buildFile = new File(fileName);
 
 		if (!buildFile.exists()) {
@@ -82,6 +91,13 @@ public class BuildFileGenerator {
 
 				// Dirset to include everything in project
 				attributeMap.put("dir", toolDirectory);
+				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
+				writeAttributes(attributeMap);
+				hd.startElement("", "", "dirset", atts);
+				hd.endElement("", "", "dirset");
+
+				// Dirset to include the common project
+				attributeMap.put("dir", commonDirectory);
 				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "dirset", atts);
