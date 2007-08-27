@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -13,6 +15,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Tanmay.Sinha
  * 
  */
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
 public class Config {

@@ -45,7 +45,7 @@ public class TigerServiceTest {
 			JAXBContext context;
 			context = JAXBContext.newInstance(Run.class);
 			Unmarshaller um = context.createUnmarshaller();
-			InputStream in = getResource("sierra-entity.xml.parsed");
+			InputStream in = getResource("sierra-jdbc.xml.parsed");
 			Run run = (Run) um.unmarshal(in);
 			assertEquals("SUCCESS", service.publishRun(run));
 		} catch (JAXBException e) {
