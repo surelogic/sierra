@@ -291,6 +291,7 @@ public class MessageWarehouse {
 	}
 
 	public static void readRun(Run run, RunGenerator generator) {
+		generator.uid(run.getUid());
 		readConfig(run.getConfig(), generator);
 		ArtifactGenerator aGen = generator.build();
 		readArtifacts(run.getToolOutput().getArtifact(), aGen);

@@ -101,7 +101,7 @@ public class TigerServiceTest {
 		request.setRevision(0L);
 		AuditTrailResponse response = service.getAuditTrails(request);
 		AuditTrailUpdate update = response.getUpdate().get(0);
-		assertEquals(audit, update.getAudit().get(0));
+		assertEquals(audit, update.getAudit().get(update.getAudit().size() - 1));
 		assertEquals(2, update.getMatch().size());
 	}
 
