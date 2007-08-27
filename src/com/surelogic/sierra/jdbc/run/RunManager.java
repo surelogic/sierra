@@ -42,16 +42,21 @@ public class RunManager {
 		return new JDBCRunGenerator(conn, factory);
 	}
 
+	/**
+	 * Remove the run with the given uid from the database. This method quietly
+	 * does nothing if the run is not in the database.
+	 * 
+	 * @param uid
+	 * @throws SQLException
+	 */
 	public void deleteRun(String uid) throws SQLException {
 		RunRecord rec = factory.newRun();
 		rec.setUid(uid);
-		if (!rec.select()) {
-			throw new IllegalArgumentException("No run with uid" + uid
-					+ " exists in the database");
+		if (rec.select()) {
+			rec.delete();
+			deleteSources.execute();
+			deleteCompilations.execute();
 		}
-		rec.delete();
-		deleteSources.execute();
-		deleteCompilations.execute();
 	}
 
 	public static RunManager getInstance(Connection conn) throws SQLException {
