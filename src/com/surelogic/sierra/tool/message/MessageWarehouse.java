@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ErrorBuilder;
@@ -194,7 +195,7 @@ public class MessageWarehouse {
 						.getValue());
 				xmlr.nextTag(); // move to toolOutput element.
 				xmlr.nextTag(); // move to artifacts (or config, if no
-				// artifacts or errors)
+				// artifacts, errors, or classMetrics)
 				// Count artifacts, so that we can estimate time until
 				// completion
 				int counter = 0;
@@ -225,7 +226,7 @@ public class MessageWarehouse {
 		parseRunDocument(runDocument, generator.build(), monitor);
 	}
 
-	public void parseRunDocument(final File runDocument,
+	private void parseRunDocument(final File runDocument,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
 			// set up a parser
@@ -241,7 +242,21 @@ public class MessageWarehouse {
 				xmlr.require(START_ELEMENT, null, "uid");
 				unmarshaller.unmarshal(xmlr, String.class);
 				xmlr.nextTag(); // move to toolOutput element.
-				xmlr.nextTag(); // move to artifacts
+				xmlr.nextTag(); // move to classMetric
+				// Unmarshal classMetric
+				MetricBuilder mBuilder = generator.metric();
+				while (xmlr.getEventType() == START_ELEMENT
+						&& xmlr.getLocalName().equals("classMetric")) {
+					readClassMetric(unmarshaller.unmarshal(xmlr,
+							ClassMetric.class).getValue(), mBuilder);
+					if (monitor != null) {
+						monitor.worked(1);
+					}
+					if (xmlr.getEventType() == CHARACTERS) {
+						xmlr.next(); // skip the whitespace between
+						// <artifacts>s.
+					}
+				}
 				// Unmarshal artifacts
 				ArtifactBuilder aBuilder = generator.artifact();
 				while (xmlr.getEventType() == START_ELEMENT
@@ -341,6 +356,12 @@ public class MessageWarehouse {
 			}
 		}
 		builder.build();
+	}
+
+	private void readClassMetric(ClassMetric metric, MetricBuilder builder) {
+		builder.className(metric.getClassName()).packageName(
+				metric.getPackageName()).path(metric.getPath()).linesOfCode(
+				metric.getLinesOfCode());
 	}
 
 	private static void readError(Error e, ErrorBuilder builder) {

@@ -132,7 +132,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			return this;
 		}
 
-		public MetricBuilder lineOfCode(int line) {
+		public MetricBuilder linesOfCode(int line) {
 			return this;
 		}
 

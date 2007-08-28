@@ -122,7 +122,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			return this;
 		}
 
-		public MetricBuilder lineOfCode(int line) {
+		public MetricBuilder linesOfCode(int line) {
 			this.linesOfCode = line;
 			return this;
 		}

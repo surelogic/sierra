@@ -8,7 +8,7 @@ public interface MetricBuilder {
 
 	MetricBuilder className(String name);
 
-	MetricBuilder lineOfCode(int line);
+	MetricBuilder linesOfCode(int lines);
 
 	void build();
 }
