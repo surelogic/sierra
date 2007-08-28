@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,10 +46,16 @@ public class MessageWarehouse {
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
 
 	private final JAXBContext ctx;
+	private final Marshaller marshaller;
+	private final Unmarshaller unmarshaller;
 
 	private MessageWarehouse() {
 		try {
 			this.ctx = JAXBContext.newInstance(Run.class);
+			marshaller = ctx.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			unmarshaller = ctx.createUnmarshaller();
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		}
@@ -69,10 +76,7 @@ public class MessageWarehouse {
 		FileWriter out;
 		try {
 			out = new FileWriter(dest);
-			Marshaller m = ctx.createMarshaller();
-			m.setProperty("jaxb.formatted.output", true);// TODO make this
-			// configurable
-			m.marshal(to, out);
+			marshaller.marshal(to, out);
 			out.close();
 		} catch (IOException e) {
 			log.log(Level.SEVERE,
@@ -84,20 +88,29 @@ public class MessageWarehouse {
 	}
 
 	/**
-	 * Write a {@link Artifact} object to the specified file destination.
+	 * Write a {@link ClassMetric} object to the specified output
 	 * 
-	 * @param to
-	 * @param dest
-	 *            a path name
+	 * @param metric
+	 * @param out
 	 */
-	public void writeArtifact(Artifact a, FileOutputStream artOut) {
-
+	public void writeClassMetric(ClassMetric metric, FileOutputStream out) {
 		try {
-			Marshaller marshaller = ctx.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					new Boolean(true));
-			marshaller.marshal(a, artOut);
+			marshaller.marshal(metric, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	/**
+	 * Write a {@link Artifact} object to the specified output..
+	 * 
+	 * @param a
+	 * @param out
+	 */
+	public void writeArtifact(Artifact a, OutputStream out) {
+		try {
+			marshaller.marshal(a, out);
 		} catch (JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
@@ -106,10 +119,7 @@ public class MessageWarehouse {
 
 	public void writeConfig(Config config, FileOutputStream artOut) {
 		try {
-			Marshaller marshaller = ctx.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					new Boolean(true));
+
 			marshaller.marshal(config, artOut);
 		} catch (JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
@@ -136,7 +146,6 @@ public class MessageWarehouse {
 
 	public ToolOutput fetchToolOutput(InputStream in) {
 		try {
-			Unmarshaller unmarshaller = ctx.createUnmarshaller();
 			return (ToolOutput) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
@@ -161,7 +170,6 @@ public class MessageWarehouse {
 
 	public Run fetchRun(InputStream in) {
 		try {
-			Unmarshaller unmarshaller = ctx.createUnmarshaller();
 			return (Run) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
@@ -172,52 +180,47 @@ public class MessageWarehouse {
 	public void parseRunDocument(final File runDocument,
 			RunGenerator generator, SLProgressMonitor monitor) {
 		try {
-			Unmarshaller um = ctx.createUnmarshaller();
+			// set up a parser
+			XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			XMLStreamReader xmlr = xmlif.createXMLStreamReader(new FileReader(
+					runDocument));
 			try {
-				// set up a parser
-				XMLInputFactory xmlif = XMLInputFactory.newInstance();
-				XMLStreamReader xmlr = xmlif
-						.createXMLStreamReader(new FileReader(runDocument));
-				try {
-					// move to the root element and check its name.
-					xmlr.nextTag();
-					xmlr.require(START_ELEMENT, null, "run");
-					xmlr.nextTag(); // move to uid element
-					xmlr.require(START_ELEMENT, null, "uid");
-					generator.uid(um.unmarshal(xmlr, String.class).getValue());
-					xmlr.nextTag(); // move to toolOutput element.
-					xmlr.nextTag(); // move to artifacts (or config, if no
-					// artifacts or errors)
-					// Count artifacts, so that we can estimate time until
-					// completion
-					int counter = 0;
-					while ((xmlr.getEventType() != START_ELEMENT)
-							|| !xmlr.getLocalName().equals("config")) {
-						if (xmlr.getEventType() == START_ELEMENT) {
-							counter++;
-						}
-						xmlr.next();
+				// move to the root element and check its name.
+				xmlr.nextTag();
+				xmlr.require(START_ELEMENT, null, "run");
+				xmlr.nextTag(); // move to uid element
+				xmlr.require(START_ELEMENT, null, "uid");
+				generator.uid(unmarshaller.unmarshal(xmlr, String.class)
+						.getValue());
+				xmlr.nextTag(); // move to toolOutput element.
+				xmlr.nextTag(); // move to artifacts (or config, if no
+				// artifacts or errors)
+				// Count artifacts, so that we can estimate time until
+				// completion
+				int counter = 0;
+				while ((xmlr.getEventType() != START_ELEMENT)
+						|| !xmlr.getLocalName().equals("config")) {
+					if (xmlr.getEventType() == START_ELEMENT) {
+						counter++;
 					}
-					if (monitor != null) {
-						monitor.beginTask("Generating Artifacts", counter);
-					}
-					readConfig(um.unmarshal(xmlr, Config.class).getValue(),
-							generator);
-
-				} catch (JAXBException e) {
-					throw new IllegalArgumentException("File with name"
-							+ runDocument.getName()
-							+ " is not a valid document", e);
+					xmlr.next();
 				}
-				xmlr.close();
-			} catch (FileNotFoundException e) {
+				if (monitor != null) {
+					monitor.beginTask("Generating Artifacts", counter);
+				}
+				readConfig(unmarshaller.unmarshal(xmlr, Config.class)
+						.getValue(), generator);
+
+			} catch (JAXBException e) {
 				throw new IllegalArgumentException("File with name"
-						+ runDocument.getName() + " does not exist.", e);
-			} catch (XMLStreamException e) {
-				throw new IllegalArgumentException(e);
+						+ runDocument.getName() + " is not a valid document", e);
 			}
-		} catch (JAXBException e) {
-			throw new IllegalStateException(e);
+			xmlr.close();
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("File with name"
+					+ runDocument.getName() + " does not exist.", e);
+		} catch (XMLStreamException e) {
+			throw new IllegalArgumentException(e);
 		}
 		parseRunDocument(runDocument, generator.build(), monitor);
 	}
@@ -225,68 +228,62 @@ public class MessageWarehouse {
 	public void parseRunDocument(final File runDocument,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
-			Unmarshaller um = ctx.createUnmarshaller();
-			try {
-				// set up a parser
-				XMLInputFactory xmlif = XMLInputFactory.newInstance();
-				XMLStreamReader xmlr = xmlif
-						.createXMLStreamReader(new FileReader(runDocument));
+			// set up a parser
+			XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			XMLStreamReader xmlr = xmlif.createXMLStreamReader(new FileReader(
+					runDocument));
 
-				try {
-					// move to the root element and check its name.
-					xmlr.nextTag();
-					xmlr.require(START_ELEMENT, null, "run");
-					xmlr.nextTag(); // move to uid element
-					xmlr.require(START_ELEMENT, null, "uid");
-					um.unmarshal(xmlr, String.class);
-					xmlr.nextTag(); // move to toolOutput element.
-					xmlr.nextTag(); // move to artifacts
-					// Unmarshal artifacts
-					ArtifactBuilder aBuilder = generator.artifact();
-					while (xmlr.getEventType() == START_ELEMENT
-							&& xmlr.getLocalName().equals("artifact")) {
-						readArtifact(um.unmarshal(xmlr, Artifact.class)
-								.getValue(), aBuilder);
-						if (monitor != null) {
-							monitor.worked(1);
-						}
-						if (xmlr.getEventType() == CHARACTERS) {
-							xmlr.next(); // skip the whitespace between
-							// <artifacts>s.
-						}
-					}
-					// Unmarshal errors
-					ErrorBuilder eBuilder = generator.error();
-					while (xmlr.getEventType() == START_ELEMENT
-							&& xmlr.getLocalName().equals("errors")) {
-						readError(um.unmarshal(xmlr, Error.class).getValue(),
-								eBuilder);
-						if (monitor != null) {
-							monitor.worked(1);
-						}
-						if (xmlr.getEventType() == CHARACTERS) {
-							xmlr.next(); // skip the whitespace between
-							// <event>s.
-						}
-					}
-					generator.finished();
+			try {
+				// move to the root element and check its name.
+				xmlr.nextTag();
+				xmlr.require(START_ELEMENT, null, "run");
+				xmlr.nextTag(); // move to uid element
+				xmlr.require(START_ELEMENT, null, "uid");
+				unmarshaller.unmarshal(xmlr, String.class);
+				xmlr.nextTag(); // move to toolOutput element.
+				xmlr.nextTag(); // move to artifacts
+				// Unmarshal artifacts
+				ArtifactBuilder aBuilder = generator.artifact();
+				while (xmlr.getEventType() == START_ELEMENT
+						&& xmlr.getLocalName().equals("artifact")) {
+					readArtifact(unmarshaller.unmarshal(xmlr, Artifact.class)
+							.getValue(), aBuilder);
 					if (monitor != null) {
-						monitor.done();
+						monitor.worked(1);
 					}
-				} catch (JAXBException e) {
-					throw new IllegalArgumentException("File with name"
-							+ runDocument.getName()
-							+ " is not a valid document", e);
+					if (xmlr.getEventType() == CHARACTERS) {
+						xmlr.next(); // skip the whitespace between
+						// <artifacts>s.
+					}
 				}
-				xmlr.close();
-			} catch (FileNotFoundException e) {
+				// Unmarshal errors
+				ErrorBuilder eBuilder = generator.error();
+				while (xmlr.getEventType() == START_ELEMENT
+						&& xmlr.getLocalName().equals("errors")) {
+					readError(unmarshaller.unmarshal(xmlr, Error.class)
+							.getValue(), eBuilder);
+					if (monitor != null) {
+						monitor.worked(1);
+					}
+					if (xmlr.getEventType() == CHARACTERS) {
+						xmlr.next(); // skip the whitespace between
+						// <event>s.
+					}
+				}
+				generator.finished();
+				if (monitor != null) {
+					monitor.done();
+				}
+			} catch (JAXBException e) {
 				throw new IllegalArgumentException("File with name"
-						+ runDocument.getName() + " does not exist.", e);
-			} catch (XMLStreamException e) {
-				throw new IllegalArgumentException(e);
+						+ runDocument.getName() + " is not a valid document", e);
 			}
-		} catch (JAXBException e) {
-			throw new IllegalStateException(e);
+			xmlr.close();
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("File with name"
+					+ runDocument.getName() + " does not exist.", e);
+		} catch (XMLStreamException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 

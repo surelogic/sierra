@@ -118,9 +118,36 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 
 	}
 
-	public void finished() {
-		// TODO Auto-generated method stub
+	public MetricBuilder metric() {
+		return new DefaultMetricBuilder();
+	}
 
+	public static class DefaultMetricBuilder implements MetricBuilder {
+
+		public void build() {
+			// Nothing to do
+		}
+
+		public MetricBuilder className(String name) {
+			return this;
+		}
+
+		public MetricBuilder lineOfCode(int line) {
+			return this;
+		}
+
+		public MetricBuilder packageName(String name) {
+			return this;
+		}
+
+		public MetricBuilder path(String path) {
+			return this;
+		}
+
+	}
+
+	public void finished() {
+		// Nothing to do
 	}
 
 }

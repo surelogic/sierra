@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.config.Config;
 
 //TODO implement error generation
@@ -27,6 +28,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String RUN_END = "</run>";
 	private static final String UID_START = "<uid>";
 	private static final String UID_END = "</uid>";
+
+	private final MessageWarehouse mw;
 	private ArtifactBuilderAdapter artifactAdapter;
 
 	private FileOutputStream artOut;
@@ -35,7 +38,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private Config config;
 
 	public MessageArtifactFileGenerator(String parsedFile, Config config) {
-
+		this.mw = MessageWarehouse.getInstance();
 		this.parsedFile = parsedFile;
 		this.config = config;
 
@@ -53,7 +56,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
 			finalFile.flush();
-			artifactAdapter = new ArtifactBuilderAdapter(artOut);
+			artifactAdapter = new ArtifactBuilderAdapter();
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
@@ -67,7 +70,13 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		return artifactAdapter;
 	}
 
-	public void write() {
+	@Override
+	public MetricBuilder metric() {
+		return new MessageMetricBuilder();
+	}
+
+	@Override
+	public void finished() {
 		FileWriter finalFile;
 
 		try {
@@ -92,13 +101,48 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		// MessageWarehouse.getInstance().writeToolOutput(to, dest);
 	}
 
-	private static class ArtifactBuilderAdapter implements ArtifactBuilder {
+	private class MessageMetricBuilder implements MetricBuilder {
+
+		private String path;
+		private String clazz;
+		private String pakkage;
+		private int linesOfCode;
+
+		public void build() {
+			ClassMetric metric = new ClassMetric();
+			metric.setClassName(clazz);
+			metric.setPackageName(pakkage);
+			metric.setLinesOfCode(linesOfCode);
+			metric.setPath(path);
+			mw.writeClassMetric(metric, artOut);
+		}
+
+		public MetricBuilder className(String name) {
+			this.clazz = name;
+			return this;
+		}
+
+		public MetricBuilder lineOfCode(int line) {
+			this.linesOfCode = line;
+			return this;
+		}
+
+		public MetricBuilder packageName(String name) {
+			this.pakkage = name;
+			return this;
+		}
+
+		public MetricBuilder path(String path) {
+			this.path = path;
+			return this;
+		}
+
+	}
+
+	private class ArtifactBuilderAdapter implements ArtifactBuilder {
 		private final Artifact.Builder artBuilder;
 
-		private FileOutputStream artOut;
-
-		public ArtifactBuilderAdapter(FileOutputStream artOut) {
-			this.artOut = artOut;
+		ArtifactBuilderAdapter() {
 			artBuilder = new Artifact.Builder();
 		}
 

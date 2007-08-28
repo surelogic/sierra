@@ -2,14 +2,12 @@ package com.surelogic.sierra.tool.message;
 
 import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlAccessOrder;
-import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-@XmlType
+@XmlType(propOrder = { "classMetric", "artifact", "errors" })
 public class ToolOutput {
 
+	private Collection<ClassMetric> classMetric;
 	private Collection<Artifact> artifacts;
 	private Collection<Error> errors;
 
@@ -27,6 +25,14 @@ public class ToolOutput {
 
 	public void setErrors(Collection<Error> errors) {
 		this.errors = errors;
+	}
+
+	public Collection<ClassMetric> getClassMetric() {
+		return classMetric;
+	}
+
+	public void setClassMetric(Collection<ClassMetric> classMetric) {
+		this.classMetric = classMetric;
 	}
 
 	@Override

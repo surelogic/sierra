@@ -22,7 +22,7 @@
  *     </project>
  * 
  *     <tools  exclude="comma, separated, list, of, tool, names, to, not, run" multithreaded="true" toolsfolder="/path/to/Tools">
- *         <pmdconfig javaVersion=Ó1.5Ó rulefile="/path/to/rule/file.xml"/>
+ *         <pmdconfig javaVersion=ï¿½1.5ï¿½ rulefile="/path/to/rule/file.xml"/>
  *         <findbugsconfig memory="1024m"/>
  *     </tools>
  * </sierra-analysis>
@@ -388,7 +388,7 @@ public class SierraAnalysis extends Task {
 			Parser parser = new Parser(generator);
 
 			tools.parseOutput(parser);
-			generator.write();
+			generator.finished();
 
 		}
 	}

@@ -11,6 +11,8 @@ import com.surelogic.sierra.tool.message.Severity;
  */
 public interface ArtifactGenerator {
 
+	public MetricBuilder metric();
+	
 	public ArtifactBuilder artifact();
 
 	public ErrorBuilder error();
