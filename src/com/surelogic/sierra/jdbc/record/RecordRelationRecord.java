@@ -1,8 +1,5 @@
 package com.surelogic.sierra.jdbc.record;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Models a relation table between two entities in a database.

@@ -16,9 +16,11 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
+import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.Record;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
+import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
@@ -45,11 +47,13 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final PreparedStatement toolIdSelect;
 
 	private final List<ArtifactRecord> artifacts;
+	private final List<ClassMetricRecord> classMetrics;
 	private final Map<SourceRecord, SourceRecord> sources;
 	private final Map<CompilationUnitRecord, CompilationUnitRecord> compUnits;
 	private final Set<ArtifactSourceRecord> relations;
 
-	private final ArtifactBuilder builder;
+	private final ArtifactBuilder aBuilder;
+	private final MetricBuilder mBuilder;
 
 	public JDBCArtifactGenerator(Connection conn, RunRecordFactory factory,
 			RunRecord run, Runnable callback) throws SQLException {
@@ -60,11 +64,13 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
 
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
+		this.classMetrics = new ArrayList<ClassMetricRecord>(COMMIT_SIZE);
 		this.sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
 		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
-		this.builder = new JDBCArtifactBuilder(run.getId());
+		this.aBuilder = new JDBCArtifactBuilder(run);
+		this.mBuilder = new JDBCMetricBuilder(run);
 	}
 
 	public void finished() {
@@ -86,6 +92,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		artifacts.clear();
 		insert(relations);
 		relations.clear();
+		insert(classMetrics);
+		classMetrics.clear();
 		conn.commit();
 	}
 
@@ -116,11 +124,67 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	}
 
 	public ArtifactBuilder artifact() {
-		return builder;
+		return aBuilder;
 	}
 
 	public ErrorBuilder error() {
 		return new JDBCErrorBuilder();
+	}
+
+	public MetricBuilder metric() {
+		return mBuilder;
+	}
+
+	private class JDBCMetricBuilder implements MetricBuilder {
+
+		private final RunRecord run;
+		private CompilationUnitRecord compUnit;
+		private int linesOfCode;
+
+		public JDBCMetricBuilder(RunRecord run) {
+			this.run = run;
+		}
+
+		public void build() {
+			CompilationUnitRecord currentComp = compUnits.get(compUnit);
+			if (currentComp == null) {
+				compUnits.put(compUnit, compUnit);
+				currentComp = compUnit;
+			}
+			ClassMetricRecord rec = factory.newClassMetric();
+			rec.setId(new RelationRecord.PK<RunRecord, CompilationUnitRecord>(
+					run, compUnit));
+			rec.setLinesOfCode(linesOfCode);
+			classMetrics.add(rec);
+			if (classMetrics.size() == COMMIT_SIZE) {
+				try {
+					persist();
+				} catch (SQLException e) {
+					throw new RunPersistenceException(e);
+				}
+			}
+		}
+
+		public MetricBuilder className(String name) {
+			compUnit.setClassName(name);
+			return this;
+		}
+
+		public MetricBuilder linesOfCode(int line) {
+			this.linesOfCode = line;
+			return this;
+		}
+
+		public MetricBuilder packageName(String name) {
+			compUnit.setPackageName(name);
+			return this;
+		}
+
+		public MetricBuilder path(String path) {
+			compUnit.setPath(path);
+			return this;
+		}
+
 	}
 
 	private class JDBCErrorBuilder implements ErrorBuilder {
@@ -147,8 +211,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		private ArtifactRecord artifact;
 		private long runId;
 
-		public JDBCArtifactBuilder(long runId) {
-			this.runId = runId;
+		public JDBCArtifactBuilder(RunRecord run) {
+			this.runId = run.getId();
 			clear();
 		}
 
@@ -282,11 +346,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		}
 
-	}
-
-	public MetricBuilder metric() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

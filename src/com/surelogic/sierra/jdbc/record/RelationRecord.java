@@ -30,7 +30,7 @@ public abstract class RelationRecord<U, V> extends
 	}
 
 	@Override
-	protected int readAttributes(ResultSet set, int idx) {
+	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		// Override this if a relation possesses attributes
 		return idx;
 	}

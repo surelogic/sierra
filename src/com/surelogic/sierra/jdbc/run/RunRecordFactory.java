@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
+import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
@@ -32,7 +33,7 @@ public class RunRecordFactory {
 	private static final String RUN_UPDATE = "UPDATE RUN SET STATUS = ? WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String RUN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_RUN_RELTN (QUALIFIER_ID,RUN_ID) VALUES(?,?)";
-
+	private static final String CLASS_METRIC_INSERT = "INSERT INTO CLASS_METRIC (RUN_ID, COMPILATION_UNIT_ID, LINES_OF_CODE) VALUES (?,?,?)";
 	private final Connection conn;
 
 	private final RecordMapper compUnitMapper;
@@ -43,6 +44,7 @@ public class RunRecordFactory {
 	private final UpdateRecordMapper runMapper;
 	private RecordMapper qualifierMapper;
 	private RecordMapper runQualMapper;
+	private RecordMapper classMetricMapper;
 
 	private RunRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -57,6 +59,8 @@ public class RunRecordFactory {
 				null);
 		runMapper = new UpdateBaseMapper(conn, RUN_INSERT, RUN_SELECT,
 				RUN_DELETE, RUN_UPDATE);
+		this.classMetricMapper = new BaseMapper(conn, CLASS_METRIC_INSERT,
+				null, null);
 	}
 
 	public static RunRecordFactory getInstance(Connection conn)
@@ -86,6 +90,10 @@ public class RunRecordFactory {
 
 	public RunRecord newRun() {
 		return new RunRecord(runMapper);
+	}
+
+	public ClassMetricRecord newClassMetric() {
+		return new ClassMetricRecord(classMetricMapper);
 	}
 
 	public QualifierRecord newQualifier() throws SQLException {
