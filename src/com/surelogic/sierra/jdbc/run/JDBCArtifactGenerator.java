@@ -23,6 +23,7 @@ import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -281,6 +282,11 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		}
 
+	}
+
+	public MetricBuilder metric() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
