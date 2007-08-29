@@ -11,21 +11,23 @@
             <groupMarker name="content"/>
             <separator name="additions"/>
           </menu>
+          
           <action
                class="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                label="Load Analysis Run Document..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"/>        
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content">
+          </action>     
+                      
           <action
-                enablesFor="1"
-                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
+           		class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
+                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisWorkbench"
                 label="Run Analysis"
-                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content">
-             <selection
-                   class="org.eclipse.jdt.core.IJavaProject">
-             </selection>
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"
+                enablesFor="+">
+             <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
+          
         </actionSet>
    </extension>
       
@@ -41,9 +43,9 @@
             <groupMarker name="content"/>
          </menu>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
-               enablesFor="1"
-               id="om.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
+               class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
+               enablesFor="+"
+               id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
                label="Run Analysis"
                menubarPath="com.surelogic.sierra.client.eclipse.contextMenu/content"/>
       </objectContribution>
@@ -81,15 +83,25 @@
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
             name="Findings"/>
    </extension>
-   
+
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="Sierra Explorer"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            class="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective"
-            id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
-      </perspective>
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="com.surelogic.sierra.client.eclipse.views.SierraRunsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
    </extension>
    
    <extension
