@@ -10,7 +10,7 @@
           </menu>
         <action
                class="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
-               id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocuement"
+               id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                label="Load Analysis Run Document..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"/>
         </actionSet>
@@ -22,17 +22,17 @@
             id="Sierra.popupMenu"
             objectClass="org.eclipse.jdt.core.IJavaProject">
          <menu
-               id="Sierra.SierraMenu"
+               id="com.surelogic.sierra.client.eclipse.contextMenu"
                label="Sierra"
                path="additions">
-            <separator name="group1"/>
+            <groupMarker name="content"/>
          </menu>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
                enablesFor="1"
-               id="Sierra.runAnalysisAction"
+               id="om.surelogic.sierra.client.eclipse.actions.RunAnalysis"
                label="Run Analysis"
-               menubarPath="Sierra.SierraMenu/group1"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.contextMenu/content"/>
       </objectContribution>
    </extension>
    
