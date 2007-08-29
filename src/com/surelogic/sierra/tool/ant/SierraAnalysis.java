@@ -351,6 +351,9 @@ public class SierraAnalysis extends Task {
 
 				root = project.getDir();
 			} else {
+				// FIXME: Hack for providing the java version as PMD rejects the
+				// String returned from System.getProperty
+				config.setJavaVersion(System.getProperty("java.version"));
 				root = config.getBaseDirectory();
 			}
 

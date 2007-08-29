@@ -333,15 +333,7 @@ public class BuildFileHandler extends DefaultHandler {
 			config.setRunDateTime(Calendar.getInstance().getTime());
 			config.setSourceDirs(srcDir);
 			config.setBinDirs(binDir);
-
-			// if (config.getJavaVendor() == null) {
-			// config.setJavaVendor(javaVendor);
-			// }
-			//
-			// if (config.getJavaVersion() == null) {
-			// config.setJavaVersion(javaVersion);
-			//			}
-
+			config.setJavaVendor(javaVendor);
 			configs.add(config);
 
 			resetParameters();
