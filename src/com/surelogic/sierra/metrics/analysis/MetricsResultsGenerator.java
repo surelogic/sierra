@@ -75,7 +75,7 @@ public final class MetricsResultsGenerator {
 			Map<String, String> attributeMap = new HashMap<String, String>();
 			attributeMap.put("name", metrics.getClassName());
 			attributeMap.put("package", metrics.getPackageName());
-			attributeMap.put("LOC", String.valueOf(metrics.getLoc()));
+			attributeMap.put("loc", String.valueOf(metrics.getLoc()));
 			writeAttributes(attributeMap);
 
 			hd.startElement("", "", "class", atts);
