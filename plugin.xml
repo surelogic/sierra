@@ -88,7 +88,7 @@
             name="Findings"/>
    </extension>
 
-   <!-- Sierra Explorer perspective and links to Java perspective -->
+   <!-- Sierra Explorer perspective and links to the Java perspective -->
    
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
