@@ -2,6 +2,8 @@
 <?eclipse version="3.2"?>
 <plugin>
 
+  <!-- Sierra menus -->
+
    <extension point="org.eclipse.ui.actionSets">
         <actionSet label="Sierra ActionSet" visible="true" id="com.surelogic.sierra.client.eclipse.workbenchActionSet">
           <menu
@@ -51,6 +53,8 @@
       </objectContribution>
    </extension>
    
+   <!-- Sierra views -->
+   
    <extension
          point="org.eclipse.ui.views">
          
@@ -84,6 +88,8 @@
             name="Findings"/>
    </extension>
 
+   <!-- Sierra Explorer perspective and links to Java perspective -->
+   
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
@@ -104,6 +110,31 @@
       </perspectiveExtension>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.views.FindingsView">
+         </viewShortcut>
+         <perspectiveShortcut
+               id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   
+   <!-- Enable the ad hoc query view on Sierra -->
+
    <extension
          point="com.surelogic.adhoc.query">
       <instance
