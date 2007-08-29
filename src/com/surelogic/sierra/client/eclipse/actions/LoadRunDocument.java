@@ -32,7 +32,7 @@ public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Load Analysis Run Document");
-			System.out.println(SierraConstants.SIERRA_RESULTS_PATH);
+			// System.out.println(SierraConstants.SIERRA_RESULTS_PATH);
 			fd.setFilterPath(SierraConstants.SIERRA_RESULTS_PATH);
 			fd.setFilterExtensions(new String[] { "*.PARSED", "*.*" });
 			fd.setFilterNames(new String[] { "Parsed Files (*.PARSED)",

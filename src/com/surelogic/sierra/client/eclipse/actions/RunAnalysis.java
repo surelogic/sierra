@@ -13,17 +13,12 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
@@ -37,14 +32,7 @@ import com.surelogic.sierra.tool.config.Config;
  * @author Tanmay.Sinha
  * 
  */
-public final class RunAnalysis implements IObjectActionDelegate {
-
-	// /** The log file for ant task results */
-	// private static final String ANT_LOG_FILE = "sierra-ant.log";
-	//
-	// /** The default logger being used */
-	// private static final String ANT_LOGGER_DEFAULT =
-	// "org.apache.tools.ant.DefaultLogger";
+public final class RunAnalysis {
 
 	/** The Sierra Logger */
 	private static final Logger log = SLLogger.getLogger("sierra");
@@ -57,18 +45,16 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 	private BuildFileGenerator bfg;
 
-	// private Stack<File> runDocuments;
-
 	private Config config;
 
 	private ArrayList<File> buildFiles;
 
 	private final File toolsDirectory;
 
-	public RunAnalysis() {
-
+	public RunAnalysis(IStructuredSelection currentSelection) {
 		// Get the plugin directory that has tools folder and append the
 		// directory
+		this.currentSelection = currentSelection;
 		String tools = BuildFileGenerator.getToolsDirectory()
 				+ SierraConstants.TOOLS_FOLDER;
 		toolsDirectory = new File(tools);
@@ -79,14 +65,9 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 			resultRoot.mkdir();
 		}
-
 	}
 
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// Nothing to do
-	}
-
-	public void run(IAction action) {
+	public void execute() {
 		List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
 		if (currentSelection != null) {
 			for (Object selection : currentSelection.toArray()) {
@@ -156,18 +137,6 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 		}
 
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			action.setEnabled(true);
-			currentSelection = (IStructuredSelection) selection;
-		} else {
-			currentSelection = null;
-			action.setEnabled(false);
-			SLog.logWarning("Selection is not an IStructuredSelection",
-					new Exception());
-		}
 	}
 
 	private class AntRunnable implements Runnable {
@@ -364,7 +333,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 				databaseEntryJob.schedule();
 
 			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
-
+				log.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
 			} else if (event.getResult().equals(
@@ -451,6 +420,7 @@ public final class RunAnalysis implements IObjectActionDelegate {
 						"You may now examine the analysis results.");
 
 			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
+				log.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
 			} else {
@@ -461,4 +431,5 @@ public final class RunAnalysis implements IObjectActionDelegate {
 
 		}
 	}
+
 }
