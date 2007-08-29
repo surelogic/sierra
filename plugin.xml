@@ -4,7 +4,10 @@
 
    <extension point="org.eclipse.ui.actionSets">
         <actionSet label="Sierra ActionSet" visible="true" id="com.surelogic.sierra.client.eclipse.workbenchActionSet">
-          <menu label="Sierra" path="additions" id="com.surelogic.sierra.client.eclipse.workbenchMenu">
+          <menu
+                label="Sierra"
+                path="additions"
+                id="com.surelogic.sierra.client.eclipse.workbenchMenu">
             <groupMarker name="content"/>
             <separator name="additions"/>
           </menu>
