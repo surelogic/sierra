@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sierra Tool
+Bundle-Name: Sierra Analysis Tool Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.4.0
 Bundle-Activator: com.surelogic.sierra.tool.SierraTool
@@ -46,3 +46,4 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jax-ws/sjsxp.jar,
  .,
  Tools/pmd-4.0/lib/pmd-4.0.jar
+Bundle-Vendor: SureLogic, Inc.
