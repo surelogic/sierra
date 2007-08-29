@@ -24,7 +24,7 @@
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                 id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisWorkbench"
-                label="Run Analysis"
+                label="Analyze Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
@@ -38,18 +38,13 @@
       <objectContribution
             id="Sierra.popupMenu"
             objectClass="org.eclipse.jdt.core.IJavaProject">
-         <menu
-               id="com.surelogic.sierra.client.eclipse.contextMenu"
-               label="Sierra"
-               path="additions">
-            <groupMarker name="content"/>
-         </menu>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
-               label="Run Analysis"
-               menubarPath="com.surelogic.sierra.client.eclipse.contextMenu/content"/>
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+               label="Analyze Project"
+               menubarPath="additions"/>
       </objectContribution>
    </extension>
    
