@@ -81,25 +81,15 @@
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
             name="Findings"/>
    </extension>
-
+   
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="com.surelogic.sierra.client.eclipse.views.FindingsView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="com.surelogic.sierra.client.eclipse.views.SierraRunsView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList">
-         </view>
-      </perspectiveExtension>
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Sierra Explorer"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            class="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective"
+            id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+      </perspective>
    </extension>
    
    <extension
