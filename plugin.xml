@@ -11,11 +11,21 @@
             <groupMarker name="content"/>
             <separator name="additions"/>
           </menu>
-        <action
+          <action
                class="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                label="Load Analysis Run Document..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"/>        
+          <action
+                enablesFor="1"
+                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
+                label="Run Analysis"
+                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content">
+             <selection
+                   class="org.eclipse.jdt.core.IJavaProject">
+             </selection>
+          </action>
         </actionSet>
    </extension>
       
@@ -33,7 +43,7 @@
          <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysis"
                enablesFor="1"
-               id="om.surelogic.sierra.client.eclipse.actions.RunAnalysis"
+               id="om.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
                label="Run Analysis"
                menubarPath="com.surelogic.sierra.client.eclipse.contextMenu/content"/>
       </objectContribution>
