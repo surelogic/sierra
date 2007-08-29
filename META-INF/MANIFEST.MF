@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sierra Eclipse Client Plug-in
+Bundle-Name: Sierra Client Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.client.eclipse;singleton:=true
 Bundle-Vendor: SureLogic, Inc.
 Bundle-Version: 1.4.0
