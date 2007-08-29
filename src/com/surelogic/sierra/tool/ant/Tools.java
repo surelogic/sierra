@@ -37,7 +37,9 @@ import com.surelogic.sierra.tool.config.Config;
 public class Tools {
 	private final static String PMD = "pmd";
 	private final static String FINDBUGS = "findbugs";
-	private final static String[] toolList = new String[] { FINDBUGS, PMD };
+	private final static String RECKONER = "reckoner";
+	private final static String[] toolList = new String[] { RECKONER, FINDBUGS,
+			PMD };
 
 	private org.apache.tools.ant.Project antProject = null;
 	private List<String> exclude = new ArrayList<String>();
@@ -89,6 +91,11 @@ public class Tools {
 	 * XXX Add a default object for ALL tools
 	 */
 	private void addAllToolDefaults() {
+		ReckonerConfig reckoner = new ReckonerConfig(antProject);
+		tools.put(reckoner.getToolName(), reckoner);
+		antProject.log("Added " + reckoner.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
 		PmdConfig pmd = new PmdConfig(antProject);
 		tools.put(pmd.getToolName(), pmd);
 		antProject.log("Added " + pmd.getToolName(),
@@ -98,6 +105,7 @@ public class Tools {
 		tools.put(findbugs.getToolName(), findbugs);
 		antProject.log("Added " + findbugs.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
+
 	}
 
 	/**

@@ -1,8 +1,10 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
@@ -28,40 +30,43 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String RUN_END = "</run>";
 	private static final String UID_START = "<uid>";
 	private static final String UID_END = "</uid>";
+	private static final String ARTIFACTS_START = "<artifacts>";
+	private static final String ARTIFACTS_END = "</artifacts>";
+	private static final String ERROR_START = "<errors>";
+	private static final String ERROR_END = "</errors>";
 
 	private final MessageWarehouse mw;
 	private ArtifactBuilderAdapter artifactAdapter;
 
 	private FileOutputStream artOut;
 
-	private String parsedFile;
+	private File parsedFile;
 	private Config config;
+	private File artifactsHolder;
+	private File metricsFile;
 
-	public MessageArtifactFileGenerator(String parsedFile, Config config) {
+	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		this.mw = MessageWarehouse.getInstance();
 		this.parsedFile = parsedFile;
 		this.config = config;
 
 		try {
 
-			artOut = new FileOutputStream(new File(parsedFile), true);
-			FileWriter finalFile = new FileWriter(new File(parsedFile));
-			finalFile.write(XML_START);
-			finalFile.write('\n');
-			finalFile.write(RUN_START);
-			finalFile.write('\n');
-			finalFile.write(UID_START);
-			finalFile.write(UUID.randomUUID().toString());
-			finalFile.write(UID_END);
-			finalFile.write('\n');
-			finalFile.write(TOOL_OUTPUT_START);
-			finalFile.flush();
+			artifactsHolder = File.createTempFile("artifacts", "tmp", new File(
+					parsedFile.getParent()));
+			artOut = new FileOutputStream(artifactsHolder, true);
 			artifactAdapter = new ArtifactBuilderAdapter();
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
 		}
+
+	}
+
+	@Override
+	public void writeMetrics(File file) {
+		this.metricsFile = file;
 
 	}
 
@@ -77,19 +82,60 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	@Override
 	public void finished() {
-		FileWriter finalFile;
-
 		try {
-			finalFile = new FileWriter(new File(parsedFile), true);
+			FileWriter finalFile = new FileWriter(parsedFile);
+			finalFile.write(XML_START);
+			finalFile.write('\n');
+			finalFile.write(RUN_START);
+			finalFile.write('\n');
+			finalFile.write(UID_START);
+			finalFile.write(UUID.randomUUID().toString());
+			finalFile.write(UID_END);
+			finalFile.write('\n');
+			finalFile.write(TOOL_OUTPUT_START);
+
+			BufferedReader in = new BufferedReader(new FileReader(metricsFile));
+			String line = null;
+			while (null != (line = in.readLine())) {
+				finalFile.write(line);
+				finalFile.write("\n");
+			}
+			in.close();
+			finalFile.flush();
+
+			finalFile.write(ARTIFACTS_START);
+			in = new BufferedReader(new FileReader(artifactsHolder));
+			line = null;
+			while (null != (line = in.readLine())) {
+				finalFile.write(line);
+				finalFile.write("\n");
+			}
+			in.close();
+			finalFile.write(ARTIFACTS_END);
+			finalFile.write(ERROR_START);
+			finalFile.write(ERROR_END);
 			finalFile.write(TOOL_OUTPUT_END);
 			finalFile.flush();
 
-			MessageWarehouse.getInstance().writeConfig(config, artOut);
-
+			File configOutput = File.createTempFile("config", "tmp", new File(
+					parsedFile.getParent()));
+			FileOutputStream fos = new FileOutputStream(configOutput);
+			MessageWarehouse.getInstance().writeConfig(config, fos);
+			in = new BufferedReader(new FileReader(configOutput));
+			line = null;
+			while (null != (line = in.readLine())) {
+				finalFile.write(line);
+				finalFile.write("\n");
+			}
+			in.close();
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
 			artOut.close();
+			artifactsHolder.delete();
+
+			fos.close();
+			configOutput.delete();
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {

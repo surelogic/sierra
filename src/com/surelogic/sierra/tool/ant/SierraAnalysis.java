@@ -75,7 +75,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -359,7 +358,7 @@ public class SierraAnalysis extends Task {
 			filterdirs(root, filter);
 
 			Iterator<File> dirIterator = filter.dirs.iterator();
-			Vector<String> sourceDirectory = new Vector<String>();
+			List<String> sourceDirectory = new ArrayList<String>();
 			while (dirIterator.hasNext()) {
 				File holder = dirIterator.next();
 				sourceDirectory.add(holder.getPath());
@@ -384,9 +383,8 @@ public class SierraAnalysis extends Task {
 			log("Generating the run document: " + runDocument,
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
-					runDocument.getAbsolutePath(), config);
+					runDocument, config);
 			Parser parser = new Parser(generator);
-
 			tools.parseOutput(parser);
 			generator.finished();
 

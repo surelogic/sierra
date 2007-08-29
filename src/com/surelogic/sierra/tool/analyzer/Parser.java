@@ -201,4 +201,8 @@ public class Parser {
 		}
 	}
 
+	public void parseReckoner(File absoluteFile) {
+		generator.writeMetrics(absoluteFile);
+	}
+
 }

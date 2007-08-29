@@ -1,5 +1,7 @@
 package com.surelogic.sierra.tool.analyzer;
 
+import java.io.File;
+
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -12,19 +14,20 @@ import com.surelogic.sierra.tool.message.Severity;
 public interface ArtifactGenerator {
 
 	public MetricBuilder metric();
-	
+
 	public ArtifactBuilder artifact();
 
 	public ErrorBuilder error();
 
 	public void finished();
-	
+
 	public interface ArtifactBuilder {
 		public SourceLocationBuilder sourceLocation();
 
 		public SourceLocationBuilder primarySourceLocation();
 
-		public ArtifactBuilder findingType(String tool, String version, String mnemonic);
+		public ArtifactBuilder findingType(String tool, String version,
+				String mnemonic);
 
 		public ArtifactBuilder priority(Priority priority);
 
@@ -65,5 +68,7 @@ public interface ArtifactGenerator {
 
 		void build();
 	}
+
+	public void writeMetrics(File absoluteFile);
 
 }

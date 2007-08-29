@@ -1,5 +1,7 @@
 package com.surelogic.sierra.tool.analyzer;
 
+import java.io.File;
+
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -150,4 +152,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 		// Nothing to do
 	}
 
+	public void writeMetrics(File absoluteFile) {
+		// Nothing to do
+	}
 }
