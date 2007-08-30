@@ -19,7 +19,9 @@ import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.RunDocumentUtility;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.analyzer.Parser;
@@ -78,16 +80,23 @@ public final class RunAnalysis {
 
 			f_buildFiles = new ArrayList<File>();
 
-			for (IJavaProject project : selectedProjects) {
-				// log.info("Generating XML...");
+			// Get from preference page
+			final String sierraPath = Activator.getDefault()
+					.getPluginPreferences().getString(
+							PreferenceConstants.P_SIERRA_PATH);
+			File sierraFolder = new File(sierraPath);
 
+			for (IJavaProject project : selectedProjects) {
 				String projectPath = project.getResource().getLocation()
 						.toString();
 
 				File baseDir = new File(projectPath);
-				File runDocument = new File(f_resultRoot + File.separator
+				File runDocument = new File(sierraPath + File.separator
 						+ project.getProject().getName()
 						+ SierraConstants.PARSED_FILE_SUFFIX);
+				// File runDocument = new File(f_resultRoot + File.separator
+				// + project.getProject().getName()
+				// + SierraConstants.PARSED_FILE_SUFFIX);
 
 				f_config = new Config();
 
@@ -114,17 +123,21 @@ public final class RunAnalysis {
 
 			if (f_buildFiles.size() > 0) {
 
-				Stack<File> runDocuments = new Stack<File>();
-
 				f_configs = new ArrayList<Config>();
+
+				Stack<File> runDocuments = new Stack<File>();
 				// Generate configs from all build files
 				for (File f : f_buildFiles) {
 					Parser buildFileParser = new Parser();
 					List<Config> configsHolder = buildFileParser
 							.parseBuildFile(f.getAbsolutePath());
 					for (Config c : configsHolder) {
+						File runDocumentHolder = new File(sierraFolder
+								+ File.separator + c.getProject()
+								+ SierraConstants.PARSED_FILE_SUFFIX);
+						c.setRunDocument(runDocumentHolder);
 						// Change the run documents
-						runDocuments.push(c.getRunDocument());
+						runDocuments.push(runDocumentHolder);
 						c.setToolsDirectory(f_toolsDirectory);
 						f_configs.add(c);
 					}
