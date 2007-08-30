@@ -173,8 +173,10 @@ public class SierraAnalysis extends Task {
 	/**
 	 * Constructor
 	 */
-	public SierraAnalysis() {
+	public SierraAnalysis(org.apache.tools.ant.Project project) {
 		super();
+			antProject = project;
+			log("Project is null in constructor? " + (antProject == null));
 	}
 
 	/**
