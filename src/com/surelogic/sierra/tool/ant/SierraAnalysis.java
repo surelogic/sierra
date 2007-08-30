@@ -638,8 +638,8 @@ public class SierraAnalysis extends Task {
 	 *            the srcdir to set
 	 */
 	public final void setSrcdir(Path srcdir) {
-		if(srcdir == null){
-			srcdir = new Path(getProject()).createPath();
+		if(this.srcdir == null){
+			this.srcdir = new Path(getProject()).createPath();
 		}
 		this.srcdir.append(srcdir);
 	}
@@ -659,8 +659,8 @@ public class SierraAnalysis extends Task {
 	 *            the bindir to set
 	 */
 	public final void setBindir(Path bindir) {
-		if(bindir == null){
-			bindir = new Path(getProject()).createPath();
+		if(this.bindir == null){
+			this.bindir = new Path(getProject()).createPath();
 		}
 		this.bindir.append(bindir);
 	}
