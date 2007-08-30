@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -22,8 +23,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 import com.surelogic.adhoc.views.QueryUtility;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.SLog;
 import com.surelogic.sierra.client.eclipse.model.FindingsModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
 import com.surelogic.sierra.tool.message.Importance;
@@ -119,12 +120,14 @@ public final class FindingsMediator {
 					return;
 				FindingsOrganization org = f_manager.get(key);
 				if (org == null) {
-					SLog.logWarning("no FindingsOrganization for key " + key);
+					SLLogger.getLogger().log(Level.WARNING,
+							"No FindingsOrganization for key " + key);
 					return;
 				}
 				String project = f_projectCombo.getText();
 				if (project == null) {
-					SLog.logWarning("no project to qualify key " + key);
+					SLLogger.getLogger().log(Level.WARNING,
+							"No project to qualify key " + key);
 					return;
 				}
 				String query = org.getQuery(project, f_manager.getFilter());
@@ -171,7 +174,8 @@ public final class FindingsMediator {
 							}
 						} catch (SQLException e) {
 							// an error occurred with the query
-							SLog.logError("SQL problem in findings view", e);
+							SLLogger.getLogger().log(Level.SEVERE,
+									"SQL problem in findings view", e);
 						} finally {
 							st.close();
 						}
@@ -179,8 +183,8 @@ public final class FindingsMediator {
 						c.close();
 					}
 				} catch (SQLException e) {
-					SLog.logError("Could not work with the embedded database",
-							e);
+					SLLogger.getLogger().log(Level.SEVERE,
+							"Could not work with the embedded database", e);
 				}
 			}
 		};

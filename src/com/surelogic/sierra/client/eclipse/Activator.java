@@ -1,10 +1,15 @@
 package com.surelogic.sierra.client.eclipse;
 
+import java.util.logging.Level;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.model.Project;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -34,6 +39,8 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		// startup the database and ensure its schema is up to date
 		Data.bootAndCheckSchema();
+		// start observing data changes
+		Project.getInstance().refresh();
 	}
 
 	@Override
@@ -70,8 +77,8 @@ public class Activator extends AbstractUIPlugin {
 					.showView(viewId);
 			return view;
 		} catch (PartInitException e) {
-			SLog.logError("Unable to open the view identified by " + viewId
-					+ ".", e);
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Unable to open the view identified by " + viewId + ".", e);
 		}
 		return null;
 	}
@@ -84,8 +91,10 @@ public class Activator extends AbstractUIPlugin {
 							viewId, secondaryId, mode);
 			return view;
 		} catch (PartInitException e) {
-			SLog.logError("Unable to open the view identified by " + viewId
-					+ " " + secondaryId + ".", e);
+			SLLogger.getLogger().log(
+					Level.SEVERE,
+					"Unable to open the view identified by " + viewId + " "
+							+ secondaryId + ".", e);
 		}
 		return null;
 	}

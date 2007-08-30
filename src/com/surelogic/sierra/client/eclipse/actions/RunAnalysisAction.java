@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -8,7 +10,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import com.surelogic.sierra.client.eclipse.SLog;
+import com.surelogic.common.logging.SLLogger;
 
 public class RunAnalysisAction implements IObjectActionDelegate,
 		IWorkbenchWindowActionDelegate {
@@ -25,8 +27,8 @@ public class RunAnalysisAction implements IObjectActionDelegate,
 			RunAnalysis ra = new RunAnalysis(currentSelection);
 			ra.execute();
 		} else {
-			SLog.logWarning("Invalid selection for running analysis",
-					new Exception());
+			SLLogger.getLogger().log(Level.WARNING,
+					"Invalid selection for running analysis", new Exception());
 		}
 
 	}
@@ -36,8 +38,10 @@ public class RunAnalysisAction implements IObjectActionDelegate,
 			currentSelection = (IStructuredSelection) selection;
 		} else {
 			currentSelection = null;
-			SLog.logWarning("Selection is not an IStructuredSelection",
-					new Exception());
+			SLLogger.getLogger()
+					.log(Level.WARNING,
+							"Selection is not an IStructuredSelection",
+							new Exception());
 		}
 
 	}
