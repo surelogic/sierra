@@ -168,15 +168,13 @@ public class SierraAnalysis extends Task {
 		DEPENDENCIES.add("jsr173_api.jar");
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
-	
 
 	/**
 	 * Constructor
 	 */
 	public SierraAnalysis(org.apache.tools.ant.Project project) {
 		super();
-			antProject = project;
-			log("Project is null in constructor? " + (antProject == null));
+		antProject = project;
 	}
 
 	/**
@@ -212,11 +210,10 @@ public class SierraAnalysis extends Task {
 	 * @see Task
 	 */
 	public void execute() {
-		if(antProject == null){
+		if (antProject == null) {
 			antProject = getProject();
-			log("Project is null? " + (antProject == null));
 		}
-		
+
 		if (runDateTime == null) {
 			runDateTime = Calendar.getInstance().getTime();
 		}
@@ -405,7 +402,8 @@ public class SierraAnalysis extends Task {
 			antProject.log("---------- CLASSPATH ----------",
 					org.apache.tools.ant.Project.MSG_VERBOSE);
 			for (String string : classpathList) {
-				antProject.log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
+				antProject
+						.log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
 			}
 		}
 	}
@@ -479,7 +477,8 @@ public class SierraAnalysis extends Task {
 	 */
 	private void cleanup() {
 		if (keepRunning) {
-			antProject.log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
+			antProject.log("Cleaning up...",
+					org.apache.tools.ant.Project.MSG_INFO);
 			tools.cleanup();
 			// If we uploaded successfully, delete our run document and temp
 			// directory
@@ -557,7 +556,8 @@ public class SierraAnalysis extends Task {
 			}
 
 			if (bindir.size() == 0) {
-				antProject.log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
+				antProject
+						.log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
 				bindir.append(srcdir);
 			} else {
 				validatePath(bindir); // throws BuildException if it has an
@@ -640,7 +640,7 @@ public class SierraAnalysis extends Task {
 	 *            the srcdir to set
 	 */
 	public final void setSrcdir(Path srcdir) {
-		if(this.srcdir == null){
+		if (this.srcdir == null) {
 			this.srcdir = new Path(getProject()).createPath();
 		}
 		this.srcdir.append(srcdir);
@@ -661,7 +661,7 @@ public class SierraAnalysis extends Task {
 	 *            the bindir to set
 	 */
 	public final void setBindir(Path bindir) {
-		if(this.bindir == null){
+		if (this.bindir == null) {
 			this.bindir = new Path(getProject()).createPath();
 		}
 		this.bindir.append(bindir);
