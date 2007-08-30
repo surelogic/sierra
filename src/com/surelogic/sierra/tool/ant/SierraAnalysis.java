@@ -169,18 +169,14 @@ public class SierraAnalysis extends Task {
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
 
-	// Common initializer code
-	{
-		antProject = getProject();
-		srcdir = new Path(antProject);
-		bindir = new Path(antProject);
-	}
-
 	/**
 	 * Constructor
 	 */
 	public SierraAnalysis() {
 		super();
+		antProject = getProject();
+		srcdir = new Path(antProject);
+		bindir = new Path(antProject);
 	}
 
 	/**
@@ -204,7 +200,9 @@ public class SierraAnalysis extends Task {
 			classpath = new Path(antProject, config.getClasspath());
 		}
 		clean = config.isCleanTempFiles();
+		srcdir = new Path(antProject).createPath();
 		srcdir.append(new Path(antProject, config.getSourceDirs()));
+		bindir = new Path(antProject).createPath();
 		bindir.append(new Path(antProject, config.getBinDirs()));
 		tools = new Tools(antProject, config);
 		project = new Project(antProject, config);
