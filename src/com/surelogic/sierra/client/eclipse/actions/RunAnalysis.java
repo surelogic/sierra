@@ -27,56 +27,54 @@ import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
- * The action that runs the Sierra Analysis
+ * Runs Sierra Analysis on an Eclipse project.
  * 
  * @author Tanmay.Sinha
- * 
  */
 public final class RunAnalysis {
 
-	/** The Sierra Logger */
-	private static final Logger log = SLLogger.getLogger("sierra");
+	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private IStructuredSelection currentSelection = null;
+	private IStructuredSelection f_currentSelection = null;
 
-	private File resultRoot;
+	private File f_resultRoot;
 
-	private File buildFile;
+	private File f_buildFile;
 
-	private BuildFileGenerator bfg;
+	private BuildFileGenerator f_buildFileGenerator;
 
-	private Config config;
+	private Config f_config;
 
-	private ArrayList<File> buildFiles;
+	private List<File> f_buildFiles;
 
-	private final File toolsDirectory;
+	private final File f_toolsDirectory;
 
 	public RunAnalysis(IStructuredSelection currentSelection) {
 		// Get the plugin directory that has tools folder and append the
 		// directory
-		this.currentSelection = currentSelection;
+		f_currentSelection = currentSelection;
 		String tools = BuildFileGenerator.getToolsDirectory()
 				+ SierraConstants.TOOLS_FOLDER;
-		toolsDirectory = new File(tools);
-		resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
+		f_toolsDirectory = new File(tools);
+		f_resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
 
-		if ((!resultRoot.exists()) || (resultRoot.exists())
-				&& (!resultRoot.isDirectory())) {
+		if ((!f_resultRoot.exists()) || (f_resultRoot.exists())
+				&& (!f_resultRoot.isDirectory())) {
 
-			resultRoot.mkdir();
+			f_resultRoot.mkdir();
 		}
 	}
 
 	public void execute() {
 		List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
-		if (currentSelection != null) {
-			for (Object selection : currentSelection.toArray()) {
+		if (f_currentSelection != null) {
+			for (Object selection : f_currentSelection.toArray()) {
 				if (selection instanceof IJavaProject) {
 					selectedProjects.add((IJavaProject) selection);
 				}
 			}
 
-			buildFiles = new ArrayList<File>();
+			f_buildFiles = new ArrayList<File>();
 			Stack<File> runDocuments = new Stack<File>();
 
 			for (IJavaProject project : selectedProjects) {
@@ -86,27 +84,27 @@ public final class RunAnalysis {
 						.toString();
 
 				File baseDir = new File(projectPath);
-				File runDocument = new File(resultRoot + File.separator
+				File runDocument = new File(f_resultRoot + File.separator
 						+ project.getProject().getName()
 						+ SierraConstants.PARSED_FILE_SUFFIX);
 				runDocuments.push(runDocument);
 
-				config = new Config();
+				f_config = new Config();
 
-				config.setBaseDirectory(baseDir);
-				config.setProject(project.getProject().getName());
-				config.setDestDirectory(resultRoot);
-				config.setRunDocument(runDocument);
+				f_config.setBaseDirectory(baseDir);
+				f_config.setProject(project.getProject().getName());
+				f_config.setDestDirectory(f_resultRoot);
+				f_config.setRunDocument(runDocument);
 
 				// Get the plugin directory that has tools folder and append the
 				// directory
 				String tools = BuildFileGenerator.getToolsDirectory();
 				tools = tools + SierraConstants.TOOLS_FOLDER;
-				config.setToolsDirectory(new File(tools));
+				f_config.setToolsDirectory(new File(tools));
 
-				bfg = new BuildFileGenerator(config);
-				buildFile = bfg.writeBuildFile();
-				buildFiles.add(buildFile);
+				f_buildFileGenerator = new BuildFileGenerator(f_config);
+				f_buildFile = f_buildFileGenerator.writeBuildFile();
+				f_buildFiles.add(f_buildFile);
 
 			}
 
@@ -114,9 +112,10 @@ public final class RunAnalysis {
 			// buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
 			// }
 
-			if (buildFile != null) {
+			if (f_buildFile != null) {
 
-				Job runSierraAnalysis = new RunSierraJob("Running Sierra...");
+				Job runSierraAnalysis = new RunSierraJob("Running Sierra...",
+						f_buildFiles, f_toolsDirectory);
 				runSierraAnalysis.setPriority(Job.SHORT);
 				runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
 						runDocuments));
@@ -131,7 +130,7 @@ public final class RunAnalysis {
 								"Sierra Analysis Started",
 								"You may continue to work as the analysis runs. "
 										+ "You will be notified when the analysis has been completed.");
-				log.info("Started analysis..");
+				LOG.info("Started analysis..");
 
 			}
 
@@ -139,58 +138,64 @@ public final class RunAnalysis {
 
 	}
 
-	private class AntRunnable implements Runnable {
+	private static class AntRunnable implements Runnable {
 
-		private boolean complete;
-		private SierraAnalysis sa;
-		private List<File> buildFileList;
+		private boolean f_complete;
+		private SierraAnalysis f_sierraAnalysis;
+		private final List<File> f_buildFileList;
+		private final File f_toolsDirectory;
 
-		public AntRunnable(List<File> buildFiles) {
-			this.buildFileList = buildFiles;
+		public AntRunnable(List<File> buildFiles, File toolsDirectory) {
+			f_buildFileList = buildFiles;
+			f_toolsDirectory = toolsDirectory;
 		}
 
 		public void run() {
 
-			complete = false;
-			for (File f : buildFileList) {
+			f_complete = false;
+			for (File f : f_buildFileList) {
 				Parser buildFileParser = new Parser();
 				List<Config> configs = buildFileParser.parseBuildFile(f
 						.getAbsolutePath());
 				for (Config c : configs) {
-					c.setToolsDirectory(toolsDirectory);
-					sa = new SierraAnalysis(c);
-					sa.execute();
+					c.setToolsDirectory(f_toolsDirectory);
+					f_sierraAnalysis = new SierraAnalysis(c);
+					f_sierraAnalysis.execute();
 				}
 			}
-			complete = true;
+			f_complete = true;
 		}
 
 		public void stopAll() {
-			sa.stop();
+			f_sierraAnalysis.stop();
 		}
 
 		public boolean isCompleted() {
-			return complete;
+			return f_complete;
 		}
 	}
 
-	private class RunSierraJob extends Job {
+	private static class RunSierraJob extends Job {
 
-		public RunSierraJob(String name) {
+		private final List<File> f_buildFiles;
+		private final File f_toolsDirectory;
+
+		public RunSierraJob(String name, List<File> buildFiles,
+				File toolsDirectory) {
 			super(name);
+			f_buildFiles = buildFiles;
+			f_toolsDirectory = toolsDirectory;
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-
-			Thread antThread;
-
 			try {
 
 				monitor.beginTask("Running tools...", IProgressMonitor.UNKNOWN);
 
-				AntRunnable antRunnable = new AntRunnable(buildFiles);
-				antThread = new Thread(antRunnable);
+				final AntRunnable antRunnable = new AntRunnable(f_buildFiles,
+						f_toolsDirectory);
+				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
 
 				BalloonUtility
@@ -212,113 +217,26 @@ public final class RunAnalysis {
 					return SierraConstants.TASK_CANCELLED;
 				} else {
 					monitor.done();
-					log.info("Completed analysis");
+					LOG.info("Completed analysis");
 					return SierraConstants.PROPER_TERMINATION;
 				}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE,
+				LOG.log(Level.SEVERE,
 						"Exception while trying to excute ant build task" + e);
-
 			}
 
 			monitor.done();
 			return SierraConstants.IMPROPER_TERMINATION;
-
 		}
 	}
 
-	// Handles ANT run using antrunner
-	// @SuppressWarnings("unused")
-	// private class RunSierraAntJob extends Job {
-	//
-	// private AntRunner runner;
-	//
-	// public RunSierraAntJob(String name) {
-	// super(name);
-	// }
-	//
-	// @Override
-	// protected IStatus run(IProgressMonitor monitor) {
-	//
-	// Thread antThread;
-	//
-	// try {
-	//
-	// monitor.beginTask("Running analysis...",
-	// IProgressMonitor.UNKNOWN);
-	//
-	// if (!AntRunner.isBuildRunning()) {
-	// antThread = new Thread(new Runnable() {
-	//
-	// public void run() {
-	//
-	// try {
-	// runner = new AntRunner();
-	// runner.setBuildFileLocation(buildFile
-	// .getAbsolutePath());
-	// runner.addBuildLogger(ANT_LOGGER_DEFAULT);
-	//
-	// runner.setArguments("-logfile " + resultRoot
-	// + File.separator + ANT_LOG_FILE);
-	// runner.run();
-	// } catch (CoreException e) {
-	// log.log(Level.SEVERE,
-	// "Core exception while trying to excute ant build task"
-	// + e);
-	// }
-	//
-	// }
-	//
-	// });
-	// antThread.start();
-	// BalloonUtility
-	// .showMessage(
-	// "Sierra Analysis Started",
-	// "You may continue to work as the analysis runs. "
-	// + "You will be notified when the analysis has been completed.");
-	//
-	// } else {
-	// monitor.done();
-	// return TASK_ALREADY_RUNNING;
-	//
-	// }
-	//
-	// while (!monitor.isCanceled()) {
-	// Thread.sleep(500);
-	// if (!AntRunner.isBuildRunning()) {
-	// break;
-	// }
-	// }
-	//
-	// if (monitor.isCanceled()) {
-	// monitor.done();
-	// antThread.interrupt();
-	// return TASK_CANCELLED;
-	// } else {
-	// monitor.done();
-	// return PROPER_TERMINATION;
-	// }
-	//
-	// } catch (Exception e) {
-	// log.log(Level.SEVERE,
-	// "Exception while trying to excute ant build task" + e);
-	//
-	// }
-	//
-	// monitor.done();
-	// return IMPROPER_TERMINATION;
-	//
-	// }
-	//
-	// }
+	private static class RunSierraAdapter extends JobChangeAdapter {
 
-	private class RunSierraAdapter extends JobChangeAdapter {
-
-		private Stack<File> runDocs;
+		private Stack<File> f_runDocs;
 
 		public RunSierraAdapter(Stack<File> runDocs) {
-			this.runDocs = runDocs;
+			f_runDocs = runDocs;
 		}
 
 		@Override
@@ -326,14 +244,14 @@ public final class RunAnalysis {
 			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
 
 				Job databaseEntryJob = new DatabaseEntryJob(
-						"Finshing analysis", runDocs);
+						"Finshing analysis", f_runDocs);
 				databaseEntryJob.setPriority(Job.SHORT);
 				databaseEntryJob
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
 				databaseEntryJob.schedule();
 
 			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
-				log.info("Cancelled analysis");
+				LOG.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
 			} else if (event.getResult().equals(
@@ -348,51 +266,36 @@ public final class RunAnalysis {
 						"Sierra Analysis Completed with errors",
 						"Check the logs.");
 			}
-
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private class DataEntryRunnable implements Runnable {
-		private boolean complete = false;
+	private static class DatabaseEntryJob extends Job {
 
-		public void run() {
-			// TODO Auto-generated method stub
-
-		}
-
-		public boolean isCompleted() {
-			return complete;
-		}
-	}
-
-	private class DatabaseEntryJob extends Job {
-
-		private Stack<File> runDocs;
+		private final Stack<File> f_runDocs;
 
 		public DatabaseEntryJob(String name, Stack<File> runDocs) {
 			super(name);
-			this.runDocs = runDocs;
+			f_runDocs = runDocs;
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			log.info("Starting database entry...");
+			LOG.info("Starting database entry...");
 
 			SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 					monitor);
 
-			while (!runDocs.isEmpty()) {
+			while (!f_runDocs.isEmpty()) {
 
-				File runDocumentHolder = runDocs.pop();
-				log.info("Currently loading..."
+				File runDocumentHolder = f_runDocs.pop();
+				LOG.info("Currently loading..."
 						+ runDocumentHolder.getAbsolutePath());
 				try {
 					RunDocumentUtility.loadRunDocument(runDocumentHolder,
 							slProgressMonitorWrapper);
 
 				} catch (RunPersistenceException rpe) {
-					log.severe(rpe.getMessage());
+					LOG.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
 							"Sierra Analysis Completed with errors",
 							"Check the logs.");
@@ -404,14 +307,14 @@ public final class RunAnalysis {
 			if (slProgressMonitorWrapper.isCanceled()) {
 				return SierraConstants.TASK_CANCELLED;
 			} else {
-				log.info("Finished everything");
+				LOG.info("Finished everything");
 				slProgressMonitorWrapper.done();
 				return SierraConstants.PROPER_TERMINATION;
 			}
 		}
 	}
 
-	private class DatabaseEntryJobAdapter extends JobChangeAdapter {
+	private static class DatabaseEntryJobAdapter extends JobChangeAdapter {
 
 		@Override
 		public void done(IJobChangeEvent event) {
@@ -420,7 +323,7 @@ public final class RunAnalysis {
 						"You may now examine the analysis results.");
 
 			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
-				log.info("Cancelled analysis");
+				LOG.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
 			} else {
@@ -428,8 +331,6 @@ public final class RunAnalysis {
 						"Sierra Analysis Completed with errors",
 						"Check the logs.");
 			}
-
 		}
 	}
-
 }

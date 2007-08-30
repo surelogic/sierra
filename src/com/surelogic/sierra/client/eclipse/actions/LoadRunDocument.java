@@ -16,13 +16,11 @@ import com.surelogic.sierra.client.eclipse.jobs.LoadRunDocumentJob;
 public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
-		// System.out.println("dispose");
-
+		// Nothing to do
 	}
 
 	public void init(IWorkbenchWindow window) {
-		// System.out.println("init");
-
+		// Nothing to do
 	}
 
 	private FileDialog fd = null;
@@ -50,8 +48,6 @@ public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		// System.out.println("selectionChanged");
-
+		// Nothing to do
 	}
-
 }

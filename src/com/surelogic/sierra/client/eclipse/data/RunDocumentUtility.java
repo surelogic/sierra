@@ -18,7 +18,8 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Settings;
 
 public final class RunDocumentUtility {
-	private static final Logger log = SLLogger.getLogger("sierra");
+
+	private static final Logger LOG = SLLogger.getLogger("sierra");
 
 	private RunDocumentUtility() {
 		// no instances
@@ -49,15 +50,15 @@ public final class RunDocumentUtility {
 				MessageWarehouse.getInstance().parseRunDocument(runDocument,
 						gen, monitor);
 			} catch (SQLException e) {
-				log.log(Level.SEVERE, "SQL Exception while persisting run.", e);
+				LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);
 			} catch (Exception e) {
-				log.log(Level.SEVERE,
+				LOG.log(Level.SEVERE,
 						"Exception occurred while persisting run.", e);
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e) {
-			log.log(Level.SEVERE, "SQL Exception while persisting run.", e);
+			LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);
 		}
 	}
 }

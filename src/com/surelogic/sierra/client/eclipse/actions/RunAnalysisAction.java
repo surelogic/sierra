@@ -19,7 +19,6 @@ public class RunAnalysisAction implements IObjectActionDelegate,
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// Nothing to do
-
 	}
 
 	public void run(IAction action) {
@@ -43,7 +42,6 @@ public class RunAnalysisAction implements IObjectActionDelegate,
 							"Selection is not an IStructuredSelection",
 							new Exception());
 		}
-
 	}
 
 	public void dispose() {
@@ -52,7 +50,5 @@ public class RunAnalysisAction implements IObjectActionDelegate,
 
 	public void init(IWorkbenchWindow window) {
 		// Nothing to do
-
 	}
-
 }
