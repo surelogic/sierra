@@ -14,12 +14,15 @@ import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
-import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRunRecord;
+import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
+import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.tool.message.Settings;
 
 class JDBCRunGenerator implements RunGenerator {
 
@@ -28,16 +31,19 @@ class JDBCRunGenerator implements RunGenerator {
 
 	private final Connection conn;
 	private final RunRecordFactory factory;
+	private final Settings settings;
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
 	private String uid;
 	private List<String> qualifiers;
 
-	JDBCRunGenerator(Connection conn, RunRecordFactory factory) {
+	JDBCRunGenerator(Connection conn, RunRecordFactory factory,
+			Settings settings) {
 		this.conn = conn;
 		this.factory = factory;
 		this.qualifiers = Collections.emptyList();
+		this.settings = settings;
 	}
 
 	public ArtifactGenerator build() {
@@ -71,7 +77,11 @@ class JDBCRunGenerator implements RunGenerator {
 				}
 			}
 			conn.commit();
-			return new JDBCArtifactGenerator(conn, factory, run,
+			final MessageFilter filter = FindingTypeManager.getInstance(conn)
+					.getMessageFilter(settings);
+			return new JDBCArtifactGenerator(conn, factory, run, filter,
+			// This runnable is called after finish is called in
+					// ArtifactGenerator
 					new Runnable() {
 						public void run() {
 							try {
@@ -80,7 +90,6 @@ class JDBCRunGenerator implements RunGenerator {
 							} catch (SQLException e) {
 								throw new RunPersistenceException(e);
 							}
-							// TODO trigger finding generation here
 							log
 									.info("Run "
 											+ run.getId()
@@ -89,12 +98,13 @@ class JDBCRunGenerator implements RunGenerator {
 								if (qualifiers.isEmpty()) {
 									// This is a client run
 									FindingManager.getInstance(conn)
-											.generateFindings(run.getUid());
+											.generateFindings(run.getUid(),
+													filter);
 								} else {
 									for (String qualifier : qualifiers) {
 										FindingManager.getInstance(conn,
 												qualifier).generateFindings(
-												run.getUid());
+												run.getUid(), filter);
 									}
 								}
 							} catch (SQLException e) {

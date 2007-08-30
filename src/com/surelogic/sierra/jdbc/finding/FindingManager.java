@@ -13,7 +13,7 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.TrailRecord;
 import com.surelogic.sierra.jdbc.run.RunRecordFactory;
-import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -40,7 +40,7 @@ public abstract class FindingManager {
 	 * 
 	 * @param uid
 	 */
-	public void generateFindings(String uid) {
+	public void generateFindings(String uid, MessageFilter filter) {
 		try {
 
 			FindingRecordFactory factory = getFactory();
@@ -79,7 +79,8 @@ public abstract class FindingManager {
 					t.setProjectId(projectId);
 					FindingRecord f = factory.newFinding();
 					f.setTrail(t);
-					f.setImportance(calculateImportance(art.s, art.p));
+					f.setImportance(filter.calculateImportance(art.m.getId()
+							.getFindingTypeId(), art.p, art.s));
 					t.insert();
 					f.insert();
 					m.setFindingId(f.getId());
@@ -94,7 +95,8 @@ public abstract class FindingManager {
 					TrailRecord t = factory.newTrail();
 					t.setId(m.getTrailId());
 					f.setTrail(t);
-					f.setImportance(calculateImportance(art.s, art.p));
+					f.setImportance(filter.calculateImportance(art.m.getId()
+							.getFindingTypeId(), art.p, art.s));
 					f.insert();
 					findingId = f.getId();
 					m.setFindingId(findingId);
@@ -117,12 +119,6 @@ public abstract class FindingManager {
 		} catch (SQLException e) {
 			sqlError(e);
 		}
-	}
-
-	private static Importance calculateImportance(Severity severity,
-			Priority priority) {
-		return Importance.values()[((int) (((float) (severity.ordinal() + priority
-				.ordinal())) / 2))];
 	}
 
 	private void sqlError(SQLException e) {

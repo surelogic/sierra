@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.tool.message.Settings;
 
 public class RunManager {
 
@@ -38,8 +39,8 @@ public class RunManager {
 		this.deleteSources = conn.prepareStatement(DELETE_UNUSED_SOURCES);
 	}
 
-	public RunGenerator getRunGenerator() {
-		return new JDBCRunGenerator(conn, factory);
+	public RunGenerator getRunGenerator(Settings settings) {
+		return new JDBCRunGenerator(conn, factory, settings);
 	}
 
 	/**

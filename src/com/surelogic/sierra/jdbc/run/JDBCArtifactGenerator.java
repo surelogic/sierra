@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.run;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,8 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
-import com.surelogic.sierra.jdbc.tool.FindingTypeKey;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
+import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.message.IdentifierType;
@@ -42,6 +42,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final Connection conn;
 
+	private final FindingTypeManager ftMan;
+
 	private final RunRecordFactory factory;
 	private final Runnable callback;
 
@@ -53,17 +55,22 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Map<CompilationUnitRecord, CompilationUnitRecord> compUnits;
 	private final Set<ArtifactSourceRecord> relations;
 
+	private final MessageFilter filter;
+
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
 
 	public JDBCArtifactGenerator(Connection conn, RunRecordFactory factory,
-			RunRecord run, Runnable callback) throws SQLException {
+			RunRecord run, MessageFilter filter, Runnable callback)
+			throws SQLException {
 		log.info("Now persisting artifacts to database for run " + run.getId());
 		this.conn = conn;
 		this.factory = factory;
 		this.callback = callback;
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
 
+		this.filter = filter;
+		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
 		this.classMetrics = new ArrayList<ClassMetricRecord>(COMMIT_SIZE);
 		this.sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
@@ -114,16 +121,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 	}
 
-	// TODO We may be able to speed up here by keeping a map of recent ids
-	private long getFindingTypeId(String tool, String version, String mnemonic)
-			throws SQLException {
-		FindingTypeKey ins = new FindingTypeKey(tool, version, mnemonic);
-		ins.fill(toolIdSelect, 1);
-		ResultSet set = toolIdSelect.executeQuery();
-		set.next();
-		return set.getLong(1);
-	}
-
 	public ArtifactBuilder artifact() {
 		return aBuilder;
 	}
@@ -140,10 +137,16 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		private final RunRecord run;
 		private CompilationUnitRecord compUnit;
-		private int linesOfCode;
+		private Integer linesOfCode;
 
 		public JDBCMetricBuilder(RunRecord run) {
 			this.run = run;
+			clear();
+		}
+
+		private void clear() {
+			this.compUnit = factory.newCompilationUnit();
+			linesOfCode = null;
 		}
 
 		public void build() {
@@ -154,7 +157,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			}
 			ClassMetricRecord rec = factory.newClassMetric();
 			rec.setId(new RelationRecord.PK<RunRecord, CompilationUnitRecord>(
-					run, compUnit));
+					run, currentComp));
 			rec.setLinesOfCode(linesOfCode);
 			classMetrics.add(rec);
 			if (classMetrics.size() == COMMIT_SIZE) {
@@ -164,6 +167,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 					throw new RunPersistenceException(e);
 				}
 			}
+			clear();
 		}
 
 		public MetricBuilder className(String name) {
@@ -211,19 +215,51 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		private ArtifactRecord artifact;
 		private long runId;
+		private final List<SourceRecord> aSources;
+		private SourceRecord pSource;
 
 		public JDBCArtifactBuilder(RunRecord run) {
 			this.runId = run.getId();
+			this.aSources = new ArrayList<SourceRecord>();
 			clear();
 		}
 
+		private SourceRecord addSource(SourceRecord source) {
+			CompilationUnitRecord compUnit = source.getCompUnit();
+			CompilationUnitRecord currentComp = compUnits.get(compUnit);
+			if (currentComp == null) {
+				compUnits.put(compUnit, compUnit);
+				currentComp = compUnit;
+			}
+			source.setCompUnit(currentComp);
+			SourceRecord currentSource = sources.get(source);
+			if (currentSource == null) {
+				sources.put(source, source);
+				currentSource = source;
+			}
+			return currentSource;
+		}
+
 		public void build() {
-			artifacts.add(artifact);
-			if (artifacts.size() == COMMIT_SIZE) {
-				try {
-					persist();
-				} catch (SQLException e) {
-					throw new RunPersistenceException(e);
+			if (filter.accept(artifact.getFindingTypeId())) {
+				artifact.setPrimary(addSource(pSource));
+				for (SourceRecord source : aSources) {
+					SourceRecord currentSource = addSource(source);
+					ArtifactSourceRecord rel = factory
+							.newArtifactSourceRelation();
+					rel
+							.setId(new RecordRelationRecord.PK<ArtifactRecord, SourceRecord>(
+									artifact, currentSource));
+					relations.add(rel);
+				}
+
+				artifacts.add(artifact);
+				if (artifacts.size() == COMMIT_SIZE) {
+					try {
+						persist();
+					} catch (SQLException e) {
+						throw new RunPersistenceException(e);
+					}
 				}
 			}
 			clear();
@@ -232,7 +268,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		public ArtifactBuilder findingType(String tool, String version,
 				String mnemonic) {
 			try {
-				artifact.setFindingTypeId(getFindingTypeId(tool, version,
+				artifact.setFindingTypeId(ftMan.getFindingTypeId(tool, version,
 						mnemonic));
 			} catch (SQLException e) {
 				throw new RunPersistenceException(e);
@@ -266,6 +302,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		private void clear() {
 			artifact = factory.newArtifact();
 			artifact.setRunId(runId);
+			aSources.clear();
 		}
 
 		private class JDBCSourceLocationBuilder implements
@@ -278,30 +315,15 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			public JDBCSourceLocationBuilder(boolean primary) {
 				sourceIns = factory.newSource();
 				compUnit = factory.newCompilationUnit();
+				sourceIns.setCompUnit(compUnit);
 				this.primary = primary;
 			}
 
 			public void build() {
-				CompilationUnitRecord currentComp = compUnits.get(compUnit);
-				if (currentComp == null) {
-					compUnits.put(compUnit, compUnit);
-					currentComp = compUnit;
-				}
-				sourceIns.setCompUnit(currentComp);
-				SourceRecord currentSource = sources.get(sourceIns);
-				if (currentSource == null) {
-					sources.put(sourceIns, sourceIns);
-					currentSource = sourceIns;
-				}
 				if (primary) {
-					artifact.setPrimary(currentSource);
+					pSource = sourceIns;
 				} else {
-					ArtifactSourceRecord rel = factory
-							.newArtifactSourceRelation();
-					rel
-							.setId(new RecordRelationRecord.PK<ArtifactRecord, SourceRecord>(
-									artifact, currentSource));
-					relations.add(rel);
+					aSources.add(sourceIns);
 				}
 			}
 
