@@ -12,6 +12,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -48,6 +49,8 @@ public class BuildFileHandler extends DefaultHandler {
 	private final String javaVendor;
 	@SuppressWarnings("unused")
 	private final String javaVersion;
+
+	private String runDocumentNameHolder;
 
 	public BuildFileHandler() {
 		javaVendor = System.getProperty("java.vendor");
@@ -102,8 +105,8 @@ public class BuildFileHandler extends DefaultHandler {
 					}
 
 					if ("runDocument".equals(aName)) {
-						File runDocument = new File(attributes.getValue(i));
-						config.setRunDocument(runDocument);
+						runDocumentNameHolder = attributes.getValue(i);
+
 					}
 
 					if ("Clean".equals(aName)) {
@@ -330,6 +333,21 @@ public class BuildFileHandler extends DefaultHandler {
 		if ("sierra-analysis".equals(eName)) {
 			inSierraAnalysis = false;
 
+			File runDocument = new File(runDocumentNameHolder);
+			if (runDocument == null || "".equals(runDocument)) {
+				runDocument = new File(SierraConstants.SIERRA_RESULTS_PATH,
+						config.getProject()
+								+ SierraConstants.PARSED_FILE_SUFFIX);
+			} else if (runDocument.isDirectory()) {
+				runDocument = new File(runDocument, config.getProject()
+						+ SierraConstants.PARSED_FILE_SUFFIX);
+			} else if (!runDocument.getName().endsWith(
+					SierraConstants.PARSED_FILE_SUFFIX)) {
+				runDocument = new File(runDocument.getParentFile(), runDocument
+						.getName()
+						+ SierraConstants.PARSED_FILE_SUFFIX);
+			}
+			config.setRunDocument(runDocument);
 			config.setRunDateTime(Calendar.getInstance().getTime());
 			config.setSourceDirs(srcDir);
 			config.setBinDirs(binDir);
