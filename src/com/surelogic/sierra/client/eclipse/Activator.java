@@ -22,16 +22,16 @@ public class Activator extends AbstractUIPlugin {
 	public static final String XML_ENCODING = "UTF-8";
 
 	// The shared instance
-	private static Activator plugin;
+	private static Activator f_plugin;
 
 	/**
 	 * The constructor
 	 */
 	public Activator() {
-		if (plugin != null)
+		if (f_plugin != null)
 			throw new IllegalStateException(PLUGIN_ID + " class instance ("
 					+ Activator.class.getName() + ") already exits");
-		plugin = this;
+		f_plugin = this;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		plugin = null;
+		f_plugin = null;
 		super.stop(context);
 	}
 
@@ -55,14 +55,14 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the shared instance.
 	 */
 	public static Activator getDefault() {
-		return plugin;
+		return f_plugin;
 	}
 
 	/**
 	 * Shows the view identified by the given view id in this page and gives it
 	 * focus. If there is a view identified by the given view id (and with no
 	 * secondary id) already open in this page, it is given focus.
-	 * <P>
+	 * <p>
 	 * This method must be called from a UI thread or it will throw a
 	 * {@link NullPointerException}. *
 	 * 
