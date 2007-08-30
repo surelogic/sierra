@@ -25,7 +25,9 @@
                 id="com.surelogic.sierra.client.eclipse.workbenchMenu"
                 label="Sierra"
                 path="additions">
-            <groupMarker name="content"/>
+            
+            <groupMarker name="server"/>
+            <separator name="project"/>
             <separator name="additions"/>
           </menu>
           
@@ -33,14 +35,25 @@
                class="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
                label="Load Analysis Run Document..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content">
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
           </action>     
-                      
+                
+         <action
+           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+                label="Synchronize Project with Server"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/project"
+                enablesFor="+">
+             <selection class="org.eclipse.jdt.core.IJavaProject"/>
+          </action>
+              
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                 id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisWorkbench"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                 label="Analyze Project"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/content"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/project"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
@@ -53,13 +66,26 @@
       <objectContribution
             id="Sierra.popupMenu"
             objectClass="org.eclipse.jdt.core.IJavaProject">
+         <menu
+               id="com.surelogic.sierra.client.eclipse.projectContextMenu"
+               label="Sierra"
+               path="additions">
+            <groupMarker name="content"/>
+         </menu>
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               enablesFor="+"
+               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+               label="Synchronize Project with Server"
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/content"/>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                label="Analyze Project"
-               menubarPath="additions"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/content"/>
       </objectContribution>
    </extension>
    

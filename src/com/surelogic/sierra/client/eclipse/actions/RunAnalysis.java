@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
@@ -37,7 +36,7 @@ public final class RunAnalysis {
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private IStructuredSelection f_currentSelection = null;
+	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
 	private File f_resultRoot;
 
@@ -53,10 +52,10 @@ public final class RunAnalysis {
 
 	private List<Config> f_configs;
 
-	public RunAnalysis(IStructuredSelection currentSelection) {
+	public RunAnalysis(List<IJavaProject> selectedProjects) {
 		// Get the plugin directory that has tools folder and append the
 		// directory
-		f_currentSelection = currentSelection;
+		f_selectedProjects.addAll(selectedProjects);
 		String tools = BuildFileGenerator.getToolsDirectory()
 				+ SierraConstants.TOOLS_FOLDER;
 		f_toolsDirectory = new File(tools);
@@ -70,100 +69,80 @@ public final class RunAnalysis {
 	}
 
 	public void execute() {
-		List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
-		if (f_currentSelection != null) {
-			for (Object selection : f_currentSelection.toArray()) {
-				if (selection instanceof IJavaProject) {
-					selectedProjects.add((IJavaProject) selection);
-				}
-			}
 
-			f_buildFiles = new ArrayList<File>();
+		f_buildFiles = new ArrayList<File>();
 
-			// Get from preference page
-			final String sierraPath = Activator.getDefault()
-					.getPluginPreferences().getString(
-							PreferenceConstants.P_SIERRA_PATH);
-			File sierraFolder = new File(sierraPath);
+		// Get from preference page
+		final String sierraPath = Activator.getDefault().getPluginPreferences()
+				.getString(PreferenceConstants.P_SIERRA_PATH);
+		final File sierraFolder = new File(sierraPath);
 
-			for (IJavaProject project : selectedProjects) {
-				String projectPath = project.getResource().getLocation()
-						.toString();
+		final StringBuilder projectList = new StringBuilder();
 
-				File baseDir = new File(projectPath);
-				File runDocument = new File(sierraPath + File.separator
-						+ project.getProject().getName()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
-				// File runDocument = new File(f_resultRoot + File.separator
-				// + project.getProject().getName()
-				// + SierraConstants.PARSED_FILE_SUFFIX);
+		for (IJavaProject project : f_selectedProjects) {
+			projectList.append(" ").append(project.getProject().getName());
+			
+			String projectPath = project.getResource().getLocation().toString();
 
-				f_config = new Config();
+			File baseDir = new File(projectPath);
+			File runDocument = new File(sierraPath + File.separator
+					+ project.getProject().getName()
+					+ SierraConstants.PARSED_FILE_SUFFIX);
 
-				f_config.setBaseDirectory(baseDir);
-				f_config.setProject(project.getProject().getName());
-				f_config.setDestDirectory(f_resultRoot);
-				f_config.setRunDocument(runDocument);
+			f_config = new Config();
 
-				// Get the plugin directory that has tools folder and append the
-				// directory
-				String tools = BuildFileGenerator.getToolsDirectory();
-				tools = tools + SierraConstants.TOOLS_FOLDER;
-				f_config.setToolsDirectory(new File(tools));
+			f_config.setBaseDirectory(baseDir);
+			f_config.setProject(project.getProject().getName());
+			f_config.setDestDirectory(f_resultRoot);
+			f_config.setRunDocument(runDocument);
 
-				f_buildFileGenerator = new BuildFileGenerator(f_config);
-				File buildFile = f_buildFileGenerator.writeBuildFile();
-				f_buildFiles.add(buildFile);
+			// Get the plug-in directory that has tools folder and append the
+			// directory
+			String tools = BuildFileGenerator.getToolsDirectory();
+			tools = tools + SierraConstants.TOOLS_FOLDER;
+			f_config.setToolsDirectory(new File(tools));
 
-			}
-
-			// if (buildFiles.size() > 1) {
-			// buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
-			// }
-
-			if (f_buildFiles.size() > 0) {
-
-				f_configs = new ArrayList<Config>();
-
-				Stack<File> runDocuments = new Stack<File>();
-				// Generate configs from all build files
-				for (File f : f_buildFiles) {
-					Parser buildFileParser = new Parser();
-					List<Config> configsHolder = buildFileParser
-							.parseBuildFile(f.getAbsolutePath());
-					for (Config c : configsHolder) {
-						File runDocumentHolder = new File(sierraFolder
-								+ File.separator + c.getProject()
-								+ SierraConstants.PARSED_FILE_SUFFIX);
-						c.setRunDocument(runDocumentHolder);
-						// Change the run documents
-						runDocuments.push(runDocumentHolder);
-						c.setToolsDirectory(f_toolsDirectory);
-						f_configs.add(c);
-					}
-				}
-				Job runSierraAnalysis = new RunSierraJob("Running Sierra...",
-						f_configs);
-				runSierraAnalysis.setPriority(Job.SHORT);
-				runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
-						runDocuments));
-				runSierraAnalysis.schedule();
-
-				// Job runBuildfile = new RunSierraAntJob("Running Sierra...");
-				// runBuildfile.setPriority(Job.SHORT);
-				// runBuildfile.addJobChangeListener(new RunSierraAdapter());
-				// runBuildfile.schedule();
-				BalloonUtility
-						.showMessage(
-								"Sierra Analysis Started",
-								"You may continue to work as the analysis runs. "
-										+ "You will be notified when the analysis has been completed.");
-				LOG.info("Started analysis..");
-
-			}
+			f_buildFileGenerator = new BuildFileGenerator(f_config);
+			File buildFile = f_buildFileGenerator.writeBuildFile();
+			f_buildFiles.add(buildFile);
 
 		}
 
+		if (f_buildFiles.size() > 0) {
+
+			f_configs = new ArrayList<Config>();
+
+			Stack<File> runDocuments = new Stack<File>();
+			// Generate configs from all build files
+			for (File f : f_buildFiles) {
+				Parser buildFileParser = new Parser();
+				List<Config> configsHolder = buildFileParser.parseBuildFile(f
+						.getAbsolutePath());
+				for (Config c : configsHolder) {
+					File runDocumentHolder = new File(sierraFolder
+							+ File.separator + c.getProject()
+							+ SierraConstants.PARSED_FILE_SUFFIX);
+					c.setRunDocument(runDocumentHolder);
+					// Change the run documents
+					runDocuments.push(runDocumentHolder);
+					c.setToolsDirectory(f_toolsDirectory);
+					f_configs.add(c);
+				}
+			}
+			Job runSierraAnalysis = new RunSierraJob("Running Sierra...",
+					f_configs);
+			runSierraAnalysis.setPriority(Job.SHORT);
+			runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
+					runDocuments));
+			runSierraAnalysis.schedule();
+
+			BalloonUtility
+					.showMessage(
+							"Sierra Analysis Started",
+							"You may continue to work as the analysis runs. "
+									+ "You will be notified when the analysis has been completed.");
+			LOG.info("Started analysis on projects:" + projectList);
+		}
 	}
 
 	private static class AntRunnable implements Runnable {
