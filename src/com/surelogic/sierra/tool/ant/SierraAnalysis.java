@@ -159,7 +159,7 @@ public class SierraAnalysis extends Task {
 	private Path bindir = null;
 
 	/* *********************** CONSTANTS ****************************** */
-	private static final String PARSED_FILE_SUFFIX = ".parsed";
+	private static final String PARSED_FILE_SUFFIX = ".sierra";
 	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
 
 	static {
@@ -371,16 +371,15 @@ public class SierraAnalysis extends Task {
 					.toArray(new String[sourceDirectory.size()]);
 
 			if (runDocument == null || "".equals(runDocument)) {
-				runDocument = new File(tmpFolder, project.getName() + ".xml"
+				runDocument = new File(tmpFolder, project.getName()
 						+ PARSED_FILE_SUFFIX);
 			} else if (runDocument.isDirectory()) {
-				runDocument = new File(runDocument, project.getName() + ".xml"
+				runDocument = new File(runDocument, project.getName()
 						+ PARSED_FILE_SUFFIX);
-			} else if (!runDocument.getName().endsWith(
-					".xml" + PARSED_FILE_SUFFIX)) {
+			} else if (!runDocument.getName().endsWith(PARSED_FILE_SUFFIX)) {
 				runDocument = new File(runDocument.getParentFile(), runDocument
 						.getName()
-						+ ".xml" + PARSED_FILE_SUFFIX);
+						+ PARSED_FILE_SUFFIX);
 			}
 
 			antProject.log("Generating the run document: " + runDocument,
