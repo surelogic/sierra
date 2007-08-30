@@ -377,9 +377,8 @@ public class MessageWarehouse {
 
 	private static void readClassMetric(ClassMetric metric,
 			MetricBuilder builder) {
-		builder.className(metric.getName()).packageName(
-				metric.getPackage()).linesOfCode(
-				metric.getLoc()).build();
+		builder.className(metric.getName()).packageName(metric.getPackage())
+				.linesOfCode(metric.getLoc()).path(metric.getPath()).build();
 	}
 
 	private static void readError(Error e, ErrorBuilder builder) {

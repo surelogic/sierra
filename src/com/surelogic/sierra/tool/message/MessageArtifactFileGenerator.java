@@ -159,6 +159,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			metric.setName(clazz);
 			metric.setPackage(pakkage);
 			metric.setLoc(linesOfCode);
+			metric.setPath(path);
 			mw.writeClassMetric(metric, artOut);
 		}
 

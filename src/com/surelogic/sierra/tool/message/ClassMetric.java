@@ -9,9 +9,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class ClassMetric {
 
+	private String path;
 	private String packageName;
 	private String className;
 	private int loc;
+
+	@XmlAttribute
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
 
 	@XmlAttribute
 	public String getPackage() {
