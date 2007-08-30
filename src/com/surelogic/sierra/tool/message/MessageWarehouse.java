@@ -218,7 +218,7 @@ public class MessageWarehouse {
 			}
 			xmlr.close();
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("File with name"
+			throw new IllegalArgumentException("File with name "
 					+ runDocument.getName() + " does not exist.", e);
 		} catch (XMLStreamException e) {
 			throw new IllegalArgumentException(e);
