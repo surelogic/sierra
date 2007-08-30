@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
 
 public final class LoadRunDocumentJob extends DatabaseJob {
 

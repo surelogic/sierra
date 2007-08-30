@@ -19,7 +19,7 @@ import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.data.RunDocumentUtility;
+import com.surelogic.sierra.client.eclipse.jobs.RunDocumentUtility;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.analyzer.Parser;

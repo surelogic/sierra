@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.data;
+package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.io.File;
 import java.sql.Connection;
