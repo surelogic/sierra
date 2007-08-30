@@ -446,8 +446,13 @@ public class SierraAnalysis extends Task {
 						+ runDocument.getAbsolutePath() + " to the server: "
 						+ server, org.apache.tools.ant.Project.MSG_ERR);
 				uploadSuccessful = false;
+				throw new BuildException("Failed to upload run document, "
+						+ runDocument.getAbsolutePath() + " to the server: "
+						+ server);
 			}
-			uploadSuccessful = true;
+			else{
+    			uploadSuccessful = true;
+			}
 		}
 	}
 
