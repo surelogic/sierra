@@ -168,16 +168,19 @@ public class SierraAnalysis extends Task {
 		DEPENDENCIES.add("jsr173_api.jar");
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
+	
+	{
+		antProject = getProject();
+		log("Project is null? " + (antProject == null));
+		srcdir = new Path(antProject);
+		bindir = new Path(antProject);
+	}
 
 	/**
 	 * Constructor
 	 */
 	public SierraAnalysis() {
 		super();
-		antProject = getProject();
-		log("Project is null? " + (antProject == null));
-		srcdir = new Path(antProject);
-		bindir = new Path(antProject);
 	}
 
 	/**
