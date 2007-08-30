@@ -60,5 +60,4 @@ public final class RunDocumentUtility {
 			log.log(Level.SEVERE, "SQL Exception while persisting run.", e);
 		}
 	}
-
 }
