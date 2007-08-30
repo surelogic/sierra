@@ -17,6 +17,9 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.surelogic.sierra.tool.SierraTool;
 
+/**
+ * This is not being used any more, however, we want this capability.
+ */
 public class AppendToFile implements IObjectActionDelegate {
 
 	private IStructuredSelection selection;
