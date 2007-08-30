@@ -2,47 +2,42 @@ package com.surelogic.sierra.tool.message;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 public class ClassMetric {
 
-	private String path;
 	private String packageName;
 	private String className;
-	private int linesOfCode;
+	private int loc;
 
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getPackageName() {
+	@XmlAttribute
+	public String getPackage() {
 		return packageName;
 	}
 
-	public void setPackageName(String packageName) {
+	public void setPackage(String packageName) {
 		this.packageName = packageName;
 	}
 
-	public String getClassName() {
+	@XmlAttribute
+	public String getName() {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setName(String className) {
 		this.className = className;
 	}
 
-	public int getLinesOfCode() {
-		return linesOfCode;
+	@XmlAttribute
+	public int getLoc() {
+		return loc;
 	}
 
-	public void setLinesOfCode(int linesOfCode) {
-		this.linesOfCode = linesOfCode;
+	public void setLoc(int loc) {
+		this.loc = loc;
 	}
 
 }

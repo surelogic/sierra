@@ -156,10 +156,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		public void build() {
 			ClassMetric metric = new ClassMetric();
-			metric.setClassName(clazz);
-			metric.setPackageName(pakkage);
-			metric.setLinesOfCode(linesOfCode);
-			metric.setPath(path);
+			metric.setName(clazz);
+			metric.setPackage(pakkage);
+			metric.setLoc(linesOfCode);
 			mw.writeClassMetric(metric, artOut);
 		}
 

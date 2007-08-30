@@ -26,11 +26,11 @@ class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 	PublishMessageArtifactGenerator(Run r) {
 		this.r = r;
 		ToolOutput to = new ToolOutput();
-		to.setArtifact(new ArrayList<Artifact>());
-		to.setErrors(new ArrayList<Error>());
+		to.getArtifacts().setArtifact(new ArrayList<Artifact>());
+		to.getErrors().setErrors(new ArrayList<Error>());
 		r.setToolOutput(to);
 		artifactAdapter = new ArtifactBuilderAdapter(r.getToolOutput()
-				.getArtifact());
+				.getArtifacts().getArtifact());
 	}
 
 	@Override

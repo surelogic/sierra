@@ -242,11 +242,13 @@ public class MessageWarehouse {
 				xmlr.require(START_ELEMENT, null, "uid");
 				unmarshaller.unmarshal(xmlr, String.class);
 				xmlr.nextTag(); // move to toolOutput element.
+				xmlr.next(); // move to metrics
+				xmlr.require(START_ELEMENT, null, "metrics");
 				xmlr.nextTag(); // move to classMetric
 				// Unmarshal classMetric
 				MetricBuilder mBuilder = generator.metric();
 				while (xmlr.getEventType() == START_ELEMENT
-						&& xmlr.getLocalName().equals("classMetric")) {
+						&& xmlr.getLocalName().equals("class")) {
 					readClassMetric(unmarshaller.unmarshal(xmlr,
 							ClassMetric.class).getValue(), mBuilder);
 					if (monitor != null) {
@@ -257,6 +259,10 @@ public class MessageWarehouse {
 						// <artifacts>s.
 					}
 				}
+
+				xmlr.nextTag();
+				xmlr.require(START_ELEMENT, null, "artifacts");
+				xmlr.nextTag();
 				// Unmarshal artifacts
 				ArtifactBuilder aBuilder = generator.artifact();
 				while (xmlr.getEventType() == START_ELEMENT
@@ -271,6 +277,9 @@ public class MessageWarehouse {
 						// <artifacts>s.
 					}
 				}
+				xmlr.nextTag();
+				xmlr.require(START_ELEMENT, null, "errors");
+				xmlr.nextTag();
 				// Unmarshal errors
 				ErrorBuilder eBuilder = generator.error();
 				while (xmlr.getEventType() == START_ELEMENT
@@ -306,14 +315,12 @@ public class MessageWarehouse {
 		generator.uid(run.getUid());
 		readConfig(run.getConfig(), generator);
 		ArtifactGenerator aGen = generator.build();
-		readArtifacts(run.getToolOutput().getArtifact(), aGen);
-		readErrors(run.getToolOutput().getErrors(), aGen);
+		readMetrics(run.getToolOutput().getMetrics().getClassMetric(), aGen);
+		readArtifacts(run.getToolOutput().getArtifacts().getArtifact(), aGen);
+		readErrors(run.getToolOutput().getErrors().getErrors(), aGen);
 		aGen.finished();
 	}
 
-	// TODO Having these methods be public static is probably not the best way
-	// to do this for RunManager, we need rework MessageWarehouse to work on
-	// in-memory runs as well.
 	private static void readArtifacts(Collection<Artifact> artifacts,
 			ArtifactGenerator generator) {
 		if (artifacts != null) {
@@ -330,6 +337,16 @@ public class MessageWarehouse {
 			ErrorBuilder eBuilder = generator.error();
 			for (Error e : errors) {
 				readError(e, eBuilder);
+			}
+		}
+	}
+
+	private static void readMetrics(Collection<ClassMetric> metrics,
+			ArtifactGenerator generator) {
+		if (metrics != null) {
+			MetricBuilder mBuilder = generator.metric();
+			for (ClassMetric m : metrics) {
+				readClassMetric(m, mBuilder);
 			}
 		}
 	}
@@ -358,10 +375,11 @@ public class MessageWarehouse {
 		builder.build();
 	}
 
-	private void readClassMetric(ClassMetric metric, MetricBuilder builder) {
-		builder.className(metric.getClassName()).packageName(
-				metric.getPackageName()).path(metric.getPath()).linesOfCode(
-				metric.getLinesOfCode());
+	private static void readClassMetric(ClassMetric metric,
+			MetricBuilder builder) {
+		builder.className(metric.getName()).packageName(
+				metric.getPackage()).linesOfCode(
+				metric.getLoc()).build();
 	}
 
 	private static void readError(Error e, ErrorBuilder builder) {
