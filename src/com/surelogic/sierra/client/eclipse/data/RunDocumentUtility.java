@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.data;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,7 +13,9 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.run.RunManager;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
 import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.Settings;
 
 public final class RunDocumentUtility {
 	private static final Logger log = SLLogger.getLogger("sierra");
@@ -39,8 +42,10 @@ public final class RunDocumentUtility {
 			Connection conn = Data.getConnection();
 			try {
 				conn.setAutoCommit(false);
+				Settings settings = new Settings();
+				settings.setRuleFilter(new ArrayList<FindingTypeFilter>());
 				RunGenerator gen = RunManager.getInstance(conn)
-						.getRunGenerator();
+						.getRunGenerator(settings);
 				MessageWarehouse.getInstance().parseRunDocument(runDocument,
 						gen, monitor);
 			} catch (SQLException e) {
