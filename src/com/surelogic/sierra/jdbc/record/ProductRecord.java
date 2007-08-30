@@ -32,6 +32,12 @@ public final class ProductRecord extends LongRecord {
 		return idx;
 	}
 
+//	@Override
+//	protected int fillUpdatedFields(PreparedStatement st, int idx)
+//			throws SQLException {
+//
+//	}
+
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		return idx;

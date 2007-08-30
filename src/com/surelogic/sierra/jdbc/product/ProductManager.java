@@ -37,38 +37,52 @@ public class ProductManager {
 		findAllStatement = conn.prepareStatement(FIND_ALL);
 	}
 
+	/**
+	 * 
+	 * @return a collection of all the product names
+	 * @throws SQLException
+	 */
 	public Collection<String> getAllProductNames() throws SQLException {
-
 		ResultSet rs = findAllStatement.executeQuery();
-
 		Collection<String> productNames = new ArrayList<String>();
-
 		while (rs.next()) {
 			productNames.add(rs.getString(1));
 		}
-
 		return productNames;
 	}
 
-	public Collection<String> getProjectNames(String product)
+	/**
+	 * 
+	 * @param productName
+	 * @return A collection of all the project names associated to this product
+	 * @throws SQLException
+	 */
+	public Collection<String> getProjectNames(String productName)
 			throws SQLException {
-		// XXX Check to ensure product exists
-		return ppManager.getProjectNames(product);
+
+		if (productName == null)
+			throw new SQLException();
+		
+		ProductRecord product = productFactory.newProduct();
+		product.setName(productName);
+
+		/** If this product does not exist, throw an error */
+		if (!product.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+		return ppManager.getProjectNames(productName);
 	}
 
-	public Long newProduct(String name, Collection<String> projects)
+	/**
+	 * Product must already exist in the database
+	 * 
+	 * @param product
+	 * @param projects
+	 * @throws SQLException
+	 */
+	private void addProjects(ProductRecord product, Collection<String> projects)
 			throws SQLException {
-
-		if (name == null)
-			throw new SQLException();
-
-		ProductRecord product = productFactory.newProduct();
-		product.setName(name);
-
-		/** If this product does not exist, add it to the DB */
-		if (!product.select())
-			product.insert();
-
 		if (projects != null) {
 			for (String projectName : projects) {
 				ProjectRecord project = projectFactory.newProject();
@@ -85,9 +99,74 @@ public class ProductManager {
 				rec.insert();
 			}
 		}
+	}
+
+	/**
+	 * Add a list of projects to the pre-existing product
+	 * 
+	 * @param productName
+	 * @param projects
+	 * @throws SQLException
+	 */
+	public void addProjects(String productName, Collection<String> projects)
+			throws SQLException {
+
+		if (productName == null)
+			throw new SQLException();
+
+		ProductRecord product = productFactory.newProduct();
+		product.setName(productName);
+
+		/** If this product does not exist, throw an error */
+		if (!product.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		addProjects(product, projects);
+	}
+
+	/**
+	 * Rename a product from currName to newName
+	 * 
+	 * @param currName
+	 * @param newName
+	 */
+	public void renameProduct(String currName, String newName) {
+		// TODO
+	}
+
+	/**
+	 * Create a new product
+	 * 
+	 * @param name name of the new product
+	 * @param projects associated projects of the new product
+	 * @return The ID of the new product
+	 * @throws SQLException
+	 */
+	public Long newProduct(String name, Collection<String> projects)
+			throws SQLException {
+
+		if (name == null)
+			throw new SQLException();
+
+		ProductRecord product = productFactory.newProduct();
+		product.setName(name);
+
+		/** If this product does not exist, add it to the DB */
+		if (!product.select())
+			product.insert();
+
+		addProjects(product, projects);
+
 		return product.getId();
 	}
 
+	/**
+	 * Remove a product from the DB identified by the name of the product
+	 * @param name
+	 * @throws SQLException
+	 */
 	public void deleteProduct(String name) throws SQLException {
 		ProductRecord product = productFactory.newProduct();
 		product.setName(name);
