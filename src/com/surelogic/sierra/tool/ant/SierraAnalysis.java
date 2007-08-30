@@ -326,7 +326,7 @@ public class SierraAnalysis extends Task {
 	 */
 	private void generateRunDocument() {
 		if (keepRunning) {
-			log("Generating the Run document...",
+			antProject.log("Generating the Run document...",
 					org.apache.tools.ant.Project.MSG_INFO);
 
 			printClasspath(classpath);
@@ -383,7 +383,7 @@ public class SierraAnalysis extends Task {
 						+ ".xml" + PARSED_FILE_SUFFIX);
 			}
 
-			log("Generating the run document: " + runDocument,
+			antProject.log("Generating the run document: " + runDocument,
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
 					runDocument, config);
@@ -399,10 +399,10 @@ public class SierraAnalysis extends Task {
 		if (path != null) {
 			String[] classpathList = path.list();
 
-			log("---------- CLASSPATH ----------",
+			antProject.log("---------- CLASSPATH ----------",
 					org.apache.tools.ant.Project.MSG_VERBOSE);
 			for (String string : classpathList) {
-				log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
+				antProject.log(string, org.apache.tools.ant.Project.MSG_VERBOSE);
 			}
 		}
 	}
@@ -423,7 +423,7 @@ public class SierraAnalysis extends Task {
 	 */
 	private void uploadRunDocument() {
 		if (keepRunning) {
-			log("Uploading the Run document to " + server + "...",
+			antProject.log("Uploading the Run document to " + server + "...",
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
 			Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
@@ -443,7 +443,7 @@ public class SierraAnalysis extends Task {
 			}
 			// FIXME utilize the return value once Bug 867 is resolved
 			if (ts.publishRun(run).equalsIgnoreCase("failure")) {
-				log("Failed to upload run document, "
+				antProject.log("Failed to upload run document, "
 						+ runDocument.getAbsolutePath() + " to the server: "
 						+ server, org.apache.tools.ant.Project.MSG_ERR);
 				uploadSuccessful = false;
@@ -476,7 +476,7 @@ public class SierraAnalysis extends Task {
 	 */
 	private void cleanup() {
 		if (keepRunning) {
-			log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
+			antProject.log("Cleaning up...", org.apache.tools.ant.Project.MSG_INFO);
 			tools.cleanup();
 			// If we uploaded successfully, delete our run document and temp
 			// directory
@@ -554,7 +554,7 @@ public class SierraAnalysis extends Task {
 			}
 
 			if (bindir.size() == 0) {
-				log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
+				antProject.log("No value set for 'bindir' or 'binaries'. Values for 'srcdir' or 'sources' will be used.");
 				bindir.append(srcdir);
 			} else {
 				validatePath(bindir); // throws BuildException if it has an
