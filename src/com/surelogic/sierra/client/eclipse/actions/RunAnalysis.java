@@ -39,7 +39,7 @@ public final class RunAnalysis {
 
 	private File f_resultRoot;
 
-	private File f_buildFile;
+	// private File f_buildFile;
 
 	private BuildFileGenerator f_buildFileGenerator;
 
@@ -48,6 +48,8 @@ public final class RunAnalysis {
 	private List<File> f_buildFiles;
 
 	private final File f_toolsDirectory;
+
+	private List<Config> f_configs;
 
 	public RunAnalysis(IStructuredSelection currentSelection) {
 		// Get the plugin directory that has tools folder and append the
@@ -75,7 +77,6 @@ public final class RunAnalysis {
 			}
 
 			f_buildFiles = new ArrayList<File>();
-			Stack<File> runDocuments = new Stack<File>();
 
 			for (IJavaProject project : selectedProjects) {
 				// log.info("Generating XML...");
@@ -87,7 +88,6 @@ public final class RunAnalysis {
 				File runDocument = new File(f_resultRoot + File.separator
 						+ project.getProject().getName()
 						+ SierraConstants.PARSED_FILE_SUFFIX);
-				runDocuments.push(runDocument);
 
 				f_config = new Config();
 
@@ -103,8 +103,8 @@ public final class RunAnalysis {
 				f_config.setToolsDirectory(new File(tools));
 
 				f_buildFileGenerator = new BuildFileGenerator(f_config);
-				f_buildFile = f_buildFileGenerator.writeBuildFile();
-				f_buildFiles.add(f_buildFile);
+				File buildFile = f_buildFileGenerator.writeBuildFile();
+				f_buildFiles.add(buildFile);
 
 			}
 
@@ -112,10 +112,25 @@ public final class RunAnalysis {
 			// buildFile = bfg.writeMultipleProjectBuildFile(buildFiles);
 			// }
 
-			if (f_buildFile != null) {
+			if (f_buildFiles.size() > 0) {
 
+				Stack<File> runDocuments = new Stack<File>();
+
+				f_configs = new ArrayList<Config>();
+				// Generate configs from all build files
+				for (File f : f_buildFiles) {
+					Parser buildFileParser = new Parser();
+					List<Config> configsHolder = buildFileParser
+							.parseBuildFile(f.getAbsolutePath());
+					for (Config c : configsHolder) {
+						// Change the run documents
+						runDocuments.push(c.getRunDocument());
+						c.setToolsDirectory(f_toolsDirectory);
+						f_configs.add(c);
+					}
+				}
 				Job runSierraAnalysis = new RunSierraJob("Running Sierra...",
-						f_buildFiles, f_toolsDirectory);
+						f_configs);
 				runSierraAnalysis.setPriority(Job.SHORT);
 				runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
 						runDocuments));
@@ -142,26 +157,19 @@ public final class RunAnalysis {
 
 		private boolean f_complete;
 		private SierraAnalysis f_sierraAnalysis;
-		private final List<File> f_buildFileList;
-		private final File f_toolsDirectory;
+		private final List<Config> f_configs;
 
-		public AntRunnable(List<File> buildFiles, File toolsDirectory) {
-			f_buildFileList = buildFiles;
-			f_toolsDirectory = toolsDirectory;
+		public AntRunnable(List<Config> configs) {
+			f_configs = configs;
 		}
 
 		public void run() {
 
 			f_complete = false;
-			for (File f : f_buildFileList) {
-				Parser buildFileParser = new Parser();
-				List<Config> configs = buildFileParser.parseBuildFile(f
-						.getAbsolutePath());
-				for (Config c : configs) {
-					c.setToolsDirectory(f_toolsDirectory);
-					f_sierraAnalysis = new SierraAnalysis(c);
-					f_sierraAnalysis.execute();
-				}
+			for (Config c : f_configs) {
+				f_sierraAnalysis = new SierraAnalysis(c);
+				f_sierraAnalysis.execute();
+
 			}
 			f_complete = true;
 		}
@@ -177,14 +185,11 @@ public final class RunAnalysis {
 
 	private static class RunSierraJob extends Job {
 
-		private final List<File> f_buildFiles;
-		private final File f_toolsDirectory;
+		private final List<Config> f_configs;
 
-		public RunSierraJob(String name, List<File> buildFiles,
-				File toolsDirectory) {
+		public RunSierraJob(String name, List<Config> configs) {
 			super(name);
-			f_buildFiles = buildFiles;
-			f_toolsDirectory = toolsDirectory;
+			f_configs = configs;
 		}
 
 		@Override
@@ -193,8 +198,7 @@ public final class RunAnalysis {
 
 				monitor.beginTask("Running tools...", IProgressMonitor.UNKNOWN);
 
-				final AntRunnable antRunnable = new AntRunnable(f_buildFiles,
-						f_toolsDirectory);
+				final AntRunnable antRunnable = new AntRunnable(f_configs);
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
 
