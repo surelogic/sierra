@@ -188,8 +188,7 @@ public class SierraAnalysis extends Task {
 		checkCP = false;
 
 		antProject = new org.apache.tools.ant.Project();
-		// antProject.addBuildListener(new CommonsLoggingListener());
-		// setProject(antProject);
+        setProject(antProject);
 
 		this.config = config;
 		destDir = config.getDestDirectory();
