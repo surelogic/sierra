@@ -175,6 +175,7 @@ public class SierraAnalysis extends Task {
 	public SierraAnalysis() {
 		super();
 		antProject = getProject();
+		log("Project is null? " + (antProject == null));
 		srcdir = new Path(antProject);
 		bindir = new Path(antProject);
 	}
