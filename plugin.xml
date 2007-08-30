@@ -2,6 +2,21 @@
 <?eclipse version="3.2"?>
 <plugin>
 
+   <!-- UI for initializing and setting Sierra prefrences -->
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
+            id="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
+            name="Sierra"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="com.surelogic.sierra.client.eclipse.preferences.PreferenceInitializer"/>
+   </extension>
+   
   <!-- Sierra menus -->
 
    <extension point="org.eclipse.ui.actionSets">
