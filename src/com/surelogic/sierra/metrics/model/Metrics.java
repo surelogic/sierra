@@ -11,6 +11,12 @@ public class Metrics {
 	/** Lines of Code */
 	private long loc;
 
+	/**
+	 * The complete path of the file - This is dependent on the system, it's
+	 * there to avoid the condition when the package and class name are same
+	 */
+	private String path;
+
 	public String getClassName() {
 		return className;
 	}
@@ -33,5 +39,13 @@ public class Metrics {
 
 	public void setLoc(long loc) {
 		this.loc = loc;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 }

@@ -178,6 +178,7 @@ public class Main {
 			String holder = target.getName().substring(0,
 					target.getName().length() - 5);
 			metrics.setClassName(holder);
+			metrics.setPath(target.getAbsolutePath());
 
 			if (reflectResult) {
 				System.out.println("For Class \"" + metrics.getClassName()

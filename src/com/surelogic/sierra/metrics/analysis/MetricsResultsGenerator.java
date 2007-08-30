@@ -76,8 +76,8 @@ public final class MetricsResultsGenerator {
 			attributeMap.put("name", metrics.getClassName());
 			attributeMap.put("package", metrics.getPackageName());
 			attributeMap.put("loc", String.valueOf(metrics.getLoc()));
+			attributeMap.put("path", metrics.getPath());
 			writeAttributes(attributeMap);
-
 			hd.startElement("", "", "class", atts);
 			hd.endElement("", "", "class");
 		} catch (SAXException e) {
