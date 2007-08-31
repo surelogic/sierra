@@ -27,7 +27,6 @@ public final class LoadRunDocumentJob extends DatabaseJob {
 
 		ScanDocumentUtility.loadRunDocument(f_runDocument,
 				slProgressMonitorWrapper);
-
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
