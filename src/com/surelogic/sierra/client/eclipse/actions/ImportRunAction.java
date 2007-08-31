@@ -34,9 +34,12 @@ public final class ImportRunAction implements IWorkbenchWindowActionDelegate {
 			final String path = Activator.getDefault().getPluginPreferences()
 					.getString(PreferenceConstants.P_SIERRA_PATH);
 			fd.setFilterPath(path);
-			fd.setFilterExtensions(new String[] { "*.sierra", "*.*" });
-			fd.setFilterNames(new String[] { "Parsed Files (*.sierra)",
-					"All Files (*.*)" });
+			fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
+					"*.*" });
+			fd
+					.setFilterNames(new String[] { "Run Documents (*.sierra)",
+							"Compressed Run Documents (*.sierra.gz)",
+							"All Files (*.*)" });
 		}
 		final String selectedFilename = fd.open();
 		if (selectedFilename != null) {
