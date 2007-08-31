@@ -44,7 +44,7 @@
            <action
                class="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
                id="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/import.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_run_doc.gif"
                label="Import Run..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
           </action>     
@@ -69,14 +69,14 @@
           <action
                class="com.surelogic.sierra.client.eclipse.actions.PublishRunAction"
                id="com.surelogic.sierra.client.eclipse.actions.PublishRunAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/export.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
                label="Publish Run..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
           </action>
          <action
            		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
                 id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                 label="Synchronize with Server"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
                 enablesFor="+">
@@ -86,7 +86,7 @@
           <action
                class="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
                id="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/earth.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
                label="Sierra Servers"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>     
@@ -131,7 +131,7 @@
                class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                label="Synchronize with Server"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
@@ -161,6 +161,7 @@
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.adhoc.views.AdHocQueryResultsView"
             id="com.surelogic.sierra.client.eclipse.AdHocQueryView.Results"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/query.gif"
             name="Query Results">
       </view>
 
@@ -176,7 +177,7 @@
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/earth.gif"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
             name="Sierra Servers">
       </view>
    </extension>
