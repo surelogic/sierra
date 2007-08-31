@@ -123,17 +123,22 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 				finalFile.write("\n");
 			}
 			in.close();
+			finalFile.flush();
+
 			finalFile.write(ARTIFACTS_END);
 			finalFile.write(ERROR_START);
+
 			in = new BufferedReader(new FileReader(errorsHolder));
 			line = null;
 			while (null != (line = in.readLine())) {
 				finalFile.write(line);
 				finalFile.write("\n");
 			}
+			in.close();
+			finalFile.flush();
+
 			finalFile.write(ERROR_END);
 			finalFile.write(TOOL_OUTPUT_END);
-			finalFile.flush();
 
 			File configOutput = File.createTempFile("config", "tmp", new File(
 					SierraConstants.SIERRA_RESULTS_PATH));
@@ -151,12 +156,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.close();
 
 			errOut.close();
-			errorsHolder.delete();
-
 			artOut.close();
-			artifactsHolder.delete();
-
 			fos.close();
+
+			errorsHolder.delete();
+			artifactsHolder.delete();
 			configOutput.delete();
 
 		} catch (FileNotFoundException e) {
