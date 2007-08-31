@@ -6,12 +6,13 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
-import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.ErrorBuilder;
 import com.surelogic.sierra.tool.config.Config;
@@ -52,7 +53,7 @@ public class MessageWarehouse {
 
 	private MessageWarehouse() {
 		try {
-			this.ctx = JAXBContext.newInstance(Run.class);
+			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -94,7 +95,22 @@ public class MessageWarehouse {
 	 * @param metric
 	 * @param out
 	 */
-	public void writeClassMetric(ClassMetric metric, FileOutputStream out) {
+	public void writeClassMetric(ClassMetric metric, OutputStream out) {
+		try {
+			marshaller.marshal(metric, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	/**
+	 * Write a {@link ClassMetric} object to the specified output
+	 * 
+	 * @param metric
+	 * @param out
+	 */
+	public void writeClassMetric(ClassMetric metric, Writer out) {
 		try {
 			marshaller.marshal(metric, out);
 		} catch (JAXBException e) {
@@ -109,7 +125,7 @@ public class MessageWarehouse {
 	 * @param error
 	 * @param out
 	 */
-	public void writeError(Error error, FileOutputStream out) {
+	public void writeError(Error error, OutputStream out) {
 		try {
 			marshaller.marshal(error, out);
 		} catch (JAXBException e) {
@@ -135,20 +151,54 @@ public class MessageWarehouse {
 	}
 
 	/**
-	 * Write a {@link Config} object to the specified output..
+	 * Write a {@link Artifact} object to the specified output..
 	 * 
-	 * @param config
+	 * @param a
 	 * @param out
 	 */
-	public void writeConfig(Config config, FileOutputStream out) {
+	public void writeArtifact(Artifact a, Writer out) {
 		try {
-
-			marshaller.marshal(config, out);
+			marshaller.marshal(a, out);
 		} catch (JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
+	}
 
+	public void writeConfig(Config config, OutputStream artOut) {
+		try {
+			marshaller.marshal(config, artOut);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	public void writeConfig(Config config, Writer artOut) {
+		try {
+			marshaller.marshal(config, artOut);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	public void writeSettings(Settings settings, OutputStream out) {
+		try {
+			marshaller.marshal(settings, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	public void writeSettings(Settings settings, Writer out) {
+		try {
+			marshaller.marshal(settings, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
 	}
 
 	/**
@@ -176,32 +226,77 @@ public class MessageWarehouse {
 		return null;
 	}
 
-	/**
-	 * Return the {@link Run} object located at src.
-	 * 
-	 * @param src
-	 *            a path name
-	 * @return a {@link Run} object, or null if none can be parsed at src.
-	 */
-	public Run fetchRun(String src) {
+	public ToolOutput fetchToolOutput(Reader in) {
 		try {
-			return fetchRun(new FileInputStream(src));
-		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
-
-	public Run fetchRun(InputStream in) {
-		try {
-			return (Run) unmarshaller.unmarshal(in);
+			return (ToolOutput) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
 		}
 		return null;
 	}
 
-	public void parseRunDocument(final File runDocument,
-			RunGenerator generator, SLProgressMonitor monitor) {
+	/**
+	 * Return the {@link Scan} object located at src.
+	 * 
+	 * @param src
+	 *            a path name
+	 * @return a {@link Scan} object, or null if none can be parsed at src.
+	 */
+	public Scan fetchScan(String src) {
+		try {
+			return fetchScan(new FileInputStream(src));
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public Scan fetchScan(InputStream in) {
+		try {
+			return (Scan) unmarshaller.unmarshal(in);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fetch tool output.", e);
+		}
+		return null;
+	}
+
+	public Scan fetchScan(Reader in) {
+		try {
+			return (Scan) unmarshaller.unmarshal(in);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fetch tool output.", e);
+		}
+		return null;
+	}
+
+	public Settings fetchSettings(String src) {
+		try {
+			return (Settings) fetchSettings(new FileInputStream(src));
+		} catch (FileNotFoundException e) {
+			log.log(Level.WARNING, "Could not fecth settings output", e);
+		}
+		return null;
+	}
+
+	public Settings fetchSettings(InputStream in) {
+		try {
+			return (Settings) unmarshaller.unmarshal(in);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fecth settings output", e);
+		}
+		return null;
+	}
+
+	public Settings fetchSettings(Reader reader) {
+		try {
+			return (Settings) unmarshaller.unmarshal(reader);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fecth settings output", e);
+		}
+		return null;
+	}
+
+	public void parseScanDocument(final File runDocument,
+			ScanGenerator generator, SLProgressMonitor monitor) {
 		try {
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
@@ -210,7 +305,7 @@ public class MessageWarehouse {
 			try {
 				// move to the root element and check its name.
 				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "run");
+				xmlr.require(START_ELEMENT, null, "scan");
 				xmlr.nextTag(); // move to uid element
 				xmlr.require(START_ELEMENT, null, "uid");
 				generator.uid(unmarshaller.unmarshal(xmlr, String.class)
@@ -245,10 +340,10 @@ public class MessageWarehouse {
 		} catch (XMLStreamException e) {
 			throw new IllegalArgumentException(e);
 		}
-		parseRunDocument(runDocument, generator.build(), monitor);
+		parseScanDocument(runDocument, generator.build(), monitor);
 	}
 
-	private void parseRunDocument(final File runDocument,
+	private void parseScanDocument(final File runDocument,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
 			// set up a parser
@@ -259,7 +354,7 @@ public class MessageWarehouse {
 			try {
 				// move to the root element and check its name.
 				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "run");
+				xmlr.require(START_ELEMENT, null, "scan");
 				xmlr.nextTag(); // move to uid element
 				xmlr.require(START_ELEMENT, null, "uid");
 				unmarshaller.unmarshal(xmlr, String.class);
@@ -333,13 +428,13 @@ public class MessageWarehouse {
 		}
 	}
 
-	public static void readRun(Run run, RunGenerator generator) {
-		generator.uid(run.getUid());
-		readConfig(run.getConfig(), generator);
+	public static void readScan(Scan scan, ScanGenerator generator) {
+		generator.uid(scan.getUid());
+		readConfig(scan.getConfig(), generator);
 		ArtifactGenerator aGen = generator.build();
-		readMetrics(run.getToolOutput().getMetrics().getClassMetric(), aGen);
-		readArtifacts(run.getToolOutput().getArtifacts().getArtifact(), aGen);
-		readErrors(run.getToolOutput().getErrors().getErrors(), aGen);
+		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
+		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
+		readErrors(scan.getToolOutput().getErrors().getErrors(), aGen);
 		aGen.finished();
 	}
 
@@ -373,7 +468,7 @@ public class MessageWarehouse {
 		}
 	}
 
-	private static void readConfig(Config config, RunGenerator builder) {
+	private static void readConfig(Config config, ScanGenerator builder) {
 		builder.javaVendor(config.getJavaVendor());
 		builder.javaVersion(config.getJavaVersion());
 		builder.project(config.getProject());

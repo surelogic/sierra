@@ -15,12 +15,12 @@ public class PublishMessageRunGeneratorTest {
 	@Test
 	public void testPublishRun() {
 		try {
-			JAXBContext context = JAXBContext.newInstance(Run.class);
+			JAXBContext context = JAXBContext.newInstance(Scan.class);
 			Unmarshaller um = context.createUnmarshaller();
 			InputStream in = getResource("sierra-entity.xml.parsed");
-			Run run = (Run) um.unmarshal(in);
+			Scan run = (Scan) um.unmarshal(in);
 			PublishMessageRunGenerator generator = new PublishMessageRunGenerator();
-			MessageWarehouse.readRun(run, generator);
+			MessageWarehouse.readScan(run, generator);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail(e.getMessage());

@@ -45,10 +45,10 @@ public class MessageWarehouseTest {
 	@Test
 	public final void testWrite() {
 		try {
-			JAXBContext ctx = JAXBContext.newInstance(Run.class);
+			JAXBContext ctx = JAXBContext.newInstance(Scan.class);
 			File f = new File("/home/dandelion/test.xml");
 			FileOutputStream out = new FileOutputStream(f);
-			Run r = new Run();
+			Scan r = new Scan();
 			r.setUid(UUID.randomUUID().toString());
 			r.setConfig(new Config());
 			r.setToolOutput(new ToolOutput());

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -15,7 +15,7 @@ import com.surelogic.sierra.tool.config.Config;
  * @author nathan
  * 
  */
-public class PublishMessageRunGenerator implements RunGenerator {
+public class PublishMessageRunGenerator implements ScanGenerator {
 
 	private String javaVendor;
 	private String javaVersion;
@@ -27,7 +27,7 @@ public class PublishMessageRunGenerator implements RunGenerator {
 	}
 
 	public ArtifactGenerator build() {
-		Run r = new Run();
+		Scan r = new Scan();
 		r.setUid(uid);
 		Config config = new Config();
 		config.setJavaVendor(javaVendor);
@@ -38,22 +38,22 @@ public class PublishMessageRunGenerator implements RunGenerator {
 		return new PublishMessageArtifactGenerator(r);
 	}
 
-	public RunGenerator javaVendor(String vendor) {
+	public ScanGenerator javaVendor(String vendor) {
 		this.javaVendor = vendor;
 		return this;
 	}
 
-	public RunGenerator javaVersion(String version) {
+	public ScanGenerator javaVersion(String version) {
 		this.javaVersion = version;
 		return this;
 	}
 
-	public RunGenerator project(String projectName) {
+	public ScanGenerator project(String projectName) {
 		this.project = projectName;
 		return this;
 	}
 
-	public RunGenerator qualifiers(Collection<String> qualifiers) {
+	public ScanGenerator qualifiers(Collection<String> qualifiers) {
 		if (qualifiers != null) {
 			this.qualifiers = new ArrayList<String>(qualifiers);
 		}
@@ -61,7 +61,7 @@ public class PublishMessageRunGenerator implements RunGenerator {
 	}
 
 
-	public RunGenerator uid(String uid) {
+	public ScanGenerator uid(String uid) {
 		this.uid = uid;
 		return this;
 	}

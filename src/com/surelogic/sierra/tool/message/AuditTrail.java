@@ -12,16 +12,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class AuditTrail {
 
-	private String trail;
+	private String finding;
 
 	private List<Audit> audits;
 
-	public String getTrail() {
-		return trail;
+	public String getFinding() {
+		return finding;
 	}
 
-	public void setTrail(String trail) {
-		this.trail = trail;
+	public void setFinding(String trail) {
+		this.finding = trail;
 	}
 
 	public List<Audit> getAudits() {

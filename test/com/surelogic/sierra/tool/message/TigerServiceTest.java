@@ -43,10 +43,10 @@ public class TigerServiceTest {
 	public void testPublishRun() {
 		try {
 			JAXBContext context;
-			context = JAXBContext.newInstance(Run.class);
+			context = JAXBContext.newInstance(Scan.class);
 			Unmarshaller um = context.createUnmarshaller();
 			InputStream in = getResource("sierra-jdbc.xml.parsed");
-			Run run = (Run) um.unmarshal(in);
+			Scan run = (Scan) um.unmarshal(in);
 			assertEquals("SUCCESS", service.publishRun(run));
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -63,7 +63,6 @@ public class TigerServiceTest {
 	@Test
 	public void testSingleComment() {
 		MergeAuditTrailRequest mergeReq = new MergeAuditTrailRequest();
-		mergeReq.setQualifier("Default");
 		mergeReq.setProject("sierra-entity");
 		List<Merge> merges = new ArrayList<Merge>();
 		mergeReq.setMerge(merges);
@@ -84,12 +83,11 @@ public class TigerServiceTest {
 		service.mergeAuditTrails(mergeReq);
 		assertEquals(trail, newTrail);
 		AuditTrails auditTrails = new AuditTrails();
-		auditTrails.setProject("sierra-entity");
 		List<AuditTrail> trails = new ArrayList<AuditTrail>();
 		auditTrails.setAuditTrail(trails);
 		AuditTrail auditTrail = new AuditTrail();
 		trails.add(auditTrail);
-		auditTrail.setTrail(trail);
+		auditTrail.setFinding(trail);
 		List<Audit> audits = new ArrayList<Audit>();
 		auditTrail.setAudits(audits);
 		Audit audit = new Audit(new Date(), "Some comment", AuditEvent.COMMENT);
@@ -97,7 +95,6 @@ public class TigerServiceTest {
 		service.commitAuditTrails(auditTrails);
 		AuditTrailRequest request = new AuditTrailRequest();
 		request.setProject("sierra-entity");
-		request.setQualifier("Default");
 		request.setRevision(0L);
 		AuditTrailResponse response = service.getAuditTrails(request);
 		AuditTrailUpdate update = response.getUpdate().get(0);

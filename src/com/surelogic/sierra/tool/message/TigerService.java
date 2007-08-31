@@ -18,7 +18,7 @@ public interface TigerService {
 	 * @return whether or not the run was successfully generated on the server.
 	 */
 	String publishRun(@WebParam(name = "run")
-	Run run);
+	Scan run);
 
 	/**
 	 * Get the set of available qualifier names.
@@ -55,5 +55,13 @@ public interface TigerService {
 	 *         revision
 	 */
 	AuditTrailResponse getAuditTrails(AuditTrailRequest request);
+
+	/**
+	 * Return the settings associated with a given qualifier.
+	 * 
+	 * @param request
+	 * @return the settings associated with a given qualifier.
+	 */
+	SettingsReply getSettings(SettingsRequest request);
 
 }

@@ -88,7 +88,7 @@ import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.Run;
+import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.TigerService;
 import com.surelogic.sierra.tool.message.TigerServiceClient;
 
@@ -425,7 +425,7 @@ public class SierraAnalysis extends Task {
 			antProject.log("Uploading the Run document to " + server + "...",
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
-			Run run = warehouse.fetchRun(runDocument.getAbsolutePath());
+			Scan run = warehouse.fetchScan(runDocument.getAbsolutePath());
 			TigerService ts = new TigerServiceClient(server)
 					.getTigerServicePort();
 

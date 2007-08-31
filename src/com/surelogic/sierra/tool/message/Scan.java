@@ -7,13 +7,13 @@ import com.surelogic.sierra.tool.config.Config;
 
 @XmlRootElement
 @XmlType(propOrder = { "uid", "toolOutput", "config" })
-public class Run {
+public class Scan {
 
 	private String uid;
 	private Config config;
 	private ToolOutput toolOutput;
 
-	public Run() {
+	public Scan() {
 		// Nothing to do
 	}
 
@@ -59,7 +59,7 @@ public class Run {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Run other = (Run) obj;
+		final Scan other = (Scan) obj;
 		if (toolOutput == null) {
 			if (other.toolOutput != null)
 				return false;

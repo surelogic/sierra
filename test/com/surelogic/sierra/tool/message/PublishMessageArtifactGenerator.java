@@ -15,15 +15,15 @@ import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
 
-	private final Run r;
+	private final Scan r;
 
 	private ArtifactBuilderAdapter artifactAdapter;
 
-	public Run getRun() {
+	public Scan getRun() {
 		return r;
 	}
 
-	PublishMessageArtifactGenerator(Run r) {
+	PublishMessageArtifactGenerator(Scan r) {
 		this.r = r;
 		ToolOutput to = new ToolOutput();
 		to.getArtifacts().setArtifact(new ArrayList<Artifact>());

@@ -12,15 +12,15 @@ import java.util.Collection;
  * @author nathan
  * 
  */
-public interface RunGenerator {
+public interface ScanGenerator {
 
-	RunGenerator uid(String uid);
+	ScanGenerator uid(String uid);
 	
-	RunGenerator javaVersion(String version);
+	ScanGenerator javaVersion(String version);
 
-	RunGenerator javaVendor(String vendor);
+	ScanGenerator javaVendor(String vendor);
 
-	RunGenerator project(String projectName);
+	ScanGenerator project(String projectName);
 
 	/**
 	 * The generated run will belong to the specified set of qualifiers. This
@@ -29,7 +29,7 @@ public interface RunGenerator {
 	 * @param qualifiers
 	 * @return
 	 */
-	RunGenerator qualifiers(Collection<String> qualifiers);
+	ScanGenerator qualifiers(Collection<String> qualifiers);
 
 	ArtifactGenerator build();
 }
