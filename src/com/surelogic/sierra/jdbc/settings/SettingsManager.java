@@ -3,16 +3,16 @@ package com.surelogic.sierra.jdbc.settings;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SettingsManager {
+import com.surelogic.sierra.tool.message.MessageWarehouse;
 
-	private final Connection conn;
+abstract class SettingsManager {
 
-	private SettingsManager(Connection conn) throws SQLException {
+	protected final Connection conn;
+	protected final MessageWarehouse mw;
+
+	protected SettingsManager(Connection conn) throws SQLException {
 		this.conn = conn;
+		mw = MessageWarehouse.getInstance();
 	}
 
-	public static SettingsManager getInstance(Connection conn)
-			throws SQLException {
-		return new SettingsManager(conn);
-	}
 }

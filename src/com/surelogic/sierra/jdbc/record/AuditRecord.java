@@ -11,7 +11,7 @@ import com.surelogic.sierra.tool.message.AuditEvent;
 public final class AuditRecord extends LongRecord {
 
 	private Long userId;
-	private Long trailId;
+	private Long findingId;
 	private Date timestamp;
 	private String value;
 	private AuditEvent event;
@@ -23,9 +23,9 @@ public final class AuditRecord extends LongRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		// USER_ID, TRAIL_ID, DATE_TIME, VALUE, EVENT
+		// USER_ID, FINDING_ID, DATE_TIME, VALUE, EVENT
 		st.setLong(idx++, userId);
-		st.setLong(idx++, trailId);
+		st.setLong(idx++, findingId);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
 		st.setString(idx++, value);
 		st.setInt(idx++, event.ordinal());
@@ -53,12 +53,12 @@ public final class AuditRecord extends LongRecord {
 		this.userId = userId;
 	}
 
-	public Long getTrailId() {
-		return trailId;
+	public Long getFindingId() {
+		return findingId;
 	}
 
-	public void setTrailId(Long trailId) {
-		this.trailId = trailId;
+	public void setFindingId(Long trailId) {
+		this.findingId = trailId;
 	}
 
 	public Date getTimestamp() {
@@ -102,7 +102,7 @@ public final class AuditRecord extends LongRecord {
 				+ ((revision == null) ? 0 : revision.hashCode());
 		result = prime * result
 				+ ((timestamp == null) ? 0 : timestamp.hashCode());
-		result = prime * result + ((trailId == null) ? 0 : trailId.hashCode());
+		result = prime * result + ((findingId == null) ? 0 : findingId.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -132,10 +132,10 @@ public final class AuditRecord extends LongRecord {
 				return false;
 		} else if (!timestamp.equals(other.timestamp))
 			return false;
-		if (trailId == null) {
-			if (other.trailId != null)
+		if (findingId == null) {
+			if (other.findingId != null)
 				return false;
-		} else if (!trailId.equals(other.trailId))
+		} else if (!findingId.equals(other.findingId))
 			return false;
 		if (userId == null) {
 			if (other.userId != null)

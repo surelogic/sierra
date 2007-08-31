@@ -1,5 +1,6 @@
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.scan;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.Record;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
-import com.surelogic.sierra.jdbc.record.RunRecord;
+import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
@@ -43,7 +44,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final FindingTypeManager ftMan;
 
-	private final RunRecordFactory factory;
+	private final ScanRecordFactory factory;
 	private final Runnable callback;
 
 	private final PreparedStatement toolIdSelect;
@@ -59,10 +60,10 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
 
-	public JDBCArtifactGenerator(Connection conn, RunRecordFactory factory,
-			RunRecord run, MessageFilter filter, Runnable callback)
+	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
+			ScanRecord scan, MessageFilter filter, Runnable callback)
 			throws SQLException {
-		log.info("Now persisting artifacts to database for run " + run.getId());
+		log.info("Now persisting artifacts to database for scan " + scan.getId());
 		this.conn = conn;
 		this.factory = factory;
 		this.callback = callback;
@@ -76,8 +77,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
 		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
-		this.aBuilder = new JDBCArtifactBuilder(run);
-		this.mBuilder = new JDBCMetricBuilder(run);
+		this.aBuilder = new JDBCArtifactBuilder(scan);
+		this.mBuilder = new JDBCMetricBuilder(scan);
 	}
 
 	public void finished() {
@@ -86,7 +87,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			toolIdSelect.close();
 			callback.run();
 		} catch (SQLException e) {
-			throw new RunPersistenceException(e);
+			throw new ScanPersistenceException(e);
 		}
 	}
 
@@ -134,12 +135,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private class JDBCMetricBuilder implements MetricBuilder {
 
-		private final RunRecord run;
+		private final ScanRecord scan;
 		private CompilationUnitRecord compUnit;
 		private Integer linesOfCode;
 
-		public JDBCMetricBuilder(RunRecord run) {
-			this.run = run;
+		public JDBCMetricBuilder(ScanRecord scan) {
+			this.scan = scan;
 			clear();
 		}
 
@@ -155,15 +156,15 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				currentComp = compUnit;
 			}
 			ClassMetricRecord rec = factory.newClassMetric();
-			rec.setId(new RelationRecord.PK<RunRecord, CompilationUnitRecord>(
-					run, currentComp));
+			rec.setId(new RelationRecord.PK<ScanRecord, CompilationUnitRecord>(
+					scan, currentComp));
 			rec.setLinesOfCode(linesOfCode);
 			classMetrics.add(rec);
 			if (classMetrics.size() == COMMIT_SIZE) {
 				try {
 					persist();
 				} catch (SQLException e) {
-					throw new RunPersistenceException(e);
+					throw new ScanPersistenceException(e);
 				}
 			}
 			clear();
@@ -213,12 +214,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private class JDBCArtifactBuilder implements ArtifactBuilder {
 
 		private ArtifactRecord artifact;
-		private long runId;
+		private long scanId;
 		private final List<SourceRecord> aSources;
 		private SourceRecord pSource;
 
-		public JDBCArtifactBuilder(RunRecord run) {
-			this.runId = run.getId();
+		public JDBCArtifactBuilder(ScanRecord scan) {
+			this.scanId = scan.getId();
 			this.aSources = new ArrayList<SourceRecord>();
 			clear();
 		}
@@ -257,7 +258,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 					try {
 						persist();
 					} catch (SQLException e) {
-						throw new RunPersistenceException(e);
+						throw new ScanPersistenceException(e);
 					}
 				}
 			}
@@ -270,7 +271,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				artifact.setFindingTypeId(ftMan.getFindingTypeId(tool, version,
 						mnemonic));
 			} catch (SQLException e) {
-				throw new RunPersistenceException(e);
+				throw new ScanPersistenceException(e);
 			}
 			return this;
 		}
@@ -300,7 +301,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		private void clear() {
 			artifact = factory.newArtifact();
-			artifact.setRunId(runId);
+			artifact.setScanId(scanId);
 			aSources.clear();
 		}
 
@@ -369,4 +370,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 	}
+
+	public void writeMetrics(File absoluteFile) {
+		// Nothing to do - used for writing metrics to the scan document
+	}
+
 }

@@ -21,22 +21,21 @@ import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public class AuditManager {
 
-	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (USER_ID,TRAIL_ID,TIMESTAMP,VALUE,EVENT) VALUES (?,?,?,?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (USER_ID,FINDING_ID,TIMESTAMP,VALUE,EVENT) VALUES (?,?,?,?,?)";
 
-	private static final String FINDING_SELECT = "SELECT ID,TRAIL_ID,IMPORTANCE FROM FINDING WHERE ID = ?";
+	private static final String FINDING_SELECT = "SELECT ID,FINDING_ID,IMPORTANCE FROM FINDING WHERE ID = ?";
 
-	private static final String PROJECT_SELECT = "SELECT ID,REVISION FROM PROJECT WHERE NAME = ?";
-	private static final String UPDATE_PROJECT_REVISION = "UPDATE PROJECT SET REVISION = ? WHERE NAME = ?";
+	private static final String PROJECT_SELECT = "SELECT ID FROM PROJECT WHERE NAME = ?";
 
-	private static final String TRAIL_SELECT = "SELECT ID FROM TRAIL WHERE UID = ? AND PROJECT_ID = ?";
-	private static final String UPDATE_OBSOLETE_TRAIL = "UPDATE SIERRA_MATCH SET TRAIL_ID = (SELECT ID FROM TRAIL WHERE UID = ?) WHERE TRAIL_ID = (SELECT ID FROM TRAIL WHERE UID = ?)";
+	private static final String TRAIL_SELECT = "SELECT ID FROM FINDING WHERE UID = ? AND PROJECT_ID = ?";
+	private static final String UPDATE_OBSOLETE_TRAIL = "UPDATE LOCATION_MATCH SET FINDING_ID = (SELECT ID FROM FINDING WHERE UID = ?) WHERE FINDING_ID = (SELECT ID FROM FINDING WHERE UID = ?)";
 
 	private final Connection conn;
 
 	private final PreparedStatement selectFinding;
 	private final PreparedStatement insertAudit;
 	private final PreparedStatement selectProject;
-	private final PreparedStatement updateRevision;
+
 	private final PreparedStatement selectTrail;
 	private final PreparedStatement updateObsoleteTrail;
 
@@ -50,7 +49,7 @@ public class AuditManager {
 		this.insertAudit = conn.prepareStatement(AUDIT_INSERT);
 		this.selectProject = conn.prepareStatement(PROJECT_SELECT);
 		this.selectTrail = conn.prepareStatement(TRAIL_SELECT);
-		this.updateRevision = conn.prepareStatement(UPDATE_PROJECT_REVISION);
+
 		this.updateObsoleteTrail = conn.prepareStatement(UPDATE_OBSOLETE_TRAIL);
 		this.fact = ClientFindingRecordFactory.getInstance(conn);
 		userId = User.getUser(conn).getId();
@@ -113,13 +112,11 @@ public class AuditManager {
 				AuditRecord aRec = fact.newAudit();
 				aRec.setEvent(a.getEvent());
 				aRec.setTimestamp(a.getTimestamp());
-				aRec.setTrailId(trailId);
+				aRec.setFindingId(trailId);
 				aRec.setUserId(userId);
 				aRec.setValue(a.getValue());
 			}
 		}
-		updateRevision.setLong(1, response.getRevision());
-		updateRevision.setString(2, project);
 		conn.commit();
 	}
 

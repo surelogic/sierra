@@ -51,6 +51,10 @@ public class ProjectManager {
 		return project.getId();
 	}
 	
+	public void clearProject(String name) throws SQLException {
+		//TODO
+	}
+	
 	public static ProjectManager getInstance(Connection conn)
 			throws SQLException {
 		return new ProjectManager(conn);

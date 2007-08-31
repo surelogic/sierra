@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClassMetricRecord extends
-		LongRecordRelationRecord<RunRecord, CompilationUnitRecord> {
+		LongRecordRelationRecord<ScanRecord, CompilationUnitRecord> {
 
 	private Integer linesOfCode;
 

@@ -1,14 +1,14 @@
-package com.surelogic.sierra.jdbc.run;
+package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.record.RunRecord;
-import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.message.Settings;
 
-public class RunManager {
+public class ScanManager {
 
 	private static final String DELETE_UNUSED_SOURCES = "DELETE FROM SOURCE_LOCATION WHERE ID IN ("
 			+ " SELECT NO_PRIMARY.ID FROM ("
@@ -27,31 +27,31 @@ public class RunManager {
 			+ " WHERE SL.COMPILATION_UNIT_ID IS NULL)";
 
 	private final Connection conn;
-	private final RunRecordFactory factory;
+	private final ScanRecordFactory factory;
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 
-	private RunManager(Connection conn) throws SQLException {
+	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
-		this.factory = RunRecordFactory.getInstance(conn);
+		this.factory = ScanRecordFactory.getInstance(conn);
 		this.deleteCompilations = conn
 				.prepareStatement(DELETE_UNUSED_COMPILATIONS);
 		this.deleteSources = conn.prepareStatement(DELETE_UNUSED_SOURCES);
 	}
 
-	public RunGenerator getRunGenerator(Settings settings) {
-		return new JDBCRunGenerator(conn, factory, settings);
+	public ScanGenerator getScanGenerator(Settings settings) {
+		return new JDBCScanGenerator(conn, factory, settings);
 	}
 
 	/**
-	 * Remove the run with the given uid from the database. This method quietly
-	 * does nothing if the run is not in the database.
+	 * Remove the scan with the given uid from the database. This method quietly
+	 * does nothing if the scan is not in the database.
 	 * 
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteRun(String uid) throws SQLException {
-		RunRecord rec = factory.newRun();
+	public void deleteScan(String uid) throws SQLException {
+		ScanRecord rec = factory.newScan();
 		rec.setUid(uid);
 		if (rec.select()) {
 			rec.delete();
@@ -60,7 +60,7 @@ public class RunManager {
 		}
 	}
 
-	public static RunManager getInstance(Connection conn) throws SQLException {
-		return new RunManager(conn);
+	public static ScanManager getInstance(Connection conn) throws SQLException {
+		return new ScanManager(conn);
 	}
 }

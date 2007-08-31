@@ -10,9 +10,8 @@ import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
-import com.surelogic.sierra.jdbc.record.RunRecord;
-import com.surelogic.sierra.jdbc.record.TrailRecord;
-import com.surelogic.sierra.jdbc.run.RunRecordFactory;
+import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -30,13 +29,13 @@ public abstract class FindingManager {
 		this.conn = conn;
 	}
 
-	protected abstract ResultSet getUnassignedArtifacts(RunRecord run)
+	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
 			throws SQLException;
 
 	protected abstract FindingRecordFactory getFactory();
 
 	/**
-	 * Generate findings for the run with the given uid
+	 * Generate findings for the scan with the given uid
 	 * 
 	 * @param uid
 	 */
@@ -44,15 +43,15 @@ public abstract class FindingManager {
 		try {
 
 			FindingRecordFactory factory = getFactory();
-			RunRecord run = RunRecordFactory.getInstance(conn).newRun();
-			run.setUid(uid);
-			if (!run.select()) {
-				throw new IllegalArgumentException("No run with uid " + uid
+			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
+			scan.setUid(uid);
+			if (!scan.select()) {
+				throw new IllegalArgumentException("No scan with uid " + uid
 						+ " exists in the database");
 			}
-			Long projectId = run.getProjectId();
+			Long projectId = scan.getProjectId();
 
-			ResultSet result = getUnassignedArtifacts(run);
+			ResultSet result = getUnassignedArtifacts(scan);
 
 			int counter = 0;
 			while (result.next()) {
@@ -73,34 +72,15 @@ public abstract class FindingManager {
 				Long findingId;
 				if (!art.m.select()) {
 					// We don't have a match, so we need to produce an entirely
-					// new finding and trail.
+					// new finding
 					MatchRecord m = art.m;
-					TrailRecord t = factory.newTrail();
-					t.setProjectId(projectId);
 					FindingRecord f = factory.newFinding();
-					f.setTrail(t);
+					f.setProjectId(projectId);
 					f.setImportance(filter.calculateImportance(art.m.getId()
 							.getFindingTypeId(), art.p, art.s));
-					t.insert();
 					f.insert();
 					m.setFindingId(f.getId());
-					m.setTrailId(t.getId());
 					m.insert();
-					findingId = f.getId();
-				} else if (art.m.getFindingId() == null) {
-					// If we have a match with a trail, but no finding, we
-					// generate a finding and give it that trail.
-					MatchRecord m = art.m;
-					FindingRecord f = factory.newFinding();
-					TrailRecord t = factory.newTrail();
-					t.setId(m.getTrailId());
-					f.setTrail(t);
-					f.setImportance(filter.calculateImportance(art.m.getId()
-							.getFindingTypeId(), art.p, art.s));
-					f.insert();
-					findingId = f.getId();
-					m.setFindingId(findingId);
-					m.update();
 					findingId = f.getId();
 				} else {
 					findingId = art.m.getFindingId();
@@ -132,13 +112,10 @@ public abstract class FindingManager {
 		MatchRecord m;
 	}
 
+	// TODO we only have one finding manager
 	public static FindingManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
 	}
 
-	public static FindingManager getInstance(Connection conn, String qualifier)
-			throws SQLException {
-		return new QualifiedFindingManager(conn, qualifier);
-	}
 }

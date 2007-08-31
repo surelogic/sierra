@@ -11,7 +11,7 @@ import com.surelogic.sierra.tool.message.Severity;
 
 public final class ArtifactRecord extends LongRecord {
 
-	private Long runId;
+	private Long scanId;
 	private Long findingTypeId;
 	private Priority priority;
 	private Severity severity;
@@ -22,12 +22,12 @@ public final class ArtifactRecord extends LongRecord {
 		super(mapper);
 	}
 
-	public Long getRunId() {
-		return runId;
+	public Long getScanId() {
+		return scanId;
 	}
 
-	public void setRunId(Long runId) {
-		this.runId = runId;
+	public void setScanId(Long scanId) {
+		this.scanId = scanId;
 	}
 
 	public Long getFindingTypeId() {
@@ -72,7 +72,7 @@ public final class ArtifactRecord extends LongRecord {
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, runId);
+		st.setLong(idx++, scanId);
 		st.setLong(idx++, findingTypeId);
 		st.setLong(idx++, primary.getId());
 		st.setInt(idx++, priority.ordinal());
@@ -83,7 +83,7 @@ public final class ArtifactRecord extends LongRecord {
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		runId = set.getLong(idx++);
+		scanId = set.getLong(idx++);
 		findingTypeId = set.getLong(idx++);
 		priority = Priority.values()[set.getInt(idx++)];
 		severity = Severity.values()[set.getInt(idx++)];
@@ -106,7 +106,7 @@ public final class ArtifactRecord extends LongRecord {
 		result = prime * result + ((primary == null) ? 0 : primary.hashCode());
 		result = prime * result
 				+ ((priority == null) ? 0 : priority.hashCode());
-		result = prime * result + (int) (runId ^ (runId >>> 32));
+		result = prime * result + (int) (scanId ^ (scanId >>> 32));
 		result = prime * result
 				+ ((severity == null) ? 0 : severity.hashCode());
 		return result;
@@ -138,7 +138,7 @@ public final class ArtifactRecord extends LongRecord {
 				return false;
 		} else if (!priority.equals(other.priority))
 			return false;
-		if (runId != other.runId)
+		if (scanId != other.scanId)
 			return false;
 		if (severity == null) {
 			if (other.severity != null)

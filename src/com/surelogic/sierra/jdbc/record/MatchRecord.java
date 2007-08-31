@@ -13,8 +13,6 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 
 	private Long findingId;
 
-	private Long trailId;
-
 	public MatchRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
@@ -23,7 +21,6 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithPk(st, idx);
 		setNullableLong(idx++, st, findingId);
-		setNullableLong(idx++, st, trailId);
 		return idx;
 	}
 
@@ -46,7 +43,6 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		this.findingId = set.getLong(idx++);
-		this.trailId = set.getLong(idx++);
 		return 0;
 	}
 
@@ -59,8 +55,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
 		setNullableLong(idx++, st, findingId);
-		setNullableLong(idx++, st, trailId);
-		return 0;
+		return idx;
 	}
 
 	public PK getId() {
@@ -77,14 +72,6 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 
 	public void setFindingId(Long findingId) {
 		this.findingId = findingId;
-	}
-
-	public Long getTrailId() {
-		return trailId;
-	}
-
-	public void setTrailId(Long trailId) {
-		this.trailId = trailId;
 	}
 
 	/**

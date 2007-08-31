@@ -8,7 +8,7 @@ public class QualifierRecord extends LongUpdatableRecord {
 
 	private String name;
 
-	public QualifierRecord(UpdateBaseMapper mapper) {
+	public QualifierRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 

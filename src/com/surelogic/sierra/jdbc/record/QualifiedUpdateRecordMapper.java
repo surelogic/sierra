@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class QualifiedUpdateRecordMapper extends QualifiedMapper implements UpdateRecordMapper {
+@Deprecated
+public class QualifiedUpdateRecordMapper extends QualifiedMapper implements
+		UpdateRecordMapper {
 	private final PreparedStatement update;
 
 	public QualifiedUpdateRecordMapper(Connection conn, String insertSql,
@@ -14,7 +16,9 @@ public class QualifiedUpdateRecordMapper extends QualifiedMapper implements Upda
 		this.update = conn.prepareStatement(updateSql);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.surelogic.sierra.jdbc.record.UpdateRecordMapper#update(com.surelogic.sierra.jdbc.record.UpdatableRecord)
 	 */
 	public void update(UpdatableRecord<?> record) throws SQLException {

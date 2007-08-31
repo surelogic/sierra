@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.surelogic.sierra.jdbc.run.RunStatus;
+import com.surelogic.sierra.jdbc.scan.ScanStatus;
 
-public final class RunRecord extends LongUpdatableRecord {
+public final class ScanRecord extends LongUpdatableRecord {
 
 	private Long userId;
 	private Long projectId;
@@ -18,9 +18,9 @@ public final class RunRecord extends LongUpdatableRecord {
 	private String javaVersion;
 	private String javaVendor;
 	private Date timestamp;
-	private RunStatus status;
+	private ScanStatus status;
 
-	public RunRecord(UpdateRecordMapper mapper) {
+	public ScanRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -64,11 +64,11 @@ public final class RunRecord extends LongUpdatableRecord {
 		this.timestamp = timestamp;
 	}
 
-	public RunStatus getStatus() {
+	public ScanStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(RunStatus status) {
+	public void setStatus(ScanStatus status) {
 		this.status = status;
 	}
 
@@ -105,7 +105,7 @@ public final class RunRecord extends LongUpdatableRecord {
 		this.javaVendor = set.getString(idx++);
 		this.javaVendor = set.getString(idx++);
 		this.timestamp = set.getTimestamp(idx++);
-		this.status = RunStatus.valueOf(set.getString(idx++));
+		this.status = ScanStatus.valueOf(set.getString(idx++));
 		return idx;
 	}
 
