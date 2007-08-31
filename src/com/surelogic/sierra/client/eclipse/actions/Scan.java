@@ -33,7 +33,7 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  * @author Tanmay.Sinha
  */
-public final class RunAnalysis {
+public final class Scan {
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
@@ -69,7 +69,7 @@ public final class RunAnalysis {
 
 	private List<Config> f_configs;
 
-	public RunAnalysis(List<IJavaProject> selectedProjects) {
+	public Scan(List<IJavaProject> selectedProjects) {
 		// Get the plug-in directory that has tools folder and append the
 		// directory
 		f_selectedProjects.addAll(selectedProjects);

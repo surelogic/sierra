@@ -14,7 +14,7 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.LoadRunDocumentJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class ImportRunAction implements IWorkbenchWindowActionDelegate {
+public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do
