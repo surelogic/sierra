@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 
 /**
  * XML Parser for results from the tools. Uses SAX parser.
@@ -24,7 +25,7 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public class Parser {
 
-	private ArtifactGenerator generator;
+	private MessageArtifactFileGenerator generator;
 
 	private static final Logger log = SLLogger.getLogger("sierra");
 
@@ -35,7 +36,7 @@ public class Parser {
 		// Nothing to do
 	}
 
-	public Parser(ArtifactGenerator generator) {
+	public Parser(MessageArtifactFileGenerator generator) {
 		this.generator = generator;
 	}
 

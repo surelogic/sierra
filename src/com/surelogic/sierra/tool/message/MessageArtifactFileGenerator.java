@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
@@ -44,6 +45,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private Config config;
 	private File artifactsHolder;
 	private File metricsFile;
+	private File errorsHolder;
+	private FileOutputStream errOut;
 
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		this.mw = MessageWarehouse.getInstance();
@@ -53,9 +56,14 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		try {
 
 			artifactsHolder = File.createTempFile("artifacts", "tmp", new File(
-					parsedFile.getParent()));
+					SierraConstants.SIERRA_RESULTS_PATH));
 			artOut = new FileOutputStream(artifactsHolder, true);
 			artifactAdapter = new ArtifactBuilderAdapter();
+
+			errorsHolder = File.createTempFile("errors", "tmp", new File(
+					SierraConstants.SIERRA_RESULTS_PATH));
+			errOut = new FileOutputStream(errorsHolder, true);
+
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
@@ -64,7 +72,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	}
 
-	@Override
 	public void writeMetrics(File file) {
 		this.metricsFile = file;
 
@@ -78,6 +85,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	@Override
 	public MetricBuilder metric() {
 		return new MessageMetricBuilder();
+	}
+
+	@Override
+	public ErrorBuilder error() {
+		return new MessageErrorBuilder();
 	}
 
 	@Override
@@ -113,12 +125,18 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			in.close();
 			finalFile.write(ARTIFACTS_END);
 			finalFile.write(ERROR_START);
+			in = new BufferedReader(new FileReader(errorsHolder));
+			line = null;
+			while (null != (line = in.readLine())) {
+				finalFile.write(line);
+				finalFile.write("\n");
+			}
 			finalFile.write(ERROR_END);
 			finalFile.write(TOOL_OUTPUT_END);
 			finalFile.flush();
 
 			File configOutput = File.createTempFile("config", "tmp", new File(
-					parsedFile.getParent()));
+					SierraConstants.SIERRA_RESULTS_PATH));
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
 			in = new BufferedReader(new FileReader(configOutput));
@@ -131,20 +149,47 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
+
+			errOut.close();
+			errorsHolder.delete();
+
 			artOut.close();
 			artifactsHolder.delete();
 
 			fos.close();
 			configOutput.delete();
+
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
 		}
 
-		// ToolOutput to = new ToolOutput();
-		// to.setArtifact(getArtifacts());
-		// MessageWarehouse.getInstance().writeToolOutput(to, dest);
+	}
+
+	private class MessageErrorBuilder implements ErrorBuilder {
+
+		private String message;
+		private String tool;
+
+		public void build() {
+
+			Error error = new Error();
+			error.setMessage(message);
+			error.setTool(tool);
+			mw.writeError(error, errOut);
+		}
+
+		public ErrorBuilder message(String message) {
+			this.message = message;
+			return this;
+		}
+
+		public ErrorBuilder tool(String tool) {
+			this.tool = tool;
+			return this;
+		}
+
 	}
 
 	private class MessageMetricBuilder implements MetricBuilder {
@@ -194,7 +239,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		public void build() {
 			Artifact a = artBuilder.build();
-			MessageWarehouse.getInstance().writeArtifact(a, artOut);
+			mw.writeArtifact(a, artOut);
 		}
 
 		public ArtifactBuilder findingType(String tool, String version,

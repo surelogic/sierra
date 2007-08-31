@@ -29,6 +29,8 @@ class FindBugsHandler extends DefaultHandler {
 
 	private ArtifactGenerator.ArtifactBuilder artifact;
 
+	private ArtifactGenerator.ErrorBuilder error;
+
 	private boolean inMethod;
 
 	private boolean inField;
@@ -47,12 +49,13 @@ class FindBugsHandler extends DefaultHandler {
 
 	private boolean inLongMessage = false;
 
-	private StringBuilder message;
-
 	// private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	@SuppressWarnings("unused")
 	private Map<String, Map<Integer, Long>> hashHolder;
+	private boolean inErrorMessage = false;
+	private StringBuilder message;
+	private StringBuilder errorMessage;
 
 	public FindBugsHandler(ArtifactGenerator generator,
 			String[] sourceDirectories) {
@@ -60,6 +63,7 @@ class FindBugsHandler extends DefaultHandler {
 		this.generator = generator;
 		this.sourceDirectories = sourceDirectories;
 		message = new StringBuilder();
+		errorMessage = new StringBuilder();
 	}
 
 	public FindBugsHandler(ArtifactGenerator generator,
@@ -70,6 +74,7 @@ class FindBugsHandler extends DefaultHandler {
 		this.generator = generator;
 		this.sourceDirectories = sourceDirectories;
 		message = new StringBuilder();
+		errorMessage = new StringBuilder();
 	}
 
 	@Override
@@ -112,6 +117,16 @@ class FindBugsHandler extends DefaultHandler {
 				}
 			}
 
+		}
+
+		if ("Exception".equals(eName)) {
+			inErrorMessage = true;
+			errorMessage.setLength(0);
+		}
+
+		if ("MissingClass".equals(eName)) {
+			inErrorMessage = true;
+			errorMessage.setLength(0);
 		}
 
 		if ("Method".equals(eName)) {
@@ -469,6 +484,20 @@ class FindBugsHandler extends DefaultHandler {
 			inLongMessage = false;
 		}
 
+		if ("Exception".equals(eName)) {
+			error = generator.error();
+			error.message("Exception : " + errorMessage.toString()).tool(
+					FINDBUGS);
+			error.build();
+		}
+
+		if ("MissingClass".equals(eName)) {
+			error = generator.error();
+			error.message("Missing Class : " + errorMessage.toString()).tool(
+					FINDBUGS);
+			error.build();
+		}
+
 		if ("Field".equals(eName)) {
 			inField = false;
 			sourceLocation.build();
@@ -490,6 +519,8 @@ class FindBugsHandler extends DefaultHandler {
 			throws SAXException {
 		if (inLongMessage) {
 			message.append(ch, start, length);
+		} else if (inErrorMessage) {
+			errorMessage.append(ch, start, length);
 		}
 	}
 }

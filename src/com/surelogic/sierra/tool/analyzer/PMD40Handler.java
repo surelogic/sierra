@@ -13,7 +13,7 @@ import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
 /**
- * The parser for PMD 4.0 results
+ * The parser for PMD 4.0 results - updated for error parsing
  * 
  * @author Tanmay.Sinha
  * 
@@ -26,6 +26,8 @@ class PMD40Handler extends DefaultHandler {
 	private static final String PMD_VERSION = "4.0";
 
 	private ArtifactGenerator.SourceLocationBuilder sourceLocation;
+
+	private ArtifactGenerator.ErrorBuilder error;
 
 	boolean hasClassName;
 
@@ -83,6 +85,25 @@ class PMD40Handler extends DefaultHandler {
 				}
 			}
 
+		}
+
+		if ("error".equals(eName)) {
+
+			error = generator.error();
+
+			if (attrs != null) {
+				for (int i = 0; i < attrs.getLength(); i++) {
+					String aName = attrs.getLocalName(i);
+					if ("".equals(aName)) {
+						aName = attrs.getQName(i);
+					}
+
+					if ("msg".equals(aName)) {
+						String holder = attrs.getValue(i);
+						error.message(holder).tool(PMD);
+					}
+				}
+			}
 		}
 
 		if ("violation".equals(eName)) {
@@ -236,6 +257,9 @@ class PMD40Handler extends DefaultHandler {
 			eName = qName;
 		}
 
+		if ("error".equals(eName)) {
+			error.build();
+		}
 		if ("violation".equals(eName)) {
 
 			messageHolder = message.toString();

@@ -104,6 +104,22 @@ public class MessageWarehouse {
 	}
 
 	/**
+	 * Write a {@link Error} object to the specified output..
+	 * 
+	 * @param error
+	 * @param out
+	 */
+	public void writeError(Error error, FileOutputStream out) {
+		try {
+			marshaller.marshal(error, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+
+	}
+
+	/**
 	 * Write a {@link Artifact} object to the specified output..
 	 * 
 	 * @param a
@@ -118,10 +134,16 @@ public class MessageWarehouse {
 		}
 	}
 
-	public void writeConfig(Config config, FileOutputStream artOut) {
+	/**
+	 * Write a {@link Config} object to the specified output..
+	 * 
+	 * @param config
+	 * @param out
+	 */
+	public void writeConfig(Config config, FileOutputStream out) {
 		try {
 
-			marshaller.marshal(config, artOut);
+			marshaller.marshal(config, out);
 		} catch (JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
