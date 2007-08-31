@@ -10,7 +10,7 @@ Require-Bundle: com.surelogic.sierra.tool,
  org.apache.ant
 Export-Package: com.surelogic.sierra.jdbc,
  com.surelogic.sierra.jdbc.finding,
- com.surelogic.sierra.jdbc.run,
+ com.surelogic.sierra.jdbc.scan,
  com.surelogic.sierra.jdbc.tool,
  com.surelogic.sierra.jdbc.user,
  com.surelogic.sierra.schema
