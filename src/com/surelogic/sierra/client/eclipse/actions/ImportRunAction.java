@@ -31,10 +31,11 @@ public final class ImportRunAction implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Run");
-			fd.setFilterPath(Activator.getDefault().getPluginPreferences()
-					.getString(PreferenceConstants.P_SIERRA_PATH));
-			fd.setFilterExtensions(new String[] { "*.PARSED", "*.*" });
-			fd.setFilterNames(new String[] { "Parsed Files (*.PARSED)",
+			final String path = Activator.getDefault().getPluginPreferences()
+					.getString(PreferenceConstants.P_SIERRA_PATH);
+			fd.setFilterPath(path);
+			fd.setFilterExtensions(new String[] { "*.sierra", "*.*" });
+			fd.setFilterNames(new String[] { "Parsed Files (*.sierra)",
 					"All Files (*.*)" });
 		}
 		final String selectedFilename = fd.open();
