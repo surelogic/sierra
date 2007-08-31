@@ -10,8 +10,8 @@ import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
-import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.QualifierRunRecord;
+import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.RunRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
@@ -42,7 +42,7 @@ public class RunRecordFactory {
 	private final RecordMapper artSourceMapper;
 	private final RecordMapper projectMapper;
 	private final UpdateRecordMapper runMapper;
-	private RecordMapper qualifierMapper;
+	private UpdateBaseMapper qualifierMapper;
 	private RecordMapper runQualMapper;
 	private RecordMapper classMetricMapper;
 
@@ -98,7 +98,7 @@ public class RunRecordFactory {
 
 	public QualifierRecord newQualifier() throws SQLException {
 		if (qualifierMapper == null) {
-			qualifierMapper = new BaseMapper(conn, null, QUALIFIER_SELECT, null);
+			qualifierMapper = new UpdateBaseMapper(conn, null, QUALIFIER_SELECT, null, null);
 		}
 		return new QualifierRecord(qualifierMapper);
 	}

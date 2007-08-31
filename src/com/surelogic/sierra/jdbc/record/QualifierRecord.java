@@ -4,11 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class QualifierRecord extends LongRecord {
+public class QualifierRecord extends LongUpdatableRecord {
 
 	private String name;
 
-	public QualifierRecord(RecordMapper mapper) {
+	public QualifierRecord(UpdateBaseMapper mapper) {
 		super(mapper);
 	}
 
@@ -59,6 +59,13 @@ public class QualifierRecord extends LongRecord {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, name);
+		return idx;
 	}
 
 }

@@ -43,6 +43,7 @@ public class QualifierManager {
 		/** If this qualifier does not exist, throw an error */
 		if (!qualifier.select()) {
 			// XXX Throw error
+			throw new SQLException();
 		}
 
 		qualifier.delete();
@@ -55,11 +56,28 @@ public class QualifierManager {
 		/** If this qualifier already exists, throw an error */
 		if (qualifier.select()) {
 			// XXX Throw error
+			throw new SQLException();
 		}
 
 		qualifier.insert();
 
 		return qualifier.getId();
+	}
+
+	public void renameQualifier(String currName, String newName)
+			throws SQLException {
+		QualifierRecord qualifier = qualifierFactory.newQualifier();
+
+		qualifier.setName(currName);
+
+		/** If this qualifier does not exist, throw an error */
+		if (!qualifier.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		qualifier.setName(newName);
+		qualifier.update();
 	}
 
 	public static QualifierManager getInstance(Connection conn)

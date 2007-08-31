@@ -62,7 +62,7 @@ public class ProductManager {
 
 		if (productName == null)
 			throw new SQLException();
-		
+
 		ProductRecord product = productFactory.newProduct();
 		product.setName(productName);
 
@@ -131,16 +131,31 @@ public class ProductManager {
 	 * 
 	 * @param currName
 	 * @param newName
+	 * @throws SQLException
 	 */
-	public void renameProduct(String currName, String newName) {
-		// TODO
+	public void renameProduct(String currName, String newName)
+			throws SQLException {
+		ProductRecord product = productFactory.newProduct();
+
+		product.setName(currName);
+
+		/** If this product does not exist, throw an error */
+		if (!product.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		product.setName(newName);
+		product.update();
 	}
 
 	/**
 	 * Create a new product
 	 * 
-	 * @param name name of the new product
-	 * @param projects associated projects of the new product
+	 * @param name
+	 *            name of the new product
+	 * @param projects
+	 *            associated projects of the new product
 	 * @return The ID of the new product
 	 * @throws SQLException
 	 */
@@ -164,6 +179,7 @@ public class ProductManager {
 
 	/**
 	 * Remove a product from the DB identified by the name of the product
+	 * 
 	 * @param name
 	 * @throws SQLException
 	 */
@@ -171,9 +187,10 @@ public class ProductManager {
 		ProductRecord product = productFactory.newProduct();
 		product.setName(name);
 
-		/** If this qualifier does not exist, throw an error */
+		/** If this product does not exist, throw an error */
 		if (!product.select()) {
 			// XXX Throw error
+			throw new SQLException();
 		}
 
 		product.delete();

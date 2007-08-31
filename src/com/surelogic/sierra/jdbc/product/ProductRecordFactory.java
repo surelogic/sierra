@@ -3,8 +3,8 @@ package com.surelogic.sierra.jdbc.product;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
 /**
  * @author Spencer.Whitman
@@ -15,19 +15,18 @@ public class ProductRecordFactory {
 	private static final String PRODUCT_INSERT = "INSERT INTO PRODUCT (NAME) VALUES (?)";
 	private static final String PRODUCT_DELETE = "DELETE FROM PRODUCT WHERE ID = ?";
 	private static final String PRODUCT_SELECT = "SELECT ID FROM PRODUCT WHERE NAME = ?";
-	private static final String PRODUCT_UPDATE = "UPDATE SIERRA_MATCH SET FINDING_ID = ?, TRAIL_ID = ? WHERE QUALIFIER_ID = ? AND PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
+	private static final String PRODUCT_UPDATE = "UPDATE PRODUCT SET NAME = ? WHERE ID = ?";
 	
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private final BaseMapper productMapper;
+	private final UpdateBaseMapper productMapper;
 
 	private ProductRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 
-		/** XXX Is this the correct Product_select? */
-		productMapper = new BaseMapper(conn, PRODUCT_INSERT, PRODUCT_SELECT,
-				PRODUCT_DELETE/*, PRODUCT_UPDATE*/);
+		productMapper = new UpdateBaseMapper(conn, PRODUCT_INSERT, PRODUCT_SELECT,
+				PRODUCT_DELETE, PRODUCT_UPDATE);
 	}
 
 	public static ProductRecordFactory getInstance(Connection conn)

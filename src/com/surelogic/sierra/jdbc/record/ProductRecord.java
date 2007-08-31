@@ -4,11 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class ProductRecord extends LongRecord {
+public final class ProductRecord extends LongUpdatableRecord {
 
 	private String name;
 
-	public ProductRecord(RecordMapper mapper) {
+	public ProductRecord(UpdateBaseMapper mapper) {
 		super(mapper);
 	}
 
@@ -32,14 +32,15 @@ public final class ProductRecord extends LongRecord {
 		return idx;
 	}
 
-//	@Override
-//	protected int fillUpdatedFields(PreparedStatement st, int idx)
-//			throws SQLException {
-//
-//	}
-
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		return idx;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, name);
 		return idx;
 	}
 
