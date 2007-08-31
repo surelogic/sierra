@@ -35,6 +35,7 @@
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
                 id="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/trash.gif"
                 label="Cleanup"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
@@ -83,9 +84,10 @@
           </action>
 
           <action
-               class="com.surelogic.sierra.client.eclipse.actions.ServerAction"
-               id="com.surelogic.sierra.client.eclipse.actions.ServerAction"
-               label="Sierra Servers..."
+               class="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/earth.gif"
+               label="Sierra Servers"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>     
           
@@ -108,6 +110,7 @@
            		class="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
                 enablesFor="+"
                 id="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/trash.gif"
                 label="Cleanup"
                 menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
          <action
@@ -161,12 +164,21 @@
             name="Query Results">
       </view>
 
-          <view
+      <view
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            name="Findings"/>
+            name="Findings">
+      </view>
+      
+      <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
+            id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/earth.gif"
+            name="Sierra Servers">
+      </view>
    </extension>
 
    <!-- Sierra Explorer perspective and links to the Java perspective -->
@@ -197,6 +209,9 @@
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <viewShortcut
                id="com.surelogic.sierra.client.eclipse.views.FindingsView">
+         </viewShortcut>
+         <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
          </viewShortcut>
          <perspectiveShortcut
                id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
