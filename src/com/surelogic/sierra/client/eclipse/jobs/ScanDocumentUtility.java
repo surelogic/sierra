@@ -10,18 +10,18 @@ import java.util.logging.Logger;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.run.RunManager;
-import com.surelogic.sierra.jdbc.run.RunPersistenceException;
-import com.surelogic.sierra.tool.analyzer.RunGenerator;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
+import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
+import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Settings;
 
-public final class RunDocumentUtility {
+public final class ScanDocumentUtility {
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private RunDocumentUtility() {
+	private ScanDocumentUtility() {
 		// no instances
 	}
 
@@ -35,19 +35,19 @@ public final class RunDocumentUtility {
 	 * @param monitor
 	 *            a progress monitor, may be <code>null</code> if progress is
 	 *            not tracked.
-	 * @throws RunPersistenceException
+	 * @throws ScanPersistenceException
 	 */
 	public static void loadRunDocument(final File runDocument,
-			final SLProgressMonitor monitor) throws RunPersistenceException {
+			final SLProgressMonitor monitor) throws ScanPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
 			try {
 				conn.setAutoCommit(false);
 				Settings settings = new Settings();
 				settings.setRuleFilter(new ArrayList<FindingTypeFilter>());
-				RunGenerator gen = RunManager.getInstance(conn)
-						.getRunGenerator(settings);
-				MessageWarehouse.getInstance().parseRunDocument(runDocument,
+				ScanGenerator gen = ScanManager.getInstance(conn)
+						.getScanGenerator(settings);
+				MessageWarehouse.getInstance().parseScanDocument(runDocument,
 						gen, monitor);
 			} catch (SQLException e) {
 				LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);

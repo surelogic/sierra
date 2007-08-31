@@ -25,7 +25,7 @@ public final class LoadRunDocumentJob extends DatabaseJob {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
 
-		RunDocumentUtility.loadRunDocument(f_runDocument,
+		ScanDocumentUtility.loadRunDocument(f_runDocument,
 				slProgressMonitorWrapper);
 
 		if (slProgressMonitorWrapper.isCanceled()) {

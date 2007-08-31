@@ -19,9 +19,9 @@ import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
-import com.surelogic.sierra.client.eclipse.jobs.RunDocumentUtility;
+import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.jdbc.run.RunPersistenceException;
+import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.analyzer.Parser;
@@ -303,10 +303,10 @@ public final class Scan {
 				LOG.info("Currently loading..."
 						+ runDocumentHolder.getAbsolutePath());
 				try {
-					RunDocumentUtility.loadRunDocument(runDocumentHolder,
+					ScanDocumentUtility.loadRunDocument(runDocumentHolder,
 							slProgressMonitorWrapper);
 
-				} catch (RunPersistenceException rpe) {
+				} catch (ScanPersistenceException rpe) {
 					LOG.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
 							"Sierra Analysis Completed with errors",
