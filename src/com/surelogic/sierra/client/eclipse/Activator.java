@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.surelogic.sierra.client.eclipse.model.Project;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -34,7 +34,7 @@ public class Activator extends AbstractUIPlugin {
 		// startup the database and ensure its schema is up to date
 		Data.bootAndCheckSchema();
 		// start observing data changes
-		Project.getInstance().refresh();
+		Projects.getInstance().refresh();
 	}
 
 	@Override

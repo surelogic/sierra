@@ -22,32 +22,32 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * The class allows observers to changes to this list of projects
  */
-public final class Project {
+public final class Projects {
 
 	private static final String QUERY = "select PROJECT from PROJECT_OVERVIEW order by PROJECT";
 
-	private static final Project INSTANCE = new Project();
+	private static final Projects INSTANCE = new Projects();
 
-	public static Project getInstance() {
+	public static Projects getInstance() {
 		return INSTANCE;
 	}
 
-	private Project() {
+	private Projects() {
 		// singleton
 	}
 
-	private final Set<IProjectObserver> f_observers = new CopyOnWriteArraySet<IProjectObserver>();
+	private final Set<IProjectsObserver> f_observers = new CopyOnWriteArraySet<IProjectsObserver>();
 
-	public void addObserver(final IProjectObserver o) {
+	public void addObserver(final IProjectsObserver o) {
 		f_observers.add(o);
 	}
 
-	public void removeObserver(final IProjectObserver o) {
+	public void removeObserver(final IProjectsObserver o) {
 		f_observers.remove(o);
 	}
 
 	private void notifyObservers() {
-		for (IProjectObserver o : f_observers)
+		for (IProjectsObserver o : f_observers)
 			o.notify(this);
 	}
 
@@ -56,9 +56,25 @@ public final class Project {
 	 */
 	private final List<String> f_projectNames = new ArrayList<String>();
 
+	/**
+	 * Gets the set of project names in the database.
+	 * 
+	 * @return the set of project names in the database.
+	 */
 	public synchronized List<String> getProjectNames() {
 		return new ArrayList<String>(f_projectNames);
+	}
 
+	/**
+	 * Checks if a project name exists in the database.
+	 * 
+	 * @param projectName
+	 *            a project name.
+	 * @return <code>true</code> if the given project name exists in the
+	 *         database, <code>false</code> otherwise.
+	 */
+	public boolean exists(final String projectName) {
+		return f_projectNames.contains(projectName);
 	}
 
 	public void refresh() {
