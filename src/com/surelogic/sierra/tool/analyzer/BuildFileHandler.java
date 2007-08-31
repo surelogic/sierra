@@ -12,7 +12,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.common.eclipse.SierraConstants;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.config.Config;
 
 /**

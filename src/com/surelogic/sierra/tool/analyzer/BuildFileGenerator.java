@@ -19,8 +19,8 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-import com.surelogic.common.eclipse.SierraConstants;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.SierraTool;
 import com.surelogic.sierra.tool.config.Config;
 
