@@ -16,12 +16,13 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.SierraConstants;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.RunDocumentUtility;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.run.RunPersistenceException;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
@@ -35,6 +36,22 @@ import com.surelogic.sierra.tool.config.Config;
 public final class RunAnalysis {
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
+
+	/** The status for properly terminated task */
+	public static final IStatus PROPER_TERMINATION = SLStatus.createStatus(
+			IStatus.OK, 0, "Proper termination", null);
+
+	/** The status for task that completed with errors */
+	public static final IStatus IMPROPER_TERMINATION = SLStatus
+			.createErrorStatus("Improper termination");
+
+	/** The status for canceled task */
+	public static final IStatus TASK_CANCELED = SLStatus.createStatus(
+			IStatus.CANCEL, 0, "Task canceled", null);
+
+	/** The status for already running task - currently uses cancel */
+	public static final IStatus TASK_ALREADY_RUNNING = SLStatus.createStatus(
+			IStatus.CANCEL, 0, "Task cancelled", null);
 
 	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
@@ -53,7 +70,7 @@ public final class RunAnalysis {
 	private List<Config> f_configs;
 
 	public RunAnalysis(List<IJavaProject> selectedProjects) {
-		// Get the plugin directory that has tools folder and append the
+		// Get the plug-in directory that has tools folder and append the
 		// directory
 		f_selectedProjects.addAll(selectedProjects);
 		String tools = BuildFileGenerator.getToolsDirectory()
@@ -81,7 +98,7 @@ public final class RunAnalysis {
 
 		for (IJavaProject project : f_selectedProjects) {
 			projectList.append(" ").append(project.getProject().getName());
-			
+
 			String projectPath = project.getResource().getLocation().toString();
 
 			File baseDir = new File(projectPath);
@@ -210,11 +227,11 @@ public final class RunAnalysis {
 				if (monitor.isCanceled()) {
 					monitor.done();
 					antRunnable.stopAll();
-					return SierraConstants.TASK_CANCELLED;
+					return TASK_CANCELED;
 				} else {
 					monitor.done();
 					LOG.info("Completed analysis");
-					return SierraConstants.PROPER_TERMINATION;
+					return PROPER_TERMINATION;
 				}
 
 			} catch (Exception e) {
@@ -223,7 +240,7 @@ public final class RunAnalysis {
 			}
 
 			monitor.done();
-			return SierraConstants.IMPROPER_TERMINATION;
+			return IMPROPER_TERMINATION;
 		}
 	}
 
@@ -237,7 +254,7 @@ public final class RunAnalysis {
 
 		@Override
 		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
+			if (event.getResult().equals(PROPER_TERMINATION)) {
 
 				Job databaseEntryJob = new DatabaseEntryJob(
 						"Finshing analysis", f_runDocs);
@@ -246,12 +263,11 @@ public final class RunAnalysis {
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
 				databaseEntryJob.schedule();
 
-			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
+			} else if (event.getResult().equals(TASK_CANCELED)) {
 				LOG.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");
-			} else if (event.getResult().equals(
-					SierraConstants.TASK_ALREADY_RUNNING)) {
+			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
 				BalloonUtility.showMessage(
 						"An instance of Sierra analysis is already running",
 						"Please wait for it to finish before restarting");
@@ -296,16 +312,16 @@ public final class RunAnalysis {
 							"Sierra Analysis Completed with errors",
 							"Check the logs.");
 					slProgressMonitorWrapper.done();
-					return SierraConstants.IMPROPER_TERMINATION;
+					return IMPROPER_TERMINATION;
 				}
 			}
 
 			if (slProgressMonitorWrapper.isCanceled()) {
-				return SierraConstants.TASK_CANCELLED;
+				return TASK_CANCELED;
 			} else {
 				LOG.info("Finished everything");
 				slProgressMonitorWrapper.done();
-				return SierraConstants.PROPER_TERMINATION;
+				return PROPER_TERMINATION;
 			}
 		}
 	}
@@ -314,11 +330,11 @@ public final class RunAnalysis {
 
 		@Override
 		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(SierraConstants.PROPER_TERMINATION)) {
+			if (event.getResult().equals(PROPER_TERMINATION)) {
 				BalloonUtility.showMessage("Sierra Analysis Completed",
 						"You may now examine the analysis results.");
 
-			} else if (event.getResult().equals(SierraConstants.TASK_CANCELLED)) {
+			} else if (event.getResult().equals(TASK_CANCELED)) {
 				LOG.info("Cancelled analysis");
 				BalloonUtility.showMessage("Sierra Analysis was cancelled",
 						"Check the logs.");

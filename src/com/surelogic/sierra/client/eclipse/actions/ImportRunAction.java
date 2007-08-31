@@ -10,10 +10,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.SierraConstants;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.LoadRunDocumentJob;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
+public final class ImportRunAction implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do
@@ -29,9 +30,9 @@ public final class LoadRunDocument implements IWorkbenchWindowActionDelegate {
 		if (fd == null) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
-			fd.setText("Load Analysis Run Document");
-			// System.out.println(SierraConstants.SIERRA_RESULTS_PATH);
-			fd.setFilterPath(SierraConstants.SIERRA_RESULTS_PATH);
+			fd.setText("Import Run");
+			fd.setFilterPath(Activator.getDefault().getPluginPreferences()
+					.getString(PreferenceConstants.P_SIERRA_PATH));
 			fd.setFilterExtensions(new String[] { "*.PARSED", "*.*" });
 			fd.setFilterNames(new String[] { "Parsed Files (*.PARSED)",
 					"All Files (*.*)" });

@@ -26,37 +26,68 @@
                 label="Sierra"
                 path="additions">
             
-            <groupMarker name="server"/>
-            <separator name="project"/>
+            <groupMarker name="client"/>
+            <separator name="server"/>
+            <separator name="administration"/>
             <separator name="additions"/>
           </menu>
           
           <action
-               class="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
-               id="com.surelogic.sierra.client.eclipse.actions.LoadRunDocument"
-               label="Load Analysis Run Document..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
-          </action>     
-                
-         <action
-           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
-                label="Synchronize Project with Server"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/project"
+           		class="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                id="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                label="Cleanup"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
-              
+           <action
+               class="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/import.gif"
+               label="Import Run..."
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
+          </action>     
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                 id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisWorkbench"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                 label="Analyze Project"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/project"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
+          
+         <action
+           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+                id="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+                label="Disconnect"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+                enablesFor="+">
+             <selection class="org.eclipse.jdt.core.IJavaProject"/>
+          </action>
+          <action
+               class="com.surelogic.sierra.client.eclipse.actions.PublishRunAction"
+               id="com.surelogic.sierra.client.eclipse.actions.PublishRunAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/export.gif"
+               label="Publish Run..."
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
+          </action>
+         <action
+           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+                label="Synchronize with Server"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+                enablesFor="+">
+             <selection class="org.eclipse.jdt.core.IJavaProject"/>
+          </action>
+
+          <action
+               class="com.surelogic.sierra.client.eclipse.actions.ServerAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ServerAction"
+               label="Sierra Servers..."
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
+          </action>     
           
         </actionSet>
    </extension>
@@ -70,22 +101,36 @@
                id="com.surelogic.sierra.client.eclipse.projectContextMenu"
                label="Sierra"
                path="additions">
-            <groupMarker name="content"/>
+            <groupMarker name="client"/>
+            <separator name="server"/>
          </menu>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-               enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
-               label="Synchronize Project with Server"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/content"/>
+           		class="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                enablesFor="+"
+                id="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
+                label="Cleanup"
+                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.RunAnalysisAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                label="Analyze Project"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/content"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
+
+         <action
+           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+                enablesFor="+"
+                id="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+                label="Disconnect"
+                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               enablesFor="+"
+               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/refresh.gif"
+               label="Synchronize with Server"
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
    </extension>
    
