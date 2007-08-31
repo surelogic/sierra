@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.run;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -370,9 +369,4 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 	}
-
-	public void writeMetrics(File absoluteFile) {
-		// Nothing to do - used for writing metrics to the run document
-	}
-
 }
