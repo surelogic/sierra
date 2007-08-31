@@ -5,11 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.SierraConstants;
@@ -18,7 +21,16 @@ import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.config.Config;
 
-//TODO implement error generation
+/**
+ * The run document generator
+ * 
+ * This class generates the run document. It generates 3 separate temporary
+ * files and stores the artifacts, errors and config in them. It finally
+ * combines all of them with proper xml tags and generates a run doucment.
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		implements ArtifactGenerator {
 
@@ -35,6 +47,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String ARTIFACTS_END = "</artifacts>";
 	private static final String ERROR_START = "<errors>";
 	private static final String ERROR_END = "</errors>";
+	private static final String ENCODING = "UTF-8";
 
 	private final MessageWarehouse mw;
 	private ArtifactBuilderAdapter artifactAdapter;
@@ -95,7 +108,12 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	@Override
 	public void finished() {
 		try {
-			FileWriter finalFile = new FileWriter(parsedFile);
+			// File output = new File(parsedFile.getAbsolutePath());
+			OutputStream stream = new FileOutputStream(parsedFile);
+			stream = new GZIPOutputStream(stream, 4096);
+			OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
+			PrintWriter finalFile = new PrintWriter(osw);
+			// FileWriter finalFile = new FileWriter(parsedFile);
 			finalFile.write(XML_START);
 			finalFile.write('\n');
 			finalFile.write(RUN_START);
@@ -155,6 +173,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.flush();
 			finalFile.close();
 
+			// Delete temp files
 			errOut.close();
 			artOut.close();
 			fos.close();

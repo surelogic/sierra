@@ -84,6 +84,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
 
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
@@ -159,7 +160,6 @@ public class SierraAnalysis extends Task {
 	private Path bindir = null;
 
 	/* *********************** CONSTANTS ****************************** */
-	private static final String PARSED_FILE_SUFFIX = ".sierra";
 	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
 
 	static {
@@ -188,7 +188,7 @@ public class SierraAnalysis extends Task {
 		checkCP = false;
 
 		antProject = new org.apache.tools.ant.Project();
-        setProject(antProject);
+		setProject(antProject);
 
 		this.config = config;
 		destDir = config.getDestDirectory();
@@ -371,14 +371,15 @@ public class SierraAnalysis extends Task {
 
 			if (runDocument == null || "".equals(runDocument)) {
 				runDocument = new File(tmpFolder, project.getName()
-						+ PARSED_FILE_SUFFIX);
+						+ SierraConstants.PARSED_FILE_SUFFIX);
 			} else if (runDocument.isDirectory()) {
 				runDocument = new File(runDocument, project.getName()
-						+ PARSED_FILE_SUFFIX);
-			} else if (!runDocument.getName().endsWith(PARSED_FILE_SUFFIX)) {
+						+ SierraConstants.PARSED_FILE_SUFFIX);
+			} else if (!runDocument.getName().endsWith(
+					SierraConstants.PARSED_FILE_SUFFIX)) {
 				runDocument = new File(runDocument.getParentFile(), runDocument
 						.getName()
-						+ PARSED_FILE_SUFFIX);
+						+ SierraConstants.PARSED_FILE_SUFFIX);
 			}
 
 			antProject.log("Generating the run document: " + runDocument,
@@ -449,9 +450,8 @@ public class SierraAnalysis extends Task {
 				throw new BuildException("Failed to upload run document, "
 						+ runDocument.getAbsolutePath() + " to the server: "
 						+ server);
-			}
-			else{
-    			uploadSuccessful = true;
+			} else {
+				uploadSuccessful = true;
 			}
 		}
 	}

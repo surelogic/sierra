@@ -6,7 +6,6 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +15,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -300,8 +300,13 @@ public class MessageWarehouse {
 		try {
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr = xmlif.createXMLStreamReader(new FileReader(
-					runDocument));
+			XMLStreamReader xmlr = null;
+			InputStream stream = new FileInputStream(runDocument);
+			if (runDocument.getName().endsWith(".gz")) {
+				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
+			} else {
+				xmlr = xmlif.createXMLStreamReader(stream);
+			}
 			try {
 				// move to the root element and check its name.
 				xmlr.nextTag();
@@ -339,6 +344,8 @@ public class MessageWarehouse {
 					+ runDocument.getName() + " does not exist.", e);
 		} catch (XMLStreamException e) {
 			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			log.severe("Error when trying to read compressed file " + e);
 		}
 		parseScanDocument(runDocument, generator.build(), monitor);
 	}
@@ -348,8 +355,13 @@ public class MessageWarehouse {
 		try {
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr = xmlif.createXMLStreamReader(new FileReader(
-					runDocument));
+			XMLStreamReader xmlr = null;
+			InputStream stream = new FileInputStream(runDocument);
+			if (runDocument.getName().endsWith(".gz")) {
+				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
+			} else {
+				xmlr = xmlif.createXMLStreamReader(stream);
+			}
 
 			try {
 				// move to the root element and check its name.
@@ -425,6 +437,8 @@ public class MessageWarehouse {
 					+ runDocument.getName() + " does not exist.", e);
 		} catch (XMLStreamException e) {
 			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			log.severe("Error when trying to read compressed file " + e);
 		}
 	}
 

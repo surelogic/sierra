@@ -11,7 +11,7 @@ public final class SierraConstants {
 	public static final String SIERRA_RESULTS = ".SierraResults";
 
 	/** The default extension for run document */
-	public static final String PARSED_FILE_SUFFIX = ".sierra";
+	public static final String PARSED_FILE_SUFFIX = ".sierra.gz";
 
 	/** The complete path for the SierraResults folder */
 	public static final String SIERRA_RESULTS_PATH = System
