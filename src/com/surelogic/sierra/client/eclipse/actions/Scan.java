@@ -29,7 +29,7 @@ import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
- * Runs Sierra Analysis on an Eclipse project.
+ * Runs Sierra Scan on an Eclipse project.
  * 
  * @author Tanmay.Sinha
  */
@@ -146,19 +146,15 @@ public final class Scan {
 					f_configs.add(c);
 				}
 			}
-			Job runSierraAnalysis = new RunSierraJob("Running Sierra...",
+			final Job runSierraScan = new RunSierraJob("Running Sierra...",
 					f_configs);
-			runSierraAnalysis.setPriority(Job.SHORT);
-			runSierraAnalysis.addJobChangeListener(new RunSierraAdapter(
+			runSierraScan.setPriority(Job.SHORT);
+			runSierraScan.addJobChangeListener(new RunSierraAdapter(
 					runDocuments));
-			runSierraAnalysis.schedule();
+			runSierraScan.schedule();
 
-			BalloonUtility
-					.showMessage(
-							"Sierra Analysis Started",
-							"You may continue to work as the analysis runs. "
-									+ "You will be notified when the analysis has been completed.");
-			LOG.info("Started analysis on projects:" + projectList);
+			showStartBalloon();
+			LOG.info("Started s on projects:" + projectList);
 		}
 	}
 
@@ -211,11 +207,7 @@ public final class Scan {
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
 
-				BalloonUtility
-						.showMessage(
-								"Sierra Analysis Started",
-								"You may continue to work as the analysis runs. "
-										+ "You will be notified when the analysis has been completed.");
+				showStartBalloon();
 
 				while (!monitor.isCanceled()) {
 					Thread.sleep(500);
@@ -230,7 +222,7 @@ public final class Scan {
 					return TASK_CANCELED;
 				} else {
 					monitor.done();
-					LOG.info("Completed analysis");
+					LOG.info("Completed scan");
 					return PROPER_TERMINATION;
 				}
 
@@ -257,25 +249,22 @@ public final class Scan {
 			if (event.getResult().equals(PROPER_TERMINATION)) {
 
 				Job databaseEntryJob = new DatabaseEntryJob(
-						"Finshing analysis", f_runDocs);
+						"Finshing scan", f_runDocs);
 				databaseEntryJob.setPriority(Job.SHORT);
 				databaseEntryJob
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
 				databaseEntryJob.schedule();
 
 			} else if (event.getResult().equals(TASK_CANCELED)) {
-				LOG.info("Cancelled analysis");
-				BalloonUtility.showMessage("Sierra Analysis was cancelled",
+				LOG.info("Canceled scan");
+				BalloonUtility.showMessage("Sierra Scan Canceled",
 						"Check the logs.");
 			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
-				BalloonUtility.showMessage(
-						"An instance of Sierra analysis is already running",
-						"Please wait for it to finish before restarting");
+				BalloonUtility.showMessage("Sierra Scan Already Running",
+						"Please wait for it to finish before restarting.");
 
 			} else {
-
-				BalloonUtility.showMessage(
-						"Sierra Analysis Completed with errors",
+				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
 						"Check the logs.");
 			}
 		}
@@ -309,7 +298,7 @@ public final class Scan {
 				} catch (ScanPersistenceException rpe) {
 					LOG.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
-							"Sierra Analysis Completed with errors",
+							"Sierra Scan Completed with Errors",
 							"Check the logs.");
 					slProgressMonitorWrapper.done();
 					return IMPROPER_TERMINATION;
@@ -331,18 +320,24 @@ public final class Scan {
 		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(PROPER_TERMINATION)) {
-				BalloonUtility.showMessage("Sierra Analysis Completed",
-						"You may now examine the analysis results.");
+				BalloonUtility.showMessage("Sierra Scan Completed",
+						"You may now examine the results.");
 
 			} else if (event.getResult().equals(TASK_CANCELED)) {
-				LOG.info("Cancelled analysis");
-				BalloonUtility.showMessage("Sierra Analysis was cancelled",
+				LOG.info("Canceled scan");
+				BalloonUtility.showMessage("Sierra Scan was Canceled",
 						"Check the logs.");
 			} else {
 				BalloonUtility.showMessage(
-						"Sierra Analysis Completed with errors",
+						"Sierra Scan Completed with Errors",
 						"Check the logs.");
 			}
 		}
+	}
+
+	private static void showStartBalloon() {
+		BalloonUtility.showMessage("Sierra Scan Started",
+				"You may continue your work. "
+						+ "You will be notified when the scan has completed.");
 	}
 }
