@@ -31,7 +31,7 @@ public class ProjectManager {
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
-				.prepareStatement("SELECT R.UID FROM RUN R WHERE R.PROJECT_ID = ?");
+				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
 	}
 
 	public Collection<String> getAllProjectNames() throws SQLException {
