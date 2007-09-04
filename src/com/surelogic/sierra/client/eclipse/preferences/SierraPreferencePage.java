@@ -22,7 +22,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.adhoc.AHLog;
+import com.surelogic.adhoc.views.AdHocQueryResultsView;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
@@ -107,9 +110,15 @@ public class SierraPreferencePage extends PreferencePage implements
 
 		void init() {
 			final IProjectsObserver obs = new IProjectsObserver() {
-				public void notify(Projects p) {
-					setTableContents(p.getProjectNames());
-					f_projectTable.getParent().layout();
+				public void notify(final Projects p) {
+					// Get into a UI thread!
+					PlatformUI.getWorkbench().getDisplay().asyncExec(
+							new Runnable() {
+								public void run() {
+									setTableContents(p.getProjectNames());
+									f_projectTable.getParent().layout();
+								}
+							});
 				}
 			};
 			Projects.getInstance().addObserver(obs);
