@@ -1,11 +1,18 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
+import java.util.logging.Level;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.jdbc.project.ProjectManager;
 
 public final class DeleteProjectDataJob extends Job {
 
@@ -18,15 +25,16 @@ public final class DeleteProjectDataJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		System.out.println("run delete " + f_projectName);
 		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ProjectManager.getInstance(Data.getConnection()).deleteProject(
+					f_projectName, new SLProgressMonitorWrapper(monitor));
+		} catch (Exception e) {
+			final String msg = "Deletion of Sierra data about project '"
+					+ f_projectName + "' failed.";
+			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			return SLStatus.createErrorStatus(msg, e);
 		}
 		Projects.getInstance().refresh();
 		return Status.OK_STATUS;
 	}
-
 }
