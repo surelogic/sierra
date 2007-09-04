@@ -10,6 +10,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -29,7 +30,7 @@ public class FindBugsConfig extends ToolConfig {
 
 	// String passed to Java's -Xmx flag
 	private String memory = "1024m";
-
+	private SLProgressMonitor monitor = null;
 	private Path classpath = null;
 
 	/**
@@ -37,6 +38,13 @@ public class FindBugsConfig extends ToolConfig {
 	 */
 	public FindBugsConfig(Project project) {
 		super("findbugs", project);
+	}
+
+	public FindBugsConfig(Project project, SLProgressMonitor monitor) {
+		super("findbugs", project);
+		if (monitor != null) {
+			this.monitor = monitor;
+		}
 	}
 
 	/*
@@ -71,19 +79,28 @@ public class FindBugsConfig extends ToolConfig {
 			antProject.log("Executing FindBugs with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
+				if (monitor != null) {
+					monitor.subTask("Running FindBugs");
+				}
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
-				antProject.log("Failed to start FindBugs process." + e.getLocalizedMessage(),
+				antProject.log("Failed to start FindBugs process."
+						+ e.getLocalizedMessage(),
 						org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (latch != null) {
 					latch.countDown();
+
+				}
+				if (monitor != null) {
+					monitor.worked(1);
 				}
 			}
 		} else {
 			if (latch != null) {
 				latch.countDown();
 			}
+
 		}
 
 	}

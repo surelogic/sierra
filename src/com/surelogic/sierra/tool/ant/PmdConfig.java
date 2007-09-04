@@ -7,9 +7,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -28,12 +30,19 @@ public class PmdConfig extends ToolConfig {
 			+ "all.xml";
 
 	private Path classpath = null;
-
+	private SLProgressMonitor monitor = null;
 	private String targetJDK = null;
 	private File rulesFile = null;
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
 		super("pmd", project);
+	}
+
+	public PmdConfig(Project project, SLProgressMonitor monitor) {
+		super("pmd", project);
+		if (monitor != null) {
+			this.monitor = monitor;
+		}
 	}
 
 	/**
@@ -81,18 +90,27 @@ public class PmdConfig extends ToolConfig {
 			}
 
 			try {
+				if (monitor != null) {
+					monitor.subTask("Running PMD");
+				}
 				for (int i = 0; i < clientCount; i++) {
 					executor.execute(new PmdRunner(i, pathDirs[i], pmdLatch));
 				}
 				pmdLatch.await();
 			} catch (InterruptedException e) {
 				antProject.log(
-						"Error while waiting for all PMD processes to finish." +
-						e.getLocalizedMessage(), org.apache.tools.ant.Project.MSG_ERR);
+						"Error while waiting for all PMD processes to finish."
+								+ e.getLocalizedMessage(),
+						org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (latch != null) {
 					latch.countDown();
+
 				}
+				if (monitor != null) {
+					monitor.worked(1);
+				}
+
 			}
 		} else {
 			if (latch != null) {
@@ -243,7 +261,8 @@ public class PmdConfig extends ToolConfig {
 
 				fork(cmdj.getCommandline());
 			} catch (BuildException e) {
-				antProject.log("Failed to start PMD process."+ e.getLocalizedMessage(),
+				antProject.log("Failed to start PMD process."
+						+ e.getLocalizedMessage(),
 						org.apache.tools.ant.Project.MSG_ERR);
 			} finally {
 				if (pmdLatch != null) {

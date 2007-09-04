@@ -13,6 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
@@ -27,10 +28,12 @@ public class Parser {
 
 	private MessageArtifactFileGenerator generator;
 
+	private SLProgressMonitor monitor = null;
+
 	private static final Logger log = SLLogger.getLogger("sierra");
 
 	/**
-	 * Constructor only for build file parsing
+	 * Constructor to be used only for build file parsing
 	 */
 	public Parser() {
 		// Nothing to do
@@ -38,6 +41,15 @@ public class Parser {
 
 	public Parser(MessageArtifactFileGenerator generator) {
 		this.generator = generator;
+	}
+
+	public Parser(MessageArtifactFileGenerator generator,
+			SLProgressMonitor monitor) {
+		this.generator = generator;
+
+		if (monitor != null) {
+			this.monitor = monitor;
+		}
 	}
 
 	/**
@@ -92,7 +104,7 @@ public class Parser {
 	}
 
 	public void parsePMD40(String fileName) {
-		PMD40Handler handler = new PMD40Handler(generator);
+		PMD40Handler handler = new PMD40Handler(generator, monitor);
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			// Parse the input
@@ -114,7 +126,7 @@ public class Parser {
 
 	public void parseFB(String fileName, String[] sourceDirectories) {
 		FindBugsHandler handler = new FindBugsHandler(generator,
-				sourceDirectories);
+				sourceDirectories, monitor);
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 
 		try {
@@ -133,7 +145,7 @@ public class Parser {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void parseForHash(String fileName,
 			Map<String, Map<Integer, Long>> hashHolder,
 			String[] sourceDirectories) {
@@ -157,6 +169,7 @@ public class Parser {
 		}
 	}
 
+	@Deprecated
 	public void parseFB(String toolFileFB, String[] sourceDirectories,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		FindBugsHandler handler = new FindBugsHandler(generator,
@@ -180,6 +193,7 @@ public class Parser {
 
 	}
 
+	@Deprecated
 	public void parsePMD(String toolFilePMD,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		PMD39Handler handler = new PMD39Handler(generator, hashHolder);

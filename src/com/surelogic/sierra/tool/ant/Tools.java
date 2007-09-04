@@ -24,7 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -82,6 +84,39 @@ public class Tools {
 		}
 
 		setMultithreaded(config.isMultithreaded());
+	}
+
+	public Tools(Project antProject, Config config, SLProgressMonitor monitor) {
+		this.antProject = antProject;
+		addAllToolDefaults(monitor);
+
+		setExclude(config.getExcludedToolsList());
+
+		Set<String> toolNames = tools.keySet();
+		toolsFolder = config.getToolsDirectory();
+		for (String toolName : toolNames) {
+			tools.get(toolName).configure(config);
+		}
+
+		setMultithreaded(config.isMultithreaded());
+	}
+
+	private void addAllToolDefaults(SLProgressMonitor monitor) {
+		ReckonerConfig reckoner = new ReckonerConfig(antProject, monitor);
+		tools.put(reckoner.getToolName(), reckoner);
+		antProject.log("Added " + reckoner.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
+		PmdConfig pmd = new PmdConfig(antProject, monitor);
+		tools.put(pmd.getToolName(), pmd);
+		antProject.log("Added " + pmd.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
+		FindBugsConfig findbugs = new FindBugsConfig(antProject, monitor);
+		tools.put(findbugs.getToolName(), findbugs);
+		antProject.log("Added " + findbugs.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
 	}
 
 	/**
@@ -213,7 +248,7 @@ public class Tools {
 	 * Runs all of the included tools Parallelizes the runs with a
 	 * ThreadPoolExecutor
 	 */
-	void runTools() {
+	void runTools(SLProgressMonitor monitor) {
 		if (analysis.keepRunning) {
 			antProject.log("Running tools...",
 					org.apache.tools.ant.Project.MSG_INFO);
@@ -236,10 +271,15 @@ public class Tools {
 
 			ToolConfig tool;
 			Set<String> toolNames = tools.keySet();
+
+			if (monitor != null) {
+				monitor.beginTask("Generating results", toolNames.size());
+			}
 			for (String toolName : toolNames) {
 				if (!analysis.keepRunning) {
 					break;
 				}
+
 				antProject.log("Running tool: " + toolName,
 						org.apache.tools.ant.Project.MSG_DEBUG);
 				tool = tools.get(toolName);
@@ -256,6 +296,10 @@ public class Tools {
 				// FIXME what is the proper behavior?
 				// Continue trying to parse the tool files
 				e.printStackTrace();
+			} finally {
+				if (monitor != null) {
+					monitor.done();
+				}
 			}
 		}
 	}

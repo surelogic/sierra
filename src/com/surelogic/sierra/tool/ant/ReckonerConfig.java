@@ -7,6 +7,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -17,6 +18,8 @@ public class ReckonerConfig extends ToolConfig {
 
 	private static final String RECKONER_JAR = "reckoner.jar";
 
+	private SLProgressMonitor monitor = null;
+
 	// /** base directory if different than the default */
 	// private String baseDir = null;
 
@@ -24,6 +27,14 @@ public class ReckonerConfig extends ToolConfig {
 
 	public ReckonerConfig(Project project) {
 		super("reckoner", project);
+	}
+
+	public ReckonerConfig(Project antProject, SLProgressMonitor monitor) {
+		super("reckoner", antProject);
+
+		if (monitor != null) {
+			this.monitor = monitor;
+		}
 	}
 
 	@Override
@@ -107,7 +118,12 @@ public class ReckonerConfig extends ToolConfig {
 			antProject.log("Executing Reckoner with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
+
+				if (monitor != null) {
+					monitor.subTask("Running Reckoner");
+				}
 				fork(cmdj.getCommandline());
+
 			} catch (BuildException e) {
 				antProject.log("Failed to start Reckoner process."
 						+ e.getLocalizedMessage(),
@@ -116,6 +132,11 @@ public class ReckonerConfig extends ToolConfig {
 				if (latch != null) {
 					latch.countDown();
 				}
+
+				if (monitor != null) {
+					monitor.worked(1);
+				}
+
 			}
 		} else {
 			if (latch != null) {

@@ -7,8 +7,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -41,6 +43,8 @@ class PMD40Handler extends DefaultHandler {
 
 	private StringBuilder message;
 
+	private SLProgressMonitor monitor = null;
+
 	private String messageHolder;
 
 	@SuppressWarnings("unused")
@@ -52,12 +56,28 @@ class PMD40Handler extends DefaultHandler {
 		message = new StringBuilder();
 	}
 
+	/**
+	 * NOT IN USE - Used for a different hash calculation
+	 * 
+	 * @param generator
+	 * @param hashHolder
+	 */
+	@Deprecated
 	public PMD40Handler(ArtifactGenerator generator,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		super();
 		this.hashHolder = hashHolder;
 		this.generator = generator;
 		message = new StringBuilder();
+	}
+
+	public PMD40Handler(MessageArtifactFileGenerator generator,
+			SLProgressMonitor monitor) {
+		super();
+		this.generator = generator;
+		message = new StringBuilder();
+		this.monitor = monitor;
+
 	}
 
 	@Override
@@ -81,6 +101,11 @@ class PMD40Handler extends DefaultHandler {
 
 					if ("name".equals(aName)) {
 						fileName = attrs.getValue(i);
+
+						if (monitor != null) {
+							monitor.subTask("Calculating hash values for "
+									+ fileName);
+						}
 					}
 				}
 			}
@@ -130,6 +155,7 @@ class PMD40Handler extends DefaultHandler {
 								.getInstance();
 						Long hashValue = hashGenerator.getHash(fileName,
 								lineNumber);
+
 						// Long hashValue = hashHolder.get(fileName).get(
 						// (Integer) lineNumber);
 
@@ -289,6 +315,10 @@ class PMD40Handler extends DefaultHandler {
 			hasPackage = false;
 			sourceLocation.build();
 			artifact.build();
+
+			if (monitor != null) {
+				monitor.worked(1);
+			}
 		}
 
 	}
@@ -315,4 +345,5 @@ class PMD40Handler extends DefaultHandler {
 			// }
 		}
 	}
+
 }

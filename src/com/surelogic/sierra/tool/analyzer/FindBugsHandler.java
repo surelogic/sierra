@@ -7,8 +7,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -49,6 +51,8 @@ class FindBugsHandler extends DefaultHandler {
 
 	private boolean inLongMessage = false;
 
+	private SLProgressMonitor monitor = null;
+
 	// private static final Logger log = SierraLogger.getLogger("Sierra");
 
 	@SuppressWarnings("unused")
@@ -66,6 +70,18 @@ class FindBugsHandler extends DefaultHandler {
 		errorMessage = new StringBuilder();
 	}
 
+	public FindBugsHandler(MessageArtifactFileGenerator generator,
+			String[] sourceDirectories, SLProgressMonitor monitor) {
+		super();
+		this.generator = generator;
+		this.sourceDirectories = sourceDirectories;
+		message = new StringBuilder();
+		errorMessage = new StringBuilder();
+
+		this.monitor = monitor;
+	}
+
+	@Deprecated
 	public FindBugsHandler(ArtifactGenerator generator,
 			String[] sourceDirectories,
 			Map<String, Map<Integer, Long>> hashHolder) {
@@ -164,6 +180,7 @@ class FindBugsHandler extends DefaultHandler {
 						// locations as it is used for identifying the
 						// location of the file for the double click in the
 						// eclipse view
+						// -> Path is no longer an empty space
 						sourceLocation.className(className).packageName(
 								packageName);
 					}
@@ -371,6 +388,11 @@ class FindBugsHandler extends DefaultHandler {
 
 								if (holderFile.exists()) {
 
+									if (monitor != null) {
+										monitor
+												.subTask("Calculating hash values for "
+														+ completePath);
+									}
 									Long hashValue = hashGenerator.getHash(
 											completePath, lineNumber);
 
@@ -383,6 +405,7 @@ class FindBugsHandler extends DefaultHandler {
 
 									completeFileName = sourceDirectories[i];
 									fileFound = true;
+
 								}
 							}
 
@@ -511,6 +534,9 @@ class FindBugsHandler extends DefaultHandler {
 
 			primarySourceLocation.build();
 			artifact.build();
+			if (monitor != null) {
+				monitor.worked(1);
+			}
 		}
 	}
 

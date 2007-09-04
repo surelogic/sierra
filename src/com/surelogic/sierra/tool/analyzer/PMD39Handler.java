@@ -50,6 +50,7 @@ class PMD39Handler extends DefaultHandler {
 		message = new StringBuilder();
 	}
 
+	@Deprecated
 	public PMD39Handler(ArtifactGenerator generator,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		super();
