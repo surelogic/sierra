@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.scan;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -57,13 +56,16 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final MessageFilter filter;
 
+	private final ScanRecord scan;
+
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanRecord scan, MessageFilter filter, Runnable callback)
 			throws SQLException {
-		log.info("Now persisting artifacts to database for scan " + scan.getId());
+		log.info("Now persisting artifacts to database for scan "
+				+ scan.getId());
 		this.conn = conn;
 		this.factory = factory;
 		this.callback = callback;
@@ -77,8 +79,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
 		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
-		this.aBuilder = new JDBCArtifactBuilder(scan);
-		this.mBuilder = new JDBCMetricBuilder(scan);
+		this.scan = scan;
+		this.aBuilder = new JDBCArtifactBuilder();
+		this.mBuilder = new JDBCMetricBuilder();
 	}
 
 	public void finished() {
@@ -87,6 +90,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			toolIdSelect.close();
 			callback.run();
 		} catch (SQLException e) {
+			quietlyRollback();
 			throw new ScanPersistenceException(e);
 		}
 	}
@@ -135,12 +139,10 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private class JDBCMetricBuilder implements MetricBuilder {
 
-		private final ScanRecord scan;
 		private CompilationUnitRecord compUnit;
 		private Integer linesOfCode;
 
-		public JDBCMetricBuilder(ScanRecord scan) {
-			this.scan = scan;
+		public JDBCMetricBuilder() {
 			clear();
 		}
 
@@ -164,6 +166,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				try {
 					persist();
 				} catch (SQLException e) {
+					quietlyRollback();
 					throw new ScanPersistenceException(e);
 				}
 			}
@@ -218,7 +221,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		private final List<SourceRecord> aSources;
 		private SourceRecord pSource;
 
-		public JDBCArtifactBuilder(ScanRecord scan) {
+		public JDBCArtifactBuilder() {
 			this.scanId = scan.getId();
 			this.aSources = new ArrayList<SourceRecord>();
 			clear();
@@ -258,6 +261,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 					try {
 						persist();
 					} catch (SQLException e) {
+						quietlyRollback();
 						throw new ScanPersistenceException(e);
 					}
 				}
@@ -271,6 +275,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				artifact.setFindingTypeId(ftMan.getFindingTypeId(tool, version,
 						mnemonic));
 			} catch (SQLException e) {
+				quietlyRollback();
 				throw new ScanPersistenceException(e);
 			}
 			return this;
@@ -371,8 +376,20 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	}
 
-	public void writeMetrics(File absoluteFile) {
-		// Nothing to do - used for writing metrics to the scan document
+	private void quietlyRollback() {
+		try {
+			rollback();
+		} catch (Exception e) {
+			// Do nothing
+		}
+	}
+
+	public void rollback() {
+		try {
+			ScanManager.getInstance(conn).deleteScan(scan.getUid());
+		} catch (SQLException e) {
+			throw new ScanPersistenceException(e);
+		}
 	}
 
 }

@@ -3,34 +3,40 @@
  */
 package com.surelogic.sierra.jdbc.tool;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.StringTokenizer;
 
 public class FindingTypeKey {
-	private Long id;
 	private final String tool;
 	private final String version;
 	private final String mnemonic;
 
-	public FindingTypeKey(String tool, String version, String mnemonic) {
+	FindingTypeKey(String tool, String version, String mnemonic) {
 		this.tool = tool;
 		this.version = version;
 		this.mnemonic = mnemonic;
 	}
 
-	public int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setString(idx++, tool);
-		st.setString(idx++, version);
-		st.setString(idx++, mnemonic);
-		return idx;
+	public String getTool() {
+		return tool;
 	}
 
-	public Long getId() {
-		return id;
+	public String getVersion() {
+		return version;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public String getMnemonic() {
+		return mnemonic;
+	}
+
+	@Override
+	public String toString() {
+		return tool + ":" + version + ":" + mnemonic;
+	}
+
+	public static FindingTypeKey fromString(String key) {
+		StringTokenizer tok = new StringTokenizer(key, ":");
+		return new FindingTypeKey(tok.nextToken(), tok.nextToken(), tok
+				.nextToken());
 	}
 
 	@Override
@@ -40,6 +46,7 @@ public class FindingTypeKey {
 		result = prime * result
 				+ ((mnemonic == null) ? 0 : mnemonic.hashCode());
 		result = prime * result + ((tool == null) ? 0 : tool.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -61,6 +68,11 @@ public class FindingTypeKey {
 			if (other.tool != null)
 				return false;
 		} else if (!tool.equals(other.tool))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
 			return false;
 		return true;
 	}

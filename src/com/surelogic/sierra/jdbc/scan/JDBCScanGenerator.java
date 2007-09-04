@@ -103,6 +103,11 @@ class JDBCScanGenerator implements ScanGenerator {
 						}
 					});
 		} catch (SQLException e) {
+			try {
+				ScanManager.getInstance(conn).deleteScan(uid);
+			} catch (SQLException e1) {
+				//Quietly do nothing, we already have an exception
+			}
 			throw new ScanPersistenceException(e);
 		}
 	}

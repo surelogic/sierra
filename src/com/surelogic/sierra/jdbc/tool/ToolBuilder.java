@@ -12,7 +12,7 @@ public class ToolBuilder {
 
 	private static final String INSERT_TOOL = "INSERT INTO TOOL (NAME,VERSION) VALUES (?,?)";
 
-	private static final String INSERT_FINDING_TYPE = "INSERT INTO FINDING_TYPE (TOOL_ID, MNEMONIC, MNEMONIC_DISPLAY, CATEGORY, CATEGORY_DISPLAY, LINK, INFO) VALUES (?,?,?,?,?,?,?)";
+	private static final String INSERT_FINDING_TYPE = "INSERT INTO FINDING_TYPE (TOOL_ID, MNEMONIC, MNEMONIC_DISPLAY, CATEGORY, LINK, INFO) VALUES (?,?,?,?,?,?)";
 
 	private final PreparedStatement insertTool;
 	private final PreparedStatement insertFindingType;
@@ -43,7 +43,6 @@ public class ToolBuilder {
 		private String mnemonic;
 		private String mnemonicDisplay;
 		private String category;
-		private String categoryDisplay;
 		private String link;
 		private String info;
 
@@ -54,8 +53,7 @@ public class ToolBuilder {
 		}
 
 		public FindingTypeBuilder category(String category) {
-			this.category = category;
-			this.categoryDisplay = prettyPrint(category);
+			this.category = prettyPrint(category);
 			return this;
 		}
 
@@ -75,7 +73,6 @@ public class ToolBuilder {
 			insertFindingType.setString(i++, mnemonic);
 			insertFindingType.setString(i++, mnemonicDisplay);
 			insertFindingType.setString(i++, category);
-			insertFindingType.setString(i++, categoryDisplay);
 			insertFindingType.setString(i++, link);
 			insertFindingType.setString(i++, info);
 			insertFindingType.executeUpdate();
@@ -85,8 +82,7 @@ public class ToolBuilder {
 		private void clear() {
 			this.mnemonic = null;
 			this.mnemonicDisplay = null;
-			this.category = null;
-			this.categoryDisplay = null;
+			this.category = null;;
 			this.link = null;
 			this.info = null;
 		}
