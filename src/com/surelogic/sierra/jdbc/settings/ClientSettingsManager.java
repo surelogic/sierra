@@ -13,14 +13,18 @@ import com.surelogic.sierra.tool.message.Settings;
 public class ClientSettingsManager extends SettingsManager {
 
 	private final PreparedStatement getSettings;
+	private final PreparedStatement getSettingsRevision;
 	private final PreparedStatement updateSettings;
 
 	private ClientSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		getSettings = conn
 				.prepareStatement("SELECT SETTINGS FROM PROJECT WHERE NAME = ?");
+		getSettingsRevision = conn
+				.prepareStatement("SELECT SETTINGS_REVISION FROM PROJECT WHERE NAME = ?");
 		updateSettings = conn
 				.prepareStatement("UPDATE PROJECT SET SETTINGS_REVISION = ?, SETTINGS = ? WHERE NAME = ?");
+
 	}
 
 	public Settings getSettings(String project) throws SQLException {
@@ -33,6 +37,17 @@ public class ClientSettingsManager extends SettingsManager {
 			}
 		}
 		return null;
+	}
+
+	public Long getSettingsRevision(String project) throws SQLException {
+		getSettingsRevision.setString(1, project);
+		ResultSet set = getSettingsRevision.executeQuery();
+		if (set.next()) {
+			return set.getLong(1);
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ project + " exists");
+		}
 	}
 
 	public void writeSettings(String project, Long revision, Settings settings)
