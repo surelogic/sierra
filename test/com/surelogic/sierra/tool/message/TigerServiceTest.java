@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,7 +46,7 @@ public class TigerServiceTest {
 			JAXBContext context;
 			context = JAXBContext.newInstance(Scan.class);
 			Unmarshaller um = context.createUnmarshaller();
-			InputStream in = getResource("sierra-jdbc.xml.parsed");
+			InputStream in = getResource("sierra-jdbc.sierra");
 			Scan run = (Scan) um.unmarshal(in);
 			assertEquals("SUCCESS", service.publishRun(run));
 		} catch (JAXBException e) {

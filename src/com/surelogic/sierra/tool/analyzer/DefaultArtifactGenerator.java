@@ -155,4 +155,8 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 	public void writeMetrics(File absoluteFile) {
 		// Nothing to do
 	}
+
+	public void rollback() {
+		// Nothing to do
+	}
 }
