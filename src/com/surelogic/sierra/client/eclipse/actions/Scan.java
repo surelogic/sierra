@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
@@ -154,7 +155,7 @@ public final class Scan {
 			runSierraScan.schedule();
 
 			showStartBalloon();
-			LOG.info("Started s on projects:" + projectList);
+			LOG.info("Started scan on projects:" + projectList);
 		}
 	}
 
@@ -163,16 +164,18 @@ public final class Scan {
 		private boolean f_complete;
 		private SierraAnalysis f_sierraAnalysis;
 		private final List<Config> f_configs;
+		private SLProgressMonitor f_monitor;
 
-		public AntRunnable(List<Config> configs) {
+		public AntRunnable(List<Config> configs, SLProgressMonitor monitor) {
 			f_configs = configs;
+			f_monitor = monitor;
 		}
 
 		public void run() {
 
 			f_complete = false;
 			for (Config c : f_configs) {
-				f_sierraAnalysis = new SierraAnalysis(c);
+				f_sierraAnalysis = new SierraAnalysis(c, f_monitor);
 				f_sierraAnalysis.execute();
 
 			}
@@ -201,9 +204,13 @@ public final class Scan {
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 
-				monitor.beginTask("Running tools...", IProgressMonitor.UNKNOWN);
+				// monitor.beginTask("Running tools...",
+				// IProgressMonitor.UNKNOWN);
 
-				final AntRunnable antRunnable = new AntRunnable(f_configs);
+				SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
+						monitor);
+				final AntRunnable antRunnable = new AntRunnable(f_configs,
+						slProgressMonitorWrapper);
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
 
@@ -248,8 +255,8 @@ public final class Scan {
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(PROPER_TERMINATION)) {
 
-				Job databaseEntryJob = new DatabaseEntryJob(
-						"Finshing scan", f_runDocs);
+				Job databaseEntryJob = new DatabaseEntryJob("Finshing scan",
+						f_runDocs);
 				databaseEntryJob.setPriority(Job.SHORT);
 				databaseEntryJob
 						.addJobChangeListener(new DatabaseEntryJobAdapter());
@@ -328,8 +335,7 @@ public final class Scan {
 				BalloonUtility.showMessage("Sierra Scan was Canceled",
 						"Check the logs.");
 			} else {
-				BalloonUtility.showMessage(
-						"Sierra Scan Completed with Errors",
+				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
 						"Check the logs.");
 			}
 		}
