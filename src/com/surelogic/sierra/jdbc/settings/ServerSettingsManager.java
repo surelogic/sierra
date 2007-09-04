@@ -21,7 +21,7 @@ public class ServerSettingsManager extends SettingsManager {
 		getSettingsByName = conn
 				.prepareStatement("SELECT SETTINGS FROM SETTINGS WHERE NAME = ?");
 		getLatestSettingsByProject = conn
-				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, SETTINGS S WHERE P.NAME = ? AND S.NAME = P.SETTINGS_NAME AND S.REVISION > ?");
+				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = ? AND S.NAME = PSR.SETTINGS_NAME AND S.REVISION > ?");
 		updateSettings = conn
 				.prepareStatement("UPDATE SETTINGS SET REVISION = ? AND SETTINGS = ? WHERE NAME = ?");
 	}
