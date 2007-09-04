@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
+import java.sql.Connection;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,8 +27,14 @@ public final class DeleteProjectDataJob extends DatabaseJob {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			ProjectManager.getInstance(Data.getConnection()).deleteProject(
-					f_projectName, new SLProgressMonitorWrapper(monitor));
+			Connection conn = Data.getConnection();
+			try {
+				ProjectManager.getInstance(conn).deleteProject(f_projectName,
+						new SLProgressMonitorWrapper(monitor));
+				conn.commit();
+			} finally {
+				conn.close();
+			}
 		} catch (Exception e) {
 			final String msg = "Deletion of Sierra data about project '"
 					+ f_projectName + "' failed.";
