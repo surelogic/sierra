@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -24,8 +23,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.adhoc.AHLog;
-import com.surelogic.adhoc.views.AdHocQueryResultsView;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
@@ -74,7 +71,9 @@ public class SierraPreferencePage extends PreferencePage implements
 		l.setLayoutData(data);
 
 		Table t = new Table(pGroup, SWT.FULL_SELECTION | SWT.MULTI);
-		t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.heightHint = 200;
+		t.setLayoutData(data);
 
 		Button b = new Button(pGroup, SWT.PUSH);
 		b.setText("Delete Sierra Data");
@@ -116,11 +115,11 @@ public class SierraPreferencePage extends PreferencePage implements
 							new Runnable() {
 								public void run() {
 									setTableContents(p.getProjectNames());
-									f_projectTable.getParent().layout();
 								}
 							});
 				}
 			};
+			Projects.getInstance().refresh();
 			Projects.getInstance().addObserver(obs);
 			// fill table
 			obs.notify(Projects.getInstance());
@@ -160,11 +159,14 @@ public class SierraPreferencePage extends PreferencePage implements
 													+ "'") + "?");
 					if (confirmDelete.open() == SWT.NO)
 						return; // bail
-					for (String projectName : projectNames) {
-						final Job job = new DeleteProjectDataJob(projectName);
-						job.setUser(true);
-						job.schedule();
-					}
+					/*
+					 * Because this job is run from a modal dialog we need to
+					 * manage showing its progress ourselves. Therefore, this
+					 * job is not a typical workspace job.
+					 */
+					final DeleteProjectDataJob job = new DeleteProjectDataJob(
+							projectNames);
+					job.runModal(f_projectTable.getShell());
 				}
 			});
 		}
