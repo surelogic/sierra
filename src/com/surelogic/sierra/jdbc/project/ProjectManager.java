@@ -81,15 +81,16 @@ public class ProjectManager {
 		return project.getId();
 	}
 
-	public void deleteProject(String name, SLProgressMonitor monitor)
+	public void deleteProject(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		ProjectRecord rec = projectFactory.newProject();
-		rec.setName(name);
+		rec.setName(projectName);
 		if (rec.select()) {
 			ScanManager scanMan = ScanManager.getInstance(conn);
 			Collection<String> scans = getProjectScans(rec.getId());
 			if (monitor != null) {
-				monitor.beginTask("Deleting Project", scans.size() + 1);
+				monitor.beginTask("Deleting Project '" + projectName + "'",
+						scans.size() + 1);
 			}
 			for (String uid : scans) {
 				scanMan.deleteScan(uid);
