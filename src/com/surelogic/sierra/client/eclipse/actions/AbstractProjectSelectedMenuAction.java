@@ -12,6 +12,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+/**
+ * This class allows both a main menu action and a right-click context menu on
+ * Java projects.
+ */
 public abstract class AbstractProjectSelectedMenuAction implements
 		IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 
