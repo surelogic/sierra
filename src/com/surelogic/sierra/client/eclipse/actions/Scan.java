@@ -292,7 +292,7 @@ public final class Scan {
 				LOG.info("Currently loading..."
 						+ runDocumentHolder.getAbsolutePath());
 				try {
-					ScanDocumentUtility.loadScamDocument(runDocumentHolder,
+					ScanDocumentUtility.loadScanDocument(runDocumentHolder,
 							slProgressMonitorWrapper);
 
 				} catch (ScanPersistenceException rpe) {

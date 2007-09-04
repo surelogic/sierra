@@ -23,7 +23,7 @@ public final class LoadScanDocumentJob extends DatabaseJob {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
 
-		ScanDocumentUtility.loadScamDocument(f_scanDocument,
+		ScanDocumentUtility.loadScanDocument(f_scanDocument,
 				slProgressMonitorWrapper);
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;

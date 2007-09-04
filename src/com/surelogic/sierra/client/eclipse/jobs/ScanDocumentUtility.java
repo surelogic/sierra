@@ -37,7 +37,7 @@ public final class ScanDocumentUtility {
 	 *            not tracked.
 	 * @throws ScanPersistenceException
 	 */
-	public static void loadScamDocument(final File scanDocument,
+	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor) throws ScanPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
