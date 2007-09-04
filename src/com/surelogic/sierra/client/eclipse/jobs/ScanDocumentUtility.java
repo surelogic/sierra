@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,9 +12,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
-import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.Settings;
 
 public final class ScanDocumentUtility {
 
@@ -43,10 +40,8 @@ public final class ScanDocumentUtility {
 			Connection conn = Data.getConnection();
 			try {
 				conn.setAutoCommit(false);
-				Settings settings = new Settings();
-				settings.setRuleFilter(new ArrayList<FindingTypeFilter>());
 				ScanGenerator gen = ScanManager.getInstance(conn)
-						.getScanGenerator(settings);
+						.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
 			} catch (SQLException e) {
