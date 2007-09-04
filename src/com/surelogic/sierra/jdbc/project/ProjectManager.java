@@ -101,7 +101,9 @@ public class ProjectManager {
 			}
 			rec.delete();
 		}
-		monitor.done();
+		if (monitor != null) {
+			monitor.done();
+		}
 	}
 
 	private Collection<String> getProjectScans(Long projectId)
