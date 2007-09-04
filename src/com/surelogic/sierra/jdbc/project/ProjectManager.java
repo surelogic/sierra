@@ -55,8 +55,6 @@ public class ProjectManager {
 		TigerService service = new TigerServiceClient(server)
 				.getTigerServicePort();
 
-		
-		
 		// Update settings
 		ClientSettingsManager settingsManager = ClientSettingsManager
 				.getInstance(conn);
@@ -87,24 +85,22 @@ public class ProjectManager {
 			throws SQLException {
 		ProjectRecord rec = projectFactory.newProject();
 		rec.setName(name);
-		if (!rec.select()) {
-			throw new IllegalArgumentException("No project with name " + name
-					+ " exists.");
-		}
-		ScanManager scanMan = ScanManager.getInstance(conn);
-		Collection<String> scans = getProjectScans(rec.getId());
-		if (monitor != null) {
-			monitor.beginTask("Deleting Project", scans.size() + 1);
-		}
-		for (String uid : scans) {
-			scanMan.deleteScan(uid);
+		if (rec.select()) {
+			ScanManager scanMan = ScanManager.getInstance(conn);
+			Collection<String> scans = getProjectScans(rec.getId());
 			if (monitor != null) {
-				if (monitor.isCanceled())
-					return;
-				monitor.worked(1);
+				monitor.beginTask("Deleting Project", scans.size() + 1);
 			}
+			for (String uid : scans) {
+				scanMan.deleteScan(uid);
+				if (monitor != null) {
+					if (monitor.isCanceled())
+						return;
+					monitor.worked(1);
+				}
+			}
+			rec.delete();
 		}
-		rec.delete();
 		monitor.done();
 	}
 
