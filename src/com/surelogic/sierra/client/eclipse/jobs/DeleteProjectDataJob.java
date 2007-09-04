@@ -5,8 +5,8 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
+import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -14,7 +14,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.project.ProjectManager;
 
-public final class DeleteProjectDataJob extends Job {
+public final class DeleteProjectDataJob extends DatabaseJob {
 
 	private final String f_projectName;
 
