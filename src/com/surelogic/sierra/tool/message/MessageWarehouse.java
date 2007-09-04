@@ -362,7 +362,10 @@ public class MessageWarehouse {
 			} else {
 				xmlr = xmlif.createXMLStreamReader(stream);
 			}
-
+			if (cancelled(monitor)) {
+				generator.rollback();
+				return;
+			}
 			try {
 				// move to the root element and check its name.
 				xmlr.nextTag();
@@ -376,12 +379,20 @@ public class MessageWarehouse {
 				xmlr.nextTag(); // move to classMetric
 				// Unmarshal classMetric
 				MetricBuilder mBuilder = generator.metric();
+				int counter = 0;
 				while (xmlr.getEventType() == START_ELEMENT
 						&& xmlr.getLocalName().equals("class")) {
 					readClassMetric(unmarshaller.unmarshal(xmlr,
 							ClassMetric.class).getValue(), mBuilder);
 					if (monitor != null) {
 						monitor.worked(1);
+					}
+					if (++counter == 200) {
+						if (cancelled(monitor)) {
+							generator.rollback();
+							return;
+						}
+						counter = 0;
 					}
 					if (xmlr.getEventType() == CHARACTERS) {
 						xmlr.next(); // skip the whitespace between
@@ -405,6 +416,13 @@ public class MessageWarehouse {
 						xmlr.next(); // skip the whitespace between
 						// <artifacts>s.
 					}
+					if (++counter == 200) {
+						if (cancelled(monitor)) {
+							generator.rollback();
+							return;
+						}
+						counter = 0;
+					}
 				}
 				xmlr.nextTag();
 				xmlr.require(START_ELEMENT, null, "errors");
@@ -421,6 +439,13 @@ public class MessageWarehouse {
 					if (xmlr.getEventType() == CHARACTERS) {
 						xmlr.next(); // skip the whitespace between
 						// <event>s.
+					}
+					if (++counter == 200) {
+						if (cancelled(monitor)) {
+							generator.rollback();
+							return;
+						}
+						counter = 0;
 					}
 				}
 				generator.finished();
@@ -533,4 +558,11 @@ public class MessageWarehouse {
 				s.getHash()).build();
 	}
 
+	private static boolean cancelled(SLProgressMonitor monitor) {
+		if (monitor != null) {
+			return monitor.isCanceled();
+		} else {
+			return false;
+		}
+	}
 }
