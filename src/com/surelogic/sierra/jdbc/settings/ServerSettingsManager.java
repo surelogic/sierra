@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.settings;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import com.surelogic.sierra.tool.message.SettingsReply;
 public class ServerSettingsManager extends SettingsManager {
 
 	private final PreparedStatement getSettingsByName;
+	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
 
@@ -21,9 +23,11 @@ public class ServerSettingsManager extends SettingsManager {
 		getSettingsByName = conn
 				.prepareStatement("SELECT SETTINGS FROM SETTINGS WHERE NAME = ?");
 		getLatestSettingsByProject = conn
-				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = ? AND S.NAME = PSR.SETTINGS_NAME AND S.REVISION > ?");
+				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.NAME = PSR.SETTINGS_NAME AND S.REVISION > ?");
+		getSettingsByProject = conn
+				.prepareStatement("SELECT S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.NAME = PSR.SETTINGS_NAME");
 		updateSettings = conn
-				.prepareStatement("UPDATE SETTINGS SET REVISION = ? AND SETTINGS = ? WHERE NAME = ?");
+				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
@@ -35,7 +39,22 @@ public class ServerSettingsManager extends SettingsManager {
 		getSettingsByName.setString(1, name);
 		ResultSet set = getSettingsByName.executeQuery();
 		if (set.next()) {
-			return mw.fetchSettings(set.getClob(1).getCharacterStream());
+			Clob clob = set.getClob(1);
+			if (clob != null) {
+				return mw.fetchSettings(clob.getCharacterStream());
+			}
+		}
+		return null;
+	}
+
+	public Settings getSettingsByProject(String project) throws SQLException {
+		getSettingsByProject.setString(1, project);
+		ResultSet set = getSettingsByProject.executeQuery();
+		if (set.next()) {
+			Clob clob = set.getClob(1);
+			if (clob != null) {
+				return mw.fetchSettings(clob.getCharacterStream());
+			}
 		}
 		return null;
 	}
@@ -57,8 +76,11 @@ public class ServerSettingsManager extends SettingsManager {
 		ResultSet set = getLatestSettingsByProject.executeQuery();
 		if (set.next()) {
 			reply.setRevision(set.getLong(1));
-			reply.setSettings(mw.fetchSettings(set.getClob(1)
-					.getCharacterStream()));
+			Clob clob = set.getClob(2);
+			if (clob != null) {
+				reply.setSettings(mw.fetchSettings(clob.getCharacterStream()));
+			}
+
 		}
 		return reply;
 	}

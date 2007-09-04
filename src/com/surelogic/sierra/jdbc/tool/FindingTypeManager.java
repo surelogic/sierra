@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,18 +73,24 @@ public class FindingTypeManager {
 
 	public MessageFilter getMessageFilter(Settings settings)
 			throws SQLException {
-		Collection<FindingTypeFilter> filters = settings.getRuleFilter();
-		Map<Long, FindingTypeFilter> map = new HashMap<Long, FindingTypeFilter>(
-				filters.size());
-		for (FindingTypeFilter filter : filters) {
-			selectFindingTypesByToolMnemonic.setString(1, filter.getTool());
-			selectFindingTypesByToolMnemonic.setString(2, filter.getMnemonic());
-			ResultSet set = selectFindingTypesByToolMnemonic.executeQuery();
-			while (set.next()) {
-				map.put(set.getLong(1), filter);
+		if (settings != null) {
+			Collection<FindingTypeFilter> filters = settings.getRuleFilter();
+			Map<Long, FindingTypeFilter> map = new HashMap<Long, FindingTypeFilter>(
+					filters.size());
+			for (FindingTypeFilter filter : filters) {
+				selectFindingTypesByToolMnemonic.setString(1, filter.getTool());
+				selectFindingTypesByToolMnemonic.setString(2, filter
+						.getMnemonic());
+				ResultSet set = selectFindingTypesByToolMnemonic.executeQuery();
+				while (set.next()) {
+					map.put(set.getLong(1), filter);
+				}
 			}
+			return new MessageFilter(map);
+		} else {
+			Map<Long, FindingTypeFilter> map = Collections.emptyMap();
+			return new MessageFilter(map);
 		}
-		return new MessageFilter(map);
 	}
 
 	public static FindingTypeManager getInstance(Connection conn)

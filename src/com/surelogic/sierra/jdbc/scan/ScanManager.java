@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
-import com.surelogic.sierra.tool.message.Settings;
 
 public class ScanManager {
 
@@ -39,8 +38,8 @@ public class ScanManager {
 		this.deleteSources = conn.prepareStatement(DELETE_UNUSED_SOURCES);
 	}
 
-	public ScanGenerator getScanGenerator(Settings settings) {
-		return new JDBCScanGenerator(conn, factory, settings);
+	public ScanGenerator getScanGenerator() {
+		return new JDBCScanGenerator(conn, factory);
 	}
 
 	/**

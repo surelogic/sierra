@@ -17,12 +17,13 @@ import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
-import com.surelogic.sierra.tool.message.Settings;
 
 class JDBCScanGenerator implements ScanGenerator {
 
@@ -31,19 +32,16 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	private final Connection conn;
 	private final ScanRecordFactory factory;
-	private final Settings settings;
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
 	private String uid;
 	private List<String> qualifiers;
 
-	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
-			Settings settings) {
+	JDBCScanGenerator(Connection conn, ScanRecordFactory factory) {
 		this.conn = conn;
 		this.factory = factory;
 		this.qualifiers = Collections.emptyList();
-		this.settings = settings;
 	}
 
 	public ArtifactGenerator build() {
@@ -72,13 +70,18 @@ class JDBCScanGenerator implements ScanGenerator {
 									q, scan));
 					rq.insert();
 				} else {
+					scan.delete();
 					throw new IllegalArgumentException(
 							"Invalid qualifier name: " + name);
 				}
 			}
 			conn.commit();
 			final MessageFilter filter = FindingTypeManager.getInstance(conn)
-					.getMessageFilter(settings);
+					.getMessageFilter(
+							qualifiers.isEmpty() ? ClientSettingsManager
+									.getInstance(conn).getSettings(projectName)
+									: ServerSettingsManager.getInstance(conn)
+											.getSettingsByProject(projectName));
 			return new JDBCArtifactGenerator(conn, factory, scan, filter,
 			// This scannable is called after finish is called in
 					// ArtifactGenerator
@@ -88,6 +91,12 @@ class JDBCScanGenerator implements ScanGenerator {
 								scan.setStatus(ScanStatus.FINISHED);
 								scan.update();
 							} catch (SQLException e) {
+								try {
+									ScanManager.getInstance(conn).deleteScan(
+											uid);
+								} catch (SQLException e1) {
+									// Do nothing, we already have an exception
+								}
 								throw new ScanPersistenceException(e);
 							}
 							log
@@ -95,7 +104,8 @@ class JDBCScanGenerator implements ScanGenerator {
 											+ scan.getId()
 											+ " persisted to database, starting finding generation.");
 							try {
-								FindingManager.getInstance(conn)
+								FindingManager
+										.getInstance(conn)
 										.generateFindings(scan.getUid(), filter);
 							} catch (SQLException e) {
 								throw new FindingGenerationException(e);
@@ -106,7 +116,7 @@ class JDBCScanGenerator implements ScanGenerator {
 			try {
 				ScanManager.getInstance(conn).deleteScan(uid);
 			} catch (SQLException e1) {
-				//Quietly do nothing, we already have an exception
+				// Quietly do nothing, we already have an exception
 			}
 			throw new ScanPersistenceException(e);
 		}

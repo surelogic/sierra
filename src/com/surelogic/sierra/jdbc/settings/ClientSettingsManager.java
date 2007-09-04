@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.settings;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +27,10 @@ public class ClientSettingsManager extends SettingsManager {
 		getSettings.setString(1, project);
 		ResultSet set = getSettings.executeQuery();
 		if (set.next()) {
-			return mw.fetchSettings(set.getClob(1).getCharacterStream());
+			Clob clob = set.getClob(1);
+			if (clob != null) {
+				return mw.fetchSettings(clob.getCharacterStream());
+			}
 		}
 		return null;
 	}
@@ -42,7 +46,7 @@ public class ClientSettingsManager extends SettingsManager {
 		updateSettings.executeQuery();
 	}
 
-	public static SettingsManager getInstance(Connection conn)
+	public static ClientSettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientSettingsManager(conn);
 	}
