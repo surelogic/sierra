@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public final class PublishRunAction implements IWorkbenchWindowActionDelegate {
+public final class ShareScanAction implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do

@@ -9,15 +9,13 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 
-public final class LoadRunDocumentJob extends DatabaseJob {
+public final class LoadScanDocumentJob extends DatabaseJob {
 
-	private final File f_runDocument;
+	private final File f_scanDocument;
 
-	// private static final Logger log = SierraLogger.getLogger("Sierra");
-
-	public LoadRunDocumentJob(File runDocument) {
-		super("Loading " + runDocument.getName());
-		f_runDocument = runDocument;
+	public LoadScanDocumentJob(File scanDocument) {
+		super("Loading " + scanDocument.getName());
+		f_scanDocument = scanDocument;
 	}
 
 	@Override
@@ -25,7 +23,7 @@ public final class LoadRunDocumentJob extends DatabaseJob {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
 
-		ScanDocumentUtility.loadRunDocument(f_runDocument,
+		ScanDocumentUtility.loadScamDocument(f_scanDocument,
 				slProgressMonitorWrapper);
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;

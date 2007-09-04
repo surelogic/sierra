@@ -3,10 +3,9 @@ package com.surelogic.sierra.client.eclipse.model;
 public interface IDatabaseObserver {
 
 	/**
-	 * Notification that a run document has been loaded into the client
-	 * database.
+	 * Notification that a scan has been loaded into the client database.
 	 */
-	void runDocumentLoaded();
+	void scanLoaded();
 
 	/**
 	 * Notification that all Sierra data about a particular project has been

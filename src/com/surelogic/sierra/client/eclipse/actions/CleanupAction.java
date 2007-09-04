@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.sierra.client.eclipse.model.Projects;
 
-public final class CleanupAction extends ProjectSelectedMenuAction {
+public final class CleanupAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
 	protected void run(List<IJavaProject> selectedProjects) {

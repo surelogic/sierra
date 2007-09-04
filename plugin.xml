@@ -41,7 +41,7 @@
           </action>
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.ScanAction"
-                id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisWorkbench"
+                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                 label="Scan Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
@@ -50,16 +50,16 @@
           </action>
           
          <action
-           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
-                id="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
+                id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
           <action
-           		class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
-                id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
                 label="Share Scan"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
@@ -67,8 +67,8 @@
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
          <action
-           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
-                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
+                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                 label="Synchronize Explanations"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
@@ -116,28 +116,28 @@
          <action
                class="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.RunAnalysisPopup"
+               id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
                label="Scan Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action
-           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 enablesFor="+"
-                id="com.surelogic.sierra.client.eclipse.actions.DisconnectFromServerAction"
+                id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
+               class="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
                enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
                label="Publish Scan"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
                enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeWithServerAction"
+               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                label="Synchronize with Server"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>

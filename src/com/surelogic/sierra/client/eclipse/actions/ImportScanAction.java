@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.Activator;
-import com.surelogic.sierra.client.eclipse.jobs.LoadRunDocumentJob;
+import com.surelogic.sierra.client.eclipse.jobs.LoadScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
@@ -30,22 +30,21 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 		if (fd == null) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
-			fd.setText("Import Run");
+			fd.setText("Import Scan");
 			final String path = Activator.getDefault().getPluginPreferences()
 					.getString(PreferenceConstants.P_SIERRA_PATH);
 			fd.setFilterPath(path);
 			fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
 					"*.*" });
-			fd
-					.setFilterNames(new String[] { "Run Documents (*.sierra)",
-							"Compressed Run Documents (*.sierra.gz)",
-							"All Files (*.*)" });
+			fd.setFilterNames(new String[] { "Scan Documents (*.sierra)",
+					"Compressed Scan Documents (*.sierra.gz)",
+					"All Files (*.*)" });
 		}
 		final String selectedFilename = fd.open();
 		if (selectedFilename != null) {
 			File runDocument = new File(selectedFilename);
 			if (runDocument.canRead()) {
-				LoadRunDocumentJob job = new LoadRunDocumentJob(runDocument);
+				LoadScanDocumentJob job = new LoadScanDocumentJob(runDocument);
 				job.setUser(true);
 				job.schedule();
 			}

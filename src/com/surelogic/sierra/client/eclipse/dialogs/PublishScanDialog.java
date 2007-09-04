@@ -13,13 +13,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class PublishRunDialog extends Dialog {
+public class PublishScanDialog extends Dialog {
 
 	private final List<String> qualifiers;
 	private Button qualifierButtons[];
 	private Vector<String> qualifierNames;
 
-	public PublishRunDialog(Shell parentShell, List<String> qualifiers) {
+	public PublishScanDialog(Shell parentShell, List<String> qualifiers) {
 		super(parentShell);
 		this.qualifiers = qualifiers;
 

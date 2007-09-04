@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class ProjectSelectedMenuAction implements
+public abstract class AbstractProjectSelectedMenuAction implements
 		IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 
 	protected abstract void run(List<IJavaProject> selectedProjects);

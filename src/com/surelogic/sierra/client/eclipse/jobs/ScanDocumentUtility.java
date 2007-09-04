@@ -26,18 +26,18 @@ public final class ScanDocumentUtility {
 	}
 
 	/**
-	 * Parses a run document into the database and generates findings. When this
-	 * method is completed the run document has been fully loaded into the
+	 * Parses a scan document into the database and generates findings. When
+	 * this method is completed the scan document has been fully loaded into the
 	 * Sierra client and is ready to be examined via the user interface.
 	 * 
-	 * @param runDocument
-	 *            the run document.
+	 * @param scanDocument
+	 *            the scan document.
 	 * @param monitor
 	 *            a progress monitor, may be <code>null</code> if progress is
 	 *            not tracked.
 	 * @throws ScanPersistenceException
 	 */
-	public static void loadRunDocument(final File runDocument,
+	public static void loadScamDocument(final File scanDocument,
 			final SLProgressMonitor monitor) throws ScanPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
@@ -47,7 +47,7 @@ public final class ScanDocumentUtility {
 				settings.setRuleFilter(new ArrayList<FindingTypeFilter>());
 				ScanGenerator gen = ScanManager.getInstance(conn)
 						.getScanGenerator(settings);
-				MessageWarehouse.getInstance().parseScanDocument(runDocument,
+				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
 			} catch (SQLException e) {
 				LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);
