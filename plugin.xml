@@ -84,19 +84,18 @@
           </action>    
 
           <action
+               class="com.surelogic.sierra.client.eclipse.actions.PreferencesAction"
+               id="com.surelogic.sierra.client.eclipse.actions.PreferencesAction"
+               label="Preferences..."
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
+          </action>   
+          <action
                class="com.surelogic.sierra.client.eclipse.actions.ImportScanAction"
                id="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_run_doc.gif"
                label="Import Scan..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>     
-          <action
-               class="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
-               id="com.surelogic.sierra.client.eclipse.actions.CleanupAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/trash.gif"
-               label="Cleanup..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
-          </action>   
           
         </actionSet>
    </extension>
