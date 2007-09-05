@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +25,6 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
-import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -61,25 +59,12 @@ public final class Scan {
 
 	private File f_resultRoot;
 
-	// private File f_buildFile;
-
-	private BuildFileGenerator f_buildFileGenerator;
-
-	private Config f_config;
-
-	private List<File> f_buildFiles;
-
-	private final File f_toolsDirectory;
-
 	private List<Config> f_configs;
 
 	public Scan(List<IJavaProject> selectedProjects) {
 		// Get the plug-in directory that has tools folder and append the
 		// directory
 		f_selectedProjects.addAll(selectedProjects);
-		String tools = BuildFileGenerator.getToolsDirectory()
-				+ SierraConstants.TOOLS_FOLDER;
-		f_toolsDirectory = new File(tools);
 		f_resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
 
 		if ((!f_resultRoot.exists()) || (f_resultRoot.exists())
@@ -90,8 +75,7 @@ public final class Scan {
 	}
 
 	public void execute() {
-
-		f_buildFiles = new ArrayList<File>();
+		f_configs = new ArrayList<Config>();
 
 		// Get from preference page
 		final String sierraPath = Activator.getDefault().getPluginPreferences()
@@ -110,46 +94,26 @@ public final class Scan {
 					+ project.getProject().getName()
 					+ SierraConstants.PARSED_FILE_SUFFIX);
 
-			f_config = new Config();
+			Config config = new Config();
 
-			f_config.setBaseDirectory(baseDir);
-			f_config.setProject(project.getProject().getName());
-			f_config.setDestDirectory(f_resultRoot);
-			f_config.setRunDocument(runDocument);
+			config.setBaseDirectory(baseDir);
+			config.setProject(project.getProject().getName());
+			config.setDestDirectory(f_resultRoot);
+			config.setRunDocument(runDocument);
+			config.setJavaVendor(System.getProperty("java.vendor"));
 
 			// Get the plug-in directory that has tools folder and append the
 			// directory
 			String tools = BuildFileGenerator.getToolsDirectory();
 			tools = tools + SierraConstants.TOOLS_FOLDER;
-			f_config.setToolsDirectory(new File(tools));
-
-			f_buildFileGenerator = new BuildFileGenerator(f_config);
-			File buildFile = f_buildFileGenerator.writeBuildFile();
-			f_buildFiles.add(buildFile);
-
+			config.setToolsDirectory(new File(tools));
+			File runDocumentHolder = new File(sierraFolder + File.separator
+					+ config.getProject() + SierraConstants.PARSED_FILE_SUFFIX);
+			config.setRunDocument(runDocumentHolder);
+			f_configs.add(config);
 		}
 
-		if (f_buildFiles.size() > 0) {
-
-			f_configs = new ArrayList<Config>();
-
-			Stack<File> runDocuments = new Stack<File>();
-			// Generate configs from all build files
-			for (File f : f_buildFiles) {
-				Parser buildFileParser = new Parser();
-				List<Config> configsHolder = buildFileParser.parseBuildFile(f
-						.getAbsolutePath());
-				for (Config c : configsHolder) {
-					File runDocumentHolder = new File(sierraFolder
-							+ File.separator + c.getProject()
-							+ SierraConstants.PARSED_FILE_SUFFIX);
-					c.setRunDocument(runDocumentHolder);
-					// Change the run documents
-					runDocuments.push(runDocumentHolder);
-					c.setToolsDirectory(f_toolsDirectory);
-					f_configs.add(c);
-				}
-			}
+		if (f_configs.size() > 0) {
 
 			for (Config c : f_configs) {
 
@@ -279,30 +243,16 @@ public final class Scan {
 
 	private static class RunSierraAdapter extends JobChangeAdapter {
 
-		// private Stack<File> f_runDocs;
-		//
-		// public RunSierraAdapter(Stack<File> runDocs) {
-		// f_runDocs = runDocs;
-		// }
-
 		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(PROPER_TERMINATION)) {
 				BalloonUtility.showMessage("Sierra Scan Completed",
 						"You may now examine the results.");
-				// Job databaseEntryJob = new DatabaseEntryJob("Finshing scan",
-				// f_runDocs);
-				// databaseEntryJob.setPriority(Job.SHORT);
-				// databaseEntryJob
-				// .addJobChangeListener(new DatabaseEntryJobAdapter());
-				// databaseEntryJob.schedule();
 
 			} else if (event.getResult().equals(TASK_CANCELED)) {
 				LOG.info("Canceled scan");
-				BalloonUtility
-						.showMessage(
-								"Sierra Scan was terminated (possible errors while scan)",
-								"Check the logs.");
+				BalloonUtility.showMessage("Sierra Scan was cancelled",
+						"Check the logs.");
 			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
 				BalloonUtility.showMessage("Sierra Scan Already Running",
 						"Please wait for it to finish before restarting.");
@@ -319,155 +269,4 @@ public final class Scan {
 				"You may continue your work. "
 						+ "You will be notified when the scan has completed.");
 	}
-
-	// private static class AntRunnable implements Runnable {
-	//
-	// private boolean f_complete;
-	// private SierraAnalysis f_sierraAnalysis;
-	// private final List<Config> f_configs;
-	// private SLProgressMonitor f_monitor;
-	//
-	// public AntRunnable(List<Config> configs, SLProgressMonitor monitor) {
-	// f_configs = configs;
-	// f_monitor = monitor;
-	// }
-	//
-	// public void run() {
-	//
-	// f_complete = false;
-	// for (Config c : f_configs) {
-	// f_sierraAnalysis = new SierraAnalysis(c, f_monitor);
-	// f_sierraAnalysis.execute();
-	//
-	// }
-	// f_complete = true;
-	// }
-	//
-	// public void stopAll() {
-	// f_sierraAnalysis.stop();
-	// }
-	//
-	// public boolean isCompleted() {
-	// return f_complete;
-	// }
-	// }
-
-	// private static class RunSierraJob extends Job {
-	//
-	// private final List<Config> f_configs;
-	//
-	// public RunSierraJob(String name, List<Config> configs) {
-	// super(name);
-	// f_configs = configs;
-	// }
-	//
-	// @Override
-	// protected IStatus run(IProgressMonitor monitor) {
-	// try {
-	//
-	// // monitor.beginTask("Running tools...",
-	// // IProgressMonitor.UNKNOWN);
-	//
-	// SLProgressMonitorWrapper slProgressMonitorWrapper = new
-	// SLProgressMonitorWrapper(
-	// monitor);
-	// final AntRunnable antRunnable = new AntRunnable(f_configs,
-	// slProgressMonitorWrapper);
-	// final Thread antThread = new Thread(antRunnable);
-	// antThread.start();
-	//
-	// showStartBalloon();
-	//
-	// while (!monitor.isCanceled()) {
-	// Thread.sleep(500);
-	// if (antRunnable.isCompleted()) {
-	// break;
-	// }
-	// }
-	//
-	// if (monitor.isCanceled()) {
-	// monitor.done();
-	// antRunnable.stopAll();
-	// return TASK_CANCELED;
-	// } else {
-	// monitor.done();
-	// LOG.info("Completed scan");
-	// return PROPER_TERMINATION;
-	// }
-	//
-	// } catch (Exception e) {
-	// LOG.log(Level.SEVERE,
-	// "Exception while trying to excute ant build task" + e);
-	// }
-	//
-	// monitor.done();
-	// return IMPROPER_TERMINATION;
-	// }
-	// }
-
-	// private static class DatabaseEntryJob extends Job {
-	//
-	// private final Stack<File> f_runDocs;
-	//
-	// public DatabaseEntryJob(String name, Stack<File> runDocs) {
-	// super(name);
-	// f_runDocs = runDocs;
-	// }
-	//
-	// @Override
-	// protected IStatus run(IProgressMonitor monitor) {
-	// LOG.info("Starting database entry...");
-	//
-	// SLProgressMonitorWrapper slProgressMonitorWrapper = new
-	// SLProgressMonitorWrapper(
-	// monitor);
-	//
-	// while (!f_runDocs.isEmpty()) {
-	//
-	// File runDocumentHolder = f_runDocs.pop();
-	// LOG.info("Currently loading..."
-	// + runDocumentHolder.getAbsolutePath());
-	// try {
-	// ScanDocumentUtility.loadScanDocument(runDocumentHolder,
-	// slProgressMonitorWrapper);
-	//
-	// } catch (ScanPersistenceException rpe) {
-	// LOG.severe(rpe.getMessage());
-	// BalloonUtility.showMessage(
-	// "Sierra Scan Completed with Errors",
-	// "Check the logs.");
-	// slProgressMonitorWrapper.done();
-	// return IMPROPER_TERMINATION;
-	// }
-	// }
-	//
-	// if (slProgressMonitorWrapper.isCanceled()) {
-	// return TASK_CANCELED;
-	// } else {
-	// LOG.info("Finished everything");
-	// slProgressMonitorWrapper.done();
-	// return PROPER_TERMINATION;
-	// }
-	// }
-	// }
-
-	// private static class DatabaseEntryJobAdapter extends JobChangeAdapter {
-	//
-	// @Override
-	// public void done(IJobChangeEvent event) {
-	// if (event.getResult().equals(PROPER_TERMINATION)) {
-	// BalloonUtility.showMessage("Sierra Scan Completed",
-	// "You may now examine the results.");
-	//
-	// } else if (event.getResult().equals(TASK_CANCELED)) {
-	// LOG.info("Canceled scan");
-	// BalloonUtility.showMessage("Sierra Scan was Canceled",
-	// "Check the logs.");
-	// } else {
-	// BalloonUtility.showMessage("Sierra Scan Completed with Errors",
-	// "Check the logs.");
-	// }
-	// }
-	// }
-
 }
