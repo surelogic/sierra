@@ -3,13 +3,13 @@ package com.surelogic.sierra.client.eclipse.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FindingsModel {
+public final class FindingsViewModel {
 
 	private final Map<String, FindingsOrganization> f_organizations = new HashMap<String, FindingsOrganization>();
 
 	private final FindingsFilter f_filter = new FindingsFilter();
 
-	public FindingsModel() {
+	public FindingsViewModel() {
 		FindingsOrganization p = new FindingsOrganization();
 		p.getMutableTreePart().add(FindingsColumn.IMPORTANCE);
 		p.getMutableTreePart().add(FindingsColumn.PACKAGE_NAME);
@@ -50,8 +50,27 @@ public final class FindingsModel {
 		return f_filter;
 	}
 
-	public String[] getKeys() {
+	public String[] getOrganizationKeys() {
 		return f_organizations.keySet().toArray(
 				new String[f_organizations.keySet().size()]);
+	}
+
+	private String f_projectName = null;
+
+	public String getProjectFocus() {
+		return f_projectName;
+	}
+
+	public void setProjectFocus(String projectName) {
+		f_projectName = projectName;
+	}
+
+	public void init() {
+
+	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+
 	}
 }

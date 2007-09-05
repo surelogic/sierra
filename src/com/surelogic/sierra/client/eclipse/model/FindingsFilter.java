@@ -56,5 +56,4 @@ public final class FindingsFilter {
 			b.append(")");
 		}
 	}
-
 }

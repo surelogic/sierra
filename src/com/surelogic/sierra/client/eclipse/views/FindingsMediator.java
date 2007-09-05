@@ -25,13 +25,15 @@ import org.eclipse.ui.part.PageBook;
 import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.FindingsModel;
+import com.surelogic.sierra.client.eclipse.model.FindingsViewModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
+import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsMediator {
 
-	private FindingsModel f_manager = new FindingsModel();
+	private FindingsViewModel f_model = new FindingsViewModel();
 
 	private final Listener f_updateFindingsOverview;
 
@@ -85,10 +87,10 @@ public final class FindingsMediator {
 				Importance i = Importance.valueOf(item.getText());
 				if (i != null) {
 					if (item.getSelection()) {
-						f_manager.getFilter().add(i);
+						f_model.getFilter().add(i);
 						System.out.println("add:" + i);
 					} else {
-						f_manager.getFilter().remove(i);
+						f_model.getFilter().remove(i);
 						System.out.println("remove:" + i);
 
 					}
@@ -118,7 +120,7 @@ public final class FindingsMediator {
 						.getSelectionIndex());
 				if (key == null)
 					return;
-				FindingsOrganization org = f_manager.get(key);
+				FindingsOrganization org = f_model.get(key);
 				if (org == null) {
 					SLLogger.getLogger().log(Level.WARNING,
 							"No FindingsOrganization for key " + key);
@@ -130,7 +132,7 @@ public final class FindingsMediator {
 							"No project to qualify key " + key);
 					return;
 				}
-				String query = org.getQuery(project, f_manager.getFilter());
+				String query = org.getQuery(project, f_model.getFilter());
 				System.out.println(key + " selected");
 				System.out.println("query \"" + query + "\"");
 				try {
@@ -189,10 +191,24 @@ public final class FindingsMediator {
 			}
 		};
 
+		IProjectsObserver pObs = new IProjectsObserver() {
+			public void notify(Projects p) {
+				// TODO Auto-generated method stub
+				/*
+				 * Does the project we are looking at still exist?
+				 */
+				
+			}
+		};
+
 	}
 
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		// TODO something reasonable
+	}
 
+	public void dispose() {
+		f_model.dispose();
+		
 	}
 }

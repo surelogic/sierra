@@ -160,6 +160,13 @@ public final class FindingsView extends ViewPart {
 	}
 
 	@Override
+	public void dispose() {
+		if (f_mediator != null)
+			f_mediator.dispose();
+		super.dispose();
+	}
+
+	@Override
 	public void setFocus() {
 		if (f_mediator != null) {
 			f_mediator.setFocus();
