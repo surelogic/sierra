@@ -1,11 +1,14 @@
 package com.surelogic.sierra.jdbc.finding;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
@@ -13,6 +16,9 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
+import com.surelogic.sierra.jdbc.user.User;
+import com.surelogic.sierra.tool.message.AuditEvent;
+import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -24,15 +30,39 @@ public abstract class FindingManager {
 	private static final int CHUNK_SIZE = 1000;
 
 	protected final Connection conn;
+	private final FindingRecordFactory fact;
+
+	private final PreparedStatement selectFinding;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
+		this.fact = ClientFindingRecordFactory.getInstance(conn);
+		selectFinding = conn
+				.prepareStatement("SELECT ID,FINDING_ID,IMPORTANCE FROM FINDING WHERE ID = ?");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
 			throws SQLException;
 
 	protected abstract FindingRecordFactory getFactory();
+
+	public void comment(Long findingId, String comment) throws SQLException {
+		FindingView f = getFinding(findingId);
+		if (f == null)
+			throw new IllegalArgumentException(findingId
+					+ " is not a valid finding id.");
+		newAudit(f.getTrailId(), comment, AuditEvent.COMMENT).insert();
+	}
+
+	public void setImportance(Long findingId, Importance importance)
+			throws SQLException {
+		FindingView f = getFinding(findingId);
+		if (f == null)
+			throw new IllegalArgumentException(findingId
+					+ " is not a valid finding id.");
+		newAudit(f.getTrailId(), importance.toString(), AuditEvent.IMPORTANCE)
+				.insert();
+	}
 
 	/**
 	 * Generate findings for the scan with the given uid
@@ -101,8 +131,31 @@ public abstract class FindingManager {
 		}
 	}
 
+	private AuditRecord newAudit(Long findingId, String value, AuditEvent event)
+			throws SQLException {
+		AuditRecord record = fact.newAudit();
+		record.setUserId(User.getUser(conn).getId());
+		record.setTimestamp(new Date());
+		record.setEvent(event);
+		record.setValue(value);
+		record.setFindingId(findingId);
+		return record;
+	}
+
 	private void sqlError(SQLException e) {
 		throw new FindingGenerationException(e);
+	}
+
+	private FindingView getFinding(Long findingId) throws SQLException {
+		selectFinding.setLong(1, findingId);
+		ResultSet set = selectFinding.executeQuery();
+		if (set.next()) {
+			FindingView f = new FindingView();
+			f.read(set, 1);
+			return f;
+		} else {
+			return null;
+		}
 	}
 
 	private static class ArtifactResult {

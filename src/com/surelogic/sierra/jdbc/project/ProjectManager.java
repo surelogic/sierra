@@ -11,6 +11,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.TigerService;
@@ -26,12 +27,21 @@ public class ProjectManager {
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
 
+	private final PreparedStatement findNewFindings;
+	private final PreparedStatement obsoleteTrail;
+	private final PreparedStatement findNewAudits;
+	
+	
 	private ProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
 				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
+
+		findNewFindings = null;
+		obsoleteTrail = null;
+		findNewAudits = null;
 	}
 
 	public Collection<String> getAllProjectNames() throws SQLException {
@@ -43,11 +53,17 @@ public class ProjectManager {
 		return projectNames;
 	}
 
+	private Collection<Merge> findNewFindings() {
+		Collection<Merge> merges = new ArrayList<Merge>();
+		
+		return merges;
+	}
+	
 	public void synchronizeProject(String server, String name,
 			SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
-		 * trails that have been merged locally, and merge them on the database.
+		 * findngs that have been created/merged locally, and merge them on the database.
 		 * Second, we commit our audits. Third, we get our updates from the
 		 * server and apply them locally. Finally, we also check to see if we
 		 * have any updates to settings.

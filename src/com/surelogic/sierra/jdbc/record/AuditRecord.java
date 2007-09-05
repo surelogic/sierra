@@ -57,8 +57,8 @@ public final class AuditRecord extends LongRecord {
 		return findingId;
 	}
 
-	public void setFindingId(Long trailId) {
-		this.findingId = trailId;
+	public void setFindingId(Long findingId) {
+		this.findingId = findingId;
 	}
 
 	public Date getTimestamp() {
