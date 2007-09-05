@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
@@ -107,20 +108,8 @@ public class ProjectManager {
 		ProjectRecord rec = projectFactory.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
-			ScanManager scanMan = ScanManager.getInstance(conn);
-			Collection<String> scans = getProjectScans(rec.getId());
-			if (monitor != null) {
-				monitor.beginTask("Deleting Project '" + projectName + "'",
-						scans.size() + 2);
-			}
-			for (String uid : scans) {
-				scanMan.deleteScan(uid);
-				if (monitor != null) {
-					if (monitor.isCanceled())
-						return;
-					monitor.worked(1);
-				}
-			}
+			ScanManager.getInstance(conn).deleteScans(
+					getProjectScans(rec.getId()), monitor);
 			deleteMatches.setLong(1, rec.getId());
 			deleteMatches.executeUpdate();
 			if (monitor != null) {

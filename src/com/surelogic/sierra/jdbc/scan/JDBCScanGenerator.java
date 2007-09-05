@@ -63,7 +63,8 @@ class JDBCScanGenerator implements ScanGenerator {
 			scan.setStatus(ScanStatus.LOADING);
 			scan.setUserId(User.getUser(conn).getId());
 			if (scan.select()) {
-				manager.deleteScan(uid);
+				manager.deleteScan(uid, null);
+				conn.commit();
 			}
 			scan.insert();
 			for (String name : qualifiers) {
@@ -99,7 +100,9 @@ class JDBCScanGenerator implements ScanGenerator {
 								scan.update();
 							} catch (SQLException e) {
 								try {
-									manager.deleteScan(uid);
+									conn.rollback();
+									manager.deleteScan(uid, null);
+									conn.commit();
 								} catch (SQLException e1) {
 									// Do nothing, we already have an exception
 								}
@@ -120,7 +123,9 @@ class JDBCScanGenerator implements ScanGenerator {
 					});
 		} catch (SQLException e) {
 			try {
-				manager.deleteScan(uid);
+				conn.rollback();
+				manager.deleteScan(uid, null);
+				conn.commit();
 			} catch (SQLException e1) {
 				// Quietly do nothing, we already have an exception
 			}

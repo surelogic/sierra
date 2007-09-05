@@ -3,7 +3,10 @@ package com.surelogic.sierra.jdbc.scan;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
@@ -45,6 +48,42 @@ public class ScanManager {
 		return new JDBCScanGenerator(conn, factory, this);
 	}
 
+	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)
+			throws SQLException {
+		for (String uid : uids) {
+			if (monitor != null) {
+				if (monitor.isCanceled()) {
+					return;
+				}
+				monitor.subTask("Deleting scan " + uid);
+			}
+			ScanRecord rec = factory.newScan();
+			rec.setUid(uid);
+			if (rec.select()) {
+				rec.delete();
+			}
+			work(monitor);
+		}
+		if (monitor != null) {
+			if (monitor.isCanceled())
+				return;
+		}
+		deleteSources.execute();
+		work(monitor);
+		if (monitor != null) {
+			if (monitor.isCanceled())
+				return;
+		}
+		deleteCompilations.execute();
+		work(monitor);
+	}
+
+	private static void work(SLProgressMonitor monitor) {
+		if (monitor != null) {
+			monitor.worked(1);
+		}
+	}
+
 	/**
 	 * Remove the scan with the given uid from the database. This method quietly
 	 * does nothing if the scan is not in the database.
@@ -52,14 +91,9 @@ public class ScanManager {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteScan(String uid) throws SQLException {
-		ScanRecord rec = factory.newScan();
-		rec.setUid(uid);
-		if (rec.select()) {
-			rec.delete();
-			deleteSources.execute();
-			deleteCompilations.execute();
-		}
+	public void deleteScan(String uid, SLProgressMonitor monitor)
+			throws SQLException {
+		deleteScans(Collections.singleton(uid), monitor);
 	}
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {

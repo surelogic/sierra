@@ -388,7 +388,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	public void rollback() {
 		try {
-			manager.deleteScan(scan.getUid());
+			conn.rollback();
+			manager.deleteScan(scan.getUid(), null);
+			conn.commit();
 		} catch (SQLException e) {
 			throw new ScanPersistenceException(e);
 		}
