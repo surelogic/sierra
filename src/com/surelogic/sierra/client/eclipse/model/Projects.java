@@ -22,11 +22,15 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * The class allows observers to changes to this list of projects
  */
-public final class Projects {
+public final class Projects extends AbstractDatabaseObserver {
 
 	private static final String QUERY = "select PROJECT from PROJECT_OVERVIEW order by PROJECT";
 
 	private static final Projects INSTANCE = new Projects();
+
+	static {
+		DatabaseHub.getInstance().addObserver(INSTANCE);
+	}
 
 	public static Projects getInstance() {
 		return INSTANCE;
@@ -118,5 +122,19 @@ public final class Projects {
 		synchronized (this) {
 			return f_projectNames.toString();
 		}
+	}
+
+	/*
+	 * Track changes to the database that can mutate the set of projects.
+	 */
+
+	@Override
+	public void projectDeleted() {
+		refresh();
+	}
+
+	@Override
+	public void scanLoaded() {
+		refresh();
 	}
 }

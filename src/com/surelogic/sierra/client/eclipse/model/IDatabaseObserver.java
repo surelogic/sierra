@@ -3,6 +3,13 @@ package com.surelogic.sierra.client.eclipse.model;
 public interface IDatabaseObserver {
 
 	/**
+	 * Notifies that something has changed in the database. This method is
+	 * called after the more specific notification, e.g., {@link #scanLoaded()},
+	 * has been invoked.
+	 */
+	void changed();
+
+	/**
 	 * Notification that a scan has been loaded into the client database.
 	 */
 	void scanLoaded();

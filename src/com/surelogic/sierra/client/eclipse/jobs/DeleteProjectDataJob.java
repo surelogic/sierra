@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.jdbc.project.ProjectManager;
 
 public final class DeleteProjectDataJob {
@@ -48,7 +48,7 @@ public final class DeleteProjectDataJob {
 							SLLogger.getLogger().log(Level.SEVERE, msg, e);
 						}
 					}
-					Projects.getInstance().refresh();
+					DatabaseHub.getInstance().notifyProjectDeleted();
 				}
 			});
 		} catch (Exception e) {
