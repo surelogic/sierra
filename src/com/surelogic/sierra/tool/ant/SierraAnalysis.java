@@ -78,15 +78,14 @@ import java.util.List;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Redirector;
 import org.apache.tools.ant.types.CommandlineJava;
-import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.RedirectorElement;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
@@ -188,7 +187,7 @@ public class SierraAnalysis extends Task {
 	 * 
 	 * @param config
 	 */
-	public SierraAnalysis(Config config, SLProgressMonitor monitor) {
+	public SierraAnalysis(Config config, SLProgressMonitor monitor, int scale) {
 		super();
 
 		if (monitor != null) {
@@ -210,7 +209,7 @@ public class SierraAnalysis extends Task {
 		srcdir.append(new Path(antProject, config.getSourceDirs()));
 		bindir = new Path(antProject).createPath();
 		bindir.append(new Path(antProject, config.getBinDirs()));
-		tools = new Tools(antProject, config, monitor);
+		tools = new Tools(antProject, config, monitor, scale);
 		project = new Project(antProject, config);
 	}
 
@@ -227,17 +226,27 @@ public class SierraAnalysis extends Task {
 			runDateTime = Calendar.getInstance().getTime();
 		}
 
-		validateParameters();
-		verifyDependencies();
-		tools.runTools(monitor);
-		generateRunDocument(monitor);
-		if (server != null && !"".equals(server)) {
-			uploadRunDocument();
+		try {
+			validateParameters();
+			verifyDependencies();
+			tools.runTools(monitor);
+			generateRunDocument(monitor);
+			if (server != null && !"".equals(server)) {
+				uploadRunDocument();
+			}
+
+			if (clean) {
+				cleanup();
+			}
+
+		} catch (BuildException be) {
+			SLLogger.getLogger("sierra").severe(
+					"Possible errors in the build file parameters.");
+			if (monitor != null) {
+				monitor.setCanceled(true);
+			}
 		}
 
-		if (clean) {
-			cleanup();
-		}
 	}
 
 	/**
@@ -393,8 +402,7 @@ public class SierraAnalysis extends Task {
 			}
 
 			if (monitor != null) {
-				int holder = getDirectories(root.getAbsolutePath());
-				monitor.beginTask("Generating the Run document", holder * 5);
+				monitor.subTask("Generating the Run document");
 			}
 
 			antProject.log("Generating the run document: " + runDocument,
@@ -404,9 +412,6 @@ public class SierraAnalysis extends Task {
 			Parser parser = new Parser(generator, monitor);
 			tools.parseOutput(parser);
 			generator.finished();
-			if (monitor != null) {
-				monitor.done();
-			}
 
 		}
 	}
@@ -783,18 +788,18 @@ public class SierraAnalysis extends Task {
 		return tools;
 	}
 
-	private int getDirectories(String currentDir) {
-
-		DirSet dirset = new DirSet();
-		dirset.setProject(antProject);
-		dirset.setDir(new File(currentDir));
-		dirset.setIncludes("**/*.java");
-		DirectoryScanner ds = dirset.getDirectoryScanner(antProject);
-		String dirs[] = ds.getIncludedFiles();
-
-		return dirs.length;
-
-	}
+	// private int getDirectories(String currentDir) {
+	//
+	// DirSet dirset = new DirSet();
+	// dirset.setProject(antProject);
+	// dirset.setDir(new File(currentDir));
+	// dirset.setIncludes("**/*.java");
+	// DirectoryScanner ds = dirset.getDirectoryScanner(antProject);
+	// String dirs[] = ds.getIncludedFiles();
+	//
+	// return dirs.length;
+	//
+	// }
 
 	/**
 	 * Code for getting the source directories

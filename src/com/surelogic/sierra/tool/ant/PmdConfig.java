@@ -33,15 +33,17 @@ public class PmdConfig extends ToolConfig {
 	private SLProgressMonitor monitor = null;
 	private String targetJDK = null;
 	private File rulesFile = null;
+	private int scale = 1;
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
 		super("pmd", project);
 	}
 
-	public PmdConfig(Project project, SLProgressMonitor monitor) {
+	public PmdConfig(Project project, SLProgressMonitor monitor, int scale) {
 		super("pmd", project);
 		if (monitor != null) {
 			this.monitor = monitor;
+			this.scale = scale;
 		}
 	}
 
@@ -108,7 +110,7 @@ public class PmdConfig extends ToolConfig {
 
 				}
 				if (monitor != null) {
-					monitor.worked(1);
+					monitor.worked(scale);
 				}
 
 			}

@@ -86,9 +86,10 @@ public class Tools {
 		setMultithreaded(config.isMultithreaded());
 	}
 
-	public Tools(Project antProject, Config config, SLProgressMonitor monitor) {
+	public Tools(Project antProject, Config config, SLProgressMonitor monitor,
+			int scale) {
 		this.antProject = antProject;
-		addAllToolDefaults(monitor);
+		addAllToolDefaults(monitor, scale);
 
 		setExclude(config.getExcludedToolsList());
 
@@ -101,18 +102,18 @@ public class Tools {
 		setMultithreaded(config.isMultithreaded());
 	}
 
-	private void addAllToolDefaults(SLProgressMonitor monitor) {
-		ReckonerConfig reckoner = new ReckonerConfig(antProject, monitor);
+	private void addAllToolDefaults(SLProgressMonitor monitor, int scale) {
+		ReckonerConfig reckoner = new ReckonerConfig(antProject, monitor, scale);
 		tools.put(reckoner.getToolName(), reckoner);
 		antProject.log("Added " + reckoner.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
 
-		PmdConfig pmd = new PmdConfig(antProject, monitor);
+		PmdConfig pmd = new PmdConfig(antProject, monitor, scale);
 		tools.put(pmd.getToolName(), pmd);
 		antProject.log("Added " + pmd.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
 
-		FindBugsConfig findbugs = new FindBugsConfig(antProject, monitor);
+		FindBugsConfig findbugs = new FindBugsConfig(antProject, monitor, scale);
 		tools.put(findbugs.getToolName(), findbugs);
 		antProject.log("Added " + findbugs.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
@@ -272,9 +273,6 @@ public class Tools {
 			ToolConfig tool;
 			Set<String> toolNames = tools.keySet();
 
-			if (monitor != null) {
-				monitor.beginTask("Generating results", toolNames.size());
-			}
 			for (String toolName : toolNames) {
 				if (!analysis.keepRunning) {
 					break;
@@ -296,10 +294,6 @@ public class Tools {
 				// FIXME what is the proper behavior?
 				// Continue trying to parse the tool files
 				e.printStackTrace();
-			} finally {
-				if (monitor != null) {
-					monitor.done();
-				}
 			}
 		}
 	}

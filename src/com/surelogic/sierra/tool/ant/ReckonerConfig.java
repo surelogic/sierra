@@ -25,15 +25,19 @@ public class ReckonerConfig extends ToolConfig {
 
 	private Path classpath = null;
 
+	private int scale = 1;
+
 	public ReckonerConfig(Project project) {
 		super("reckoner", project);
 	}
 
-	public ReckonerConfig(Project antProject, SLProgressMonitor monitor) {
+	public ReckonerConfig(Project antProject, SLProgressMonitor monitor,
+			int scale) {
 		super("reckoner", antProject);
 
 		if (monitor != null) {
 			this.monitor = monitor;
+			this.scale = scale;
 		}
 	}
 
@@ -134,7 +138,7 @@ public class ReckonerConfig extends ToolConfig {
 				}
 
 				if (monitor != null) {
-					monitor.worked(1);
+					monitor.worked(scale);
 				}
 
 			}

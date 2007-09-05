@@ -49,7 +49,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String ERROR_END = "</errors>";
 	private static final String ENCODING = "UTF-8";
 
-	private final MessageWarehouse mw;
 	private ArtifactBuilderAdapter artifactAdapter;
 
 	private FileOutputStream artOut;
@@ -62,7 +61,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private FileOutputStream errOut;
 
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
-		this.mw = MessageWarehouse.getInstance();
 		this.parsedFile = parsedFile;
 		this.config = config;
 
@@ -194,6 +192,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		private String message;
 		private String tool;
+		private final MessageWarehouse mw = MessageWarehouse.getInstance();
 
 		public void build() {
 
@@ -221,6 +220,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		private String clazz;
 		private String pakkage;
 		private int linesOfCode;
+		private final MessageWarehouse mw = MessageWarehouse.getInstance();
 
 		public void build() {
 			ClassMetric metric = new ClassMetric();
@@ -255,6 +255,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	private class ArtifactBuilderAdapter implements ArtifactBuilder {
 		private final Artifact.Builder artBuilder;
+		private final MessageWarehouse mw = MessageWarehouse.getInstance();
 
 		ArtifactBuilderAdapter() {
 			artBuilder = new Artifact.Builder();

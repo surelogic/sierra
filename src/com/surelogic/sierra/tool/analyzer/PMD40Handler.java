@@ -286,6 +286,13 @@ class PMD40Handler extends DefaultHandler {
 		if ("error".equals(eName)) {
 			error.build();
 		}
+
+		if ("file".equals(eName)) {
+
+			if (monitor != null) {
+				monitor.worked(1);
+			}
+		}
 		if ("violation".equals(eName)) {
 
 			messageHolder = message.toString();
@@ -316,9 +323,6 @@ class PMD40Handler extends DefaultHandler {
 			sourceLocation.build();
 			artifact.build();
 
-			if (monitor != null) {
-				monitor.worked(1);
-			}
 		}
 
 	}

@@ -48,7 +48,7 @@ public class TestSierraAnalysis {
 		}
 		assertFalse(config.getRunDocument().exists());
 
-		SierraAnalysis sa = new SierraAnalysis(config, null);
+		SierraAnalysis sa = new SierraAnalysis(config, null, 0);
 		new Thread(new Stopper(sa)).start();
 
 		sa.execute();// should wait

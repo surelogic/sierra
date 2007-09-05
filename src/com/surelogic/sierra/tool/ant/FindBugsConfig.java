@@ -32,6 +32,7 @@ public class FindBugsConfig extends ToolConfig {
 	private String memory = "1024m";
 	private SLProgressMonitor monitor = null;
 	private Path classpath = null;
+	private int scale = 1;
 
 	/**
 	 * @param project
@@ -40,10 +41,11 @@ public class FindBugsConfig extends ToolConfig {
 		super("findbugs", project);
 	}
 
-	public FindBugsConfig(Project project, SLProgressMonitor monitor) {
+	public FindBugsConfig(Project project, SLProgressMonitor monitor, int scale) {
 		super("findbugs", project);
 		if (monitor != null) {
 			this.monitor = monitor;
+			this.scale = scale;
 		}
 	}
 
@@ -93,7 +95,7 @@ public class FindBugsConfig extends ToolConfig {
 
 				}
 				if (monitor != null) {
-					monitor.worked(1);
+					monitor.worked(scale);
 				}
 			}
 		} else {
