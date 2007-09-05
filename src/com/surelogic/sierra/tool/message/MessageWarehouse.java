@@ -298,6 +298,9 @@ public class MessageWarehouse {
 	public void parseScanDocument(final File runDocument,
 			ScanGenerator generator, SLProgressMonitor monitor) {
 		try {
+			if (monitor != null) {
+				monitor.subTask("Generating Artifacts");
+			}
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			XMLStreamReader xmlr = null;
@@ -447,7 +450,9 @@ public class MessageWarehouse {
 						counter = 0;
 					}
 				}
-				monitor.subTask("Generating findings");
+				if (monitor != null) {
+					monitor.subTask("Generating findings");
+				}
 				generator.finished();
 			} catch (JAXBException e) {
 				throw new IllegalArgumentException("File with name"
