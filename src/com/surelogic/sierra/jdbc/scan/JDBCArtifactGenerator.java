@@ -44,6 +44,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final FindingTypeManager ftMan;
 
 	private final ScanRecordFactory factory;
+	private final ScanManager manager;
 	private final Runnable callback;
 
 	private final PreparedStatement toolIdSelect;
@@ -62,12 +63,13 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final MetricBuilder mBuilder;
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
-			ScanRecord scan, MessageFilter filter, Runnable callback)
-			throws SQLException {
+			ScanManager manager, ScanRecord scan, MessageFilter filter,
+			Runnable callback) throws SQLException {
 		log.info("Now persisting artifacts to database for scan "
 				+ scan.getId());
 		this.conn = conn;
 		this.factory = factory;
+		this.manager = manager;
 		this.callback = callback;
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
 
@@ -386,7 +388,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	public void rollback() {
 		try {
-			ScanManager.getInstance(conn).deleteScan(scan.getUid());
+			manager.deleteScan(scan.getUid());
 		} catch (SQLException e) {
 			throw new ScanPersistenceException(e);
 		}

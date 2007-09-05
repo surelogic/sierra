@@ -32,15 +32,18 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	private final Connection conn;
 	private final ScanRecordFactory factory;
+	private final ScanManager manager;
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
 	private String uid;
 	private List<String> qualifiers;
 
-	JDBCScanGenerator(Connection conn, ScanRecordFactory factory) {
+	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
+			ScanManager manager) {
 		this.conn = conn;
 		this.factory = factory;
+		this.manager = manager;
 		this.qualifiers = Collections.emptyList();
 	}
 
@@ -59,6 +62,9 @@ class JDBCScanGenerator implements ScanGenerator {
 			scan.setJavaVendor(javaVendor);
 			scan.setStatus(ScanStatus.LOADING);
 			scan.setUserId(User.getUser(conn).getId());
+			if (scan.select()) {
+				manager.deleteScan(uid);
+			}
 			scan.insert();
 			for (String name : qualifiers) {
 				QualifierRecord q = factory.newQualifier();
@@ -82,8 +88,9 @@ class JDBCScanGenerator implements ScanGenerator {
 									.getInstance(conn).getSettings(projectName)
 									: ServerSettingsManager.getInstance(conn)
 											.getSettingsByProject(projectName));
-			return new JDBCArtifactGenerator(conn, factory, scan, filter,
-			// This scannable is called after finish is called in
+			return new JDBCArtifactGenerator(conn, factory, manager, scan,
+					filter,
+					// This scannable is called after finish is called in
 					// ArtifactGenerator
 					new Runnable() {
 						public void run() {
@@ -92,8 +99,7 @@ class JDBCScanGenerator implements ScanGenerator {
 								scan.update();
 							} catch (SQLException e) {
 								try {
-									ScanManager.getInstance(conn).deleteScan(
-											uid);
+									manager.deleteScan(uid);
 								} catch (SQLException e1) {
 									// Do nothing, we already have an exception
 								}
@@ -114,7 +120,7 @@ class JDBCScanGenerator implements ScanGenerator {
 					});
 		} catch (SQLException e) {
 			try {
-				ScanManager.getInstance(conn).deleteScan(uid);
+				manager.deleteScan(uid);
 			} catch (SQLException e1) {
 				// Quietly do nothing, we already have an exception
 			}

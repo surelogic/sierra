@@ -24,21 +24,26 @@ public class ProjectManager {
 
 	private final ProjectRecordFactory projectFactory;
 
+	private final PreparedStatement deleteMatches;
+	private final PreparedStatement deleteFindings;
+
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
 
 	private final PreparedStatement findNewFindings;
 	private final PreparedStatement obsoleteTrail;
 	private final PreparedStatement findNewAudits;
-	
-	
+
 	private ProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
 				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
-
+		deleteMatches = conn
+				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = ?");
+		deleteFindings = conn
+				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = ?");
 		findNewFindings = null;
 		obsoleteTrail = null;
 		findNewAudits = null;
@@ -55,18 +60,18 @@ public class ProjectManager {
 
 	private Collection<Merge> findNewFindings() {
 		Collection<Merge> merges = new ArrayList<Merge>();
-		
+
 		return merges;
 	}
-	
+
 	public void synchronizeProject(String server, String name,
 			SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
-		 * findngs that have been created/merged locally, and merge them on the database.
-		 * Second, we commit our audits. Third, we get our updates from the
-		 * server and apply them locally. Finally, we also check to see if we
-		 * have any updates to settings.
+		 * findngs that have been created/merged locally, and merge them on the
+		 * database. Second, we commit our audits. Third, we get our updates
+		 * from the server and apply them locally. Finally, we also check to see
+		 * if we have any updates to settings.
 		 */
 		TigerService service = new TigerServiceClient(server)
 				.getTigerServicePort();
@@ -106,7 +111,7 @@ public class ProjectManager {
 			Collection<String> scans = getProjectScans(rec.getId());
 			if (monitor != null) {
 				monitor.beginTask("Deleting Project '" + projectName + "'",
-						scans.size() + 1);
+						scans.size() + 2);
 			}
 			for (String uid : scans) {
 				scanMan.deleteScan(uid);
@@ -115,6 +120,20 @@ public class ProjectManager {
 						return;
 					monitor.worked(1);
 				}
+			}
+			deleteMatches.setLong(1, rec.getId());
+			deleteMatches.executeUpdate();
+			if (monitor != null) {
+				if (monitor.isCanceled())
+					return;
+				monitor.worked(1);
+			}
+			deleteFindings.setLong(1, rec.getId());
+			deleteFindings.executeUpdate();
+			if (monitor != null) {
+				if (monitor.isCanceled())
+					return;
+				monitor.worked(1);
 			}
 			rec.delete();
 		}

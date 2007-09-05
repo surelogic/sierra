@@ -38,7 +38,7 @@ public abstract class FindingManager {
 		this.conn = conn;
 		this.fact = ClientFindingRecordFactory.getInstance(conn);
 		selectFinding = conn
-				.prepareStatement("SELECT ID,FINDING_ID,IMPORTANCE FROM FINDING WHERE ID = ?");
+				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -51,7 +51,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		newAudit(f.getTrailId(), comment, AuditEvent.COMMENT).insert();
+		newAudit(findingId, comment, AuditEvent.COMMENT).insert();
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -60,7 +60,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		newAudit(f.getTrailId(), importance.toString(), AuditEvent.IMPORTANCE)
+		newAudit(findingId, importance.toString(), AuditEvent.IMPORTANCE)
 				.insert();
 	}
 

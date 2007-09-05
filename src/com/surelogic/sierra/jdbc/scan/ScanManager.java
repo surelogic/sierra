@@ -42,7 +42,7 @@ public class ScanManager {
 	}
 
 	public ScanGenerator getScanGenerator() {
-		return new JDBCScanGenerator(conn, factory);
+		return new JDBCScanGenerator(conn, factory, this);
 	}
 
 	/**
