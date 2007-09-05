@@ -21,6 +21,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.jobs.SierraSchedulingRule;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
@@ -222,6 +223,9 @@ public final class Scan {
 				try {
 					ScanDocumentUtility.loadScanDocument(f_config
 							.getRunDocument(), f_monitor);
+
+					// Notify that scan was completed
+					DatabaseHub.getInstance().notifyScanLoaded();
 				} catch (ScanPersistenceException rpe) {
 					LOG.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
