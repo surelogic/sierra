@@ -46,7 +46,7 @@ public class MessageWarehouse {
 			.getName());
 
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
-
+	private static final int COUNT = 200;
 	private final JAXBContext ctx;
 	private final Marshaller marshaller;
 	private final Unmarshaller unmarshaller;
@@ -320,20 +320,17 @@ public class MessageWarehouse {
 				// artifacts, errors, or classMetrics)
 				// Count artifacts, so that we can estimate time until
 				// completion
-				int counter = 0;
 				while ((xmlr.getEventType() != START_ELEMENT)
 						|| !xmlr.getLocalName().equals("config")) {
-					if (xmlr.getEventType() == START_ELEMENT) {
-						counter++;
-					}
 					xmlr.next();
-				}
-				if (monitor != null) {
-					monitor.beginTask("Generating Artifacts", counter);
 				}
 				readConfig(unmarshaller.unmarshal(xmlr, Config.class)
 						.getValue(), generator);
-
+				if (cancelled(monitor)) {
+					return;
+				} else {
+					work(monitor);
+				}
 			} catch (JAXBException e) {
 				throw new IllegalArgumentException("File with name"
 						+ runDocument.getName() + " is not a valid document", e);
@@ -384,13 +381,13 @@ public class MessageWarehouse {
 						&& xmlr.getLocalName().equals("class")) {
 					readClassMetric(unmarshaller.unmarshal(xmlr,
 							ClassMetric.class).getValue(), mBuilder);
-					if (monitor != null) {
-						monitor.worked(1);
-					}
-					if (++counter == 200) {
+
+					if (++counter == COUNT) {
 						if (cancelled(monitor)) {
 							generator.rollback();
 							return;
+						} else {
+							work(monitor);
 						}
 						counter = 0;
 					}
@@ -409,17 +406,17 @@ public class MessageWarehouse {
 						&& xmlr.getLocalName().equals("artifact")) {
 					readArtifact(unmarshaller.unmarshal(xmlr, Artifact.class)
 							.getValue(), aBuilder);
-					if (monitor != null) {
-						monitor.worked(1);
-					}
+
 					if (xmlr.getEventType() == CHARACTERS) {
 						xmlr.next(); // skip the whitespace between
 						// <artifacts>s.
 					}
-					if (++counter == 200) {
+					if (++counter == COUNT) {
 						if (cancelled(monitor)) {
 							generator.rollback();
 							return;
+						} else {
+							work(monitor);
 						}
 						counter = 0;
 					}
@@ -440,18 +437,18 @@ public class MessageWarehouse {
 						xmlr.next(); // skip the whitespace between
 						// <event>s.
 					}
-					if (++counter == 200) {
+					if (++counter == COUNT) {
 						if (cancelled(monitor)) {
 							generator.rollback();
 							return;
+						} else {
+							work(monitor);
 						}
 						counter = 0;
 					}
 				}
+				monitor.subTask("Generating findings");
 				generator.finished();
-				if (monitor != null) {
-					monitor.done();
-				}
 			} catch (JAXBException e) {
 				throw new IllegalArgumentException("File with name"
 						+ runDocument.getName() + " is not a valid document", e);
@@ -563,6 +560,12 @@ public class MessageWarehouse {
 			return monitor.isCanceled();
 		} else {
 			return false;
+		}
+	}
+
+	private static void work(SLProgressMonitor monitor) {
+		if (monitor != null) {
+			monitor.worked(1);
 		}
 	}
 }
