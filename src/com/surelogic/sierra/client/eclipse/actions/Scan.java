@@ -46,12 +46,8 @@ public final class Scan {
 	public static final IStatus IMPROPER_TERMINATION = SLStatus
 			.createErrorStatus("Improper termination");
 
-	/** The status for canceled task */
-	public static final IStatus TASK_CANCELED = SLStatus.createStatus(
-			IStatus.CANCEL, 0, "Task canceled", null);
-
-	/** The status for already running task - currently uses cancel */
-	public static final IStatus TASK_ALREADY_RUNNING = SLStatus.createStatus(
+	/** The status for cancelled task */
+	public static final IStatus TASK_CANCELLED = SLStatus.createStatus(
 			IStatus.CANCEL, 0, "Task cancelled", null);
 
 	private static final String SIERRA_JOB = "sierra";
@@ -103,6 +99,14 @@ public final class Scan {
 			config.setRunDocument(runDocument);
 			config.setJavaVendor(System.getProperty("java.vendor"));
 
+			// Get clean option
+
+			// Get excluded tools
+
+			// Get included dirs -project specific
+
+			// Get excluded dirs - project specific
+
 			// Get the plug-in directory that has tools folder and append the
 			// directory
 			String tools = BuildFileGenerator.getToolsDirectory();
@@ -153,37 +157,48 @@ public final class Scan {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
+			// This is an estimate for the number of files in a project
+			int scale = 1000;
+			int total = 5;
+			SLProgressMonitorWrapper slProgressMonitorWrapper = null;
+			if (monitor != null) {
+				slProgressMonitorWrapper = new SLProgressMonitorWrapper(monitor);
+				slProgressMonitorWrapper.beginTask("Scanning project", total
+						* scale);
+			}
+
 			try {
-
-				// This is an estimate for the number of files in a project
-				int scale = 1000;
-				int total = 5;
-				if (monitor != null) {
-					monitor.beginTask("Scanning project", total * scale);
-				}
-
-				SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
-						monitor);
 				final AntSingleRunnable antRunnable = new AntSingleRunnable(
 						f_config, slProgressMonitorWrapper, scale);
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
-
 				showStartBalloon();
 
-				while (!monitor.isCanceled()) {
+				while (!slProgressMonitorWrapper.isCanceled()) {
 					Thread.sleep(500);
 					if (antRunnable.isCompleted()) {
 						break;
 					}
 				}
 
-				if (monitor.isCanceled()) {
-					monitor.done();
+				if (slProgressMonitorWrapper.isCanceled()) {
+					slProgressMonitorWrapper.done();
 					antRunnable.stopAll();
-					return TASK_CANCELED;
+					return TASK_CANCELLED;
 				} else {
-					monitor.done();
+					try {
+						// Start database entry
+						ScanDocumentUtility.loadScanDocument(f_config
+								.getRunDocument(), slProgressMonitorWrapper);
+						// Notify that scan was completed
+						DatabaseHub.getInstance().notifyScanLoaded();
+					} catch (ScanPersistenceException rpe) {
+						LOG.severe(rpe.getMessage());
+						slProgressMonitorWrapper.done();
+						return IMPROPER_TERMINATION;
+
+					}
+					slProgressMonitorWrapper.done();
 					LOG.info("Completed scan");
 					return PROPER_TERMINATION;
 				}
@@ -193,7 +208,7 @@ public final class Scan {
 						"Exception while trying to excute ant build task" + e);
 			}
 
-			monitor.done();
+			slProgressMonitorWrapper.done();
 			return IMPROPER_TERMINATION;
 		}
 	}
@@ -218,21 +233,6 @@ public final class Scan {
 			f_complete = false;
 			f_sierraAnalysis = new SierraAnalysis(f_config, f_monitor, f_scale);
 			f_sierraAnalysis.execute();
-
-			if (!f_monitor.isCanceled()) {
-				try {
-					ScanDocumentUtility.loadScanDocument(f_config
-							.getRunDocument(), f_monitor);
-
-					// Notify that scan was completed
-					DatabaseHub.getInstance().notifyScanLoaded();
-				} catch (ScanPersistenceException rpe) {
-					LOG.severe(rpe.getMessage());
-					BalloonUtility.showMessage(
-							"Sierra Scan Completed with Errors",
-							"Check the logs.");
-				}
-			}
 			f_complete = true;
 		}
 
@@ -253,15 +253,11 @@ public final class Scan {
 				BalloonUtility.showMessage("Sierra Scan Completed",
 						"You may now examine the results.");
 
-			} else if (event.getResult().equals(TASK_CANCELED)) {
-				LOG.info("Canceled scan");
-				BalloonUtility.showMessage("Sierra Scan was cancelled",
+			} else if (event.getResult().equals(TASK_CANCELLED)) {
+				LOG.info("Cancelled scan");
+				BalloonUtility.showMessage("Sierra Scan was Cancelled",
 						"Check the logs.");
-			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
-				BalloonUtility.showMessage("Sierra Scan Already Running",
-						"Please wait for it to finish before restarting.");
-
-			} else {
+			} else if (event.getResult().equals(IMPROPER_TERMINATION)) {
 				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
 						"Check the logs.");
 			}

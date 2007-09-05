@@ -18,10 +18,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.Activator;
@@ -154,7 +154,7 @@ public class SierraPreferencePage extends PreferencePage implements
 					confirmDelete
 							.setMessage("Are you sure you want to delete all Sierra data for "
 
-									+ (multiDelete ? "these"
+									+ (multiDelete ? "these "
 											+ projectNames.size() + " projects"
 											: "project '" + projectNames.get(0)
 													+ "'") + "?");
@@ -181,7 +181,7 @@ public class SierraPreferencePage extends PreferencePage implements
 				 * TODO: Fix to use ILabelDecorator to look like a Java project.
 				 */
 				item.setImage(SLImages
-						.getWorkbenchImage(ISharedImages.IMG_OBJ_PROJECT));
+						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			}
 		}
 	}
