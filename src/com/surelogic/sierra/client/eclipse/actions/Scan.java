@@ -21,6 +21,7 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
+import com.surelogic.sierra.client.eclipse.jobs.SierraSchedulingRule;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
@@ -53,6 +54,8 @@ public final class Scan {
 	/** The status for already running task - currently uses cancel */
 	public static final IStatus TASK_ALREADY_RUNNING = SLStatus.createStatus(
 			IStatus.CANCEL, 0, "Task cancelled", null);
+
+	private static final String SIERRA_JOB = "sierra";
 
 	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
@@ -147,70 +150,57 @@ public final class Scan {
 					f_configs.add(c);
 				}
 			}
-			final Job runSierraScan = new RunSierraJob("Running Sierra...",
-					f_configs);
-			runSierraScan.setPriority(Job.SHORT);
-			runSierraScan.addJobChangeListener(new RunSierraAdapter(
-					runDocuments));
-			runSierraScan.schedule();
+
+			for (Config c : f_configs) {
+
+				final Job runSingleSierraScan = new RunSingleSierraJob(
+						"Running Sierra on " + c.getProject(), c, SIERRA_JOB);
+				runSingleSierraScan.setPriority(Job.SHORT);
+				runSingleSierraScan.belongsTo(c.getProject());
+				runSingleSierraScan
+						.addJobChangeListener(new RunSierraAdapter());
+				runSingleSierraScan.schedule();
+			}
 
 			showStartBalloon();
 			LOG.info("Started scan on projects:" + projectList);
+
 		}
 	}
 
-	private static class AntRunnable implements Runnable {
+	private static class RunSingleSierraJob extends Job {
 
-		private boolean f_complete;
-		private SierraAnalysis f_sierraAnalysis;
-		private final List<Config> f_configs;
-		private SLProgressMonitor f_monitor;
+		private final Config f_config;
+		private final String f_familyName;
 
-		public AntRunnable(List<Config> configs, SLProgressMonitor monitor) {
-			f_configs = configs;
-			f_monitor = monitor;
+		@Override
+		public boolean belongsTo(Object family) {
+			return f_familyName.equals(family);
 		}
 
-		public void run() {
-
-			f_complete = false;
-			for (Config c : f_configs) {
-				f_sierraAnalysis = new SierraAnalysis(c, f_monitor);
-				f_sierraAnalysis.execute();
-
-			}
-			f_complete = true;
-		}
-
-		public void stopAll() {
-			f_sierraAnalysis.stop();
-		}
-
-		public boolean isCompleted() {
-			return f_complete;
-		}
-	}
-
-	private static class RunSierraJob extends Job {
-
-		private final List<Config> f_configs;
-
-		public RunSierraJob(String name, List<Config> configs) {
+		public RunSingleSierraJob(String name, Config config, String familyName) {
 			super(name);
-			f_configs = configs;
+			f_config = config;
+			f_familyName = familyName;
+			setRule(SierraSchedulingRule.getInstance());
+
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 
-				// monitor.beginTask("Running tools...",
-				// IProgressMonitor.UNKNOWN);
+				// This is an estimate for the number of files in a project
+				int scale = 1000;
+				int total = 5;
+				if (monitor != null) {
+					monitor.beginTask("Scanning project", total * scale);
+				}
 
 				SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 						monitor);
-				final AntRunnable antRunnable = new AntRunnable(f_configs,
-						slProgressMonitorWrapper);
+				final AntSingleRunnable antRunnable = new AntSingleRunnable(
+						f_config, slProgressMonitorWrapper, scale);
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
 
@@ -243,97 +233,80 @@ public final class Scan {
 		}
 	}
 
-	private static class RunSierraAdapter extends JobChangeAdapter {
+	private static class AntSingleRunnable implements Runnable {
 
-		private Stack<File> f_runDocs;
+		private boolean f_complete;
+		private SierraAnalysis f_sierraAnalysis;
+		private final Config f_config;
+		private SLProgressMonitor f_monitor;
+		private int f_scale = 1;
 
-		public RunSierraAdapter(Stack<File> runDocs) {
-			f_runDocs = runDocs;
+		public AntSingleRunnable(Config config, SLProgressMonitor monitor,
+				int scale) {
+			f_config = config;
+			f_monitor = monitor;
+			f_scale = scale;
 		}
 
-		@Override
-		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(PROPER_TERMINATION)) {
+		public void run() {
 
-				Job databaseEntryJob = new DatabaseEntryJob("Finshing scan",
-						f_runDocs);
-				databaseEntryJob.setPriority(Job.SHORT);
-				databaseEntryJob
-						.addJobChangeListener(new DatabaseEntryJobAdapter());
-				databaseEntryJob.schedule();
+			f_complete = false;
+			f_sierraAnalysis = new SierraAnalysis(f_config, f_monitor, f_scale);
+			f_sierraAnalysis.execute();
 
-			} else if (event.getResult().equals(TASK_CANCELED)) {
-				LOG.info("Canceled scan");
-				BalloonUtility.showMessage("Sierra Scan Canceled",
-						"Check the logs.");
-			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
-				BalloonUtility.showMessage("Sierra Scan Already Running",
-						"Please wait for it to finish before restarting.");
-
-			} else {
-				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
-						"Check the logs.");
-			}
-		}
-	}
-
-	private static class DatabaseEntryJob extends Job {
-
-		private final Stack<File> f_runDocs;
-
-		public DatabaseEntryJob(String name, Stack<File> runDocs) {
-			super(name);
-			f_runDocs = runDocs;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			LOG.info("Starting database entry...");
-
-			SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
-					monitor);
-
-			while (!f_runDocs.isEmpty()) {
-
-				File runDocumentHolder = f_runDocs.pop();
-				LOG.info("Currently loading..."
-						+ runDocumentHolder.getAbsolutePath());
+			if (!f_monitor.isCanceled()) {
 				try {
-					ScanDocumentUtility.loadScanDocument(runDocumentHolder,
-							slProgressMonitorWrapper);
-
+					ScanDocumentUtility.loadScanDocument(f_config
+							.getRunDocument(), f_monitor);
 				} catch (ScanPersistenceException rpe) {
 					LOG.severe(rpe.getMessage());
 					BalloonUtility.showMessage(
 							"Sierra Scan Completed with Errors",
 							"Check the logs.");
-					slProgressMonitorWrapper.done();
-					return IMPROPER_TERMINATION;
 				}
 			}
+			f_complete = true;
+		}
 
-			if (slProgressMonitorWrapper.isCanceled()) {
-				return TASK_CANCELED;
-			} else {
-				LOG.info("Finished everything");
-				slProgressMonitorWrapper.done();
-				return PROPER_TERMINATION;
-			}
+		public void stopAll() {
+			f_sierraAnalysis.stop();
+		}
+
+		public boolean isCompleted() {
+			return f_complete;
 		}
 	}
 
-	private static class DatabaseEntryJobAdapter extends JobChangeAdapter {
+	private static class RunSierraAdapter extends JobChangeAdapter {
+
+		// private Stack<File> f_runDocs;
+		//
+		// public RunSierraAdapter(Stack<File> runDocs) {
+		// f_runDocs = runDocs;
+		// }
 
 		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(PROPER_TERMINATION)) {
 				BalloonUtility.showMessage("Sierra Scan Completed",
 						"You may now examine the results.");
+				// Job databaseEntryJob = new DatabaseEntryJob("Finshing scan",
+				// f_runDocs);
+				// databaseEntryJob.setPriority(Job.SHORT);
+				// databaseEntryJob
+				// .addJobChangeListener(new DatabaseEntryJobAdapter());
+				// databaseEntryJob.schedule();
 
 			} else if (event.getResult().equals(TASK_CANCELED)) {
 				LOG.info("Canceled scan");
-				BalloonUtility.showMessage("Sierra Scan was Canceled",
-						"Check the logs.");
+				BalloonUtility
+						.showMessage(
+								"Sierra Scan was terminated (possible errors while scan)",
+								"Check the logs.");
+			} else if (event.getResult().equals(TASK_ALREADY_RUNNING)) {
+				BalloonUtility.showMessage("Sierra Scan Already Running",
+						"Please wait for it to finish before restarting.");
+
 			} else {
 				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
 						"Check the logs.");
@@ -346,4 +319,155 @@ public final class Scan {
 				"You may continue your work. "
 						+ "You will be notified when the scan has completed.");
 	}
+
+	// private static class AntRunnable implements Runnable {
+	//
+	// private boolean f_complete;
+	// private SierraAnalysis f_sierraAnalysis;
+	// private final List<Config> f_configs;
+	// private SLProgressMonitor f_monitor;
+	//
+	// public AntRunnable(List<Config> configs, SLProgressMonitor monitor) {
+	// f_configs = configs;
+	// f_monitor = monitor;
+	// }
+	//
+	// public void run() {
+	//
+	// f_complete = false;
+	// for (Config c : f_configs) {
+	// f_sierraAnalysis = new SierraAnalysis(c, f_monitor);
+	// f_sierraAnalysis.execute();
+	//
+	// }
+	// f_complete = true;
+	// }
+	//
+	// public void stopAll() {
+	// f_sierraAnalysis.stop();
+	// }
+	//
+	// public boolean isCompleted() {
+	// return f_complete;
+	// }
+	// }
+
+	// private static class RunSierraJob extends Job {
+	//
+	// private final List<Config> f_configs;
+	//
+	// public RunSierraJob(String name, List<Config> configs) {
+	// super(name);
+	// f_configs = configs;
+	// }
+	//
+	// @Override
+	// protected IStatus run(IProgressMonitor monitor) {
+	// try {
+	//
+	// // monitor.beginTask("Running tools...",
+	// // IProgressMonitor.UNKNOWN);
+	//
+	// SLProgressMonitorWrapper slProgressMonitorWrapper = new
+	// SLProgressMonitorWrapper(
+	// monitor);
+	// final AntRunnable antRunnable = new AntRunnable(f_configs,
+	// slProgressMonitorWrapper);
+	// final Thread antThread = new Thread(antRunnable);
+	// antThread.start();
+	//
+	// showStartBalloon();
+	//
+	// while (!monitor.isCanceled()) {
+	// Thread.sleep(500);
+	// if (antRunnable.isCompleted()) {
+	// break;
+	// }
+	// }
+	//
+	// if (monitor.isCanceled()) {
+	// monitor.done();
+	// antRunnable.stopAll();
+	// return TASK_CANCELED;
+	// } else {
+	// monitor.done();
+	// LOG.info("Completed scan");
+	// return PROPER_TERMINATION;
+	// }
+	//
+	// } catch (Exception e) {
+	// LOG.log(Level.SEVERE,
+	// "Exception while trying to excute ant build task" + e);
+	// }
+	//
+	// monitor.done();
+	// return IMPROPER_TERMINATION;
+	// }
+	// }
+
+	// private static class DatabaseEntryJob extends Job {
+	//
+	// private final Stack<File> f_runDocs;
+	//
+	// public DatabaseEntryJob(String name, Stack<File> runDocs) {
+	// super(name);
+	// f_runDocs = runDocs;
+	// }
+	//
+	// @Override
+	// protected IStatus run(IProgressMonitor monitor) {
+	// LOG.info("Starting database entry...");
+	//
+	// SLProgressMonitorWrapper slProgressMonitorWrapper = new
+	// SLProgressMonitorWrapper(
+	// monitor);
+	//
+	// while (!f_runDocs.isEmpty()) {
+	//
+	// File runDocumentHolder = f_runDocs.pop();
+	// LOG.info("Currently loading..."
+	// + runDocumentHolder.getAbsolutePath());
+	// try {
+	// ScanDocumentUtility.loadScanDocument(runDocumentHolder,
+	// slProgressMonitorWrapper);
+	//
+	// } catch (ScanPersistenceException rpe) {
+	// LOG.severe(rpe.getMessage());
+	// BalloonUtility.showMessage(
+	// "Sierra Scan Completed with Errors",
+	// "Check the logs.");
+	// slProgressMonitorWrapper.done();
+	// return IMPROPER_TERMINATION;
+	// }
+	// }
+	//
+	// if (slProgressMonitorWrapper.isCanceled()) {
+	// return TASK_CANCELED;
+	// } else {
+	// LOG.info("Finished everything");
+	// slProgressMonitorWrapper.done();
+	// return PROPER_TERMINATION;
+	// }
+	// }
+	// }
+
+	// private static class DatabaseEntryJobAdapter extends JobChangeAdapter {
+	//
+	// @Override
+	// public void done(IJobChangeEvent event) {
+	// if (event.getResult().equals(PROPER_TERMINATION)) {
+	// BalloonUtility.showMessage("Sierra Scan Completed",
+	// "You may now examine the results.");
+	//
+	// } else if (event.getResult().equals(TASK_CANCELED)) {
+	// LOG.info("Canceled scan");
+	// BalloonUtility.showMessage("Sierra Scan was Canceled",
+	// "Check the logs.");
+	// } else {
+	// BalloonUtility.showMessage("Sierra Scan Completed with Errors",
+	// "Check the logs.");
+	// }
+	// }
+	// }
+
 }
