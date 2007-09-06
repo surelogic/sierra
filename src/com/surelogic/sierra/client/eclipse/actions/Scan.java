@@ -3,6 +3,8 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -202,10 +204,16 @@ public final class Scan {
 				if (antRunnable.hasError()) {
 					slProgressMonitorWrapper.done();
 
-					List<String> failedTools = antRunnable.getFailedTools();
-					String message = "Failed : ";
-					for (String s : failedTools) {
-						message = message + s + " ";
+					Map<String, String> failedTools = antRunnable
+							.getFailedTools();
+					String message = "";
+					Set<String> toolName = failedTools.keySet();
+					for (String s : toolName) {
+
+						String holder = failedTools.get(s);
+						message = s
+								+ " execution failed. Use the following command from command line to identify the error "
+								+ holder;
 					}
 					return SLStatus.createErrorStatus(message);
 				} else if (slProgressMonitorWrapper.isCanceled()) {
@@ -257,7 +265,7 @@ public final class Scan {
 		private SLProgressMonitor f_monitor;
 		private int f_scale = 1;
 		private boolean f_error = false;
-		private List<String> f_failedTools;
+		private Map<String, String> f_failedTools;
 
 		/**
 		 * The constructor for thread
@@ -302,7 +310,7 @@ public final class Scan {
 			return f_complete;
 		}
 
-		public List<String> getFailedTools() {
+		public Map<String, String> getFailedTools() {
 			return f_failedTools;
 		}
 	}
