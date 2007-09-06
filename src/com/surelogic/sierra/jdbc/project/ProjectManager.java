@@ -22,6 +22,8 @@ public class ProjectManager {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
+	private final ScanManager scanManager;
+
 	private final ProjectRecordFactory projectFactory;
 
 	private final PreparedStatement deleteMatches;
@@ -36,6 +38,7 @@ public class ProjectManager {
 
 	private ProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
+		this.scanManager = ScanManager.getInstance(conn);
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
@@ -108,8 +111,7 @@ public class ProjectManager {
 		rec.setName(projectName);
 		if (rec.select()) {
 			monitor.subTask("Deleting scans for project " + projectName);
-			ScanManager.getInstance(conn).deleteScans(
-					getProjectScans(rec.getId()), monitor);
+			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			monitor.subTask("Deleting matches for project " + projectName);
 			deleteMatches.setLong(1, rec.getId());
 			deleteMatches.executeUpdate();
