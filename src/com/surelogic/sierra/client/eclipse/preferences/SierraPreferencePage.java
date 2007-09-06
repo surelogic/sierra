@@ -173,15 +173,19 @@ public class SierraPreferencePage extends PreferencePage implements
 		}
 
 		void setTableContents(List<String> projectNames) {
-			f_projectTable.removeAll();
-			for (String projectName : projectNames) {
-				TableItem item = new TableItem(f_projectTable, SWT.NULL);
-				item.setText(projectName);
-				/*
-				 * TODO: Fix to use ILabelDecorator to look like a Java project.
-				 */
-				item.setImage(SLImages
-						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			if (!f_projectTable.isDisposed()) {
+				f_projectTable.removeAll();
+				for (String projectName : projectNames) {
+					TableItem item = new TableItem(f_projectTable, SWT.NULL);
+					item.setText(projectName);
+					/*
+					 * TODO: Fix to use ILabelDecorator to look like a Java
+					 * project.
+					 */
+					item
+							.setImage(SLImages
+									.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+				}
 			}
 		}
 	}
