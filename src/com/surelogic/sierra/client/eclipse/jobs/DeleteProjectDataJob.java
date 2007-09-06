@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -30,14 +31,17 @@ public final class DeleteProjectDataJob {
 			dialog.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
+					SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+							monitor);
+					slMonitor.beginTask("Deleting selected projects",
+							f_projectNames.size() * 4);
 					for (final String projectName : f_projectNames) {
 						try {
 							Connection conn = Data.getConnection();
-
+							conn.setAutoCommit(false);
 							try {
 								ProjectManager.getInstance(conn).deleteProject(
-										projectName,
-										new SLProgressMonitorWrapper(monitor));
+										projectName, slMonitor);
 								conn.commit();
 							} finally {
 								conn.close();
