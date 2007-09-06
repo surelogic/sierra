@@ -77,17 +77,29 @@ public final class UserPasswordDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite panel = (Composite) super.createDialogArea(parent);
+		Composite orig = (Composite) super.createDialogArea(parent);
 
 		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		orig.setLayout(gridLayout);
+
+		Label banner = new Label(orig, SWT.NONE);
+		GridData data1 = new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
+		banner.setLayoutData(data1);
+		banner.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+
+		Composite panel = new Composite(orig, SWT.NONE);
+		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		panel.setLayout(gridLayout);
 
 		final Label directions = new Label(panel, SWT.WRAP);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
+		data.heightHint = 30;
 		directions.setLayoutData(data);
-		directions.setText("Enter your authentication for '" + f_serverName
-				+ "'");
+		directions.setText("Enter your authentication for the server '"
+				+ f_serverName + "'");
 
 		final Label serverImg = new Label(panel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
@@ -100,22 +112,22 @@ public final class UserPasswordDialog extends Dialog {
 
 		final Label userLabel = new Label(panel, SWT.NONE);
 		userLabel.setText("User:");
-		userLabel.setForeground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_BLUE));
+		// userLabel.setForeground(getShell().getDisplay().getSystemColor(
+		// SWT.COLOR_BLUE));
 		userLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		f_userText = new Text(panel, SWT.SINGLE);
+		f_userText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		f_userText
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		f_userText.setText(f_user);
 
 		final Label passwordLabel = new Label(panel, SWT.NONE);
 		passwordLabel.setText("Password:");
-		passwordLabel.setForeground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_BLUE));
+		// passwordLabel.setForeground(getShell().getDisplay().getSystemColor(
+		// SWT.COLOR_BLUE));
 		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		f_passwordText = new Text(panel, SWT.SINGLE);
+		f_passwordText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		f_passwordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 		f_passwordText.setText("");
