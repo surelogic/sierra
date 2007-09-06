@@ -138,11 +138,9 @@ public final class Scan {
 
 			BalloonUtility
 					.showMessage(
-							"Sierra Scan Started",
+							"Sierra Scan Started on " + projectList,
 							"You may continue your work. "
 									+ "You will be notified when the scan has completed.");
-			LOG.info("Started scan on projects:" + projectList);
-
 		}
 	}
 
