@@ -14,13 +14,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
@@ -30,11 +30,12 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.FindingsViewModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsViewOrganization;
+import com.surelogic.sierra.client.eclipse.model.IFindingsViewModelObserver;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.tool.message.Importance;
 
-public final class FindingsMediator {
+public final class FindingsMediator implements IFindingsViewModelObserver {
 
 	private FindingsViewModel f_model;
 
@@ -42,7 +43,7 @@ public final class FindingsMediator {
 
 	private final PageBook f_pages;
 
-	private final Widget f_noFindingsPage;
+	private final Control f_noFindingsPage;
 
 	private final Composite f_findingsPage;
 
@@ -66,7 +67,7 @@ public final class FindingsMediator {
 
 	private Composite results = null;
 
-	FindingsMediator(PageBook pages, Widget noFindingsPage,
+	FindingsMediator(PageBook pages, Control noFindingsPage,
 			Composite findingsPage, Combo projectCombo, ToolItem groupings,
 			Combo groupByCombo, ToolItem filters, Composite topSash,
 			ExpandItem detailsItem, Composite detailsComp, ExpandItem logItem,
@@ -197,25 +198,70 @@ public final class FindingsMediator {
 				}
 			}
 		};
-
-		IProjectsObserver pObs = new IProjectsObserver() {
-			public void notify(Projects p) {
-				// TODO Auto-generated method stub
-				/*
-				 * Does the project we are looking at still exist?
-				 */
-
-			}
-		};
-
 	}
 
 	public void setFocus() {
 		// TODO something reasonable
 	}
 
+	public void init() {
+		f_model.addObserver(this);
+		f_model.init();
+	}
+
 	public void dispose() {
 		f_model.dispose();
+	}
 
+	public void findingsFilterChanged(FindingsViewModel model) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void findingsOrganizationChanged(FindingsViewModel model) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void findingsOrganizationFocusChanged(FindingsViewModel model) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void noProjects(FindingsViewModel model) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				/*
+				 * Since there are no projects in the database we have nothing
+				 * to display.
+				 */
+				f_pages.showPage(f_noFindingsPage);
+			}
+		});
+	}
+
+	public void projectListChanged(FindingsViewModel model) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				f_pages.showPage(f_findingsPage);
+				f_projectCombo.setItems(Projects.getInstance()
+						.getProjectNamesArray());
+			}
+		});
+	}
+
+	public void projectFocusChanged(final FindingsViewModel model) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				final String projectNameFocus = model.getProjectFocus();
+				String[] items = f_projectCombo.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].equals(projectNameFocus)) {
+						f_projectCombo.select(i);
+						return;
+					}
+				}
+			}
+		});
 	}
 }

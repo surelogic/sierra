@@ -3,6 +3,8 @@ package com.surelogic.sierra.client.eclipse.model;
 public interface IFindingsViewModelObserver {
 
 	void noProjects(FindingsViewModel model);
+	
+	void projectListChanged(FindingsViewModel model);
 
 	void projectFocusChanged(FindingsViewModel model);
 

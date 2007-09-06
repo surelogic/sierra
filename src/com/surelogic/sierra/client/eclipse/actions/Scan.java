@@ -19,7 +19,6 @@ import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.jobs.SierraSchedulingRule;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -75,8 +74,7 @@ public final class Scan {
 		/*
 		 * Get default folder from the preference page
 		 */
-		final String sierraPath = Activator.getDefault().getPluginPreferences()
-				.getString(PreferenceConstants.P_SIERRA_PATH);
+		final String sierraPath = PreferenceConstants.getSierraPath();
 		final File sierraFolder = new File(sierraPath);
 
 		final StringBuilder projectList = new StringBuilder();
@@ -135,12 +133,10 @@ public final class Scan {
 				runSingleSierraScan.schedule();
 
 			}
-
-			BalloonUtility
-					.showMessage(
-							"Sierra Scan Started on " + projectList,
-							"You may continue your work. "
-									+ "You will be notified when the scan has completed.");
+			if (PreferenceConstants.showBalloonNotifications())
+				BalloonUtility.showMessage("Sierra Scan Started on "
+						+ projectList, "You may continue your work. "
+						+ "You will be notified when the scan has completed.");
 		}
 	}
 
@@ -315,20 +311,25 @@ public final class Scan {
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(Status.OK_STATUS)) {
 				LOG.info("Completed scan for " + f_projectName);
-				BalloonUtility.showMessage("Sierra Scan Completed on "
-						+ f_projectName, "You may now examine the results.");
+				if (PreferenceConstants.showBalloonNotifications())
+					BalloonUtility
+							.showMessage("Sierra Scan Completed on "
+									+ f_projectName,
+									"You may now examine the results.");
 
 			} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
 				LOG.info("Canceled scan on " + f_projectName);
-				BalloonUtility.showMessage("Sierra Scan was Canceled for "
-						+ f_projectName, "Check the logs.");
+				if (PreferenceConstants.showBalloonNotifications())
+					BalloonUtility.showMessage("Sierra Scan was Canceled for "
+							+ f_projectName, "Check the logs.");
 			} else {
 				LOG
 						.severe("Error while trying to run scan on "
 								+ f_projectName);
-				BalloonUtility.showMessage(
-						"Sierra Scan Completed with Errors for "
-								+ f_projectName, "Check the logs.");
+				if (PreferenceConstants.showBalloonNotifications())
+					BalloonUtility.showMessage(
+							"Sierra Scan Completed with Errors for "
+									+ f_projectName, "Check the logs.");
 			}
 		}
 	}

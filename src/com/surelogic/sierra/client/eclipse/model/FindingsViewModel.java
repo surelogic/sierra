@@ -50,6 +50,7 @@ public final class FindingsViewModel {
 	public void init() {
 		load();
 		Projects.getInstance().addObserver(f_prjObs);
+		f_prjObs.notify(Projects.getInstance());
 	}
 
 	public void dispose() {
@@ -210,6 +211,8 @@ public final class FindingsViewModel {
 	};
 
 	private void projectNamesChanged() {
+		for (IFindingsViewModelObserver o : f_observers)
+			o.projectListChanged(this);
 		if (!Projects.getInstance().contains(f_projectFocus)) {
 			f_projectFocus = Projects.getInstance().getFirst();
 			for (IFindingsViewModelObserver o : f_observers)

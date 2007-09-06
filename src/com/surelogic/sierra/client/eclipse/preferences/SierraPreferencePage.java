@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -33,6 +34,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	DirectoryFieldEditor f_path;
+	BooleanFieldEditor f_balloonFlag;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -80,6 +82,14 @@ public class SierraPreferencePage extends PreferencePage implements
 		b.setEnabled(false);
 		b.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 
+		f_balloonFlag = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_BALLOON_FLAG,
+				"Show 'balloon' notifications for scan start and completion.",
+				panel);
+		f_balloonFlag.setPage(this);
+		f_balloonFlag.setPreferenceStore(getPreferenceStore());
+		f_balloonFlag.load();
+
 		(new Mediator(t, b)).init();
 
 		return panel;
@@ -88,12 +98,14 @@ public class SierraPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		f_path.loadDefault();
+		f_balloonFlag.loadDefault();
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
 		f_path.store();
+		f_balloonFlag.store();
 		return super.performOk();
 	}
 

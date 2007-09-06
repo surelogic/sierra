@@ -157,6 +157,8 @@ public final class FindingsView extends ViewPart {
 				detailsItem, detailsComp, logItem, logComp);
 
 		pages.showPage(noFindingsPage);
+
+		f_mediator.init();
 	}
 
 	@Override

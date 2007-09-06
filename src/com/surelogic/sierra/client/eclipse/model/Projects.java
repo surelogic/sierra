@@ -71,6 +71,15 @@ public final class Projects extends AbstractDatabaseObserver {
 	}
 
 	/**
+	 * Gets the set of project names in the database.
+	 * 
+	 * @return the set of project names in the database.
+	 */
+	public synchronized String[] getProjectNamesArray() {
+		return f_projectNames.toArray(new String[f_projectNames.size()]);
+	}
+
+	/**
 	 * Returns <code>true</code> if the database contains no projects.
 	 * 
 	 * @return <code>true</code> if the database contains no projects.
@@ -96,7 +105,7 @@ public final class Projects extends AbstractDatabaseObserver {
 	 * 
 	 * @return the first project in the database.
 	 */
-	public String getFirst() {
+	public synchronized String getFirst() {
 		return f_projectNames.getFirst();
 	}
 

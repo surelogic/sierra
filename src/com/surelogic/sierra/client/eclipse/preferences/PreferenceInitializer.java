@@ -23,6 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.getPreferenceStore();
 		create(RAW);
 		store.setDefault(PreferenceConstants.P_SIERRA_PATH, RAW);
+		store.setDefault(PreferenceConstants.P_SIERRA_BALLOON_FLAG, true);
 	}
 
 	/**
