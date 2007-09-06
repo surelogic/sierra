@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
@@ -31,8 +30,11 @@ public class ProjectManager {
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
 
+	@SuppressWarnings("unused")
 	private final PreparedStatement findNewFindings;
+	@SuppressWarnings("unused")
 	private final PreparedStatement obsoleteTrail;
+	@SuppressWarnings("unused")
 	private final PreparedStatement findNewAudits;
 
 	private ProjectManager(Connection conn) throws SQLException {
@@ -59,6 +61,7 @@ public class ProjectManager {
 		return projectNames;
 	}
 
+	@SuppressWarnings("unused")
 	private Collection<Merge> findNewFindings() {
 		Collection<Merge> merges = new ArrayList<Merge>();
 

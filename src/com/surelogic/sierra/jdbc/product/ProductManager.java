@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
-import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 
 public class ProductManager {
 
@@ -23,7 +21,7 @@ public class ProductManager {
 
 	private final ProductRecordFactory productFactory;
 	private final ProjectRecordFactory projectFactory;
-	private final ProductProjectRecordFactory pprFactory;
+	
 	private final ProductProjectManager ppManager;
 
 	private ProductManager(Connection conn) throws SQLException {
@@ -31,7 +29,7 @@ public class ProductManager {
 
 		productFactory = ProductRecordFactory.getInstance(conn);
 		projectFactory = ProjectRecordFactory.getInstance(conn);
-		pprFactory = ProductProjectRecordFactory.getInstance(conn);
+
 		ppManager = ProductProjectManager.getInstance(conn);
 
 		findAllStatement = conn.prepareStatement(FIND_ALL);
@@ -89,14 +87,17 @@ public class ProductManager {
 				project.setName(projectName);
 				if (!project.select()) {
 					// XXX Throw error
+					throw new SQLException();
 				}
 
 				/** Add a relation between this project and product to the DB */
-				ProductProjectRecord rec = pprFactory.newProductProject();
-				rec
-						.setId(new RecordRelationRecord.PK<ProductRecord, ProjectRecord>(
-								product, project));
-				rec.insert();
+//				ProductProjectRecord rec = pprFactory.newProductProject();
+//				rec.setId(new RecordStringRelationRecord.PK<ProductRecord,String>(
+//						product, projectName));
+//				rec.insert();
+				
+				ppManager.addProjectRelation(product, projectName);
+				
 			}
 		}
 	}

@@ -7,20 +7,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
+import com.surelogic.sierra.jdbc.record.ProductRecord;
+import com.surelogic.sierra.jdbc.record.RecordStringRelationRecord;
+
 public class ProductProjectManager {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM PRODUCT PD, PRODUCT_PROJECT_RELTN PPR, PROJECT PR WHERE PD.NAME = ? AND PPR.PRODUCT_ID = PD.ID AND PR.NAME = PPR.PROJECT_NAME";
-	private final PreparedStatement ps;
+	private final PreparedStatement getProjectNames;
+
+	private ProductProjectRecordFactory pprFactory;
+	private final ProductRecordFactory productFactory;
 
 	private ProductProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
-	
-//		ProductProjectRecordFactory.getInstance(conn);
-		
-		ps = conn.prepareStatement(GET_PROJECT_NAMES);
+
+		pprFactory = ProductProjectRecordFactory.getInstance(conn);
+		productFactory = ProductRecordFactory.getInstance(conn);
+
+		getProjectNames = conn.prepareStatement(GET_PROJECT_NAMES);
 	}
 
 	/**
@@ -32,8 +40,8 @@ public class ProductProjectManager {
 	public Collection<String> getProjectNames(String product)
 			throws SQLException {
 
-		ps.setString(1, product);
-		ResultSet rs = ps.executeQuery();
+		getProjectNames.setString(1, product);
+		ResultSet rs = getProjectNames.executeQuery();
 
 		Collection<String> projectNames = new ArrayList<String>();
 		while (rs.next()) {
@@ -41,6 +49,68 @@ public class ProductProjectManager {
 		}
 
 		return projectNames;
+	}
+
+	public void addProjectRelation(ProductRecord product, String projectName)
+			throws SQLException {
+
+		if (product == null)
+			throw new SQLException();
+
+		ProductProjectRecord ppr = pprFactory.newProductProject();
+		ppr.setId(new RecordStringRelationRecord.PK<ProductRecord, String>(
+				product, projectName));
+		ppr.insert();
+	}
+
+	public void addProjectRelation(String productName, String projectName)
+			throws SQLException {
+		// Add a relation between this product and this project (don't check the
+		// project name)
+		if (productName == null)
+			throw new SQLException();
+
+		ProductRecord product = productFactory.newProduct();
+
+		product.setName(productName);
+
+		if (!product.select()) {
+			// TODO
+			throw new SQLException();
+		}
+
+		addProjectRelation(product, projectName);
+	}
+
+	public void deleteProjectRelation(ProductRecord product, String projectName)
+			throws SQLException {
+
+		if (product == null)
+			throw new SQLException();
+
+		ProductProjectRecord ppr = pprFactory.newProductProject();
+		ppr.setId(new RecordStringRelationRecord.PK<ProductRecord, String>(
+				product, projectName));
+		ppr.delete();
+	}
+
+	public void deleteProjectRelation(String productName, String projectName)
+			throws SQLException {
+		// Add a relation between this product and this project (don't check the
+		// project name)
+		if (productName == null)
+			throw new SQLException();
+
+		ProductRecord product = productFactory.newProduct();
+
+		product.setName(productName);
+
+		if (!product.select()) {
+			// TODO
+			throw new SQLException();
+		}
+
+		deleteProjectRelation(product, projectName);
 	}
 
 	public static ProductProjectManager getInstance(Connection conn)
