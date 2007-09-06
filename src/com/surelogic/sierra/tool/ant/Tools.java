@@ -301,7 +301,7 @@ public class Tools {
 	/**
 	 * stops any running tools
 	 */
-	public void stop() {
+	void stop() {
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
