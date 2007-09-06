@@ -42,7 +42,7 @@ public class HashGenerator {
 
 	private static String currentFileName;
 
-	private static BufferedReader in;
+	// private static BufferedReader in;
 
 	private static File currentFile;
 
@@ -103,7 +103,7 @@ public class HashGenerator {
 				previousLine = lineNumber;
 			}
 
-			in = new BufferedReader(new FileReader(currentFile));
+			BufferedReader in = new BufferedReader(new FileReader(currentFile));
 			String holder = in.readLine();
 			// while (holder != null) {
 			//
@@ -175,6 +175,7 @@ public class HashGenerator {
 			int hashDown = valueDown.hashCode();
 
 			hashValue = (((long) hashDown) << 32) + hashUp;
+			in.close();
 			return hashValue;
 
 		} catch (FileNotFoundException e) {
@@ -188,10 +189,11 @@ public class HashGenerator {
 
 	}
 
+	@Deprecated
 	public Long getHash(File originalFile, int lineNumber) {
 
 		try {
-			in = new BufferedReader(new FileReader(currentFile));
+			BufferedReader in = new BufferedReader(new FileReader(currentFile));
 			String holder = in.readLine();
 			// while (holder != null) {
 			//

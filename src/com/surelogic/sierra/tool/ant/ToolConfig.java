@@ -108,6 +108,12 @@ public abstract class ToolConfig implements Runnable {
 	 */
 	abstract void cleanup();
 
+	/**
+	 * set completetion code
+	 */
+
+	abstract String getCompletedCode();
+
 	/*
 	 * $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	 * END ABSTRACT METHODS
@@ -127,7 +133,7 @@ public abstract class ToolConfig implements Runnable {
 	void stop() {
 		if (eWatchdog != null) {
 			eWatchdog.timeoutOccured(null); // mimic a timeout in order to
-											// destroy the process
+			// destroy the process
 		}
 	}
 

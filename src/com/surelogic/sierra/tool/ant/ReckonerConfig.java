@@ -8,24 +8,23 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
+/**
+ * The config object for reckoner
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public class ReckonerConfig extends ToolConfig {
 
-	// private static final String RECKONER_CLASS =
-	// "com.surelogic.sierra.metrics.analysis.main";
-
 	private static final String RECKONER_JAR = "reckoner.jar";
-
-	private SLProgressMonitor monitor = null;
-
-	// /** base directory if different than the default */
-	// private String baseDir = null;
-
-	private Path classpath = null;
-
-	private int scale = 1;
+	private SLProgressMonitor f_monitor = null;
+	private Path f_classpath = null;
+	private int f_scale = 1;
+	private String f_status = "";
 
 	public ReckonerConfig(Project project) {
 		super("reckoner", project);
@@ -36,8 +35,8 @@ public class ReckonerConfig extends ToolConfig {
 		super("reckoner", antProject);
 
 		if (monitor != null) {
-			this.monitor = monitor;
-			this.scale = scale;
+			this.f_monitor = monitor;
+			this.f_scale = scale;
 		}
 	}
 
@@ -51,20 +50,21 @@ public class ReckonerConfig extends ToolConfig {
 
 	@Override
 	protected Path getClasspath() {
-		if (classpath == null) {
+		if (f_classpath == null) {
 			File libDir = new File(analysis.getTools().getToolsFolder(),
 					"reckoner" + File.separator + "lib");
 			File[] jars = libDir.listFiles(new JarFileFilter());
 			File mainJar = new File(analysis.getTools().getToolsFolder(),
 					"reckoner" + File.separator + RECKONER_JAR);
-			classpath = new Path(antProject);
+			f_classpath = new Path(antProject);
 			for (File file : jars) {
-				classpath.append(new Path(antProject, file.getAbsolutePath()));
+				f_classpath
+						.append(new Path(antProject, file.getAbsolutePath()));
 			}
 
-			classpath.append(new Path(antProject, mainJar.getAbsolutePath()));
+			f_classpath.append(new Path(antProject, mainJar.getAbsolutePath()));
 		}
-		return classpath;
+		return f_classpath;
 	}
 
 	@Override
@@ -123,10 +123,19 @@ public class ReckonerConfig extends ToolConfig {
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
 
-				if (monitor != null) {
-					monitor.subTask("Running Reckoner");
+				if (f_monitor != null) {
+					f_monitor.subTask("Running Reckoner");
 				}
-				fork(cmdj.getCommandline());
+				int rc = fork(cmdj.getCommandline());
+				if (rc != 0) {
+					antProject.log("Reckoner failed to execute.",
+							org.apache.tools.ant.Project.MSG_ERR);
+					SLLogger.getLogger("sierra").severe(
+							"Reckoner failed to execute.");
+					analysis.stop();
+					f_status = "FindBugs";
+
+				}
 
 			} catch (BuildException e) {
 				antProject.log("Failed to start Reckoner process."
@@ -137,8 +146,8 @@ public class ReckonerConfig extends ToolConfig {
 					latch.countDown();
 				}
 
-				if (monitor != null) {
-					monitor.worked(scale);
+				if (f_monitor != null) {
+					f_monitor.worked(f_scale);
 				}
 
 			}
@@ -154,6 +163,11 @@ public class ReckonerConfig extends ToolConfig {
 	void configure(Config config) {
 		// Nothing to do
 
+	}
+
+	@Override
+	String getCompletedCode() {
+		return f_status;
 	}
 
 }

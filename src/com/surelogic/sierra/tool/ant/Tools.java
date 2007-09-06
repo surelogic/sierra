@@ -329,6 +329,27 @@ public class Tools {
 	}
 
 	/**
+	 * Checks the tools status
+	 * 
+	 * @param parser
+	 */
+	List<String> checkStatus() {
+		List<String> failedTools = new ArrayList<String>();
+		ToolConfig tool;
+		Set<String> toolNames = tools.keySet();
+		for (String toolName : toolNames) {
+			antProject.log("Checking status for " + toolName,
+					org.apache.tools.ant.Project.MSG_DEBUG);
+			tool = tools.get(toolName);
+			String holder = tool.getCompletedCode();
+			if (!holder.equals("")) {
+				failedTools.add(holder);
+			}
+		}
+		return failedTools;
+	}
+
+	/**
 	 * Makes all of the tools clean up their files
 	 */
 	void cleanup() {

@@ -230,6 +230,13 @@ public class SierraAnalysis extends Task {
 			validateParameters();
 			verifyDependencies();
 			tools.runTools(monitor);
+
+			List<String> failedTools = tools.checkStatus();
+			if (failedTools.size() != 0) {
+				throw new ToolRunException(
+						"Following tools failed. Check logs.", failedTools);
+
+			}
 			generateRunDocument(monitor);
 			if (server != null && !"".equals(server)) {
 				uploadRunDocument();
@@ -239,12 +246,11 @@ public class SierraAnalysis extends Task {
 				cleanup();
 			}
 
+		} catch (ToolRunException tre) {
+			throw tre;
 		} catch (BuildException be) {
-			SLLogger.getLogger("sierra").severe(
-					"Possible errors in the build file parameters.");
-			if (monitor != null) {
-				monitor.setCanceled(true);
-			}
+			SLLogger.getLogger("sierra").severe(be.getMessage());
+			throw be;
 		}
 
 	}

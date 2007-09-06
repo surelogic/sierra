@@ -11,6 +11,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -26,13 +27,14 @@ public class FindBugsConfig extends ToolConfig {
 	private static final String FB_HOME = "FB";
 
 	// The folder to set as findbugs.home
-	private File home = null;
+	private File f_home = null;
 
 	// String passed to Java's -Xmx flag
-	private String memory = "1024m";
-	private SLProgressMonitor monitor = null;
-	private Path classpath = null;
-	private int scale = 1;
+	private String f_memory = "1024m";
+	private SLProgressMonitor f_monitor = null;
+	private Path f_classpath = null;
+	private int f_scale = 1;
+	private String f_status = "";
 
 	/**
 	 * @param project
@@ -44,8 +46,8 @@ public class FindBugsConfig extends ToolConfig {
 	public FindBugsConfig(Project project, SLProgressMonitor monitor, int scale) {
 		super("findbugs", project);
 		if (monitor != null) {
-			this.monitor = monitor;
-			this.scale = scale;
+			this.f_monitor = monitor;
+			this.f_scale = scale;
 		}
 	}
 
@@ -60,7 +62,7 @@ public class FindBugsConfig extends ToolConfig {
 			// run FindBugs
 			CommandlineJava cmdj = new CommandlineJava();
 			cmdj.setClassname(FINDBUGS_CLASS);
-			cmdj.setMaxmemory(memory);
+			cmdj.setMaxmemory(f_memory);
 			cmdj.createClasspath(antProject).createPath()
 					.append(getClasspath());
 
@@ -81,21 +83,30 @@ public class FindBugsConfig extends ToolConfig {
 			antProject.log("Executing FindBugs with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
-				if (monitor != null) {
-					monitor.subTask("Running FindBugs");
+				if (f_monitor != null) {
+					f_monitor.subTask("Running FindBugs");
 				}
-				fork(cmdj.getCommandline());
+				int rc = fork(cmdj.getCommandline());
+				if (rc != 0) {
+					antProject.log("Findbugs failed to execute.",
+							org.apache.tools.ant.Project.MSG_ERR);
+					SLLogger.getLogger("sierra").severe(
+							"Findbugs failed to execute.");
+					analysis.stop();
+					f_status = "reckoner";
+				}
 			} catch (BuildException e) {
 				antProject.log("Failed to start FindBugs process."
 						+ e.getLocalizedMessage(),
 						org.apache.tools.ant.Project.MSG_ERR);
+
 			} finally {
 				if (latch != null) {
 					latch.countDown();
 
 				}
-				if (monitor != null) {
-					monitor.worked(scale);
+				if (f_monitor != null) {
+					f_monitor.worked(f_scale);
 				}
 			}
 		} else {
@@ -111,13 +122,13 @@ public class FindBugsConfig extends ToolConfig {
 	 * creates the classpath for FindBugs
 	 */
 	protected Path getClasspath() {
-		if (classpath == null) {
+		if (f_classpath == null) {
 			File lib = new File(analysis.getTools().getToolsFolder(), "FB"
 					+ File.separator + "lib" + File.separator + FINDBUGS_JAR);
-			classpath = new Path(antProject);
-			classpath.append(new Path(antProject, lib.getAbsolutePath()));
+			f_classpath = new Path(antProject);
+			f_classpath.append(new Path(antProject, lib.getAbsolutePath()));
 		}
-		return classpath;
+		return f_classpath;
 	}
 
 	/*
@@ -171,10 +182,11 @@ public class FindBugsConfig extends ToolConfig {
 	 * @return the home
 	 */
 	public final File getHome() {
-		if (home == null) {
-			home = new File(analysis.getSierraTools().getToolsFolder(), FB_HOME);
+		if (f_home == null) {
+			f_home = new File(analysis.getSierraTools().getToolsFolder(),
+					FB_HOME);
 		}
-		return home;
+		return f_home;
 	}
 
 	/**
@@ -184,14 +196,14 @@ public class FindBugsConfig extends ToolConfig {
 	 *            the home to set
 	 */
 	public final void setHome(File home) {
-		this.home = home;
+		this.f_home = home;
 	}
 
 	/**
 	 * @return the memory
 	 */
 	public final String getMemory() {
-		return memory;
+		return f_memory;
 	}
 
 	/**
@@ -199,6 +211,11 @@ public class FindBugsConfig extends ToolConfig {
 	 *            the memory to set
 	 */
 	public final void setMemory(String memory) {
-		this.memory = memory;
+		this.f_memory = memory;
+	}
+
+	@Override
+	String getCompletedCode() {
+		return f_status;
 	}
 }

@@ -12,6 +12,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -24,26 +25,28 @@ import com.surelogic.sierra.tool.config.Config;
 public class PmdConfig extends ToolConfig {
 	private final static String PMD_JAR = "pmd-4.0.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
+	private final static String PMD = "pmd";
 
 	// The path to the default rules file, relative to the Tools folder
-	private static final String RULES_FILE_PATH = "pmd" + File.separator
+	private static final String RULES_FILE_PATH = PMD + File.separator
 			+ "all.xml";
 
-	private Path classpath = null;
-	private SLProgressMonitor monitor = null;
-	private String targetJDK = null;
-	private File rulesFile = null;
-	private int scale = 1;
+	private Path f_classpath = null;
+	private SLProgressMonitor f_monitor = null;
+	private String f_targetJDK = null;
+	private File f_rulesFile = null;
+	private int f_scale = 1;
+	private String f_status = "";
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
-		super("pmd", project);
+		super(PMD, project);
 	}
 
 	public PmdConfig(Project project, SLProgressMonitor monitor, int scale) {
-		super("pmd", project);
+		super(PMD, project);
 		if (monitor != null) {
-			this.monitor = monitor;
-			this.scale = scale;
+			this.f_monitor = monitor;
+			this.f_scale = scale;
 		}
 	}
 
@@ -54,16 +57,16 @@ public class PmdConfig extends ToolConfig {
 	public void validate() {
 		super.validate();
 
-		if (targetJDK != null && !targetJDK.matches("\\d\\.\\d")) {
+		if (f_targetJDK != null && !f_targetJDK.matches("\\d\\.\\d")) {
 			throw new BuildException(
 					"Invalid version string for pmdconfig's 'javaVersion' attribute. Must be one of the following: 1.3, 1.4, 1.5, 1.6 ");
 		}
-		if (rulesFile != null && !rulesFile.isFile()) {
+		if (f_rulesFile != null && !f_rulesFile.isFile()) {
 			throw new BuildException(
 					"rulesfile must be a valid PMD rules XML file.");
 			// TODO can we check and make sure it is a valid PMD xml file?
 		} else {
-			rulesFile = new File(analysis.getSierraTools().getToolsFolder(),
+			f_rulesFile = new File(analysis.getSierraTools().getToolsFolder(),
 					RULES_FILE_PATH);
 		}
 	}
@@ -92,8 +95,8 @@ public class PmdConfig extends ToolConfig {
 			}
 
 			try {
-				if (monitor != null) {
-					monitor.subTask("Running PMD");
+				if (f_monitor != null) {
+					f_monitor.subTask("Running PMD");
 				}
 				for (int i = 0; i < clientCount; i++) {
 					executor.execute(new PmdRunner(i, pathDirs[i], pmdLatch));
@@ -109,8 +112,8 @@ public class PmdConfig extends ToolConfig {
 					latch.countDown();
 
 				}
-				if (monitor != null) {
-					monitor.worked(scale);
+				if (f_monitor != null) {
+					f_monitor.worked(f_scale);
 				}
 
 			}
@@ -162,7 +165,7 @@ public class PmdConfig extends ToolConfig {
 	 * @return the rulesFile
 	 */
 	public final File getRulesFile() {
-		return rulesFile;
+		return f_rulesFile;
 	}
 
 	/**
@@ -170,28 +173,29 @@ public class PmdConfig extends ToolConfig {
 	 *            the rulesFile to set
 	 */
 	public final void setRulesFile(File rulesFile) {
-		this.rulesFile = rulesFile;
+		this.f_rulesFile = rulesFile;
 	}
 
 	public void setTargetJDK(String version) {
-		this.targetJDK = version;
+		this.f_targetJDK = version;
 	}
 
 	public String getTargetJDK() {
-		return targetJDK;
+		return f_targetJDK;
 	}
 
 	protected Path getClasspath() {
-		if (classpath == null) {
+		if (f_classpath == null) {
 			File libDir = new File(analysis.getTools().getToolsFolder(), "pmd"
 					+ File.separator + "lib");
 			File[] jars = libDir.listFiles(new JarFileFilter());
-			classpath = new Path(antProject);
+			f_classpath = new Path(antProject);
 			for (File file : jars) {
-				classpath.append(new Path(antProject, file.getAbsolutePath()));
+				f_classpath
+						.append(new Path(antProject, file.getAbsolutePath()));
 			}
 		}
-		return classpath;
+		return f_classpath;
 	}
 
 	/**
@@ -224,7 +228,7 @@ public class PmdConfig extends ToolConfig {
 					.append(getClasspath());
 
 			// Add optional arguments
-			if (targetJDK != null && !"".equals(targetJDK)) {
+			if (f_targetJDK != null && !"".equals(f_targetJDK)) {
 				cmdj.createArgument().setValue("-targetjdk");
 				cmdj.createArgument().setValue(getTargetJDK());
 			}
@@ -255,13 +259,21 @@ public class PmdConfig extends ToolConfig {
 			cmdj.createArgument().setValue("xml");
 
 			// Add the ruleset file
-			cmdj.createArgument().setValue(rulesFile.getAbsolutePath());
+			cmdj.createArgument().setValue(f_rulesFile.getAbsolutePath());
 
 			antProject.log("Executing PMD with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			try {
 
-				fork(cmdj.getCommandline());
+				int rc = fork(cmdj.getCommandline());
+				if (rc != 0) {
+					antProject.log("PMD failed to execute.",
+							org.apache.tools.ant.Project.MSG_ERR);
+					SLLogger.getLogger("sierra").severe(
+							"PMD failed to execute.");
+					analysis.stop();
+					f_status = "pmd";
+				}
 			} catch (BuildException e) {
 				antProject.log("Failed to start PMD process."
 						+ e.getLocalizedMessage(),
@@ -273,5 +285,10 @@ public class PmdConfig extends ToolConfig {
 			}
 
 		}
+	}
+
+	@Override
+	String getCompletedCode() {
+		return f_status;
 	}
 }
