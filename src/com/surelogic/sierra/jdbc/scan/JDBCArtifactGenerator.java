@@ -36,7 +36,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			.getLoggerFor(JDBCArtifactGenerator.class);
 
 	private static final String TOOL_ID_SELECT = "SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?";
-
+	
+	
 	private static final int COMMIT_SIZE = 700;
 
 	private final Connection conn;
@@ -72,7 +73,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.manager = manager;
 		this.callback = callback;
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
-
+		
 		this.filter = filter;
 		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);

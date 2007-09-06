@@ -23,6 +23,9 @@ public final class CompilationUnitRecord extends LongRecord {
 	}
 
 	public void setPath(String path) {
+		if (path == null) {
+			path = "";
+		}
 		this.path = path;
 	}
 

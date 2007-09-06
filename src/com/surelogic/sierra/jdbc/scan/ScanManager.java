@@ -12,7 +12,9 @@ import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
 public class ScanManager {
 
-	private static final String DELETE_UNUSED_SOURCES = "DELETE FROM SOURCE_LOCATION WHERE ID IN ("
+	private static final String MAKE_TEMP = "DECLARE GLOBAL TEMPORARY TABLE TEMP_IDS (ID BIGINT NOT NULL) NOT LOGGED";
+
+	private static final String INSERT_TEMP_SOURCES = "INSERT INTO SESSION.TEMP_IDS"
 			+ " SELECT NO_PRIMARY.ID FROM ("
 			+ " SELECT SL.ID \"ID\""
 			+ " FROM SOURCE_LOCATION SL"
@@ -20,28 +22,43 @@ public class ScanManager {
 			+ " WHERE A.PRIMARY_SOURCE_LOCATION_ID IS NULL"
 			+ " ) AS NO_PRIMARY"
 			+ " LEFT OUTER JOIN ARTIFACT_SOURCE_LOCATION_RELTN ASLR ON ASLR.SOURCE_LOCATION_ID = NO_PRIMARY.ID"
-			+ " WHERE ASLR.SOURCE_LOCATION_ID IS NULL)";
+			+ " WHERE ASLR.SOURCE_LOCATION_ID IS NULL";
 
-	private static final String DELETE_UNUSED_COMPILATIONS = "DELETE FROM COMPILATION_UNIT WHERE ID IN ("
+	private static final String DELETE_UNUSED_SOURCES = "DELETE FROM SOURCE_LOCATION WHERE ID IN ("
+			+ " SELECT ID FROM SESSION.TEMP_IDS)";
+
+	private static final String INSERT_TEMP_COMPILATIONS = "INSERT INTO SESSION.TEMP_IDS"
 			+ " SELECT NO_SOURCE.ID FROM ("
 			+ " SELECT CU.ID"
 			+ " FROM COMPILATION_UNIT CU"
 			+ " LEFT OUTER JOIN SOURCE_LOCATION SL ON SL.COMPILATION_UNIT_ID = CU.ID"
 			+ " WHERE SL.COMPILATION_UNIT_ID IS NULL) AS NO_SOURCE"
 			+ " LEFT OUTER JOIN CLASS_METRIC CM ON CM.COMPILATION_UNIT_ID = NO_SOURCE.ID"
-			+ " WHERE CM.COMPILATION_UNIT_ID IS NULL)";
+			+ " WHERE CM.COMPILATION_UNIT_ID IS NULL";
+
+	private static final String DELETE_UNUSED_COMPILATIONS = "DELETE FROM COMPILATION_UNIT WHERE ID IN ("
+			+ " SELECT ID FROM SESSION.TEMP_IDS)";
 
 	private final Connection conn;
 	private final ScanRecordFactory factory;
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
+	private final PreparedStatement insertTempSources;
+	private final PreparedStatement insertTempCompilations;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.factory = ScanRecordFactory.getInstance(conn);
+		// TODO this has to be moved to make sure it happens only once per
+		// connection
+		conn.createStatement().execute(MAKE_TEMP);
 		this.deleteCompilations = conn
 				.prepareStatement(DELETE_UNUSED_COMPILATIONS);
 		this.deleteSources = conn.prepareStatement(DELETE_UNUSED_SOURCES);
+		this.insertTempSources = conn.prepareStatement(INSERT_TEMP_SOURCES);
+		this.insertTempCompilations = conn
+				.prepareStatement(INSERT_TEMP_COMPILATIONS);
+
 	}
 
 	public ScanGenerator getScanGenerator() {
@@ -55,7 +72,6 @@ public class ScanManager {
 				if (monitor.isCanceled()) {
 					return;
 				}
-				monitor.subTask("Deleting scan " + uid);
 			}
 			ScanRecord rec = factory.newScan();
 			rec.setUid(uid);
@@ -68,13 +84,18 @@ public class ScanManager {
 			if (monitor.isCanceled())
 				return;
 		}
+		conn.commit();
+		insertTempSources.execute();
 		deleteSources.execute();
+		conn.commit();
 		work(monitor);
 		if (monitor != null) {
 			if (monitor.isCanceled())
 				return;
 		}
+		insertTempCompilations.execute();
 		deleteCompilations.execute();
+		conn.commit();
 		work(monitor);
 	}
 

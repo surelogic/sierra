@@ -30,11 +30,8 @@ public class ProjectManager {
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
 
-	@SuppressWarnings("unused")
 	private final PreparedStatement findNewFindings;
-	@SuppressWarnings("unused")
 	private final PreparedStatement obsoleteTrail;
-	@SuppressWarnings("unused")
 	private final PreparedStatement findNewAudits;
 
 	private ProjectManager(Connection conn) throws SQLException {
@@ -61,7 +58,6 @@ public class ProjectManager {
 		return projectNames;
 	}
 
-	@SuppressWarnings("unused")
 	private Collection<Merge> findNewFindings() {
 		Collection<Merge> merges = new ArrayList<Merge>();
 
@@ -111,8 +107,10 @@ public class ProjectManager {
 		ProjectRecord rec = projectFactory.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
+			monitor.subTask("Deleting scans for project " + projectName);
 			ScanManager.getInstance(conn).deleteScans(
 					getProjectScans(rec.getId()), monitor);
+			monitor.subTask("Deleting matches for project " + projectName);
 			deleteMatches.setLong(1, rec.getId());
 			deleteMatches.executeUpdate();
 			if (monitor != null) {
@@ -120,6 +118,7 @@ public class ProjectManager {
 					return;
 				monitor.worked(1);
 			}
+			monitor.subTask("Deleting findings for project " + projectName);
 			deleteFindings.setLong(1, rec.getId());
 			deleteFindings.executeUpdate();
 			if (monitor != null) {
