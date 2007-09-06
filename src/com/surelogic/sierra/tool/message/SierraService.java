@@ -9,7 +9,7 @@ import javax.jws.soap.SOAPBinding.Use;
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.BARE)
-public interface TigerService {
+public interface SierraService {
 
 	/**
 	 * Publish a run to the server.

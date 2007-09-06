@@ -14,6 +14,10 @@ public enum AuditEvent {
 	/**
 	 * The user has changed the importance of a finding.
 	 */
-	IMPORTANCE
+	IMPORTANCE,
+	/**
+	 * Indicates that a finding has been looked at by someone.
+	 */
+	READ
 
 }

@@ -92,8 +92,8 @@ import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
-import com.surelogic.sierra.tool.message.TigerService;
-import com.surelogic.sierra.tool.message.TigerServiceClient;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 /**
  * @author ethan
@@ -450,7 +450,7 @@ public class SierraAnalysis extends Task {
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
 			Scan run = warehouse.fetchScan(runDocument.getAbsolutePath());
-			TigerService ts = new TigerServiceClient(server)
+			SierraService ts = new SierraServiceClient(server)
 					.getTigerServicePort();
 
 			// Verify the qualifiers

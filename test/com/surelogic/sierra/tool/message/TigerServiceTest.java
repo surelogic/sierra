@@ -28,11 +28,11 @@ import org.junit.Test;
  */
 public class TigerServiceTest {
 
-	private TigerService service;
+	private SierraService service;
 
 	@Before
 	public void setUp() throws Exception {
-		service = new TigerServiceClient().getTigerServicePort();
+		service = new SierraServiceClient().getTigerServicePort();
 	}
 
 	@After

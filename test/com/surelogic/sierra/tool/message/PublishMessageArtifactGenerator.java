@@ -144,7 +144,7 @@ class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 
 	@Override
 	public void finished() {
-		TigerServiceClient client = new TigerServiceClient();
+		SierraServiceClient client = new SierraServiceClient();
 		client.getTigerServicePort().publishRun(r);
 	}
 
