@@ -47,9 +47,18 @@ public final class Scan {
 
 	private List<Config> f_configs;
 
+	/**
+	 * The constructor for the Scan
+	 * 
+	 * @param selectedProjects
+	 *            the list of IJavaProjects for scan
+	 * 
+	 */
 	public Scan(List<IJavaProject> selectedProjects) {
-		// Get the plug-in directory that has tools folder and append the
-		// directory
+		/*
+		 * Get the plug-in directory that has tools folder and append the
+		 * directory
+		 */
 		f_selectedProjects.addAll(selectedProjects);
 		f_resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
 
@@ -63,13 +72,18 @@ public final class Scan {
 	public void execute() {
 		f_configs = new ArrayList<Config>();
 
-		// Get from preference page
+		/*
+		 * Get default folder from the preference page
+		 */
 		final String sierraPath = Activator.getDefault().getPluginPreferences()
 				.getString(PreferenceConstants.P_SIERRA_PATH);
 		final File sierraFolder = new File(sierraPath);
 
 		final StringBuilder projectList = new StringBuilder();
 
+		/*
+		 * Create config objects for all the selected projects
+		 */
 		for (IJavaProject project : f_selectedProjects) {
 			projectList.append(" ").append(project.getProject().getName());
 
@@ -89,15 +103,14 @@ public final class Scan {
 			config.setJavaVendor(System.getProperty("java.vendor"));
 
 			// Get clean option
-
 			// Get excluded tools
-
 			// Get included dirs -project specific
-
 			// Get excluded dirs - project specific
 
-			// Get the plug-in directory that has tools folder and append the
-			// directory
+			/*
+			 * Get the plug-in directory that has tools folder and append the
+			 * directory
+			 */
 			String tools = BuildFileGenerator.getToolsDirectory();
 			tools = tools + SierraConstants.TOOLS_FOLDER;
 			config.setToolsDirectory(new File(tools));
@@ -109,34 +122,53 @@ public final class Scan {
 
 		if (f_configs.size() > 0) {
 
+			// Run the scan on the all the configs
 			for (Config c : f_configs) {
 
-				final Job runSingleSierraScan = new RunSingleSierraJob(
+				final Job runSingleSierraScan = new ScanProjectJob(
 						"Running Sierra on " + c.getProject(), c, SIERRA_JOB);
 				runSingleSierraScan.setPriority(Job.SHORT);
 				runSingleSierraScan.belongsTo(c.getProject());
 				runSingleSierraScan
-						.addJobChangeListener(new RunSierraAdapter());
+						.addJobChangeListener(new ScanProjectJobAdapter(c
+								.getProject()));
 				runSingleSierraScan.schedule();
+
 			}
 
-			showStartBalloon();
+			BalloonUtility
+					.showMessage(
+							"Sierra Scan Started",
+							"You may continue your work. "
+									+ "You will be notified when the scan has completed.");
 			LOG.info("Started scan on projects:" + projectList);
 
 		}
 	}
 
-	private static class RunSingleSierraJob extends Job {
+	/**
+	 * The job to scan a project. There is one job per project.
+	 * 
+	 * @author Tanmay.Sinha
+	 * 
+	 */
+	private static class ScanProjectJob extends Job {
 
 		private final Config f_config;
 		private final String f_familyName;
 
-		@Override
-		public boolean belongsTo(Object family) {
-			return f_familyName.equals(family);
-		}
-
-		public RunSingleSierraJob(String name, Config config, String familyName) {
+		/**
+		 * 
+		 * The constructor for a Sierra scan
+		 * 
+		 * @param name
+		 *            the name of the job.
+		 * @param config
+		 *            the config object for tool run.
+		 * @param familyName
+		 *            the family name.
+		 */
+		public ScanProjectJob(String name, Config config, String familyName) {
 			super(name);
 			f_config = config;
 			f_familyName = familyName;
@@ -145,7 +177,11 @@ public final class Scan {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			// This is an estimate for the number of files in a project
+
+			// TODO: Dynamically adjust the total and scale depending on the
+			// options selected currently it's an estimate for the number of
+			// files in a project
+
 			int scale = 1000;
 			int total = 5;
 			SLProgressMonitorWrapper slProgressMonitorWrapper = null;
@@ -156,11 +192,10 @@ public final class Scan {
 			}
 
 			try {
-				final AntSingleRunnable antRunnable = new AntSingleRunnable(
-						f_config, slProgressMonitorWrapper, scale);
+				final AntRunnable antRunnable = new AntRunnable(f_config,
+						slProgressMonitorWrapper, scale);
 				final Thread antThread = new Thread(antRunnable);
 				antThread.start();
-				showStartBalloon();
 
 				while (!slProgressMonitorWrapper.isCanceled()) {
 					Thread.sleep(500);
@@ -175,10 +210,10 @@ public final class Scan {
 					return Status.CANCEL_STATUS;
 				} else {
 					try {
-						// Start database entry
+						/* Start database entry */
 						ScanDocumentUtility.loadScanDocument(f_config
 								.getRunDocument(), slProgressMonitorWrapper);
-						// Notify that scan was completed
+						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());
@@ -186,7 +221,6 @@ public final class Scan {
 						return SLStatus.createErrorStatus("Scan failed", rpe);
 					}
 					slProgressMonitorWrapper.done();
-					LOG.info("Completed scan");
 					return Status.OK_STATUS;
 				}
 
@@ -196,9 +230,22 @@ public final class Scan {
 				return SLStatus.createErrorStatus("Scan failed", e);
 			}
 		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return f_familyName.equals(family);
+		}
+
 	}
 
-	private static class AntSingleRunnable implements Runnable {
+	/**
+	 * The thread to run the ant task, it allows polling to check for
+	 * completion. Also provides method to stop the tool runs.
+	 * 
+	 * @author Tanmay.Sinha
+	 * 
+	 */
+	private static class AntRunnable implements Runnable {
 
 		private boolean f_complete;
 		private SierraAnalysis f_sierraAnalysis;
@@ -206,8 +253,17 @@ public final class Scan {
 		private SLProgressMonitor f_monitor;
 		private int f_scale = 1;
 
-		public AntSingleRunnable(Config config, SLProgressMonitor monitor,
-				int scale) {
+		/**
+		 * The constructor for thread
+		 * 
+		 * @param config
+		 *            the config object for tool run.
+		 * @param monitor
+		 *            the monitor to allow progress indication
+		 * @param scale
+		 *            the scale for monitor
+		 */
+		public AntRunnable(Config config, SLProgressMonitor monitor, int scale) {
 			f_config = config;
 			f_monitor = monitor;
 			f_scale = scale;
@@ -230,28 +286,53 @@ public final class Scan {
 		}
 	}
 
-	private static class RunSierraAdapter extends JobChangeAdapter {
+	/**
+	 * The adapter for the {@link ScanProjectJob}, handles all the possible
+	 * cases for status messages from the job and displays and logs appropriate
+	 * message.
+	 * 
+	 * @author Tanmay.Sinha
+	 * 
+	 */
+	private static class ScanProjectJobAdapter extends JobChangeAdapter {
+
+		private final String f_projectName;
+
+		/**
+		 * 
+		 * @param projectName
+		 *            the name of the project
+		 */
+		public ScanProjectJobAdapter(String projectName) {
+			super();
+			this.f_projectName = projectName;
+		}
+
+		@Override
+		public void running(IJobChangeEvent event) {
+			LOG.info("Starting scan on " + f_projectName);
+		}
 
 		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getResult().equals(Status.OK_STATUS)) {
-				BalloonUtility.showMessage("Sierra Scan Completed",
-						"You may now examine the results.");
+				LOG.info("Completed scan for " + f_projectName);
+				BalloonUtility.showMessage("Sierra Scan Completed on "
+						+ f_projectName, "You may now examine the results.");
 
 			} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
-				LOG.info("Canceled scan");
-				BalloonUtility.showMessage("Sierra Scan was Canceled",
-						"Check the logs.");
+				LOG.info("Canceled scan on " + f_projectName);
+				BalloonUtility.showMessage("Sierra Scan was Canceled for "
+						+ f_projectName, "Check the logs.");
 			} else {
-				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
-						"Check the logs.");
+				LOG
+						.severe("Error while trying to run scan on "
+								+ f_projectName);
+				BalloonUtility.showMessage(
+						"Sierra Scan Completed with Errors for "
+								+ f_projectName, "Check the logs.");
 			}
 		}
 	}
 
-	private static void showStartBalloon() {
-		BalloonUtility.showMessage("Sierra Scan Started",
-				"You may continue your work. "
-						+ "You will be notified when the scan has completed.");
-	}
 }
