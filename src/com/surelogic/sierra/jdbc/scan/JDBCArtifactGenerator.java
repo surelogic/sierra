@@ -36,8 +36,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			.getLoggerFor(JDBCArtifactGenerator.class);
 
 	private static final String TOOL_ID_SELECT = "SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?";
-	
-	
+
 	private static final int COMMIT_SIZE = 700;
 
 	private final Connection conn;
@@ -57,23 +56,23 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Set<ArtifactSourceRecord> relations;
 
 	private final MessageFilter filter;
-
+	private final String projectName;
 	private final ScanRecord scan;
 
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, ScanRecord scan, MessageFilter filter,
-			Runnable callback) throws SQLException {
+			ScanManager manager, String projectName, ScanRecord scan,
+			MessageFilter filter, Runnable callback) throws SQLException {
 		log.info("Now persisting artifacts to database for scan "
-				+ scan.getId());
+				+ scan.getUid() + " in project " + projectName + ".");
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.callback = callback;
 		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
-		
+
 		this.filter = filter;
 		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
@@ -82,6 +81,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
 		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
+		this.projectName = projectName;
 		this.scan = scan;
 		this.aBuilder = new JDBCArtifactBuilder();
 		this.mBuilder = new JDBCMetricBuilder();

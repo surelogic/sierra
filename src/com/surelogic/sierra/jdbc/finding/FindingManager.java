@@ -5,22 +5,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
+import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
+import com.surelogic.sierra.tool.message.AuditTrailUpdate;
+import com.surelogic.sierra.tool.message.AuditTrails;
 import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
+import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public abstract class FindingManager {
 
@@ -33,12 +40,21 @@ public abstract class FindingManager {
 	private final FindingRecordFactory fact;
 
 	private final PreparedStatement selectFinding;
+	private final PreparedStatement markFindingAsRead;
+	private final PreparedStatement updateFindingImportance;
+
+	// private final PreparedStatement getLocalMerges;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.fact = ClientFindingRecordFactory.getInstance(conn);
 		selectFinding = conn
 				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
+		markFindingAsRead = conn
+				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y' WHERE ID = ?");
+		updateFindingImportance = conn
+				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ? WHERE ID = ?");
+		// getLocalMerges = conn.prepareStatement("");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -62,6 +78,19 @@ public abstract class FindingManager {
 					+ " is not a valid finding id.");
 		newAudit(findingId, importance.toString(), AuditEvent.IMPORTANCE)
 				.insert();
+		updateFindingImportance.setInt(1, importance.ordinal());
+		updateFindingImportance.setLong(2, findingId);
+		updateFindingImportance.execute();
+	}
+
+	public void markAsRead(Long findingId) throws SQLException {
+		FindingView f = getFinding(findingId);
+		if (f == null)
+			throw new IllegalArgumentException(findingId
+					+ " is not a valid finding id.");
+		newAudit(findingId, null, AuditEvent.READ).insert();
+		markFindingAsRead.setLong(1, findingId);
+		markFindingAsRead.execute();
 	}
 
 	/**
@@ -69,7 +98,8 @@ public abstract class FindingManager {
 	 * 
 	 * @param uid
 	 */
-	public void generateFindings(String uid, MessageFilter filter) {
+	public void generateFindings(String projectName, String uid,
+			MessageFilter filter) {
 		try {
 
 			FindingRecordFactory factory = getFactory();
@@ -125,10 +155,32 @@ public abstract class FindingManager {
 			}
 			conn.commit();
 			result.close();
-			log.info("All new findings persisted.");
+			log.info("All new findings persisted for scan " + uid
+					+ " in project " + projectName + ".");
 		} catch (SQLException e) {
 			sqlError(e);
 		}
+	}
+
+	public void updateLocalFindings(Long revison,
+			List<TrailObsoletion> obsoletions, List<AuditTrailUpdate> updates,
+			SLProgressMonitor monitor) {
+
+	}
+
+	public List<Merge> getNewLocalMerges(String project,
+			SLProgressMonitor monitor) {
+		return null;
+	}
+
+	public void updateLocalTrailUids(String project, Long revision,
+			List<String> trails, List<Merge> merges) {
+
+	}
+
+	public AuditTrails getNewLocalAudits(String project,
+			SLProgressMonitor monitor) {
+		return null;
 	}
 
 	private AuditRecord newAudit(Long findingId, String value, AuditEvent event)
@@ -169,6 +221,11 @@ public abstract class FindingManager {
 	public static FindingManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
+	}
+
+	public Long getLatestAuditRevision(String projectName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

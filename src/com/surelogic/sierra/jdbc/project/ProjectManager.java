@@ -6,16 +6,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.tool.message.AuditTrailRequest;
+import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.Merge;
+import com.surelogic.sierra.tool.message.MergeAuditResponse;
+import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
-import com.surelogic.sierra.tool.message.TigerService;
-import com.surelogic.sierra.tool.message.TigerServiceClient;
+import com.surelogic.sierra.tool.message.SierraServer;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 public class ProjectManager {
 
@@ -23,7 +30,7 @@ public class ProjectManager {
 	private final Connection conn;
 
 	private final ScanManager scanManager;
-
+	private final FindingManager findingManager;
 	private final ProjectRecordFactory projectFactory;
 
 	private final PreparedStatement deleteMatches;
@@ -32,13 +39,10 @@ public class ProjectManager {
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
 
-	private final PreparedStatement findNewFindings;
-	private final PreparedStatement obsoleteTrail;
-	private final PreparedStatement findNewAudits;
-
 	private ProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.scanManager = ScanManager.getInstance(conn);
+		this.findingManager = FindingManager.getInstance(conn);
 		projectFactory = ProjectRecordFactory.getInstance(conn);
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
@@ -47,9 +51,7 @@ public class ProjectManager {
 				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = ?");
 		deleteFindings = conn
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = ?");
-		findNewFindings = null;
-		obsoleteTrail = null;
-		findNewAudits = null;
+
 	}
 
 	public Collection<String> getAllProjectNames() throws SQLException {
@@ -61,13 +63,7 @@ public class ProjectManager {
 		return projectNames;
 	}
 
-	private Collection<Merge> findNewFindings() {
-		Collection<Merge> merges = new ArrayList<Merge>();
-
-		return merges;
-	}
-
-	public void synchronizeProject(String server, String name,
+	public void synchronizeProject(SierraServer server, String projectName,
 			SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
@@ -76,20 +72,45 @@ public class ProjectManager {
 		 * from the server and apply them locally. Finally, we also check to see
 		 * if we have any updates to settings.
 		 */
-		TigerService service = new TigerServiceClient(server)
+		SierraService service = new SierraServiceClient(server)
 				.getTigerServicePort();
 
+		// Commit merges
+		MergeAuditTrailRequest mergeRequest = new MergeAuditTrailRequest();
+		mergeRequest.setProject(projectName);
+		List<Merge> merges = findingManager.getNewLocalMerges(projectName,
+				monitor);
+		mergeRequest.setMerge(merges);
+		MergeAuditResponse mergeResponse = service
+				.mergeAuditTrails(mergeRequest);
+		findingManager.updateLocalTrailUids(projectName, mergeResponse
+				.getRevision(), mergeResponse.getTrail(), merges);
+		
+		// Commit Audits
+		service.commitAuditTrails(findingManager.getNewLocalAudits(projectName,
+				monitor));
+		
+		// Get updated audits from server
+		AuditTrailRequest auditRequest = new AuditTrailRequest();
+		auditRequest.setProject(projectName);
+		auditRequest.setRevision(findingManager
+				.getLatestAuditRevision(projectName));
+		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
+		findingManager
+				.updateLocalFindings(auditResponse.getRevision(), auditResponse
+						.getObsolete(), auditResponse.getUpdate(), monitor);
+		
 		// Update settings
 		ClientSettingsManager settingsManager = ClientSettingsManager
 				.getInstance(conn);
 		SettingsRequest request = new SettingsRequest();
-		request.setProject(name);
-		Long revision = settingsManager.getSettingsRevision(name);
+		request.setProject(projectName);
+		Long revision = settingsManager.getSettingsRevision(projectName);
 		request.setRevision(revision);
 		SettingsReply reply = service.getSettings(request);
 		Long serverRevision = reply.getRevision();
 		if (serverRevision != null) {
-			settingsManager.writeSettings(name, serverRevision, reply
+			settingsManager.writeSettings(projectName, serverRevision, reply
 					.getSettings());
 		}
 	}

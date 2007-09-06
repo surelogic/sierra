@@ -10,6 +10,7 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingRecord extends LongRecord {
 
+	private boolean read;
 	private Importance importance;
 	private String uid;
 	private Long projectId;
@@ -22,6 +23,7 @@ public final class FindingRecord extends LongRecord {
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, projectId);
 		st.setString(idx++, uid);
+		st.setString(idx++, read ? "Y" : "N");
 		setNullableInt(idx++, st, importance.ordinal());
 		return idx;
 	}
@@ -35,6 +37,7 @@ public final class FindingRecord extends LongRecord {
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		this.projectId = set.getLong(idx++);
 		this.uid = set.getString(idx++);
+		this.read = set.getString(idx++).equals("Y");
 		this.importance = Importance.values()[set.getInt(idx++)];
 		return idx;
 	}
@@ -61,6 +64,14 @@ public final class FindingRecord extends LongRecord {
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
+	}
+
+	public boolean isRead() {
+		return read;
+	}
+
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 
 }
