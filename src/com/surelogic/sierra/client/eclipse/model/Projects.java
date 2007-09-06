@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -58,7 +59,7 @@ public final class Projects extends AbstractDatabaseObserver {
 	/**
 	 * Protected by a lock on <code>this</code>.
 	 */
-	private final List<String> f_projectNames = new ArrayList<String>();
+	private final LinkedList<String> f_projectNames = new LinkedList<String>();
 
 	/**
 	 * Gets the set of project names in the database.
@@ -70,6 +71,15 @@ public final class Projects extends AbstractDatabaseObserver {
 	}
 
 	/**
+	 * Returns <code>true</code> if the database contains no projects.
+	 * 
+	 * @return <code>true</code> if the database contains no projects.
+	 */
+	public synchronized boolean isEmpty() {
+		return f_projectNames.isEmpty();
+	}
+
+	/**
 	 * Checks if a project name exists in the database.
 	 * 
 	 * @param projectName
@@ -77,8 +87,17 @@ public final class Projects extends AbstractDatabaseObserver {
 	 * @return <code>true</code> if the given project name exists in the
 	 *         database, <code>false</code> otherwise.
 	 */
-	public boolean exists(final String projectName) {
+	public synchronized boolean contains(final String projectName) {
 		return f_projectNames.contains(projectName);
+	}
+
+	/**
+	 * Returns the first project in the database.
+	 * 
+	 * @return the first project in the database.
+	 */
+	public String getFirst() {
+		return f_projectNames.getFirst();
 	}
 
 	public void refresh() {

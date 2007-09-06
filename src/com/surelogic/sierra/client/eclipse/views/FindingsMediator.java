@@ -1,11 +1,13 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -24,16 +26,17 @@ import org.eclipse.ui.part.PageBook;
 
 import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.FindingsViewModel;
-import com.surelogic.sierra.client.eclipse.model.FindingsOrganization;
+import com.surelogic.sierra.client.eclipse.model.FindingsViewOrganization;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsMediator {
 
-	private FindingsViewModel f_model = new FindingsViewModel();
+	private FindingsViewModel f_model;
 
 	private final Listener f_updateFindingsOverview;
 
@@ -68,6 +71,10 @@ public final class FindingsMediator {
 			Combo groupByCombo, ToolItem filters, Composite topSash,
 			ExpandItem detailsItem, Composite detailsComp, ExpandItem logItem,
 			Composite logComp) {
+		final IPath pluginState = Activator.getDefault().getStateLocation();
+		final File modelSaveFile = new File(pluginState.toOSString()
+				+ System.getProperty("file.separator") + "findings-view.xml");
+		f_model = new FindingsViewModel(modelSaveFile);
 		f_pages = pages;
 		f_noFindingsPage = noFindingsPage;
 		f_findingsPage = findingsPage;
@@ -120,7 +127,7 @@ public final class FindingsMediator {
 						.getSelectionIndex());
 				if (key == null)
 					return;
-				FindingsOrganization org = f_model.get(key);
+				FindingsViewOrganization org = f_model.get(key);
 				if (org == null) {
 					SLLogger.getLogger().log(Level.WARNING,
 							"No FindingsOrganization for key " + key);
@@ -197,7 +204,7 @@ public final class FindingsMediator {
 				/*
 				 * Does the project we are looking at still exist?
 				 */
-				
+
 			}
 		};
 
@@ -209,6 +216,6 @@ public final class FindingsMediator {
 
 	public void dispose() {
 		f_model.dispose();
-		
+
 	}
 }

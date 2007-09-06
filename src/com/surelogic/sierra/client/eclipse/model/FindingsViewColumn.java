@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-public enum FindingsColumn {
+public enum FindingsViewColumn {
 
 	CATEGORY("CATEGORY \"Category", "CATEGORY"),
 
@@ -21,7 +21,7 @@ public enum FindingsColumn {
 	private final String f_title;
 	private final String f_order;
 
-	private FindingsColumn(String title, String order) {
+	private FindingsViewColumn(String title, String order) {
 		if (title == null)
 			throw new IllegalArgumentException("title must be non-null");
 		if (order == null)

@@ -5,19 +5,35 @@ import java.util.Set;
 
 import com.surelogic.sierra.tool.message.Importance;
 
-public final class FindingsFilter {
+/**
+ * A model that reflects what findings the user wants to be displayed.
+ */
+public final class FindingsViewFilter {
+
+	/**
+	 * The model this filter is contained within. Each model has one and only
+	 * one filter. This reference is used to allow notification that the filter
+	 * has been mutated.
+	 */
+	private final FindingsViewModel f_model;
+
+	public FindingsViewFilter(final FindingsViewModel model) {
+		f_model = model;
+	}
 
 	private final Set<Importance> f_importanceFilter = new HashSet<Importance>();
 
 	public void add(final Importance importance) {
 		if (importance != null) {
 			f_importanceFilter.add(importance);
+			f_model.findingsFilterChanged();
 		}
 	}
 
 	public void remove(final Importance importance) {
 		if (importance != null) {
 			f_importanceFilter.remove(importance);
+			f_model.findingsFilterChanged();
 		}
 	}
 
@@ -30,7 +46,7 @@ public final class FindingsFilter {
 	 * generate the contents of the findings view.
 	 * <p>
 	 * This method is only intended to be called from
-	 * {@link FindingsOrganization#getQuery(String)}.
+	 * {@link FindingsViewOrganization#getQuery(String)}.
 	 * <p>
 	 * <i>Implementation Note:</i> This method depends upon all the elements in
 	 * the {@link Importance} enumerations being upper-case (i.e., invoking
