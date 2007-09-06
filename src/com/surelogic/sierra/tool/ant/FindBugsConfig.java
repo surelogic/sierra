@@ -4,6 +4,8 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -34,7 +36,7 @@ public class FindBugsConfig extends ToolConfig {
 	private SLProgressMonitor f_monitor = null;
 	private Path f_classpath = null;
 	private int f_scale = 1;
-	private String f_status = "";
+	private Map<String, String> f_status = null;
 
 	/**
 	 * @param project
@@ -88,12 +90,13 @@ public class FindBugsConfig extends ToolConfig {
 				}
 				int rc = fork(cmdj.getCommandline());
 				if (rc != 0) {
-					antProject.log("Findbugs failed to execute.",
-							org.apache.tools.ant.Project.MSG_ERR);
+					antProject.log("Findbugs failed to execute with command "
+							+ cmdj, org.apache.tools.ant.Project.MSG_ERR);
 					SLLogger.getLogger("sierra").severe(
-							"Findbugs failed to execute.");
+							"Findbugs failed to execute with command " + cmdj);
 					analysis.stop();
-					f_status = "reckoner";
+					f_status = new HashMap<String, String>();
+					f_status.put("FindBugs", cmdj.toString());
 				}
 			} catch (BuildException e) {
 				antProject.log("Failed to start FindBugs process."
@@ -215,7 +218,7 @@ public class FindBugsConfig extends ToolConfig {
 	}
 
 	@Override
-	String getCompletedCode() {
+	Map<String, String> getCompletedCode() {
 		return f_status;
 	}
 }

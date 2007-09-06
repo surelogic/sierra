@@ -2,6 +2,8 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,7 +38,7 @@ public class PmdConfig extends ToolConfig {
 	private String f_targetJDK = null;
 	private File f_rulesFile = null;
 	private int f_scale = 1;
-	private String f_status = "";
+	private Map<String, String> f_status = null;
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
 		super(PMD, project);
@@ -272,7 +274,8 @@ public class PmdConfig extends ToolConfig {
 					SLLogger.getLogger("sierra").severe(
 							"PMD failed to execute.");
 					analysis.stop();
-					f_status = "pmd";
+					f_status = new HashMap<String, String>();
+					f_status.put("PMD", cmdj.toString());
 				}
 			} catch (BuildException e) {
 				antProject.log("Failed to start PMD process."
@@ -288,7 +291,7 @@ public class PmdConfig extends ToolConfig {
 	}
 
 	@Override
-	String getCompletedCode() {
+	Map<String, String> getCompletedCode() {
 		return f_status;
 	}
 }

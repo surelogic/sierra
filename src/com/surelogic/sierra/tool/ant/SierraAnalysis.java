@@ -75,6 +75,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -231,7 +232,7 @@ public class SierraAnalysis extends Task {
 			verifyDependencies();
 			tools.runTools(monitor);
 
-			List<String> failedTools = tools.checkStatus();
+			Map<String, String> failedTools = tools.checkStatus();
 			if (failedTools.size() != 0) {
 				throw new ToolRunException(
 						"Following tools failed. Check logs.", failedTools);

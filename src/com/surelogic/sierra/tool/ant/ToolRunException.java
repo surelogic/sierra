@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.ant;
 
-import java.util.List;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 
@@ -11,14 +11,14 @@ public class ToolRunException extends BuildException {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private List<String> f_failedTools;
+	private Map<String, String> f_failedTools;
 
-	public ToolRunException(String message, List<String> failedTools) {
+	public ToolRunException(String message, Map<String, String> failedTools) {
 		super(message);
 		f_failedTools = failedTools;
 	}
 
-	public List<String> getFailedTools() {
+	public Map<String, String> getFailedTools() {
 		return f_failedTools;
 	}
 
