@@ -31,15 +31,12 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.FindingsViewModel;
 import com.surelogic.sierra.client.eclipse.model.FindingsViewOrganization;
 import com.surelogic.sierra.client.eclipse.model.IFindingsViewModelObserver;
-import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsMediator implements IFindingsViewModelObserver {
 
 	private FindingsViewModel f_model;
-
-	private final Listener f_updateFindingsOverview;
 
 	private final PageBook f_pages;
 
@@ -49,9 +46,9 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 
 	private final Combo f_projectCombo;
 
-	private final ToolItem f_groupings;
+	private final ToolItem f_organizations;
 
-	private final Combo f_groupByCombo;
+	private final Combo f_organizeByCombo;
 
 	private final ToolItem f_filters;
 
@@ -65,11 +62,11 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 
 	private final Composite f_logComp;
 
-	private Composite results = null;
+	private Composite f_results = null;
 
 	FindingsMediator(PageBook pages, Control noFindingsPage,
-			Composite findingsPage, Combo projectCombo, ToolItem groupings,
-			Combo groupByCombo, ToolItem filters, Composite topSash,
+			Composite findingsPage, Combo projectCombo, ToolItem organizations,
+			Combo organizeByCombo, ToolItem filters, Composite topSash,
 			ExpandItem detailsItem, Composite detailsComp, ExpandItem logItem,
 			Composite logComp) {
 		final IPath pluginState = Activator.getDefault().getStateLocation();
@@ -80,8 +77,8 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 		f_noFindingsPage = noFindingsPage;
 		f_findingsPage = findingsPage;
 		f_projectCombo = projectCombo;
-		f_groupings = groupings;
-		f_groupByCombo = groupByCombo;
+		f_organizations = organizations;
+		f_organizeByCombo = organizeByCombo;
 		f_filters = filters;
 		f_topSash = topSash;
 		f_detailsItem = detailsItem;
@@ -121,83 +118,6 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 				filterMenu.setVisible(true);
 			}
 		});
-
-		f_updateFindingsOverview = new Listener() {
-			public void handleEvent(Event event) {
-				String key = f_groupByCombo.getItem(f_groupByCombo
-						.getSelectionIndex());
-				if (key == null)
-					return;
-				FindingsViewOrganization org = f_model.get(key);
-				if (org == null) {
-					SLLogger.getLogger().log(Level.WARNING,
-							"No FindingsOrganization for key " + key);
-					return;
-				}
-				String project = f_projectCombo.getText();
-				if (project == null) {
-					SLLogger.getLogger().log(Level.WARNING,
-							"No project to qualify key " + key);
-					return;
-				}
-				String query = org.getQuery(project, f_model.getFilter());
-				System.out.println(key + " selected");
-				System.out.println("query \"" + query + "\"");
-				try {
-					final Connection c = Data.getConnection();
-					try {
-						final Statement st = c.createStatement();
-						try {
-							boolean hasResultSet = st.execute(query);
-							if (hasResultSet) {
-								// result set
-								final ResultSet rs = st.getResultSet();
-								final String[] columnLabels = QueryUtility
-										.getColumnLabels(rs);
-								final String[][] rows = QueryUtility.getRows(
-										rs, 20000);
-								PlatformUI.getWorkbench().getDisplay()
-										.asyncExec(new Runnable() {
-											public void run() {
-												if (results != null) {
-													results.dispose();
-													results = QueryUtility
-															.construct(
-																	f_topSash,
-																	columnLabels,
-																	rows);
-													results
-															.setLayoutData(new GridData(
-																	SWT.FILL,
-																	SWT.FILL,
-																	true, true));
-													f_topSash.layout();
-												}
-											}
-										});
-								// do stuff with result set
-								System.out.println("got a result set");
-
-							} else {
-								// update count or no results
-								int updateCount = st.getUpdateCount();
-							}
-						} catch (SQLException e) {
-							// an error occurred with the query
-							SLLogger.getLogger().log(Level.SEVERE,
-									"SQL problem in findings view", e);
-						} finally {
-							st.close();
-						}
-					} finally {
-						c.close();
-					}
-				} catch (SQLException e) {
-					SLLogger.getLogger().log(Level.SEVERE,
-							"Could not work with the embedded database", e);
-				}
-			}
-		};
 	}
 
 	public void setFocus() {
@@ -217,6 +137,18 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 
 		f_model.addObserver(this);
 		f_model.init();
+
+		f_organizeByCombo.setItems(f_model.getViewOrganizationKeys());
+		setOrganizationInCombo();
+		f_organizeByCombo.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				/*
+				 * The user has selected a view organization within the UI.
+				 */
+				final String organizationName = f_organizeByCombo.getText();
+				f_model.setViewOrganizationFocus(organizationName);
+			}
+		});
 	}
 
 	public void dispose() {
@@ -233,9 +165,15 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 
 	}
 
-	public void findingsOrganizationFocusChanged(FindingsViewModel model) {
-		// TODO Auto-generated method stub
-
+	public void findingsOrganizationFocusChanged(final FindingsViewModel model) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				setProjectInCombo();
+				System.out.println("Changed project to"
+						+ model.getProjectFocus());
+				updateFindingsTreeTable();
+			}
+		});
 	}
 
 	public void noProjects(FindingsViewModel model) {
@@ -267,6 +205,7 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 				setProjectInCombo();
 				System.out.println("Changed project to"
 						+ model.getProjectFocus());
+				updateFindingsTreeTable();
 			}
 		});
 	}
@@ -280,6 +219,70 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 					f_projectCombo.select(i);
 				return;
 			}
+		}
+	}
+
+	private void setOrganizationInCombo() {
+		final String organizationFocus = f_model.getViewOrganizationFocus();
+		String[] items = f_organizeByCombo.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].equals(organizationFocus)) {
+				if (f_organizeByCombo.getSelectionIndex() != i)
+					f_organizeByCombo.select(i);
+				return;
+			}
+		}
+	}
+
+	private void updateFindingsTreeTable() {
+		final FindingsViewOrganization org = f_model.getViewOrganization();
+
+		final String project = f_model.getProjectFocus();
+		if (project == null) {
+			SLLogger.getLogger().log(Level.WARNING,
+					"No project is in focus on the findings view (file a bug)");
+			return;
+		}
+
+		String query = org.getQuery(project, f_model.getFilter());
+		System.out.println("query \"" + query + "\"");
+
+		try {
+			final Connection c = Data.getConnection();
+			try {
+				final Statement st = c.createStatement();
+				try {
+					final ResultSet rs = st.executeQuery(query);
+					final String[] columnLabels = QueryUtility
+							.getColumnLabels(rs);
+					final String[][] rows = QueryUtility.getRows(rs, 20000);
+					PlatformUI.getWorkbench().getDisplay().asyncExec(
+							new Runnable() {
+								public void run() {
+									if (f_results != null) {
+										f_results.dispose();
+									}
+									System.out.println("got results");
+									f_results = QueryUtility.construct(
+											f_topSash, columnLabels, rows);
+									f_results.setLayoutData(new GridData(
+											SWT.FILL, SWT.FILL, true, true));
+									f_topSash.layout();
+								}
+							});
+				} catch (SQLException e) {
+					// an error occurred with the query
+					SLLogger.getLogger().log(Level.SEVERE,
+							"SQL problem in findings view", e);
+				} finally {
+					st.close();
+				}
+			} finally {
+				c.close();
+			}
+		} catch (SQLException e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Could not work with the embedded database", e);
 		}
 	}
 }

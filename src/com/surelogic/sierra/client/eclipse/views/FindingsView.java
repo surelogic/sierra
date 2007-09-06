@@ -81,15 +81,15 @@ public final class FindingsView extends ViewPart {
 		findingsBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 
-		final ToolBar groupByBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
-		final ToolItem groupings = new ToolItem(groupByBar, SWT.PUSH);
-		groupings.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
-		groupings
+		final ToolBar organizeByBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
+		final ToolItem organizations = new ToolItem(organizeByBar, SWT.PUSH);
+		organizations.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
+		organizations
 				.setToolTipText("Define how findings are organized within this view");
 
-		final Label groupBy = new Label(findingsBar, SWT.NONE);
-		groupBy.setText("by");
-		final Combo groupByCombo = new Combo(findingsBar, SWT.DROP_DOWN
+		final Label byLabel = new Label(findingsBar, SWT.NONE);
+		byLabel.setText("by");
+		final Combo organizeByCombo = new Combo(findingsBar, SWT.DROP_DOWN
 				| SWT.READ_ONLY);
 
 		/*
@@ -129,9 +129,9 @@ public final class FindingsView extends ViewPart {
 			}
 		});
 		findingsBar.setMenu(toolBarMenu);
-		groupByBar.setMenu(toolBarMenu);
+		organizeByBar.setMenu(toolBarMenu);
 		toolBar.setMenu(toolBarMenu);
-		groupBy.setMenu(toolBarMenu);
+		byLabel.setMenu(toolBarMenu);
 
 		ExpandBar bar = new ExpandBar(sf, SWT.V_SCROLL);
 		int barIndex = 0;
@@ -153,7 +153,7 @@ public final class FindingsView extends ViewPart {
 		bar.setSpacing(2);
 
 		f_mediator = new FindingsMediator(pages, noFindingsPage, findingsPage,
-				projectCombo, groupings, groupByCombo, filter, topSash,
+				projectCombo, organizations, organizeByCombo, filter, topSash,
 				detailsItem, detailsComp, logItem, logComp);
 
 		pages.showPage(noFindingsPage);

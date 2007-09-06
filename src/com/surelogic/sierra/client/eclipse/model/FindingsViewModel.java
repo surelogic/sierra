@@ -65,11 +65,15 @@ public final class FindingsViewModel {
 
 	private final Map<String, FindingsViewOrganization> f_viewOrganizations = new HashMap<String, FindingsViewOrganization>();
 
-	public FindingsViewOrganization get(final String key) {
+	public FindingsViewOrganization getViewOrganization() {
+		return f_viewOrganizations.get(f_viewOrganizationFocus);
+	}
+
+	public FindingsViewOrganization getViewOrganization(final String key) {
 		return f_viewOrganizations.get(key);
 	}
 
-	public String[] getOrganizationKeys() {
+	public String[] getViewOrganizationKeys() {
 		return f_viewOrganizations.keySet().toArray(
 				new String[f_viewOrganizations.keySet().size()]);
 	}
@@ -90,15 +94,15 @@ public final class FindingsViewModel {
 	 * f_viewOrganizations.keySet().contains(f_organizationFocus)
 	 * </pre>
 	 */
-	private String f_organizationFocus = "Importance";
+	private String f_viewOrganizationFocus = "Importance";
 
 	/**
 	 * Gets the organization of focus, should not be <code>null</code>.
 	 * 
 	 * @return The organization of focus,or <code>null</code>.
 	 */
-	public String getOrganizationFocus() {
-		return f_organizationFocus;
+	public String getViewOrganizationFocus() {
+		return f_viewOrganizationFocus;
 	}
 
 	/**
@@ -110,12 +114,12 @@ public final class FindingsViewModel {
 	 * @throws IllegalStateException
 	 *             if the organization name does not exist within this model.
 	 */
-	public void setOrganizationFocus(String organizationName) {
+	public void setViewOrganizationFocus(String organizationName) {
 		if (!f_viewOrganizations.keySet().contains(organizationName))
 			throw new IllegalStateException("'" + organizationName
 					+ "' not the name of an organization");
-		if (!f_organizationFocus.equals(organizationName)) {
-			f_organizationFocus = organizationName;
+		if (!f_viewOrganizationFocus.equals(organizationName)) {
+			f_viewOrganizationFocus = organizationName;
 			for (IFindingsViewModelObserver o : f_observers)
 				o.findingsOrganizationFocusChanged(this);
 		}

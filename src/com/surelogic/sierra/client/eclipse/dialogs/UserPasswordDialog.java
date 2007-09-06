@@ -77,63 +77,63 @@ public final class UserPasswordDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite orig = (Composite) super.createDialogArea(parent);
+		final Composite panel = (Composite) super.createDialogArea(parent);
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		orig.setLayout(gridLayout);
+		panel.setLayout(gridLayout);
 
-		Label banner = new Label(orig, SWT.NONE);
-		GridData data1 = new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-		banner.setLayoutData(data1);
+		Label banner = new Label(panel, SWT.NONE);
+		banner.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, true,
+				1, 1));
 		banner.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
-		Composite panel = new Composite(orig, SWT.NONE);
+		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		panel.setLayout(gridLayout);
+		entryPanel.setLayout(gridLayout);
 
-		final Label directions = new Label(panel, SWT.WRAP);
+		final Label directions = new Label(entryPanel, SWT.WRAP);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
 		data.heightHint = 30;
 		directions.setLayoutData(data);
 		directions.setText("Enter your authentication for the server '"
 				+ f_serverName + "'");
 
-		final Label serverImg = new Label(panel, SWT.NONE);
+		final Label serverImg = new Label(entryPanel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 		serverImg.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		final Label serverlabel = new Label(panel, SWT.NONE);
+		final Label serverlabel = new Label(entryPanel, SWT.NONE);
 		serverlabel.setText(f_protocol + "://" + f_host + " on port " + f_port);
 		serverlabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 
-		final Label userLabel = new Label(panel, SWT.NONE);
+		final Label userLabel = new Label(entryPanel, SWT.NONE);
 		userLabel.setText("User:");
 		// userLabel.setForeground(getShell().getDisplay().getSystemColor(
 		// SWT.COLOR_BLUE));
 		userLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		f_userText = new Text(panel, SWT.SINGLE | SWT.BORDER);
+		f_userText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
 		f_userText
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		f_userText.setText(f_user);
 
-		final Label passwordLabel = new Label(panel, SWT.NONE);
+		final Label passwordLabel = new Label(entryPanel, SWT.NONE);
 		passwordLabel.setText("Password:");
 		// passwordLabel.setForeground(getShell().getDisplay().getSystemColor(
 		// SWT.COLOR_BLUE));
 		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		f_passwordText = new Text(panel, SWT.SINGLE | SWT.BORDER);
+		f_passwordText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
 		f_passwordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 		f_passwordText.setText("");
 		f_passwordText.setEchoChar('\u25CF');
 
-		f_savePasswordButton = new Button(panel, SWT.CHECK);
+		f_savePasswordButton = new Button(entryPanel, SWT.CHECK);
 		f_savePasswordButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER,
 				false, false, 2, 1));
 		f_savePasswordButton.setText("Save Password");
@@ -144,7 +144,7 @@ public final class UserPasswordDialog extends Dialog {
 			}
 		});
 
-		final Composite warning = new Composite(panel, SWT.NONE);
+		final Composite warning = new Composite(entryPanel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false,
 				2, 1));
 		gridLayout = new GridLayout();
@@ -162,7 +162,7 @@ public final class UserPasswordDialog extends Dialog {
 		saveWarning
 				.setText("Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.");
 
-		return panel;
+		return entryPanel;
 	}
 
 	@Override
