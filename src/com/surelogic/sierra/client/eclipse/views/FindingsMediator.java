@@ -205,6 +205,16 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 	}
 
 	public void init() {
+		f_projectCombo.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				/*
+				 * The user has selected a project within the UI.
+				 */
+				final String projectName = f_projectCombo.getText();
+				f_model.setProjectFocus(projectName);
+			}
+		});
+
 		f_model.addObserver(this);
 		f_model.init();
 	}
@@ -243,11 +253,10 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 	public void projectListChanged(FindingsViewModel model) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				System.out.println("list changed");
 				f_pages.showPage(f_findingsPage);
 				f_projectCombo.setItems(Projects.getInstance()
 						.getProjectNamesArray());
-				setProjectFocus();
+				setProjectInCombo();
 			}
 		});
 	}
@@ -255,18 +264,18 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 	public void projectFocusChanged(final FindingsViewModel model) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				setProjectFocus();
+				setProjectInCombo();
+				System.out.println("Changed project to"
+						+ model.getProjectFocus());
 			}
 		});
 	}
 
-	private void setProjectFocus() {
+	private void setProjectInCombo() {
 		final String projectNameFocus = f_model.getProjectFocus();
-		System.out.println("new focus " + projectNameFocus);
 		String[] items = f_projectCombo.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].equals(projectNameFocus)) {
-				System.out.println("selected" + i);
 				if (f_projectCombo.getSelectionIndex() != i)
 					f_projectCombo.select(i);
 				return;
