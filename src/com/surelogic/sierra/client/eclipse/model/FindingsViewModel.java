@@ -214,9 +214,7 @@ public final class FindingsViewModel {
 		for (IFindingsViewModelObserver o : f_observers)
 			o.projectListChanged(this);
 		if (!Projects.getInstance().contains(f_projectFocus)) {
-			f_projectFocus = Projects.getInstance().getFirst();
-			for (IFindingsViewModelObserver o : f_observers)
-				o.projectFocusChanged(this);
+			setProjectFocus(Projects.getInstance().getFirst());
 		}
 	}
 

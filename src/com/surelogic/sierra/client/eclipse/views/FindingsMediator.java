@@ -243,9 +243,11 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 	public void projectListChanged(FindingsViewModel model) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				System.out.println("list changed");
 				f_pages.showPage(f_findingsPage);
 				f_projectCombo.setItems(Projects.getInstance()
 						.getProjectNamesArray());
+				setProjectFocus();
 			}
 		});
 	}
@@ -253,15 +255,22 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 	public void projectFocusChanged(final FindingsViewModel model) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				final String projectNameFocus = model.getProjectFocus();
-				String[] items = f_projectCombo.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (items[i].equals(projectNameFocus)) {
-						f_projectCombo.select(i);
-						return;
-					}
-				}
+				setProjectFocus();
 			}
 		});
+	}
+
+	private void setProjectFocus() {
+		final String projectNameFocus = f_model.getProjectFocus();
+		System.out.println("new focus " + projectNameFocus);
+		String[] items = f_projectCombo.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].equals(projectNameFocus)) {
+				System.out.println("selected" + i);
+				if (f_projectCombo.getSelectionIndex() != i)
+					f_projectCombo.select(i);
+				return;
+			}
+		}
 	}
 }
