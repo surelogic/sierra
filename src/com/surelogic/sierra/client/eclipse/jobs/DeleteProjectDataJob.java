@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -35,22 +36,31 @@ public final class DeleteProjectDataJob {
 							monitor);
 					slMonitor.beginTask("Deleting selected projects",
 							f_projectNames.size() * 4);
-					for (final String projectName : f_projectNames) {
+
+					Connection conn;
+					try {
+						conn = Data.getConnection();
+
+						conn.setAutoCommit(false);
+						ProjectManager manager = ProjectManager
+								.getInstance(conn);
 						try {
-							Connection conn = Data.getConnection();
-							conn.setAutoCommit(false);
-							try {
-								ProjectManager.getInstance(conn).deleteProject(
-										projectName, slMonitor);
+							for (final String projectName : f_projectNames) {
+								manager.deleteProject(projectName, slMonitor);
 								conn.commit();
-							} finally {
-								conn.close();
 							}
 						} catch (Exception e) {
-							final String msg = "Deletion of Sierra data about project '"
-									+ projectName + "' failed.";
+							final String msg = "Deletion of Sierra data about projects '"
+									+ f_projectNames + "' failed.";
 							SLLogger.getLogger().log(Level.SEVERE, msg, e);
+						} finally {
+							conn.close();
 						}
+
+					} catch (SQLException e1) {
+						final String msg = "Deletion of Sierra data about projects '"
+								+ f_projectNames + "' failed.";
+						SLLogger.getLogger().log(Level.SEVERE, msg, e1);
 					}
 					DatabaseHub.getInstance().notifyProjectDeleted();
 				}
