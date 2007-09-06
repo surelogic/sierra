@@ -27,6 +27,7 @@ import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
+import com.surelogic.sierra.tool.ant.ToolRunException;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -193,12 +194,21 @@ public final class Scan {
 
 				while (!slProgressMonitorWrapper.isCanceled()) {
 					Thread.sleep(500);
-					if (antRunnable.isCompleted()) {
+					if (antRunnable.isCompleted() || antRunnable.hasError()) {
 						break;
 					}
 				}
 
-				if (slProgressMonitorWrapper.isCanceled()) {
+				if (antRunnable.hasError()) {
+					slProgressMonitorWrapper.done();
+
+					List<String> failedTools = antRunnable.getFailedTools();
+					String message = "Failed : ";
+					for (String s : failedTools) {
+						message = message + s + " ";
+					}
+					return SLStatus.createErrorStatus(message);
+				} else if (slProgressMonitorWrapper.isCanceled()) {
 					slProgressMonitorWrapper.done();
 					antRunnable.stopAll();
 					return Status.CANCEL_STATUS;
@@ -246,6 +256,8 @@ public final class Scan {
 		private final Config f_config;
 		private SLProgressMonitor f_monitor;
 		private int f_scale = 1;
+		private boolean f_error = false;
+		private List<String> f_failedTools;
 
 		/**
 		 * The constructor for thread
@@ -265,18 +277,33 @@ public final class Scan {
 
 		public void run() {
 
-			f_complete = false;
-			f_sierraAnalysis = new SierraAnalysis(f_config, f_monitor, f_scale);
-			f_sierraAnalysis.execute();
-			f_complete = true;
+			try {
+				f_complete = false;
+				f_sierraAnalysis = new SierraAnalysis(f_config, f_monitor,
+						f_scale);
+				f_sierraAnalysis.execute();
+				f_complete = true;
+			} catch (ToolRunException tre) {
+				// Exception already logged
+				f_error = true;
+				f_failedTools = tre.getFailedTools();
+			}
 		}
 
 		public void stopAll() {
 			f_sierraAnalysis.stop();
 		}
 
+		public boolean hasError() {
+			return f_error;
+		}
+
 		public boolean isCompleted() {
 			return f_complete;
+		}
+
+		public List<String> getFailedTools() {
+			return f_failedTools;
 		}
 	}
 
@@ -319,17 +346,10 @@ public final class Scan {
 
 			} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
 				LOG.info("Canceled scan on " + f_projectName);
-				if (PreferenceConstants.showBalloonNotifications())
-					BalloonUtility.showMessage("Sierra Scan was Canceled for "
-							+ f_projectName, "Check the logs.");
 			} else {
 				LOG
 						.severe("Error while trying to run scan on "
 								+ f_projectName);
-				if (PreferenceConstants.showBalloonNotifications())
-					BalloonUtility.showMessage(
-							"Sierra Scan Completed with Errors for "
-									+ f_projectName, "Check the logs.");
 			}
 		}
 	}
