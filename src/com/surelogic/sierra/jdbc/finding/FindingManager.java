@@ -14,7 +14,6 @@ import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
-import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;

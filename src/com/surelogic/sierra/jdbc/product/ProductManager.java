@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
-import com.surelogic.sierra.jdbc.record.ProjectRecord;
 
 public class ProductManager {
 
@@ -20,7 +18,6 @@ public class ProductManager {
 	private final PreparedStatement findAllStatement;
 
 	private final ProductRecordFactory productFactory;
-	private final ProjectRecordFactory projectFactory;
 	
 	private final ProductProjectManager ppManager;
 
@@ -28,8 +25,7 @@ public class ProductManager {
 		this.conn = conn;
 
 		productFactory = ProductRecordFactory.getInstance(conn);
-		projectFactory = ProjectRecordFactory.getInstance(conn);
-
+		
 		ppManager = ProductProjectManager.getInstance(conn);
 
 		findAllStatement = conn.prepareStatement(FIND_ALL);
@@ -83,12 +79,12 @@ public class ProductManager {
 			throws SQLException {
 		if (projects != null) {
 			for (String projectName : projects) {
-				ProjectRecord project = projectFactory.newProject();
-				project.setName(projectName);
-				if (!project.select()) {
-					// XXX Throw error
-					throw new SQLException();
-				}
+//				ProjectRecord project = projectFactory.newProject();
+//				project.setName(projectName);
+//				if (!project.select()) {
+//					// XXX Throw error
+//					throw new SQLException();
+//				}
 
 				/** Add a relation between this project and product to the DB */
 //				ProductProjectRecord rec = pprFactory.newProductProject();

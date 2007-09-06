@@ -56,6 +56,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Set<ArtifactSourceRecord> relations;
 
 	private final MessageFilter filter;
+	@SuppressWarnings("unused")
 	private final String projectName;
 	private final ScanRecord scan;
 

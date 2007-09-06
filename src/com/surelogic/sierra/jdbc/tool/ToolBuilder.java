@@ -82,7 +82,7 @@ public class ToolBuilder {
 		private void clear() {
 			this.mnemonic = null;
 			this.mnemonicDisplay = null;
-			this.category = null;;
+			this.category = null;
 			this.link = null;
 			this.info = null;
 		}
