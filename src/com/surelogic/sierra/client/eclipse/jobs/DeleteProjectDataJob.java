@@ -62,6 +62,7 @@ public final class DeleteProjectDataJob {
 								+ f_projectNames + "' failed.";
 						SLLogger.getLogger().log(Level.SEVERE, msg, e1);
 					}
+					monitor.done();
 					DatabaseHub.getInstance().notifyProjectDeleted();
 				}
 			});
