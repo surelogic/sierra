@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -37,18 +38,6 @@ import com.surelogic.sierra.tool.config.Config;
 public final class Scan {
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
-
-	/** The status for properly terminated task */
-	public static final IStatus PROPER_TERMINATION = SLStatus.createStatus(
-			IStatus.OK, 0, "Proper termination", null);
-
-	/** The status for task that completed with errors */
-	public static final IStatus IMPROPER_TERMINATION = SLStatus
-			.createErrorStatus("Improper termination");
-
-	/** The status for cancelled task */
-	public static final IStatus TASK_CANCELLED = SLStatus.createStatus(
-			IStatus.CANCEL, 0, "Task cancelled", null);
 
 	private static final String SIERRA_JOB = "sierra";
 
@@ -152,7 +141,6 @@ public final class Scan {
 			f_config = config;
 			f_familyName = familyName;
 			setRule(SierraSchedulingRule.getInstance());
-
 		}
 
 		@Override
@@ -184,7 +172,7 @@ public final class Scan {
 				if (slProgressMonitorWrapper.isCanceled()) {
 					slProgressMonitorWrapper.done();
 					antRunnable.stopAll();
-					return TASK_CANCELLED;
+					return Status.CANCEL_STATUS;
 				} else {
 					try {
 						// Start database entry
@@ -195,21 +183,18 @@ public final class Scan {
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());
 						slProgressMonitorWrapper.done();
-						return IMPROPER_TERMINATION;
-
+						return SLStatus.createErrorStatus("Scan failed", rpe);
 					}
 					slProgressMonitorWrapper.done();
 					LOG.info("Completed scan");
-					return PROPER_TERMINATION;
+					return Status.OK_STATUS;
 				}
 
 			} catch (Exception e) {
 				LOG.log(Level.SEVERE,
-						"Exception while trying to excute ant build task" + e);
+						"Exception while trying to execute ant build task" + e);
+				return SLStatus.createErrorStatus("Scan failed", e);
 			}
-
-			slProgressMonitorWrapper.done();
-			return IMPROPER_TERMINATION;
 		}
 	}
 
@@ -249,15 +234,15 @@ public final class Scan {
 
 		@Override
 		public void done(IJobChangeEvent event) {
-			if (event.getResult().equals(PROPER_TERMINATION)) {
+			if (event.getResult().equals(Status.OK_STATUS)) {
 				BalloonUtility.showMessage("Sierra Scan Completed",
 						"You may now examine the results.");
 
-			} else if (event.getResult().equals(TASK_CANCELLED)) {
-				LOG.info("Cancelled scan");
-				BalloonUtility.showMessage("Sierra Scan was Cancelled",
+			} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
+				LOG.info("Canceled scan");
+				BalloonUtility.showMessage("Sierra Scan was Canceled",
 						"Check the logs.");
-			} else if (event.getResult().equals(IMPROPER_TERMINATION)) {
+			} else {
 				BalloonUtility.showMessage("Sierra Scan Completed with Errors",
 						"Check the logs.");
 			}
