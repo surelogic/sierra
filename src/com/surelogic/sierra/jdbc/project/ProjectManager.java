@@ -130,9 +130,6 @@ public class ProjectManager {
 			}
 			rec.delete();
 		}
-		if (monitor != null) {
-			monitor.done();
-		}
 	}
 
 	private Collection<String> getProjectScans(Long projectId)
