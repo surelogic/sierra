@@ -75,7 +75,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -232,10 +231,9 @@ public class SierraAnalysis extends Task {
 			verifyDependencies();
 			tools.runTools(monitor);
 
-			Map<String, String> failedTools = tools.checkStatus();
-			if (failedTools.size() != 0) {
-				throw new ToolRunException(
-						"Following tools failed. Check logs.", failedTools);
+			String errorMessage = tools.checkStatus();
+			if (errorMessage != null) {
+				throw new RuntimeException(errorMessage);
 
 			}
 			generateRunDocument(monitor);
@@ -247,11 +245,11 @@ public class SierraAnalysis extends Task {
 				cleanup();
 			}
 
-		} catch (ToolRunException tre) {
-			throw tre;
 		} catch (BuildException be) {
 			SLLogger.getLogger("sierra").severe(be.getMessage());
 			throw be;
+		} catch (RuntimeException re) {
+			throw re;
 		}
 
 	}
@@ -414,6 +412,7 @@ public class SierraAnalysis extends Task {
 
 			antProject.log("Generating the run document: " + runDocument,
 					org.apache.tools.ant.Project.MSG_INFO);
+
 			MessageArtifactFileGenerator generator = new MessageArtifactFileGenerator(
 					runDocument, config);
 			Parser parser = new Parser(generator, monitor);

@@ -333,20 +333,20 @@ public class Tools {
 	 * 
 	 * @param parser
 	 */
-	Map<String, String> checkStatus() {
-		Map<String, String> failedTools = new HashMap<String, String>();
+	String checkStatus() {
+		String errorMessage = null;
 		ToolConfig tool;
 		Set<String> toolNames = tools.keySet();
 		for (String toolName : toolNames) {
 			antProject.log("Checking status for " + toolName,
 					org.apache.tools.ant.Project.MSG_DEBUG);
 			tool = tools.get(toolName);
-			Map<String, String> holder = tool.getCompletedCode();
-			if (holder != null) {
-				failedTools.putAll(holder);
+			errorMessage = tool.getErrorMessage();
+			if (errorMessage != null) {
+				return errorMessage;
 			}
 		}
-		return failedTools;
+		return errorMessage;
 	}
 
 	/**

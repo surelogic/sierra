@@ -5,7 +5,6 @@ package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.tools.ant.BuildException;
@@ -113,7 +112,7 @@ public abstract class ToolConfig implements Runnable {
 	 * set completetion code
 	 */
 
-	abstract Map<String, String> getCompletedCode();
+	abstract String getErrorMessage();
 
 	/*
 	 * $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

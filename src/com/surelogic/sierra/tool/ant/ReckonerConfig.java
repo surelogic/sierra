@@ -1,8 +1,6 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -26,7 +24,7 @@ public class ReckonerConfig extends ToolConfig {
 	private SLProgressMonitor f_monitor = null;
 	private Path f_classpath = null;
 	private int f_scale = 1;
-	private Map<String, String> f_status = null;
+	private String f_status = null;
 
 	public ReckonerConfig(Project project) {
 		super("reckoner", project);
@@ -133,10 +131,11 @@ public class ReckonerConfig extends ToolConfig {
 					antProject.log("Reckoner failed to execute.",
 							org.apache.tools.ant.Project.MSG_ERR);
 					SLLogger.getLogger("sierra").severe(
-							"Reckoner failed to execute.");
+							"Reckoner failed to execute with following command "
+									+ cmdj.toString());
 					analysis.stop();
-					f_status = new HashMap<String, String>();
-					f_status.put("Reckoner", cmdj.toString());
+					f_status = "Reckoner execution failed with following command "
+							+ cmdj.toString();
 
 				}
 
@@ -169,7 +168,7 @@ public class ReckonerConfig extends ToolConfig {
 	}
 
 	@Override
-	Map<String, String> getCompletedCode() {
+	String getErrorMessage() {
 		return f_status;
 	}
 

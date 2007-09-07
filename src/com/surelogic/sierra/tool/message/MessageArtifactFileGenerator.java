@@ -170,6 +170,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
+			osw.close();
+			stream.close();
 
 			// Delete temp files
 			errOut.close();
@@ -182,6 +184,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file" + e);
+			throw new RuntimeException(e.getMessage());
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
 		}
