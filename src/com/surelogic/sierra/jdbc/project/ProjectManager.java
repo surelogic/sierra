@@ -73,7 +73,7 @@ public class ProjectManager {
 		 * if we have any updates to settings.
 		 */
 		SierraService service = new SierraServiceClient(server)
-				.getTigerServicePort();
+				.getSierraServicePort();
 
 		// Commit merges
 		MergeAuditTrailRequest mergeRequest = new MergeAuditTrailRequest();
