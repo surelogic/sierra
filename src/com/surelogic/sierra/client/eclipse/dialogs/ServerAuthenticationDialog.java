@@ -15,23 +15,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
 
 /**
  * Dialog to prompt the user for a user name and password to a Sierra server.
  */
-public final class UserPasswordDialog extends Dialog {
+public final class ServerAuthenticationDialog extends Dialog {
 
-	private final String f_serverName;
-	private final String f_protocol;
-	private final String f_host;
-	private final int f_port;
+	private final SierraServerModel f_server;
 
-	private String f_user = "";
 	private Text f_userText;
-
-	private String f_password = "";
 	private Text f_passwordText;
-
 	private boolean f_savePassword = false;
 	private Button f_savePasswordButton;
 
@@ -41,31 +35,14 @@ public final class UserPasswordDialog extends Dialog {
 	 * 
 	 * @param parentShell
 	 *            a shell.
-	 * @param serverName
-	 *            the logical name of the Sierra server.
-	 * @param protocol
-	 *            the protocol <code>http</code> or <code>https</code>.
-	 * @param host
-	 *            a non-null host name or IP address that a Sierra server is
-	 *            running on.
-	 * @param port
-	 *            the port the Sierra server is running on.
-	 * @param user
-	 *            a user name, or <code>null</code> if the user name is not
-	 *            known.
+	 * @param server
+	 *            the information about the Sierra server.
 	 */
-	public UserPasswordDialog(Shell parentShell, String serverName,
-			String protocol, String host, int port, String user) {
+	public ServerAuthenticationDialog(Shell parentShell,
+			SierraServerModel server) {
 		super(parentShell);
-		assert serverName != null;
-		assert protocol != null;
-		assert host != null;
-		f_serverName = serverName;
-		f_protocol = protocol;
-		f_host = host;
-		f_port = port;
-		if (user != null)
-			f_user = user;
+		assert server != null;
+		f_server = server;
 	}
 
 	@Override
@@ -84,8 +61,8 @@ public final class UserPasswordDialog extends Dialog {
 		panel.setLayout(gridLayout);
 
 		Label banner = new Label(panel, SWT.NONE);
-		banner.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, true,
-				1, 1));
+		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
+				1));
 		banner.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
@@ -96,17 +73,19 @@ public final class UserPasswordDialog extends Dialog {
 
 		final Label directions = new Label(entryPanel, SWT.WRAP);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
-		data.heightHint = 40;
+		data.heightHint = 20;
 		directions.setLayoutData(data);
-		directions.setText("Enter your authentication for the server '"
-				+ f_serverName + "'");
+		directions.setText("Enter your authentication for '"
+				+ f_server.getName() + "'");
 
 		final Label serverImg = new Label(entryPanel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
-		serverImg.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false));
+		data = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+		data.heightHint = 25;
+		serverImg.setLayoutData(data);
 		final Label serverlabel = new Label(entryPanel, SWT.NONE);
-		serverlabel.setText(f_protocol + "://" + f_host + " on port " + f_port);
+		serverlabel.setText(f_server.getProtocol() + "://" + f_server.getHost()
+				+ " on port " + f_server.getPort());
 		serverlabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 
@@ -119,7 +98,7 @@ public final class UserPasswordDialog extends Dialog {
 		f_userText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
 		f_userText
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
-		f_userText.setText(f_user);
+		f_userText.setText(f_server.getUser());
 
 		final Label passwordLabel = new Label(entryPanel, SWT.NONE);
 		passwordLabel.setText("Password:");
@@ -157,30 +136,22 @@ public final class UserPasswordDialog extends Dialog {
 				false));
 		final Label saveWarning = new Label(warning, SWT.WRAP);
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		data.widthHint = 250;
+		data.widthHint = 300;
 		saveWarning.setLayoutData(data);
-		saveWarning
-				.setText("Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.");
+		saveWarning.setText(ServerLocationDialog.SAVE_PW_WARNING);
 
 		return entryPanel;
 	}
 
 	@Override
 	protected void okPressed() {
-		f_user = f_userText.getText();
-		f_password = f_passwordText.getText();
+		f_server.setUser(f_userText.getText());
+		f_server.setPassword(f_passwordText.getText());
+		f_server.setSavePassword(f_savePassword);
 		super.okPressed();
 	}
 
-	public String getUser() {
-		return f_user;
-	}
-
-	public String getPassword() {
-		return f_password;
-	}
-
-	public boolean savePassword() {
-		return f_savePassword;
+	public SierraServerModel getServer() {
+		return f_server;
 	}
 }

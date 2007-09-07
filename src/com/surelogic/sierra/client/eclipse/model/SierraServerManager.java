@@ -14,7 +14,7 @@ public final class SierraServerManager {
 	/**
 	 * Maps servers by their name.
 	 */
-	final Map<String, SierraServer> f_nameToServer = new HashMap<String, SierraServer>();
+	final Map<String, SierraServerModel> f_nameToServer = new HashMap<String, SierraServerModel>();
 
 	/**
 	 * The save file (under the workspace) for the set of servers managed by
@@ -47,12 +47,12 @@ public final class SierraServerManager {
 	 *            a server name.
 	 * @return the server with the passed name.
 	 */
-	public SierraServer getOrCreate(final String name) {
+	public SierraServerModel getOrCreate(final String name) {
 		if (name == null)
 			throw new IllegalArgumentException("name must be non-null");
-		SierraServer server = f_nameToServer.get(name);
+		SierraServerModel server = f_nameToServer.get(name);
 		if (server == null) {
-			server = new SierraServer(this, name);
+			server = new SierraServerModel(this, name);
 			notifyObservers();
 		}
 		return server;
@@ -64,9 +64,9 @@ public final class SierraServerManager {
 	 * 
 	 * @return the new server.
 	 */
-	public SierraServer create() {
+	public SierraServerModel create() {
 		final String name = newUniqueName("server");
-		final SierraServer query = new SierraServer(this, name);
+		final SierraServerModel query = new SierraServerModel(this, name);
 		setFocus(query);
 		return query;
 	}
@@ -76,10 +76,10 @@ public final class SierraServerManager {
 	 * The new server becomes the focus of this model.
 	 */
 	public void duplicate() {
-		final SierraServer server = getFocus();
+		final SierraServerModel server = getFocus();
 		if (server != null) {
 			final String name = newUniqueName(server.getName());
-			final SierraServer newServer = new SierraServer(this, name);
+			final SierraServerModel newServer = new SierraServerModel(this, name);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());
 			newServer.setPort(server.getPort());
@@ -133,13 +133,13 @@ public final class SierraServerManager {
 	 * of this model.
 	 */
 	public interface SierraServerObserver {
-		void update(SierraServer focus);
+		void update(SierraServerModel focus);
 	}
 
 	/**
 	 * Defines a server which is the current focus of this model.
 	 */
-	private SierraServer f_focus;
+	private SierraServerModel f_focus;
 
 	/**
 	 * Sets the passed server as the current focus of this model.
@@ -147,7 +147,7 @@ public final class SierraServerManager {
 	 * @param server
 	 *            the non-null server to be the focus of this model.
 	 */
-	public void setFocus(final SierraServer server) {
+	public void setFocus(final SierraServerModel server) {
 		if (server == null)
 			throw new IllegalArgumentException("server must be non-null");
 		f_focus = server;
@@ -159,7 +159,7 @@ public final class SierraServerManager {
 	 * 
 	 * @return the server which is the current focus of this model.
 	 */
-	public SierraServer getFocus() {
+	public SierraServerModel getFocus() {
 		return f_focus;
 	}
 

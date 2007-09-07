@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-public final class SierraServer {
+public final class SierraServerModel {
 
 	private final SierraServerManager f_manager;
 
@@ -8,7 +8,7 @@ public final class SierraServer {
 		return f_manager;
 	}
 
-	public SierraServer(final SierraServerManager manager, final String name) {
+	public SierraServerModel(final SierraServerManager manager, final String name) {
 		assert manager != null;
 		f_manager = manager;
 		assert name != null;
@@ -29,6 +29,10 @@ public final class SierraServer {
 
 	public boolean isSecure() {
 		return f_secure;
+	}
+
+	public String getProtocol() {
+		return f_secure ? "https" : "http";
 	}
 
 	public void setSecure(boolean secure) {
