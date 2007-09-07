@@ -25,13 +25,14 @@ import org.junit.Test;
  * @author nathan
  * 
  */
-public class TigerServiceTest {
+public class SierraServiceTest {
 
 	private SierraService service;
 
 	@Before
 	public void setUp() throws Exception {
-		service = new SierraServiceClient().getTigerServicePort();
+		service = new SierraServiceClient(new SierraServer("localhost", 8080))
+				.getSierraServicePort();
 	}
 
 	@After
@@ -74,13 +75,14 @@ public class TigerServiceTest {
 				"ShortVariable"));
 		MergeAuditResponse mergeRes = service.mergeAuditTrails(mergeReq);
 		String trail = mergeRes.getTrail().get(0);
-		service.mergeAuditTrails(mergeReq);
+		mergeRes = service.mergeAuditTrails(mergeReq);
 		String newTrail = mergeRes.getTrail().get(0);
 		assertNotNull(trail);
 		assertEquals(trail, newTrail);
 		matches.add(new Match("package2", "class2", 35L, "PMD", "4.0",
 				"ShortVariable"));
-		service.mergeAuditTrails(mergeReq);
+		mergeRes = service.mergeAuditTrails(mergeReq);
+		newTrail = mergeRes.getTrail().get(0);
 		assertEquals(trail, newTrail);
 		AuditTrails auditTrails = new AuditTrails();
 		List<AuditTrail> trails = new ArrayList<AuditTrail>();
@@ -95,7 +97,7 @@ public class TigerServiceTest {
 		service.commitAuditTrails(auditTrails);
 		AuditTrailRequest request = new AuditTrailRequest();
 		request.setProject("sierra-entity");
-		request.setRevision(0L);
+		request.setRevision(null);
 		AuditTrailResponse response = service.getAuditTrails(request);
 		AuditTrailUpdate update = response.getUpdate().get(0);
 		assertEquals(audit, update.getAudit().get(update.getAudit().size() - 1));
