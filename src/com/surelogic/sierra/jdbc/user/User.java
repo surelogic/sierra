@@ -1,9 +1,12 @@
 package com.surelogic.sierra.jdbc.user;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.surelogic.sierra.jdbc.record.LongRecord;
 
 public class User {
 
@@ -32,5 +35,25 @@ public class User {
 
 	public Long getId() {
 		return id;
+	}
+
+	public static User findOrCreate(Connection conn, String user)
+			throws SQLException {
+		PreparedStatement st = conn
+				.prepareStatement("SELECT ID FROM SIERRA_USER WHERE USER_NAME = ?");
+		st.setString(1, user);
+		ResultSet set = st.executeQuery();
+		if (!set.next()) {
+			st = conn.prepareStatement(
+					"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, user);
+			st.executeUpdate();
+			set = st.getGeneratedKeys();
+		}
+		set.next();
+		User ret = new User();
+		ret.id = set.getLong(1);
+		return ret;
 	}
 }

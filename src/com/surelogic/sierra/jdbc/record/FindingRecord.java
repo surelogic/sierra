@@ -30,13 +30,13 @@ public final class FindingRecord extends LongRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		return fillWithPk(st, idx);
+		st.setString(idx++, uid);
+		return idx;
 	}
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		this.projectId = set.getLong(idx++);
-		this.uid = set.getString(idx++);
 		this.read = set.getString(idx++).equals("Y");
 		this.importance = Importance.values()[set.getInt(idx++)];
 		return idx;

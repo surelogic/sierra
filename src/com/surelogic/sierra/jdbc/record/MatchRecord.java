@@ -182,4 +182,10 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 
 	}
 
+	@Override
+	public String toString() {
+		return "Match(" + id.projectId + "," + id.packageName + "."
+				+ id.className + "," + id.hash + "," + id.findingTypeId + ")";
+	}
+
 }

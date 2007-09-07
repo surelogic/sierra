@@ -4,25 +4,37 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
+import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
+import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
+import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
 import com.surelogic.sierra.tool.message.AuditTrails;
+import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -34,26 +46,64 @@ public abstract class FindingManager {
 			.getLoggerFor(FindingManager.class);
 
 	private static final int CHUNK_SIZE = 1000;
+	private static final int CHECK_SIZE = 10;
 
 	protected final Connection conn;
+
+	private final FindingTypeManager ftManager;
+
 	private final FindingRecordFactory fact;
 
 	private final PreparedStatement selectFinding;
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
-
-	// private final PreparedStatement getLocalMerges;
+	private final PreparedStatement updateFindingUid;
+	private final PreparedStatement updateMatchRevision;
+	private final PreparedStatement findLocalMerges;
+	private final PreparedStatement findLocalAudits;
+	private final PreparedStatement obsoleteAudits;
+	private final PreparedStatement obsoleteMatches;
+	private final PreparedStatement obsoleteFinding;
+	private final PreparedStatement latestAuditRevision;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.fact = ClientFindingRecordFactory.getInstance(conn);
+		ftManager = FindingTypeManager.getInstance(conn);
 		selectFinding = conn
 				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
 		markFindingAsRead = conn
 				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y' WHERE ID = ?");
 		updateFindingImportance = conn
 				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ? WHERE ID = ?");
-		// getLocalMerges = conn.prepareStatement("");
+		updateFindingUid = conn
+				.prepareStatement("UPDATE FINDING SET UID = ? WHERE ID = ?");
+		updateMatchRevision = conn
+				.prepareStatement("UPDATE LOCATION_MATCH SET REVISION = ? WHERE FINDING_ID = ? AND REVISION IS NULL");
+		findLocalMerges = conn
+				.prepareStatement("SELECT M.FINDING_ID,M.PACKAGE_NAME,M.CLASS_NAME,M.HASH,T.NAME,T.VERSION, FT.MNEMONIC"
+						+ " FROM LOCATION_MATCH NEW_M, FINDING F, LOCATION_MATCH M, FINDING_TYPE FT, TOOL T"
+						+ " WHERE NEW_M.PROJECT_ID = ? AND"
+						+ " NEW_M.REVISION IS NULL AND"
+						+ " F.ID = NEW_M.FINDING_ID AND"
+						+ " F.IS_READ = 'Y' AND"
+						+ " M.FINDING_ID = F.ID AND"
+						+ " FT.ID = M.FINDING_TYPE_ID AND"
+						+ " T.ID = FT.TOOL_ID" + " ORDER BY FINDING_ID");
+		findLocalAudits = conn
+				.prepareStatement("SELECT F.UID,A.DATE_TIME,A.EVENT,A.VALUE"
+						+ " FROM AUDIT A, FINDING F"
+						+ " WHERE A.REVISION IS NULL AND"
+						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
+						+ " AND F.UID IS NOT NULL ORDER BY A.FINDING_ID");
+		obsoleteAudits = conn
+				.prepareStatement("UPDATE AUDIT SET FINDING_ID = ? WHERE FINDING_ID = ?");
+		obsoleteMatches = conn
+				.prepareStatement("UPDATE LOCATION_MATCH SET FINDING_ID = ? WHERE FINDING_ID = ?");
+		obsoleteFinding = conn
+				.prepareStatement("UPDATE FINDING SET OBSOLETED_BY_ID = ?, OBSOLETED_BY_REVISION = ? WHERE ID = ?");
+		latestAuditRevision = conn
+				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, FINDING F, AUDIT A WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND A.FINDING_ID = F.ID");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -66,7 +116,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		newAudit(findingId, comment, AuditEvent.COMMENT).insert();
+		comment(getUserId(), findingId, comment, new Date());
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -75,11 +125,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		newAudit(findingId, importance.toString(), AuditEvent.IMPORTANCE)
-				.insert();
-		updateFindingImportance.setInt(1, importance.ordinal());
-		updateFindingImportance.setLong(2, findingId);
-		updateFindingImportance.execute();
+		setImportance(getUserId(), findingId, importance, new Date());
 	}
 
 	public void markAsRead(Long findingId) throws SQLException {
@@ -87,9 +133,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		newAudit(findingId, null, AuditEvent.READ).insert();
-		markFindingAsRead.setLong(1, findingId);
-		markFindingAsRead.execute();
+		markAsRead(getUserId(), findingId, new Date());
 	}
 
 	/**
@@ -98,7 +142,7 @@ public abstract class FindingManager {
 	 * @param uid
 	 */
 	public void generateFindings(String projectName, String uid,
-			MessageFilter filter) {
+			MessageFilter filter, SLProgressMonitor monitor) {
 		try {
 
 			FindingRecordFactory factory = getFactory();
@@ -147,9 +191,18 @@ public abstract class FindingManager {
 				LongRelationRecord afr = factory.newArtifactFinding();
 				afr.setId(new RelationRecord.PK<Long, Long>(art.id, findingId));
 				afr.insert();
-				if (++counter == CHUNK_SIZE) {
+				if ((++counter % CHUNK_SIZE) == 0) {
 					conn.commit();
-					counter = 0;
+				}
+				if ((counter % CHECK_SIZE) == 0) {
+					if (monitor != null) {
+						if (monitor.isCanceled()) {
+							conn.rollback();
+							ScanManager.getInstance(conn).deleteScan(uid, null);
+							return;
+						}
+						monitor.worked(1);
+					}
 				}
 			}
 			conn.commit();
@@ -161,36 +214,259 @@ public abstract class FindingManager {
 		}
 	}
 
-	public void updateLocalFindings(Long revison,
+	public void updateLocalFindings(String projectName, Long revision,
 			List<TrailObsoletion> obsoletions, List<AuditTrailUpdate> updates,
-			SLProgressMonitor monitor) {
+			SLProgressMonitor monitor) throws SQLException {
+		ProjectRecord project = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		project.setName(projectName);
+		if (project.select()) {
+			for (TrailObsoletion to : obsoletions) {
+				FindingRecord obsoletedFinding = fact.newFinding();
+				obsoletedFinding.setUid(to.getObsoletedTrail());
+				if (obsoletedFinding.select()) {
+					FindingRecord newFinding = fact.newFinding();
+					newFinding.setUid(to.getTrail());
+					if (!newFinding.select()) {
+						newFinding.insert();
+					}
+					obsolete(obsoletedFinding.getId(), newFinding.getId(),
+							revision);
+				} else {
+					log.log(Level.WARNING, "A trail obsoletion for uid "
+							+ to.getObsoletedTrail() + " to uid "
+							+ to.getTrail() + " could not be resolved");
+				}
+			}
+			for (AuditTrailUpdate update : updates) {
+				// TODO make sure that everything is ordered by revision and
+				// time
+				FindingRecord finding = fact.newFinding();
+				finding.setUid(update.getTrail());
+				if (!finding.select()) {
+					finding.insert();
+				}
+				MatchRecord mRec = fact.newMatch();
+				MatchRecord.PK pk = new MatchRecord.PK();
+				pk.setProjectId(project.getId());
+				mRec.setId(pk);
+				for (Match m : update.getMatch()) {
+					fillKey(pk, m);
+					if (mRec.select()) {
+						if (!mRec.getFindingId().equals(finding.getId())) {
+							// This must be a local match, so delete it
+							delete(mRec.getFindingId(), finding.getId());
+						}
+					} else {
+						mRec.setFindingId(finding.getId());
+						mRec.insert();
+					}
+				}
+				for (Audit a : update.getAudit()) {
+					Long userId = getUserId(a.getUser());
+					switch (a.getEvent()) {
+					case COMMENT:
+						comment(userId, finding.getId(), a.getValue(), a
+								.getTimestamp());
+						break;
+					case IMPORTANCE:
+						setImportance(userId, finding.getId(), Importance
+								.valueOf(a.getValue()), a.getTimestamp());
+						break;
+					case READ:
+						markAsRead(userId, finding.getId(), a.getTimestamp());
+					default:
+						break;
+					}
+				}
 
+			}
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ projectName + " exists.");
+		}
 	}
 
-	public List<Merge> getNewLocalMerges(String project,
-			SLProgressMonitor monitor) {
-		return null;
+	public AuditTrails getNewLocalAudits(String projectName,
+			SLProgressMonitor monitor) throws SQLException {
+		AuditTrails response = new AuditTrails();
+		List<AuditTrail> trails = new ArrayList<AuditTrail>();
+		response.setAuditTrail(trails);
+		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
+		rec.setName(projectName);
+		if (rec.select()) {
+			findLocalAudits.setLong(1, rec.getId());
+			ResultSet set = findLocalAudits.executeQuery();
+			String oldUid = null;
+			List<Audit> audits = null;
+			while (set.next()) {
+				int idx = 1;
+				String newUid = set.getString(idx++);
+				if (!newUid.equals(oldUid)) {
+					oldUid = newUid;
+					audits = new LinkedList<Audit>();
+					AuditTrail trail = new AuditTrail();
+					trail.setFinding(newUid);
+					trail.setAudits(audits);
+					trails.add(trail);
+				}
+				Audit a = new Audit();
+				a.setTimestamp(set.getTimestamp(idx++));
+				a.setEvent(AuditEvent.values()[set.getInt(idx++)]);
+				a.setValue(set.getString(idx++));
+				audits.add(a);
+			}
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ projectName + " exists.");
+		}
+		return response;
 	}
 
-	public void updateLocalTrailUids(String project, Long revision,
-			List<String> trails, List<Merge> merges) {
-
+	public List<Merge> getNewLocalMerges(String projectName,
+			SLProgressMonitor monitor) throws SQLException {
+		List<Merge> merges = new ArrayList<Merge>();
+		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
+		rec.setName(projectName);
+		if (rec.select()) {
+			findLocalMerges.setLong(1, rec.getId());
+			ResultSet set = findLocalMerges.executeQuery();
+			Long oldFinding = null;
+			List<Match> matches = null;
+			while (set.next()) {
+				int idx = 1;
+				Long newFinding = set.getLong(idx++);
+				if (!newFinding.equals(oldFinding)) {
+					oldFinding = newFinding;
+					Merge merge = new Merge();
+					matches = new LinkedList<Match>();
+					merge.setMatch(matches);
+					merges.add(merge);
+				}
+				Match m = new Match();
+				m.setPackageName(set.getString(idx++));
+				m.setClassName(set.getString(idx++));
+				m.setHash(set.getLong(idx++));
+				m.setFindingType(new FindingType(set.getString(idx++), set
+						.getString(idx++), set.getString(idx++)));
+				matches.add(m);
+			}
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ projectName + " exists.");
+		}
+		return merges;
 	}
 
-	public AuditTrails getNewLocalAudits(String project,
-			SLProgressMonitor monitor) {
-		return null;
-	}
-
-	private AuditRecord newAudit(Long findingId, String value, AuditEvent event)
+	public void updateLocalTrailUids(String projectName, Long revision,
+			List<String> trails, List<Merge> merges, SLProgressMonitor monitor)
 			throws SQLException {
+		ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		projectRec.setName(projectName);
+		if (projectRec.select()) {
+			MatchRecord match = fact.newMatch();
+			MatchRecord.PK pk = new MatchRecord.PK();
+			match.setId(pk);
+			pk.setProjectId(projectRec.getId());
+			Iterator<String> trailIter = trails.iterator();
+			Iterator<Merge> mergeIter = merges.iterator();
+			while (mergeIter.hasNext() && trailIter.hasNext()) {
+				String trail = trailIter.next();
+				Match m = mergeIter.next().getMatch().get(0);
+				fillKey(pk, m);
+				if (match.select()) {
+					updateFindingUid.setString(1, trail);
+					updateFindingUid.setLong(2, match.getFindingId());
+					updateFindingUid.execute();
+					updateMatchRevision.setLong(1, match.getFindingId());
+					updateMatchRevision.setLong(2, revision);
+					updateMatchRevision.execute();
+				} else {
+					log.log(Level.WARNING, "Could not locate finding for "
+							+ match + ".  The trail will not be updated.");
+				}
+			}
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ projectName + " exists.");
+		}
+	}
+
+	public Long getLatestAuditRevision(String projectName) throws SQLException {
+		latestAuditRevision.setString(1, projectName);
+		ResultSet set = latestAuditRevision.executeQuery();
+		if (set.next()) {
+			return set.getLong(1);
+		}
+		return 0L;
+	}
+
+	private void comment(Long userId, Long findingId, String comment, Date time)
+			throws SQLException {
+		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time).insert();
+	}
+
+	private void setImportance(Long userId, Long findingId,
+			Importance importance, Date time) throws SQLException {
+		newAudit(userId, findingId, importance.toString(),
+				AuditEvent.IMPORTANCE, time).insert();
+		updateFindingImportance.setInt(1, importance.ordinal());
+		updateFindingImportance.setLong(2, findingId);
+		updateFindingImportance.execute();
+	}
+
+	private void markAsRead(Long userId, Long findingId, Date time)
+			throws SQLException {
+		newAudit(userId, findingId, null, AuditEvent.READ, time).insert();
+		markFindingAsRead.setLong(1, findingId);
+		markFindingAsRead.execute();
+	}
+
+	private AuditRecord newAudit(Long userId, Long findingId, String value,
+			AuditEvent event, Date time) throws SQLException {
 		AuditRecord record = fact.newAudit();
-		record.setUserId(User.getUser(conn).getId());
-		record.setTimestamp(new Date());
+		record.setUserId(userId);
+		record.setTimestamp(time);
 		record.setEvent(event);
 		record.setValue(value);
 		record.setFindingId(findingId);
 		return record;
+	}
+
+	/**
+	 * Obsolete a finding with another finding. This involves merging all of the
+	 * matches and audits of the old finding into the new finding, and then
+	 * marking the old finding as obsolete.
+	 * 
+	 * @param obsolete
+	 * @param finding
+	 * @param revision
+	 * @throws SQLException
+	 */
+	private void obsolete(Long obsolete, Long finding, Long revision)
+			throws SQLException {
+		obsoleteMatches.setLong(1, finding);
+		obsoleteMatches.setLong(2, obsolete);
+		obsoleteMatches.execute();
+		obsoleteAudits.setLong(1, finding);
+		obsoleteAudits.setLong(2, obsolete);
+		obsoleteAudits.execute();
+		obsoleteFinding.setLong(1, finding);
+		obsoleteFinding.setLong(2, revision);
+		obsoleteFinding.setLong(3, obsolete);
+		obsoleteFinding.execute();
+	}
+
+	/**
+	 * Delete a local finding, and pass any uncommitted changes to the new
+	 * finding.
+	 * 
+	 * @param deleted
+	 * @param finding
+	 */
+	private void delete(Long deleted, Long finding) {
+		//TODO
 	}
 
 	private void sqlError(SQLException e) {
@@ -209,6 +485,23 @@ public abstract class FindingManager {
 		}
 	}
 
+	private Long getUserId() throws SQLException {
+		return User.getUser(conn).getId();
+	}
+
+	private Long getUserId(String user) throws SQLException {
+		return User.findOrCreate(conn, user).getId();
+	}
+
+	private void fillKey(MatchRecord.PK pk, Match match) throws SQLException {
+		pk.setClassName(match.getClassName());
+		pk.setPackageName(match.getPackageName());
+		pk.setHash(match.getHash());
+		FindingType ft = match.getFindingType();
+		pk.setFindingTypeId(ftManager.getFindingTypeId(ft.getTool(), ft
+				.getVersion(), ft.getMnemonic()));
+	}
+
 	private static class ArtifactResult {
 		Long id;
 		Priority p;
@@ -220,11 +513,6 @@ public abstract class FindingManager {
 	public static FindingManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
-	}
-
-	public Long getLatestAuditRevision(String projectName) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -84,22 +84,22 @@ public class ProjectManager {
 		MergeAuditResponse mergeResponse = service
 				.mergeAuditTrails(mergeRequest);
 		findingManager.updateLocalTrailUids(projectName, mergeResponse
-				.getRevision(), mergeResponse.getTrail(), merges);
-		
+				.getRevision(), mergeResponse.getTrail(), merges, monitor);
+
 		// Commit Audits
 		service.commitAuditTrails(findingManager.getNewLocalAudits(projectName,
 				monitor));
-		
+
 		// Get updated audits from server
 		AuditTrailRequest auditRequest = new AuditTrailRequest();
 		auditRequest.setProject(projectName);
 		auditRequest.setRevision(findingManager
 				.getLatestAuditRevision(projectName));
 		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
-		findingManager
-				.updateLocalFindings(auditResponse.getRevision(), auditResponse
-						.getObsolete(), auditResponse.getUpdate(), monitor);
-		
+		findingManager.updateLocalFindings(projectName, auditResponse
+				.getRevision(), auditResponse.getObsolete(), auditResponse
+				.getUpdate(), monitor);
+
 		// Update settings
 		ClientSettingsManager settingsManager = ClientSettingsManager
 				.getInstance(conn);

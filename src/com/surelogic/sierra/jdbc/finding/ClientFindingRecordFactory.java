@@ -18,6 +18,7 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	private static final String MATCH_INSERT = "INSERT INTO LOCATION_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID) VALUES (?,?,?,?,?,?)";
 	private static final String MATCH_UPDATE = "UPDATE LOCATION_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID,IS_READ,IMPORTANCE) VALUES (?,?,?,?)";
+	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IS_READ,IMPORTANCE FROM FINDING WHERE UID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper findingMap;
@@ -26,7 +27,7 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	private ClientFindingRecordFactory(Connection conn) throws SQLException {
 		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT, MATCH_SELECT,
 				null, MATCH_UPDATE);
-		this.findingMap = new BaseMapper(conn, FINDING_INSERT, null, null);
+		this.findingMap = new BaseMapper(conn, FINDING_INSERT, FINDING_SELECT, null);
 		this.artifactFindingMap = new BaseMapper(conn,
 				INSERT_ARTIFACT_FINDING_RELATION, null, null);
 	}
@@ -48,7 +49,7 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 			throws SQLException {
 		return new ClientFindingRecordFactory(conn);
 	}
-	
+
 	public LongRelationRecord newArtifactFinding() {
 		return new LongRelationRecord(artifactFindingMap);
 	}

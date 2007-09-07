@@ -89,8 +89,8 @@ class JDBCScanGenerator implements ScanGenerator {
 									.getInstance(conn).getSettings(projectName)
 									: ServerSettingsManager.getInstance(conn)
 											.getSettingsByProject(projectName));
-			return new JDBCArtifactGenerator(conn, factory, manager, projectName, scan,
-					filter,
+			return new JDBCArtifactGenerator(conn, factory, manager,
+					projectName, scan, filter,
 					// This scannable is called after finish is called in
 					// ArtifactGenerator
 					new Runnable() {
@@ -117,7 +117,7 @@ class JDBCScanGenerator implements ScanGenerator {
 							try {
 								FindingManager.getInstance(conn)
 										.generateFindings(projectName,
-												scan.getUid(), filter);
+												scan.getUid(), filter, null);
 							} catch (SQLException e) {
 								throw new FindingGenerationException(e);
 							}
