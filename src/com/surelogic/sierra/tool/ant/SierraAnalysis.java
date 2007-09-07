@@ -457,7 +457,7 @@ public class SierraAnalysis extends Task {
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
 			Scan run = warehouse.fetchScan(runDocument.getAbsolutePath());
 			SierraService ts = new SierraServiceClient(server)
-					.getTigerServicePort();
+					.getSierraServicePort();
 
 			// Verify the qualifiers
 			List<String> list = ts.getQualifiers().getQualifier();

@@ -14,7 +14,7 @@ public class SierraServiceClient extends Service {
 	public SierraServiceClient() {
 		super(createUrl(null), new QName(
 				"http://services.sierra.surelogic.com/",
-				"TigerServiceBeanService"));
+				"SierraServiceBeanService"));
 	}
 
 	/**
@@ -26,7 +26,7 @@ public class SierraServiceClient extends Service {
 	public SierraServiceClient(SierraServer server) {
 		super(createUrl(server), new QName(
 				"http://services.sierra.surelogic.com/",
-				"TigerServiceBeanService"));
+				"SierraServiceBeanService"));
 	}
 
 	public SierraServiceClient(URL wsdlDocumentLocation, QName serviceName) {
@@ -42,12 +42,12 @@ public class SierraServiceClient extends Service {
 	public SierraServiceClient(String server) {
 		super(createUrl(new SierraServer(server)), new QName(
 				"http://services.sierra.surelogic.com/",
-				"TigerServiceBeanService"));
+				"SierraServiceBeanService"));
 	}
 
-	public SierraService getTigerServicePort() {
+	public SierraService getSierraServicePort() {
 		return super.getPort(new QName("http://services.sierra.surelogic.com/",
-				"TigerServiceBeanPort"), SierraService.class);
+				"SierraServiceBeanPort"), SierraService.class);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class SierraServiceClient extends Service {
 		}
 		try {
 			return new URL("http://" + host
-					+ "/TigerServiceBeanService/TigerServiceBean?wsdl");
+					+ "/SierraServiceBeanService/SierraServiceBean?wsdl");
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
