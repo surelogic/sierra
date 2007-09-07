@@ -179,7 +179,7 @@ public final class Scan {
 			// options selected currently it's an estimate for the number of
 			// files in a project
 
-			int scale = 1000;
+			int scale = 5000;
 			int total = 5;
 			SLProgressMonitorWrapper slProgressMonitorWrapper = null;
 			if (monitor != null) {
@@ -231,6 +231,10 @@ public final class Scan {
 						LOG.severe(rpe.getMessage());
 						slProgressMonitorWrapper.done();
 						return SLStatus.createErrorStatus("Scan failed", rpe);
+					} catch (IllegalStateException ise) {
+						LOG.severe(ise.getMessage());
+						slProgressMonitorWrapper.done();
+						return SLStatus.createErrorStatus("Scan failed", ise);
 					}
 					slProgressMonitorWrapper.done();
 					return Status.OK_STATUS;

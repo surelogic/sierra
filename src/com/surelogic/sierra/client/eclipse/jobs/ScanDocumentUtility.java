@@ -3,10 +3,8 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
@@ -41,6 +39,7 @@ public final class ScanDocumentUtility {
 						.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
+
 			} finally {
 				conn.close();
 			}
