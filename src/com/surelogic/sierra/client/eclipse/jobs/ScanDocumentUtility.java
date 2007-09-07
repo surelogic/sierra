@@ -38,22 +38,18 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor) throws ScanPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
+			conn.setAutoCommit(false);
 			try {
-				conn.setAutoCommit(false);
 				ScanGenerator gen = ScanManager.getInstance(conn)
 						.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
-			} catch (SQLException e) {
-				LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);
-			} catch (Exception e) {
-				LOG.log(Level.SEVERE,
-						"Exception occurred while persisting run.", e);
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "SQL Exception while persisting run.", e);
+			// Could not get a valid connection
+			throw new IllegalStateException(e);
 		}
 	}
 }
