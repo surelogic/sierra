@@ -97,8 +97,7 @@ public class ProjectManager {
 				.getLatestAuditRevision(projectName));
 		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
 		findingManager.updateLocalFindings(projectName, auditResponse
-				.getRevision(), auditResponse.getObsolete(), auditResponse
-				.getUpdate(), monitor);
+				.getObsolete(), auditResponse.getUpdate(), monitor);
 
 		// Update settings
 		ClientSettingsManager settingsManager = ClientSettingsManager

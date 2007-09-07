@@ -214,7 +214,7 @@ public abstract class FindingManager {
 		}
 	}
 
-	public void updateLocalFindings(String projectName, Long revision,
+	public void updateLocalFindings(String projectName,
 			List<TrailObsoletion> obsoletions, List<AuditTrailUpdate> updates,
 			SLProgressMonitor monitor) throws SQLException {
 		ProjectRecord project = ProjectRecordFactory.getInstance(conn)
@@ -230,8 +230,7 @@ public abstract class FindingManager {
 					if (!newFinding.select()) {
 						newFinding.insert();
 					}
-					obsolete(obsoletedFinding.getId(), newFinding.getId(),
-							revision);
+					obsolete(obsoletedFinding.getId(), newFinding.getId(), to.getRevision());
 				} else {
 					log.log(Level.WARNING, "A trail obsoletion for uid "
 							+ to.getObsoletedTrail() + " to uid "
