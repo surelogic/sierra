@@ -41,6 +41,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 	public ServerAuthenticationDialog(Shell parentShell,
 			SierraServerModel server) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		assert server != null;
 		f_server = server;
 	}
@@ -76,7 +77,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data.heightHint = 20;
 		directions.setLayoutData(data);
 		directions.setText("Enter your authentication for '"
-				+ f_server.getName() + "'");
+				+ f_server.getLabel() + "'");
 
 		final Label serverImg = new Label(entryPanel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
@@ -140,7 +141,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(ServerLocationDialog.SAVE_PW_WARNING);
 
-		return entryPanel;
+		return panel;
 	}
 
 	@Override

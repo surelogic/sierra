@@ -8,21 +8,30 @@ public final class SierraServerModel {
 		return f_manager;
 	}
 
-	public SierraServerModel(final SierraServerManager manager, final String name) {
+	public SierraServerModel(final SierraServerManager manager,
+			final String label) {
 		assert manager != null;
 		f_manager = manager;
-		assert name != null;
-		f_name = name;
+		assert label != null;
+		f_label = label;
+		assert !f_manager.f_nameToServer.containsKey(f_label);
+		f_manager.f_nameToServer.put(f_label, this);
 	}
 
-	private String f_name = "";
+	private String f_label = "";
 
-	public String getName() {
-		return f_name;
+	public String getLabel() {
+		return f_label;
 	}
 
-	public void setName(String name) {
-		f_name = name;
+	public void setLabel(String label) {
+		if (label == null || label.equals(f_label))
+			return;
+		// overwrite semantics, i.e., no check if the new name is in use
+		f_manager.f_nameToServer.remove(f_label);
+		f_label = label;
+		f_manager.f_nameToServer.put(f_label, this);
+		f_manager.notifyObservers();
 	}
 
 	private boolean f_secure = false;
@@ -87,5 +96,17 @@ public final class SierraServerModel {
 
 	public void setSavePassword(boolean savePassword) {
 		f_savePassword = savePassword;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		b.append("'").append(getLabel()).append("' is ");
+		b.append(getProtocol()).append("://");
+		b.append(getHost()).append(":").append(getPort());
+		b.append("/user=\"").append(getUser()).append("\" ");
+		b.append(" password=\"").append(getPassword()).append("\" ");
+		b.append(" password-is-saved=").append(savePassword());
+		return b.toString();
 	}
 }

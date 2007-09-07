@@ -78,7 +78,7 @@ public final class SierraServerManager {
 	public void duplicate() {
 		final SierraServerModel server = getFocus();
 		if (server != null) {
-			final String name = newUniqueName(server.getName());
+			final String name = newUniqueName(server.getLabel());
 			final SierraServerModel newServer = new SierraServerModel(this, name);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());

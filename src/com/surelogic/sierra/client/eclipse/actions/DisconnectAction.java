@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
 
@@ -14,14 +14,16 @@ public final class DisconnectAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
 	protected void run(List<IJavaProject> selectedProjects) {
-		SierraServerModel s = new SierraServerModel(new SierraServerManager(
-				new File("foo")), "Server 1");
+		SierraServerManager m = new SierraServerManager(
+				new File("foo"));
+		SierraServerModel s = new SierraServerModel(m, "Server 1");
+		SierraServerModel s2 = new SierraServerModel(m, "Server 2");
 		s.setHost("fluid.surelogic.com");
 		// TODO: Just for testing of the user password dialog
-		ServerAuthenticationDialog d = new ServerAuthenticationDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				s);
+		ServerLocationDialog d = new ServerLocationDialog(PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow().getShell(), s, true);
 		d.open();
+		System.out.println(s);
 
 	}
 }
