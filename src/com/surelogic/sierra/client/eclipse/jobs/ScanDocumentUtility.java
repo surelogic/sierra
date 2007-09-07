@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -15,8 +14,6 @@ import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public final class ScanDocumentUtility {
-
-	private static final Logger LOG = SLLogger.getLogger("sierra");
 
 	private ScanDocumentUtility() {
 		// no instances
