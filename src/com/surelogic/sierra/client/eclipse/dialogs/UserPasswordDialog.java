@@ -157,7 +157,7 @@ public final class UserPasswordDialog extends Dialog {
 				false));
 		final Label saveWarning = new Label(warning, SWT.WRAP);
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		data.widthHint = 300;
+		data.widthHint = 250;
 		saveWarning.setLayoutData(data);
 		saveWarning
 				.setText("Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.");

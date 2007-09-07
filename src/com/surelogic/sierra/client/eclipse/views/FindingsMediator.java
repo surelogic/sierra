@@ -203,8 +203,6 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				setProjectInCombo();
-				System.out.println("Changed project to"
-						+ model.getProjectFocus());
 				updateFindingsTreeTable();
 			}
 		});
@@ -252,6 +250,9 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 			try {
 				final Statement st = c.createStatement();
 				try {
+					// TODO: fix query
+					if (true)
+						return;
 					final ResultSet rs = st.executeQuery(query);
 					final String[] columnLabels = QueryUtility
 							.getColumnLabels(rs);
