@@ -542,6 +542,13 @@ public class SierraAnalysis extends Task {
 	 */
 	private void validateParameters() {
 		if (keepRunning) {
+			if(srcdir == null){
+				srcdir = new Path(antProject).createPath();
+			}
+			if(bindir == null){
+				bindir = new Path(antProject).createPath();
+			}
+			
 			if (destDir != null && !destDir.isDirectory()) {
 				throw new BuildException("'destdir' must be a valid directory.");
 			} else {
@@ -576,6 +583,7 @@ public class SierraAnalysis extends Task {
 			} else {
 				project.validate();
 			}
+			
 
 			if (srcdir.size() == 0) {
 				// We can do this w/o checking b/c the project was validated
