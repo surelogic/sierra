@@ -68,7 +68,7 @@ public final class DeleteProjectDataJob {
 					}
 					monitor.done();
 					DatabaseHub.getInstance().notifyProjectDeleted();
-					if (!jobFailed) {
+					if (jobFailed) {
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
@@ -78,7 +78,7 @@ public final class DeleteProjectDataJob {
 										dialog
 												.setMessage("Deletion of Sierra data about projects "
 														+ f_projectNames
-														+ " failed.");
+														+ " failed. All exceptions have been logged to the Eclipse 'Error Log'");
 										dialog.open();
 									}
 								});
