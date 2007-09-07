@@ -13,6 +13,7 @@ public class Audit {
 	private Date timestamp;
 	private String value;
 	private AuditEvent event;
+	private String user;
 
 	public Audit() {
 		// Do nothing
@@ -48,47 +49,18 @@ public class Audit {
 		this.event = event;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((event == null) ? 0 : event.hashCode());
-		result = prime * result
-				+ ((timestamp == null) ? 0 : timestamp.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+	public String getUser() {
+		return user;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Audit other = (Audit) obj;
-		if (event == null) {
-			if (other.event != null)
-				return false;
-		} else if (!event.equals(other.event))
-			return false;
-		if (timestamp == null) {
-			if (other.timestamp != null)
-				return false;
-		} else if (!timestamp.equals(other.timestamp))
-			return false;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	@Override
 	public String toString() {
-		return "Audit(" + event + ", " + timestamp + ", " + value + ")";
+		return "Audit(" + event + ", " + timestamp + ", " + value + ", " + user
+				+ ")";
 	}
 
 }
