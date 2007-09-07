@@ -96,7 +96,7 @@ public final class UserPasswordDialog extends Dialog {
 
 		final Label directions = new Label(entryPanel, SWT.WRAP);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
-		data.heightHint = 30;
+		data.heightHint = 40;
 		directions.setLayoutData(data);
 		directions.setText("Enter your authentication for the server '"
 				+ f_serverName + "'");
