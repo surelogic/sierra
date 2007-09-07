@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 public class TrailObsoletion {
 	private String trail;
 	private String obsoletedTrail;
+	private Long revision;
 
 	public TrailObsoletion() {
 		// Do Nothing
@@ -32,6 +33,14 @@ public class TrailObsoletion {
 
 	public void setObsoletedTrail(String obsoletedTrail) {
 		this.obsoletedTrail = obsoletedTrail;
+	}
+
+	public Long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Long revision) {
+		this.revision = revision;
 	}
 
 }

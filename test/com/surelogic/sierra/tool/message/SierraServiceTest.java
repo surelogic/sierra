@@ -97,7 +97,7 @@ public class SierraServiceTest {
 		service.commitAuditTrails(auditTrails);
 		AuditTrailRequest request = new AuditTrailRequest();
 		request.setProject("sierra-entity");
-		request.setRevision(null);
+		request.setRevision(-1L);
 		AuditTrailResponse response = service.getAuditTrails(request);
 		AuditTrailUpdate update = response.getUpdate().get(0);
 		assertEquals(audit, update.getAudit().get(update.getAudit().size() - 1));
