@@ -34,14 +34,26 @@ public final class ScanDocumentUtility {
 		try {
 			Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);
+			RuntimeException exc = null;
 			try {
 				ScanGenerator gen = ScanManager.getInstance(conn)
 						.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
 
+			} catch (RuntimeException e) {
+				exc = e;
 			} finally {
-				conn.close();
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					if (exc == null) {
+						throw e;
+					}
+				}
+			}
+			if (exc != null) {
+				throw exc;
 			}
 		} catch (SQLException e) {
 			// Could not get a valid connection
