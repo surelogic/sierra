@@ -467,7 +467,7 @@ public abstract class FindingManager {
 	 * @param finding
 	 */
 	private void delete(Long deleted, Long finding) {
-		//TODO
+		// TODO
 	}
 
 	private void sqlError(SQLException e) {
