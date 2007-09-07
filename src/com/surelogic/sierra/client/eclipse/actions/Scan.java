@@ -3,8 +3,6 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +27,6 @@ import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
-import com.surelogic.sierra.tool.ant.ToolRunException;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -203,18 +200,7 @@ public final class Scan {
 
 				if (antRunnable.hasError()) {
 					slProgressMonitorWrapper.done();
-
-					Map<String, String> failedTools = antRunnable
-							.getFailedTools();
-					String message = "";
-					Set<String> toolName = failedTools.keySet();
-					for (String s : toolName) {
-
-						String holder = failedTools.get(s);
-						message = s
-								+ " execution failed. Use the following command from command line to identify the error "
-								+ holder;
-					}
+					String message = antRunnable.getErrorMessage();
 					return SLStatus.createErrorStatus(message);
 				} else if (slProgressMonitorWrapper.isCanceled()) {
 					slProgressMonitorWrapper.done();
@@ -269,7 +255,7 @@ public final class Scan {
 		private SLProgressMonitor f_monitor;
 		private int f_scale = 1;
 		private boolean f_error = false;
-		private Map<String, String> f_failedTools;
+		private String f_errorMessage;
 
 		/**
 		 * The constructor for thread
@@ -295,10 +281,9 @@ public final class Scan {
 						f_scale);
 				f_sierraAnalysis.execute();
 				f_complete = true;
-			} catch (ToolRunException tre) {
-				// Exception already logged
+			} catch (RuntimeException re) {
 				f_error = true;
-				f_failedTools = tre.getFailedTools();
+				f_errorMessage = re.getMessage();
 			}
 		}
 
@@ -314,9 +299,10 @@ public final class Scan {
 			return f_complete;
 		}
 
-		public Map<String, String> getFailedTools() {
-			return f_failedTools;
+		public String getErrorMessage() {
+			return f_errorMessage;
 		}
+
 	}
 
 	/**
