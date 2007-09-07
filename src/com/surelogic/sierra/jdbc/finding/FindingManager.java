@@ -275,6 +275,7 @@ public abstract class FindingManager {
 						break;
 					case READ:
 						markAsRead(userId, finding.getId(), a.getTimestamp());
+						break;
 					default:
 						break;
 					}
