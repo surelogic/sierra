@@ -11,5 +11,5 @@ public interface IProjectsObserver {
 	 * @param p
 	 *            the project manager object.
 	 */
-	void notify(final Projects p);
+	void notify(Projects p);
 }

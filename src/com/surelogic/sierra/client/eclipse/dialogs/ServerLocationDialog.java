@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -76,7 +77,12 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		parent.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_RED));
 		final Composite contents = (Composite) super.createDialogArea(parent);
+		contents.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_BLUE));
+		contents.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite panel = new Composite(contents, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -238,7 +244,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				f_validateLocation = validateButton.getSelection();
 			}
 		});
-		validateButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+		validateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 2, 1));
 
 		setTitle(TITLE);
@@ -246,6 +252,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		f_mediator = new Mediator(labelText, hostText, portText, userText,
 				passwordText);
 		f_mediator.init();
+		
+		Dialog.applyDialogFont(panel);
 
 		return panel;
 	}
@@ -253,7 +261,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	@Override
 	protected Control createContents(Composite parent) {
 		final Control contents = super.createContents(parent);
-		//getShell().pack();
+		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		getShell().pack();
 		f_mediator.checkDialogContents();
 		return contents;
 	}
@@ -261,6 +270,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		f_mediator.okPressed();
+		/*
+		 * Because we probably changed something about the server, notify all
+		 * observers of server information.
+		 */
+		f_server.getManager().notifyObservers();
 		super.okPressed();
 	}
 

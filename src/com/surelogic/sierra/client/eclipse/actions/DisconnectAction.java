@@ -14,8 +14,7 @@ public final class DisconnectAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
 	protected void run(List<IJavaProject> selectedProjects) {
-		SierraServerManager m = new SierraServerManager(
-				new File("foo"));
+		SierraServerManager m = new SierraServerManager();
 		SierraServerModel s = new SierraServerModel(m, "Server 1");
 		SierraServerModel s2 = new SierraServerModel(m, "Server 2");
 		s.setHost("fluid.surelogic.com");

@@ -17,17 +17,6 @@ public final class SierraServerManager {
 	final Map<String, SierraServerModel> f_nameToServer = new HashMap<String, SierraServerModel>();
 
 	/**
-	 * The save file (under the workspace) for the set of servers managed by
-	 * this class.
-	 */
-	private final File f_saveFile;
-
-	public SierraServerManager(final File saveFile) {
-		assert saveFile != null;
-		f_saveFile = saveFile;
-	}
-
-	/**
 	 * Checks if a given name is the name for an existing server.
 	 * 
 	 * @param name
@@ -79,7 +68,8 @@ public final class SierraServerManager {
 		final SierraServerModel server = getFocus();
 		if (server != null) {
 			final String name = newUniqueName(server.getLabel());
-			final SierraServerModel newServer = new SierraServerModel(this, name);
+			final SierraServerModel newServer = new SierraServerModel(this,
+					name);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());
 			newServer.setPort(server.getPort());
@@ -129,14 +119,6 @@ public final class SierraServerManager {
 	}
 
 	/**
-	 * An interface that lets implementing object observe changes to the state
-	 * of this model.
-	 */
-	public interface SierraServerObserver {
-		void update(SierraServerModel focus);
-	}
-
-	/**
 	 * Defines a server which is the current focus of this model.
 	 */
 	private SierraServerModel f_focus;
@@ -166,16 +148,16 @@ public final class SierraServerManager {
 	/**
 	 * The set of observers to changes to the state of this class.
 	 */
-	private Set<SierraServerObserver> f_serverObservers = new HashSet<SierraServerObserver>();
+	private Set<ISierraServerObserver> f_serverObservers = new HashSet<ISierraServerObserver>();
 
 	/**
-	 * Registers a {@link SierraServerObserver} object to receive notifications
+	 * Registers a {@link ISierraServerObserver} object to receive notifications
 	 * of changes to the state of this class.
 	 * 
 	 * @param o
 	 *            the observer.
 	 */
-	public void addObserver(final SierraServerObserver o) {
+	public void addObserver(final ISierraServerObserver o) {
 		f_serverObservers.add(o);
 	}
 
@@ -186,25 +168,23 @@ public final class SierraServerManager {
 	 * @param o
 	 *            the observer.
 	 */
-	public void removeObserver(final SierraServerObserver o) {
+	public void removeObserver(final ISierraServerObserver o) {
 		f_serverObservers.remove(o);
 	}
 
 	/**
-	 * Notifies all registered {@link SierraServerObserver} objects.
+	 * Notifies all registered {@link ISierraServerObserver} objects.
 	 */
 	public void notifyObservers() {
-		for (SierraServerObserver o : f_serverObservers)
-			o.update(f_focus);
+		for (ISierraServerObserver o : f_serverObservers)
+			o.notify(this);
 	}
 
-	/**
-	 * Gets the file that the servers managed by this class are normally
-	 * persisted to.
-	 * 
-	 * @return the file used to persist server information.
-	 */
-	public File getSaveFile() {
-		return f_saveFile;
+	public void save(File file) {
+		// TODO: persist this model
+	}
+
+	public void load(File file) {
+		// TODO: load this model.
 	}
 }
