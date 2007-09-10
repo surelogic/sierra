@@ -15,17 +15,27 @@ import com.surelogic.common.logging.SLLogger;
 
 public final class SierraServerManager {
 
+	public static final SierraServerManager INSTANCE = new SierraServerManager();
+
+	public static SierraServerManager getInstance() {
+		return INSTANCE;
+	}
+
+	private SierraServerManager() {
+		// singleton
+	}
+
 	/**
 	 * Maps servers by their label.
 	 */
-	final Map<String, SierraServerModel> f_labelToServer = new HashMap<String, SierraServerModel>();
+	final Map<String, SierraServer> f_labelToServer = new HashMap<String, SierraServer>();
 
 	/**
-	 * Checks if a given name is the name for an existing server.
+	 * Checks if a given label is the label for an existing server.
 	 * 
 	 * @param label
-	 *            a server name.
-	 * @return <code>true</code> if the name is used for an existing server,
+	 *            a server label.
+	 * @return <code>true</code> if the label is used for an existing server,
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean exists(final String label) {
@@ -37,15 +47,15 @@ public final class SierraServerManager {
 	 * it is created.
 	 * 
 	 * @param label
-	 *            a server name.
-	 * @return the server with the passed name.
+	 *            a server label.
+	 * @return the server with the passed label.
 	 */
-	public SierraServerModel getOrCreate(final String label) {
+	public SierraServer getOrCreate(final String label) {
 		if (label == null)
 			throw new IllegalArgumentException("label must be non-null");
-		SierraServerModel server = f_labelToServer.get(label);
+		SierraServer server = f_labelToServer.get(label);
 		if (server == null) {
-			server = new SierraServerModel(this, label);
+			server = new SierraServer(this, label);
 			notifyObservers();
 		}
 		return server;
@@ -57,14 +67,14 @@ public final class SierraServerManager {
 	 * 
 	 * @return the new server.
 	 */
-	public SierraServerModel create() {
+	public SierraServer create() {
 		final String label = newUniqueLabel("server");
-		final SierraServerModel query = new SierraServerModel(this, label);
+		final SierraServer query = new SierraServer(this, label);
 		setFocus(query);
 		return query;
 	}
 
-	public void delete(SierraServerModel server) {
+	public void delete(SierraServer server) {
 		if (server.getManager() != this) {
 			SLLogger.getLogger().log(
 					Level.WARNING,
@@ -74,9 +84,9 @@ public final class SierraServerManager {
 		}
 		if (f_focus == server)
 			f_focus = null;
-		for (Iterator<Map.Entry<String, SierraServerModel>> i = f_labelToServer
+		for (Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
 				.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<String, SierraServerModel> entry = i.next();
+			Map.Entry<String, SierraServer> entry = i.next();
 			if (entry.getValue() == server) {
 				i.remove();
 			}
@@ -85,7 +95,7 @@ public final class SierraServerManager {
 	}
 
 	public void delete(String label) {
-		SierraServerModel server = f_labelToServer.get(label);
+		SierraServer server = f_labelToServer.get(label);
 		if (server != null) {
 			delete(server);
 		}
@@ -96,10 +106,10 @@ public final class SierraServerManager {
 	 * The new server becomes the focus of this model.
 	 */
 	public void duplicate() {
-		final SierraServerModel server = getFocus();
+		final SierraServer server = getFocus();
 		if (server != null) {
 			final String label = newUniqueLabel(server.getLabel());
-			final SierraServerModel newServer = new SierraServerModel(this,
+			final SierraServer newServer = new SierraServer(this,
 					label);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());
@@ -130,11 +140,11 @@ public final class SierraServerManager {
 		}
 		// create a new label
 		int id = 1;
-		String name;
+		String label;
 		do {
-			name = prefix + " (" + id++ + ")";
-		} while (exists(name));
-		return name;
+			label = prefix + " (" + id++ + ")";
+		} while (exists(label));
+		return label;
 	}
 
 	/**
@@ -145,15 +155,15 @@ public final class SierraServerManager {
 	 * @return the ordered list of server labels.
 	 */
 	public String[] getLabels() {
-		List<String> f_names = new ArrayList<String>(f_labelToServer.keySet());
-		Collections.sort(f_names);
-		return f_names.toArray(new String[f_names.size()]);
+		List<String> f_labels = new ArrayList<String>(f_labelToServer.keySet());
+		Collections.sort(f_labels);
+		return f_labels.toArray(new String[f_labels.size()]);
 	}
 
 	/**
 	 * Defines a server which is the current focus of this model.
 	 */
-	private SierraServerModel f_focus;
+	private SierraServer f_focus;
 
 	/**
 	 * Sets the passed server as the current focus of this model.
@@ -161,7 +171,7 @@ public final class SierraServerManager {
 	 * @param server
 	 *            the non-null server to be the focus of this model.
 	 */
-	public void setFocus(final SierraServerModel server) {
+	public void setFocus(final SierraServer server) {
 		if (server == null)
 			throw new IllegalArgumentException("server must be non-null");
 		f_focus = server;
@@ -173,8 +183,35 @@ public final class SierraServerManager {
 	 * 
 	 * @return the server which is the current focus of this model.
 	 */
-	public SierraServerModel getFocus() {
+	public SierraServer getFocus() {
 		return f_focus;
+	}
+
+	private Map<String, SierraServer> f_projectNameToServer = new HashMap<String, SierraServer>();
+
+	public boolean isConnected(String projectName) {
+		return f_projectNameToServer.containsKey(projectName);
+	}
+
+	public void connect(String projectName, SierraServer server) {
+		if (projectName == null)
+			throw new IllegalArgumentException("project name must be non-null.");
+		if (server == null)
+			throw new IllegalArgumentException("server must be non-null.");
+		f_projectNameToServer.put(projectName, server);
+
+	}
+
+	public void disconnect(String projectName) {
+		f_projectNameToServer.remove(projectName);
+	}
+
+	public SierraServer getServer(String projectName) {
+		return f_projectNameToServer.get(projectName);
+	}
+
+	public List<String> getProjectsConnectedTo(SierraServer server) {
+		return null;
 	}
 
 	/**
@@ -214,9 +251,11 @@ public final class SierraServerManager {
 
 	public void save(File file) {
 		// TODO: persist this model
+		System.out.println("save to " + file);
 	}
 
 	public void load(File file) {
 		// TODO: load this model.
+		System.out.println("load from " + file);
 	}
 }

@@ -15,14 +15,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 /**
  * Dialog to prompt the user for a user name and password to a Sierra server.
  */
 public final class ServerAuthenticationDialog extends Dialog {
 
-	private final SierraServerModel f_server;
+	private final SierraServer f_server;
 
 	private Text f_userText;
 	private Text f_passwordText;
@@ -39,7 +39,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 	 *            the information about the Sierra server.
 	 */
 	public ServerAuthenticationDialog(Shell parentShell,
-			SierraServerModel server) {
+			SierraServer server) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		assert server != null;
@@ -148,7 +148,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		super.okPressed();
 	}
 
-	public SierraServerModel getServer() {
+	public SierraServer getServer() {
 		return f_server;
 	}
 }

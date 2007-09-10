@@ -12,17 +12,17 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.jdbc.project.ProjectManager;
-import com.surelogic.sierra.tool.message.SierraServer;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class SynchronizeProjectDataJob extends DatabaseJob {
 
 	private final String f_projectName;
-	private final SierraServer f_server;
+	private final SierraServerLocation f_server;
 
 	public SynchronizeProjectDataJob(String projectName,
-			SierraServerModel server) {
+			SierraServer server) {
 		super("Synchronizing Sierra data form project '" + projectName + "'");
 		f_projectName = projectName;
 		f_server = server.getServer();

@@ -1,8 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.io.File;
-
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -19,7 +16,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.Activator;
 
 public final class SierraServersView extends ViewPart {
 
@@ -84,7 +80,7 @@ public final class SierraServersView extends ViewPart {
 				.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false,
 						false));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_SHORT));
 
 		/*
 		 * Server Information (left-hand side)
@@ -106,8 +102,8 @@ public final class SierraServersView extends ViewPart {
 		serverURL
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		f_mediator = new SierraServersMediator(getQuerySaveFile(), serverList,
-				newServer, duplicateServer, deleteServer, editServer, openInBrowser,
+		f_mediator = new SierraServersMediator(serverList, newServer,
+				duplicateServer, deleteServer, editServer, openInBrowser,
 				serverURL);
 		f_mediator.init();
 	}
@@ -115,11 +111,5 @@ public final class SierraServersView extends ViewPart {
 	@Override
 	public void setFocus() {
 		f_mediator.setFocus();
-	}
-
-	private File getQuerySaveFile() {
-		IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString()
-				+ System.getProperty("file.separator") + "servers.xml");
 	}
 }

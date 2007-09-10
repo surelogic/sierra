@@ -21,7 +21,7 @@ import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 /**
  * Dialog to allow the user to enter or edit the location and authentication
@@ -35,7 +35,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private static final String INFO_MSG = "Define the location and authentication information for the Sierra server you want to interact with.";
 	private static final int INFO_WIDTH_HINT = 70;
 
-	private final SierraServerModel f_server;
+	private final SierraServer f_server;
 
 	private final boolean f_newLocation;
 
@@ -57,7 +57,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 *            indicates that this location was just created. This controls
 	 *            the dialog title.
 	 */
-	public ServerLocationDialog(Shell parentShell, SierraServerModel server,
+	public ServerLocationDialog(Shell parentShell, SierraServer server,
 			boolean newLocation) {
 		super(parentShell);
 		assert server != null;
@@ -273,7 +273,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
-	public SierraServerModel getServer() {
+	public SierraServer getServer() {
 		return f_server;
 	}
 

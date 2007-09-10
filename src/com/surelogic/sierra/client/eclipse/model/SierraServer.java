@@ -1,8 +1,8 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-import com.surelogic.sierra.tool.message.SierraServer;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
-public final class SierraServerModel {
+public final class SierraServer {
 
 	private final SierraServerManager f_manager;
 
@@ -10,7 +10,7 @@ public final class SierraServerModel {
 		return f_manager;
 	}
 
-	public SierraServerModel(final SierraServerManager manager,
+	public SierraServer(final SierraServerManager manager,
 			final String label) {
 		assert manager != null;
 		f_manager = manager;
@@ -119,7 +119,7 @@ public final class SierraServerModel {
 		return b.toString();
 	}
 
-	public SierraServer getServer() {
-		return new SierraServer(f_host, f_port);
+	public SierraServerLocation getServer() {
+		return new SierraServerLocation(f_host, f_port);
 	}
 }

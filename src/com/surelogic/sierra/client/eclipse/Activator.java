@@ -1,9 +1,13 @@
 package com.surelogic.sierra.client.eclipse;
 
+import java.io.File;
+
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -33,14 +37,20 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		// startup the database and ensure its schema is up to date
 		Data.bootAndCheckSchema();
+		// load up persisted sierra servers
+		SierraServerManager.getInstance().load(getServerSaveFile());
 		// start observing data changes
 		Projects.getInstance().refresh();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		f_plugin = null;
-		super.stop(context);
+		try {
+			SierraServerManager.getInstance().save(getServerSaveFile());
+			f_plugin = null;
+		} finally {
+			super.stop(context);
+		}
 	}
 
 	/**
@@ -50,5 +60,11 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return f_plugin;
+	}
+
+	private File getServerSaveFile() {
+		IPath pluginState = Activator.getDefault().getStateLocation();
+		return new File(pluginState.toOSString()
+				+ System.getProperty("file.separator") + "servers.xml");
 	}
 }

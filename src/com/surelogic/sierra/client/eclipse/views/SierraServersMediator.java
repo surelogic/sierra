@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -21,11 +20,10 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.client.eclipse.model.SierraServerModel;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 public final class SierraServersMediator implements ISierraServerObserver {
 
-	final File f_saveFile;
 	final Table f_serverList;
 	final ToolItem f_newServer;
 	final ToolItem f_duplicateServer;
@@ -34,13 +32,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final Button f_openInBrowser;
 	final Label f_serverURL;
 
-	final SierraServerManager f_manager = new SierraServerManager();
+	final SierraServerManager f_manager = SierraServerManager.getInstance();
 
-	public SierraServersMediator(File saveFile, Table serverList,
-			ToolItem newServer, ToolItem duplicateServer,
-			ToolItem deleteServer, Button editServer, Button openInBrowser,
-			Label serverURL) {
-		f_saveFile = saveFile;
+	public SierraServersMediator(Table serverList, ToolItem newServer,
+			ToolItem duplicateServer, ToolItem deleteServer, Button editServer,
+			Button openInBrowser, Label serverURL) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -51,7 +47,6 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	public void init() {
-		f_manager.load(f_saveFile);
 		f_manager.addObserver(this);
 		notify(f_manager);
 
@@ -65,7 +60,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				if (sa.length > 0) {
 					final TableItem selection = sa[0];
 					final String label = selection.getText();
-					final SierraServerModel server = f_manager
+					final SierraServer server = f_manager
 							.getOrCreate(label);
 					f_manager.setFocus(server);
 					System.out.println(server.toString());
@@ -75,7 +70,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_newServer.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				final SierraServerModel newServer = f_manager.create();
+				final SierraServer newServer = f_manager.create();
 				final ServerLocationDialog dialog = new ServerLocationDialog(
 						f_serverList.getShell(), newServer, true);
 				if (dialog.open() == Window.CANCEL) {
@@ -96,7 +91,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_deleteServer.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				SierraServerModel server = f_manager.getFocus();
+				SierraServer server = f_manager.getFocus();
 				if (server != null) {
 					f_manager.delete(server);
 				}
@@ -105,7 +100,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_editServer.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				final SierraServerModel server = f_manager.getFocus();
+				final SierraServer server = f_manager.getFocus();
 				if (server == null) {
 					SLLogger.getLogger().log(Level.WARNING,
 							"Edit server pressed with no server focus.");
@@ -119,7 +114,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_openInBrowser.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				final SierraServerModel server = f_manager.getFocus();
+				final SierraServer server = f_manager.getFocus();
 				if (server == null) {
 					SLLogger.getLogger().log(Level.WARNING,
 							"Edit server pressed with no server focus.");
@@ -131,7 +126,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	public void dispose() {
-		f_manager.save(f_saveFile);
+		// TODO
 	}
 
 	public void setFocus() {
@@ -152,7 +147,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						item.setText(label);
 					}
 				}
-				SierraServerModel server = f_manager.getFocus();
+				SierraServer server = f_manager.getFocus();
 				final boolean focusServer = server != null;
 				f_duplicateServer.setEnabled(focusServer);
 				f_deleteServer.setEnabled(focusServer);
@@ -186,7 +181,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		return true;
 	}
 
-	private static void openInBrowser(SierraServerModel server) {
+	private static void openInBrowser(SierraServer server) {
 		final String url = server.toURLString() + "/sierra";
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
