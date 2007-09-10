@@ -16,11 +16,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 public final class SierraServersMediator implements ISierraServerObserver {
 
@@ -60,8 +61,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				if (sa.length > 0) {
 					final TableItem selection = sa[0];
 					final String label = selection.getText();
-					final SierraServer server = f_manager
-							.getOrCreate(label);
+					final SierraServer server = f_manager.getOrCreate(label);
 					f_manager.setFocus(server);
 					System.out.println(server.toString());
 				}
@@ -145,6 +145,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					for (String label : labels) {
 						TableItem item = new TableItem(f_serverList, SWT.NONE);
 						item.setText(label);
+						item.setImage(SLImages
+								.getImage(SLImages.IMG_SIERRA_SERVER));
 					}
 				}
 				SierraServer server = f_manager.getFocus();
