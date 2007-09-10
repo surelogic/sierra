@@ -32,7 +32,7 @@ public class Config {
 	// Comma-separated list of tool names that won't be run
 	private String excludedToolsList = null;
 	// The full path and name of the run document
-	private File runDocument = null;
+	private File scanDocument = null;
 	// True if the temp directory inside the destDir should be deleted when done
 	private boolean cleanTempFiles = false;
 	// Path string containing all source directories to be scanned
@@ -175,9 +175,9 @@ public class Config {
 			return false;
 		} else if (!excludedToolsList.equals(other.getExcludedToolsList())) {
 			return false;
-		} else if (runDocument == null && other.getRunDocument() != null) {
+		} else if (scanDocument == null && other.getScanDocument() != null) {
 			return false;
-		} else if (!runDocument.equals(other.getRunDocument())) {
+		} else if (!scanDocument.equals(other.getScanDocument())) {
 			return false;
 		} else if (cleanTempFiles != other.isCleanTempFiles()) {
 			return false;
@@ -237,16 +237,16 @@ public class Config {
 	/**
 	 * @return the runDocument
 	 */
-	public final File getRunDocument() {
-		return runDocument;
+	public final File getScanDocument() {
+		return scanDocument;
 	}
 
 	/**
 	 * @param runDocumentName
 	 *            the runDocumentName to set
 	 */
-	public final void setRunDocument(File runDocument) {
-		this.runDocument = runDocument;
+	public final void setScanDocument(File scanDocument) {
+		this.scanDocument = scanDocument;
 	}
 
 	/**

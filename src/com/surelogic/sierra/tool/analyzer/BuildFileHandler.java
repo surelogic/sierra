@@ -333,21 +333,21 @@ public class BuildFileHandler extends DefaultHandler {
 		if ("sierra-analysis".equals(eName)) {
 			inSierraAnalysis = false;
 
-			File runDocument = new File(runDocumentNameHolder);
-			if (runDocument == null || "".equals(runDocument)) {
-				runDocument = new File(SierraConstants.SIERRA_RESULTS_PATH,
+			File scanDocument = new File(runDocumentNameHolder);
+			if (scanDocument == null || "".equals(scanDocument)) {
+				scanDocument = new File(SierraConstants.SIERRA_RESULTS_PATH,
 						config.getProject()
 								+ SierraConstants.PARSED_FILE_SUFFIX);
-			} else if (runDocument.isDirectory()) {
-				runDocument = new File(runDocument, config.getProject()
+			} else if (scanDocument.isDirectory()) {
+				scanDocument = new File(scanDocument, config.getProject()
 						+ SierraConstants.PARSED_FILE_SUFFIX);
-			} else if (!runDocument.getName().endsWith(
+			} else if (!scanDocument.getName().endsWith(
 					SierraConstants.PARSED_FILE_SUFFIX)) {
-				runDocument = new File(runDocument.getParentFile(), runDocument
-						.getName()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
+				scanDocument = new File(scanDocument.getParentFile(),
+						scanDocument.getName()
+								+ SierraConstants.PARSED_FILE_SUFFIX);
 			}
-			config.setRunDocument(runDocument);
+			config.setScanDocument(scanDocument);
 			config.setRunDateTime(Calendar.getInstance().getTime());
 			config.setSourceDirs(srcDir);
 			config.setBinDirs(binDir);

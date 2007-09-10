@@ -31,7 +31,7 @@ public class TestSierraAnalysis {
 		config.setBaseDirectory(new File("/Users/ethan/workspace/fluid"));
 		config.setToolsDirectory(new File(
 				"/Users/ethan/sierra-workspace/sierra-tool/Tools"));
-		config.setRunDocument(new File(config.getDestDirectory(),
+		config.setScanDocument(new File(config.getDestDirectory(),
 				"testRun.xml.parsed"));
 		config.setMultithreaded(true);
 	}
@@ -42,18 +42,18 @@ public class TestSierraAnalysis {
 
 	@Test
 	public final void testStop() {
-		File run = config.getRunDocument();
+		File run = config.getScanDocument();
 		if (run.exists()) {
 			run.delete();
 		}
-		assertFalse(config.getRunDocument().exists());
+		assertFalse(config.getScanDocument().exists());
 
 		SierraAnalysis sa = new SierraAnalysis(config, null, 0);
 		new Thread(new Stopper(sa)).start();
 
 		sa.execute();// should wait
 
-		assertFalse(config.getRunDocument().exists());
+		assertFalse(config.getScanDocument().exists());
 	}
 
 }

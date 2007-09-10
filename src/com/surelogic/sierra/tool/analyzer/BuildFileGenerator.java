@@ -162,7 +162,7 @@ public class BuildFileGenerator {
 						.getAbsolutePath());
 				attributeMap.put("bindir", config.getBaseDirectory()
 						.getAbsolutePath());
-				attributeMap.put("runDocument", config.getRunDocument()
+				attributeMap.put("runDocument", config.getScanDocument()
 						.getAbsolutePath());
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "sierra-analysis", atts);
