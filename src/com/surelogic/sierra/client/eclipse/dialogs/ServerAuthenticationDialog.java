@@ -92,8 +92,6 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 		final Label userLabel = new Label(entryPanel, SWT.NONE);
 		userLabel.setText("User:");
-		// userLabel.setForeground(getShell().getDisplay().getSystemColor(
-		// SWT.COLOR_BLUE));
 		userLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		f_userText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
@@ -103,8 +101,6 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 		final Label passwordLabel = new Label(entryPanel, SWT.NONE);
 		passwordLabel.setText("Password:");
-		// passwordLabel.setForeground(getShell().getDisplay().getSystemColor(
-		// SWT.COLOR_BLUE));
 		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		f_passwordText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
