@@ -224,15 +224,15 @@ public final class Scan {
 						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
 
-						/* Rename the rundocument */
-						File runDocument = f_config.getScanDocument();
-						File newRunDocument = new File(sierraPath
+						/* Rename the scan document */
+						File scanDocument = f_config.getScanDocument();
+						File newScanDocument = new File(sierraPath
 								+ File.separator + f_config.getProject()
 								+ SierraConstants.PARSED_FILE_SUFFIX);
-						if (newRunDocument.exists()) {
-							newRunDocument.delete();
+						if (newScanDocument.exists()) {
+							newScanDocument.delete();
 						}
-						runDocument.renameTo(newRunDocument);
+						scanDocument.renameTo(newScanDocument);
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());
 						slProgressMonitorWrapper.done();
