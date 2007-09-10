@@ -77,12 +77,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		parent.setBackground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_RED));
 		final Composite contents = (Composite) super.createDialogArea(parent);
-		contents.setBackground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_BLUE));
-		contents.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite panel = new Composite(contents, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -252,7 +247,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		f_mediator = new Mediator(labelText, hostText, portText, userText,
 				passwordText);
 		f_mediator.init();
-		
+
 		Dialog.applyDialogFont(panel);
 
 		return panel;
