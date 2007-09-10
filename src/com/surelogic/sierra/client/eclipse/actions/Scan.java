@@ -93,7 +93,7 @@ public final class Scan {
 			projectList.append(" ").append(project.getProject().getName());
 			String projectPath = project.getResource().getLocation().toString();
 			File baseDir = new File(projectPath);
-			File runDocument = new File(sierraPath + File.separator
+			File scanDocument = new File(sierraPath + File.separator
 					+ project.getProject().getName() + " - " + getTimeStamp()
 					+ SierraConstants.PARSED_FILE_SUFFIX);
 
@@ -102,9 +102,9 @@ public final class Scan {
 			config.setBaseDirectory(baseDir);
 			config.setProject(project.getProject().getName());
 			config.setDestDirectory(f_resultRoot);
-			config.setRunDocument(runDocument);
+			config.setScanDocument(scanDocument);
 			config.setJavaVendor(System.getProperty("java.vendor"));
-			config.setRunDocument(runDocument);
+			config.setScanDocument(scanDocument);
 			config.setToolsDirectory(new File(tools));
 
 			// Get clean option
@@ -220,12 +220,12 @@ public final class Scan {
 					try {
 						/* Start database entry */
 						ScanDocumentUtility.loadScanDocument(f_config
-								.getRunDocument(), slProgressMonitorWrapper);
+								.getScanDocument(), slProgressMonitorWrapper);
 						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
 
 						/* Rename the rundocument */
-						File runDocument = f_config.getRunDocument();
+						File runDocument = f_config.getScanDocument();
 						File newRunDocument = new File(sierraPath
 								+ File.separator + f_config.getProject()
 								+ SierraConstants.PARSED_FILE_SUFFIX);
