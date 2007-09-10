@@ -53,6 +53,17 @@ public class DeploySchemaTask extends Task {
 		try {
 			Connection conn = DriverManager.getConnection(url);
 			SierraSchemaUtility.checkAndUpdate(conn, true);
+			
+			conn.createStatement().execute("INSERT INTO QUALIFIER (NAME) VALUES ('DefaultQualifier')");
+			
+			conn.createStatement().execute("INSERT INTO PRODUCT (NAME) VALUES ('DefaultProduct')");
+			conn.createStatement().execute("INSERT INTO PRODUCT (NAME) VALUES ('TestProduct')");
+		
+			conn.createStatement().execute("INSERT INTO PROJECT (NAME) VALUES ('DefaultProject')");
+			conn.createStatement().execute("INSERT INTO PROJECT (NAME) VALUES ('TestProject')");
+			
+			conn.createStatement().execute("INSERT INTO PRODUCT_PROJECT_RELTN (PRODUCT_ID, PROJECT_NAME) VALUES (2,'TestProject')");
+			conn.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

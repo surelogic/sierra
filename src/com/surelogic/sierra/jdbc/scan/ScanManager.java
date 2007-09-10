@@ -49,9 +49,15 @@ public class ScanManager {
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.factory = ScanRecordFactory.getInstance(conn);
-		// TODO this has to be moved to make sure it happens only once per
-		// connection
-		conn.createStatement().execute(MAKE_TEMP);
+
+		/** Make sure this is called only once per connection */
+		try{	
+				conn.createStatement().execute(MAKE_TEMP);
+		} catch (SQLException sql) {
+			// XXX Silently ignore this...this needs to be corrected eventually
+		}
+
+
 		this.deleteCompilations = conn
 				.prepareStatement(DELETE_UNUSED_COMPILATIONS);
 		this.deleteSources = conn.prepareStatement(DELETE_UNUSED_SOURCES);

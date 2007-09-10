@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.surelogic.sierra.jdbc.record.LongRecord;
-
 public class User {
 
 	private Long id;
