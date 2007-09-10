@@ -77,7 +77,12 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		parent.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_BLUE));
 		final Composite contents = (Composite) super.createDialogArea(parent);
+		contents.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		contents.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_RED));
 
 		Composite panel = new Composite(contents, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
