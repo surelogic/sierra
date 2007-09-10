@@ -304,41 +304,48 @@ public class MessageWarehouse {
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			XMLStreamReader xmlr = null;
-			InputStream stream = new FileInputStream(runDocument);
-			if (runDocument.getName().endsWith(".gz")) {
-				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
-			} else {
-				xmlr = xmlif.createXMLStreamReader(stream);
-			}
+
+			FileInputStream stream = new FileInputStream(runDocument);
 			try {
-				// move to the root element and check its name.
-				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "scan");
-				xmlr.nextTag(); // move to uid element
-				xmlr.require(START_ELEMENT, null, "uid");
-				generator.uid(unmarshaller.unmarshal(xmlr, String.class)
-						.getValue());
-				xmlr.nextTag(); // move to toolOutput element.
-				xmlr.nextTag(); // move to artifacts (or config, if no
-				// artifacts, errors, or classMetrics)
-				// Count artifacts, so that we can estimate time until
-				// completion
-				while ((xmlr.getEventType() != START_ELEMENT)
-						|| !xmlr.getLocalName().equals("config")) {
-					xmlr.next();
-				}
-				readConfig(unmarshaller.unmarshal(xmlr, Config.class)
-						.getValue(), generator);
-				if (cancelled(monitor)) {
-					return;
+				if (runDocument.getName().endsWith(".gz")) {
+					xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(
+							stream));
 				} else {
-					work(monitor);
+					xmlr = xmlif.createXMLStreamReader(stream);
 				}
-			} catch (JAXBException e) {
-				throw new IllegalArgumentException("File with name"
-						+ runDocument.getName() + " is not a valid document", e);
+				try {
+					// move to the root element and check its name.
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "scan");
+					xmlr.nextTag(); // move to uid element
+					xmlr.require(START_ELEMENT, null, "uid");
+					generator.uid(unmarshaller.unmarshal(xmlr, String.class)
+							.getValue());
+					xmlr.nextTag(); // move to toolOutput element.
+					xmlr.nextTag(); // move to artifacts (or config, if no
+					// artifacts, errors, or classMetrics)
+					// Count artifacts, so that we can estimate time until
+					// completion
+					while ((xmlr.getEventType() != START_ELEMENT)
+							|| !xmlr.getLocalName().equals("config")) {
+						xmlr.next();
+					}
+					readConfig(unmarshaller.unmarshal(xmlr, Config.class)
+							.getValue(), generator);
+					if (cancelled(monitor)) {
+						return;
+					} else {
+						work(monitor);
+					}
+				} catch (JAXBException e) {
+					throw new IllegalArgumentException("File with name"
+							+ runDocument.getName()
+							+ " is not a valid document", e);
+				}
+				xmlr.close();
+			} finally {
+				stream.close();
 			}
-			xmlr.close();
 		} catch (FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name "
 					+ runDocument.getName() + " does not exist.", e);
@@ -357,108 +364,114 @@ public class MessageWarehouse {
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			XMLStreamReader xmlr = null;
 			InputStream stream = new FileInputStream(runDocument);
-			if (runDocument.getName().endsWith(".gz")) {
-				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
-			} else {
-				xmlr = xmlif.createXMLStreamReader(stream);
-			}
-			if (cancelled(monitor)) {
-				generator.rollback();
-				return;
-			}
 			try {
-				// move to the root element and check its name.
-				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "scan");
-				xmlr.nextTag(); // move to uid element
-				xmlr.require(START_ELEMENT, null, "uid");
-				unmarshaller.unmarshal(xmlr, String.class);
-				xmlr.nextTag(); // move to toolOutput element.
-				xmlr.next(); // move to metrics
-				xmlr.require(START_ELEMENT, null, "metrics");
-				xmlr.nextTag(); // move to classMetric
-				// Unmarshal classMetric
-				MetricBuilder mBuilder = generator.metric();
-				int counter = 0;
-				while (xmlr.getEventType() == START_ELEMENT
-						&& xmlr.getLocalName().equals("class")) {
-					readClassMetric(unmarshaller.unmarshal(xmlr,
-							ClassMetric.class).getValue(), mBuilder);
-
-					if (++counter == COUNT) {
-						if (cancelled(monitor)) {
-							generator.rollback();
-							return;
-						} else {
-							work(monitor);
-						}
-						counter = 0;
-					}
-					if (xmlr.getEventType() == CHARACTERS) {
-						xmlr.next(); // skip the whitespace between
-						// <artifacts>s.
-					}
+				if (runDocument.getName().endsWith(".gz")) {
+					xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(
+							stream));
+				} else {
+					xmlr = xmlif.createXMLStreamReader(stream);
 				}
-
-				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "artifacts");
-				xmlr.nextTag();
-				// Unmarshal artifacts
-				ArtifactBuilder aBuilder = generator.artifact();
-				while (xmlr.getEventType() == START_ELEMENT
-						&& xmlr.getLocalName().equals("artifact")) {
-					readArtifact(unmarshaller.unmarshal(xmlr, Artifact.class)
-							.getValue(), aBuilder);
-
-					if (xmlr.getEventType() == CHARACTERS) {
-						xmlr.next(); // skip the whitespace between
-						// <artifacts>s.
-					}
-					if (++counter == COUNT) {
-						if (cancelled(monitor)) {
-							generator.rollback();
-							return;
-						} else {
-							work(monitor);
-						}
-						counter = 0;
-					}
+				if (cancelled(monitor)) {
+					generator.rollback();
+					return;
 				}
-				xmlr.nextTag();
-				xmlr.require(START_ELEMENT, null, "errors");
-				xmlr.nextTag();
-				// Unmarshal errors
-				ErrorBuilder eBuilder = generator.error();
-				while (xmlr.getEventType() == START_ELEMENT
-						&& xmlr.getLocalName().equals("errors")) {
-					readError(unmarshaller.unmarshal(xmlr, Error.class)
-							.getValue(), eBuilder);
+				try {
+					// move to the root element and check its name.
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "scan");
+					xmlr.nextTag(); // move to uid element
+					xmlr.require(START_ELEMENT, null, "uid");
+					unmarshaller.unmarshal(xmlr, String.class);
+					xmlr.nextTag(); // move to toolOutput element.
+					xmlr.next(); // move to metrics
+					xmlr.require(START_ELEMENT, null, "metrics");
+					xmlr.nextTag(); // move to classMetric
+					// Unmarshal classMetric
+					MetricBuilder mBuilder = generator.metric();
+					int counter = 0;
+					while (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("class")) {
+						readClassMetric(unmarshaller.unmarshal(xmlr,
+								ClassMetric.class).getValue(), mBuilder);
+
+						if (++counter == COUNT) {
+							if (cancelled(monitor)) {
+								generator.rollback();
+								return;
+							} else {
+								work(monitor);
+							}
+							counter = 0;
+						}
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <artifacts>s.
+						}
+					}
+
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "artifacts");
+					xmlr.nextTag();
+					// Unmarshal artifacts
+					ArtifactBuilder aBuilder = generator.artifact();
+					while (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("artifact")) {
+						readArtifact(unmarshaller.unmarshal(xmlr,
+								Artifact.class).getValue(), aBuilder);
+
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <artifacts>s.
+						}
+						if (++counter == COUNT) {
+							if (cancelled(monitor)) {
+								generator.rollback();
+								return;
+							} else {
+								work(monitor);
+							}
+							counter = 0;
+						}
+					}
+					xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "errors");
+					xmlr.nextTag();
+					// Unmarshal errors
+					ErrorBuilder eBuilder = generator.error();
+					while (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("errors")) {
+						readError(unmarshaller.unmarshal(xmlr, Error.class)
+								.getValue(), eBuilder);
+						if (monitor != null) {
+							monitor.worked(1);
+						}
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <event>s.
+						}
+						if (++counter == COUNT) {
+							if (cancelled(monitor)) {
+								generator.rollback();
+								return;
+							} else {
+								work(monitor);
+							}
+							counter = 0;
+						}
+					}
 					if (monitor != null) {
-						monitor.worked(1);
+						monitor.subTask("Generating findings");
 					}
-					if (xmlr.getEventType() == CHARACTERS) {
-						xmlr.next(); // skip the whitespace between
-						// <event>s.
-					}
-					if (++counter == COUNT) {
-						if (cancelled(monitor)) {
-							generator.rollback();
-							return;
-						} else {
-							work(monitor);
-						}
-						counter = 0;
-					}
+					generator.finished();
+				} catch (JAXBException e) {
+					throw new IllegalArgumentException("File with name"
+							+ runDocument.getName()
+							+ " is not a valid document", e);
 				}
-				if (monitor != null) {
-					monitor.subTask("Generating findings");
-				}
-				generator.finished();
-			} catch (JAXBException e) {
-				throw new IllegalArgumentException("File with name"
-						+ runDocument.getName() + " is not a valid document", e);
+				xmlr.close();
+			} finally {
+				stream.close();
 			}
-			xmlr.close();
 		} catch (FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name"
 					+ runDocument.getName() + " does not exist.", e);
