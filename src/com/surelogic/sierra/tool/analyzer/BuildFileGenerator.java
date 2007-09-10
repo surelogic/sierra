@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,23 +28,28 @@ import com.surelogic.sierra.tool.config.Config;
 public class BuildFileGenerator {
 
 	private static final Logger log = SLLogger.getLogger("sierra");
-	private Config config;
 	private AttributesImpl atts;
+	private static final BuildFileGenerator INSTANCE = new BuildFileGenerator();
 
-	/**
-	 * Entry.
-	 */
-	public static void main(String[] args) {
-		BuildFileGenerator buildFileGenerator = new BuildFileGenerator(
-				new Config());
-		buildFileGenerator.writeBuildFile();
+	public static BuildFileGenerator getInstance() {
+		return INSTANCE;
 	}
 
-	public BuildFileGenerator(Config config) {
-		this.config = config;
+	public BuildFileGenerator() {
+		// Nothing to do
 	}
 
-	public File writeBuildFile() {
+	public List<File> writeBuildFiles(List<Config> configs, boolean override) {
+		List<File> buildFiles = new ArrayList<File>();
+
+		for (Config c : configs) {
+			buildFiles.add(writeBuildFile(c, override));
+		}
+
+		return buildFiles;
+	}
+
+	private File writeBuildFile(Config config, boolean override) {
 
 		String fileName = config.getBaseDirectory() + File.separator
 				+ SierraConstants.SIERRA_BUILD_FILE;
@@ -60,7 +66,7 @@ public class BuildFileGenerator {
 
 		File buildFile = new File(fileName);
 
-		if (!buildFile.exists()) {
+		if (!buildFile.exists() || override) {
 
 			try {
 				FileOutputStream fos = new FileOutputStream(fileName);
@@ -68,7 +74,8 @@ public class BuildFileGenerator {
 				of.setIndent(1);
 				of.setIndenting(true);
 				XMLSerializer serializer = new XMLSerializer(fos, of);
-				// SAX2.0 ContentHandler.
+
+				// ContentHandler.
 				ContentHandler hd = serializer.asContentHandler();
 				hd.startDocument();
 				atts = new AttributesImpl();
@@ -82,6 +89,13 @@ public class BuildFileGenerator {
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
 
+				// Create property
+				attributeMap.put("name", "tool");
+				attributeMap.put("location", toolDirectory);
+				writeAttributes(attributeMap);
+				hd.startElement("", "", "property", atts);
+				hd.endElement("", "", "property");
+
 				// Include antlib.xml
 				attributeMap.put("resource", SierraConstants.ANTLIB_DIR);
 				writeAttributes(attributeMap);
@@ -90,7 +104,7 @@ public class BuildFileGenerator {
 				hd.startElement("", "", "classpath", null);
 
 				// Dirset to include everything in project
-				attributeMap.put("dir", toolDirectory);
+				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY);
 				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "dirset", atts);
@@ -103,29 +117,8 @@ public class BuildFileGenerator {
 				hd.startElement("", "", "dirset", atts);
 				hd.endElement("", "", "dirset");
 
-				// // Findbugs fileset
-				// attributeMap.put("dir", toolDirectory +
-				// FINDBUGS_LIB_LOCATION);
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "fileset", atts);
-				// attributeMap.put("name", FINDBUGS_JAR);
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "include", atts);
-				// hd.endElement("", "", "include");
-				// hd.endElement("", "", "fileset");
-				//
-				// // PMD fileset location
-				// attributeMap.put("dir", toolDirectory + PMD_40_LIB_LOCATION);
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "fileset", atts);
-				// attributeMap.put("name", INCLUDE_ALL_JARS);
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "include", atts);
-				// hd.endElement("", "", "include");
-				// hd.endElement("", "", "fileset");
-
 				// Backport util concurrent (for FindBugs)
-				attributeMap.put("dir", toolDirectory
+				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY
 						+ SierraConstants.BUC_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
@@ -136,7 +129,7 @@ public class BuildFileGenerator {
 				hd.endElement("", "", "fileset");
 
 				// JAXB file set
-				attributeMap.put("dir", toolDirectory
+				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY
 						+ SierraConstants.JAX_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
@@ -173,38 +166,6 @@ public class BuildFileGenerator {
 						.getAbsolutePath());
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
-
-				// Source tag
-				// attributeMap.put("dir", config.getBaseDirectory());
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "source", atts);
-
-				// attributeMap.put("name", "**/src");
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "include", atts);
-				// hd.endElement("", "", "include");
-				//
-				// attributeMap.put("name", "**/Tools/**");
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "exclude", atts);
-				// hd.endElement("", "", "exclude");
-				// hd.endElement("", "", "source");
-
-				// Binary tag
-				// attributeMap.put("dir", config.getBaseDirectory());
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "binary", atts);
-
-				// attributeMap.put("name", "**/bin");
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "include", atts);
-				// hd.endElement("", "", "include");
-				//
-				// attributeMap.put("name", "**/Tools/**");
-				// writeAttributes(attributeMap);
-				// hd.startElement("", "", "exclude", atts);
-				// hd.endElement("", "", "exclude");
-				// hd.endElement("", "", "binary");
 
 				// Close tags
 				hd.endElement("", "", "project");
@@ -243,6 +204,11 @@ public class BuildFileGenerator {
 
 	}
 
+	/**
+	 * Utility to get the plugin directory
+	 * 
+	 * @return
+	 */
 	public static String getToolsDirectory() {
 		String commonDirectory = "";
 

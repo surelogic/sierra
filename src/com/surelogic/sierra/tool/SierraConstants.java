@@ -36,10 +36,13 @@ public final class SierraConstants {
 	public static final String INCLUDE_ALL_JARS = "**/*.jar";
 
 	/** Backport util concurrent libraries */
-	public static final String BUC_LIB_LOCATION = "Tools/backport-util-concurrent-3.0";
+	public static final String BUC_LIB_LOCATION = "/Tools/backport-util-concurrent-3.0";
 
 	/** JAXB libraries location */
-	public static final String JAX_LIB_LOCATION = "Tools/jax-ws";
+	public static final String JAX_LIB_LOCATION = "/Tools/jax-ws";
+
+	/** The tool property */
+	public static final String TOOL_PROPERTY = "${tool}";
 
 	/** The name of build file for multiple projects */
 	@Deprecated
