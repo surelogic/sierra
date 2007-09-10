@@ -5,71 +5,102 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+
+import com.surelogic.common.logging.SLLogger;
 
 public final class SierraServerManager {
 
 	/**
-	 * Maps servers by their name.
+	 * Maps servers by their label.
 	 */
-	final Map<String, SierraServerModel> f_nameToServer = new HashMap<String, SierraServerModel>();
+	final Map<String, SierraServerModel> f_labelToServer = new HashMap<String, SierraServerModel>();
 
 	/**
 	 * Checks if a given name is the name for an existing server.
 	 * 
-	 * @param name
+	 * @param label
 	 *            a server name.
 	 * @return <code>true</code> if the name is used for an existing server,
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean exists(final String name) {
-		return f_nameToServer.containsKey(name);
+	public boolean exists(final String label) {
+		return f_labelToServer.containsKey(label);
 	}
 
 	/**
-	 * Gets the server with the passed name. If the server does not exist then
+	 * Gets the server with the passed label. If the server does not exist then
 	 * it is created.
 	 * 
-	 * @param name
+	 * @param label
 	 *            a server name.
 	 * @return the server with the passed name.
 	 */
-	public SierraServerModel getOrCreate(final String name) {
-		if (name == null)
-			throw new IllegalArgumentException("name must be non-null");
-		SierraServerModel server = f_nameToServer.get(name);
+	public SierraServerModel getOrCreate(final String label) {
+		if (label == null)
+			throw new IllegalArgumentException("label must be non-null");
+		SierraServerModel server = f_labelToServer.get(label);
 		if (server == null) {
-			server = new SierraServerModel(this, name);
+			server = new SierraServerModel(this, label);
 			notifyObservers();
 		}
 		return server;
 	}
 
 	/**
-	 * Creates a server with a unique name. The new server is set as the focus
-	 * query.
+	 * Creates a server with a unique label. The new server is set as the focus
+	 * server.
 	 * 
 	 * @return the new server.
 	 */
 	public SierraServerModel create() {
-		final String name = newUniqueName("server");
-		final SierraServerModel query = new SierraServerModel(this, name);
+		final String label = newUniqueLabel("server");
+		final SierraServerModel query = new SierraServerModel(this, label);
 		setFocus(query);
 		return query;
 	}
 
+	public void delete(SierraServerModel server) {
+		if (server.getManager() != this) {
+			SLLogger.getLogger().log(
+					Level.WARNING,
+					"A server can only be deleted from its associated manager : "
+							+ server);
+			return;
+		}
+		if (f_focus == server)
+			f_focus = null;
+		for (Iterator<Map.Entry<String, SierraServerModel>> i = f_labelToServer
+				.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, SierraServerModel> entry = i.next();
+			if (entry.getValue() == server) {
+				i.remove();
+			}
+		}
+		notifyObservers();
+	}
+
+	public void delete(String label) {
+		SierraServerModel server = f_labelToServer.get(label);
+		if (server != null) {
+			delete(server);
+		}
+	}
+
 	/**
-	 * Creates a duplicate of the current focus server with a new unique name.
+	 * Creates a duplicate of the current focus server with a new unique label.
 	 * The new server becomes the focus of this model.
 	 */
 	public void duplicate() {
 		final SierraServerModel server = getFocus();
 		if (server != null) {
-			final String name = newUniqueName(server.getLabel());
+			final String label = newUniqueLabel(server.getLabel());
 			final SierraServerModel newServer = new SierraServerModel(this,
-					name);
+					label);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());
 			newServer.setPort(server.getPort());
@@ -81,14 +112,14 @@ public final class SierraServerManager {
 	}
 
 	/**
-	 * Creates a unique server name. For example, given a prefix of
+	 * Creates a unique server label. For example, given a prefix of
 	 * <code>"server"</code>, it could return <code>"server (1)"</code>.
 	 * 
 	 * @param prefix
-	 *            non-null prefix for the name.
-	 * @return a unique server name.
+	 *            non-null prefix for the label.
+	 * @return a unique server label.
 	 */
-	private String newUniqueName(String prefix) {
+	private String newUniqueLabel(String prefix) {
 		// strip off any previous number, e.g., (1)
 		if (prefix.endsWith(")")) {
 			int index = prefix.lastIndexOf("(");
@@ -97,7 +128,7 @@ public final class SierraServerManager {
 					prefix = prefix.substring(0, index - 1);
 			}
 		}
-		// create a new name
+		// create a new label
 		int id = 1;
 		String name;
 		do {
@@ -107,13 +138,14 @@ public final class SierraServerManager {
 	}
 
 	/**
-	 * Gets the ordered list of server names managed by this model. The array
-	 * returned is a copy so mutations to the array will not affect this model.
+	 * Gets the list of server labels managed by this model in alphabetical
+	 * order. The array returned is a copy so mutations to the array will not
+	 * affect this model.
 	 * 
-	 * @return the ordered list of server names.
+	 * @return the ordered list of server labels.
 	 */
-	public String[] getNames() {
-		List<String> f_names = new ArrayList<String>(f_nameToServer.keySet());
+	public String[] getLabels() {
+		List<String> f_names = new ArrayList<String>(f_labelToServer.keySet());
 		Collections.sort(f_names);
 		return f_names.toArray(new String[f_names.size()]);
 	}

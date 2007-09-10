@@ -14,8 +14,8 @@ public final class SierraServerModel {
 		f_manager = manager;
 		assert label != null;
 		f_label = label;
-		assert !f_manager.f_nameToServer.containsKey(f_label);
-		f_manager.f_nameToServer.put(f_label, this);
+		assert !f_manager.f_labelToServer.containsKey(f_label);
+		f_manager.f_labelToServer.put(f_label, this);
 	}
 
 	private String f_label = "";
@@ -28,9 +28,9 @@ public final class SierraServerModel {
 		if (label == null || label.equals(f_label))
 			return;
 		// overwrite semantics, i.e., no check if the new name is in use
-		f_manager.f_nameToServer.remove(f_label);
+		f_manager.f_labelToServer.remove(f_label);
 		f_label = label;
-		f_manager.f_nameToServer.put(f_label, this);
+		f_manager.f_labelToServer.put(f_label, this);
 		f_manager.notifyObservers();
 	}
 
@@ -96,6 +96,13 @@ public final class SierraServerModel {
 
 	public void setSavePassword(boolean savePassword) {
 		f_savePassword = savePassword;
+	}
+
+	public String toURLString() {
+		final StringBuilder b = new StringBuilder();
+		b.append(getProtocol()).append("://");
+		b.append(getHost()).append(":").append(getPort());
+		return b.toString();
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public final class SierraServersView extends ViewPart {
 		gridLayout.numColumns = 1;
 		rhs.setLayout(gridLayout);
 
-		Table serverList = new Table(rhs, SWT.FULL_SELECTION | SWT.MULTI);
+		Table serverList = new Table(rhs, SWT.FULL_SELECTION);
 		serverList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite c = new Composite(rhs, SWT.NONE);
@@ -71,8 +71,11 @@ public final class SierraServersView extends ViewPart {
 		deleteServer.setImage(PlatformUI.getWorkbench().getSharedImages()
 				.getImage(ISharedImages.IMG_TOOL_DELETE));
 		deleteServer.setToolTipText("Deletes the selected server location");
+		final Button editServer = new Button(c, SWT.NONE);
+		editServer.setText("Edit");
+		editServer.setToolTipText("Edit the selected server location");
 		final Button openInBrowser = new Button(c, SWT.NONE);
-		openInBrowser.setText("Open in Browser");
+		openInBrowser.setText("Open");
 		openInBrowser
 				.setToolTipText("Open the selected server in a Web browser");
 
@@ -100,12 +103,11 @@ public final class SierraServersView extends ViewPart {
 		serverImg.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 		final Label serverURL = new Label(infoGroup, SWT.NONE);
-		serverURL.setText("https://fluid.surelogic.com on port 8080");
 		serverURL
-				.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		f_mediator = new SierraServersMediator(getQuerySaveFile(), serverList,
-				newServer, duplicateServer, deleteServer, openInBrowser,
+				newServer, duplicateServer, deleteServer, editServer, openInBrowser,
 				serverURL);
 		f_mediator.init();
 	}
