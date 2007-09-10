@@ -235,5 +235,20 @@
             class="com.surelogic.sierra.client.eclipse.AdHocGlue">
       </instance>
    </extension>
+   <extension
+         id="sierraBuildFile"
+         point="org.eclipse.ui.exportWizards">
+         <category name="Sierra" id="sierra.category"/>
+         <wizard
+         	category="sierra.category" 
+         	name="Sierra Buildfiles"
+         	class="com.surelogic.sierra.client.eclipse.wizards.SierraBuildFileExportWizard"
+         	id="sierra.build.file.wizard"
+         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif">
+         		<description>
+         			A wizard to generate Sierra Buildfiles
+         		</description>
+         	</wizard>
+   </extension>
    
 </plugin>

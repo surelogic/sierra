@@ -2,8 +2,6 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +25,6 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
-import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -52,10 +49,6 @@ public final class Scan {
 
 	/** The list of configurations to run scan on */
 	private List<Config> f_configs;
-
-	/** The default folder from the preference page */
-	private static final String sierraPath = PreferenceConstants
-			.getSierraPath();
 
 	/**
 	 * The constructor for the Scan
@@ -82,44 +75,15 @@ public final class Scan {
 	public void execute() {
 		f_configs = new ArrayList<Config>();
 
-		/* The plug-in directory that has tools folder */
-		final String tools = BuildFileGenerator.getToolsDirectory()
-				+ SierraConstants.TOOLS_FOLDER;
-
 		final StringBuilder projectList = new StringBuilder();
 
-		/* Create config objects for all the selected projects */
-		for (IJavaProject project : f_selectedProjects) {
-			projectList.append(" ").append(project.getProject().getName());
-			String projectPath = project.getResource().getLocation().toString();
-			File baseDir = new File(projectPath);
-			File scanDocument = new File(sierraPath + File.separator
-					+ project.getProject().getName() + " - " + getTimeStamp()
-					+ SierraConstants.PARSED_FILE_SUFFIX);
-
-			Config config = new Config();
-
-			config.setBaseDirectory(baseDir);
-			config.setProject(project.getProject().getName());
-			config.setDestDirectory(f_resultRoot);
-			config.setScanDocument(scanDocument);
-			config.setJavaVendor(System.getProperty("java.vendor"));
-			config.setScanDocument(scanDocument);
-			config.setToolsDirectory(new File(tools));
-
-			// Get clean option
-			// Get excluded tools
-			// Get included dirs -project specific
-			// Get excluded dirs - project specific
-
-			f_configs.add(config);
-		}
-
+		f_configs = ConfigGenerator.getInstance()
+				.getConfigs(f_selectedProjects);
 		if (f_configs.size() > 0) {
 
-			// Run the scan on the all the configs
+			/* Run the scan on the all the configs */
 			for (Config c : f_configs) {
-
+				projectList.append(" ").append(c.getProject());
 				final Job runSingleSierraScan = new ScanProjectJob(
 						"Running Sierra on " + c.getProject(), c, SIERRA);
 				runSingleSierraScan.setPriority(Job.SHORT);
@@ -135,19 +99,6 @@ public final class Scan {
 						+ projectList, "You may continue your work. "
 						+ "You will be notified when the scan has completed.");
 		}
-	}
-
-	private String getTimeStamp() {
-		Date date = Calendar.getInstance().getTime();
-		long time = Calendar.getInstance().getTimeInMillis();
-
-		/*
-		 * Change the colon on date to semi-colon as file name with a colon is
-		 * invalid
-		 */
-		String timeStamp = date.toString().replace(":", ";") + " - "
-				+ String.valueOf(time);
-		return timeStamp;
 	}
 
 	/**
@@ -226,9 +177,18 @@ public final class Scan {
 
 						/* Rename the scan document */
 						File scanDocument = f_config.getScanDocument();
-						File newScanDocument = new File(sierraPath
-								+ File.separator + f_config.getProject()
+						File newScanDocument = new File(PreferenceConstants
+								.getSierraPath()
+								+ File.separator
+								+ f_config.getProject()
 								+ SierraConstants.PARSED_FILE_SUFFIX);
+						/*
+						 * This approach assures that the scan document
+						 * generation will not crash. The tool will simply
+						 * override the existing scan document no matter how
+						 * recent it is.
+						 * 
+						 */
 						if (newScanDocument.exists()) {
 							newScanDocument.delete();
 						}
@@ -262,7 +222,8 @@ public final class Scan {
 
 	/**
 	 * The thread to run the ant task, it allows polling to check for
-	 * completion. Also provides method to stop the tool runs.
+	 * completion. Also provides method to stop the tool runs and determines any
+	 * exception that occured
 	 * 
 	 * @author Tanmay.Sinha
 	 * 
