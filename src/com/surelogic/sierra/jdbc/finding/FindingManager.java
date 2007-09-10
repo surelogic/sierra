@@ -65,6 +65,8 @@ public abstract class FindingManager {
 	private final PreparedStatement obsoleteMatches;
 	private final PreparedStatement obsoleteFinding;
 	private final PreparedStatement latestAuditRevision;
+	private final PreparedStatement deleteMatches;
+	private final PreparedStatement deleteFindings;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -104,6 +106,10 @@ public abstract class FindingManager {
 				.prepareStatement("UPDATE FINDING SET OBSOLETED_BY_ID = ?, OBSOLETED_BY_REVISION = ? WHERE ID = ?");
 		latestAuditRevision = conn
 				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, FINDING F, AUDIT A WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND A.FINDING_ID = F.ID");
+		deleteMatches = conn
+				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
+		deleteFindings = conn
+				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -214,6 +220,30 @@ public abstract class FindingManager {
 		}
 	}
 
+	public void deleteFindings(String projectName, SLProgressMonitor monitor)
+			throws SQLException {
+		if (monitor != null) {
+			monitor.subTask("Deleting matches for project " + projectName);
+		}
+		deleteMatches.setString(1, projectName);
+		deleteMatches.executeUpdate();
+		if (monitor != null) {
+			if (monitor.isCanceled())
+				return;
+			monitor.worked(1);
+		}
+		if (monitor != null) {
+			monitor.subTask("Deleting findings for project " + projectName);
+		}
+		deleteFindings.setString(1, projectName);
+		deleteFindings.executeUpdate();
+		if (monitor != null) {
+			if (monitor.isCanceled())
+				return;
+			monitor.worked(1);
+		}
+	}
+
 	public void updateLocalFindings(String projectName,
 			List<TrailObsoletion> obsoletions, List<AuditTrailUpdate> updates,
 			SLProgressMonitor monitor) throws SQLException {
@@ -230,7 +260,8 @@ public abstract class FindingManager {
 					if (!newFinding.select()) {
 						newFinding.insert();
 					}
-					obsolete(obsoletedFinding.getId(), newFinding.getId(), to.getRevision());
+					obsolete(obsoletedFinding.getId(), newFinding.getId(), to
+							.getRevision());
 				} else {
 					log.log(Level.WARNING, "A trail obsoletion for uid "
 							+ to.getObsoletedTrail() + " to uid "
