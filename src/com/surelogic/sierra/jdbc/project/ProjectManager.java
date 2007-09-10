@@ -76,6 +76,8 @@ public class ProjectManager {
 				.getSierraServicePort();
 
 		// Commit merges
+		monitor.subTask("Committing local merges from project " + projectName
+				+ ".");
 		MergeAuditTrailRequest mergeRequest = new MergeAuditTrailRequest();
 		mergeRequest.setProject(projectName);
 		List<Merge> merges = findingManager.getNewLocalMerges(projectName,
@@ -85,12 +87,22 @@ public class ProjectManager {
 				.mergeAuditTrails(mergeRequest);
 		findingManager.updateLocalTrailUids(projectName, mergeResponse
 				.getRevision(), mergeResponse.getTrail(), merges, monitor);
-
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
 		// Commit Audits
+		monitor.subTask("Committing local audits for project " + projectName
+				+ ".");
 		service.commitAuditTrails(findingManager.getNewLocalAudits(projectName,
 				monitor));
-
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
 		// Get updated audits from server
+		monitor.subTask("Updating findings for project " + projectName
+				+ " from server.");
 		AuditTrailRequest auditRequest = new AuditTrailRequest();
 		auditRequest.setProject(projectName);
 		auditRequest.setRevision(findingManager
@@ -98,8 +110,13 @@ public class ProjectManager {
 		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
 		findingManager.updateLocalFindings(projectName, auditResponse
 				.getObsolete(), auditResponse.getUpdate(), monitor);
-
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
 		// Update settings
+		monitor.subTask("Checking for updated settings for project "
+				+ projectName);
 		ClientSettingsManager settingsManager = ClientSettingsManager
 				.getInstance(conn);
 		SettingsRequest request = new SettingsRequest();
@@ -112,6 +129,7 @@ public class ProjectManager {
 			settingsManager.writeSettings(projectName, serverRevision, reply
 					.getSettings());
 		}
+		monitor.worked(1);
 	}
 
 	public Long newProject(String name) throws SQLException {
