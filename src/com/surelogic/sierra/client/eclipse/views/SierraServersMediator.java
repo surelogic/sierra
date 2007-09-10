@@ -187,7 +187,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	private static void openInBrowser(SierraServerModel server) {
-		final String url = server.toURLString();
+		final String url = server.toURLString() + "/sierra";
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
@@ -202,6 +202,5 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Exception occurred when opening URL: " + url);
 		}
-
 	}
 }
