@@ -20,7 +20,7 @@ import com.surelogic.sierra.tool.message.MergeAuditResponse;
 import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
-import com.surelogic.sierra.tool.message.SierraServer;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 
@@ -63,7 +63,7 @@ public class ProjectManager {
 		return projectNames;
 	}
 
-	public void synchronizeProject(SierraServer server, String projectName,
+	public void synchronizeProject(SierraServerLocation server, String projectName,
 			SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
