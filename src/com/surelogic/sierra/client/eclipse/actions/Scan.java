@@ -53,6 +53,10 @@ public final class Scan {
 	/** The list of configurations to run scan on */
 	private List<Config> f_configs;
 
+	/** The default folder from the preference page */
+	private static final String sierraPath = PreferenceConstants
+			.getSierraPath();
+
 	/**
 	 * The constructor for the Scan
 	 * 
@@ -78,13 +82,7 @@ public final class Scan {
 	public void execute() {
 		f_configs = new ArrayList<Config>();
 
-		/* Get default folder from the preference page */
-		final String sierraPath = PreferenceConstants.getSierraPath();
-
-		/*
-		 * Get the plug-in directory that has tools folder and append the
-		 * directory
-		 */
+		/* The plug-in directory that has tools folder */
 		final String tools = BuildFileGenerator.getToolsDirectory()
 				+ SierraConstants.TOOLS_FOLDER;
 
@@ -141,12 +139,14 @@ public final class Scan {
 
 	private String getTimeStamp() {
 		Date date = Calendar.getInstance().getTime();
+		long time = Calendar.getInstance().getTimeInMillis();
 
 		/*
 		 * Change the colon on date to semi-colon as file name with a colon is
 		 * invalid
 		 */
-		String timeStamp = date.toString().replace(":", ";");
+		String timeStamp = date.toString().replace(":", ";") + " - "
+				+ String.valueOf(time);
 		return timeStamp;
 	}
 
@@ -223,6 +223,16 @@ public final class Scan {
 								.getRunDocument(), slProgressMonitorWrapper);
 						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
+
+						/* Rename the rundocument */
+						File runDocument = f_config.getRunDocument();
+						File newRunDocument = new File(sierraPath
+								+ File.separator + f_config.getProject()
+								+ SierraConstants.PARSED_FILE_SUFFIX);
+						if (newRunDocument.exists()) {
+							newRunDocument.delete();
+						}
+						runDocument.renameTo(newRunDocument);
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());
 						slProgressMonitorWrapper.done();
