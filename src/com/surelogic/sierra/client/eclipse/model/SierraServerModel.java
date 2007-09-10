@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+import com.surelogic.sierra.tool.message.SierraServer;
+
 public final class SierraServerModel {
 
 	private final SierraServerManager f_manager;
@@ -115,5 +117,9 @@ public final class SierraServerModel {
 		b.append(" password=\"").append(getPassword()).append("\" ");
 		b.append(" password-is-saved=").append(savePassword());
 		return b.toString();
+	}
+
+	public SierraServer getServer() {
+		return new SierraServer(f_host, f_port);
 	}
 }
