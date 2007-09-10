@@ -241,10 +241,10 @@
          <category name="Sierra" id="sierra.category"/>
          <wizard
          	category="sierra.category" 
-         	name="Sierra Buildfiles"
+         	name="Ant Buildfiles"
          	class="com.surelogic.sierra.client.eclipse.wizards.SierraBuildFileExportWizard"
          	id="sierra.build.file.wizard"
-         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif">
+         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/ant_export.gif">
          		<description>
          			A wizard to generate Sierra Buildfiles
          		</description>

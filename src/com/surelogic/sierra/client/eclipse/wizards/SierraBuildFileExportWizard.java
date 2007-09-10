@@ -38,7 +38,7 @@ public class SierraBuildFileExportWizard extends Wizard implements
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export");
 		setDefaultPageImageDescriptor(SLImages
-				.getImageDescriptor(SLImages.IMG_SIERRA_LOGO));
+				.getImageDescriptor(SLImages.IMG_ANT_EXPORT_WIZ));
 		fSelection = selection;
 	}
 }
