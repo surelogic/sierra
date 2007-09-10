@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import java.io.File;
+import java.net.URL;
 import java.util.logging.Level;
 
 import org.eclipse.jface.window.Window;
@@ -13,6 +14,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -182,8 +185,23 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 		return true;
 	}
-	
+
 	private static void openInBrowser(SierraServerModel server) {
-		
+		final String url = server.toURLString();
+		final String name = "Sierra Server '" + server.getLabel() + "'";
+
+		try {
+			final IWebBrowser browser = PlatformUI.getWorkbench()
+					.getBrowserSupport().createBrowser(
+							IWorkbenchBrowserSupport.LOCATION_BAR
+									| IWorkbenchBrowserSupport.NAVIGATION_BAR
+									| IWorkbenchBrowserSupport.STATUS,
+							server.getLabel(), name, name);
+			browser.openURL(new URL(url));
+		} catch (Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Exception occurred when opening URL: " + url);
+		}
+
 	}
 }

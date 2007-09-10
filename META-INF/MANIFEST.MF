@@ -19,5 +19,6 @@ Require-Bundle: org.eclipse.ui,
  com.surelogic.common.eclipse,
  com.surelogic.common,
  org.eclipse.jdt.launching,
- org.apache.ant
+ org.apache.ant,
+ org.eclipse.ui.browser
 Eclipse-LazyStart: true
