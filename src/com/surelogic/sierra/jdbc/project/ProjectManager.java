@@ -146,19 +146,32 @@ public class ProjectManager {
 	public void deleteProject(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		ProjectRecord rec = projectFactory.newProject();
+		
+		if(rec == null || projectName == null) {
+			System.out.println("**************************************");
+			return;
+		}
+		
 		rec.setName(projectName);
+		
 		if (rec.select()) {
-			monitor.subTask("Deleting scans for project " + projectName);
+			if (monitor != null)
+				monitor.subTask("Deleting scans for project " + projectName);
+		
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
-			monitor.subTask("Deleting matches for project " + projectName);
+
+			if (monitor != null)
+				monitor.subTask("Deleting matches for project " + projectName);
+
 			deleteMatches.setLong(1, rec.getId());
 			deleteMatches.executeUpdate();
 			if (monitor != null) {
 				if (monitor.isCanceled())
 					return;
 				monitor.worked(1);
+				monitor.subTask("Deleting findings for project " + projectName);
 			}
-			monitor.subTask("Deleting findings for project " + projectName);
+			
 			deleteFindings.setLong(1, rec.getId());
 			deleteFindings.executeUpdate();
 			if (monitor != null) {
