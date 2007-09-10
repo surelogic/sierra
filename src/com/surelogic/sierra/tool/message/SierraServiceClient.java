@@ -23,7 +23,7 @@ public class SierraServiceClient extends Service {
 	 * @param host
 	 *            a String of type <em>server</em> or <em>server</em>:<em>port</em>
 	 */
-	public SierraServiceClient(SierraServer server) {
+	public SierraServiceClient(SierraServerLocation server) {
 		super(createUrl(server), new QName(
 				"http://services.sierra.surelogic.com/",
 				"SierraServiceBeanService"));
@@ -40,7 +40,7 @@ public class SierraServiceClient extends Service {
 	 * @param server
 	 */
 	public SierraServiceClient(String server) {
-		super(createUrl(new SierraServer(server)), new QName(
+		super(createUrl(new SierraServerLocation(server)), new QName(
 				"http://services.sierra.surelogic.com/",
 				"SierraServiceBeanService"));
 	}
@@ -58,7 +58,7 @@ public class SierraServiceClient extends Service {
 	 *            a String of type <em>host</em> or <em>host</em>[<em>:port</em>]
 	 * @return
 	 */
-	private static URL createUrl(SierraServer server) {
+	private static URL createUrl(SierraServerLocation server) {
 		String host;
 		if (server == null) {
 			host = "localhost:8080";

@@ -3,16 +3,16 @@ package com.surelogic.sierra.tool.message;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SierraServer {
+public class SierraServerLocation {
 	private final String host;
 	private final Integer port;
 
-	public SierraServer(String host, Integer port) {
+	public SierraServerLocation(String host, Integer port) {
 		this.host = host;
 		this.port = port;
 	}
 
-	public SierraServer(String server) {
+	public SierraServerLocation(String server) {
 		Matcher m = Pattern.compile("([^:]*)(:(\\d+))?").matcher(server);
 		String strPort = m.group(3);
 		if (strPort != null) {
