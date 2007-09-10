@@ -2,6 +2,8 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,14 +38,19 @@ import com.surelogic.sierra.tool.config.Config;
  */
 public final class Scan {
 
+	/** The logger */
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private static final String SIERRA_JOB = "sierra";
+	/** The Sierra job family name */
+	private static final String SIERRA = "sierra";
 
+	/** The list of selected projects */
 	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
+	/** The location to store tool results */
 	private File f_resultRoot;
 
+	/** The list of configurations to run scan on */
 	private List<Config> f_configs;
 
 	/**
@@ -71,25 +78,25 @@ public final class Scan {
 	public void execute() {
 		f_configs = new ArrayList<Config>();
 
-		/*
-		 * Get default folder from the preference page
-		 */
+		/* Get default folder from the preference page */
 		final String sierraPath = PreferenceConstants.getSierraPath();
-		final File sierraFolder = new File(sierraPath);
+
+		/*
+		 * Get the plug-in directory that has tools folder and append the
+		 * directory
+		 */
+		final String tools = BuildFileGenerator.getToolsDirectory()
+				+ SierraConstants.TOOLS_FOLDER;
 
 		final StringBuilder projectList = new StringBuilder();
 
-		/*
-		 * Create config objects for all the selected projects
-		 */
+		/* Create config objects for all the selected projects */
 		for (IJavaProject project : f_selectedProjects) {
 			projectList.append(" ").append(project.getProject().getName());
-
 			String projectPath = project.getResource().getLocation().toString();
-
 			File baseDir = new File(projectPath);
 			File runDocument = new File(sierraPath + File.separator
-					+ project.getProject().getName()
+					+ project.getProject().getName() + " - " + getTimeStamp()
 					+ SierraConstants.PARSED_FILE_SUFFIX);
 
 			Config config = new Config();
@@ -99,22 +106,14 @@ public final class Scan {
 			config.setDestDirectory(f_resultRoot);
 			config.setRunDocument(runDocument);
 			config.setJavaVendor(System.getProperty("java.vendor"));
+			config.setRunDocument(runDocument);
+			config.setToolsDirectory(new File(tools));
 
 			// Get clean option
 			// Get excluded tools
 			// Get included dirs -project specific
 			// Get excluded dirs - project specific
 
-			/*
-			 * Get the plug-in directory that has tools folder and append the
-			 * directory
-			 */
-			String tools = BuildFileGenerator.getToolsDirectory();
-			tools = tools + SierraConstants.TOOLS_FOLDER;
-			config.setToolsDirectory(new File(tools));
-			File runDocumentHolder = new File(sierraFolder + File.separator
-					+ config.getProject() + SierraConstants.PARSED_FILE_SUFFIX);
-			config.setRunDocument(runDocumentHolder);
 			f_configs.add(config);
 		}
 
@@ -124,7 +123,7 @@ public final class Scan {
 			for (Config c : f_configs) {
 
 				final Job runSingleSierraScan = new ScanProjectJob(
-						"Running Sierra on " + c.getProject(), c, SIERRA_JOB);
+						"Running Sierra on " + c.getProject(), c, SIERRA);
 				runSingleSierraScan.setPriority(Job.SHORT);
 				runSingleSierraScan.belongsTo(c.getProject());
 				runSingleSierraScan
@@ -138,6 +137,17 @@ public final class Scan {
 						+ projectList, "You may continue your work. "
 						+ "You will be notified when the scan has completed.");
 		}
+	}
+
+	private String getTimeStamp() {
+		Date date = Calendar.getInstance().getTime();
+
+		/*
+		 * Change the colon on date to semi-colon as file name with a colon is
+		 * invalid
+		 */
+		String timeStamp = date.toString().replace(":", ";");
+		return timeStamp;
 	}
 
 	/**
