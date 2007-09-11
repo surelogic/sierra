@@ -29,7 +29,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
-	public static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
+	private static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format \nthat's difficult, but not impossible, for an intruder to read.";
 
 	private static final String TITLE = "Enter Sierra Server Location Information";
 	private static final String INFO_MSG = "Define the information for the Sierra server you want to interact with.";
@@ -77,24 +77,29 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		parent.setBackground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_BLUE));
 		final Composite contents = (Composite) super.createDialogArea(parent);
-		contents.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		contents.setBackground(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_RED));
 
 		Composite panel = new Composite(contents, SWT.NONE);
-		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		panel.setLayout(gridLayout);
 
-		final Label label = new Label(panel, SWT.RIGHT);
+		panel.setLayout(gridLayout);
+		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		/* Label and text box */
+		final Group labelGroup = new Group(panel, SWT.NONE);
+		labelGroup.setText("Location");
+		labelGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
+				2, 1));
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		labelGroup.setLayout(gridLayout);
+
+		final Label label = new Label(labelGroup, SWT.RIGHT);
 		label.setText("Label:");
 		label.setLayoutData(new GridData(SWT.RIGHT));
-		Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
+		Text labelText = new Text(labelGroup, SWT.SINGLE | SWT.BORDER);
 		labelText.setText(f_server.getLabel());
 		labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		labelText.addListener(SWT.Verify, new Listener() {
@@ -114,6 +119,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			}
 		});
 
+		/* Location group */
 		final Group locGroup = new Group(panel, SWT.NONE);
 		locGroup.setText("Location");
 		locGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2,
@@ -180,6 +186,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		http.addListener(SWT.Selection, protListener);
 		https.addListener(SWT.Selection, protListener);
 
+		/* Authorization group */
 		final Group authGroup = new Group(panel, SWT.NONE);
 		authGroup.setText("Authentication");
 		authGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2,
@@ -219,8 +226,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		});
 
 		final Composite warning = new Composite(authGroup, SWT.NONE);
-		warning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2,
-				1));
+		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+				2, 1));
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		warning.setLayout(gridLayout);
@@ -232,11 +239,20 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		final Label saveWarning = new Label(warning, SWT.WRAP);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		data.widthHint = 100;
+		// data.widthHint = 100;
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(SAVE_PW_WARNING);
 
-		final Button validateButton = new Button(panel, SWT.CHECK);
+		/* Button group */
+		final Group buttonGroup = new Group(panel, SWT.NONE);
+		buttonGroup.setText("Location");
+		buttonGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
+				2, 1));
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		buttonGroup.setLayout(gridLayout);
+
+		final Button validateButton = new Button(buttonGroup, SWT.CHECK);
 		validateButton.setText("Validate server location on completion");
 		validateButton.setSelection(f_validateLocation);
 		validateButton.addListener(SWT.Selection, new Listener() {
@@ -255,13 +271,24 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		Dialog.applyDialogFont(panel);
 
-		return panel;
+		return contents;
 	}
+
+	// /*
+	// * Use this to allow resize
+	// *
+	// * @see org.eclipse.jface.window.Window#setShellStyle(int)
+	// */
+	// @Override
+	// protected void setShellStyle(int newShellStyle) {
+	// super.setShellStyle(newShellStyle | SWT.RESIZE | SWT.MAX);
+	// }
 
 	@Override
 	protected Control createContents(Composite parent) {
 		final Control contents = super.createContents(parent);
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1,
+				1));
 		getShell().pack();
 		f_mediator.checkDialogContents();
 		return contents;
