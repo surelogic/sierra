@@ -29,7 +29,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
-	private static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format \nthat's difficult, but not impossible, for an intruder to read.";
+	private static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
 
 	private static final String TITLE = "Enter Sierra Server Location Information";
 	private static final String INFO_MSG = "Define the information for the Sierra server you want to interact with.";
@@ -84,21 +84,14 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		gridLayout.numColumns = 2;
 
 		panel.setLayout(gridLayout);
-		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.widthHint = 400;
+		panel.setLayoutData(data);
 
-		/* Label and text box */
-		final Group labelGroup = new Group(panel, SWT.NONE);
-		labelGroup.setText("Location");
-		labelGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
-				2, 1));
-		gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		labelGroup.setLayout(gridLayout);
-
-		final Label label = new Label(labelGroup, SWT.RIGHT);
+		final Label label = new Label(panel, SWT.RIGHT);
 		label.setText("Label:");
 		label.setLayoutData(new GridData(SWT.RIGHT));
-		Text labelText = new Text(labelGroup, SWT.SINGLE | SWT.BORDER);
+		Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		labelText.setText(f_server.getLabel());
 		labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		labelText.addListener(SWT.Verify, new Listener() {
@@ -129,7 +122,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		final Label hostLabel = new Label(locGroup, SWT.RIGHT);
 		hostLabel.setText("Host:");
-		GridData data = new GridData(SWT.RIGHT);
+		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		hostLabel.setLayoutData(data);
 		Text hostText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
