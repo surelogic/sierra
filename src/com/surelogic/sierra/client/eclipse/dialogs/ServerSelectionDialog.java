@@ -34,6 +34,12 @@ public final class ServerSelectionDialog extends Dialog {
 		return f_server;
 	}
 
+	private boolean f_useForAllUnconnectedProjects = false;
+
+	public boolean useForAllUnconnectedProjects() {
+		return f_useForAllUnconnectedProjects;
+	}
+
 	public ServerSelectionDialog(Shell parentShell, String projectName) {
 		super(parentShell);
 		f_projectName = projectName;
@@ -79,6 +85,12 @@ public final class ServerSelectionDialog extends Dialog {
 
 		final Button useForAll = new Button(entryPanel, SWT.CHECK);
 		useForAll.setText("Use this server for all unconnected projects");
+		useForAll.setSelection(f_useForAllUnconnectedProjects);
+		useForAll.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				f_useForAllUnconnectedProjects = useForAll.getSelection();
+			}
+		});
 
 		f_serverTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
