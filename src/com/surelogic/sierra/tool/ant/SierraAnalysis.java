@@ -71,13 +71,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.ZipInputStream;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -460,7 +461,7 @@ public class SierraAnalysis extends Task {
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
 			Scan run;
 			try {
-				run = warehouse.fetchScan(new ZipInputStream(
+				run = warehouse.fetchScan(new GZIPInputStream(
 						new FileInputStream(runDocument.getAbsolutePath())));
 
 				SierraService ts = new SierraServiceClient(server)
@@ -491,6 +492,9 @@ public class SierraAnalysis extends Task {
 					uploadSuccessful = true;
 				}
 			} catch (FileNotFoundException e) {
+				throw new IllegalStateException(runDocument
+						+ " is not a valid document", e);
+			} catch (IOException e) {
 				throw new IllegalStateException(runDocument
 						+ " is not a valid document", e);
 			}
