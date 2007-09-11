@@ -7,12 +7,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -35,18 +40,52 @@ public final class SierraServerPersistence {
 	public static final String USER = "user";
 	public static final String VERSION = "version";
 
+	// fields needed for caching the password
+	private static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
+	private static final URL FAKE_URL;
+
+	static {
+		URL temp = null;
+		try {
+			temp = new URL("http://org.eclipse.team.cvs.core");//$NON-NLS-1$ 
+		} catch (MalformedURLException e) {
+			// Should never fail
+		}
+		FAKE_URL = temp;
+	}
+
+	@SuppressWarnings("unchecked")
 	public static void save(final SierraServerManager manager, final File file) {
 		try {
+			Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL,
+					"", AUTH_SCHEME);
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
 			outputXMLHeader(pw);
 			for (SierraServer server : manager.getServers()) {
 				outputServer(pw, server, manager.getProjectsConnectedTo(server));
+				if (map == null) {
+					map = new java.util.HashMap<String, String>();
+				}
+				if (server.getUser() != null && server.savePassword()) {
+					// "@" symbol to ensure that one user can have multiple
+					// passwords on different servers
+					map.put(server.getUser() + "@" + server.getHost(), server
+							.getPassword());
+				}
+
 			}
 			outputXMLFooter(pw);
+			if (map != null) {
+				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
+			}
+
 			pw.close();
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure to persist Sierra servers to " + file, e);
+		} catch (CoreException e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Failure to add authorization info", e);
 		}
 	}
 
@@ -112,6 +151,10 @@ public final class SierraServerPersistence {
 					"Problem parsing Sierra servers from " + file, e);
 		} finally {
 			stream.close();
+
+			/* Clear all the username password for sierra servers */
+			Platform.flushAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
+
 		}
 	}
 
@@ -121,9 +164,12 @@ public final class SierraServerPersistence {
 	static class SaveFileReader extends DefaultHandler {
 
 		private final SierraServerManager f_manager;
+		private Map<String, String> f_map;
 
+		@SuppressWarnings("unchecked")
 		SaveFileReader(SierraServerManager manager) {
 			f_manager = manager;
+			f_map = Platform.getAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
 		}
 
 		private SierraServer f_server = null;
@@ -148,6 +194,19 @@ public final class SierraServerPersistence {
 				f_server.setPort(port);
 				f_server.setUser(user);
 				f_server.setSavePassword(savePassword);
+
+				if (f_map != null && savePassword) {
+					String password = f_map.get(f_server.getUser() + "@"
+							+ f_server.getHost());
+					if (password != null) {
+						// "@" symbol to ensure that one user can have multiple
+						// passwords on different servers
+						f_server.setPassword(password);
+					} else {
+						f_server.setSavePassword(false);
+					}
+				}
+
 			} else if (name.equals(CONNECTED_PROJECT)) {
 				final String projectName = attributes.getValue(NAME);
 				if (f_server == null) {
