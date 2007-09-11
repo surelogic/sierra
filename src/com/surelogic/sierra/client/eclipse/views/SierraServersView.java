@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
@@ -51,9 +50,10 @@ public final class SierraServersView extends ViewPart {
 		serverList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Menu serverListMenu = new Menu(serverList.getShell(), SWT.POP_UP);
-
-		final MenuItem editServerItem = new MenuItem(serverListMenu, SWT.PUSH);
-		editServerItem.setText("Edit...");
+		final MenuItem newServerItem = new MenuItem(serverListMenu, SWT.PUSH);
+		newServerItem.setImage(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		newServerItem.setText("New...");
 		final MenuItem duplicateServerItem = new MenuItem(serverListMenu,
 				SWT.PUSH);
 		duplicateServerItem.setImage(SLImages
@@ -63,6 +63,11 @@ public final class SierraServersView extends ViewPart {
 		deleteServerItem.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 		deleteServerItem.setText("Delete");
+		new MenuItem(serverListMenu, SWT.SEPARATOR);
+		final MenuItem serverPropertiesItem = new MenuItem(serverListMenu,
+				SWT.PUSH);
+		serverPropertiesItem.setText("Properties...");
+		serverList.setMenu(serverListMenu);
 
 		Composite c = new Composite(rhs, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -70,8 +75,8 @@ public final class SierraServersView extends ViewPart {
 		c.setLayout(fillLayout);
 		final ToolBar horizontalToolBar = new ToolBar(c, SWT.HORIZONTAL);
 		final ToolItem newServer = new ToolItem(horizontalToolBar, SWT.PUSH);
-		newServer.setImage(PlatformUI.getWorkbench().getSharedImages()
-				.getImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		newServer.setImage(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		newServer.setToolTipText("New server location");
 		final ToolItem duplicateServer = new ToolItem(horizontalToolBar,
 				SWT.PUSH);
@@ -83,11 +88,8 @@ public final class SierraServersView extends ViewPart {
 		deleteServer.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 		deleteServer.setToolTipText("Deletes the selected server location");
-		final Button editServer = new Button(c, SWT.NONE);
-		editServer.setText("Edit");
-		editServer.setToolTipText("Edit the selected server location");
 		final Button openInBrowser = new Button(c, SWT.NONE);
-		openInBrowser.setText("Open");
+		openInBrowser.setText("Browse");
 		openInBrowser
 				.setToolTipText("Open the selected server in a Web browser");
 
@@ -129,8 +131,9 @@ public final class SierraServersView extends ViewPart {
 		projectList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
-				duplicateServer, deleteServer, editServer, openInBrowser,
-				serverURL, projectList);
+				duplicateServer, deleteServer, newServerItem,
+				duplicateServerItem, deleteServerItem, serverPropertiesItem,
+				openInBrowser, serverURL, projectList);
 		f_mediator.init();
 	}
 

@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
@@ -30,21 +31,59 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final ToolItem f_newServer;
 	final ToolItem f_duplicateServer;
 	final ToolItem f_deleteServer;
-	final Button f_editServer;
+	final MenuItem f_newServerItem;
+	final MenuItem f_duplicateServerItem;
+	final MenuItem f_deleteServerItem;
+	final MenuItem f_serverPropertiesItem;
 	final Button f_openInBrowser;
 	final Label f_serverURL;
 	final Table f_projectList;
 
+	final Listener f_newServerAction = new Listener() {
+		public void handleEvent(Event event) {
+			final SierraServer newServer = f_manager.create();
+			final ServerLocationDialog dialog = new ServerLocationDialog(
+					f_serverList.getShell(), newServer, true);
+			if (dialog.open() == Window.CANCEL) {
+				/*
+				 * If the user cancels input of information about the new
+				 * server, we'll assume that they don't want it.
+				 */
+				f_manager.delete(newServer);
+			}
+		}
+	};
+
+	final Listener f_duplicateServerAction = new Listener() {
+		public void handleEvent(Event event) {
+			f_manager.duplicate();
+		}
+	};
+
+	final Listener f_deleteServerAction = new Listener() {
+		public void handleEvent(Event event) {
+			SierraServer server = f_manager.getFocus();
+			if (server != null) {
+				f_manager.delete(server);
+			}
+		}
+	};
+
 	final SierraServerManager f_manager = SierraServerManager.getInstance();
 
 	public SierraServersMediator(Table serverList, ToolItem newServer,
-			ToolItem duplicateServer, ToolItem deleteServer, Button editServer,
+			ToolItem duplicateServer, ToolItem deleteServer,
+			MenuItem newServerItem, MenuItem duplicateServerItem,
+			MenuItem deleteServerItem, MenuItem serverPropertiesItem,
 			Button openInBrowser, Label serverURL, Table projectList) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
 		f_deleteServer = deleteServer;
-		f_editServer = editServer;
+		f_newServerItem = newServerItem;
+		f_duplicateServerItem = duplicateServerItem;
+		f_deleteServerItem = deleteServerItem;
+		f_serverPropertiesItem = serverPropertiesItem;
 		f_openInBrowser = openInBrowser;
 		f_serverURL = serverURL;
 		f_projectList = projectList;
@@ -71,37 +110,17 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_newServer.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				final SierraServer newServer = f_manager.create();
-				final ServerLocationDialog dialog = new ServerLocationDialog(
-						f_serverList.getShell(), newServer, true);
-				if (dialog.open() == Window.CANCEL) {
-					/*
-					 * If the user cancels input of information about the new
-					 * server, we'll assume that they don't want it.
-					 */
-					f_manager.delete(newServer);
-				}
-			}
-		});
+		f_newServer.addListener(SWT.Selection, f_newServerAction);
+		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
 
-		f_duplicateServer.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				f_manager.duplicate();
-			}
-		});
+		f_duplicateServer.addListener(SWT.Selection, f_duplicateServerAction);
+		f_duplicateServerItem.addListener(SWT.Selection,
+				f_duplicateServerAction);
 
-		f_deleteServer.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				SierraServer server = f_manager.getFocus();
-				if (server != null) {
-					f_manager.delete(server);
-				}
-			}
-		});
+		f_deleteServer.addListener(SWT.Selection, f_deleteServerAction);
+		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-		f_editServer.addListener(SWT.Selection, new Listener() {
+		f_serverPropertiesItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final SierraServer server = f_manager.getFocus();
 				if (server == null) {
@@ -156,7 +175,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				final boolean focusServer = server != null;
 				f_duplicateServer.setEnabled(focusServer);
 				f_deleteServer.setEnabled(focusServer);
-				f_editServer.setEnabled(focusServer);
+				f_duplicateServerItem.setEnabled(focusServer);
+				f_deleteServerItem.setEnabled(focusServer);
+				f_serverPropertiesItem.setEnabled(focusServer);
 				f_openInBrowser.setEnabled(focusServer);
 				if (focusServer) {
 					items = f_serverList.getItems();
