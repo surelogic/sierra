@@ -6,10 +6,15 @@ import java.util.regex.Pattern;
 public class SierraServerLocation {
 	private final String host;
 	private final Integer port;
+	private final String user;
+	private final String pass;
 
-	public SierraServerLocation(String host, Integer port) {
+	public SierraServerLocation(String host, Integer port, String user,
+			String pass) {
 		this.host = host;
 		this.port = port;
+		this.user = user;
+		this.pass = pass;
 	}
 
 	public SierraServerLocation(String server) {
@@ -21,7 +26,9 @@ public class SierraServerLocation {
 			this.port = null;
 		}
 		this.host = m.group(1);
-
+		this.user = null;
+		this.pass = null;
+		// TODO
 	}
 
 	public String getHost() {
@@ -30,6 +37,14 @@ public class SierraServerLocation {
 
 	public Integer getPort() {
 		return port;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPass() {
+		return pass;
 	}
 
 }

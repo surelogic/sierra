@@ -31,8 +31,8 @@ public class SierraServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		service = new SierraServiceClient(new SierraServerLocation("localhost", 8080))
-				.getSierraServicePort();
+		service = new SierraServiceClient(new SierraServerLocation("localhost",
+				8080, null, null)).getSierraServicePort();
 	}
 
 	@After
