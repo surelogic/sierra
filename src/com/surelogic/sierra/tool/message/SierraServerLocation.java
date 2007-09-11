@@ -1,7 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SierraServerLocation {
 	private final String host;
