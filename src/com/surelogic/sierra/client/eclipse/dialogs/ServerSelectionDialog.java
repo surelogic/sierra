@@ -5,6 +5,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -48,13 +49,25 @@ public final class ServerSelectionDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite panel = (Composite) super.createDialogArea(parent);
-		panel.setLayout(new GridLayout());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		panel.setLayout(gridLayout);
 
-		final Label l = new Label(panel, SWT.WRAP);
-		l.setText("Select a Sierra server to connect to the project '"
-				+ f_projectName + "':");
+		Label banner = new Label(panel, SWT.NONE);
+		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
+				1));
+		banner.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
-		f_serverTable = new Table(panel, SWT.FULL_SELECTION);
+		final Composite entryPanel = new Composite(panel, SWT.NONE);
+		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		gridLayout = new GridLayout();
+		entryPanel.setLayout(gridLayout);
+
+		final Label l = new Label(entryPanel, SWT.WRAP);
+		l.setText("Connect '" + f_projectName + "' to:");
+
+		f_serverTable = new Table(entryPanel, SWT.FULL_SELECTION);
 		f_serverTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		for (SierraServer server : f_manager.getServers()) {
@@ -63,6 +76,9 @@ public final class ServerSelectionDialog extends Dialog {
 			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 			item.setData(server);
 		}
+
+		final Button useForAll = new Button(entryPanel, SWT.CHECK);
+		useForAll.setText("Use this server for all unconnected projects.");
 
 		f_serverTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
