@@ -46,7 +46,7 @@ public class SierraServiceTest {
 			JAXBContext context;
 			context = JAXBContext.newInstance(Scan.class);
 			Unmarshaller um = context.createUnmarshaller();
-			InputStream in = getResource("sierra-jdbc.sierra");
+			InputStream in = getResource("ad-hoc-query.sierra");
 			Scan run = (Scan) um.unmarshal(in);
 			assertEquals("SUCCESS", service.publishRun(run));
 		} catch (JAXBException e) {
@@ -92,7 +92,8 @@ public class SierraServiceTest {
 		auditTrail.setFinding(trail);
 		List<Audit> audits = new ArrayList<Audit>();
 		auditTrail.setAudits(audits);
-		Audit audit = new Audit(new Date(), "Some comment", AuditEvent.COMMENT);
+		Audit audit = new Audit("user", new Date(), "Some comment",
+				AuditEvent.COMMENT);
 		audits.add(audit);
 		service.commitAuditTrails(auditTrails);
 		AuditTrailRequest request = new AuditTrailRequest();

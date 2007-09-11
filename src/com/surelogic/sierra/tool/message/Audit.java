@@ -19,7 +19,8 @@ public class Audit {
 		// Do nothing
 	}
 
-	public Audit(Date timestamp, String value, AuditEvent event) {
+	public Audit(String user, Date timestamp, String value, AuditEvent event) {
+		this.user = user;
 		this.timestamp = timestamp;
 		this.value = value;
 		this.event = event;
