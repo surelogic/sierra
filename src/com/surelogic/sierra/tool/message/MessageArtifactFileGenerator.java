@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
@@ -66,13 +65,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		try {
 
-			artifactsHolder = File.createTempFile("artifacts", "tmp", new File(
-					SierraConstants.SIERRA_RESULTS_PATH));
+			artifactsHolder = File.createTempFile("artifacts", "tmp");
 			artOut = new FileOutputStream(artifactsHolder, true);
 			artifactAdapter = new ArtifactBuilderAdapter();
 
-			errorsHolder = File.createTempFile("errors", "tmp", new File(
-					SierraConstants.SIERRA_RESULTS_PATH));
+			errorsHolder = File.createTempFile("errors", "tmp");
 			errOut = new FileOutputStream(errorsHolder, true);
 
 		} catch (FileNotFoundException e) {
@@ -156,8 +153,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(ERROR_END);
 			finalFile.write(TOOL_OUTPUT_END);
 
-			File configOutput = File.createTempFile("config", "tmp", new File(
-					SierraConstants.SIERRA_RESULTS_PATH));
+			File configOutput = File.createTempFile("config", "tmp");
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
 			in = new BufferedReader(new FileReader(configOutput));
@@ -183,10 +179,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			configOutput.delete();
 
 		} catch (FileNotFoundException e) {
-			log.log(Level.SEVERE, "Unable to locate the file" + e);
+			log.log(Level.SEVERE, "Unable to locate the file", e);
 			throw new RuntimeException(e.getMessage());
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
+			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
 		}
 
 	}
