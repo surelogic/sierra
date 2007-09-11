@@ -208,11 +208,13 @@ public final class SierraServerManager {
 		if (server == null)
 			throw new IllegalArgumentException("server must be non-null.");
 		f_projectNameToServer.put(projectName, server);
+		notifyObservers();
 
 	}
 
 	public void disconnect(String projectName) {
 		f_projectNameToServer.remove(projectName);
+		notifyObservers();
 	}
 
 	public SierraServer getServer(String projectName) {
