@@ -3,12 +3,13 @@ package com.surelogic.sierra.client.eclipse.actions;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
-public final class TroubleshootNoSuchServer extends TroubleshootConnection {
+public final class TroubleshootWrongAuthentication extends
+		TroubleshootConnection {
 
-	public TroubleshootNoSuchServer(SierraServer server) {
+	public TroubleshootWrongAuthentication(SierraServer server) {
 		super(server);
 	}
 
@@ -18,10 +19,9 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 	void fix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				ServerLocationDialog dialog = new ServerLocationDialog(
+				ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), f_server,
-						"Failure: No Such Server");
+								.getShell(), f_server);
 				f_dialogResult = dialog.open();
 			}
 		});

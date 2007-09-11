@@ -6,9 +6,9 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
-public final class TroubleshootNoSuchServer extends TroubleshootConnection {
+public final class TroubleshootWrongServer extends TroubleshootConnection {
 
-	public TroubleshootNoSuchServer(SierraServer server) {
+	public TroubleshootWrongServer(SierraServer server) {
 		super(server);
 	}
 
@@ -20,8 +20,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 			public void run() {
 				ServerLocationDialog dialog = new ServerLocationDialog(
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), f_server,
-						"Failure: No Such Server");
+								.getShell(), f_server, "Failure: Wrong Server");
 				f_dialogResult = dialog.open();
 			}
 		});
