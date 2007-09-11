@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 /**
  * Dialog to allow the user to enter or edit the location and authentication
@@ -41,7 +41,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private boolean f_isSecure;
 	private boolean f_savePassword;
-	private boolean f_validateLocation = true;
 
 	private Mediator f_mediator;
 
@@ -243,26 +242,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(SAVE_PW_WARNING);
 
-		/* Button group */
-		final Group buttonGroup = new Group(panel, SWT.NONE);
-		buttonGroup.setText("Location");
-		buttonGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false,
-				2, 1));
-		gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		buttonGroup.setLayout(gridLayout);
-
-		final Button validateButton = new Button(buttonGroup, SWT.CHECK);
-		validateButton.setText("Validate server location on completion");
-		validateButton.setSelection(f_validateLocation);
-		validateButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				f_validateLocation = validateButton.getSelection();
-			}
-		});
-		validateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 2, 1));
-
 		setTitle(TITLE);
 
 		f_mediator = new Mediator(labelText, hostText, portText, userText,
@@ -357,12 +336,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				valid = false;
 			}
 
-			final String labelText = f_labelText.getText();
+			final String labelText = f_labelText.getText().trim();
 			if (labelText.equals("")) {
 				valid = false;
 			} else if (!f_server.getLabel().equals(labelText)
 					&& f_manager.exists(labelText)) {
-				System.out.println("Exists");
 				valid = false;
 				showInfo = false;
 				setMessage("The label '" + labelText
@@ -376,11 +354,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 
 		public void okPressed() {
-			f_server.setLabel(f_labelText.getText());
-			f_server.setHost(f_hostText.getText());
-			f_server.setPort(Integer.parseInt(f_portText.getText()));
+			f_server.setLabel(f_labelText.getText().trim());
+			f_server.setHost(f_hostText.getText().trim());
+			f_server.setPort(Integer.parseInt(f_portText.getText().trim()));
 			f_server.setSecure(f_isSecure);
-			f_server.setUser(f_userText.getText());
+			f_server.setUser(f_userText.getText().trim());
 			f_server.setPassword(f_passwordText.getText());
 			f_server.setSavePassword(f_savePassword);
 		}
