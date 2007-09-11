@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +92,15 @@ public final class SierraServerPersistence {
 
 	public static void load(final SierraServerManager manager, final File file)
 			throws Exception {
-		InputStream stream = new FileInputStream(file);
+		InputStream stream;
+		try {
+			stream = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			/*
+			 * This means we are running the tool for the first time.
+			 */
+			return;
+		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SaveFileReader handler = new SaveFileReader(manager);
 		try {
