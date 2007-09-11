@@ -26,17 +26,11 @@ import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 public class ProjectManager {
 
-	@SuppressWarnings("unused")
 	private final Connection conn;
 
 	private final ScanManager scanManager;
 	private final FindingManager findingManager;
 	private final ProjectRecordFactory projectFactory;
-
-	@SuppressWarnings("unused")
-	private final PreparedStatement deleteMatches;
-	@SuppressWarnings("unused")
-	private final PreparedStatement deleteFindings;
 
 	private final PreparedStatement findAllProjectNames;
 	private final PreparedStatement findProjectRuns;
@@ -49,11 +43,6 @@ public class ProjectManager {
 		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
 		findProjectRuns = conn
 				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
-		deleteMatches = conn
-				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = ?");
-		deleteFindings = conn
-				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = ?");
-
 	}
 
 	public Collection<String> getAllProjectNames() throws SQLException {
@@ -65,8 +54,8 @@ public class ProjectManager {
 		return projectNames;
 	}
 
-	public void synchronizeProject(SierraServerLocation server, String projectName,
-			SLProgressMonitor monitor) throws SQLException {
+	public void synchronizeProject(SierraServerLocation server,
+			String projectName, SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
 		 * findings that have been created/merged locally, and merge them on the
@@ -152,7 +141,7 @@ public class ProjectManager {
 		if (rec.select()) {
 			if (monitor != null)
 				monitor.subTask("Deleting scans for project " + projectName);
-		
+
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			findingManager.deleteFindings(projectName, monitor);
 			rec.delete();
