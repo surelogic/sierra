@@ -65,7 +65,7 @@ public final class ServerSelectionDialog extends Dialog {
 		entryPanel.setLayout(gridLayout);
 
 		final Label l = new Label(entryPanel, SWT.WRAP);
-		l.setText("Connect '" + f_projectName + "' to:");
+		l.setText("Select the server to connect '" + f_projectName + "' to:");
 
 		f_serverTable = new Table(entryPanel, SWT.FULL_SELECTION);
 		f_serverTable.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -78,7 +78,7 @@ public final class ServerSelectionDialog extends Dialog {
 		}
 
 		final Button useForAll = new Button(entryPanel, SWT.CHECK);
-		useForAll.setText("Use this server for all unconnected projects.");
+		useForAll.setText("Use this server for all unconnected projects");
 
 		f_serverTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
