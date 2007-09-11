@@ -76,9 +76,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			errOut = new FileOutputStream(errorsHolder, true);
 
 		} catch (FileNotFoundException e) {
-			log.log(Level.SEVERE, "Unable to locate the file" + e);
+			log.log(Level.SEVERE, "Unable to locate the file", e);
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Unable to read/write from/to the file" + e);
+			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
 		}
 
 	}
