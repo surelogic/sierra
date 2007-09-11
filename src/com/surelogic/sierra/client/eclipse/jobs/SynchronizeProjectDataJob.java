@@ -35,29 +35,38 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
 		slMonitor.beginTask("Synchronizing findings and settings for project "
 				+ f_projectName + ".", 5);
+		IStatus status = null;
 		try {
 			final Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);
 			final ProjectManager manager = ProjectManager.getInstance(conn);
 			try {
 				manager.synchronizeProject(f_server, f_projectName, slMonitor);
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				conn.commit();
+				if (monitor.isCanceled()) {
+					conn.rollback();
+					status = Status.CANCEL_STATUS;
+				} else {
+					conn.commit();
+				}
 			} catch (Exception e) {
 				final String msg = "Synchronization of sierra project "
 						+ f_projectName + " failed.";
 				SLLogger.getLogger().log(Level.SEVERE, msg, e);
-				return SLStatus.createErrorStatus(msg, e);
+				status = SLStatus.createErrorStatus(msg, e);
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e1) {
-			final String msg = "Synchronization of sierra project "
-					+ f_projectName + " failed.";
-			SLLogger.getLogger().log(Level.SEVERE, msg, e1);
-			return SLStatus.createErrorStatus(msg, e1);
+			if (status == null) {
+				final String msg = "Synchronization of sierra project "
+						+ f_projectName + " failed.";
+				SLLogger.getLogger().log(Level.SEVERE, msg, e1);
+				status = SLStatus.createErrorStatus(msg, e1);
+			}
 		}
-		return Status.OK_STATUS;
+		if (status == null) {
+			status = Status.OK_STATUS;
+		}
+		return status;
 	}
 }
