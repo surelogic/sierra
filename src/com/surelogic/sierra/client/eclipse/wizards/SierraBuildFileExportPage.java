@@ -237,11 +237,6 @@ public class SierraBuildFileExportPage extends WizardPage {
 		setPageComplete(complete);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
