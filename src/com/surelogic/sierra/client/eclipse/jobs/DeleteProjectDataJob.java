@@ -19,6 +19,7 @@ import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.jdbc.project.ProjectManager;
 
 public final class DeleteProjectDataJob {
@@ -51,6 +52,8 @@ public final class DeleteProjectDataJob {
 							for (final String projectName : f_projectNames) {
 								manager.deleteProject(projectName, slMonitor);
 								conn.commit();
+								SierraServerManager.getInstance().disconnect(
+										projectName);
 							}
 						} catch (Exception e) {
 							final String msg = "Deletion of Sierra data about projects "
@@ -90,5 +93,35 @@ public final class DeleteProjectDataJob {
 					+ f_projectNames + " failed.";
 			SLLogger.getLogger().log(Level.SEVERE, msg, e);
 		}
+	}
+
+	public static void utility(List<String> projectNames, Shell shell,
+			boolean disconnect) {
+		if (shell == null) {
+			shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getShell();
+		}
+		final boolean multiDelete = projectNames.size() > 1;
+
+		final MessageBox confirmDelete = new MessageBox(shell, SWT.ICON_WARNING
+				| SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+		confirmDelete.setText("Confirm "
+				+ (multiDelete ? "Multiple Project" : "Project")
+				+ (disconnect ? " Disconnect" : " Sierra Data Deletion"));
+		confirmDelete.setMessage("Are you sure you want to delete all "
+				+ "Sierra data in your Eclipse workspace for "
+				+ (multiDelete ? "these " + projectNames.size() + " projects"
+						: "project '" + projectNames.get(0) + "'")
+				+ ". This action will not "
+				+ "change or delete data on any Sierra server.");
+		if (confirmDelete.open() == SWT.NO)
+			return; // bail
+		/*
+		 * Because this job can be run from a modal dialog we need to manage
+		 * showing its progress ourselves. Therefore, this job is not a typical
+		 * workspace job.
+		 */
+		final DeleteProjectDataJob job = new DeleteProjectDataJob(projectNames);
+		job.runModal(shell);
 	}
 }

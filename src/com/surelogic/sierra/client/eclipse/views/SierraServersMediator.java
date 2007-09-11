@@ -1,6 +1,8 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.jface.window.Window;
@@ -22,6 +24,7 @@ import org.eclipse.ui.ide.IDE;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -174,8 +177,14 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_disconnectProjectItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
-
+				List<String> projectNames = new ArrayList<String>();
+				final TableItem[] si = f_projectList.getSelection();
+				for (TableItem item : si) {
+					projectNames.add(item.getText());
+				}
+				if (projectNames.size() > 0) {
+					DeleteProjectDataJob.utility(projectNames, null, true);
+				}
 			}
 		});
 	}

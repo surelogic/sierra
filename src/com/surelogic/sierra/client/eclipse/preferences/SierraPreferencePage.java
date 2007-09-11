@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
@@ -155,31 +154,8 @@ public class SierraPreferencePage extends PreferencePage implements
 					if (projectNames.size() == 0)
 						return;
 
-					final boolean multiDelete = projectNames.size() > 1;
-
-					final MessageBox confirmDelete = new MessageBox(
-							f_projectTable.getShell(), SWT.ICON_WARNING
-									| SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-					confirmDelete.setText("Confirm "
-							+ (multiDelete ? "Multiple Project" : "Project")
-							+ " Sierra Data Deletion");
-					confirmDelete
-							.setMessage("Are you sure you want to delete all Sierra data for "
-
-									+ (multiDelete ? "these "
-											+ projectNames.size() + " projects"
-											: "project '" + projectNames.get(0)
-													+ "'") + "?");
-					if (confirmDelete.open() == SWT.NO)
-						return; // bail
-					/*
-					 * Because this job is run from a modal dialog we need to
-					 * manage showing its progress ourselves. Therefore, this
-					 * job is not a typical workspace job.
-					 */
-					final DeleteProjectDataJob job = new DeleteProjectDataJob(
-							projectNames);
-					job.runModal(f_projectTable.getShell());
+					DeleteProjectDataJob.utility(projectNames, f_projectTable
+							.getShell(), false);
 				}
 			});
 		}

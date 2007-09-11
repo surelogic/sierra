@@ -213,8 +213,8 @@ public final class SierraServerManager {
 	}
 
 	public void disconnect(String projectName) {
-		f_projectNameToServer.remove(projectName);
-		notifyObservers();
+		if (f_projectNameToServer.remove(projectName) != null)
+			notifyObservers();
 	}
 
 	public SierraServer getServer(String projectName) {
