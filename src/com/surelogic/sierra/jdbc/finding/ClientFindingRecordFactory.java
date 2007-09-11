@@ -20,21 +20,24 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID,IS_READ,IMPORTANCE) VALUES (?,?,?,?)";
 	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IS_READ,IMPORTANCE FROM FINDING WHERE UID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (USER_ID,FINDING_ID,DATE_TIME,VALUE,EVENT,REVISION) VALUES (?,?,?,?,?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;
+	private final RecordMapper auditMap;
 
 	private ClientFindingRecordFactory(Connection conn) throws SQLException {
 		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT, MATCH_SELECT,
 				null, MATCH_UPDATE);
-		this.findingMap = new BaseMapper(conn, FINDING_INSERT, FINDING_SELECT, null);
+		this.findingMap = new BaseMapper(conn, FINDING_INSERT, FINDING_SELECT,
+				null);
 		this.artifactFindingMap = new BaseMapper(conn,
 				INSERT_ARTIFACT_FINDING_RELATION, null, null);
+		this.auditMap = new BaseMapper(conn, AUDIT_INSERT, null, null);
 	}
 
 	public AuditRecord newAudit() {
-		// TODO
-		return null;
+		return new AuditRecord(auditMap);
 	}
 
 	public FindingRecord newFinding() {

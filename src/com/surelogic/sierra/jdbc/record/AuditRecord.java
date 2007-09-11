@@ -1,5 +1,7 @@
 package com.surelogic.sierra.jdbc.record;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +19,7 @@ public final class AuditRecord extends LongRecord {
 	private AuditEvent event;
 	private Long revision;
 
-	AuditRecord(RecordMapper mapper) {
+	public AuditRecord(RecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -35,7 +37,7 @@ public final class AuditRecord extends LongRecord {
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithNk(st, idx);
-		st.setLong(idx++, revision);
+		setNullableLong(idx++, st, revision);
 		return idx;
 	}
 
@@ -102,7 +104,8 @@ public final class AuditRecord extends LongRecord {
 				+ ((revision == null) ? 0 : revision.hashCode());
 		result = prime * result
 				+ ((timestamp == null) ? 0 : timestamp.hashCode());
-		result = prime * result + ((findingId == null) ? 0 : findingId.hashCode());
+		result = prime * result
+				+ ((findingId == null) ? 0 : findingId.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
