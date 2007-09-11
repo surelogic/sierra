@@ -127,13 +127,24 @@ public final class SierraServersView extends ViewPart {
 		gridLayout = new GridLayout();
 		projectsGroup.setLayout(gridLayout);
 
-		Table projectList = new Table(projectsGroup, SWT.FULL_SELECTION);
+		Table projectList = new Table(projectsGroup, SWT.MULTI);
 		projectList.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		final Menu projectListMenu = new Menu(projectList.getShell(),
+				SWT.POP_UP);
+		final MenuItem connectProjectItem = new MenuItem(projectListMenu,
+				SWT.PUSH);
+		connectProjectItem.setText("Connect...");
+		final MenuItem disconnectProjectItem = new MenuItem(projectListMenu,
+				SWT.PUSH);
+		disconnectProjectItem.setText("Disconnect");
+		projectList.setMenu(projectListMenu);
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem, serverPropertiesItem,
-				openInBrowser, serverURL, projectList);
+				openInBrowser, infoGroup, serverURL, projectList, connectProjectItem,
+				disconnectProjectItem);
 		f_mediator.init();
 	}
 

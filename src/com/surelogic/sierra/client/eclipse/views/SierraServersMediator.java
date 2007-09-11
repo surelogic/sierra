@@ -7,6 +7,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
@@ -36,8 +37,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_deleteServerItem;
 	final MenuItem f_serverPropertiesItem;
 	final Button f_openInBrowser;
+	final Group f_infoGroup;
 	final Label f_serverURL;
 	final Table f_projectList;
+	final MenuItem f_connectProjectItem;
+	final MenuItem f_disconnectProjectItem;
 
 	final Listener f_newServerAction = new Listener() {
 		public void handleEvent(Event event) {
@@ -75,7 +79,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverPropertiesItem,
-			Button openInBrowser, Label serverURL, Table projectList) {
+			Button openInBrowser, Group infoGroup, Label serverURL,
+			Table projectList, MenuItem connectProjectItem,
+			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -85,8 +91,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_deleteServerItem = deleteServerItem;
 		f_serverPropertiesItem = serverPropertiesItem;
 		f_openInBrowser = openInBrowser;
+		f_infoGroup = infoGroup;
 		f_serverURL = serverURL;
 		f_projectList = projectList;
+		f_connectProjectItem = connectProjectItem;
+		f_disconnectProjectItem = disconnectProjectItem;
 	}
 
 	public void init() {
@@ -105,7 +114,6 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					final String label = selection.getText();
 					final SierraServer server = f_manager.getOrCreate(label);
 					f_manager.setFocus(server);
-					System.out.println(server.toString());
 				}
 			}
 		});
@@ -145,6 +153,31 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				openInBrowser(server);
 			}
 		});
+
+		f_projectList.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				/*
+				 * Determine the server label that has been selected and tell
+				 * the model that it is the focus.
+				 */
+				final TableItem[] sa = f_projectList.getSelection();
+				f_disconnectProjectItem.setEnabled(sa.length > 0);
+			}
+		});
+
+		f_connectProjectItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		f_disconnectProjectItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	public void dispose() {
@@ -179,6 +212,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				f_deleteServerItem.setEnabled(focusServer);
 				f_serverPropertiesItem.setEnabled(focusServer);
 				f_openInBrowser.setEnabled(focusServer);
+				f_infoGroup.setEnabled(focusServer);
 				if (focusServer) {
 					items = f_serverList.getItems();
 					for (int i = 0; i < items.length; i++) {
@@ -202,6 +236,10 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					}
 				} else {
 					f_serverURL.setText("No server selected");
+					items = f_projectList.getItems();
+					for (TableItem item : items) {
+						item.dispose();
+					}
 				}
 				f_serverList.setRedraw(true);
 			}
