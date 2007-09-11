@@ -22,8 +22,6 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
  */
 public final class ServerAuthenticationDialog extends Dialog {
 
-	private static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
-
 	private final SierraServer f_server;
 
 	private Text f_userText;
@@ -136,7 +134,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		data.widthHint = 300;
 		saveWarning.setLayoutData(data);
-		saveWarning.setText(SAVE_PW_WARNING);
+		saveWarning.setText(ServerLocationDialog.SAVE_PW_WARNING);
 
 		return panel;
 	}

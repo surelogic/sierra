@@ -29,7 +29,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
-	private static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
+	static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
 
 	private static final String TITLE = "Enter Sierra Server Location Information";
 	private static final String INFO_MSG = "Define the information for the Sierra server you want to interact with.";
