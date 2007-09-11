@@ -21,7 +21,7 @@ import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
- * The run document generator
+ * The scan document generator
  * 
  * This class generates the run document. It generates 3 separate temporary
  * files and stores the artifacts, errors and config in them. It finally
