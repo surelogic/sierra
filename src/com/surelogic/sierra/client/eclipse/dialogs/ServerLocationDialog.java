@@ -29,6 +29,8 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
+	private static final int CONTENTS_WIDTH_HINT = 350;
+
 	static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
 
 	private static final String TITLE = "Enter Sierra Server Location Information";
@@ -85,7 +87,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		panel.setLayout(gridLayout);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		data.widthHint = 400;
+		data.widthHint = CONTENTS_WIDTH_HINT;
 		panel.setLayoutData(data);
 
 		final Label label = new Label(panel, SWT.RIGHT);
