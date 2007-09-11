@@ -40,7 +40,6 @@ public final class ServerAuthenticationDialog extends Dialog {
 	 */
 	public ServerAuthenticationDialog(Shell parentShell, SierraServer server) {
 		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		assert server != null;
 		f_server = server;
 	}

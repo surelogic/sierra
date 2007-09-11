@@ -12,6 +12,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -25,15 +26,20 @@ public final class SynchronizeAction extends AbstractProjectSelectedMenuAction {
 			List<String> projectNames) {
 
 		final SierraServerManager manager = SierraServerManager.getInstance();
+		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
 
 		for (String projectName : projectNames) {
+			/*
+			 * Is the project connected to a server?
+			 */
 			if (manager.isConnected(projectName)) {
+				/*
+				 * Yes, start the job.
+				 */
 				final SierraServer server = manager.getServer(projectName);
-				SynchronizeProjectDataJob job = new SynchronizeProjectDataJob(
-						projectName, server);
-				job.schedule();
+				runJob(projectName, server, shell);
 			} else {
 				/*
 				 * Are any servers defined?
@@ -44,7 +50,7 @@ public final class SynchronizeAction extends AbstractProjectSelectedMenuAction {
 					confirmDelete.setText("Synchronize Explanations Failed");
 					confirmDelete
 							.setMessage("There are no Sierra server locations defined. "
-									+ "A Sierra server location is required to perform this action. "
+									+ "A project must be connected to a Sierra server to perform this action. "
 									+ "The 'Sierra Server' view will be opened so that you can define a location. "
 									+ "Invoke this action again once a Sierra server location is defined.");
 
@@ -52,30 +58,55 @@ public final class SynchronizeAction extends AbstractProjectSelectedMenuAction {
 					ViewUtility.showView(SierraServersView.class.getName());
 					return;
 				}
-				/*
-				 * Select a server to connect this project to.
-				 */
-				ServerSelectionDialog dialog = new ServerSelectionDialog(shell,
-						projectName);
-				if (dialog.open() == Window.CANCEL) {
+
+				final SierraServer server;
+				if (unconnectedProjectsServer == null) {
 					/*
-					 * Just stop
+					 * Select a server to connect this project to.
 					 */
-					return;
+					ServerSelectionDialog dialog = new ServerSelectionDialog(
+							shell, projectName);
+					if (dialog.open() == Window.CANCEL) {
+						/*
+						 * Just stop
+						 */
+						return;
+					}
+					server = dialog.getServer();
+					if (server == null) {
+						SLLogger
+								.getLogger()
+								.log(Level.SEVERE,
+										"null Sierra server returned from ServerSelectionDialog (bug).");
+						return;
+					}
+					if (dialog.useForAllUnconnectedProjects())
+						unconnectedProjectsServer = server;
+				} else {
+					server = unconnectedProjectsServer;
 				}
-				final SierraServer server = dialog.getServer();
-				if (server == null) {
-					SLLogger
-							.getLogger()
-							.log(Level.SEVERE,
-									"null Sierra server returned from ServerSelectionDialog (bug).");
-					return;
-				}
+
 				manager.connect(projectName, server);
-				SynchronizeProjectDataJob job = new SynchronizeProjectDataJob(
-						projectName, server);
-				job.schedule();
+
+				runJob(projectName, server, shell);
 			}
 		}
+	}
+
+	private void runJob(final String projectName, final SierraServer server,
+			final Shell shell) {
+		if (!server.savePassword()) {
+			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
+					shell, server);
+			if (dialog.open() == Window.CANCEL) {
+				/*
+				 * Just stop, don't try to run the job.
+				 */
+				return;
+			}
+		}
+		SynchronizeProjectDataJob job = new SynchronizeProjectDataJob(
+				projectName, server);
+		job.schedule();
 	}
 }
