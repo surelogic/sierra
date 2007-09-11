@@ -99,6 +99,16 @@ public final class SierraServer {
 		f_savePassword = savePassword;
 	}
 
+	private boolean f_usedToConnectToAServer = false;
+
+	public boolean usedToConnectToAServer() {
+		return f_usedToConnectToAServer;
+	}
+
+	public void setUsed() {
+		f_usedToConnectToAServer = true;
+	}
+
 	public String toURLString() {
 		final StringBuilder b = new StringBuilder();
 		b.append(getProtocol()).append("://");
