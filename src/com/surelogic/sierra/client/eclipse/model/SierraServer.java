@@ -10,8 +10,7 @@ public final class SierraServer {
 		return f_manager;
 	}
 
-	public SierraServer(final SierraServerManager manager,
-			final String label) {
+	public SierraServer(final SierraServerManager manager, final String label) {
 		assert manager != null;
 		f_manager = manager;
 		assert label != null;
@@ -120,6 +119,6 @@ public final class SierraServer {
 	}
 
 	public SierraServerLocation getServer() {
-		return new SierraServerLocation(f_host, f_port);
+		return new SierraServerLocation(f_host, f_port, f_user, f_password);
 	}
 }
