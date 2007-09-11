@@ -48,8 +48,8 @@ public class User {
 			st.setString(1, user);
 			st.executeUpdate();
 			set = st.getGeneratedKeys();
+			set.next();
 		}
-		set.next();
 		User ret = new User();
 		ret.id = set.getLong(1);
 		return ret;

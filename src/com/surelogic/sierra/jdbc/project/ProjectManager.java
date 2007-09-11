@@ -73,11 +73,13 @@ public class ProjectManager {
 		mergeRequest.setProject(projectName);
 		List<Merge> merges = findingManager.getNewLocalMerges(projectName,
 				monitor);
-		mergeRequest.setMerge(merges);
-		MergeAuditResponse mergeResponse = service
-				.mergeAuditTrails(mergeRequest);
-		findingManager.updateLocalTrailUids(projectName, mergeResponse
-				.getRevision(), mergeResponse.getTrail(), merges, monitor);
+		if (!merges.isEmpty()) {
+			mergeRequest.setMerge(merges);
+			MergeAuditResponse mergeResponse = service
+					.mergeAuditTrails(mergeRequest);
+			findingManager.updateLocalTrailUids(projectName, mergeResponse
+					.getRevision(), mergeResponse.getTrail(), merges, monitor);
+		}
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -141,7 +143,6 @@ public class ProjectManager {
 		if (rec.select()) {
 			if (monitor != null)
 				monitor.subTask("Deleting scans for project " + projectName);
-
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			findingManager.deleteFindings(projectName, monitor);
 			rec.delete();

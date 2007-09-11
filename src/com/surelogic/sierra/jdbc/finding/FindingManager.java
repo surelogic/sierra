@@ -251,66 +251,71 @@ public abstract class FindingManager {
 				.newProject();
 		project.setName(projectName);
 		if (project.select()) {
-			for (TrailObsoletion to : obsoletions) {
-				FindingRecord obsoletedFinding = fact.newFinding();
-				obsoletedFinding.setUid(to.getObsoletedTrail());
-				if (obsoletedFinding.select()) {
-					FindingRecord newFinding = fact.newFinding();
-					newFinding.setUid(to.getTrail());
-					if (!newFinding.select()) {
-						newFinding.insert();
+			if (obsoletions != null) {
+				for (TrailObsoletion to : obsoletions) {
+					FindingRecord obsoletedFinding = fact.newFinding();
+					obsoletedFinding.setUid(to.getObsoletedTrail());
+					if (obsoletedFinding.select()) {
+						FindingRecord newFinding = fact.newFinding();
+						newFinding.setUid(to.getTrail());
+						if (!newFinding.select()) {
+							newFinding.insert();
+						}
+						obsolete(obsoletedFinding.getId(), newFinding.getId(),
+								to.getRevision());
+					} else {
+						log.log(Level.WARNING, "A trail obsoletion for uid "
+								+ to.getObsoletedTrail() + " to uid "
+								+ to.getTrail() + " could not be resolved");
 					}
-					obsolete(obsoletedFinding.getId(), newFinding.getId(), to
-							.getRevision());
-				} else {
-					log.log(Level.WARNING, "A trail obsoletion for uid "
-							+ to.getObsoletedTrail() + " to uid "
-							+ to.getTrail() + " could not be resolved");
 				}
 			}
-			for (AuditTrailUpdate update : updates) {
-				// TODO make sure that everything is ordered by revision and
-				// time
-				FindingRecord finding = fact.newFinding();
-				finding.setUid(update.getTrail());
-				if (!finding.select()) {
-					finding.insert();
-				}
-				MatchRecord mRec = fact.newMatch();
-				MatchRecord.PK pk = new MatchRecord.PK();
-				pk.setProjectId(project.getId());
-				mRec.setId(pk);
-				for (Match m : update.getMatch()) {
-					fillKey(pk, m);
-					if (mRec.select()) {
-						if (!mRec.getFindingId().equals(finding.getId())) {
-							// This must be a local match, so delete it
-							delete(mRec.getFindingId(), finding.getId());
+			if (updates != null) {
+				for (AuditTrailUpdate update : updates) {
+					// TODO make sure that everything is ordered by revision and
+					// time
+					FindingRecord finding = fact.newFinding();
+					finding.setUid(update.getTrail());
+					if (!finding.select()) {
+						finding.insert();
+					}
+					MatchRecord mRec = fact.newMatch();
+					MatchRecord.PK pk = new MatchRecord.PK();
+					pk.setProjectId(project.getId());
+					mRec.setId(pk);
+					for (Match m : update.getMatch()) {
+						fillKey(pk, m);
+						if (mRec.select()) {
+							if (!mRec.getFindingId().equals(finding.getId())) {
+								// This must be a local match, so delete it
+								delete(mRec.getFindingId(), finding.getId());
+							}
+						} else {
+							mRec.setFindingId(finding.getId());
+							mRec.insert();
 						}
-					} else {
-						mRec.setFindingId(finding.getId());
-						mRec.insert();
 					}
-				}
-				for (Audit a : update.getAudit()) {
-					Long userId = getUserId(a.getUser());
-					switch (a.getEvent()) {
-					case COMMENT:
-						comment(userId, finding.getId(), a.getValue(), a
-								.getTimestamp());
-						break;
-					case IMPORTANCE:
-						setImportance(userId, finding.getId(), Importance
-								.valueOf(a.getValue()), a.getTimestamp());
-						break;
-					case READ:
-						markAsRead(userId, finding.getId(), a.getTimestamp());
-						break;
-					default:
-						break;
+					for (Audit a : update.getAudit()) {
+						Long userId = getUserId(a.getUser());
+						switch (a.getEvent()) {
+						case COMMENT:
+							comment(userId, finding.getId(), a.getValue(), a
+									.getTimestamp());
+							break;
+						case IMPORTANCE:
+							setImportance(userId, finding.getId(), Importance
+									.valueOf(a.getValue()), a.getTimestamp());
+							break;
+						case READ:
+							markAsRead(userId, finding.getId(), a
+									.getTimestamp());
+							break;
+						default:
+							break;
+						}
 					}
-				}
 
+				}
 			}
 		} else {
 			throw new IllegalArgumentException("No project with name "
@@ -343,7 +348,7 @@ public abstract class FindingManager {
 				}
 				Audit a = new Audit();
 				a.setTimestamp(set.getTimestamp(idx++));
-				a.setEvent(AuditEvent.values()[set.getInt(idx++)]);
+				a.setEvent(AuditEvent.valueOf(set.getString(idx++)));
 				a.setValue(set.getString(idx++));
 				audits.add(a);
 			}
@@ -359,33 +364,32 @@ public abstract class FindingManager {
 		List<Merge> merges = new ArrayList<Merge>();
 		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
 		rec.setName(projectName);
-		if (rec.select()) {
-			findLocalMerges.setLong(1, rec.getId());
-			ResultSet set = findLocalMerges.executeQuery();
-			Long oldFinding = null;
-			List<Match> matches = null;
-			while (set.next()) {
-				int idx = 1;
-				Long newFinding = set.getLong(idx++);
-				if (!newFinding.equals(oldFinding)) {
-					oldFinding = newFinding;
-					Merge merge = new Merge();
-					matches = new LinkedList<Match>();
-					merge.setMatch(matches);
-					merges.add(merge);
-				}
-				Match m = new Match();
-				m.setPackageName(set.getString(idx++));
-				m.setClassName(set.getString(idx++));
-				m.setHash(set.getLong(idx++));
-				m.setFindingType(new FindingType(set.getString(idx++), set
-						.getString(idx++), set.getString(idx++)));
-				matches.add(m);
-			}
-		} else {
-			throw new IllegalArgumentException("No project with name "
-					+ projectName + " exists.");
+		if (!rec.select()) {
+			rec.insert();
 		}
+		findLocalMerges.setLong(1, rec.getId());
+		ResultSet set = findLocalMerges.executeQuery();
+		Long oldFinding = null;
+		List<Match> matches = null;
+		while (set.next()) {
+			int idx = 1;
+			Long newFinding = set.getLong(idx++);
+			if (!newFinding.equals(oldFinding)) {
+				oldFinding = newFinding;
+				Merge merge = new Merge();
+				matches = new LinkedList<Match>();
+				merge.setMatch(matches);
+				merges.add(merge);
+			}
+			Match m = new Match();
+			m.setPackageName(set.getString(idx++));
+			m.setClassName(set.getString(idx++));
+			m.setHash(set.getLong(idx++));
+			m.setFindingType(new FindingType(set.getString(idx++), set
+					.getString(idx++), set.getString(idx++)));
+			matches.add(m);
+		}
+
 		return merges;
 	}
 
