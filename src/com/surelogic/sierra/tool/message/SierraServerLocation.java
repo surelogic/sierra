@@ -18,14 +18,14 @@ public class SierraServerLocation {
 	}
 
 	public SierraServerLocation(String server) {
-		Matcher m = Pattern.compile("([^:]*)(:(\\d+))?").matcher(server);
-		String strPort = m.group(3);
+		String[] strArr = server.split(":");
+		String strPort = strArr[1];
 		if (strPort != null) {
 			this.port = Integer.parseInt(strPort);
 		} else {
 			this.port = null;
 		}
-		this.host = m.group(1);
+		this.host = strArr[0];
 		this.user = null;
 		this.pass = null;
 		// TODO
