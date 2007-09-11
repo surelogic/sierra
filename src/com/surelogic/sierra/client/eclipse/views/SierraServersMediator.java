@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -48,17 +47,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 	final Listener f_newServerAction = new Listener() {
 		public void handleEvent(Event event) {
-			final SierraServer newServer = f_manager.create();
-			final ServerLocationDialog dialog = new ServerLocationDialog(
-					f_serverList.getShell(), newServer,
-					"New Sierra Server Location");
-			if (dialog.open() == Window.CANCEL) {
-				/*
-				 * If the user cancels input of information about the new
-				 * server, we'll assume that they don't want it.
-				 */
-				f_manager.delete(newServer);
-			}
+			ServerLocationDialog.newServer(f_serverList.getShell());
 		}
 	};
 
@@ -153,7 +142,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				}
 				final ServerLocationDialog dialog = new ServerLocationDialog(
 						f_serverList.getShell(), server,
-						"Edit Sierra Server Location");
+						ServerLocationDialog.EDIT_TITLE);
 				dialog.open();
 			}
 		});

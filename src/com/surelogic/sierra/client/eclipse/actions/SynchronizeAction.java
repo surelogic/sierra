@@ -13,6 +13,7 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -52,10 +53,11 @@ public final class SynchronizeAction extends AbstractProjectSelectedMenuAction {
 							.setMessage("There are no Sierra server locations defined. "
 									+ "A project must be connected to a Sierra server to perform this action. "
 									+ "The 'Sierra Server' view will be opened so that you can define a location. "
-									+ "Invoke this action again once a Sierra server location is defined.");
+									+ "Invoke this action again once you have defined a Sierra server location.");
 
 					confirmDelete.open();
 					ViewUtility.showView(SierraServersView.class.getName());
+					ServerLocationDialog.newServer(shell);
 					return;
 				}
 

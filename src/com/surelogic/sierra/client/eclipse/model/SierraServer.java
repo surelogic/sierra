@@ -99,6 +99,9 @@ public final class SierraServer {
 		f_savePassword = savePassword;
 	}
 
+	/**
+	 * Not persisted, only used during an Eclipse session.
+	 */
 	private boolean f_usedToConnectToAServer = false;
 
 	public boolean usedToConnectToAServer() {

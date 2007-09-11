@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -28,6 +29,9 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  * information for a Sierra server.
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
+
+	public static final String NEW_TITLE = "New Sierra Server Location";
+	public static final String EDIT_TITLE = "Edit Sierra Server Location";
 
 	private static final int CONTENTS_WIDTH_HINT = 350;
 
@@ -246,16 +250,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		return contents;
 	}
 
-	// /*
-	// * Use this to allow resize
-	// *
-	// * @see org.eclipse.jface.window.Window#setShellStyle(int)
-	// */
-	// @Override
-	// protected void setShellStyle(int newShellStyle) {
-	// super.setShellStyle(newShellStyle | SWT.RESIZE | SWT.MAX);
-	// }
-
 	@Override
 	protected Control createContents(Composite parent) {
 		final Control contents = super.createContents(parent);
@@ -354,6 +348,20 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_server.setUser(f_userText.getText().trim());
 			f_server.setPassword(f_passwordText.getText());
 			f_server.setSavePassword(f_savePassword);
+		}
+	}
+
+	public static void newServer(final Shell shell) {
+		final SierraServerManager manager = SierraServerManager.getInstance();
+		final SierraServer newServer = manager.create();
+		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
+				newServer, ServerLocationDialog.NEW_TITLE);
+		if (dialog.open() == Window.CANCEL) {
+			/*
+			 * If the user cancels input of information about the new server,
+			 * we'll assume that they don't want it.
+			 */
+			manager.delete(newServer);
 		}
 	}
 }
