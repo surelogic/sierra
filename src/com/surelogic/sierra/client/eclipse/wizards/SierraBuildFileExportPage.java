@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import com.surelogic.sierra.client.eclipse.actions.ConfigGenerator;
+import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.config.Config;
 

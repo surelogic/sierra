@@ -39,7 +39,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private final SierraServer f_server;
 
-	private final boolean f_newLocation;
+	private final String f_title;
 
 	private boolean f_isSecure;
 	private boolean f_savePassword;
@@ -54,16 +54,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 *            a shell.
 	 * @param server
 	 *            the information about the Sierra server.
-	 * @param newLocation
-	 *            indicates that this location was just created. This controls
-	 *            the dialog title.
+	 * @param title
+	 *            the title to use for this dialog.
 	 */
 	public ServerLocationDialog(Shell parentShell, SierraServer server,
-			boolean newLocation) {
+			String title) {
 		super(parentShell);
 		assert server != null;
 		f_server = server;
-		f_newLocation = newLocation;
+		f_title = title;
 		f_isSecure = f_server.isSecure();
 		f_savePassword = f_server.savePassword();
 	}
@@ -72,8 +71,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-		newShell.setText((f_newLocation ? "New " : "Edit ")
-				+ "Sierra Server Location");
+		newShell.setText(f_title);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.actions;
+package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public final class ConfigGenerator {
 			+ SierraConstants.TOOLS_FOLDER;
 
 	private ConfigGenerator() {
-		// Nothing to do
+		// singleton
 	}
 
 	public static ConfigGenerator getInstance() {

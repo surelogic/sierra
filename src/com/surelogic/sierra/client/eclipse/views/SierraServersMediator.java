@@ -50,7 +50,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		public void handleEvent(Event event) {
 			final SierraServer newServer = f_manager.create();
 			final ServerLocationDialog dialog = new ServerLocationDialog(
-					f_serverList.getShell(), newServer, true);
+					f_serverList.getShell(), newServer,
+					"New Sierra Server Location");
 			if (dialog.open() == Window.CANCEL) {
 				/*
 				 * If the user cancels input of information about the new
@@ -151,7 +152,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					return;
 				}
 				final ServerLocationDialog dialog = new ServerLocationDialog(
-						f_serverList.getShell(), server, false);
+						f_serverList.getShell(), server,
+						"Edit Sierra Server Location");
 				dialog.open();
 			}
 		});
