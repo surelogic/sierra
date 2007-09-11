@@ -111,7 +111,7 @@ public final class DeleteProjectDataJob {
 		confirmDelete.setMessage("Are you sure you want to delete all "
 				+ "Sierra data in your Eclipse workspace for "
 				+ (multiDelete ? "these " + projectNames.size() + " projects"
-						: "project '" + projectNames.get(0) + "'")
+						: "the project '" + projectNames.get(0) + "'")
 				+ ". This action will not "
 				+ "change or delete data on any Sierra server.");
 		if (confirmDelete.open() == SWT.NO)

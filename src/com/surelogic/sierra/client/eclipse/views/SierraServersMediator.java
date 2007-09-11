@@ -8,8 +8,8 @@ import java.util.logging.Level;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
@@ -40,7 +40,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_deleteServerItem;
 	final MenuItem f_serverPropertiesItem;
 	final Button f_openInBrowser;
-	final Group f_infoGroup;
+	final Composite f_infoGroup;
 	final Label f_serverURL;
 	final Table f_projectList;
 	final MenuItem f_connectProjectItem;
@@ -76,13 +76,24 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	};
 
+	final Listener f_projectListAction = new Listener() {
+		public void handleEvent(Event event) {
+			/*
+			 * Determine the server label that has been selected and tell the
+			 * model that it is the focus.
+			 */
+			final TableItem[] sa = f_projectList.getSelection();
+			f_disconnectProjectItem.setEnabled(sa.length > 0);
+		}
+	};
+
 	final SierraServerManager f_manager = SierraServerManager.getInstance();
 
 	public SierraServersMediator(Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverPropertiesItem,
-			Button openInBrowser, Group infoGroup, Label serverURL,
+			Button openInBrowser, Composite infoGroup, Label serverURL,
 			Table projectList, MenuItem connectProjectItem,
 			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
@@ -157,16 +168,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_projectList.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				/*
-				 * Determine the server label that has been selected and tell
-				 * the model that it is the focus.
-				 */
-				final TableItem[] sa = f_projectList.getSelection();
-				f_disconnectProjectItem.setEnabled(sa.length > 0);
-			}
-		});
+		f_projectList.addListener(SWT.Selection, f_projectListAction);
 
 		f_connectProjectItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -194,7 +196,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	public void setFocus() {
-		// TODO something reasonable.
+		f_serverList.setFocus();
 	}
 
 	public void notify(SierraServerManager manager) {
@@ -244,12 +246,13 @@ public final class SierraServersMediator implements ISierraServerObserver {
 										.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 					}
 				} else {
-					f_serverURL.setText("No server selected");
+					f_serverURL.setText("");
 					items = f_projectList.getItems();
 					for (TableItem item : items) {
 						item.dispose();
 					}
 				}
+				f_projectListAction.handleEvent(null);
 				f_serverList.setRedraw(true);
 			}
 		});
@@ -267,7 +270,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	private static void openInBrowser(SierraServer server) {
-		final String url = server.toURLString() + "/sierra";
+		final String urlString = server.toURLString() + "/sierra";
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
@@ -277,10 +280,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
 							server.getLabel(), name, name);
-			browser.openURL(new URL(url));
+			final URL url = new URL(urlString);
+			browser.openURL(url);
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					"Exception occurred when opening URL: " + url);
+					"Exception occurred when opening URL: " + urlString);
 		}
 	}
 }
