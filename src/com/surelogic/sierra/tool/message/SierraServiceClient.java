@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -27,6 +28,9 @@ public class SierraServiceClient extends Service {
 		super(createUrl(server), new QName(
 				"http://services.sierra.surelogic.com/",
 				"SierraServiceBeanService"));
+
+		// I need this for BASIC HTTP authenticator for connecting to the WebService
+		Authenticator.setDefault(new SierraServiceClientAuthenticator(server.getUser(), server.getPass()));
 	}
 
 	public SierraServiceClient(URL wsdlDocumentLocation, QName serviceName) {
