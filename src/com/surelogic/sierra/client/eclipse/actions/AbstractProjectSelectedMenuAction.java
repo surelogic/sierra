@@ -19,7 +19,8 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public abstract class AbstractProjectSelectedMenuAction implements
 		IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 
-	protected abstract void run(List<IJavaProject> selectedProjects);
+	protected abstract void run(List<IJavaProject> selectedProjects,
+			List<String> projectNames);
 
 	private IStructuredSelection f_currentSelection = null;
 
@@ -30,12 +31,15 @@ public abstract class AbstractProjectSelectedMenuAction implements
 	public final void run(IAction action) {
 		if (f_currentSelection != null) {
 			final List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
+			final List<String> selectedProjectNames = new ArrayList<String>();
 			for (Object selection : f_currentSelection.toArray()) {
 				if (selection instanceof IJavaProject) {
-					selectedProjects.add((IJavaProject) selection);
+					final IJavaProject javaProject = (IJavaProject) selection;
+					selectedProjects.add(javaProject);
+					selectedProjectNames.add(javaProject.getElementName());
 				}
 			}
-			run(selectedProjects);
+			run(selectedProjects, selectedProjectNames);
 		}
 	}
 

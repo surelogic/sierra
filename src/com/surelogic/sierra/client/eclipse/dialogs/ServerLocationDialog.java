@@ -32,7 +32,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	public static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
 
 	private static final String TITLE = "Enter Sierra Server Location Information";
-	private static final String INFO_MSG = "Define the location and authentication information for the Sierra server you want to interact with.";
+	private static final String INFO_MSG = "Define the information for the Sierra server you want to interact with.";
 	private static final int INFO_WIDTH_HINT = 70;
 
 	private final SierraServer f_server;

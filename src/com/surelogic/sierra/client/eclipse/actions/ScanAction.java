@@ -7,7 +7,8 @@ import org.eclipse.jdt.core.IJavaProject;
 public class ScanAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
-	protected void run(List<IJavaProject> selectedProjects) {
+	protected void run(List<IJavaProject> selectedProjects,
+			List<String> projectNames) {
 		new Scan(selectedProjects).execute();
 	}
 }

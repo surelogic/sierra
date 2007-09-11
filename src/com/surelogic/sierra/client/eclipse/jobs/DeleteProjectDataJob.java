@@ -90,6 +90,5 @@ public final class DeleteProjectDataJob {
 					+ f_projectNames + " failed.";
 			SLLogger.getLogger().log(Level.SEVERE, msg, e);
 		}
-
 	}
 }

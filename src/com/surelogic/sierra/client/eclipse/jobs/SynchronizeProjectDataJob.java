@@ -6,10 +6,12 @@ import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -21,8 +23,7 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 	private final String f_projectName;
 	private final SierraServerLocation f_server;
 
-	public SynchronizeProjectDataJob(String projectName,
-			SierraServer server) {
+	public SynchronizeProjectDataJob(String projectName, SierraServer server) {
 		super("Synchronizing Sierra data form project '" + projectName + "'");
 		f_projectName = projectName;
 		f_server = server.getServer();
@@ -34,19 +35,20 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
 		slMonitor.beginTask("Synchronizing findings and settings for project "
 				+ f_projectName + ".", 5);
-		boolean jobFailed = false;
 		try {
 			final Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);
 			final ProjectManager manager = ProjectManager.getInstance(conn);
 			try {
 				manager.synchronizeProject(f_server, f_projectName, slMonitor);
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
 				conn.commit();
 			} catch (Exception e) {
 				final String msg = "Synchronization of sierra project "
 						+ f_projectName + " failed.";
 				SLLogger.getLogger().log(Level.SEVERE, msg, e);
-				jobFailed = true;
+				return SLStatus.createErrorStatus(msg, e);
 			} finally {
 				conn.close();
 			}
@@ -54,10 +56,8 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 			final String msg = "Synchronization of sierra project "
 					+ f_projectName + " failed.";
 			SLLogger.getLogger().log(Level.SEVERE, msg, e1);
-			jobFailed = true;
+			return SLStatus.createErrorStatus(msg, e1);
 		}
-
-		return null;
-
+		return Status.OK_STATUS;
 	}
 }

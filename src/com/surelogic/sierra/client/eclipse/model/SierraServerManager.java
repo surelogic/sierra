@@ -42,6 +42,16 @@ public final class SierraServerManager {
 		return f_labelToServer.containsKey(label);
 	}
 
+	public boolean isEmpty() {
+		return f_labelToServer.isEmpty();
+	}
+
+	public Set<SierraServer> getServers() {
+		Set<SierraServer> servers = new HashSet<SierraServer>(f_labelToServer
+				.values());
+		return servers;
+	}
+
 	/**
 	 * Gets the server with the passed label. If the server does not exist then
 	 * it is created.
@@ -109,8 +119,7 @@ public final class SierraServerManager {
 		final SierraServer server = getFocus();
 		if (server != null) {
 			final String label = newUniqueLabel(server.getLabel());
-			final SierraServer newServer = new SierraServer(this,
-					label);
+			final SierraServer newServer = new SierraServer(this, label);
 			newServer.setHost(server.getHost());
 			newServer.setPassword(server.getPassword());
 			newServer.setPort(server.getPort());
@@ -155,9 +164,9 @@ public final class SierraServerManager {
 	 * @return the ordered list of server labels.
 	 */
 	public String[] getLabels() {
-		List<String> f_labels = new ArrayList<String>(f_labelToServer.keySet());
-		Collections.sort(f_labels);
-		return f_labels.toArray(new String[f_labels.size()]);
+		List<String> labels = new ArrayList<String>(f_labelToServer.keySet());
+		Collections.sort(labels);
+		return labels.toArray(new String[labels.size()]);
 	}
 
 	/**
@@ -211,7 +220,15 @@ public final class SierraServerManager {
 	}
 
 	public List<String> getProjectsConnectedTo(SierraServer server) {
-		return null;
+		List<String> projects = new ArrayList<String>();
+		for (Map.Entry<String, SierraServer> entry : f_projectNameToServer
+				.entrySet()) {
+			if (entry.getValue() == server) {
+				projects.add(entry.getKey());
+			}
+		}
+		Collections.sort(projects);
+		return projects;
 	}
 
 	/**
