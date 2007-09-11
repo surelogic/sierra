@@ -33,7 +33,9 @@ public class ProjectManager {
 	private final FindingManager findingManager;
 	private final ProjectRecordFactory projectFactory;
 
+	@SuppressWarnings("unused")
 	private final PreparedStatement deleteMatches;
+	@SuppressWarnings("unused")
 	private final PreparedStatement deleteFindings;
 
 	private final PreparedStatement findAllProjectNames;
@@ -67,7 +69,7 @@ public class ProjectManager {
 			SLProgressMonitor monitor) throws SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
-		 * findngs that have been created/merged locally, and merge them on the
+		 * findings that have been created/merged locally, and merge them on the
 		 * database. Second, we commit our audits. Third, we get our updates
 		 * from the server and apply them locally. Finally, we also check to see
 		 * if we have any updates to settings.
