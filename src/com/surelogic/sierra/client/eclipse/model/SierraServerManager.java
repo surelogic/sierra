@@ -267,12 +267,10 @@ public final class SierraServerManager {
 	}
 
 	public void save(File file) {
-		// TODO: persist this model
-		System.out.println("save to " + file);
+		SierraServerPersistence.save(this, file);
 	}
 
-	public void load(File file) {
-		// TODO: load this model.
-		System.out.println("load from " + file);
+	public void load(File file) throws Exception {
+		SierraServerPersistence.load(this, file);
 	}
 }

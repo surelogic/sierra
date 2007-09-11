@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
@@ -32,12 +33,13 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final Button f_editServer;
 	final Button f_openInBrowser;
 	final Label f_serverURL;
+	final Table f_projectList;
 
 	final SierraServerManager f_manager = SierraServerManager.getInstance();
 
 	public SierraServersMediator(Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer, Button editServer,
-			Button openInBrowser, Label serverURL) {
+			Button openInBrowser, Label serverURL, Table projectList) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -45,6 +47,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_editServer = editServer;
 		f_openInBrowser = openInBrowser;
 		f_serverURL = serverURL;
+		f_projectList = projectList;
 	}
 
 	public void init() {
@@ -164,6 +167,18 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						}
 					}
 					f_serverURL.setText(server.toURLString());
+					items = f_projectList.getItems();
+					for (TableItem item : items) {
+						item.dispose();
+					}
+					for (String projectName : f_manager
+							.getProjectsConnectedTo(server)) {
+						TableItem item = new TableItem(f_projectList, SWT.NONE);
+						item.setText(projectName);
+						item
+								.setImage(SLImages
+										.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					}
 				} else {
 					f_serverURL.setText("No server selected");
 				}

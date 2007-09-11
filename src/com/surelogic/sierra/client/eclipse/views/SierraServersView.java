@@ -130,7 +130,7 @@ public final class SierraServersView extends ViewPart {
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, editServer, openInBrowser,
-				serverURL);
+				serverURL, projectList);
 		f_mediator.init();
 	}
 
