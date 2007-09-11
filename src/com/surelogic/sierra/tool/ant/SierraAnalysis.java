@@ -68,6 +68,8 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,6 +77,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -455,32 +458,41 @@ public class SierraAnalysis extends Task {
 			antProject.log("Uploading the Run document to " + server + "...",
 					org.apache.tools.ant.Project.MSG_INFO);
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
-			Scan run = warehouse.fetchScan(runDocument.getAbsolutePath());
-			SierraService ts = new SierraServiceClient(server)
-					.getSierraServicePort();
+			Scan run;
+			try {
+				run = warehouse.fetchScan(new ZipInputStream(
+						new FileInputStream(runDocument.getAbsolutePath())));
 
-			// Verify the qualifiers
-			List<String> list = ts.getQualifiers().getQualifier();
-			if (!list.containsAll(qualifiers)) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("Invalid qualifiers. Valid qualifiers are:\n");
-				for (String string : list) {
-					sb.append(string);
-					sb.append("\n");
+				SierraService ts = new SierraServiceClient(server)
+						.getSierraServicePort();
+
+				// Verify the qualifiers
+				List<String> list = ts.getQualifiers().getQualifier();
+				if (!list.containsAll(qualifiers)) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+					for (String string : list) {
+						sb.append(string);
+						sb.append("\n");
+					}
+					throw new BuildException(sb.toString());
 				}
-				throw new BuildException(sb.toString());
-			}
-			// FIXME utilize the return value once Bug 867 is resolved
-			if (ts.publishRun(run).equalsIgnoreCase("failure")) {
-				antProject.log("Failed to upload run document, "
-						+ runDocument.getAbsolutePath() + " to the server: "
-						+ server, org.apache.tools.ant.Project.MSG_ERR);
-				uploadSuccessful = false;
-				throw new BuildException("Failed to upload run document, "
-						+ runDocument.getAbsolutePath() + " to the server: "
-						+ server);
-			} else {
-				uploadSuccessful = true;
+				// FIXME utilize the return value once Bug 867 is resolved
+				if (ts.publishRun(run).equalsIgnoreCase("failure")) {
+					antProject.log("Failed to upload run document, "
+							+ runDocument.getAbsolutePath()
+							+ " to the server: " + server,
+							org.apache.tools.ant.Project.MSG_ERR);
+					uploadSuccessful = false;
+					throw new BuildException("Failed to upload run document, "
+							+ runDocument.getAbsolutePath()
+							+ " to the server: " + server);
+				} else {
+					uploadSuccessful = true;
+				}
+			} catch (FileNotFoundException e) {
+				throw new IllegalStateException(runDocument
+						+ " is not a valid document", e);
 			}
 		}
 	}
