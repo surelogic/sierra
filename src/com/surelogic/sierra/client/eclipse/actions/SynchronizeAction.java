@@ -71,6 +71,7 @@ public final class SynchronizeAction extends AbstractProjectSelectedMenuAction {
 									"null Sierra server returned from ServerSelectionDialog (bug).");
 					return;
 				}
+				manager.connect(projectName, server);
 				SynchronizeProjectDataJob job = new SynchronizeProjectDataJob(
 						projectName, server);
 				job.schedule();
