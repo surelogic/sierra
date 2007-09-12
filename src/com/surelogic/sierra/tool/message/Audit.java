@@ -14,16 +14,25 @@ public class Audit {
 	private String value;
 	private AuditEvent event;
 	private String user;
+	private Long revision;
 
 	public Audit() {
 		// Do nothing
 	}
 
-	public Audit(String user, Date timestamp, String value, AuditEvent event) {
+	public Audit(Date timestamp, AuditEvent event, String value) {
+		this.timestamp = timestamp;
+		this.value = value;
+		this.event = event;
+	}
+
+	public Audit(String user, Date timestamp, AuditEvent event, String value,
+			Long revision) {
 		this.user = user;
 		this.timestamp = timestamp;
 		this.value = value;
 		this.event = event;
+		this.revision = revision;
 	}
 
 	public Date getTimestamp() {
@@ -56,6 +65,14 @@ public class Audit {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public Long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Long revision) {
+		this.revision = revision;
 	}
 
 	@Override

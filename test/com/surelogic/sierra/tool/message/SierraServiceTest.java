@@ -99,8 +99,8 @@ public class SierraServiceTest {
 			auditTrail.setFinding(trail);
 			List<Audit> audits = new ArrayList<Audit>();
 			auditTrail.setAudits(audits);
-			Audit audit = new Audit("test", new Date(), "Some comment",
-					AuditEvent.COMMENT);
+			Audit audit = new Audit(new Date(), AuditEvent.COMMENT,
+					"Some comment");
 			audits.add(audit);
 			service.commitAuditTrails(auditTrails);
 			GetAuditTrailRequest request = new GetAuditTrailRequest();
