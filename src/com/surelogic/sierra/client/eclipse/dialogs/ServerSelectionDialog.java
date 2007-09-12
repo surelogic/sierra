@@ -42,6 +42,7 @@ public final class ServerSelectionDialog extends Dialog {
 
 	public ServerSelectionDialog(Shell parentShell, String projectName) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		f_projectName = projectName;
 	}
 
