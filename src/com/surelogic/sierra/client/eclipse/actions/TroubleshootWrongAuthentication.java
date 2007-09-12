@@ -16,7 +16,7 @@ public final class TroubleshootWrongAuthentication extends
 	private int f_dialogResult;
 
 	@Override
-	void fix() {
+	public void fix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(

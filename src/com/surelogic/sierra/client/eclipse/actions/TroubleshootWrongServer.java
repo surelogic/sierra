@@ -15,7 +15,7 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 	private int f_dialogResult;
 
 	@Override
-	void fix() {
+	public void fix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ServerLocationDialog dialog = new ServerLocationDialog(

@@ -46,5 +46,5 @@ public abstract class TroubleshootConnection {
 	 * Subclasses must override to take the appropriate UI actions to mutate the
 	 * server object.
 	 */
-	abstract void fix();
+	public abstract void fix();
 }
