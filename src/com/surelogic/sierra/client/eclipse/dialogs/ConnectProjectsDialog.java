@@ -160,6 +160,7 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		private void setDialogState() {
 			f_projectGroup.setEnabled(!f_connectAll);
+			f_queryTable.setEnabled(!f_connectAll);
 		}
 
 		void okPressed() {

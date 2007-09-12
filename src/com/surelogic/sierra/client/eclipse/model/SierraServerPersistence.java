@@ -65,6 +65,8 @@ public final class SierraServerPersistence {
 			for (SierraServer server : manager.getServers()) {
 				outputServer(pw, server,
 						manager.getProjectsConnectedTo(server), true);
+
+				/* Store the passoword in the keyring */
 				if (map == null) {
 					map = new java.util.HashMap<String, String>();
 				}
@@ -215,6 +217,7 @@ public final class SierraServerPersistence {
 				f_server.setUser(user);
 				f_server.setSavePassword(savePassword);
 
+				/* Retrieve password from keyring */
 				if (f_map != null && savePassword) {
 					String password = f_map.get(f_server.getUser() + "@"
 							+ f_server.getHost());
