@@ -132,6 +132,7 @@ public final class SierraServer {
 	}
 
 	public SierraServerLocation getServer() {
-		return new SierraServerLocation(f_host, f_port, f_user, f_password);
+		return new SierraServerLocation(f_label, f_host, f_secure, f_port,
+				f_user, f_password);
 	}
 }
