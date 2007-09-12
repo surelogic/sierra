@@ -63,7 +63,8 @@ public final class SierraServerPersistence {
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
 			outputXMLHeader(pw);
 			for (SierraServer server : manager.getServers()) {
-				outputServer(pw, server, manager.getProjectsConnectedTo(server));
+				outputServer(pw, server,
+						manager.getProjectsConnectedTo(server), true);
 				if (map == null) {
 					map = new java.util.HashMap<String, String>();
 				}
@@ -89,6 +90,23 @@ public final class SierraServerPersistence {
 		}
 	}
 
+	public static void export(final SierraServerManager manager,
+			List<SierraServer> serversToExport, final File file) {
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter(file));
+			outputXMLHeader(pw);
+			for (SierraServer server : serversToExport) {
+				outputServer(pw, server,
+						manager.getProjectsConnectedTo(server), false);
+			}
+			outputXMLFooter(pw);
+			pw.close();
+		} catch (IOException e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Failure to persist Sierra servers to " + file, e);
+		}
+	}
+
 	private static void outputXMLHeader(PrintWriter pw) {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
@@ -100,15 +118,17 @@ public final class SierraServerPersistence {
 	}
 
 	private static void outputServer(PrintWriter pw, SierraServer server,
-			List<String> connectedProjectNames) {
+			List<String> connectedProjectNames, boolean save) {
 		StringBuilder b = new StringBuilder();
 		b.append("  <").append(SERVER);
 		Entities.addAttribute(LABEL, server.getLabel(), b);
 		Entities.addAttribute(HOST, server.getHost(), b);
 		Entities.addAttribute(PROTOCOL, server.getProtocol(), b);
 		Entities.addAttribute(PORT, server.getPort(), b);
-		Entities.addAttribute(USER, server.getUser(), b);
-		Entities.addAttribute(SAVE_PASSWORD, server.savePassword() + "", b);
+		if (save) {
+			Entities.addAttribute(USER, server.getUser(), b);
+			Entities.addAttribute(SAVE_PASSWORD, server.savePassword() + "", b);
+		}
 		b.append(">");
 		pw.println(b.toString());
 
