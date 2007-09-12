@@ -13,11 +13,13 @@ import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.GetAuditTrailRequest;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
+import com.surelogic.sierra.tool.message.ServerUIDRequest;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -68,10 +70,28 @@ public class ProjectManager {
 		SierraService service = new SierraServiceClient(server)
 				.getSierraServicePort();
 
+		// Look up project. If it doesn't exist, create it and relate it to the
+		// server.
+		ProjectRecord rec = projectFactory.newProject();
+		rec.setName(projectName);
+		if (!rec.select()) {
+			rec.insert();
+		}
+		String serverUid = rec.getServerUid();
+		if (serverUid == null) {
+			serverUid = service.getUid(new ServerUIDRequest()).getUid();
+			rec.setServerUid(serverUid);
+			rec.update();
+		}
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
 		// Commit merges
 		monitor.subTask("Committing local merges from project " + projectName
 				+ ".");
 		MergeAuditTrailRequest mergeRequest = new MergeAuditTrailRequest();
+		mergeRequest.setServer(serverUid);
 		mergeRequest.setProject(projectName);
 		List<Merge> merges = findingManager.getNewLocalMerges(projectName,
 				monitor);
@@ -89,8 +109,11 @@ public class ProjectManager {
 		// Commit Audits
 		monitor.subTask("Committing local audits for project " + projectName
 				+ ".");
-		service.commitAuditTrails(findingManager.getNewLocalAudits(projectName,
-				monitor));
+		CommitAuditTrailRequest commitRequest = new CommitAuditTrailRequest();
+		commitRequest.setServer(serverUid);
+		commitRequest.setAuditTrail(findingManager.getNewLocalAudits(
+				projectName, monitor));
+		service.commitAuditTrails(commitRequest);
 
 		if (monitor.isCanceled()) {
 			return;
@@ -104,6 +127,7 @@ public class ProjectManager {
 		auditRequest.setProject(projectName);
 		auditRequest.setRevision(findingManager
 				.getLatestAuditRevision(projectName));
+		auditRequest.setServer(serverUid);
 		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
 		findingManager.updateLocalFindings(projectName, auditResponse
 				.getObsolete(), auditResponse.getUpdate(), monitor);
@@ -117,6 +141,7 @@ public class ProjectManager {
 		ClientSettingsManager settingsManager = ClientSettingsManager
 				.getInstance(conn);
 		SettingsRequest request = new SettingsRequest();
+		request.setServer(serverUid);
 		request.setProject(projectName);
 		Long revision = settingsManager.getSettingsRevision(projectName);
 		request.setRevision(revision);

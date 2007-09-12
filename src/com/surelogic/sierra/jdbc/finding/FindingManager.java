@@ -31,7 +31,6 @@ import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
-import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
@@ -279,6 +278,7 @@ public abstract class FindingManager {
 					// time
 					FindingRecord finding = fact.newFinding();
 					finding.setUid(update.getTrail());
+					finding.setProjectId(project.getId());
 					if (!finding.select()) {
 						finding.insert();
 					}
@@ -326,11 +326,9 @@ public abstract class FindingManager {
 		}
 	}
 
-	public CommitAuditTrailRequest getNewLocalAudits(String projectName,
+	public List<AuditTrail> getNewLocalAudits(String projectName,
 			SLProgressMonitor monitor) throws SQLException {
-		CommitAuditTrailRequest response = new CommitAuditTrailRequest();
 		List<AuditTrail> trails = new ArrayList<AuditTrail>();
-		response.setAuditTrail(trails);
 		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
@@ -359,7 +357,7 @@ public abstract class FindingManager {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
 		}
-		return response;
+		return trails;
 	}
 
 	public List<Merge> getNewLocalMerges(String projectName,
@@ -367,9 +365,7 @@ public abstract class FindingManager {
 		List<Merge> merges = new ArrayList<Merge>();
 		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
 		rec.setName(projectName);
-		if (!rec.select()) {
-			rec.insert();
-		}
+		rec.select();
 		findLocalMerges.setLong(1, rec.getId());
 		ResultSet set = findLocalMerges.executeQuery();
 		Long oldFinding = null;
@@ -552,7 +548,7 @@ public abstract class FindingManager {
 	public void deleteLocalAudits(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		deleteLocalAudits.setString(1, projectName);
-		deleteLocalAudits.executeQuery();
+		deleteLocalAudits.executeUpdate();
 	}
 
 }

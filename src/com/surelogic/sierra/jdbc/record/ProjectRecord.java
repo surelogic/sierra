@@ -3,11 +3,13 @@ package com.surelogic.sierra.jdbc.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
-public final class ProjectRecord extends LongRecord {
+public final class ProjectRecord extends LongUpdatableRecord {
 	private String name;
+	private String serverUid;
 
-	public ProjectRecord(RecordMapper mapper) {
+	public ProjectRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -17,6 +19,14 @@ public final class ProjectRecord extends LongRecord {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getServerUid() {
+		return serverUid;
+	}
+
+	public void setServerUid(String serverUid) {
+		this.serverUid = serverUid;
 	}
 
 	@Override
@@ -46,18 +56,27 @@ public final class ProjectRecord extends LongRecord {
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setString(idx++, name);
+		idx = fillWithNk(st, idx);
+		setNullableString(idx++, st, serverUid);
 		return idx;
 	}
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		return fill(st, idx);
+		st.setString(idx++, name);
+		return idx;
 	}
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		serverUid = set.getString(idx++);
 		return idx;
 	}
 
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		idx = fill(st, idx);
+		return idx;
+	}
 }

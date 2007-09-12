@@ -29,7 +29,7 @@ public final class AuditRecord extends LongRecord {
 		st.setLong(idx++, findingId);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
 		setNullableString(idx++, st, value);
-		st.setInt(idx++, event.ordinal());
+		st.setString(idx++, event.name());
 		return idx;
 	}
 

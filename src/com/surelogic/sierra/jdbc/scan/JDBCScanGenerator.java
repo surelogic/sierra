@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
+import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
@@ -49,7 +50,12 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public ArtifactGenerator build() {
-		ProjectRecord p = factory.newProject();
+		ProjectRecord p;
+		try {
+			p = ProjectRecordFactory.getInstance(conn).newProject();
+		} catch (SQLException e) {
+			throw new ScanPersistenceException(e);
+		}
 		p.setName(projectName);
 		try {
 			if (!p.select()) {

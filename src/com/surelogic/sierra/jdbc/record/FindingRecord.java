@@ -24,7 +24,8 @@ public final class FindingRecord extends LongRecord {
 		st.setLong(idx++, projectId);
 		st.setString(idx++, uid);
 		st.setString(idx++, read ? "Y" : "N");
-		setNullableInt(idx++, st, importance.ordinal());
+		setNullableInt(idx++, st, importance == null ? null : importance
+				.ordinal());
 		return idx;
 	}
 
