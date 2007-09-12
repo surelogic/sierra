@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlRootElement
 public class MergeAuditTrailRequest {
+	private String server;
 	private String project;
 	private List<Merge> merge;
 
@@ -28,6 +29,14 @@ public class MergeAuditTrailRequest {
 
 	public void setMerge(List<Merge> merge) {
 		this.merge = merge;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
 	}
 
 }

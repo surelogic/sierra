@@ -95,6 +95,7 @@ import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.config.Config;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
@@ -468,7 +469,8 @@ public class SierraAnalysis extends Task {
 						.getSierraServicePort();
 
 				// Verify the qualifiers
-				List<String> list = ts.getQualifiers().getQualifier();
+				List<String> list = ts.getQualifiers(new QualifierRequest())
+						.getQualifier();
 				if (!list.containsAll(qualifiers)) {
 					StringBuilder sb = new StringBuilder();
 					sb.append("Invalid qualifiers. Valid qualifiers are:\n");

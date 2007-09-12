@@ -17,15 +17,22 @@ public interface SierraService {
 	 * @param run
 	 * @return whether or not the run was successfully generated on the server.
 	 */
-	String publishRun(@WebParam(name = "run")
-	Scan run);
+	String publishRun(@WebParam(name = "scan")
+	Scan scan);
 
 	/**
 	 * Get the set of available qualifier names.
 	 * 
 	 * @return
 	 */
-	Qualifiers getQualifiers();
+	Qualifiers getQualifiers(QualifierRequest request);
+
+	/**
+	 * Return the server's unique identifier
+	 * 
+	 * @return
+	 */
+	ServerUIDReply getUid(ServerUIDRequest request);
 
 	/**
 	 * Return the uid of an audit trail that matches the given seed. If none
@@ -34,7 +41,8 @@ public interface SierraService {
 	 * @param seed
 	 * @return the unique identifier of a global audit trail.
 	 */
-	MergeAuditResponse mergeAuditTrails(MergeAuditTrailRequest seed);
+	MergeAuditTrailResponse mergeAuditTrails(MergeAuditTrailRequest seed)
+			throws ServerMismatchException;
 
 	/**
 	 * Commit an audit trail of transactions. The audit trail consists of any
@@ -44,7 +52,8 @@ public interface SierraService {
 	 * @param audits
 	 * @return the server revision containing the new audits
 	 */
-	CommitAuditResponse commitAuditTrails(AuditTrails audits);
+	CommitAuditTrailResponse commitAuditTrails(CommitAuditTrailRequest audits)
+			throws ServerMismatchException;
 
 	/**
 	 * Get all of the auditing events for the given qualifier and project
@@ -54,7 +63,8 @@ public interface SierraService {
 	 * @return all audit trails and the audits they contain after the specified
 	 *         revision
 	 */
-	AuditTrailResponse getAuditTrails(AuditTrailRequest request);
+	AuditTrailResponse getAuditTrails(GetAuditTrailRequest request)
+			throws ServerMismatchException;
 
 	/**
 	 * Return the settings associated with a given qualifier.
@@ -62,6 +72,7 @@ public interface SierraService {
 	 * @param request
 	 * @return the settings associated with a given qualifier.
 	 */
-	SettingsReply getSettings(SettingsRequest request);
+	SettingsReply getSettings(SettingsRequest request)
+			throws ServerMismatchException;
 
 }

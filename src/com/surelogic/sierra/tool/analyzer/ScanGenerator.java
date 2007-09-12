@@ -15,7 +15,7 @@ import java.util.Collection;
 public interface ScanGenerator {
 
 	ScanGenerator uid(String uid);
-	
+
 	ScanGenerator javaVersion(String version);
 
 	ScanGenerator javaVendor(String vendor);
@@ -31,5 +31,8 @@ public interface ScanGenerator {
 	 */
 	ScanGenerator qualifiers(Collection<String> qualifiers);
 
+	ScanGenerator user(String userName);
+
 	ArtifactGenerator build();
+
 }

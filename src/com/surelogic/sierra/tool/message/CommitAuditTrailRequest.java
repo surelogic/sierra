@@ -1,35 +1,27 @@
 package com.surelogic.sierra.tool.message;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
-@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-public class SettingsRequest {
+public class CommitAuditTrailRequest {
 
 	private String server;
 
-	private String project;
+	private List<AuditTrail> auditTrail;
 
-	private Long revision;
-
-	public String getProject() {
-		return project;
+	public List<AuditTrail> getAuditTrail() {
+		return auditTrail;
 	}
 
-	public void setProject(String project) {
-		this.project = project;
-	}
-
-	public Long getRevision() {
-		return revision;
-	}
-
-	public void setRevision(Long revision) {
-		this.revision = revision;
+	public void setAuditTrail(List<AuditTrail> auditTrail) {
+		this.auditTrail = auditTrail;
 	}
 
 	public String getServer() {

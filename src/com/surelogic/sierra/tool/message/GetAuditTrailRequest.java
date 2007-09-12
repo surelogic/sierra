@@ -5,16 +5,23 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType
-@XmlRootElement
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-public class SettingsRequest {
+@XmlRootElement
+@XmlType
+public class GetAuditTrailRequest {
 
 	private String server;
-
 	private String project;
-
 	private Long revision;
+
+	public GetAuditTrailRequest() {
+		// Do Nothing
+	}
+
+	public GetAuditTrailRequest(String project, String qualifier, Long revision) {
+		this.project = project;
+		this.revision = revision;
+	}
 
 	public String getProject() {
 		return project;

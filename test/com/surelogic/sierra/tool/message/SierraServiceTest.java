@@ -32,7 +32,7 @@ public class SierraServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		service = new SierraServiceClient(new SierraServerLocation("localhost",
-				8080, null, null)).getSierraServicePort();
+				8080, "test", "test")).getSierraServicePort();
 	}
 
 	@After
@@ -58,12 +58,16 @@ public class SierraServiceTest {
 
 	@Test
 	public void testGetQualifiers() {
-		assertTrue(service.getQualifiers().getQualifier().contains("Default"));
+		assertTrue(service.getQualifiers(new QualifierRequest()).getQualifier()
+				.contains("Default"));
 	}
 
 	@Test
 	public void testSingleComment() {
+
+		String server = service.getUid(new ServerUIDRequest()).getUid();
 		MergeAuditTrailRequest mergeReq = new MergeAuditTrailRequest();
+		mergeReq.setServer(server);
 		mergeReq.setProject("sierra-entity");
 		List<Merge> merges = new ArrayList<Merge>();
 		mergeReq.setMerge(merges);
@@ -73,36 +77,44 @@ public class SierraServiceTest {
 		merge.setMatch(matches);
 		matches.add(new Match("package", "class", 34L, "PMD", "4.0",
 				"ShortVariable"));
-		MergeAuditResponse mergeRes = service.mergeAuditTrails(mergeReq);
-		String trail = mergeRes.getTrail().get(0);
-		mergeRes = service.mergeAuditTrails(mergeReq);
-		String newTrail = mergeRes.getTrail().get(0);
-		assertNotNull(trail);
-		assertEquals(trail, newTrail);
-		matches.add(new Match("package2", "class2", 35L, "PMD", "4.0",
-				"ShortVariable"));
-		mergeRes = service.mergeAuditTrails(mergeReq);
-		newTrail = mergeRes.getTrail().get(0);
-		assertEquals(trail, newTrail);
-		AuditTrails auditTrails = new AuditTrails();
-		List<AuditTrail> trails = new ArrayList<AuditTrail>();
-		auditTrails.setAuditTrail(trails);
-		AuditTrail auditTrail = new AuditTrail();
-		trails.add(auditTrail);
-		auditTrail.setFinding(trail);
-		List<Audit> audits = new ArrayList<Audit>();
-		auditTrail.setAudits(audits);
-		Audit audit = new Audit("user", new Date(), "Some comment",
-				AuditEvent.COMMENT);
-		audits.add(audit);
-		service.commitAuditTrails(auditTrails);
-		AuditTrailRequest request = new AuditTrailRequest();
-		request.setProject("sierra-entity");
-		request.setRevision(-1L);
-		AuditTrailResponse response = service.getAuditTrails(request);
-		AuditTrailUpdate update = response.getUpdate().get(0);
-		assertEquals(audit, update.getAudit().get(update.getAudit().size() - 1));
-		assertEquals(2, update.getMatch().size());
+		try {
+			MergeAuditTrailResponse mergeRes = service
+					.mergeAuditTrails(mergeReq);
+			String trail = mergeRes.getTrail().get(0);
+			mergeRes = service.mergeAuditTrails(mergeReq);
+			String newTrail = mergeRes.getTrail().get(0);
+			assertNotNull(trail);
+			assertEquals(trail, newTrail);
+			matches.add(new Match("package2", "class2", 35L, "PMD", "4.0",
+					"ShortVariable"));
+			mergeRes = service.mergeAuditTrails(mergeReq);
+			newTrail = mergeRes.getTrail().get(0);
+			assertEquals(trail, newTrail);
+			CommitAuditTrailRequest auditTrails = new CommitAuditTrailRequest();
+			auditTrails.setServer(server);
+			List<AuditTrail> trails = new ArrayList<AuditTrail>();
+			auditTrails.setAuditTrail(trails);
+			AuditTrail auditTrail = new AuditTrail();
+			trails.add(auditTrail);
+			auditTrail.setFinding(trail);
+			List<Audit> audits = new ArrayList<Audit>();
+			auditTrail.setAudits(audits);
+			Audit audit = new Audit("test", new Date(), "Some comment",
+					AuditEvent.COMMENT);
+			audits.add(audit);
+			service.commitAuditTrails(auditTrails);
+			GetAuditTrailRequest request = new GetAuditTrailRequest();
+			request.setServer(server);
+			request.setProject("sierra-entity");
+			request.setRevision(-1L);
+			AuditTrailResponse response = service.getAuditTrails(request);
+			AuditTrailUpdate update = response.getUpdate().get(0);
+			assertEquals(audit, update.getAudit().get(
+					update.getAudit().size() - 1));
+			assertEquals(2, update.getMatch().size());
+		} catch (ServerMismatchException e) {
+			fail();
+		}
 	}
 
 	private static InputStream getResource(String name) {

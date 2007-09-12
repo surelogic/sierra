@@ -60,9 +60,13 @@ public class PublishMessageRunGenerator implements ScanGenerator {
 		return this;
 	}
 
-
 	public ScanGenerator uid(String uid) {
 		this.uid = uid;
+		return this;
+	}
+
+	public ScanGenerator user(String userName) {
+		// We do nothing here
 		return this;
 	}
 

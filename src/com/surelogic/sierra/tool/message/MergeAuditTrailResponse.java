@@ -10,16 +10,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
-public class AuditTrails {
+public class MergeAuditTrailResponse {
 
-	private List<AuditTrail> auditTrail;
+	private List<String> trail;
+	private Long revision;
 
-	public List<AuditTrail> getAuditTrail() {
-		return auditTrail;
+	public Long getRevision() {
+		return revision;
 	}
 
-	public void setAuditTrail(List<AuditTrail> auditTrail) {
-		this.auditTrail = auditTrail;
+	public void setRevision(Long revision) {
+		this.revision = revision;
+	}
+
+	public List<String> getTrail() {
+		return trail;
+	}
+
+	public void setTrail(List<String> trail) {
+		this.trail = trail;
 	}
 
 }
