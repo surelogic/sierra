@@ -1,41 +1,34 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.File;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
-import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
+import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.tool.SierraConstants;
 
-public final class ShareScanAction implements IWorkbenchWindowActionDelegate {
-
-	public void dispose() {
-		// Nothing to do
+public final class ShareScanAction extends AbstractWebServiceMenuAction {
+	@Override
+	void run(String projectName, SierraServer server, Shell shell) {
+		final String scanFileName = PreferenceConstants.getSierraPath()
+				+ File.separator + projectName
+				+ SierraConstants.PARSED_FILE_SUFFIX;
+		final File scanFile = new File(scanFileName);
+		if (scanFile.exists()) {
+			ShareScanJob job = new ShareScanJob(projectName, server, scanFile);
+			job.schedule();
+		} else {
+			final MessageBox message = new MessageBox(shell, SWT.ICON_ERROR
+					| SWT.APPLICATION_MODAL | SWT.OK);
+			message.setText("No Scan Exists");
+			message.setMessage("You must scan '" + projectName
+					+ "' before you can share the scan results to the server '"
+					+ server.getLabel() + "'.");
+			message.open();
+		}
 	}
-
-	public void init(IWorkbenchWindow window) {
-		// Nothing to do
-
-	}
-
-	public void run(IAction action) {
-		Set<String> q = new HashSet<String>();
-		q.add("qual 1");
-		q.add("qual 2");
-		q.add("qual 3");
-		q.add("qual 4");
-		QualifierSelectionDialog dialog = new QualifierSelectionDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				q, "project1", "server1");
-		dialog.open();
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		// Nothing to do
-	}
-
 }

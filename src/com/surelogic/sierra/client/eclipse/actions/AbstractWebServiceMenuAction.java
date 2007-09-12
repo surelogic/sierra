@@ -46,16 +46,16 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Are any servers defined?
 				 */
 				if (manager.isEmpty()) {
-					final MessageBox confirmDelete = new MessageBox(shell,
+					final MessageBox noServersMsg = new MessageBox(shell,
 							SWT.ICON_ERROR | SWT.APPLICATION_MODAL | SWT.OK);
-					confirmDelete.setText("No Sierra Servers");
-					confirmDelete
+					noServersMsg.setText("No Sierra Servers");
+					noServersMsg
 							.setMessage("There are no Sierra server locations defined. "
 									+ "A project must be connected to a Sierra server to perform this action. "
 									+ "The 'Sierra Server' view will be opened so that you can define a location. "
 									+ "Invoke this action again once you have defined a Sierra server location.");
 
-					confirmDelete.open();
+					noServersMsg.open();
 					ViewUtility.showView(SierraServersView.class.getName());
 					ServerLocationDialog.newServer(shell);
 					return;
