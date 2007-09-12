@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -28,7 +27,6 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
-import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 public class ShareScanJob extends DatabaseJob {
@@ -50,7 +48,6 @@ public class ShareScanJob extends DatabaseJob {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
 		slMonitor.beginTask("Sharing scan of project " + f_projectName + " to "
 				+ f_server.getLabel() + ".", 5);
-		IStatus status = null;
 		try {
 			FileInputStream in = new FileInputStream(f_scanFile);
 			Scan scan = MessageWarehouse.getInstance().fetchScan(
@@ -66,6 +63,7 @@ public class ShareScanJob extends DatabaseJob {
 				} else {
 					QualifierPromptFromJob prompt = new QualifierPromptFromJob(
 							qualifiers, f_projectName, f_server.getLabel());
+					prompt.open();
 					if (prompt.isCanceled()) {
 						slMonitor.setCanceled(true);
 						return Status.CANCEL_STATUS;
@@ -73,7 +71,7 @@ public class ShareScanJob extends DatabaseJob {
 						qualifiers = prompt.getSelectedQualifiers();
 					}
 				}
-				if(slMonitor.isCanceled()) {
+				if (slMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				scan.getConfig().setQualifiers(
