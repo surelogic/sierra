@@ -12,13 +12,14 @@ public class SierraServiceClientTest extends TestCase {
 	private final String badPassword = "alexBAD";
 	private final String goodPassword = "alex";
 	private final String host = "localhost";
-	private final Integer port = Integer.valueOf(8080);
+	private final int port = 8080;
+	private final boolean secure = false;
 
 	@Test
 	public void testSierraServiceClientBadLogin() {
 		try {
 			SierraServerLocation serverLocation = new SierraServerLocation(
-					host, port, username, badPassword);
+					host, secure, port, username, badPassword);
 			SierraService service = new SierraServiceClient(serverLocation)
 					.getSierraServicePort();
 			service.getQualifiers(new QualifierRequest());
@@ -34,7 +35,7 @@ public class SierraServiceClientTest extends TestCase {
 	public void testSierraServiceClientGoodLogin() {
 		try {
 			SierraServerLocation serverLocation = new SierraServerLocation(
-					host, port, username, goodPassword);
+					host, secure, port, username, goodPassword);
 			SierraService service = new SierraServiceClient(serverLocation)
 					.getSierraServicePort();
 			Qualifiers qualifiers = service

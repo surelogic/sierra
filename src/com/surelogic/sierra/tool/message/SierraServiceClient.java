@@ -29,8 +29,10 @@ public class SierraServiceClient extends Service {
 				"http://services.sierra.surelogic.com/",
 				"SierraServiceBeanService"));
 
-		// I need this for BASIC HTTP authenticator for connecting to the WebService
-		Authenticator.setDefault(new SierraServiceClientAuthenticator(server.getUser(), server.getPass()));
+		// I need this for BASIC HTTP authenticator for connecting to the
+		// WebService
+		Authenticator.setDefault(new SierraServiceClientAuthenticator(server
+				.getUser(), server.getPass()));
 	}
 
 	public SierraServiceClient(URL wsdlDocumentLocation, QName serviceName) {
@@ -67,8 +69,7 @@ public class SierraServiceClient extends Service {
 		if (server == null) {
 			host = "localhost:8080";
 		} else {
-			host = server.getHost()
-					+ (server.getPort() == null ? "" : (":" + server.getPort()));
+			host = server.getHost() + ":" + server.getPort();
 		}
 		try {
 			return new URL("http://" + host
@@ -77,5 +78,4 @@ public class SierraServiceClient extends Service {
 			throw new IllegalStateException(e);
 		}
 	}
-
 }
