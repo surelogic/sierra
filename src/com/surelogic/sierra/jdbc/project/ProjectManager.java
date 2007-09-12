@@ -13,16 +13,17 @@ import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
-import com.surelogic.sierra.tool.message.AuditTrailRequest;
+import com.surelogic.sierra.tool.message.GetAuditTrailRequest;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.Merge;
-import com.surelogic.sierra.tool.message.MergeAuditResponse;
+import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
 
 public class ProjectManager {
 
@@ -55,7 +56,8 @@ public class ProjectManager {
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
-			String projectName, SLProgressMonitor monitor) throws SQLException {
+			String projectName, SLProgressMonitor monitor)
+			throws ServerMismatchException, SQLException {
 		/*
 		 * Synchronization consists of four steps. First, we need to find any
 		 * findings that have been created/merged locally, and merge them on the
@@ -75,7 +77,7 @@ public class ProjectManager {
 				monitor);
 		if (!merges.isEmpty()) {
 			mergeRequest.setMerge(merges);
-			MergeAuditResponse mergeResponse = service
+			MergeAuditTrailResponse mergeResponse = service
 					.mergeAuditTrails(mergeRequest);
 			findingManager.updateLocalTrailUids(projectName, mergeResponse
 					.getRevision(), mergeResponse.getTrail(), merges, monitor);
@@ -89,6 +91,7 @@ public class ProjectManager {
 				+ ".");
 		service.commitAuditTrails(findingManager.getNewLocalAudits(projectName,
 				monitor));
+
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -96,7 +99,8 @@ public class ProjectManager {
 		// Get updated audits from server
 		monitor.subTask("Updating findings for project " + projectName
 				+ " from server.");
-		AuditTrailRequest auditRequest = new AuditTrailRequest();
+		findingManager.deleteLocalAudits(projectName, monitor);
+		GetAuditTrailRequest auditRequest = new GetAuditTrailRequest();
 		auditRequest.setProject(projectName);
 		auditRequest.setRevision(findingManager
 				.getLatestAuditRevision(projectName));

@@ -10,48 +10,27 @@ public class User {
 
 	private Long id;
 
-	public static User getUser(Connection conn) throws SQLException {
-		User user = new User();
-		java.sql.Statement st = conn.createStatement();
-		try {
-			ResultSet set = st
-					.executeQuery("SELECT ID FROM SIERRA_USER WHERE USER_NAME='eclipse'");
-			if (!set.next()) {
-				st
-						.executeUpdate(
-								"INSERT INTO SIERRA_USER (USER_NAME) VALUES ('eclipse')",
-								Statement.RETURN_GENERATED_KEYS);
-				set = st.getGeneratedKeys();
-				set.next();
-			}
-			user.id = set.getLong(1);
-		} finally {
-			st.close();
-		}
-		return user;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public static User findOrCreate(Connection conn, String user)
+	public static User getUser(String userName, Connection conn)
 			throws SQLException {
+		User user = new User();
 		PreparedStatement st = conn
 				.prepareStatement("SELECT ID FROM SIERRA_USER WHERE USER_NAME = ?");
-		st.setString(1, user);
+		st.setString(1, userName);
 		ResultSet set = st.executeQuery();
 		if (!set.next()) {
 			st = conn.prepareStatement(
 					"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
 					Statement.RETURN_GENERATED_KEYS);
-			st.setString(1, user);
+			st.setString(1, userName);
 			st.executeUpdate();
 			set = st.getGeneratedKeys();
 			set.next();
 		}
-		User ret = new User();
-		ret.id = set.getLong(1);
-		return ret;
+		user.id = set.getLong(1);
+		return user;
+	}
+
+	public Long getId() {
+		return id;
 	}
 }

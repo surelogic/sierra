@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -82,7 +82,7 @@ public final class ScanRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, userId);
+		setNullableLong(idx++, st, userId);
 		st.setLong(idx++, projectId);
 		st.setString(idx++, uid);
 		setNullableString(idx++, st, javaVersion);

@@ -37,6 +37,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String javaVendor;
 	private String javaVersion;
 	private String uid;
+	private String user;
 	private List<String> qualifiers;
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
@@ -61,7 +62,9 @@ class JDBCScanGenerator implements ScanGenerator {
 			scan.setJavaVersion(javaVersion);
 			scan.setJavaVendor(javaVendor);
 			scan.setStatus(ScanStatus.LOADING);
-			scan.setUserId(User.getUser(conn).getId());
+			if (user != null) {
+				scan.setUserId(User.getUser(user, conn).getId());
+			}
 			if (scan.select()) {
 				manager.deleteScan(uid, null);
 				conn.commit();
@@ -159,6 +162,11 @@ class JDBCScanGenerator implements ScanGenerator {
 		if (qualifiers != null) {
 			this.qualifiers = new ArrayList<String>(qualifiers);
 		}
+		return this;
+	}
+
+	public ScanGenerator user(String user) {
+		this.user = user;
 		return this;
 	}
 

@@ -19,7 +19,7 @@ public final class SierraSchemaUtility {
 	 * Up this number when you add a new schema version SQL script to this
 	 * package.
 	 */
-	public static final int schemaVersion = 0;
+	public static final int schemaVersion = 1;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/";
 	public static final String SQL_COMMON = SQL_SCRIPT_PREFIX + "schema_";

@@ -31,7 +31,7 @@ import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
-import com.surelogic.sierra.tool.message.AuditTrails;
+import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
@@ -67,6 +67,7 @@ public abstract class FindingManager {
 	private final PreparedStatement latestAuditRevision;
 	private final PreparedStatement deleteMatches;
 	private final PreparedStatement deleteFindings;
+	private final PreparedStatement deleteLocalAudits;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -110,6 +111,8 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteFindings = conn
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
+		deleteLocalAudits = conn
+				.prepareStatement("DELETE FROM AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -122,7 +125,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		comment(getUserId(), findingId, comment, new Date());
+		comment(null, findingId, comment, new Date());
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -131,7 +134,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		setImportance(getUserId(), findingId, importance, new Date());
+		setImportance(null, findingId, importance, new Date());
 	}
 
 	public void markAsRead(Long findingId) throws SQLException {
@@ -139,7 +142,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		markAsRead(getUserId(), findingId, new Date());
+		markAsRead(null, findingId, new Date());
 	}
 
 	/**
@@ -323,9 +326,9 @@ public abstract class FindingManager {
 		}
 	}
 
-	public AuditTrails getNewLocalAudits(String projectName,
+	public CommitAuditTrailRequest getNewLocalAudits(String projectName,
 			SLProgressMonitor monitor) throws SQLException {
-		AuditTrails response = new AuditTrails();
+		CommitAuditTrailRequest response = new CommitAuditTrailRequest();
 		List<AuditTrail> trails = new ArrayList<AuditTrail>();
 		response.setAuditTrail(trails);
 		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
@@ -520,12 +523,8 @@ public abstract class FindingManager {
 		}
 	}
 
-	private Long getUserId() throws SQLException {
-		return User.getUser(conn).getId();
-	}
-
 	private Long getUserId(String user) throws SQLException {
-		return User.findOrCreate(conn, user).getId();
+		return User.getUser(user, conn).getId();
 	}
 
 	private void fillKey(MatchRecord.PK pk, Match match) throws SQLException {
@@ -548,6 +547,12 @@ public abstract class FindingManager {
 	public static FindingManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
+	}
+
+	public void deleteLocalAudits(String projectName, SLProgressMonitor monitor)
+			throws SQLException {
+		deleteLocalAudits.setString(1, projectName);
+		deleteLocalAudits.executeQuery();
 	}
 
 }

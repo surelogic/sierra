@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ public final class AuditRecord extends LongRecord {
 		// USER_ID, FINDING_ID, DATE_TIME, VALUE, EVENT
 		st.setLong(idx++, findingId);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
-		st.setString(idx++, value);
+		setNullableString(idx++, st, value);
 		st.setInt(idx++, event.ordinal());
 		return idx;
 	}
