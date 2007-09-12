@@ -15,7 +15,8 @@ Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.ant,
  com.surelogic.sierra.tool.config,
- com.surelogic.sierra.tool.message
+ com.surelogic.sierra.tool.message,
+ javax.xml.ws
 Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.jar,
  Tools/FB/lib/asm-3.0.jar,
  Tools/FB/lib/asm-analysis-3.0.jar,
