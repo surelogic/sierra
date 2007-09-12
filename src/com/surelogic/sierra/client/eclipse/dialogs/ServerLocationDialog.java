@@ -64,6 +64,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	public ServerLocationDialog(Shell parentShell, SierraServer server,
 			String title) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		assert server != null;
 		f_server = server;
 		f_title = title;
