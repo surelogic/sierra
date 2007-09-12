@@ -49,8 +49,9 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 					conn.commit();
 				}
 			} catch (Exception e) {
-				final String msg = "Synchronization of sierra project "
-						+ f_projectName + " failed.";
+				final String msg = "Synchronization of project '"
+						+ f_projectName + "' to Sierra server '" + f_server
+						+ "' failed.";
 				SLLogger.getLogger().log(Level.SEVERE, msg, e);
 				status = SLStatus.createErrorStatus(msg, e);
 			} finally {
@@ -58,8 +59,9 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 			}
 		} catch (SQLException e1) {
 			if (status == null) {
-				final String msg = "Synchronization of sierra project "
-						+ f_projectName + " failed.";
+				final String msg = "Synchronization of project '"
+						+ f_projectName + "' to Sierra server '" + f_server
+						+ "' failed.";
 				SLLogger.getLogger().log(Level.SEVERE, msg, e1);
 				status = SLStatus.createErrorStatus(msg, e1);
 			}
