@@ -24,7 +24,7 @@ public final class QualifierPromptFromJob {
 	 * @param server
 	 *            the mutable server configuration to be fixed.
 	 */
-	protected QualifierPromptFromJob(Set<String> qualifiers,
+	public QualifierPromptFromJob(Set<String> qualifiers,
 			String projectName, String serverLabel) {
 		if (qualifiers == null || qualifiers.size() < 1)
 			throw new IllegalArgumentException(
