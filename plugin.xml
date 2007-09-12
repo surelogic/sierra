@@ -126,19 +126,20 @@
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
+
          <action
                class="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
-               label="Publish Scan"
+               label="Share Scan"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
-               label="Synchronize with Server"
+               label="Synchronize Explanations"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
    </extension>
