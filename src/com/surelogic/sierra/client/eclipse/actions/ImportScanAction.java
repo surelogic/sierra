@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.sierra.client.eclipse.jobs.LoadScanDocumentJob;
+import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
@@ -41,7 +41,8 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 		if (selectedFilename != null) {
 			File runDocument = new File(selectedFilename);
 			if (runDocument.canRead()) {
-				LoadScanDocumentJob job = new LoadScanDocumentJob(runDocument);
+				ImportScanDocumentJob job = new ImportScanDocumentJob(
+						runDocument);
 				job.setUser(true);
 				job.schedule();
 			}

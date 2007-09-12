@@ -9,11 +9,11 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 
-public final class LoadScanDocumentJob extends DatabaseJob {
+public final class ImportScanDocumentJob extends DatabaseJob {
 
 	private final File f_scanDocument;
 
-	public LoadScanDocumentJob(File scanDocument) {
+	public ImportScanDocumentJob(File scanDocument) {
 		super("Loading " + scanDocument.getName());
 		f_scanDocument = scanDocument;
 	}
