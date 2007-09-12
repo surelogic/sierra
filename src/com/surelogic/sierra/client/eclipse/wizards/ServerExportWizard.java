@@ -2,35 +2,30 @@ package com.surelogic.sierra.client.eclipse.wizards;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
-/**
- * The Sierra Build File wizard
- * 
- * @see org.eclipse.ant.internal.ui.datatransfer.AntBuildfileExportWizard
- */
-public class SierraBuildFileExportWizard extends Wizard implements
-		IExportWizard {
+public class ServerExportWizard extends Wizard implements IExportWizard {
+
 	private IStructuredSelection fSelection;
-	private SierraBuildFileExportPage fMainPage;
+	private ServerExportPage fMainPage;
 
 	/** Creates buildfile. */
 	@Override
 	public boolean performFinish() {
-		return fMainPage.generateBuildfiles();
+		return fMainPage.exportServers();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		fMainPage = new SierraBuildFileExportPage();
-		List<IJavaProject> projects = fSelection.toList();
+		fMainPage = new ServerExportPage();
+		List<SierraServer> projects = fSelection.toList();
 		fMainPage.setSelectedProjects(projects);
 		addPage(fMainPage);
 	}
@@ -38,7 +33,7 @@ public class SierraBuildFileExportWizard extends Wizard implements
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export");
 		setDefaultPageImageDescriptor(SLImages
-				.getImageDescriptor(SLImages.IMG_ANT_EXPORT_WIZ));
+				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
 		fSelection = selection;
 	}
 }

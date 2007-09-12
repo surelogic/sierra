@@ -243,11 +243,21 @@
          <wizard
          	category="sierra.category" 
          	name="Ant Buildfiles"
-         	class="com.surelogic.sierra.client.eclipse.wizards.SierraBuildFileExportWizard"
+         	class="com.surelogic.sierra.client.eclipse.wizards.BuildFileExportWizard"
          	id="sierra.build.file.wizard"
          	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/ant_export.gif">
          		<description>
          			A wizard to generate Sierra Buildfiles
+         		</description>
+         	</wizard>
+         	<wizard
+         		category="sierra.category" 
+         		name="Servers"
+         		class="com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard"
+         		id="sierra.build.file.wizard"
+         		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/server.gif">
+         		<description>
+         			A wizard to export Sierra servers
          		</description>
          	</wizard>
    </extension>

@@ -39,14 +39,14 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  * @see org.eclipse.ant.internal.ui.datatransferAntBuildFileExportPage
  */
-public class SierraBuildFileExportPage extends WizardPage {
+public class BuildFileExportPage extends WizardPage {
 
 	private CheckboxTableViewer f_TableViewer;
 	private List<IJavaProject> f_SelectedJavaProjects = new ArrayList<IJavaProject>();
 	private Button f_overrideCheckbox;
 	private Text f_buildfilenameText;
 
-	public SierraBuildFileExportPage() {
+	public BuildFileExportPage() {
 		super("SierraBuildfileExportWizardPage"); //$NON-NLS-1$
 		setPageComplete(false);
 		setTitle("Generate Sierra Buildfiles");
