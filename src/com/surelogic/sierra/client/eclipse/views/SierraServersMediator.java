@@ -66,6 +66,18 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	};
 
+	final Listener f_openInBrowserAction = new Listener() {
+		public void handleEvent(Event event) {
+			final SierraServer server = f_manager.getFocus();
+			if (server == null) {
+				SLLogger.getLogger().log(Level.WARNING,
+						"Edit server pressed with no server focus.");
+				return;
+			}
+			openInBrowser(server);
+		}
+	};
+
 	final Listener f_projectListAction = new Listener() {
 		public void handleEvent(Event event) {
 			/*
@@ -122,6 +134,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
+		f_serverList.addListener(SWT.MouseDoubleClick, f_openInBrowserAction);
+
 		f_newServer.addListener(SWT.Selection, f_newServerAction);
 		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
 
@@ -147,17 +161,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_openInBrowser.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				final SierraServer server = f_manager.getFocus();
-				if (server == null) {
-					SLLogger.getLogger().log(Level.WARNING,
-							"Edit server pressed with no server focus.");
-					return;
-				}
-				openInBrowser(server);
-			}
-		});
+		f_openInBrowser.addListener(SWT.Selection, f_openInBrowserAction);
 
 		f_projectList.addListener(SWT.Selection, f_projectListAction);
 

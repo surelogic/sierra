@@ -41,15 +41,16 @@ public final class SierraServerPersistence {
 	public static final String VERSION = "version";
 
 	// fields needed for caching the password
-	private static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
+	private static final String AUTH_SCHEME = "";
 	private static final URL FAKE_URL;
 
 	static {
 		URL temp = null;
 		try {
-			temp = new URL("http://org.eclipse.team.cvs.core");//$NON-NLS-1$ 
+			temp = new URL("http://com.surelogic.sierra");
 		} catch (MalformedURLException e) {
-			// Should never fail
+			SLLogger.getLogger().log(Level.SEVERE,
+					"unable to form valid URL for server persistence", e);
 		}
 		FAKE_URL = temp;
 	}
@@ -72,7 +73,6 @@ public final class SierraServerPersistence {
 					map.put(server.getUser() + "@" + server.getHost(), server
 							.getPassword());
 				}
-
 			}
 			outputXMLFooter(pw);
 			if (map != null) {
@@ -151,10 +151,10 @@ public final class SierraServerPersistence {
 					"Problem parsing Sierra servers from " + file, e);
 		} finally {
 			stream.close();
-
-			/* Clear all the username password for sierra servers */
+			/*
+			 * Clear all the user and password information for sierra servers
+			 */
 			Platform.flushAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
-
 		}
 	}
 
@@ -229,5 +229,4 @@ public final class SierraServerPersistence {
 			}
 		}
 	}
-
 }
