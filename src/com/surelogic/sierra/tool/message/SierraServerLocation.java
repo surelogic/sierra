@@ -1,6 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-
 public class SierraServerLocation {
 	private final String host;
 	private final Integer port;
@@ -45,4 +44,12 @@ public class SierraServerLocation {
 		return pass;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		b.append(getHost()).append(":").append(getPort());
+		b.append("/user=\"").append(getUser()).append("\" ");
+		b.append(" password=\"").append(getPass()).append("\"");
+		return b.toString();
+	}
 }
