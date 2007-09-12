@@ -28,7 +28,6 @@ public final class AuditRecord extends LongRecord {
 		// USER_ID, FINDING_ID, DATE_TIME, VALUE, EVENT
 		st.setLong(idx++, findingId);
 		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
-		setNullableString(idx++, st, value);
 		st.setString(idx++, event.name());
 		return idx;
 	}
@@ -36,7 +35,8 @@ public final class AuditRecord extends LongRecord {
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithNk(st, idx);
-		st.setLong(idx++, userId);
+		setNullableString(idx++, st, value);
+		setNullableLong(idx++, st, userId);
 		setNullableLong(idx++, st, revision);
 		return idx;
 	}

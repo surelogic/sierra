@@ -124,7 +124,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		comment(null, findingId, comment, new Date());
+		comment(null, findingId, comment, new Date(), null);
 	}
 
 	public void setImportance(Long findingId, Importance importance)
@@ -133,7 +133,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		setImportance(null, findingId, importance, new Date());
+		setImportance(null, findingId, importance, new Date(), null);
 	}
 
 	public void markAsRead(Long findingId) throws SQLException {
@@ -141,7 +141,7 @@ public abstract class FindingManager {
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		markAsRead(null, findingId, new Date());
+		markAsRead(null, findingId, new Date(), null);
 	}
 
 	/**
@@ -286,38 +286,46 @@ public abstract class FindingManager {
 					MatchRecord.PK pk = new MatchRecord.PK();
 					pk.setProjectId(project.getId());
 					mRec.setId(pk);
-					for (Match m : update.getMatch()) {
-						fillKey(pk, m);
-						if (mRec.select()) {
-							if (!mRec.getFindingId().equals(finding.getId())) {
-								// This must be a local match, so delete it
-								delete(mRec.getFindingId(), finding.getId());
+					List<Match> matches = update.getMatch();
+					if (matches != null) {
+						for (Match m : matches) {
+							fillKey(pk, m);
+							if (mRec.select()) {
+								if (!mRec.getFindingId()
+										.equals(finding.getId())) {
+									// This must be a local match, so delete it
+									delete(mRec.getFindingId(), finding.getId());
+								}
+							} else {
+								mRec.setFindingId(finding.getId());
+								mRec.insert();
 							}
-						} else {
-							mRec.setFindingId(finding.getId());
-							mRec.insert();
 						}
 					}
-					for (Audit a : update.getAudit()) {
-						Long userId = getUserId(a.getUser());
-						switch (a.getEvent()) {
-						case COMMENT:
-							comment(userId, finding.getId(), a.getValue(), a
-									.getTimestamp());
-							break;
-						case IMPORTANCE:
-							setImportance(userId, finding.getId(), Importance
-									.valueOf(a.getValue()), a.getTimestamp());
-							break;
-						case READ:
-							markAsRead(userId, finding.getId(), a
-									.getTimestamp());
-							break;
-						default:
-							break;
+					List<Audit> audits = update.getAudit();
+					if (audits != null) {
+						for (Audit a : audits) {
+							Long userId = getUserId(a.getUser());
+							switch (a.getEvent()) {
+							case COMMENT:
+								comment(userId, finding.getId(), a.getValue(),
+										a.getTimestamp(), a.getRevision());
+								break;
+							case IMPORTANCE:
+								setImportance(userId, finding.getId(),
+										Importance.valueOf(a.getValue()), a
+												.getTimestamp(), a
+												.getRevision());
+								break;
+							case READ:
+								markAsRead(userId, finding.getId(), a
+										.getTimestamp(), a.getRevision());
+								break;
+							default:
+								break;
+							}
 						}
 					}
-
 				}
 			}
 		} else {
@@ -347,11 +355,8 @@ public abstract class FindingManager {
 					trail.setAudits(audits);
 					trails.add(trail);
 				}
-				Audit a = new Audit();
-				a.setTimestamp(set.getTimestamp(idx++));
-				a.setEvent(AuditEvent.valueOf(set.getString(idx++)));
-				a.setValue(set.getString(idx++));
-				audits.add(a);
+				audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
+						.valueOf(set.getString(idx++)), set.getString(idx++)));
 			}
 		} else {
 			throw new IllegalArgumentException("No project with name "
@@ -436,35 +441,39 @@ public abstract class FindingManager {
 		return 0L;
 	}
 
-	private void comment(Long userId, Long findingId, String comment, Date time)
-			throws SQLException {
-		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time).insert();
+	private void comment(Long userId, Long findingId, String comment,
+			Date time, Long revision) throws SQLException {
+		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
+				.insert();
 	}
 
 	private void setImportance(Long userId, Long findingId,
-			Importance importance, Date time) throws SQLException {
+			Importance importance, Date time, Long revision)
+			throws SQLException {
 		newAudit(userId, findingId, importance.toString(),
-				AuditEvent.IMPORTANCE, time).insert();
+				AuditEvent.IMPORTANCE, time, revision).insert();
 		updateFindingImportance.setInt(1, importance.ordinal());
 		updateFindingImportance.setLong(2, findingId);
 		updateFindingImportance.execute();
 	}
 
-	private void markAsRead(Long userId, Long findingId, Date time)
-			throws SQLException {
-		newAudit(userId, findingId, null, AuditEvent.READ, time).insert();
+	private void markAsRead(Long userId, Long findingId, Date time,
+			Long revision) throws SQLException {
+		newAudit(userId, findingId, null, AuditEvent.READ, time, revision)
+				.insert();
 		markFindingAsRead.setLong(1, findingId);
 		markFindingAsRead.execute();
 	}
 
 	private AuditRecord newAudit(Long userId, Long findingId, String value,
-			AuditEvent event, Date time) throws SQLException {
+			AuditEvent event, Date time, Long revision) throws SQLException {
 		AuditRecord record = fact.newAudit();
 		record.setUserId(userId);
 		record.setTimestamp(time);
 		record.setEvent(event);
 		record.setValue(value);
 		record.setFindingId(findingId);
+		record.setRevision(revision);
 		return record;
 	}
 

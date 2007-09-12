@@ -20,7 +20,7 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID,IS_READ,IMPORTANCE) VALUES (?,?,?,?)";
 	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IS_READ,IMPORTANCE FROM FINDING WHERE UID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (FINDING_ID,DATE_TIME,VALUE,EVENT,USER_ID,REVISION) VALUES (?,?,?,?,?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (FINDING_ID,DATE_TIME,EVENT,VALUE,USER_ID,REVISION) VALUES (?,?,?,?,?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;
