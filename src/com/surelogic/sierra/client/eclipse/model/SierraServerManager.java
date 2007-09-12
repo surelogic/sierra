@@ -233,6 +233,12 @@ public final class SierraServerManager {
 		return projects;
 	}
 
+	public Set<String> getConnectedProjects() {
+		Set<String> projects = new HashSet<String>(f_projectNameToServer
+				.keySet());
+		return projects;
+	}
+
 	/**
 	 * The set of observers to changes to the state of this class.
 	 */

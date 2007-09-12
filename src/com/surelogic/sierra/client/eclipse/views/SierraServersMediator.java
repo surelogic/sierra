@@ -22,6 +22,7 @@ import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
@@ -167,8 +168,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_connectProjectItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
-
+				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
+						f_serverList.getShell());
+				dialog.open();
 			}
 		});
 
