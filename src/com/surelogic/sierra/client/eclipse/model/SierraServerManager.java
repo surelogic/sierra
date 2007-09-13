@@ -196,7 +196,7 @@ public final class SierraServerManager {
 		return f_focus;
 	}
 
-	private Map<String, SierraServer> f_projectNameToServer = new HashMap<String, SierraServer>();
+	private final Map<String, SierraServer> f_projectNameToServer = new HashMap<String, SierraServer>();
 
 	public boolean isConnected(String projectName) {
 		return f_projectNameToServer.containsKey(projectName);

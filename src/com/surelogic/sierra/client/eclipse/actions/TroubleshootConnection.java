@@ -6,37 +6,43 @@ public abstract class TroubleshootConnection {
 
 	protected final SierraServer f_server;
 
+	protected final String f_projectName;
+
 	/**
 	 * Constructs this object.
 	 * 
 	 * @param server
 	 *            the mutable server configuration to be fixed.
 	 */
-	protected TroubleshootConnection(final SierraServer server) {
+	protected TroubleshootConnection(final SierraServer server,
+			final String projectName) {
 		if (server == null)
 			throw new IllegalStateException("server must be non-null");
 		f_server = server;
+		if (projectName == null)
+			throw new IllegalStateException("projectName must be non-null");
+		f_projectName = projectName;
 	}
 
 	public final SierraServer getServer() {
 		return f_server;
 	}
 
-	private boolean f_canceled = false;
+	private boolean f_retry = true;
 
-	protected void setCanceled() {
-		f_canceled = true;
+	protected void setRetry(boolean retry) {
+		f_retry = retry;
 	}
 
 	/**
-	 * Indicates that the user didn't try to fix the server location and
-	 * authentication data.
+	 * Indicates if the troubleshooting object wants the job to retry the action
+	 * that was troubleshooted.
 	 * 
-	 * @return <code>false</code> if the user fixed the server location and
-	 *         authentication data, <code>false</code> otherwise.
+	 * @return <code>true</code> if a retry should be attempted,
+	 *         <code>false</code> otherwise.
 	 */
-	public final boolean isCanceled() {
-		return f_canceled;
+	public final boolean retry() {
+		return f_retry;
 	}
 
 	/**

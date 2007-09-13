@@ -9,8 +9,8 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
-	public TroubleshootWrongAuthentication(SierraServer server) {
-		super(server);
+	public TroubleshootWrongAuthentication(SierraServer server, String projectName) {
+		super(server, projectName);
 	}
 
 	private int f_dialogResult;
@@ -25,7 +25,6 @@ public final class TroubleshootWrongAuthentication extends
 				f_dialogResult = dialog.open();
 			}
 		});
-		if (f_dialogResult == Window.CANCEL)
-			setCanceled();
+		setRetry(f_dialogResult != Window.CANCEL);
 	}
 }

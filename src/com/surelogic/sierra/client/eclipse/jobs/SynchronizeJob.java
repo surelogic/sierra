@@ -87,24 +87,30 @@ public class SynchronizeJob extends DatabaseJob {
 				return Status.OK_STATUS;
 			}
 		} catch (ServerMismatchException e) {
-			troubleshoot = new TroubleshootWrongServer(f_server);
+			troubleshoot = new TroubleshootWrongServer(f_server, f_projectName);
+			conn.rollback();
+			troubleshoot.fix();
+			if (troubleshoot.retry()) {
+				return synchronize(conn, manager, slMonitor);
+			} else {
+				return SLStatus.createErrorStatus(e);
+			}
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
 					.getMessage())) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server);
+				troubleshoot = new TroubleshootWrongAuthentication(f_server,
+						f_projectName);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server);
+				troubleshoot = new TroubleshootNoSuchServer(f_server,
+						f_projectName);
 			}
-		}
-		// We had a recoverable error. Rollback, run the appropriate
-		// troubleshoot, and try again.
-		conn.rollback();
-		troubleshoot.fix();
-		if (troubleshoot.isCanceled()) {
-			slMonitor.setCanceled(true);
-			return Status.CANCEL_STATUS;
-		} else {
-			return synchronize(conn, manager, slMonitor);
+			conn.rollback();
+			troubleshoot.fix();
+			if (troubleshoot.retry()) {
+				return synchronize(conn, manager, slMonitor);
+			} else {
+				return SLStatus.createErrorStatus(e);
+			}
 		}
 	}
 }

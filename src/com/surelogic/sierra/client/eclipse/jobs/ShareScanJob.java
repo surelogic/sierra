@@ -57,7 +57,7 @@ public class ShareScanJob extends DatabaseJob {
 				return Status.CANCEL_STATUS;
 			} else {
 
-				Set<String> qualifiers = getQualifiers(slMonitor);
+				Set<String> qualifiers = getQualifiersOnTheServer(slMonitor);
 				if (slMonitor.isCanceled()) {
 					return null;
 				} else {
@@ -86,7 +86,7 @@ public class ShareScanJob extends DatabaseJob {
 		}
 	}
 
-	Set<String> getQualifiers(SLProgressMonitor slMonitor) {
+	private Set<String> getQualifiersOnTheServer(SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
 			return new TreeSet<String>(new SierraServiceClient(f_server
@@ -95,24 +95,25 @@ public class ShareScanJob extends DatabaseJob {
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
 					.getMessage())) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server);
+				troubleshoot = new TroubleshootWrongAuthentication(f_server,
+						f_projectName);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server);
+				troubleshoot = new TroubleshootNoSuchServer(f_server,
+						f_projectName);
 			}
-		}
-		// We had a recoverable error. Rollback, run the appropriate
-		// troubleshoot, and try again.
-		troubleshoot.fix();
-		if (troubleshoot.isCanceled()) {
-			slMonitor.setCanceled(true);
-			return null;
-		} else {
-			return getQualifiers(slMonitor);
+			// We had a recoverable error. Rollback, run the appropriate
+			// troubleshoot, and try again.
+			troubleshoot.fix();
+			if (troubleshoot.retry()) {
+				return getQualifiersOnTheServer(slMonitor);
+			} else {
+				throw e; // re-throw
+			}
 		}
 
 	}
 
-	IStatus publishRun(Scan scan, SLProgressMonitor slMonitor) {
+	private IStatus publishRun(Scan scan, SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
 			new SierraServiceClient(f_server.getServer())
@@ -121,19 +122,20 @@ public class ShareScanJob extends DatabaseJob {
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
 					.getMessage())) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server);
+				troubleshoot = new TroubleshootWrongAuthentication(f_server,
+						f_projectName);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server);
+				troubleshoot = new TroubleshootNoSuchServer(f_server,
+						f_projectName);
 			}
-		}
-		// We had a recoverable error. Rollback, run the appropriate
-		// troubleshoot, and try again.
-		troubleshoot.fix();
-		if (troubleshoot.isCanceled()) {
-			slMonitor.setCanceled(true);
-			return Status.CANCEL_STATUS;
-		} else {
-			return publishRun(scan, slMonitor);
+			// We had a recoverable error. Rollback, run the appropriate
+			// troubleshoot, and try again.
+			troubleshoot.fix();
+			if (troubleshoot.retry()) {
+				return publishRun(scan, slMonitor);
+			} else {
+				return SLStatus.createErrorStatus(e);
+			}
 		}
 	}
 }

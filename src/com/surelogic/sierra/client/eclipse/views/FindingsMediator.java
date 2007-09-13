@@ -250,9 +250,6 @@ public final class FindingsMediator implements IFindingsViewModelObserver {
 			try {
 				final Statement st = c.createStatement();
 				try {
-					// TODO: fix query
-					if (true)
-						return;
 					final ResultSet rs = st.executeQuery(query);
 					final String[] columnLabels = QueryUtility
 							.getColumnLabels(rs);
