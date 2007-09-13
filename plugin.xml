@@ -79,7 +79,7 @@
                class="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
                id="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
-               label="Show Sierra Servers"
+               label="Show Sierra Team Servers"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
           </action>    
 
@@ -117,7 +117,7 @@
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-               label="Scan Project"
+               label="Scan"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action
@@ -185,7 +185,7 @@
             class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
-            name="Sierra Servers">
+            name="Sierra Team Servers">
       </view>
    </extension>
 
