@@ -43,7 +43,7 @@ public final class ConnectProjectsDialog extends Dialog {
 		if (f_server == null)
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
-		List<String> projectNames = JDTUtility.getJavaProjectNames(false);
+		List<String> projectNames = JDTUtility.getJavaProjectNames();
 		projectNames.removeAll(f_manager.getConnectedProjects());
 		Collections.sort(projectNames);
 		f_unconnectedProjects = projectNames;
