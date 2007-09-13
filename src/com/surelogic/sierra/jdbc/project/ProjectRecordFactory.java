@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.project;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
