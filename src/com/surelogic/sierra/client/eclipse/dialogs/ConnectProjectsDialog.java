@@ -1,17 +1,8 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -30,8 +21,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ide.IDE;
 
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -52,22 +43,7 @@ public final class ConnectProjectsDialog extends Dialog {
 		if (f_server == null)
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
-		List<String> projectNames = new ArrayList<String>();
-		try {
-			IWorkspace ws = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot wsRoot = ws.getRoot();
-			IJavaModel model = JavaCore.create(wsRoot);
-			for (IJavaProject project : model.getJavaProjects()) {
-				final String projectName = project.getElementName();
-				if (projectName != null) {
-					projectNames.add(projectName);
-				}
-			}
-		} catch (JavaModelException e) {
-			final String msg = "Unable to list the Java projects in the workspace";
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			throw new IllegalStateException(msg, e);
-		}
+		List<String> projectNames = JDTUtility.getJavaProjectNames(false);
 		projectNames.removeAll(f_manager.getConnectedProjects());
 		Collections.sort(projectNames);
 		f_unconnectedProjects = projectNames;
