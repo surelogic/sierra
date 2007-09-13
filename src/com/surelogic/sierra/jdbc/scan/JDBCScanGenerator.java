@@ -2,11 +2,11 @@ package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -39,14 +39,14 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String javaVersion;
 	private String uid;
 	private String user;
-	private List<String> qualifiers;
+	private Set<String> qualifiers;
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.qualifiers = Collections.emptyList();
+		this.qualifiers = Collections.emptySet();
 	}
 
 	public ArtifactGenerator build() {
@@ -166,7 +166,7 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	public ScanGenerator qualifiers(Collection<String> qualifiers) {
 		if (qualifiers != null) {
-			this.qualifiers = new ArrayList<String>(qualifiers);
+			this.qualifiers = new TreeSet<String>(qualifiers);
 		}
 		return this;
 	}

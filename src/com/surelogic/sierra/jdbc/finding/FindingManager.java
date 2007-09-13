@@ -120,27 +120,18 @@ public abstract class FindingManager {
 	protected abstract FindingRecordFactory getFactory();
 
 	public void comment(Long findingId, String comment) throws SQLException {
-		FindingView f = getFinding(findingId);
-		if (f == null)
-			throw new IllegalArgumentException(findingId
-					+ " is not a valid finding id.");
+		checkIsRead(findingId);
 		comment(null, findingId, comment, new Date(), null);
 	}
 
 	public void setImportance(Long findingId, Importance importance)
 			throws SQLException {
-		FindingView f = getFinding(findingId);
-		if (f == null)
-			throw new IllegalArgumentException(findingId
-					+ " is not a valid finding id.");
+		checkIsRead(findingId);
 		setImportance(null, findingId, importance, new Date(), null);
 	}
 
 	public void markAsRead(Long findingId) throws SQLException {
-		FindingView f = getFinding(findingId);
-		if (f == null)
-			throw new IllegalArgumentException(findingId
-					+ " is not a valid finding id.");
+		checkIsRead(findingId);
 		markAsRead(null, findingId, new Date(), null);
 	}
 
@@ -514,6 +505,23 @@ public abstract class FindingManager {
 
 	private void sqlError(SQLException e) {
 		throw new FindingGenerationException(e);
+	}
+
+	/**
+	 * For use in the client. Checks to see if a finding has been read. If it
+	 * has not, it marks it as read.
+	 * 
+	 * @param findingId
+	 * @throws SQLException
+	 */
+	private void checkIsRead(Long findingId) throws SQLException {
+		FindingView f = getFinding(findingId);
+		if (f == null)
+			throw new IllegalArgumentException(findingId
+					+ " is not a valid finding id.");
+		if (!f.isRead()) {
+			markAsRead(null, findingId, new Date(), null);
+		}
 	}
 
 	private FindingView getFinding(Long findingId) throws SQLException {
