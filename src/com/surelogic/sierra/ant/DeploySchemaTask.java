@@ -44,12 +44,25 @@ public class DeploySchemaTask extends Task {
 			throw new IllegalStateException(
 					"Could not locate derby client driver", e);
 		}
-		String user = System.getProperty("sierra.db.user");
-		String pass = System.getProperty("sierra.db.pass");
-		String location = System.getProperty("sierra.db.location");
-		String url = "jdbc:derby:" + location
+
+		String user = null;
+		String pass = null;
+		String location = null;
+		
+		if (getProject() != null) {
+			user = getProject().getProperty("sierra.db.user");
+			pass = getProject().getProperty("sierra.db.pass");
+			location= getProject().getProperty("sierra.db.location");
+		} else {
+			user = System.getProperty("sierra.db.user");
+			pass = System.getProperty("sierra.db.pass");
+			location = System.getProperty("sierra.db.location");
+		}
+		
+		String url = "jdbc:derby:" + ((location == null) ? "" : location)
 				+ ((pass == null) ? "" : ";password=" + pass)
 				+ ((user == null) ? "" : ";user=" + user) + ";create=true";
+		
 		try {
 			Connection conn = DriverManager.getConnection(url);
 			SierraSchemaUtility.checkAndUpdate(conn, true);
