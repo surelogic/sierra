@@ -150,6 +150,7 @@ public class ServerImportPage extends WizardPage {
 
 		if (f_invalidFile) {
 			setErrorMessage("Invalid import file");
+			f_tableItemDescription.setText("");
 			complete = false;
 		}
 
@@ -210,7 +211,8 @@ public class ServerImportPage extends WizardPage {
 					TableItem item = f_transfersTable.getSelection()[0];
 					f_tableItemDescription.setText(item.getData().toString());
 				} else {
-					f_tableItemDescription.setText(""); //$NON-NLS-1$
+					f_tableItemDescription
+							.setText("Select a server to get more information"); //$NON-NLS-1$
 				}
 			}
 		};
@@ -377,7 +379,8 @@ public class ServerImportPage extends WizardPage {
 				for (TableItem ti : items) {
 					ti.dispose();
 				}
-				f_tableItemDescription.setText("");
+				f_tableItemDescription
+						.setText("Select a server to get more information");
 			}
 			f_existingServers.clear();
 
@@ -408,11 +411,15 @@ public class ServerImportPage extends WizardPage {
 			if (f_existingServers.size() > 0) {
 				StringBuilder builder = new StringBuilder();
 				for (String s : f_existingServers) {
-					builder.append(s + " ");
+					builder.append("'" + s + "' ");
 				}
-				builder
-						.append("already exist and cannot be imported. In order to import delete the servers using the Sierra Server view");
+				builder.append("already exist and cannot be imported. "
+						+ "In order to import, first delete the server(s) "
+						+ "using the Sierra Server view.");
 				f_tableItemDescription.setText(builder.toString());
+			} else {
+				f_tableItemDescription
+						.setText("Select a server to get more information");
 			}
 
 		} catch (SAXException e) {
