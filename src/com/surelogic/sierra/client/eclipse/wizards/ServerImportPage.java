@@ -322,7 +322,7 @@ public class ServerImportPage extends WizardPage {
 
 			public void handleEvent(Event event) {
 				if (fd == null) {
-					fd = new FileDialog(getShell(), SWT.SAVE);
+					fd = new FileDialog(getShell(), SWT.OPEN);
 					fd.setText("Destination File");
 					fd.setFilterExtensions(new String[] { "*.xml", "*.*" });
 					fd.setFilterNames(new String[] { "XML Files (*.xml)",
