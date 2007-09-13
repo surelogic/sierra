@@ -77,21 +77,22 @@ public final class SierraServersView extends ViewPart {
 		final ToolItem newServer = new ToolItem(horizontalToolBar, SWT.PUSH);
 		newServer.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		newServer.setToolTipText("New server location");
+		newServer.setToolTipText("New team server location");
 		final ToolItem duplicateServer = new ToolItem(horizontalToolBar,
 				SWT.PUSH);
 		duplicateServer.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
 		duplicateServer
-				.setToolTipText("Duplicates the selected server location");
+				.setToolTipText("Duplicates the selected team server location");
 		final ToolItem deleteServer = new ToolItem(horizontalToolBar, SWT.PUSH);
 		deleteServer.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
-		deleteServer.setToolTipText("Deletes the selected server location");
+		deleteServer
+				.setToolTipText("Deletes the selected team server location");
 		final Button openInBrowser = new Button(c, SWT.NONE);
 		openInBrowser.setText("Browse");
 		openInBrowser
-				.setToolTipText("Open the selected server in a Web browser");
+				.setToolTipText("Open the selected team server in a Web browser");
 
 		Label banner = new Label(rhs, SWT.NONE);
 		banner
@@ -105,7 +106,6 @@ public final class SierraServersView extends ViewPart {
 		 */
 
 		final Composite infoGroup = new Composite(parent, SWT.NONE);
-		//infoGroup.setText("Server Information");
 		infoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		gridLayout = new GridLayout();
@@ -143,8 +143,8 @@ public final class SierraServersView extends ViewPart {
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem, serverPropertiesItem,
-				openInBrowser, infoGroup, serverURL, projectList, connectProjectItem,
-				disconnectProjectItem);
+				openInBrowser, infoGroup, serverURL, projectList,
+				connectProjectItem, disconnectProjectItem);
 		f_mediator.init();
 	}
 
