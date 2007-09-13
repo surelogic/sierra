@@ -237,11 +237,11 @@
       </instance>
    </extension>
    <extension
-         id="sierraBuildFile"
+         id="sierraexportwizards"
          point="org.eclipse.ui.exportWizards">
-         <category name="Sierra" id="sierra.category"/>
+         <category name="Sierra" id="sierra.export.category"/>
          <wizard
-         	category="sierra.category" 
+         	category="sierra.export.category" 
          	name="Ant Buildfiles"
          	class="com.surelogic.sierra.client.eclipse.wizards.BuildFileExportWizard"
          	id="sierra.build.file.wizard"
@@ -251,15 +251,30 @@
          		</description>
          	</wizard>
          	<wizard
-         		category="sierra.category" 
+         		category="sierra.export.category" 
          		name="Servers"
          		class="com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard"
-         		id="sierra.build.file.wizard"
+         		id="server.export.file.wizard"
          		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/server.gif">
          		<description>
          			A wizard to export Sierra servers
          		</description>
          	</wizard>
+   </extension>
+   <extension
+   		 id="sierraimportwizards"
+   		 point="org.eclipse.ui.importWizards">
+   		 <category name="Sierra" id="sierra.import.category"/>
+   		 <wizard
+         	category="sierra.import.category" 
+         	name="Servers"
+         	class="com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard"
+         	id="server.import.file.wizard"
+         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/server.gif">
+         		<description>
+         			A wizard to import Sierra Servers
+         		</description>
+         </wizard>
    </extension>
    
 </plugin>

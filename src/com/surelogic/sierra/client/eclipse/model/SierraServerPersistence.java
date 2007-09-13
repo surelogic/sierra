@@ -127,8 +127,8 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(HOST, server.getHost(), b);
 		Entities.addAttribute(PROTOCOL, server.getProtocol(), b);
 		Entities.addAttribute(PORT, server.getPort(), b);
+		Entities.addAttribute(USER, server.getUser(), b);
 		if (save) {
-			Entities.addAttribute(USER, server.getUser(), b);
 			Entities.addAttribute(SAVE_PASSWORD, server.savePassword() + "", b);
 		}
 		b.append(">");

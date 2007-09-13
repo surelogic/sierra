@@ -1,38 +1,31 @@
 package com.surelogic.sierra.client.eclipse.wizards;
 
-import java.util.List;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
-public class ServerExportWizard extends Wizard implements IExportWizard {
-
-	private IStructuredSelection fSelection;
-	private ServerExportPage fMainPage;
+public class ServerImportWizard extends Wizard implements IImportWizard {
+	private ServerImportPage f_mainPage;
 
 	@Override
 	public boolean performFinish() {
-		return fMainPage.exportServers();
+		return f_mainPage.importServers();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		fMainPage = new ServerExportPage();
-		List<SierraServer> projects = fSelection.toList();
-		fMainPage.setSelectedProjects(projects);
-		addPage(fMainPage);
+		f_mainPage = new ServerImportPage();
+		addPage(f_mainPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Export");
+		setWindowTitle("Import");
 		setDefaultPageImageDescriptor(SLImages
 				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
-		fSelection = selection;
 	}
+
 }
