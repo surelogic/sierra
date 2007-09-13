@@ -72,8 +72,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.factory = factory;
 		this.manager = manager;
 		this.callback = callback;
-		toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
-
+		this.toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
 		this.filter = filter;
 		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
@@ -89,28 +88,33 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	}
 
 	public void finished() {
+		persist();
 		try {
-			persist();
 			toolIdSelect.close();
-			callback.run();
 		} catch (SQLException e) {
 			quietlyRollback();
 			throw new ScanPersistenceException(e);
 		}
+		callback.run();
 	}
 
-	private void persist() throws SQLException {
-		lookupOrInsert(compUnits.values());
-		compUnits.clear();
-		lookupOrInsert(sources.values());
-		sources.clear();
-		insert(artifacts);
-		artifacts.clear();
-		insert(relations);
-		relations.clear();
-		insert(classMetrics);
-		classMetrics.clear();
-		conn.commit();
+	private void persist() {
+		try {
+			lookupOrInsert(compUnits.values());
+			compUnits.clear();
+			lookupOrInsert(sources.values());
+			sources.clear();
+			insert(artifacts);
+			artifacts.clear();
+			insert(relations);
+			relations.clear();
+			insert(classMetrics);
+			classMetrics.clear();
+			conn.commit();
+		} catch (SQLException e) {
+			quietlyRollback();
+			throw new ScanPersistenceException(e);
+		}
 	}
 
 	private void lookupOrInsert(Collection<? extends Record<?>> objects)
@@ -125,7 +129,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private void insert(Collection<? extends Record<?>> objects)
 			throws SQLException {
 		for (Record<?> rec : objects) {
-			rec.insert();
+			try {
+				rec.insert();
+			} catch (SQLException e) {
+				System.out.println("here");
+				throw e;
+			}
 		}
 	}
 
@@ -167,12 +176,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			rec.setLinesOfCode(linesOfCode);
 			classMetrics.add(rec);
 			if (classMetrics.size() == COMMIT_SIZE) {
-				try {
-					persist();
-				} catch (SQLException e) {
-					quietlyRollback();
-					throw new ScanPersistenceException(e);
-				}
+				persist();
 			}
 			clear();
 		}
@@ -259,15 +263,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 									artifact, currentSource));
 					relations.add(rel);
 				}
-
 				artifacts.add(artifact);
 				if (artifacts.size() == COMMIT_SIZE) {
-					try {
-						persist();
-					} catch (SQLException e) {
-						quietlyRollback();
-						throw new ScanPersistenceException(e);
-					}
+					persist();
 				}
 			}
 			clear();

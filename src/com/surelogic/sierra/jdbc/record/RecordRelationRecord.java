@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.record;
 
-
 /**
  * Models a relation table between two entities in a database.
  * 

@@ -9,7 +9,6 @@ import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import com.surelogic.sierra.tool.message.IdentifierType;
 
@@ -81,11 +80,7 @@ public final class SourceRecord extends LongRecord {
 		setNullableLong(idx++, st, hash);
 		st.setInt(idx++, lineOfCode);
 		st.setInt(idx++, endLineOfCode);
-		if (type != null) {
-			st.setString(idx++, type.name());
-		} else {
-			st.setNull(idx++, Types.VARCHAR);
-		}
+		setNullableString(idx++, st, type == null ? null : type.name());
 		setNullableString(idx++, st, identifier);
 		return idx;
 	}
@@ -106,11 +101,13 @@ public final class SourceRecord extends LongRecord {
 		int result = 1;
 		result = prime * result
 				+ ((compUnit == null) ? 0 : compUnit.hashCode());
-		result = prime * result + endLineOfCode;
+		result = prime * result
+				+ ((endLineOfCode == null) ? 0 : endLineOfCode.hashCode());
 		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
 		result = prime * result
 				+ ((identifier == null) ? 0 : identifier.hashCode());
-		result = prime * result + lineOfCode;
+		result = prime * result
+				+ ((lineOfCode == null) ? 0 : lineOfCode.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -129,7 +126,10 @@ public final class SourceRecord extends LongRecord {
 				return false;
 		} else if (!compUnit.equals(other.compUnit))
 			return false;
-		if (endLineOfCode != other.endLineOfCode)
+		if (endLineOfCode == null) {
+			if (other.endLineOfCode != null)
+				return false;
+		} else if (!endLineOfCode.equals(other.endLineOfCode))
 			return false;
 		if (hash == null) {
 			if (other.hash != null)
@@ -141,7 +141,10 @@ public final class SourceRecord extends LongRecord {
 				return false;
 		} else if (!identifier.equals(other.identifier))
 			return false;
-		if (lineOfCode != other.lineOfCode)
+		if (lineOfCode == null) {
+			if (other.lineOfCode != null)
+				return false;
+		} else if (!lineOfCode.equals(other.lineOfCode))
 			return false;
 		if (type == null) {
 			if (other.type != null)
