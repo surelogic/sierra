@@ -1,17 +1,17 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -29,6 +29,31 @@ public final class FindingsView2 extends ViewPart {
 
 	private FindingsMediator f_mediator = null;
 
+	Finder f_finder;
+
+	final Listener f_listener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event != null) {
+				Button pressed = (Button) event.widget;
+				int index = (Integer) pressed.getData();
+				f_finder.emptyAfter(index);
+			}
+			f_finder.addColumn(new Finder.IColumn() {
+				public void createContents(Composite panel, int index) {
+					panel.setLayout(new RowLayout(SWT.VERTICAL));
+					panel.setBackground(f_finder.getShell().getDisplay()
+							.getSystemColor(SWT.COLOR_BLUE));
+					for (int i = 0; i < 15; i++) {
+						Button b = new Button(panel, SWT.NONE);
+						b.setData(index);
+						b.setText("FOO BAR");
+						b.addListener(SWT.Selection, f_listener);
+					}
+				}
+			});
+		}
+	};
+
 	@Override
 	public void createPartControl(final Composite parent) {
 
@@ -38,38 +63,16 @@ public final class FindingsView2 extends ViewPart {
 		noFindingsPage.setText(NO_FINDINGS);
 
 		final Composite findingsPage = new Composite(pages, SWT.NONE);
-		findingsPage.setLayout(new GridLayout());
+		findingsPage.setLayout(new FillLayout());
 
-		final Composite projectSelector = new Composite(findingsPage, SWT.NONE);
-		projectSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
-		projectSelector.setLayout(gridLayout);
+		SashForm sf = new SashForm(findingsPage, SWT.VERTICAL | SWT.SMOOTH);
 
-		Label label = new Label(projectSelector, SWT.NONE);
-		label.setAlignment(SWT.RIGHT);
-		label.setImage(SLImages
-				.getJDTImage(ISharedImages.IMG_OBJS_PACKFRAG_ROOT));
-		label = new Label(projectSelector, SWT.NONE);
-		label.setAlignment(SWT.RIGHT);
-		label.setText("Project:");
-
-		final Combo projectCombo = new Combo(projectSelector, SWT.DROP_DOWN
-				| SWT.READ_ONLY);
-		projectCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
+		f_finder = new Finder(sf, SWT.NONE);
+		f_listener.handleEvent(null);
 
 		/*
 		 * Findings for the project
 		 */
-		final Group findingsGroup = new Group(findingsPage, SWT.NONE);
-		findingsGroup.setText("Analysis Findings");
-		findingsGroup
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		findingsGroup.setLayout(new FillLayout());
-
-		SashForm sf = new SashForm(findingsGroup, SWT.VERTICAL | SWT.SMOOTH);
 
 		final Composite topSash = new Composite(sf, SWT.NONE);
 		topSash.setLayout(new GridLayout());
@@ -149,7 +152,7 @@ public final class FindingsView2 extends ViewPart {
 		logItem.setControl(logComp);
 		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
 
-		sf.setWeights(new int[] { 3, 1 });
+		sf.setWeights(new int[] { 1, 3, 1 });
 		bar.setSpacing(2);
 
 		pages.showPage(findingsPage);
