@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
@@ -24,11 +26,10 @@ public final class QualifierPromptFromJob {
 	 * @param server
 	 *            the mutable server configuration to be fixed.
 	 */
-	public QualifierPromptFromJob(Set<String> qualifiers,
-			String projectName, String serverLabel) {
-		if (qualifiers == null || qualifiers.size() < 1)
-			throw new IllegalArgumentException(
-					"Qualifier set must be non-null and contain at least one qualifier");
+	public QualifierPromptFromJob(Set<String> qualifiers, String projectName,
+			String serverLabel) {
+		if (qualifiers == null)
+			throw new IllegalArgumentException("Qualifier set must be non-null");
 		f_qualifiers = new HashSet<String>(qualifiers);
 		if (projectName == null)
 			throw new IllegalArgumentException("Project name must be non-null");
@@ -41,15 +42,35 @@ public final class QualifierPromptFromJob {
 	public void open() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				QualifierSelectionDialog dialog = new QualifierSelectionDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), f_qualifiers, f_projectName,
-						f_serverLabel);
-				if (dialog.open() != Window.CANCEL) {
-					f_selectedQualifiers.addAll(dialog.getSelectedQualifiers());
-					f_useForAllOnSameServer = dialog.useForAllOnSameServer();
+				if (f_qualifiers.isEmpty()) {
+					final MessageBox dialog = new MessageBox(PlatformUI
+							.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), SWT.ICON_ERROR | SWT.APPLICATION_MODAL
+							| SWT.OK);
+					dialog.setText("No Qualifiers on Sierra Team Server");
+					dialog
+							.setMessage("The requested action failed because the Sierra team server '"
+									+ f_serverLabel
+									+ "' has no qualifiers defined.\n\n"
+									+ "Possible resolutions for this problem include:\n"
+									+ " \u25CF Login to the Sierra team server '"
+									+ f_serverLabel
+									+ "' and create a qualifier.");
+					dialog.open();
+					f_canceled = true; // bail out
 				} else {
-					f_canceled = true;
+					QualifierSelectionDialog dialog = new QualifierSelectionDialog(
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getShell(),
+							f_qualifiers, f_projectName, f_serverLabel);
+					if (dialog.open() != Window.CANCEL) {
+						f_selectedQualifiers.addAll(dialog
+								.getSelectedQualifiers());
+						f_useForAllOnSameServer = dialog
+								.useForAllOnSameServer();
+					} else {
+						f_canceled = true;
+					}
 				}
 			}
 		});

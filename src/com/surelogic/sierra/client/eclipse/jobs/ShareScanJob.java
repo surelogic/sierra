@@ -58,6 +58,9 @@ public class ShareScanJob extends DatabaseJob {
 			} else {
 
 				Set<String> qualifiers = getQualifiersOnTheServer(slMonitor);
+				if (qualifiers == null) {
+					return Status.CANCEL_STATUS;
+				}
 				if (slMonitor.isCanceled()) {
 					return null;
 				} else {
@@ -107,7 +110,9 @@ public class ShareScanJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return getQualifiersOnTheServer(slMonitor);
 			} else {
-				throw e; // re-throw
+				SLLogger.getLogger().log(Level.WARNING,
+						"Failed to get qualifiers from " + f_server, e);
+				return null;
 			}
 		}
 
@@ -134,7 +139,11 @@ public class ShareScanJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return publishRun(scan, slMonitor);
 			} else {
-				return SLStatus.createErrorStatus(e);
+				SLLogger.getLogger().log(
+						Level.WARNING,
+						"Failed to get publish run about " + f_projectName
+								+ " to " + f_server, e);
+				return Status.CANCEL_STATUS;
 			}
 		}
 	}

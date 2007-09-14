@@ -26,7 +26,7 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 								+ "' is not the Sierra team server that the project '"
 								+ f_projectName
 								+ "' has previously connected to and exchanged data with.\n\n"
-								+ "Possible reasons for this include:\n"
+								+ "Possible reasons for this problem include:\n"
 								+ " \u25CF The Sierra team server '"
 								+ f_server.getLabel()
 								+ "' has been reinstalled (or its database has been erased or mutated).\n"

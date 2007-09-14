@@ -92,7 +92,11 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return synchronize(conn, manager, slMonitor);
 			} else {
-				return SLStatus.createErrorStatus(e);
+				SLLogger.getLogger().log(
+						Level.WARNING,
+						"Failed to synchronize " + f_projectName + " with "
+								+ f_server + " (wrong server)", e);
+				return Status.CANCEL_STATUS;
 			}
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
@@ -110,7 +114,11 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return synchronize(conn, manager, slMonitor);
 			} else {
-				return SLStatus.createErrorStatus(e);
+				SLLogger.getLogger().log(
+						Level.WARNING,
+						"Failed to get publish synchronize project "
+								+ f_projectName + " to " + f_server, e);
+				return Status.CANCEL_STATUS;
 			}
 		}
 	}

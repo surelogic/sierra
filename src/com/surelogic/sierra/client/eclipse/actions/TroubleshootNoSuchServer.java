@@ -24,7 +24,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 						.setMessage("The requested action failed because it was not possible to connect to the Sierra team server '"
 								+ f_server.getLabel()
 								+ "'.\n\n"
-								+ "Possible reasons for this include:\n"
+								+ "Possible reasons for this problem include:\n"
 								+ " \u25CF The network is down or disconnected.\n"
 								+ " \u25CF The Sierra team server '"
 								+ f_server.getLabel()
