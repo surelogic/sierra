@@ -177,12 +177,7 @@ class PMD40Handler extends DefaultHandler {
 
 						hasPackage = true;
 						String packageName = attrs.getValue(i);
-
-						int lastSlash = fileName.lastIndexOf(File.separator);
-						String sourceDirectory = fileName.substring(0,
-								lastSlash);
-						sourceLocation.packageName(packageName).path(
-								sourceDirectory);
+						sourceLocation.packageName(packageName);
 					}
 
 					if ("class".equals(aName)) {
@@ -315,9 +310,7 @@ class PMD40Handler extends DefaultHandler {
 			// package associated with it
 			if (!hasPackage) {
 				String packageName = SierraConstants.DEFAULT_PACKAGE;
-				int lastSlash = fileName.lastIndexOf(File.separator);
-				String sourceDirectory = fileName.substring(0, lastSlash);
-				sourceLocation.packageName(packageName).path(sourceDirectory);
+				sourceLocation.packageName(packageName);
 			}
 			hasPackage = false;
 			sourceLocation.build();

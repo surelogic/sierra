@@ -43,8 +43,6 @@ class FindBugsHandler extends DefaultHandler {
 
 	private String fileName;
 
-	private String completeFileName;
-
 	private boolean inClass;
 
 	private String relativePath;
@@ -149,8 +147,6 @@ class FindBugsHandler extends DefaultHandler {
 			sourceLocation = artifact.sourceLocation();
 			inMethod = true;
 			if (attributes != null) {
-				String className = "";
-				String packageName = "";
 				for (int i = 0; i < attributes.getLength(); i++) {
 					String aName = attributes.getLocalName(i);
 					if ("".equals(aName)) {
@@ -164,27 +160,6 @@ class FindBugsHandler extends DefaultHandler {
 						sourceLocation.identifier(method);
 					}
 
-					if ("classname".equals(aName)) {
-
-						className = attributes.getValue(i);
-						int lastPeriod = className.lastIndexOf(".");
-						if (lastPeriod == -1) {
-							packageName = SierraConstants.DEFAULT_PACKAGE;
-						} else {
-
-							packageName = className.substring(0, lastPeriod);
-							className = className.substring(lastPeriod + 1);
-						}
-						// Why is this path an empty space?
-						// -> Path is only populated for primary source
-						// locations as it is used for identifying the
-						// location of the file for the double click in the
-						// eclipse view
-						// -> Path is no longer an empty space
-						sourceLocation.className(className).packageName(
-								packageName);
-					}
-
 				}
 
 			}
@@ -194,32 +169,11 @@ class FindBugsHandler extends DefaultHandler {
 			sourceLocation = artifact.sourceLocation();
 			inClass = true;
 			if (attributes != null) {
-				String className = "";
-				String packageName = "";
 
 				for (int i = 0; i < attributes.getLength(); i++) {
 					String aName = attributes.getLocalName(i);
 					if ("".equals(aName)) {
 						aName = attributes.getQName(i);
-					}
-
-					if ("classname".equals(aName)) {
-
-						className = attributes.getValue(i);
-						sourceLocation.type(IdentifierType.CLASS);
-
-						int lastPeriod = className.lastIndexOf(".");
-						if (lastPeriod == -1) {
-							packageName = SierraConstants.DEFAULT_PACKAGE;
-						} else {
-
-							packageName = className.substring(0, lastPeriod);
-							className = className.substring(lastPeriod + 1);
-						}
-
-						sourceLocation.className(className).packageName(
-								packageName).identifier(className);
-
 					}
 
 				}
@@ -232,8 +186,6 @@ class FindBugsHandler extends DefaultHandler {
 			inField = true;
 
 			if (attributes != null) {
-				String className = "";
-				String packageName = "";
 
 				for (int i = 0; i < attributes.getLength(); i++) {
 					String aName = attributes.getLocalName(i);
@@ -246,23 +198,6 @@ class FindBugsHandler extends DefaultHandler {
 
 						sourceLocation.type(IdentifierType.FIELD);
 						sourceLocation.identifier(field);
-					}
-
-					if ("classname".equals(aName)) {
-
-						className = attributes.getValue(i);
-						int lastPeriod = className.lastIndexOf(".");
-						if (lastPeriod == -1) {
-							packageName = SierraConstants.DEFAULT_PACKAGE;
-						} else {
-
-							packageName = className.substring(0, lastPeriod);
-							className = className.substring(lastPeriod + 1);
-						}
-
-						sourceLocation.className(className).packageName(
-								packageName);
-
 					}
 
 				}
@@ -282,6 +217,10 @@ class FindBugsHandler extends DefaultHandler {
 				String end = "";
 
 				if (attributes != null) {
+
+					String className = "";
+					String packageName = "";
+
 					for (int i = 0; i < attributes.getLength(); i++) {
 						String aName = attributes.getLocalName(i);
 						if ("".equals(aName)) {
@@ -296,6 +235,20 @@ class FindBugsHandler extends DefaultHandler {
 
 						}
 
+						if ("classname".equals(aName)) {
+
+							className = attributes.getValue(i);
+							int lastPeriod = className.lastIndexOf(".");
+							if (lastPeriod == -1) {
+								packageName = SierraConstants.DEFAULT_PACKAGE;
+							} else {
+
+								packageName = className
+										.substring(0, lastPeriod);
+								className = className.substring(lastPeriod + 1);
+							}
+
+						}
 						if ("end".equals(aName)) {
 							end = attributes.getValue(i);
 							sourceLocation.endLine(Integer.parseInt(end));
@@ -303,11 +256,48 @@ class FindBugsHandler extends DefaultHandler {
 
 						if ("sourcepath".equals(aName)) {
 							String relativePath = attributes.getValue(i);
-							sourceLocation.path(relativePath);
+							int lastSlash = relativePath.lastIndexOf("/");
+							fileName = relativePath.substring(lastSlash + 1);
+						}
+
+					}
+
+					// The following code handles 4 cases of inner classes
+					// identified by FindBugs, the first one is of kind
+					// "Test", second is "Test$1", third "Test$TestInner"
+					// and the last is class declared in the same file
+					// "TestInner" it does different resolution for the
+					// last kind, it uses the same name for the first three
+					// kinds, for the last kind it adds the superclass name
+					// and makes the name of format "Test$TestInner"
+
+					String superClass = fileName.substring(0,
+							fileName.length() - 5);
+
+					if (superClass.equals(className)) {
+
+						sourceLocation.className(className).packageName(
+								packageName);
+					} else {
+
+						int dollarSign = className.indexOf("$");
+
+						if (dollarSign != -1) {
+							// The inner class is of format Test$1 or
+							// Test$TestInner
+							sourceLocation.className(className).packageName(
+									packageName);
+						} else {
+
+							// Use the name given by findbugs
+							sourceLocation.className(
+									superClass + "$" + className).packageName(
+									packageName);
 						}
 
 					}
 				}
+
 			} else {
 
 				String start = "0";
@@ -396,14 +386,7 @@ class FindBugsHandler extends DefaultHandler {
 									Long hashValue = hashGenerator.getHash(
 											completePath, lineNumber);
 
-									// Long hashValue = hashHolder.get(
-									// completePath).get(
-									// (Integer) lineNumber);
 									primarySourceLocation.hash(hashValue);
-
-									// System.out.println(hashValue);
-
-									completeFileName = sourceDirectories[i];
 									fileFound = true;
 
 								}
@@ -427,7 +410,7 @@ class FindBugsHandler extends DefaultHandler {
 					if (superClass.equals(className)) {
 
 						primarySourceLocation.className(className).packageName(
-								packageName).path(completeFileName);
+								packageName);
 					} else {
 
 						int dollarSign = className.indexOf("$");
@@ -436,14 +419,13 @@ class FindBugsHandler extends DefaultHandler {
 							// The inner class is of format Test$1 or
 							// Test$TestInner
 							primarySourceLocation.className(className)
-									.packageName(packageName).path(
-											completeFileName);
+									.packageName(packageName);
 						} else {
 
 							// Use the name given by findbugs
 							primarySourceLocation.className(
 									superClass + "$" + className).packageName(
-									packageName).path(completeFileName);
+									packageName);
 						}
 
 					}

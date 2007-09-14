@@ -18,7 +18,7 @@ public interface ArtifactGenerator {
 	public ErrorBuilder error();
 
 	public void rollback();
-	
+
 	public void finished();
 
 	public interface ArtifactBuilder {
