@@ -3,30 +3,16 @@
  */
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class CompilationUnitRecord extends LongRecord {
-	private String path;
 	private String className;
 	private String packageName;
 
 	public CompilationUnitRecord(RecordMapper mapper) {
 		super(mapper);
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		if (path == null) {
-			path = "";
-		}
-		this.path = path;
 	}
 
 	public String getClassName() {
@@ -47,7 +33,6 @@ public final class CompilationUnitRecord extends LongRecord {
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		setNullableString(idx++, st, path);
 		st.setString(idx++, className);
 		st.setString(idx++, packageName);
 		return idx;
@@ -71,7 +56,6 @@ public final class CompilationUnitRecord extends LongRecord {
 				+ ((className == null) ? 0 : className.hashCode());
 		result = prime * result
 				+ ((packageName == null) ? 0 : packageName.hashCode());
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
 	}
 
@@ -93,11 +77,6 @@ public final class CompilationUnitRecord extends LongRecord {
 			if (other.packageName != null)
 				return false;
 		} else if (!packageName.equals(other.packageName))
-			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
 			return false;
 		return true;
 	}

@@ -196,11 +196,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			return this;
 		}
 
-		public MetricBuilder path(String path) {
-			compUnit.setPath(path);
-			return this;
-		}
-
 	}
 
 	private class JDBCErrorBuilder implements ErrorBuilder {
@@ -361,11 +356,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 			public SourceLocationBuilder packageName(String packageName) {
 				compUnit.setPackageName(packageName);
-				return this;
-			}
-
-			public SourceLocationBuilder path(String path) {
-				compUnit.setPath(path);
 				return this;
 			}
 
