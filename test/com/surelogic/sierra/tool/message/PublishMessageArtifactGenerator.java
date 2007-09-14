@@ -129,11 +129,6 @@ class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 				return this;
 			}
 
-			public SourceLocationBuilder path(String path) {
-				sourceBuilder.path(path);
-				return this;
-			}
-
 			public SourceLocationBuilder type(IdentifierType type) {
 				sourceBuilder.type(type);
 				return this;

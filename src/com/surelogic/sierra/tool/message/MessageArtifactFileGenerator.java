@@ -216,7 +216,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	private class MessageMetricBuilder implements MetricBuilder {
 
-		private String path;
 		private String clazz;
 		private String pakkage;
 		private int linesOfCode;
@@ -227,7 +226,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			metric.setName(clazz);
 			metric.setPackage(pakkage);
 			metric.setLoc(linesOfCode);
-			metric.setPath(path);
 			mw.writeClassMetric(metric, artOut);
 		}
 
@@ -243,11 +241,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 		public MetricBuilder packageName(String name) {
 			this.pakkage = name;
-			return this;
-		}
-
-		public MetricBuilder path(String path) {
-			this.path = path;
 			return this;
 		}
 
@@ -339,11 +332,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 			public SourceLocationBuilder packageName(String packageName) {
 				sourceBuilder.packageName(packageName);
-				return this;
-			}
-
-			public SourceLocationBuilder path(String path) {
-				sourceBuilder.path(path);
 				return this;
 			}
 

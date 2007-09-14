@@ -12,7 +12,6 @@ public class SourceLocation {
 		private String identifier;
 		private String className;
 		private String packageName;
-		private String path;
 		private int lineOfCode;
 		private int endLine;
 		private Long hash;
@@ -41,11 +40,6 @@ public class SourceLocation {
 			return this;
 		}
 
-		public Builder path(String path) {
-			this.path = path;
-			return this;
-		}
-
 		public Builder lineOfCode(int lineOfCode) {
 			this.lineOfCode = lineOfCode;
 			return this;
@@ -66,7 +60,6 @@ public class SourceLocation {
 			this.identifier = null;
 			this.className = null;
 			this.packageName = null;
-			this.path = null;
 			this.lineOfCode = 0;
 			this.endLine = 0;
 			this.hash = null;
@@ -93,7 +86,6 @@ public class SourceLocation {
 	}
 
 	SourceLocation(Builder builder) {
-		this.pathName = builder.path;
 		this.className = builder.className;
 		this.hash = builder.hash;
 		this.packageName = builder.packageName;

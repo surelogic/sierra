@@ -549,7 +549,7 @@ public class MessageWarehouse {
 	private static void readClassMetric(ClassMetric metric,
 			MetricBuilder builder) {
 		builder.className(metric.getName()).packageName(metric.getPackage())
-				.linesOfCode(metric.getLoc()).path(metric.getPath()).build();
+				.linesOfCode(metric.getLoc()).build();
 	}
 
 	private static void readError(Error e, ErrorBuilder builder) {
@@ -558,19 +558,17 @@ public class MessageWarehouse {
 
 	private static void readPrimarySource(ArtifactBuilder aBuilder,
 			SourceLocation s) {
-		aBuilder.primarySourceLocation().path(s.getPathName()).className(
-				s.getClassName()).packageName(s.getPackageName()).endLine(
-				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
-				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
-				s.getHash()).build();
+		aBuilder.primarySourceLocation().className(s.getClassName())
+				.packageName(s.getPackageName()).endLine(s.getEndLineOfCode())
+				.lineOfCode(s.getLineOfCode()).type(s.getIdentifierType())
+				.identifier(s.getIdentifier()).hash(s.getHash()).build();
 	}
 
 	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s) {
-		aBuilder.sourceLocation().path(s.getPathName()).className(
-				s.getClassName()).packageName(s.getPackageName()).endLine(
-				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
-				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
-				s.getHash()).build();
+		aBuilder.sourceLocation().className(s.getClassName()).packageName(
+				s.getPackageName()).endLine(s.getEndLineOfCode()).lineOfCode(
+				s.getLineOfCode()).type(s.getIdentifierType()).identifier(
+				s.getIdentifier()).hash(s.getHash()).build();
 	}
 
 	private static boolean cancelled(SLProgressMonitor monitor) {
