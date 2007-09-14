@@ -30,10 +30,10 @@ public final class ShareScanAction extends AbstractWebServiceMenuAction {
 					+ server.getLabel() + "'.\n\n"
 					+ "Possible reasons for this problem include:\n"
 					+ " \u25CF You have never scanned the project '"
-					+ projectName + "'.\n" + " \u25CF The '"
+					+ projectName + "'.\n" + " \u25CF The file '"
 					+ PreferenceConstants.getSierraPath()
 					+ System.getProperty("file.separator") + projectName
-					+ ".sierra.gz' file has been deleted from the disk.\n\n"
+					+ ".sierra.gz' has been deleted from the disk.\n\n"
 					+ "Possible resolutions for this problem include:\n"
 					+ " \u25CF Run a scan on the project '" + projectName
 					+ "'.");
