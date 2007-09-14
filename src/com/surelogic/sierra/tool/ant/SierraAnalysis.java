@@ -31,9 +31,9 @@
  * destDir - defaults to /tmp, the directory to store tools' results
  * Srcdir - required unless nested <source> elements are defined
  * BinDir - required unless nested <binary> elements are defined
- * Server - if set, will attempt to send the WSDL file to this address. The port is optional
+ * Server - if set, will attempt to send the scan document to this address. The port is optional
  * qualifiers - comma-separated list of qualifiers, must be valid as per the {@link Qualifier} class.
- * Clean - if set to true, will clean the tool result files and the WSDL (if it
+ * Clean - if set to true, will clean the tool result files and the scan document (if it
  * runDocument - the full path to the desired run document
  * was sent to the server successfully)
  * 
@@ -97,6 +97,7 @@ import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 
@@ -134,8 +135,16 @@ public class SierraAnalysis extends Task {
 	 * Ant Task Attributes
 	 **************************************************************************/
 
-	// Optional attribute, if present, we send the WSDL file to this server
+	// Optional attribute, if present, we send the scan document will be sent to
+	// this server
 	private String server = null;
+
+	// Optional attribute, required when we send the scan document will be sent
+	// to this server.
+	private String user;
+	// Optional attribute, required when we send the scan document will be sent
+	// to this server.
+	private String password;
 
 	// Optional, but req'd if URL is set. Comma-separated list of qualifiers
 	private final List<String> qualifiers = new ArrayList<String>();
@@ -349,7 +358,7 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
-	 * Generates a WSDL file from the updated database
+	 * Generates a scan document from the updated database
 	 * 
 	 */
 	private void generateRunDocument(SLProgressMonitor monitor) {
@@ -453,7 +462,8 @@ public class SierraAnalysis extends Task {
 	}
 
 	/**
-	 * Optional action. Uploads the generated WSDL file to the desired server.
+	 * Optional action. Uploads the generated scan document to the desired
+	 * server.
 	 */
 	private void uploadRunDocument() {
 		if (keepRunning) {
@@ -465,7 +475,10 @@ public class SierraAnalysis extends Task {
 				run = warehouse.fetchScan(new GZIPInputStream(
 						new FileInputStream(runDocument.getAbsolutePath())));
 
-				SierraService ts = new SierraServiceClient(server)
+				SierraServerLocation location = new SierraServerLocation(
+						server, user, password);
+
+				SierraService ts = new SierraServiceClient(location)
 						.getSierraServicePort();
 
 				// Verify the qualifiers
@@ -641,6 +654,22 @@ public class SierraAnalysis extends Task {
 
 	public String getServer() {
 		return server;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public void addConfiguredProject(Project project) {

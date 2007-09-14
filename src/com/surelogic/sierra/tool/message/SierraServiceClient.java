@@ -39,18 +39,6 @@ public class SierraServiceClient extends Service {
 		super(wsdlDocumentLocation, serviceName);
 	}
 
-	/**
-	 * Construct a client pointing to the specified hostname. The hostname
-	 * should be of the form <em>host</em>[<em>:port</em>].
-	 * 
-	 * @param server
-	 */
-	public SierraServiceClient(String server) {
-		super(createUrl(new SierraServerLocation(server)), new QName(
-				"http://services.sierra.surelogic.com/",
-				"SierraServiceBeanService"));
-	}
-
 	public SierraService getSierraServicePort() {
 		return super.getPort(new QName("http://services.sierra.surelogic.com/",
 				"SierraServiceBeanPort"), SierraService.class);

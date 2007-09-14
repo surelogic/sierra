@@ -21,7 +21,7 @@ public class SierraServerLocation {
 		f_label = label;
 	}
 
-	public SierraServerLocation(String server) {
+	public SierraServerLocation(String server, String user, String pass) {
 		/*
 		 * TODO: fix this to set the protocol properly
 		 */
@@ -34,8 +34,8 @@ public class SierraServerLocation {
 		}
 		f_host = strArr[0];
 		f_secure = false;
-		f_user = null;
-		f_password = null;
+		f_user = user;
+		f_password = pass;
 		f_label = UNLABELED_SERVER;
 	}
 
