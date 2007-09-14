@@ -1,7 +1,12 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -9,6 +14,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
@@ -16,6 +22,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.PageBook;
@@ -43,6 +52,18 @@ public final class FindingsView2 extends ViewPart {
 					panel.setLayout(new RowLayout(SWT.VERTICAL));
 					panel.setBackground(f_finder.getShell().getDisplay()
 							.getSystemColor(SWT.COLOR_BLUE));
+					final CLabel label = new CLabel(panel, SWT.RIGHT);
+					label.addListener(SWT.MouseDown, new Listener() {
+						public void handleEvent(Event event) {
+							System.out.println("selected");
+							label.setBackground(f_finder.getShell()
+									.getDisplay().getSystemColor(
+											SWT.COLOR_YELLOW));
+						}
+					});
+					label.setText("Echo do it");
+					label.setImage(SLImages
+							.getImage(SLImages.IMG_FINDBUGS_FINDING));
 					for (int i = 0; i < 15; i++) {
 						Button b = new Button(panel, SWT.NONE);
 						b.setData(index);
@@ -68,6 +89,67 @@ public final class FindingsView2 extends ViewPart {
 		SashForm sf = new SashForm(findingsPage, SWT.VERTICAL | SWT.SMOOTH);
 
 		f_finder = new Finder(sf, SWT.NONE);
+		f_finder.addColumn(new Finder.IColumn() {
+			public void createContents(Composite panel, int index) {
+				final Table table = new Table(panel, SWT.BORDER);
+				table.setHeaderVisible(true);
+				table.setLinesVisible(true);
+				TableColumn column1 = new TableColumn(table, SWT.NONE);
+				column1.setText("Bug Status");
+				column1.setWidth(100);
+				final TableColumn column2 = new TableColumn(table, SWT.NONE);
+				column2.setText("Percent");
+				column2.setWidth(200);
+				String[] labels = new String[] { "Resolved", "New",
+						"Won't Fix", "Invalid" };
+				for (int i = 0; i < labels.length; i++) {
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(labels[i]);
+				}
+				/*
+				 * NOTE: MeasureItem, PaintItem and EraseItem are called
+				 * repeatedly. Therefore, it is critical for performance that
+				 * these methods be as efficient as possible.
+				 */
+				table.addListener(SWT.PaintItem, new Listener() {
+					int[] percents = new int[] { 50, 30, 5, 15 };
+
+					public void handleEvent(Event event) {
+						Display display = f_finder.getDisplay();
+						if (event.index == 1) {
+							GC gc = event.gc;
+							TableItem item = (TableItem) event.item;
+							int index = table.indexOf(item);
+							int percent = percents[index];
+							Color foreground = gc.getForeground();
+							Color background = gc.getBackground();
+							gc.setForeground(display
+									.getSystemColor(SWT.COLOR_RED));
+							gc.setBackground(display
+									.getSystemColor(SWT.COLOR_YELLOW));
+							int width = (column2.getWidth() - 1) * percent
+									/ 100;
+							gc.fillGradientRectangle(event.x, event.y, width,
+									event.height, true);
+							Rectangle rect2 = new Rectangle(event.x, event.y,
+									width - 1, event.height - 1);
+							gc.drawRectangle(rect2);
+							gc.setForeground(display
+									.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+							String text = percent + "%";
+							Point size = event.gc.textExtent(text);
+							int offset = Math.max(0,
+									(event.height - size.y) / 2);
+							gc.drawText(text, event.x + 2, event.y + offset,
+									true);
+							gc.setForeground(background);
+							gc.setBackground(foreground);
+						}
+					}
+				});
+
+			}
+		});
 		f_listener.handleEvent(null);
 
 		/*
