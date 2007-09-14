@@ -183,6 +183,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			throw new RuntimeException(e.getMessage());
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
+			throw new RuntimeException(e.getMessage());
 		}
 
 	}
