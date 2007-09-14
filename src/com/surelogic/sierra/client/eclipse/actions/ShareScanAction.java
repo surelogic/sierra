@@ -27,7 +27,16 @@ public final class ShareScanAction extends AbstractWebServiceMenuAction {
 			message.setText("No Scan Exists");
 			message.setMessage("You must scan '" + projectName
 					+ "' before you can share the scan results to the server '"
-					+ server.getLabel() + "'.");
+					+ server.getLabel() + "'.\n\n"
+					+ "Possible reasons for this problem include:\n"
+					+ " \u25CF You have never scanned the project '"
+					+ projectName + "'.\n" + " \u25CF The '"
+					+ PreferenceConstants.getSierraPath()
+					+ System.getProperty("file.separator") + projectName
+					+ ".sierra.gz' file has been deleted from the disk.\n\n"
+					+ "Possible resolutions for this problem include:\n"
+					+ " \u25CF Run a scan on the project '" + projectName
+					+ "'.");
 			message.open();
 		}
 	}

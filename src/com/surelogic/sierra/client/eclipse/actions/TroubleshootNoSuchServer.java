@@ -38,7 +38,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 								+ "'.\n"
 								+ " \u25CF Check the Sierra team server '"
 								+ f_server.getLabel()
-								+ "'. is running.\n"
+								+ "' is running.\n"
 								+ " \u25CF Fix the location settings for '"
 								+ getServer().getLabel()
 								+ "' so that they are correct.");
