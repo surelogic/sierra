@@ -7,11 +7,13 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.PlatformUI;
 
 public class Finder extends ScrolledComposite {
 
@@ -28,6 +30,8 @@ public class Finder extends ScrolledComposite {
 
 		setExpandVertical(true);
 		setExpandHorizontal(true);
+		setAlwaysShowScrollBars(true);
+
 		Point sashSize = f_finderContents.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		setMinSize(sashSize);
 
@@ -36,6 +40,8 @@ public class Finder extends ScrolledComposite {
 				fixupSizeOfColumnViewports();
 			}
 		});
+		f_finderContents.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_LIST_SELECTION));
 	}
 
 	private final List<ScrolledComposite> f_columns = new ArrayList<ScrolledComposite>();
@@ -61,8 +67,12 @@ public class Finder extends ScrolledComposite {
 
 		Point sashSize = f_finderContents.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		setMinSize(sashSize);
-		Point finderSize = getSize();
-		setOrigin(sashSize.x - finderSize.x, 0);
+		Point from = getOrigin();
+		Point to = new Point(sashSize.x - getSize().x, getOrigin().y);
+		if (from.x < to.x) {
+			Thread t = new Thread(new Animate(from, to, this));
+			t.start();
+		}
 		f_finderContents.layout();
 		fixupSizeOfColumnViewports();
 		return index;
@@ -84,10 +94,48 @@ public class Finder extends ScrolledComposite {
 	}
 
 	private void fixupSizeOfColumnViewports() {
-		Point finderViewportSize = getSize();
+		Rectangle finderViewportSize = getClientArea();
 		for (ScrolledComposite columnViewport : f_columns) {
 			Point columnViewportSize = columnViewport.getSize();
-			columnViewport.setSize(columnViewportSize.x, finderViewportSize.y);
+			columnViewport.setSize(columnViewportSize.x,
+					finderViewportSize.height - 3);
+		}
+	}
+
+	static class Animate implements Runnable {
+		public static final int SLEEP_DURATION = 10;
+		public static final int PIXELS_PER_FRAME = 6;
+
+		final Point f_from;
+		final Point f_to;
+		final ScrolledComposite f_control;
+
+		Animate(Point from, Point to, ScrolledComposite control) {
+			f_from = from;
+			f_to = to;
+			f_control = control;
+		}
+
+		public void run() {
+			boolean animating = true;
+			while (animating) {
+				try {
+					Thread.sleep(SLEEP_DURATION);
+				} catch (InterruptedException e) {
+					// ignore
+				}
+				f_from.x += PIXELS_PER_FRAME;
+				if (f_from.x >= f_to.x) {
+					f_from.x = f_to.x;
+					animating = false;
+				}
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						f_control.setOrigin(f_from);
+					}
+				});
+			}
+
 		}
 	}
 }
