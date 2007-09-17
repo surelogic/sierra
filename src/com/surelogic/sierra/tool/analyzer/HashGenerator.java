@@ -142,8 +142,8 @@ public class HashGenerator {
 				valueDown = LAST;
 			}
 
-			System.out.println("Value up :" + valueUp);
-			System.out.println("Value down :" + valueDown);
+			// System.out.println("Value up :" + valueUp);
+			// System.out.println("Value down :" + valueDown);
 			int hashUp = valueUp.hashCode();
 			int hashDown = valueDown.hashCode();
 
