@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -18,7 +17,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandBar;
@@ -28,9 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -65,30 +60,33 @@ public final class FindingsView2 extends ViewPart {
 		final Label tL = new Label(result, SWT.LEFT);
 		tL.setText(text);
 		tL.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+		final Label aL = new Label(result, SWT.NONE);
+		aL.setImage(SLImages.getImage(SLImages.IMG_RIGHT_ARROW_SMALL));
+		aL.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false, false));
 		tL.addListener(SWT.MouseDown, new Listener() {
 			boolean toggle = true;
 
 			public void handleEvent(Event event) {
 				if (toggle) {
+					f_finder.emptyAfter(f_finder.getColumnIndex(iL));
 					result.setBackground(result.getShell().getDisplay()
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 					iL.setBackground(result.getShell().getDisplay()
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 					tL.setBackground(result.getShell().getDisplay()
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
+					aL.setBackground(result.getShell().getDisplay()
+							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 					onClick.handleEvent(event);
 				} else {
 					result.setBackground(null);
 					iL.setBackground(null);
 					tL.setBackground(null);
+					aL.setBackground(null);
 				}
 				toggle = !toggle;
-
 			}
 		});
-		Label l = new Label(result, SWT.NONE);
-		l.setImage(SLImages.getImage(SLImages.IMG_RIGHT_ARROW_SMALL));
-		l.setLayoutData(new GridData(SWT.DEFAULT, SWT.FILL, false, false));
 		return result;
 	}
 
@@ -133,6 +131,8 @@ public final class FindingsView2 extends ViewPart {
 					getLabel("Project", null, rhs, f_listener);
 					getLabel("Recent Activity", null, rhs, f_listener);
 					getLabel("Tool Provider", null, rhs, f_listener);
+					rhs.setBackground(rhs.getShell().getDisplay()
+							.getSystemColor(SWT.COLOR_BLUE));
 				}
 
 				private void newButton(String text, Group g) {
@@ -229,67 +229,67 @@ public final class FindingsView2 extends ViewPart {
 		SashForm sf = new SashForm(findingsPage, SWT.VERTICAL | SWT.SMOOTH);
 
 		f_finder = new Finder(sf, SWT.NONE);
-		f_finder.addColumn(new Finder.IColumn() {
-			public void createContents(Composite panel, int index) {
-				final Table table = new Table(panel, SWT.BORDER);
-				table.setHeaderVisible(true);
-				table.setLinesVisible(true);
-				TableColumn column1 = new TableColumn(table, SWT.NONE);
-				column1.setText("Bug Status");
-				column1.setWidth(100);
-				final TableColumn column2 = new TableColumn(table, SWT.NONE);
-				column2.setText("Percent");
-				column2.setWidth(200);
-				String[] labels = new String[] { "Resolved", "New",
-						"Won't Fix", "Invalid" };
-				for (int i = 0; i < labels.length; i++) {
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(labels[i]);
-				}
-				/*
-				 * NOTE: MeasureItem, PaintItem and EraseItem are called
-				 * repeatedly. Therefore, it is critical for performance that
-				 * these methods be as efficient as possible.
-				 */
-				table.addListener(SWT.PaintItem, new Listener() {
-					int[] percents = new int[] { 50, 30, 5, 15 };
-
-					public void handleEvent(Event event) {
-						Display display = f_finder.getDisplay();
-						if (event.index == 1) {
-							GC gc = event.gc;
-							TableItem item = (TableItem) event.item;
-							int index = table.indexOf(item);
-							int percent = percents[index];
-							Color foreground = gc.getForeground();
-							Color background = gc.getBackground();
-							gc.setForeground(display
-									.getSystemColor(SWT.COLOR_RED));
-							gc.setBackground(display
-									.getSystemColor(SWT.COLOR_YELLOW));
-							int width = (column2.getWidth() - 1) * percent
-									/ 100;
-							gc.fillGradientRectangle(event.x, event.y, width,
-									event.height, true);
-							Rectangle rect2 = new Rectangle(event.x, event.y,
-									width - 1, event.height - 1);
-							gc.drawRectangle(rect2);
-							gc.setForeground(display
-									.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-							String text = percent + "%";
-							Point size = event.gc.textExtent(text);
-							int offset = Math.max(0,
-									(event.height - size.y) / 2);
-							gc.drawText(text, event.x + 2, event.y + offset,
-									true);
-							gc.setForeground(background);
-							gc.setBackground(foreground);
-						}
-					}
-				});
-
-			}
-		});
+		// f_finder.addColumn(new Finder.IColumn() {
+		// public void createContents(Composite panel, int index) {
+		// final Table table = new Table(panel, SWT.BORDER);
+		// table.setHeaderVisible(true);
+		// table.setLinesVisible(true);
+		// TableColumn column1 = new TableColumn(table, SWT.NONE);
+		// column1.setText("Bug Status");
+		// column1.setWidth(100);
+		// final TableColumn column2 = new TableColumn(table, SWT.NONE);
+		// column2.setText("Percent");
+		// column2.setWidth(200);
+		// String[] labels = new String[] { "Resolved", "New",
+		// "Won't Fix", "Invalid" };
+		// for (int i = 0; i < labels.length; i++) {
+		// TableItem item = new TableItem(table, SWT.NONE);
+		// item.setText(labels[i]);
+		// }
+		// /*
+		// * NOTE: MeasureItem, PaintItem and EraseItem are called
+		// * repeatedly. Therefore, it is critical for performance that
+		// * these methods be as efficient as possible.
+		// */
+		// table.addListener(SWT.PaintItem, new Listener() {
+		// int[] percents = new int[] { 50, 30, 5, 15 };
+		//
+		// public void handleEvent(Event event) {
+		// Display display = f_finder.getDisplay();
+		// if (event.index == 1) {
+		// GC gc = event.gc;
+		// TableItem item = (TableItem) event.item;
+		// int index = table.indexOf(item);
+		// int percent = percents[index];
+		// Color foreground = gc.getForeground();
+		// Color background = gc.getBackground();
+		// gc.setForeground(display
+		// .getSystemColor(SWT.COLOR_RED));
+		// gc.setBackground(display
+		// .getSystemColor(SWT.COLOR_YELLOW));
+		// int width = (column2.getWidth() - 1) * percent
+		// / 100;
+		// gc.fillGradientRectangle(event.x, event.y, width,
+		// event.height, true);
+		// Rectangle rect2 = new Rectangle(event.x, event.y,
+		// width - 1, event.height - 1);
+		// gc.drawRectangle(rect2);
+		// gc.setForeground(display
+		// .getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		// String text = percent + "%";
+		// Point size = event.gc.textExtent(text);
+		// int offset = Math.max(0,
+		// (event.height - size.y) / 2);
+		// gc.drawText(text, event.x + 2, event.y + offset,
+		// true);
+		// gc.setForeground(background);
+		// gc.setBackground(foreground);
+		// }
+		// }
+		// });
+		//
+		// }
+		// });
 		f_listener.handleEvent(null);
 
 		/*
