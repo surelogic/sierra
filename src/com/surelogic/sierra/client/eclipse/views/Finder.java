@@ -15,6 +15,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * A scrolled composite specialized to act like the Mac finder. This is
+ * <i>mostly</i> a general purpose control. The
+ * {@link #addColumn(com.surelogic.sierra.client.eclipse.views.Finder.IColumn)}
+ * method allows addition of a new column into the finder, and
+ * {@link #emptyAfter(int)} removes columns.
+ * <p>
+ * When a column is added to this finder and the finder is not wide enough to
+ * display it it is animated into view.
+ */
 public class Finder extends ScrolledComposite {
 
 	private final Composite f_finderContents;
@@ -69,7 +79,7 @@ public class Finder extends ScrolledComposite {
 		setMinSize(sashSize);
 		Point from = getOrigin();
 		Point to = new Point(sashSize.x - getSize().x, getOrigin().y);
-		if (from.x < to.x) {
+		if (this.isVisible() && from.x < to.x) {
 			Thread t = new Thread(new Animate(from, to, this));
 			t.start();
 		}
@@ -102,9 +112,16 @@ public class Finder extends ScrolledComposite {
 		}
 	}
 
+	/**
+	 * An animation to make a new column visible in this finder.
+	 */
 	static class Animate implements Runnable {
-		public static final int SLEEP_DURATION = 10;
-		public static final int PIXELS_PER_FRAME = 6;
+		public static final int FRAME_RATE_NS = 50000000;
+		public static final int PIXELS_PER_FRAME = 20;
+		/**
+		 * Causes the pixels per frame to double after the specified frame.
+		 */
+		public static final int SPEED_UP_AFTER_FRAME = 4;
 
 		final Point f_from;
 		final Point f_to;
@@ -118,13 +135,22 @@ public class Finder extends ScrolledComposite {
 
 		public void run() {
 			boolean animating = true;
+			int frames = 0;
+			long lastFrameTimeNS = System.nanoTime();
 			while (animating) {
-				try {
-					Thread.sleep(SLEEP_DURATION);
-				} catch (InterruptedException e) {
-					// ignore
+				boolean waitingNextFrame = true;
+				while (waitingNextFrame) {
+					final long now = System.nanoTime();
+					if (now < lastFrameTimeNS + FRAME_RATE_NS) {
+						Thread.yield();
+					} else {
+						waitingNextFrame = false;
+						lastFrameTimeNS = now;
+					}
 				}
 				f_from.x += PIXELS_PER_FRAME;
+				if (frames++ > SPEED_UP_AFTER_FRAME)
+					f_from.x += PIXELS_PER_FRAME;
 				if (f_from.x >= f_to.x) {
 					f_from.x = f_to.x;
 					animating = false;
