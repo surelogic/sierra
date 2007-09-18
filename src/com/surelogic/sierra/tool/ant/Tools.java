@@ -40,8 +40,9 @@ public class Tools {
 	private final static String PMD = "pmd";
 	private final static String FINDBUGS = "findbugs";
 	private final static String RECKONER = "reckoner";
+	private final static String CHECKSTYLE = "checkstyle";
 	private final static String[] toolList = new String[] { RECKONER, FINDBUGS,
-			PMD };
+			PMD, CHECKSTYLE };
 
 	private org.apache.tools.ant.Project antProject = null;
 	private List<String> exclude = new ArrayList<String>();
@@ -118,6 +119,12 @@ public class Tools {
 		antProject.log("Added " + findbugs.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
 
+		CheckStyleConfig checkstyle = new CheckStyleConfig(antProject, monitor,
+				scale);
+		tools.put(checkstyle.getToolName(), checkstyle);
+		antProject.log("Added " + checkstyle.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
 	}
 
 	/**
@@ -140,6 +147,11 @@ public class Tools {
 		FindBugsConfig findbugs = new FindBugsConfig(antProject);
 		tools.put(findbugs.getToolName(), findbugs);
 		antProject.log("Added " + findbugs.getToolName(),
+				org.apache.tools.ant.Project.MSG_INFO);
+
+		CheckStyleConfig checkstyle = new CheckStyleConfig(antProject);
+		tools.put(checkstyle.getToolName(), checkstyle);
+		antProject.log("Added " + checkstyle.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
 
 	}

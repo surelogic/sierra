@@ -145,6 +145,26 @@ public class Parser {
 		}
 	}
 
+	public void parseCheckStyle(String fileName) {
+		CheckStyleHandler handler = new CheckStyleHandler(generator, monitor);
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+
+		try {
+			// Parse the input
+			SAXParser saxParser = factory.newSAXParser();
+			saxParser.parse(new File(fileName), handler);
+		} catch (SAXException se) {
+			log.log(Level.SEVERE,
+					"Could not parse the Checkstyle file. Possible errors in the generated file"
+							+ se);
+		} catch (ParserConfigurationException e) {
+			log.log(Level.SEVERE, "Could not parse the Checkstyle file." + e);
+		} catch (IOException e) {
+			log.log(Level.SEVERE,
+					"Could not parse the Checkstyle file. I/O Error." + e);
+		}
+	}
+
 	@Deprecated
 	public void parseForHash(String fileName,
 			Map<String, Map<Integer, Long>> hashHolder,

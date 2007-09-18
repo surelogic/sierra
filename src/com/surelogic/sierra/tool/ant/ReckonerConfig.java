@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
@@ -21,6 +22,7 @@ import com.surelogic.sierra.tool.config.Config;
 public class ReckonerConfig extends ToolConfig {
 
 	private static final String RECKONER_JAR = "reckoner.jar";
+	private static final String RECKONER_FOLDER = "reckoner";
 	private SLProgressMonitor f_monitor = null;
 	private Path f_classpath = null;
 	private int f_scale = 1;
@@ -52,10 +54,10 @@ public class ReckonerConfig extends ToolConfig {
 	protected Path getClasspath() {
 		if (f_classpath == null) {
 			File libDir = new File(analysis.getTools().getToolsFolder(),
-					"reckoner" + File.separator + "lib");
+					RECKONER_FOLDER + File.separator + "lib");
 			File[] jars = libDir.listFiles(new JarFileFilter());
 			File mainJar = new File(analysis.getTools().getToolsFolder(),
-					"reckoner" + File.separator + RECKONER_JAR);
+					RECKONER_FOLDER + File.separator + RECKONER_JAR);
 			f_classpath = new Path(antProject);
 			for (File file : jars) {
 				f_classpath
@@ -97,7 +99,7 @@ public class ReckonerConfig extends ToolConfig {
 	public void run() {
 		if (analysis.keepRunning) {
 			analysis.printClasspath(getClasspath());
-			// run FindBugs
+			// run reckoner
 			CommandlineJava cmdj = new CommandlineJava();
 			File mainJar = new File(analysis.getTools().getToolsFolder(),
 					"reckoner" + File.separator + RECKONER_JAR);
@@ -127,7 +129,7 @@ public class ReckonerConfig extends ToolConfig {
 					f_monitor.subTask("Running Reckoner");
 				}
 				int rc = fork(cmdj.getCommandline());
-				if (rc != 0) {
+				if ((rc == 1) || (rc == Execute.INVALID)) {
 					antProject.log("Reckoner failed to execute.",
 							org.apache.tools.ant.Project.MSG_ERR);
 					SLLogger.getLogger("sierra").severe(

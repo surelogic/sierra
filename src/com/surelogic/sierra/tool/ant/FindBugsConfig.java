@@ -7,6 +7,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
@@ -87,7 +88,7 @@ public class FindBugsConfig extends ToolConfig {
 					f_monitor.subTask("Running FindBugs");
 				}
 				int rc = fork(cmdj.getCommandline());
-				if (rc != 0) {
+				if ((rc == 1) || (rc == Execute.INVALID)) {
 					antProject.log("Findbugs failed to execute with command "
 							+ cmdj, org.apache.tools.ant.Project.MSG_ERR);
 					SLLogger.getLogger("sierra").severe(

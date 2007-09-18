@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
@@ -266,7 +267,7 @@ public class PmdConfig extends ToolConfig {
 			try {
 
 				int rc = fork(cmdj.getCommandline());
-				if (rc != 0) {
+				if ((rc == 1) || (rc == Execute.INVALID)) {
 					antProject.log("PMD failed to execute.",
 							org.apache.tools.ant.Project.MSG_ERR);
 					SLLogger.getLogger("sierra").severe(
