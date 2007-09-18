@@ -11,7 +11,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -35,23 +34,38 @@ public class Finder extends ScrolledComposite {
 	public Finder(Composite parent, int style) {
 		super(parent, style | SWT.H_SCROLL);
 		f_finderContents = new Composite(this, SWT.NONE);
-		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-		layout.fill = true;
-		layout.wrap = false;
-		f_finderContents.setLayout(layout);
+		// RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		// layout.fill = true;
+		// layout.wrap = false;
+		// f_finderContents.setLayout(layout);
 		setContent(f_finderContents);
 
 		setExpandVertical(true);
 		setExpandHorizontal(true);
 		setAlwaysShowScrollBars(true);
 
-		Point sashSize = f_finderContents.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		setMinSize(sashSize);
-
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
+				// MessageBox dialog = new
+				// MessageBox(f_finderContents.getShell(), SWT.DEFAULT);
+				// dialog.setText("NOW");
+				// dialog.open();
+				Rectangle rect = getClientArea();
+				// System.out.println("resize");
+				Point sashSize = f_finderContents.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
+				// System.out.println("sashSize=" + sashSize);
+				// System.out.println("sashSize=" + rect);
+				sashSize.y = rect.height;
+				setMinSize(sashSize);
+				f_finderContents.setSize(sashSize);
+				// PlatformUI.getWorkbench().getDisplay().asyncExec(new
+				// Runnable() {
+				// public void run() {
 				rememberColumnViewportOrigins();
 				fixupSizeOfColumnViewports();
+				// }
+				// });
 			}
 		});
 		f_finderContents.setBackground(getShell().getDisplay().getSystemColor(
@@ -81,13 +95,14 @@ public class Finder extends ScrolledComposite {
 				SWT.DEFAULT));
 		columnContents.layout();
 
+		fixupSizeOfColumnViewports();
 		final Point sashSize = f_finderContents.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT);
 		setMinSize(sashSize);
 		final Point from = getOrigin();
 		final Point to = new Point(sashSize.x - getSize().x, getOrigin().y);
-		f_finderContents.layout();
-		fixupSizeOfColumnViewports();
+		// f_finderContents.layout();
+		// fixupSizeOfColumnViewports();
 		if (this.isVisible() && from.x < to.x) {
 			final Thread animateTillColumnIsVisible = new Thread(new Animate(
 					from, to, this));
@@ -115,7 +130,7 @@ public class Finder extends ScrolledComposite {
 			}
 			index++;
 		}
-		f_finderContents.layout();
+		// f_finderContents.layout();
 		fixupSizeOfColumnViewports();
 	}
 
@@ -160,17 +175,34 @@ public class Finder extends ScrolledComposite {
 		f_columnViewportToOrigin.remove(columnViewport);
 	}
 
+	private static final int BORDER = 10;
+	private static final int PADDING = 3;
+
 	private void fixupSizeOfColumnViewports() {
+		System.out.println();
 		Rectangle finderViewportSize = getClientArea();
+		System.out.println("finderViewportSize=" + finderViewportSize);
+		int xPos = BORDER;
 		for (ScrolledComposite columnViewport : f_columns) {
-			final Point columnViewportSize = columnViewport.getSize();
-			columnViewport.setSize(columnViewportSize.x,
-					finderViewportSize.height - 3);
+			final Control columnContents = columnViewport.getContent();
+			final Point pColumnContentsSize = columnContents.computeSize(
+					SWT.DEFAULT, SWT.DEFAULT);
+			columnViewport.setBounds(xPos, BORDER, pColumnContentsSize.x,
+					finderViewportSize.height - (2 * BORDER));
+			xPos += PADDING + pColumnContentsSize.x;
+			// final Point columnViewportSize = columnViewport.getSize();
+			// System.out.println("columnViewportSize=" + columnViewportSize);
+			// columnViewport.setSize(columnViewportSize.x,
+			// finderViewportSize.height - 5);
 			final Point origin = f_columnViewportToOrigin.get(columnViewport);
 			if (origin != null) {
 				columnViewport.setOrigin(origin);
 			}
 		}
+		f_finderContents.setSize(xPos - PADDING + BORDER,
+				finderViewportSize.height);
+		//Rectangle finderCSize = f_finderContents.getBounds();
+		//System.out.println("finderCSize=" + finderCSize);
 	}
 
 	/**
