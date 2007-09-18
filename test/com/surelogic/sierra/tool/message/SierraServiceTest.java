@@ -75,8 +75,7 @@ public class SierraServiceTest {
 		merges.add(merge);
 		List<Match> matches = new ArrayList<Match>();
 		merge.setMatch(matches);
-		matches.add(new Match("package", "class", 34L, "PMD", "4.0",
-				"ShortVariable"));
+		matches.add(new Match("package", "class", 34L, "ShortVariable"));
 		try {
 			MergeAuditTrailResponse mergeRes = service
 					.mergeAuditTrails(mergeReq);
@@ -85,8 +84,7 @@ public class SierraServiceTest {
 			String newTrail = mergeRes.getTrail().get(0);
 			assertNotNull(trail);
 			assertEquals(trail, newTrail);
-			matches.add(new Match("package2", "class2", 35L, "PMD", "4.0",
-					"ShortVariable"));
+			matches.add(new Match("package2", "class2", 35L, "ShortVariable"));
 			mergeRes = service.mergeAuditTrails(mergeReq);
 			newTrail = mergeRes.getTrail().get(0);
 			assertEquals(trail, newTrail);
