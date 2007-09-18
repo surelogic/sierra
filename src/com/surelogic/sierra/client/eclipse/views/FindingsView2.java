@@ -24,9 +24,12 @@ import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -60,10 +63,28 @@ public final class FindingsView2 extends ViewPart {
 			layout.fill = true;
 			layout.wrap = false;
 			g.setLayout(layout);
-			Text t = new Text(g, SWT.SINGLE | SWT.SEARCH);
-			newReport(g, "Common", null, 250, 1260);
-			newReport(g, "Fluid", null, 1000, 1260);
+			// Text t = new Text(g, SWT.SINGLE | SWT.SEARCH);
+			Label lt = new Label(g, SWT.RIGHT);
+			lt.setText("Findings");
+			newReport(g, "Common", null, 450, 1260);
+			newReport(g, "Fluid", null, 800, 1260);
 			newReport(g, "JEdit", null, 10, 1260);
+			Label st = new Label(g, SWT.RIGHT);
+			st.setText("1,260");
+
+			final Link li = new Link(g, SWT.WRAP);
+			li
+					.setText("<A HREF=\"select\">Select All</A> <A HREF=\"deselect\">Deselect All</A>");
+
+			// Composite controls = new Composite(g, SWT.NONE);
+			// RowLayout rlc = new RowLayout(SWT.HORIZONTAL);
+			// rlc.wrap = false;
+			// controls.setLayout(rlc);
+			//			
+			// Button sa = new Button(controls, SWT.FLAT);
+			// sa.setText("Select All");
+			// Button dsa = new Button(controls, SWT.FLAT);
+			// dsa.setText("Deselect all");
 			g.pack();
 			rhs = new Composite(panel, SWT.NONE);
 			rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false, false));
@@ -78,7 +99,7 @@ public final class FindingsView2 extends ViewPart {
 			getLabel("Package", null, rhs, f_listener);
 			getLabel("Project", null, rhs, f_listener);
 			getLabel("Recent Activity", null, rhs, f_listener);
-			getLabel("Tool Provider", null, rhs, f_listener);
+			getLabel("Tool", null, rhs, f_listener);
 		}
 
 		private void newButton(String text, Group g) {
@@ -109,7 +130,7 @@ public final class FindingsView2 extends ViewPart {
 
 				@Override
 				public Point computeSize(int hint, int hint2, boolean changed) {
-					return new Point(100, bSize.y);
+					return new Point(75, bSize.y);
 				}
 			};
 			// c.setBackground(result.getShell().getDisplay()
@@ -126,16 +147,32 @@ public final class FindingsView2 extends ViewPart {
 					gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
 					int percent = (int) (((double) value / (double) total) * 100);
 					int width = (cSize.x - 1) * percent / 100;
+					if (width < 2)
+						width = 2;
 					gc.fillGradientRectangle(0, 0, width, cSize.y, true);
 					Rectangle rect2 = new Rectangle(0, 0, cSize.x - 1,
 							cSize.y - 1);
+					gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 					gc.drawRectangle(rect2);
-					gc.setForeground(display
-							.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-					String text = value + " findings";
+					if (percent > 25) {
+						int p = (cSize.x - 1) * 25 / 100;
+						gc.drawLine(p, 0, p, cSize.y - 1);
+					}
+					if (percent > 50) {
+						int p = (cSize.x - 1) * 50 / 100;
+						gc.drawLine(p, 0, p, cSize.y - 1);
+					}
+					if (percent > 75) {
+						int p = (cSize.x - 1) * 75 / 100;
+						gc.drawLine(p, 0, p, cSize.y - 1);
+					}
+					// gc.setForeground(display
+					// .getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+					String text = value + "";
 					Point size = e.gc.textExtent(text);
 					int offset = Math.max(0, (cSize.y - size.y) / 2);
-					gc.drawText(text, 0 + 2, 0 + offset, true);
+					int rightJ = cSize.x - 2 - size.x;
+					gc.drawText(text, rightJ, 0 + offset, true);
 					gc.setForeground(background);
 					gc.setBackground(foreground);
 					// Do some drawing
@@ -221,154 +258,113 @@ public final class FindingsView2 extends ViewPart {
 
 		SashForm sf = new SashForm(findingsPage, SWT.VERTICAL | SWT.SMOOTH);
 
-		f_finder = new Finder(sf, SWT.NONE);
-		// f_finder.addColumn(new Finder.IColumn() {
-		// public void createContents(Composite panel, int index) {
-		// final Table table = new Table(panel, SWT.BORDER);
-		// table.setHeaderVisible(true);
-		// table.setLinesVisible(true);
-		// TableColumn column1 = new TableColumn(table, SWT.NONE);
-		// column1.setText("Bug Status");
-		// column1.setWidth(100);
-		// final TableColumn column2 = new TableColumn(table, SWT.NONE);
-		// column2.setText("Percent");
-		// column2.setWidth(200);
-		// String[] labels = new String[] { "Resolved", "New",
-		// "Won't Fix", "Invalid" };
-		// for (int i = 0; i < labels.length; i++) {
-		// TableItem item = new TableItem(table, SWT.NONE);
-		// item.setText(labels[i]);
-		// }
-		// /*
-		// * NOTE: MeasureItem, PaintItem and EraseItem are called
-		// * repeatedly. Therefore, it is critical for performance that
-		// * these methods be as efficient as possible.
-		// */
-		// table.addListener(SWT.PaintItem, new Listener() {
-		// int[] percents = new int[] { 50, 30, 5, 15 };
-		//
-		// public void handleEvent(Event event) {
-		// Display display = f_finder.getDisplay();
-		// if (event.index == 1) {
-		// GC gc = event.gc;
-		// TableItem item = (TableItem) event.item;
-		// int index = table.indexOf(item);
-		// int percent = percents[index];
-		// Color foreground = gc.getForeground();
-		// Color background = gc.getBackground();
-		// gc.setForeground(display
-		// .getSystemColor(SWT.COLOR_RED));
-		// gc.setBackground(display
-		// .getSystemColor(SWT.COLOR_YELLOW));
-		// int width = (column2.getWidth() - 1) * percent
-		// / 100;
-		// gc.fillGradientRectangle(event.x, event.y, width,
-		// event.height, true);
-		// Rectangle rect2 = new Rectangle(event.x, event.y,
-		// width - 1, event.height - 1);
-		// gc.drawRectangle(rect2);
-		// gc.setForeground(display
-		// .getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-		// String text = percent + "%";
-		// Point size = event.gc.textExtent(text);
-		// int offset = Math.max(0,
-		// (event.height - size.y) / 2);
-		// gc.drawText(text, event.x + 2, event.y + offset,
-		// true);
-		// gc.setForeground(background);
-		// gc.setBackground(foreground);
-		// }
-		// }
-		// });
-		//
-		// }
-		// });
+		// top
+		
+		Composite finderC = new Composite(sf, SWT.NONE);
+		finderC.setLayout(new GridLayout());
+
+		final Link li = new Link(finderC, SWT.WRAP);
+		li
+				.setText("<A HREF=\"select\">Project</A> > <A HREF=\"deselect\">Importance</A>");
+		li.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		f_finder = new Finder(finderC, SWT.NONE);
+		f_finder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		f_finder.addColumn(f_columnC);
+		
+		// bottom
+		
+		TabFolder folder = new TabFolder(sf, SWT.NONE);
+		TabItem tabTable = new TabItem(folder, SWT.NONE);
+		tabTable.setText("Table");
+		TabItem tabGraph = new TabItem(folder, SWT.NONE);
+		tabGraph.setText("Graph");
+		
 
 		/*
 		 * Findings for the project
 		 */
 
-		final Composite topSash = new Composite(sf, SWT.NONE);
-		topSash.setLayout(new GridLayout());
+//		final Composite topSash = new Composite(sf, SWT.NONE);
+//		topSash.setLayout(new GridLayout());
+//
+//		final Composite findingsBar = new Composite(topSash, SWT.NONE);
+//		final GridLayout findingsBarLayout = new GridLayout();
+//		findingsBarLayout.numColumns = 4;
+//		findingsBar.setLayout(findingsBarLayout);
+//		findingsBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+//				false));
+//
+//		final ToolBar organizeByBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
+//		final ToolItem organizations = new ToolItem(organizeByBar, SWT.PUSH);
+//		organizations.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
+//		organizations
+//				.setToolTipText("Define how findings are organized within this view");
+//
+//		final Label byLabel = new Label(findingsBar, SWT.NONE);
+//		byLabel.setText("by");
+//		final Combo organizeByCombo = new Combo(findingsBar, SWT.DROP_DOWN
+//				| SWT.READ_ONLY);
+//
+//		/*
+//		 * Toolbar for analysis findings
+//		 */
+//
+//		final ToolBar toolBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
+//		toolBar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+//
+//		final ToolItem filter = new ToolItem(toolBar, SWT.DROP_DOWN);
+//		filter.setImage(SLImages.getImage(SLImages.IMG_FILTER));
+//		filter
+//				.setToolTipText("Configure the filters to be applied to this view");
+//		filter.setText("Filters");
+//
+//		new ToolItem(toolBar, SWT.SEPARATOR);
+//
+//		final ToolItem export = new ToolItem(toolBar, SWT.PUSH);
+//		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+//		export.setToolTipText("Export findings to a file");
+//		export.setText("Export");
+//
+//		final Menu toolBarMenu = new Menu(findingsPage.getShell(), SWT.POP_UP);
+//		final MenuItem showText = new MenuItem(toolBarMenu, SWT.CHECK);
+//		showText.setText("Show Text");
+//		showText.setSelection(true);
+//		showText.addListener(SWT.Selection, new Listener() {
+//			public void handleEvent(Event event) {
+//				if (showText.getSelection()) {
+//					filter.setText("Filters");
+//					export.setText("Export");
+//				} else {
+//					filter.setText("");
+//					export.setText("");
+//				}
+//				topSash.layout();
+//			}
+//		});
+//		findingsBar.setMenu(toolBarMenu);
+//		organizeByBar.setMenu(toolBarMenu);
+//		toolBar.setMenu(toolBarMenu);
+//		byLabel.setMenu(toolBarMenu);
+//
+//		ExpandBar bar = new ExpandBar(sf, SWT.V_SCROLL);
+//		int barIndex = 0;
+//		// Second item
+//		final Composite detailsComp = new Composite(bar, SWT.NONE);
+//		final ExpandItem detailsItem = new ExpandItem(bar, SWT.NONE, barIndex++);
+//		detailsItem.setText("Details");
+//		detailsItem.setControl(detailsComp);
+//		detailsItem.setImage(SLImages.getImage(SLImages.IMG_DETAILS));
+//
+//		// Second item
+//		final Composite logComp = new Composite(bar, SWT.NONE);
+//		final ExpandItem logItem = new ExpandItem(bar, SWT.NONE, barIndex++);
+//		logItem.setText("Log");
+//		logItem.setControl(logComp);
+//		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
 
-		final Composite findingsBar = new Composite(topSash, SWT.NONE);
-		final GridLayout findingsBarLayout = new GridLayout();
-		findingsBarLayout.numColumns = 4;
-		findingsBar.setLayout(findingsBarLayout);
-		findingsBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
-
-		final ToolBar organizeByBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
-		final ToolItem organizations = new ToolItem(organizeByBar, SWT.PUSH);
-		organizations.setImage(SLImages.getImage(SLImages.IMG_CATEGORY));
-		organizations
-				.setToolTipText("Define how findings are organized within this view");
-
-		final Label byLabel = new Label(findingsBar, SWT.NONE);
-		byLabel.setText("by");
-		final Combo organizeByCombo = new Combo(findingsBar, SWT.DROP_DOWN
-				| SWT.READ_ONLY);
-
-		/*
-		 * Toolbar for analysis findings
-		 */
-
-		final ToolBar toolBar = new ToolBar(findingsBar, SWT.HORIZONTAL);
-		toolBar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
-
-		final ToolItem filter = new ToolItem(toolBar, SWT.DROP_DOWN);
-		filter.setImage(SLImages.getImage(SLImages.IMG_FILTER));
-		filter
-				.setToolTipText("Configure the filters to be applied to this view");
-		filter.setText("Filters");
-
-		new ToolItem(toolBar, SWT.SEPARATOR);
-
-		final ToolItem export = new ToolItem(toolBar, SWT.PUSH);
-		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
-		export.setToolTipText("Export findings to a file");
-		export.setText("Export");
-
-		final Menu toolBarMenu = new Menu(findingsPage.getShell(), SWT.POP_UP);
-		final MenuItem showText = new MenuItem(toolBarMenu, SWT.CHECK);
-		showText.setText("Show Text");
-		showText.setSelection(true);
-		showText.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (showText.getSelection()) {
-					filter.setText("Filters");
-					export.setText("Export");
-				} else {
-					filter.setText("");
-					export.setText("");
-				}
-				topSash.layout();
-			}
-		});
-		findingsBar.setMenu(toolBarMenu);
-		organizeByBar.setMenu(toolBarMenu);
-		toolBar.setMenu(toolBarMenu);
-		byLabel.setMenu(toolBarMenu);
-
-		ExpandBar bar = new ExpandBar(sf, SWT.V_SCROLL);
-		int barIndex = 0;
-		// Second item
-		final Composite detailsComp = new Composite(bar, SWT.NONE);
-		final ExpandItem detailsItem = new ExpandItem(bar, SWT.NONE, barIndex++);
-		detailsItem.setText("Details");
-		detailsItem.setControl(detailsComp);
-		detailsItem.setImage(SLImages.getImage(SLImages.IMG_DETAILS));
-
-		// Second item
-		final Composite logComp = new Composite(bar, SWT.NONE);
-		final ExpandItem logItem = new ExpandItem(bar, SWT.NONE, barIndex++);
-		logItem.setText("Log");
-		logItem.setControl(logComp);
-		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
-
-		sf.setWeights(new int[] { 5, 3, 1 });
-		bar.setSpacing(2);
+		sf.setWeights(new int[] { 4, 5 });
+		//bar.setSpacing(2);
 
 		pages.showPage(findingsPage);
 	}
