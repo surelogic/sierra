@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandBar;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
@@ -42,6 +44,111 @@ public final class FindingsView2 extends ViewPart {
 	private FindingsMediator f_mediator = null;
 
 	Finder f_finder;
+
+	Finder.IColumn f_columnC = new Finder.IColumn() {
+
+		public void createContents(Composite panel, int index) {
+			Composite rhs = panel;
+			GridLayout gl = new GridLayout();
+			gl.numColumns = 2;
+			rhs.setLayout(gl);
+
+			Group g = new Group(panel, SWT.NONE);
+			g.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false, false));
+			g.setText("Projects");
+			RowLayout layout = new RowLayout(SWT.VERTICAL);
+			layout.fill = true;
+			layout.wrap = false;
+			g.setLayout(layout);
+			Text t = new Text(g, SWT.SINGLE | SWT.SEARCH);
+			newReport(g, "Common", null, 250, 1260);
+			newReport(g, "Fluid", null, 1000, 1260);
+			newReport(g, "JEdit", null, 10, 1260);
+			g.pack();
+			rhs = new Composite(panel, SWT.NONE);
+			rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false, false));
+
+			RowLayout l = new RowLayout(SWT.VERTICAL);
+			l.fill = true;
+			rhs.setLayout(l);
+			getLabel("Age", null, rhs, f_listener);
+			getLabel("Audit Status", null, rhs, f_listener);
+			getLabel("Importance", null, rhs, f_listener);
+			getLabel("Finding Type", null, rhs, f_listener);
+			getLabel("Package", null, rhs, f_listener);
+			getLabel("Project", null, rhs, f_listener);
+			getLabel("Recent Activity", null, rhs, f_listener);
+			getLabel("Tool Provider", null, rhs, f_listener);
+		}
+
+		private void newButton(String text, Group g) {
+			Button b = new Button(g, SWT.CHECK);
+			b.setText(text);
+			b.setImage(SLImages
+					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		}
+
+		private void newReport(Composite parent, String text, Image image,
+				final int value, final int total) {
+			final Composite result = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			// layout.horizontalSpacing=0;
+			// layout.verticalSpacing=0;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.numColumns = 2;
+			result.setLayout(layout);
+
+			final Button b = new Button(result, SWT.CHECK);
+			b.setText(text);
+			b.setImage(image);
+			final Point bSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			b.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+			final Canvas c = new Canvas(result, SWT.NONE) {
+
+				@Override
+				public Point computeSize(int hint, int hint2, boolean changed) {
+					return new Point(100, bSize.y);
+				}
+			};
+			// c.setBackground(result.getShell().getDisplay()
+			// .getSystemColor(SWT.COLOR_LIST_SELECTION));
+			c.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			c.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					final Display display = result.getDisplay();
+					Point cSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					GC gc = e.gc;
+					Color foreground = gc.getForeground();
+					Color background = gc.getBackground();
+					gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
+					gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+					int percent = (int) (((double) value / (double) total) * 100);
+					int width = (cSize.x - 1) * percent / 100;
+					gc.fillGradientRectangle(0, 0, width, cSize.y, true);
+					Rectangle rect2 = new Rectangle(0, 0, cSize.x - 1,
+							cSize.y - 1);
+					gc.drawRectangle(rect2);
+					gc.setForeground(display
+							.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+					String text = value + " findings";
+					Point size = e.gc.textExtent(text);
+					int offset = Math.max(0, (cSize.y - size.y) / 2);
+					gc.drawText(text, 0 + 2, 0 + offset, true);
+					gc.setForeground(background);
+					gc.setBackground(foreground);
+					// Do some drawing
+					// Rectangle rect = ((Canvas) e.widget).getBounds();
+					// e.gc.setForeground(e.display
+					// .getSystemColor(SWT.COLOR_RED));
+					// e.gc.drawFocus(5, 5, rect.width - 10,
+					// rect.height - 10);
+					// e.gc.drawText(value + " findings", 0, 0);
+				}
+			});
+		}
+	};
 
 	Composite getLabel(String text, Image image, Composite parent,
 			final Listener onClick) {
@@ -68,7 +175,7 @@ public final class FindingsView2 extends ViewPart {
 
 			public void handleEvent(Event event) {
 				if (toggle) {
-					f_finder.emptyAfter(f_finder.getColumnIndex(iL));
+					// f_finder.emptyAfter(f_finder.getColumnIndex(iL));
 					result.setBackground(result.getShell().getDisplay()
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 					iL.setBackground(result.getShell().getDisplay()
@@ -92,126 +199,12 @@ public final class FindingsView2 extends ViewPart {
 
 	final Listener f_listener = new Listener() {
 		public void handleEvent(final Event event) {
-			f_finder.addColumn(new Finder.IColumn() {
-
-				public void createContents(Composite panel, int index) {
-					Composite rhs = panel;
-					if (event != null) {
-						GridLayout gl = new GridLayout();
-						gl.numColumns = 2;
-						rhs.setLayout(gl);
-
-						Group g = new Group(panel, SWT.NONE);
-						g.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP,
-								false, false));
-						g.setText("Projects");
-						RowLayout layout = new RowLayout(SWT.VERTICAL);
-						layout.fill = true;
-						layout.wrap = false;
-						g.setLayout(layout);
-						Text t = new Text(g, SWT.SINGLE | SWT.SEARCH);
-						newReport(g, "Common", null, 250, 1260);
-						newReport(g, "Fluid", null, 1000, 1260);
-						newReport(g, "JEdit", null, 10, 1260);
-						g.pack();
-						rhs = new Composite(panel, SWT.NONE);
-						rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP,
-								false, false));
-					}
-					RowLayout l = new RowLayout(SWT.VERTICAL);
-					l.fill = true;
-					rhs.setLayout(l);
-					// panel.setBackground(f_finder.getShell().getDisplay()
-					// .getSystemColor(SWT.COLOR_BLUE));
-					getLabel("Age", null, rhs, f_listener);
-					getLabel("Audit Status", null, rhs, f_listener);
-					getLabel("Importance", null, rhs, f_listener);
-					getLabel("Finding Type", null, rhs, f_listener);
-					getLabel("Package", null, rhs, f_listener);
-					getLabel("Project", null, rhs, f_listener);
-					getLabel("Recent Activity", null, rhs, f_listener);
-					getLabel("Tool Provider", null, rhs, f_listener);
-					rhs.setBackground(rhs.getShell().getDisplay()
-							.getSystemColor(SWT.COLOR_BLUE));
-				}
-
-				private void newButton(String text, Group g) {
-					Button b = new Button(g, SWT.CHECK);
-					b.setText(text);
-					b
-							.setImage(SLImages
-									.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-				}
-
-				private void newReport(Composite parent, String text,
-						Image image, final int value, final int total) {
-					final Composite result = new Composite(parent, SWT.NONE);
-					GridLayout layout = new GridLayout();
-					// layout.horizontalSpacing=0;
-					// layout.verticalSpacing=0;
-					layout.marginHeight = 0;
-					layout.marginWidth = 0;
-					layout.numColumns = 2;
-					result.setLayout(layout);
-
-					final Button b = new Button(result, SWT.CHECK);
-					b.setText(text);
-					b.setImage(image);
-					final Point bSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					b.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-							false));
-
-					final Canvas c = new Canvas(result, SWT.NONE) {
-
-						@Override
-						public Point computeSize(int hint, int hint2,
-								boolean changed) {
-							return new Point(100, bSize.y);
-						}
-					};
-					// c.setBackground(result.getShell().getDisplay()
-					// .getSystemColor(SWT.COLOR_LIST_SELECTION));
-					c.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-							false));
-					c.addPaintListener(new PaintListener() {
-						public void paintControl(PaintEvent e) {
-							final Display display = result.getDisplay();
-							Point cSize = c.computeSize(SWT.DEFAULT,
-									SWT.DEFAULT);
-							GC gc = e.gc;
-							Color foreground = gc.getForeground();
-							Color background = gc.getBackground();
-							gc.setForeground(display
-									.getSystemColor(SWT.COLOR_RED));
-							gc.setBackground(display
-									.getSystemColor(SWT.COLOR_YELLOW));
-							int percent = (int) (((double) value / (double) total) * 100);
-							int width = (cSize.x - 1) * percent / 100;
-							gc
-									.fillGradientRectangle(0, 0, width,
-											cSize.y, true);
-							Rectangle rect2 = new Rectangle(0, 0, cSize.x - 1,
-									cSize.y - 1);
-							gc.drawRectangle(rect2);
-							gc.setForeground(display
-									.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-							String text = value + " findings";
-							Point size = e.gc.textExtent(text);
-							int offset = Math.max(0, (cSize.y - size.y) / 2);
-							gc.drawText(text, 0 + 2, 0 + offset, true);
-							gc.setForeground(background);
-							gc.setBackground(foreground);
-							// Do some drawing
-							// Rectangle rect = ((Canvas) e.widget).getBounds();
-							// e.gc.setForeground(e.display
-							// .getSystemColor(SWT.COLOR_RED));
-							// e.gc.drawFocus(5, 5, rect.width - 10,
-							// rect.height - 10);
-							// e.gc.drawText(value + " findings", 0, 0);
-						}
-					});
-				}
-			});
+			Widget in = event.widget;
+			if (!(in instanceof Control))
+				f_finder.addColumn(f_columnC);
+			else
+				f_finder.addColumnAfter(f_columnC, f_finder
+						.getColumnIndex((Control) in));
 		}
 	};
 
@@ -290,7 +283,7 @@ public final class FindingsView2 extends ViewPart {
 		//
 		// }
 		// });
-		f_listener.handleEvent(null);
+		f_finder.addColumn(f_columnC);
 
 		/*
 		 * Findings for the project
