@@ -12,7 +12,7 @@ public class ToolBuilder {
 
 	private static final String INSERT_TOOL = "INSERT INTO TOOL (NAME,VERSION) VALUES (?,?)";
 
-	private static final String INSERT_FINDING_TYPE = "INSERT INTO FINDING_TYPE (TOOL_ID, MNEMONIC, MNEMONIC_DISPLAY, CATEGORY, LINK, INFO) VALUES (?,?,?,?,?,?)";
+	private static final String INSERT_ARTIFACT_TYPE = "INSERT INTO ARTIFACT_TYPE (TOOL_ID, MNEMONIC, MNEMONIC_DISPLAY, CATEGORY, LINK, INFO) VALUES (?,?,?,?,?,?)";
 
 	private final PreparedStatement insertTool;
 	private final PreparedStatement insertFindingType;
@@ -21,24 +21,24 @@ public class ToolBuilder {
 		try {
 			this.insertTool = conn.prepareStatement(INSERT_TOOL,
 					Statement.RETURN_GENERATED_KEYS);
-			this.insertFindingType = conn.prepareStatement(INSERT_FINDING_TYPE);
+			this.insertFindingType = conn.prepareStatement(INSERT_ARTIFACT_TYPE);
 		} catch (SQLException e) {
 			throw new IllegalStateException(
 					"Could not persist tool into database", e);
 		}
 	}
 
-	public FindingTypeBuilder build(String name, String version)
+	public ArtifactTypeBuilder build(String name, String version)
 			throws SQLException {
 		insertTool.setString(1, name);
 		insertTool.setString(2, version);
 		insertTool.executeUpdate();
 		ResultSet set = insertTool.getGeneratedKeys();
 		set.next();
-		return new FindingTypeBuilder(set.getLong(1));
+		return new ArtifactTypeBuilder(set.getLong(1));
 	}
 
-	public class FindingTypeBuilder {
+	public class ArtifactTypeBuilder {
 		private final long toolId;
 		private String mnemonic;
 		private String mnemonicDisplay;
@@ -46,23 +46,23 @@ public class ToolBuilder {
 		private String link;
 		private String info;
 
-		public FindingTypeBuilder mnemonic(String mnemonic) {
+		public ArtifactTypeBuilder mnemonic(String mnemonic) {
 			this.mnemonic = mnemonic;
 			this.mnemonicDisplay = prettyPrint(mnemonic);
 			return this;
 		}
 
-		public FindingTypeBuilder category(String category) {
+		public ArtifactTypeBuilder category(String category) {
 			this.category = prettyPrint(category);
 			return this;
 		}
 
-		public FindingTypeBuilder link(String link) {
+		public ArtifactTypeBuilder link(String link) {
 			this.link = link;
 			return this;
 		}
 
-		public FindingTypeBuilder info(String info) {
+		public ArtifactTypeBuilder info(String info) {
 			this.info = info;
 			return this;
 		}
@@ -108,7 +108,7 @@ public class ToolBuilder {
 			return s;
 		}
 
-		private FindingTypeBuilder(long toolId) {
+		private ArtifactTypeBuilder(long toolId) {
 			this.toolId = toolId;
 		}
 

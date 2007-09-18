@@ -4,36 +4,64 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
+import com.surelogic.sierra.tool.message.ArtifactType;
+import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
+import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.Settings;
 
 public class FindingTypeManager {
 
-	private final PreparedStatement selectFindingType;
-	private final PreparedStatement selectFindingTypesByToolMnemonic;
-	private final PreparedStatement selectAllFindingTypes;
+	private final PreparedStatement selectArtifactTypesByFindingType;
+	private final PreparedStatement selectArtifactType;
+	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
+	private final PreparedStatement deleteArtifactTypesByFindingType;
+	private final PreparedStatement insertArtifactTypeFindingTypeRelation;
+	private final UpdateBaseMapper findingTypeMapper;
 
 	private FindingTypeManager(Connection conn) throws SQLException {
-		this.selectFindingType = conn
-				.prepareStatement("SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?");
-		this.selectFindingTypesByToolMnemonic = conn
-				.prepareStatement("SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?");
-		this.selectAllFindingTypes = conn
-				.prepareStatement("SELECT T.NAME, T.VERSION, FT.MNEMONIC,FT.CATEGORY,FT.MNEMONIC_DISPLAY FROM TOOL T, FINDING_TYPE FT WHERE FT.TOOL_ID = T.ID ORDER BY T.NAME,T.VERSION");
+		this.selectArtifactType = conn
+				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
+		this.selectArtifactTypesByFindingType = conn
+				.prepareStatement("SELECT AR.ID FROM FINDING_TYPE FT, ARTIFACT_TYPE_FINDING_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE FT.NAME = ? AND AFTR.FINDING_TYPE_ID = FT.ID AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
+		this.selectArtifactTypesByToolAndMnemonic = conn
+				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
+		this.deleteArtifactTypesByFindingType = conn
+				.prepareStatement("DELETE FROM ARTIFACT_TYPE_FINDING_TYPE_RELTN WHERE FINDING_TYPE_ID = ?");
+		this.insertArtifactTypeFindingTypeRelation = conn
+				.prepareStatement("INSERT INTO ARTIFACT_TYPE_FINDING_TYPE_RELTN (ARTIFACT_TYPE_ID,FINDING_TYPE_ID) VALUES (?,?)");
+		this.findingTypeMapper = new UpdateBaseMapper(
+				conn,
+				"INSERT INTO FINDING_TYPE (NAME,SHORT_MESSAGE,INFO) VALUES (?,?,?)",
+				"SELECT ID,SHORT_MESSAGE,INFO FROM FINDING_TYPE WHERE NAME = ?",
+				"DELETE FROM FINDING_TYPE WHERE ID = ?",
+				"UPDATE FINDING_TYPE SET SHORT_MESSAGE = ?, INFO = ? WHERE ID = ?");
 	}
 
-	public Long getFindingTypeId(String tool, String version, String mnemonic)
+	public Long getFindingTypeId(String name) throws SQLException {
+		FindingTypeRecord ft = newRecord();
+		ft.setName(name);
+		if (ft.select()) {
+			return ft.getId();
+		}
+		return null;
+	}
+
+	public Long getArtifactTypeId(String tool, String version, String mnemonic)
 			throws SQLException {
-		selectFindingType.setString(1, tool);
-		selectFindingType.setString(2, version);
-		selectFindingType.setString(3, mnemonic);
-		ResultSet set = selectFindingType.executeQuery();
+		selectArtifactType.setString(1, tool);
+		selectArtifactType.setString(2, version);
+		selectArtifactType.setString(3, mnemonic);
+		ResultSet set = selectArtifactType.executeQuery();
 		if (set.next()) {
 			return set.getLong(1);
 		} else {
@@ -41,55 +69,76 @@ public class FindingTypeManager {
 		}
 	}
 
-	public Map<String, Map<String, Collection<FindingTypeDisplay>>> getFindingTypes()
+	private Collection<Long> getArtifactTypes(String tool, String mnemonic)
 			throws SQLException {
-		Map<String, Map<String, Collection<FindingTypeDisplay>>> retMap = new HashMap<String, Map<String, Collection<FindingTypeDisplay>>>();
-		ResultSet set = selectAllFindingTypes.executeQuery();
-		String tool = null;
-		String version = null;
-		Collection<FindingTypeDisplay> fts = null;
+		List<Long> ids = new LinkedList<Long>();
+		selectArtifactTypesByToolAndMnemonic.setString(1, tool);
+		selectArtifactTypesByToolAndMnemonic.setString(2, mnemonic);
+		ResultSet set = selectArtifactTypesByToolAndMnemonic.executeQuery();
 		while (set.next()) {
-			int idx = 1;
-			String nextTool = set.getString(idx++);
-			String nextVersion = set.getString(idx++);
-			if (!nextTool.equals(tool) || !nextVersion.equals(version)) {
-				tool = nextTool;
-				version = nextVersion;
-				fts = new ArrayList<FindingTypeDisplay>();
-				Map<String, Collection<FindingTypeDisplay>> versionMap = retMap
-						.get(tool);
-				if (versionMap == null) {
-					versionMap = new HashMap<String, Collection<FindingTypeDisplay>>();
-					retMap.put(tool, versionMap);
-				}
-				versionMap.put(version, fts);
-			}
-			fts.add(new FindingTypeDisplay(new FindingTypeKey(tool, version,
-					set.getString(idx++)), set.getString(idx++), set
-					.getString(idx++)));
+			ids.add(set.getLong(1));
 		}
-		return retMap;
+		return ids;
 	}
 
 	public MessageFilter getMessageFilter(Settings settings)
 			throws SQLException {
 		if (settings != null) {
-			Collection<FindingTypeFilter> filters = settings.getRuleFilter();
-			Map<Long, FindingTypeFilter> map = new HashMap<Long, FindingTypeFilter>(
+			Collection<FindingTypeFilter> filters = settings.getFilter();
+			Map<Long, FindingTypeFilter> findingMap = new HashMap<Long, FindingTypeFilter>(
 					filters.size());
+			Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
+					filters.size() * 2);
+			FindingTypeRecord ft = newRecord();
 			for (FindingTypeFilter filter : filters) {
-				selectFindingTypesByToolMnemonic.setString(1, filter.getTool());
-				selectFindingTypesByToolMnemonic.setString(2, filter
-						.getMnemonic());
-				ResultSet set = selectFindingTypesByToolMnemonic.executeQuery();
+				ft.setName(filter.getName());
+				if (ft.select()) {
+					findingMap.put(ft.getId(), filter);
+				}
+				selectArtifactTypesByFindingType.setString(1, filter.getName());
+				ResultSet set = selectArtifactTypesByFindingType.executeQuery();
 				while (set.next()) {
-					map.put(set.getLong(1), filter);
+					artifactMap.put(set.getLong(1), filter);
 				}
 			}
-			return new MessageFilter(map);
+			return new MessageFilter(findingMap, artifactMap);
 		} else {
 			Map<Long, FindingTypeFilter> map = Collections.emptyMap();
-			return new MessageFilter(map);
+			return new MessageFilter(map, map);
+		}
+	}
+
+	public void updateFindingTypes(FindingTypes type) throws SQLException {
+		FindingTypeRecord rec = newRecord();
+		for (FindingType ft : type.getFindingType()) {
+			rec.setName(ft.getName());
+			rec.setInfo(ft.getInfo());
+			rec.setShortMessage(ft.getShortMessage());
+			if (rec.select()) {
+				rec.update();
+				deleteArtifactTypesByFindingType.setLong(1, rec.getId());
+				deleteArtifactTypesByFindingType.executeUpdate();
+			} else {
+				rec.insert();
+			}
+			for (ArtifactType at : ft.getArtifact()) {
+				if (at.getVersion() != null) {
+					insertArtifactTypeFindingTypeRelation.setLong(1,
+							getArtifactTypeId(at.getTool(), at.getVersion(), at
+									.getMnemonic()));
+					insertArtifactTypeFindingTypeRelation.setLong(2, rec
+							.getId());
+					insertArtifactTypeFindingTypeRelation.executeUpdate();
+				} else {
+					for (Long id : getArtifactTypes(at.getTool(), at
+							.getMnemonic())) {
+						insertArtifactTypeFindingTypeRelation.setLong(1, id);
+						insertArtifactTypeFindingTypeRelation.setLong(2, rec
+								.getId());
+						insertArtifactTypeFindingTypeRelation.executeUpdate();
+					}
+				}
+			}
 		}
 	}
 
@@ -97,4 +146,9 @@ public class FindingTypeManager {
 			throws SQLException {
 		return new FindingTypeManager(conn);
 	}
+
+	private FindingTypeRecord newRecord() {
+		return new FindingTypeRecord(findingTypeMapper);
+	}
+
 }

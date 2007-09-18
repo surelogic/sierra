@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.sierra.jdbc.tool.ToolBuilder;
-import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
+import com.surelogic.sierra.jdbc.tool.ToolBuilder.ArtifactTypeBuilder;
 
 public class FindBugs1_2_1ToolInfoGenerator {
 
@@ -37,7 +37,7 @@ public class FindBugs1_2_1ToolInfoGenerator {
 		} catch (SAXException e) {
 			throw new IllegalStateException("Could not create SAX parser.", e);
 		}
-		FindingTypeBuilder t;
+		ArtifactTypeBuilder t;
 		try {
 			t = ToolBuilder.getBuilder(conn).build("FindBugs", "1.2.1");
 		} catch (SQLException e) {

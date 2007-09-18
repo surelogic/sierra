@@ -17,19 +17,24 @@ public class MessageFilter {
 	private Map<Long, Importance> importances;
 	private Map<Long, Integer> deltas;
 
-	MessageFilter(Map<Long, FindingTypeFilter> filterMap) {
-		filtered = new HashSet<Long>(filterMap.size());
-		importances = new HashMap<Long, Importance>(filterMap.size());
-		deltas = new HashMap<Long, Integer>(filterMap.size());
-		for (Entry<Long, FindingTypeFilter> entry : filterMap.entrySet()) {
+	MessageFilter(Map<Long, FindingTypeFilter> findingMap,
+			Map<Long, FindingTypeFilter> artifactMap) {
+		filtered = new HashSet<Long>(artifactMap.size());
+		importances = new HashMap<Long, Importance>(findingMap.size());
+		deltas = new HashMap<Long, Integer>(findingMap.size());
+		for (Entry<Long, FindingTypeFilter> entry : findingMap.entrySet()) {
 			FindingTypeFilter ftf = entry.getValue();
 			Importance i;
-			if (ftf.isFiltered()) {
-				filtered.add(entry.getKey());
-			} else if ((i = ftf.getImportance()) != null) {
+			if ((i = ftf.getImportance()) != null) {
 				importances.put(entry.getKey(), i);
 			} else {
 				deltas.put(entry.getKey(), ftf.getDelta());
+			}
+		}
+		for (Entry<Long, FindingTypeFilter> entry : artifactMap.entrySet()) {
+			FindingTypeFilter ftf = entry.getValue();
+			if (ftf.isFiltered()) {
+				filtered.add(entry.getKey());
 			}
 		}
 	}

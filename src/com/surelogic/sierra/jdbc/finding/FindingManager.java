@@ -31,7 +31,6 @@ import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
-import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
@@ -83,15 +82,14 @@ public abstract class FindingManager {
 		updateMatchRevision = conn
 				.prepareStatement("UPDATE LOCATION_MATCH SET REVISION = ? WHERE FINDING_ID = ? AND REVISION IS NULL");
 		findLocalMerges = conn
-				.prepareStatement("SELECT M.FINDING_ID,M.PACKAGE_NAME,M.CLASS_NAME,M.HASH,T.NAME,T.VERSION, FT.MNEMONIC"
-						+ " FROM LOCATION_MATCH NEW_M, FINDING F, LOCATION_MATCH M, FINDING_TYPE FT, TOOL T"
+				.prepareStatement("SELECT M.FINDING_ID,M.PACKAGE_NAME,M.CLASS_NAME,M.HASH,FT.NAME"
+						+ " FROM LOCATION_MATCH NEW_M, FINDING F, LOCATION_MATCH M, FINDING_TYPE FT"
 						+ " WHERE NEW_M.PROJECT_ID = ? AND"
 						+ " NEW_M.REVISION IS NULL AND"
 						+ " F.ID = NEW_M.FINDING_ID AND"
 						+ " F.IS_READ = 'Y' AND"
 						+ " M.FINDING_ID = F.ID AND"
-						+ " FT.ID = M.FINDING_TYPE_ID AND"
-						+ " T.ID = FT.TOOL_ID" + " ORDER BY FINDING_ID");
+						+ " FT.ID = M.FINDING_TYPE_ID" + " ORDER BY FINDING_ID");
 		findLocalAudits = conn
 				.prepareStatement("SELECT F.UID,A.DATE_TIME,A.EVENT,A.VALUE"
 						+ " FROM AUDIT A, FINDING F"
@@ -380,8 +378,7 @@ public abstract class FindingManager {
 			m.setPackageName(set.getString(idx++));
 			m.setClassName(set.getString(idx++));
 			m.setHash(set.getLong(idx++));
-			m.setFindingType(new FindingType(set.getString(idx++), set
-					.getString(idx++), set.getString(idx++)));
+			m.setFindingType(set.getString(idx++));
 			matches.add(m);
 		}
 
@@ -544,9 +541,8 @@ public abstract class FindingManager {
 		pk.setClassName(match.getClassName());
 		pk.setPackageName(match.getPackageName());
 		pk.setHash(match.getHash());
-		FindingType ft = match.getFindingType();
-		pk.setFindingTypeId(ftManager.getFindingTypeId(ft.getTool(), ft
-				.getVersion(), ft.getMnemonic()));
+		String ft = match.getFindingType();
+		pk.setFindingTypeId(ftManager.getFindingTypeId(ft));
 	}
 
 	private static class ArtifactResult {

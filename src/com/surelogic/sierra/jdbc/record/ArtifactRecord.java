@@ -30,7 +30,7 @@ public final class ArtifactRecord extends LongRecord {
 		this.scanId = scanId;
 	}
 
-	public Long getFindingTypeId() {
+	public Long getArtifactTypeId() {
 		return findingTypeId;
 	}
 

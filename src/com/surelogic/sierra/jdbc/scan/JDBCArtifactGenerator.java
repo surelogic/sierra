@@ -1,7 +1,6 @@
 package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +34,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private static final Logger log = SLLogger
 			.getLoggerFor(JDBCArtifactGenerator.class);
 
-	private static final String TOOL_ID_SELECT = "SELECT FT.ID FROM TOOL T, FINDING_TYPE FT WHERE T.NAME = ? AND T.VERSION = ? AND FT.TOOL_ID = T.ID AND FT.MNEMONIC = ?";
-
 	private static final int COMMIT_SIZE = 700;
 
 	private final Connection conn;
@@ -46,8 +43,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
 	private final Runnable callback;
-
-	private final PreparedStatement toolIdSelect;
 
 	private final List<ArtifactRecord> artifacts;
 	private final List<ClassMetricRecord> classMetrics;
@@ -72,7 +67,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.factory = factory;
 		this.manager = manager;
 		this.callback = callback;
-		this.toolIdSelect = conn.prepareStatement(TOOL_ID_SELECT);
 		this.filter = filter;
 		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
@@ -89,12 +83,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	public void finished() {
 		persist();
-		try {
-			toolIdSelect.close();
-		} catch (SQLException e) {
-			quietlyRollback();
-			throw new ScanPersistenceException(e);
-		}
 		callback.run();
 	}
 
@@ -247,7 +235,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 		public void build() {
-			if (filter.accept(artifact.getFindingTypeId())) {
+			if (filter.accept(artifact.getArtifactTypeId())) {
 				artifact.setPrimary(addSource(pSource));
 				for (SourceRecord source : aSources) {
 					SourceRecord currentSource = addSource(source);
@@ -269,8 +257,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		public ArtifactBuilder findingType(String tool, String version,
 				String mnemonic) {
 			try {
-				artifact.setFindingTypeId(ftMan.getFindingTypeId(tool, version,
-						mnemonic));
+				artifact.setFindingTypeId(ftMan.getArtifactTypeId(tool,
+						version, mnemonic));
 			} catch (SQLException e) {
 				quietlyRollback();
 				throw new ScanPersistenceException(e);

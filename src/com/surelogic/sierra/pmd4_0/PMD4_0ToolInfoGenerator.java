@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.sierra.jdbc.tool.ToolBuilder;
-import com.surelogic.sierra.jdbc.tool.ToolBuilder.FindingTypeBuilder;
+import com.surelogic.sierra.jdbc.tool.ToolBuilder.ArtifactTypeBuilder;
 
 /**
  * Generates the tool and finding type information for pmd. The rulesets were
@@ -42,7 +42,7 @@ public class PMD4_0ToolInfoGenerator extends DefaultHandler {
 
 	private String ruleset;
 
-	private FindingTypeBuilder rule;
+	private ArtifactTypeBuilder rule;
 
 	// Indicates that we are currently parsing the description attribute.
 	private boolean isInfo;
