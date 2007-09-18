@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Artifact {
 	public static class Builder {
 
-		private FindingType findingType;
+		private ArtifactType artifactType;
 		private Priority priority;
 		private Severity severity;
 
@@ -29,7 +29,10 @@ public class Artifact {
 		}
 
 		public Builder findingType(String tool, String version, String mnemonic) {
-			this.findingType = new FindingType(tool, version, mnemonic);
+			this.artifactType = new ArtifactType();
+			artifactType.setTool(tool);
+			artifactType.setVersion(version);
+			artifactType.setMnemonic(mnemonic);
 			return this;
 		}
 
@@ -66,7 +69,7 @@ public class Artifact {
 		}
 
 		private void clear() {
-			this.findingType = null;
+			this.artifactType = null;
 			this.priority = null;
 			this.severity = null;
 			this.sources.clear();
@@ -75,7 +78,7 @@ public class Artifact {
 		}
 	}
 
-	private FindingType findingType;
+	private ArtifactType artifactType;
 	private SourceLocation primarySourceLocation;
 	private List<SourceLocation> additionalSources;
 	private Priority priority;
@@ -87,7 +90,7 @@ public class Artifact {
 	}
 
 	public Artifact(Builder builder) {
-		this.findingType = builder.findingType;
+		this.artifactType = builder.artifactType;
 		this.primarySourceLocation = builder.primarySourceLocation;
 		this.additionalSources = new ArrayList<SourceLocation>(builder.sources);
 		if (builder.priority != null) {
@@ -99,8 +102,12 @@ public class Artifact {
 		this.message = builder.message;
 	}
 
-	public FindingType getFindingType() {
-		return findingType;
+	public ArtifactType getArtifactType() {
+		return artifactType;
+	}
+
+	public void setArtifactType(ArtifactType artifactType) {
+		this.artifactType = artifactType;
 	}
 
 	public SourceLocation getPrimarySourceLocation() {
@@ -121,10 +128,6 @@ public class Artifact {
 
 	public String getMessage() {
 		return message;
-	}
-
-	public void setFindingType(FindingType findingType) {
-		this.findingType = findingType;
 	}
 
 	public void setPrimarySourceLocation(SourceLocation primarySourceLocation) {
@@ -156,7 +159,7 @@ public class Artifact {
 				+ ((additionalSources == null) ? 0 : additionalSources
 						.hashCode());
 		result = prime * result
-				+ ((findingType == null) ? 0 : findingType.hashCode());
+				+ ((artifactType == null) ? 0 : artifactType.hashCode());
 		result = prime * result + ((message == null) ? 0 : message.hashCode());
 		result = prime
 				* result
@@ -183,10 +186,10 @@ public class Artifact {
 				return false;
 		} else if (!additionalSources.equals(other.additionalSources))
 			return false;
-		if (findingType == null) {
-			if (other.findingType != null)
+		if (artifactType == null) {
+			if (other.artifactType != null)
 				return false;
-		} else if (!findingType.equals(other.findingType))
+		} else if (!artifactType.equals(other.artifactType))
 			return false;
 		if (message == null) {
 			if (other.message != null)

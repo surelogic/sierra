@@ -53,7 +53,8 @@ public class MessageWarehouse {
 
 	private MessageWarehouse() {
 		try {
-			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class);
+			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class,
+					FindingTypes.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -201,6 +202,24 @@ public class MessageWarehouse {
 		}
 	}
 
+	public void writeFindingTypes(FindingTypes types, OutputStream out) {
+		try {
+			marshaller.marshal(types, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
+	public void writeFindingTypes(FindingTypes types, Writer out) {
+		try {
+			marshaller.marshal(types, out);
+		} catch (JAXBException e) {
+			log.log(Level.SEVERE, "Error marshalling parser output to file "
+					+ e);
+		}
+	}
+
 	/**
 	 * Return the {@link ToolOutput} object located at src.
 	 * 
@@ -289,6 +308,24 @@ public class MessageWarehouse {
 	public Settings fetchSettings(Reader reader) {
 		try {
 			return (Settings) unmarshaller.unmarshal(reader);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fecth settings output", e);
+		}
+		return null;
+	}
+
+	public FindingTypes fetchFindingTypes(InputStream in) {
+		try {
+			return (FindingTypes) unmarshaller.unmarshal(in);
+		} catch (JAXBException e) {
+			log.log(Level.WARNING, "Could not fecth settings output", e);
+		}
+		return null;
+	}
+
+	public FindingTypes fetchFindingTypes(Reader reader) {
+		try {
+			return (FindingTypes) unmarshaller.unmarshal(reader);
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fecth settings output", e);
 		}
@@ -533,8 +570,8 @@ public class MessageWarehouse {
 	private static void readArtifact(Artifact artifact, ArtifactBuilder builder) {
 		builder.severity(artifact.getSeverity()).priority(
 				artifact.getPriority()).message(artifact.getMessage());
-		builder.findingType(artifact.getFindingType().getTool(), artifact
-				.getFindingType().getVersion(), artifact.getFindingType()
+		builder.findingType(artifact.getArtifactType().getTool(), artifact
+				.getArtifactType().getVersion(), artifact.getArtifactType()
 				.getMnemonic());
 		readPrimarySource(builder, artifact.getPrimarySourceLocation());
 		Collection<SourceLocation> sources = artifact.getAdditionalSources();

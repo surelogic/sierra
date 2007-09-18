@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.surelogic.com/sierra/1.0" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.surelogic.com/sierra/1.0">
+    <annotation>
+    	<documentation>
+    		This is the general schema for xml types used by Sierra,
+    		both in configuration documents, and by web services. It
+    		does not currently contain all xml types used by Sierra, as
+    		this is a work in progress. The Java types corresponding to
+    		xml types described in this document, however, should be
+    		kept up to date.
+    	</documentation>
+    </annotation>
+    <complexType name="FindingType">
+		<sequence>
+			<element name="artifact" type="tns:ArtifactType"
+				maxOccurs="unbounded" minOccurs="1">
+			</element>
+			<element name="shortMessage" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="info" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+    <complexType name="ArtifactType">
+    	<sequence minOccurs="0" maxOccurs="1">
+    		<any></any>
+    	</sequence>
+    	<attribute name="tool" type="string" use="required"></attribute>
+    	<attribute name="version" type="string"></attribute>
+    	<attribute name="mnemonic" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="Category">
+		<sequence>
+			<element name="findingType" type="string"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+			<element name="name" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="parent" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="description" type="string" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+
+
+	<complexType name="FindingTypes">
+		<sequence>
+			<element name="findingType" type="tns:FindingType" maxOccurs="unbounded" minOccurs="0"></element>
+            <element name="category" type="tns:Category" maxOccurs="unbounded" minOccurs="0"></element>
+        </sequence>
+	</complexType>
+
+	<element name="findingTypes" type="tns:FindingTypes"></element>
+
+	<complexType name="Settings">
+		<sequence>
+			<element name="filter" type="tns:FindingTypeFilter" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+	
+    <element name="settings" type="tns:Settings"></element>
+
+    <complexType name="FindingTypeFilter">
+    	<sequence>
+    		<element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<choice maxOccurs="1" minOccurs="1">
+    			<element name="importance" type="tns:Importance"></element>
+    			<element name="delta" type="int"></element>
+    			<element name="filtered" type="boolean"></element>
+    		</choice>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="Importance">
+    	<restriction base="string">
+    		<enumeration value="IRRELEVANT"></enumeration>
+    		<enumeration value="LOW"></enumeration>
+    		<enumeration value="MEDIUM"></enumeration>
+    		<enumeration value="HIGH"></enumeration>
+    		<enumeration value="CRITICAL"></enumeration>
+    	</restriction>
+    </simpleType>
+</schema>

@@ -10,18 +10,18 @@ public class Match {
 	private String packageName;
 	private String className;
 	private Long hash;
-	private FindingType findingType;
+	private String findingType;
 
 	public Match() {
 		// Do nothing
 	}
 
-	public Match(String packageName, String className, Long hash, String tool,
-			String version, String mnemonic) {
+	public Match(String packageName, String className, Long hash,
+			String findingType) {
 		this.packageName = packageName;
 		this.className = className;
 		this.hash = hash;
-		this.findingType = new FindingType(tool, version, mnemonic);
+		this.findingType = findingType;
 	}
 
 	public String getPackageName() {
@@ -48,11 +48,11 @@ public class Match {
 		this.hash = hash;
 	}
 
-	public FindingType getFindingType() {
+	public String getFindingType() {
 		return findingType;
 	}
 
-	public void setFindingType(FindingType findingType) {
+	public void setFindingType(String findingType) {
 		this.findingType = findingType;
 	}
 
