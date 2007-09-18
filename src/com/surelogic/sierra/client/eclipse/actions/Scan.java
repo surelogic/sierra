@@ -139,7 +139,7 @@ public final class Scan {
 			// files in a project
 
 			int scale = 5000;
-			int total = 5;
+			int total = 6;
 			SLProgressMonitorWrapper slProgressMonitorWrapper = null;
 			if (monitor != null) {
 				slProgressMonitorWrapper = new SLProgressMonitorWrapper(monitor);
@@ -170,7 +170,7 @@ public final class Scan {
 					return Status.CANCEL_STATUS;
 				} else {
 					try {
-						/* Start database entry */
+						 /* Start database entry */
 						ScanDocumentUtility.loadScanDocument(f_config
 								.getScanDocument(), slProgressMonitorWrapper);
 						/* Notify that scan was completed */
