@@ -363,7 +363,7 @@ public final class FindingsView2 extends ViewPart {
 //		logItem.setControl(logComp);
 //		logItem.setImage(SLImages.getImage(SLImages.IMG_COMMENT));
 
-		sf.setWeights(new int[] { 4, 5 });
+		sf.setWeights(new int[] { 3, 5 });
 		//bar.setSpacing(2);
 
 		pages.showPage(findingsPage);
