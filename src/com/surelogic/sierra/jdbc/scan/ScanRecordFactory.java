@@ -30,7 +30,7 @@ public class ScanRecordFactory {
 	private static final String SCAN_UPDATE = "UPDATE SCAN SET STATUS = ? WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String SCAN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_SCAN_RELTN (QUALIFIER_ID,SCAN_ID) VALUES(?,?)";
-	private static final String CLASS_METRIC_INSERT = "INSERT INTO CLASS_METRIC (SCAN_ID, COMPILATION_UNIT_ID, LINES_OF_CODE) VALUES (?,?,?)";
+	private static final String CLASS_METRIC_INSERT = "INSERT INTO METRIC_CU (SCAN_ID, COMPILATION_UNIT_ID, LINES_OF_CODE) VALUES (?,?,?)";
 	private final Connection conn;
 
 	private final RecordMapper compUnitMapper;
