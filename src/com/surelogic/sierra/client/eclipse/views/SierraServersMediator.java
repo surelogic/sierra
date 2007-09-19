@@ -267,7 +267,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	private static void openInBrowser(SierraServer server) {
-		final String urlString = server.toURLString() + "/sierra";
+		final String urlString = server.toURLAuthString();
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
