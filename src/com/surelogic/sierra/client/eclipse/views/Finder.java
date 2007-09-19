@@ -35,7 +35,7 @@ public class Finder extends ScrolledComposite {
 
 		setExpandVertical(true);
 		setExpandHorizontal(true);
-		setAlwaysShowScrollBars(true);
+		setAlwaysShowScrollBars(false);
 
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
