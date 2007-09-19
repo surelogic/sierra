@@ -213,12 +213,12 @@ public class Finder extends ScrolledComposite {
 	/**
 	 * The width in pixels around the finder contents.
 	 */
-	private static final int BORDER = 3;
+	private static final int BORDER = 2;
 
 	/**
 	 * The vertical space between columns.
 	 */
-	private static final int PADDING = 3;
+	private static final int PADDING = 2;
 
 	/**
 	 * We directly manage the layout of the contents of the finder. This method

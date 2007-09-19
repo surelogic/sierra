@@ -140,7 +140,7 @@ public final class FindingsView extends ViewPart {
 		final ExpandItem detailsItem = new ExpandItem(bar, SWT.NONE, barIndex++);
 		detailsItem.setText("Details");
 		detailsItem.setControl(detailsComp);
-		detailsItem.setImage(SLImages.getImage(SLImages.IMG_DETAILS));
+		detailsItem.setImage(SLImages.getImage(SLImages.IMG_MAGNIFYING_GLASS));
 
 		// Second item
 		final Composite logComp = new Composite(bar, SWT.NONE);
