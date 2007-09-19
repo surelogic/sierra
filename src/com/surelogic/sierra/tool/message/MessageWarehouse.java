@@ -421,79 +421,87 @@ public class MessageWarehouse {
 					unmarshaller.unmarshal(xmlr, String.class);
 					xmlr.nextTag(); // move to toolOutput element.
 					xmlr.next(); // move to metrics
-					xmlr.require(START_ELEMENT, null, "metrics");
-					xmlr.nextTag(); // move to classMetric
-					// Unmarshal classMetric
-					MetricBuilder mBuilder = generator.metric();
 					int counter = 0;
-					while (xmlr.getEventType() == START_ELEMENT
-							&& xmlr.getLocalName().equals("class")) {
-						readClassMetric(unmarshaller.unmarshal(xmlr,
-								ClassMetric.class).getValue(), mBuilder);
+					if (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("metrics")) {
+						xmlr.require(START_ELEMENT, null, "metrics");
+						xmlr.nextTag(); // move to classMetric
+						// Unmarshal classMetric
+						MetricBuilder mBuilder = generator.metric();
+						while (xmlr.getEventType() == START_ELEMENT
+								&& xmlr.getLocalName().equals("class")) {
+							readClassMetric(unmarshaller.unmarshal(xmlr,
+									ClassMetric.class).getValue(), mBuilder);
 
-						if (++counter == COUNT) {
-							if (cancelled(monitor)) {
-								generator.rollback();
-								return;
-							} else {
-								work(monitor);
+							if (++counter == COUNT) {
+								if (cancelled(monitor)) {
+									generator.rollback();
+									return;
+								} else {
+									work(monitor);
+								}
+								counter = 0;
 							}
-							counter = 0;
-						}
-						if (xmlr.getEventType() == CHARACTERS) {
-							xmlr.next(); // skip the whitespace between
-							// <artifacts>s.
-						}
-					}
-
-					xmlr.nextTag();
-					xmlr.require(START_ELEMENT, null, "artifacts");
-					xmlr.nextTag();
-					// Unmarshal artifacts
-					ArtifactBuilder aBuilder = generator.artifact();
-					while (xmlr.getEventType() == START_ELEMENT
-							&& xmlr.getLocalName().equals("artifact")) {
-						readArtifact(unmarshaller.unmarshal(xmlr,
-								Artifact.class).getValue(), aBuilder);
-
-						if (xmlr.getEventType() == CHARACTERS) {
-							xmlr.next(); // skip the whitespace between
-							// <artifacts>s.
-						}
-						if (++counter == COUNT) {
-							if (cancelled(monitor)) {
-								generator.rollback();
-								return;
-							} else {
-								work(monitor);
+							if (xmlr.getEventType() == CHARACTERS) {
+								xmlr.next(); // skip the whitespace between
+								// <artifacts>s.
 							}
-							counter = 0;
 						}
+						xmlr.nextTag();
 					}
-					xmlr.nextTag();
-					xmlr.require(START_ELEMENT, null, "errors");
-					xmlr.nextTag();
-					// Unmarshal errors
-					ErrorBuilder eBuilder = generator.error();
-					while (xmlr.getEventType() == START_ELEMENT
+					if (xmlr.getEventType() == START_ELEMENT
+							&& xmlr.getLocalName().equals("artifacts")) {
+						xmlr.require(START_ELEMENT, null, "artifacts");
+						xmlr.nextTag();
+						// Unmarshal artifacts
+						ArtifactBuilder aBuilder = generator.artifact();
+						while (xmlr.getEventType() == START_ELEMENT
+								&& xmlr.getLocalName().equals("artifact")) {
+							readArtifact(unmarshaller.unmarshal(xmlr,
+									Artifact.class).getValue(), aBuilder);
+
+							if (xmlr.getEventType() == CHARACTERS) {
+								xmlr.next(); // skip the whitespace between
+								// <artifacts>s.
+							}
+							if (++counter == COUNT) {
+								if (cancelled(monitor)) {
+									generator.rollback();
+									return;
+								} else {
+									work(monitor);
+								}
+								counter = 0;
+							}
+						}
+						xmlr.nextTag();
+					}
+					if (xmlr.getEventType() == START_ELEMENT
 							&& xmlr.getLocalName().equals("errors")) {
-						readError(unmarshaller.unmarshal(xmlr, Error.class)
-								.getValue(), eBuilder);
-						if (monitor != null) {
-							monitor.worked(1);
-						}
-						if (xmlr.getEventType() == CHARACTERS) {
-							xmlr.next(); // skip the whitespace between
-							// <event>s.
-						}
-						if (++counter == COUNT) {
-							if (cancelled(monitor)) {
-								generator.rollback();
-								return;
-							} else {
-								work(monitor);
+						xmlr.require(START_ELEMENT, null, "errors");
+						xmlr.nextTag();
+						// Unmarshal errors
+						ErrorBuilder eBuilder = generator.error();
+						while (xmlr.getEventType() == START_ELEMENT
+								&& xmlr.getLocalName().equals("errors")) {
+							readError(unmarshaller.unmarshal(xmlr, Error.class)
+									.getValue(), eBuilder);
+							if (monitor != null) {
+								monitor.worked(1);
 							}
-							counter = 0;
+							if (xmlr.getEventType() == CHARACTERS) {
+								xmlr.next(); // skip the whitespace between
+								// <event>s.
+							}
+							if (++counter == COUNT) {
+								if (cancelled(monitor)) {
+									generator.rollback();
+									return;
+								} else {
+									work(monitor);
+								}
+								counter = 0;
+							}
 						}
 					}
 					if (monitor != null) {
