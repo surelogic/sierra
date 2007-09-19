@@ -59,9 +59,13 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private File errorsHolder;
 	private FileOutputStream errOut;
 
+	// private final Set<String> files;
+
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		this.parsedFile = parsedFile;
 		this.config = config;
+
+		// files = new HashSet<String>();
 
 		try {
 
@@ -79,6 +83,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 		}
 
 	}
+
+	// public void addFile(String fileName) {
+	// files.add(fileName);
+	// }
 
 	public void writeMetrics(File file) {
 		this.metricsFile = file;
@@ -103,12 +111,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	@Override
 	public void finished() {
 		try {
-			// File output = new File(parsedFile.getAbsolutePath());
 			OutputStream stream = new FileOutputStream(parsedFile);
 			stream = new GZIPOutputStream(stream, 4096);
 			OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
 			PrintWriter finalFile = new PrintWriter(osw);
-			// FileWriter finalFile = new FileWriter(parsedFile);
 			finalFile.write(XML_START);
 			finalFile.write('\n');
 			finalFile.write(RUN_START);
@@ -119,46 +125,53 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
 
-			BufferedReader in = new BufferedReader(new FileReader(metricsFile));
+			BufferedReader in;
 			String line = null;
-			while (null != (line = in.readLine())) {
-				finalFile.write(line);
-				finalFile.write("\n");
+
+			if (metricsFile != null && metricsFile.exists()) {
+				in = new BufferedReader(new FileReader(metricsFile));
+				while ((line = in.readLine()) != null) {
+					finalFile.write(line);
+					finalFile.write("\n");
+				}
+				in.close();
+				finalFile.flush();
 			}
-			in.close();
-			finalFile.flush();
 
-			finalFile.write(ARTIFACTS_START);
-			in = new BufferedReader(new FileReader(artifactsHolder));
-			line = null;
-			while (null != (line = in.readLine())) {
-				finalFile.write(line);
-				finalFile.write("\n");
+			if (artifactsHolder.exists()) {
+				finalFile.write(ARTIFACTS_START);
+				in = new BufferedReader(new FileReader(artifactsHolder));
+				line = null;
+				while ((line = in.readLine()) != null) {
+					finalFile.write(line);
+					finalFile.write("\n");
+				}
+				in.close();
+				finalFile.flush();
+				finalFile.write(ARTIFACTS_END);
 			}
-			in.close();
-			finalFile.flush();
 
-			finalFile.write(ARTIFACTS_END);
-			finalFile.write(ERROR_START);
-
-			in = new BufferedReader(new FileReader(errorsHolder));
-			line = null;
-			while (null != (line = in.readLine())) {
-				finalFile.write(line);
-				finalFile.write("\n");
+			if (artifactsHolder.exists()) {
+				finalFile.write(ERROR_START);
+				in = new BufferedReader(new FileReader(errorsHolder));
+				line = null;
+				while ((line = in.readLine()) != null) {
+					finalFile.write(line);
+					finalFile.write("\n");
+				}
+				in.close();
+				finalFile.flush();
+				finalFile.write(ERROR_END);
 			}
-			in.close();
-			finalFile.flush();
-
-			finalFile.write(ERROR_END);
 			finalFile.write(TOOL_OUTPUT_END);
 
 			File configOutput = File.createTempFile("config", "tmp");
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
+
 			in = new BufferedReader(new FileReader(configOutput));
 			line = null;
-			while (null != (line = in.readLine())) {
+			while ((line = in.readLine()) != null) {
 				finalFile.write(line);
 				finalFile.write("\n");
 			}
@@ -168,6 +181,39 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.close();
 			osw.close();
 			stream.close();
+
+			// // Create a buffer for reading the files
+			// byte[] buf = new byte[1024];
+			// try {
+			// // Create the ZIP file
+			// String outFilename = "C:/outfile.zip";
+			// ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+			// outFilename));
+
+			// for (String s : files) {
+
+			// FileInputStream zipIn = new FileInputStream(s);
+			//
+			// // Add ZIP entry to output stream.
+			// out.putNextEntry(new ZipEntry(s));
+			//
+			// // Transfer bytes from the file to the ZIP file
+			// int len;
+			// while ((len = zipIn.read(buf)) > 0) {
+			// out.write(buf, 0, len);
+			// }
+			//
+			// // Complete the entry
+			// out.closeEntry();
+			// zipIn.close();
+			// System.out.println(s);
+			// }
+			//
+			// // Complete the ZIP file
+			// out.close();
+			// } catch (IOException e) {
+			// // Testing
+			// }
 
 			// Delete temp files
 			errOut.close();
@@ -183,6 +229,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			throw new RuntimeException(e.getMessage());
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
+			throw new RuntimeException(e.getMessage());
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"Error when trying to generate the scan document", e);
 			throw new RuntimeException(e.getMessage());
 		}
 

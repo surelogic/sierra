@@ -39,7 +39,7 @@ class FindBugsHandler extends DefaultHandler {
 
 	private String[] sourceDirectories;
 
-	private ArtifactGenerator generator;
+	private MessageArtifactFileGenerator generator;
 
 	private String fileName;
 
@@ -59,7 +59,7 @@ class FindBugsHandler extends DefaultHandler {
 	private StringBuilder message;
 	private StringBuilder errorMessage;
 
-	public FindBugsHandler(ArtifactGenerator generator,
+	public FindBugsHandler(MessageArtifactFileGenerator generator,
 			String[] sourceDirectories) {
 		super();
 		this.generator = generator;
@@ -80,7 +80,7 @@ class FindBugsHandler extends DefaultHandler {
 	}
 
 	@Deprecated
-	public FindBugsHandler(ArtifactGenerator generator,
+	public FindBugsHandler(MessageArtifactFileGenerator generator,
 			String[] sourceDirectories,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		super();
@@ -378,6 +378,7 @@ class FindBugsHandler extends DefaultHandler {
 
 								if (holderFile.exists()) {
 
+									// generator.addFile(completePath);
 									if (monitor != null) {
 										monitor
 												.subTask("Calculating hash values for "

@@ -26,13 +26,13 @@ public class CheckStyleHandler extends DefaultHandler {
 
 	private ArtifactGenerator.ArtifactBuilder artifact;
 
-	private ArtifactGenerator generator;
+	private MessageArtifactFileGenerator generator;
 
 	private String fileName;
 
 	private SLProgressMonitor monitor = null;
 	private String className;
-	private String packageName;
+	private String packageName = "NA";
 
 	public CheckStyleHandler(MessageArtifactFileGenerator generator,
 			SLProgressMonitor monitor) {
@@ -63,13 +63,14 @@ public class CheckStyleHandler extends DefaultHandler {
 			} else if (fileName.endsWith(".java")) {
 				className = file.getName().substring(0,
 						file.getName().length() - 5);
+				packageName = PackageFinder.getInstance().getPackage(file);
 			} else {
 				/*
 				 * Not a java file
 				 */
 				className = file.getName();
 			}
-			packageName = PackageFinder.getInstance().getPackage(file);
+
 		}
 
 		if (name.equals(ERROR)) {
@@ -81,6 +82,8 @@ public class CheckStyleHandler extends DefaultHandler {
 
 			final String source = attributes.getValue(SOURCE);
 			final String message = attributes.getValue(MESSAGE);
+
+			// generator.addFile(fileName);
 
 			if (monitor != null) {
 				monitor.subTask("Calculating hash value (Checkstyle)"

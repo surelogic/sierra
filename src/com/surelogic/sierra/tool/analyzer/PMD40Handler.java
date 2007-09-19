@@ -22,7 +22,7 @@ import com.surelogic.sierra.tool.message.Severity;
  */
 class PMD40Handler extends DefaultHandler {
 
-	private ArtifactGenerator generator;
+	private MessageArtifactFileGenerator generator;
 
 	private static final String PMD = "PMD";
 	private static final String PMD_VERSION = "4.0";
@@ -50,7 +50,7 @@ class PMD40Handler extends DefaultHandler {
 	@SuppressWarnings("unused")
 	private Map<String, Map<Integer, Long>> hashHolder;
 
-	public PMD40Handler(ArtifactGenerator generator) {
+	public PMD40Handler(MessageArtifactFileGenerator generator) {
 		super();
 		this.generator = generator;
 		message = new StringBuilder();
@@ -63,7 +63,7 @@ class PMD40Handler extends DefaultHandler {
 	 * @param hashHolder
 	 */
 	@Deprecated
-	public PMD40Handler(ArtifactGenerator generator,
+	public PMD40Handler(MessageArtifactFileGenerator generator,
 			Map<String, Map<Integer, Long>> hashHolder) {
 		super();
 		this.hashHolder = hashHolder;
@@ -150,6 +150,7 @@ class PMD40Handler extends DefaultHandler {
 
 						int lineNumber = Integer.parseInt(attrs.getValue(i));
 
+						// generator.addFile(fileName);
 						// The hash code generation
 						HashGenerator hashGenerator = HashGenerator
 								.getInstance();
