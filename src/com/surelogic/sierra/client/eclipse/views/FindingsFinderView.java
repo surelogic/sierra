@@ -28,6 +28,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
+import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.SLImages;
 
 public final class FindingsFinderView extends ViewPart {
@@ -36,9 +37,9 @@ public final class FindingsFinderView extends ViewPart {
 
 	private FindingsMediator f_mediator = null;
 
-	Finder f_finder;
+	CascadingList f_finder;
 
-	Finder.IColumn f_columnC = new Finder.IColumn() {
+	CascadingList.IColumn f_columnC = new CascadingList.IColumn() {
 
 		public void createContents(Composite panel, int index) {
 			Composite rhs = panel;
@@ -236,7 +237,7 @@ public final class FindingsFinderView extends ViewPart {
 				f_finder.addColumn(f_columnC);
 			else
 				f_finder.addColumnAfter(f_columnC, f_finder
-						.getColumnIndex((Control) in));
+						.getColumnIndexOf((Control) in));
 		}
 	};
 
@@ -278,7 +279,7 @@ public final class FindingsFinderView extends ViewPart {
 				.setText("<A HREF=\"select\">Project</A> > <A HREF=\"deselect\">Importance</A>");
 		li.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false, false));
 
-		f_finder = new Finder(finderC, SWT.NONE);
+		f_finder = new CascadingList(finderC, SWT.NONE);
 		f_finder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		f_finder.addColumn(f_columnC);
 
