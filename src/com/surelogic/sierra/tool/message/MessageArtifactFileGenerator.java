@@ -38,8 +38,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
 
 	private static final Logger log = SLLogger.getLogger("sierra");
-	private static final String RUN_START = "<scan>";
-	private static final String RUN_END = "</scan>";
+	private static final String RUN_START = "<tns:scan xmlns:tns=\"http://www.surelogic.com/sierra/1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+	private static final String RUN_END = "</tns:scan>";
 	private static final String UID_START = "<uid>";
 	private static final String UID_END = "</uid>";
 	private static final String ARTIFACTS_START = "<artifacts>";
