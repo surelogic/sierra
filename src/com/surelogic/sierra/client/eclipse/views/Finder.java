@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -15,7 +16,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.PlatformUI;
+
+import com.surelogic.common.logging.SLLogger;
 
 /**
  * A scrolled composite specialized to act like the Mac finder. This is
@@ -82,8 +86,8 @@ public class Finder extends ScrolledComposite {
 		columnViewport.setExpandVertical(true);
 		columnViewport.setExpandHorizontal(true);
 		columnViewport.setAlwaysShowScrollBars(false);
-		columnViewport.setMinSize(columnContents.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT));
+		columnViewport.setMinHeight(columnContents.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT).y);
 		columnContents.layout();
 
 		fixupSizeOfFinderContents();
@@ -227,9 +231,34 @@ public class Finder extends ScrolledComposite {
 			final Control columnContents = columnViewport.getContent();
 			final Point pColumnContentsSize = columnContents.computeSize(
 					SWT.DEFAULT, SWT.DEFAULT);
-			columnViewport.setBounds(xPos, BORDER, pColumnContentsSize.x,
-					finderViewportSize.height - (2 * BORDER));
-			xPos += PADDING + pColumnContentsSize.x;
+			final int columnViewportHeight = finderViewportSize.height
+					- (2 * BORDER);
+			int scrollBarWidth = 0;
+			if (pColumnContentsSize.y > columnViewportHeight) {
+				/*
+				 * The scroll bar will be showing to the right of this column,
+				 * so we need to make room for it.
+				 */
+
+				ScrollBar bar = columnViewport.getVerticalBar();
+				if (bar != null) {
+					scrollBarWidth = bar.getSize().x;
+				} else {
+					SLLogger
+							.getLogger()
+							.log(Level.WARNING,
+									"null vertical scroll bar for a column in the finder.");
+					/*
+					 * Just guess the scroll bar width.
+					 */
+					scrollBarWidth = 15;
+				}
+			}
+			final int columnViewportWidth = pColumnContentsSize.x
+					+ scrollBarWidth;
+			columnViewport.setBounds(xPos, BORDER, columnViewportWidth,
+					columnViewportHeight);
+			xPos += PADDING + columnViewportWidth;
 			final Point origin = f_columnViewportToOrigin.get(columnViewport);
 			if (origin != null) {
 				columnViewport.setOrigin(origin);
