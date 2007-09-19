@@ -50,7 +50,7 @@ public final class FindingsViewModel {
 	public void init() {
 		load();
 		Projects.getInstance().addObserver(f_prjObs);
-		f_prjObs.notify(Projects.getInstance());
+		//f_prjObs.notify(Projects.getInstance());
 	}
 
 	public void dispose() {

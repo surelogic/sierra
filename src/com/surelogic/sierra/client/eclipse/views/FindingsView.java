@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -25,8 +26,6 @@ import com.surelogic.common.eclipse.SLImages;
 
 public final class FindingsView extends ViewPart {
 
-	private static final String NO_FINDINGS = "No findings ... please run Sierra analysis on a project to generate a set of findings";
-
 	private FindingsMediator f_mediator = null;
 
 	@Override
@@ -34,8 +33,10 @@ public final class FindingsView extends ViewPart {
 
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
-		final Label noFindingsPage = new Label(pages, SWT.WRAP | SWT.CENTER);
-		noFindingsPage.setText(NO_FINDINGS);
+		final Link noFindingsPage = new Link(pages, SWT.NONE);
+		noFindingsPage.setText(FindingsGraphView.NO_FINDINGS);
+		noFindingsPage.addListener(SWT.Selection,
+				FindingsGraphView.NO_FINDINGS_LISTENER);
 
 		final Composite findingsPage = new Composite(pages, SWT.NONE);
 		findingsPage.setLayout(new GridLayout());

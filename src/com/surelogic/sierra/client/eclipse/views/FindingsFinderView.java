@@ -30,7 +30,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class FindingsView2 extends ViewPart {
+public final class FindingsFinderView extends ViewPart {
 
 	private static final String NO_FINDINGS = "No findings ... please run Sierra analysis on a project to generate a set of findings";
 
@@ -64,7 +64,7 @@ public final class FindingsView2 extends ViewPart {
 
 			final Link li = new Link(g, SWT.WRAP);
 			li
-					.setText("<A HREF=\"select\">Select All</A> <A HREF=\"deselect\">Deselect All</A>");
+					.setText("<A HREF=\"select\">Graph</A> <A HREF=\"deselect\">Show</A>");
 			// Composite controls = new Composite(g, SWT.NONE);
 			// RowLayout rlc = new RowLayout(SWT.HORIZONTAL);
 			// rlc.wrap = false;
@@ -288,11 +288,11 @@ public final class FindingsView2 extends ViewPart {
 						false));
 		clilb.setLayout(new RowLayout(SWT.HORIZONTAL));
 
-		//Button lilb = new Button(clilb, SWT.PUSH|SWT.FLAT);
-		//lilb.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		// Button lilb = new Button(clilb, SWT.PUSH|SWT.FLAT);
+		// lilb.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
 		final Link lib = new Link(clilb, SWT.WRAP);
 		lib
-				.setText("Saved: <A HREF=\"select\">New Stuff</A> <A HREF=\"deselect\">Cross Project</A>  <A HREF=\"deselect\">My Packages</A>");
+				.setText("Saved selections: <A HREF=\"select\">New Stuff</A> <A HREF=\"deselect\">Cross Project</A>  <A HREF=\"deselect\">My Packages</A>");
 
 		// bottom
 		//

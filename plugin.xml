@@ -174,10 +174,26 @@
 
       <view
             category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.FindingsView2"
-            id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
             name="Investigate Findings">
+      </view>
+      
+      <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            name="Show">
+      </view>
+      
+            <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsGraphView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsGraphView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            name="Graph">
       </view>
       
       <view
