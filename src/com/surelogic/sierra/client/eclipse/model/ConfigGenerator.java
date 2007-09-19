@@ -27,6 +27,9 @@ public final class ConfigGenerator {
 	private final String tools = BuildFileGenerator.getToolsDirectory()
 			+ SierraConstants.TOOLS_FOLDER;
 
+	/** The number of excluded tools : Default 0 */
+	private int f_numberofExcludedTools = 0;
+
 	private ConfigGenerator() {
 		// singleton
 	}
@@ -63,9 +66,9 @@ public final class ConfigGenerator {
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setScanDocument(scanDocument);
 		config.setToolsDirectory(new File(tools));
+		config.setExcludedToolsList(getExcludedTools());
 
 		// Get clean option
-		// Get excluded tools
 		// Get included dirs -project specific
 		// Get excluded dirs - project specific
 
@@ -83,5 +86,51 @@ public final class ConfigGenerator {
 		String timeStamp = date.toString().replace(":", ";") + " - "
 				+ String.valueOf(time);
 		return timeStamp;
+	}
+
+	/**
+	 * Generates a comma separated string of the exluded tools
+	 * 
+	 * @return
+	 */
+	private String getExcludedTools() {
+
+		String excludedTools = "";
+		f_numberofExcludedTools = 0;
+
+		if (!PreferenceConstants.runFindBugs()) {
+			excludedTools += "findbugs, ";
+			f_numberofExcludedTools++;
+		}
+
+		if (!PreferenceConstants.runCheckStyle()) {
+			excludedTools += "checkstyle, ";
+			f_numberofExcludedTools++;
+		}
+
+		if (!PreferenceConstants.runPMD()) {
+			excludedTools += "pmd, ";
+			f_numberofExcludedTools++;
+		}
+
+		if (!PreferenceConstants.runReckoner()) {
+			excludedTools += "reckoner";
+			f_numberofExcludedTools++;
+		}
+
+		if (excludedTools != null && excludedTools.endsWith(", ")) {
+			excludedTools = excludedTools.substring(0,
+					excludedTools.length() - 2);
+		}
+
+		if (excludedTools.equals("")) {
+			return null;
+		}
+
+		return excludedTools;
+	}
+
+	public int getNumberofExcludedTools() {
+		return f_numberofExcludedTools;
 	}
 }

@@ -134,12 +134,14 @@ public final class Scan {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 
-			// TODO: Dynamically adjust the total and scale depending on the
-			// options selected currently it's an estimate for the number of
-			// files in a project
+			// ADDED: Dynamic adjustment of the total and scale depending on the
+			// options selected for tool to be run. Current we assume maximum 6
+			// units of work in total. 4 units for tools (1 per tool) 1 for
+			// generating scan document and 1 for storing in the database
 
 			int scale = 5000;
-			int total = 6;
+			int total = 6 - ConfigGenerator.getInstance()
+					.getNumberofExcludedTools();
 			SLProgressMonitorWrapper slProgressMonitorWrapper = null;
 			if (monitor != null) {
 				slProgressMonitorWrapper = new SLProgressMonitorWrapper(monitor);
@@ -170,7 +172,7 @@ public final class Scan {
 					return Status.CANCEL_STATUS;
 				} else {
 					try {
-						 /* Start database entry */
+						/* Start database entry */
 						ScanDocumentUtility.loadScanDocument(f_config
 								.getScanDocument(), slProgressMonitorWrapper);
 						/* Notify that scan was completed */

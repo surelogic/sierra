@@ -10,6 +10,11 @@
             class="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
             name="Sierra"/>
+            <page
+            class="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
+            id="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
+            name="Tools"
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
    </extension>
    
    <extension

@@ -20,4 +20,32 @@ public class PreferenceConstants {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_SIERRA_BALLOON_FLAG);
 	}
+
+	public static final String P_RUN_FINDBUGS = "com.surelogic.sierra.runFindBugs";
+
+	public static boolean runFindBugs() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_RUN_FINDBUGS);
+	}
+
+	public static final String P_RUN_PMD = "com.surelogic.sierra.runPMD";
+
+	public static boolean runPMD() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_RUN_PMD);
+	}
+
+	public static final String P_RUN_RECKONER = "com.surelogic.sierra.runReckoner";
+
+	public static boolean runReckoner() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_RUN_RECKONER);
+	}
+
+	public static final String P_RUN_CHECKSTYLE = "com.surelogic.sierra.runCheckStyle";
+
+	public static boolean runCheckStyle() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_RUN_CHECKSTYLE);
+	}
 }
