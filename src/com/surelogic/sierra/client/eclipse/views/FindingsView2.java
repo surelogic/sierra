@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.PageBook;
@@ -261,27 +263,33 @@ public final class FindingsView2 extends ViewPart {
 		finderC.setLayout(gl);
 
 		Composite cbc = new Composite(finderC, SWT.NONE);
-		cbc.setLayout(new RowLayout(SWT.HORIZONTAL));
-		Label lil = new Label(cbc, SWT.NONE);
-		lil.setImage(SLImages.getImage(SLImages.IMG_QUERY));
+		gl = new GridLayout();
+		gl.numColumns = 2;
+		cbc.setLayout(gl);
+
+		ToolBar tbHome = new ToolBar(cbc, SWT.HORIZONTAL | SWT.FLAT);
+		tbHome
+				.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false,
+						false));
+		ToolItem homeItem = new ToolItem(tbHome, SWT.PUSH);
+		homeItem.setImage(SLImages.getImage(SLImages.IMG_QUERY));
 		final Link li = new Link(cbc, SWT.WRAP);
 		li
 				.setText("<A HREF=\"select\">Project</A> > <A HREF=\"deselect\">Importance</A>");
-		cbc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		li.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false, false));
 
 		f_finder = new Finder(finderC, SWT.NONE);
 		f_finder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		f_finder.addColumn(f_columnC);
 
 		Composite clilb = new Composite(finderC, SWT.NONE);
-		GridData data = new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false);
 		clilb
 				.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
 						false));
 		clilb.setLayout(new RowLayout(SWT.HORIZONTAL));
 
-		Label lilb = new Label(clilb, SWT.NONE);
-		lilb.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		//Button lilb = new Button(clilb, SWT.PUSH|SWT.FLAT);
+		//lilb.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
 		final Link lib = new Link(clilb, SWT.WRAP);
 		lib
 				.setText("Saved: <A HREF=\"select\">New Stuff</A> <A HREF=\"deselect\">Cross Project</A>  <A HREF=\"deselect\">My Packages</A>");
