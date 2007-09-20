@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,24 +40,26 @@ public class ScanManager {
 	private static final String DELETE_UNUSED_COMPILATIONS = "DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 			+ " SELECT ID FROM SESSION.TEMP_IDS)";
 
+	private static final String OLDEST_SCAN_BY_PROJECT = "SELECT SCAN_UID FROM LATEST_SCANS WHERE PROJECT = ?";
+
 	private final Connection conn;
 	private final ScanRecordFactory factory;
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 	private final PreparedStatement insertTempSources;
 	private final PreparedStatement insertTempCompilations;
+	private final PreparedStatement getOldestScanByProject;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.factory = ScanRecordFactory.getInstance(conn);
 
 		/** Make sure this is called only once per connection */
-		try{	
-				conn.createStatement().execute(MAKE_TEMP);
+		try {
+			conn.createStatement().execute(MAKE_TEMP);
 		} catch (SQLException sql) {
 			// XXX Silently ignore this...this needs to be corrected eventually
 		}
-
 
 		this.deleteCompilations = conn
 				.prepareStatement(DELETE_UNUSED_COMPILATIONS);
@@ -64,7 +67,8 @@ public class ScanManager {
 		this.insertTempSources = conn.prepareStatement(INSERT_TEMP_SOURCES);
 		this.insertTempCompilations = conn
 				.prepareStatement(INSERT_TEMP_COMPILATIONS);
-
+		this.getOldestScanByProject = conn
+				.prepareStatement(OLDEST_SCAN_BY_PROJECT);
 	}
 
 	public ScanGenerator getScanGenerator() {
@@ -121,6 +125,15 @@ public class ScanManager {
 	public void deleteScan(String uid, SLProgressMonitor monitor)
 			throws SQLException {
 		deleteScans(Collections.singleton(uid), monitor);
+	}
+
+	public void deleteOldestScan(String projectName, SLProgressMonitor monitor)
+			throws SQLException {
+		getOldestScanByProject.setString(1, projectName);
+		ResultSet set = getOldestScanByProject.executeQuery();
+		if (set.next()) {
+			deleteScan(set.getString(1), monitor);
+		}
 	}
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {
