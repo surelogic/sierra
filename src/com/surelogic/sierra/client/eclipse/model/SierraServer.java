@@ -112,6 +112,8 @@ public final class SierraServer {
 		f_usedToConnectToAServer = true;
 	}
 
+	private static final String SIERRA_WEB_PATH = "/sierra";
+
 	public String toURLString() {
 		final StringBuilder b = new StringBuilder();
 		b.append(getProtocol()).append("://");
@@ -120,13 +122,19 @@ public final class SierraServer {
 	}
 
 	public String toURLAuthString() {
-		final StringBuilder b = new StringBuilder(toURLString());
-		b.append("/sierra");
+		System.out.println(this);
 		if (savePassword()) {
-			b.append("/;?j_username=").append(getUser());
-			b.append("&j_password=").append(getPassword());
+			final StringBuilder b = new StringBuilder();
+			b.append(getProtocol()).append("://");
+			b.append(getUser()).append(":");
+			b.append(getPassword()).append("@");
+			b.append(getHost()).append(":").append(getPort());
+			b.append(SIERRA_WEB_PATH);
+			System.out.println(b);
+			return b.toString();
+		} else {
+			return toURLString() + SIERRA_WEB_PATH;
 		}
-		return b.toString();
 	}
 
 	@Override
