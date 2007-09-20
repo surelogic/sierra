@@ -46,7 +46,7 @@ public final class Scan {
 	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
 	/** The location to store tool results */
-	private File f_resultRoot;
+	private final File f_resultRoot;
 
 	/** The list of configurations to run scan on */
 	private List<Config> f_configs;
@@ -174,7 +174,8 @@ public final class Scan {
 					try {
 						/* Start database entry */
 						ScanDocumentUtility.loadScanDocument(f_config
-								.getScanDocument(), slProgressMonitorWrapper);
+								.getScanDocument(), slProgressMonitorWrapper,
+								f_config.getProject());
 						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
 
@@ -236,7 +237,7 @@ public final class Scan {
 		private boolean f_complete;
 		private SierraAnalysis f_sierraAnalysis;
 		private final Config f_config;
-		private SLProgressMonitor f_monitor;
+		private final SLProgressMonitor f_monitor;
 		private int f_scale = 1;
 		private boolean f_error = false;
 		private String f_errorMessage;

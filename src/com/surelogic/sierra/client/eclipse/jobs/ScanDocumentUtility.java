@@ -27,10 +27,14 @@ public final class ScanDocumentUtility {
 	 * @param monitor
 	 *            a progress monitor, may be <code>null</code> if progress is
 	 *            not tracked.
+	 * @param projectName
+	 *            the name of the project for the given scan document, may be
+	 *            <code>null</code> NEED FIX
 	 * @throws ScanPersistenceException
 	 */
 	public static void loadScanDocument(final File scanDocument,
-			final SLProgressMonitor monitor) throws ScanPersistenceException {
+			final SLProgressMonitor monitor, final String projectName)
+			throws ScanPersistenceException {
 		try {
 			Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);

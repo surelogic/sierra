@@ -24,7 +24,7 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 				monitor);
 
 		ScanDocumentUtility.loadScanDocument(f_scanDocument,
-				slProgressMonitorWrapper);
+				slProgressMonitorWrapper, null);
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
