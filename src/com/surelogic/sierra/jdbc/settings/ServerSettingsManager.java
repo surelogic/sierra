@@ -7,17 +7,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 
 public class ServerSettingsManager extends SettingsManager {
 
+	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
+	
 	private final PreparedStatement getSettingsByName;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
-
+	private final PreparedStatement getAllSettings;
+	
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		getSettingsByName = conn
@@ -28,11 +33,26 @@ public class ServerSettingsManager extends SettingsManager {
 				.prepareStatement("SELECT S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID");
 		updateSettings = conn
 				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
+		getAllSettings = conn.prepareStatement(FIND_ALL);
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new ServerSettingsManager(conn);
+	}
+	
+	/**
+	 * 
+	 * @return a collection of all the product names
+	 * @throws SQLException
+	 */
+	public Collection<String> getAllSettingNames() throws SQLException {
+		ResultSet rs = getAllSettings.executeQuery();
+		Collection<String> settingNames = new ArrayList<String>();
+		while (rs.next()) {
+			settingNames.add(rs.getString(1));
+		}
+		return settingNames;
 	}
 
 	public Settings getSettingsByName(String name) throws SQLException {
