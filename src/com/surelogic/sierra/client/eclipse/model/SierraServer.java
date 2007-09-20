@@ -116,7 +116,8 @@ public final class SierraServer {
 		f_usedToConnectToAServer = true;
 	}
 
-	private static final String SIERRA_WEB_PATH = "/sierra";
+	private static final String SIERRA_WEB_PATH = "/sierra/";
+	private static final String ENCODING = "UTF-8";
 
 	public String toURLString() {
 		final StringBuilder b = new StringBuilder();
@@ -130,9 +131,9 @@ public final class SierraServer {
 		if (savePassword()) {
 			final StringBuilder b = new StringBuilder();
 			b.append("http://");
-			b.append(URLEncoder.encode(getUser(), "utf-8"));
+			b.append(URLEncoder.encode(getUser(), ENCODING));
 			b.append(":");
-			b.append(URLEncoder.encode(getPassword(), "utf-8"));
+			b.append(URLEncoder.encode(getPassword(), ENCODING));
 			b.append("@");
 			b.append(getHost()).append(":").append(getPort());
 			b.append(SIERRA_WEB_PATH);

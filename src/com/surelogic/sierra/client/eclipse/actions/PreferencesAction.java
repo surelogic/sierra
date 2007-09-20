@@ -8,9 +8,9 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 
-	private static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";
-	private static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
-	private static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage";
+	public static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";
+	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
+	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage";
 
 	public void dispose() {
 		// Nothing to do

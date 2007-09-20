@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import java.net.URL;
+import java.util.logging.Level;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -7,37 +10,69 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 
 public class ToolsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private static final String DESELECT_TOOL_WARNING = "An unchecked a tool will not be run during any scan invoked within this Eclipse workspace.  For more fine grained control of scan results, setup a <A HREF=\"results filter\">'Results Filter'</A> instead.";
-
-	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net/\">FindBugs\u2122</A> is a static "
-			+ "analysis tool created at University of Maryland for finding bugs "
-			+ "in Java code.";
-	private static final String PMD_INFO = "PMD\u2122 is a static analysis tool "
-			+ "to look for multiple issues like potential bugs, dead, duplicate "
-			+ "and suboptimal code, and overcomplicated  expressions.";
-	private static final String RECKONER_INFO = "Reckoner is metrics gathering tool "
-			+ "created by SureLogic that collects metrics like logical lines of code "
-			+ "and defect density for java code.";
-	private static final String CHECKSTYLE_INFO = "CheckStyle\u2122 is a static "
-			+ "analysis tool that identifies stylisitic issues with the java code.";
+	private static final String DESELECT_TOOL_WARNING = "A tool that is not checked will be skipped during all scans.  For more fine-grained control of scan results, setup a <A HREF=\"results filter\">'Results Filter'</A> instead.";
+	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is a static analysis tool created at University of Maryland for finding bugs in Java code.";
+	private static final String PMD_INFO = "<A HREF=\"http://pmd.sourceforge.net\">PMD</A> is a static analysis tool to look for multiple issues like potential bugs, dead, duplicate and sub-optimal code, and over-complicated expressions.";
+	private static final String RECKONER_INFO = "<A HREF=\"http://www.surelogic.com\">Reckoner</A> is a static analysis tool created by SureLogic, Inc. that collects metrics about Java code.";
+	private static final String CHECKSTYLE_INFO = "<A HREF=\"http://checkstyle.sourceforge.net\">CheckStyle</A> is a static analysis tool that identifies stylistic issues within Java code.";
 	private static final String TAB_SPACE = "\t";
 
 	private BooleanFieldEditor f_runFindbugsFlag;
 	private BooleanFieldEditor f_runPMDFlag;
 	private BooleanFieldEditor f_runReckonerFlag;
 	private BooleanFieldEditor f_runCheckStyleFlag;
+
+	static final Listener LINK_LISTENER = new Listener() {
+		public void handleEvent(Event event) {
+			final String name = event.text;
+			if (name != null) {
+				if (name.startsWith("http")) {
+					try {
+						final IWebBrowser browser = PlatformUI
+								.getWorkbench()
+								.getBrowserSupport()
+								.createBrowser(
+										IWorkbenchBrowserSupport.LOCATION_BAR
+												| IWorkbenchBrowserSupport.NAVIGATION_BAR
+												| IWorkbenchBrowserSupport.STATUS,
+										name, name, name);
+						browser.openURL(new URL(name));
+					} catch (Exception e) {
+						SLLogger.getLogger().log(Level.SEVERE,
+								"Exception occurred when opening " + name);
+					}
+				} else {
+					PreferencesUtil.createPreferenceDialogOn(
+							null,
+							PreferencesAction.FILTER_ID,
+							new String[] { PreferencesAction.PREF_ID,
+									PreferencesAction.TOOLS_ID,
+									PreferencesAction.FILTER_ID }, null).open();
+				}
+			}
+		}
+	};
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -107,18 +142,19 @@ public class ToolsPreferencePage extends PreferencePage implements
 		warningImg
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
-		final Label deselectWarning = new Label(warning, SWT.WRAP);
+		final Link deselectWarning = new Link(warning, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		data.widthHint = 300;
 		deselectWarning.setLayoutData(data);
 		deselectWarning.setText(DESELECT_TOOL_WARNING);
+		deselectWarning.addListener(SWT.Selection, LINK_LISTENER);
 		return panel;
 
 	}
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Use this page to select the tools to be included in scan.");
+		setDescription("Use this page to select the tools run during a Sierra scan.");
 	}
 
 	private void addSpacedText(Composite parent, String text) {
@@ -131,11 +167,12 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 		addSpace(composite);
 
-		final Label infoText = new Label(composite, SWT.WRAP);
+		final Link infoText = new Link(composite, SWT.NONE);
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		data.widthHint = 300;
 		infoText.setLayoutData(data);
 		infoText.setText(text);
+		infoText.addListener(SWT.Selection, LINK_LISTENER);
 	}
 
 	/**
