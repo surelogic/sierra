@@ -19,20 +19,18 @@ import com.surelogic.sierra.client.eclipse.Activator;
 public class ToolsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private static final String DESELECT_TOOL_WARNING = "Deselecting a tool will "
-			+ "turn off the tool completely. The tool will NOT be executed next time "
-			+ "the scan is run on any project in the workspace. Turning off a tool is "
-			+ "discouraged, it is recommended to use the 'Results Filter' instead.";
-	private static final String FINDBUGS_INFO = "Findbugs(tm) is a static "
+	private static final String DESELECT_TOOL_WARNING = "An unchecked a tool will not be run during any scan invoked within this Eclipse workspace.  For more fine grained control of scan results, setup a <A HREF=\"results filter\">'Results Filter'</A> instead.";
+
+	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net/\">FindBugs\u2122</A> is a static "
 			+ "analysis tool created at University of Maryland for finding bugs "
 			+ "in Java code.";
-	private static final String PMD_INFO = "PMD(tm) is a static analyis tool "
+	private static final String PMD_INFO = "PMD\u2122 is a static analysis tool "
 			+ "to look for multiple issues like potential bugs, dead, duplicate "
 			+ "and suboptimal code, and overcomplicated  expressions.";
 	private static final String RECKONER_INFO = "Reckoner is metrics gathering tool "
 			+ "created by SureLogic that collects metrics like logical lines of code "
 			+ "and defect density for java code.";
-	private static final String CHECKSTYLE_INFO = "Checkstyle(tm) is a static "
+	private static final String CHECKSTYLE_INFO = "CheckStyle\u2122 is a static "
 			+ "analysis tool that identifies stylisitic issues with the java code.";
 	private static final String TAB_SPACE = "\t";
 
@@ -64,7 +62,8 @@ public class ToolsPreferencePage extends PreferencePage implements
 		data.widthHint = 100;
 
 		f_runFindbugsFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_FINDBUGS, "FindBugs", toolsGroup);
+				PreferenceConstants.P_RUN_FINDBUGS, "FindBugs\u2122",
+				toolsGroup);
 		f_runFindbugsFlag.setPage(this);
 		f_runFindbugsFlag.setPreferenceStore(getPreferenceStore());
 		f_runFindbugsFlag.load();
@@ -72,7 +71,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 		addSpacedText(toolsGroup, FINDBUGS_INFO);
 
 		f_runPMDFlag = new BooleanFieldEditor(PreferenceConstants.P_RUN_PMD,
-				"PMD", toolsGroup);
+				"PMD\u2122", toolsGroup);
 		f_runPMDFlag.setPage(this);
 		f_runPMDFlag.setPreferenceStore(getPreferenceStore());
 		f_runPMDFlag.load();
@@ -88,14 +87,15 @@ public class ToolsPreferencePage extends PreferencePage implements
 		addSpacedText(toolsGroup, RECKONER_INFO);
 
 		f_runCheckStyleFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_CHECKSTYLE, "CheckStyle", toolsGroup);
+				PreferenceConstants.P_RUN_CHECKSTYLE, "CheckStyle\u2122",
+				toolsGroup);
 		f_runCheckStyleFlag.setPage(this);
 		f_runCheckStyleFlag.setPreferenceStore(getPreferenceStore());
 		f_runCheckStyleFlag.load();
 
 		addSpacedText(toolsGroup, CHECKSTYLE_INFO);
 
-		final Composite warning = new Composite(toolsGroup, SWT.NONE);
+		final Composite warning = new Composite(panel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				2, 1));
 		gridLayout = new GridLayout();
@@ -107,11 +107,11 @@ public class ToolsPreferencePage extends PreferencePage implements
 		warningImg
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
-		final Label deslectWarning = new Label(warning, SWT.WRAP);
+		final Label deselectWarning = new Label(warning, SWT.WRAP);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		data.widthHint = 300;
-		deslectWarning.setLayoutData(data);
-		deslectWarning.setText(DESELECT_TOOL_WARNING);
+		deselectWarning.setLayoutData(data);
+		deselectWarning.setText(DESELECT_TOOL_WARNING);
 		return panel;
 
 	}

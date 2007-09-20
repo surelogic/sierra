@@ -267,7 +267,6 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	private static void openInBrowser(SierraServer server) {
-		final String urlString = server.toURLAuthString();
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
@@ -277,11 +276,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
 							server.getLabel(), name, name);
-			final URL url = new URL(urlString);
+			final URL url = server.getAuthorizedURL();
 			browser.openURL(url);
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					"Exception occurred when opening URL: " + urlString);
+					"Exception occurred when opening " + server);
 		}
 	}
 }

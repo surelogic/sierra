@@ -1,5 +1,9 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class SierraServer {
@@ -121,19 +125,25 @@ public final class SierraServer {
 		return b.toString();
 	}
 
-	public String toURLAuthString() {
+	public URL getAuthorizedURL() throws Exception {
 		System.out.println(this);
 		if (savePassword()) {
 			final StringBuilder b = new StringBuilder();
-			b.append(getProtocol()).append("://");
-			b.append(getUser()).append(":");
-			b.append(getPassword()).append("@");
+			b.append("http://");
+			b.append(URLEncoder.encode(getUser(), "utf-8"));
+			b.append(":");
+			b.append(URLEncoder.encode(getPassword(), "utf-8"));
+			b.append("@");
 			b.append(getHost()).append(":").append(getPort());
 			b.append(SIERRA_WEB_PATH);
 			System.out.println(b);
-			return b.toString();
+			final URI uri = new URI(b.toString());
+			final URL url = uri.toURL();
+			return url;
 		} else {
-			return toURLString() + SIERRA_WEB_PATH;
+			final URI uri = new URI(toURLString() + SIERRA_WEB_PATH);
+			final URL url = uri.toURL();
+			return url;
 		}
 	}
 
