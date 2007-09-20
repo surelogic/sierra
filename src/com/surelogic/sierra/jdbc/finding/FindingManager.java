@@ -66,6 +66,8 @@ public abstract class FindingManager {
 	private final PreparedStatement deleteMatches;
 	private final PreparedStatement deleteFindings;
 	private final PreparedStatement deleteLocalAudits;
+	private final PreparedStatement deleteOverview;
+	private final PreparedStatement populateOverview;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -110,6 +112,30 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteLocalAudits = conn
 				.prepareStatement("DELETE FROM AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
+		deleteOverview = conn.prepareStatement("DELETE FROM FINDINGS_OVERVIEW");
+		populateOverview = conn
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
+						+ " SELECT F.PROJECT_ID,F.ID,F.IS_READ,"
+						+ "        CASE"
+						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
+						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
+						+ "             WHEN F.IMPORTANCE=2 THEN 'Medium'"
+						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
+						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
+						+ "        END,"
+						+ "        CASE WHEN FIXED.ID IS NULL THEN 'N' ELSE 'Y' END,"
+						+ "        CASE WHEN RECENT.ID IS NULL THEN 'N' ELSE 'Y' END,"
+						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
+						+ "        LM.PACKAGE_NAME,"
+						+ "        LM.CLASS_NAME,"
+						+ "        FT.NAME"
+						+ " FROM"
+						+ "    FINDING F"
+						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
+						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
+						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
+						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -131,6 +157,12 @@ public abstract class FindingManager {
 	public void markAsRead(Long findingId) throws SQLException {
 		checkIsRead(findingId);
 		markAsRead(null, findingId, new Date(), null);
+	}
+
+	public void generateOverview(String projectName, String uid)
+			throws SQLException {
+		deleteOverview.execute();
+		populateOverview.execute();
 	}
 
 	/**

@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.finding.FindingGenerationException;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -107,6 +106,15 @@ class JDBCScanGenerator implements ScanGenerator {
 							try {
 								scan.setStatus(ScanStatus.FINISHED);
 								scan.update();
+								FindingManager fm = FindingManager
+										.getInstance(conn);
+								fm.generateFindings(projectName, scan.getUid(),
+										filter, null);
+								conn.commit();
+								if (qualifiers.isEmpty()) {
+									fm.generateOverview(projectName, uid);
+								}
+								conn.commit();
 							} catch (SQLException e) {
 								try {
 									conn.rollback();
@@ -123,13 +131,6 @@ class JDBCScanGenerator implements ScanGenerator {
 											+ " for project "
 											+ projectName
 											+ " persisted to database, starting finding generation.");
-							try {
-								FindingManager.getInstance(conn)
-										.generateFindings(projectName,
-												scan.getUid(), filter, null);
-							} catch (SQLException e) {
-								throw new FindingGenerationException(e);
-							}
 						}
 					});
 		} catch (SQLException e) {
@@ -165,7 +166,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public ScanGenerator qualifiers(Collection<String> qualifiers) {
-		if (qualifiers != null) {
+		if (qualifiers != null && !qualifiers.isEmpty()) {
 			this.qualifiers = new TreeSet<String>(qualifiers);
 		}
 		return this;
