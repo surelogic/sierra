@@ -13,9 +13,9 @@
       <page
             class="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
-            name="Tool Selection"
+            name="Tools"
             category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
-            <page
+      <page
             class="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
             name="Result Filter"
