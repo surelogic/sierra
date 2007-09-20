@@ -123,9 +123,8 @@ public final class SierraServer {
 		final StringBuilder b = new StringBuilder(toURLString());
 		b.append("/sierra");
 		if (savePassword()) {
-			b.append("/j_security_check?j_username=").append(getUser()).append(
-					"&j_password=").append(getPassword());
-
+			b.append("/;?j_username=").append(getUser());
+			b.append("&j_password=").append(getPassword());
 		}
 		return b.toString();
 	}
