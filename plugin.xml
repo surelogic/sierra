@@ -10,10 +10,15 @@
             class="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
             name="Sierra"/>
-            <page
+      <page
             class="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
-            name="Tools"
+            name="Tool Selection"
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
+            <page
+            class="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
+            id="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
+            name="Result Filter"
             category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
    </extension>
    
