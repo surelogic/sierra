@@ -2,8 +2,8 @@
 <tns:findingTypes xmlns:tns="http://www.surelogic.com/sierra/1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
-
 	<findingType>
+		<id>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Swing Methods Invoked In Swing Thread">
 		</artifact>
@@ -33,6 +33,7 @@
 		<name>Swing Methods Invoked In Swing Thread</name>
 	</findingType>
 	<findingType>
+		<id>IL_INFINITE_LOOP</id>
 		<artifact tool="FindBugs" mnemonic="Infinite Loop"></artifact>
 		<shortMessage>An apparent infinite loop</shortMessage>
 		<info>
@@ -44,6 +45,7 @@
 		<name>Infinite Loop</name>
 	</findingType>
 	<findingType>
+		<id>IL_INFINITE_RECURSIVE_LOOP</id>
 		<artifact tool="FindBugs" mnemonic="Infinite Recursive Loop">
 		</artifact>
 		<shortMessage>An apparent infinite recursive loop</shortMessage>
@@ -57,6 +59,7 @@
 		<name>Infinite Recursive Loop</name>
 	</findingType>
 	<findingType>
+		<id>IL_CONTAINER_ADDED_TO_ITSELF</id>
 		<artifact tool="FindBugs"
 			mnemonic="Container Added To Itself">
 		</artifact>
@@ -71,6 +74,7 @@
 		<name>Container Added To Itself</name>
 	</findingType>
 	<findingType>
+		<id>VO_VOLATILE_REFERENCE_TO_ARRAY</id>
 		<artifact tool="FindBugs"
 			mnemonic="Volatile Reference To Array">
 		</artifact>
@@ -92,6 +96,7 @@
 		<name>Volatile Reference To Array</name>
 	</findingType>
 	<findingType>
+		<id>UI_INHERITANCE_UNSAFE_GETRESOURCE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Inheritance Unsafe Getresource">
 		</artifact>
@@ -109,6 +114,7 @@
 		<name>Inheritance Unsafe Getresource</name>
 	</findingType>
 	<findingType>
+		<id>NP_SYNC_AND_NULL_CHECK_FIELD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Sync And Null Check Field">
 		</artifact>
@@ -127,6 +133,7 @@
 		<name>Sync And Null Check Field</name>
 	</findingType>
 	<findingType>
+		<id>TESTING</id>
 		<artifact tool="FindBugs" mnemonic="Testing"></artifact>
 		<shortMessage>Testing</shortMessage>
 		<info>
@@ -138,6 +145,7 @@
 		<name>Testing</name>
 	</findingType>
 	<findingType>
+		<id>UNKNOWN</id>
 		<artifact tool="FindBugs" mnemonic="Unknown"></artifact>
 		<shortMessage>Unknown bug pattern</shortMessage>
 		<info>
@@ -153,6 +161,7 @@
 		<name>Unknown</name>
 	</findingType>
 	<findingType>
+		<id>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</id>
 		<artifact tool="FindBugs"
 			mnemonic="Creates Empty Zip File Entry">
 		</artifact>
@@ -171,6 +180,7 @@
 		<name>Creates Empty Zip File Entry</name>
 	</findingType>
 	<findingType>
+		<id>AM_CREATES_EMPTY_JAR_FILE_ENTRY</id>
 		<artifact tool="FindBugs"
 			mnemonic="Creates Empty Jar File Entry">
 		</artifact>
@@ -189,6 +199,7 @@
 		<name>Creates Empty Jar File Entry</name>
 	</findingType>
 	<findingType>
+		<id>IMSE_DONT_CATCH_IMSE</id>
 		<artifact tool="FindBugs" mnemonic="Dont Catch Imse"></artifact>
 		<shortMessage>
 			Dubious catching of IllegalMonitorStateException
@@ -203,6 +214,7 @@
 		<name>Dont Catch Imse</name>
 	</findingType>
 	<findingType>
+		<id>FL_MATH_USING_FLOAT_PRECISION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Math Using Float Precision">
 		</artifact>
@@ -220,6 +232,7 @@
 		<name>Math Using Float Precision</name>
 	</findingType>
 	<findingType>
+		<id>CN_IDIOM</id>
 		<artifact tool="FindBugs" mnemonic="Idiom"></artifact>
 		<shortMessage>
 			Class implements Cloneable but does not define or use clone
@@ -234,6 +247,7 @@
 		<name>Idiom</name>
 	</findingType>
 	<findingType>
+		<id>CN_IDIOM_NO_SUPER_CALL</id>
 		<artifact tool="FindBugs" mnemonic="Idiom No Super Call">
 		</artifact>
 		<shortMessage>
@@ -258,6 +272,7 @@
 		<name>Idiom No Super Call</name>
 	</findingType>
 	<findingType>
+		<id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
 		<artifact tool="FindBugs"
 			mnemonic="Future Keyword Used As Identifier">
 		</artifact>
@@ -277,6 +292,7 @@
 		<name>Future Keyword Used As Identifier</name>
 	</findingType>
 	<findingType>
+		<id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
 		<artifact tool="FindBugs"
 			mnemonic="Future Keyword Used As Member Identifier">
 		</artifact>
@@ -296,6 +312,7 @@
 		<name>Future Keyword Used As Member Identifier</name>
 	</findingType>
 	<findingType>
+		<id>DE_MIGHT_DROP</id>
 		<artifact tool="FindBugs" mnemonic="Might Drop"></artifact>
 		<shortMessage>Method might drop exception</shortMessage>
 		<info>
@@ -308,6 +325,7 @@
 		<name>Might Drop</name>
 	</findingType>
 	<findingType>
+		<id>DE_MIGHT_IGNORE</id>
 		<artifact tool="FindBugs" mnemonic="Might Ignore"></artifact>
 		<shortMessage>Method might ignore exception</shortMessage>
 		<info>
@@ -320,6 +338,7 @@
 		<name>Might Ignore</name>
 	</findingType>
 	<findingType>
+		<id>DP_DO_INSIDE_DO_PRIVILEGED</id>
 		<artifact tool="FindBugs" mnemonic="Do Inside Do Privileged">
 		</artifact>
 		<shortMessage>
@@ -338,6 +357,7 @@
 		<name>Do Inside Do Privileged</name>
 	</findingType>
 	<findingType>
+		<id>DP_DO_INSIDE_DO_PRIVILEDGED</id>
 		<artifact tool="FindBugs" mnemonic="Do Inside Do Priviledged">
 		</artifact>
 		<shortMessage>
@@ -356,6 +376,7 @@
 		<name>Do Inside Do Priviledged</name>
 	</findingType>
 	<findingType>
+		<id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Create Classloader Inside Do Privileged">
 		</artifact>
@@ -375,6 +396,7 @@
 		<name>Create Classloader Inside Do Privileged</name>
 	</findingType>
 	<findingType>
+		<id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Create Classloader Inside Do Priviledged">
 		</artifact>
@@ -394,6 +416,7 @@
 		<name>Create Classloader Inside Do Priviledged</name>
 	</findingType>
 	<findingType>
+		<id>JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Field Isnt Final In Immutable Class">
 		</artifact>
@@ -410,6 +433,7 @@
 		<name>Field Isnt Final In Immutable Class</name>
 	</findingType>
 	<findingType>
+		<id>DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Thread Passed Where Runnable Expected">
 		</artifact>
@@ -427,6 +451,7 @@
 		<name>Thread Passed Where Runnable Expected</name>
 	</findingType>
 	<findingType>
+		<id>DMI_COLLECTION_OF_URLS</id>
 		<artifact tool="FindBugs" mnemonic="Collection Of Urls">
 		</artifact>
 		<shortMessage>
@@ -446,6 +471,7 @@
 		<name>Collection Of Urls</name>
 	</findingType>
 	<findingType>
+		<id>DMI_BLOCKING_METHODS_ON_URL</id>
 		<artifact tool="FindBugs" mnemonic="Blocking Methods On Url">
 		</artifact>
 		<shortMessage>
@@ -464,6 +490,7 @@
 		<name>Blocking Methods On Url</name>
 	</findingType>
 	<findingType>
+		<id>DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Annotation Is Not Visible To Reflection">
 		</artifact>
@@ -483,6 +510,7 @@
 		<name>Annotation Is Not Visible To Reflection</name>
 	</findingType>
 	<findingType>
+		<id>DM_EXIT</id>
 		<artifact tool="FindBugs" mnemonic="Exit"></artifact>
 		<shortMessage>Method invokes System.exit(...)</shortMessage>
 		<info>
@@ -497,6 +525,7 @@
 		<name>Exit</name>
 	</findingType>
 	<findingType>
+		<id>DM_RUN_FINALIZERS_ON_EXIT</id>
 		<artifact tool="FindBugs" mnemonic="Run Finalizers On Exit">
 		</artifact>
 		<shortMessage>
@@ -513,6 +542,7 @@
 		<name>Run Finalizers On Exit</name>
 	</findingType>
 	<findingType>
+		<id>DM_STRING_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="String Ctor"></artifact>
 		<shortMessage>
 			Method invokes inefficient new String(String) constructor
@@ -531,6 +561,7 @@
 		<name>String Ctor</name>
 	</findingType>
 	<findingType>
+		<id>DM_STRING_VOID_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="String Void Ctor">
 		</artifact>
 		<shortMessage>
@@ -553,6 +584,7 @@
 		<name>String Void Ctor</name>
 	</findingType>
 	<findingType>
+		<id>DM_STRING_TOSTRING</id>
 		<artifact tool="FindBugs" mnemonic="String Tostring"></artifact>
 		<shortMessage>
 			Method invokes toString() method on a String
@@ -567,6 +599,7 @@
 		<name>String Tostring</name>
 	</findingType>
 	<findingType>
+		<id>DM_GC</id>
 		<artifact tool="FindBugs" mnemonic="Gc"></artifact>
 		<shortMessage>
 			Explicit garbage collection; extremely dubious except in
@@ -588,6 +621,7 @@
 		<name>Gc</name>
 	</findingType>
 	<findingType>
+		<id>DM_BOOLEAN_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="Boolean Ctor"></artifact>
 		<shortMessage>
 			Method invokes inefficient Boolean constructor; use
@@ -607,6 +641,7 @@
 		<name>Boolean Ctor</name>
 	</findingType>
 	<findingType>
+		<id>DM_NUMBER_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="Number Ctor"></artifact>
 		<shortMessage>
 			Method invokes inefficient Number constructor; use static
@@ -637,6 +672,7 @@
 		<name>Number Ctor</name>
 	</findingType>
 	<findingType>
+		<id>DM_FP_NUMBER_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="Fp Number Ctor"></artifact>
 		<shortMessage>
 			Method invokes inefficient floating-point Number
@@ -660,6 +696,7 @@
 		<name>Fp Number Ctor</name>
 	</findingType>
 	<findingType>
+		<id>DM_STRING_EMPTY_EQUALS</id>
 		<artifact tool="FindBugs" mnemonic="String Empty Equals">
 		</artifact>
 		<shortMessage>
@@ -677,6 +714,7 @@
 		<name>String Empty Equals</name>
 	</findingType>
 	<findingType>
+		<id>DM_CONVERT_CASE</id>
 		<artifact tool="FindBugs" mnemonic="Convert Case"></artifact>
 		<shortMessage>
 			Consider using Locale parameterized version of invoked
@@ -698,6 +736,7 @@
 		<name>Convert Case</name>
 	</findingType>
 	<findingType>
+		<id>BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR</id>
 		<artifact tool="FindBugs"
 			mnemonic="Unboxed And Coerced For Ternary Operator">
 		</artifact>
@@ -725,6 +764,7 @@
 		<name>Unboxed And Coerced For Ternary Operator</name>
 	</findingType>
 	<findingType>
+		<id>BX_BOXING_IMMEDIATELY_UNBOXED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Boxing Immediately Unboxed">
 		</artifact>
@@ -742,6 +782,7 @@
 		<name>Boxing Immediately Unboxed</name>
 	</findingType>
 	<findingType>
+		<id>BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Boxing Immediately Unboxed To Perform Coercion">
 		</artifact>
@@ -761,6 +802,7 @@
 		<name>Boxing Immediately Unboxed To Perform Coercion</name>
 	</findingType>
 	<findingType>
+		<id>DM_BOXED_PRIMITIVE_TOSTRING</id>
 		<artifact tool="FindBugs" mnemonic="Boxed Primitive Tostring">
 		</artifact>
 		<shortMessage>
@@ -793,6 +835,7 @@
 		<name>Boxed Primitive Tostring</name>
 	</findingType>
 	<findingType>
+		<id>DM_NEW_FOR_GETCLASS</id>
 		<artifact tool="FindBugs" mnemonic="New For Getclass">
 		</artifact>
 		<shortMessage>
@@ -809,6 +852,7 @@
 		<name>New For Getclass</name>
 	</findingType>
 	<findingType>
+		<id>DM_MONITOR_WAIT_ON_CONDITION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Monitor Wait On Condition">
 		</artifact>
@@ -827,6 +871,7 @@
 		<name>Monitor Wait On Condition</name>
 	</findingType>
 	<findingType>
+		<id>RV_01_TO_INT</id>
 		<artifact tool="FindBugs" mnemonic="01 To Int"></artifact>
 		<shortMessage>
 			Random value from 0 to 1 is coerced to the integer 0
@@ -842,6 +887,7 @@
 		<name>01 To Int</name>
 	</findingType>
 	<findingType>
+		<id>DM_NEXTINT_VIA_NEXTDOUBLE</id>
 		<artifact tool="FindBugs" mnemonic="Nextint Via Nextdouble">
 		</artifact>
 		<shortMessage>
@@ -858,6 +904,7 @@
 		<name>Nextint Via Nextdouble</name>
 	</findingType>
 	<findingType>
+		<id>SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Nonconstant String Passed To Execute">
 		</artifact>
@@ -877,6 +924,9 @@
 		<name>Nonconstant String Passed To Execute</name>
 	</findingType>
 	<findingType>
+		<id>
+			SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING
+		</id>
 		<artifact tool="FindBugs"
 			mnemonic="Prepared Statement Generated From Nonconstant String">
 		</artifact>
@@ -897,6 +947,7 @@
 		</name>
 	</findingType>
 	<findingType>
+		<id>DM_USELESS_THREAD</id>
 		<artifact tool="FindBugs" mnemonic="Useless Thread"></artifact>
 		<shortMessage>
 			A thread was created using the default empty run method
@@ -912,6 +963,7 @@
 		<name>Useless Thread</name>
 	</findingType>
 	<findingType>
+		<id>DC_DOUBLECHECK</id>
 		<artifact tool="FindBugs" mnemonic="Doublecheck"></artifact>
 		<shortMessage>Possible double check of field</shortMessage>
 		<info>
@@ -928,6 +980,7 @@
 		<name>Doublecheck</name>
 	</findingType>
 	<findingType>
+		<id>FI_FINALIZER_NULLS_FIELDS</id>
 		<artifact tool="FindBugs" mnemonic="Finalizer Nulls Fields">
 		</artifact>
 		<shortMessage>Finalizer nulls fields</shortMessage>
@@ -941,6 +994,7 @@
 		<name>Finalizer Nulls Fields</name>
 	</findingType>
 	<findingType>
+		<id>FI_FINALIZER_ONLY_NULLS_FIELDS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Finalizer Only Nulls Fields">
 		</artifact>
@@ -956,6 +1010,7 @@
 		<name>Finalizer Only Nulls Fields</name>
 	</findingType>
 	<findingType>
+		<id>FI_PUBLIC_SHOULD_BE_PROTECTED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Public Should Be Protected">
 		</artifact>
@@ -971,6 +1026,7 @@
 		<name>Public Should Be Protected</name>
 	</findingType>
 	<findingType>
+		<id>FI_EMPTY</id>
 		<artifact tool="FindBugs" mnemonic="Empty"></artifact>
 		<shortMessage>Empty finalizer should be deleted</shortMessage>
 		<info>
@@ -982,6 +1038,7 @@
 		<name>Empty</name>
 	</findingType>
 	<findingType>
+		<id>FI_NULLIFY_SUPER</id>
 		<artifact tool="FindBugs" mnemonic="Nullify Super"></artifact>
 		<shortMessage>
 			Finalizer nullifies superclass finalizer
@@ -998,6 +1055,7 @@
 		<name>Nullify Super</name>
 	</findingType>
 	<findingType>
+		<id>FI_USELESS</id>
 		<artifact tool="FindBugs" mnemonic="Useless"></artifact>
 		<shortMessage>
 			Finalizer does nothing but call superclass finalizer
@@ -1013,6 +1071,7 @@
 		<name>Useless</name>
 	</findingType>
 	<findingType>
+		<id>FI_MISSING_SUPER_CALL</id>
 		<artifact tool="FindBugs" mnemonic="Missing Super Call">
 		</artifact>
 		<shortMessage>
@@ -1031,6 +1090,7 @@
 		<name>Missing Super Call</name>
 	</findingType>
 	<findingType>
+		<id>FI_EXPLICIT_INVOCATION</id>
 		<artifact tool="FindBugs" mnemonic="Explicit Invocation">
 		</artifact>
 		<shortMessage>Explicit invocation of finalizer</shortMessage>
@@ -1052,6 +1112,7 @@
 		<name>Explicit Invocation</name>
 	</findingType>
 	<findingType>
+		<id>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</id>
 		<artifact tool="FindBugs"
 			mnemonic="Dont Define Equals For Enum">
 		</artifact>
@@ -1072,6 +1133,7 @@
 		<name>Dont Define Equals For Enum</name>
 	</findingType>
 	<findingType>
+		<id>EQ_SELF_USE_OBJECT</id>
 		<artifact tool="FindBugs" mnemonic="Self Use Object"></artifact>
 		<shortMessage>
 			Covariant equals() method defined, Object.equals(Object)
@@ -1093,6 +1155,7 @@
 		<name>Self Use Object</name>
 	</findingType>
 	<findingType>
+		<id>EQ_SELF_NO_OBJECT</id>
 		<artifact tool="FindBugs" mnemonic="Self No Object"></artifact>
 		<shortMessage>Covariant equals() method defined</shortMessage>
 		<info>
@@ -1108,6 +1171,7 @@
 		<name>Self No Object</name>
 	</findingType>
 	<findingType>
+		<id>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</id>
 		<artifact tool="FindBugs"
 			mnemonic="Overriding Equals Not Symmetric">
 		</artifact>
@@ -1134,6 +1198,7 @@
 		<name>Overriding Equals Not Symmetric</name>
 	</findingType>
 	<findingType>
+		<id>HSC_HUGE_SHARED_STRING_CONSTANT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Huge Shared String Constant">
 		</artifact>
@@ -1157,6 +1222,7 @@
 		<name>Huge Shared String Constant</name>
 	</findingType>
 	<findingType>
+		<id>NP_ARGUMENT_MIGHT_BE_NULL</id>
 		<artifact tool="FindBugs" mnemonic="Argument Might Be Null">
 		</artifact>
 		<shortMessage>
@@ -1173,6 +1239,7 @@
 		<name>Argument Might Be Null</name>
 	</findingType>
 	<findingType>
+		<id>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Equals Should Handle Null Argument">
 		</artifact>
@@ -1191,6 +1258,7 @@
 		<name>Equals Should Handle Null Argument</name>
 	</findingType>
 	<findingType>
+		<id>NP_DOES_NOT_HANDLE_NULL</id>
 		<artifact tool="FindBugs" mnemonic="Does Not Handle Null">
 		</artifact>
 		<shortMessage>
@@ -1208,6 +1276,7 @@
 		<name>Does Not Handle Null</name>
 	</findingType>
 	<findingType>
+		<id>CO_SELF_NO_OBJECT</id>
 		<artifact tool="FindBugs" mnemonic="Self No Object"></artifact>
 		<shortMessage>
 			Covariant compareTo() method defined
@@ -1225,6 +1294,7 @@
 		<name>Self No Object</name>
 	</findingType>
 	<findingType>
+		<id>HE_USE_OF_UNHASHABLE_CLASS</id>
 		<artifact tool="FindBugs" mnemonic="Use Of Unhashable Class">
 		</artifact>
 		<shortMessage>
@@ -1243,6 +1313,7 @@
 		<name>Use Of Unhashable Class</name>
 	</findingType>
 	<findingType>
+		<id>HE_HASHCODE_USE_OBJECT_EQUALS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Hashcode Use Object Equals">
 		</artifact>
@@ -1274,6 +1345,7 @@
 		<name>Hashcode Use Object Equals</name>
 	</findingType>
 	<findingType>
+		<id>EQ_COMPARETO_USE_OBJECT_EQUALS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Compareto Use Object Equals">
 		</artifact>
@@ -1306,6 +1378,7 @@
 		<name>Compareto Use Object Equals</name>
 	</findingType>
 	<findingType>
+		<id>HE_HASHCODE_NO_EQUALS</id>
 		<artifact tool="FindBugs" mnemonic="Hashcode No Equals">
 		</artifact>
 		<shortMessage>
@@ -1323,6 +1396,7 @@
 		<name>Hashcode No Equals</name>
 	</findingType>
 	<findingType>
+		<id>HE_EQUALS_USE_HASHCODE</id>
 		<artifact tool="FindBugs" mnemonic="Equals Use Hashcode">
 		</artifact>
 		<shortMessage>
@@ -1351,6 +1425,7 @@
 		<name>Equals Use Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>HE_INHERITS_EQUALS_USE_HASHCODE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Inherits Equals Use Hashcode">
 		</artifact>
@@ -1378,6 +1453,7 @@
 		<name>Inherits Equals Use Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>HE_EQUALS_NO_HASHCODE</id>
 		<artifact tool="FindBugs" mnemonic="Equals No Hashcode">
 		</artifact>
 		<shortMessage>
@@ -1395,6 +1471,7 @@
 		<name>Equals No Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>EQ_ABSTRACT_SELF</id>
 		<artifact tool="FindBugs" mnemonic="Abstract Self"></artifact>
 		<shortMessage>
 			Abstract class defines covariant equals() method
@@ -1412,6 +1489,7 @@
 		<name>Abstract Self</name>
 	</findingType>
 	<findingType>
+		<id>ES_COMPARING_STRINGS_WITH_EQ</id>
 		<artifact tool="FindBugs"
 			mnemonic="Comparing Strings With Eq">
 		</artifact>
@@ -1434,6 +1512,7 @@
 		<name>Comparing Strings With Eq</name>
 	</findingType>
 	<findingType>
+		<id>ES_COMPARING_PARAMETER_STRING_WITH_EQ</id>
 		<artifact tool="FindBugs"
 			mnemonic="Comparing Parameter String With Eq">
 		</artifact>
@@ -1455,6 +1534,7 @@
 		<name>Comparing Parameter String With Eq</name>
 	</findingType>
 	<findingType>
+		<id>CO_ABSTRACT_SELF</id>
 		<artifact tool="FindBugs" mnemonic="Abstract Self"></artifact>
 		<shortMessage>
 			Abstract class defines covariant compareTo() method
@@ -1472,6 +1552,7 @@
 		<name>Abstract Self</name>
 	</findingType>
 	<findingType>
+		<id>IS_FIELD_NOT_GUARDED</id>
 		<artifact tool="FindBugs" mnemonic="Field Not Guarded">
 		</artifact>
 		<shortMessage>
@@ -1487,6 +1568,7 @@
 		<name>Field Not Guarded</name>
 	</findingType>
 	<findingType>
+		<id>IS2_INCONSISTENT_SYNC</id>
 		<artifact tool="FindBugs" mnemonic="Inconsistent Sync">
 		</artifact>
 		<shortMessage>Inconsistent synchronization</shortMessage>
@@ -1528,6 +1610,7 @@
 		<name>Inconsistent Sync</name>
 	</findingType>
 	<findingType>
+		<id>NN_NAKED_NOTIFY</id>
 		<artifact tool="FindBugs" mnemonic="Naked Notify"></artifact>
 		<shortMessage>Naked notify</shortMessage>
 		<info>
@@ -1550,6 +1633,7 @@
 		<name>Naked Notify</name>
 	</findingType>
 	<findingType>
+		<id>MS_EXPOSE_REP</id>
 		<artifact tool="FindBugs" mnemonic="Expose Rep"></artifact>
 		<shortMessage>
 			Public static method may expose internal representation by
@@ -1566,6 +1650,7 @@
 		<name>Expose Rep</name>
 	</findingType>
 	<findingType>
+		<id>EI_EXPOSE_REP</id>
 		<artifact tool="FindBugs" mnemonic="Expose Rep"></artifact>
 		<shortMessage>
 			May expose internal representation by returning reference to
@@ -1586,6 +1671,7 @@
 		<name>Expose Rep</name>
 	</findingType>
 	<findingType>
+		<id>EI_EXPOSE_REP2</id>
 		<artifact tool="FindBugs" mnemonic="Expose REP2"></artifact>
 		<shortMessage>
 			May expose internal representation by incorporating
@@ -1605,6 +1691,7 @@
 		<name>Expose REP2</name>
 	</findingType>
 	<findingType>
+		<id>EI_EXPOSE_STATIC_REP2</id>
 		<artifact tool="FindBugs" mnemonic="Expose Static REP2">
 		</artifact>
 		<shortMessage>
@@ -1624,6 +1711,7 @@
 		<name>Expose Static REP2</name>
 	</findingType>
 	<findingType>
+		<id>RU_INVOKE_RUN</id>
 		<artifact tool="FindBugs" mnemonic="Invoke Run"></artifact>
 		<shortMessage>
 			Invokes run on a thread (did you mean to start it instead?)
@@ -1643,6 +1731,7 @@
 		<name>Invoke Run</name>
 	</findingType>
 	<findingType>
+		<id>SP_SPIN_ON_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Spin On Field"></artifact>
 		<shortMessage>Method spins on field</shortMessage>
 		<info>
@@ -1658,6 +1747,7 @@
 		<name>Spin On Field</name>
 	</findingType>
 	<findingType>
+		<id>NS_DANGEROUS_NON_SHORT_CIRCUIT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Dangerous Non Short Circuit">
 		</artifact>
@@ -1689,6 +1779,7 @@
 		<name>Dangerous Non Short Circuit</name>
 	</findingType>
 	<findingType>
+		<id>NS_NON_SHORT_CIRCUIT</id>
 		<artifact tool="FindBugs" mnemonic="Non Short Circuit">
 		</artifact>
 		<shortMessage>
@@ -1715,6 +1806,7 @@
 		<name>Non Short Circuit</name>
 	</findingType>
 	<findingType>
+		<id>TLW_TWO_LOCK_WAIT</id>
 		<artifact tool="FindBugs" mnemonic="Two Lock Wait"></artifact>
 		<shortMessage>Wait with two locks held</shortMessage>
 		<info>
@@ -1729,6 +1821,7 @@
 		<name>Two Lock Wait</name>
 	</findingType>
 	<findingType>
+		<id>TLW_TWO_LOCK_NOTIFY</id>
 		<artifact tool="FindBugs" mnemonic="Two Lock Notify"></artifact>
 		<shortMessage>Notify with two locks held</shortMessage>
 		<info>
@@ -1746,6 +1839,7 @@
 		<name>Two Lock Notify</name>
 	</findingType>
 	<findingType>
+		<id>UW_UNCOND_WAIT</id>
 		<artifact tool="FindBugs" mnemonic="Uncond Wait"></artifact>
 		<shortMessage>Unconditional wait</shortMessage>
 		<info>
@@ -1761,6 +1855,7 @@
 		<name>Uncond Wait</name>
 	</findingType>
 	<findingType>
+		<id>UR_UNINIT_READ</id>
 		<artifact tool="FindBugs" mnemonic="Uninit Read"></artifact>
 		<shortMessage>
 			Uninitialized read of field in constructor
@@ -1776,6 +1871,7 @@
 		<name>Uninit Read</name>
 	</findingType>
 	<findingType>
+		<id>UG_SYNC_SET_UNSYNC_GET</id>
 		<artifact tool="FindBugs" mnemonic="Sync Set Unsync Get">
 		</artifact>
 		<shortMessage>
@@ -1794,6 +1890,7 @@
 		<name>Sync Set Unsync Get</name>
 	</findingType>
 	<findingType>
+		<id>IC_INIT_CIRCULARITY</id>
 		<artifact tool="FindBugs" mnemonic="Init Circularity">
 		</artifact>
 		<shortMessage>Initialization circularity</shortMessage>
@@ -1808,6 +1905,7 @@
 		<name>Init Circularity</name>
 	</findingType>
 	<findingType>
+		<id>IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Superclass Uses Subclass During Initialization">
 		</artifact>
@@ -1835,6 +1933,7 @@
 		<name>Superclass Uses Subclass During Initialization</name>
 	</findingType>
 	<findingType>
+		<id>IT_NO_SUCH_ELEMENT</id>
 		<artifact tool="FindBugs" mnemonic="No Such Element"></artifact>
 		<shortMessage>
 			Iterator next() method can't throw NoSuchElement exception
@@ -1856,6 +1955,7 @@
 		<name>No Such Element</name>
 	</findingType>
 	<findingType>
+		<id>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Synchronization On Shared Constant">
 		</artifact>
@@ -1882,6 +1982,7 @@
 		<name>Synchronization On Shared Constant</name>
 	</findingType>
 	<findingType>
+		<id>ESync_EMPTY_SYNC</id>
 		<artifact tool="FindBugs" mnemonic="Empty Sync"></artifact>
 		<shortMessage>Empty synchronized block</shortMessage>
 		<info>
@@ -1897,6 +1998,7 @@
 		<name>Empty Sync</name>
 	</findingType>
 	<findingType>
+		<id>IS_INCONSISTENT_SYNC</id>
 		<artifact tool="FindBugs" mnemonic="Inconsistent Sync">
 		</artifact>
 		<shortMessage>Inconsistent synchronization</shortMessage>
@@ -1928,6 +2030,7 @@
 		<name>Inconsistent Sync</name>
 	</findingType>
 	<findingType>
+		<id>ML_SYNC_ON_UPDATED_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Sync On Updated Field">
 		</artifact>
 		<shortMessage>
@@ -1944,6 +2047,7 @@
 		<name>Sync On Updated Field</name>
 	</findingType>
 	<findingType>
+		<id>MS_OOI_PKGPROTECT</id>
 		<artifact tool="FindBugs" mnemonic="Ooi Pkgprotect"></artifact>
 		<shortMessage>
 			Field should be moved out of an interface and made package
@@ -1962,6 +2066,7 @@
 		<name>Ooi Pkgprotect</name>
 	</findingType>
 	<findingType>
+		<id>MS_FINAL_PKGPROTECT</id>
 		<artifact tool="FindBugs" mnemonic="Final Pkgprotect">
 		</artifact>
 		<shortMessage>
@@ -1978,6 +2083,7 @@
 		<name>Final Pkgprotect</name>
 	</findingType>
 	<findingType>
+		<id>MS_SHOULD_BE_FINAL</id>
 		<artifact tool="FindBugs" mnemonic="Should Be Final"></artifact>
 		<shortMessage>Field isn't final but should be</shortMessage>
 		<info>
@@ -1991,6 +2097,7 @@
 		<name>Should Be Final</name>
 	</findingType>
 	<findingType>
+		<id>MS_PKGPROTECT</id>
 		<artifact tool="FindBugs" mnemonic="Pkgprotect"></artifact>
 		<shortMessage>Field should be package protected</shortMessage>
 		<info>
@@ -2003,6 +2110,7 @@
 		<name>Pkgprotect</name>
 	</findingType>
 	<findingType>
+		<id>MS_MUTABLE_HASHTABLE</id>
 		<artifact tool="FindBugs" mnemonic="Mutable Hashtable">
 		</artifact>
 		<shortMessage>Field is a mutable Hashtable</shortMessage>
@@ -2017,6 +2125,7 @@
 		<name>Mutable Hashtable</name>
 	</findingType>
 	<findingType>
+		<id>MS_MUTABLE_ARRAY</id>
 		<artifact tool="FindBugs" mnemonic="Mutable Array"></artifact>
 		<shortMessage>Field is a mutable array</shortMessage>
 		<info>
@@ -2030,6 +2139,7 @@
 		<name>Mutable Array</name>
 	</findingType>
 	<findingType>
+		<id>MS_CANNOT_BE_FINAL</id>
 		<artifact tool="FindBugs" mnemonic="Cannot Be Final"></artifact>
 		<shortMessage>
 			Field isn't final and can't be protected from malicious code
@@ -2045,6 +2155,7 @@
 		<name>Cannot Be Final</name>
 	</findingType>
 	<findingType>
+		<id>IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Ambiguous Invocation Of Inherited Or Outer Method">
 		</artifact>
@@ -2068,6 +2179,7 @@
 		<name>Ambiguous Invocation Of Inherited Or Outer Method</name>
 	</findingType>
 	<findingType>
+		<id>NM_CLASS_NAMING_CONVENTION</id>
 		<artifact tool="FindBugs" mnemonic="Class Naming Convention">
 		</artifact>
 		<shortMessage>
@@ -2086,6 +2198,7 @@
 		<name>Class Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>NM_METHOD_NAMING_CONVENTION</id>
 		<artifact tool="FindBugs" mnemonic="Method Naming Convention">
 		</artifact>
 		<shortMessage>
@@ -2101,6 +2214,7 @@
 		<name>Method Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>NM_FIELD_NAMING_CONVENTION</id>
 		<artifact tool="FindBugs" mnemonic="Field Naming Convention">
 		</artifact>
 		<shortMessage>
@@ -2116,6 +2230,7 @@
 		<name>Field Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>NM_VERY_CONFUSING</id>
 		<artifact tool="FindBugs" mnemonic="Very Confusing"></artifact>
 		<shortMessage>Very confusing method names</shortMessage>
 		<info>
@@ -2130,6 +2245,7 @@
 		<name>Very Confusing</name>
 	</findingType>
 	<findingType>
+		<id>NM_VERY_CONFUSING_INTENTIONAL</id>
 		<artifact tool="FindBugs"
 			mnemonic="Very Confusing Intentional">
 		</artifact>
@@ -2152,6 +2268,7 @@
 		<name>Very Confusing Intentional</name>
 	</findingType>
 	<findingType>
+		<id>NM_CONFUSING</id>
 		<artifact tool="FindBugs" mnemonic="Confusing"></artifact>
 		<shortMessage>Confusing method names</shortMessage>
 		<info>
@@ -2163,6 +2280,7 @@
 		<name>Confusing</name>
 	</findingType>
 	<findingType>
+		<id>NM_METHOD_CONSTRUCTOR_CONFUSION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Method Constructor Confusion">
 		</artifact>
@@ -2184,6 +2302,7 @@
 		<name>Method Constructor Confusion</name>
 	</findingType>
 	<findingType>
+		<id>NM_LCASE_HASHCODE</id>
 		<artifact tool="FindBugs" mnemonic="Lcase Hashcode"></artifact>
 		<shortMessage>
 			Class defines hashcode(); should it be hashCode()?
@@ -2200,6 +2319,7 @@
 		<name>Lcase Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>NM_LCASE_TOSTRING</id>
 		<artifact tool="FindBugs" mnemonic="Lcase Tostring"></artifact>
 		<shortMessage>
 			Class defines tostring(); should it be toString()?
@@ -2216,6 +2336,7 @@
 		<name>Lcase Tostring</name>
 	</findingType>
 	<findingType>
+		<id>NM_BAD_EQUAL</id>
 		<artifact tool="FindBugs" mnemonic="Bad Equal"></artifact>
 		<shortMessage>
 			Class defines equal(); should it be equals()?
@@ -2233,6 +2354,7 @@
 		<name>Bad Equal</name>
 	</findingType>
 	<findingType>
+		<id>NM_CLASS_NOT_EXCEPTION</id>
 		<artifact tool="FindBugs" mnemonic="Class Not Exception">
 		</artifact>
 		<shortMessage>
@@ -2249,6 +2371,7 @@
 		<name>Class Not Exception</name>
 	</findingType>
 	<findingType>
+		<id>RR_NOT_CHECKED</id>
 		<artifact tool="FindBugs" mnemonic="Not Checked"></artifact>
 		<shortMessage>
 			Method ignores results of InputStream.read()
@@ -2270,6 +2393,7 @@
 		<name>Not Checked</name>
 	</findingType>
 	<findingType>
+		<id>SR_NOT_CHECKED</id>
 		<artifact tool="FindBugs" mnemonic="Not Checked"></artifact>
 		<shortMessage>
 			Method ignores results of InputStream.skip()
@@ -2293,6 +2417,7 @@
 		<name>Not Checked</name>
 	</findingType>
 	<findingType>
+		<id>SE_READ_RESOLVE_MUST_RETURN_OBJECT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Read Resolve Must Return Object">
 		</artifact>
@@ -2309,6 +2434,7 @@
 		<name>Read Resolve Must Return Object</name>
 	</findingType>
 	<findingType>
+		<id>SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Transient Field Of Nonserializable Class">
 		</artifact>
@@ -2328,6 +2454,7 @@
 		<name>Transient Field Of Nonserializable Class</name>
 	</findingType>
 	<findingType>
+		<id>SE_TRANSIENT_FIELD_NOT_RESTORED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Transient Field Not Restored">
 		</artifact>
@@ -2347,6 +2474,7 @@
 		<name>Transient Field Not Restored</name>
 	</findingType>
 	<findingType>
+		<id>SE_METHOD_MUST_BE_PRIVATE</id>
 		<artifact tool="FindBugs" mnemonic="Method Must Be Private">
 		</artifact>
 		<shortMessage>
@@ -2364,6 +2492,7 @@
 		<name>Method Must Be Private</name>
 	</findingType>
 	<findingType>
+		<id>SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION</id>
 		<artifact tool="FindBugs"
 			mnemonic="No Suitable Constructor For Externalization">
 		</artifact>
@@ -2385,6 +2514,7 @@
 		<name>No Suitable Constructor For Externalization</name>
 	</findingType>
 	<findingType>
+		<id>SE_NO_SUITABLE_CONSTRUCTOR</id>
 		<artifact tool="FindBugs" mnemonic="No Suitable Constructor">
 		</artifact>
 		<shortMessage>
@@ -2405,6 +2535,7 @@
 		<name>No Suitable Constructor</name>
 	</findingType>
 	<findingType>
+		<id>SE_NO_SERIALVERSIONID</id>
 		<artifact tool="FindBugs" mnemonic="No Serialversionid">
 		</artifact>
 		<shortMessage>
@@ -2431,6 +2562,7 @@
 		<name>No Serialversionid</name>
 	</findingType>
 	<findingType>
+		<id>SE_COMPARATOR_SHOULD_BE_SERIALIZABLE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Comparator Should Be Serializable">
 		</artifact>
@@ -2454,6 +2586,7 @@
 		<name>Comparator Should Be Serializable</name>
 	</findingType>
 	<findingType>
+		<id>SF_SWITCH_FALLTHROUGH</id>
 		<artifact tool="FindBugs" mnemonic="Switch Fallthrough">
 		</artifact>
 		<shortMessage>
@@ -2470,6 +2603,7 @@
 		<name>Switch Fallthrough</name>
 	</findingType>
 	<findingType>
+		<id>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH</id>
 		<artifact tool="FindBugs"
 			mnemonic="Dead Store Due To Switch Fallthrough">
 		</artifact>
@@ -2487,6 +2621,7 @@
 		<name>Dead Store Due To Switch Fallthrough</name>
 	</findingType>
 	<findingType>
+		<id>WS_WRITEOBJECT_SYNC</id>
 		<artifact tool="FindBugs" mnemonic="Writeobject Sync">
 		</artifact>
 		<shortMessage>
@@ -2504,6 +2639,7 @@
 		<name>Writeobject Sync</name>
 	</findingType>
 	<findingType>
+		<id>RS_READOBJECT_SYNC</id>
 		<artifact tool="FindBugs" mnemonic="Readobject Sync"></artifact>
 		<shortMessage>
 			Class's readObject() method is synchronized
@@ -2524,6 +2660,7 @@
 		<name>Readobject Sync</name>
 	</findingType>
 	<findingType>
+		<id>SE_NONSTATIC_SERIALVERSIONID</id>
 		<artifact tool="FindBugs"
 			mnemonic="Nonstatic Serialversionid">
 		</artifact>
@@ -2540,6 +2677,7 @@
 		<name>Nonstatic Serialversionid</name>
 	</findingType>
 	<findingType>
+		<id>SE_NONFINAL_SERIALVERSIONID</id>
 		<artifact tool="FindBugs" mnemonic="Nonfinal Serialversionid">
 		</artifact>
 		<shortMessage>serialVersionUID isn't final</shortMessage>
@@ -2555,6 +2693,7 @@
 		<name>Nonfinal Serialversionid</name>
 	</findingType>
 	<findingType>
+		<id>SE_NONLONG_SERIALVERSIONID</id>
 		<artifact tool="FindBugs" mnemonic="Nonlong Serialversionid">
 		</artifact>
 		<shortMessage>serialVersionUID isn't long</shortMessage>
@@ -2570,6 +2709,7 @@
 		<name>Nonlong Serialversionid</name>
 	</findingType>
 	<findingType>
+		<id>SE_BAD_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Bad Field"></artifact>
 		<shortMessage>
 			Non-transient non-serializable instance field in
@@ -2591,6 +2731,7 @@
 		<name>Bad Field</name>
 	</findingType>
 	<findingType>
+		<id>SE_BAD_FIELD_INNER_CLASS</id>
 		<artifact tool="FindBugs" mnemonic="Bad Field Inner Class">
 		</artifact>
 		<shortMessage>
@@ -2613,6 +2754,7 @@
 		<name>Bad Field Inner Class</name>
 	</findingType>
 	<findingType>
+		<id>SE_INNER_CLASS</id>
 		<artifact tool="FindBugs" mnemonic="Inner Class"></artifact>
 		<shortMessage>Serializable inner class</shortMessage>
 		<info>
@@ -2629,6 +2771,7 @@
 		<name>Inner Class</name>
 	</findingType>
 	<findingType>
+		<id>SE_BAD_FIELD_STORE</id>
 		<artifact tool="FindBugs" mnemonic="Bad Field Store"></artifact>
 		<shortMessage>
 			Non-serializable value stored into instance field of a
@@ -2643,6 +2786,7 @@
 		<name>Bad Field Store</name>
 	</findingType>
 	<findingType>
+		<id>SC_START_IN_CTOR</id>
 		<artifact tool="FindBugs" mnemonic="Start In Ctor"></artifact>
 		<shortMessage>Constructor invokes Thread.start()</shortMessage>
 		<info>
@@ -2656,6 +2800,7 @@
 		<name>Start In Ctor</name>
 	</findingType>
 	<findingType>
+		<id>SS_SHOULD_BE_STATIC</id>
 		<artifact tool="FindBugs" mnemonic="Should Be Static">
 		</artifact>
 		<shortMessage>
@@ -2671,6 +2816,7 @@
 		<name>Should Be Static</name>
 	</findingType>
 	<findingType>
+		<id>UUF_UNUSED_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Unused Field"></artifact>
 		<shortMessage>Unused field</shortMessage>
 		<info>
@@ -2682,6 +2828,7 @@
 		<name>Unused Field</name>
 	</findingType>
 	<findingType>
+		<id>URF_UNREAD_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Unread Field"></artifact>
 		<shortMessage>Unread field</shortMessage>
 		<info>
@@ -2693,6 +2840,7 @@
 		<name>Unread Field</name>
 	</findingType>
 	<findingType>
+		<id>QF_QUESTIONABLE_FOR_LOOP</id>
 		<artifact tool="FindBugs" mnemonic="Questionable For Loop">
 		</artifact>
 		<shortMessage>
@@ -2708,6 +2856,7 @@
 		<name>Questionable For Loop</name>
 	</findingType>
 	<findingType>
+		<id>UWF_NULL_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Null Field"></artifact>
 		<shortMessage>Field only ever set to null</shortMessage>
 		<info>
@@ -2720,6 +2869,7 @@
 		<name>Null Field</name>
 	</findingType>
 	<findingType>
+		<id>UWF_UNWRITTEN_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Unwritten Field"></artifact>
 		<shortMessage>Unwritten field</shortMessage>
 		<info>
@@ -2733,6 +2883,7 @@
 		<name>Unwritten Field</name>
 	</findingType>
 	<findingType>
+		<id>ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Write To Static From Instance Method">
 		</artifact>
@@ -2749,6 +2900,7 @@
 		<name>Write To Static From Instance Method</name>
 	</findingType>
 	<findingType>
+		<id>NP_LOAD_OF_KNOWN_NULL_VALUE</id>
 		<artifact tool="FindBugs" mnemonic="Load Of Known Null Value">
 		</artifact>
 		<shortMessage>Load of known null value</shortMessage>
@@ -2765,6 +2917,7 @@
 		<name>Load Of Known Null Value</name>
 	</findingType>
 	<findingType>
+		<id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Immediate Dereference Of Readline">
 		</artifact>
@@ -2782,6 +2935,7 @@
 		<name>Immediate Dereference Of Readline</name>
 	</findingType>
 	<findingType>
+		<id>NP_UNWRITTEN_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Unwritten Field"></artifact>
 		<shortMessage>Read of unwritten field</shortMessage>
 		<info>
@@ -2795,6 +2949,7 @@
 		<name>Unwritten Field</name>
 	</findingType>
 	<findingType>
+		<id>SIC_INNER_SHOULD_BE_STATIC</id>
 		<artifact tool="FindBugs" mnemonic="Inner Should Be Static">
 		</artifact>
 		<shortMessage>Should be a static inner class</shortMessage>
@@ -2811,6 +2966,7 @@
 		<name>Inner Should Be Static</name>
 	</findingType>
 	<findingType>
+		<id>NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
 		<artifact tool="FindBugs"
 			mnemonic="Field Not Initialized In Constructor">
 		</artifact>
@@ -2830,6 +2986,7 @@
 		<name>Field Not Initialized In Constructor</name>
 	</findingType>
 	<findingType>
+		<id>UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
 		<artifact tool="FindBugs"
 			mnemonic="Field Not Initialized In Constructor">
 		</artifact>
@@ -2849,6 +3006,7 @@
 		<name>Field Not Initialized In Constructor</name>
 	</findingType>
 	<findingType>
+		<id>SIC_INNER_SHOULD_BE_STATIC_ANON</id>
 		<artifact tool="FindBugs"
 			mnemonic="Inner Should Be Static Anon">
 		</artifact>
@@ -2871,6 +3029,7 @@
 		<name>Inner Should Be Static Anon</name>
 	</findingType>
 	<findingType>
+		<id>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Inner Should Be Static Needs This">
 		</artifact>
@@ -2895,6 +3054,7 @@
 		<name>Inner Should Be Static Needs This</name>
 	</findingType>
 	<findingType>
+		<id>WA_NOT_IN_LOOP</id>
 		<artifact tool="FindBugs" mnemonic="Not In Loop"></artifact>
 		<shortMessage>Wait not in loop</shortMessage>
 		<info>
@@ -2909,6 +3069,7 @@
 		<name>Not In Loop</name>
 	</findingType>
 	<findingType>
+		<id>WA_AWAIT_NOT_IN_LOOP</id>
 		<artifact tool="FindBugs" mnemonic="Await Not In Loop">
 		</artifact>
 		<shortMessage>Condition.await() not in loop</shortMessage>
@@ -2925,6 +3086,7 @@
 		<name>Await Not In Loop</name>
 	</findingType>
 	<findingType>
+		<id>NO_NOTIFY_NOT_NOTIFYALL</id>
 		<artifact tool="FindBugs" mnemonic="Notify Not Notifyall">
 		</artifact>
 		<shortMessage>
@@ -2945,6 +3107,7 @@
 		<name>Notify Not Notifyall</name>
 	</findingType>
 	<findingType>
+		<id>RV_CHECK_FOR_POSITIVE_INDEXOF</id>
 		<artifact tool="FindBugs"
 			mnemonic="Check For Positive Indexof">
 		</artifact>
@@ -2964,6 +3127,7 @@
 		<name>Check For Positive Indexof</name>
 	</findingType>
 	<findingType>
+		<id>RV_DONT_JUST_NULL_CHECK_READLINE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Dont Just Null Check Readline">
 		</artifact>
@@ -2983,6 +3147,7 @@
 		<name>Dont Just Null Check Readline</name>
 	</findingType>
 	<findingType>
+		<id>RV_RETURN_VALUE_IGNORED</id>
 		<artifact tool="FindBugs" mnemonic="Return Value Ignored">
 		</artifact>
 		<shortMessage>Method ignores return value</shortMessage>
@@ -3007,6 +3172,7 @@
 		<name>Return Value Ignored</name>
 	</findingType>
 	<findingType>
+		<id>RV_RETURN_VALUE_IGNORED2</id>
 		<artifact tool="FindBugs" mnemonic="Return Value IGNORED2">
 		</artifact>
 		<shortMessage>Method ignores return value</shortMessage>
@@ -3031,6 +3197,7 @@
 		<name>Return Value IGNORED2</name>
 	</findingType>
 	<findingType>
+		<id>NP_ALWAYS_NULL</id>
 		<artifact tool="FindBugs" mnemonic="Always Null"></artifact>
 		<shortMessage>Null pointer dereference</shortMessage>
 		<info>
@@ -3044,6 +3211,7 @@
 		<name>Always Null</name>
 	</findingType>
 	<findingType>
+		<id>NP_STORE_INTO_NONNULL_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Store Into Nonnull Field">
 		</artifact>
 		<shortMessage>
@@ -3058,6 +3226,7 @@
 		<name>Store Into Nonnull Field</name>
 	</findingType>
 	<findingType>
+		<id>NP_ALWAYS_NULL_EXCEPTION</id>
 		<artifact tool="FindBugs" mnemonic="Always Null Exception">
 		</artifact>
 		<shortMessage>
@@ -3080,6 +3249,7 @@
 		<name>Always Null Exception</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_ON_SOME_PATH</id>
 		<artifact tool="FindBugs" mnemonic="Null On Some Path">
 		</artifact>
 		<shortMessage>Possible null pointer dereference</shortMessage>
@@ -3094,6 +3264,7 @@
 		<name>Null On Some Path</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_ON_SOME_PATH_EXCEPTION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Null On Some Path Exception">
 		</artifact>
@@ -3118,6 +3289,7 @@
 		<name>Null On Some Path Exception</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Null On Some Path From Return Value">
 		</artifact>
@@ -3138,6 +3310,7 @@
 		<name>Null On Some Path From Return Value</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_PARAM_DEREF_NONVIRTUAL</id>
 		<artifact tool="FindBugs"
 			mnemonic="Null Param Deref Nonvirtual">
 		</artifact>
@@ -3155,6 +3328,7 @@
 		<name>Null Param Deref Nonvirtual</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Null Param Deref All Targets Dangerous">
 		</artifact>
@@ -3173,6 +3347,7 @@
 		<name>Null Param Deref All Targets Dangerous</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_PARAM_DEREF</id>
 		<artifact tool="FindBugs" mnemonic="Null Param Deref">
 		</artifact>
 		<shortMessage>
@@ -3188,6 +3363,7 @@
 		<name>Null Param Deref</name>
 	</findingType>
 	<findingType>
+		<id>NP_NONNULL_PARAM_VIOLATION</id>
 		<artifact tool="FindBugs" mnemonic="Nonnull Param Violation">
 		</artifact>
 		<shortMessage>
@@ -3205,6 +3381,7 @@
 		<name>Nonnull Param Violation</name>
 	</findingType>
 	<findingType>
+		<id>NP_NONNULL_RETURN_VIOLATION</id>
 		<artifact tool="FindBugs" mnemonic="Nonnull Return Violation">
 		</artifact>
 		<shortMessage>
@@ -3220,6 +3397,7 @@
 		<name>Nonnull Return Violation</name>
 	</findingType>
 	<findingType>
+		<id>NP_CLONE_COULD_RETURN_NULL</id>
 		<artifact tool="FindBugs" mnemonic="Clone Could Return Null">
 		</artifact>
 		<shortMessage>Clone method may return null</shortMessage>
@@ -3234,6 +3412,7 @@
 		<name>Clone Could Return Null</name>
 	</findingType>
 	<findingType>
+		<id>NP_TOSTRING_COULD_RETURN_NULL</id>
 		<artifact tool="FindBugs"
 			mnemonic="Tostring Could Return Null">
 		</artifact>
@@ -3251,6 +3430,7 @@
 		<name>Tostring Could Return Null</name>
 	</findingType>
 	<findingType>
+		<id>NP_GUARANTEED_DEREF</id>
 		<artifact tool="FindBugs" mnemonic="Guaranteed Deref">
 		</artifact>
 		<shortMessage>
@@ -3267,6 +3447,7 @@
 		<name>Guaranteed Deref</name>
 	</findingType>
 	<findingType>
+		<id>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</id>
 		<artifact tool="FindBugs"
 			mnemonic="Guaranteed Deref On Exception Path">
 		</artifact>
@@ -3286,6 +3467,7 @@
 		<name>Guaranteed Deref On Exception Path</name>
 	</findingType>
 	<findingType>
+		<id>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</id>
 		<artifact tool="FindBugs"
 			mnemonic="Instance Before Finals Assigned">
 		</artifact>
@@ -3303,6 +3485,7 @@
 		<name>Instance Before Finals Assigned</name>
 	</findingType>
 	<findingType>
+		<id>OS_OPEN_STREAM</id>
 		<artifact tool="FindBugs" mnemonic="Open Stream"></artifact>
 		<shortMessage>Method may fail to close stream</shortMessage>
 		<info>
@@ -3319,6 +3502,7 @@
 		<name>Open Stream</name>
 	</findingType>
 	<findingType>
+		<id>OS_OPEN_STREAM_EXCEPTION_PATH</id>
 		<artifact tool="FindBugs"
 			mnemonic="Open Stream Exception Path">
 		</artifact>
@@ -3339,6 +3523,7 @@
 		<name>Open Stream Exception Path</name>
 	</findingType>
 	<findingType>
+		<id>PZLA_PREFER_ZERO_LENGTH_ARRAYS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Prefer Zero Length Arrays">
 		</artifact>
@@ -3364,6 +3549,7 @@
 		<name>Prefer Zero Length Arrays</name>
 	</findingType>
 	<findingType>
+		<id>UCF_USELESS_CONTROL_FLOW</id>
 		<artifact tool="FindBugs" mnemonic="Useless Control Flow">
 		</artifact>
 		<shortMessage>Useless control flow</shortMessage>
@@ -3381,6 +3567,7 @@
 		<name>Useless Control Flow</name>
 	</findingType>
 	<findingType>
+		<id>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Useless Control Flow Next Line">
 		</artifact>
@@ -3400,6 +3587,7 @@
 		<name>Useless Control Flow Next Line</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Nullcheck Would Have Been A Npe">
 		</artifact>
@@ -3421,6 +3609,7 @@
 		<name>Redundant Nullcheck Would Have Been A Npe</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Nullcheck Of Null Value">
 		</artifact>
@@ -3436,6 +3625,7 @@
 		<name>Redundant Nullcheck Of Null Value</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Nullcheck Of Nonnull Value">
 		</artifact>
@@ -3451,6 +3641,7 @@
 		<name>Redundant Nullcheck Of Nonnull Value</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Comparison Two Null Values">
 		</artifact>
@@ -3466,6 +3657,7 @@
 		<name>Redundant Comparison Two Null Values</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Comparison Of Null And Nonnull Value">
 		</artifact>
@@ -3481,6 +3673,7 @@
 		<name>Redundant Comparison Of Null And Nonnull Value</name>
 	</findingType>
 	<findingType>
+		<id>RCN_REDUNDANT_CHECKED_NULL_COMPARISON</id>
 		<artifact tool="FindBugs"
 			mnemonic="Redundant Checked Null Comparison">
 		</artifact>
@@ -3505,6 +3698,7 @@
 		<name>Redundant Checked Null Comparison</name>
 	</findingType>
 	<findingType>
+		<id>UL_UNRELEASED_LOCK</id>
 		<artifact tool="FindBugs" mnemonic="Unreleased Lock"></artifact>
 		<shortMessage>
 			Method does not release lock on all paths
@@ -3522,6 +3716,7 @@
 		<name>Unreleased Lock</name>
 	</findingType>
 	<findingType>
+		<id>UL_UNRELEASED_LOCK_EXCEPTION_PATH</id>
 		<artifact tool="FindBugs"
 			mnemonic="Unreleased Lock Exception Path">
 		</artifact>
@@ -3541,6 +3736,7 @@
 		<name>Unreleased Lock Exception Path</name>
 	</findingType>
 	<findingType>
+		<id>RC_REF_COMPARISON</id>
 		<artifact tool="FindBugs" mnemonic="Ref Comparison"></artifact>
 		<shortMessage>Suspicious reference comparison</shortMessage>
 		<info>
@@ -3556,6 +3752,7 @@
 		<name>Ref Comparison</name>
 	</findingType>
 	<findingType>
+		<id>EC_UNRELATED_TYPES</id>
 		<artifact tool="FindBugs" mnemonic="Unrelated Types"></artifact>
 		<shortMessage>
 			Call to equals() comparing different types
@@ -3577,6 +3774,7 @@
 		<name>Unrelated Types</name>
 	</findingType>
 	<findingType>
+		<id>EC_UNRELATED_INTERFACES</id>
 		<artifact tool="FindBugs" mnemonic="Unrelated Interfaces">
 		</artifact>
 		<shortMessage>
@@ -3601,6 +3799,7 @@
 		<name>Unrelated Interfaces</name>
 	</findingType>
 	<findingType>
+		<id>EC_UNRELATED_CLASS_AND_INTERFACE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Unrelated Class And Interface">
 		</artifact>
@@ -3626,6 +3825,7 @@
 		<name>Unrelated Class And Interface</name>
 	</findingType>
 	<findingType>
+		<id>EC_NULL_ARG</id>
 		<artifact tool="FindBugs" mnemonic="Null Arg"></artifact>
 		<shortMessage>Call to equals() with null argument</shortMessage>
 		<info>
@@ -3639,6 +3839,7 @@
 		<name>Null Arg</name>
 	</findingType>
 	<findingType>
+		<id>MWN_MISMATCHED_WAIT</id>
 		<artifact tool="FindBugs" mnemonic="Mismatched Wait"></artifact>
 		<shortMessage>Mismatched wait()</shortMessage>
 		<info>
@@ -3653,6 +3854,7 @@
 		<name>Mismatched Wait</name>
 	</findingType>
 	<findingType>
+		<id>MWN_MISMATCHED_NOTIFY</id>
 		<artifact tool="FindBugs" mnemonic="Mismatched Notify">
 		</artifact>
 		<shortMessage>Mismatched notify()</shortMessage>
@@ -3669,6 +3871,7 @@
 		<name>Mismatched Notify</name>
 	</findingType>
 	<findingType>
+		<id>SA_LOCAL_SELF_ASSIGNMENT</id>
 		<artifact tool="FindBugs" mnemonic="Local Self Assignment">
 		</artifact>
 		<shortMessage>Self assignment of local variable</shortMessage>
@@ -3683,6 +3886,7 @@
 		<name>Local Self Assignment</name>
 	</findingType>
 	<findingType>
+		<id>SA_FIELD_SELF_ASSIGNMENT</id>
 		<artifact tool="FindBugs" mnemonic="Field Self Assignment">
 		</artifact>
 		<shortMessage>Self assignment of field</shortMessage>
@@ -3697,6 +3901,7 @@
 		<name>Field Self Assignment</name>
 	</findingType>
 	<findingType>
+		<id>SA_FIELD_DOUBLE_ASSIGNMENT</id>
 		<artifact tool="FindBugs" mnemonic="Field Double Assignment">
 		</artifact>
 		<shortMessage>Double assignment of field</shortMessage>
@@ -3712,6 +3917,7 @@
 		<name>Field Double Assignment</name>
 	</findingType>
 	<findingType>
+		<id>SA_LOCAL_DOUBLE_ASSIGNMENT</id>
 		<artifact tool="FindBugs" mnemonic="Local Double Assignment">
 		</artifact>
 		<shortMessage>Double assignment of local variable</shortMessage>
@@ -3727,6 +3933,7 @@
 		<name>Local Double Assignment</name>
 	</findingType>
 	<findingType>
+		<id>SA_FIELD_SELF_COMPUTATION</id>
 		<artifact tool="FindBugs" mnemonic="Field Self Computation">
 		</artifact>
 		<shortMessage>
@@ -3746,6 +3953,7 @@
 		<name>Field Self Computation</name>
 	</findingType>
 	<findingType>
+		<id>SA_LOCAL_SELF_COMPUTATION</id>
 		<artifact tool="FindBugs" mnemonic="Local Self Computation">
 		</artifact>
 		<shortMessage>
@@ -3765,6 +3973,7 @@
 		<name>Local Self Computation</name>
 	</findingType>
 	<findingType>
+		<id>SA_FIELD_SELF_COMPARISON</id>
 		<artifact tool="FindBugs" mnemonic="Field Self Comparison">
 		</artifact>
 		<shortMessage>
@@ -3780,6 +3989,7 @@
 		<name>Field Self Comparison</name>
 	</findingType>
 	<findingType>
+		<id>SA_LOCAL_SELF_COMPARISON</id>
 		<artifact tool="FindBugs" mnemonic="Local Self Comparison">
 		</artifact>
 		<shortMessage>
@@ -3795,6 +4005,7 @@
 		<name>Local Self Comparison</name>
 	</findingType>
 	<findingType>
+		<id>DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Long Bits To Double Invoked On Int">
 		</artifact>
@@ -3812,6 +4023,7 @@
 		<name>Long Bits To Double Invoked On Int</name>
 	</findingType>
 	<findingType>
+		<id>DMI_RANDOM_USED_ONLY_ONCE</id>
 		<artifact tool="FindBugs" mnemonic="Random Used Only Once">
 		</artifact>
 		<shortMessage>
@@ -3838,6 +4050,7 @@
 		<name>Random Used Only Once</name>
 	</findingType>
 	<findingType>
+		<id>RV_ABSOLUTE_VALUE_OF_RANDOM_INT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Absolute Value Of Random Int">
 		</artifact>
@@ -3859,6 +4072,7 @@
 		<name>Absolute Value Of Random Int</name>
 	</findingType>
 	<findingType>
+		<id>RV_ABSOLUTE_VALUE_OF_HASHCODE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Absolute Value Of Hashcode">
 		</artifact>
@@ -3879,6 +4093,7 @@
 		<name>Absolute Value Of Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>RV_REM_OF_RANDOM_INT</id>
 		<artifact tool="FindBugs" mnemonic="Rem Of Random Int">
 		</artifact>
 		<shortMessage>
@@ -3897,6 +4112,7 @@
 		<name>Rem Of Random Int</name>
 	</findingType>
 	<findingType>
+		<id>RV_REM_OF_HASHCODE</id>
 		<artifact tool="FindBugs" mnemonic="Rem Of Hashcode"></artifact>
 		<shortMessage>
 			Remainder of hashCode could be negative
@@ -3923,6 +4139,7 @@
 		<name>Rem Of Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Comparison With Nonnegative Value">
 		</artifact>
@@ -3938,6 +4155,7 @@
 		<name>Bad Comparison With Nonnegative Value</name>
 	</findingType>
 	<findingType>
+		<id>INT_BAD_COMPARISON_WITH_SIGNED_BYTE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Comparison With Signed Byte">
 		</artifact>
@@ -3955,6 +4173,7 @@
 		<name>Bad Comparison With Signed Byte</name>
 	</findingType>
 	<findingType>
+		<id>INT_VACUOUS_COMPARISON</id>
 		<artifact tool="FindBugs" mnemonic="Vacuous Comparison">
 		</artifact>
 		<shortMessage>Vacuous comparison of integer value</shortMessage>
@@ -3967,6 +4186,7 @@
 		<name>Vacuous Comparison</name>
 	</findingType>
 	<findingType>
+		<id>INT_BAD_REM_BY_1</id>
 		<artifact tool="FindBugs" mnemonic="Bad Rem By 1"></artifact>
 		<shortMessage>Integer remainder modulo 1</shortMessage>
 		<info>
@@ -3979,6 +4199,7 @@
 		<name>Bad Rem By 1</name>
 	</findingType>
 	<findingType>
+		<id>BIT_IOR_OF_SIGNED_BYTE</id>
 		<artifact tool="FindBugs" mnemonic="Ior Of Signed Byte">
 		</artifact>
 		<shortMessage>Bitwise OR of signed byte value</shortMessage>
@@ -4012,6 +4233,7 @@
 		<name>Ior Of Signed Byte</name>
 	</findingType>
 	<findingType>
+		<id>BIT_AND</id>
 		<artifact tool="FindBugs" mnemonic="And"></artifact>
 		<shortMessage>Incompatible bit masks</shortMessage>
 		<info>
@@ -4025,6 +4247,7 @@
 		<name>And</name>
 	</findingType>
 	<findingType>
+		<id>BIT_AND_ZZ</id>
 		<artifact tool="FindBugs" mnemonic="And Zz"></artifact>
 		<shortMessage>
 			Check to see if ((...) &amp; 0) == 0
@@ -4039,6 +4262,7 @@
 		<name>And Zz</name>
 	</findingType>
 	<findingType>
+		<id>BIT_IOR</id>
 		<artifact tool="FindBugs" mnemonic="Ior"></artifact>
 		<shortMessage>Incompatible bit masks</shortMessage>
 		<info>
@@ -4057,6 +4281,7 @@
 		<name>Ior</name>
 	</findingType>
 	<findingType>
+		<id>LI_LAZY_INIT_INSTANCE</id>
 		<artifact tool="FindBugs" mnemonic="Lazy Init Instance">
 		</artifact>
 		<shortMessage>
@@ -4078,6 +4303,7 @@
 		<name>Lazy Init Instance</name>
 	</findingType>
 	<findingType>
+		<id>LI_LAZY_INIT_STATIC</id>
 		<artifact tool="FindBugs" mnemonic="Lazy Init Static">
 		</artifact>
 		<shortMessage>
@@ -4099,6 +4325,7 @@
 		<name>Lazy Init Static</name>
 	</findingType>
 	<findingType>
+		<id>JLM_JSR166_LOCK_MONITORENTER</id>
 		<artifact tool="FindBugs" mnemonic="JSR166 Lock Monitorenter">
 		</artifact>
 		<shortMessage>
@@ -4117,6 +4344,7 @@
 		<name>JSR166 Lock Monitorenter</name>
 	</findingType>
 	<findingType>
+		<id>UPM_UNCALLED_PRIVATE_METHOD</id>
 		<artifact tool="FindBugs" mnemonic="Uncalled Private Method">
 		</artifact>
 		<shortMessage>Private method is never called</shortMessage>
@@ -4131,6 +4359,7 @@
 		<name>Uncalled Private Method</name>
 	</findingType>
 	<findingType>
+		<id>UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Uncallable Method Of Anonymous Class">
 		</artifact>
@@ -4153,6 +4382,7 @@
 		<name>Uncallable Method Of Anonymous Class</name>
 	</findingType>
 	<findingType>
+		<id>ODR_OPEN_DATABASE_RESOURCE</id>
 		<artifact tool="FindBugs" mnemonic="Open Database Resource">
 		</artifact>
 		<shortMessage>
@@ -4173,6 +4403,7 @@
 		<name>Open Database Resource</name>
 	</findingType>
 	<findingType>
+		<id>ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH</id>
 		<artifact tool="FindBugs"
 			mnemonic="Open Database Resource Exception Path">
 		</artifact>
@@ -4194,6 +4425,7 @@
 		<name>Open Database Resource Exception Path</name>
 	</findingType>
 	<findingType>
+		<id>SBSC_USE_STRINGBUFFER_CONCATENATION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Use Stringbuffer Concatenation">
 		</artifact>
@@ -4226,6 +4458,7 @@
 		<name>Use Stringbuffer Concatenation</name>
 	</findingType>
 	<findingType>
+		<id>ITA_INEFFICIENT_TO_ARRAY</id>
 		<artifact tool="FindBugs" mnemonic="Inefficient To Array">
 		</artifact>
 		<shortMessage>
@@ -4247,6 +4480,7 @@
 		<name>Inefficient To Array</name>
 	</findingType>
 	<findingType>
+		<id>IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Assert Method Invoked From Run Method">
 		</artifact>
@@ -4266,6 +4500,7 @@
 		<name>Assert Method Invoked From Run Method</name>
 	</findingType>
 	<findingType>
+		<id>IJU_SETUP_NO_SUPER</id>
 		<artifact tool="FindBugs" mnemonic="Setup No Super"></artifact>
 		<shortMessage>
 			TestCase implements setUp but doesn't call super.setUp()
@@ -4280,6 +4515,7 @@
 		<name>Setup No Super</name>
 	</findingType>
 	<findingType>
+		<id>IJU_TEARDOWN_NO_SUPER</id>
 		<artifact tool="FindBugs" mnemonic="Teardown No Super">
 		</artifact>
 		<shortMessage>
@@ -4296,6 +4532,7 @@
 		<name>Teardown No Super</name>
 	</findingType>
 	<findingType>
+		<id>IJU_SUITE_NOT_STATIC</id>
 		<artifact tool="FindBugs" mnemonic="Suite Not Static">
 		</artifact>
 		<shortMessage>
@@ -4311,6 +4548,7 @@
 		<name>Suite Not Static</name>
 	</findingType>
 	<findingType>
+		<id>IJU_BAD_SUITE_METHOD</id>
 		<artifact tool="FindBugs" mnemonic="Bad Suite Method">
 		</artifact>
 		<shortMessage>
@@ -4328,6 +4566,7 @@
 		<name>Bad Suite Method</name>
 	</findingType>
 	<findingType>
+		<id>IJU_NO_TESTS</id>
 		<artifact tool="FindBugs" mnemonic="No Tests"></artifact>
 		<shortMessage>TestCase has no tests</shortMessage>
 		<info>
@@ -4339,6 +4578,7 @@
 		<name>No Tests</name>
 	</findingType>
 	<findingType>
+		<id>BOA_BADLY_OVERRIDDEN_ADAPTER</id>
 		<artifact tool="FindBugs" mnemonic="Badly Overridden Adapter">
 		</artifact>
 		<shortMessage>
@@ -4357,6 +4597,7 @@
 		<name>Badly Overridden Adapter</name>
 	</findingType>
 	<findingType>
+		<id>BRSA_BAD_RESULTSET_ACCESS</id>
 		<artifact tool="FindBugs" mnemonic="Bad Resultset Access">
 		</artifact>
 		<shortMessage>
@@ -4372,6 +4613,7 @@
 		<name>Bad Resultset Access</name>
 	</findingType>
 	<findingType>
+		<id>SQL_BAD_RESULTSET_ACCESS</id>
 		<artifact tool="FindBugs" mnemonic="Bad Resultset Access">
 		</artifact>
 		<shortMessage>
@@ -4387,6 +4629,7 @@
 		<name>Bad Resultset Access</name>
 	</findingType>
 	<findingType>
+		<id>SQL_BAD_PREPARED_STATEMENT_ACCESS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Prepared Statement Access">
 		</artifact>
@@ -4405,6 +4648,7 @@
 		<name>Bad Prepared Statement Access</name>
 	</findingType>
 	<findingType>
+		<id>SIO_SUPERFLUOUS_INSTANCEOF</id>
 		<artifact tool="FindBugs" mnemonic="Superfluous Instanceof">
 		</artifact>
 		<shortMessage>
@@ -4420,6 +4664,7 @@
 		<name>Superfluous Instanceof</name>
 	</findingType>
 	<findingType>
+		<id>BAC_BAD_APPLET_CONSTRUCTOR</id>
 		<artifact tool="FindBugs" mnemonic="Bad Applet Constructor">
 		</artifact>
 		<shortMessage>
@@ -4436,6 +4681,7 @@
 		<name>Bad Applet Constructor</name>
 	</findingType>
 	<findingType>
+		<id>EC_ARRAY_AND_NONARRAY</id>
 		<artifact tool="FindBugs" mnemonic="Array And Nonarray">
 		</artifact>
 		<shortMessage>
@@ -4456,6 +4702,7 @@
 		<name>Array And Nonarray</name>
 	</findingType>
 	<findingType>
+		<id>EC_BAD_ARRAY_COMPARE</id>
 		<artifact tool="FindBugs" mnemonic="Bad Array Compare">
 		</artifact>
 		<shortMessage>
@@ -4475,6 +4722,7 @@
 		<name>Bad Array Compare</name>
 	</findingType>
 	<findingType>
+		<id>UOE_USE_OBJECT_EQUALS</id>
 		<artifact tool="FindBugs" mnemonic="Use Object Equals">
 		</artifact>
 		<shortMessage>
@@ -4500,6 +4748,7 @@
 		<name>Use Object Equals</name>
 	</findingType>
 	<findingType>
+		<id>STI_INTERRUPTED_ON_CURRENTTHREAD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Interrupted On Currentthread">
 		</artifact>
@@ -4517,6 +4766,7 @@
 		<name>Interrupted On Currentthread</name>
 	</findingType>
 	<findingType>
+		<id>STI_INTERRUPTED_ON_UNKNOWNTHREAD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Interrupted On Unknownthread">
 		</artifact>
@@ -4537,6 +4787,7 @@
 		<name>Interrupted On Unknownthread</name>
 	</findingType>
 	<findingType>
+		<id>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</id>
 		<artifact tool="FindBugs"
 			mnemonic="Parameter Is Dead But Overwritten">
 		</artifact>
@@ -4554,6 +4805,7 @@
 		<name>Parameter Is Dead But Overwritten</name>
 	</findingType>
 	<findingType>
+		<id>DLS_DEAD_LOCAL_STORE</id>
 		<artifact tool="FindBugs" mnemonic="Dead Local Store">
 		</artifact>
 		<shortMessage>Dead store to local variable</shortMessage>
@@ -4572,6 +4824,7 @@
 		<name>Dead Local Store</name>
 	</findingType>
 	<findingType>
+		<id>DLS_DEAD_LOCAL_STORE_OF_NULL</id>
 		<artifact tool="FindBugs" mnemonic="Dead Local Store Of Null">
 		</artifact>
 		<shortMessage>
@@ -4588,6 +4841,7 @@
 		<name>Dead Local Store Of Null</name>
 	</findingType>
 	<findingType>
+		<id>MF_METHOD_MASKS_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Method Masks Field">
 		</artifact>
 		<shortMessage>
@@ -4604,6 +4858,7 @@
 		<name>Method Masks Field</name>
 	</findingType>
 	<findingType>
+		<id>MF_CLASS_MASKS_FIELD</id>
 		<artifact tool="FindBugs" mnemonic="Class Masks Field">
 		</artifact>
 		<shortMessage>
@@ -4620,6 +4875,7 @@
 		<name>Class Masks Field</name>
 	</findingType>
 	<findingType>
+		<id>WMI_WRONG_MAP_ITERATOR</id>
 		<artifact tool="FindBugs" mnemonic="Wrong Map Iterator">
 		</artifact>
 		<shortMessage>
@@ -4637,6 +4893,7 @@
 		<name>Wrong Map Iterator</name>
 	</findingType>
 	<findingType>
+		<id>ISC_INSTANTIATE_STATIC_CLASS</id>
 		<artifact tool="FindBugs" mnemonic="Instantiate Static Class">
 		</artifact>
 		<shortMessage>
@@ -4654,6 +4911,7 @@
 		<name>Instantiate Static Class</name>
 	</findingType>
 	<findingType>
+		<id>REC_CATCH_EXCEPTION</id>
 		<artifact tool="FindBugs" mnemonic="Catch Exception"></artifact>
 		<shortMessage>
 			Exception is caught when Exception is not thrown
@@ -4673,6 +4931,7 @@
 		<name>Catch Exception</name>
 	</findingType>
 	<findingType>
+		<id>FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER</id>
 		<artifact tool="FindBugs"
 			mnemonic="Test If Equal To Not A Number">
 		</artifact>
@@ -4699,6 +4958,7 @@
 		<name>Test If Equal To Not A Number</name>
 	</findingType>
 	<findingType>
+		<id>FE_FLOATING_POINT_EQUALITY</id>
 		<artifact tool="FindBugs" mnemonic="Floating Point Equality">
 		</artifact>
 		<shortMessage>Test for floating point equality</shortMessage>
@@ -4719,6 +4979,7 @@
 		<name>Floating Point Equality</name>
 	</findingType>
 	<findingType>
+		<id>UM_UNNECESSARY_MATH</id>
 		<artifact tool="FindBugs" mnemonic="Unnecessary Math">
 		</artifact>
 		<shortMessage>
@@ -4773,6 +5034,7 @@
 		<name>Unnecessary Math</name>
 	</findingType>
 	<findingType>
+		<id>CD_CIRCULAR_DEPENDENCY</id>
 		<artifact tool="FindBugs" mnemonic="Circular Dependency">
 		</artifact>
 		<shortMessage>
@@ -4789,6 +5051,7 @@
 		<name>Circular Dependency</name>
 	</findingType>
 	<findingType>
+		<id>RI_REDUNDANT_INTERFACES</id>
 		<artifact tool="FindBugs" mnemonic="Redundant Interfaces">
 		</artifact>
 		<shortMessage>
@@ -4809,6 +5072,7 @@
 		<name>Redundant Interfaces</name>
 	</findingType>
 	<findingType>
+		<id>MTIA_SUSPECT_STRUTS_INSTANCE_FIELD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Suspect Struts Instance Field">
 		</artifact>
@@ -4829,6 +5093,7 @@
 		<name>Suspect Struts Instance Field</name>
 	</findingType>
 	<findingType>
+		<id>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</id>
 		<artifact tool="FindBugs"
 			mnemonic="Suspect Servlet Instance Field">
 		</artifact>
@@ -4848,6 +5113,7 @@
 		<name>Suspect Servlet Instance Field</name>
 	</findingType>
 	<findingType>
+		<id>PS_PUBLIC_SEMAPHORES</id>
 		<artifact tool="FindBugs" mnemonic="Public Semaphores">
 		</artifact>
 		<shortMessage>
@@ -4870,6 +5136,7 @@
 		<name>Public Semaphores</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</id>
 		<artifact tool="FindBugs"
 			mnemonic="Integer Multiply Cast To Long">
 		</artifact>
@@ -4897,6 +5164,7 @@
 		<name>Integer Multiply Cast To Long</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND</id>
 		<artifact tool="FindBugs"
 			mnemonic="Int Cast To Float Passed To Round">
 		</artifact>
@@ -4920,6 +5188,7 @@
 		<name>Int Cast To Float Passed To Round</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL</id>
 		<artifact tool="FindBugs"
 			mnemonic="Int Cast To Double Passed To Ceil">
 		</artifact>
@@ -4943,6 +5212,7 @@
 		<name>Int Cast To Double Passed To Ceil</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_IDIV_CAST_TO_DOUBLE</id>
 		<artifact tool="FindBugs" mnemonic="Idiv Cast To Double">
 		</artifact>
 		<shortMessage>
@@ -4968,6 +5238,7 @@
 		<name>Idiv Cast To Double</name>
 	</findingType>
 	<findingType>
+		<id>J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Store Of Non Serializable Object Into Session">
 		</artifact>
@@ -4984,6 +5255,7 @@
 		<name>Store Of Non Serializable Object Into Session</name>
 	</findingType>
 	<findingType>
+		<id>DMI_NONSERIALIZABLE_OBJECT_WRITTEN</id>
 		<artifact tool="FindBugs"
 			mnemonic="Nonserializable Object Written">
 		</artifact>
@@ -5001,6 +5273,7 @@
 		<name>Nonserializable Object Written</name>
 	</findingType>
 	<findingType>
+		<id>VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG</id>
 		<artifact tool="FindBugs"
 			mnemonic="Primitive Array Passed To Object Vararg">
 		</artifact>
@@ -5019,6 +5292,7 @@
 		<name>Primitive Array Passed To Object Vararg</name>
 	</findingType>
 	<findingType>
+		<id>BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Equals Method Should Work For All Objects">
 		</artifact>
@@ -5038,6 +5312,7 @@
 		<name>Equals Method Should Work For All Objects</name>
 	</findingType>
 	<findingType>
+		<id>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Cast To Abstract Collection">
 		</artifact>
@@ -5059,6 +5334,7 @@
 		<name>Bad Cast To Abstract Collection</name>
 	</findingType>
 	<findingType>
+		<id>BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY</id>
 		<artifact tool="FindBugs"
 			mnemonic="Impossible Cast Primitive Array">
 		</artifact>
@@ -5074,6 +5350,7 @@
 		<name>Impossible Cast Primitive Array</name>
 	</findingType>
 	<findingType>
+		<id>BC_IMPOSSIBLE_CAST</id>
 		<artifact tool="FindBugs" mnemonic="Impossible Cast"></artifact>
 		<shortMessage>Impossible cast</shortMessage>
 		<info>
@@ -5085,6 +5362,7 @@
 		<name>Impossible Cast</name>
 	</findingType>
 	<findingType>
+		<id>NP_NULL_INSTANCEOF</id>
 		<artifact tool="FindBugs" mnemonic="Null Instanceof"></artifact>
 		<shortMessage>
 			A known null value is checked to see if it is an instance of
@@ -5101,6 +5379,7 @@
 		<name>Null Instanceof</name>
 	</findingType>
 	<findingType>
+		<id>BC_NULL_INSTANCEOF</id>
 		<artifact tool="FindBugs" mnemonic="Null Instanceof"></artifact>
 		<shortMessage>
 			A known null value is checked to see if it is an instance of
@@ -5117,6 +5396,7 @@
 		<name>Null Instanceof</name>
 	</findingType>
 	<findingType>
+		<id>BC_IMPOSSIBLE_INSTANCEOF</id>
 		<artifact tool="FindBugs" mnemonic="Impossible Instanceof">
 		</artifact>
 		<shortMessage>instanceof will always return false</shortMessage>
@@ -5130,6 +5410,7 @@
 		<name>Impossible Instanceof</name>
 	</findingType>
 	<findingType>
+		<id>BC_VACUOUS_INSTANCEOF</id>
 		<artifact tool="FindBugs" mnemonic="Vacuous Instanceof">
 		</artifact>
 		<shortMessage>instanceof will always return true</shortMessage>
@@ -5143,6 +5424,7 @@
 		<name>Vacuous Instanceof</name>
 	</findingType>
 	<findingType>
+		<id>BC_UNCONFIRMED_CAST</id>
 		<artifact tool="FindBugs" mnemonic="Unconfirmed Cast">
 		</artifact>
 		<shortMessage>Unchecked/unconfirmed cast</shortMessage>
@@ -5157,6 +5439,7 @@
 		<name>Unconfirmed Cast</name>
 	</findingType>
 	<findingType>
+		<id>BC_BAD_CAST_TO_CONCRETE_COLLECTION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Cast To Concrete Collection">
 		</artifact>
@@ -5177,6 +5460,7 @@
 		<name>Bad Cast To Concrete Collection</name>
 	</findingType>
 	<findingType>
+		<id>RE_POSSIBLE_UNINTENDED_PATTERN</id>
 		<artifact tool="FindBugs"
 			mnemonic="Possible Unintended Pattern">
 		</artifact>
@@ -5197,6 +5481,7 @@
 		<name>Possible Unintended Pattern</name>
 	</findingType>
 	<findingType>
+		<id>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Bad Syntax For Regular Expression">
 		</artifact>
@@ -5214,6 +5499,7 @@
 		<name>Bad Syntax For Regular Expression</name>
 	</findingType>
 	<findingType>
+		<id>RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION</id>
 		<artifact tool="FindBugs"
 			mnemonic="Cant Use File Separator As Regular Expression">
 		</artifact>
@@ -5238,6 +5524,7 @@
 		<name>Cant Use File Separator As Regular Expression</name>
 	</findingType>
 	<findingType>
+		<id>DLS_OVERWRITTEN_INCREMENT</id>
 		<artifact tool="FindBugs" mnemonic="Overwritten Increment">
 		</artifact>
 		<shortMessage>Overwritten increment</shortMessage>
@@ -5253,6 +5540,7 @@
 		<name>Overwritten Increment</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Questionable Unsigned Right Shift">
 		</artifact>
@@ -5272,6 +5560,7 @@
 		<name>Questionable Unsigned Right Shift</name>
 	</findingType>
 	<findingType>
+		<id>ICAST_BAD_SHIFT_AMOUNT</id>
 		<artifact tool="FindBugs" mnemonic="Bad Shift Amount">
 		</artifact>
 		<shortMessage>
@@ -5289,6 +5578,7 @@
 		<name>Bad Shift Amount</name>
 	</findingType>
 	<findingType>
+		<id>IM_MULTIPLYING_RESULT_OF_IREM</id>
 		<artifact tool="FindBugs"
 			mnemonic="Multiplying Result Of Irem">
 		</artifact>
@@ -5306,6 +5596,7 @@
 		<name>Multiplying Result Of Irem</name>
 	</findingType>
 	<findingType>
+		<id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
 		<artifact tool="FindBugs"
 			mnemonic="Invoking Tostring On Array">
 		</artifact>
@@ -5322,6 +5613,7 @@
 		<name>Invoking Tostring On Array</name>
 	</findingType>
 	<findingType>
+		<id>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</id>
 		<artifact tool="FindBugs"
 			mnemonic="Average Computation Could Overflow">
 		</artifact>
@@ -5352,6 +5644,7 @@
 		<name>Average Computation Could Overflow</name>
 	</findingType>
 	<findingType>
+		<id>IM_BAD_CHECK_FOR_ODD</id>
 		<artifact tool="FindBugs" mnemonic="Bad Check For Odd">
 		</artifact>
 		<shortMessage>
@@ -5369,6 +5662,7 @@
 		<name>Bad Check For Odd</name>
 	</findingType>
 	<findingType>
+		<id>DMI_HARDCODED_ABSOLUTE_FILENAME</id>
 		<artifact tool="FindBugs"
 			mnemonic="Hardcoded Absolute Filename">
 		</artifact>
@@ -5386,6 +5680,7 @@
 		<name>Hardcoded Absolute Filename</name>
 	</findingType>
 	<findingType>
+		<id>DMI_BAD_MONTH</id>
 		<artifact tool="FindBugs" mnemonic="Bad Month"></artifact>
 		<shortMessage>Bad constant value for month</shortMessage>
 		<info>
@@ -5397,6 +5692,7 @@
 		<name>Bad Month</name>
 	</findingType>
 	<findingType>
+		<id>DMI_USELESS_SUBSTRING</id>
 		<artifact tool="FindBugs" mnemonic="Useless Substring">
 		</artifact>
 		<shortMessage>
@@ -5411,6 +5707,7 @@
 		<name>Useless Substring</name>
 	</findingType>
 	<findingType>
+		<id>DMI_CALLING_NEXT_FROM_HASNEXT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Calling Next From Hasnext">
 		</artifact>
@@ -5427,6 +5724,7 @@
 		<name>Calling Next From Hasnext</name>
 	</findingType>
 	<findingType>
+		<id>SWL_SLEEP_WITH_LOCK_HELD</id>
 		<artifact tool="FindBugs" mnemonic="Sleep With Lock Held">
 		</artifact>
 		<shortMessage>
@@ -5445,6 +5743,7 @@
 		<name>Sleep With Lock Held</name>
 	</findingType>
 	<findingType>
+		<id>DB_DUPLICATE_BRANCHES</id>
 		<artifact tool="FindBugs" mnemonic="Duplicate Branches">
 		</artifact>
 		<shortMessage>
@@ -5460,6 +5759,7 @@
 		<name>Duplicate Branches</name>
 	</findingType>
 	<findingType>
+		<id>DB_DUPLICATE_SWITCH_CLAUSES</id>
 		<artifact tool="FindBugs" mnemonic="Duplicate Switch Clauses">
 		</artifact>
 		<shortMessage>
@@ -5476,6 +5776,7 @@
 		<name>Duplicate Switch Clauses</name>
 	</findingType>
 	<findingType>
+		<id>IMA_INEFFICIENT_MEMBER_ACCESS</id>
 		<artifact tool="FindBugs"
 			mnemonic="Inefficient Member Access">
 		</artifact>
@@ -5496,6 +5797,7 @@
 		<name>Inefficient Member Access</name>
 	</findingType>
 	<findingType>
+		<id>XFB_XML_FACTORY_BYPASS</id>
 		<artifact tool="FindBugs" mnemonic="Xml Factory Bypass">
 		</artifact>
 		<shortMessage>
@@ -5519,6 +5821,7 @@
 		<name>Xml Factory Bypass</name>
 	</findingType>
 	<findingType>
+		<id>USM_USELESS_SUBCLASS_METHOD</id>
 		<artifact tool="FindBugs" mnemonic="Useless Subclass Method">
 		</artifact>
 		<shortMessage>
@@ -5535,6 +5838,7 @@
 		<name>Useless Subclass Method</name>
 	</findingType>
 	<findingType>
+		<id>USM_USELESS_ABSTRACT_METHOD</id>
 		<artifact tool="FindBugs" mnemonic="Useless Abstract Method">
 		</artifact>
 		<shortMessage>
@@ -5551,6 +5855,7 @@
 		<name>Useless Abstract Method</name>
 	</findingType>
 	<findingType>
+		<id>CI_CONFUSED_INHERITANCE</id>
 		<artifact tool="FindBugs" mnemonic="Confused Inheritance">
 		</artifact>
 		<shortMessage>
@@ -5569,6 +5874,7 @@
 		<name>Confused Inheritance</name>
 	</findingType>
 	<findingType>
+		<id>QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT</id>
 		<artifact tool="FindBugs"
 			mnemonic="Questionable Boolean Assignment">
 		</artifact>
@@ -5586,6 +5892,7 @@
 		<name>Questionable Boolean Assignment</name>
 	</findingType>
 	<findingType>
+		<id>VR_UNRESOLVABLE_REFERENCE</id>
 		<artifact tool="FindBugs" mnemonic="Unresolvable Reference">
 		</artifact>
 		<shortMessage>
@@ -5601,6 +5908,7 @@
 		<name>Unresolvable Reference</name>
 	</findingType>
 	<findingType>
+		<id>GC_UNRELATED_TYPES</id>
 		<artifact tool="FindBugs" mnemonic="Unrelated Types"></artifact>
 		<shortMessage>
 			No relationship between generic parameter and method
@@ -5618,6 +5926,7 @@
 		<name>Unrelated Types</name>
 	</findingType>
 	<findingType>
+		<id>STCAL_STATIC_CALENDAR_INSTANCE</id>
 		<artifact tool="FindBugs" mnemonic="Static Calendar Instance">
 		</artifact>
 		<shortMessage>Static Calendar</shortMessage>
@@ -5645,6 +5954,7 @@
 		<name>Static Calendar Instance</name>
 	</findingType>
 	<findingType>
+		<id>STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Invoke On Static Calendar Instance">
 		</artifact>
@@ -5666,6 +5976,7 @@
 		<name>Invoke On Static Calendar Instance</name>
 	</findingType>
 	<findingType>
+		<id>STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Static Simple Data Format Instance">
 		</artifact>
@@ -5689,6 +6000,7 @@
 		<name>Static Simple Data Format Instance</name>
 	</findingType>
 	<findingType>
+		<id>STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE</id>
 		<artifact tool="FindBugs"
 			mnemonic="Invoke On Static Date Format Instance">
 		</artifact>
@@ -5709,123 +6021,139 @@
 		<name>Invoke On Static Date Format Instance</name>
 	</findingType>
 	<category>
-		<findingType>Unresolvable Reference</findingType>
-		<findingType>Infinite Loop</findingType>
-		<findingType>Infinite Recursive Loop</findingType>
-		<findingType>Container Added To Itself</findingType>
-		<findingType>Testing</findingType>
-		<findingType>Unknown</findingType>
-		<findingType>Math Using Float Precision</findingType>
-		<findingType>Field Isnt Final In Immutable Class</findingType>
+		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
+		<findingType>IL_INFINITE_LOOP</findingType>
+		<findingType>IL_INFINITE_RECURSIVE_LOOP</findingType>
+		<findingType>IL_CONTAINER_ADDED_TO_ITSELF</findingType>
+		<findingType>TESTING</findingType>
+		<findingType>UNKNOWN</findingType>
+		<findingType>FL_MATH_USING_FLOAT_PRECISION</findingType>
 		<findingType>
-			Annotation Is Not Visible To Reflection
+			JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS
 		</findingType>
 		<findingType>
-			Unboxed And Coerced For Ternary Operator
+			DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION
 		</findingType>
-		<findingType>Argument Might Be Null</findingType>
-		<findingType>Absolute Value Of Random Int</findingType>
-		<findingType>Absolute Value Of Hashcode</findingType>
-		<findingType>01 To Int</findingType>
-		<findingType>Overriding Equals Not Symmetric</findingType>
-		<findingType>Dont Define Equals For Enum</findingType>
-		<findingType>Use Of Unhashable Class</findingType>
-		<findingType>Dangerous Non Short Circuit</findingType>
-		<findingType>Uninit Read</findingType>
-		<findingType>Very Confusing</findingType>
-		<findingType>Method Constructor Confusion</findingType>
-		<findingType>Lcase Hashcode</findingType>
-		<findingType>Lcase Tostring</findingType>
-		<findingType>Bad Equal</findingType>
-		<findingType>Dead Store Due To Switch Fallthrough</findingType>
-		<findingType>Unwritten Field</findingType>
-		<findingType>Null Field</findingType>
-		<findingType>Unwritten Field</findingType>
-		<findingType>Return Value Ignored</findingType>
-		<findingType>Return Value IGNORED2</findingType>
-		<findingType>Dont Just Null Check Readline</findingType>
-		<findingType>Always Null</findingType>
-		<findingType>Store Into Nonnull Field</findingType>
-		<findingType>Always Null Exception</findingType>
-		<findingType>Null On Some Path</findingType>
-		<findingType>Null On Some Path Exception</findingType>
-		<findingType>Null Param Deref</findingType>
-		<findingType>Null Param Deref Nonvirtual</findingType>
 		<findingType>
-			Null Param Deref All Targets Dangerous
+			BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR
 		</findingType>
-		<findingType>Nonnull Param Violation</findingType>
-		<findingType>Nonnull Return Violation</findingType>
-		<findingType>Guaranteed Deref</findingType>
-		<findingType>Guaranteed Deref On Exception Path</findingType>
-		<findingType>Useless Control Flow Next Line</findingType>
+		<findingType>NP_ARGUMENT_MIGHT_BE_NULL</findingType>
+		<findingType>RV_ABSOLUTE_VALUE_OF_RANDOM_INT</findingType>
+		<findingType>RV_ABSOLUTE_VALUE_OF_HASHCODE</findingType>
+		<findingType>RV_01_TO_INT</findingType>
+		<findingType>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</findingType>
+		<findingType>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</findingType>
+		<findingType>HE_USE_OF_UNHASHABLE_CLASS</findingType>
+		<findingType>NS_DANGEROUS_NON_SHORT_CIRCUIT</findingType>
+		<findingType>UR_UNINIT_READ</findingType>
+		<findingType>NM_VERY_CONFUSING</findingType>
+		<findingType>NM_METHOD_CONSTRUCTOR_CONFUSION</findingType>
+		<findingType>NM_LCASE_HASHCODE</findingType>
+		<findingType>NM_LCASE_TOSTRING</findingType>
+		<findingType>NM_BAD_EQUAL</findingType>
 		<findingType>
-			Redundant Nullcheck Would Have Been A Npe
+			SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH
 		</findingType>
-		<findingType>Ref Comparison</findingType>
+		<findingType>NP_UNWRITTEN_FIELD</findingType>
+		<findingType>UWF_NULL_FIELD</findingType>
+		<findingType>UWF_UNWRITTEN_FIELD</findingType>
+		<findingType>RV_RETURN_VALUE_IGNORED</findingType>
+		<findingType>RV_RETURN_VALUE_IGNORED2</findingType>
+		<findingType>RV_DONT_JUST_NULL_CHECK_READLINE</findingType>
+		<findingType>NP_ALWAYS_NULL</findingType>
+		<findingType>NP_STORE_INTO_NONNULL_FIELD</findingType>
+		<findingType>NP_ALWAYS_NULL_EXCEPTION</findingType>
+		<findingType>NP_NULL_ON_SOME_PATH</findingType>
+		<findingType>NP_NULL_ON_SOME_PATH_EXCEPTION</findingType>
+		<findingType>NP_NULL_PARAM_DEREF</findingType>
+		<findingType>NP_NULL_PARAM_DEREF_NONVIRTUAL</findingType>
 		<findingType>
-			Primitive Array Passed To Object Vararg
+			NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS
 		</findingType>
-		<findingType>Unrelated Types</findingType>
-		<findingType>Array And Nonarray</findingType>
-		<findingType>Null Arg</findingType>
-		<findingType>Unrelated Interfaces</findingType>
-		<findingType>Unrelated Class And Interface</findingType>
-		<findingType>Bad Comparison With Signed Byte</findingType>
-		<findingType>Bad Comparison With Nonnegative Value</findingType>
-		<findingType>Bad Rem By 1</findingType>
-		<findingType>Ior Of Signed Byte</findingType>
-		<findingType>And</findingType>
-		<findingType>And Zz</findingType>
-		<findingType>Ior</findingType>
-		<findingType>Field Self Assignment</findingType>
-		<findingType>Local Double Assignment</findingType>
-		<findingType>Field Double Assignment</findingType>
-		<findingType>Field Self Computation</findingType>
-		<findingType>Local Self Computation</findingType>
-		<findingType>Field Self Comparison</findingType>
-		<findingType>Local Self Comparison</findingType>
-		<findingType>Uncallable Method Of Anonymous Class</findingType>
-		<findingType>Assert Method Invoked From Run Method</findingType>
-		<findingType>Bad Suite Method</findingType>
-		<findingType>Setup No Super</findingType>
-		<findingType>Teardown No Super</findingType>
-		<findingType>Suite Not Static</findingType>
-		<findingType>No Tests</findingType>
-		<findingType>Badly Overridden Adapter</findingType>
-		<findingType>Bad Resultset Access</findingType>
-		<findingType>Bad Resultset Access</findingType>
-		<findingType>Bad Prepared Statement Access</findingType>
-		<findingType>Superfluous Instanceof</findingType>
-		<findingType>Bad Applet Constructor</findingType>
-		<findingType>Bad Array Compare</findingType>
-		<findingType>Interrupted On Currentthread</findingType>
-		<findingType>Interrupted On Unknownthread</findingType>
-		<findingType>Parameter Is Dead But Overwritten</findingType>
-		<findingType>Method Masks Field</findingType>
-		<findingType>Class Masks Field</findingType>
-		<findingType>Test If Equal To Not A Number</findingType>
-		<findingType>Int Cast To Double Passed To Ceil</findingType>
-		<findingType>Int Cast To Float Passed To Round</findingType>
-		<findingType>Null Instanceof</findingType>
-		<findingType>Null Instanceof</findingType>
-		<findingType>Long Bits To Double Invoked On Int</findingType>
-		<findingType>Impossible Cast Primitive Array</findingType>
-		<findingType>Impossible Cast</findingType>
-		<findingType>Impossible Instanceof</findingType>
-		<findingType>Possible Unintended Pattern</findingType>
-		<findingType>Bad Syntax For Regular Expression</findingType>
+		<findingType>NP_NONNULL_PARAM_VIOLATION</findingType>
+		<findingType>NP_NONNULL_RETURN_VIOLATION</findingType>
+		<findingType>NP_GUARANTEED_DEREF</findingType>
+		<findingType>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</findingType>
+		<findingType>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</findingType>
 		<findingType>
-			Cant Use File Separator As Regular Expression
+			RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE
 		</findingType>
-		<findingType>Overwritten Increment</findingType>
-		<findingType>Bad Shift Amount</findingType>
-		<findingType>Multiplying Result Of Irem</findingType>
-		<findingType>Invoking Tostring On Array</findingType>
-		<findingType>Bad Month</findingType>
-		<findingType>Calling Next From Hasnext</findingType>
-		<findingType>Questionable Boolean Assignment</findingType>
-		<findingType>Unrelated Types</findingType>
+		<findingType>RC_REF_COMPARISON</findingType>
+		<findingType>
+			VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG
+		</findingType>
+		<findingType>EC_UNRELATED_TYPES</findingType>
+		<findingType>EC_ARRAY_AND_NONARRAY</findingType>
+		<findingType>EC_NULL_ARG</findingType>
+		<findingType>EC_UNRELATED_INTERFACES</findingType>
+		<findingType>EC_UNRELATED_CLASS_AND_INTERFACE</findingType>
+		<findingType>INT_BAD_COMPARISON_WITH_SIGNED_BYTE</findingType>
+		<findingType>
+			INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE
+		</findingType>
+		<findingType>INT_BAD_REM_BY_1</findingType>
+		<findingType>BIT_IOR_OF_SIGNED_BYTE</findingType>
+		<findingType>BIT_AND</findingType>
+		<findingType>BIT_AND_ZZ</findingType>
+		<findingType>BIT_IOR</findingType>
+		<findingType>SA_FIELD_SELF_ASSIGNMENT</findingType>
+		<findingType>SA_LOCAL_DOUBLE_ASSIGNMENT</findingType>
+		<findingType>SA_FIELD_DOUBLE_ASSIGNMENT</findingType>
+		<findingType>SA_FIELD_SELF_COMPUTATION</findingType>
+		<findingType>SA_LOCAL_SELF_COMPUTATION</findingType>
+		<findingType>SA_FIELD_SELF_COMPARISON</findingType>
+		<findingType>SA_LOCAL_SELF_COMPARISON</findingType>
+		<findingType>
+			UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS
+		</findingType>
+		<findingType>
+			IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD
+		</findingType>
+		<findingType>IJU_BAD_SUITE_METHOD</findingType>
+		<findingType>IJU_SETUP_NO_SUPER</findingType>
+		<findingType>IJU_TEARDOWN_NO_SUPER</findingType>
+		<findingType>IJU_SUITE_NOT_STATIC</findingType>
+		<findingType>IJU_NO_TESTS</findingType>
+		<findingType>BOA_BADLY_OVERRIDDEN_ADAPTER</findingType>
+		<findingType>BRSA_BAD_RESULTSET_ACCESS</findingType>
+		<findingType>SQL_BAD_RESULTSET_ACCESS</findingType>
+		<findingType>SQL_BAD_PREPARED_STATEMENT_ACCESS</findingType>
+		<findingType>SIO_SUPERFLUOUS_INSTANCEOF</findingType>
+		<findingType>BAC_BAD_APPLET_CONSTRUCTOR</findingType>
+		<findingType>EC_BAD_ARRAY_COMPARE</findingType>
+		<findingType>STI_INTERRUPTED_ON_CURRENTTHREAD</findingType>
+		<findingType>STI_INTERRUPTED_ON_UNKNOWNTHREAD</findingType>
+		<findingType>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</findingType>
+		<findingType>MF_METHOD_MASKS_FIELD</findingType>
+		<findingType>MF_CLASS_MASKS_FIELD</findingType>
+		<findingType>FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER</findingType>
+		<findingType>
+			ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL
+		</findingType>
+		<findingType>
+			ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND
+		</findingType>
+		<findingType>NP_NULL_INSTANCEOF</findingType>
+		<findingType>BC_NULL_INSTANCEOF</findingType>
+		<findingType>
+			DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT
+		</findingType>
+		<findingType>BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY</findingType>
+		<findingType>BC_IMPOSSIBLE_CAST</findingType>
+		<findingType>BC_IMPOSSIBLE_INSTANCEOF</findingType>
+		<findingType>RE_POSSIBLE_UNINTENDED_PATTERN</findingType>
+		<findingType>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</findingType>
+		<findingType>
+			RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION
+		</findingType>
+		<findingType>DLS_OVERWRITTEN_INCREMENT</findingType>
+		<findingType>ICAST_BAD_SHIFT_AMOUNT</findingType>
+		<findingType>IM_MULTIPLYING_RESULT_OF_IREM</findingType>
+		<findingType>DMI_INVOKING_TOSTRING_ON_ARRAY</findingType>
+		<findingType>DMI_BAD_MONTH</findingType>
+		<findingType>DMI_CALLING_NEXT_FROM_HASNEXT</findingType>
+		<findingType>QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT</findingType>
+		<findingType>GC_UNRELATED_TYPES</findingType>
 		<name>Correctness</name>
 		<description>
 			Probable bug - an apparent coding mistake resulting in code
@@ -5834,98 +6162,104 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Swing Methods Invoked In Swing Thread</findingType>
-		<findingType>Finalizer Only Nulls Fields</findingType>
-		<findingType>Finalizer Nulls Fields</findingType>
-		<findingType>Inheritance Unsafe Getresource</findingType>
-		<findingType>Creates Empty Zip File Entry</findingType>
-		<findingType>Creates Empty Jar File Entry</findingType>
-		<findingType>Do Inside Do Privileged</findingType>
-		<findingType>Do Inside Do Priviledged</findingType>
 		<findingType>
-			Create Classloader Inside Do Privileged
+			SW_SWING_METHODS_INVOKED_IN_SWING_THREAD
+		</findingType>
+		<findingType>FI_FINALIZER_ONLY_NULLS_FIELDS</findingType>
+		<findingType>FI_FINALIZER_NULLS_FIELDS</findingType>
+		<findingType>UI_INHERITANCE_UNSAFE_GETRESOURCE</findingType>
+		<findingType>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</findingType>
+		<findingType>AM_CREATES_EMPTY_JAR_FILE_ENTRY</findingType>
+		<findingType>DP_DO_INSIDE_DO_PRIVILEGED</findingType>
+		<findingType>DP_DO_INSIDE_DO_PRIVILEDGED</findingType>
+		<findingType>
+			DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED
 		</findingType>
 		<findingType>
-			Create Classloader Inside Do Priviledged
+			DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED
 		</findingType>
-		<findingType>Dont Catch Imse</findingType>
-		<findingType>Idiom</findingType>
-		<findingType>Idiom No Super Call</findingType>
-		<findingType>Might Drop</findingType>
-		<findingType>Might Ignore</findingType>
-		<findingType>Exit</findingType>
-		<findingType>Future Keyword Used As Identifier</findingType>
+		<findingType>IMSE_DONT_CATCH_IMSE</findingType>
+		<findingType>CN_IDIOM</findingType>
+		<findingType>CN_IDIOM_NO_SUPER_CALL</findingType>
+		<findingType>DE_MIGHT_DROP</findingType>
+		<findingType>DE_MIGHT_IGNORE</findingType>
+		<findingType>DM_EXIT</findingType>
+		<findingType>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</findingType>
 		<findingType>
-			Future Keyword Used As Member Identifier
+			NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER
 		</findingType>
-		<findingType>Run Finalizers On Exit</findingType>
-		<findingType>Equals Should Handle Null Argument</findingType>
-		<findingType>Nonconstant String Passed To Execute</findingType>
+		<findingType>DM_RUN_FINALIZERS_ON_EXIT</findingType>
+		<findingType>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</findingType>
 		<findingType>
-			Prepared Statement Generated From Nonconstant String
-		</findingType>
-		<findingType>Empty</findingType>
-		<findingType>Nullify Super</findingType>
-		<findingType>Useless</findingType>
-		<findingType>Missing Super Call</findingType>
-		<findingType>Explicit Invocation</findingType>
-		<findingType>Self Use Object</findingType>
-		<findingType>Self No Object</findingType>
-		<findingType>Does Not Handle Null</findingType>
-		<findingType>Self No Object</findingType>
-		<findingType>Comparing Strings With Eq</findingType>
-		<findingType>Comparing Parameter String With Eq</findingType>
-		<findingType>Compareto Use Object Equals</findingType>
-		<findingType>Hashcode Use Object Equals</findingType>
-		<findingType>Hashcode No Equals</findingType>
-		<findingType>Equals Use Hashcode</findingType>
-		<findingType>Inherits Equals Use Hashcode</findingType>
-		<findingType>Equals No Hashcode</findingType>
-		<findingType>Abstract Self</findingType>
-		<findingType>Abstract Self</findingType>
-		<findingType>Non Short Circuit</findingType>
-		<findingType>
-			Superclass Uses Subclass During Initialization
-		</findingType>
-		<findingType>Instance Before Finals Assigned</findingType>
-		<findingType>No Such Element</findingType>
-		<findingType>Method Naming Convention</findingType>
-		<findingType>Field Naming Convention</findingType>
-		<findingType>Class Naming Convention</findingType>
-		<findingType>Very Confusing Intentional</findingType>
-		<findingType>Confusing</findingType>
-		<findingType>Class Not Exception</findingType>
-		<findingType>Not Checked</findingType>
-		<findingType>Not Checked</findingType>
-		<findingType>No Suitable Constructor</findingType>
-		<findingType>
-			No Suitable Constructor For Externalization
-		</findingType>
-		<findingType>Comparator Should Be Serializable</findingType>
-		<findingType>No Serialversionid</findingType>
-		<findingType>Read Resolve Must Return Object</findingType>
-		<findingType>Transient Field Not Restored</findingType>
-		<findingType>Nonfinal Serialversionid</findingType>
-		<findingType>Nonstatic Serialversionid</findingType>
-		<findingType>Nonlong Serialversionid</findingType>
-		<findingType>Method Must Be Private</findingType>
-		<findingType>Bad Field</findingType>
-		<findingType>Inner Class</findingType>
-		<findingType>Bad Field Inner Class</findingType>
-		<findingType>Bad Field Store</findingType>
-		<findingType>Tostring Could Return Null</findingType>
-		<findingType>Clone Could Return Null</findingType>
-		<findingType>Open Stream</findingType>
-		<findingType>Open Stream Exception Path</findingType>
-		<findingType>Open Database Resource</findingType>
-		<findingType>Open Database Resource Exception Path</findingType>
-		<findingType>Instantiate Static Class</findingType>
-		<findingType>Random Used Only Once</findingType>
-		<findingType>
-			Equals Method Should Work For All Objects
+			SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE
 		</findingType>
 		<findingType>
-			Store Of Non Serializable Object Into Session
+			SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING
+		</findingType>
+		<findingType>FI_EMPTY</findingType>
+		<findingType>FI_NULLIFY_SUPER</findingType>
+		<findingType>FI_USELESS</findingType>
+		<findingType>FI_MISSING_SUPER_CALL</findingType>
+		<findingType>FI_EXPLICIT_INVOCATION</findingType>
+		<findingType>EQ_SELF_USE_OBJECT</findingType>
+		<findingType>EQ_SELF_NO_OBJECT</findingType>
+		<findingType>NP_DOES_NOT_HANDLE_NULL</findingType>
+		<findingType>CO_SELF_NO_OBJECT</findingType>
+		<findingType>ES_COMPARING_STRINGS_WITH_EQ</findingType>
+		<findingType>ES_COMPARING_PARAMETER_STRING_WITH_EQ</findingType>
+		<findingType>EQ_COMPARETO_USE_OBJECT_EQUALS</findingType>
+		<findingType>HE_HASHCODE_USE_OBJECT_EQUALS</findingType>
+		<findingType>HE_HASHCODE_NO_EQUALS</findingType>
+		<findingType>HE_EQUALS_USE_HASHCODE</findingType>
+		<findingType>HE_INHERITS_EQUALS_USE_HASHCODE</findingType>
+		<findingType>HE_EQUALS_NO_HASHCODE</findingType>
+		<findingType>EQ_ABSTRACT_SELF</findingType>
+		<findingType>CO_ABSTRACT_SELF</findingType>
+		<findingType>NS_NON_SHORT_CIRCUIT</findingType>
+		<findingType>
+			IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION
+		</findingType>
+		<findingType>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</findingType>
+		<findingType>IT_NO_SUCH_ELEMENT</findingType>
+		<findingType>NM_METHOD_NAMING_CONVENTION</findingType>
+		<findingType>NM_FIELD_NAMING_CONVENTION</findingType>
+		<findingType>NM_CLASS_NAMING_CONVENTION</findingType>
+		<findingType>NM_VERY_CONFUSING_INTENTIONAL</findingType>
+		<findingType>NM_CONFUSING</findingType>
+		<findingType>NM_CLASS_NOT_EXCEPTION</findingType>
+		<findingType>RR_NOT_CHECKED</findingType>
+		<findingType>SR_NOT_CHECKED</findingType>
+		<findingType>SE_NO_SUITABLE_CONSTRUCTOR</findingType>
+		<findingType>
+			SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION
+		</findingType>
+		<findingType>SE_COMPARATOR_SHOULD_BE_SERIALIZABLE</findingType>
+		<findingType>SE_NO_SERIALVERSIONID</findingType>
+		<findingType>SE_READ_RESOLVE_MUST_RETURN_OBJECT</findingType>
+		<findingType>SE_TRANSIENT_FIELD_NOT_RESTORED</findingType>
+		<findingType>SE_NONFINAL_SERIALVERSIONID</findingType>
+		<findingType>SE_NONSTATIC_SERIALVERSIONID</findingType>
+		<findingType>SE_NONLONG_SERIALVERSIONID</findingType>
+		<findingType>SE_METHOD_MUST_BE_PRIVATE</findingType>
+		<findingType>SE_BAD_FIELD</findingType>
+		<findingType>SE_INNER_CLASS</findingType>
+		<findingType>SE_BAD_FIELD_INNER_CLASS</findingType>
+		<findingType>SE_BAD_FIELD_STORE</findingType>
+		<findingType>NP_TOSTRING_COULD_RETURN_NULL</findingType>
+		<findingType>NP_CLONE_COULD_RETURN_NULL</findingType>
+		<findingType>OS_OPEN_STREAM</findingType>
+		<findingType>OS_OPEN_STREAM_EXCEPTION_PATH</findingType>
+		<findingType>ODR_OPEN_DATABASE_RESOURCE</findingType>
+		<findingType>
+			ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH
+		</findingType>
+		<findingType>ISC_INSTANTIATE_STATIC_CLASS</findingType>
+		<findingType>DMI_RANDOM_USED_ONLY_ONCE</findingType>
+		<findingType>
+			BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS
+		</findingType>
+		<findingType>
+			J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION
 		</findingType>
 		<name>Bad practice</name>
 		<description>
@@ -5938,63 +6272,79 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Thread Passed Where Runnable Expected</findingType>
-		<findingType>Immediate Dereference Of Readline</findingType>
-		<findingType>Rem Of Random Int</findingType>
-		<findingType>Rem Of Hashcode</findingType>
-		<findingType>Init Circularity</findingType>
 		<findingType>
-			Ambiguous Invocation Of Inherited Or Outer Method
+			DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED
+		</findingType>
+		<findingType>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</findingType>
+		<findingType>RV_REM_OF_RANDOM_INT</findingType>
+		<findingType>RV_REM_OF_HASHCODE</findingType>
+		<findingType>IC_INIT_CIRCULARITY</findingType>
+		<findingType>
+			IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD
 		</findingType>
 		<findingType>
-			Transient Field Of Nonserializable Class
+			SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS
 		</findingType>
-		<findingType>Switch Fallthrough</findingType>
-		<findingType>Questionable For Loop</findingType>
-		<findingType>Field Not Initialized In Constructor</findingType>
-		<findingType>Field Not Initialized In Constructor</findingType>
-		<findingType>Check For Positive Indexof</findingType>
-		<findingType>Null On Some Path From Return Value</findingType>
-		<findingType>Load Of Known Null Value</findingType>
-		<findingType>Prefer Zero Length Arrays</findingType>
-		<findingType>Useless Control Flow</findingType>
-		<findingType>Redundant Nullcheck Of Null Value</findingType>
-		<findingType>Redundant Nullcheck Of Nonnull Value</findingType>
-		<findingType>Redundant Comparison Two Null Values</findingType>
+		<findingType>SF_SWITCH_FALLTHROUGH</findingType>
+		<findingType>QF_QUESTIONABLE_FOR_LOOP</findingType>
 		<findingType>
-			Redundant Comparison Of Null And Nonnull Value
+			NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR
 		</findingType>
-		<findingType>Local Self Assignment</findingType>
-		<findingType>Vacuous Comparison</findingType>
-		<findingType>Use Object Equals</findingType>
-		<findingType>Dead Local Store</findingType>
-		<findingType>Dead Local Store Of Null</findingType>
-		<findingType>Catch Exception</findingType>
-		<findingType>Floating Point Equality</findingType>
-		<findingType>Circular Dependency</findingType>
-		<findingType>Redundant Interfaces</findingType>
-		<findingType>Suspect Struts Instance Field</findingType>
-		<findingType>Suspect Servlet Instance Field</findingType>
-		<findingType>Public Semaphores</findingType>
-		<findingType>Integer Multiply Cast To Long</findingType>
-		<findingType>Idiv Cast To Double</findingType>
-		<findingType>Bad Cast To Concrete Collection</findingType>
-		<findingType>Unconfirmed Cast</findingType>
-		<findingType>Vacuous Instanceof</findingType>
-		<findingType>Bad Cast To Abstract Collection</findingType>
-		<findingType>Bad Check For Odd</findingType>
-		<findingType>Average Computation Could Overflow</findingType>
-		<findingType>Questionable Unsigned Right Shift</findingType>
-		<findingType>Hardcoded Absolute Filename</findingType>
-		<findingType>Useless Substring</findingType>
-		<findingType>Write To Static From Instance Method</findingType>
-		<findingType>Nonserializable Object Written</findingType>
-		<findingType>Duplicate Branches</findingType>
-		<findingType>Duplicate Switch Clauses</findingType>
-		<findingType>Xml Factory Bypass</findingType>
-		<findingType>Useless Subclass Method</findingType>
-		<findingType>Useless Abstract Method</findingType>
-		<findingType>Confused Inheritance</findingType>
+		<findingType>
+			UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR
+		</findingType>
+		<findingType>RV_CHECK_FOR_POSITIVE_INDEXOF</findingType>
+		<findingType>
+			NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE
+		</findingType>
+		<findingType>NP_LOAD_OF_KNOWN_NULL_VALUE</findingType>
+		<findingType>PZLA_PREFER_ZERO_LENGTH_ARRAYS</findingType>
+		<findingType>UCF_USELESS_CONTROL_FLOW</findingType>
+		<findingType>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</findingType>
+		<findingType>
+			RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE
+		</findingType>
+		<findingType>
+			RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES
+		</findingType>
+		<findingType>
+			RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE
+		</findingType>
+		<findingType>SA_LOCAL_SELF_ASSIGNMENT</findingType>
+		<findingType>INT_VACUOUS_COMPARISON</findingType>
+		<findingType>UOE_USE_OBJECT_EQUALS</findingType>
+		<findingType>DLS_DEAD_LOCAL_STORE</findingType>
+		<findingType>DLS_DEAD_LOCAL_STORE_OF_NULL</findingType>
+		<findingType>REC_CATCH_EXCEPTION</findingType>
+		<findingType>FE_FLOATING_POINT_EQUALITY</findingType>
+		<findingType>CD_CIRCULAR_DEPENDENCY</findingType>
+		<findingType>RI_REDUNDANT_INTERFACES</findingType>
+		<findingType>MTIA_SUSPECT_STRUTS_INSTANCE_FIELD</findingType>
+		<findingType>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</findingType>
+		<findingType>PS_PUBLIC_SEMAPHORES</findingType>
+		<findingType>ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</findingType>
+		<findingType>ICAST_IDIV_CAST_TO_DOUBLE</findingType>
+		<findingType>BC_BAD_CAST_TO_CONCRETE_COLLECTION</findingType>
+		<findingType>BC_UNCONFIRMED_CAST</findingType>
+		<findingType>BC_VACUOUS_INSTANCEOF</findingType>
+		<findingType>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</findingType>
+		<findingType>IM_BAD_CHECK_FOR_ODD</findingType>
+		<findingType>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</findingType>
+		<findingType>
+			ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT
+		</findingType>
+		<findingType>DMI_HARDCODED_ABSOLUTE_FILENAME</findingType>
+		<findingType>DMI_USELESS_SUBSTRING</findingType>
+		<findingType>
+			ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD
+		</findingType>
+		<findingType>DMI_NONSERIALIZABLE_OBJECT_WRITTEN</findingType>
+		<findingType>DB_DUPLICATE_BRANCHES</findingType>
+		<findingType>DB_DUPLICATE_SWITCH_CLAUSES</findingType>
+		<findingType>XFB_XML_FACTORY_BYPASS</findingType>
+		<findingType>USM_USELESS_SUBCLASS_METHOD</findingType>
+		<findingType>USM_USELESS_ABSTRACT_METHOD</findingType>
+		<findingType>CI_CONFUSED_INHERITANCE</findingType>
 		<name>Dodgy</name>
 		<description>
 			code that is confusing, anomalous, or written in a way that
@@ -6006,36 +6356,36 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Huge Shared String Constant</findingType>
-		<findingType>Blocking Methods On Url</findingType>
-		<findingType>Collection Of Urls</findingType>
-		<findingType>String Ctor</findingType>
-		<findingType>String Void Ctor</findingType>
-		<findingType>String Tostring</findingType>
-		<findingType>Gc</findingType>
-		<findingType>Boolean Ctor</findingType>
-		<findingType>Number Ctor</findingType>
-		<findingType>Fp Number Ctor</findingType>
-		<findingType>String Empty Equals</findingType>
-		<findingType>Boxed Primitive Tostring</findingType>
-		<findingType>Boxing Immediately Unboxed</findingType>
+		<findingType>HSC_HUGE_SHARED_STRING_CONSTANT</findingType>
+		<findingType>DMI_BLOCKING_METHODS_ON_URL</findingType>
+		<findingType>DMI_COLLECTION_OF_URLS</findingType>
+		<findingType>DM_STRING_CTOR</findingType>
+		<findingType>DM_STRING_VOID_CTOR</findingType>
+		<findingType>DM_STRING_TOSTRING</findingType>
+		<findingType>DM_GC</findingType>
+		<findingType>DM_BOOLEAN_CTOR</findingType>
+		<findingType>DM_NUMBER_CTOR</findingType>
+		<findingType>DM_FP_NUMBER_CTOR</findingType>
+		<findingType>DM_STRING_EMPTY_EQUALS</findingType>
+		<findingType>DM_BOXED_PRIMITIVE_TOSTRING</findingType>
+		<findingType>BX_BOXING_IMMEDIATELY_UNBOXED</findingType>
 		<findingType>
-			Boxing Immediately Unboxed To Perform Coercion
+			BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION
 		</findingType>
-		<findingType>New For Getclass</findingType>
-		<findingType>Nextint Via Nextdouble</findingType>
-		<findingType>Should Be Static</findingType>
-		<findingType>Unused Field</findingType>
-		<findingType>Unread Field</findingType>
-		<findingType>Inner Should Be Static</findingType>
-		<findingType>Inner Should Be Static Needs This</findingType>
-		<findingType>Inner Should Be Static Anon</findingType>
-		<findingType>Uncalled Private Method</findingType>
-		<findingType>Use Stringbuffer Concatenation</findingType>
-		<findingType>Inefficient To Array</findingType>
-		<findingType>Wrong Map Iterator</findingType>
-		<findingType>Unnecessary Math</findingType>
-		<findingType>Inefficient Member Access</findingType>
+		<findingType>DM_NEW_FOR_GETCLASS</findingType>
+		<findingType>DM_NEXTINT_VIA_NEXTDOUBLE</findingType>
+		<findingType>SS_SHOULD_BE_STATIC</findingType>
+		<findingType>UUF_UNUSED_FIELD</findingType>
+		<findingType>URF_UNREAD_FIELD</findingType>
+		<findingType>SIC_INNER_SHOULD_BE_STATIC</findingType>
+		<findingType>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</findingType>
+		<findingType>SIC_INNER_SHOULD_BE_STATIC_ANON</findingType>
+		<findingType>UPM_UNCALLED_PRIVATE_METHOD</findingType>
+		<findingType>SBSC_USE_STRINGBUFFER_CONCATENATION</findingType>
+		<findingType>ITA_INEFFICIENT_TO_ARRAY</findingType>
+		<findingType>WMI_WRONG_MAP_ITERATOR</findingType>
+		<findingType>UM_UNNECESSARY_MATH</findingType>
+		<findingType>IMA_INEFFICIENT_MEMBER_ACCESS</findingType>
 		<name>Performance</name>
 		<description>
 			code that is not necessarily incorrect but may be
@@ -6043,67 +6393,73 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Public Should Be Protected</findingType>
-		<findingType>Expose Rep</findingType>
-		<findingType>Expose Rep</findingType>
-		<findingType>Expose REP2</findingType>
-		<findingType>Expose Static REP2</findingType>
-		<findingType>Ooi Pkgprotect</findingType>
-		<findingType>Final Pkgprotect</findingType>
-		<findingType>Should Be Final</findingType>
-		<findingType>Pkgprotect</findingType>
-		<findingType>Mutable Hashtable</findingType>
-		<findingType>Mutable Array</findingType>
-		<findingType>Cannot Be Final</findingType>
+		<findingType>FI_PUBLIC_SHOULD_BE_PROTECTED</findingType>
+		<findingType>MS_EXPOSE_REP</findingType>
+		<findingType>EI_EXPOSE_REP</findingType>
+		<findingType>EI_EXPOSE_REP2</findingType>
+		<findingType>EI_EXPOSE_STATIC_REP2</findingType>
+		<findingType>MS_OOI_PKGPROTECT</findingType>
+		<findingType>MS_FINAL_PKGPROTECT</findingType>
+		<findingType>MS_SHOULD_BE_FINAL</findingType>
+		<findingType>MS_PKGPROTECT</findingType>
+		<findingType>MS_MUTABLE_HASHTABLE</findingType>
+		<findingType>MS_MUTABLE_ARRAY</findingType>
+		<findingType>MS_CANNOT_BE_FINAL</findingType>
 		<name>Malicious code vulnerability</name>
 		<description>
 			code that is vulnerable to attacks from untrusted code
 		</description>
 	</category>
 	<category>
-		<findingType>Static Calendar Instance</findingType>
-		<findingType>Static Simple Data Format Instance</findingType>
-		<findingType>Invoke On Static Calendar Instance</findingType>
-		<findingType>Invoke On Static Date Format Instance</findingType>
-		<findingType>Sync And Null Check Field</findingType>
-		<findingType>Volatile Reference To Array</findingType>
-		<findingType>Monitor Wait On Condition</findingType>
-		<findingType>Useless Thread</findingType>
-		<findingType>Doublecheck</findingType>
-		<findingType>Synchronization On Shared Constant</findingType>
-		<findingType>Empty Sync</findingType>
-		<findingType>Inconsistent Sync</findingType>
-		<findingType>Naked Notify</findingType>
-		<findingType>Invoke Run</findingType>
-		<findingType>Spin On Field</findingType>
-		<findingType>Two Lock Wait</findingType>
-		<findingType>Two Lock Notify</findingType>
-		<findingType>Uncond Wait</findingType>
-		<findingType>Sync Set Unsync Get</findingType>
-		<findingType>Inconsistent Sync</findingType>
-		<findingType>Field Not Guarded</findingType>
-		<findingType>Sync On Updated Field</findingType>
-		<findingType>Writeobject Sync</findingType>
-		<findingType>Readobject Sync</findingType>
-		<findingType>Start In Ctor</findingType>
-		<findingType>Not In Loop</findingType>
-		<findingType>Await Not In Loop</findingType>
-		<findingType>Notify Not Notifyall</findingType>
-		<findingType>Unreleased Lock</findingType>
-		<findingType>Unreleased Lock Exception Path</findingType>
-		<findingType>Mismatched Wait</findingType>
-		<findingType>Mismatched Notify</findingType>
-		<findingType>Lazy Init Instance</findingType>
-		<findingType>Lazy Init Static</findingType>
-		<findingType>JSR166 Lock Monitorenter</findingType>
-		<findingType>Sleep With Lock Held</findingType>
+		<findingType>STCAL_STATIC_CALENDAR_INSTANCE</findingType>
+		<findingType>
+			STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE
+		</findingType>
+		<findingType>
+			STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE
+		</findingType>
+		<findingType>
+			STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE
+		</findingType>
+		<findingType>NP_SYNC_AND_NULL_CHECK_FIELD</findingType>
+		<findingType>VO_VOLATILE_REFERENCE_TO_ARRAY</findingType>
+		<findingType>DM_MONITOR_WAIT_ON_CONDITION</findingType>
+		<findingType>DM_USELESS_THREAD</findingType>
+		<findingType>DC_DOUBLECHECK</findingType>
+		<findingType>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</findingType>
+		<findingType>ESync_EMPTY_SYNC</findingType>
+		<findingType>IS2_INCONSISTENT_SYNC</findingType>
+		<findingType>NN_NAKED_NOTIFY</findingType>
+		<findingType>RU_INVOKE_RUN</findingType>
+		<findingType>SP_SPIN_ON_FIELD</findingType>
+		<findingType>TLW_TWO_LOCK_WAIT</findingType>
+		<findingType>TLW_TWO_LOCK_NOTIFY</findingType>
+		<findingType>UW_UNCOND_WAIT</findingType>
+		<findingType>UG_SYNC_SET_UNSYNC_GET</findingType>
+		<findingType>IS_INCONSISTENT_SYNC</findingType>
+		<findingType>IS_FIELD_NOT_GUARDED</findingType>
+		<findingType>ML_SYNC_ON_UPDATED_FIELD</findingType>
+		<findingType>WS_WRITEOBJECT_SYNC</findingType>
+		<findingType>RS_READOBJECT_SYNC</findingType>
+		<findingType>SC_START_IN_CTOR</findingType>
+		<findingType>WA_NOT_IN_LOOP</findingType>
+		<findingType>WA_AWAIT_NOT_IN_LOOP</findingType>
+		<findingType>NO_NOTIFY_NOT_NOTIFYALL</findingType>
+		<findingType>UL_UNRELEASED_LOCK</findingType>
+		<findingType>UL_UNRELEASED_LOCK_EXCEPTION_PATH</findingType>
+		<findingType>MWN_MISMATCHED_WAIT</findingType>
+		<findingType>MWN_MISMATCHED_NOTIFY</findingType>
+		<findingType>LI_LAZY_INIT_INSTANCE</findingType>
+		<findingType>LI_LAZY_INIT_STATIC</findingType>
+		<findingType>JLM_JSR166_LOCK_MONITORENTER</findingType>
+		<findingType>SWL_SLEEP_WITH_LOCK_HELD</findingType>
 		<name>Multithreaded correctness</name>
 		<description>
 			code flaws having to do with threads, locks, and volatiles
 		</description>
 	</category>
 	<category>
-		<findingType>Convert Case</findingType>
+		<findingType>DM_CONVERT_CASE</findingType>
 		<name>Internationalization</name>
 		<description>
 			code flaws having to do with internationalization and locale

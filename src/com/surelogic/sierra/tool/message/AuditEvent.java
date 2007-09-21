@@ -18,6 +18,10 @@ public enum AuditEvent {
 	/**
 	 * Indicates that a finding has been looked at by someone.
 	 */
-	READ
+	READ,
+	/**
+	 * Sets the summary displayed by this finding.
+	 */
+	SUMMARY
 
 }

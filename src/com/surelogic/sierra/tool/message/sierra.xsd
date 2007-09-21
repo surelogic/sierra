@@ -12,14 +12,21 @@
     </annotation>
     <complexType name="FindingType">
 		<sequence>
-			<element name="artifact" type="tns:ArtifactType"
+            <element name="id" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="artifact" type="tns:ArtifactType"
 				maxOccurs="unbounded" minOccurs="1">
 			</element>
-			<element name="shortMessage" type="string" maxOccurs="1" minOccurs="0"></element>
-			<element name="info" type="string" maxOccurs="1" minOccurs="0"></element>
-			<element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="shortMessage" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="info" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="name" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
 		</sequence>
-	</complexType>
+    </complexType>
 
     <complexType name="ArtifactType">
     	<sequence minOccurs="0" maxOccurs="1">

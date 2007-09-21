@@ -3,6 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
 	<findingType>
+		<id>EmptyCatchBlock</id>
 		<artifact tool="PMD" mnemonic="EmptyCatchBlock"></artifact>
 		<shortMessage>
 			Empty Catch Block finds instances where an exception is
@@ -19,6 +20,7 @@
 		<name>Empty Catch Block</name>
 	</findingType>
 	<findingType>
+		<id>EmptyIfStmt</id>
 		<artifact tool="PMD" mnemonic="EmptyIfStmt"></artifact>
 		<shortMessage>
 			Empty If Statement finds instances where a condition is
@@ -31,6 +33,7 @@
 		<name>Empty If Stmt</name>
 	</findingType>
 	<findingType>
+		<id>EmptyWhileStmt</id>
 		<artifact tool="PMD" mnemonic="EmptyWhileStmt"></artifact>
 		<shortMessage>
 			Empty While Statement finds all instances where a while
@@ -49,6 +52,7 @@
 		<name>Empty While Stmt</name>
 	</findingType>
 	<findingType>
+		<id>EmptyTryBlock</id>
 		<artifact tool="PMD" mnemonic="EmptyTryBlock"></artifact>
 		<shortMessage>
 			Avoid empty try blocks - what's the point?
@@ -57,6 +61,7 @@
 		<name>Empty Try Block</name>
 	</findingType>
 	<findingType>
+		<id>EmptyFinallyBlock</id>
 		<artifact tool="PMD" mnemonic="EmptyFinallyBlock"></artifact>
 		<shortMessage>
 			Avoid empty finally blocks - these can be deleted.
@@ -65,6 +70,7 @@
 		<name>Empty Finally Block</name>
 	</findingType>
 	<findingType>
+		<id>EmptySwitchStatements</id>
 		<artifact tool="PMD" mnemonic="EmptySwitchStatements">
 		</artifact>
 		<shortMessage>Avoid empty switch statements.</shortMessage>
@@ -72,6 +78,7 @@
 		<name>Empty Switch Statements</name>
 	</findingType>
 	<findingType>
+		<id>JumbledIncrementer</id>
 		<artifact tool="PMD" mnemonic="JumbledIncrementer"></artifact>
 		<shortMessage>
 			Avoid jumbled loop incrementers - it's usually a mistake,
@@ -84,6 +91,7 @@
 		<name>Jumbled Incrementer</name>
 	</findingType>
 	<findingType>
+		<id>ForLoopShouldBeWhileLoop</id>
 		<artifact tool="PMD" mnemonic="ForLoopShouldBeWhileLoop">
 		</artifact>
 		<shortMessage>
@@ -97,6 +105,7 @@
 		<name>For Loop Should Be While Loop</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryConversionTemporary</id>
 		<artifact tool="PMD"
 			mnemonic="UnnecessaryConversionTemporary">
 		</artifact>
@@ -111,6 +120,7 @@
 		<name>Unnecessary Conversion Temporary</name>
 	</findingType>
 	<findingType>
+		<id>OverrideBothEqualsAndHashcode</id>
 		<artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode">
 		</artifact>
 		<shortMessage>
@@ -130,6 +140,7 @@
 		<name>Override Both Equals And Hashcode</name>
 	</findingType>
 	<findingType>
+		<id>DoubleCheckedLocking</id>
 		<artifact tool="PMD" mnemonic="DoubleCheckedLocking"></artifact>
 		<shortMessage>
 			Partially created objects can be returned by the Double
@@ -150,6 +161,7 @@
 		<name>Double Checked Locking</name>
 	</findingType>
 	<findingType>
+		<id>ReturnFromFinallyBlock</id>
 		<artifact tool="PMD" mnemonic="ReturnFromFinallyBlock">
 		</artifact>
 		<shortMessage>
@@ -163,6 +175,7 @@
 		<name>Return From Finally Block</name>
 	</findingType>
 	<findingType>
+		<id>EmptySynchronizedBlock</id>
 		<artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
 		</artifact>
 		<shortMessage>
@@ -172,12 +185,14 @@
 		<name>Empty Synchronized Block</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryReturn</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryReturn"></artifact>
 		<shortMessage>Avoid unnecessary return statements</shortMessage>
 		<info>Avoid unnecessary return statements</info>
 		<name>Unnecessary Return</name>
 	</findingType>
 	<findingType>
+		<id>EmptyStaticInitializer</id>
 		<artifact tool="PMD" mnemonic="EmptyStaticInitializer">
 		</artifact>
 		<shortMessage>
@@ -187,6 +202,7 @@
 		<name>Empty Static Initializer</name>
 	</findingType>
 	<findingType>
+		<id>UnconditionalIfStatement</id>
 		<artifact tool="PMD" mnemonic="UnconditionalIfStatement">
 		</artifact>
 		<shortMessage>
@@ -200,6 +216,7 @@
 		<name>Unconditional If Statement</name>
 	</findingType>
 	<findingType>
+		<id>EmptyStatementNotInLoop</id>
 		<artifact tool="PMD" mnemonic="EmptyStatementNotInLoop">
 		</artifact>
 		<shortMessage>
@@ -217,6 +234,7 @@
 		<name>Empty Statement Not In Loop</name>
 	</findingType>
 	<findingType>
+		<id>BooleanInstantiation</id>
 		<artifact tool="PMD" mnemonic="BooleanInstantiation"></artifact>
 		<shortMessage>
 			Avoid instantiating Boolean objects; you can reference
@@ -231,6 +249,7 @@
 		<name>Boolean Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryFinalModifier</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryFinalModifier">
 		</artifact>
 		<shortMessage>
@@ -244,6 +263,7 @@
 		<name>Unnecessary Final Modifier</name>
 	</findingType>
 	<findingType>
+		<id>CollapsibleIfStatements</id>
 		<artifact tool="PMD" mnemonic="CollapsibleIfStatements">
 		</artifact>
 		<shortMessage>
@@ -259,6 +279,7 @@
 		<name>Collapsible If Statements</name>
 	</findingType>
 	<findingType>
+		<id>UselessOverridingMethod</id>
 		<artifact tool="PMD" mnemonic="UselessOverridingMethod">
 		</artifact>
 		<shortMessage>
@@ -272,6 +293,7 @@
 		<name>Useless Overriding Method</name>
 	</findingType>
 	<findingType>
+		<id>ClassCastExceptionWithToArray</id>
 		<artifact tool="PMD" mnemonic="ClassCastExceptionWithToArray">
 		</artifact>
 		<shortMessage>
@@ -289,6 +311,7 @@
 		<name>Class Cast Exception With To Array</name>
 	</findingType>
 	<findingType>
+		<id>AvoidDecimalLiteralsInBigDecimalConstructor</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidDecimalLiteralsInBigDecimalConstructor">
 		</artifact>
@@ -327,6 +350,7 @@
 		<name>Avoid Decimal Literals In Big Decimal Constructor</name>
 	</findingType>
 	<findingType>
+		<id>UselessOperationOnImmutable</id>
 		<artifact tool="PMD" mnemonic="UselessOperationOnImmutable">
 		</artifact>
 		<shortMessage>
@@ -344,6 +368,7 @@
 		<name>Useless Operation On Immutable</name>
 	</findingType>
 	<findingType>
+		<id>MisplacedNullCheck</id>
 		<artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
 		<shortMessage>
 			The null check here is misplaced. if the variable is null
@@ -360,6 +385,7 @@
 		<name>Misplaced Null Check</name>
 	</findingType>
 	<findingType>
+		<id>UnusedNullCheckInEquals</id>
 		<artifact tool="PMD" mnemonic="UnusedNullCheckInEquals">
 		</artifact>
 		<shortMessage>
@@ -375,6 +401,7 @@
 		<name>Unused Null Check In Equals</name>
 	</findingType>
 	<findingType>
+		<id>AvoidThreadGroup</id>
 		<artifact tool="PMD" mnemonic="AvoidThreadGroup"></artifact>
 		<shortMessage>
 			Avoid using ThreadGroup; although it is intended to be used
@@ -389,6 +416,7 @@
 		<name>Avoid Thread Group</name>
 	</findingType>
 	<findingType>
+		<id>BrokenNullCheck</id>
 		<artifact tool="PMD" mnemonic="BrokenNullCheck"></artifact>
 		<shortMessage>
 			The null check is broken since it will throw a
@@ -403,6 +431,7 @@
 		<name>Broken Null Check</name>
 	</findingType>
 	<findingType>
+		<id>BigIntegerInstantiation</id>
 		<artifact tool="PMD" mnemonic="BigIntegerInstantiation">
 		</artifact>
 		<shortMessage>
@@ -420,6 +449,7 @@
 		<name>Big Integer Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>AvoidUsingOctalValues</id>
 		<artifact tool="PMD" mnemonic="AvoidUsingOctalValues">
 		</artifact>
 		<shortMessage>
@@ -433,6 +463,7 @@
 		<name>Avoid Using Octal Values</name>
 	</findingType>
 	<findingType>
+		<id>IfStmtsMustUseBraces</id>
 		<artifact tool="PMD" mnemonic="IfStmtsMustUseBraces"></artifact>
 		<shortMessage>
 			Avoid using if statements without using curly braces.
@@ -443,6 +474,7 @@
 		<name>If Stmts Must Use Braces</name>
 	</findingType>
 	<findingType>
+		<id>WhileLoopsMustUseBraces</id>
 		<artifact tool="PMD" mnemonic="WhileLoopsMustUseBraces">
 		</artifact>
 		<shortMessage>
@@ -454,6 +486,7 @@
 		<name>While Loops Must Use Braces</name>
 	</findingType>
 	<findingType>
+		<id>IfElseStmtsMustUseBraces</id>
 		<artifact tool="PMD" mnemonic="IfElseStmtsMustUseBraces">
 		</artifact>
 		<shortMessage>
@@ -465,6 +498,7 @@
 		<name>If Else Stmts Must Use Braces</name>
 	</findingType>
 	<findingType>
+		<id>ForLoopsMustUseBraces</id>
 		<artifact tool="PMD" mnemonic="ForLoopsMustUseBraces">
 		</artifact>
 		<shortMessage>
@@ -476,6 +510,7 @@
 		<name>For Loops Must Use Braces</name>
 	</findingType>
 	<findingType>
+		<id>ProperCloneImplementation</id>
 		<artifact tool="PMD" mnemonic="ProperCloneImplementation">
 		</artifact>
 		<shortMessage>
@@ -487,6 +522,7 @@
 		<name>Proper Clone Implementation</name>
 	</findingType>
 	<findingType>
+		<id>CloneThrowsCloneNotSupportedException</id>
 		<artifact tool="PMD"
 			mnemonic="CloneThrowsCloneNotSupportedException">
 		</artifact>
@@ -501,6 +537,7 @@
 		<name>Clone Throws Clone Not Supported Exception</name>
 	</findingType>
 	<findingType>
+		<id>CloneMethodMustImplementCloneable</id>
 		<artifact tool="PMD"
 			mnemonic="CloneMethodMustImplementCloneable">
 		</artifact>
@@ -517,6 +554,7 @@
 		<name>Clone Method Must Implement Cloneable</name>
 	</findingType>
 	<findingType>
+		<id>NPathComplexity</id>
 		<artifact tool="PMD" mnemonic="NPathComplexity"></artifact>
 		<shortMessage>
 			The NPath complexity of a method is the number of acyclic
@@ -533,6 +571,7 @@
 		<name>NPath Complexity</name>
 	</findingType>
 	<findingType>
+		<id>ExcessiveMethodLength</id>
 		<artifact tool="PMD" mnemonic="ExcessiveMethodLength">
 		</artifact>
 		<shortMessage>
@@ -548,6 +587,7 @@
 		<name>Excessive Method Length</name>
 	</findingType>
 	<findingType>
+		<id>ExcessiveParameterList</id>
 		<artifact tool="PMD" mnemonic="ExcessiveParameterList">
 		</artifact>
 		<shortMessage>
@@ -563,6 +603,7 @@
 		<name>Excessive Parameter List</name>
 	</findingType>
 	<findingType>
+		<id>ExcessiveClassLength</id>
 		<artifact tool="PMD" mnemonic="ExcessiveClassLength"></artifact>
 		<shortMessage>
 			Long Class files are indications that the class may be
@@ -577,6 +618,7 @@
 		<name>Excessive Class Length</name>
 	</findingType>
 	<findingType>
+		<id>CyclomaticComplexity</id>
 		<artifact tool="PMD" mnemonic="CyclomaticComplexity"></artifact>
 		<shortMessage>
 			Complexity is determined by the number of decision points in
@@ -595,6 +637,7 @@
 		<name>Cyclomatic Complexity</name>
 	</findingType>
 	<findingType>
+		<id>ExcessivePublicCount</id>
 		<artifact tool="PMD" mnemonic="ExcessivePublicCount"></artifact>
 		<shortMessage>
 			A large number of public methods and attributes declared in
@@ -609,6 +652,7 @@
 		<name>Excessive Public Count</name>
 	</findingType>
 	<findingType>
+		<id>TooManyFields</id>
 		<artifact tool="PMD" mnemonic="TooManyFields"></artifact>
 		<shortMessage>
 			Classes that have too many fields could be redesigned to
@@ -627,6 +671,7 @@
 		<name>Too Many Fields</name>
 	</findingType>
 	<findingType>
+		<id>NcssMethodCount</id>
 		<artifact tool="PMD" mnemonic="NcssMethodCount"></artifact>
 		<shortMessage>
 			This rule uses the NCSS (Non Commenting Source Statements)
@@ -645,6 +690,7 @@
 		<name>Ncss Method Count</name>
 	</findingType>
 	<findingType>
+		<id>NcssTypeCount</id>
 		<artifact tool="PMD" mnemonic="NcssTypeCount"></artifact>
 		<shortMessage>
 			This rule uses the NCSS (Non Commenting Source Statements)
@@ -663,6 +709,7 @@
 		<name>Ncss Type Count</name>
 	</findingType>
 	<findingType>
+		<id>NcssConstructorCount</id>
 		<artifact tool="PMD" mnemonic="NcssConstructorCount"></artifact>
 		<shortMessage>
 			This rule uses the NCSS (Non Commenting Source Statements)
@@ -681,6 +728,7 @@
 		<name>Ncss Constructor Count</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryConstructor</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryConstructor">
 		</artifact>
 		<shortMessage>
@@ -696,6 +744,7 @@
 		<name>Unnecessary Constructor</name>
 	</findingType>
 	<findingType>
+		<id>NullAssignment</id>
 		<artifact tool="PMD" mnemonic="NullAssignment"></artifact>
 		<shortMessage>
 			Assigning a &quot;null&quot; to a variable (outside of its
@@ -718,6 +767,7 @@
 		<name>Null Assignment</name>
 	</findingType>
 	<findingType>
+		<id>OnlyOneReturn</id>
 		<artifact tool="PMD" mnemonic="OnlyOneReturn"></artifact>
 		<shortMessage>
 			A method should have only one exit point, and that should be
@@ -730,6 +780,7 @@
 		<name>Only One Return</name>
 	</findingType>
 	<findingType>
+		<id>UnusedModifier</id>
 		<artifact tool="PMD" mnemonic="UnusedModifier"></artifact>
 		<shortMessage>
 			Fields in interfaces are automatically public static final,
@@ -750,6 +801,7 @@
 		<name>Unused Modifier</name>
 	</findingType>
 	<findingType>
+		<id>AssignmentInOperand</id>
 		<artifact tool="PMD" mnemonic="AssignmentInOperand"></artifact>
 		<shortMessage>
 			Avoid assignments in operands; this can make code more
@@ -762,6 +814,7 @@
 		<name>Assignment In Operand</name>
 	</findingType>
 	<findingType>
+		<id>AtLeastOneConstructor</id>
 		<artifact tool="PMD" mnemonic="AtLeastOneConstructor">
 		</artifact>
 		<shortMessage>
@@ -771,6 +824,7 @@
 		<name>At Least One Constructor</name>
 	</findingType>
 	<findingType>
+		<id>DontImportSun</id>
 		<artifact tool="PMD" mnemonic="DontImportSun"></artifact>
 		<shortMessage>
 			Avoid importing anything from the 'sun.*' packages. These
@@ -783,6 +837,7 @@
 		<name>Dont Import Sun</name>
 	</findingType>
 	<findingType>
+		<id>SuspiciousOctalEscape</id>
 		<artifact tool="PMD" mnemonic="SuspiciousOctalEscape">
 		</artifact>
 		<shortMessage>
@@ -816,6 +871,7 @@
 		<name>Suspicious Octal Escape</name>
 	</findingType>
 	<findingType>
+		<id>CallSuperInConstructor</id>
 		<artifact tool="PMD" mnemonic="CallSuperInConstructor">
 		</artifact>
 		<shortMessage>
@@ -833,6 +889,7 @@
 		<name>Call Super In Constructor</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryParentheses</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryParentheses">
 		</artifact>
 		<shortMessage>
@@ -846,6 +903,7 @@
 		<name>Unnecessary Parentheses</name>
 	</findingType>
 	<findingType>
+		<id>SingularField</id>
 		<artifact tool="PMD" mnemonic="SingularField"></artifact>
 		<shortMessage>
 			A field that's only used by one method could perhaps be
@@ -858,6 +916,7 @@
 		<name>Singular Field</name>
 	</findingType>
 	<findingType>
+		<id>DefaultPackage</id>
 		<artifact tool="PMD" mnemonic="DefaultPackage"></artifact>
 		<shortMessage>
 			Use explicit scoping instead of the default package private
@@ -870,6 +929,7 @@
 		<name>Default Package</name>
 	</findingType>
 	<findingType>
+		<id>BooleanInversion</id>
 		<artifact tool="PMD" mnemonic="BooleanInversion"></artifact>
 		<shortMessage>
 			3
@@ -916,6 +976,7 @@
 		<name>Boolean Inversion</name>
 	</findingType>
 	<findingType>
+		<id>DataflowAnomalyAnalysis</id>
 		<artifact tool="PMD" mnemonic="DataflowAnomalyAnalysis">
 		</artifact>
 		<shortMessage>
@@ -947,6 +1008,7 @@
 		<name>Dataflow Anomaly Analysis</name>
 	</findingType>
 	<findingType>
+		<id>CouplingBetweenObjects</id>
 		<artifact tool="PMD" mnemonic="CouplingBetweenObjects">
 		</artifact>
 		<shortMessage>
@@ -962,6 +1024,7 @@
 		<name>Coupling Between Objects</name>
 	</findingType>
 	<findingType>
+		<id>ExcessiveImports</id>
 		<artifact tool="PMD" mnemonic="ExcessiveImports"></artifact>
 		<shortMessage>
 			A high number of imports can indicate a high degree of
@@ -978,6 +1041,7 @@
 		<name>Excessive Imports</name>
 	</findingType>
 	<findingType>
+		<id>LooseCoupling</id>
 		<artifact tool="PMD" mnemonic="LooseCoupling"></artifact>
 		<shortMessage>
 			Avoid using implementation types (i.e., HashSet); use the
@@ -990,6 +1054,7 @@
 		<name>Loose Coupling</name>
 	</findingType>
 	<findingType>
+		<id>UseSingleton</id>
 		<artifact tool="PMD" mnemonic="UseSingleton"></artifact>
 		<shortMessage>
 			If you have a class that has nothing but static methods,
@@ -1010,6 +1075,7 @@
 		<name>Use Singleton</name>
 	</findingType>
 	<findingType>
+		<id>SimplifyBooleanReturns</id>
 		<artifact tool="PMD" mnemonic="SimplifyBooleanReturns">
 		</artifact>
 		<shortMessage>
@@ -1023,6 +1089,7 @@
 		<name>Simplify Boolean Returns</name>
 	</findingType>
 	<findingType>
+		<id>SimplifyBooleanExpressions</id>
 		<artifact tool="PMD" mnemonic="SimplifyBooleanExpressions">
 		</artifact>
 		<shortMessage>
@@ -1036,6 +1103,7 @@
 		<name>Simplify Boolean Expressions</name>
 	</findingType>
 	<findingType>
+		<id>SwitchStmtsShouldHaveDefault</id>
 		<artifact tool="PMD" mnemonic="SwitchStmtsShouldHaveDefault">
 		</artifact>
 		<shortMessage>
@@ -1045,6 +1113,7 @@
 		<name>Switch Stmts Should Have Default</name>
 	</findingType>
 	<findingType>
+		<id>AvoidDeeplyNestedIfStmts</id>
 		<artifact tool="PMD" mnemonic="AvoidDeeplyNestedIfStmts">
 		</artifact>
 		<shortMessage>
@@ -1054,6 +1123,7 @@
 		<name>Avoid Deeply Nested If Stmts</name>
 	</findingType>
 	<findingType>
+		<id>AvoidReassigningParameters</id>
 		<artifact tool="PMD" mnemonic="AvoidReassigningParameters">
 		</artifact>
 		<shortMessage>
@@ -1067,6 +1137,7 @@
 		<name>Avoid Reassigning Parameters</name>
 	</findingType>
 	<findingType>
+		<id>SwitchDensity</id>
 		<artifact tool="PMD" mnemonic="SwitchDensity"></artifact>
 		<shortMessage>
 			A high ratio of statements to labels in a switch statement
@@ -1083,6 +1154,7 @@
 		<name>Switch Density</name>
 	</findingType>
 	<findingType>
+		<id>ConstructorCallsOverridableMethod</id>
 		<artifact tool="PMD"
 			mnemonic="ConstructorCallsOverridableMethod">
 		</artifact>
@@ -1115,6 +1187,7 @@
 		<name>Constructor Calls Overridable Method</name>
 	</findingType>
 	<findingType>
+		<id>AccessorClassGeneration</id>
 		<artifact tool="PMD" mnemonic="AccessorClassGeneration">
 		</artifact>
 		<shortMessage>
@@ -1142,6 +1215,7 @@
 		<name>Accessor Class Generation</name>
 	</findingType>
 	<findingType>
+		<id>FinalFieldCouldBeStatic</id>
 		<artifact tool="PMD" mnemonic="FinalFieldCouldBeStatic">
 		</artifact>
 		<shortMessage>
@@ -1157,6 +1231,7 @@
 		<name>Final Field Could Be Static</name>
 	</findingType>
 	<findingType>
+		<id>CloseResource</id>
 		<artifact tool="PMD" mnemonic="CloseResource"></artifact>
 		<shortMessage>
 			Ensure that resources (like Connection, Statement, and
@@ -1169,6 +1244,7 @@
 		<name>Close Resource</name>
 	</findingType>
 	<findingType>
+		<id>NonStaticInitializer</id>
 		<artifact tool="PMD" mnemonic="NonStaticInitializer"></artifact>
 		<shortMessage>
 			A nonstatic initializer block will be called any time a
@@ -1185,6 +1261,7 @@
 		<name>Non Static Initializer</name>
 	</findingType>
 	<findingType>
+		<id>DefaultLabelNotLastInSwitchStmt</id>
 		<artifact tool="PMD"
 			mnemonic="DefaultLabelNotLastInSwitchStmt">
 		</artifact>
@@ -1199,6 +1276,7 @@
 		<name>Default Label Not Last In Switch Stmt</name>
 	</findingType>
 	<findingType>
+		<id>NonCaseLabelInSwitchStatement</id>
 		<artifact tool="PMD" mnemonic="NonCaseLabelInSwitchStatement">
 		</artifact>
 		<shortMessage>
@@ -1214,6 +1292,7 @@
 		<name>Non Case Label In Switch Statement</name>
 	</findingType>
 	<findingType>
+		<id>OptimizableToArrayCall</id>
 		<artifact tool="PMD" mnemonic="OptimizableToArrayCall">
 		</artifact>
 		<shortMessage>
@@ -1227,6 +1306,7 @@
 		<name>Optimizable To Array Call</name>
 	</findingType>
 	<findingType>
+		<id>BadComparison</id>
 		<artifact tool="PMD" mnemonic="BadComparison"></artifact>
 		<shortMessage>
 			Avoid equality comparisons with Double.NaN - these are
@@ -1239,6 +1319,7 @@
 		<name>Bad Comparison</name>
 	</findingType>
 	<findingType>
+		<id>EqualsNull</id>
 		<artifact tool="PMD" mnemonic="EqualsNull"></artifact>
 		<shortMessage>
 			Inexperienced programmers sometimes confuse comparison
@@ -1251,6 +1332,7 @@
 		<name>Equals Null</name>
 	</findingType>
 	<findingType>
+		<id>ConfusingTernary</id>
 		<artifact tool="PMD" mnemonic="ConfusingTernary"></artifact>
 		<shortMessage>
 			In an &quot;if&quot; expression with an &quot;else&quot;
@@ -1277,6 +1359,7 @@
 		<name>Confusing Ternary</name>
 	</findingType>
 	<findingType>
+		<id>InstantiationToGetClass</id>
 		<artifact tool="PMD" mnemonic="InstantiationToGetClass">
 		</artifact>
 		<shortMessage>
@@ -1290,6 +1373,7 @@
 		<name>Instantiation To Get Class</name>
 	</findingType>
 	<findingType>
+		<id>IdempotentOperations</id>
 		<artifact tool="PMD" mnemonic="IdempotentOperations"></artifact>
 		<shortMessage>
 			Avoid idempotent operations - they are have no effect.
@@ -1300,6 +1384,7 @@
 		<name>Idempotent Operations</name>
 	</findingType>
 	<findingType>
+		<id>SimpleDateFormatNeedsLocale</id>
 		<artifact tool="PMD" mnemonic="SimpleDateFormatNeedsLocale">
 		</artifact>
 		<shortMessage>
@@ -1313,6 +1398,7 @@
 		<name>Simple Date Format Needs Locale</name>
 	</findingType>
 	<findingType>
+		<id>ImmutableField</id>
 		<artifact tool="PMD" mnemonic="ImmutableField"></artifact>
 		<shortMessage>
 			Identifies private fields whose values never change once
@@ -1329,6 +1415,7 @@
 		<name>Immutable Field</name>
 	</findingType>
 	<findingType>
+		<id>UseLocaleWithCaseConversions</id>
 		<artifact tool="PMD" mnemonic="UseLocaleWithCaseConversions">
 		</artifact>
 		<shortMessage>
@@ -1344,6 +1431,7 @@
 		<name>Use Locale With Case Conversions</name>
 	</findingType>
 	<findingType>
+		<id>AvoidProtectedFieldInFinalClass</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidProtectedFieldInFinalClass">
 		</artifact>
@@ -1360,6 +1448,7 @@
 		<name>Avoid Protected Field In Final Class</name>
 	</findingType>
 	<findingType>
+		<id>AssignmentToNonFinalStatic</id>
 		<artifact tool="PMD" mnemonic="AssignmentToNonFinalStatic">
 		</artifact>
 		<shortMessage>
@@ -1371,6 +1460,7 @@
 		<name>Assignment To Non Final Static</name>
 	</findingType>
 	<findingType>
+		<id>MissingStaticMethodInNonInstantiatableClass</id>
 		<artifact tool="PMD"
 			mnemonic="MissingStaticMethodInNonInstantiatableClass">
 		</artifact>
@@ -1385,6 +1475,7 @@
 		<name>Missing Static Method In Non Instantiatable Class</name>
 	</findingType>
 	<findingType>
+		<id>AvoidSynchronizedAtMethodLevel</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidSynchronizedAtMethodLevel">
 		</artifact>
@@ -1403,6 +1494,7 @@
 		<name>Avoid Synchronized At Method Level</name>
 	</findingType>
 	<findingType>
+		<id>MissingBreakInSwitch</id>
 		<artifact tool="PMD" mnemonic="MissingBreakInSwitch"></artifact>
 		<shortMessage>
 			A switch statement without an enclosed break statement may
@@ -1415,6 +1507,7 @@
 		<name>Missing Break In Switch</name>
 	</findingType>
 	<findingType>
+		<id>UseNotifyAllInsteadOfNotify</id>
 		<artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
 		</artifact>
 		<shortMessage>
@@ -1432,6 +1525,7 @@
 		<name>Use Notify All Instead Of Notify</name>
 	</findingType>
 	<findingType>
+		<id>AvoidInstanceofChecksInCatchClause</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidInstanceofChecksInCatchClause">
 		</artifact>
@@ -1446,6 +1540,7 @@
 		<name>Avoid Instanceof Checks In Catch Clause</name>
 	</findingType>
 	<findingType>
+		<id>AbstractClassWithoutAbstractMethod</id>
 		<artifact tool="PMD"
 			mnemonic="AbstractClassWithoutAbstractMethod">
 		</artifact>
@@ -1468,6 +1563,7 @@
 		<name>Abstract Class Without Abstract Method</name>
 	</findingType>
 	<findingType>
+		<id>SimplifyConditional</id>
 		<artifact tool="PMD" mnemonic="SimplifyConditional"></artifact>
 		<shortMessage>
 			No need to check for null before an instanceof; the
@@ -1480,6 +1576,7 @@
 		<name>Simplify Conditional</name>
 	</findingType>
 	<findingType>
+		<id>CompareObjectsWithEquals</id>
 		<artifact tool="PMD" mnemonic="CompareObjectsWithEquals">
 		</artifact>
 		<shortMessage>
@@ -1493,6 +1590,7 @@
 		<name>Compare Objects With Equals</name>
 	</findingType>
 	<findingType>
+		<id>PositionLiteralsFirstInComparisons</id>
 		<artifact tool="PMD"
 			mnemonic="PositionLiteralsFirstInComparisons">
 		</artifact>
@@ -1509,6 +1607,7 @@
 		<name>Position Literals First In Comparisons</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryLocalBeforeReturn</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn">
 		</artifact>
 		<shortMessage>
@@ -1518,6 +1617,7 @@
 		<name>Unnecessary Local Before Return</name>
 	</findingType>
 	<findingType>
+		<id>NonThreadSafeSingleton</id>
 		<artifact tool="PMD" mnemonic="NonThreadSafeSingleton">
 		</artifact>
 		<shortMessage>
@@ -1545,6 +1645,7 @@
 		<name>Non Thread Safe Singleton</name>
 	</findingType>
 	<findingType>
+		<id>UncommentedEmptyMethod</id>
 		<artifact tool="PMD" mnemonic="UncommentedEmptyMethod">
 		</artifact>
 		<shortMessage>
@@ -1564,6 +1665,7 @@
 		<name>Uncommented Empty Method</name>
 	</findingType>
 	<findingType>
+		<id>UncommentedEmptyConstructor</id>
 		<artifact tool="PMD" mnemonic="UncommentedEmptyConstructor">
 		</artifact>
 		<shortMessage>
@@ -1583,6 +1685,7 @@
 		<name>Uncommented Empty Constructor</name>
 	</findingType>
 	<findingType>
+		<id>AvoidConstantsInterface</id>
 		<artifact tool="PMD" mnemonic="AvoidConstantsInterface">
 		</artifact>
 		<shortMessage>
@@ -1598,6 +1701,7 @@
 		<name>Avoid Constants Interface</name>
 	</findingType>
 	<findingType>
+		<id>UnsynchronizedStaticDateFormatter</id>
 		<artifact tool="PMD"
 			mnemonic="UnsynchronizedStaticDateFormatter">
 		</artifact>
@@ -1616,6 +1720,7 @@
 		<name>Unsynchronized Static Date Formatter</name>
 	</findingType>
 	<findingType>
+		<id>PreserveStackTrace</id>
 		<artifact tool="PMD" mnemonic="PreserveStackTrace"></artifact>
 		<shortMessage>
 			Throwing a new exception from a catch block without passing
@@ -1632,6 +1737,7 @@
 		<name>Preserve Stack Trace</name>
 	</findingType>
 	<findingType>
+		<id>UseCollectionIsEmpty</id>
 		<artifact tool="PMD" mnemonic="UseCollectionIsEmpty"></artifact>
 		<shortMessage>
 			The isEmpty() method on java.util.Collection is provided to
@@ -1646,6 +1752,7 @@
 		<name>Use Collection Is Empty</name>
 	</findingType>
 	<findingType>
+		<id>EmptyFinalizer</id>
 		<artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
 		<shortMessage>
 			If the finalize() method is empty, then it does not need to
@@ -1658,6 +1765,7 @@
 		<name>Empty Finalizer</name>
 	</findingType>
 	<findingType>
+		<id>FinalizeOnlyCallsSuperFinalize</id>
 		<artifact tool="PMD"
 			mnemonic="FinalizeOnlyCallsSuperFinalize">
 		</artifact>
@@ -1672,6 +1780,7 @@
 		<name>Finalize Only Calls Super Finalize</name>
 	</findingType>
 	<findingType>
+		<id>FinalizeOverloaded</id>
 		<artifact tool="PMD" mnemonic="FinalizeOverloaded"></artifact>
 		<shortMessage>
 			Methods named finalize() should not have parameters. It is
@@ -1686,6 +1795,7 @@
 		<name>Finalize Overloaded</name>
 	</findingType>
 	<findingType>
+		<id>FinalizeDoesNotCallSuperFinalize</id>
 		<artifact tool="PMD"
 			mnemonic="FinalizeDoesNotCallSuperFinalize">
 		</artifact>
@@ -1700,6 +1810,7 @@
 		<name>Finalize Does Not Call Super Finalize</name>
 	</findingType>
 	<findingType>
+		<id>FinalizeShouldBeProtected</id>
 		<artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
 		</artifact>
 		<shortMessage>
@@ -1713,6 +1824,7 @@
 		<name>Finalize Should Be Protected</name>
 	</findingType>
 	<findingType>
+		<id>AvoidCallingFinalize</id>
 		<artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
 		<shortMessage>
 			Object.finalize() is called by the garbage collector on an
@@ -1727,12 +1839,14 @@
 		<name>Avoid Calling Finalize</name>
 	</findingType>
 	<findingType>
+		<id>DuplicateImports</id>
 		<artifact tool="PMD" mnemonic="DuplicateImports"></artifact>
 		<shortMessage>Avoid duplicate import statements.</shortMessage>
 		<info>Avoid duplicate import statements.</info>
 		<name>Duplicate Imports</name>
 	</findingType>
 	<findingType>
+		<id>DontImportJavaLang</id>
 		<artifact tool="PMD" mnemonic="DontImportJavaLang"></artifact>
 		<shortMessage>
 			Avoid importing anything from the package 'java.lang'. These
@@ -1745,12 +1859,14 @@
 		<name>Dont Import Java Lang</name>
 	</findingType>
 	<findingType>
+		<id>UnusedImports</id>
 		<artifact tool="PMD" mnemonic="UnusedImports"></artifact>
 		<shortMessage>Avoid unused import statements.</shortMessage>
 		<info>Avoid unused import statements.</info>
 		<name>Unused Imports</name>
 	</findingType>
 	<findingType>
+		<id>ImportFromSamePackage</id>
 		<artifact tool="PMD" mnemonic="ImportFromSamePackage">
 		</artifact>
 		<shortMessage>
@@ -1762,6 +1878,7 @@
 		<name>Import From Same Package</name>
 	</findingType>
 	<findingType>
+		<id>UseProperClassLoader</id>
 		<artifact tool="PMD" mnemonic="UseProperClassLoader"></artifact>
 		<shortMessage>
 			In J2EE getClassLoader() might not work as expected. Use
@@ -1774,6 +1891,7 @@
 		<name>Use Proper Class Loader</name>
 	</findingType>
 	<findingType>
+		<id>MDBAndSessionBeanNamingConvention</id>
 		<artifact tool="PMD"
 			mnemonic="MDBAndSessionBeanNamingConvention">
 		</artifact>
@@ -1788,6 +1906,7 @@
 		<name>MDBAnd Session Bean Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>RemoteSessionInterfaceNamingConvention</id>
 		<artifact tool="PMD"
 			mnemonic="RemoteSessionInterfaceNamingConvention">
 		</artifact>
@@ -1802,6 +1921,7 @@
 		<name>Remote Session Interface Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>LocalInterfaceSessionNamingConvention</id>
 		<artifact tool="PMD"
 			mnemonic="LocalInterfaceSessionNamingConvention">
 		</artifact>
@@ -1816,6 +1936,7 @@
 		<name>Local Interface Session Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>LocalHomeNamingConvention</id>
 		<artifact tool="PMD" mnemonic="LocalHomeNamingConvention">
 		</artifact>
 		<shortMessage>
@@ -1829,6 +1950,7 @@
 		<name>Local Home Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>RemoteInterfaceNamingConvention</id>
 		<artifact tool="PMD"
 			mnemonic="RemoteInterfaceNamingConvention">
 		</artifact>
@@ -1841,6 +1963,7 @@
 		<name>Remote Interface Naming Convention</name>
 	</findingType>
 	<findingType>
+		<id>BeanMembersShouldSerialize</id>
 		<artifact tool="PMD" mnemonic="BeanMembersShouldSerialize">
 		</artifact>
 		<shortMessage>
@@ -1864,6 +1987,7 @@
 		<name>Bean Members Should Serialize</name>
 	</findingType>
 	<findingType>
+		<id>MissingSerialVersionUID</id>
 		<artifact tool="PMD" mnemonic="MissingSerialVersionUID">
 		</artifact>
 		<shortMessage>
@@ -1877,6 +2001,7 @@
 		<name>Missing Serial Version Uid</name>
 	</findingType>
 	<findingType>
+		<id>JUnitStaticSuite</id>
 		<artifact tool="PMD" mnemonic="JUnitStaticSuite"></artifact>
 		<shortMessage>
 			The suite() method in a JUnit test needs to be both public
@@ -1889,6 +2014,7 @@
 		<name>JUnit Static Suite</name>
 	</findingType>
 	<findingType>
+		<id>JUnitSpelling</id>
 		<artifact tool="PMD" mnemonic="JUnitSpelling"></artifact>
 		<shortMessage>
 			Some JUnit framework methods are easy to misspell.
@@ -1897,6 +2023,7 @@
 		<name>JUnit Spelling</name>
 	</findingType>
 	<findingType>
+		<id>JUnitAssertionsShouldIncludeMessage</id>
 		<artifact tool="PMD"
 			mnemonic="JUnitAssertionsShouldIncludeMessage">
 		</artifact>
@@ -1913,6 +2040,7 @@
 		<name>JUnit Assertions Should Include Message</name>
 	</findingType>
 	<findingType>
+		<id>JUnitTestsShouldIncludeAssert</id>
 		<artifact tool="PMD" mnemonic="JUnitTestsShouldIncludeAssert">
 		</artifact>
 		<shortMessage>
@@ -1928,6 +2056,7 @@
 		<name>JUnit Tests Should Include Assert</name>
 	</findingType>
 	<findingType>
+		<id>TestClassWithoutTestCases</id>
 		<artifact tool="PMD" mnemonic="TestClassWithoutTestCases">
 		</artifact>
 		<shortMessage>
@@ -1945,6 +2074,7 @@
 		<name>Test Class Without Test Cases</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryBooleanAssertion</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion">
 		</artifact>
 		<shortMessage>
@@ -1966,6 +2096,7 @@
 		<name>Unnecessary Boolean Assertion</name>
 	</findingType>
 	<findingType>
+		<id>UseAssertEqualsInsteadOfAssertTrue</id>
 		<artifact tool="PMD"
 			mnemonic="UseAssertEqualsInsteadOfAssertTrue">
 		</artifact>
@@ -1982,6 +2113,7 @@
 		<name>Use Assert Equals Instead Of Assert True</name>
 	</findingType>
 	<findingType>
+		<id>UseAssertSameInsteadOfAssertTrue</id>
 		<artifact tool="PMD"
 			mnemonic="UseAssertSameInsteadOfAssertTrue">
 		</artifact>
@@ -1998,6 +2130,7 @@
 		<name>Use Assert Same Instead Of Assert True</name>
 	</findingType>
 	<findingType>
+		<id>UseAssertNullInsteadOfAssertTrue</id>
 		<artifact tool="PMD"
 			mnemonic="UseAssertNullInsteadOfAssertTrue">
 		</artifact>
@@ -2014,6 +2147,7 @@
 		<name>Use Assert Null Instead Of Assert True</name>
 	</findingType>
 	<findingType>
+		<id>SimplifyBooleanAssertion</id>
 		<artifact tool="PMD" mnemonic="SimplifyBooleanAssertion">
 		</artifact>
 		<shortMessage>
@@ -2027,6 +2161,7 @@
 		<name>Simplify Boolean Assertion</name>
 	</findingType>
 	<findingType>
+		<id>UseCorrectExceptionLogging</id>
 		<artifact tool="PMD" mnemonic="UseCorrectExceptionLogging">
 		</artifact>
 		<shortMessage>
@@ -2042,6 +2177,7 @@
 		<name>Use Correct Exception Logging</name>
 	</findingType>
 	<findingType>
+		<id>ProperLogger</id>
 		<artifact tool="PMD" mnemonic="ProperLogger"></artifact>
 		<shortMessage>
 			A logger should normally be defined private static final and
@@ -2060,6 +2196,7 @@
 		<name>Proper Logger</name>
 	</findingType>
 	<findingType>
+		<id>MoreThanOneLogger</id>
 		<artifact tool="PMD" mnemonic="MoreThanOneLogger"></artifact>
 		<shortMessage>
 			Normally only one logger is used in each class.
@@ -2068,6 +2205,7 @@
 		<name>More Than One Logger</name>
 	</findingType>
 	<findingType>
+		<id>LoggerIsNotStaticFinal</id>
 		<artifact tool="PMD" mnemonic="LoggerIsNotStaticFinal">
 		</artifact>
 		<shortMessage>
@@ -2079,6 +2217,7 @@
 		<name>Logger Is Not Static Final</name>
 	</findingType>
 	<findingType>
+		<id>SystemPrintln</id>
 		<artifact tool="PMD" mnemonic="SystemPrintln"></artifact>
 		<shortMessage>
 			System.(out|err).print is used, consider using a logger.
@@ -2089,6 +2228,7 @@
 		<name>System Println</name>
 	</findingType>
 	<findingType>
+		<id>AvoidPrintStackTrace</id>
 		<artifact tool="PMD" mnemonic="AvoidPrintStackTrace"></artifact>
 		<shortMessage>
 			Avoid printStackTrace(); use a logger call instead.
@@ -2097,6 +2237,7 @@
 		<name>Avoid Print Stack Trace</name>
 	</findingType>
 	<findingType>
+		<id>ReplaceVectorWithList</id>
 		<artifact tool="PMD" mnemonic="ReplaceVectorWithList">
 		</artifact>
 		<shortMessage>
@@ -2112,6 +2253,7 @@
 		<name>Replace Vector With List</name>
 	</findingType>
 	<findingType>
+		<id>ReplaceHashtableWithMap</id>
 		<artifact tool="PMD" mnemonic="ReplaceHashtableWithMap">
 		</artifact>
 		<shortMessage>
@@ -2125,6 +2267,7 @@
 		<name>Replace Hashtable With Map</name>
 	</findingType>
 	<findingType>
+		<id>ReplaceEnumerationWithIterator</id>
 		<artifact tool="PMD"
 			mnemonic="ReplaceEnumerationWithIterator">
 		</artifact>
@@ -2139,6 +2282,7 @@
 		<name>Replace Enumeration With Iterator</name>
 	</findingType>
 	<findingType>
+		<id>AvoidEnumAsIdentifier</id>
 		<artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier">
 		</artifact>
 		<shortMessage>
@@ -2150,6 +2294,7 @@
 		<name>Avoid Enum As Identifier</name>
 	</findingType>
 	<findingType>
+		<id>AvoidAssertAsIdentifier</id>
 		<artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier">
 		</artifact>
 		<shortMessage>
@@ -2161,6 +2306,7 @@
 		<name>Avoid Assert As Identifier</name>
 	</findingType>
 	<findingType>
+		<id>IntegerInstantiation</id>
 		<artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
 		<shortMessage>
 			In JDK 1.5, calling new Integer() causes memory allocation.
@@ -2173,6 +2319,7 @@
 		<name>Integer Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>ByteInstantiation</id>
 		<artifact tool="PMD" mnemonic="ByteInstantiation"></artifact>
 		<shortMessage>
 			In JDK 1.5, calling new Byte() causes memory allocation.
@@ -2185,6 +2332,7 @@
 		<name>Byte Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>ShortInstantiation</id>
 		<artifact tool="PMD" mnemonic="ShortInstantiation"></artifact>
 		<shortMessage>
 			In JDK 1.5, calling new Short() causes memory allocation.
@@ -2197,6 +2345,7 @@
 		<name>Short Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>LongInstantiation</id>
 		<artifact tool="PMD" mnemonic="LongInstantiation"></artifact>
 		<shortMessage>
 			In JDK 1.5, calling new Long() causes memory allocation.
@@ -2209,6 +2358,7 @@
 		<name>Long Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>JUnit4TestShouldUseBeforeAnnotation</id>
 		<artifact tool="PMD"
 			mnemonic="JUnit4TestShouldUseBeforeAnnotation">
 		</artifact>
@@ -2227,6 +2377,7 @@
 		<name>JUnit4Test Should Use Before Annotation</name>
 	</findingType>
 	<findingType>
+		<id>JUnit4TestShouldUseAfterAnnotation</id>
 		<artifact tool="PMD"
 			mnemonic="JUnit4TestShouldUseAfterAnnotation">
 		</artifact>
@@ -2245,6 +2396,7 @@
 		<name>JUnit4Test Should Use After Annotation</name>
 	</findingType>
 	<findingType>
+		<id>JUnit4TestShouldUseTestAnnotation</id>
 		<artifact tool="PMD"
 			mnemonic="JUnit4TestShouldUseTestAnnotation">
 		</artifact>
@@ -2261,6 +2413,7 @@
 		<name>JUnit4Test Should Use Test Annotation</name>
 	</findingType>
 	<findingType>
+		<id>JUnit4SuitesShouldUseSuiteAnnotation</id>
 		<artifact tool="PMD"
 			mnemonic="JUnit4SuitesShouldUseSuiteAnnotation">
 		</artifact>
@@ -2277,12 +2430,14 @@
 		<name>JUnit4Suites Should Use Suite Annotation</name>
 	</findingType>
 	<findingType>
+		<id>JUnitUseExpected</id>
 		<artifact tool="PMD" mnemonic="JUnitUseExpected"></artifact>
 		<shortMessage></shortMessage>
 		<info></info>
 		<name>JUnit Use Expected</name>
 	</findingType>
 	<findingType>
+		<id>ShortVariable</id>
 		<artifact tool="PMD" mnemonic="ShortVariable"></artifact>
 		<shortMessage>
 			Detects when a field, local, or parameter has a very short
@@ -2295,6 +2450,7 @@
 		<name>Short Variable</name>
 	</findingType>
 	<findingType>
+		<id>LongVariable</id>
 		<artifact tool="PMD" mnemonic="LongVariable"></artifact>
 		<shortMessage>
 			Detects when a field, formal or local variable is declared
@@ -2307,6 +2463,7 @@
 		<name>Long Variable</name>
 	</findingType>
 	<findingType>
+		<id>ShortMethodName</id>
 		<artifact tool="PMD" mnemonic="ShortMethodName"></artifact>
 		<shortMessage>
 			Detects when very short method names are used.
@@ -2315,6 +2472,7 @@
 		<name>Short Method Name</name>
 	</findingType>
 	<findingType>
+		<id>VariableNamingConventions</id>
 		<artifact tool="PMD" mnemonic="VariableNamingConventions">
 		</artifact>
 		<shortMessage>
@@ -2332,6 +2490,7 @@
 		<name>Variable Naming Conventions</name>
 	</findingType>
 	<findingType>
+		<id>MethodNamingConventions</id>
 		<artifact tool="PMD" mnemonic="MethodNamingConventions">
 		</artifact>
 		<shortMessage>
@@ -2345,6 +2504,7 @@
 		<name>Method Naming Conventions</name>
 	</findingType>
 	<findingType>
+		<id>ClassNamingConventions</id>
 		<artifact tool="PMD" mnemonic="ClassNamingConventions">
 		</artifact>
 		<shortMessage>
@@ -2358,6 +2518,7 @@
 		<name>Class Naming Conventions</name>
 	</findingType>
 	<findingType>
+		<id>AbstractNaming</id>
 		<artifact tool="PMD" mnemonic="AbstractNaming"></artifact>
 		<shortMessage>
 			Abstract classes should be named 'AbstractXXX'.
@@ -2366,6 +2527,7 @@
 		<name>Abstract Naming</name>
 	</findingType>
 	<findingType>
+		<id>AvoidDollarSigns</id>
 		<artifact tool="PMD" mnemonic="AvoidDollarSigns"></artifact>
 		<shortMessage>
 			Avoid using dollar signs in variable/method/class/interface
@@ -2378,6 +2540,7 @@
 		<name>Avoid Dollar Signs</name>
 	</findingType>
 	<findingType>
+		<id>MethodWithSameNameAsEnclosingClass</id>
 		<artifact tool="PMD"
 			mnemonic="MethodWithSameNameAsEnclosingClass">
 		</artifact>
@@ -2392,6 +2555,7 @@
 		<name>Method With Same Name As Enclosing Class</name>
 	</findingType>
 	<findingType>
+		<id>SuspiciousHashcodeMethodName</id>
 		<artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
 		</artifact>
 		<shortMessage>
@@ -2407,6 +2571,7 @@
 		<name>Suspicious Hashcode Method Name</name>
 	</findingType>
 	<findingType>
+		<id>SuspiciousConstantFieldName</id>
 		<artifact tool="PMD" mnemonic="SuspiciousConstantFieldName">
 		</artifact>
 		<shortMessage>
@@ -2422,6 +2587,7 @@
 		<name>Suspicious Constant Field Name</name>
 	</findingType>
 	<findingType>
+		<id>SuspiciousEqualsMethodName</id>
 		<artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
 		</artifact>
 		<shortMessage>
@@ -2437,6 +2603,7 @@
 		<name>Suspicious Equals Method Name</name>
 	</findingType>
 	<findingType>
+		<id>AvoidFieldNameMatchingTypeName</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidFieldNameMatchingTypeName">
 		</artifact>
@@ -2453,6 +2620,7 @@
 		<name>Avoid Field Name Matching Type Name</name>
 	</findingType>
 	<findingType>
+		<id>AvoidFieldNameMatchingMethodName</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidFieldNameMatchingMethodName">
 		</artifact>
@@ -2471,6 +2639,7 @@
 		<name>Avoid Field Name Matching Method Name</name>
 	</findingType>
 	<findingType>
+		<id>NoPackage</id>
 		<artifact tool="PMD" mnemonic="NoPackage"></artifact>
 		<shortMessage>
 			Detects when a class or interface does not have a package
@@ -2483,6 +2652,7 @@
 		<name>No Package</name>
 	</findingType>
 	<findingType>
+		<id>PackageCase</id>
 		<artifact tool="PMD" mnemonic="PackageCase"></artifact>
 		<shortMessage>
 			Detects when a package definition contains upper case
@@ -2495,6 +2665,7 @@
 		<name>Package Case</name>
 	</findingType>
 	<findingType>
+		<id>MisleadingVariableName</id>
 		<artifact tool="PMD" mnemonic="MisleadingVariableName">
 		</artifact>
 		<shortMessage>
@@ -2508,6 +2679,7 @@
 		<name>Misleading Variable Name</name>
 	</findingType>
 	<findingType>
+		<id>BooleanGetMethodName</id>
 		<artifact tool="PMD" mnemonic="BooleanGetMethodName"></artifact>
 		<shortMessage>
 			Looks for methods named 'getX()' with 'boolean' as the
@@ -2522,6 +2694,7 @@
 		<name>Boolean Get Method Name</name>
 	</findingType>
 	<findingType>
+		<id>LocalVariableCouldBeFinal</id>
 		<artifact tool="PMD" mnemonic="LocalVariableCouldBeFinal">
 		</artifact>
 		<shortMessage>
@@ -2533,6 +2706,7 @@
 		<name>Local Variable Could Be Final</name>
 	</findingType>
 	<findingType>
+		<id>MethodArgumentCouldBeFinal</id>
 		<artifact tool="PMD" mnemonic="MethodArgumentCouldBeFinal">
 		</artifact>
 		<shortMessage>
@@ -2546,6 +2720,7 @@
 		<name>Method Argument Could Be Final</name>
 	</findingType>
 	<findingType>
+		<id>AvoidInstantiatingObjectsInLoops</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidInstantiatingObjectsInLoops">
 		</artifact>
@@ -2556,6 +2731,7 @@
 		<name>Avoid Instantiating Objects In Loops</name>
 	</findingType>
 	<findingType>
+		<id>UseArrayListInsteadOfVector</id>
 		<artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector">
 		</artifact>
 		<shortMessage>
@@ -2569,6 +2745,7 @@
 		<name>Use Array List Instead Of Vector</name>
 	</findingType>
 	<findingType>
+		<id>SimplifyStartsWith</id>
 		<artifact tool="PMD" mnemonic="SimplifyStartsWith"></artifact>
 		<shortMessage>
 			Since it passes in a literal of length 1, this call to
@@ -2583,6 +2760,7 @@
 		<name>Simplify Starts With</name>
 	</findingType>
 	<findingType>
+		<id>UseStringBufferForStringAppends</id>
 		<artifact tool="PMD"
 			mnemonic="UseStringBufferForStringAppends">
 		</artifact>
@@ -2593,6 +2771,7 @@
 		<name>Use String Buffer For String Appends</name>
 	</findingType>
 	<findingType>
+		<id>UseArraysAsList</id>
 		<artifact tool="PMD" mnemonic="UseArraysAsList"></artifact>
 		<shortMessage>
 			The class java.util.Arrays has a &quot;asList&quot; method
@@ -2609,6 +2788,7 @@
 		<name>Use Arrays As List</name>
 	</findingType>
 	<findingType>
+		<id>AvoidArrayLoops</id>
 		<artifact tool="PMD" mnemonic="AvoidArrayLoops"></artifact>
 		<shortMessage>
 			Instead of copying data between two arrays, use
@@ -2621,6 +2801,7 @@
 		<name>Avoid Array Loops</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryWrapperObjectCreation</id>
 		<artifact tool="PMD"
 			mnemonic="UnnecessaryWrapperObjectCreation">
 		</artifact>
@@ -2631,6 +2812,7 @@
 		<name>Unnecessary Wrapper Object Creation</name>
 	</findingType>
 	<findingType>
+		<id>AddEmptyString</id>
 		<artifact tool="PMD" mnemonic="AddEmptyString"></artifact>
 		<shortMessage>
 			Finds empty string literals which are being added. This is
@@ -2643,6 +2825,7 @@
 		<name>Add Empty String</name>
 	</findingType>
 	<findingType>
+		<id>AvoidCatchingThrowable</id>
 		<artifact tool="PMD" mnemonic="AvoidCatchingThrowable">
 		</artifact>
 		<shortMessage>
@@ -2656,6 +2839,7 @@
 		<name>Avoid Catching Throwable</name>
 	</findingType>
 	<findingType>
+		<id>SignatureDeclareThrowsException</id>
 		<artifact tool="PMD"
 			mnemonic="SignatureDeclareThrowsException">
 		</artifact>
@@ -2674,6 +2858,7 @@
 		<name>Signature Declare Throws Exception</name>
 	</findingType>
 	<findingType>
+		<id>ExceptionAsFlowControl</id>
 		<artifact tool="PMD" mnemonic="ExceptionAsFlowControl">
 		</artifact>
 		<shortMessage>
@@ -2687,6 +2872,7 @@
 		<name>Exception As Flow Control</name>
 	</findingType>
 	<findingType>
+		<id>AvoidCatchingNPE</id>
 		<artifact tool="PMD" mnemonic="AvoidCatchingNPE"></artifact>
 		<shortMessage>
 			Code should never throw NPE under normal circumstances. A
@@ -2701,6 +2887,7 @@
 		<name>Avoid Catching Npe</name>
 	</findingType>
 	<findingType>
+		<id>AvoidThrowingRawExceptionTypes</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidThrowingRawExceptionTypes">
 		</artifact>
@@ -2717,6 +2904,7 @@
 		<name>Avoid Throwing Raw Exception Types</name>
 	</findingType>
 	<findingType>
+		<id>AvoidThrowingNullPointerException</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidThrowingNullPointerException">
 		</artifact>
@@ -2737,6 +2925,7 @@
 		<name>Avoid Throwing Null Pointer Exception</name>
 	</findingType>
 	<findingType>
+		<id>AvoidRethrowingException</id>
 		<artifact tool="PMD" mnemonic="AvoidRethrowingException">
 		</artifact>
 		<shortMessage>
@@ -2750,6 +2939,7 @@
 		<name>Avoid Rethrowing Exception</name>
 	</findingType>
 	<findingType>
+		<id>DoNotExtendJavaLangError</id>
 		<artifact tool="PMD" mnemonic="DoNotExtendJavaLangError">
 		</artifact>
 		<shortMessage>
@@ -2759,6 +2949,7 @@
 		<name>Do Not Extend Java Lang Error</name>
 	</findingType>
 	<findingType>
+		<id>AvoidDuplicateLiterals</id>
 		<artifact tool="PMD" mnemonic="AvoidDuplicateLiterals">
 		</artifact>
 		<shortMessage>
@@ -2772,6 +2963,7 @@
 		<name>Avoid Duplicate Literals</name>
 	</findingType>
 	<findingType>
+		<id>StringInstantiation</id>
 		<artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
 		<shortMessage>
 			Avoid instantiating String objects; this is usually
@@ -2784,6 +2976,7 @@
 		<name>String Instantiation</name>
 	</findingType>
 	<findingType>
+		<id>StringToString</id>
 		<artifact tool="PMD" mnemonic="StringToString"></artifact>
 		<shortMessage>
 			Avoid calling toString() on String objects; this is
@@ -2796,6 +2989,7 @@
 		<name>String To String</name>
 	</findingType>
 	<findingType>
+		<id>InefficientStringBuffering</id>
 		<artifact tool="PMD" mnemonic="InefficientStringBuffering">
 		</artifact>
 		<shortMessage>
@@ -2809,6 +3003,7 @@
 		<name>Inefficient String Buffering</name>
 	</findingType>
 	<findingType>
+		<id>UnnecessaryCaseChange</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryCaseChange">
 		</artifact>
 		<shortMessage>
@@ -2822,6 +3017,7 @@
 		<name>Unnecessary Case Change</name>
 	</findingType>
 	<findingType>
+		<id>UseStringBufferLength</id>
 		<artifact tool="PMD" mnemonic="UseStringBufferLength">
 		</artifact>
 		<shortMessage>
@@ -2839,6 +3035,7 @@
 		<name>Use String Buffer Length</name>
 	</findingType>
 	<findingType>
+		<id>AppendCharacterWithChar</id>
 		<artifact tool="PMD" mnemonic="AppendCharacterWithChar">
 		</artifact>
 		<shortMessage>
@@ -2852,6 +3049,7 @@
 		<name>Append Character With Char</name>
 	</findingType>
 	<findingType>
+		<id>ConsecutiveLiteralAppends</id>
 		<artifact tool="PMD" mnemonic="ConsecutiveLiteralAppends">
 		</artifact>
 		<shortMessage>
@@ -2865,6 +3063,7 @@
 		<name>Consecutive Literal Appends</name>
 	</findingType>
 	<findingType>
+		<id>UseIndexOfChar</id>
 		<artifact tool="PMD" mnemonic="UseIndexOfChar"></artifact>
 		<shortMessage>
 			Use String.indexOf(char) when checking for the index of a
@@ -2877,6 +3076,7 @@
 		<name>Use Index Of Char</name>
 	</findingType>
 	<findingType>
+		<id>InefficientEmptyStringCheck</id>
 		<artifact tool="PMD" mnemonic="InefficientEmptyStringCheck">
 		</artifact>
 		<shortMessage>
@@ -2898,6 +3098,7 @@
 		<name>Inefficient Empty String Check</name>
 	</findingType>
 	<findingType>
+		<id>InsufficientStringBufferDeclaration</id>
 		<artifact tool="PMD"
 			mnemonic="InsufficientStringBufferDeclaration">
 		</artifact>
@@ -2924,6 +3125,7 @@
 		<name>Insufficient String Buffer Declaration</name>
 	</findingType>
 	<findingType>
+		<id>UselessStringValueOf</id>
 		<artifact tool="PMD" mnemonic="UselessStringValueOf"></artifact>
 		<shortMessage>
 			No need to call String.valueOf to append to a string; just
@@ -2936,6 +3138,7 @@
 		<name>Useless String Value Of</name>
 	</findingType>
 	<findingType>
+		<id>StringBufferInstantiationWithChar</id>
 		<artifact tool="PMD"
 			mnemonic="StringBufferInstantiationWithChar">
 		</artifact>
@@ -2950,6 +3153,7 @@
 		<name>String Buffer Instantiation With Char</name>
 	</findingType>
 	<findingType>
+		<id>MethodReturnsInternalArray</id>
 		<artifact tool="PMD" mnemonic="MethodReturnsInternalArray">
 		</artifact>
 		<shortMessage>
@@ -2965,6 +3169,7 @@
 		<name>Method Returns Internal Array</name>
 	</findingType>
 	<findingType>
+		<id>ArrayIsStoredDirectly</id>
 		<artifact tool="PMD" mnemonic="ArrayIsStoredDirectly">
 		</artifact>
 		<shortMessage>
@@ -2980,6 +3185,7 @@
 		<name>Array Is Stored Directly</name>
 	</findingType>
 	<findingType>
+		<id>UnusedPrivateField</id>
 		<artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
 		<shortMessage>
 			Detects when a private field is declared and/or assigned a
@@ -2992,6 +3198,7 @@
 		<name>Unused Private Field</name>
 	</findingType>
 	<findingType>
+		<id>UnusedLocalVariable</id>
 		<artifact tool="PMD" mnemonic="UnusedLocalVariable"></artifact>
 		<shortMessage>
 			Detects when a local variable is declared and/or assigned,
@@ -3004,6 +3211,7 @@
 		<name>Unused Local Variable</name>
 	</findingType>
 	<findingType>
+		<id>UnusedPrivateMethod</id>
 		<artifact tool="PMD" mnemonic="UnusedPrivateMethod"></artifact>
 		<shortMessage>
 			Unused Private Method detects when a private method is
@@ -3016,6 +3224,7 @@
 		<name>Unused Private Method</name>
 	</findingType>
 	<findingType>
+		<id>UnusedFormalParameter</id>
 		<artifact tool="PMD" mnemonic="UnusedFormalParameter">
 		</artifact>
 		<shortMessage>
@@ -3029,38 +3238,38 @@
 		<name>Unused Formal Parameter</name>
 	</findingType>
 	<category>
-		<findingType>Empty Catch Block</findingType>
-		<findingType>Empty If Stmt</findingType>
-		<findingType>Empty While Stmt</findingType>
-		<findingType>Empty Try Block</findingType>
-		<findingType>Empty Finally Block</findingType>
-		<findingType>Empty Switch Statements</findingType>
-		<findingType>Jumbled Incrementer</findingType>
-		<findingType>For Loop Should Be While Loop</findingType>
-		<findingType>Unnecessary Conversion Temporary</findingType>
-		<findingType>Override Both Equals And Hashcode</findingType>
-		<findingType>Double Checked Locking</findingType>
-		<findingType>Return From Finally Block</findingType>
-		<findingType>Empty Synchronized Block</findingType>
-		<findingType>Unnecessary Return</findingType>
-		<findingType>Empty Static Initializer</findingType>
-		<findingType>Unconditional If Statement</findingType>
-		<findingType>Empty Statement Not In Loop</findingType>
-		<findingType>Boolean Instantiation</findingType>
-		<findingType>Unnecessary Final Modifier</findingType>
-		<findingType>Collapsible If Statements</findingType>
-		<findingType>Useless Overriding Method</findingType>
-		<findingType>Class Cast Exception With To Array</findingType>
+		<findingType>EmptyCatchBlock</findingType>
+		<findingType>EmptyIfStmt</findingType>
+		<findingType>EmptyWhileStmt</findingType>
+		<findingType>EmptyTryBlock</findingType>
+		<findingType>EmptyFinallyBlock</findingType>
+		<findingType>EmptySwitchStatements</findingType>
+		<findingType>JumbledIncrementer</findingType>
+		<findingType>ForLoopShouldBeWhileLoop</findingType>
+		<findingType>UnnecessaryConversionTemporary</findingType>
+		<findingType>OverrideBothEqualsAndHashcode</findingType>
+		<findingType>DoubleCheckedLocking</findingType>
+		<findingType>ReturnFromFinallyBlock</findingType>
+		<findingType>EmptySynchronizedBlock</findingType>
+		<findingType>UnnecessaryReturn</findingType>
+		<findingType>EmptyStaticInitializer</findingType>
+		<findingType>UnconditionalIfStatement</findingType>
+		<findingType>EmptyStatementNotInLoop</findingType>
+		<findingType>BooleanInstantiation</findingType>
+		<findingType>UnnecessaryFinalModifier</findingType>
+		<findingType>CollapsibleIfStatements</findingType>
+		<findingType>UselessOverridingMethod</findingType>
+		<findingType>ClassCastExceptionWithToArray</findingType>
 		<findingType>
-			Avoid Decimal Literals In Big Decimal Constructor
+			AvoidDecimalLiteralsInBigDecimalConstructor
 		</findingType>
-		<findingType>Useless Operation On Immutable</findingType>
-		<findingType>Misplaced Null Check</findingType>
-		<findingType>Unused Null Check In Equals</findingType>
-		<findingType>Avoid Thread Group</findingType>
-		<findingType>Broken Null Check</findingType>
-		<findingType>Big Integer Instantiation</findingType>
-		<findingType>Avoid Using Octal Values</findingType>
+		<findingType>UselessOperationOnImmutable</findingType>
+		<findingType>MisplacedNullCheck</findingType>
+		<findingType>UnusedNullCheckInEquals</findingType>
+		<findingType>AvoidThreadGroup</findingType>
+		<findingType>BrokenNullCheck</findingType>
+		<findingType>BigIntegerInstantiation</findingType>
+		<findingType>AvoidUsingOctalValues</findingType>
 		<name>Basic Rules</name>
 		<description>
 			The Basic Ruleset contains a collection of good practices
@@ -3068,21 +3277,19 @@
 		</description>
 	</category>
 	<category>
-		<findingType>If Stmts Must Use Braces</findingType>
-		<findingType>While Loops Must Use Braces</findingType>
-		<findingType>If Else Stmts Must Use Braces</findingType>
-		<findingType>For Loops Must Use Braces</findingType>
+		<findingType>IfStmtsMustUseBraces</findingType>
+		<findingType>WhileLoopsMustUseBraces</findingType>
+		<findingType>IfElseStmtsMustUseBraces</findingType>
+		<findingType>ForLoopsMustUseBraces</findingType>
 		<name>Braces Rules</name>
 		<description>
 			The Braces Ruleset contains a collection of braces rules.
 		</description>
 	</category>
 	<category>
-		<findingType>Proper Clone Implementation</findingType>
-		<findingType>
-			Clone Throws Clone Not Supported Exception
-		</findingType>
-		<findingType>Clone Method Must Implement Cloneable</findingType>
+		<findingType>ProperCloneImplementation</findingType>
+		<findingType>CloneThrowsCloneNotSupportedException</findingType>
+		<findingType>CloneMethodMustImplementCloneable</findingType>
 		<name>Clone Implementation Rules</name>
 		<description>
 			The Clone Implementation ruleset contains a collection of
@@ -3090,16 +3297,16 @@
 		</description>
 	</category>
 	<category>
-		<findingType>NPath Complexity</findingType>
-		<findingType>Excessive Method Length</findingType>
-		<findingType>Excessive Parameter List</findingType>
-		<findingType>Excessive Class Length</findingType>
-		<findingType>Cyclomatic Complexity</findingType>
-		<findingType>Excessive Public Count</findingType>
-		<findingType>Too Many Fields</findingType>
-		<findingType>Ncss Method Count</findingType>
-		<findingType>Ncss Type Count</findingType>
-		<findingType>Ncss Constructor Count</findingType>
+		<findingType>NPathComplexity</findingType>
+		<findingType>ExcessiveMethodLength</findingType>
+		<findingType>ExcessiveParameterList</findingType>
+		<findingType>ExcessiveClassLength</findingType>
+		<findingType>CyclomaticComplexity</findingType>
+		<findingType>ExcessivePublicCount</findingType>
+		<findingType>TooManyFields</findingType>
+		<findingType>NcssMethodCount</findingType>
+		<findingType>NcssTypeCount</findingType>
+		<findingType>NcssConstructorCount</findingType>
 		<name>Code Size Rules</name>
 		<description>
 			The Code Size Ruleset contains a collection of rules that
@@ -3107,20 +3314,20 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Unnecessary Constructor</findingType>
-		<findingType>Null Assignment</findingType>
-		<findingType>Only One Return</findingType>
-		<findingType>Unused Modifier</findingType>
-		<findingType>Assignment In Operand</findingType>
-		<findingType>At Least One Constructor</findingType>
-		<findingType>Dont Import Sun</findingType>
-		<findingType>Suspicious Octal Escape</findingType>
-		<findingType>Call Super In Constructor</findingType>
-		<findingType>Unnecessary Parentheses</findingType>
-		<findingType>Singular Field</findingType>
-		<findingType>Default Package</findingType>
-		<findingType>Boolean Inversion</findingType>
-		<findingType>Dataflow Anomaly Analysis</findingType>
+		<findingType>UnnecessaryConstructor</findingType>
+		<findingType>NullAssignment</findingType>
+		<findingType>OnlyOneReturn</findingType>
+		<findingType>UnusedModifier</findingType>
+		<findingType>AssignmentInOperand</findingType>
+		<findingType>AtLeastOneConstructor</findingType>
+		<findingType>DontImportSun</findingType>
+		<findingType>SuspiciousOctalEscape</findingType>
+		<findingType>CallSuperInConstructor</findingType>
+		<findingType>UnnecessaryParentheses</findingType>
+		<findingType>SingularField</findingType>
+		<findingType>DefaultPackage</findingType>
+		<findingType>BooleanInversion</findingType>
+		<findingType>DataflowAnomalyAnalysis</findingType>
 		<name>Controversial Rules</name>
 		<description>
 			The Controversial Ruleset contains rules that, for whatever
@@ -3132,9 +3339,9 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Coupling Between Objects</findingType>
-		<findingType>Excessive Imports</findingType>
-		<findingType>Loose Coupling</findingType>
+		<findingType>CouplingBetweenObjects</findingType>
+		<findingType>ExcessiveImports</findingType>
+		<findingType>LooseCoupling</findingType>
 		<name>Coupling Rules</name>
 		<description>
 			These are rules which find instances of high or
@@ -3142,56 +3349,50 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Use Singleton</findingType>
-		<findingType>Simplify Boolean Returns</findingType>
-		<findingType>Simplify Boolean Expressions</findingType>
-		<findingType>Switch Stmts Should Have Default</findingType>
-		<findingType>Avoid Deeply Nested If Stmts</findingType>
-		<findingType>Avoid Reassigning Parameters</findingType>
-		<findingType>Switch Density</findingType>
-		<findingType>Constructor Calls Overridable Method</findingType>
-		<findingType>Accessor Class Generation</findingType>
-		<findingType>Final Field Could Be Static</findingType>
-		<findingType>Close Resource</findingType>
-		<findingType>Non Static Initializer</findingType>
-		<findingType>Default Label Not Last In Switch Stmt</findingType>
-		<findingType>Non Case Label In Switch Statement</findingType>
-		<findingType>Optimizable To Array Call</findingType>
-		<findingType>Bad Comparison</findingType>
-		<findingType>Equals Null</findingType>
-		<findingType>Confusing Ternary</findingType>
-		<findingType>Instantiation To Get Class</findingType>
-		<findingType>Idempotent Operations</findingType>
-		<findingType>Simple Date Format Needs Locale</findingType>
-		<findingType>Immutable Field</findingType>
-		<findingType>Use Locale With Case Conversions</findingType>
-		<findingType>Avoid Protected Field In Final Class</findingType>
-		<findingType>Assignment To Non Final Static</findingType>
+		<findingType>UseSingleton</findingType>
+		<findingType>SimplifyBooleanReturns</findingType>
+		<findingType>SimplifyBooleanExpressions</findingType>
+		<findingType>SwitchStmtsShouldHaveDefault</findingType>
+		<findingType>AvoidDeeplyNestedIfStmts</findingType>
+		<findingType>AvoidReassigningParameters</findingType>
+		<findingType>SwitchDensity</findingType>
+		<findingType>ConstructorCallsOverridableMethod</findingType>
+		<findingType>AccessorClassGeneration</findingType>
+		<findingType>FinalFieldCouldBeStatic</findingType>
+		<findingType>CloseResource</findingType>
+		<findingType>NonStaticInitializer</findingType>
+		<findingType>DefaultLabelNotLastInSwitchStmt</findingType>
+		<findingType>NonCaseLabelInSwitchStatement</findingType>
+		<findingType>OptimizableToArrayCall</findingType>
+		<findingType>BadComparison</findingType>
+		<findingType>EqualsNull</findingType>
+		<findingType>ConfusingTernary</findingType>
+		<findingType>InstantiationToGetClass</findingType>
+		<findingType>IdempotentOperations</findingType>
+		<findingType>SimpleDateFormatNeedsLocale</findingType>
+		<findingType>ImmutableField</findingType>
+		<findingType>UseLocaleWithCaseConversions</findingType>
+		<findingType>AvoidProtectedFieldInFinalClass</findingType>
+		<findingType>AssignmentToNonFinalStatic</findingType>
 		<findingType>
-			Missing Static Method In Non Instantiatable Class
+			MissingStaticMethodInNonInstantiatableClass
 		</findingType>
-		<findingType>Avoid Synchronized At Method Level</findingType>
-		<findingType>Missing Break In Switch</findingType>
-		<findingType>Use Notify All Instead Of Notify</findingType>
-		<findingType>
-			Avoid Instanceof Checks In Catch Clause
-		</findingType>
-		<findingType>
-			Abstract Class Without Abstract Method
-		</findingType>
-		<findingType>Simplify Conditional</findingType>
-		<findingType>Compare Objects With Equals</findingType>
-		<findingType>
-			Position Literals First In Comparisons
-		</findingType>
-		<findingType>Unnecessary Local Before Return</findingType>
-		<findingType>Non Thread Safe Singleton</findingType>
-		<findingType>Uncommented Empty Method</findingType>
-		<findingType>Uncommented Empty Constructor</findingType>
-		<findingType>Avoid Constants Interface</findingType>
-		<findingType>Unsynchronized Static Date Formatter</findingType>
-		<findingType>Preserve Stack Trace</findingType>
-		<findingType>Use Collection Is Empty</findingType>
+		<findingType>AvoidSynchronizedAtMethodLevel</findingType>
+		<findingType>MissingBreakInSwitch</findingType>
+		<findingType>UseNotifyAllInsteadOfNotify</findingType>
+		<findingType>AvoidInstanceofChecksInCatchClause</findingType>
+		<findingType>AbstractClassWithoutAbstractMethod</findingType>
+		<findingType>SimplifyConditional</findingType>
+		<findingType>CompareObjectsWithEquals</findingType>
+		<findingType>PositionLiteralsFirstInComparisons</findingType>
+		<findingType>UnnecessaryLocalBeforeReturn</findingType>
+		<findingType>NonThreadSafeSingleton</findingType>
+		<findingType>UncommentedEmptyMethod</findingType>
+		<findingType>UncommentedEmptyConstructor</findingType>
+		<findingType>AvoidConstantsInterface</findingType>
+		<findingType>UnsynchronizedStaticDateFormatter</findingType>
+		<findingType>PreserveStackTrace</findingType>
+		<findingType>UseCollectionIsEmpty</findingType>
 		<name>Design Rules</name>
 		<description>
 			The Design Ruleset contains a collection of rules that find
@@ -3199,12 +3400,12 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Empty Finalizer</findingType>
-		<findingType>Finalize Only Calls Super Finalize</findingType>
-		<findingType>Finalize Overloaded</findingType>
-		<findingType>Finalize Does Not Call Super Finalize</findingType>
-		<findingType>Finalize Should Be Protected</findingType>
-		<findingType>Avoid Calling Finalize</findingType>
+		<findingType>EmptyFinalizer</findingType>
+		<findingType>FinalizeOnlyCallsSuperFinalize</findingType>
+		<findingType>FinalizeOverloaded</findingType>
+		<findingType>FinalizeDoesNotCallSuperFinalize</findingType>
+		<findingType>FinalizeShouldBeProtected</findingType>
+		<findingType>AvoidCallingFinalize</findingType>
 		<name>Finalizer Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3212,10 +3413,10 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Duplicate Imports</findingType>
-		<findingType>Dont Import Java Lang</findingType>
-		<findingType>Unused Imports</findingType>
-		<findingType>Import From Same Package</findingType>
+		<findingType>DuplicateImports</findingType>
+		<findingType>DontImportJavaLang</findingType>
+		<findingType>UnusedImports</findingType>
+		<findingType>ImportFromSamePackage</findingType>
 		<name>Import Statement Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3223,22 +3424,20 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Use Proper Class Loader</findingType>
-		<findingType>MDBAnd Session Bean Naming Convention</findingType>
+		<findingType>UseProperClassLoader</findingType>
+		<findingType>MDBAndSessionBeanNamingConvention</findingType>
 		<findingType>
-			Remote Session Interface Naming Convention
+			RemoteSessionInterfaceNamingConvention
 		</findingType>
-		<findingType>
-			Local Interface Session Naming Convention
-		</findingType>
-		<findingType>Local Home Naming Convention</findingType>
-		<findingType>Remote Interface Naming Convention</findingType>
+		<findingType>LocalInterfaceSessionNamingConvention</findingType>
+		<findingType>LocalHomeNamingConvention</findingType>
+		<findingType>RemoteInterfaceNamingConvention</findingType>
 		<name>J2EE Rules</name>
 		<description>These are rules for J2EE</description>
 	</category>
 	<category>
-		<findingType>Bean Members Should Serialize</findingType>
-		<findingType>Missing Serial Version Uid</findingType>
+		<findingType>BeanMembersShouldSerialize</findingType>
+		<findingType>MissingSerialVersionUID</findingType>
 		<name>JavaBean Rules</name>
 		<description>
 			The JavaBeans Ruleset catches instances of bean rules not
@@ -3246,24 +3445,16 @@
 		</description>
 	</category>
 	<category>
-		<findingType>JUnit Static Suite</findingType>
-		<findingType>JUnit Spelling</findingType>
-		<findingType>
-			JUnit Assertions Should Include Message
-		</findingType>
-		<findingType>JUnit Tests Should Include Assert</findingType>
-		<findingType>Test Class Without Test Cases</findingType>
-		<findingType>Unnecessary Boolean Assertion</findingType>
-		<findingType>
-			Use Assert Equals Instead Of Assert True
-		</findingType>
-		<findingType>
-			Use Assert Same Instead Of Assert True
-		</findingType>
-		<findingType>
-			Use Assert Null Instead Of Assert True
-		</findingType>
-		<findingType>Simplify Boolean Assertion</findingType>
+		<findingType>JUnitStaticSuite</findingType>
+		<findingType>JUnitSpelling</findingType>
+		<findingType>JUnitAssertionsShouldIncludeMessage</findingType>
+		<findingType>JUnitTestsShouldIncludeAssert</findingType>
+		<findingType>TestClassWithoutTestCases</findingType>
+		<findingType>UnnecessaryBooleanAssertion</findingType>
+		<findingType>UseAssertEqualsInsteadOfAssertTrue</findingType>
+		<findingType>UseAssertSameInsteadOfAssertTrue</findingType>
+		<findingType>UseAssertNullInsteadOfAssertTrue</findingType>
+		<findingType>SimplifyBooleanAssertion</findingType>
 		<name>JUnit Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3271,8 +3462,8 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Use Correct Exception Logging</findingType>
-		<findingType>Proper Logger</findingType>
+		<findingType>UseCorrectExceptionLogging</findingType>
+		<findingType>ProperLogger</findingType>
 		<name>Jakarta Commons Logging Rules</name>
 		<description>
 			The Jakarta Commons Logging ruleset contains a collection of
@@ -3280,10 +3471,10 @@
 		</description>
 	</category>
 	<category>
-		<findingType>More Than One Logger</findingType>
-		<findingType>Logger Is Not Static Final</findingType>
-		<findingType>System Println</findingType>
-		<findingType>Avoid Print Stack Trace</findingType>
+		<findingType>MoreThanOneLogger</findingType>
+		<findingType>LoggerIsNotStaticFinal</findingType>
+		<findingType>SystemPrintln</findingType>
+		<findingType>AvoidPrintStackTrace</findingType>
 		<name>Java Logging Rules</name>
 		<description>
 			The Java Logging ruleset contains a collection of rules that
@@ -3291,26 +3482,20 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Replace Vector With List</findingType>
-		<findingType>Replace Hashtable With Map</findingType>
-		<findingType>Replace Enumeration With Iterator</findingType>
-		<findingType>Avoid Enum As Identifier</findingType>
-		<findingType>Avoid Assert As Identifier</findingType>
-		<findingType>Integer Instantiation</findingType>
-		<findingType>Byte Instantiation</findingType>
-		<findingType>Short Instantiation</findingType>
-		<findingType>Long Instantiation</findingType>
-		<findingType>
-			JUnit4Test Should Use Before Annotation
-		</findingType>
-		<findingType>
-			JUnit4Test Should Use After Annotation
-		</findingType>
-		<findingType>JUnit4Test Should Use Test Annotation</findingType>
-		<findingType>
-			JUnit4Suites Should Use Suite Annotation
-		</findingType>
-		<findingType>JUnit Use Expected</findingType>
+		<findingType>ReplaceVectorWithList</findingType>
+		<findingType>ReplaceHashtableWithMap</findingType>
+		<findingType>ReplaceEnumerationWithIterator</findingType>
+		<findingType>AvoidEnumAsIdentifier</findingType>
+		<findingType>AvoidAssertAsIdentifier</findingType>
+		<findingType>IntegerInstantiation</findingType>
+		<findingType>ByteInstantiation</findingType>
+		<findingType>ShortInstantiation</findingType>
+		<findingType>LongInstantiation</findingType>
+		<findingType>JUnit4TestShouldUseBeforeAnnotation</findingType>
+		<findingType>JUnit4TestShouldUseAfterAnnotation</findingType>
+		<findingType>JUnit4TestShouldUseTestAnnotation</findingType>
+		<findingType>JUnit4SuitesShouldUseSuiteAnnotation</findingType>
+		<findingType>JUnitUseExpected</findingType>
 		<name>Migration Rules</name>
 		<description>
 			Contains rules about migrating from one JDK version to
@@ -3319,26 +3504,24 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Short Variable</findingType>
-		<findingType>Long Variable</findingType>
-		<findingType>Short Method Name</findingType>
-		<findingType>Variable Naming Conventions</findingType>
-		<findingType>Method Naming Conventions</findingType>
-		<findingType>Class Naming Conventions</findingType>
-		<findingType>Abstract Naming</findingType>
-		<findingType>Avoid Dollar Signs</findingType>
-		<findingType>
-			Method With Same Name As Enclosing Class
-		</findingType>
-		<findingType>Suspicious Hashcode Method Name</findingType>
-		<findingType>Suspicious Constant Field Name</findingType>
-		<findingType>Suspicious Equals Method Name</findingType>
-		<findingType>Avoid Field Name Matching Type Name</findingType>
-		<findingType>Avoid Field Name Matching Method Name</findingType>
-		<findingType>No Package</findingType>
-		<findingType>Package Case</findingType>
-		<findingType>Misleading Variable Name</findingType>
-		<findingType>Boolean Get Method Name</findingType>
+		<findingType>ShortVariable</findingType>
+		<findingType>LongVariable</findingType>
+		<findingType>ShortMethodName</findingType>
+		<findingType>VariableNamingConventions</findingType>
+		<findingType>MethodNamingConventions</findingType>
+		<findingType>ClassNamingConventions</findingType>
+		<findingType>AbstractNaming</findingType>
+		<findingType>AvoidDollarSigns</findingType>
+		<findingType>MethodWithSameNameAsEnclosingClass</findingType>
+		<findingType>SuspiciousHashcodeMethodName</findingType>
+		<findingType>SuspiciousConstantFieldName</findingType>
+		<findingType>SuspiciousEqualsMethodName</findingType>
+		<findingType>AvoidFieldNameMatchingTypeName</findingType>
+		<findingType>AvoidFieldNameMatchingMethodName</findingType>
+		<findingType>NoPackage</findingType>
+		<findingType>PackageCase</findingType>
+		<findingType>MisleadingVariableName</findingType>
+		<findingType>BooleanGetMethodName</findingType>
 		<name>Naming Rules</name>
 		<description>
 			The Naming Ruleset contains a collection of rules about
@@ -3346,16 +3529,16 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Local Variable Could Be Final</findingType>
-		<findingType>Method Argument Could Be Final</findingType>
-		<findingType>Avoid Instantiating Objects In Loops</findingType>
-		<findingType>Use Array List Instead Of Vector</findingType>
-		<findingType>Simplify Starts With</findingType>
-		<findingType>Use String Buffer For String Appends</findingType>
-		<findingType>Use Arrays As List</findingType>
-		<findingType>Avoid Array Loops</findingType>
-		<findingType>Unnecessary Wrapper Object Creation</findingType>
-		<findingType>Add Empty String</findingType>
+		<findingType>LocalVariableCouldBeFinal</findingType>
+		<findingType>MethodArgumentCouldBeFinal</findingType>
+		<findingType>AvoidInstantiatingObjectsInLoops</findingType>
+		<findingType>UseArrayListInsteadOfVector</findingType>
+		<findingType>SimplifyStartsWith</findingType>
+		<findingType>UseStringBufferForStringAppends</findingType>
+		<findingType>UseArraysAsList</findingType>
+		<findingType>AvoidArrayLoops</findingType>
+		<findingType>UnnecessaryWrapperObjectCreation</findingType>
+		<findingType>AddEmptyString</findingType>
 		<name>Optimization Rules</name>
 		<description>
 			These rules deal with different optimizations that generally
@@ -3363,14 +3546,14 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Avoid Catching Throwable</findingType>
-		<findingType>Signature Declare Throws Exception</findingType>
-		<findingType>Exception As Flow Control</findingType>
-		<findingType>Avoid Catching Npe</findingType>
-		<findingType>Avoid Throwing Raw Exception Types</findingType>
-		<findingType>Avoid Throwing Null Pointer Exception</findingType>
-		<findingType>Avoid Rethrowing Exception</findingType>
-		<findingType>Do Not Extend Java Lang Error</findingType>
+		<findingType>AvoidCatchingThrowable</findingType>
+		<findingType>SignatureDeclareThrowsException</findingType>
+		<findingType>ExceptionAsFlowControl</findingType>
+		<findingType>AvoidCatchingNPE</findingType>
+		<findingType>AvoidThrowingRawExceptionTypes</findingType>
+		<findingType>AvoidThrowingNullPointerException</findingType>
+		<findingType>AvoidRethrowingException</findingType>
+		<findingType>DoNotExtendJavaLangError</findingType>
 		<name>Strict Exception Rules</name>
 		<description>
 			These rules provide some strict guidelines about throwing
@@ -3378,21 +3561,19 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Avoid Duplicate Literals</findingType>
-		<findingType>String Instantiation</findingType>
-		<findingType>String To String</findingType>
-		<findingType>Inefficient String Buffering</findingType>
-		<findingType>Unnecessary Case Change</findingType>
-		<findingType>Use String Buffer Length</findingType>
-		<findingType>Append Character With Char</findingType>
-		<findingType>Consecutive Literal Appends</findingType>
-		<findingType>Use Index Of Char</findingType>
-		<findingType>Inefficient Empty String Check</findingType>
-		<findingType>
-			Insufficient String Buffer Declaration
-		</findingType>
-		<findingType>Useless String Value Of</findingType>
-		<findingType>String Buffer Instantiation With Char</findingType>
+		<findingType>AvoidDuplicateLiterals</findingType>
+		<findingType>StringInstantiation</findingType>
+		<findingType>StringToString</findingType>
+		<findingType>InefficientStringBuffering</findingType>
+		<findingType>UnnecessaryCaseChange</findingType>
+		<findingType>UseStringBufferLength</findingType>
+		<findingType>AppendCharacterWithChar</findingType>
+		<findingType>ConsecutiveLiteralAppends</findingType>
+		<findingType>UseIndexOfChar</findingType>
+		<findingType>InefficientEmptyStringCheck</findingType>
+		<findingType>InsufficientStringBufferDeclaration</findingType>
+		<findingType>UselessStringValueOf</findingType>
+		<findingType>StringBufferInstantiationWithChar</findingType>
 		<name>String and StringBuffer Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3400,8 +3581,8 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Method Returns Internal Array</findingType>
-		<findingType>Array Is Stored Directly</findingType>
+		<findingType>MethodReturnsInternalArray</findingType>
+		<findingType>ArrayIsStoredDirectly</findingType>
 		<name>Security Code Guidelines</name>
 		<description>
 			These rules check the security guidelines from Sun,
@@ -3410,10 +3591,10 @@
 		</description>
 	</category>
 	<category>
-		<findingType>Unused Private Field</findingType>
-		<findingType>Unused Local Variable</findingType>
-		<findingType>Unused Private Method</findingType>
-		<findingType>Unused Formal Parameter</findingType>
+		<findingType>UnusedPrivateField</findingType>
+		<findingType>UnusedLocalVariable</findingType>
+		<findingType>UnusedPrivateMethod</findingType>
+		<findingType>UnusedFormalParameter</findingType>
 		<name>Unused Code Rules</name>
 		<description>
 			The Unused Code Ruleset contains a collection of rules that
