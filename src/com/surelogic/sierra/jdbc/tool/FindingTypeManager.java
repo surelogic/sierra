@@ -136,11 +136,10 @@ public class FindingTypeManager {
 	}
 
 	public void updateFindingTypes(FindingTypes type) throws SQLException {
-		deleteArtifactTypeRelations.execute();
 		FindingTypeRecord fRec = newFindingTypeRecord();
 		for (FindingType ft : type.getFindingType()) {
-			fRec.setUid(ft.getId());
-			fRec.setName(ft.getName());
+			fRec.setUid(ft.getId().trim());
+			fRec.setName(ft.getName().trim());
 			fRec.setInfo(ft.getInfo());
 			fRec.setShortMessage(ft.getShortMessage());
 			if (fRec.select()) {
@@ -167,30 +166,29 @@ public class FindingTypeManager {
 				}
 			}
 		}
-		deleteCategoriesRelations.execute();
 		CategoryRecord cRec = newCategoryRecord();
 		for (Category cat : type.getCategory()) {
-			cRec.setUid(cat.getId());
-			cRec.setName(cat.getName());
+			cRec.setUid(cat.getId().trim());
+			cRec.setName(cat.getName().trim());
 			cRec.setDescription(cat.getDescription());
 			if (cRec.select()) {
 				cRec.update();
 			} else {
 				cRec.insert();
 			}
-//			for (String ftId : cat.getFindingType()) {
-//				fRec.setUid(ftId);
-//				if (fRec.select()) {
-//					insertCategoryFindingTypeRelation.setLong(1, cRec.getId());
-//					insertCategoryFindingTypeRelation.setLong(2, fRec.getId());
-//					insertCategoryFindingTypeRelation.execute();
-//				} else {
-//					log.log(Level.SEVERE,
-//							"Could not locate a finding type for record with uid "
-//									+ ftId);
-//				}
-//
-//			}
+			for (String ftId : cat.getFindingType()) {
+				fRec.setUid(ftId.trim());
+				if (fRec.select()) {
+					insertCategoryFindingTypeRelation.setLong(1, cRec.getId());
+					insertCategoryFindingTypeRelation.setLong(2, fRec.getId());
+					insertCategoryFindingTypeRelation.execute();
+				} else {
+					log.log(Level.SEVERE,
+							"Could not locate a finding type for record with uid "
+									+ ftId);
+				}
+
+			}
 		}
 	}
 
