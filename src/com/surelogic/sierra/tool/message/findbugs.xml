@@ -6108,6 +6108,7 @@
 		<name>Invoke On Static Date Format Instance</name>
 	</findingType>
 	<category>
+		<id>Correctness</id>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
 		<findingType>IL_INFINITE_LOOP</findingType>
 		<findingType>IL_INFINITE_RECURSIVE_LOOP</findingType>
@@ -6249,6 +6250,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Bad practice</id>
 		<findingType>
 			SW_SWING_METHODS_INVOKED_IN_SWING_THREAD
 		</findingType>
@@ -6359,6 +6361,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Dodgy</id>
 		<findingType>
 			DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED
 		</findingType>
@@ -6443,6 +6446,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Performance</id>
 		<findingType>HSC_HUGE_SHARED_STRING_CONSTANT</findingType>
 		<findingType>DMI_BLOCKING_METHODS_ON_URL</findingType>
 		<findingType>DMI_COLLECTION_OF_URLS</findingType>
@@ -6480,6 +6484,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Malicious code vulnerability</id>
 		<findingType>FI_PUBLIC_SHOULD_BE_PROTECTED</findingType>
 		<findingType>MS_EXPOSE_REP</findingType>
 		<findingType>EI_EXPOSE_REP</findingType>
@@ -6498,6 +6503,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Multithreaded correctness</id>
 		<findingType>STCAL_STATIC_CALENDAR_INSTANCE</findingType>
 		<findingType>
 			STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE
@@ -6546,6 +6552,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Internationalization</id>
 		<findingType>DM_CONVERT_CASE</findingType>
 		<name>Internationalization</name>
 		<description>
