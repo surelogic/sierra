@@ -3,6 +3,23 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
 	<findingType>
+		<id>AvoidNonConstructorMethodsWithClassName</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidNonConstructorMethodsWithClassName">
+		</artifact>
+		<shortMessage>
+			It is very easy to confuse methods having the same name as
+			their class with constructors. It is preferable to choose a
+			different name for these methods.
+		</shortMessage>
+		<info>
+			It is very easy to confuse methods having the same name as
+			their class with constructors. It is preferable to choose a
+			different name for these methods.
+		</info>
+		<name>Avoid Non-Constructor Methods With Class Name</name>
+	</findingType>
+	<findingType>
 		<id>EmptyCatchBlock</id>
 		<artifact tool="PMD" mnemonic="EmptyCatchBlock"></artifact>
 		<shortMessage>
