@@ -40,8 +40,12 @@ public final class ScanDocumentUtility {
 			conn.setAutoCommit(false);
 			RuntimeException exc = null;
 			try {
-				ScanGenerator gen = ScanManager.getInstance(conn)
-						.getScanGenerator();
+				ScanManager sMan = ScanManager.getInstance(conn);
+				if (projectName != null) {
+					sMan.deleteOldestScan(projectName, monitor);
+				}
+				conn.commit();
+				ScanGenerator gen = sMan.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
 
