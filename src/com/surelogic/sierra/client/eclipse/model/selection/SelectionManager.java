@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 public final class SelectionManager {
 
-	public static final SelectionManager INSTANCE = new SelectionManager();
+	private static final SelectionManager INSTANCE = new SelectionManager();
 
 	public static SelectionManager getInstance() {
 		return INSTANCE;

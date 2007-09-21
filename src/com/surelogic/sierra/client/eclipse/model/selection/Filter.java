@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 
@@ -28,6 +29,13 @@ import com.surelogic.sierra.client.eclipse.Data;
  * w.r.t. thread confinement. So races may lurk here.
  */
 public abstract class Filter {
+
+	/**
+	 * Gets the factory for this filter.
+	 * 
+	 * @return a filter factory object.
+	 */
+	public abstract ISelectionFilterFactory getFactory();
 
 	private final Selection f_selection;
 
@@ -184,8 +192,27 @@ public abstract class Filter {
 	 * "checked" in the user interface. It should be an invariant that for all
 	 * elements <code>e</code> of this set
 	 * <code>f_summaryCounts.containsKey(e)</code> is true.
+	 * <p>
+	 * If this set is mutated other than via a call to
+	 * {@link #setPorous(String)} then it is required to invoke
+	 * {@link #notifyObservers()}.
 	 */
 	protected final Set<String> f_porousValues = new HashSet<String>();
+
+	protected final Set<IPorousObserver> f_porousObservers = new CopyOnWriteArraySet<IPorousObserver>();
+
+	public final void addObserver(IPorousObserver o) {
+		f_porousObservers.add(o);
+	}
+
+	public final void removeObserver(IPorousObserver o) {
+		f_porousObservers.remove(o);
+	}
+
+	protected void notifyObservers() {
+		for (IPorousObserver o : f_porousObservers)
+			o.porous(this);
+	}
 
 	/**
 	 * Checks if the passed value is porous. It would be "checked" in the user
@@ -216,6 +243,7 @@ public abstract class Filter {
 		if (!f_allValues.contains(value))
 			throw new IllegalArgumentException("value not filtered by " + this);
 		f_porousValues.add(value);
+		notifyObservers();
 	}
 
 	/**

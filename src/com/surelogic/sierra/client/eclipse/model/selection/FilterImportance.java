@@ -18,9 +18,15 @@ public final class FilterImportance extends Filter {
 	FilterImportance(Selection selection, Filter previous, Executor executor) {
 		super(selection, previous, executor);
 	}
+	
+	@Override
+	public ISelectionFilterFactory getFactory() {
+		return FACTORY;
+	}
 
 	@Override
 	protected String getColumnName() {
 		return "IMPORTANCE";
 	}
+
 }

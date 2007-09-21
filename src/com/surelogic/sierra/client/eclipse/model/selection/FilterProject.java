@@ -20,6 +20,11 @@ public final class FilterProject extends Filter {
 	}
 
 	@Override
+	public ISelectionFilterFactory getFactory() {
+		return FACTORY;
+	}
+
+	@Override
 	protected String getColumnName() {
 		return "PROJECT";
 	}

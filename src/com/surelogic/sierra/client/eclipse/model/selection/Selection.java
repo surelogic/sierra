@@ -13,19 +13,19 @@ public final class Selection {
 
 	protected final Executor f_executor;
 
-	private final Set<ISelectionFilterFactory> f_availableFilters;
+	private final Set<ISelectionFilterFactory> f_allFilters;
 
 	Selection(SelectionManager manager, final Executor executor) {
 		assert manager != null;
 		f_manager = manager;
 		assert executor != null;
 		f_executor = executor;
-		f_availableFilters = new HashSet<ISelectionFilterFactory>();
+		f_allFilters = new HashSet<ISelectionFilterFactory>();
 		/*
 		 * Add in all the filter factories.
 		 */
-		f_availableFilters.add(FilterImportance.FACTORY);
-		f_availableFilters.add(FilterProject.FACTORY);
+		f_allFilters.add(FilterImportance.FACTORY);
+		f_allFilters.add(FilterProject.FACTORY);
 	}
 
 	private final SelectionManager f_manager;
@@ -54,7 +54,7 @@ public final class Selection {
 	public Filter construct(ISelectionFilterFactory factory) {
 		if (factory == null)
 			throw new IllegalArgumentException("factory must be non-null");
-		if (!f_availableFilters.contains(factory))
+		if (!getAvailableFilters().contains(factory))
 			throw new IllegalArgumentException(factory.getFilterLabel()
 					+ " already used in selection");
 		final Filter previous = f_filters.isEmpty() ? null : f_filters
@@ -66,7 +66,10 @@ public final class Selection {
 
 	public List<ISelectionFilterFactory> getAvailableFilters() {
 		List<ISelectionFilterFactory> result = new ArrayList<ISelectionFilterFactory>(
-				f_availableFilters);
+				f_allFilters);
+		for (Filter filter : f_filters) {
+			result.remove(filter.getFactory());
+		}
 		Collections.sort(result);
 		return result;
 	}
