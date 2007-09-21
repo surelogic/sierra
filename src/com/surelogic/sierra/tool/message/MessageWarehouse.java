@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -291,7 +292,7 @@ public class MessageWarehouse {
 		try {
 			return (Settings) fetchSettings(new FileInputStream(src));
 		} catch (FileNotFoundException e) {
-			log.log(Level.WARNING, "Could not fecth settings output", e);
+			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 		return null;
 	}
@@ -300,7 +301,7 @@ public class MessageWarehouse {
 		try {
 			return (Settings) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fecth settings output", e);
+			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 		return null;
 	}
@@ -309,16 +310,16 @@ public class MessageWarehouse {
 		try {
 			return (Settings) unmarshaller.unmarshal(reader);
 		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fecth settings output", e);
+			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 		return null;
 	}
 
 	public FindingTypes fetchFindingTypes(InputStream in) {
 		try {
-			return (FindingTypes) unmarshaller.unmarshal(in);
+			return (FindingTypes) ((JAXBElement)unmarshaller.unmarshal(in)).getValue();
 		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fecth settings output", e);
+			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 		return null;
 	}
@@ -327,7 +328,7 @@ public class MessageWarehouse {
 		try {
 			return (FindingTypes) unmarshaller.unmarshal(reader);
 		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fecth settings output", e);
+			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 		return null;
 	}
