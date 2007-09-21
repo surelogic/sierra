@@ -8,6 +8,7 @@ import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 public class FindingTypeRecord extends LongUpdatableRecord {
 
+	private String uid;
 	private String name;
 	private String shortMessage;
 	private String info;
@@ -18,6 +19,7 @@ public class FindingTypeRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
+		st.setString(idx++, uid);
 		st.setString(idx++, name);
 		setNullableString(idx++, st, shortMessage);
 		setNullableString(idx++, st, info);
@@ -26,12 +28,13 @@ public class FindingTypeRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		st.setString(idx++, name);
+		st.setString(idx++, uid);
 		return idx;
 	}
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		name = set.getString(idx++);
 		shortMessage = set.getString(idx++);
 		info = set.getString(idx++);
 		return idx;
@@ -40,9 +43,18 @@ public class FindingTypeRecord extends LongUpdatableRecord {
 	@Override
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
+		st.setString(idx++, name);
 		setNullableString(idx++, st, shortMessage);
 		setNullableString(idx++, st, info);
 		return idx;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public String getName() {

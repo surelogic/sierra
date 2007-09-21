@@ -15,7 +15,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.sun.media.sound.HsbParser;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
@@ -153,6 +152,7 @@ public class FindBugsFindingTypeGenerator {
 					isDescription = false;
 				} else if (CATEGORY_NAME.equals(name)) {
 					category.setName(buffer.toString());
+					category.setId(buffer.toString());
 					buffer.setLength(0);
 					isName = false;
 				}
@@ -174,7 +174,7 @@ public class FindBugsFindingTypeGenerator {
 					}
 				}
 				ArtifactType at = new ArtifactType();
-				at.setMnemonic(type.getName());
+				at.setMnemonic(type.getId());
 				at.setTool(TOOL);
 				type.getArtifact().add(at);
 			} else if (inType) {
@@ -220,8 +220,7 @@ public class FindBugsFindingTypeGenerator {
 						category = attributes.getValue(i);
 					}
 				}
-				cMap.get(category).getFindingType().add(
-						fMap.get(type).getId());
+				cMap.get(category).getFindingType().add(fMap.get(type).getId());
 			}
 		}
 

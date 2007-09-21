@@ -36,8 +36,6 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 
 	private static final String NAME = "name";
 
-	private static final String LINK = "externalInfoUrl";
-
 	private static final String INFO = "description";
 
 	private static final String EXAMPLE = "example";
@@ -119,6 +117,7 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 			if (RULESET.equals(localName)) {
 				category = new Category();
 				category.setName(attributes.getValue(NAME));
+				category.setId(category.getName());
 				categories.add(category);
 			} else if (RULE.equals(localName)) {
 				type = new FindingType();
