@@ -3238,6 +3238,7 @@
 		<name>Unused Formal Parameter</name>
 	</findingType>
 	<category>
+		<id>Basic Rules</id>
 		<findingType>EmptyCatchBlock</findingType>
 		<findingType>EmptyIfStmt</findingType>
 		<findingType>EmptyWhileStmt</findingType>
@@ -3277,6 +3278,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Braces Rules</id>
 		<findingType>IfStmtsMustUseBraces</findingType>
 		<findingType>WhileLoopsMustUseBraces</findingType>
 		<findingType>IfElseStmtsMustUseBraces</findingType>
@@ -3287,6 +3289,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Clone Implementation Rules</id>
 		<findingType>ProperCloneImplementation</findingType>
 		<findingType>CloneThrowsCloneNotSupportedException</findingType>
 		<findingType>CloneMethodMustImplementCloneable</findingType>
@@ -3297,6 +3300,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Code Size Rules</id>
 		<findingType>NPathComplexity</findingType>
 		<findingType>ExcessiveMethodLength</findingType>
 		<findingType>ExcessiveParameterList</findingType>
@@ -3314,6 +3318,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Controversial Rules</id>
 		<findingType>UnnecessaryConstructor</findingType>
 		<findingType>NullAssignment</findingType>
 		<findingType>OnlyOneReturn</findingType>
@@ -3339,6 +3344,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Coupling Rules</id>
 		<findingType>CouplingBetweenObjects</findingType>
 		<findingType>ExcessiveImports</findingType>
 		<findingType>LooseCoupling</findingType>
@@ -3349,6 +3355,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Design Rules</id>
 		<findingType>UseSingleton</findingType>
 		<findingType>SimplifyBooleanReturns</findingType>
 		<findingType>SimplifyBooleanExpressions</findingType>
@@ -3400,6 +3407,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Finalizer Rules</id>
 		<findingType>EmptyFinalizer</findingType>
 		<findingType>FinalizeOnlyCallsSuperFinalize</findingType>
 		<findingType>FinalizeOverloaded</findingType>
@@ -3413,6 +3421,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Import Statement Rules</id>
 		<findingType>DuplicateImports</findingType>
 		<findingType>DontImportJavaLang</findingType>
 		<findingType>UnusedImports</findingType>
@@ -3424,6 +3433,7 @@
 		</description>
 	</category>
 	<category>
+		<id>J2EE Rules</id>
 		<findingType>UseProperClassLoader</findingType>
 		<findingType>MDBAndSessionBeanNamingConvention</findingType>
 		<findingType>
@@ -3436,6 +3446,7 @@
 		<description>These are rules for J2EE</description>
 	</category>
 	<category>
+		<id>JavaBean Rules</id>
 		<findingType>BeanMembersShouldSerialize</findingType>
 		<findingType>MissingSerialVersionUID</findingType>
 		<name>JavaBean Rules</name>
@@ -3445,6 +3456,7 @@
 		</description>
 	</category>
 	<category>
+		<id>JUnit Rules</id>
 		<findingType>JUnitStaticSuite</findingType>
 		<findingType>JUnitSpelling</findingType>
 		<findingType>JUnitAssertionsShouldIncludeMessage</findingType>
@@ -3462,6 +3474,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Jakarta Commons Logging Rules</id>
 		<findingType>UseCorrectExceptionLogging</findingType>
 		<findingType>ProperLogger</findingType>
 		<name>Jakarta Commons Logging Rules</name>
@@ -3471,6 +3484,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Java Logging Rules</id>
 		<findingType>MoreThanOneLogger</findingType>
 		<findingType>LoggerIsNotStaticFinal</findingType>
 		<findingType>SystemPrintln</findingType>
@@ -3482,6 +3496,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Migration Rules</id>
 		<findingType>ReplaceVectorWithList</findingType>
 		<findingType>ReplaceHashtableWithMap</findingType>
 		<findingType>ReplaceEnumerationWithIterator</findingType>
@@ -3504,6 +3519,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Naming Rules</id>
 		<findingType>ShortVariable</findingType>
 		<findingType>LongVariable</findingType>
 		<findingType>ShortMethodName</findingType>
@@ -3529,6 +3545,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Optimization Rules</id>
 		<findingType>LocalVariableCouldBeFinal</findingType>
 		<findingType>MethodArgumentCouldBeFinal</findingType>
 		<findingType>AvoidInstantiatingObjectsInLoops</findingType>
@@ -3546,6 +3563,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Strict Exception Rules</id>
 		<findingType>AvoidCatchingThrowable</findingType>
 		<findingType>SignatureDeclareThrowsException</findingType>
 		<findingType>ExceptionAsFlowControl</findingType>
@@ -3561,6 +3579,7 @@
 		</description>
 	</category>
 	<category>
+		<id>String and StringBuffer Rules</id>
 		<findingType>AvoidDuplicateLiterals</findingType>
 		<findingType>StringInstantiation</findingType>
 		<findingType>StringToString</findingType>
@@ -3581,6 +3600,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Security Code Guidelines</id>
 		<findingType>MethodReturnsInternalArray</findingType>
 		<findingType>ArrayIsStoredDirectly</findingType>
 		<name>Security Code Guidelines</name>
@@ -3591,6 +3611,7 @@
 		</description>
 	</category>
 	<category>
+		<id>Unused Code Rules</id>
 		<findingType>UnusedPrivateField</findingType>
 		<findingType>UnusedLocalVariable</findingType>
 		<findingType>UnusedPrivateMethod</findingType>
