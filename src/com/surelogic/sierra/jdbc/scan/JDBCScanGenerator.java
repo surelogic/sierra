@@ -112,6 +112,9 @@ class JDBCScanGenerator implements ScanGenerator {
 										filter, null);
 								conn.commit();
 								if (qualifiers.isEmpty()) {
+									log.info("Generating overview for scan "
+											+ scan.getUid() + "in project "
+											+ projectName);
 									fm.generateOverview(projectName, uid);
 								}
 								conn.commit();

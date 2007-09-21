@@ -169,6 +169,7 @@ public class FindBugsFindingTypeGenerator {
 					if (NAME.equals(attributes.getQName(i))) {
 						String ftName = attributes.getValue(i);
 						fMap.put(ftName, type);
+						type.setId(ftName);
 						type.setName(prettyPrint(ftName));
 					}
 				}
@@ -220,7 +221,7 @@ public class FindBugsFindingTypeGenerator {
 					}
 				}
 				cMap.get(category).getFindingType().add(
-						fMap.get(type).getName());
+						fMap.get(type).getId());
 			}
 		}
 

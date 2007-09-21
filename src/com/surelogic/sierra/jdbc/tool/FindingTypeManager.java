@@ -14,6 +14,7 @@ import java.util.Map;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.tool.message.ArtifactType;
+import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.FindingTypes;
@@ -139,6 +140,9 @@ public class FindingTypeManager {
 					}
 				}
 			}
+		}
+		for(Category ft : type.getCategory()) {
+			
 		}
 	}
 

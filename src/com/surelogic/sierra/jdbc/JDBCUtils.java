@@ -2,7 +2,9 @@ package com.surelogic.sierra.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Date;
 
 /**
  * A collection of utility methods specific to SIERRA to help w/ using JDBC.
@@ -60,6 +62,15 @@ public class JDBCUtils {
 			st.setNull(idx, Types.VARCHAR);
 		} else {
 			st.setLong(idx, intValue);
+		}
+	}
+
+	public static void setNullableTimestamp(int idx, PreparedStatement st,
+			Date dateValue) throws SQLException {
+		if (dateValue == null) {
+			st.setNull(idx, Types.TIMESTAMP);
+		} else {
+			st.setTimestamp(idx, new Timestamp(dateValue.getTime()));
 		}
 	}
 

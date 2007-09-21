@@ -1,11 +1,12 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableTimestamp;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import com.surelogic.sierra.tool.message.AuditEvent;
@@ -26,17 +27,17 @@ public final class AuditRecord extends LongRecord {
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
 		// USER_ID, FINDING_ID, DATE_TIME, VALUE, EVENT
-		st.setLong(idx++, findingId);
-		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
-		st.setString(idx++, event.name());
+		fillWithPk(st, idx);
 		return idx;
 	}
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		idx = fillWithNk(st, idx);
-		setNullableString(idx++, st, value);
+		st.setLong(idx++, findingId);
+		st.setString(idx++, event.toString());
 		setNullableLong(idx++, st, userId);
+		setNullableTimestamp(idx++, st, timestamp);
+		setNullableString(idx++, st, value);
 		setNullableLong(idx++, st, revision);
 		return idx;
 	}

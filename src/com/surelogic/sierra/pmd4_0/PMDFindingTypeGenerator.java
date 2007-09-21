@@ -123,12 +123,13 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 			} else if (RULE.equals(localName)) {
 				type = new FindingType();
 				String name = attributes.getValue(NAME);
-				type.setName(prettyPrint(attributes.getValue(NAME)));
+				type.setId(name);
+				type.setName(prettyPrint(name));
 				ArtifactType at = new ArtifactType();
 				at.setMnemonic(name);
 				at.setTool("PMD");
 				type.getArtifact().add(at);
-				category.getFindingType().add(type.getName());
+				category.getFindingType().add(type.getId());
 			} else if (INFO.equals(localName)) {
 				isInfo = true;
 			} else if (EXAMPLE.equals(localName)) {
@@ -161,7 +162,7 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 				String example = buffer.toString();
 				example = example.trim();
 				buffer.setLength(0);
-//				type.setInfo(type.getInfo() + "\n\nExample:\n" + example);
+				// type.setInfo(type.getInfo() + "\n\nExample:\n" + example);
 			}
 		}
 	}

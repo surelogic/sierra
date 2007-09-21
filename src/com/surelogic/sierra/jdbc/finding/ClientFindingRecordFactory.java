@@ -17,10 +17,10 @@ public class ClientFindingRecordFactory implements FindingRecordFactory {
 	private static final String MATCH_SELECT = "SELECT FINDING_ID FROM LOCATION_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	private static final String MATCH_INSERT = "INSERT INTO LOCATION_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID) VALUES (?,?,?,?,?,?)";
 	private static final String MATCH_UPDATE = "UPDATE LOCATION_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID,IS_READ,IMPORTANCE) VALUES (?,?,?,?)";
-	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IS_READ,IMPORTANCE FROM FINDING WHERE UID = ?";
+	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID) VALUES (?,?)";
+	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID FROM FINDING WHERE UID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (FINDING_ID,DATE_TIME,EVENT,VALUE,USER_ID,REVISION) VALUES (?,?,?,?,?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;

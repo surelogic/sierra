@@ -55,6 +55,7 @@ public abstract class FindingManager {
 	private final PreparedStatement selectFinding;
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
+	private final PreparedStatement updateFindingSummary;
 	private final PreparedStatement updateFindingUid;
 	private final PreparedStatement updateMatchRevision;
 	private final PreparedStatement findLocalMerges;
@@ -79,6 +80,8 @@ public abstract class FindingManager {
 				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y' WHERE ID = ?");
 		updateFindingImportance = conn
 				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ? WHERE ID = ?");
+		updateFindingSummary = conn
+				.prepareStatement("UPDATE FINDING SET SUMMARY = ? WHERE ID = ?");
 		updateFindingUid = conn
 				.prepareStatement("UPDATE FINDING SET UID = ? WHERE ID = ?");
 		updateMatchRevision = conn
@@ -131,7 +134,8 @@ public abstract class FindingManager {
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
-						+ "        FT.NAME"
+						+ "        FT.NAME,"
+						+ "        F.SUMMARY"
 						+ " FROM"
 						+ "    FINDING F"
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
@@ -146,22 +150,65 @@ public abstract class FindingManager {
 
 	protected abstract FindingRecordFactory getFactory();
 
+	/**
+	 * Make a user comment on an existing finding. This method is for use by a
+	 * client.
+	 * 
+	 * @param findingId
+	 * @param comment
+	 * @throws SQLException
+	 */
 	public void comment(Long findingId, String comment) throws SQLException {
 		checkIsRead(findingId);
-		comment(null, findingId, comment, new Date(), null);
+		comment(null, findingId, comment, null, null);
 	}
 
+	/**
+	 * Set the importance of a particular finding. This method is for use by a
+	 * client.
+	 * 
+	 * @param findingId
+	 * @param importance
+	 * @throws SQLException
+	 */
 	public void setImportance(Long findingId, Importance importance)
 			throws SQLException {
 		checkIsRead(findingId);
-		setImportance(null, findingId, importance, new Date(), null);
+		setImportance(null, findingId, importance, null, null);
 	}
 
+	/**
+	 * Indicate that the user has looked over this finding. This method is for
+	 * use by a client.
+	 * 
+	 * @param findingId
+	 * @throws SQLException
+	 */
 	public void markAsRead(Long findingId) throws SQLException {
 		checkIsRead(findingId);
-		markAsRead(null, findingId, new Date(), null);
+		markAsRead(null, findingId, null, null);
 	}
 
+	/**
+	 * Change the summary that should be displayed for a particular finding.
+	 * 
+	 * @param findingId
+	 * @param summary
+	 * @throws SQLException
+	 */
+	public void changeSummary(Long findingId, String summary)
+			throws SQLException {
+		checkIsRead(findingId);
+		changeSummary(null, findingId, summary, null, null);
+	}
+
+	/**
+	 * Regenerate the findings overview for the given project.
+	 * 
+	 * @param projectName
+	 * @param uid
+	 * @throws SQLException
+	 */
 	public void generateOverview(String projectName, String uid)
 			throws SQLException {
 		deleteOverview.execute();
@@ -195,6 +242,7 @@ public abstract class FindingManager {
 				art.id = result.getLong(idx++);
 				art.p = Priority.values()[result.getInt(idx++)];
 				art.s = Severity.values()[result.getInt(idx++)];
+				art.message = result.getString(idx++);
 				art.m = factory.newMatch();
 				// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
 				MatchRecord.PK pk = new MatchRecord.PK();
@@ -211,11 +259,13 @@ public abstract class FindingManager {
 					MatchRecord m = art.m;
 					FindingRecord f = factory.newFinding();
 					f.setProjectId(projectId);
-					f.setImportance(filter.calculateImportance(art.m.getId()
-							.getFindingTypeId(), art.p, art.s));
 					f.insert();
 					m.setFindingId(f.getId());
 					m.insert();
+					setImportance(null, f.getId(), filter.calculateImportance(
+							art.m.getId().getFindingTypeId(), art.p, art.s),
+							null, null);
+					changeSummary(null, f.getId(), art.message, null, null);
 					findingId = f.getId();
 				} else {
 					findingId = art.m.getFindingId();
@@ -345,8 +395,12 @@ public abstract class FindingManager {
 								markAsRead(userId, finding.getId(), a
 										.getTimestamp(), a.getRevision());
 								break;
-							default:
+							case SUMMARY:
+								changeSummary(userId, finding.getId(), a
+										.getValue(), a.getTimestamp(), a
+										.getRevision());
 								break;
+							default:
 							}
 						}
 					}
@@ -488,6 +542,15 @@ public abstract class FindingManager {
 		markFindingAsRead.execute();
 	}
 
+	private void changeSummary(Long userId, Long findingId, String summary,
+			Date time, Long revision) throws SQLException {
+		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision)
+				.insert();
+		updateFindingSummary.setString(1, summary);
+		updateFindingSummary.setLong(2, findingId);
+		updateFindingSummary.execute();
+	}
+
 	private AuditRecord newAudit(Long userId, Long findingId, String value,
 			AuditEvent event, Date time, Long revision) throws SQLException {
 		AuditRecord record = fact.newAudit();
@@ -584,6 +647,7 @@ public abstract class FindingManager {
 		Long id;
 		Priority p;
 		Severity s;
+		String message;
 		MatchRecord m;
 	}
 
