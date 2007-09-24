@@ -3726,31 +3726,6 @@
 		<name>Redundant Comparison Of Null And Nonnull Value</name>
 	</findingType>
 	<findingType>
-		<id>RCN_REDUNDANT_CHECKED_NULL_COMPARISON</id>
-		<artifact tool="FindBugs"
-			mnemonic="RCN_REDUNDANT_CHECKED_NULL_COMPARISON">
-		</artifact>
-		<shortMessage>
-			Redundant comparison to null of previously checked value
-		</shortMessage>
-		<info>
-
-			&lt;p&gt; This method contains a redundant comparison of a
-			reference value to null. Two types of redundant comparison
-			are reported: &lt;/p&gt; &lt;ul&gt; &lt;li&gt; Both values
-			compared are definitely null&lt;/li&gt; &lt;li&gt; One value
-			is definitely null and the other is definitely not
-			null&lt;/li&gt; &lt;/ul&gt;
-
-			&lt;p&gt; This particular warning generally indicates that a
-			value known not to be null was checked against null. While
-			the check is not necessary, it may simply be a case of
-			defensive programming.&lt;/p&gt;
-
-		</info>
-		<name>Redundant Checked Null Comparison</name>
-	</findingType>
-	<findingType>
 		<id>UL_UNRELEASED_LOCK</id>
 		<artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK">
 		</artifact>
