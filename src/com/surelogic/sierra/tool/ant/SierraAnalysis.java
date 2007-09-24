@@ -484,6 +484,10 @@ public class SierraAnalysis extends Task {
 				// Verify the qualifiers
 				List<String> list = ts.getQualifiers(new QualifierRequest())
 						.getQualifier();
+				if (list == null || list.isEmpty()) {
+					throw new BuildException(
+							"The target build server does not have any valid qualifiers to publish to.");
+				}
 				if (!list.containsAll(qualifiers)) {
 					StringBuilder sb = new StringBuilder();
 					sb.append("Invalid qualifiers. Valid qualifiers are:\n");
