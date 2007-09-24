@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -53,22 +54,22 @@ public final class FilterSelectionMenu {
 				FilterSelectionMenu menu);
 	}
 
-	protected final Set<ISelectionObserver> f_selectionObservers = new CopyOnWriteArraySet<ISelectionObserver>();
+	private final Set<ISelectionObserver> f_selectionObservers = new CopyOnWriteArraySet<ISelectionObserver>();
 
-	public final void addObserver(ISelectionObserver o) {
+	public void addObserver(ISelectionObserver o) {
 		f_selectionObservers.add(o);
 	}
 
-	public final void removeObserver(ISelectionObserver o) {
+	public void removeObserver(ISelectionObserver o) {
 		f_selectionObservers.remove(o);
 	}
 
-	protected void notifyObservers(ISelectionFilterFactory filter) {
+	private void notifyObservers(ISelectionFilterFactory filter) {
 		for (ISelectionObserver o : f_selectionObservers)
 			o.filterSelected(filter, this);
 	}
 
-	Composite constructFilterSelector(String text, Image image,
+	private Composite constructFilterSelector(String text, Image image,
 			Composite parent, final ISelectionFilterFactory filter) {
 		final Composite result = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -114,18 +115,21 @@ public final class FilterSelectionMenu {
 				}
 			}
 		}
+		f_selected = filter;
 		highlight(button);
 		notifyObservers(filter);
 	}
 
 	private void highlight(Composite button) {
+		final Display display = button.getShell().getDisplay();
+		button.setBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		for (Control c : button.getChildren()) {
-			c.setBackground(c.getShell().getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION));
+			c.setBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		}
 	}
 
 	private void unhighlight(Composite button) {
+		button.setBackground(null);
 		for (Control c : button.getChildren()) {
 			c.setBackground(null);
 		}

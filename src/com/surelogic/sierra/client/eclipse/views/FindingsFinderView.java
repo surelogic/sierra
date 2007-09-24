@@ -8,10 +8,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.CascadingList;
+import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 
 public final class FindingsFinderView extends ViewPart {
