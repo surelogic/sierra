@@ -3555,6 +3555,9 @@
 		<findingType>PackageCase</findingType>
 		<findingType>MisleadingVariableName</findingType>
 		<findingType>BooleanGetMethodName</findingType>
+		<findingType>
+			AvoidNonConstructorMethodsWithClassName
+		</findingType>
 		<name>Naming Rules</name>
 		<description>
 			The Naming Ruleset contains a collection of rules about
