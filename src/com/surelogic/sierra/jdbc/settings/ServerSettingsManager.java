@@ -16,13 +16,15 @@ import com.surelogic.sierra.tool.message.SettingsReply;
 public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
-	
+
 	private final PreparedStatement getSettingsByName;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
 	private final PreparedStatement getAllSettings;
-	
+
+	private final PreparedStatement createNewSetting;
+
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		getSettingsByName = conn
@@ -34,13 +36,33 @@ public class ServerSettingsManager extends SettingsManager {
 		updateSettings = conn
 				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
+
+		createNewSetting = conn
+				.prepareStatement("INSERT INTO SETTINGS (NAME, REVISION, SETTINGS) VALUES (?,?,?)");
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new ServerSettingsManager(conn);
 	}
-	
+
+	public int add(String name) throws SQLException {
+		// XXX insert a new row into the revision table w/ the current vm time
+		// and use the generated key as your revision number
+		Long revision = new Long(0);
+		Settings settings = new Settings();
+
+		StringWriter writer = new StringWriter();
+		mw.writeSettings(settings, writer);
+		String str = writer.toString();
+		StringReader reader = new StringReader(str);
+
+		createNewSetting.setString(1, name);
+		createNewSetting.setLong(2, revision);
+		createNewSetting.setCharacterStream(2, reader, str.length());
+		return 0;
+	}
+
 	/**
 	 * 
 	 * @return a collection of all the product names
