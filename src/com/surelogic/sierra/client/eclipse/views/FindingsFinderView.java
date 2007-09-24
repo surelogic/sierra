@@ -36,6 +36,8 @@ public final class FindingsFinderView extends ViewPart {
 		findingsPage.setLayout(layout);
 
 		final Composite breadcrumbsPanel = new Composite(findingsPage, SWT.NONE);
+		breadcrumbsPanel.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
+				true, false));
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -50,9 +52,8 @@ public final class FindingsFinderView extends ViewPart {
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
 		clearSelectionItem.setImage(SLImages.getImage(SLImages.IMG_QUERY));
-		final Link breadcrumbs = new Link(breadcrumbsPanel, SWT.WRAP);
-		breadcrumbs.setText("");
-		breadcrumbs.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false,
+		final Link breadcrumbs = new Link(breadcrumbsPanel, SWT.NORMAL);
+		breadcrumbs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 
 		final CascadingList finder = new CascadingList(findingsPage, SWT.NONE);

@@ -53,23 +53,23 @@ public final class FilterSelectionMenu {
 		f_panel.setEnabled(enabled);
 	}
 
-	public interface ISelectionObserver {
+	public interface ISelectionMenuObserver {
 		void filterSelected(ISelectionFilterFactory filter,
 				FilterSelectionMenu menu);
 	}
 
-	private final Set<ISelectionObserver> f_selectionObservers = new CopyOnWriteArraySet<ISelectionObserver>();
+	private final Set<ISelectionMenuObserver> f_selectionObservers = new CopyOnWriteArraySet<ISelectionMenuObserver>();
 
-	public void addObserver(ISelectionObserver o) {
+	public void addObserver(ISelectionMenuObserver o) {
 		f_selectionObservers.add(o);
 	}
 
-	public void removeObserver(ISelectionObserver o) {
+	public void removeObserver(ISelectionMenuObserver o) {
 		f_selectionObservers.remove(o);
 	}
 
 	private void notifyObservers(ISelectionFilterFactory filter) {
-		for (ISelectionObserver o : f_selectionObservers)
+		for (ISelectionMenuObserver o : f_selectionObservers)
 			o.filterSelected(filter, this);
 	}
 

@@ -1,26 +1,34 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.util.logging.Level;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
+import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
-import com.surelogic.sierra.client.eclipse.views.FilterSelectionMenu.ISelectionObserver;
+import com.surelogic.sierra.client.eclipse.views.FilterSelectionMenu.ISelectionMenuObserver;
 
 public final class FindingsFinderMediator implements IProjectsObserver,
-		ISelectionObserver {
+		ISelectionObserver, ISelectionMenuObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -48,6 +56,12 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 
 	public void init() {
 		f_savedSelections.setText("Saved selections:");
+
+		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				reset();
+			}
+		});
 
 		Projects.getInstance().addObserver(this);
 		notify(Projects.getInstance());
@@ -82,6 +96,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 	private void reset() {
 		f_breadcrumbs.setText("");
 		f_workingSelection = f_manager.construct();
+		f_workingSelection.addObserver(this);
 		f_finder.addColumnAfter(new CascadingList.IColumn() {
 			public void createContents(Composite panel, int index) {
 				FilterSelectionMenu menu = new FilterSelectionMenu(
@@ -96,6 +111,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		if (f_workingSelection == null)
 			throw new IllegalStateException(
 					"null working selection upon cascading list menu selection (bug)");
+		menu.setEnabled(false);
 		final int column = f_finder.getColumnIndexOf(menu.getPanel());
 		/*
 		 * Filters start being applied in column 1 of the cascading list. Thus,
@@ -117,26 +133,75 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		}, column);
 		final Filter newFilter = f_workingSelection.construct(filter);
 		newFilter.initAsync(new DrawColumn(column, newFilter,
-				f_workingSelection));
+				f_workingSelection, menu));
 	}
 
-	static class DrawColumn implements Runnable {
+	static class DrawColumn implements Filter.CompletedAction {
 
 		private final int f_column;
 		private final Filter f_filter;
 		private final Selection f_selection;
+		private final FilterSelectionMenu f_menu;
 
-		public DrawColumn(int column, Filter filter, Selection selection) {
+		public DrawColumn(int column, Filter filter, Selection selection,
+				FilterSelectionMenu menu) {
 			f_column = column;
 			assert filter != null;
 			f_filter = filter;
 			assert selection != null;
 			f_selection = selection;
+			assert menu != null;
+			f_menu = menu;
 		}
 
-		public void run() {
+		public void failure(final Exception e) {
+			System.out.println("failure");
+			// beware the thread context this method call might be made in.
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					final String msg = "Applying the '"
+							+ f_filter.getFactory().getFilterLabel()
+							+ "' filter to the current selection failed (bug).";
+					ErrorDialog.openError(PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getShell(),
+							"Selection Error", msg, SLStatus.createErrorStatus(
+									"Initialization of the filter failed.", e));
+					SLLogger.getLogger().log(Level.SEVERE, msg, e);
+					f_menu.setEnabled(true);
+				}
+			});
+		}
+
+		public void success() {
 			System.out.println("done with queries!!!");
+			// beware the thread context this method call might be made in.
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					f_menu.setEnabled(true);
+				}
+			});
 
 		}
+	}
+
+	public void selectionStructureChanged(Selection selection) {
+		final StringBuilder b = new StringBuilder();
+		String lastName = null;
+		int column = 0;
+		for (Filter filter : selection.getFilters()) {
+			final String name = filter.getFactory().getFilterLabel();
+			if (lastName == null) {
+				lastName = name;
+			} else {
+				b.append("<a href=\"").append(column++).append("\">");
+				b.append(lastName).append("</a>");
+				b.append(" &gt; ");
+				lastName = name;
+			}
+		}
+		if (lastName != null) {
+			b.append(lastName);
+		}
+		f_breadcrumbs.setText(b.toString());
 	}
 }

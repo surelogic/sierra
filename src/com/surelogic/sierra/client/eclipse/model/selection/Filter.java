@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
 
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 
 /**
@@ -88,6 +86,21 @@ public abstract class Filter {
 	 */
 	protected final LinkedList<String> f_allValues = new LinkedList<String>();
 
+	public interface CompletedAction {
+		/**
+		 * The initialization was successful.
+		 */
+		void success();
+
+		/**
+		 * The initialization failed.
+		 * 
+		 * @param e
+		 *            the cause, may be <code>null</code>.
+		 */
+		void failure(Exception e);
+	}
+
 	/**
 	 * Starts a task in the background to query the necessary information about
 	 * this filter. This method doesn't wait for the task to complete, it
@@ -99,48 +112,45 @@ public abstract class Filter {
 	 *            to be invoked when the initialization of this filter is
 	 *            complete.
 	 */
-	public void initAsync(final Runnable completedAction) {
+	public void initAsync(final CompletedAction completedAction) {
 		final Runnable task = new Runnable() {
 			public void run() {
 				try {
 					queryCounts();
 					deriveSummaryCounts();
 					deriveAllValues();
-				} finally {
-					completedAction.run();
+				} catch (Exception e) {
+					completedAction.failure(e);
+					return;
 				}
+				completedAction.success();
 			}
 		};
 		f_exector.execute(task);
 	}
 
-	private void queryCounts() {
+	private void queryCounts() throws SQLException {
+		final Connection c = Data.getConnection();
 		try {
-			final Connection c = Data.getConnection();
+			final Statement st = c.createStatement();
 			try {
-				final Statement st = c.createStatement();
-				try {
-					final ResultSet rs = st.executeQuery(getCountsQuery()
-							.toString());
-					final int columnCount = rs.getMetaData().getColumnCount();
-					while (rs.next()) {
-						final LinkedList<String> columnList = new LinkedList<String>();
-						for (int i = 1; i < columnCount; i++) {
-							final String column = rs.getString(i);
-							columnList.add(column);
-						}
-						int count = rs.getInt(columnCount);
-						f_counts.put(columnList, count);
+				final ResultSet rs = st.executeQuery(getCountsQuery()
+						.toString());
+				final int columnCount = rs.getMetaData().getColumnCount();
+				while (rs.next()) {
+					final LinkedList<String> columnList = new LinkedList<String>();
+					for (int i = 1; i < columnCount; i++) {
+						final String column = rs.getString(i);
+						columnList.add(column);
 					}
-				} finally {
-					st.close();
+					int count = rs.getInt(columnCount);
+					f_counts.put(columnList, count);
 				}
 			} finally {
-				c.close();
+				st.close();
 			}
-		} catch (SQLException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Unable to query the database for findings counts", e);
+		} finally {
+			c.close();
 		}
 	}
 

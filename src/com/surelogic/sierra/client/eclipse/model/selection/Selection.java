@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 public final class Selection {
@@ -43,6 +44,15 @@ public final class Selection {
 	private final LinkedList<Filter> f_filters = new LinkedList<Filter>();
 
 	/**
+	 * Gets the ordered list of filters managed by this Selection;
+	 * 
+	 * @return
+	 */
+	public final List<Filter> getFilters() {
+		return new LinkedList<Filter>(f_filters);
+	}
+
+	/**
 	 * Removes all existing filters from this selection with an index after the
 	 * specified index.
 	 * 
@@ -51,15 +61,19 @@ public final class Selection {
 	 *            will clear out all filters.
 	 */
 	public void emptyAfter(int filterIndex) {
+		boolean changed = false;
 		int index = 0;
 		for (Iterator<Filter> iterator = f_filters.iterator(); iterator
 				.hasNext();) {
 			iterator.next();
 			if (index > filterIndex) {
 				iterator.remove();
+				changed = true;
 			}
 			index++;
 		}
+		if (changed)
+			notifyObservers();
 	}
 
 	public int getFilterCount() {
@@ -76,6 +90,7 @@ public final class Selection {
 				.getLast();
 		final Filter filter = factory.construct(this, previous, f_executor);
 		f_filters.add(filter);
+		notifyObservers();
 		return filter;
 	}
 
@@ -87,5 +102,20 @@ public final class Selection {
 		}
 		Collections.sort(result);
 		return result;
+	}
+
+	private final Set<ISelectionObserver> f_observers = new CopyOnWriteArraySet<ISelectionObserver>();
+
+	public void addObserver(ISelectionObserver o) {
+		f_observers.add(o);
+	}
+
+	public void removeObserver(ISelectionObserver o) {
+		f_observers.remove(o);
+	}
+
+	private void notifyObservers() {
+		for (ISelectionObserver o : f_observers)
+			o.selectionStructureChanged(this);
 	}
 }
