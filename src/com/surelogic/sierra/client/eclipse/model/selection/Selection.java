@@ -13,6 +13,9 @@ public final class Selection {
 
 	protected final Executor f_executor;
 
+	/**
+	 * Setup in the constructor and immutable after that point.
+	 */
 	private final Set<ISelectionFilterFactory> f_allFilters;
 
 	Selection(SelectionManager manager, final Executor executor) {
@@ -34,12 +37,24 @@ public final class Selection {
 		return f_manager;
 	}
 
+	/**
+	 * The ordered list of filters within this selection.
+	 */
 	private final LinkedList<Filter> f_filters = new LinkedList<Filter>();
 
+	/**
+	 * Removes all existing filters from this selection with an index after the
+	 * specified index.
+	 * 
+	 * @param filterIndex
+	 *            the index of a filter used by this selection. A value of -1
+	 *            will clear out all filters.
+	 */
 	public void emptyAfter(int filterIndex) {
 		int index = 0;
 		for (Iterator<Filter> iterator = f_filters.iterator(); iterator
 				.hasNext();) {
+			iterator.next();
 			if (index > filterIndex) {
 				iterator.remove();
 			}

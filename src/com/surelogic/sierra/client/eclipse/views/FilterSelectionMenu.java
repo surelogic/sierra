@@ -23,6 +23,10 @@ public final class FilterSelectionMenu {
 
 	private final Composite f_panel;
 
+	public Composite getPanel() {
+		return f_panel;
+	}
+
 	FilterSelectionMenu(List<ISelectionFilterFactory> choices, Composite panel) {
 		assert choices != null;
 		if (choices.size() < 1)

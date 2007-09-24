@@ -377,4 +377,10 @@ public abstract class Filter {
 		if (f_quote)
 			b.append("'");
 	}
+
+	@Override
+	public String toString() {
+		return "[Filter: " + getColumnName() + "]";
+	}
+
 }
