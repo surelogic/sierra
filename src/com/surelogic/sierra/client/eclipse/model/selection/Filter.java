@@ -138,6 +138,7 @@ public abstract class Filter {
 		try {
 			final Statement st = c.createStatement();
 			try {
+				System.out.println(getCountsQuery().toString());
 				final ResultSet rs = st.executeQuery(getCountsQuery()
 						.toString());
 				final int columnCount = rs.getMetaData().getColumnCount();
@@ -250,13 +251,21 @@ public abstract class Filter {
 	 * 
 	 * @param value
 	 *            a value managed by this filter.
+	 * @param porous
+	 *            <code>true</code> sets the value to be porous,
+	 *            <code>false</code> makes it non-porous.
 	 * @throws IllegalArgumentException
 	 *             if <code>getValues().contains(value)</code> is not true.
 	 */
-	public void setPorous(String value) {
+	public void setPorous(String value, boolean porous) {
 		if (!f_allValues.contains(value))
 			throw new IllegalArgumentException("value not filtered by " + this);
-		f_porousValues.add(value);
+		if (porous == isPorous(value))
+			return;
+		if (porous)
+			f_porousValues.add(value);
+		else
+			f_porousValues.remove(value);
 		notifyObservers();
 	}
 
@@ -312,46 +321,43 @@ public abstract class Filter {
 		b.append("select ");
 		addColumnsTo(b);
 		b.append(",count(*) from FINDINGS_OVERVIEW ");
-		if (hasWhereClause()) {
-			addWhereClauseTo(b);
-		}
+		addCountsWhereClauseTo(b);
 		b.append("group by ");
 		addColumnsTo(b);
 		return b;
 	}
 
 	protected void addColumnsTo(StringBuilder b) {
-		boolean first = true;
 		Filter filter = this;
+		final LinkedList<String> columnNames = new LinkedList<String>();
 		do {
+			columnNames.addFirst(filter.getColumnName());
+			filter = filter.f_previous;
+		} while (filter != null);
+
+		boolean first = true;
+		for (String columnName : columnNames) {
 			if (first) {
 				first = false;
 			} else {
 				b.append(",");
 			}
-			b.append(filter.getColumnName());
-			filter = filter.f_previous;
-		} while (filter != null);
-	}
-
-	protected boolean hasWhereClause() {
-		Filter filter = this;
-		do {
-			if (filter.hasWhereClausePart())
-				return true;
-			filter = filter.f_previous;
-		} while (filter != null);
-		return false;
+			b.append(columnName);
+		}
 	}
 
 	protected boolean hasWhereClausePart() {
-		return false;
+		/*
+		 * We don't need a where clause if everything is checked as being
+		 * porous.
+		 */
+		return !f_porousValues.containsAll(f_allValues);
 	}
 
-	protected void addWhereClauseTo(StringBuilder b) {
+	protected void addCountsWhereClauseTo(StringBuilder b) {
 		boolean first = true;
-		Filter filter = this;
-		do {
+		Filter filter = this.f_previous;
+		while (filter != null) {
 			if (filter.hasWhereClausePart()) {
 				if (first) {
 					b.append("where ");
@@ -359,10 +365,10 @@ public abstract class Filter {
 				} else {
 					b.append("and ");
 				}
-				addWhereClausePartTo(b);
+				filter.addWhereClausePartTo(b);
 			}
 			filter = filter.f_previous;
-		} while (filter != null);
+		}
 	}
 
 	protected void addWhereClausePartTo(StringBuilder b) {

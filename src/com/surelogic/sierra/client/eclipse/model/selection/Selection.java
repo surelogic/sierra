@@ -28,7 +28,9 @@ public final class Selection {
 		/*
 		 * Add in all the filter factories.
 		 */
+		f_allFilters.add(FilterFindingType.FACTORY);
 		f_allFilters.add(FilterImportance.FACTORY);
+		f_allFilters.add(FilterPackage.FACTORY);
 		f_allFilters.add(FilterProject.FACTORY);
 	}
 
@@ -88,6 +90,11 @@ public final class Selection {
 					+ " already used in selection");
 		final Filter previous = f_filters.isEmpty() ? null : f_filters
 				.getLast();
+		if (previous != null && !previous.isPorous()) {
+			throw new IllegalStateException("unable to construct filter '"
+					+ factory.getFilterLabel() + "' over non-porous filter '"
+					+ previous.getFactory().getFilterLabel() + "' (bug)");
+		}
 		final Filter filter = factory.construct(this, previous, f_executor);
 		f_filters.add(filter);
 		notifyObservers();

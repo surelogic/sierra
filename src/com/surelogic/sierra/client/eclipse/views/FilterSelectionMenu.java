@@ -124,6 +124,15 @@ public final class FilterSelectionMenu {
 		notifyObservers(filter);
 	}
 
+	void clearSelection() {
+		for (Control c : f_panel.getChildren()) {
+			if (c instanceof Composite) {
+				unhighlight((Composite) c);
+			}
+		}
+		f_selected = null;
+	}
+
 	private void highlight(Composite button) {
 		final Display display = button.getShell().getDisplay();
 		button.setBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION));
