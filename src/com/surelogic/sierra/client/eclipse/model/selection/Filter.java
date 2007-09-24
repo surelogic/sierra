@@ -74,6 +74,10 @@ public abstract class Filter {
 	 */
 	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
 
+	public Map<String, Integer> getSummaryCounts() {
+		return new HashMap<String, Integer>(f_summaryCounts);
+	}
+
 	/**
 	 * Set by {@link #deriveSummaryCounts()}. Should be considered immutable
 	 * after that.

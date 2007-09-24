@@ -41,7 +41,7 @@ public final class FindingsFinderView2 extends ViewPart {
 
 	CascadingList.IColumn f_columnC = new CascadingList.IColumn() {
 
-		public void createContents(Composite panel, int index) {
+		public void createContents(Composite panel) {
 			Composite rhs = panel;
 			GridLayout gl = new GridLayout();
 			gl.numColumns = 2;
