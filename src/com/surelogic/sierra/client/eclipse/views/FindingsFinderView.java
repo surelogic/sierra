@@ -53,8 +53,9 @@ public final class FindingsFinderView extends ViewPart {
 				SWT.PUSH);
 		clearSelectionItem.setImage(SLImages.getImage(SLImages.IMG_QUERY));
 		final Link breadcrumbs = new Link(breadcrumbsPanel, SWT.NORMAL);
+		breadcrumbs.setText("");
 		breadcrumbs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
+				true));
 
 		final CascadingList finder = new CascadingList(findingsPage, SWT.NONE);
 		finder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -65,8 +66,6 @@ public final class FindingsFinderView extends ViewPart {
 				findingsPage, finder, clearSelectionItem, breadcrumbs,
 				savedSelections);
 		f_mediator.init();
-
-		// pages.showPage(noFindingsPage);
 	}
 
 	@Override

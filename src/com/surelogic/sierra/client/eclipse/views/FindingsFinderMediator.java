@@ -207,6 +207,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			b.append(lastName);
 		}
 		f_breadcrumbs.setText(b.toString());
+		f_breadcrumbs.getParent().layout();
 	}
 
 	private void constructFilterReport(final int column, final Filter filter) {
