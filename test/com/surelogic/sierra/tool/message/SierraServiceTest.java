@@ -75,7 +75,7 @@ public class SierraServiceTest {
 		merges.add(merge);
 		List<Match> matches = new ArrayList<Match>();
 		merge.setMatch(matches);
-		matches.add(new Match("package", "class", 34L, "ShortVariable"));
+		matches.add(new Match("package", "class", 34L, "SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
 		try {
 			MergeAuditTrailResponse mergeRes = service
 					.mergeAuditTrails(mergeReq);
@@ -84,7 +84,7 @@ public class SierraServiceTest {
 			String newTrail = mergeRes.getTrail().get(0);
 			assertNotNull(trail);
 			assertEquals(trail, newTrail);
-			matches.add(new Match("package2", "class2", 35L, "ShortVariable"));
+			matches.add(new Match("package2", "class2", 35L, "SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
 			mergeRes = service.mergeAuditTrails(mergeReq);
 			newTrail = mergeRes.getTrail().get(0);
 			assertEquals(trail, newTrail);
@@ -97,7 +97,7 @@ public class SierraServiceTest {
 			auditTrail.setFinding(trail);
 			List<Audit> audits = new ArrayList<Audit>();
 			auditTrail.setAudits(audits);
-			Audit audit = new Audit(new Date(), AuditEvent.COMMENT,
+			Audit audit = new Audit(null, AuditEvent.COMMENT,
 					"Some comment");
 			audits.add(audit);
 			service.commitAuditTrails(auditTrails);
@@ -107,8 +107,10 @@ public class SierraServiceTest {
 			request.setRevision(-1L);
 			AuditTrailResponse response = service.getAuditTrails(request);
 			AuditTrailUpdate update = response.getUpdate().get(0);
-			assertEquals(audit, update.getAudit().get(
-					update.getAudit().size() - 1));
+			assertEquals(audit.getEvent(), update.getAudit().get(
+					update.getAudit().size() - 1).getEvent());
+			assertEquals(audit.getValue(), update.getAudit().get(
+					update.getAudit().size() - 1).getValue());
 			assertEquals(2, update.getMatch().size());
 		} catch (ServerMismatchException e) {
 			fail();
