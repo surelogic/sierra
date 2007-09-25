@@ -184,7 +184,6 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					f_menu.setEnabled(true);
 				}
 			});
-
 		}
 	}
 

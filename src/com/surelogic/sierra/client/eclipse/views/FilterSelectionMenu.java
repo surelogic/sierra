@@ -45,12 +45,25 @@ public final class FilterSelectionMenu {
 		}
 	}
 
+	private boolean f_enabled = true;
+
 	public boolean isEnabled() {
-		return f_panel.isEnabled();
+		return f_enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
-		f_panel.setEnabled(enabled);
+		f_enabled = enabled;
+		setEnabledHelper(f_panel, enabled);
+	}
+
+	private void setEnabledHelper(Composite c, boolean enabled) {
+		for (Control control : c.getChildren()) {
+			if (control instanceof Composite) {
+				setEnabledHelper((Composite) control, enabled);
+			} else if (control instanceof Label) {
+				((Label) control).setEnabled(enabled);
+			}
+		}
 	}
 
 	public interface ISelectionMenuObserver {
