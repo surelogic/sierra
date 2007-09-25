@@ -66,8 +66,7 @@ public class FindingTypeFilterRecord extends
 
 	@Override
 	protected int readPk(ResultSet set, int idx) throws SQLException {
-		id.parentTableId = set.getLong(idx++);
-		id.findingTypeId = set.getLong(idx++);
+		// The primary key is the same as the natural key
 		return idx;
 	}
 
@@ -108,6 +107,30 @@ public class FindingTypeFilterRecord extends
 			this.findingTypeId = findingTypeId;
 		}
 
+	}
+
+	public Integer getDelta() {
+		return delta;
+	}
+
+	public void setDelta(Integer delta) {
+		this.delta = delta;
+	}
+
+	public Importance getImportance() {
+		return importance;
+	}
+
+	public void setImportance(Importance importance) {
+		this.importance = importance;
+	}
+
+	public Boolean getFiltered() {
+		return filtered;
+	}
+
+	public void setFiltered(Boolean filtered) {
+		this.filtered = filtered;
 	}
 
 }
