@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.tools.ant.util.facade.FacadeTaskHelper;
+
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
+import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
@@ -43,7 +46,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		listSettingCategories = conn
-				.prepareStatement("SELECT UID,NAME FROM CATEGORY");
+				.prepareStatement("SELECT UID,NAME FROM FINDING_CATEGORY");
 		deleteFindingTypeFilter = conn
 				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
 		insertFindingTypeFilter = conn
@@ -52,7 +55,7 @@ public class ServerSettingsManager extends SettingsManager {
 				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
 				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM "
-						+ "CATEGORY C INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.CATEGORY_ID = C.ID"
+						+ "FINDING_CATEGORY C INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.CATEGORY_ID = C.ID"
 						+ " INNER JOIN FINDING_TYPE FT ON FT.ID = F.FINDING_TYPE_ID "
 						+ " LEFT OUTER JOIN SETTING_FILTERS F ON F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID"
 						+ " WHERE C.ID = ? AND F.SETTINGS_ID = ?");
@@ -154,9 +157,30 @@ public class ServerSettingsManager extends SettingsManager {
 	 * 
 	 * @param filters
 	 * @param settings
+	 * @throws SQLException
 	 */
-	public void applyFilters(List<FindingTypeFilter> filters, String settings) {
-
+	public void applyFilters(List<FindingTypeFilter> filters, String settings)
+			throws SQLException {
+		SettingsRecord sRec = newSettingsRecord();
+		sRec.setName(settings);
+		if (sRec.select()) {
+			for (FindingTypeFilter filter : filters) {
+				FindingTypeRecord ftRec = ftFactory.newFindingTypeRecord();
+				ftRec.setUid(filter.getName());
+				if (ftRec.select()) {
+					FindingTypeFilterRecord rec = newFilterRecord();
+					rec.setId(new FindingTypeFilterRecord.PK(sRec.getId(),
+							ftRec.getId()));
+					
+				} else {
+					throw new IllegalArgumentException(filter.getName()
+							+ " is not a valid filter name.");
+				}
+			}
+		} else {
+			throw new IllegalArgumentException(settings
+					+ " is not a valid settings name");
+		}
 	}
 
 	/**
