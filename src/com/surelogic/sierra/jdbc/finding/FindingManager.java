@@ -133,6 +133,7 @@ public abstract class FindingManager {
 						+ "	            ELSE 'U'"
 						+ "        END,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
+						+ "        ?,"
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.NAME,"
@@ -218,7 +219,8 @@ public abstract class FindingManager {
 		if (p.select()) {
 			deleteOverview.setLong(1, p.getId());
 			deleteOverview.execute();
-			populateOverview.setLong(1, p.getId());
+			populateOverview.setString(1, projectName);
+			populateOverview.setLong(2, p.getId());
 			populateOverview.execute();
 		} else {
 			throw new IllegalArgumentException(projectName
