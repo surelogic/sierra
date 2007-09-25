@@ -9,7 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 
@@ -46,22 +49,38 @@ public class ServerSettingsManager extends SettingsManager {
 		return new ServerSettingsManager(conn);
 	}
 
-	public void add(String name) throws SQLException {
-		// XXX insert a new row into the revision table w/ the current vm time
-		// and use the generated key as your revision number
-		Long revision = new Long(0);
+	/**
+	 * Get the list of categories that settings can be defined for.
+	 * 
+	 * @param settings
+	 * @return
+	 */
+	public List<String> listSettingCategories(String settings) {
+		return null;
+	}
 
-		// XXX probably want to make this a copy of the "default" settings?
-		Settings settings = new Settings();
+	/**
+	 * Return the current finding type filters for the selected category. All
+	 * finding types in this category are guaranteed to have a filter.
+	 * 
+	 * @param category
+	 * @param settings
+	 * @return
+	 */
+	public List<FindingTypeFilter> listCategoryFilters(String category,
+			String settings) {
+		return null;
+	}
 
-		StringWriter writer = new StringWriter();
-		mw.writeSettings(settings, writer);
-		String str = writer.toString();
-		StringReader reader = new StringReader(str);
+	/**
+	 * Insert the specified filters into these settings. Any existing finding
+	 * type filters for the selected finding types will be deleted.
+	 * 
+	 * @param filters
+	 * @param settings
+	 */
+	public void applyFilters(List<FindingTypeFilter> filters, String settings) {
 
-		createNewSetting.setString(1, name);
-		createNewSetting.setLong(2, revision);
-		createNewSetting.setCharacterStream(2, reader, str.length());
 	}
 
 	/**
@@ -128,13 +147,13 @@ public class ServerSettingsManager extends SettingsManager {
 		return reply;
 	}
 
-	public void writeSettings(String name, Long revision, Settings settings)
+	public void writeSettings(String name, Settings settings)
 			throws SQLException {
 		StringWriter writer = new StringWriter();
 		mw.writeSettings(settings, writer);
 		String str = writer.toString();
 		StringReader reader = new StringReader(str);
-		updateSettings.setLong(1, revision);
+		updateSettings.setLong(1, Server.nextRevision(conn));
 		updateSettings.setCharacterStream(2, reader, str.length());
 		updateSettings.executeQuery();
 	}
