@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
+import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 
@@ -20,18 +22,27 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
-	private final PreparedStatement getSettingsByName;
+	private final PreparedStatement deleteFindingTypeFilter;
+	private final PreparedStatement insertFindingTypeFilter;
+	private final PreparedStatement getFiltersBySettingId;
+	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
 	private final PreparedStatement getAllSettings;
 
-	private final PreparedStatement createNewSetting;
+	private final BaseMapper settingsMapper;
 
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
-		getSettingsByName = conn
-				.prepareStatement("SELECT SETTINGS FROM SETTINGS WHERE NAME = ?");
+		deleteFindingTypeFilter = conn
+				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
+		insertFindingTypeFilter = conn
+				.prepareStatement("INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)");
+		getFiltersBySettingId = conn
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? FT.ID = F.FINDING_TYPE_ID");
+		getFiltersBySettingIdAndCategory = conn
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM CATEGORY C, CATEGORY_FINDING_TYPE_RELTN CFR, SETTING_FILTERS F, FINDING_TYPE FT WHERE C.NAME = ? AND CFR.CATEGORY_ID = C.ID AND AND F.SETTINGS_ID = ? AND F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID AND FT.ID = F.FINDING_TYPE_ID");
 		getLatestSettingsByProject = conn
 				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION > ?");
 		getSettingsByProject = conn
@@ -39,14 +50,24 @@ public class ServerSettingsManager extends SettingsManager {
 		updateSettings = conn
 				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
-
-		createNewSetting = conn
-				.prepareStatement("INSERT INTO SETTINGS (NAME, REVISION, SETTINGS) VALUES (?,?,?)");
+		settingsMapper = new BaseMapper(conn,
+				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
+				"SELECT ID,REVISION FROM SETTINGS WHERE NAME = ?",
+				"DELETE FROM SETTINGS WHERE ID = ?");
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new ServerSettingsManager(conn);
+	}
+
+	/**
+	 * Create a new group of settings.
+	 * 
+	 * @param name
+	 */
+	public void createSettings(String name) {
+
 	}
 
 	/**
@@ -98,14 +119,7 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	public Settings getSettingsByName(String name) throws SQLException {
-		getSettingsByName.setString(1, name);
-		ResultSet set = getSettingsByName.executeQuery();
-		if (set.next()) {
-			Clob clob = set.getClob(1);
-			if (clob != null) {
-				return mw.fetchSettings(clob.getCharacterStream());
-			}
-		}
+		
 		return null;
 	}
 
@@ -156,5 +170,27 @@ public class ServerSettingsManager extends SettingsManager {
 		updateSettings.setLong(1, Server.nextRevision(conn));
 		updateSettings.setCharacterStream(2, reader, str.length());
 		updateSettings.executeQuery();
+	}
+
+	private FindingTypeFilter readFilter(ResultSet set) throws SQLException {
+		FindingTypeFilter filter = new FindingTypeFilter();
+		filter.setName(set.getString(1));
+		boolean hasImportance;
+		boolean hasFiltered;
+		int delta = set.getInt(2);
+		int importance = set.getInt(3);
+		hasImportance = !set.wasNull();
+		if (hasImportance) {
+			filter.setImportance(Importance.values()[importance]);
+		}
+		String filtered = set.getString(4);
+		hasFiltered = !set.wasNull();
+		if (hasFiltered) {
+			filter.setFiltered("Y".equals(filtered));
+		}
+		if (!(hasImportance || hasFiltered)) {
+			filter.setDelta(delta);
+		}
+		return filter;
 	}
 }

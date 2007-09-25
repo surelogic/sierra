@@ -13,5 +13,5 @@ Export-Package: com.surelogic.sierra.jdbc,
  com.surelogic.sierra.jdbc.project,
  com.surelogic.sierra.jdbc.scan,
  com.surelogic.sierra.jdbc.tool,
- com.surelogic.sierra.jdbc.user,
+ com.surelogic.sierra.jdbc.server,
  com.surelogic.sierra.schema
