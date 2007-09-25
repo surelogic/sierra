@@ -35,6 +35,8 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		//TODO find a better place to define this system property
+		System.setProperty("derby.storage.pageCacheSize", "2500");
 		// startup the database and ensure its schema is up to date
 		Data.bootAndCheckSchema();
 		// load up persisted sierra servers
