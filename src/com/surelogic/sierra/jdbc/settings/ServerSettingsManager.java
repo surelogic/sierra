@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.settings;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.tools.ant.util.facade.FacadeTaskHelper;
 
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
@@ -20,16 +23,17 @@ import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Settings;
+import com.surelogic.sierra.tool.message.SettingsReply;
 
 public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
-	// private final PreparedStatement getFiltersBySettingId;
+	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement listSettingCategories;
-	// private final PreparedStatement getSettingsByProject;
-	// private final PreparedStatement getLatestSettingsByProject;
+	private final PreparedStatement getSettingsByProject;
+	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
 	private final PreparedStatement getAllSettings;
 
@@ -47,25 +51,18 @@ public class ServerSettingsManager extends SettingsManager {
 				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
 				"SELECT DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
 				"DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
-		// getFiltersBySettingId = conn
-		// .prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM
-		// SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID
-		// = F.FINDING_TYPE_ID");
+		getFiltersBySettingId = conn
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
 				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM "
 						+ "FINDING_CATEGORY C INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.CATEGORY_ID = C.ID"
 						+ " INNER JOIN FINDING_TYPE FT ON FT.ID = CFR.FINDING_TYPE_ID "
 						+ " LEFT OUTER JOIN SETTING_FILTERS F ON F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID"
 						+ " WHERE C.ID = ? AND F.SETTINGS_ID = ?");
-		// getLatestSettingsByProject = conn
-		// .prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P,
-		// PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND
-		// PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION >
-		// ?");
-		// getSettingsByProject = conn
-		// .prepareStatement("SELECT S.SETTINGS FROM PROJECT P,
-		// PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND
-		// PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID");
+		getLatestSettingsByProject = conn
+				.prepareStatement("SELECT S.ID, S.REVISION FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION > ?");
+		getSettingsByProject = conn
+				.prepareStatement("SELECT S.ID FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID");
 		updateSettings = conn
 				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
@@ -119,7 +116,8 @@ public class ServerSettingsManager extends SettingsManager {
 
 	/**
 	 * Return the current finding type filters for the selected category. All
-	 * finding types in this category are guaranteed to have a filter.
+	 * finding types in this category are guaranteed to have a filter. If none
+	 * exists, an filter is created with a delta of 0.
 	 * 
 	 * @param category
 	 *            a category uid
@@ -212,22 +210,27 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	public Settings getSettingsByName(String name) throws SQLException {
-
-		return null;
+		SettingsRecord rec = newSettingsRecord();
+		rec.setName(name);
+		if (rec.select()) {
+			getFiltersBySettingId.setLong(1, rec.getId());
+			return readSettings(getFiltersBySettingId.executeQuery());
+		} else {
+			return null;
+		}
 	}
 
-	// public Settings getSettingsByProject(String project) throws SQLException
-	// {
-	// getSettingsByProject.setString(1, project);
-	// ResultSet set = getSettingsByProject.executeQuery();
-	// if (set.next()) {
-	// Clob clob = set.getClob(1);
-	// if (clob != null) {
-	// return mw.fetchSettings(clob.getCharacterStream());
-	// }
-	// }
-	// return null;
-	// }
+	public Settings getSettingsByProject(String project) throws SQLException {
+		getSettingsByProject.setString(1, project);
+		ResultSet set = getSettingsByProject.executeQuery();
+		if (set.next()) {
+			Clob clob = set.getClob(1);
+			if (clob != null) {
+				return mw.fetchSettings(clob.getCharacterStream());
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Return the latest settings for a given project, but ONLY if there is a
@@ -238,31 +241,26 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	// public SettingsReply getLatestSettingsByProject(String project,
-	// Long revision) throws SQLException {
-	// SettingsReply reply = new SettingsReply();
-	// getLatestSettingsByProject.setString(1, project);
-	// getLatestSettingsByProject.setLong(2, revision);
-	// ResultSet set = getLatestSettingsByProject.executeQuery();
-	// if (set.next()) {
-	// reply.setRevision(set.getLong(1));
-	// Clob clob = set.getClob(2);
-	// if (clob != null) {
-	// reply.setSettings(mw.fetchSettings(clob.getCharacterStream()));
-	// }
-	//
-	// }
-	// return reply;
-	// }
-	public void writeSettings(String name, Settings settings)
+	public SettingsReply getLatestSettingsByProject(String project,
+			Long revision) throws SQLException {
+		SettingsReply reply = new SettingsReply();
+		getLatestSettingsByProject.setString(1, project);
+		getLatestSettingsByProject.setLong(2, revision);
+		ResultSet set = getLatestSettingsByProject.executeQuery();
+		if (set.next()) {
+			Long settings = set.getLong(1);
+			reply.setRevision(set.getLong(2));
+			getFiltersBySettingId.setLong(1, settings);
+			reply
+					.setSettings(readSettings(getFiltersBySettingId
+							.executeQuery()));
+		}
+		return reply;
+	}
+
+	public void writeSettings(Settings settings, String name)
 			throws SQLException {
-		StringWriter writer = new StringWriter();
-		mw.writeSettings(settings, writer);
-		String str = writer.toString();
-		StringReader reader = new StringReader(str);
-		updateSettings.setLong(1, Server.nextRevision(conn));
-		updateSettings.setCharacterStream(2, reader, str.length());
-		updateSettings.executeQuery();
+		applyFilters(settings.getFilter(), name);
 	}
 
 	private FindingTypeFilterRecord newFilterRecord() {
@@ -271,6 +269,15 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private SettingsRecord newSettingsRecord() {
 		return new SettingsRecord(settingsMapper);
+	}
+
+	private Settings readSettings(ResultSet set) throws SQLException {
+		Settings settings = new Settings();
+		List<FindingTypeFilter> filters = settings.getFilter();
+		while (set.next()) {
+			filters.add(readFilter(set));
+		}
+		return settings;
 	}
 
 	private FindingTypeFilter readFilter(ResultSet set) throws SQLException {
