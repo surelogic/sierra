@@ -81,10 +81,11 @@ public final class FilterSelectionReport implements IPorousObserver {
 				final int total = f_filter.getFindingCountTotal();
 				Label lt = new Label(group, SWT.RIGHT);
 				lt.setText(StringUtility.toCommaSepString(total) + " Findings");
-				for (Map.Entry<String, Integer> count : f_filter
-						.getSummaryCounts().entrySet()) {
-					newReport(group, count.getKey(), null, count.getValue(),
-							total);
+				for (String value : f_filter.getAllValues()) {
+					final Integer countO = f_filter.getSummaryCounts().get(
+							value);
+					final int count = countO == null ? 0 : countO;
+					newReport(group, value, null, count, total);
 				}
 				f_porousCount = new Label(group, SWT.RIGHT);
 

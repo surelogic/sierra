@@ -90,6 +90,10 @@ public abstract class Filter {
 	 */
 	protected final LinkedList<String> f_allValues = new LinkedList<String>();
 
+	public List<String> getAllValues() {
+		return new LinkedList<String>(f_allValues);
+	}
+
 	public interface CompletedAction {
 		/**
 		 * The initialization was successful.
