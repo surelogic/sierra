@@ -115,7 +115,8 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteLocalAudits = conn
 				.prepareStatement("DELETE FROM AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
-		deleteOverview = conn.prepareStatement("DELETE FROM FINDINGS_OVERVIEW");
+		deleteOverview = conn
+				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		populateOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
 						+ " SELECT F.PROJECT_ID,F.ID,F.IS_READ,"
@@ -142,7 +143,8 @@ public abstract class FindingManager {
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
+						+ " WHERE F.PROJECT_ID = ?");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -211,8 +213,17 @@ public abstract class FindingManager {
 	 */
 	public void generateOverview(String projectName, String uid)
 			throws SQLException {
-		deleteOverview.execute();
-		populateOverview.execute();
+		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
+		p.setName(projectName);
+		if (p.select()) {
+			deleteOverview.setLong(1, p.getId());
+			deleteOverview.execute();
+			populateOverview.setLong(1, p.getId());
+			populateOverview.execute();
+		} else {
+			throw new IllegalArgumentException(projectName
+					+ " is not a valid project name.");
+		}
 	}
 
 	/**
