@@ -29,8 +29,6 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
-	private final PreparedStatement deleteFindingTypeFilter;
-	private final PreparedStatement insertFindingTypeFilter;
 	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement listSettingCategories;
@@ -40,6 +38,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement getAllSettings;
 
 	private final BaseMapper settingsMapper;
+	private final BaseMapper findingTypeFilterMapper;
 
 	private final FindingTypeRecordFactory ftFactory;
 
@@ -47,16 +46,17 @@ public class ServerSettingsManager extends SettingsManager {
 		super(conn);
 		listSettingCategories = conn
 				.prepareStatement("SELECT UID,NAME FROM FINDING_CATEGORY");
-		deleteFindingTypeFilter = conn
-				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
-		insertFindingTypeFilter = conn
-				.prepareStatement("INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)");
+		findingTypeFilterMapper = new BaseMapper(
+				conn,
+				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
+				"SELECT DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
+				"DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
 		getFiltersBySettingId = conn
 				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
 				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM "
 						+ "FINDING_CATEGORY C INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.CATEGORY_ID = C.ID"
-						+ " INNER JOIN FINDING_TYPE FT ON FT.ID = F.FINDING_TYPE_ID "
+						+ " INNER JOIN FINDING_TYPE FT ON FT.ID = CFR.FINDING_TYPE_ID "
 						+ " LEFT OUTER JOIN SETTING_FILTERS F ON F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID"
 						+ " WHERE C.ID = ? AND F.SETTINGS_ID = ?");
 		getLatestSettingsByProject = conn
@@ -171,7 +171,18 @@ public class ServerSettingsManager extends SettingsManager {
 					FindingTypeFilterRecord rec = newFilterRecord();
 					rec.setId(new FindingTypeFilterRecord.PK(sRec.getId(),
 							ftRec.getId()));
-					
+					if (rec.select()) {
+						rec.delete();
+					}
+					if ((filter.getImportance() != null)
+							|| (filter.isFiltered() != null)
+							|| ((filter.getDelta() != null) && (filter
+									.getDelta() != 0))) {
+						rec.setImportance(filter.getImportance());
+						rec.setFiltered(filter.isFiltered());
+						rec.setDelta(filter.getDelta());
+						rec.insert();
+					}
 				} else {
 					throw new IllegalArgumentException(filter.getName()
 							+ " is not a valid filter name.");
@@ -252,7 +263,7 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	private FindingTypeFilterRecord newFilterRecord() {
-		return new FindingTypeFilterRecord(null);
+		return new FindingTypeFilterRecord(findingTypeFilterMapper);
 	}
 
 	private SettingsRecord newSettingsRecord() {
