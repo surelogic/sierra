@@ -1,7 +1,5 @@
 package com.surelogic.sierra.jdbc.settings;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.tools.ant.util.facade.FacadeTaskHelper;
 
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
@@ -34,7 +30,6 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement listSettingCategories;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
-	private final PreparedStatement updateSettings;
 	private final PreparedStatement getAllSettings;
 
 	private final BaseMapper settingsMapper;
@@ -63,8 +58,6 @@ public class ServerSettingsManager extends SettingsManager {
 				.prepareStatement("SELECT S.ID, S.REVISION FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION > ?");
 		getSettingsByProject = conn
 				.prepareStatement("SELECT S.ID FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID");
-		updateSettings = conn
-				.prepareStatement("UPDATE SETTINGS SET REVISION = ?, SETTINGS = ? WHERE NAME = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
 		settingsMapper = new BaseMapper(conn,
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",

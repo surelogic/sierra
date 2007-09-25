@@ -1,8 +1,5 @@
 package com.surelogic.sierra.jdbc.settings;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +42,7 @@ public class ClientSettingsManager extends SettingsManager {
 
 	public void writeSettings(String project, Long revision, Settings settings)
 			throws SQLException {
-
+		//TODO
 	}
 
 	public static ClientSettingsManager getInstance(Connection conn)
