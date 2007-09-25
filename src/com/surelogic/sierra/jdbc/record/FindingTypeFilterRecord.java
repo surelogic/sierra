@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.tool.message.Importance;
 import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+
 public class FindingTypeFilterRecord extends
 		AbstractRecord<FindingTypeFilterRecord.PK> {
 
@@ -32,8 +33,7 @@ public class FindingTypeFilterRecord extends
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return fillWithPk(st, idx);
 	}
 
 	@Override
@@ -45,24 +45,38 @@ public class FindingTypeFilterRecord extends
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		boolean hasImportance;
+		boolean hasFiltered;
+		int delta = set.getInt(idx++);
+		int importance = set.getInt(idx++);
+		hasImportance = !set.wasNull();
+		if (hasImportance) {
+			this.importance = Importance.values()[importance];
+		}
+		String filtered = set.getString(idx++);
+		hasFiltered = !set.wasNull();
+		if (hasFiltered) {
+			this.filtered = "Y".equals(filtered);
+		}
+		if (!(hasImportance || hasFiltered)) {
+			this.delta = delta;
+		}
+		return idx;
 	}
 
 	@Override
 	protected int readPk(ResultSet set, int idx) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		id.parentTableId = set.getLong(idx++);
+		id.findingTypeId = set.getLong(idx++);
+		return idx;
 	}
 
 	public PK getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
 	}
 
 	public void setId(PK id) {
-		// TODO Auto-generated method stub
-
+		this.id = id;
 	}
 
 	public static class PK {

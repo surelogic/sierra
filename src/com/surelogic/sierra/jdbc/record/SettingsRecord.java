@@ -32,4 +32,20 @@ public class SettingsRecord extends LongRecord {
 		return idx;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Long revision) {
+		this.revision = revision;
+	}
+
 }

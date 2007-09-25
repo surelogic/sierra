@@ -14,7 +14,6 @@ import java.util.Map;
 
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
-import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
@@ -28,11 +27,10 @@ public class FindingTypeManager {
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
 	private final PreparedStatement insertArtifactTypeFindingTypeRelation;
-	private final UpdateBaseMapper findingTypeMapper;
-	private final UpdateBaseMapper categoryMapper;
 	private final PreparedStatement insertCategoryFindingTypeRelation;
 	private final PreparedStatement checkUnassignedArtifactTypes;
 	private final PreparedStatement checkUncategorizedFindingTypes;
+	private final FindingTypeRecordFactory factory;
 
 	private FindingTypeManager(Connection conn) throws SQLException {
 		this.selectArtifactType = conn
@@ -43,28 +41,17 @@ public class FindingTypeManager {
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.insertArtifactTypeFindingTypeRelation = conn
 				.prepareStatement("INSERT INTO ARTIFACT_TYPE_FINDING_TYPE_RELTN (ARTIFACT_TYPE_ID,FINDING_TYPE_ID) VALUES (?,?)");
-		this.findingTypeMapper = new UpdateBaseMapper(
-				conn,
-				"INSERT INTO FINDING_TYPE (UID,NAME,SHORT_MESSAGE,INFO) VALUES (?,?,?,?)",
-				"SELECT ID,NAME,SHORT_MESSAGE,INFO FROM FINDING_TYPE WHERE UID = ?",
-				"DELETE FROM FINDING_TYPE WHERE ID = ?",
-				"UPDATE FINDING_TYPE SET NAME = ?, SHORT_MESSAGE = ?, INFO = ? WHERE ID = ?");
-		this.categoryMapper = new UpdateBaseMapper(
-				conn,
-				"INSERT INTO FINDING_CATEGORY (UID,NAME,DESCRIPTION) VALUES (?,?,?)",
-				"SELECT ID,NAME,DESCRIPTION FROM FINDING_CATEGORY WHERE UID = ?",
-				"DELETE FROM FINDING_CATEGORY WHERE ID = ?",
-				"UPDATE FINDING_CATEGORY SET NAME = ?, DESCRIPTION = ? WHERE ID = ?");
 		this.insertCategoryFindingTypeRelation = conn
 				.prepareStatement("INSERT INTO CATEGORY_FINDING_TYPE_RELTN (CATEGORY_ID,FINDING_TYPE_ID) VALUES (?,?)");
 		this.checkUnassignedArtifactTypes = conn
 				.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) EXCEPT (SELECT ARTIFACT_TYPE_ID FROM ARTIFACT_TYPE_FINDING_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
 		this.checkUncategorizedFindingTypes = conn
 				.prepareStatement("SELECT UID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) EXCEPT (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
+		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
 	public Long getFindingTypeId(String name) throws SQLException {
-		FindingTypeRecord ft = newFindingTypeRecord();
+		FindingTypeRecord ft = factory.newFindingTypeRecord();
 		ft.setName(name);
 		if (ft.select()) {
 			return ft.getId();
@@ -105,7 +92,7 @@ public class FindingTypeManager {
 					filters.size());
 			Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
 					filters.size() * 2);
-			FindingTypeRecord ft = newFindingTypeRecord();
+			FindingTypeRecord ft = factory.newFindingTypeRecord();
 			for (FindingTypeFilter filter : filters) {
 				ft.setName(filter.getName());
 				if (ft.select()) {
@@ -127,7 +114,7 @@ public class FindingTypeManager {
 	public void updateFindingTypes(List<FindingTypes> types)
 			throws SQLException {
 		for (FindingTypes type : types) {
-			FindingTypeRecord fRec = newFindingTypeRecord();
+			FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
 			// artifact
 			// types.
@@ -162,7 +149,7 @@ public class FindingTypeManager {
 					}
 				}
 			}
-			CategoryRecord cRec = newCategoryRecord();
+			CategoryRecord cRec = factory.newCategoryRecord();
 			// Load in all of the categories, and associate them with finding
 			// types
 			for (Category cat : type.getCategory()) {
@@ -224,14 +211,6 @@ public class FindingTypeManager {
 			}
 			throw new IllegalStateException(builder.toString());
 		}
-	}
-
-	private FindingTypeRecord newFindingTypeRecord() {
-		return new FindingTypeRecord(findingTypeMapper);
-	}
-
-	private CategoryRecord newCategoryRecord() {
-		return new CategoryRecord(categoryMapper);
 	}
 
 	public static FindingTypeManager getInstance(Connection conn)

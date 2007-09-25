@@ -12,7 +12,11 @@ import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.BaseMapper;
+import com.surelogic.sierra.jdbc.record.CategoryRecord;
+import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
+import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Settings;
@@ -26,6 +30,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement insertFindingTypeFilter;
 	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
+	private final PreparedStatement listSettingCategories;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement updateSettings;
@@ -33,16 +38,24 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private final BaseMapper settingsMapper;
 
+	private final FindingTypeRecordFactory ftFactory;
+
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
+		listSettingCategories = conn
+				.prepareStatement("SELECT UID,NAME FROM CATEGORY");
 		deleteFindingTypeFilter = conn
 				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
 		insertFindingTypeFilter = conn
 				.prepareStatement("INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)");
 		getFiltersBySettingId = conn
-				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? FT.ID = F.FINDING_TYPE_ID");
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
-				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM CATEGORY C, CATEGORY_FINDING_TYPE_RELTN CFR, SETTING_FILTERS F, FINDING_TYPE FT WHERE C.NAME = ? AND CFR.CATEGORY_ID = C.ID AND AND F.SETTINGS_ID = ? AND F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID AND FT.ID = F.FINDING_TYPE_ID");
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM "
+						+ "CATEGORY C INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.CATEGORY_ID = C.ID"
+						+ " INNER JOIN FINDING_TYPE FT ON FT.ID = F.FINDING_TYPE_ID "
+						+ " LEFT OUTER JOIN SETTING_FILTERS F ON F.FINDING_TYPE_ID = CFR.FINDING_TYPE_ID"
+						+ " WHERE C.ID = ? AND F.SETTINGS_ID = ?");
 		getLatestSettingsByProject = conn
 				.prepareStatement("SELECT S.REVISION,S.SETTINGS FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION > ?");
 		getSettingsByProject = conn
@@ -54,6 +67,7 @@ public class ServerSettingsManager extends SettingsManager {
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
 				"SELECT ID,REVISION FROM SETTINGS WHERE NAME = ?",
 				"DELETE FROM SETTINGS WHERE ID = ?");
+		ftFactory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
@@ -62,12 +76,22 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Create a new group of settings.
+	 * Create a new group of settings. If the settings already exist, this
+	 * method does nothing.
 	 * 
 	 * @param name
+	 * @throws SQLException
 	 */
-	public void createSettings(String name) {
-
+	public void createSettings(String name) throws SQLException {
+		SettingsRecord record = newSettingsRecord();
+		record.setName(name);
+		if (!record.select()) {
+			record.setRevision(Server.nextRevision(conn));
+			record.insert();
+		} else {
+			throw new IllegalArgumentException("Settings with the name " + name
+					+ " already exist.");
+		}
 	}
 
 	/**
@@ -75,9 +99,16 @@ public class ServerSettingsManager extends SettingsManager {
 	 * 
 	 * @param settings
 	 * @return
+	 * @throws SQLException
 	 */
-	public List<String> listSettingCategories(String settings) {
-		return null;
+	public List<CategoryView> listSettingCategories(String settings)
+			throws SQLException {
+		ResultSet set = listSettingCategories.executeQuery();
+		List<CategoryView> view = new ArrayList<CategoryView>();
+		while (set.next()) {
+			view.add(new CategoryView(set.getString(1), set.getString(2)));
+		}
+		return view;
 	}
 
 	/**
@@ -85,12 +116,36 @@ public class ServerSettingsManager extends SettingsManager {
 	 * finding types in this category are guaranteed to have a filter.
 	 * 
 	 * @param category
+	 *            a category uid
 	 * @param settings
+	 *            a settings name
 	 * @return
+	 * @throws SQLException
 	 */
 	public List<FindingTypeFilter> listCategoryFilters(String category,
-			String settings) {
-		return null;
+			String settings) throws SQLException {
+		CategoryRecord cRec = ftFactory.newCategoryRecord();
+		cRec.setUid(category);
+		if (cRec.select()) {
+			SettingsRecord sRec = newSettingsRecord();
+			sRec.setName(settings);
+			if (sRec.select()) {
+				List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>();
+				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(2, cRec.getId());
+				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
+				while (set.next()) {
+					filters.add(readFilter(set));
+				}
+				return filters;
+			} else {
+				throw new IllegalArgumentException(settings
+						+ " is not a valid settings name");
+			}
+		} else {
+			throw new IllegalArgumentException("The category with uid "
+					+ category + " is not a valid category.");
+		}
 	}
 
 	/**
@@ -119,7 +174,7 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	public Settings getSettingsByName(String name) throws SQLException {
-		
+
 		return null;
 	}
 
@@ -172,18 +227,27 @@ public class ServerSettingsManager extends SettingsManager {
 		updateSettings.executeQuery();
 	}
 
+	private FindingTypeFilterRecord newFilterRecord() {
+		return new FindingTypeFilterRecord(null);
+	}
+
+	private SettingsRecord newSettingsRecord() {
+		return new SettingsRecord(settingsMapper);
+	}
+
 	private FindingTypeFilter readFilter(ResultSet set) throws SQLException {
+		int idx = 1;
 		FindingTypeFilter filter = new FindingTypeFilter();
-		filter.setName(set.getString(1));
+		filter.setName(set.getString(idx++));
 		boolean hasImportance;
 		boolean hasFiltered;
-		int delta = set.getInt(2);
-		int importance = set.getInt(3);
+		int delta = set.getInt(idx++);
+		int importance = set.getInt(idx++);
 		hasImportance = !set.wasNull();
 		if (hasImportance) {
 			filter.setImportance(Importance.values()[importance]);
 		}
-		String filtered = set.getString(4);
+		String filtered = set.getString(idx++);
 		hasFiltered = !set.wasNull();
 		if (hasFiltered) {
 			filter.setFiltered("Y".equals(filtered));
