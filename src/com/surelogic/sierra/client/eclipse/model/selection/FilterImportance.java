@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.Executor;
 
 public final class FilterImportance extends Filter {
@@ -37,5 +36,4 @@ public final class FilterImportance extends Filter {
 				"Irrelevant" };
 		f_allValues.addAll(Arrays.asList(values));
 	}
-
 }

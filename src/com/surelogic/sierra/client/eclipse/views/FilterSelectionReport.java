@@ -85,7 +85,8 @@ public final class FilterSelectionReport implements IPorousObserver {
 					final Integer countO = f_filter.getSummaryCounts().get(
 							value);
 					final int count = countO == null ? 0 : countO;
-					newReport(group, value, null, count, total);
+					newReport(group, value, f_filter.getImageFor(value), count,
+							total);
 				}
 				f_porousCount = new Label(group, SWT.RIGHT);
 

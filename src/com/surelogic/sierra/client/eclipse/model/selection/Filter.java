@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
+import org.eclipse.swt.graphics.Image;
+
 import com.surelogic.sierra.client.eclipse.Data;
 
 /**
@@ -402,9 +404,12 @@ public abstract class Filter {
 			b.append("'");
 	}
 
+	public Image getImageFor(String value) {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return "[Filter: " + getColumnName() + "]";
 	}
-
 }
