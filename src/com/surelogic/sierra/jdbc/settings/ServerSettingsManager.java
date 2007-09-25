@@ -46,10 +46,12 @@ public class ServerSettingsManager extends SettingsManager {
 		return new ServerSettingsManager(conn);
 	}
 
-	public int add(String name) throws SQLException {
+	public void add(String name) throws SQLException {
 		// XXX insert a new row into the revision table w/ the current vm time
 		// and use the generated key as your revision number
 		Long revision = new Long(0);
+
+		// XXX probably want to make this a copy of the "default" settings?
 		Settings settings = new Settings();
 
 		StringWriter writer = new StringWriter();
@@ -60,7 +62,6 @@ public class ServerSettingsManager extends SettingsManager {
 		createNewSetting.setString(1, name);
 		createNewSetting.setLong(2, revision);
 		createNewSetting.setCharacterStream(2, reader, str.length());
-		return 0;
 	}
 
 	/**
