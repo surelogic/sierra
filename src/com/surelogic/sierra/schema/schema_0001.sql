@@ -48,16 +48,17 @@ CREATE TABLE FINDING_TOOL_COUNT (
   COUNT      INT    NOT NULL
 );
 
+-- An overview of all findings in the database
 CREATE TABLE FINDINGS_OVERVIEW (
   PROJECT_ID     BIGINT         NOT NULL CONSTRAINT OVERVIEW_PROJECT_FK REFERENCES PROJECT(ID),
   FINDING_ID     BIGINT         NOT NULL CONSTRAINT OVERVIEW_FINDING_FK REFERENCES FINDING(ID),
-  EXAMINED       CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_EXAMINED_CN CHECK (EXAMINED IN ('Y','N')),
-  LAST_CHANGED   TIMESTAMP,
+  EXAMINED       CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_EXAMINED_CN CHECK (EXAMINED IN ('Y','N')), -- Indicates whether someone has marked this finding as read
+  LAST_CHANGED   TIMESTAMP, -- The time the latest audit was applied to this finding
   IMPORTANCE     VARCHAR(10)    NOT NULL CONSTRAINT OVERVIEW_IMPORTANCE_CN CHECK (IMPORTANCE IN ('Irrelevant','Low','Medium','High','Critical')),
-  STATE          CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_STATE_CN CHECK (STATE IN ('N','F','U')),
+  STATE          CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_STATE_CN CHECK (STATE IN ('N','F','U')), -- (N)ew, (U)nchanged, (F)ixed
   LINE_OF_CODE   INT,
-  ARTIFACT_COUNT INT            NOT NULL,
-  COMMENT_COUNT  INT            NOT NULL,
+  ARTIFACT_COUNT INT, -- The number of artifacts in the latest scan for this finding
+  COMMENT_COUNT  INT            NOT NULL, -- The number of comments on this finding (Does not include changes to importance, or summary)
   PROJECT        VARCHAR(255)   NOT NULL,
   PACKAGE        VARCHAR(32672) NOT NULL,
   CLASS          VARCHAR(32672) NOT NULL,

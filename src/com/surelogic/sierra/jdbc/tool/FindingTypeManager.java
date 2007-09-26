@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.tool.message.ArtifactType;
@@ -22,6 +24,9 @@ import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.Settings;
 
 public class FindingTypeManager {
+
+	private static final Logger log = SLLogger
+			.getLoggerFor(FindingTypeManager.class);
 
 	private final PreparedStatement selectArtifactTypesByFindingType;
 	private final PreparedStatement selectArtifactType;
@@ -170,10 +175,12 @@ public class FindingTypeManager {
 								.getId());
 						insertCategoryFindingTypeRelation.execute();
 					} else {
-						throw new IllegalStateException(
-								"Could not locate a finding type for record with uid "
-										+ ftId + " while buildering category "
-										+ cat.getName() + ".");
+						String message = "Could not locate a finding type for record with uid "
+								+ ftId
+								+ " while building category "
+								+ cat.getName() + ".";
+						log.severe(message);
+						throw new IllegalStateException(message);
 					}
 				}
 			}
@@ -209,7 +216,9 @@ public class FindingTypeManager {
 					builder.append(s);
 				}
 			}
-			throw new IllegalStateException(builder.toString());
+			String message = builder.toString();
+			log.severe(message);
+			throw new IllegalStateException(message);
 		}
 	}
 
