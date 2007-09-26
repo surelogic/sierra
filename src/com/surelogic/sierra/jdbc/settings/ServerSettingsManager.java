@@ -93,12 +93,10 @@ public class ServerSettingsManager extends SettingsManager {
 	/**
 	 * Get the list of categories that settings can be defined for.
 	 * 
-	 * @param settings
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<CategoryView> listSettingCategories(String settings)
-			throws SQLException {
+	public List<CategoryView> listSettingCategories() throws SQLException {
 		ResultSet set = listSettingCategories.executeQuery();
 		List<CategoryView> view = new ArrayList<CategoryView>();
 		while (set.next()) {
@@ -128,8 +126,8 @@ public class ServerSettingsManager extends SettingsManager {
 			sRec.setName(settings);
 			if (sRec.select()) {
 				List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>();
-				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
-				getFiltersBySettingIdAndCategory.setLong(2, cRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(1, cRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(2, sRec.getId());
 				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
 				while (set.next()) {
 					filters.add(readFilter(set));
