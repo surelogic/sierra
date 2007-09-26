@@ -29,6 +29,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement listSettingCategories;
 	private final PreparedStatement getSettingsByProject;
+	private final PreparedStatement copySettings;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement getAllSettings;
 
@@ -58,6 +59,8 @@ public class ServerSettingsManager extends SettingsManager {
 				.prepareStatement("SELECT S.ID, S.REVISION FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID AND S.REVISION > ?");
 		getSettingsByProject = conn
 				.prepareStatement("SELECT S.ID FROM PROJECT P, PROJECT_SETTINGS_RELTN PSR, SETTINGS S WHERE P.NAME = ? AND PSR.PROJECT_ID = P.ID AND S.ID = PSR.SETTINGS_ID");
+		copySettings = conn
+				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?,FINDING_TYPE_ID,FILTER_TYPE,DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
 		settingsMapper = new BaseMapper(conn,
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
@@ -72,18 +75,45 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Create a new group of settings. If the settings already exist, this
-	 * method does nothing.
+	 * Create a new settings record, and optionally pre-populates it from
+	 * existing settings.
 	 * 
 	 * @param name
 	 * @throws SQLException
 	 */
 	public void createSettings(String name) throws SQLException {
+		createSettings(name, null);
+	}
+
+	/**
+	 * Create a new settings record, and optionally pre-populates it from
+	 * existing settings.
+	 * 
+	 * @param name
+	 * @param from
+	 *            the name of an existing settings record that we want to copy
+	 *            from. May be null.
+	 * @throws SQLException
+	 */
+	public void createSettings(String name, String from) throws SQLException {
 		SettingsRecord record = newSettingsRecord();
 		record.setName(name);
 		if (!record.select()) {
 			record.setRevision(Server.nextRevision(conn));
 			record.insert();
+			if (from != null) {
+				SettingsRecord old = newSettingsRecord();
+				old.setName(from);
+				if (old.select()) {
+					copySettings.setLong(1, record.getId());
+					copySettings.setLong(2, record.getId());
+					copySettings.execute();
+				} else {
+					throw new IllegalArgumentException(
+							"Settings with the name " + from
+									+ " already exist.");
+				}
+			}
 		} else {
 			throw new IllegalArgumentException("Settings with the name " + name
 					+ " already exist.");
@@ -126,8 +156,8 @@ public class ServerSettingsManager extends SettingsManager {
 			sRec.setName(settings);
 			if (sRec.select()) {
 				List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>();
-				getFiltersBySettingIdAndCategory.setLong(1, cRec.getId());
-				getFiltersBySettingIdAndCategory.setLong(2, sRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(2, cRec.getId());
 				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
 				while (set.next()) {
 					filters.add(readFilter(set));
