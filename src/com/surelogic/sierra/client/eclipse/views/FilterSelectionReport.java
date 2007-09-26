@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.RadioMenu;
+import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IPorousObserver;
@@ -34,7 +34,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 	private final int f_column;
 	private final Filter f_filter;
 
-	private RadioMenu f_menu = null;
+	private RadioArrowMenu f_menu = null;
 
 	private Label f_porousCount = null;
 
@@ -42,7 +42,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 		return f_menu != null;
 	}
 
-	public RadioMenu getMenu() {
+	public RadioArrowMenu getMenu() {
 		return f_menu;
 	}
 
@@ -99,7 +99,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 					Composite rhs = new Composite(panel, SWT.NONE);
 					rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false,
 							false));
-					f_menu = new RadioMenu(rhs);
+					f_menu = new RadioArrowMenu(rhs);
 					for (ISelectionFilterFactory f : f_filter.getSelection()
 							.getAvailableFilters()) {
 						f_menu.addChoice(f, null);

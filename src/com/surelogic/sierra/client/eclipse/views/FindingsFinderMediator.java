@@ -16,8 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.common.eclipse.RadioMenu;
-import com.surelogic.common.eclipse.RadioMenu.IRadioMenuObserver;
+import com.surelogic.common.eclipse.RadioArrowMenu;
+import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
@@ -108,7 +108,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_workingSelection.addObserver(this);
 		f_finder.addColumnAfter(new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
-				final RadioMenu menu = new RadioMenu(panel);
+				final RadioArrowMenu menu = new RadioArrowMenu(panel);
 				for (ISelectionFilterFactory f : f_workingSelection
 						.getAvailableFilters()) {
 					menu.addChoice(f, null);
@@ -118,7 +118,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		}, -1);
 	}
 
-	public void selected(Object choice, RadioMenu menu) {
+	public void selected(Object choice, RadioArrowMenu menu) {
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			if (f_workingSelection == null)
@@ -153,9 +153,9 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 
 		private final int f_column;
 		private final Filter f_filter;
-		private final RadioMenu f_menu;
+		private final RadioArrowMenu f_menu;
 
-		public DrawColumn(int column, Filter filter, RadioMenu menu) {
+		public DrawColumn(int column, Filter filter, RadioArrowMenu menu) {
 			f_column = column;
 			assert filter != null;
 			f_filter = filter;

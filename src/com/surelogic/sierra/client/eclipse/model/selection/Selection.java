@@ -28,10 +28,14 @@ public final class Selection {
 		/*
 		 * Add in all the filter factories.
 		 */
+		f_allFilters.add(FilterArtifactCount.FACTORY);
+		f_allFilters.add(FilterCommentCount.FACTORY);
+		f_allFilters.add(FilterExamined.FACTORY);
 		f_allFilters.add(FilterFindingType.FACTORY);
 		f_allFilters.add(FilterImportance.FACTORY);
 		f_allFilters.add(FilterPackage.FACTORY);
 		f_allFilters.add(FilterProject.FACTORY);
+		f_allFilters.add(FilterState.FACTORY);
 	}
 
 	private final SelectionManager f_manager;

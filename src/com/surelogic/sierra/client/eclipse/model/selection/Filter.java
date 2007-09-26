@@ -149,13 +149,14 @@ public abstract class Filter {
 						.toString());
 				final int columnCount = rs.getMetaData().getColumnCount();
 				while (rs.next()) {
-					final LinkedList<String> columnList = new LinkedList<String>();
+					final LinkedList<String> valueList = new LinkedList<String>();
 					for (int i = 1; i < columnCount; i++) {
-						final String column = rs.getString(i);
-						columnList.add(column);
+						final String dbValue = rs.getString(i);
+						final String value = valueMapper(dbValue);
+						valueList.add(value);
 					}
 					int count = rs.getInt(columnCount);
-					f_counts.put(columnList, count);
+					f_counts.put(valueList, count);
 				}
 			} finally {
 				st.close();
@@ -163,6 +164,19 @@ public abstract class Filter {
 		} finally {
 			c.close();
 		}
+	}
+
+	/**
+	 * Maps values returned from the database to values for the user interface.
+	 * This method simply returns the raw database value. Subclasses may
+	 * override as necessary.
+	 * 
+	 * @param dbValue
+	 *            the database string for the value.
+	 * @return the value for the user interface.
+	 */
+	protected String valueMapper(String dbValue) {
+		return dbValue;
 	}
 
 	private void deriveSummaryCounts() {
