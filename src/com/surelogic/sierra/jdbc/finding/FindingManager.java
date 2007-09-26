@@ -136,7 +136,7 @@ public abstract class FindingManager {
 						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'N'"
 						+ "	            ELSE 'U'"
 						+ "        END,"
-						+ "        FAC.COUNT,"
+						+ "        CASE WHEN FAC.COUNT IS NULL THEN 0 ELSE FAC.COUNT END,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
 						+ "        ?,"
 						+ "        LM.PACKAGE_NAME,"
@@ -147,8 +147,10 @@ public abstract class FindingManager {
 						+ "    FINDING F"
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
+						+ "    LEFT OUTER JOIN (SELECT AFR.FINDING_ID \"ID\",COUNT(AFR.ARTIFACT_ID) \"COUNT\" FROM ARTIFACT A, ARTIFACT_FINDING_RELTN AFR WHERE A.SCAN_ID = ? AND AFR.ARTIFACT_ID = A.ID GROUP BY AFR.FINDING_ID) AS FAC ON FAC.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
-						+ "    INNER JOIN FINDING_ARTIFACT_COUNT FAC ON FAC.FINDING = F.ID AND FAC.SCAN = ?"
+						// + " INNER JOIN FINDING_ARTIFACT_COUNT FAC ON
+						// FAC.FINDING = F.ID AND FAC.SCAN = ?"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
 						+ " WHERE F.PROJECT_ID = ?");
@@ -223,7 +225,8 @@ public abstract class FindingManager {
 		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
 		p.setName(projectName);
 		if (p.select()) {
-			ScanRecord scanRecord = ScanRecordFactory.getInstance(conn).newScan();
+			ScanRecord scanRecord = ScanRecordFactory.getInstance(conn)
+					.newScan();
 			scanRecord.setUid(scan);
 			if (scanRecord.select()) {
 				deleteOverview.setLong(1, p.getId());
