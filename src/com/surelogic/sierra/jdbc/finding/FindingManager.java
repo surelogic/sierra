@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -53,6 +54,7 @@ public abstract class FindingManager {
 	private final FindingRecordFactory fact;
 
 	private final PreparedStatement selectFinding;
+	private final PreparedStatement touchFinding;
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
 	private final PreparedStatement updateFindingSummary;
@@ -76,12 +78,14 @@ public abstract class FindingManager {
 		ftManager = FindingTypeManager.getInstance(conn);
 		selectFinding = conn
 				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
+		touchFinding = conn
+				.prepareStatement("UPDATE FINDING SET LAST_CHANGED = ? WHERE ID = ?");
 		markFindingAsRead = conn
-				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y' WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingImportance = conn
-				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ? WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingSummary = conn
-				.prepareStatement("UPDATE FINDING SET SUMMARY = ? WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET SUMMARY = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingUid = conn
 				.prepareStatement("UPDATE FINDING SET UID = ? WHERE ID = ?");
 		updateMatchRevision = conn
@@ -119,7 +123,7 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		populateOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
-						+ " SELECT F.PROJECT_ID,F.ID,F.IS_READ,"
+						+ " SELECT F.PROJECT_ID,F.ID,F.IS_READ,F.LAST_CHANGED,"
 						+ "        CASE"
 						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
 						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
@@ -163,7 +167,7 @@ public abstract class FindingManager {
 	 */
 	public void comment(Long findingId, String comment) throws SQLException {
 		checkIsRead(findingId);
-		comment(null, findingId, comment, null, null);
+		comment(null, findingId, comment, new Date(), null);
 	}
 
 	/**
@@ -177,7 +181,7 @@ public abstract class FindingManager {
 	public void setImportance(Long findingId, Importance importance)
 			throws SQLException {
 		checkIsRead(findingId);
-		setImportance(null, findingId, importance, null, null);
+		setImportance(null, findingId, importance, new Date(), null);
 	}
 
 	/**
@@ -189,7 +193,7 @@ public abstract class FindingManager {
 	 */
 	public void markAsRead(Long findingId) throws SQLException {
 		checkIsRead(findingId);
-		markAsRead(null, findingId, null, null);
+		markAsRead(null, findingId, new Date(), null);
 	}
 
 	/**
@@ -202,7 +206,7 @@ public abstract class FindingManager {
 	public void changeSummary(Long findingId, String summary)
 			throws SQLException {
 		checkIsRead(findingId);
-		changeSummary(null, findingId, summary, null, null);
+		changeSummary(null, findingId, summary, new Date(), null);
 	}
 
 	/**
@@ -270,15 +274,20 @@ public abstract class FindingManager {
 					// We don't have a match, so we need to produce an entirely
 					// new finding
 					MatchRecord m = art.m;
+					Importance importance = filter.calculateImportance(art.m
+							.getId().getFindingTypeId(), art.p, art.s);
 					FindingRecord f = factory.newFinding();
 					f.setProjectId(projectId);
+					f.setImportance(importance);
+					f.setSummary(art.message);
 					f.insert();
 					m.setFindingId(f.getId());
 					m.insert();
-					setImportance(null, f.getId(), filter.calculateImportance(
-							art.m.getId().getFindingTypeId(), art.p, art.s),
-							null, null);
-					changeSummary(null, f.getId(), art.message, null, null);
+					newAudit(null, f.getId(), importance.toString(),
+							AuditEvent.IMPORTANCE, scan.getTimestamp(), null)
+							.insert();
+					newAudit(null, f.getId(), art.message, AuditEvent.SUMMARY,
+							scan.getTimestamp(), null);
 					findingId = f.getId();
 				} else {
 					findingId = art.m.getFindingId();
@@ -535,6 +544,8 @@ public abstract class FindingManager {
 			Date time, Long revision) throws SQLException {
 		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
 				.insert();
+		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
+		touchFinding.execute();
 	}
 
 	private void setImportance(Long userId, Long findingId,
@@ -543,7 +554,8 @@ public abstract class FindingManager {
 		newAudit(userId, findingId, importance.toString(),
 				AuditEvent.IMPORTANCE, time, revision).insert();
 		updateFindingImportance.setInt(1, importance.ordinal());
-		updateFindingImportance.setLong(2, findingId);
+		updateFindingImportance.setTimestamp(2, new Timestamp(time.getTime()));
+		updateFindingImportance.setLong(3, findingId);
 		updateFindingImportance.execute();
 	}
 
@@ -551,7 +563,8 @@ public abstract class FindingManager {
 			Long revision) throws SQLException {
 		newAudit(userId, findingId, null, AuditEvent.READ, time, revision)
 				.insert();
-		markFindingAsRead.setLong(1, findingId);
+		markFindingAsRead.setTimestamp(1, new Timestamp(time.getTime()));
+		markFindingAsRead.setLong(2, findingId);
 		markFindingAsRead.execute();
 	}
 
@@ -560,7 +573,8 @@ public abstract class FindingManager {
 		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision)
 				.insert();
 		updateFindingSummary.setString(1, summary);
-		updateFindingSummary.setLong(2, findingId);
+		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
+		updateFindingSummary.setLong(3, findingId);
 		updateFindingSummary.execute();
 	}
 
