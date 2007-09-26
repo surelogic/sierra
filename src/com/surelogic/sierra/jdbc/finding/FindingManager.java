@@ -136,6 +136,7 @@ public abstract class FindingManager {
 						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'N'"
 						+ "	            ELSE 'U'"
 						+ "        END,"
+						+ "        FAC.COUNT,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
 						+ "        ?,"
 						+ "        LM.PACKAGE_NAME,"
@@ -147,6 +148,7 @@ public abstract class FindingManager {
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
+						+ "    INNER JOIN FINDING_ARTIFACT_COUNT FAC ON FAC.FINDING = F.ID AND FAC.SCAN = ?"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
 						+ " WHERE F.PROJECT_ID = ?");
@@ -213,19 +215,27 @@ public abstract class FindingManager {
 	 * Regenerate the findings overview for the given project.
 	 * 
 	 * @param projectName
-	 * @param uid
+	 * @param scan
 	 * @throws SQLException
 	 */
-	public void generateOverview(String projectName, String uid)
+	public void generateOverview(String projectName, String scan)
 			throws SQLException {
 		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
 		p.setName(projectName);
 		if (p.select()) {
-			deleteOverview.setLong(1, p.getId());
-			deleteOverview.execute();
-			populateOverview.setString(1, projectName);
-			populateOverview.setLong(2, p.getId());
-			populateOverview.execute();
+			ScanRecord scanRecord = ScanRecordFactory.getInstance(conn).newScan();
+			scanRecord.setUid(scan);
+			if (scanRecord.select()) {
+				deleteOverview.setLong(1, p.getId());
+				deleteOverview.execute();
+				populateOverview.setString(1, projectName);
+				populateOverview.setLong(2, scanRecord.getId());
+				populateOverview.setLong(3, p.getId());
+				populateOverview.execute();
+			} else {
+				throw new IllegalArgumentException("No scan with uid " + scan
+						+ " exists in the database");
+			}
 		} else {
 			throw new IllegalArgumentException(projectName
 					+ " is not a valid project name.");
