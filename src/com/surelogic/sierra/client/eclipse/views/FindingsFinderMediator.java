@@ -16,6 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.common.eclipse.RadioMenu;
+import com.surelogic.common.eclipse.RadioMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
@@ -25,10 +27,9 @@ import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFacto
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
-import com.surelogic.sierra.client.eclipse.views.FilterSelectionMenu.ISelectionMenuObserver;
 
 public final class FindingsFinderMediator implements IProjectsObserver,
-		ISelectionObserver, ISelectionMenuObserver {
+		ISelectionObserver, IRadioMenuObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -107,49 +108,54 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_workingSelection.addObserver(this);
 		f_finder.addColumnAfter(new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
-				FilterSelectionMenu menu = new FilterSelectionMenu(
-						f_workingSelection.getAvailableFilters(), panel);
+				final RadioMenu menu = new RadioMenu(panel);
+				for (ISelectionFilterFactory f : f_workingSelection
+						.getAvailableFilters()) {
+					menu.addChoice(f, null);
+				}
 				menu.addObserver(FindingsFinderMediator.this);
 			}
 		}, -1);
 	}
 
-	public void filterSelected(ISelectionFilterFactory filter,
-			FilterSelectionMenu menu) {
-		if (f_workingSelection == null)
-			throw new IllegalStateException(
-					"null working selection upon cascading list menu selection (bug)");
-		menu.setEnabled(false);
-		final int column = f_finder.getColumnIndexOf(menu.getPanel());
-		/*
-		 * Filters start being applied in column 1 of the cascading list. Thus,
-		 * we need to subtract one from the cascading list column to get the
-		 * column to use to "empty after" the list of filters applied to the
-		 * selection.
-		 */
-		f_workingSelection.emptyAfter(column - 1);
-		f_finder.addColumnAfter(new CascadingList.IColumn() {
-			public void createContents(Composite panel) {
-				final Display display = panel.getShell().getDisplay();
-				panel.setBackground(display
-						.getSystemColor(SWT.COLOR_LIST_SELECTION));
-				final Label waitLabel = new Label(panel, SWT.NONE);
-				waitLabel.setText("Please wait...");
-				waitLabel.setBackground(display
-						.getSystemColor(SWT.COLOR_LIST_SELECTION));
-			}
-		}, column);
-		final Filter newFilter = f_workingSelection.construct(filter);
-		newFilter.initAsync(new DrawColumn(column, newFilter, menu));
+	public void selected(Object choice, RadioMenu menu) {
+		if (choice instanceof ISelectionFilterFactory) {
+			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
+			if (f_workingSelection == null)
+				throw new IllegalStateException(
+						"null working selection upon cascading list menu selection (bug)");
+			menu.setEnabled(false);
+			final int column = f_finder.getColumnIndexOf(menu.getPanel());
+			/*
+			 * Filters start being applied in column 1 of the cascading list.
+			 * Thus, we need to subtract one from the cascading list column to
+			 * get the column to use to "empty after" the list of filters
+			 * applied to the selection.
+			 */
+			f_workingSelection.emptyAfter(column - 1);
+			f_finder.addColumnAfter(new CascadingList.IColumn() {
+				public void createContents(Composite panel) {
+					final Display display = panel.getShell().getDisplay();
+					panel.setBackground(display
+							.getSystemColor(SWT.COLOR_LIST_SELECTION));
+					final Label waitLabel = new Label(panel, SWT.NONE);
+					waitLabel.setText("Please wait...");
+					waitLabel.setBackground(display
+							.getSystemColor(SWT.COLOR_LIST_SELECTION));
+				}
+			}, column);
+			final Filter newFilter = f_workingSelection.construct(filter);
+			newFilter.initAsync(new DrawColumn(column, newFilter, menu));
+		}
 	}
 
 	class DrawColumn implements Filter.CompletedAction {
 
 		private final int f_column;
 		private final Filter f_filter;
-		private final FilterSelectionMenu f_menu;
+		private final RadioMenu f_menu;
 
-		public DrawColumn(int column, Filter filter, FilterSelectionMenu menu) {
+		public DrawColumn(int column, Filter filter, RadioMenu menu) {
 			f_column = column;
 			assert filter != null;
 			f_filter = filter;

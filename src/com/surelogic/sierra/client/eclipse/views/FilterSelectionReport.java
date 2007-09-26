@@ -1,7 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -24,9 +22,11 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 
 import com.surelogic.common.eclipse.CascadingList;
+import com.surelogic.common.eclipse.RadioMenu;
 import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IPorousObserver;
+import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 
 public final class FilterSelectionReport implements IPorousObserver {
 
@@ -34,7 +34,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 	private final int f_column;
 	private final Filter f_filter;
 
-	private FilterSelectionMenu f_menu = null;
+	private RadioMenu f_menu = null;
 
 	private Label f_porousCount = null;
 
@@ -42,7 +42,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 		return f_menu != null;
 	}
 
-	public FilterSelectionMenu getMenu() {
+	public RadioMenu getMenu() {
 		return f_menu;
 	}
 
@@ -99,8 +99,11 @@ public final class FilterSelectionReport implements IPorousObserver {
 					Composite rhs = new Composite(panel, SWT.NONE);
 					rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false,
 							false));
-					f_menu = new FilterSelectionMenu(f_filter.getSelection()
-							.getAvailableFilters(), rhs);
+					f_menu = new RadioMenu(rhs);
+					for (ISelectionFilterFactory f : f_filter.getSelection()
+							.getAvailableFilters()) {
+						f_menu.addChoice(f, null);
+					}
 					f_menu.addObserver(f_mediator);
 				}
 			}
