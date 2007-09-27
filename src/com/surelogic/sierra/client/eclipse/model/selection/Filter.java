@@ -151,8 +151,7 @@ public abstract class Filter {
 				while (rs.next()) {
 					final LinkedList<String> valueList = new LinkedList<String>();
 					for (int i = 1; i < columnCount; i++) {
-						final String dbValue = rs.getString(i);
-						final String value = db2ui(dbValue);
+						final String value = rs.getString(i);
 						valueList.add(value);
 					}
 					int count = rs.getInt(columnCount);
@@ -164,32 +163,6 @@ public abstract class Filter {
 		} finally {
 			c.close();
 		}
-	}
-
-	/**
-	 * Maps values returned from the database to values for the user interface.
-	 * This method simply returns passed raw database value. Subclasses may
-	 * override as necessary.
-	 * 
-	 * @param dbValue
-	 *            the database string for the value.
-	 * @return the value for the user interface.
-	 */
-	protected String db2ui(String dbValue) {
-		return dbValue;
-	}
-
-	/**
-	 * Maps values from the user interface to database values. This method
-	 * simply returns the passed user interface value. Subclasses may override
-	 * as necessary.
-	 * 
-	 * @param uiValue
-	 *            the database string for the value.
-	 * @return the value for the database.
-	 */
-	protected String ui2db(String uiValue) {
-		return uiValue;
 	}
 
 	private void deriveSummaryCounts() {
@@ -388,9 +361,13 @@ public abstract class Filter {
 	}
 
 	protected void addCountsWhereClauseTo(StringBuilder b) {
+		boolean stateFilterNotUsed = true;
 		boolean first = true;
 		Filter filter = this.f_previous;
 		while (filter != null) {
+			// TODO: fragile base class :-)
+			if (filter instanceof FilterState)
+				stateFilterNotUsed = false;
 			if (filter.hasWhereClausePart()) {
 				if (first) {
 					b.append("where ");
@@ -401,6 +378,19 @@ public abstract class Filter {
 				filter.addWhereClausePartTo(b);
 			}
 			filter = filter.f_previous;
+		}
+		if (stateFilterNotUsed && !(this instanceof FilterState)) {
+			/*
+			 * In this case we need to add to the where clause to filter out all
+			 * the findings that have been fixed.
+			 */
+			if (first) {
+				b.append("where ");
+				first = false;
+			} else {
+				b.append("and ");
+			}
+			FilterState.addWhereClauseToFilterOutFixed(b);
 		}
 	}
 
@@ -415,7 +405,7 @@ public abstract class Filter {
 			} else {
 				b.append(",");
 			}
-			addValueTo(b, ui2db(value));
+			addValueTo(b, value);
 		}
 		b.append(") ");
 	}

@@ -25,42 +25,24 @@ public final class FilterState extends Filter {
 		return FACTORY;
 	}
 
+	private static final String COLUMN_NAME = "STATE";
+
 	@Override
 	protected String getColumnName() {
-		return "STATE";
+		return COLUMN_NAME;
 	}
 
-	private static final String DB_FIXED = "F";
-	private static final String DB_NEW = "N";
-	private static final String DB_UNCHANGED = "U";
-
-	private static final String UI_FIXED = "Fixed";
-	private static final String UI_NEW = "New";
-	private static final String UI_UNCHANGED = "Unchanged";
-
-	@Override
-	protected String db2ui(String dbValue) {
-		if (DB_NEW.equals(dbValue))
-			return UI_NEW;
-		else if (DB_FIXED.equals(dbValue))
-			return UI_FIXED;
-		else
-			return UI_UNCHANGED;
-	}
-
-	@Override
-	protected String ui2db(String uiValue) {
-		if (UI_NEW.equals(uiValue))
-			return DB_NEW;
-		else if (UI_FIXED.equals(uiValue))
-			return DB_FIXED;
-		else
-			return DB_UNCHANGED;
-	}
+	private static final String FIXED = "F";
+	private static final String NEW = "N";
+	private static final String UNCHANGED = "U";
 
 	@Override
 	protected void deriveAllValues() {
-		String[] values = new String[] { UI_NEW, UI_UNCHANGED, UI_FIXED };
+		String[] values = new String[] { NEW, UNCHANGED, FIXED };
 		f_allValues.addAll(Arrays.asList(values));
+	}
+
+	protected static void addWhereClauseToFilterOutFixed(StringBuilder b) {
+		b.append(COLUMN_NAME + " != '" + FIXED + "' ");
 	}
 }
