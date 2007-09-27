@@ -152,7 +152,14 @@ public abstract class FindingManager {
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-						+ " WHERE F.PROJECT_ID = ?");
+						+ " WHERE"
+						+ "    F.ID IN ("
+						+ "       SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+						+ "          WHERE "
+						+ "          S.ID IN ((SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?) UNION (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?))"
+						+ "          AND A.SCAN_ID = S.ID"
+						+ "          AND AFR.ARTIFACT_ID = A.ID"
+						+ "       )");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -230,9 +237,11 @@ public abstract class FindingManager {
 			if (scanRecord.select()) {
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
-				populateOverview.setString(1, projectName);
-				populateOverview.setLong(2, scanRecord.getId());
-				populateOverview.setLong(3, p.getId());
+				int idx = 1;
+				populateOverview.setString(idx++, projectName);
+				populateOverview.setLong(idx++, scanRecord.getId());
+				populateOverview.setString(idx++, projectName);
+				populateOverview.setString(idx++, projectName);
 				populateOverview.execute();
 			} else {
 				throw new IllegalArgumentException("No scan with uid " + scan

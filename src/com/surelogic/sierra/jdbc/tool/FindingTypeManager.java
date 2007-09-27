@@ -28,6 +28,7 @@ public class FindingTypeManager {
 	private static final Logger log = SLLogger
 			.getLoggerFor(FindingTypeManager.class);
 
+	private final PreparedStatement checkForArtifactTypeRelation;
 	private final PreparedStatement selectArtifactTypesByFindingType;
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
@@ -38,6 +39,8 @@ public class FindingTypeManager {
 	private final FindingTypeRecordFactory factory;
 
 	private FindingTypeManager(Connection conn) throws SQLException {
+		this.checkForArtifactTypeRelation = conn
+				.prepareStatement("SELECT FT.UID FROM ARTIFACT_TYPE_FINDING_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.selectArtifactTypesByFindingType = conn
@@ -134,23 +137,35 @@ public class FindingTypeManager {
 					fRec.insert();
 				}
 				for (ArtifactType at : ft.getArtifact()) {
+					Collection<Long> typeIds;
 					if (at.getVersion() != null) {
-						insertArtifactTypeFindingTypeRelation.setLong(1,
-								getArtifactTypeId(at.getTool(),
-										at.getVersion(), at.getMnemonic()));
+						typeIds = getArtifactTypes(at.getTool(), at
+								.getMnemonic());
+					} else {
+						typeIds = Collections.singleton(getArtifactTypeId(at
+								.getTool(), at.getVersion(), at.getMnemonic()));
+					}
+					for (Long id : getArtifactTypes(at.getTool(), at
+							.getMnemonic())) {
+						checkForArtifactTypeRelation.setLong(1, id);
+						ResultSet set = checkForArtifactTypeRelation
+								.executeQuery();
+						if (set.next()) {
+							String message = "The artifact with mnemonic "
+									+ at.getMnemonic()
+									+ " in tool "
+									+ at.getTool()
+									+ " has already been assigned to finding type with uid "
+									+ set.getString(1)
+									+ " and cannot be assigned to the finding type with uid "
+									+ fRec.getUid() + ".";
+							log.severe(message);
+							throw new IllegalStateException(message);
+						}
+						insertArtifactTypeFindingTypeRelation.setLong(1, id);
 						insertArtifactTypeFindingTypeRelation.setLong(2, fRec
 								.getId());
 						insertArtifactTypeFindingTypeRelation.executeUpdate();
-					} else {
-						for (Long id : getArtifactTypes(at.getTool(), at
-								.getMnemonic())) {
-							insertArtifactTypeFindingTypeRelation
-									.setLong(1, id);
-							insertArtifactTypeFindingTypeRelation.setLong(2,
-									fRec.getId());
-							insertArtifactTypeFindingTypeRelation
-									.executeUpdate();
-						}
 					}
 				}
 			}
