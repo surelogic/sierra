@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
 	<findingType>
-		<id>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</id>
+		<id>SwingMethodsShouldBeInvokedInSwingThread</id>
 		<artifact tool="FindBugs"
 			mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD">
 		</artifact>
@@ -30,10 +30,10 @@
 
 
 		</info>
-		<name>Swing Methods Invoked In Swing Thread</name>
+		<name>Swing Methods Should Be Invoked In Swing Thread</name>
 	</findingType>
 	<findingType>
-		<id>IL_INFINITE_LOOP</id>
+		<id>CaughtInfiniteLoop</id>
 		<artifact tool="FindBugs" mnemonic="IL_INFINITE_LOOP">
 		</artifact>
 		<shortMessage>An apparent infinite loop</shortMessage>
@@ -43,10 +43,10 @@
 			(other than by perhaps throwing an exception).&lt;/p&gt;
 
 		</info>
-		<name>Infinite Loop</name>
+		<name>Caught Infinite Loop</name>
 	</findingType>
 	<findingType>
-		<id>IL_INFINITE_RECURSIVE_LOOP</id>
+		<id>CaughtInfiniteRecursiveLoop</id>
 		<artifact tool="FindBugs"
 			mnemonic="IL_INFINITE_RECURSIVE_LOOP">
 		</artifact>
@@ -58,10 +58,10 @@
 			result in a stack overflow.&lt;/p&gt;
 
 		</info>
-		<name>Infinite Recursive Loop</name>
+		<name>Caught Infinite Recursive Loop</name>
 	</findingType>
 	<findingType>
-		<id>IL_CONTAINER_ADDED_TO_ITSELF</id>
+		<id>ContainerAddedToItself</id>
 		<artifact tool="FindBugs"
 			mnemonic="IL_CONTAINER_ADDED_TO_ITSELF">
 		</artifact>
@@ -76,7 +76,7 @@
 		<name>Container Added To Itself</name>
 	</findingType>
 	<findingType>
-		<id>VO_VOLATILE_REFERENCE_TO_ARRAY</id>
+		<id>VolatileReferenceToArray</id>
 		<artifact tool="FindBugs"
 			mnemonic="VO_VOLATILE_REFERENCE_TO_ARRAY">
 		</artifact>
@@ -98,7 +98,7 @@
 		<name>Volatile Reference To Array</name>
 	</findingType>
 	<findingType>
-		<id>UI_INHERITANCE_UNSAFE_GETRESOURCE</id>
+		<id>UnsafeInheritanceOfGetResource</id>
 		<artifact tool="FindBugs"
 			mnemonic="UI_INHERITANCE_UNSAFE_GETRESOURCE">
 		</artifact>
@@ -113,10 +113,10 @@
 			extended by a class in another package.&lt;/p&gt;
 
 		</info>
-		<name>Inheritance Unsafe Getresource</name>
+		<name>Unsafe Inheritance getResource()</name>
 	</findingType>
 	<findingType>
-		<id>NP_SYNC_AND_NULL_CHECK_FIELD</id>
+		<id>SynchronizeAndNullCheckOnSameField</id>
 		<artifact tool="FindBugs"
 			mnemonic="NP_SYNC_AND_NULL_CHECK_FIELD">
 		</artifact>
@@ -132,10 +132,10 @@
 
 
 		</info>
-		<name>Sync And Null Check Field</name>
+		<name>Synchronize and Null Check on the Same Field</name>
 	</findingType>
 	<findingType>
-		<id>TESTING</id>
+		<id>GeneratedFromIncompleteDetectors</id>
 		<artifact tool="FindBugs" mnemonic="TESTING"></artifact>
 		<shortMessage>Testing</shortMessage>
 		<info>
@@ -144,10 +144,10 @@
 			incompletely implemented bug detectors.&lt;/p&gt;
 
 		</info>
-		<name>Testing</name>
+		<name>Generated From Incomplete Detectors</name>
 	</findingType>
 	<findingType>
-		<id>UNKNOWN</id>
+		<id>UnknownBugPattern</id>
 		<artifact tool="FindBugs" mnemonic="UNKNOWN"></artifact>
 		<shortMessage>Unknown bug pattern</shortMessage>
 		<info>
@@ -160,10 +160,10 @@
 			.&lt;/p&gt;
 
 		</info>
-		<name>Unknown</name>
+		<name>Unknown Bug Pattern</name>
 	</findingType>
 	<findingType>
-		<id>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</id>
+		<id>CreatesEmptyZipFileEntry</id>
 		<artifact tool="FindBugs"
 			mnemonic="AM_CREATES_EMPTY_ZIP_FILE_ENTRY">
 		</artifact>
@@ -182,7 +182,7 @@
 		<name>Creates Empty Zip File Entry</name>
 	</findingType>
 	<findingType>
-		<id>AM_CREATES_EMPTY_JAR_FILE_ENTRY</id>
+		<id>CreatesEmptyJarFileEntry</id>
 		<artifact tool="FindBugs"
 			mnemonic="AM_CREATES_EMPTY_JAR_FILE_ENTRY">
 		</artifact>
@@ -201,7 +201,7 @@
 		<name>Creates Empty Jar File Entry</name>
 	</findingType>
 	<findingType>
-		<id>IMSE_DONT_CATCH_IMSE</id>
+		<id>AvoidCatchingIllegalStateMonitorException</id>
 		<artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE">
 		</artifact>
 		<shortMessage>
@@ -214,10 +214,10 @@
 			or notify on an object you do not hold a lock on).&lt;/p&gt;
 
 		</info>
-		<name>Dont Catch Imse</name>
+		<name>Avoid Catching IllegalStateMonitorException</name>
 	</findingType>
 	<findingType>
-		<id>FL_MATH_USING_FLOAT_PRECISION</id>
+		<id>AvoidUsingFloatForMathOperations</id>
 		<artifact tool="FindBugs"
 			mnemonic="FL_MATH_USING_FLOAT_PRECISION">
 		</artifact>
@@ -232,26 +232,34 @@
 			using double math instead.&lt;/p&gt;
 
 		</info>
-		<name>Math Using Float Precision</name>
+		<name>Avoid Using Float For Math Operations</name>
 	</findingType>
 	<findingType>
-		<id>CN_IDIOM</id>
+		<id>CloneMethodMustImplementCloneable</id>
 		<artifact tool="FindBugs" mnemonic="CN_IDIOM"></artifact>
+		<artifact tool="PMD"
+			mnemonic="CloneMethodMustImplementCloneable">
+		</artifact>
 		<shortMessage>
 			Class implements Cloneable but does not define or use clone
 			method
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; Class implements Cloneable but does not define or
 			use the clone method.&lt;/p&gt;
 
+			The method clone() should only be implemented if the class
+			implements the Cloneable interface with the exception of a
+			final method that only throws CloneNotSupportedException.
+
 		</info>
-		<name>Idiom</name>
+		<name>Clone method must implement cloneable</name>
 	</findingType>
 	<findingType>
-		<id>CN_IDIOM_NO_SUPER_CALL</id>
+		<id>NoSuperCloneCall</id>
 		<artifact tool="FindBugs" mnemonic="CN_IDIOM_NO_SUPER_CALL">
+		</artifact>
+		<artifact tool="PMD" mnemonic="ProperCloneImplementation">
 		</artifact>
 		<shortMessage>
 			clone method does not call super.clone()
@@ -272,10 +280,10 @@
 			returns an object of the correct type.&lt;/p&gt;
 
 		</info>
-		<name>Idiom No Super Call</name>
+		<name>No Super Clone Call</name>
 	</findingType>
 	<findingType>
-		<id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
+		<id>UseOfFutureKeywordAsIdentifier</id>
 		<artifact tool="FindBugs"
 			mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER">
 		</artifact>
@@ -292,10 +300,10 @@
 
 
 		</info>
-		<name>Future Keyword Used As Identifier</name>
+		<name>Use Of Future Keyword As Identifier</name>
 	</findingType>
 	<findingType>
-		<id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
+		<id>UseOfFutureKeywordAsMemberIdentifier</id>
 		<artifact tool="FindBugs"
 			mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER">
 		</artifact>
@@ -312,10 +320,10 @@
 
 
 		</info>
-		<name>Future Keyword Used As Member Identifier</name>
+		<name>Use Of Future Keyword As Member Identifier</name>
 	</findingType>
 	<findingType>
-		<id>DE_MIGHT_DROP</id>
+		<id>MethodMightDropException</id>
 		<artifact tool="FindBugs" mnemonic="DE_MIGHT_DROP"></artifact>
 		<shortMessage>Method might drop exception</shortMessage>
 		<info>
@@ -325,10 +333,10 @@
 			way, or they should be thrown out of the method.&lt;/p&gt;
 
 		</info>
-		<name>Might Drop</name>
+		<name>Method might drop exception</name>
 	</findingType>
 	<findingType>
-		<id>DE_MIGHT_IGNORE</id>
+		<id>MethodMightIgnoreException</id>
 		<artifact tool="FindBugs" mnemonic="DE_MIGHT_IGNORE"></artifact>
 		<shortMessage>Method might ignore exception</shortMessage>
 		<info>
@@ -338,7 +346,7 @@
 			way, or they should be thrown out of the method.&lt;/p&gt;
 
 		</info>
-		<name>Might Ignore</name>
+		<name>Method Might Ignore Exception</name>
 	</findingType>
 	<findingType>
 		<id>DP_DO_INSIDE_DO_PRIVILEGED</id>
@@ -358,10 +366,10 @@
 			occur inside a doPrivileged block.&lt;/p&gt;
 
 		</info>
-		<name>Do Inside Do Privileged</name>
+		<name>Method Requires Security Permission Check</name>
 	</findingType>
 	<findingType>
-		<id>DP_DO_INSIDE_DO_PRIVILEDGED</id>
+		<id>MethodRequiresSecurityPermissionCheck</id>
 		<artifact tool="FindBugs"
 			mnemonic="DP_DO_INSIDE_DO_PRIVILEDGED">
 		</artifact>
@@ -378,7 +386,7 @@
 			occur inside a doPrivileged block.&lt;/p&gt;
 
 		</info>
-		<name>Do Inside Do Priviledged</name>
+		<name>Method Requires Security Permission Check</name>
 	</findingType>
 	<findingType>
 		<id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED</id>
@@ -398,10 +406,12 @@
 			occur inside a doPrivileged block.&lt;/p&gt;
 
 		</info>
-		<name>Create Classloader Inside Do Privileged</name>
+		<name>
+			Classloader Creation Requires Security Permission Check
+		</name>
 	</findingType>
 	<findingType>
-		<id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED</id>
+		<id>ClassloaderCreationRequiresSecurityPermissionCheck</id>
 		<artifact tool="FindBugs"
 			mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED">
 		</artifact>
@@ -418,10 +428,12 @@
 			occur inside a doPrivileged block.&lt;/p&gt;
 
 		</info>
-		<name>Create Classloader Inside Do Priviledged</name>
+		<name>
+			Classloader Creation Requires Security Permission Check
+		</name>
 	</findingType>
 	<findingType>
-		<id>JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS</id>
+		<id>FieldIsntFinalInImmutableClass</id>
 		<artifact tool="FindBugs"
 			mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS">
 		</artifact>
@@ -438,7 +450,7 @@
 		<name>Field Isnt Final In Immutable Class</name>
 	</findingType>
 	<findingType>
-		<id>DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED</id>
+		<id>ThreadPassedWhereRunnableExpected</id>
 		<artifact tool="FindBugs"
 			mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED">
 		</artifact>
@@ -456,7 +468,7 @@
 		<name>Thread Passed Where Runnable Expected</name>
 	</findingType>
 	<findingType>
-		<id>DMI_COLLECTION_OF_URLS</id>
+		<id>AvoidCollectionOfURLS</id>
 		<artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS">
 		</artifact>
 		<shortMessage>
@@ -473,10 +485,10 @@
 			&lt;code&gt;java.net.URI&lt;/code&gt; instead. &lt;/p&gt;
 
 		</info>
-		<name>Collection Of Urls</name>
+		<name>Avoid Collection Of Urls</name>
 	</findingType>
 	<findingType>
-		<id>DMI_BLOCKING_METHODS_ON_URL</id>
+		<id>BlockingMethodsOnURL</id>
 		<artifact tool="FindBugs"
 			mnemonic="DMI_BLOCKING_METHODS_ON_URL">
 		</artifact>
@@ -496,7 +508,7 @@
 		<name>Blocking Methods On Url</name>
 	</findingType>
 	<findingType>
-		<id>DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION</id>
+		<id>AnnotationIsNotVisibleToReflection</id>
 		<artifact tool="FindBugs"
 			mnemonic="DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION">
 		</artifact>
@@ -516,7 +528,7 @@
 		<name>Annotation Is Not Visible To Reflection</name>
 	</findingType>
 	<findingType>
-		<id>DM_EXIT</id>
+		<id>AvoidCallingSystemExit</id>
 		<artifact tool="FindBugs" mnemonic="DM_EXIT"></artifact>
 		<shortMessage>Method invokes System.exit(...)</shortMessage>
 		<info>
@@ -528,10 +540,10 @@
 			RuntimeException instead.&lt;/p&gt;
 
 		</info>
-		<name>Exit</name>
+		<name>Avoid Calling System Exit</name>
 	</findingType>
 	<findingType>
-		<id>DM_RUN_FINALIZERS_ON_EXIT</id>
+		<id>AvoidCallingSystemRunFinalizersOnExit</id>
 		<artifact tool="FindBugs"
 			mnemonic="DM_RUN_FINALIZERS_ON_EXIT">
 		</artifact>
@@ -546,10 +558,10 @@
 			-- Joshua Bloch&lt;/p&gt;
 
 		</info>
-		<name>Run Finalizers On Exit</name>
+		<name>Avoid Calling System Run Finalizers On Exit</name>
 	</findingType>
 	<findingType>
-		<id>DM_STRING_CTOR</id>
+		<id>InefficientStringConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_STRING_CTOR"></artifact>
 		<shortMessage>
 			Method invokes inefficient new String(String) constructor
@@ -565,10 +577,10 @@
 			&lt;code&gt;String&lt;/code&gt; directly.&lt;/p&gt;
 
 		</info>
-		<name>String Ctor</name>
+		<name>Inefficient String Constructor</name>
 	</findingType>
 	<findingType>
-		<id>DM_STRING_VOID_CTOR</id>
+		<id>InefficientStringVoidConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
 		</artifact>
 		<shortMessage>
@@ -588,10 +600,10 @@
 			string constant directly.&lt;/p&gt;
 
 		</info>
-		<name>String Void Ctor</name>
+		<name>Inefficient String Void Constructor</name>
 	</findingType>
 	<findingType>
-		<id>DM_STRING_TOSTRING</id>
+		<id>AvoidCallingtoStringOnString</id>
 		<artifact tool="FindBugs" mnemonic="DM_STRING_TOSTRING">
 		</artifact>
 		<shortMessage>
@@ -604,10 +616,10 @@
 			String.&lt;/p&gt;
 
 		</info>
-		<name>String Tostring</name>
+		<name>Avoid Calling toString On String</name>
 	</findingType>
 	<findingType>
-		<id>DM_GC</id>
+		<id>AvoidExplicitGarbageCollection</id>
 		<artifact tool="FindBugs" mnemonic="DM_GC"></artifact>
 		<shortMessage>
 			Explicit garbage collection; extremely dubious except in
@@ -626,10 +638,10 @@
 			crawl.&lt;/p&gt;
 
 		</info>
-		<name>Gc</name>
+		<name>Avoid Explicit Garbage Collection</name>
 	</findingType>
 	<findingType>
-		<id>DM_BOOLEAN_CTOR</id>
+		<id>InefficientBooleanConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_BOOLEAN_CTOR"></artifact>
 		<shortMessage>
 			Method invokes inefficient Boolean constructor; use
@@ -646,11 +658,12 @@
 			&lt;code&gt;Boolean&lt;/code&gt; objects instead.&lt;/p&gt;
 
 		</info>
-		<name>Boolean Ctor</name>
+		<name>Inefficient Boolean Constructor</name>
 	</findingType>
 	<findingType>
-		<id>DM_NUMBER_CTOR</id>
+		<id>InefficientNumberConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_NUMBER_CTOR"></artifact>
+		<artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
 		<shortMessage>
 			Method invokes inefficient Number constructor; use static
 			valueOf instead
@@ -676,11 +689,13 @@
 			&lt;code&gt;Character&lt;/code&gt;, and
 			&lt;code&gt;Byte&lt;/code&gt;. &lt;/p&gt;
 
+			In JDK 1.5, calling new Integer() causes memory allocation.
+			Integer.valueOf() is more memory friendly.
 		</info>
-		<name>Number Ctor</name>
+		<name>Inefficient Number Constructor</name>
 	</findingType>
 	<findingType>
-		<id>DM_FP_NUMBER_CTOR</id>
+		<id>InefficientFloatingPointNumberConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_FP_NUMBER_CTOR">
 		</artifact>
 		<shortMessage>
@@ -702,10 +717,10 @@
 			&lt;code&gt;Float&lt;/code&gt;. &lt;/p&gt;
 
 		</info>
-		<name>Fp Number Ctor</name>
+		<name>Inefficient Floating-Point Number Constructor</name>
 	</findingType>
 	<findingType>
-		<id>DM_STRING_EMPTY_EQUALS</id>
+		<id>UseStringLength</id>
 		<artifact tool="FindBugs" mnemonic="DM_STRING_EMPTY_EQUALS">
 		</artifact>
 		<shortMessage>
@@ -720,10 +735,10 @@
 			constants from the class file.&lt;/p&gt;
 
 		</info>
-		<name>String Empty Equals</name>
+		<name>Use String Length</name>
 	</findingType>
 	<findingType>
-		<id>DM_CONVERT_CASE</id>
+		<id>UseLocaleParameterizedVersion</id>
 		<artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"></artifact>
 		<shortMessage>
 			Consider using Locale parameterized version of invoked
@@ -742,10 +757,10 @@
 			&lt;p&gt;versions instead.&lt;/p&gt;
 
 		</info>
-		<name>Convert Case</name>
+		<name>Use Locale Parameterized Version</name>
 	</findingType>
 	<findingType>
-		<id>BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR</id>
+		<id>UnboxedAndCoercedForTernaryOperator</id>
 		<artifact tool="FindBugs"
 			mnemonic="BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR">
 		</artifact>
@@ -773,7 +788,7 @@
 		<name>Unboxed And Coerced For Ternary Operator</name>
 	</findingType>
 	<findingType>
-		<id>BX_BOXING_IMMEDIATELY_UNBOXED</id>
+		<id>BoxingImmediatelyUnboxed</id>
 		<artifact tool="FindBugs"
 			mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED">
 		</artifact>
@@ -791,7 +806,7 @@
 		<name>Boxing Immediately Unboxed</name>
 	</findingType>
 	<findingType>
-		<id>BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION</id>
+		<id>BoxingImmediatelyUnboxedToPerformCoercion</id>
 		<artifact tool="FindBugs"
 			mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION">
 		</artifact>
@@ -811,7 +826,7 @@
 		<name>Boxing Immediately Unboxed To Perform Coercion</name>
 	</findingType>
 	<findingType>
-		<id>DM_BOXED_PRIMITIVE_TOSTRING</id>
+		<id>BoxedPrimitiveToString</id>
 		<artifact tool="FindBugs"
 			mnemonic="DM_BOXED_PRIMITIVE_TOSTRING">
 		</artifact>
@@ -842,10 +857,10 @@
 			&lt;/table&gt;
 
 		</info>
-		<name>Boxed Primitive Tostring</name>
+		<name>Boxed Primitive toString</name>
 	</findingType>
 	<findingType>
-		<id>DM_NEW_FOR_GETCLASS</id>
+		<id>AvoidAllocatingObjectForObtainingClassObject</id>
 		<artifact tool="FindBugs" mnemonic="DM_NEW_FOR_GETCLASS">
 		</artifact>
 		<shortMessage>
@@ -859,10 +874,10 @@
 			class.&lt;/p&gt;
 
 		</info>
-		<name>New For Getclass</name>
+		<name>Avoid Allocating Object For Obtaining Class Object</name>
 	</findingType>
 	<findingType>
-		<id>DM_MONITOR_WAIT_ON_CONDITION</id>
+		<id>MonitorWaitOnCondition</id>
 		<artifact tool="FindBugs"
 			mnemonic="DM_MONITOR_WAIT_ON_CONDITION">
 		</artifact>
@@ -881,7 +896,7 @@
 		<name>Monitor Wait On Condition</name>
 	</findingType>
 	<findingType>
-		<id>RV_01_TO_INT</id>
+		<id>RandomValue01ToInt</id>
 		<artifact tool="FindBugs" mnemonic="RV_01_TO_INT"></artifact>
 		<shortMessage>
 			Random value from 0 to 1 is coerced to the integer 0
@@ -897,7 +912,7 @@
 		<name>01 To Int</name>
 	</findingType>
 	<findingType>
-		<id>DM_NEXTINT_VIA_NEXTDOUBLE</id>
+		<id>UseNextIntNotNextDoubleOfRandom</id>
 		<artifact tool="FindBugs"
 			mnemonic="DM_NEXTINT_VIA_NEXTDOUBLE">
 		</artifact>
@@ -912,7 +927,7 @@
 			using (int)(r.nextDouble() * n). &lt;/p&gt;
 
 		</info>
-		<name>Nextint Via Nextdouble</name>
+		<name>Use nextInt Not nextDouble Of Random</name>
 	</findingType>
 	<findingType>
 		<id>SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE</id>
@@ -958,7 +973,7 @@
 		</name>
 	</findingType>
 	<findingType>
-		<id>DM_USELESS_THREAD</id>
+		<id>UselessThread</id>
 		<artifact tool="FindBugs" mnemonic="DM_USELESS_THREAD">
 		</artifact>
 		<shortMessage>
@@ -975,7 +990,7 @@
 		<name>Useless Thread</name>
 	</findingType>
 	<findingType>
-		<id>DC_DOUBLECHECK</id>
+		<id>PossibleDoubleCheckOfField</id>
 		<artifact tool="FindBugs" mnemonic="DC_DOUBLECHECK"></artifact>
 		<shortMessage>Possible double check of field</shortMessage>
 		<info>
@@ -1023,9 +1038,11 @@
 		<name>Finalizer Only Nulls Fields</name>
 	</findingType>
 	<findingType>
-		<id>FI_PUBLIC_SHOULD_BE_PROTECTED</id>
+		<id>FinalizeShouldBeProtected</id>
 		<artifact tool="FindBugs"
 			mnemonic="FI_PUBLIC_SHOULD_BE_PROTECTED">
+		</artifact>
+		<artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
 		</artifact>
 		<shortMessage>
 			Finalizer should be protected, not public
@@ -1035,20 +1052,26 @@
 			&lt;p&gt; A class's &lt;code&gt;finalize()&lt;/code&gt;
 			method should have protected access, not public.&lt;/p&gt;
 
+			If you override finalize(), make it protected. If you make
+			it public, other classes may call it.
+
 		</info>
-		<name>Public Should Be Protected</name>
+		<name>Finalize Should Be Protected</name>
 	</findingType>
 	<findingType>
-		<id>FI_EMPTY</id>
+		<id>EmptyFinalizer</id>
 		<artifact tool="FindBugs" mnemonic="FI_EMPTY"></artifact>
+		<artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
 		<shortMessage>Empty finalizer should be deleted</shortMessage>
 		<info>
 
 			&lt;p&gt; Empty &lt;code&gt;finalize()&lt;/code&gt; methods
 			are useless, so they should be deleted.&lt;/p&gt;
 
+			If the finalize() method is empty, then it does not need to
+			exist.
 		</info>
-		<name>Empty</name>
+		<name>Empty Finalizer Block</name>
 	</findingType>
 	<findingType>
 		<id>FI_NULLIFY_SUPER</id>
@@ -1069,24 +1092,31 @@
 		<name>Nullify Super</name>
 	</findingType>
 	<findingType>
-		<id>FI_USELESS</id>
+		<id>FinalizeOnlyCallsSuperFinalize</id>
 		<artifact tool="FindBugs" mnemonic="FI_USELESS"></artifact>
+		<artifact tool="PMD"
+			mnemonic="FinalizeOnlyCallsSuperFinalize">
+		</artifact>
 		<shortMessage>
 			Finalizer does nothing but call superclass finalizer
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; The only thing this
 			&lt;code&gt;finalize()&lt;/code&gt; method does is call the
 			superclass's &lt;code&gt;finalize()&lt;/code&gt; method,
 			making it redundant.&amp;nbsp; Delete it.&lt;/p&gt;
 
+			If the finalize() is implemented, it should do something
+			besides just calling super.finalize().
 		</info>
-		<name>Useless</name>
+		<name>Finalize Only Calls Super Finalize</name>
 	</findingType>
 	<findingType>
-		<id>FI_MISSING_SUPER_CALL</id>
+		<id>FinalizeDoesNotCallSuperFinalize</id>
 		<artifact tool="FindBugs" mnemonic="FI_MISSING_SUPER_CALL">
+		</artifact>
+		<artifact tool="PMD"
+			mnemonic="FinalizeDoesNotCallSuperFinalize">
 		</artifact>
 		<shortMessage>
 			Finalizer does not call superclass finalizer
@@ -1100,13 +1130,16 @@
 			performed.&amp;nbsp; Add a call to
 			&lt;code&gt;super.finalize()&lt;/code&gt;.&lt;/p&gt;
 
+			If the finalize() is implemented, its last action should be
+			to call super.finalize.
 		</info>
-		<name>Missing Super Call</name>
+		<name>Finalize Does Not Call Super Finalize</name>
 	</findingType>
 	<findingType>
-		<id>FI_EXPLICIT_INVOCATION</id>
+		<id>AvoidCallingFinalizeExplicitly</id>
 		<artifact tool="FindBugs" mnemonic="FI_EXPLICIT_INVOCATION">
 		</artifact>
+		<artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
 		<shortMessage>Explicit invocation of finalizer</shortMessage>
 		<info>
 
@@ -1123,7 +1156,7 @@
 			getting finalized in a separate thread.
 
 		</info>
-		<name>Explicit Invocation</name>
+		<name>Avoid Calling Finalize Explicitly</name>
 	</findingType>
 	<findingType>
 		<id>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</id>
@@ -1332,7 +1365,7 @@
 		<name>Use Of Unhashable Class</name>
 	</findingType>
 	<findingType>
-		<id>HE_HASHCODE_USE_OBJECT_EQUALS</id>
+		<id>DefinesHashCodeUsesEquals</id>
 		<artifact tool="FindBugs"
 			mnemonic="HE_HASHCODE_USE_OBJECT_EQUALS">
 		</artifact>
@@ -1360,8 +1393,13 @@
 			assert false : &quot;hashCode not designed&quot;; return 42;
 			// any arbitrary constant will do }&lt;/pre&gt;&lt;/p&gt;
 
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
 		</info>
-		<name>Hashcode Use Object Equals</name>
+		<name>Defines Hash Code Uses Equals</name>
 	</findingType>
 	<findingType>
 		<id>EQ_COMPARETO_USE_OBJECT_EQUALS</id>
@@ -1397,25 +1435,29 @@
 		<name>Compareto Use Object Equals</name>
 	</findingType>
 	<findingType>
-		<id>HE_HASHCODE_NO_EQUALS</id>
+		<id>DefinesHashcodeNotEquals</id>
 		<artifact tool="FindBugs" mnemonic="HE_HASHCODE_NO_EQUALS">
 		</artifact>
 		<shortMessage>
 			Class defines hashCode() but not equals()
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; This class defines a
 			&lt;code&gt;hashCode()&lt;/code&gt; method but not an
 			&lt;code&gt;equals()&lt;/code&gt; method.&amp;nbsp;
 			Therefore, the class may violate the invariant that equal
 			objects must have equal hashcodes.&lt;/p&gt;
 
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
 		</info>
-		<name>Hashcode No Equals</name>
+		<name>Defines Hashcode Not Equals</name>
 	</findingType>
 	<findingType>
-		<id>HE_EQUALS_USE_HASHCODE</id>
+		<id>DefinesEqualsUsesHashcode</id>
 		<artifact tool="FindBugs" mnemonic="HE_EQUALS_USE_HASHCODE">
 		</artifact>
 		<shortMessage>
@@ -1440,11 +1482,16 @@
 			false : &quot;hashCode not designed&quot;; return 42; // any
 			arbitrary constant will do }&lt;/pre&gt;
 
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
 		</info>
-		<name>Equals Use Hashcode</name>
+		<name>Defines equals() Uses hashcode()</name>
 	</findingType>
 	<findingType>
-		<id>HE_INHERITS_EQUALS_USE_HASHCODE</id>
+		<id>InheritsEqualsUsesHashCode</id>
 		<artifact tool="FindBugs"
 			mnemonic="HE_INHERITS_EQUALS_USE_HASHCODE">
 		</artifact>
@@ -1468,11 +1515,17 @@
 			&lt;code&gt;hashCode()&lt;/code&gt; method to throw
 			&lt;code&gt;UnsupportedOperationException&lt;/code&gt;.&lt;/p&gt;
 
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
+
 		</info>
-		<name>Inherits Equals Use Hashcode</name>
+		<name>Inherits Equals Uses Hashcode</name>
 	</findingType>
 	<findingType>
-		<id>HE_EQUALS_NO_HASHCODE</id>
+		<id>OverridesEqualsNotHashcode</id>
 		<artifact tool="FindBugs" mnemonic="HE_EQUALS_NO_HASHCODE">
 		</artifact>
 		<shortMessage>
@@ -1486,8 +1539,13 @@
 			Therefore, the class may violate the invariant that equal
 			objects must have equal hashcodes.&lt;/p&gt;
 
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
 		</info>
-		<name>Equals No Hashcode</name>
+		<name>Overrides Equals Not Hashcode</name>
 	</findingType>
 	<findingType>
 		<id>EQ_ABSTRACT_SELF</id>
@@ -1573,7 +1631,7 @@
 		<name>Abstract Self</name>
 	</findingType>
 	<findingType>
-		<id>IS_FIELD_NOT_GUARDED</id>
+		<id>FieldNotGuarded</id>
 		<artifact tool="FindBugs" mnemonic="IS_FIELD_NOT_GUARDED">
 		</artifact>
 		<shortMessage>
@@ -1589,7 +1647,7 @@
 		<name>Field Not Guarded</name>
 	</findingType>
 	<findingType>
-		<id>IS2_INCONSISTENT_SYNC</id>
+		<id>InconsistentSynchronization2</id>
 		<artifact tool="FindBugs" mnemonic="IS2_INCONSISTENT_SYNC">
 		</artifact>
 		<shortMessage>Inconsistent synchronization</shortMessage>
@@ -1631,7 +1689,7 @@
 		<name>Inconsistent Sync</name>
 	</findingType>
 	<findingType>
-		<id>NN_NAKED_NOTIFY</id>
+		<id>NakedNotifyCall</id>
 		<artifact tool="FindBugs" mnemonic="NN_NAKED_NOTIFY"></artifact>
 		<shortMessage>Naked notify</shortMessage>
 		<info>
@@ -1654,7 +1712,7 @@
 		<name>Naked Notify</name>
 	</findingType>
 	<findingType>
-		<id>MS_EXPOSE_REP</id>
+		<id>PublicStaticMayExposeInternalRepresentation</id>
 		<artifact tool="FindBugs" mnemonic="MS_EXPOSE_REP"></artifact>
 		<shortMessage>
 			Public static method may expose internal representation by
@@ -1671,7 +1729,7 @@
 		<name>Expose Rep</name>
 	</findingType>
 	<findingType>
-		<id>EI_EXPOSE_REP</id>
+		<id>MayExposeInternalRepresentation</id>
 		<artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP"></artifact>
 		<shortMessage>
 			May expose internal representation by returning reference to
@@ -1692,7 +1750,7 @@
 		<name>Expose Rep</name>
 	</findingType>
 	<findingType>
-		<id>EI_EXPOSE_REP2</id>
+		<id>MayExposeInternalRepresentation2</id>
 		<artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP2"></artifact>
 		<shortMessage>
 			May expose internal representation by incorporating
@@ -1712,7 +1770,7 @@
 		<name>Expose REP2</name>
 	</findingType>
 	<findingType>
-		<id>EI_EXPOSE_STATIC_REP2</id>
+		<id>MayExposeInternalStaticStatic</id>
 		<artifact tool="FindBugs" mnemonic="EI_EXPOSE_STATIC_REP2">
 		</artifact>
 		<shortMessage>
@@ -1732,7 +1790,7 @@
 		<name>Expose Static REP2</name>
 	</findingType>
 	<findingType>
-		<id>RU_INVOKE_RUN</id>
+		<id>InvokesRun</id>
 		<artifact tool="FindBugs" mnemonic="RU_INVOKE_RUN"></artifact>
 		<shortMessage>
 			Invokes run on a thread (did you mean to start it instead?)
@@ -1752,7 +1810,7 @@
 		<name>Invoke Run</name>
 	</findingType>
 	<findingType>
-		<id>SP_SPIN_ON_FIELD</id>
+		<id>MethodSpinsOnField</id>
 		<artifact tool="FindBugs" mnemonic="SP_SPIN_ON_FIELD">
 		</artifact>
 		<shortMessage>Method spins on field</shortMessage>
@@ -1828,7 +1886,7 @@
 		<name>Non Short Circuit</name>
 	</findingType>
 	<findingType>
-		<id>TLW_TWO_LOCK_WAIT</id>
+		<id>WaitWithTwoLocks</id>
 		<artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_WAIT">
 		</artifact>
 		<shortMessage>Wait with two locks held</shortMessage>
@@ -1844,7 +1902,7 @@
 		<name>Two Lock Wait</name>
 	</findingType>
 	<findingType>
-		<id>TLW_TWO_LOCK_NOTIFY</id>
+		<id>TwoLocksOnNotify</id>
 		<artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY">
 		</artifact>
 		<shortMessage>Notify with two locks held</shortMessage>
@@ -1863,7 +1921,7 @@
 		<name>Two Lock Notify</name>
 	</findingType>
 	<findingType>
-		<id>UW_UNCOND_WAIT</id>
+		<id>UnconditionalWait</id>
 		<artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"></artifact>
 		<shortMessage>Unconditional wait</shortMessage>
 		<info>
@@ -1895,7 +1953,7 @@
 		<name>Uninit Read</name>
 	</findingType>
 	<findingType>
-		<id>UG_SYNC_SET_UNSYNC_GET</id>
+		<id>SynchronizedSetUnsynchronizedGet</id>
 		<artifact tool="FindBugs" mnemonic="UG_SYNC_SET_UNSYNC_GET">
 		</artifact>
 		<shortMessage>
@@ -1980,7 +2038,7 @@
 		<name>No Such Element</name>
 	</findingType>
 	<findingType>
-		<id>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</id>
+		<id>SynchronizationOnSharedConstant</id>
 		<artifact tool="FindBugs"
 			mnemonic="DL_SYNCHRONIZATION_ON_SHARED_CONSTANT">
 		</artifact>
@@ -2007,8 +2065,10 @@
 		<name>Synchronization On Shared Constant</name>
 	</findingType>
 	<findingType>
-		<id>ESync_EMPTY_SYNC</id>
+		<id>EmptySynchronizationBlock</id>
 		<artifact tool="FindBugs" mnemonic="ESync_EMPTY_SYNC">
+		</artifact>
+		<artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
 		</artifact>
 		<shortMessage>Empty synchronized block</shortMessage>
 		<info>
@@ -2024,7 +2084,7 @@
 		<name>Empty Sync</name>
 	</findingType>
 	<findingType>
-		<id>IS_INCONSISTENT_SYNC</id>
+		<id>InconsistentSynchronization</id>
 		<artifact tool="FindBugs" mnemonic="IS_INCONSISTENT_SYNC">
 		</artifact>
 		<shortMessage>Inconsistent synchronization</shortMessage>
@@ -2056,7 +2116,7 @@
 		<name>Inconsistent Sync</name>
 	</findingType>
 	<findingType>
-		<id>ML_SYNC_ON_UPDATED_FIELD</id>
+		<id>AvoidSynchronizationOnUpdatedField</id>
 		<artifact tool="FindBugs" mnemonic="ML_SYNC_ON_UPDATED_FIELD">
 		</artifact>
 		<shortMessage>
@@ -2073,7 +2133,7 @@
 		<name>Sync On Updated Field</name>
 	</findingType>
 	<findingType>
-		<id>MS_OOI_PKGPROTECT</id>
+		<id>FieldShouldBeOutOfInterfaceAndPackageProtected</id>
 		<artifact tool="FindBugs" mnemonic="MS_OOI_PKGPROTECT">
 		</artifact>
 		<shortMessage>
@@ -2093,7 +2153,7 @@
 		<name>Ooi Pkgprotect</name>
 	</findingType>
 	<findingType>
-		<id>MS_FINAL_PKGPROTECT</id>
+		<id>FieldShouldBeFinalAndPackageProtected</id>
 		<artifact tool="FindBugs" mnemonic="MS_FINAL_PKGPROTECT">
 		</artifact>
 		<shortMessage>
@@ -2110,7 +2170,7 @@
 		<name>Final Pkgprotect</name>
 	</findingType>
 	<findingType>
-		<id>MS_SHOULD_BE_FINAL</id>
+		<id>FieldShouldBeFinal</id>
 		<artifact tool="FindBugs" mnemonic="MS_SHOULD_BE_FINAL">
 		</artifact>
 		<shortMessage>Field isn't final but should be</shortMessage>
@@ -2125,7 +2185,7 @@
 		<name>Should Be Final</name>
 	</findingType>
 	<findingType>
-		<id>MS_PKGPROTECT</id>
+		<id>PackageProtectField</id>
 		<artifact tool="FindBugs" mnemonic="MS_PKGPROTECT"></artifact>
 		<shortMessage>Field should be package protected</shortMessage>
 		<info>
@@ -2135,10 +2195,10 @@
 			package protected to avoid this vulnerability.&lt;/p&gt;
 
 		</info>
-		<name>Pkgprotect</name>
+		<name>Package protect field</name>
 	</findingType>
 	<findingType>
-		<id>MS_MUTABLE_HASHTABLE</id>
+		<id>MutableHashtable</id>
 		<artifact tool="FindBugs" mnemonic="MS_MUTABLE_HASHTABLE">
 		</artifact>
 		<shortMessage>Field is a mutable Hashtable</shortMessage>
@@ -2153,7 +2213,7 @@
 		<name>Mutable Hashtable</name>
 	</findingType>
 	<findingType>
-		<id>MS_MUTABLE_ARRAY</id>
+		<id>MutableArray</id>
 		<artifact tool="FindBugs" mnemonic="MS_MUTABLE_ARRAY">
 		</artifact>
 		<shortMessage>Field is a mutable array</shortMessage>
@@ -2168,7 +2228,7 @@
 		<name>Mutable Array</name>
 	</findingType>
 	<findingType>
-		<id>MS_CANNOT_BE_FINAL</id>
+		<id>CannotBeFinal</id>
 		<artifact tool="FindBugs" mnemonic="MS_CANNOT_BE_FINAL">
 		</artifact>
 		<shortMessage>
@@ -2209,9 +2269,11 @@
 		<name>Ambiguous Invocation Of Inherited Or Outer Method</name>
 	</findingType>
 	<findingType>
-		<id>NM_CLASS_NAMING_CONVENTION</id>
+		<id>ClassNamingConventions</id>
 		<artifact tool="FindBugs"
 			mnemonic="NM_CLASS_NAMING_CONVENTION">
+		</artifact>
+		<artifact tool="PMD" mnemonic="ClassNamingConventions">
 		</artifact>
 		<shortMessage>
 			Class names should start with an upper case letter
@@ -2225,30 +2287,38 @@
 			abbreviation is much more widely used than the long form,
 			such as URL or HTML). &lt;/p&gt;
 
+			Class names should always begin with an upper case
+			character.
+
 		</info>
 		<name>Class Naming Convention</name>
 	</findingType>
 	<findingType>
-		<id>NM_METHOD_NAMING_CONVENTION</id>
+		<id>MethodNamingConventions</id>
 		<artifact tool="FindBugs"
 			mnemonic="NM_METHOD_NAMING_CONVENTION">
+		</artifact>
+		<artifact tool="PMD" mnemonic="MethodNamingConventions">
 		</artifact>
 		<shortMessage>
 			Method names should start with an lower case letter
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; Methods should be verbs, in mixed case with the
 			first letter lowercase, with the first letter of each
 			internal word capitalized. &lt;/p&gt;
 
+			Method names should always begin with a lower case
+			character, and should not contain underscores.
 		</info>
 		<name>Method Naming Convention</name>
 	</findingType>
 	<findingType>
-		<id>NM_FIELD_NAMING_CONVENTION</id>
+		<id>FieldNamingConventions</id>
 		<artifact tool="FindBugs"
 			mnemonic="NM_FIELD_NAMING_CONVENTION">
+		</artifact>
+		<artifact tool="PMD" mnemonic="VariableNamingConventions">
 		</artifact>
 		<shortMessage>
 			Field names should start with an lower case letter
@@ -2259,6 +2329,8 @@
 			mixed case with a lowercase first letter and the first
 			letters of subsequent words capitalized. &lt;/p&gt;
 
+			Final variables that should be fully capitalized and
+			non-final variables should not include underscores.
 		</info>
 		<name>Field Naming Convention</name>
 	</findingType>
@@ -2336,8 +2408,10 @@
 		<name>Method Constructor Confusion</name>
 	</findingType>
 	<findingType>
-		<id>NM_LCASE_HASHCODE</id>
+		<id>SuspiciousHashcodeMethodName</id>
 		<artifact tool="FindBugs" mnemonic="NM_LCASE_HASHCODE">
+		</artifact>
+		<artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
 		</artifact>
 		<shortMessage>
 			Class defines hashcode(); should it be hashCode()?
@@ -2350,8 +2424,11 @@
 			method in &lt;code&gt;java.lang.Object&lt;/code&gt;, which
 			is probably what was intended.&lt;/p&gt;
 
+			The method name and return type are suspiciously close to
+			hashCode(), which may mean you are intending to override the
+			hashCode() method.
 		</info>
-		<name>Lcase Hashcode</name>
+		<name>Suspicious Hashcode Method Name</name>
 	</findingType>
 	<findingType>
 		<id>NM_LCASE_TOSTRING</id>
@@ -2372,8 +2449,10 @@
 		<name>Lcase Tostring</name>
 	</findingType>
 	<findingType>
-		<id>NM_BAD_EQUAL</id>
+		<id>SuspiciousEqualsMethodName</id>
 		<artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"></artifact>
+		<artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
+		</artifact>
 		<shortMessage>
 			Class defines equal(); should it be equals()?
 		</shortMessage>
@@ -2386,8 +2465,11 @@
 			&lt;code&gt;java.lang.Object&lt;/code&gt;, which is probably
 			what was intended.&lt;/p&gt;
 
+			The method name and parameter number are suspiciously close
+			to equals(Object), which may mean you are intending to
+			override the equals(Object) method.
 		</info>
-		<name>Bad Equal</name>
+		<name>Suspicious Equals Method Name</name>
 	</findingType>
 	<findingType>
 		<id>NM_CLASS_NOT_EXCEPTION</id>
@@ -2659,7 +2741,7 @@
 		<name>Dead Store Due To Switch Fallthrough</name>
 	</findingType>
 	<findingType>
-		<id>WS_WRITEOBJECT_SYNC</id>
+		<id>IncorrectSynchronizationOfWriteObject</id>
 		<artifact tool="FindBugs" mnemonic="WS_WRITEOBJECT_SYNC">
 		</artifact>
 		<shortMessage>
@@ -2677,7 +2759,7 @@
 		<name>Writeobject Sync</name>
 	</findingType>
 	<findingType>
-		<id>RS_READOBJECT_SYNC</id>
+		<id>AvoidSynchronizationOfReadObject</id>
 		<artifact tool="FindBugs" mnemonic="RS_READOBJECT_SYNC">
 		</artifact>
 		<shortMessage>
@@ -2828,7 +2910,7 @@
 		<name>Bad Field Store</name>
 	</findingType>
 	<findingType>
-		<id>SC_START_IN_CTOR</id>
+		<id>AvoidThreadStartInConstructor</id>
 		<artifact tool="FindBugs" mnemonic="SC_START_IN_CTOR">
 		</artifact>
 		<shortMessage>Constructor invokes Thread.start()</shortMessage>
@@ -2859,15 +2941,17 @@
 		<name>Should Be Static</name>
 	</findingType>
 	<findingType>
-		<id>UUF_UNUSED_FIELD</id>
-		<artifact tool="FindBugs" mnemonic="UUF_UNUSED_FIELD">
-		</artifact>
+		<id>UnusedField</id>
+		<artifact tool="FindBugs" mnemonic="UUF_UNUSED_FIELD"></artifact>
+		<artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
 		<shortMessage>Unused field</shortMessage>
 		<info>
 
 			&lt;p&gt; This field is never used.&amp;nbsp; Consider
 			removing it from the class.&lt;/p&gt;
 
+			Detects when a private field is declared and/or assigned a
+			value, but not used.
 		</info>
 		<name>Unused Field</name>
 	</findingType>
@@ -3103,7 +3187,7 @@
 		<name>Inner Should Be Static Needs This</name>
 	</findingType>
 	<findingType>
-		<id>WA_NOT_IN_LOOP</id>
+		<id>WaitNotInLoop</id>
 		<artifact tool="FindBugs" mnemonic="WA_NOT_IN_LOOP"></artifact>
 		<shortMessage>Wait not in loop</shortMessage>
 		<info>
@@ -3118,7 +3202,7 @@
 		<name>Not In Loop</name>
 	</findingType>
 	<findingType>
-		<id>WA_AWAIT_NOT_IN_LOOP</id>
+		<id>AwaitNotInLoop</id>
 		<artifact tool="FindBugs" mnemonic="WA_AWAIT_NOT_IN_LOOP">
 		</artifact>
 		<shortMessage>Condition.await() not in loop</shortMessage>
@@ -3135,7 +3219,7 @@
 		<name>Await Not In Loop</name>
 	</findingType>
 	<findingType>
-		<id>NO_NOTIFY_NOT_NOTIFYALL</id>
+		<id>UseNotifyAllInsteadOfNotify</id>
 		<artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL">
 		</artifact>
 		<shortMessage>
@@ -3710,23 +3794,27 @@
 		<name>Redundant Comparison Two Null Values</name>
 	</findingType>
 	<findingType>
-		<id>RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE</id>
+		<id>RedundantComparisonOfNullAndNonnullValue</id>
 		<artifact tool="FindBugs"
 			mnemonic="RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE">
 		</artifact>
+		<artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
 		<shortMessage>
 			Redundant comparison of non-null value to null
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; This method contains a reference known to be
 			non-null with another reference known to be null.&lt;/p&gt;
 
+			The null check here is misplaced. if the variable is null
+			you'll get a NullPointerException. Either the check is
+			useless (the variable will never be &quot;null&quot;) or
+			it's incorrect.
 		</info>
 		<name>Redundant Comparison Of Null And Nonnull Value</name>
 	</findingType>
 	<findingType>
-		<id>UL_UNRELEASED_LOCK</id>
+		<id>UnreleasedLock</id>
 		<artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK">
 		</artifact>
 		<shortMessage>
@@ -3745,7 +3833,7 @@
 		<name>Unreleased Lock</name>
 	</findingType>
 	<findingType>
-		<id>UL_UNRELEASED_LOCK_EXCEPTION_PATH</id>
+		<id>UnreleasedLockOnExceptionPath</id>
 		<artifact tool="FindBugs"
 			mnemonic="UL_UNRELEASED_LOCK_EXCEPTION_PATH">
 		</artifact>
@@ -3762,7 +3850,7 @@
 			{ // do something } finally { l.unlock(); } &lt;/pre&gt;
 
 		</info>
-		<name>Unreleased Lock Exception Path</name>
+		<name>Unreleased Lock On An Exception Path</name>
 	</findingType>
 	<findingType>
 		<id>RC_REF_COMPARISON</id>
@@ -3856,8 +3944,9 @@
 		<name>Unrelated Class And Interface</name>
 	</findingType>
 	<findingType>
-		<id>EC_NULL_ARG</id>
+		<id>EqualComparisonToNullArgument</id>
 		<artifact tool="FindBugs" mnemonic="EC_NULL_ARG"></artifact>
+		<artifact tool="PMD" mnemonic="EqualsNull"></artifact>
 		<shortMessage>Call to equals() with null argument</shortMessage>
 		<info>
 
@@ -3866,11 +3955,14 @@
 			equals() method, this call should always return
 			&lt;code&gt;false&lt;/code&gt;.&lt;/p&gt;
 
+			Inexperienced programmers sometimes confuse comparison
+			concepts and use equals() to compare to null.
+
 		</info>
-		<name>Null Arg</name>
+		<name>Equal Comparison To Null Argument</name>
 	</findingType>
 	<findingType>
-		<id>MWN_MISMATCHED_WAIT</id>
+		<id>MismatchedWait</id>
 		<artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_WAIT">
 		</artifact>
 		<shortMessage>Mismatched wait()</shortMessage>
@@ -3886,7 +3978,7 @@
 		<name>Mismatched Wait</name>
 	</findingType>
 	<findingType>
-		<id>MWN_MISMATCHED_NOTIFY</id>
+		<id>MismatchedNotify</id>
 		<artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY">
 		</artifact>
 		<shortMessage>Mismatched notify()</shortMessage>
@@ -4283,7 +4375,7 @@
 			a logic error or typo.&lt;/p&gt;
 
 		</info>
-		<name>And</name>
+		<name>Incompatible Bit Masks And</name>
 	</findingType>
 	<findingType>
 		<id>BIT_AND_ZZ</id>
@@ -4298,7 +4390,7 @@
 			indicate a logic error or typo.&lt;/p&gt;
 
 		</info>
-		<name>And Zz</name>
+		<name>Incompatible Bit Masks And Zz</name>
 	</findingType>
 	<findingType>
 		<id>BIT_IOR</id>
@@ -4317,10 +4409,10 @@
 			(&quot;&amp;amp;&quot;).&lt;/p&gt;
 
 		</info>
-		<name>Ior</name>
+		<name>Incompatible Bit Masks Ior</name>
 	</findingType>
 	<findingType>
-		<id>LI_LAZY_INIT_INSTANCE</id>
+		<id>IncorrectLazyInitializationOfInstance</id>
 		<artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_INSTANCE">
 		</artifact>
 		<shortMessage>
@@ -4342,7 +4434,7 @@
 		<name>Lazy Init Instance</name>
 	</findingType>
 	<findingType>
-		<id>LI_LAZY_INIT_STATIC</id>
+		<id>IncorrectLazyInitializationOfStatic</id>
 		<artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_STATIC">
 		</artifact>
 		<shortMessage>
@@ -4361,10 +4453,10 @@
 			Memory Model web site&lt;/a&gt;. &lt;/p&gt;
 
 		</info>
-		<name>Lazy Init Static</name>
+		<name>Incorrect lazy initialization of static field</name>
 	</findingType>
 	<findingType>
-		<id>JLM_JSR166_LOCK_MONITORENTER</id>
+		<id>AvoidCallingSynchronizedOnLock</id>
 		<artifact tool="FindBugs"
 			mnemonic="JLM_JSR166_LOCK_MONITORENTER">
 		</artifact>
@@ -4467,9 +4559,12 @@
 		<name>Open Database Resource Exception Path</name>
 	</findingType>
 	<findingType>
-		<id>SBSC_USE_STRINGBUFFER_CONCATENATION</id>
+		<id>UseStringBufferForStringAppends</id>
 		<artifact tool="FindBugs"
 			mnemonic="SBSC_USE_STRINGBUFFER_CONCATENATION">
+		</artifact>
+		<artifact tool="PMD"
+			mnemonic="UseStringBufferForStringAppends">
 		</artifact>
 		<shortMessage>
 			Method concatenates strings using + in a loop
@@ -4496,8 +4591,11 @@
 			buf.append(field[i]); } String s = buf.toString();
 			&lt;/pre&gt;
 
+			Avoid using += for appending strings. Use StringBuffer
+			instead.
+
 		</info>
-		<name>Use Stringbuffer Concatenation</name>
+		<name>Use StringBuffer For String Appends</name>
 	</findingType>
 	<findingType>
 		<id>ITA_INEFFICIENT_TO_ARRAY</id>
@@ -5780,7 +5878,7 @@
 		<name>Calling Next From Hasnext</name>
 	</findingType>
 	<findingType>
-		<id>SWL_SLEEP_WITH_LOCK_HELD</id>
+		<id>AvoidCallingSleepWithLockHeld</id>
 		<artifact tool="FindBugs" mnemonic="SWL_SLEEP_WITH_LOCK_HELD">
 		</artifact>
 		<shortMessage>
@@ -5987,7 +6085,7 @@
 		<name>Unrelated Types</name>
 	</findingType>
 	<findingType>
-		<id>STCAL_STATIC_CALENDAR_INSTANCE</id>
+		<id>AvoidStaticCalendar</id>
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_STATIC_CALENDAR_INSTANCE">
 		</artifact>
@@ -6016,7 +6114,7 @@
 		<name>Static Calendar Instance</name>
 	</findingType>
 	<findingType>
-		<id>STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE</id>
+		<id>CallToStaticCalendar</id>
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE">
 		</artifact>
@@ -6038,7 +6136,7 @@
 		<name>Invoke On Static Calendar Instance</name>
 	</findingType>
 	<findingType>
-		<id>STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE</id>
+		<id>AvoidStaticDateformat</id>
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE">
 		</artifact>
@@ -6062,7 +6160,7 @@
 		<name>Static Simple Data Format Instance</name>
 	</findingType>
 	<findingType>
-		<id>STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE</id>
+		<id>CallToStaticDateFormat</id>
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE">
 		</artifact>
@@ -6085,25 +6183,19 @@
 	<category>
 		<id>Correctness</id>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
-		<findingType>IL_INFINITE_LOOP</findingType>
-		<findingType>IL_INFINITE_RECURSIVE_LOOP</findingType>
-		<findingType>IL_CONTAINER_ADDED_TO_ITSELF</findingType>
-		<findingType>TESTING</findingType>
-		<findingType>UNKNOWN</findingType>
-		<findingType>FL_MATH_USING_FLOAT_PRECISION</findingType>
-		<findingType>
-			JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS
-		</findingType>
-		<findingType>
-			DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION
-		</findingType>
-		<findingType>
-			BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR
-		</findingType>
+		<findingType>CaughtInfiniteLoop</findingType>
+		<findingType>CaughtInfiniteRecursiveLoop</findingType>
+		<findingType>ContainerAddedToItself</findingType>
+		<findingType>GeneratedFromIncompleteDetectors</findingType>
+		<findingType>UnknownBugPattern</findingType>
+		<findingType>AvoidUsingFloatForMathOperations</findingType>
+		<findingType>FieldIsntFinalInImmutableClass</findingType>
+		<findingType>AnnotationIsNotVisibleToReflection</findingType>
+		<findingType>UnboxedAndCoercedForTernaryOperator</findingType>
 		<findingType>NP_ARGUMENT_MIGHT_BE_NULL</findingType>
 		<findingType>RV_ABSOLUTE_VALUE_OF_RANDOM_INT</findingType>
 		<findingType>RV_ABSOLUTE_VALUE_OF_HASHCODE</findingType>
-		<findingType>RV_01_TO_INT</findingType>
+		<findingType>RandomValue01ToInt</findingType>
 		<findingType>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</findingType>
 		<findingType>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</findingType>
 		<findingType>HE_USE_OF_UNHASHABLE_CLASS</findingType>
@@ -6111,9 +6203,9 @@
 		<findingType>UR_UNINIT_READ</findingType>
 		<findingType>NM_VERY_CONFUSING</findingType>
 		<findingType>NM_METHOD_CONSTRUCTOR_CONFUSION</findingType>
-		<findingType>NM_LCASE_HASHCODE</findingType>
+		<findingType>SuspiciousHashcodeMethodName</findingType>
 		<findingType>NM_LCASE_TOSTRING</findingType>
-		<findingType>NM_BAD_EQUAL</findingType>
+		<findingType>SuspiciousEqualsMethodName</findingType>
 		<findingType>
 			SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH
 		</findingType>
@@ -6139,7 +6231,7 @@
 		<findingType>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</findingType>
 		<findingType>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</findingType>
 		<findingType>
-			RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE
+			RedundantComparisonOfNullAndNonnullValue
 		</findingType>
 		<findingType>RC_REF_COMPARISON</findingType>
 		<findingType>
@@ -6147,7 +6239,7 @@
 		</findingType>
 		<findingType>EC_UNRELATED_TYPES</findingType>
 		<findingType>EC_ARRAY_AND_NONARRAY</findingType>
-		<findingType>EC_NULL_ARG</findingType>
+		<findingType>EqualComparisonToNullArgument</findingType>
 		<findingType>EC_UNRELATED_INTERFACES</findingType>
 		<findingType>EC_UNRELATED_CLASS_AND_INTERFACE</findingType>
 		<findingType>INT_BAD_COMPARISON_WITH_SIGNED_BYTE</findingType>
@@ -6227,32 +6319,32 @@
 	<category>
 		<id>Bad practice</id>
 		<findingType>
-			SW_SWING_METHODS_INVOKED_IN_SWING_THREAD
+			SwingMethodsShouldBeInvokedInSwingThread
 		</findingType>
 		<findingType>FI_FINALIZER_ONLY_NULLS_FIELDS</findingType>
 		<findingType>FI_FINALIZER_NULLS_FIELDS</findingType>
-		<findingType>UI_INHERITANCE_UNSAFE_GETRESOURCE</findingType>
-		<findingType>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</findingType>
-		<findingType>AM_CREATES_EMPTY_JAR_FILE_ENTRY</findingType>
-		<findingType>DP_DO_INSIDE_DO_PRIVILEGED</findingType>
-		<findingType>DP_DO_INSIDE_DO_PRIVILEDGED</findingType>
+		<findingType>UnsafeInheritanceOfGetResource</findingType>
+		<findingType>CreatesEmptyZipFileEntry</findingType>
+		<findingType>CreatesEmptyJarFileEntry</findingType>
 		<findingType>
 			DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED
 		</findingType>
+		<findingType>DP_DO_INSIDE_DO_PRIVILEGED</findingType>
+		<findingType>MethodRequiresSecurityPermissionCheck</findingType>
 		<findingType>
-			DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED
+			ClassloaderCreationRequiresSecurityPermissionCheck
 		</findingType>
-		<findingType>IMSE_DONT_CATCH_IMSE</findingType>
-		<findingType>CN_IDIOM</findingType>
-		<findingType>CN_IDIOM_NO_SUPER_CALL</findingType>
-		<findingType>DE_MIGHT_DROP</findingType>
-		<findingType>DE_MIGHT_IGNORE</findingType>
-		<findingType>DM_EXIT</findingType>
-		<findingType>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</findingType>
 		<findingType>
-			NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER
+			AvoidCatchingIllegalStateMonitorException
 		</findingType>
-		<findingType>DM_RUN_FINALIZERS_ON_EXIT</findingType>
+		<findingType>CloneMethodMustImplementCloneable</findingType>
+		<findingType>NoSuperCloneCall</findingType>
+		<findingType>MethodMightDropException</findingType>
+		<findingType>MethodMightIgnoreException</findingType>
+		<findingType>AvoidCallingSystemExit</findingType>
+		<findingType>UseOfFutureKeywordAsIdentifier</findingType>
+		<findingType>UseOfFutureKeywordAsMemberIdentifier</findingType>
+		<findingType>AvoidCallingSystemRunFinalizersOnExit</findingType>
 		<findingType>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</findingType>
 		<findingType>
 			SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE
@@ -6260,11 +6352,11 @@
 		<findingType>
 			SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING
 		</findingType>
-		<findingType>FI_EMPTY</findingType>
+		<findingType>EmptyFinalizer</findingType>
 		<findingType>FI_NULLIFY_SUPER</findingType>
-		<findingType>FI_USELESS</findingType>
-		<findingType>FI_MISSING_SUPER_CALL</findingType>
-		<findingType>FI_EXPLICIT_INVOCATION</findingType>
+		<findingType>FinalizeOnlyCallsSuperFinalize</findingType>
+		<findingType>FinalizeDoesNotCallSuperFinalize</findingType>
+		<findingType>AvoidCallingFinalizeExplicitly</findingType>
 		<findingType>EQ_SELF_USE_OBJECT</findingType>
 		<findingType>EQ_SELF_NO_OBJECT</findingType>
 		<findingType>NP_DOES_NOT_HANDLE_NULL</findingType>
@@ -6272,11 +6364,11 @@
 		<findingType>ES_COMPARING_STRINGS_WITH_EQ</findingType>
 		<findingType>ES_COMPARING_PARAMETER_STRING_WITH_EQ</findingType>
 		<findingType>EQ_COMPARETO_USE_OBJECT_EQUALS</findingType>
-		<findingType>HE_HASHCODE_USE_OBJECT_EQUALS</findingType>
-		<findingType>HE_HASHCODE_NO_EQUALS</findingType>
-		<findingType>HE_EQUALS_USE_HASHCODE</findingType>
-		<findingType>HE_INHERITS_EQUALS_USE_HASHCODE</findingType>
-		<findingType>HE_EQUALS_NO_HASHCODE</findingType>
+		<findingType>DefinesHashCodeUsesEquals</findingType>
+		<findingType>DefinesHashcodeNotEquals</findingType>
+		<findingType>DefinesEqualsUsesHashcode</findingType>
+		<findingType>InheritsEqualsUsesHashCode</findingType>
+		<findingType>OverridesEqualsNotHashcode</findingType>
 		<findingType>EQ_ABSTRACT_SELF</findingType>
 		<findingType>CO_ABSTRACT_SELF</findingType>
 		<findingType>NS_NON_SHORT_CIRCUIT</findingType>
@@ -6285,9 +6377,9 @@
 		</findingType>
 		<findingType>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</findingType>
 		<findingType>IT_NO_SUCH_ELEMENT</findingType>
-		<findingType>NM_METHOD_NAMING_CONVENTION</findingType>
-		<findingType>NM_FIELD_NAMING_CONVENTION</findingType>
-		<findingType>NM_CLASS_NAMING_CONVENTION</findingType>
+		<findingType>MethodNamingConventions</findingType>
+		<findingType>FieldNamingConventions</findingType>
+		<findingType>ClassNamingConventions</findingType>
 		<findingType>NM_VERY_CONFUSING_INTENTIONAL</findingType>
 		<findingType>NM_CONFUSING</findingType>
 		<findingType>NM_CLASS_NOT_EXCEPTION</findingType>
@@ -6337,9 +6429,7 @@
 	</category>
 	<category>
 		<id>Dodgy</id>
-		<findingType>
-			DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED
-		</findingType>
+		<findingType>ThreadPassedWhereRunnableExpected</findingType>
 		<findingType>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</findingType>
 		<findingType>RV_REM_OF_RANDOM_INT</findingType>
 		<findingType>RV_REM_OF_HASHCODE</findingType>
@@ -6365,6 +6455,9 @@
 		<findingType>NP_LOAD_OF_KNOWN_NULL_VALUE</findingType>
 		<findingType>PZLA_PREFER_ZERO_LENGTH_ARRAYS</findingType>
 		<findingType>UCF_USELESS_CONTROL_FLOW</findingType>
+		<findingType>
+			RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE
+		</findingType>
 		<findingType>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</findingType>
 		<findingType>
 			RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE
@@ -6373,7 +6466,7 @@
 			RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES
 		</findingType>
 		<findingType>
-			RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE
+			RedundantComparisonOfNullAndNonnullValue
 		</findingType>
 		<findingType>SA_LOCAL_SELF_ASSIGNMENT</findingType>
 		<findingType>INT_VACUOUS_COMPARISON</findingType>
@@ -6423,31 +6516,35 @@
 	<category>
 		<id>Performance</id>
 		<findingType>HSC_HUGE_SHARED_STRING_CONSTANT</findingType>
-		<findingType>DMI_BLOCKING_METHODS_ON_URL</findingType>
-		<findingType>DMI_COLLECTION_OF_URLS</findingType>
-		<findingType>DM_STRING_CTOR</findingType>
-		<findingType>DM_STRING_VOID_CTOR</findingType>
-		<findingType>DM_STRING_TOSTRING</findingType>
-		<findingType>DM_GC</findingType>
-		<findingType>DM_BOOLEAN_CTOR</findingType>
-		<findingType>DM_NUMBER_CTOR</findingType>
-		<findingType>DM_FP_NUMBER_CTOR</findingType>
-		<findingType>DM_STRING_EMPTY_EQUALS</findingType>
-		<findingType>DM_BOXED_PRIMITIVE_TOSTRING</findingType>
-		<findingType>BX_BOXING_IMMEDIATELY_UNBOXED</findingType>
+		<findingType>BlockingMethodsOnURL</findingType>
+		<findingType>AvoidCollectionOfURLS</findingType>
+		<findingType>InefficientStringConstructor</findingType>
+		<findingType>InefficientStringVoidConstructor</findingType>
+		<findingType>AvoidCallingtoStringOnString</findingType>
+		<findingType>AvoidExplicitGarbageCollection</findingType>
+		<findingType>InefficientBooleanConstructor</findingType>
+		<findingType>InefficientNumberConstructor</findingType>
 		<findingType>
-			BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION
+			InefficientFloatingPointNumberConstructor
 		</findingType>
-		<findingType>DM_NEW_FOR_GETCLASS</findingType>
-		<findingType>DM_NEXTINT_VIA_NEXTDOUBLE</findingType>
+		<findingType>UseStringLength</findingType>
+		<findingType>BoxedPrimitiveToString</findingType>
+		<findingType>BoxingImmediatelyUnboxed</findingType>
+		<findingType>
+			BoxingImmediatelyUnboxedToPerformCoercion
+		</findingType>
+		<findingType>
+			AvoidAllocatingObjectForObtainingClassObject
+		</findingType>
+		<findingType>UseNextIntNotNextDoubleOfRandom</findingType>
 		<findingType>SS_SHOULD_BE_STATIC</findingType>
-		<findingType>UUF_UNUSED_FIELD</findingType>
+		<findingType>UnusedField</findingType>
 		<findingType>URF_UNREAD_FIELD</findingType>
 		<findingType>SIC_INNER_SHOULD_BE_STATIC</findingType>
 		<findingType>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</findingType>
 		<findingType>SIC_INNER_SHOULD_BE_STATIC_ANON</findingType>
 		<findingType>UPM_UNCALLED_PRIVATE_METHOD</findingType>
-		<findingType>SBSC_USE_STRINGBUFFER_CONCATENATION</findingType>
+		<findingType>UseStringBufferForStringAppends</findingType>
 		<findingType>ITA_INEFFICIENT_TO_ARRAY</findingType>
 		<findingType>WMI_WRONG_MAP_ITERATOR</findingType>
 		<findingType>UM_UNNECESSARY_MATH</findingType>
@@ -6460,18 +6557,22 @@
 	</category>
 	<category>
 		<id>Malicious code vulnerability</id>
-		<findingType>FI_PUBLIC_SHOULD_BE_PROTECTED</findingType>
-		<findingType>MS_EXPOSE_REP</findingType>
-		<findingType>EI_EXPOSE_REP</findingType>
-		<findingType>EI_EXPOSE_REP2</findingType>
-		<findingType>EI_EXPOSE_STATIC_REP2</findingType>
-		<findingType>MS_OOI_PKGPROTECT</findingType>
-		<findingType>MS_FINAL_PKGPROTECT</findingType>
-		<findingType>MS_SHOULD_BE_FINAL</findingType>
-		<findingType>MS_PKGPROTECT</findingType>
-		<findingType>MS_MUTABLE_HASHTABLE</findingType>
-		<findingType>MS_MUTABLE_ARRAY</findingType>
-		<findingType>MS_CANNOT_BE_FINAL</findingType>
+		<findingType>FinalizeShouldBeProtected</findingType>
+		<findingType>
+			PublicStaticMayExposeInternalRepresentation
+		</findingType>
+		<findingType>MayExposeInternalRepresentation</findingType>
+		<findingType>MayExposeInternalRepresentation2</findingType>
+		<findingType>MayExposeInternalStaticStatic</findingType>
+		<findingType>
+			FieldShouldBeOutOfInterfaceAndPackageProtected
+		</findingType>
+		<findingType>FieldShouldBeFinalAndPackageProtected</findingType>
+		<findingType>FieldShouldBeFinal</findingType>
+		<findingType>PackageProtectField</findingType>
+		<findingType>MutableHashtable</findingType>
+		<findingType>MutableArray</findingType>
+		<findingType>CannotBeFinal</findingType>
 		<name>Malicious code vulnerability</name>
 		<description>
 			code that is vulnerable to attacks from untrusted code
@@ -6479,48 +6580,42 @@
 	</category>
 	<category>
 		<id>Multithreaded correctness</id>
-		<findingType>STCAL_STATIC_CALENDAR_INSTANCE</findingType>
-		<findingType>
-			STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE
-		</findingType>
-		<findingType>
-			STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE
-		</findingType>
-		<findingType>
-			STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE
-		</findingType>
-		<findingType>NP_SYNC_AND_NULL_CHECK_FIELD</findingType>
-		<findingType>VO_VOLATILE_REFERENCE_TO_ARRAY</findingType>
-		<findingType>DM_MONITOR_WAIT_ON_CONDITION</findingType>
-		<findingType>DM_USELESS_THREAD</findingType>
-		<findingType>DC_DOUBLECHECK</findingType>
-		<findingType>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</findingType>
-		<findingType>ESync_EMPTY_SYNC</findingType>
-		<findingType>IS2_INCONSISTENT_SYNC</findingType>
-		<findingType>NN_NAKED_NOTIFY</findingType>
-		<findingType>RU_INVOKE_RUN</findingType>
-		<findingType>SP_SPIN_ON_FIELD</findingType>
-		<findingType>TLW_TWO_LOCK_WAIT</findingType>
-		<findingType>TLW_TWO_LOCK_NOTIFY</findingType>
-		<findingType>UW_UNCOND_WAIT</findingType>
-		<findingType>UG_SYNC_SET_UNSYNC_GET</findingType>
-		<findingType>IS_INCONSISTENT_SYNC</findingType>
-		<findingType>IS_FIELD_NOT_GUARDED</findingType>
-		<findingType>ML_SYNC_ON_UPDATED_FIELD</findingType>
-		<findingType>WS_WRITEOBJECT_SYNC</findingType>
-		<findingType>RS_READOBJECT_SYNC</findingType>
-		<findingType>SC_START_IN_CTOR</findingType>
-		<findingType>WA_NOT_IN_LOOP</findingType>
-		<findingType>WA_AWAIT_NOT_IN_LOOP</findingType>
-		<findingType>NO_NOTIFY_NOT_NOTIFYALL</findingType>
-		<findingType>UL_UNRELEASED_LOCK</findingType>
-		<findingType>UL_UNRELEASED_LOCK_EXCEPTION_PATH</findingType>
-		<findingType>MWN_MISMATCHED_WAIT</findingType>
-		<findingType>MWN_MISMATCHED_NOTIFY</findingType>
-		<findingType>LI_LAZY_INIT_INSTANCE</findingType>
-		<findingType>LI_LAZY_INIT_STATIC</findingType>
-		<findingType>JLM_JSR166_LOCK_MONITORENTER</findingType>
-		<findingType>SWL_SLEEP_WITH_LOCK_HELD</findingType>
+		<findingType>AvoidStaticCalendar</findingType>
+		<findingType>AvoidStaticDateformat</findingType>
+		<findingType>CallToStaticCalendar</findingType>
+		<findingType>CallToStaticDateFormat</findingType>
+		<findingType>SynchronizeAndNullCheckOnSameField</findingType>
+		<findingType>VolatileReferenceToArray</findingType>
+		<findingType>MonitorWaitOnCondition</findingType>
+		<findingType>UselessThread</findingType>
+		<findingType>PossibleDoubleCheckOfField</findingType>
+		<findingType>SynchronizationOnSharedConstant</findingType>
+		<findingType>EmptySynchronizationBlock</findingType>
+		<findingType>InconsistentSynchronization2</findingType>
+		<findingType>NakedNotifyCall</findingType>
+		<findingType>InvokesRun</findingType>
+		<findingType>MethodSpinsOnField</findingType>
+		<findingType>WaitWithTwoLocks</findingType>
+		<findingType>TwoLocksOnNotify</findingType>
+		<findingType>UnconditionalWait</findingType>
+		<findingType>SynchronizedSetUnsynchronizedGet</findingType>
+		<findingType>InconsistentSynchronization</findingType>
+		<findingType>FieldNotGuarded</findingType>
+		<findingType>AvoidSynchronizationOnUpdatedField</findingType>
+		<findingType>IncorrectSynchronizationOfWriteObject</findingType>
+		<findingType>AvoidSynchronizationOfReadObject</findingType>
+		<findingType>AvoidThreadStartInConstructor</findingType>
+		<findingType>WaitNotInLoop</findingType>
+		<findingType>AwaitNotInLoop</findingType>
+		<findingType>UseNotifyAllInsteadOfNotify</findingType>
+		<findingType>UnreleasedLock</findingType>
+		<findingType>UnreleasedLockOnExceptionPath</findingType>
+		<findingType>MismatchedWait</findingType>
+		<findingType>MismatchedNotify</findingType>
+		<findingType>IncorrectLazyInitializationOfInstance</findingType>
+		<findingType>IncorrectLazyInitializationOfStatic</findingType>
+		<findingType>AvoidCallingSynchronizedOnLock</findingType>
+		<findingType>AvoidCallingSleepWithLockHeld</findingType>
 		<name>Multithreaded correctness</name>
 		<description>
 			code flaws having to do with threads, locks, and volatiles
@@ -6528,7 +6623,7 @@
 	</category>
 	<category>
 		<id>Internationalization</id>
-		<findingType>DM_CONVERT_CASE</findingType>
+		<findingType>UseLocaleParameterizedVersion</findingType>
 		<name>Internationalization</name>
 		<description>
 			code flaws having to do with internationalization and locale

@@ -136,26 +136,7 @@
 		</info>
 		<name>Unnecessary Conversion Temporary</name>
 	</findingType>
-	<findingType>
-		<id>OverrideBothEqualsAndHashcode</id>
-		<artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode">
-		</artifact>
-		<shortMessage>
-			Override both public boolean Object.equals(Object other),
-			and public int Object.hashCode(), or override neither. Even
-			if you are inheriting a hashCode() from a parent class,
-			consider implementing hashCode and explicitly delegating to
-			your superclass.
-		</shortMessage>
-		<info>
-			Override both public boolean Object.equals(Object other),
-			and public int Object.hashCode(), or override neither. Even
-			if you are inheriting a hashCode() from a parent class,
-			consider implementing hashCode and explicitly delegating to
-			your superclass.
-		</info>
-		<name>Override Both Equals And Hashcode</name>
-	</findingType>
+
 	<findingType>
 		<id>DoubleCheckedLocking</id>
 		<artifact tool="PMD" mnemonic="DoubleCheckedLocking"></artifact>
@@ -191,16 +172,7 @@
 		</info>
 		<name>Return From Finally Block</name>
 	</findingType>
-	<findingType>
-		<id>EmptySynchronizedBlock</id>
-		<artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
-		</artifact>
-		<shortMessage>
-			Avoid empty synchronized blocks - they're useless.
-		</shortMessage>
-		<info>Avoid empty synchronized blocks - they're useless.</info>
-		<name>Empty Synchronized Block</name>
-	</findingType>
+
 	<findingType>
 		<id>UnnecessaryReturn</id>
 		<artifact tool="PMD" mnemonic="UnnecessaryReturn"></artifact>
@@ -384,23 +356,7 @@
 		</info>
 		<name>Useless Operation On Immutable</name>
 	</findingType>
-	<findingType>
-		<id>MisplacedNullCheck</id>
-		<artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
-		<shortMessage>
-			The null check here is misplaced. if the variable is null
-			you'll get a NullPointerException. Either the check is
-			useless (the variable will never be &quot;null&quot;) or
-			it's incorrect.
-		</shortMessage>
-		<info>
-			The null check here is misplaced. if the variable is null
-			you'll get a NullPointerException. Either the check is
-			useless (the variable will never be &quot;null&quot;) or
-			it's incorrect.
-		</info>
-		<name>Misplaced Null Check</name>
-	</findingType>
+
 	<findingType>
 		<id>UnusedNullCheckInEquals</id>
 		<artifact tool="PMD" mnemonic="UnusedNullCheckInEquals">
@@ -526,18 +482,7 @@
 		</info>
 		<name>For Loops Must Use Braces</name>
 	</findingType>
-	<findingType>
-		<id>ProperCloneImplementation</id>
-		<artifact tool="PMD" mnemonic="ProperCloneImplementation">
-		</artifact>
-		<shortMessage>
-			Object clone() should be implemented with super.clone().
-		</shortMessage>
-		<info>
-			Object clone() should be implemented with super.clone().
-		</info>
-		<name>Proper Clone Implementation</name>
-	</findingType>
+
 	<findingType>
 		<id>CloneThrowsCloneNotSupportedException</id>
 		<artifact tool="PMD"
@@ -553,23 +498,7 @@
 		</info>
 		<name>Clone Throws Clone Not Supported Exception</name>
 	</findingType>
-	<findingType>
-		<id>CloneMethodMustImplementCloneable</id>
-		<artifact tool="PMD"
-			mnemonic="CloneMethodMustImplementCloneable">
-		</artifact>
-		<shortMessage>
-			The method clone() should only be implemented if the class
-			implements the Cloneable interface with the exception of a
-			final method that only throws CloneNotSupportedException.
-		</shortMessage>
-		<info>
-			The method clone() should only be implemented if the class
-			implements the Cloneable interface with the exception of a
-			final method that only throws CloneNotSupportedException.
-		</info>
-		<name>Clone Method Must Implement Cloneable</name>
-	</findingType>
+
 	<findingType>
 		<id>NPathComplexity</id>
 		<artifact tool="PMD" mnemonic="NPathComplexity"></artifact>
@@ -1335,19 +1264,7 @@
 		</info>
 		<name>Bad Comparison</name>
 	</findingType>
-	<findingType>
-		<id>EqualsNull</id>
-		<artifact tool="PMD" mnemonic="EqualsNull"></artifact>
-		<shortMessage>
-			Inexperienced programmers sometimes confuse comparison
-			concepts and use equals() to compare to null.
-		</shortMessage>
-		<info>
-			Inexperienced programmers sometimes confuse comparison
-			concepts and use equals() to compare to null.
-		</info>
-		<name>Equals Null</name>
-	</findingType>
+
 	<findingType>
 		<id>ConfusingTernary</id>
 		<artifact tool="PMD" mnemonic="ConfusingTernary"></artifact>
@@ -1768,34 +1685,8 @@
 		</info>
 		<name>Use Collection Is Empty</name>
 	</findingType>
-	<findingType>
-		<id>EmptyFinalizer</id>
-		<artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
-		<shortMessage>
-			If the finalize() method is empty, then it does not need to
-			exist.
-		</shortMessage>
-		<info>
-			If the finalize() method is empty, then it does not need to
-			exist.
-		</info>
-		<name>Empty Finalizer</name>
-	</findingType>
-	<findingType>
-		<id>FinalizeOnlyCallsSuperFinalize</id>
-		<artifact tool="PMD"
-			mnemonic="FinalizeOnlyCallsSuperFinalize">
-		</artifact>
-		<shortMessage>
-			If the finalize() is implemented, it should do something
-			besides just calling super.finalize().
-		</shortMessage>
-		<info>
-			If the finalize() is implemented, it should do something
-			besides just calling super.finalize().
-		</info>
-		<name>Finalize Only Calls Super Finalize</name>
-	</findingType>
+
+
 	<findingType>
 		<id>FinalizeOverloaded</id>
 		<artifact tool="PMD" mnemonic="FinalizeOverloaded"></artifact>
@@ -1811,50 +1702,9 @@
 		</info>
 		<name>Finalize Overloaded</name>
 	</findingType>
-	<findingType>
-		<id>FinalizeDoesNotCallSuperFinalize</id>
-		<artifact tool="PMD"
-			mnemonic="FinalizeDoesNotCallSuperFinalize">
-		</artifact>
-		<shortMessage>
-			If the finalize() is implemented, its last action should be
-			to call super.finalize.
-		</shortMessage>
-		<info>
-			If the finalize() is implemented, its last action should be
-			to call super.finalize.
-		</info>
-		<name>Finalize Does Not Call Super Finalize</name>
-	</findingType>
-	<findingType>
-		<id>FinalizeShouldBeProtected</id>
-		<artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
-		</artifact>
-		<shortMessage>
-			If you override finalize(), make it protected. If you make
-			it public, other classes may call it.
-		</shortMessage>
-		<info>
-			If you override finalize(), make it protected. If you make
-			it public, other classes may call it.
-		</info>
-		<name>Finalize Should Be Protected</name>
-	</findingType>
-	<findingType>
-		<id>AvoidCallingFinalize</id>
-		<artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
-		<shortMessage>
-			Object.finalize() is called by the garbage collector on an
-			object when garbage collection determines that there are no
-			more references to the object.
-		</shortMessage>
-		<info>
-			Object.finalize() is called by the garbage collector on an
-			object when garbage collection determines that there are no
-			more references to the object.
-		</info>
-		<name>Avoid Calling Finalize</name>
-	</findingType>
+
+
+
 	<findingType>
 		<id>DuplicateImports</id>
 		<artifact tool="PMD" mnemonic="DuplicateImports"></artifact>
@@ -2322,19 +2172,7 @@
 		</info>
 		<name>Avoid Assert As Identifier</name>
 	</findingType>
-	<findingType>
-		<id>IntegerInstantiation</id>
-		<artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
-		<shortMessage>
-			In JDK 1.5, calling new Integer() causes memory allocation.
-			Integer.valueOf() is more memory friendly.
-		</shortMessage>
-		<info>
-			In JDK 1.5, calling new Integer() causes memory allocation.
-			Integer.valueOf() is more memory friendly.
-		</info>
-		<name>Integer Instantiation</name>
-	</findingType>
+
 	<findingType>
 		<id>ByteInstantiation</id>
 		<artifact tool="PMD" mnemonic="ByteInstantiation"></artifact>
@@ -2489,52 +2327,6 @@
 		<name>Short Method Name</name>
 	</findingType>
 	<findingType>
-		<id>VariableNamingConventions</id>
-		<artifact tool="PMD" mnemonic="VariableNamingConventions">
-		</artifact>
-		<shortMessage>
-			A variable naming conventions rule - customize this to your
-			liking. Currently, it checks for final variables that should
-			be fully capitalized and non-final variables that should not
-			include underscores.
-		</shortMessage>
-		<info>
-			A variable naming conventions rule - customize this to your
-			liking. Currently, it checks for final variables that should
-			be fully capitalized and non-final variables that should not
-			include underscores.
-		</info>
-		<name>Variable Naming Conventions</name>
-	</findingType>
-	<findingType>
-		<id>MethodNamingConventions</id>
-		<artifact tool="PMD" mnemonic="MethodNamingConventions">
-		</artifact>
-		<shortMessage>
-			Method names should always begin with a lower case
-			character, and should not contain underscores.
-		</shortMessage>
-		<info>
-			Method names should always begin with a lower case
-			character, and should not contain underscores.
-		</info>
-		<name>Method Naming Conventions</name>
-	</findingType>
-	<findingType>
-		<id>ClassNamingConventions</id>
-		<artifact tool="PMD" mnemonic="ClassNamingConventions">
-		</artifact>
-		<shortMessage>
-			Class names should always begin with an upper case
-			character.
-		</shortMessage>
-		<info>
-			Class names should always begin with an upper case
-			character.
-		</info>
-		<name>Class Naming Conventions</name>
-	</findingType>
-	<findingType>
 		<id>AbstractNaming</id>
 		<artifact tool="PMD" mnemonic="AbstractNaming"></artifact>
 		<shortMessage>
@@ -2571,22 +2363,7 @@
 		</info>
 		<name>Method With Same Name As Enclosing Class</name>
 	</findingType>
-	<findingType>
-		<id>SuspiciousHashcodeMethodName</id>
-		<artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
-		</artifact>
-		<shortMessage>
-			The method name and return type are suspiciously close to
-			hashCode(), which may mean you are intending to override the
-			hashCode() method.
-		</shortMessage>
-		<info>
-			The method name and return type are suspiciously close to
-			hashCode(), which may mean you are intending to override the
-			hashCode() method.
-		</info>
-		<name>Suspicious Hashcode Method Name</name>
-	</findingType>
+
 	<findingType>
 		<id>SuspiciousConstantFieldName</id>
 		<artifact tool="PMD" mnemonic="SuspiciousConstantFieldName">
@@ -2603,22 +2380,7 @@
 		</info>
 		<name>Suspicious Constant Field Name</name>
 	</findingType>
-	<findingType>
-		<id>SuspiciousEqualsMethodName</id>
-		<artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
-		</artifact>
-		<shortMessage>
-			The method name and parameter number are suspiciously close
-			to equals(Object), which may mean you are intending to
-			override the equals(Object) method.
-		</shortMessage>
-		<info>
-			The method name and parameter number are suspiciously close
-			to equals(Object), which may mean you are intending to
-			override the equals(Object) method.
-		</info>
-		<name>Suspicious Equals Method Name</name>
-	</findingType>
+
 	<findingType>
 		<id>AvoidFieldNameMatchingTypeName</id>
 		<artifact tool="PMD"
@@ -2776,17 +2538,7 @@
 		</info>
 		<name>Simplify Starts With</name>
 	</findingType>
-	<findingType>
-		<id>UseStringBufferForStringAppends</id>
-		<artifact tool="PMD"
-			mnemonic="UseStringBufferForStringAppends">
-		</artifact>
-		<shortMessage>
-			Finds usages of += for appending strings.
-		</shortMessage>
-		<info>Finds usages of += for appending strings.</info>
-		<name>Use String Buffer For String Appends</name>
-	</findingType>
+
 	<findingType>
 		<id>UseArraysAsList</id>
 		<artifact tool="PMD" mnemonic="UseArraysAsList"></artifact>
@@ -3201,19 +2953,7 @@
 		</info>
 		<name>Array Is Stored Directly</name>
 	</findingType>
-	<findingType>
-		<id>UnusedPrivateField</id>
-		<artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
-		<shortMessage>
-			Detects when a private field is declared and/or assigned a
-			value, but not used.
-		</shortMessage>
-		<info>
-			Detects when a private field is declared and/or assigned a
-			value, but not used.
-		</info>
-		<name>Unused Private Field</name>
-	</findingType>
+
 	<findingType>
 		<id>UnusedLocalVariable</id>
 		<artifact tool="PMD" mnemonic="UnusedLocalVariable"></artifact>
@@ -3254,6 +2994,301 @@
 		</info>
 		<name>Unused Formal Parameter</name>
 	</findingType>
+
+	<findingType>
+		<id>OverrideBothEqualsAndHashcode</id>
+		<artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode">
+		</artifact>
+		<shortMessage>
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
+		</shortMessage>
+		<info>
+			Override both public boolean Object.equals(Object other),
+			and public int Object.hashCode(), or override neither. Even
+			if you are inheriting a hashCode() from a parent class,
+			consider implementing hashCode and explicitly delegating to
+			your superclass.
+		</info>
+		<name>Override Both Equals And Hashcode</name>
+	</findingType>
+	<!-- Duplicate
+		<findingType>
+		<id>AvoidCallingFinalize</id>
+		<artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
+		<shortMessage>
+		Object.finalize() is called by the garbage collector on an
+		object when garbage collection determines that there are no
+		more references to the object.
+		</shortMessage>
+		<info>
+		Object.finalize() is called by the garbage collector on an
+		object when garbage collection determines that there are no
+		more references to the object.
+		</info>
+		<name>Avoid Calling Finalize</name>
+		</findingType>
+		
+		<findingType>
+		<id>UnusedPrivateField</id>
+		<artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
+		<shortMessage>
+		Detects when a private field is declared and/or assigned a
+		value, but not used.
+		</shortMessage>
+		<info>
+		Detects when a private field is declared and/or assigned a
+		value, but not used.
+		</info>
+		<name>Unused Private Field</name>
+		</findingType>
+		
+		<findingType>
+		<id>UseStringBufferForStringAppends</id>
+		<artifact tool="PMD"
+		mnemonic="UseStringBufferForStringAppends">
+		</artifact>
+		<shortMessage>
+		Finds usages of += for appending strings.
+		</shortMessage>
+		<info>Finds usages of += for appending strings.</info>
+		<name>Use String Buffer For String Appends</name>
+		</findingType>
+		
+		<findingType>
+		<id>IntegerInstantiation</id>
+		<artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
+		<shortMessage>
+		In JDK 1.5, calling new Integer() causes memory allocation.
+		Integer.valueOf() is more memory friendly.
+		</shortMessage>
+		<info>
+		In JDK 1.5, calling new Integer() causes memory allocation.
+		Integer.valueOf() is more memory friendly.
+		</info>
+		<name>Integer Instantiation</name>
+		</findingType>
+		
+		<findingType>
+		<id>SuspiciousHashcodeMethodName</id>
+		<artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
+		</artifact>
+		<shortMessage>
+		The method name and return type are suspiciously close to
+		hashCode(), which may mean you are intending to override the
+		hashCode() method.
+		</shortMessage>
+		<info>
+		The method name and return type are suspiciously close to
+		hashCode(), which may mean you are intending to override the
+		hashCode() method.
+		</info>
+		<name>Suspicious Hashcode Method Name</name>
+		</findingType>
+		
+		<findingType>
+		<id>SuspiciousEqualsMethodName</id>
+		<artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
+		</artifact>
+		<shortMessage>
+		The method name and parameter number are suspiciously close
+		to equals(Object), which may mean you are intending to
+		override the equals(Object) method.
+		</shortMessage>
+		<info>
+		The method name and parameter number are suspiciously close
+		to equals(Object), which may mean you are intending to
+		override the equals(Object) method.
+		</info>
+		<name>Suspicious Equals Method Name</name>
+		</findingType>
+		
+		<findingType>
+		<id>MethodNamingConventions</id>
+		<artifact tool="PMD" mnemonic="MethodNamingConventions">
+		</artifact>
+		<shortMessage>
+		Method names should always begin with a lower case
+		character, and should not contain underscores.
+		</shortMessage>
+		<info>
+		Method names should always begin with a lower case
+		character, and should not contain underscores.
+		</info>
+		<name>Method Naming Conventions</name>
+		</findingType>
+		
+		<findingType>
+		<id>VariableNamingConventions</id>
+		<artifact tool="PMD" mnemonic="VariableNamingConventions">
+		</artifact>
+		<shortMessage>
+		A variable naming conventions rule - customize this to your
+		liking. Currently, it checks for final variables that should
+		be fully capitalized and non-final variables that should not
+		include underscores.
+		</shortMessage>
+		<info>
+		A variable naming conventions rule - customize this to your
+		liking. Currently, it checks for final variables that should
+		be fully capitalized and non-final variables that should not
+		include underscores.
+		</info>
+		<name>Variable Naming Conventions</name>
+		</findingType>
+		
+		<findingType>
+		<id>ClassNamingConventions</id>
+		<artifact tool="PMD" mnemonic="ClassNamingConventions">
+		</artifact>
+		<shortMessage>
+		Class names should always begin with an upper case
+		character.
+		</shortMessage>
+		<info>
+		Class names should always begin with an upper case
+		character.
+		</info>
+		<name>Class Naming Conventions</name>
+		</findingType>
+		
+		<findingType>
+		<id>FinalizeShouldBeProtected</id>
+		<artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
+		</artifact>
+		<shortMessage>
+		If you override finalize(), make it protected. If you make
+		it public, other classes may call it.
+		</shortMessage>
+		<info>
+		If you override finalize(), make it protected. If you make
+		it public, other classes may call it.
+		</info>
+		<name>Finalize Should Be Protected</name>
+		</findingType>
+		<findingType>
+		<id>ProperCloneImplementation</id>
+		<artifact tool="PMD" mnemonic="ProperCloneImplementation">
+		</artifact>
+		<shortMessage>
+		Object clone() should be implemented with super.clone().
+		</shortMessage>
+		<info>
+		Object clone() should be implemented with super.clone().
+		</info>
+		<name>Proper Clone Implementation</name>
+		</findingType>
+		
+		<findingType>
+		<id>CloneMethodMustImplementCloneable</id>
+		<artifact tool="PMD"
+		mnemonic="CloneMethodMustImplementCloneable">
+		</artifact>
+		<shortMessage>
+		The method clone() should only be implemented if the class
+		implements the Cloneable interface with the exception of a
+		final method that only throws CloneNotSupportedException.
+		</shortMessage>
+		<info>
+		The method clone() should only be implemented if the class
+		implements the Cloneable interface with the exception of a
+		final method that only throws CloneNotSupportedException.
+		</info>
+		<name>Clone Method Must Implement Cloneable</name>
+		</findingType>
+		
+		<findingType>
+		<id>MisplacedNullCheck</id>
+		<artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
+		<shortMessage>
+		The null check here is misplaced. if the variable is null
+		you'll get a NullPointerException. Either the check is
+		useless (the variable will never be &quot;null&quot;) or
+		it's incorrect.
+		</shortMessage>
+		<info>
+		The null check here is misplaced. if the variable is null
+		you'll get a NullPointerException. Either the check is
+		useless (the variable will never be &quot;null&quot;) or
+		it's incorrect.
+		</info>
+		<name>Misplaced Null Check</name>
+		</findingType>
+		
+		<findingType>
+		<id>EqualsNull</id>
+		<artifact tool="PMD" mnemonic="EqualsNull"></artifact>
+		<shortMessage>
+		Inexperienced programmers sometimes confuse comparison
+		concepts and use equals() to compare to null.
+		</shortMessage>
+		<info>
+		Inexperienced programmers sometimes confuse comparison
+		concepts and use equals() to compare to null.
+		</info>
+		<name>Equals Null</name>
+		</findingType>
+		
+		<findingType>
+		<id>EmptyFinalizer</id>
+		<artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
+		<shortMessage>
+		If the finalize() method is empty, then it does not need to
+		exist.
+		</shortMessage>
+		<info>
+		If the finalize() method is empty, then it does not need to
+		exist.
+		</info>
+		<name>Empty Finalizer</name>
+		</findingType>
+		
+		<findingType>
+		<id>FinalizeOnlyCallsSuperFinalize</id>
+		<artifact tool="PMD"
+		mnemonic="FinalizeOnlyCallsSuperFinalize">
+		</artifact>
+		<shortMessage>
+		If the finalize() is implemented, it should do something
+		besides just calling super.finalize().
+		</shortMessage>
+		<info>
+		If the finalize() is implemented, it should do something
+		besides just calling super.finalize().
+		</info>
+		<name>Finalize Only Calls Super Finalize</name>
+		</findingType>
+		
+		<findingType>
+		<id>FinalizeDoesNotCallSuperFinalize</id>
+		<artifact tool="PMD"
+		mnemonic="FinalizeDoesNotCallSuperFinalize">
+		</artifact>
+		<shortMessage>
+		If the finalize() is implemented, its last action should be
+		to call super.finalize.
+		</shortMessage>
+		<info>
+		If the finalize() is implemented, its last action should be
+		to call super.finalize.
+		</info>
+		<name>Finalize Does Not Call Super Finalize</name>
+		</findingType>
+		
+		<findingType>
+		<id>EmptySynchronizedBlock</id>
+		<artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
+		</artifact>
+		<shortMessage>
+		Avoid empty synchronized blocks - they're useless.
+		</shortMessage>
+		<info>Avoid empty synchronized blocks - they're useless.</info>
+		<name>Empty Synchronized Block</name>
+		</findingType>
+	-->
 	<category>
 		<id>Basic Rules</id>
 		<findingType>EmptyCatchBlock</findingType>
@@ -3268,7 +3303,7 @@
 		<findingType>OverrideBothEqualsAndHashcode</findingType>
 		<findingType>DoubleCheckedLocking</findingType>
 		<findingType>ReturnFromFinallyBlock</findingType>
-		<findingType>EmptySynchronizedBlock</findingType>
+		<!-- DUP <findingType>EmptySynchronizedBlock</findingType> -->
 		<findingType>UnnecessaryReturn</findingType>
 		<findingType>EmptyStaticInitializer</findingType>
 		<findingType>UnconditionalIfStatement</findingType>
@@ -3282,7 +3317,7 @@
 			AvoidDecimalLiteralsInBigDecimalConstructor
 		</findingType>
 		<findingType>UselessOperationOnImmutable</findingType>
-		<findingType>MisplacedNullCheck</findingType>
+		<!--  DUP <findingType>MisplacedNullCheck</findingType> -->
 		<findingType>UnusedNullCheckInEquals</findingType>
 		<findingType>AvoidThreadGroup</findingType>
 		<findingType>BrokenNullCheck</findingType>
@@ -3307,9 +3342,9 @@
 	</category>
 	<category>
 		<id>Clone Implementation Rules</id>
-		<findingType>ProperCloneImplementation</findingType>
+		<!-- DUP <findingType>ProperCloneImplementation</findingType> -->
 		<findingType>CloneThrowsCloneNotSupportedException</findingType>
-		<findingType>CloneMethodMustImplementCloneable</findingType>
+		<!-- DUP <findingType>CloneMethodMustImplementCloneable</findingType>-->
 		<name>Clone Implementation Rules</name>
 		<description>
 			The Clone Implementation ruleset contains a collection of
@@ -3389,7 +3424,7 @@
 		<findingType>NonCaseLabelInSwitchStatement</findingType>
 		<findingType>OptimizableToArrayCall</findingType>
 		<findingType>BadComparison</findingType>
-		<findingType>EqualsNull</findingType>
+		<!--  DUP <findingType>EqualsNull</findingType> -->
 		<findingType>ConfusingTernary</findingType>
 		<findingType>InstantiationToGetClass</findingType>
 		<findingType>IdempotentOperations</findingType>
@@ -3425,12 +3460,12 @@
 	</category>
 	<category>
 		<id>Finalizer Rules</id>
-		<findingType>EmptyFinalizer</findingType>
-		<findingType>FinalizeOnlyCallsSuperFinalize</findingType>
+		<!-- DUP <findingType>EmptyFinalizer</findingType> -->
+		<!-- DUP <findingType>FinalizeOnlyCallsSuperFinalize</findingType> -->
 		<findingType>FinalizeOverloaded</findingType>
-		<findingType>FinalizeDoesNotCallSuperFinalize</findingType>
-		<findingType>FinalizeShouldBeProtected</findingType>
-		<findingType>AvoidCallingFinalize</findingType>
+		<!-- DUP <findingType>FinalizeDoesNotCallSuperFinalize</findingType> -->
+		<!-- DUP <findingType>FinalizeShouldBeProtected</findingType> -->
+		<!-- DUP <findingType>AvoidCallingFinalize</findingType> -->
 		<name>Finalizer Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3519,7 +3554,7 @@
 		<findingType>ReplaceEnumerationWithIterator</findingType>
 		<findingType>AvoidEnumAsIdentifier</findingType>
 		<findingType>AvoidAssertAsIdentifier</findingType>
-		<findingType>IntegerInstantiation</findingType>
+		<!-- DUP <findingType>IntegerInstantiation</findingType> -->
 		<findingType>ByteInstantiation</findingType>
 		<findingType>ShortInstantiation</findingType>
 		<findingType>LongInstantiation</findingType>
@@ -3540,15 +3575,15 @@
 		<findingType>ShortVariable</findingType>
 		<findingType>LongVariable</findingType>
 		<findingType>ShortMethodName</findingType>
-		<findingType>VariableNamingConventions</findingType>
-		<findingType>MethodNamingConventions</findingType>
-		<findingType>ClassNamingConventions</findingType>
+		<!-- DUP <findingType>VariableNamingConventions</findingType> -->
+		<!-- DUP <findingType>MethodNamingConventions</findingType> -->
+		<!-- DUP <findingType>ClassNamingConventions</findingType> -->
 		<findingType>AbstractNaming</findingType>
 		<findingType>AvoidDollarSigns</findingType>
 		<findingType>MethodWithSameNameAsEnclosingClass</findingType>
-		<findingType>SuspiciousHashcodeMethodName</findingType>
+		<!-- DUP <findingType>SuspiciousHashcodeMethodName</findingType> -->
 		<findingType>SuspiciousConstantFieldName</findingType>
-		<findingType>SuspiciousEqualsMethodName</findingType>
+		<!-- DUP <findingType>SuspiciousEqualsMethodName</findingType> -->
 		<findingType>AvoidFieldNameMatchingTypeName</findingType>
 		<findingType>AvoidFieldNameMatchingMethodName</findingType>
 		<findingType>NoPackage</findingType>
@@ -3571,7 +3606,7 @@
 		<findingType>AvoidInstantiatingObjectsInLoops</findingType>
 		<findingType>UseArrayListInsteadOfVector</findingType>
 		<findingType>SimplifyStartsWith</findingType>
-		<findingType>UseStringBufferForStringAppends</findingType>
+		<!--  DUP <findingType>UseStringBufferForStringAppends</findingType> -->
 		<findingType>UseArraysAsList</findingType>
 		<findingType>AvoidArrayLoops</findingType>
 		<findingType>UnnecessaryWrapperObjectCreation</findingType>
@@ -3632,7 +3667,7 @@
 	</category>
 	<category>
 		<id>Unused Code Rules</id>
-		<findingType>UnusedPrivateField</findingType>
+		<!-- DUP <findingType>UnusedPrivateField</findingType> -->
 		<findingType>UnusedLocalVariable</findingType>
 		<findingType>UnusedPrivateMethod</findingType>
 		<findingType>UnusedFormalParameter</findingType>
