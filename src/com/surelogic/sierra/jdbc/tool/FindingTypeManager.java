@@ -76,7 +76,11 @@ public class FindingTypeManager {
 		if (set.next()) {
 			return set.getLong(1);
 		} else {
-			return null;
+			String message = "No Artifact could be found with tool name "
+					+ tool + ", mnemonic " + mnemonic + ", and version "
+					+ version + ".";
+			log.severe(message);
+			throw new IllegalArgumentException(message);
 		}
 	}
 
@@ -138,7 +142,7 @@ public class FindingTypeManager {
 				}
 				for (ArtifactType at : ft.getArtifact()) {
 					Collection<Long> typeIds;
-					if (at.getVersion() != null) {
+					if (at.getVersion() == null) {
 						typeIds = getArtifactTypes(at.getTool(), at
 								.getMnemonic());
 					} else {
