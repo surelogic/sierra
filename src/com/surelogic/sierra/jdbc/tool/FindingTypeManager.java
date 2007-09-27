@@ -145,8 +145,7 @@ public class FindingTypeManager {
 						typeIds = Collections.singleton(getArtifactTypeId(at
 								.getTool(), at.getVersion(), at.getMnemonic()));
 					}
-					for (Long id : getArtifactTypes(at.getTool(), at
-							.getMnemonic())) {
+					for (Long id : typeIds) {
 						checkForArtifactTypeRelation.setLong(1, id);
 						ResultSet set = checkForArtifactTypeRelation
 								.executeQuery();
