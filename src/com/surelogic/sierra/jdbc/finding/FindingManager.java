@@ -134,7 +134,9 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		populateOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
-						+ " SELECT F.PROJECT_ID,F.ID,F.IS_READ,F.LAST_CHANGED,"
+						+ " SELECT F.PROJECT_ID,F.ID,"
+						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
+						+ "        F.LAST_CHANGED,"
 						+ "        CASE"
 						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
 						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
@@ -143,9 +145,9 @@ public abstract class FindingManager {
 						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
 						+ "        END,"
 						+ "        CASE"
-						+ "             WHEN FIXED.ID IS NOT NULL THEN 'F'"
-						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'N'"
-						+ "	            ELSE 'U'"
+						+ "             WHEN FIXED.ID IS NOT NULL THEN 'Fixed'"
+						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'New'"
+						+ "	            ELSE 'Unchanged'"
 						+ "        END,"
 						+ "        FAC.LINE_OF_CODE,"
 						+ "        CASE WHEN FAC.COUNT IS NULL THEN 0 ELSE FAC.COUNT END,"

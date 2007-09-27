@@ -80,7 +80,7 @@ public class FindingTypeManager {
 					+ tool + ", mnemonic " + mnemonic + ", and version "
 					+ version + ".";
 			log.severe(message);
-			throw new IllegalArgumentException(message);
+			throw new IllegalStateException(message);
 		}
 	}
 
@@ -92,6 +92,12 @@ public class FindingTypeManager {
 		ResultSet set = selectArtifactTypesByToolAndMnemonic.executeQuery();
 		while (set.next()) {
 			ids.add(set.getLong(1));
+		}
+		if (ids.isEmpty()) {
+			String message = "No artifact types could be found with tool "
+					+ tool + " and mnemonic " + mnemonic + ".";
+			log.severe(message);
+			throw new IllegalStateException(message);
 		}
 		return ids;
 	}

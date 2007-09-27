@@ -52,10 +52,10 @@ CREATE TABLE FINDING_TOOL_COUNT (
 CREATE TABLE FINDINGS_OVERVIEW (
   PROJECT_ID     BIGINT         NOT NULL CONSTRAINT OVERVIEW_PROJECT_FK REFERENCES PROJECT(ID),
   FINDING_ID     BIGINT         NOT NULL CONSTRAINT OVERVIEW_FINDING_FK REFERENCES FINDING(ID),
-  EXAMINED       CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_EXAMINED_CN CHECK (EXAMINED IN ('Y','N')), -- Indicates whether someone has marked this finding as read
+  EXAMINED       VARCHAR(3)     NOT NULL CONSTRAINT OVERVIEW_EXAMINED_CN CHECK (EXAMINED IN ('Yes','No')), -- Indicates whether someone has marked this finding as read
   LAST_CHANGED   TIMESTAMP, -- The time the latest audit was applied to this finding
   IMPORTANCE     VARCHAR(10)    NOT NULL CONSTRAINT OVERVIEW_IMPORTANCE_CN CHECK (IMPORTANCE IN ('Irrelevant','Low','Medium','High','Critical')),
-  STATE          CHAR(1)        NOT NULL CONSTRAINT OVERVIEW_STATE_CN CHECK (STATE IN ('N','F','U')), -- (N)ew, (U)nchanged, (F)ixed
+  STATE          VARCHAR(9)     NOT NULL CONSTRAINT OVERVIEW_STATE_CN CHECK (STATE IN ('New','Fixed','Unchanged')),
   LINE_OF_CODE   INT,
   ARTIFACT_COUNT INT, -- The number of artifacts in the latest scan for this finding
   COMMENT_COUNT  INT            NOT NULL, -- The number of comments on this finding (Does not include changes to importance, or summary)
