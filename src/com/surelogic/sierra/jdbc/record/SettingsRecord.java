@@ -4,12 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SettingsRecord extends LongRecord {
+public class SettingsRecord extends LongUpdatableRecord {
 
 	private String name;
 	private Long revision;
 
-	public SettingsRecord(RecordMapper mapper) {
+	public SettingsRecord(UpdateBaseMapper mapper) {
 		super(mapper);
 	}
 
@@ -46,6 +46,13 @@ public class SettingsRecord extends LongRecord {
 
 	public void setRevision(Long revision) {
 		this.revision = revision;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, name);
+		return idx;
 	}
 
 }

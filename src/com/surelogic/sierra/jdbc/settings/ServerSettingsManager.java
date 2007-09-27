@@ -14,6 +14,7 @@ import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
@@ -33,7 +34,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement getAllSettings;
 
-	private final BaseMapper settingsMapper;
+	private final UpdateBaseMapper settingsMapper;
 	private final BaseMapper findingTypeFilterMapper;
 
 	private final FindingTypeRecordFactory ftFactory;
@@ -62,10 +63,11 @@ public class ServerSettingsManager extends SettingsManager {
 		copySettings = conn
 				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?,FINDING_TYPE_ID,FILTER_TYPE,DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
-		settingsMapper = new BaseMapper(conn,
+		settingsMapper = new UpdateBaseMapper(conn,
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
 				"SELECT ID,REVISION FROM SETTINGS WHERE NAME = ?",
-				"DELETE FROM SETTINGS WHERE ID = ?");
+				"DELETE FROM SETTINGS WHERE ID = ?",
+				"UPDATE SETTINGS SET NAME = ? WHERE ID = ?");
 		ftFactory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
@@ -118,6 +120,22 @@ public class ServerSettingsManager extends SettingsManager {
 			throw new IllegalArgumentException("Settings with the name " + name
 					+ " already exist.");
 		}
+	}
+
+	public void renameSettings(String currName, String newName)
+			throws SQLException {
+
+		SettingsRecord record = newSettingsRecord();
+		record.setName(currName);
+
+		/** Can't rename a setting which does not exist */
+		if (!record.select()) {
+			// XXX fill in
+			throw new SQLException();
+		}
+
+		record.setName(newName);
+		record.update();
 	}
 
 	/**
