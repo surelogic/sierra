@@ -30,20 +30,31 @@ public final class FilterExamined extends Filter {
 		return "EXAMINED";
 	}
 
-	private static final String YES = "Yes";
-	private static final String NO = "No";
+	private static final String DB_YES = "Y";
+	private static final String DB_NO = "N";
+
+	private static final String UI_YES = "Yes";
+	private static final String UI_NO = "No";
 
 	@Override
-	protected String valueMapper(String dbValue) {
-		if ("Y".equals(dbValue))
-			return YES;
+	protected String db2ui(String dbValue) {
+		if (DB_YES.equals(dbValue))
+			return UI_YES;
 		else
-			return NO;
+			return UI_NO;
+	}
+
+	@Override
+	protected String ui2db(String uiValue) {
+		if (UI_YES.equals(uiValue))
+			return DB_YES;
+		else
+			return DB_NO;
 	}
 
 	@Override
 	protected void deriveAllValues() {
-		String[] values = new String[] { YES, NO };
+		String[] values = new String[] { UI_YES, UI_NO };
 		f_allValues.addAll(Arrays.asList(values));
 	}
 }

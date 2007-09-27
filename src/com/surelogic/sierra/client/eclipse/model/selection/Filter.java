@@ -152,7 +152,7 @@ public abstract class Filter {
 					final LinkedList<String> valueList = new LinkedList<String>();
 					for (int i = 1; i < columnCount; i++) {
 						final String dbValue = rs.getString(i);
-						final String value = valueMapper(dbValue);
+						final String value = db2ui(dbValue);
 						valueList.add(value);
 					}
 					int count = rs.getInt(columnCount);
@@ -168,15 +168,28 @@ public abstract class Filter {
 
 	/**
 	 * Maps values returned from the database to values for the user interface.
-	 * This method simply returns the raw database value. Subclasses may
+	 * This method simply returns passed raw database value. Subclasses may
 	 * override as necessary.
 	 * 
 	 * @param dbValue
 	 *            the database string for the value.
 	 * @return the value for the user interface.
 	 */
-	protected String valueMapper(String dbValue) {
+	protected String db2ui(String dbValue) {
 		return dbValue;
+	}
+
+	/**
+	 * Maps values from the user interface to database values. This method
+	 * simply returns the passed user interface value. Subclasses may override
+	 * as necessary.
+	 * 
+	 * @param uiValue
+	 *            the database string for the value.
+	 * @return the value for the database.
+	 */
+	protected String ui2db(String uiValue) {
+		return uiValue;
 	}
 
 	private void deriveSummaryCounts() {
@@ -402,18 +415,18 @@ public abstract class Filter {
 			} else {
 				b.append(",");
 			}
-			addValueTo(b, value);
+			addValueTo(b, ui2db(value));
 		}
 		b.append(") ");
 	}
 
-	protected void addValueTo(StringBuilder b, String value) {
+	protected void addValueTo(StringBuilder b, String dbValue) {
 		if (f_quote)
 			b.append("'");
 		/*
 		 * TODO: We should turn all ' in this string to ''
 		 */
-		b.append(value);
+		b.append(dbValue);
 		if (f_quote)
 			b.append("'");
 	}

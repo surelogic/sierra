@@ -67,7 +67,6 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_breadcrumbs.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final int column = Integer.parseInt(event.text);
-				System.out.println("TODO: jump back to column " + column);
 				emptyAfter(column);
 			}
 		});
@@ -182,7 +181,6 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		}
 
 		public void success() {
-			System.out.println("done with queries!!!");
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
