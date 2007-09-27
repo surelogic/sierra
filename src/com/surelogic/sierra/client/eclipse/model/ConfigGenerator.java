@@ -95,39 +95,40 @@ public final class ConfigGenerator {
 	 */
 	private String getExcludedTools() {
 
-		String excludedTools = "";
+		StringBuffer excludedTools = new StringBuffer();
+		excludedTools.append("");
 		f_numberofExcludedTools = 0;
 
 		if (!PreferenceConstants.runFindBugs()) {
-			excludedTools += "findbugs, ";
+			excludedTools.append("findbugs, ");
 			f_numberofExcludedTools++;
 		}
 
 		if (!PreferenceConstants.runCheckStyle()) {
-			excludedTools += "checkstyle, ";
+			excludedTools.append("checkstyle, ");
 			f_numberofExcludedTools++;
 		}
 
 		if (!PreferenceConstants.runPMD()) {
-			excludedTools += "pmd, ";
+			excludedTools.append("pmd, ");
 			f_numberofExcludedTools++;
 		}
 
 		if (!PreferenceConstants.runReckoner()) {
-			excludedTools += "reckoner";
+			excludedTools.append("reckoner");
 			f_numberofExcludedTools++;
 		}
 
-		if (excludedTools != null && excludedTools.endsWith(", ")) {
-			excludedTools = excludedTools.substring(0,
-					excludedTools.length() - 2);
+		String listOfTools = excludedTools.toString();
+		if (listOfTools != null && listOfTools.endsWith(", ")) {
+			listOfTools = listOfTools.substring(0, listOfTools.length() - 2);
 		}
 
-		if (excludedTools.equals("")) {
+		if (listOfTools.equals("")) {
 			return null;
 		}
 
-		return excludedTools;
+		return listOfTools;
 	}
 
 	public int getNumberofExcludedTools() {
