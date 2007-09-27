@@ -73,13 +73,8 @@ public class CheckStyleConfig extends ToolConfig {
 					antProject.log("Parsing Checkstyle results file: " + file,
 							org.apache.tools.ant.Project.MSG_INFO);
 
-					/*
-					 * CHECKSTYLE PARSING TURNED OFF
-					 */
+					parser.parseCheckStyle(file.getAbsolutePath());
 
-					if (false) {
-						parser.parseCheckStyle(file.getAbsolutePath());
-					}
 				}
 			}
 		}

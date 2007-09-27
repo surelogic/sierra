@@ -1,0 +1,1896 @@
+<tns:findingTypes xmlns:tns="http://www.surelogic.com/sierra/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
+	<findingType>
+		<id>PackageHtml</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtmlCheck">
+		</artifact>
+		<shortMessage>
+			Checks that all packages have a package documentation.
+		</shortMessage>
+		<info>
+			Checks that all packages have a package documentation.
+		</info>
+		<name>Package Html</name>
+	</findingType>
+	<findingType>
+		<id>JavadocMethod</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck">
+		</artifact>
+		<shortMessage>
+			Checks the Javadoc of a method or constructor.
+		</shortMessage>
+		<info>Checks the Javadoc of a method or constructor.</info>
+		<name>Javadoc Method</name>
+	</findingType>
+	<findingType>
+		<id>JavadocStyle</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck">
+		</artifact>
+		<shortMessage>
+			Custom Checkstyle Check to validate Javadoc.
+		</shortMessage>
+		<info>Custom Checkstyle Check to validate Javadoc.</info>
+		<name>Javadoc Style</name>
+	</findingType>
+	<findingType>
+		<id>JavadocType</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck">
+		</artifact>
+		<shortMessage>Checks the Javadoc of a type.</shortMessage>
+		<info>Checks the Javadoc of a type.</info>
+		<name>Javadoc Type</name>
+	</findingType>
+	<findingType>
+		<id>JavadocVariable</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a variable has Javadoc comment.
+		</shortMessage>
+		<info>Checks that a variable has Javadoc comment.</info>
+		<name>Javadoc Variable</name>
+	</findingType>
+	<findingType>
+		<id>WriteTag</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.WriteTagCheck">
+		</artifact>
+		<shortMessage>
+			Outputs a JavaDoc tag as information.
+		</shortMessage>
+		<info>Outputs a JavaDoc tag as information.</info>
+		<name>Write Tag</name>
+	</findingType>
+	<findingType>
+		<id>AbstractClassName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.AbstractClassNameCheck">
+		</artifact>
+		<shortMessage>
+			Ensures that the names of abstract classes conforming to
+			some regular expression.
+		</shortMessage>
+		<info>
+			Ensures that the names of abstract classes conforming to
+			some regular expression.
+		</info>
+		<name>Abstract Class Name</name>
+	</findingType>
+	<findingType>
+		<id>ConstantName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that constant names conform to a format specified by
+			the format property.
+		</shortMessage>
+		<info>
+			Checks that constant names conform to a format specified by
+			the format property.
+		</info>
+		<name>Constant Name</name>
+	</findingType>
+	<findingType>
+		<id>LocalFinalVariableName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.LocalFinalVariableNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that local final variable names conform to a format
+			specified by the format property.
+		</shortMessage>
+		<info>
+			Checks that local final variable names conform to a format
+			specified by the format property.
+		</info>
+		<name>Local Final Variable Name</name>
+	</findingType>
+	<findingType>
+		<id>LocalVariableName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that local, non-final variable names conform to a
+			format specified by the format property.
+		</shortMessage>
+		<info>
+			Checks that local, non-final variable names conform to a
+			format specified by the format property.
+		</info>
+		<name>Local Variable Name</name>
+	</findingType>
+	<findingType>
+		<id>MemberName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.MemberNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that instance variable names conform to a format
+			specified by the format property.
+		</shortMessage>
+		<info>
+			Checks that instance variable names conform to a format
+			specified by the format property.
+		</info>
+		<name>Member Name</name>
+	</findingType>
+	<findingType>
+		<id>MethodName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that method names conform to a format specified by
+			the format property.
+		</shortMessage>
+		<info>
+			Checks that method names conform to a format specified by
+			the format property.
+		</info>
+		<name>Method Name</name>
+	</findingType>
+	<findingType>
+		<id>PackageName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.PackageNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that package names conform to a format specified by
+			the format property.
+		</shortMessage>
+		<info>
+			Checks that package names conform to a format specified by
+			the format property.
+		</info>
+		<name>Package Name</name>
+	</findingType>
+	<findingType>
+		<id>ParameterName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that parameter names conform to a format specified by
+			the format property.
+		</shortMessage>
+		<info>
+			Checks that parameter names conform to a format specified by
+			the format property.
+		</info>
+		<name>Parameter Name</name>
+	</findingType>
+	<findingType>
+		<id>StaticVariableName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that static, non-final variable names conform to a
+			format specified by the format property.
+		</shortMessage>
+		<info>
+			Checks that static, non-final variable names conform to a
+			format specified by the format property.
+		</info>
+		<name>Static Variable Name</name>
+	</findingType>
+	<findingType>
+		<id>TypeName</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.TypeNameCheck">
+		</artifact>
+		<shortMessage>
+			Checks that type names conform to a format specified by the
+			format property.
+		</shortMessage>
+		<info>
+			Checks that type names conform to a format specified by the
+			format property.
+		</info>
+		<name>Type Name</name>
+	</findingType>
+	<findingType>
+		<id>Header</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.HeaderCheck">
+		</artifact>
+		<shortMessage>
+			Checks the header of the source against a fixed header file.
+		</shortMessage>
+		<info>
+			Checks the header of the source against a fixed header file.
+		</info>
+		<name>Header</name>
+	</findingType>
+	<findingType>
+		<id>RegexpHeader</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.RegexpHeaderCheck">
+		</artifact>
+		<shortMessage>
+			Checks the header of the source against a header file that
+			contains a regular expression for each line of the source
+			header.
+		</shortMessage>
+		<info>
+			Checks the header of the source against a header file that
+			contains a regular expression for each line of the source
+			header.
+		</info>
+		<name>Regexp Header</name>
+	</findingType>
+	<findingType>
+		<id>CrossLanguageRegexpHeader</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.CrossLanguageRegexpHeaderCheck">
+		</artifact>
+		<shortMessage>
+			Checks the header of each source file against a header that
+			contains a regular expression for each line of the source
+			header.
+		</shortMessage>
+		<info>
+			Checks the header of each source file against a header that
+			contains a regular expression for each line of the source
+			header.
+		</info>
+		<name>Cross Language Regexp Header</name>
+	</findingType>
+	<findingType>
+		<id>AvoidStarImport</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck">
+		</artifact>
+		<shortMessage>
+			Check that finds import statements that use the * notation.
+		</shortMessage>
+		<info>
+			Check that finds import statements that use the * notation.
+		</info>
+		<name>Avoid Star Import</name>
+	</findingType>
+	<findingType>
+		<id>IllegalImport</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.IllegalImportCheck">
+		</artifact>
+		<shortMessage>
+			Checks for imports from a set of illegal packages.
+		</shortMessage>
+		<info>Checks for imports from a set of illegal packages.</info>
+		<name>Illegal Import</name>
+	</findingType>
+	<findingType>
+		<id>RedundantImport</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.RedundantImportCheck">
+		</artifact>
+		<shortMessage>
+			Checks for imports that are redundant.
+		</shortMessage>
+		<info>Checks for imports that are redundant.</info>
+		<name>Redundant Import</name>
+	</findingType>
+	<findingType>
+		<id>UnusedImports</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck">
+		</artifact>
+		<shortMessage>
+			Checks for unused import statements.
+		</shortMessage>
+		<info>Checks for unused import statements.</info>
+		<name>Unused Imports</name>
+	</findingType>
+	<findingType>
+		<id>ImportOrder</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.ImportOrderCheck">
+		</artifact>
+		<shortMessage>
+			Class to check the ordering/grouping of imports.
+		</shortMessage>
+		<info>Class to check the ordering/grouping of imports.</info>
+		<name>Import Order</name>
+	</findingType>
+	<findingType>
+		<id>ImportControl</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.ImportControlCheck">
+		</artifact>
+		<shortMessage>
+			Check that controls what packages can be imported in each
+			package.
+		</shortMessage>
+		<info>
+			Check that controls what packages can be imported in each
+			package.
+		</info>
+		<name>Import Control</name>
+	</findingType>
+	<findingType>
+		<id>ExecutableStatementCount</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.ExecutableStatementCountCheck">
+		</artifact>
+		<shortMessage>
+			Restricts the number of executable statements to a specified
+			limit (default = 30).
+		</shortMessage>
+		<info>
+			Restricts the number of executable statements to a specified
+			limit (default = 30).
+		</info>
+		<name>Executable Statement Count</name>
+	</findingType>
+	<findingType>
+		<id>FileLength</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.FileLengthCheck">
+		</artifact>
+		<shortMessage>Checks for long source files.</shortMessage>
+		<info>Checks for long source files.</info>
+		<name>File Length</name>
+	</findingType>
+	<findingType>
+		<id>LineLength</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck">
+		</artifact>
+		<shortMessage>Checks for long lines.</shortMessage>
+		<info>Checks for long lines.</info>
+		<name>Line Length</name>
+	</findingType>
+	<findingType>
+		<id>MethodLength</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.MethodLengthCheck">
+		</artifact>
+		<shortMessage>Checks for long methods.</shortMessage>
+		<info>Checks for long methods.</info>
+		<name>Method Length</name>
+	</findingType>
+	<findingType>
+		<id>AnonInnerLength</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.AnonInnerLengthCheck">
+		</artifact>
+		<shortMessage>
+			Checks for long anonymous inner classes.
+		</shortMessage>
+		<info>Checks for long anonymous inner classes.</info>
+		<name>Anon Inner Length</name>
+	</findingType>
+	<findingType>
+		<id>ParameterNumber</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.ParameterNumberCheck">
+		</artifact>
+		<shortMessage>
+			Checks the number of parameters that a method or constructor
+			has.
+		</shortMessage>
+		<info>
+			Checks the number of parameters that a method or constructor
+			has.
+		</info>
+		<name>Parameter Number</name>
+	</findingType>
+	<findingType>
+		<id>EmptyForInitializerPad</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForInitializerPadCheck">
+		</artifact>
+		<shortMessage>
+			Checks the padding of an empty for initializer; that is
+			whether a space is required at an empty for initializer, or
+			such spaces are forbidden.
+		</shortMessage>
+		<info>
+			Checks the padding of an empty for initializer; that is
+			whether a space is required at an empty for initializer, or
+			such spaces are forbidden.
+		</info>
+		<name>Empty For Initializer Pad</name>
+	</findingType>
+	<findingType>
+		<id>EmptyForIteratorPad</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForIteratorPadCheck">
+		</artifact>
+		<shortMessage>
+			Checks the padding of an empty for iterator; that is whether
+			a space is required at an empty for iterator, or such spaces
+			are forbidden.
+		</shortMessage>
+		<info>
+			Checks the padding of an empty for iterator; that is whether
+			a space is required at an empty for iterator, or such spaces
+			are forbidden.
+		</info>
+		<name>Empty For Iterator Pad</name>
+	</findingType>
+	<findingType>
+		<id>MethodParamPad</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.MethodParamPadCheck">
+		</artifact>
+		<shortMessage>
+			Checks the padding between the identifier of a method
+			definition, constructor definition, method call, or
+			constructor invocation; and the left parenthesis of the
+			parameter list.
+		</shortMessage>
+		<info>
+			Checks the padding between the identifier of a method
+			definition, constructor definition, method call, or
+			constructor invocation; and the left parenthesis of the
+			parameter list.
+		</info>
+		<name>Method Param Pad</name>
+	</findingType>
+	<findingType>
+		<id>NoWhitespaceAfter</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceAfterCheck">
+		</artifact>
+		<shortMessage>
+			Checks that there is no whitespace after a token.
+		</shortMessage>
+		<info>Checks that there is no whitespace after a token.</info>
+		<name>No Whitespace After</name>
+	</findingType>
+	<findingType>
+		<id>NoWhitespaceBefore</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceBeforeCheck">
+		</artifact>
+		<shortMessage>
+			Checks that there is no whitespace before a token.
+		</shortMessage>
+		<info>Checks that there is no whitespace before a token.</info>
+		<name>No Whitespace Before</name>
+	</findingType>
+	<findingType>
+		<id>OperatorWrap</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.OperatorWrapCheck">
+		</artifact>
+		<shortMessage>Checks line wrapping for operators.</shortMessage>
+		<info>Checks line wrapping for operators.</info>
+		<name>Operator Wrap</name>
+	</findingType>
+	<findingType>
+		<id>ParenPad</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.ParenPadCheck">
+		</artifact>
+		<shortMessage>
+			Checks the padding of parentheses; that is whether a space
+			is required after a left parenthesis and before a right
+			parenthesis, or such spaces are forbidden, with the
+			exception that it does not check for padding of the right
+			parenthesis at an empty for iterator.
+		</shortMessage>
+		<info>
+			Checks the padding of parentheses; that is whether a space
+			is required after a left parenthesis and before a right
+			parenthesis, or such spaces are forbidden, with the
+			exception that it does not check for padding of the right
+			parenthesis at an empty for iterator.
+		</info>
+		<name>Paren Pad</name>
+	</findingType>
+	<findingType>
+		<id>TypecastParenPad</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.TypecastParenPadCheck">
+		</artifact>
+		<shortMessage>
+			Checks the padding of parentheses for typecasts.
+		</shortMessage>
+		<info>Checks the padding of parentheses for typecasts.</info>
+		<name>Typecast Paren Pad</name>
+	</findingType>
+	<findingType>
+		<id>TabCharacter</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.TabCharacterCheck">
+		</artifact>
+		<shortMessage>
+			Reports tab characters ('\t') in the source code.
+		</shortMessage>
+		<info>Reports tab characters ('\t') in the source code.</info>
+		<name>Tab Character</name>
+	</findingType>
+	<findingType>
+		<id>WhitespaceAfter</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAfterCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a token is followed by whitespace, with the
+			exception that it does not check for whitespace after the
+			semicolon of an empty for iterator.
+		</shortMessage>
+		<info>
+			Checks that a token is followed by whitespace, with the
+			exception that it does not check for whitespace after the
+			semicolon of an empty for iterator.
+		</info>
+		<name>Whitespace After</name>
+	</findingType>
+	<findingType>
+		<id>WhitespaceAround</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a token is surrounded by whitespace.
+		</shortMessage>
+		<info>Checks that a token is surrounded by whitespace.</info>
+		<name>Whitespace Around</name>
+	</findingType>
+	<findingType>
+		<id>ModifierOrder</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrderCheck">
+		</artifact>
+		<shortMessage>
+			Checks that the order of modifiers conforms to the
+			suggestions in the Java Language specification, sections
+			8.1.1, 8.3.1 and 8.4.3.
+		</shortMessage>
+		<info>
+			Checks that the order of modifiers conforms to the
+			suggestions in the Java Language specification, sections
+			8.1.1, 8.3.1 and 8.4.3.
+		</info>
+		<name>Modifier Order</name>
+	</findingType>
+	<findingType>
+		<id>RedundantModifier</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.modifier.RedundantModifierCheck">
+		</artifact>
+		<shortMessage>
+			Checks for redundant modifiers in interface and annotation
+			definitions.
+		</shortMessage>
+		<info>
+			Checks for redundant modifiers in interface and annotation
+			definitions.
+		</info>
+		<name>Redundant Modifier</name>
+	</findingType>
+	<findingType>
+		<id>EmptyBlock</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.EmptyBlockCheck">
+		</artifact>
+		<shortMessage>Checks for empty blocks.</shortMessage>
+		<info>Checks for empty blocks.</info>
+		<name>Empty Block</name>
+	</findingType>
+	<findingType>
+		<id>LeftCurly</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck">
+		</artifact>
+		<shortMessage>
+			Checks the placement of left curly braces on types, methods
+			and other blocks:
+		</shortMessage>
+		<info>
+			Checks the placement of left curly braces on types, methods
+			and other blocks:
+		</info>
+		<name>Left Curly</name>
+	</findingType>
+	<findingType>
+		<id>NeedBraces</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck">
+		</artifact>
+		<shortMessage>
+			Checks for braces around code blocks.
+		</shortMessage>
+		<info>Checks for braces around code blocks.</info>
+		<name>Need Braces</name>
+	</findingType>
+	<findingType>
+		<id>RightCurly</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck">
+		</artifact>
+		<shortMessage>
+			Checks the placement of right curly braces.
+		</shortMessage>
+		<info>Checks the placement of right curly braces.</info>
+		<name>Right Curly</name>
+	</findingType>
+	<findingType>
+		<id>AvoidNestedBlocks</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.AvoidNestedBlocksCheck">
+		</artifact>
+		<shortMessage>Finds nested blocks.</shortMessage>
+		<info>Finds nested blocks.</info>
+		<name>Avoid Nested Blocks</name>
+	</findingType>
+	<findingType>
+		<id>ArrayTrailingComma</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ArrayTrailingCommaCheck">
+		</artifact>
+		<shortMessage>
+			Checks if array initialization contains optional trailing
+			comma.
+		</shortMessage>
+		<info>
+			Checks if array initialization contains optional trailing
+			comma.
+		</info>
+		<name>Array Trailing Comma</name>
+	</findingType>
+	<findingType>
+		<id>AvoidInlineConditionals</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.AvoidInlineConditionalsCheck">
+		</artifact>
+		<shortMessage>Detects inline conditionals.</shortMessage>
+		<info>Detects inline conditionals.</info>
+		<name>Avoid Inline Conditionals</name>
+	</findingType>
+	<findingType>
+		<id>CovariantEquals</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.CovariantEqualsCheck">
+		</artifact>
+		<shortMessage>
+			Checks that if a class defines a covariant method equals,
+			then it defines method equals(java.lang.Object).
+		</shortMessage>
+		<info>
+			Checks that if a class defines a covariant method equals,
+			then it defines method equals(java.lang.Object).
+		</info>
+		<name>Covariant Equals</name>
+	</findingType>
+	<findingType>
+		<id>DoubleCheckedLocking</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DoubleCheckedLockingCheck">
+		</artifact>
+		<shortMessage>
+			Detect the double-checked locking idiom, a technique that
+			tries to avoid synchronization overhead but is incorrect
+			because of subtle artifacts of the java memory model.
+		</shortMessage>
+		<info>
+			Detect the double-checked locking idiom, a technique that
+			tries to avoid synchronization overhead but is incorrect
+			because of subtle artifacts of the java memory model.
+		</info>
+		<name>Double Checked Locking</name>
+	</findingType>
+	<findingType>
+		<id>EmptyStatement</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.EmptyStatementCheck">
+		</artifact>
+		<shortMessage>
+			Detects empty statements (standalone ';').
+		</shortMessage>
+		<info>Detects empty statements (standalone ';').</info>
+		<name>Empty Statement</name>
+	</findingType>
+	<findingType>
+		<id>EqualsHashCode</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.EqualsHashCodeCheck">
+		</artifact>
+		<shortMessage>
+			Checks that classes that override equals() also override
+			hashCode().
+		</shortMessage>
+		<info>
+			Checks that classes that override equals() also override
+			hashCode().
+		</info>
+		<name>Equals Hash Code</name>
+	</findingType>
+	<findingType>
+		<id>FinalLocalVariable</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck">
+		</artifact>
+		<shortMessage>
+			Ensures that local variables that never get their values
+			changed, must be declared final.
+		</shortMessage>
+		<info>
+			Ensures that local variables that never get their values
+			changed, must be declared final.
+		</info>
+		<name>Final Local Variable</name>
+	</findingType>
+	<findingType>
+		<id>HiddenField</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a local variable or a parameter does not shadow
+			a field that is defined in the same class.
+		</shortMessage>
+		<info>
+			Checks that a local variable or a parameter does not shadow
+			a field that is defined in the same class.
+		</info>
+		<name>Hidden Field</name>
+	</findingType>
+	<findingType>
+		<id>IllegalInstantiation</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalInstantiationCheck">
+		</artifact>
+		<shortMessage>
+			Checks for illegal instantiations where a factory method is
+			preferred.
+		</shortMessage>
+		<info>
+			Checks for illegal instantiations where a factory method is
+			preferred.
+		</info>
+		<name>Illegal Instantiation</name>
+	</findingType>
+	<findingType>
+		<id>IllegalToken</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTokenCheck">
+		</artifact>
+		<shortMessage>Checks for illegal tokens.</shortMessage>
+		<info>Checks for illegal tokens.</info>
+		<name>Illegal Token</name>
+	</findingType>
+	<findingType>
+		<id>IllegalTokenText</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTokenTextCheck">
+		</artifact>
+		<shortMessage>Checks for illegal token text.</shortMessage>
+		<info>Checks for illegal token text.</info>
+		<name>Illegal Token Text</name>
+	</findingType>
+	<findingType>
+		<id>InnerAssignment</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck">
+		</artifact>
+		<shortMessage>
+			Checks for assignments in subexpressions, such as in String
+			s = Integer.toString(i = 2);.
+		</shortMessage>
+		<info>
+			Checks for assignments in subexpressions, such as in String
+			s = Integer.toString(i = 2);.
+		</info>
+		<name>Inner Assignment</name>
+	</findingType>
+	<findingType>
+		<id>MagicNumber</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck">
+		</artifact>
+		<shortMessage>Checks for magic numbers.</shortMessage>
+		<info>Checks for magic numbers.</info>
+		<name>Magic Number</name>
+	</findingType>
+	<findingType>
+		<id>MissingSwitchDefault</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MissingSwitchDefaultCheck">
+		</artifact>
+		<shortMessage>
+			Checks that switch statement has &quot;default&quot; clause.
+		</shortMessage>
+		<info>
+			Checks that switch statement has &quot;default&quot; clause.
+		</info>
+		<name>Missing Switch Default</name>
+	</findingType>
+	<findingType>
+		<id>ModifiedControlVariable</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariableCheck">
+		</artifact>
+		<shortMessage>
+			Check for ensuring that for loop control variables are not
+			modified inside the for block.
+		</shortMessage>
+		<info>
+			Check for ensuring that for loop control variables are not
+			modified inside the for block.
+		</info>
+		<name>Modified Control Variable</name>
+	</findingType>
+	<findingType>
+		<id>RedundantThrows</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.RedundantThrowsCheck">
+		</artifact>
+		<shortMessage>
+			Checks for redundant exceptions declared in throws clause
+			such as duplicates, unchecked exceptions or subclasses of
+			another declared exception.
+		</shortMessage>
+		<info>
+			Checks for redundant exceptions declared in throws clause
+			such as duplicates, unchecked exceptions or subclasses of
+			another declared exception.
+		</info>
+		<name>Redundant Throws</name>
+	</findingType>
+	<findingType>
+		<id>SimplifyBooleanExpression</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanExpressionCheck">
+		</artifact>
+		<shortMessage>
+			Checks for overly complicated boolean expressions.
+		</shortMessage>
+		<info>Checks for overly complicated boolean expressions.</info>
+		<name>Simplify Boolean Expression</name>
+	</findingType>
+	<findingType>
+		<id>SimplifyBooleanReturn</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanReturnCheck">
+		</artifact>
+		<shortMessage>
+			Checks for overly complicated boolean return statements.
+		</shortMessage>
+		<info>
+			Checks for overly complicated boolean return statements.
+		</info>
+		<name>Simplify Boolean Return</name>
+	</findingType>
+	<findingType>
+		<id>StringLiteralEquality</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.StringLiteralEqualityCheck">
+		</artifact>
+		<shortMessage>
+			Checks that string literals are not used with == or !=.
+		</shortMessage>
+		<info>
+			Checks that string literals are not used with == or !=.
+		</info>
+		<name>String Literal Equality</name>
+	</findingType>
+	<findingType>
+		<id>NestedIfDepth</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.NestedIfDepthCheck">
+		</artifact>
+		<shortMessage>
+			Restricts nested if-else blocks to a specified depth
+			(default = 1).
+		</shortMessage>
+		<info>
+			Restricts nested if-else blocks to a specified depth
+			(default = 1).
+		</info>
+		<name>Nested If Depth</name>
+	</findingType>
+	<findingType>
+		<id>NestedTryDepth</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.NestedTryDepthCheck">
+		</artifact>
+		<shortMessage>
+			Restricts nested try-catch-finally blocks to a specified
+			depth (default = 1).
+		</shortMessage>
+		<info>
+			Restricts nested try-catch-finally blocks to a specified
+			depth (default = 1).
+		</info>
+		<name>Nested Try Depth</name>
+	</findingType>
+	<findingType>
+		<id>SuperClone</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SuperCloneCheck">
+		</artifact>
+		<shortMessage>
+			Checks that an overriding clone() method invokes
+			super.clone().
+		</shortMessage>
+		<info>
+			Checks that an overriding clone() method invokes
+			super.clone().
+		</info>
+		<name>Super Clone</name>
+	</findingType>
+	<findingType>
+		<id>SuperFinalize</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SuperFinalizeCheck">
+		</artifact>
+		<shortMessage>
+			Checks that an overriding finalize() method invokes
+			super.finalize().
+		</shortMessage>
+		<info>
+			Checks that an overriding finalize() method invokes
+			super.finalize().
+		</info>
+		<name>Super Finalize</name>
+	</findingType>
+	<findingType>
+		<id>IllegalCatch</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalCatchCheck">
+		</artifact>
+		<shortMessage>
+			Catching java.lang.Exception, java.lang.Error or
+			java.lang.RuntimeException is almost never acceptable.
+		</shortMessage>
+		<info>
+			Catching java.lang.Exception, java.lang.Error or
+			java.lang.RuntimeException is almost never acceptable.
+		</info>
+		<name>Illegal Catch</name>
+	</findingType>
+	<findingType>
+		<id>IllegalThrows</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalThrowsCheck">
+		</artifact>
+		<shortMessage>
+			Throwing java.lang.Error or java.lang.RuntimeException is
+			almost never acceptable.
+		</shortMessage>
+		<info>
+			Throwing java.lang.Error or java.lang.RuntimeException is
+			almost never acceptable.
+		</info>
+		<name>Illegal Throws</name>
+	</findingType>
+	<findingType>
+		<id>PackageDeclaration</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.PackageDeclarationCheck">
+		</artifact>
+		<shortMessage>
+			Ensures there is a package declaration.
+		</shortMessage>
+		<info>Ensures there is a package declaration.</info>
+		<name>Package Declaration</name>
+	</findingType>
+	<findingType>
+		<id>JUnitTestCase</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.JUnitTestCaseCheck">
+		</artifact>
+		<shortMessage>
+			Ensures that the setUp(), tearDown()methods are named
+			correctly, have no arguments, return void and are either
+			public or protected.
+		</shortMessage>
+		<info>
+			Ensures that the setUp(), tearDown()methods are named
+			correctly, have no arguments, return void and are either
+			public or protected.
+		</info>
+		<name>JUnit Test Case</name>
+	</findingType>
+	<findingType>
+		<id>ReturnCount</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ReturnCountCheck">
+		</artifact>
+		<shortMessage>
+			Restricts return statements to a specified count (default =
+			2).
+		</shortMessage>
+		<info>
+			Restricts return statements to a specified count (default =
+			2).
+		</info>
+		<name>Return Count</name>
+	</findingType>
+	<findingType>
+		<id>IllegalType</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTypeCheck">
+		</artifact>
+		<shortMessage>
+			Checks that particular class are never used as types in
+			variable declarations, return values or parameters.
+		</shortMessage>
+		<info>
+			Checks that particular class are never used as types in
+			variable declarations, return values or parameters.
+		</info>
+		<name>Illegal Type</name>
+	</findingType>
+	<findingType>
+		<id>DeclarationOrder</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DeclarationOrderCheck">
+		</artifact>
+		<shortMessage>
+			Checks that the parts of a class or interface declaration
+			appear in the order suggested by the Code Conventions for
+			the Java Programming Language.
+		</shortMessage>
+		<info>
+			Checks that the parts of a class or interface declaration
+			appear in the order suggested by the Code Conventions for
+			the Java Programming Language.
+		</info>
+		<name>Declaration Order</name>
+	</findingType>
+	<findingType>
+		<id>ParameterAssignment</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ParameterAssignmentCheck">
+		</artifact>
+		<shortMessage>Disallow assignment of parameters.</shortMessage>
+		<info>Disallow assignment of parameters.</info>
+		<name>Parameter Assignment</name>
+	</findingType>
+	<findingType>
+		<id>ExplicitInitialization</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ExplicitInitializationCheck">
+		</artifact>
+		<shortMessage>
+			Checks if any class or object member explicitly initialized
+			to default for its type value (null for object references,
+			zero for numeric types and char and false for boolean.
+		</shortMessage>
+		<info>
+			Checks if any class or object member explicitly initialized
+			to default for its type value (null for object references,
+			zero for numeric types and char and false for boolean.
+		</info>
+		<name>Explicit Initialization</name>
+	</findingType>
+	<findingType>
+		<id>DefaultComesLast</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DefaultComesLastCheck">
+		</artifact>
+		<shortMessage>
+			Check that the default is after all the cases in a switch
+			statement.
+		</shortMessage>
+		<info>
+			Check that the default is after all the cases in a switch
+			statement.
+		</info>
+		<name>Default Comes Last</name>
+	</findingType>
+	<findingType>
+		<id>MissingCtor</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MissingCtorCheck">
+		</artifact>
+		<shortMessage>
+			Checks that classes (except abstract one) define a ctor and
+			don't rely on the default one.
+		</shortMessage>
+		<info>
+			Checks that classes (except abstract one) define a ctor and
+			don't rely on the default one.
+		</info>
+		<name>Missing Ctor</name>
+	</findingType>
+	<findingType>
+		<id>FallThrough</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.FallThroughCheck">
+		</artifact>
+		<shortMessage>
+			Checks for fall through in switch statements Finds locations
+			where a case contains Java code - but lacks a break, return,
+			throw or continue statement.
+		</shortMessage>
+		<info>
+			Checks for fall through in switch statements Finds locations
+			where a case contains Java code - but lacks a break, return,
+			throw or continue statement.
+		</info>
+		<name>Fall Through</name>
+	</findingType>
+	<findingType>
+		<id>MultipleStringLiterals</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck">
+		</artifact>
+		<shortMessage>
+			Checks for multiple occurrences of the same string literal
+			within a single file.
+		</shortMessage>
+		<info>
+			Checks for multiple occurrences of the same string literal
+			within a single file.
+		</info>
+		<name>Multiple String Literals</name>
+	</findingType>
+	<findingType>
+		<id>MultipleVariableDeclarations</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MultipleVariableDeclarationsCheck">
+		</artifact>
+		<shortMessage>
+			Checks that each variable declaration is in its own
+			statement and on its own line.
+		</shortMessage>
+		<info>
+			Checks that each variable declaration is in its own
+			statement and on its own line.
+		</info>
+		<name>Multiple Variable Declarations</name>
+	</findingType>
+	<findingType>
+		<id>RequireThis</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.RequireThisCheck">
+		</artifact>
+		<shortMessage>
+			Checks that code doesn't rely on the &quot;this&quot;
+			default.
+		</shortMessage>
+		<info>
+			Checks that code doesn't rely on the &quot;this&quot;
+			default.
+		</info>
+		<name>Require This</name>
+	</findingType>
+	<findingType>
+		<id>UnnecessaryParentheses</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.UnnecessaryParenthesesCheck">
+		</artifact>
+		<shortMessage>
+			Checks if unnecessary parentheses are used in a statement or
+			expression.
+		</shortMessage>
+		<info>
+			Checks if unnecessary parentheses are used in a statement or
+			expression.
+		</info>
+		<name>Unnecessary Parentheses</name>
+	</findingType>
+	<findingType>
+		<id>VisibilityModifier</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck">
+		</artifact>
+		<shortMessage>Checks visibility of class members.</shortMessage>
+		<info>Checks visibility of class members.</info>
+		<name>Visibility Modifier</name>
+	</findingType>
+	<findingType>
+		<id>FinalClass</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck">
+		</artifact>
+		<shortMessage>
+			Checks that class which has only private ctors is declared
+			as final.
+		</shortMessage>
+		<info>
+			Checks that class which has only private ctors is declared
+			as final.
+		</info>
+		<name>Final Class</name>
+	</findingType>
+	<findingType>
+		<id>InterfaceIsType</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.InterfaceIsTypeCheck">
+		</artifact>
+		<shortMessage>
+			Implements Bloch, Effective Java, Item 17 - Use Interfaces
+			only to define types.
+		</shortMessage>
+		<info>
+			Implements Bloch, Effective Java, Item 17 - Use Interfaces
+			only to define types.
+		</info>
+		<name>Interface Is Type</name>
+	</findingType>
+	<findingType>
+		<id>HideUtilityClassConstructor</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.HideUtilityClassConstructorCheck">
+		</artifact>
+		<shortMessage>
+			Make sure that utility classes (classes that contain only
+			static methods) do not have a public constructor.
+		</shortMessage>
+		<info>
+			Make sure that utility classes (classes that contain only
+			static methods) do not have a public constructor.
+		</info>
+		<name>Hide Utility Class Constructor</name>
+	</findingType>
+	<findingType>
+		<id>DesignForExtension</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck">
+		</artifact>
+		<shortMessage>
+			Checks that classes are designed for inheritance.
+		</shortMessage>
+		<info>Checks that classes are designed for inheritance.</info>
+		<name>Design For Extension</name>
+	</findingType>
+	<findingType>
+		<id>MutableException</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.MutableExceptionCheck">
+		</artifact>
+		<shortMessage>
+			Ensures that exceptions (defined as any class name
+			conforming to some regular expression) are immutable.
+		</shortMessage>
+		<info>
+			Ensures that exceptions (defined as any class name
+			conforming to some regular expression) are immutable.
+		</info>
+		<name>Mutable Exception</name>
+	</findingType>
+	<findingType>
+		<id>ThrowsCount</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.ThrowsCountCheck">
+		</artifact>
+		<shortMessage>
+			Restricts throws statements to a specified count (default =
+			1).
+		</shortMessage>
+		<info>
+			Restricts throws statements to a specified count (default =
+			1).
+		</info>
+		<name>Throws Count</name>
+	</findingType>
+	<findingType>
+		<id>StrictDuplicateCode</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.duplicates.StrictDuplicateCodeCheck">
+		</artifact>
+		<shortMessage>
+			Performs a line-by-line comparison of all code lines and
+			reports duplicate code if a sequence of lines differs only
+			in indentation.
+		</shortMessage>
+		<info>
+			Performs a line-by-line comparison of all code lines and
+			reports duplicate code if a sequence of lines differs only
+			in indentation.
+		</info>
+		<name>Strict Duplicate Code</name>
+	</findingType>
+	<findingType>
+		<id>BooleanExpressionComplexity</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.BooleanExpressionComplexityCheck">
+		</artifact>
+		<shortMessage>
+			Restricts nested boolean operators (&amp;&amp;, || and ^) to
+			a specified depth (default = 3).
+		</shortMessage>
+		<info>
+			Restricts nested boolean operators (&amp;&amp;, || and ^) to
+			a specified depth (default = 3).
+		</info>
+		<name>Boolean Expression Complexity</name>
+	</findingType>
+	<findingType>
+		<id>ClassDataAbstractionCoupling</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.ClassDataAbstractionCouplingCheck">
+		</artifact>
+		<shortMessage>
+			This metric measures the number of instantiations of other
+			classes within the given class.
+		</shortMessage>
+		<info>
+			This metric measures the number of instantiations of other
+			classes within the given class.
+		</info>
+		<name>Class Data Abstraction Coupling</name>
+	</findingType>
+	<findingType>
+		<id>ClassFanOutComplexity</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.ClassFanOutComplexityCheck">
+		</artifact>
+		<shortMessage>
+			The number of other classes a given class relies on.
+		</shortMessage>
+		<info>
+			The number of other classes a given class relies on.
+		</info>
+		<name>Class Fan Out Complexity</name>
+	</findingType>
+	<findingType>
+		<id>CyclomaticComplexity</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck">
+		</artifact>
+		<shortMessage>
+			Checks cyclomatic complexity against a specified limit.
+		</shortMessage>
+		<info>
+			Checks cyclomatic complexity against a specified limit.
+		</info>
+		<name>Cyclomatic Complexity</name>
+	</findingType>
+	<findingType>
+		<id>NPathComplexity</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.NPathComplexityCheck">
+		</artifact>
+		<shortMessage>
+			Checks the npath complexity against a specified limt
+			(default = 200).
+		</shortMessage>
+		<info>
+			Checks the npath complexity against a specified limt
+			(default = 200).
+		</info>
+		<name>NPath Complexity</name>
+	</findingType>
+	<findingType>
+		<id>JavaNCSS</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.JavaNCSSCheck">
+		</artifact>
+		<shortMessage>
+			This check calculates the Non Commenting Source Statements
+			(NCSS) metric for java source files and methods.
+		</shortMessage>
+		<info>
+			This check calculates the Non Commenting Source Statements
+			(NCSS) metric for java source files and methods.
+		</info>
+		<name>Java NCSS</name>
+	</findingType>
+	<findingType>
+		<id>GenericIllegalRegexp</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck">
+		</artifact>
+		<shortMessage>
+			A generic check for code problems, the user can search for
+			any pattern.
+		</shortMessage>
+		<info>
+			A generic check for code problems, the user can search for
+			any pattern.
+		</info>
+		<name>Generic Illegal Regexp</name>
+	</findingType>
+	<findingType>
+		<id>NewlineAtEndOfFile</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.NewlineAtEndOfFileCheck">
+		</artifact>
+		<shortMessage>
+			Checks that there is a newline at the end of each file.
+		</shortMessage>
+		<info>
+			Checks that there is a newline at the end of each file.
+		</info>
+		<name>Newline At End Of File</name>
+	</findingType>
+	<findingType>
+		<id>TodoComment</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck">
+		</artifact>
+		<shortMessage>A check for TODO comments.</shortMessage>
+		<info>A check for TODO comments.</info>
+		<name>Todo Comment</name>
+	</findingType>
+	<findingType>
+		<id>Translation</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.TranslationCheck">
+		</artifact>
+		<shortMessage>
+			The TranslationCheck class helps to ensure the correct
+			translation of code by checking property files for
+			consistency regarding their keys.
+		</shortMessage>
+		<info>
+			The TranslationCheck class helps to ensure the correct
+			translation of code by checking property files for
+			consistency regarding their keys.
+		</info>
+		<name>Translation</name>
+	</findingType>
+	<findingType>
+		<id>UncommentedMain</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.UncommentedMainCheck">
+		</artifact>
+		<shortMessage>Detects uncommented main methods.</shortMessage>
+		<info>Detects uncommented main methods.</info>
+		<name>Uncommented Main</name>
+	</findingType>
+	<findingType>
+		<id>UpperEll</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.UpperEllCheck">
+		</artifact>
+		<shortMessage>
+			Checks that long constants are defined with an upper ell.
+		</shortMessage>
+		<info>
+			Checks that long constants are defined with an upper ell.
+		</info>
+		<name>Upper Ell</name>
+	</findingType>
+	<findingType>
+		<id>ArrayTypeStyle</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.ArrayTypeStyleCheck">
+		</artifact>
+		<shortMessage>
+			Checks the style of array type definitions.
+		</shortMessage>
+		<info>Checks the style of array type definitions.</info>
+		<name>Array Type Style</name>
+	</findingType>
+	<findingType>
+		<id>FinalParameters</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck">
+		</artifact>
+		<shortMessage>
+			Check that method/constructor/catch/foreach parameters are
+			final.
+		</shortMessage>
+		<info>
+			Check that method/constructor/catch/foreach parameters are
+			final.
+		</info>
+		<name>Final Parameters</name>
+	</findingType>
+	<findingType>
+		<id>DescendantToken</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.DescendantTokenCheck">
+		</artifact>
+		<shortMessage>
+			Checks for restricted tokens beneath other tokens.
+		</shortMessage>
+		<info>Checks for restricted tokens beneath other tokens.</info>
+		<name>Descendant Token</name>
+	</findingType>
+	<findingType>
+		<id>Indentation</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.IndentationCheck">
+		</artifact>
+		<shortMessage>
+			Checks correct indentation of Java Code.
+		</shortMessage>
+		<info>Checks correct indentation of Java Code.</info>
+		<name>Indentation</name>
+	</findingType>
+	<findingType>
+		<id>TrailingComment</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.TrailingCommentCheck">
+		</artifact>
+		<shortMessage>
+			The check to ensure that requires that comments be the only
+			thing on a line.
+		</shortMessage>
+		<info>
+			The check to ensure that requires that comments be the only
+			thing on a line.
+		</info>
+		<name>Trailing Comment</name>
+	</findingType>
+	<findingType>
+		<id>RequiredRegexp</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.RequiredRegexpCheck">
+		</artifact>
+		<shortMessage>
+			A check that makes sure that a specified pattern exists in
+			the code.
+		</shortMessage>
+		<info>
+			A check that makes sure that a specified pattern exists in
+			the code.
+		</info>
+		<name>Required Regexp</name>
+	</findingType>
+	<findingType>
+		<id>Regexp</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.RegexpCheck">
+		</artifact>
+		<shortMessage>
+			A check that makes sure that a specified pattern exists (or
+			not) in the file.
+		</shortMessage>
+		<info>
+			A check that makes sure that a specified pattern exists (or
+			not) in the file.
+		</info>
+		<name>Regexp</name>
+	</findingType>
+	<findingType>
+		<id>EntityBean</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.EntityBeanCheck">
+		</artifact>
+		<shortMessage>
+			Checks that an EntityBean implementation satisfies
+			EntityBean requirements.
+		</shortMessage>
+		<info>
+			Checks that an EntityBean implementation satisfies
+			EntityBean requirements.
+		</info>
+		<name>Entity Bean</name>
+	</findingType>
+	<findingType>
+		<id>FinalStatic</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.FinalStaticCheck">
+		</artifact>
+		<shortMessage>
+			Checks that all static fields are declared final.
+		</shortMessage>
+		<info>Checks that all static fields are declared final.</info>
+		<name>Final Static</name>
+	</findingType>
+	<findingType>
+		<id>LocalHomeInterface</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.LocalHomeInterfaceCheck">
+		</artifact>
+		<shortMessage>
+			Checks the local home interface requirements: * every method
+			must not throw the java.rmi.RemoteException Reference:
+			Enterprise JavaBeansTM Specification,Version 2.0, section
+			9.6.2.
+		</shortMessage>
+		<info>
+			Checks the local home interface requirements: * every method
+			must not throw the java.rmi.RemoteException Reference:
+			Enterprise JavaBeansTM Specification,Version 2.0, section
+			9.6.2.
+		</info>
+		<name>Local Home Interface</name>
+	</findingType>
+	<findingType>
+		<id>LocalInterface</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.LocalInterfaceCheck">
+		</artifact>
+		<shortMessage>
+			Checks the methods of a local interface.
+		</shortMessage>
+		<info>Checks the methods of a local interface.</info>
+		<name>Local Interface</name>
+	</findingType>
+	<findingType>
+		<id>MessageBean</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.MessageBeanCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a MessageBean implementation satisfies
+			MessageBean requirements.
+		</shortMessage>
+		<info>
+			Checks that a MessageBean implementation satisfies
+			MessageBean requirements.
+		</info>
+		<name>Message Bean</name>
+	</findingType>
+	<findingType>
+		<id>RemoteHomeInterface</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteHomeInterfaceCheck">
+		</artifact>
+		<shortMessage>
+			Checks the methods of a remote home interface.
+		</shortMessage>
+		<info>Checks the methods of a remote home interface.</info>
+		<name>Remote Home Interface</name>
+	</findingType>
+	<findingType>
+		<id>RemoteInterface</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteInterfaceCheck">
+		</artifact>
+		<shortMessage>
+			Checks the methods of a remote interface.
+		</shortMessage>
+		<info>Checks the methods of a remote interface.</info>
+		<name>Remote Interface</name>
+	</findingType>
+	<findingType>
+		<id>SessionBean</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.SessionBeanCheck">
+		</artifact>
+		<shortMessage>
+			Checks that a SessionBean implementation satisfies
+			SessionBean requirements.
+		</shortMessage>
+		<info>
+			Checks that a SessionBean implementation satisfies
+			SessionBean requirements.
+		</info>
+		<name>Session Bean</name>
+	</findingType>
+	<findingType>
+		<id>ThisParameter</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.ThisParameterCheck">
+		</artifact>
+		<shortMessage>
+			Checks that 'this' is not a parameter of any method calls or
+			constructors for a bean.
+		</shortMessage>
+		<info>
+			Checks that 'this' is not a parameter of any method calls or
+			constructors for a bean.
+		</info>
+		<name>This Parameter</name>
+	</findingType>
+	<findingType>
+		<id>ThisReturn</id>
+		<artifact tool="checkstyle"
+			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.ThisReturnCheck">
+		</artifact>
+		<shortMessage>
+			Checks that 'this' is not returned by a bean method.
+		</shortMessage>
+		<info>
+			Checks that 'this' is not returned by a bean method.
+		</info>
+		<name>This Return</name>
+	</findingType>
+	<category>
+		<id>Javadoc Comments</id>
+		<findingType>PackageHtml</findingType>
+		<findingType>JavadocMethod</findingType>
+		<findingType>JavadocStyle</findingType>
+		<findingType>JavadocType</findingType>
+		<findingType>JavadocVariable</findingType>
+		<name>Javadoc Comments</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Naming Conventions</id>
+		<findingType>WriteTag</findingType>
+		<findingType>AbstractClassName</findingType>
+		<findingType>ConstantName</findingType>
+		<findingType>LocalFinalVariableName</findingType>
+		<findingType>LocalVariableName</findingType>
+		<findingType>MemberName</findingType>
+		<findingType>MethodName</findingType>
+		<findingType>PackageName</findingType>
+		<findingType>ParameterName</findingType>
+		<findingType>StaticVariableName</findingType>
+		<name>Naming Conventions</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Headers</id>
+		<findingType>TypeName</findingType>
+		<findingType>Header</findingType>
+		<findingType>RegexpHeader</findingType>
+		<name>Headers</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Imports</id>
+		<findingType>CrossLanguageRegexpHeader</findingType>
+		<findingType>AvoidStarImport</findingType>
+		<findingType>IllegalImport</findingType>
+		<findingType>RedundantImport</findingType>
+		<findingType>UnusedImports</findingType>
+		<findingType>ImportOrder</findingType>
+		<name>Imports</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Size Violations</id>
+		<findingType>ImportControl</findingType>
+		<findingType>ExecutableStatementCount</findingType>
+		<findingType>FileLength</findingType>
+		<findingType>LineLength</findingType>
+		<findingType>MethodLength</findingType>
+		<findingType>AnonInnerLength</findingType>
+		<name>Size Violations</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Whitespace</id>
+		<findingType>ParameterNumber</findingType>
+		<findingType>EmptyForInitializerPad</findingType>
+		<findingType>EmptyForIteratorPad</findingType>
+		<findingType>MethodParamPad</findingType>
+		<findingType>NoWhitespaceAfter</findingType>
+		<findingType>NoWhitespaceBefore</findingType>
+		<findingType>OperatorWrap</findingType>
+		<findingType>ParenPad</findingType>
+		<findingType>TypecastParenPad</findingType>
+		<findingType>TabCharacter</findingType>
+		<findingType>WhitespaceAfter</findingType>
+		<name>Whitespace</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Modifiers</id>
+		<findingType>WhitespaceAround</findingType>
+		<findingType>ModifierOrder</findingType>
+		<name>Modifiers</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Block Checks</id>
+		<findingType>RedundantModifier</findingType>
+		<findingType>EmptyBlock</findingType>
+		<findingType>LeftCurly</findingType>
+		<findingType>NeedBraces</findingType>
+		<findingType>RightCurly</findingType>
+		<name>Block Checks</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Coding</id>
+		<findingType>AvoidNestedBlocks</findingType>
+		<findingType>ArrayTrailingComma</findingType>
+		<findingType>AvoidInlineConditionals</findingType>
+		<findingType>CovariantEquals</findingType>
+		<findingType>DoubleCheckedLocking</findingType>
+		<findingType>EmptyStatement</findingType>
+		<findingType>EqualsHashCode</findingType>
+		<findingType>FinalLocalVariable</findingType>
+		<findingType>HiddenField</findingType>
+		<findingType>IllegalInstantiation</findingType>
+		<findingType>IllegalToken</findingType>
+		<findingType>IllegalTokenText</findingType>
+		<findingType>InnerAssignment</findingType>
+		<findingType>MagicNumber</findingType>
+		<findingType>MissingSwitchDefault</findingType>
+		<findingType>ModifiedControlVariable</findingType>
+		<findingType>RedundantThrows</findingType>
+		<findingType>SimplifyBooleanExpression</findingType>
+		<findingType>SimplifyBooleanReturn</findingType>
+		<findingType>StringLiteralEquality</findingType>
+		<findingType>NestedIfDepth</findingType>
+		<findingType>NestedTryDepth</findingType>
+		<findingType>SuperClone</findingType>
+		<findingType>SuperFinalize</findingType>
+		<findingType>IllegalCatch</findingType>
+		<findingType>IllegalThrows</findingType>
+		<findingType>PackageDeclaration</findingType>
+		<findingType>JUnitTestCase</findingType>
+		<findingType>ReturnCount</findingType>
+		<findingType>IllegalType</findingType>
+		<findingType>DeclarationOrder</findingType>
+		<findingType>ParameterAssignment</findingType>
+		<findingType>ExplicitInitialization</findingType>
+		<findingType>DefaultComesLast</findingType>
+		<findingType>MissingCtor</findingType>
+		<findingType>FallThrough</findingType>
+		<findingType>MultipleStringLiterals</findingType>
+		<findingType>MultipleVariableDeclarations</findingType>
+		<findingType>RequireThis</findingType>
+		<name>Coding</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Class Design</id>
+		<findingType>UnnecessaryParentheses</findingType>
+		<findingType>VisibilityModifier</findingType>
+		<findingType>FinalClass</findingType>
+		<findingType>InterfaceIsType</findingType>
+		<findingType>HideUtilityClassConstructor</findingType>
+		<findingType>DesignForExtension</findingType>
+		<findingType>MutableException</findingType>
+		<name>Class Design</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Duplicate Code</id>
+		<findingType>ThrowsCount</findingType>
+		<name>Duplicate Code</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Metrics</id>
+		<findingType>StrictDuplicateCode</findingType>
+		<findingType>BooleanExpressionComplexity</findingType>
+		<findingType>ClassDataAbstractionCoupling</findingType>
+		<findingType>ClassFanOutComplexity</findingType>
+		<findingType>CyclomaticComplexity</findingType>
+		<findingType>NPathComplexity</findingType>
+		<name>Metrics</name>
+		<description></description>
+	</category>
+	<category>
+		<id>Miscellaneous</id>
+		<findingType>JavaNCSS</findingType>
+		<findingType>GenericIllegalRegexp</findingType>
+		<findingType>NewlineAtEndOfFile</findingType>
+		<findingType>TodoComment</findingType>
+		<findingType>Translation</findingType>
+		<findingType>UncommentedMain</findingType>
+		<findingType>UpperEll</findingType>
+		<findingType>ArrayTypeStyle</findingType>
+		<findingType>FinalParameters</findingType>
+		<findingType>DescendantToken</findingType>
+		<findingType>Indentation</findingType>
+		<findingType>TrailingComment</findingType>
+		<findingType>RequiredRegexp</findingType>
+		<name>Miscellaneous</name>
+		<description></description>
+	</category>
+	<category>
+		<id>J2EE Checks</id>
+		<findingType>Regexp</findingType>
+		<findingType>EntityBean</findingType>
+		<findingType>FinalStatic</findingType>
+		<findingType>LocalHomeInterface</findingType>
+		<findingType>LocalInterface</findingType>
+		<findingType>MessageBean</findingType>
+		<findingType>RemoteHomeInterface</findingType>
+		<findingType>RemoteInterface</findingType>
+		<findingType>SessionBean</findingType>
+		<findingType>ThisParameter</findingType>
+		<findingType>ThisReturn</findingType>
+		<name>J2EE Checks</name>
+		<description></description>
+	</category>
+</tns:findingTypes>
