@@ -246,6 +246,21 @@ public class FindingTypeManager {
 		}
 	}
 
+	public String getFindingDiscription(String uid) throws SQLException {
+
+		FindingTypeRecord ftr = factory.newFindingTypeRecord();
+
+		ftr.setUid(uid);
+
+		/** Can't get the description for a finding that doesn't exist */
+		if (!ftr.select()) {
+			// XXX fill in
+			throw new SQLException();
+		}
+
+		return ftr.getInfo();
+	}
+
 	public static FindingTypeManager getInstance(Connection conn)
 			throws SQLException {
 		return new FindingTypeManager(conn);
