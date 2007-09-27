@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.surelogic.common.jdbc.SchemaAction;
+import com.surelogic.sierra.checkstyle4_3.Checkstyle4_3ToolInfoGenerator;
 import com.surelogic.sierra.findbugs1_2_1.FindBugs1_2_1ToolInfoGenerator;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.pmd3_9.PMD3_9ToolInfoGenerator;
@@ -20,6 +21,7 @@ public class Schema_0000 implements SchemaAction {
 		PMD3_9ToolInfoGenerator.generateTool(conn);
 		PMD4_0ToolInfoGenerator.generateTool(conn);
 		FindBugs1_2_1ToolInfoGenerator.generateTool(conn);
+		Checkstyle4_3ToolInfoGenerator.generateTool(conn);
 		conn.commit();
 		MessageWarehouse mw = MessageWarehouse.getInstance();
 		FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
@@ -31,6 +33,10 @@ public class Schema_0000 implements SchemaAction {
 		in = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(
 						"com/surelogic/sierra/tool/message/pmd.xml");
+		types.add(mw.fetchFindingTypes(in));
+		in = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(
+						"com/surelogic/sierra/tool/message/checkstyle.xml");
 		types.add(mw.fetchFindingTypes(in));
 		ftMan.updateFindingTypes(types);
 		conn.commit();

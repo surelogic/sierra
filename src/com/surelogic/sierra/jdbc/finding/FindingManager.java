@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -165,10 +164,7 @@ public abstract class FindingManager {
 						+ "    LEFT OUTER JOIN (SELECT AFR.FINDING_ID \"ID\",MAX(SL.LINE_OF_CODE) \"LINE_OF_CODE\",COUNT(AFR.ARTIFACT_ID) \"COUNT\" FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR WHERE A.SCAN_ID = ? AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND AFR.ARTIFACT_ID = A.ID GROUP BY AFR.FINDING_ID) AS FAC ON FAC.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-				// + " WHERE"
-				// + " F.ID IN (SELECT ID FROM SESSION.TEMP_FINDING_IDS)"
-				);
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 		deleteTempIds = conn
 				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
 		populateTempIds = conn

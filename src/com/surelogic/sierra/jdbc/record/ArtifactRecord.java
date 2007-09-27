@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -75,8 +75,8 @@ public final class ArtifactRecord extends LongRecord {
 		st.setLong(idx++, scanId);
 		st.setLong(idx++, findingTypeId);
 		st.setLong(idx++, primary.getId());
-		st.setInt(idx++, priority.ordinal());
-		st.setInt(idx++, severity.ordinal());
+		setNullableInt(idx++, st, priority == null ? null : priority.ordinal());
+		setNullableInt(idx++, st, severity == null ? null : severity.ordinal());
 		setNullableString(idx++, st, message);
 		return idx;
 	}
