@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,12 +71,22 @@ public abstract class FindingManager {
 	private final PreparedStatement deleteFindings;
 	private final PreparedStatement deleteLocalAudits;
 	private final PreparedStatement deleteOverview;
+	private final PreparedStatement populateTempIds;
+	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateOverview;
 
 	FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.fact = ClientFindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
+		try {
+			conn
+					.createStatement()
+					.execute(
+							"DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+		} catch (SQLException e) {
+			// Do nothing, the table is probably already there.
+		}
 		selectFinding = conn
 				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
 		touchFinding = conn
@@ -145,21 +156,26 @@ public abstract class FindingManager {
 						+ "        FT.NAME,"
 						+ "        F.SUMMARY"
 						+ " FROM"
-						+ "    FINDING F"
+						+ "    SESSION.TEMP_FINDING_IDS TF"
+						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT AFR.FINDING_ID \"ID\",MAX(SL.LINE_OF_CODE) \"LINE_OF_CODE\",COUNT(AFR.ARTIFACT_ID) \"COUNT\" FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR WHERE A.SCAN_ID = ? AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND AFR.ARTIFACT_ID = A.ID GROUP BY AFR.FINDING_ID) AS FAC ON FAC.ID = F.ID"
 						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-						+ " WHERE"
-						+ "    F.ID IN ("
-						+ "       SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
-						+ "          WHERE "
-						+ "          S.ID IN ((SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?) UNION (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?))"
-						+ "          AND A.SCAN_ID = S.ID"
-						+ "          AND AFR.ARTIFACT_ID = A.ID"
-						+ "       )");
+				// + " WHERE"
+				// + " F.ID IN (SELECT ID FROM SESSION.TEMP_FINDING_IDS)"
+				);
+		deleteTempIds = conn
+				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
+		populateTempIds = conn
+				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS"
+						+ "   SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+						+ "   WHERE "
+						+ "      S.ID IN ((SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?) UNION (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?))"
+						+ "      AND A.SCAN_ID = S.ID"
+						+ "      AND AFR.ARTIFACT_ID = A.ID");
 	}
 
 	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
@@ -224,6 +240,7 @@ public abstract class FindingManager {
 	 * 
 	 * @param projectName
 	 * @param scan
+	 *            the uid of the latest scan. This must be the latest scan.
 	 * @throws SQLException
 	 */
 	public void generateOverview(String projectName, String scan)
@@ -235,14 +252,21 @@ public abstract class FindingManager {
 					.newScan();
 			scanRecord.setUid(scan);
 			if (scanRecord.select()) {
+				log.info("Clearing overview");
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
+				log.info("Calculating ids");
 				int idx = 1;
+				populateTempIds.setString(idx++, projectName);
+				populateTempIds.setString(idx++, projectName);
+				populateTempIds.execute();
+				log.info("Populating overview");
+				idx = 1;
 				populateOverview.setString(idx++, projectName);
 				populateOverview.setLong(idx++, scanRecord.getId());
-				populateOverview.setString(idx++, projectName);
-				populateOverview.setString(idx++, projectName);
 				populateOverview.execute();
+				log.info("Deleting temp ids");
+				deleteTempIds.execute();
 			} else {
 				throw new IllegalArgumentException("No scan with uid " + scan
 						+ " exists in the database");
