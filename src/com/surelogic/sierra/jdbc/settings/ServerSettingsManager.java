@@ -138,6 +138,19 @@ public class ServerSettingsManager extends SettingsManager {
 		record.update();
 	}
 
+	public void deleteSettings(String settings) throws SQLException {
+		SettingsRecord record = newSettingsRecord();
+		record.setName(settings);
+
+		/** If this product does not exist, throw an error */
+		if (!record.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		record.delete();
+	}
+
 	/**
 	 * Get the list of categories that settings can be defined for.
 	 * 
