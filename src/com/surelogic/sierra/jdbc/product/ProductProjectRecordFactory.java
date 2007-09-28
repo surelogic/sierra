@@ -13,7 +13,7 @@ public class ProductProjectRecordFactory {
 
 	private final String INSERT = "INSERT INTO PRODUCT_PROJECT_RELTN (PRODUCT_ID, PROJECT_NAME) VALUES (?,?)";
 	private final String DELETE = "DELETE FROM PRODUCT_PROJECT_RELTN WHERE PRODUCT_ID = ? AND PROJECT_NAME = ?";
-	
+
 	private final BaseMapper pprMapper;
 
 	private ProductProjectRecordFactory(Connection conn) throws SQLException {
