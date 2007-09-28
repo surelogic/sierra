@@ -12,7 +12,7 @@ public final class FilterState extends Filter {
 		}
 
 		public String getFilterLabel() {
-			return "State";
+			return "Status";
 		}
 	};
 
@@ -32,9 +32,9 @@ public final class FilterState extends Filter {
 		return COLUMN_NAME;
 	}
 
-	private static final String FIXED = "F";
-	private static final String NEW = "N";
-	private static final String UNCHANGED = "U";
+	private static final String FIXED = "Fixed";
+	private static final String NEW = "New";
+	private static final String UNCHANGED = "Unchanged";
 
 	@Override
 	protected void deriveAllValues() {

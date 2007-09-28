@@ -36,6 +36,7 @@ public final class Selection {
 		f_allFilters.add(FilterPackage.FACTORY);
 		f_allFilters.add(FilterProject.FACTORY);
 		f_allFilters.add(FilterState.FACTORY);
+		f_allFilters.add(FilterType.FACTORY);
 	}
 
 	private final SelectionManager f_manager;

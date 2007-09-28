@@ -30,10 +30,16 @@ public final class FilterImportance extends Filter {
 		return "IMPORTANCE";
 	}
 
+	public static final String CRITICAL = "Critical";
+	public static final String HIGH = "High";
+	public static final String MEDIUM = "Medium";
+	public static final String LOW = "Low";
+	public static final String IRRELEVANT = "Irrelevant";
+
 	@Override
 	protected void deriveAllValues() {
-		String[] values = new String[] { "Critical", "High", "Medium", "Low",
-				"Irrelevant" };
+		String[] values = new String[] { CRITICAL, HIGH, MEDIUM, LOW,
+				IRRELEVANT };
 		f_allValues.addAll(Arrays.asList(values));
 	}
 }

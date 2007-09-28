@@ -1,22 +1,21 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.Arrays;
 import java.util.concurrent.Executor;
 
-public final class FilterExamined extends Filter {
+public final class FilterType extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous,
 				Executor executor) {
-			return new FilterExamined(selection, previous, executor);
+			return new FilterType(selection, previous, executor);
 		}
 
 		public String getFilterLabel() {
-			return "Examined";
+			return "Type";
 		}
 	};
 
-	FilterExamined(Selection selection, Filter previous, Executor executor) {
+	FilterType(Selection selection, Filter previous, Executor executor) {
 		super(selection, previous, executor);
 	}
 
@@ -27,15 +26,6 @@ public final class FilterExamined extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "EXAMINED";
-	}
-
-	private static final String YES = "Yes";
-	private static final String NO = "No";
-
-	@Override
-	protected void deriveAllValues() {
-		String[] values = new String[] { YES, NO };
-		f_allValues.addAll(Arrays.asList(values));
+		return "CLASS";
 	}
 }
