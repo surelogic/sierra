@@ -3,12 +3,12 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 
-public final class FilterState extends Filter {
+public final class FilterSelection extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous,
 				Executor executor) {
-			return new FilterState(selection, previous, executor);
+			return new FilterSelection(selection, previous, executor);
 		}
 
 		public String getFilterLabel() {
@@ -16,7 +16,7 @@ public final class FilterState extends Filter {
 		}
 	};
 
-	FilterState(Selection selection, Filter previous, Executor executor) {
+	FilterSelection(Selection selection, Filter previous, Executor executor) {
 		super(selection, previous, executor);
 	}
 

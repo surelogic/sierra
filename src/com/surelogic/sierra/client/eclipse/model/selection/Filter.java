@@ -366,7 +366,7 @@ public abstract class Filter {
 		Filter filter = this.f_previous;
 		while (filter != null) {
 			// TODO: fragile base class :-)
-			if (filter instanceof FilterState)
+			if (filter instanceof FilterSelection)
 				stateFilterNotUsed = false;
 			if (filter.hasWhereClausePart()) {
 				if (first) {
@@ -379,7 +379,7 @@ public abstract class Filter {
 			}
 			filter = filter.f_previous;
 		}
-		if (stateFilterNotUsed && !(this instanceof FilterState)) {
+		if (stateFilterNotUsed && !(this instanceof FilterSelection)) {
 			/*
 			 * In this case we need to add to the where clause to filter out all
 			 * the findings that have been fixed.
@@ -390,7 +390,7 @@ public abstract class Filter {
 			} else {
 				b.append("and ");
 			}
-			FilterState.addWhereClauseToFilterOutFixed(b);
+			FilterSelection.addWhereClauseToFilterOutFixed(b);
 		}
 	}
 
