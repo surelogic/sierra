@@ -39,7 +39,7 @@ import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.TrailObsoletion;
 
-public abstract class FindingManager {
+public class FindingManager {
 
 	protected static final Logger log = SLLogger
 			.getLoggerFor(FindingManager.class);
@@ -48,12 +48,9 @@ public abstract class FindingManager {
 	private static final int CHECK_SIZE = 10;
 
 	protected final Connection conn;
+	protected final FindingTypeManager ftManager;
+	protected final FindingRecordFactory factory;
 
-	private final FindingTypeManager ftManager;
-
-	private final FindingRecordFactory fact;
-
-	private final PreparedStatement selectFinding;
 	private final PreparedStatement touchFinding;
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
@@ -69,25 +66,13 @@ public abstract class FindingManager {
 	private final PreparedStatement deleteMatches;
 	private final PreparedStatement deleteFindings;
 	private final PreparedStatement deleteLocalAudits;
-	private final PreparedStatement deleteOverview;
-	private final PreparedStatement populateTempIds;
-	private final PreparedStatement deleteTempIds;
-	private final PreparedStatement populateOverview;
 
-	FindingManager(Connection conn) throws SQLException {
+	private final PreparedStatement unassignedArtifacts;
+
+	protected FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
-		this.fact = ClientFindingRecordFactory.getInstance(conn);
+		this.factory = FindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
-		try {
-			conn
-					.createStatement()
-					.execute(
-							"DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
-		} catch (SQLException e) {
-			// Do nothing, the table is probably already there.
-		}
-		selectFinding = conn
-				.prepareStatement("SELECT ID,IMPORTANCE FROM FINDING WHERE ID = ?");
 		touchFinding = conn
 				.prepareStatement("UPDATE FINDING SET LAST_CHANGED = ? WHERE ID = ?");
 		markFindingAsRead = conn
@@ -129,150 +114,19 @@ public abstract class FindingManager {
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteLocalAudits = conn
 				.prepareStatement("DELETE FROM AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
-		deleteOverview = conn
-				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
-		populateOverview = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
-						+ " SELECT F.PROJECT_ID,F.ID,"
-						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
-						+ "        F.LAST_CHANGED,"
-						+ "        CASE"
-						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
-						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
-						+ "             WHEN F.IMPORTANCE=2 THEN 'Medium'"
-						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
-						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
-						+ "        END,"
-						+ "        CASE"
-						+ "             WHEN FIXED.ID IS NOT NULL THEN 'Fixed'"
-						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'New'"
-						+ "	            ELSE 'Unchanged'"
-						+ "        END,"
-						+ "        FAC.LINE_OF_CODE,"
-						+ "        CASE WHEN FAC.COUNT IS NULL THEN 0 ELSE FAC.COUNT END,"
-						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
-						+ "        ?,"
-						+ "        LM.PACKAGE_NAME,"
-						+ "        LM.CLASS_NAME,"
-						+ "        FT.NAME,"
-						+ "        F.SUMMARY"
-						+ " FROM"
-						+ "    SESSION.TEMP_FINDING_IDS TF"
-						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
-						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
-						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
-						+ "    LEFT OUTER JOIN (SELECT AFR.FINDING_ID \"ID\",MAX(SL.LINE_OF_CODE) \"LINE_OF_CODE\",COUNT(AFR.ARTIFACT_ID) \"COUNT\" FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR WHERE A.SCAN_ID = ? AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND AFR.ARTIFACT_ID = A.ID GROUP BY AFR.FINDING_ID) AS FAC ON FAC.ID = F.ID"
-						+ "    LEFT OUTER JOIN (SELECT A.FINDING_ID \"ID\", COUNT(*) \"COUNT\" FROM AUDIT A WHERE A.EVENT='COMMENT' GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
-						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
-		deleteTempIds = conn
-				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
-		populateTempIds = conn
-				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS"
-						+ "   SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
-						+ "   WHERE "
-						+ "      S.ID IN ((SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?) UNION (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?))"
-						+ "      AND A.SCAN_ID = S.ID"
-						+ "      AND AFR.ARTIFACT_ID = A.ID");
+
+		unassignedArtifacts = conn
+				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,ATFTR.FINDING_TYPE_ID"
+						+ " FROM (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID WHERE U.SCAN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, "
+						+ " ARTIFACT A,ARTIFACT_TYPE_FINDING_TYPE_RELTN ATFTR, SCAN R, SOURCE_LOCATION S, COMPILATION_UNIT CU"
+						+ " WHERE"
+						+ " A.ID = UNASSIGNED.ID AND R.ID = A.SCAN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID AND ATFTR.ARTIFACT_TYPE_ID = A.ARTIFACT_TYPE_ID");
 	}
 
-	protected abstract ResultSet getUnassignedArtifacts(ScanRecord scan)
-			throws SQLException;
-
-	protected abstract FindingRecordFactory getFactory();
-
-	/**
-	 * Make a user comment on an existing finding. This method is for use by a
-	 * client.
-	 * 
-	 * @param findingId
-	 * @param comment
-	 * @throws SQLException
-	 */
-	public void comment(Long findingId, String comment) throws SQLException {
-		checkIsRead(findingId);
-		comment(null, findingId, comment, new Date(), null);
-	}
-
-	/**
-	 * Set the importance of a particular finding. This method is for use by a
-	 * client.
-	 * 
-	 * @param findingId
-	 * @param importance
-	 * @throws SQLException
-	 */
-	public void setImportance(Long findingId, Importance importance)
+	protected ResultSet getUnassignedArtifacts(ScanRecord scan)
 			throws SQLException {
-		checkIsRead(findingId);
-		setImportance(null, findingId, importance, new Date(), null);
-	}
-
-	/**
-	 * Indicate that the user has looked over this finding. This method is for
-	 * use by a client.
-	 * 
-	 * @param findingId
-	 * @throws SQLException
-	 */
-	public void markAsRead(Long findingId) throws SQLException {
-		checkIsRead(findingId);
-		markAsRead(null, findingId, new Date(), null);
-	}
-
-	/**
-	 * Change the summary that should be displayed for a particular finding.
-	 * 
-	 * @param findingId
-	 * @param summary
-	 * @throws SQLException
-	 */
-	public void changeSummary(Long findingId, String summary)
-			throws SQLException {
-		checkIsRead(findingId);
-		changeSummary(null, findingId, summary, new Date(), null);
-	}
-
-	/**
-	 * Regenerate the findings overview for the given project.
-	 * 
-	 * @param projectName
-	 * @param scan
-	 *            the uid of the latest scan. This must be the latest scan.
-	 * @throws SQLException
-	 */
-	public void generateOverview(String projectName, String scan)
-			throws SQLException {
-		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
-		p.setName(projectName);
-		if (p.select()) {
-			ScanRecord scanRecord = ScanRecordFactory.getInstance(conn)
-					.newScan();
-			scanRecord.setUid(scan);
-			if (scanRecord.select()) {
-				log.info("Clearing overview");
-				deleteOverview.setLong(1, p.getId());
-				deleteOverview.execute();
-				log.info("Calculating ids");
-				int idx = 1;
-				populateTempIds.setString(idx++, projectName);
-				populateTempIds.setString(idx++, projectName);
-				populateTempIds.execute();
-				log.info("Populating overview");
-				idx = 1;
-				populateOverview.setString(idx++, projectName);
-				populateOverview.setLong(idx++, scanRecord.getId());
-				populateOverview.execute();
-				log.info("Deleting temp ids");
-				deleteTempIds.execute();
-			} else {
-				throw new IllegalArgumentException("No scan with uid " + scan
-						+ " exists in the database");
-			}
-		} else {
-			throw new IllegalArgumentException(projectName
-					+ " is not a valid project name.");
-		}
+		unassignedArtifacts.setLong(1, scan.getId());
+		return unassignedArtifacts.executeQuery();
 	}
 
 	/**
@@ -283,8 +137,6 @@ public abstract class FindingManager {
 	public void generateFindings(String projectName, String uid,
 			MessageFilter filter, SLProgressMonitor monitor) {
 		try {
-
-			FindingRecordFactory factory = getFactory();
 			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
 			scan.setUid(uid);
 			if (!scan.select()) {
@@ -394,10 +246,10 @@ public abstract class FindingManager {
 		if (project.select()) {
 			if (obsoletions != null) {
 				for (TrailObsoletion to : obsoletions) {
-					FindingRecord obsoletedFinding = fact.newFinding();
+					FindingRecord obsoletedFinding = factory.newFinding();
 					obsoletedFinding.setUid(to.getObsoletedTrail());
 					if (obsoletedFinding.select()) {
-						FindingRecord newFinding = fact.newFinding();
+						FindingRecord newFinding = factory.newFinding();
 						newFinding.setUid(to.getTrail());
 						if (!newFinding.select()) {
 							newFinding.insert();
@@ -415,13 +267,13 @@ public abstract class FindingManager {
 				for (AuditTrailUpdate update : updates) {
 					// TODO make sure that everything is ordered by revision and
 					// time
-					FindingRecord finding = fact.newFinding();
+					FindingRecord finding = factory.newFinding();
 					finding.setUid(update.getTrail());
 					finding.setProjectId(project.getId());
 					if (!finding.select()) {
 						finding.insert();
 					}
-					MatchRecord mRec = fact.newMatch();
+					MatchRecord mRec = factory.newMatch();
 					MatchRecord.PK pk = new MatchRecord.PK();
 					pk.setProjectId(project.getId());
 					mRec.setId(pk);
@@ -546,7 +398,7 @@ public abstract class FindingManager {
 				.newProject();
 		projectRec.setName(projectName);
 		if (projectRec.select()) {
-			MatchRecord match = fact.newMatch();
+			MatchRecord match = factory.newMatch();
 			MatchRecord.PK pk = new MatchRecord.PK();
 			match.setId(pk);
 			pk.setProjectId(projectRec.getId());
@@ -583,7 +435,7 @@ public abstract class FindingManager {
 		return 0L;
 	}
 
-	private void comment(Long userId, Long findingId, String comment,
+	protected void comment(Long userId, Long findingId, String comment,
 			Date time, Long revision) throws SQLException {
 		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
 				.insert();
@@ -591,7 +443,7 @@ public abstract class FindingManager {
 		touchFinding.execute();
 	}
 
-	private void setImportance(Long userId, Long findingId,
+	protected void setImportance(Long userId, Long findingId,
 			Importance importance, Date time, Long revision)
 			throws SQLException {
 		newAudit(userId, findingId, importance.toString(),
@@ -602,7 +454,7 @@ public abstract class FindingManager {
 		updateFindingImportance.execute();
 	}
 
-	private void markAsRead(Long userId, Long findingId, Date time,
+	protected void markAsRead(Long userId, Long findingId, Date time,
 			Long revision) throws SQLException {
 		newAudit(userId, findingId, null, AuditEvent.READ, time, revision)
 				.insert();
@@ -611,7 +463,7 @@ public abstract class FindingManager {
 		markFindingAsRead.execute();
 	}
 
-	private void changeSummary(Long userId, Long findingId, String summary,
+	protected void changeSummary(Long userId, Long findingId, String summary,
 			Date time, Long revision) throws SQLException {
 		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision)
 				.insert();
@@ -623,7 +475,7 @@ public abstract class FindingManager {
 
 	private AuditRecord newAudit(Long userId, Long findingId, String value,
 			AuditEvent event, Date time, Long revision) throws SQLException {
-		AuditRecord record = fact.newAudit();
+		AuditRecord record = factory.newAudit();
 		record.setUserId(userId);
 		record.setTimestamp(time);
 		record.setEvent(event);
@@ -672,35 +524,6 @@ public abstract class FindingManager {
 		throw new FindingGenerationException(e);
 	}
 
-	/**
-	 * For use in the client. Checks to see if a finding has been read. If it
-	 * has not, it marks it as read.
-	 * 
-	 * @param findingId
-	 * @throws SQLException
-	 */
-	private void checkIsRead(Long findingId) throws SQLException {
-		FindingView f = getFinding(findingId);
-		if (f == null)
-			throw new IllegalArgumentException(findingId
-					+ " is not a valid finding id.");
-		if (!f.isRead()) {
-			markAsRead(null, findingId, new Date(), null);
-		}
-	}
-
-	private FindingView getFinding(Long findingId) throws SQLException {
-		selectFinding.setLong(1, findingId);
-		ResultSet set = selectFinding.executeQuery();
-		if (set.next()) {
-			FindingView f = new FindingView();
-			f.read(set, 1);
-			return f;
-		} else {
-			return null;
-		}
-	}
-
 	private Long getUserId(String user) throws SQLException {
 		return Server.getUser(user, conn).getId();
 	}
@@ -721,16 +544,14 @@ public abstract class FindingManager {
 		MatchRecord m;
 	}
 
-	// TODO we only have one finding manager
-	public static FindingManager getInstance(Connection conn)
-			throws SQLException {
-		return new ClientFindingManager(conn);
-	}
-
 	public void deleteLocalAudits(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		deleteLocalAudits.setString(1, projectName);
 		deleteLocalAudits.executeUpdate();
 	}
 
+	public static FindingManager getInstance(Connection conn)
+			throws SQLException {
+		return new FindingManager(conn);
+	}
 }

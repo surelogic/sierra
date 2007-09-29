@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.LongView;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingView extends LongView {
+public class FindingRecord extends LongView {
 
 	private Importance importance;
 	private boolean isRead;

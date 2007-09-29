@@ -10,7 +10,9 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
+import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
@@ -106,16 +108,29 @@ class JDBCScanGenerator implements ScanGenerator {
 							try {
 								scan.setStatus(ScanStatus.FINISHED);
 								scan.update();
-								FindingManager fm = FindingManager
-										.getInstance(conn);
-								fm.generateFindings(projectName, scan.getUid(),
-										filter, null);
+								log
+										.info("Scan "
+												+ scan.getUid()
+												+ " for project "
+												+ projectName
+												+ " persisted to database, starting finding generation.");
 								conn.commit();
 								if (qualifiers.isEmpty()) {
+									ClientFindingManager fm = ClientFindingManager
+											.getInstance(conn);
+									fm.generateFindings(projectName, scan
+											.getUid(), filter, null);
+									conn.commit();
 									log.info("Generating overview for scan "
 											+ scan.getUid() + "in project "
 											+ projectName);
 									fm.generateOverview(projectName, uid);
+								} else {
+									ServerFindingManager fm = ServerFindingManager
+											.getInstance(conn);
+									fm.generateFindings(projectName, scan
+											.getUid(), filter, null);
+									conn.commit();
 								}
 								conn.commit();
 							} catch (SQLException e) {
@@ -128,12 +143,6 @@ class JDBCScanGenerator implements ScanGenerator {
 								}
 								throw new ScanPersistenceException(e);
 							}
-							log
-									.info("Scan "
-											+ scan.getUid()
-											+ " for project "
-											+ projectName
-											+ " persisted to database, starting finding generation.");
 						}
 					});
 		} catch (SQLException e) {

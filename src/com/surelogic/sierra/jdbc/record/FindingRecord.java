@@ -15,6 +15,7 @@ public final class FindingRecord extends LongRecord {
 	private Long projectId;
 	private Importance importance;
 	private String summary;
+	private boolean read;
 
 	public FindingRecord(RecordMapper mapper) {
 		super(mapper);
@@ -41,6 +42,7 @@ public final class FindingRecord extends LongRecord {
 		this.projectId = set.getLong(idx++);
 		this.importance = Importance.values()[set.getInt(idx++)];
 		this.summary = set.getString(idx++);
+		this.read = "Y".equals(set.getString(idx++));
 		return idx;
 	}
 
@@ -74,6 +76,10 @@ public final class FindingRecord extends LongRecord {
 
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+
+	public boolean isRead() {
+		return read;
 	}
 
 }

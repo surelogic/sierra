@@ -9,23 +9,24 @@ import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.GetAuditTrailRequest;
-import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.Merge;
-import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
+import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerUIDRequest;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
-import com.surelogic.sierra.tool.message.ServerMismatchException;
 
 public class ProjectManager {
 
