@@ -97,8 +97,14 @@ public final class ClientFindingManager extends FindingManager {
 		populateTempIds = conn
 				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS"
 						+ "   SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
-						+ "   WHERE "
-						+ "      S.ID IN ((SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?) UNION (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?))"
+						+ "   WHERE"
+						+ "      S.ID IN (SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?)"
+						+ "      AND A.SCAN_ID = S.ID"
+						+ "      AND AFR.ARTIFACT_ID = A.ID"
+						+ " UNION"
+						+ "   SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+						+ "   WHERE"
+						+ "      S.ID IN (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?)"
 						+ "      AND A.SCAN_ID = S.ID"
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
 		selectFindingProject = conn
