@@ -39,16 +39,17 @@ public class ProductProjectManager {
 	 */
 	public Collection<String> getProjectNames(String product)
 			throws SQLException {
-
 		getProjectNames.setString(1, product);
 		ResultSet rs = getProjectNames.executeQuery();
-
-		Collection<String> projectNames = new ArrayList<String>();
-		while (rs.next()) {
-			projectNames.add(rs.getString(1));
+		try {
+			Collection<String> projectNames = new ArrayList<String>();
+			while (rs.next()) {
+				projectNames.add(rs.getString(1));
+			}
+			return projectNames;
+		} finally {
+			rs.close();
 		}
-		rs.close();
-		return projectNames;
 	}
 
 	public void addProjectRelation(ProductRecord product, String projectName)

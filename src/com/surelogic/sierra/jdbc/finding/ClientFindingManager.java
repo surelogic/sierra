@@ -232,11 +232,14 @@ public final class ClientFindingManager extends FindingManager {
 	private void regenerateFindingOverview(Long findingId) throws SQLException {
 		selectFindingProject.setLong(1, findingId);
 		ResultSet set = selectFindingProject.executeQuery();
-		if (set.next()) {
-			regenerateOverview(set.getString(1), Collections
-					.singletonList(findingId));
+		try {
+			if (set.next()) {
+				regenerateOverview(set.getString(1), Collections
+						.singletonList(findingId));
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 	}
 
 	/**

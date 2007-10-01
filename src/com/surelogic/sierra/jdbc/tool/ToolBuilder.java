@@ -35,10 +35,12 @@ public class ToolBuilder {
 		insertTool.setString(2, version);
 		insertTool.executeUpdate();
 		ResultSet set = insertTool.getGeneratedKeys();
-		set.next();
-		Long id = set.getLong(1);
-		set.close();
-		return new ArtifactTypeBuilder(id);
+		try {
+			set.next();
+			return new ArtifactTypeBuilder(set.getLong(1));
+		} finally {
+			set.close();
+		}
 	}
 
 	public class ArtifactTypeBuilder {

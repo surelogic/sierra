@@ -160,10 +160,13 @@ public class ServerSettingsManager extends SettingsManager {
 	public List<CategoryView> listSettingCategories() throws SQLException {
 		ResultSet set = listSettingCategories.executeQuery();
 		List<CategoryView> view = new ArrayList<CategoryView>();
-		while (set.next()) {
-			view.add(new CategoryView(set.getString(1), set.getString(2)));
+		try {
+			while (set.next()) {
+				view.add(new CategoryView(set.getString(1), set.getString(2)));
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 		return view;
 	}
 
@@ -191,10 +194,13 @@ public class ServerSettingsManager extends SettingsManager {
 				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
 				getFiltersBySettingIdAndCategory.setLong(2, cRec.getId());
 				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
-				while (set.next()) {
-					filters.add(readFilter(set));
+				try {
+					while (set.next()) {
+						filters.add(readFilter(set));
+					}
+				} finally {
+					set.close();
 				}
-				set.close();
 				return filters;
 			} else {
 				throw new IllegalArgumentException(settings
@@ -257,10 +263,13 @@ public class ServerSettingsManager extends SettingsManager {
 	public Collection<String> getAllSettingNames() throws SQLException {
 		ResultSet rs = getAllSettings.executeQuery();
 		Collection<String> settingNames = new ArrayList<String>();
-		while (rs.next()) {
-			settingNames.add(rs.getString(1));
+		try {
+			while (rs.next()) {
+				settingNames.add(rs.getString(1));
+			}
+		} finally {
+			rs.close();
 		}
-		rs.close();
 		return settingNames;
 	}
 
@@ -290,15 +299,17 @@ public class ServerSettingsManager extends SettingsManager {
 		getLatestSettingsByProject.setString(1, project);
 		getLatestSettingsByProject.setLong(2, revision);
 		ResultSet set = getLatestSettingsByProject.executeQuery();
-		if (set.next()) {
-			Long settings = set.getLong(1);
-			reply.setRevision(set.getLong(2));
-			getFiltersBySettingId.setLong(1, settings);
-			reply
-					.setSettings(readSettings(getFiltersBySettingId
-							.executeQuery()));
+		try {
+			if (set.next()) {
+				Long settings = set.getLong(1);
+				reply.setRevision(set.getLong(2));
+				getFiltersBySettingId.setLong(1, settings);
+				reply.setSettings(readSettings(getFiltersBySettingId
+						.executeQuery()));
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 		return reply;
 	}
 
@@ -309,6 +320,7 @@ public class ServerSettingsManager extends SettingsManager {
 
 	/**
 	 * Return the current settings for the given project.
+	 * 
 	 * @param projectName
 	 * @return
 	 * @throws SQLException
@@ -317,15 +329,16 @@ public class ServerSettingsManager extends SettingsManager {
 			throws SQLException {
 		getSettingsByProject.setString(1, projectName);
 		ResultSet set = getSettingsByProject.executeQuery();
-		Settings settings;
-		if (set.next()) {
-			getFiltersBySettingId.setLong(1, set.getLong(1));
-			settings = readSettings(getFiltersBySettingId.executeQuery());
-		} else {
-			settings = new Settings();
+		try {
+			if (set.next()) {
+				getFiltersBySettingId.setLong(1, set.getLong(1));
+				return readSettings(getFiltersBySettingId.executeQuery());
+			} else {
+				return new Settings();
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
-		return settings;
 	}
 
 	private FindingTypeFilterRecord newFilterRecord() {
@@ -337,13 +350,17 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	private Settings readSettings(ResultSet set) throws SQLException {
-		Settings settings = new Settings();
-		List<FindingTypeFilter> filters = settings.getFilter();
-		while (set.next()) {
-			filters.add(readFilter(set));
+		try {
+			Settings settings = new Settings();
+			List<FindingTypeFilter> filters = settings.getFilter();
+			while (set.next()) {
+				filters.add(readFilter(set));
+			}
+			return settings;
+		} finally {
+			set.close();
 		}
-		set.close();
-		return settings;
+
 	}
 
 	private FindingTypeFilter readFilter(ResultSet set) throws SQLException {

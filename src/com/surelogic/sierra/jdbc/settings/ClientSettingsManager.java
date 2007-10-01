@@ -9,7 +9,7 @@ import com.surelogic.sierra.tool.message.Settings;
 
 public class ClientSettingsManager extends SettingsManager {
 
-		private final PreparedStatement getSettingsRevision;
+	private final PreparedStatement getSettingsRevision;
 
 	private ClientSettingsManager(Connection conn) throws SQLException {
 		super(conn);
@@ -18,34 +18,35 @@ public class ClientSettingsManager extends SettingsManager {
 	}
 
 	public Settings getSettings(String project) throws SQLException {
-//		getSettings.setString(1, project);
-//		ResultSet set = getSettings.executeQuery();
-//		if (set.next()) {
-//			Clob clob = set.getClob(1);
-//			if (clob != null) {
-//				return mw.fetchSettings(clob.getCharacterStream());
-//			}
-//		}
+		// getSettings.setString(1, project);
+		// ResultSet set = getSettings.executeQuery();
+		// if (set.next()) {
+		// Clob clob = set.getClob(1);
+		// if (clob != null) {
+		// return mw.fetchSettings(clob.getCharacterStream());
+		// }
+		// }
 		return new Settings();
 	}
 
 	public Long getSettingsRevision(String project) throws SQLException {
 		getSettingsRevision.setString(1, project);
 		ResultSet set = getSettingsRevision.executeQuery();
-		if (set.next()) {
-			Long revision = set.getLong(1);
+		try {
+			if (set.next()) {
+				return set.getLong(1);
+			} else {
+				throw new IllegalArgumentException("No project with name "
+						+ project + " exists");
+			}
+		} finally {
 			set.close();
-			return revision;
-		} else {
-			set.close();
-			throw new IllegalArgumentException("No project with name "
-					+ project + " exists");
 		}
 	}
 
 	public void writeSettings(String project, Long revision, Settings settings)
 			throws SQLException {
-		//TODO
+		// TODO
 	}
 
 	public static ClientSettingsManager getInstance(Connection conn)

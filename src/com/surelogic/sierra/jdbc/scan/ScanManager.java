@@ -131,10 +131,13 @@ public class ScanManager {
 			throws SQLException {
 		getOldestScanByProject.setString(1, projectName);
 		ResultSet set = getOldestScanByProject.executeQuery();
-		if (set.next()) {
-			deleteScan(set.getString(1), monitor);
+		try {
+			if (set.next()) {
+				deleteScan(set.getString(1), monitor);
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 	}
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {

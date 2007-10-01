@@ -52,10 +52,13 @@ public class ProjectManager {
 	public Collection<String> getAllProjectNames() throws SQLException {
 		ResultSet rs = findAllProjectNames.executeQuery();
 		Collection<String> projectNames = new ArrayList<String>();
-		while (rs.next()) {
-			projectNames.add(rs.getString(1));
+		try {
+			while (rs.next()) {
+				projectNames.add(rs.getString(1));
+			}
+		} finally {
+			rs.close();
 		}
-		rs.close();
 		return projectNames;
 	}
 
@@ -185,10 +188,13 @@ public class ProjectManager {
 		Collection<String> runs = new ArrayList<String>();
 		findProjectRuns.setLong(1, projectId);
 		ResultSet set = findProjectRuns.executeQuery();
-		while (set.next()) {
-			runs.add(set.getString(1));
+		try {
+			while (set.next()) {
+				runs.add(set.getString(1));
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 		return runs;
 	}
 

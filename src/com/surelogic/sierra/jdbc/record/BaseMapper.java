@@ -40,14 +40,16 @@ public class BaseMapper implements RecordMapper {
 	public void insert(AbstractRecord<?> record) throws SQLException {
 		if (insert == null)
 			throw new UnsupportedOperationException();
-		ResultSet keys;
 		record.fill(insert, 1);
 		insert.executeUpdate();
-		keys = insert.getGeneratedKeys();
-		if (keys.next()) {
-			record.readPk(keys, 1);
+		ResultSet keys = insert.getGeneratedKeys();
+		try {
+			if (keys.next()) {
+				record.readPk(keys, 1);
+			}
+		} finally {
+			keys.close();
 		}
-		keys.close();
 	}
 
 	/*
@@ -72,12 +74,16 @@ public class BaseMapper implements RecordMapper {
 			throw new UnsupportedOperationException();
 		record.fillWithNk(select, 1);
 		ResultSet set = select.executeQuery();
-		boolean found = set.next();
-		if (found) {
-			record.readAttributes(set, record.readPk(set, 1));
+		try {
+			boolean found = set.next();
+			if (found) {
+				record.readAttributes(set, record.readPk(set, 1));
+			}
+			return found;
+		} finally {
+			set.close();
 		}
-		set.close();
-		return found;
+
 	}
 
 }

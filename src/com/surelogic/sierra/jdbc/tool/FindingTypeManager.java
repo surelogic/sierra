@@ -73,17 +73,19 @@ public class FindingTypeManager {
 		selectArtifactType.setString(2, version);
 		selectArtifactType.setString(3, mnemonic);
 		ResultSet set = selectArtifactType.executeQuery();
-		if (set.next()) {
-			Long id = set.getLong(1);
+		try {
+			if (set.next()) {
+				Long id = set.getLong(1);
+				return id;
+			} else {
+				String message = "No Artifact could be found with tool name "
+						+ tool + ", mnemonic " + mnemonic + ", and version "
+						+ version + ".";
+				log.severe(message);
+				throw new IllegalStateException(message);
+			}
+		} finally {
 			set.close();
-			return id;
-		} else {
-			set.close();
-			String message = "No Artifact could be found with tool name "
-					+ tool + ", mnemonic " + mnemonic + ", and version "
-					+ version + ".";
-			log.severe(message);
-			throw new IllegalStateException(message);
 		}
 	}
 
@@ -93,10 +95,13 @@ public class FindingTypeManager {
 		selectArtifactTypesByToolAndMnemonic.setString(1, tool);
 		selectArtifactTypesByToolAndMnemonic.setString(2, mnemonic);
 		ResultSet set = selectArtifactTypesByToolAndMnemonic.executeQuery();
-		while (set.next()) {
-			ids.add(set.getLong(1));
+		try {
+			while (set.next()) {
+				ids.add(set.getLong(1));
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
 		if (ids.isEmpty()) {
 			String message = "No artifact types could be found with tool "
 					+ tool + " and mnemonic " + mnemonic + ".";
@@ -122,10 +127,13 @@ public class FindingTypeManager {
 				}
 				selectArtifactTypesByFindingType.setString(1, filter.getName());
 				ResultSet set = selectArtifactTypesByFindingType.executeQuery();
-				while (set.next()) {
-					artifactMap.put(set.getLong(1), filter);
+				try {
+					while (set.next()) {
+						artifactMap.put(set.getLong(1), filter);
+					}
+				} finally {
+					set.close();
 				}
-				set.close();
 			}
 			return new MessageFilter(findingMap, artifactMap);
 		} else {
@@ -164,20 +172,22 @@ public class FindingTypeManager {
 						checkForArtifactTypeRelation.setLong(1, id);
 						ResultSet set = checkForArtifactTypeRelation
 								.executeQuery();
-						if (set.next()) {
+						try {
+							if (set.next()) {
+								String message = "The artifact with mnemonic "
+										+ at.getMnemonic()
+										+ " in tool "
+										+ at.getTool()
+										+ " has already been assigned to finding type with uid "
+										+ set.getString(1)
+										+ " and cannot be assigned to the finding type with uid "
+										+ fRec.getUid() + ".";
+								log.severe(message);
+								throw new IllegalStateException(message);
+							}
+						} finally {
 							set.close();
-							String message = "The artifact with mnemonic "
-									+ at.getMnemonic()
-									+ " in tool "
-									+ at.getTool()
-									+ " has already been assigned to finding type with uid "
-									+ set.getString(1)
-									+ " and cannot be assigned to the finding type with uid "
-									+ fRec.getUid() + ".";
-							log.severe(message);
-							throw new IllegalStateException(message);
 						}
-						set.close();
 						insertArtifactTypeFindingTypeRelation.setLong(1, id);
 						insertArtifactTypeFindingTypeRelation.setLong(2, fRec
 								.getId());

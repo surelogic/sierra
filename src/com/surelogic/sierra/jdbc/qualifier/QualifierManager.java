@@ -30,10 +30,13 @@ public class QualifierManager {
 	public Collection<String> getAllQualifierNames() throws SQLException {
 		ResultSet rs = findAllQualifierNames.executeQuery();
 		Collection<String> qualifierNames = new ArrayList<String>();
-		while (rs.next()) {
-			qualifierNames.add(rs.getString(1));
+		try {
+			while (rs.next()) {
+				qualifierNames.add(rs.getString(1));
+			}
+		} finally {
+			rs.close();
 		}
-		rs.close();
 		return qualifierNames;
 	}
 

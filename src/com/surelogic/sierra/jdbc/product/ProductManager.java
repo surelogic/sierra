@@ -18,14 +18,14 @@ public class ProductManager {
 	private final PreparedStatement findAllStatement;
 
 	private final ProductRecordFactory productFactory;
-	
+
 	private final ProductProjectManager ppManager;
 
 	private ProductManager(Connection conn) throws SQLException {
 		this.conn = conn;
 
 		productFactory = ProductRecordFactory.getInstance(conn);
-		
+
 		ppManager = ProductProjectManager.getInstance(conn);
 
 		findAllStatement = conn.prepareStatement(FIND_ALL);
@@ -39,10 +39,13 @@ public class ProductManager {
 	public Collection<String> getAllProductNames() throws SQLException {
 		ResultSet rs = findAllStatement.executeQuery();
 		Collection<String> productNames = new ArrayList<String>();
-		while (rs.next()) {
-			productNames.add(rs.getString(1));
+		try {
+			while (rs.next()) {
+				productNames.add(rs.getString(1));
+			}
+		} finally {
+			rs.close();
 		}
-		rs.close();
 		return productNames;
 	}
 
@@ -80,21 +83,21 @@ public class ProductManager {
 			throws SQLException {
 		if (projects != null) {
 			for (String projectName : projects) {
-//				ProjectRecord project = projectFactory.newProject();
-//				project.setName(projectName);
-//				if (!project.select()) {
-//					// XXX Throw error
-//					throw new SQLException();
-//				}
+				// ProjectRecord project = projectFactory.newProject();
+				// project.setName(projectName);
+				// if (!project.select()) {
+				// // XXX Throw error
+				// throw new SQLException();
+				// }
 
 				/** Add a relation between this project and product to the DB */
-//				ProductProjectRecord rec = pprFactory.newProductProject();
-//				rec.setId(new RecordStringRelationRecord.PK<ProductRecord,String>(
-//						product, projectName));
-//				rec.insert();
-				
+				// ProductProjectRecord rec = pprFactory.newProductProject();
+				// rec.setId(new
+				// RecordStringRelationRecord.PK<ProductRecord,String>(
+				// product, projectName));
+				// rec.insert();
 				ppManager.addProjectRelation(product, projectName);
-				
+
 			}
 		}
 	}

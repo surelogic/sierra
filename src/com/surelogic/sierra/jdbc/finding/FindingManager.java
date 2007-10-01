@@ -146,65 +146,70 @@ public class FindingManager {
 			Long projectId = scan.getProjectId();
 
 			ResultSet result = getUnassignedArtifacts(scan);
-
-			int counter = 0;
-			while (result.next()) {
-				ArtifactResult art = new ArtifactResult();
-				int idx = 1;
-				art.id = result.getLong(idx++);
-				art.p = Priority.values()[result.getInt(idx++)];
-				art.s = Severity.values()[result.getInt(idx++)];
-				art.message = result.getString(idx++);
-				art.m = factory.newMatch();
-				// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
-				MatchRecord.PK pk = new MatchRecord.PK();
-				pk.setProjectId(result.getLong(idx++));
-				pk.setHash(result.getLong(idx++));
-				pk.setClassName(result.getString(idx++));
-				pk.setPackageName(result.getString(idx++));
-				pk.setFindingTypeId(result.getLong(idx++));
-				art.m.setId(pk);
-				Long findingId;
-				if (!art.m.select()) {
-					// We don't have a match, so we need to produce an entirely
-					// new finding
-					MatchRecord m = art.m;
-					Importance importance = filter.calculateImportance(art.m
-							.getId().getFindingTypeId(), art.p, art.s);
-					FindingRecord f = factory.newFinding();
-					f.setProjectId(projectId);
-					f.setImportance(importance);
-					f.setSummary(art.message);
-					f.insert();
-					m.setFindingId(f.getId());
-					m.insert();
-					newAudit(null, f.getId(), importance.toString(),
-							AuditEvent.IMPORTANCE, scan.getTimestamp(), null)
-							.insert();
-					newAudit(null, f.getId(), art.message, AuditEvent.SUMMARY,
-							scan.getTimestamp(), null);
-					findingId = f.getId();
-				} else {
-					findingId = art.m.getFindingId();
-				}
-				LongRelationRecord afr = factory.newArtifactFinding();
-				afr.setId(new RelationRecord.PK<Long, Long>(art.id, findingId));
-				afr.insert();
-				if ((++counter % CHUNK_SIZE) == 0) {
-					conn.commit();
-				}
-				if ((counter % CHECK_SIZE) == 0) {
-					if (monitor != null) {
-						if (monitor.isCanceled()) {
-							conn.rollback();
-							ScanManager.getInstance(conn).deleteScan(uid, null);
-							return;
+			try {
+				int counter = 0;
+				while (result.next()) {
+					ArtifactResult art = new ArtifactResult();
+					int idx = 1;
+					art.id = result.getLong(idx++);
+					art.p = Priority.values()[result.getInt(idx++)];
+					art.s = Severity.values()[result.getInt(idx++)];
+					art.message = result.getString(idx++);
+					art.m = factory.newMatch();
+					// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
+					MatchRecord.PK pk = new MatchRecord.PK();
+					pk.setProjectId(result.getLong(idx++));
+					pk.setHash(result.getLong(idx++));
+					pk.setClassName(result.getString(idx++));
+					pk.setPackageName(result.getString(idx++));
+					pk.setFindingTypeId(result.getLong(idx++));
+					art.m.setId(pk);
+					Long findingId;
+					if (!art.m.select()) {
+						// We don't have a match, so we need to produce an
+						// entirely
+						// new finding
+						MatchRecord m = art.m;
+						Importance importance = filter.calculateImportance(
+								art.m.getId().getFindingTypeId(), art.p, art.s);
+						FindingRecord f = factory.newFinding();
+						f.setProjectId(projectId);
+						f.setImportance(importance);
+						f.setSummary(art.message);
+						f.insert();
+						m.setFindingId(f.getId());
+						m.insert();
+						newAudit(null, f.getId(), importance.toString(),
+								AuditEvent.IMPORTANCE, scan.getTimestamp(),
+								null).insert();
+						newAudit(null, f.getId(), art.message,
+								AuditEvent.SUMMARY, scan.getTimestamp(), null);
+						findingId = f.getId();
+					} else {
+						findingId = art.m.getFindingId();
+					}
+					LongRelationRecord afr = factory.newArtifactFinding();
+					afr.setId(new RelationRecord.PK<Long, Long>(art.id,
+							findingId));
+					afr.insert();
+					if ((++counter % CHUNK_SIZE) == 0) {
+						conn.commit();
+					}
+					if ((counter % CHECK_SIZE) == 0) {
+						if (monitor != null) {
+							if (monitor.isCanceled()) {
+								conn.rollback();
+								ScanManager.getInstance(conn).deleteScan(uid,
+										null);
+								return;
+							}
+							monitor.worked(1);
 						}
-						monitor.worked(1);
 					}
 				}
+			} finally {
+				result.close();
 			}
-			result.close();
 			conn.commit();
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
@@ -337,23 +342,27 @@ public class FindingManager {
 		if (rec.select()) {
 			findLocalAudits.setLong(1, rec.getId());
 			ResultSet set = findLocalAudits.executeQuery();
-			String oldUid = null;
-			List<Audit> audits = null;
-			while (set.next()) {
-				int idx = 1;
-				String newUid = set.getString(idx++);
-				if (!newUid.equals(oldUid)) {
-					oldUid = newUid;
-					audits = new LinkedList<Audit>();
-					AuditTrail trail = new AuditTrail();
-					trail.setFinding(newUid);
-					trail.setAudits(audits);
-					trails.add(trail);
+			try {
+				String oldUid = null;
+				List<Audit> audits = null;
+				while (set.next()) {
+					int idx = 1;
+					String newUid = set.getString(idx++);
+					if (!newUid.equals(oldUid)) {
+						oldUid = newUid;
+						audits = new LinkedList<Audit>();
+						AuditTrail trail = new AuditTrail();
+						trail.setFinding(newUid);
+						trail.setAudits(audits);
+						trails.add(trail);
+					}
+					audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
+							.valueOf(set.getString(idx++)), set
+							.getString(idx++)));
 				}
-				audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
-						.valueOf(set.getString(idx++)), set.getString(idx++)));
+			} finally {
+				set.close();
 			}
-			set.close();
 		} else {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
@@ -371,24 +380,27 @@ public class FindingManager {
 		ResultSet set = findLocalMerges.executeQuery();
 		Long oldFinding = null;
 		List<Match> matches = null;
-		while (set.next()) {
-			int idx = 1;
-			Long newFinding = set.getLong(idx++);
-			if (!newFinding.equals(oldFinding)) {
-				oldFinding = newFinding;
-				Merge merge = new Merge();
-				matches = new LinkedList<Match>();
-				merge.setMatch(matches);
-				merges.add(merge);
+		try {
+			while (set.next()) {
+				int idx = 1;
+				Long newFinding = set.getLong(idx++);
+				if (!newFinding.equals(oldFinding)) {
+					oldFinding = newFinding;
+					Merge merge = new Merge();
+					matches = new LinkedList<Match>();
+					merge.setMatch(matches);
+					merges.add(merge);
+				}
+				Match m = new Match();
+				m.setPackageName(set.getString(idx++));
+				m.setClassName(set.getString(idx++));
+				m.setHash(set.getLong(idx++));
+				m.setFindingType(set.getString(idx++));
+				matches.add(m);
 			}
-			Match m = new Match();
-			m.setPackageName(set.getString(idx++));
-			m.setClassName(set.getString(idx++));
-			m.setHash(set.getLong(idx++));
-			m.setFindingType(set.getString(idx++));
-			matches.add(m);
+		} finally {
+			set.close();
 		}
-		set.close();
 		return merges;
 	}
 
@@ -430,12 +442,15 @@ public class FindingManager {
 	public Long getLatestAuditRevision(String projectName) throws SQLException {
 		latestAuditRevision.setString(1, projectName);
 		ResultSet set = latestAuditRevision.executeQuery();
-		Long revision = 0L;
-		if (set.next()) {
-			revision = set.getLong(1);
+		try {
+			if (set.next()) {
+				return set.getLong(1);
+			} else {
+				return 0L;
+			}
+		} finally {
+			set.close();
 		}
-		set.close();
-		return revision;
 	}
 
 	protected void comment(Long userId, Long findingId, String comment,
