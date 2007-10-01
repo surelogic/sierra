@@ -109,7 +109,6 @@ public class SierraAnalysis extends Task {
 	protected Redirector redirector = new Redirector(this);
 	protected RedirectorElement redirectorElement;
 	private CommandlineJava cmdl = new CommandlineJava();
-	private boolean uploadSuccessful = false;
 
 	private String[] sourceDirectories = null;
 
@@ -498,18 +497,7 @@ public class SierraAnalysis extends Task {
 					throw new BuildException(sb.toString());
 				}
 				// FIXME utilize the return value once Bug 867 is resolved
-				if (ts.publishRun(run).equalsIgnoreCase("failure")) {
-					antProject.log("Failed to upload run document, "
-							+ runDocument.getAbsolutePath()
-							+ " to the server: " + server,
-							org.apache.tools.ant.Project.MSG_ERR);
-					uploadSuccessful = false;
-					throw new BuildException("Failed to upload run document, "
-							+ runDocument.getAbsolutePath()
-							+ " to the server: " + server);
-				} else {
-					uploadSuccessful = true;
-				}
+				ts.publishRun(run);
 			} catch (FileNotFoundException e) {
 				throw new IllegalStateException(runDocument
 						+ " is not a valid document", e);
@@ -549,10 +537,8 @@ public class SierraAnalysis extends Task {
 			tools.cleanup();
 			// If we uploaded successfully, delete our run document and temp
 			// directory
-			if (uploadSuccessful) {
-				runDocument.delete();
-				tmpFolder.delete();
-			}
+			runDocument.delete();
+			tmpFolder.delete();
 		}
 	}
 

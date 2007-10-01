@@ -47,7 +47,7 @@ public class SierraServiceTest {
 			Unmarshaller um = context.createUnmarshaller();
 			InputStream in = getResource("ad-hoc-query.sierra");
 			Scan run = (Scan) um.unmarshal(in);
-			assertEquals("SUCCESS", service.publishRun(run));
+			service.publishRun(run);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -74,7 +74,8 @@ public class SierraServiceTest {
 		merges.add(merge);
 		List<Match> matches = new ArrayList<Match>();
 		merge.setMatch(matches);
-		matches.add(new Match("package", "class", 34L, "SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
+		matches.add(new Match("package", "class", 34L,
+				"SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
 		try {
 			MergeAuditTrailResponse mergeRes = service
 					.mergeAuditTrails(mergeReq);
@@ -83,7 +84,8 @@ public class SierraServiceTest {
 			String newTrail = mergeRes.getTrail().get(0);
 			assertNotNull(trail);
 			assertEquals(trail, newTrail);
-			matches.add(new Match("package2", "class2", 35L, "SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
+			matches.add(new Match("package2", "class2", 35L,
+					"SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
 			mergeRes = service.mergeAuditTrails(mergeReq);
 			newTrail = mergeRes.getTrail().get(0);
 			assertEquals(trail, newTrail);
@@ -96,8 +98,7 @@ public class SierraServiceTest {
 			auditTrail.setFinding(trail);
 			List<Audit> audits = new ArrayList<Audit>();
 			auditTrail.setAudits(audits);
-			Audit audit = new Audit(null, AuditEvent.COMMENT,
-					"Some comment");
+			Audit audit = new Audit(null, AuditEvent.COMMENT, "Some comment");
 			audits.add(audit);
 			service.commitAuditTrails(auditTrails);
 			GetAuditTrailRequest request = new GetAuditTrailRequest();

@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import javax.jws.Oneway;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -17,7 +18,8 @@ public interface SierraService {
 	 * @param run
 	 * @return whether or not the run was successfully generated on the server.
 	 */
-	String publishRun(@WebParam(name = "scan")
+	@Oneway
+	void publishRun(@WebParam(name = "scan")
 	Scan scan);
 
 	/**
