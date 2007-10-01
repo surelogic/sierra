@@ -37,9 +37,9 @@ class FindBugsHandler extends DefaultHandler {
 
 	private boolean inField;
 
-	private String[] sourceDirectories;
+	private final String[] sourceDirectories;
 
-	private MessageArtifactFileGenerator generator;
+	private final MessageArtifactFileGenerator generator;
 
 	private String fileName;
 
@@ -56,8 +56,8 @@ class FindBugsHandler extends DefaultHandler {
 	@SuppressWarnings("unused")
 	private Map<String, Map<Integer, Long>> hashHolder;
 	private boolean inErrorMessage = false;
-	private StringBuilder message;
-	private StringBuilder errorMessage;
+	private final StringBuilder message;
+	private final StringBuilder errorMessage;
 
 	public FindBugsHandler(MessageArtifactFileGenerator generator,
 			String[] sourceDirectories) {
@@ -381,7 +381,7 @@ class FindBugsHandler extends DefaultHandler {
 									// generator.addFile(completePath);
 									if (monitor != null) {
 										monitor
-												.subTask("Calculating hash values for "
+												.subTask("Calculating hash values (FindBugs) for "
 														+ completePath);
 									}
 									Long hashValue = hashGenerator.getHash(

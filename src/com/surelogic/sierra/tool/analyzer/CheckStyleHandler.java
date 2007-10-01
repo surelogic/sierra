@@ -23,25 +23,26 @@ public class CheckStyleHandler extends DefaultHandler {
 	// private static final String COLUMN = "column";
 	private boolean f_isValid = false;
 
-	private ArtifactGenerator.SourceLocationBuilder primarySourceLocation;
+	private ArtifactGenerator.SourceLocationBuilder f_primarySourceLocation;
 
-	private ArtifactGenerator.ArtifactBuilder artifact;
+	private ArtifactGenerator.ArtifactBuilder f_artifact;
 
 	// private ArtifactGenerator.ErrorBuilder error;
 
-	private final MessageArtifactFileGenerator generator;
+	private final MessageArtifactFileGenerator f_generator;
 
-	private String fileName;
+	private String f_fileName;
 
-	private SLProgressMonitor monitor = null;
-	private String className;
-	private String packageName = "NA";
+	private SLProgressMonitor f_monitor = null;
+	private String f_className;
+	private String f_packageName = "NA";
+	private boolean f_ignore = false;
 
 	public CheckStyleHandler(MessageArtifactFileGenerator generator,
 			SLProgressMonitor monitor) {
 		super();
-		this.generator = generator;
-		this.monitor = monitor;
+		this.f_generator = generator;
+		this.f_monitor = monitor;
 	}
 
 	@Override
@@ -53,25 +54,25 @@ public class CheckStyleHandler extends DefaultHandler {
 		}
 
 		if (name.equals(FILE)) {
-			fileName = attributes.getValue(NAME);
-			File file = new File(fileName);
+			f_fileName = attributes.getValue(NAME);
+			File file = new File(f_fileName);
 
 			/*
 			 * Currently the code handles only .class and .java files all other
 			 * cases are stored with their complete name
 			 */
-			if (fileName.endsWith(".class")) {
-				className = file.getName().substring(0,
+			if (f_fileName.endsWith(".class")) {
+				f_className = file.getName().substring(0,
 						file.getName().length() - 6);
-			} else if (fileName.endsWith(".java")) {
-				className = file.getName().substring(0,
+			} else if (f_fileName.endsWith(".java")) {
+				f_className = file.getName().substring(0,
 						file.getName().length() - 5);
-				packageName = PackageFinder.getInstance().getPackage(file);
+				f_packageName = PackageFinder.getInstance().getPackage(file);
 			} else {
 				/*
 				 * Not a java file
 				 */
-				className = file.getName();
+				f_className = file.getName();
 			}
 
 		}
@@ -84,26 +85,29 @@ public class CheckStyleHandler extends DefaultHandler {
 
 			// Mark TreeWalker as error in scan document
 			if (source.equals(TREEWALKER)) {
+				f_ignore = true;
 				// IGNORE FOR NOW
 				// error = generator.error();
 				// error.message(source + " : " + message);
 			} else {
 
-				artifact = generator.artifact();
-				primarySourceLocation = artifact.primarySourceLocation();
-				primarySourceLocation.className(className).packageName(
-						packageName);
+				f_artifact = f_generator.artifact();
+				f_primarySourceLocation = f_artifact.primarySourceLocation();
+				f_primarySourceLocation.className(f_className).packageName(
+						f_packageName);
 
 				// generator.addFile(fileName);
 
-				if (monitor != null) {
-					monitor.subTask("Calculating hash value (Checkstyle)"
-							+ fileName);
+				if (f_monitor != null) {
+					f_monitor
+							.subTask("Calculating hash value (Checkstyle) for "
+									+ f_fileName);
 				}
-				long hash = HashGenerator.getInstance().getHash(fileName, line);
+				long hash = HashGenerator.getInstance().getHash(f_fileName,
+						line);
 
-				primarySourceLocation.lineOfCode(line).hash(hash);
-				artifact.message(message).findingType(CHECK_STYLE, VERSION,
+				f_primarySourceLocation.lineOfCode(line).hash(hash);
+				f_artifact.message(message).findingType(CHECK_STYLE, VERSION,
 						source);
 			}
 		}
@@ -114,9 +118,11 @@ public class CheckStyleHandler extends DefaultHandler {
 			throws SAXException {
 
 		if (name.endsWith(ERROR)) {
-			if (artifact != null) {
-				primarySourceLocation.build();
-				artifact.build();
+			if (!f_ignore) {
+				f_primarySourceLocation.build();
+				f_artifact.build();
+			} else {
+				f_ignore = false;
 			}
 		}
 

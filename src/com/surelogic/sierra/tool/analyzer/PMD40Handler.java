@@ -22,7 +22,7 @@ import com.surelogic.sierra.tool.message.Severity;
  */
 class PMD40Handler extends DefaultHandler {
 
-	private MessageArtifactFileGenerator generator;
+	private final MessageArtifactFileGenerator generator;
 
 	private static final String PMD = "PMD";
 	private static final String PMD_VERSION = "4.0";
@@ -41,7 +41,7 @@ class PMD40Handler extends DefaultHandler {
 
 	private boolean inViolation;
 
-	private StringBuilder message;
+	private final StringBuilder message;
 
 	private SLProgressMonitor monitor = null;
 
@@ -103,8 +103,9 @@ class PMD40Handler extends DefaultHandler {
 						fileName = attrs.getValue(i);
 
 						if (monitor != null) {
-							monitor.subTask("Calculating hash values for "
-									+ fileName);
+							monitor
+									.subTask("Calculating hash values (PMD) for "
+											+ fileName);
 						}
 					}
 				}
