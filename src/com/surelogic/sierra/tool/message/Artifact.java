@@ -63,9 +63,21 @@ public class Artifact {
 		}
 
 		public Artifact build() {
+			validate();
 			Artifact a = new Artifact(this);
 			clear();
 			return a;
+		}
+
+		private void validate() {
+			if (this.artifactType == null) {
+				throw new IllegalArgumentException(
+						"An artifact is being built with no artifact type.");
+			}
+			if (this.primarySourceLocation == null) {
+				throw new IllegalArgumentException(
+						"An artifact is being build with no primary source location");
+			}
 		}
 
 		private void clear() {
