@@ -25,7 +25,7 @@ public final class FilterSelection extends Filter {
 		return FACTORY;
 	}
 
-	private static final String COLUMN_NAME = "STATE";
+	private static final String COLUMN_NAME = "STATUS";
 
 	@Override
 	protected String getColumnName() {
