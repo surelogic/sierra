@@ -1,2 +1,7 @@
 
 
+CREATE TABLE SCAN_OVERVIEW (
+
+
+);
+
