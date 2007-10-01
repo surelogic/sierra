@@ -79,6 +79,8 @@ public class CheckStyleHandler extends DefaultHandler {
 		if (name.equals(ERROR)) {
 
 			artifact = generator.artifact();
+			primarySourceLocation = artifact.primarySourceLocation();
+
 			final String source = attributes.getValue(SOURCE);
 			final String message = attributes.getValue(MESSAGE);
 			final int line = Integer.valueOf(attributes.getValue(LINE));
@@ -89,7 +91,7 @@ public class CheckStyleHandler extends DefaultHandler {
 				// error = generator.error();
 				// error.message(source + " : " + message);
 			} else {
-				primarySourceLocation = artifact.primarySourceLocation();
+
 				primarySourceLocation.className(className).packageName(
 						packageName);
 
