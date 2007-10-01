@@ -19,6 +19,7 @@ public class CheckStyleHandler extends DefaultHandler {
 	private static final String MESSAGE = "message";
 	private static final String SOURCE = "source";
 	private static final String VERSION = "4.3";
+	private static final String TREEWALKER = "com.puppycrawl.tools.checkstyle.TreeWalker";
 	// private static final String COLUMN = "column";
 	private boolean f_isValid = false;
 
@@ -26,7 +27,9 @@ public class CheckStyleHandler extends DefaultHandler {
 
 	private ArtifactGenerator.ArtifactBuilder artifact;
 
-	private MessageArtifactFileGenerator generator;
+	// private ArtifactGenerator.ErrorBuilder error;
+
+	private final MessageArtifactFileGenerator generator;
 
 	private String fileName;
 
@@ -74,25 +77,34 @@ public class CheckStyleHandler extends DefaultHandler {
 		}
 
 		if (name.equals(ERROR)) {
-			artifact = generator.artifact();
-			primarySourceLocation = artifact.primarySourceLocation();
-
-			primarySourceLocation.className(className).packageName(packageName);
-			final int line = Integer.valueOf(attributes.getValue(LINE));
 
 			final String source = attributes.getValue(SOURCE);
 			final String message = attributes.getValue(MESSAGE);
+			final int line = Integer.valueOf(attributes.getValue(LINE));
 
-			// generator.addFile(fileName);
+			// Mark TreeWalker as error in scan document
+			if (source.equals(TREEWALKER)) {
+				// IGNORE FOR NOW
+				// error = generator.error();
+				// error.message(source + " : " + message);
+			} else {
+				artifact = generator.artifact();
+				primarySourceLocation = artifact.primarySourceLocation();
+				primarySourceLocation.className(className).packageName(
+						packageName);
 
-			if (monitor != null) {
-				monitor.subTask("Calculating hash value (Checkstyle)"
-						+ fileName);
+				// generator.addFile(fileName);
+
+				if (monitor != null) {
+					monitor.subTask("Calculating hash value (Checkstyle)"
+							+ fileName);
+				}
+				long hash = HashGenerator.getInstance().getHash(fileName, line);
+
+				primarySourceLocation.lineOfCode(line).hash(hash);
+				artifact.message(message).findingType(CHECK_STYLE, VERSION,
+						source);
 			}
-			long hash = HashGenerator.getInstance().getHash(fileName, line);
-
-			primarySourceLocation.lineOfCode(line).hash(hash);
-			artifact.message(message).findingType(CHECK_STYLE, VERSION, source);
 		}
 	}
 
@@ -101,8 +113,12 @@ public class CheckStyleHandler extends DefaultHandler {
 			throws SAXException {
 
 		if (name.endsWith(ERROR)) {
+			// if (error != null) {
+			// error.build();
+			// } else {
 			primarySourceLocation.build();
 			artifact.build();
+			// }
 		}
 
 	}
