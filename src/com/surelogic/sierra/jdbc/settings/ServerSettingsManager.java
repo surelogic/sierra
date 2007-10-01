@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.settings;
 
-import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -345,7 +344,7 @@ public class ServerSettingsManager extends SettingsManager {
 		return new FindingTypeFilterRecord(findingTypeFilterMapper);
 	}
 
-	private SettingsRecord newSettingsRecord() {
+	public SettingsRecord newSettingsRecord() {
 		return new SettingsRecord(settingsMapper);
 	}
 

@@ -1,11 +1,13 @@
 package com.surelogic.sierra.jdbc.settings;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
-import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.RelationRecord;
+import com.surelogic.sierra.jdbc.record.RecordStringRelationRecord;
 import com.surelogic.sierra.jdbc.record.SettingsProjectRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 
@@ -14,11 +16,17 @@ public class SettingsProjectManager {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private SettingsProjectRecordFactory sprFactory;
-	private ProjectRecordFactory pFactory;
+	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM SETTINGS SS, SETTINGS_PROJECT_RELTN SPR, PROJECT PR WHERE SS.NAME = ? AND SPR.SETTINGS_ID = SS.ID AND PR.NAME = SPR.PROJECT_NAME";
+	private final PreparedStatement getProjectNames;
+
+	private final SettingsProjectRecordFactory sprFactory;
 
 	private SettingsProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
+
+		sprFactory = SettingsProjectRecordFactory.getInstance(conn);
+
+		getProjectNames = conn.prepareStatement(GET_PROJECT_NAMES);
 	}
 
 	public void addRelation(SettingsRecord settings, String projectName)
@@ -27,16 +35,54 @@ public class SettingsProjectManager {
 		if (settings == null)
 			throw new SQLException();
 
-		ProjectRecord project = pFactory.newProject();
-		project.setName(projectName);
-		if (!project.select()) {
-			// XXX fill in
+		SettingsProjectRecord spr = sprFactory.newSettingsProject();
+		spr.setId(new RecordStringRelationRecord.PK<SettingsRecord, String>(
+				settings, projectName));
+		spr.insert();
+	}
+
+	public void addRelation(String selectedSettingName, String selectedSPRItem)
+			throws SQLException {
+		ServerSettingsManager ssm = ServerSettingsManager.getInstance(conn);
+		SettingsRecord rec = ssm.newSettingsRecord();
+		rec.setName(selectedSettingName);
+		if (!rec.select()) {
+			// XXX TODO
 			throw new SQLException();
 		}
 
-		SettingsProjectRecord spr = sprFactory.newSettingsProject();
-		spr.setId(new RelationRecord.PK<ProjectRecord, SettingsRecord>(project,
-				settings));
-		spr.insert();
+		addRelation(rec, selectedSPRItem);
 	}
+
+	public Collection<String> getProjectNames(String setting)
+			throws SQLException {
+
+		getProjectNames.setString(1, setting);
+		ResultSet rs = getProjectNames.executeQuery();
+
+		Collection<String> projectNames = new ArrayList<String>();
+		while (rs.next()) {
+			projectNames.add(rs.getString(1));
+		}
+		rs.close();
+		return projectNames;
+	}
+
+	public void deleteProjectRelation(SettingsRecord settings,
+			String projectName) throws SQLException {
+
+		if (settings == null)
+			throw new SQLException();
+
+		SettingsProjectRecord spr = sprFactory.newSettingsProject();
+		spr.setId(new RecordStringRelationRecord.PK<SettingsRecord, String>(
+				settings, projectName));
+		spr.delete();
+	}
+
+	public static SettingsProjectManager getInstance(Connection conn)
+			throws SQLException {
+		return new SettingsProjectManager(conn);
+	}
+
 }
