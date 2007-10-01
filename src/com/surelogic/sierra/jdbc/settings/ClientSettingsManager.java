@@ -33,8 +33,11 @@ public class ClientSettingsManager extends SettingsManager {
 		getSettingsRevision.setString(1, project);
 		ResultSet set = getSettingsRevision.executeQuery();
 		if (set.next()) {
-			return set.getLong(1);
+			Long revision = set.getLong(1);
+			set.close();
+			return revision;
 		} else {
+			set.close();
 			throw new IllegalArgumentException("No project with name "
 					+ project + " exists");
 		}

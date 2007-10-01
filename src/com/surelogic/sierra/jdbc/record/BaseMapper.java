@@ -47,6 +47,7 @@ public class BaseMapper implements RecordMapper {
 		if (keys.next()) {
 			record.readPk(keys, 1);
 		}
+		keys.close();
 	}
 
 	/*
@@ -75,6 +76,7 @@ public class BaseMapper implements RecordMapper {
 		if (found) {
 			record.readAttributes(set, record.readPk(set, 1));
 		}
+		set.close();
 		return found;
 	}
 

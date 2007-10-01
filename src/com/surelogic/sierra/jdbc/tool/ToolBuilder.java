@@ -21,7 +21,8 @@ public class ToolBuilder {
 		try {
 			this.insertTool = conn.prepareStatement(INSERT_TOOL,
 					Statement.RETURN_GENERATED_KEYS);
-			this.insertFindingType = conn.prepareStatement(INSERT_ARTIFACT_TYPE);
+			this.insertFindingType = conn
+					.prepareStatement(INSERT_ARTIFACT_TYPE);
 		} catch (SQLException e) {
 			throw new IllegalStateException(
 					"Could not persist tool into database", e);
@@ -35,7 +36,9 @@ public class ToolBuilder {
 		insertTool.executeUpdate();
 		ResultSet set = insertTool.getGeneratedKeys();
 		set.next();
-		return new ArtifactTypeBuilder(set.getLong(1));
+		Long id = set.getLong(1);
+		set.close();
+		return new ArtifactTypeBuilder(id);
 	}
 
 	public class ArtifactTypeBuilder {

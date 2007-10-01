@@ -134,6 +134,7 @@ public class ScanManager {
 		if (set.next()) {
 			deleteScan(set.getString(1), monitor);
 		}
+		set.close();
 	}
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {

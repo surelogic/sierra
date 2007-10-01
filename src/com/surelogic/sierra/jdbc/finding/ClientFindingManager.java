@@ -236,6 +236,7 @@ public final class ClientFindingManager extends FindingManager {
 			regenerateOverview(set.getString(1), Collections
 					.singletonList(findingId));
 		}
+		set.close();
 	}
 
 	/**

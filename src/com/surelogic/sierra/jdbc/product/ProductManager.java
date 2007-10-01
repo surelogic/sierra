@@ -42,6 +42,7 @@ public class ProductManager {
 		while (rs.next()) {
 			productNames.add(rs.getString(1));
 		}
+		rs.close();
 		return productNames;
 	}
 

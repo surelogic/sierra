@@ -163,6 +163,7 @@ public class ServerSettingsManager extends SettingsManager {
 		while (set.next()) {
 			view.add(new CategoryView(set.getString(1), set.getString(2)));
 		}
+		set.close();
 		return view;
 	}
 
@@ -193,6 +194,7 @@ public class ServerSettingsManager extends SettingsManager {
 				while (set.next()) {
 					filters.add(readFilter(set));
 				}
+				set.close();
 				return filters;
 			} else {
 				throw new IllegalArgumentException(settings
@@ -258,6 +260,7 @@ public class ServerSettingsManager extends SettingsManager {
 		while (rs.next()) {
 			settingNames.add(rs.getString(1));
 		}
+		rs.close();
 		return settingNames;
 	}
 
@@ -270,18 +273,6 @@ public class ServerSettingsManager extends SettingsManager {
 		} else {
 			return null;
 		}
-	}
-
-	public Settings getSettingsByProject(String project) throws SQLException {
-		getSettingsByProject.setString(1, project);
-		ResultSet set = getSettingsByProject.executeQuery();
-		if (set.next()) {
-			Clob clob = set.getClob(1);
-			if (clob != null) {
-				return mw.fetchSettings(clob.getCharacterStream());
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -307,12 +298,34 @@ public class ServerSettingsManager extends SettingsManager {
 					.setSettings(readSettings(getFiltersBySettingId
 							.executeQuery()));
 		}
+		set.close();
 		return reply;
 	}
 
 	public void writeSettings(Settings settings, String name)
 			throws SQLException {
 		applyFilters(settings.getFilter(), name);
+	}
+
+	/**
+	 * Return the current settings for the given project.
+	 * @param projectName
+	 * @return
+	 * @throws SQLException
+	 */
+	public Settings getSettingsByProject(String projectName)
+			throws SQLException {
+		getSettingsByProject.setString(1, projectName);
+		ResultSet set = getSettingsByProject.executeQuery();
+		Settings settings;
+		if (set.next()) {
+			getFiltersBySettingId.setLong(1, set.getLong(1));
+			settings = readSettings(getFiltersBySettingId.executeQuery());
+		} else {
+			settings = new Settings();
+		}
+		set.close();
+		return settings;
 	}
 
 	private FindingTypeFilterRecord newFilterRecord() {
@@ -329,6 +342,7 @@ public class ServerSettingsManager extends SettingsManager {
 		while (set.next()) {
 			filters.add(readFilter(set));
 		}
+		set.close();
 		return settings;
 	}
 
@@ -354,4 +368,5 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 		return filter;
 	}
+
 }

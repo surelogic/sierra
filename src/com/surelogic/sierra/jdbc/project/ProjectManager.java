@@ -55,6 +55,7 @@ public class ProjectManager {
 		while (rs.next()) {
 			projectNames.add(rs.getString(1));
 		}
+		rs.close();
 		return projectNames;
 	}
 
@@ -187,6 +188,7 @@ public class ProjectManager {
 		while (set.next()) {
 			runs.add(set.getString(1));
 		}
+		set.close();
 		return runs;
 	}
 

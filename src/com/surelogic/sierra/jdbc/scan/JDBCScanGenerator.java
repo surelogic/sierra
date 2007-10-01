@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
-import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -130,7 +129,6 @@ class JDBCScanGenerator implements ScanGenerator {
 											.getInstance(conn);
 									fm.generateFindings(projectName, scan
 											.getUid(), filter, null);
-									conn.commit();
 								}
 								conn.commit();
 							} catch (SQLException e) {

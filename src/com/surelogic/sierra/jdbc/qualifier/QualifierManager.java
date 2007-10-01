@@ -33,6 +33,7 @@ public class QualifierManager {
 		while (rs.next()) {
 			qualifierNames.add(rs.getString(1));
 		}
+		rs.close();
 		return qualifierNames;
 	}
 

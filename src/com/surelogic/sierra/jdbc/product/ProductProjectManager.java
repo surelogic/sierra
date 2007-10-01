@@ -47,7 +47,7 @@ public class ProductProjectManager {
 		while (rs.next()) {
 			projectNames.add(rs.getString(1));
 		}
-
+		rs.close();
 		return projectNames;
 	}
 

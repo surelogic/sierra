@@ -18,6 +18,7 @@ public class Server {
 		st.setString(1, userName);
 		ResultSet set = st.executeQuery();
 		if (!set.next()) {
+			set.close();
 			st = conn.prepareStatement(
 					"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
 					Statement.RETURN_GENERATED_KEYS);
@@ -27,6 +28,7 @@ public class Server {
 			set.next();
 		}
 		user.id = set.getLong(1);
+		set.close();
 		return user;
 	}
 
@@ -38,14 +40,18 @@ public class Server {
 		st.execute();
 		ResultSet set = st.getGeneratedKeys();
 		set.next();
-		return set.getLong(1);
+		Long revision = set.getLong(1);
+		set.close();
+		return revision;
 	}
 
 	public static String getUid(Connection conn) throws SQLException {
 		ResultSet set = conn.createStatement().executeQuery(
 				"SELECT UID FROM SERVER");
 		set.next();
-		return set.getString(1);
+		String uid = set.getString(1);
+		set.close();
+		return uid;
 	}
 
 }

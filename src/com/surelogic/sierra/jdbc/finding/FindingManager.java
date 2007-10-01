@@ -204,8 +204,8 @@ public class FindingManager {
 					}
 				}
 			}
-			conn.commit();
 			result.close();
+			conn.commit();
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {
@@ -353,6 +353,7 @@ public class FindingManager {
 				audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
 						.valueOf(set.getString(idx++)), set.getString(idx++)));
 			}
+			set.close();
 		} else {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
@@ -387,7 +388,7 @@ public class FindingManager {
 			m.setFindingType(set.getString(idx++));
 			matches.add(m);
 		}
-
+		set.close();
 		return merges;
 	}
 
@@ -429,10 +430,12 @@ public class FindingManager {
 	public Long getLatestAuditRevision(String projectName) throws SQLException {
 		latestAuditRevision.setString(1, projectName);
 		ResultSet set = latestAuditRevision.executeQuery();
+		Long revision = 0L;
 		if (set.next()) {
-			return set.getLong(1);
+			revision = set.getLong(1);
 		}
-		return 0L;
+		set.close();
+		return revision;
 	}
 
 	protected void comment(Long userId, Long findingId, String comment,

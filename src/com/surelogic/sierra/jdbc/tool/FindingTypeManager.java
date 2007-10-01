@@ -74,8 +74,11 @@ public class FindingTypeManager {
 		selectArtifactType.setString(3, mnemonic);
 		ResultSet set = selectArtifactType.executeQuery();
 		if (set.next()) {
-			return set.getLong(1);
+			Long id = set.getLong(1);
+			set.close();
+			return id;
 		} else {
+			set.close();
 			String message = "No Artifact could be found with tool name "
 					+ tool + ", mnemonic " + mnemonic + ", and version "
 					+ version + ".";
@@ -93,6 +96,7 @@ public class FindingTypeManager {
 		while (set.next()) {
 			ids.add(set.getLong(1));
 		}
+		set.close();
 		if (ids.isEmpty()) {
 			String message = "No artifact types could be found with tool "
 					+ tool + " and mnemonic " + mnemonic + ".";
@@ -121,6 +125,7 @@ public class FindingTypeManager {
 				while (set.next()) {
 					artifactMap.put(set.getLong(1), filter);
 				}
+				set.close();
 			}
 			return new MessageFilter(findingMap, artifactMap);
 		} else {
@@ -160,6 +165,7 @@ public class FindingTypeManager {
 						ResultSet set = checkForArtifactTypeRelation
 								.executeQuery();
 						if (set.next()) {
+							set.close();
 							String message = "The artifact with mnemonic "
 									+ at.getMnemonic()
 									+ " in tool "
@@ -171,6 +177,7 @@ public class FindingTypeManager {
 							log.severe(message);
 							throw new IllegalStateException(message);
 						}
+						set.close();
 						insertArtifactTypeFindingTypeRelation.setLong(1, id);
 						insertArtifactTypeFindingTypeRelation.setLong(2, fRec
 								.getId());
