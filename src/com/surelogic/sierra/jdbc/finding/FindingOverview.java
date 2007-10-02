@@ -39,8 +39,9 @@ public class FindingOverview {
 		this.findingId = set.getLong(idx++);
 		this.examined = "Yes".equals(set.getString(idx++));
 		this.lastChanged = set.getTimestamp(idx++);
-		this.importance = Importance.valueOf(set.getString(idx++));
-		this.status = FindingStatus.valueOf(set.getString(idx++));
+		this.importance = Importance
+				.valueOf(set.getString(idx++).toUpperCase());
+		this.status = FindingStatus.valueOf(set.getString(idx++).toUpperCase());
 		this.lineOfCode = set.getInt(idx++);
 		this.numberOfArtifacts = set.getInt(idx++);
 		this.numberOfComments = set.getInt(idx++);

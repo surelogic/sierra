@@ -218,6 +218,13 @@ public class FindingManager {
 		}
 	}
 
+	/**
+	 * Delete all findings for the given project.
+	 * 
+	 * @param projectName
+	 * @param monitor
+	 * @throws SQLException
+	 */
 	public void deleteFindings(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		if (monitor != null) {
