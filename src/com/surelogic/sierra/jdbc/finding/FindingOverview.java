@@ -1,8 +1,12 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -16,6 +20,8 @@ import com.surelogic.sierra.tool.message.Importance;
  * 
  */
 public class FindingOverview {
+
+	private static View view = new View();
 
 	private long findingId;
 
@@ -109,4 +115,49 @@ public class FindingOverview {
 		return numberOfComments;
 	}
 
+	public static View getView() {
+		return view;
+	}
+
+	/**
+	 * Provides views of the FINDINGS_OVERVIEW table.
+	 * 
+	 * @author nathan
+	 * 
+	 */
+	public static class View {
+
+		/**
+		 * Get the latest findings for the given class. Only findings with
+		 * status New or Unchanged are returned, fixed findings are not shown.
+		 * 
+		 * TODO do we want to also show fixed findings?
+		 * 
+		 * @param projectName
+		 * @param className
+		 * @param packageName
+		 * @return
+		 */
+		public List<FindingOverview> showFindingsForClass(Connection conn,
+				String projectName, String packageName, String className)
+				throws SQLException {
+			List<FindingOverview> findings = new ArrayList<FindingOverview>();
+			PreparedStatement selectFindingsByClass = conn
+					.prepareStatement("SELECT FINDING_ID,EXAMINED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,COMMENT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CLASS = ?");
+			int idx = 1;
+			selectFindingsByClass.setString(idx++, projectName);
+			selectFindingsByClass.setString(idx++, packageName);
+			selectFindingsByClass.setString(idx++, className);
+			ResultSet set = selectFindingsByClass.executeQuery();
+			try {
+				while (set.next()) {
+					findings.add(new FindingOverview(set));
+				}
+			} finally {
+				set.close();
+			}
+			return findings;
+		}
+	}
 }

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,6 @@ public final class ClientFindingManager extends FindingManager {
 
 	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
-	private final PreparedStatement selectFindingsByClass;
 
 	private ClientFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -102,38 +100,6 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
 		selectFindingProject = conn
 				.prepareStatement("SELECT P.NAME FROM FINDING F, PROJECT P WHERE F.ID = ? AND P.ID = F.PROJECT_ID");
-		selectFindingsByClass = conn
-				.prepareStatement("SELECT FINDING_ID,EXAMINED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,COMMENT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
-						+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CLASS = ?");
-	}
-
-	/**
-	 * Get the latest findings for the given class. Only findings with status
-	 * New or Unchanged are returned, fixed findings are not shown.
-	 * 
-	 * TODO do we want to also show fixed findings?
-	 * 
-	 * @param projectName
-	 * @param className
-	 * @param packageName
-	 * @return
-	 */
-	public List<FindingOverview> showFindingsForClass(String projectName,
-			String packageName, String className) throws SQLException {
-		List<FindingOverview> findings = new ArrayList<FindingOverview>();
-		int idx = 1;
-		selectFindingsByClass.setString(idx++, projectName);
-		selectFindingsByClass.setString(idx++, packageName);
-		selectFindingsByClass.setString(idx++, className);
-		ResultSet set = selectFindingsByClass.executeQuery();
-		try {
-			while (set.next()) {
-				findings.add(new FindingOverview(set));
-			}
-		} finally {
-			set.close();
-		}
-		return findings;
 	}
 
 	/**
@@ -259,14 +225,13 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	
-	
 	@Override
 	public void deleteFindings(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
-		ProjectRecord pRec = ProjectRecordFactory.getInstance(conn).newProject();
+		ProjectRecord pRec = ProjectRecordFactory.getInstance(conn)
+				.newProject();
 		pRec.setName(projectName);
-		if(pRec.select()) {
+		if (pRec.select()) {
 			deleteOverview.setLong(1, pRec.getId());
 			deleteOverview.execute();
 		}

@@ -39,6 +39,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement deleteSeriesOverview;
 	private final PreparedStatement populateSeriesOverview;
 	private final PreparedStatement populateTempIds;
+	private final PreparedStatement oldestScanInQualifierExcept;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -94,6 +95,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
+		oldestScanInQualifierExcept = conn.prepareStatement("SELECT S.ID FROM SCAN S WHERE S.QUALIFIER_SCAN_RELTN QSR, SCAN S");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
