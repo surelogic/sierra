@@ -285,6 +285,37 @@
          			A wizard to import Sierra Servers
          		</description>
          </wizard>
+   </extension> 
+   <extension
+		 id="com.surelogic.sierra.client.eclipse.sierraMarker"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <persistent value="true"/>
    </extension>
+   <extension
+		 point="org.eclipse.ui.ide.markerImageProviders">
+	  <imageprovider
+			markertype="com.surelogic.sierra.client.eclipse.sierraMarker"
+			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+			id="com.surelogic.sierra.client.eclipse.sierraMarkerImageProvider">
+	  </imageprovider>
+   </extension>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	 
+  </extension>
+  <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
+			icon="icons/sierra_marker.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="icons/sierra_marker.gif"/>
+  </extension>
    
 </plugin>

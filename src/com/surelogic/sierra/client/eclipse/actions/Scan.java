@@ -150,6 +150,14 @@ public final class Scan {
 			}
 
 			try {
+
+				/*
+				 * Remove the editor changes listener The listener for database
+				 * changes is removed at the start of each scan and added back
+				 * at the end
+				 */
+				MarkersHandler.removeMarkerListener();
+
 				final AntRunnable antRunnable = new AntRunnable(f_config,
 						slProgressMonitorWrapper, scale);
 				final Thread antThread = new Thread(antRunnable);
@@ -197,6 +205,12 @@ public final class Scan {
 							newScanDocument.delete();
 						}
 						scanDocument.renameTo(newScanDocument);
+
+						/*
+						 * Add the listener back
+						 */
+						MarkersHandler.addMarkerListener();
+
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());
 						slProgressMonitorWrapper.done();

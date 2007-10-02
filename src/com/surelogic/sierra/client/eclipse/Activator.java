@@ -7,6 +7,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -54,6 +55,8 @@ public class Activator extends AbstractUIPlugin {
 		SierraServerManager.getInstance().load(getServerSaveFile());
 		// start observing data changes
 		Projects.getInstance().refresh();
+		// listen changes to the active editor
+		MarkersHandler.addMarkerListener();
 	}
 
 	@Override
