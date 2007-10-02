@@ -96,33 +96,20 @@ public abstract class Filter {
 		return new LinkedList<String>(f_allValues);
 	}
 
-	public interface CompletedAction {
-		/**
-		 * The initialization was successful.
-		 */
-		void success();
-
-		/**
-		 * The initialization failed.
-		 * 
-		 * @param e
-		 *            the cause, may be <code>null</code>.
-		 */
-		void failure(Exception e);
-	}
-
 	/**
 	 * Starts a task in the background to query the necessary information about
 	 * this filter. This method doesn't wait for the task to complete, it
 	 * returns immediately.
 	 * <p>
-	 * The passed object is invoked when the task completes.
-	 * 
-	 * @param completedAction
-	 *            to be invoked when the initialization of this filter is
-	 *            complete.
+	 * This method is intended to be called upon an update to the database to
+	 * refresh the model within this class.
+	 * <p>
+	 * Observers are notified (later on) via a call to
+	 * {@link IFilterObserver#contentsChanged(Filter)} if the query was
+	 * successful, or {@link IFilterObserver#queryFailure(Exception)} if the
+	 * query failed.
 	 */
-	public void initAsync(final CompletedAction completedAction) {
+	public void queryAsync() {
 		final Runnable task = new Runnable() {
 			public void run() {
 				try {
@@ -130,10 +117,10 @@ public abstract class Filter {
 					deriveSummaryCounts();
 					deriveAllValues();
 				} catch (Exception e) {
-					completedAction.failure(e);
+					notifyQueryFailure(e);
 					return;
 				}
-				completedAction.success();
+				notifyContentsChanged();
 			}
 		};
 		f_exector.execute(task);
@@ -216,23 +203,36 @@ public abstract class Filter {
 	 * <p>
 	 * If this set is mutated other than via a call to
 	 * {@link #setPorous(String)} then it is required to invoke
-	 * {@link #notifyObservers()}.
+	 * {@link #notifyPorous()}.
 	 */
 	protected final Set<String> f_porousValues = new HashSet<String>();
 
-	protected final Set<IPorousObserver> f_porousObservers = new CopyOnWriteArraySet<IPorousObserver>();
+	protected final Set<IFilterObserver> f_observers = new CopyOnWriteArraySet<IFilterObserver>();
 
-	public final void addObserver(IPorousObserver o) {
-		f_porousObservers.add(o);
+	public final void addObserver(IFilterObserver o) {
+		f_observers.add(o);
 	}
 
-	public final void removeObserver(IPorousObserver o) {
-		f_porousObservers.remove(o);
+	public final void removeObserver(IFilterObserver o) {
+		f_observers.remove(o);
 	}
 
-	protected void notifyObservers() {
-		for (IPorousObserver o : f_porousObservers)
+	protected void notifyPorous() {
+		for (IFilterObserver o : f_observers) {
 			o.porous(this);
+		}
+	}
+
+	protected void notifyContentsChanged() {
+		for (IFilterObserver o : f_observers) {
+			o.contentsChanged(this);
+		}
+	}
+
+	protected void notifyQueryFailure(final Exception e) {
+		for (IFilterObserver o : f_observers) {
+			o.queryFailure(this, e);
+		}
 	}
 
 	/**
@@ -272,7 +272,7 @@ public abstract class Filter {
 			f_porousValues.add(value);
 		else
 			f_porousValues.remove(value);
-		notifyObservers();
+		notifyPorous();
 	}
 
 	/**

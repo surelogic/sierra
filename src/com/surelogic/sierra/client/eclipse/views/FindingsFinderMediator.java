@@ -23,6 +23,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
+import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -144,11 +145,12 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 				}
 			}, column);
 			final Filter newFilter = f_workingSelection.construct(filter);
-			newFilter.initAsync(new DrawColumn(column, newFilter, menu));
+			newFilter.addObserver(new DrawColumn(column, newFilter, menu));
+			newFilter.queryAsync();
 		}
 	}
 
-	class DrawColumn implements Filter.CompletedAction {
+	class DrawColumn implements IFilterObserver {
 
 		private final int f_column;
 		private final Filter f_filter;
@@ -162,7 +164,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			f_menu = menu;
 		}
 
-		public void failure(final Exception e) {
+		public void queryFailure(Filter filter, final Exception e) {
 			System.out.println("failure");
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -180,7 +182,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			});
 		}
 
-		public void success() {
+		public void contentsChanged(Filter filter) {
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -188,6 +190,11 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					f_menu.setEnabled(true);
 				}
 			});
+		}
+
+		public void porous(Filter filter) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 

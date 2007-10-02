@@ -24,10 +24,10 @@ import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
-import com.surelogic.sierra.client.eclipse.model.selection.IPorousObserver;
+import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 
-public final class FilterSelectionReport implements IPorousObserver {
+public final class FilterSelectionReport implements IFilterObserver {
 
 	private final CascadingList f_finder;
 	private final int f_column;
@@ -190,5 +190,15 @@ public final class FilterSelectionReport implements IPorousObserver {
 		f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
 		if (hasAMenu())
 			getMenu().setEnabled(porousCount > 0);
+	}
+
+	public void contentsChanged(Filter filter) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void queryFailure(Filter filter, Exception e) {
+		// TODO Auto-generated method stub
+
 	}
 }
