@@ -38,12 +38,62 @@ public final class ServerFindingManager extends FindingManager {
 
 	private final PreparedStatement deleteSeriesOverview;
 	private final PreparedStatement populateSeriesOverview;
+	private final PreparedStatement populateTempIds;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
+		try {
+			conn
+					.createStatement()
+					.execute(
+							"DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+		} catch (SQLException e) {
+			// Do nothing, the table is probably already there.
+		}
 		deleteSeriesOverview = conn
 				.prepareStatement("DELETE FROM TIME_SERIES_OVERVIEW WHERE PROJECT_ID = ? AND QUALIFIER_ID = ?");
-		populateSeriesOverview = conn.prepareStatement("SELECT * FROM TIME_SERIES_OVERVIEW");
+		populateTempIds = conn
+				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
+						+ "SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?");
+		populateSeriesOverview = conn
+				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW"
+						+ " SELECT ?, F.ID,F.PROJECT_ID,"
+						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
+						+ "        F.LAST_CHANGED,"
+						+ "        CASE"
+						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
+						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
+						+ "             WHEN F.IMPORTANCE=2 THEN 'Medium'"
+						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
+						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
+						+ "        END,"
+						+ "        CASE"
+						+ "             WHEN SO.FINDING_ID IS NULL THEN 'Fixed'"
+						+ "             WHEN PREV.FINDING_ID IS NULL THEN 'New'"
+						+ "             ELSE 'Unchanged'"
+						+ "        END,"
+						+ "        SO.LINE_OF_CODE,"
+						+ "        CASE WHEN SO.ARTIFACT_COUNT IS NULL THEN 0 ELSE SO.ARTIFACT_COUNT END,"
+						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
+						+ "        ?,"
+						+ "        LM.PACKAGE_NAME,"
+						+ "        LM.CLASS_NAME,"
+						+ "        FT.NAME,"
+						+ "        SO.TOOL,"
+						+ "        F.SUMMARY"
+						+ " FROM"
+						+ "    SESSION.TEMP_FINDING_IDS TF"
+						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
+						+ "    LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
+						+ "    LEFT OUTER JOIN SCAN_OVERVIEW PREV ON PREV.FINDING_ID = F.ID AND PREV.SCAN_ID = ?"
+						+ "    LEFT OUTER JOIN ("
+						+ "       SELECT"
+						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
+						+ "       FROM AUDIT A"
+						+ "       WHERE A.EVENT='COMMENT'"
+						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
+						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
