@@ -34,26 +34,38 @@ public final class MarkersHandler {
 	private static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private static final IWorkbench f_workbench = PlatformUI.getWorkbench();
-	private static final MarkerListener f_listener = new MarkerListener();
-	private static final IWorkbenchPage f_page = f_workbench
-			.getActiveWorkbenchWindow().getActivePage();
+	private ClientFindingManager f_manager = null;
+	private IFile f_currentFile = null;
+	private final MarkerListener f_listener = new MarkerListener();
 
-	private static ClientFindingManager f_manager = null;
+	private static final MarkersHandler INSTANCE = new MarkersHandler();
 
-	public static void addMarkerListener() {
-
-		setManager();
-
-		IEditorPart editor = f_page.getActiveEditor();
-		if (editor != null) {
-			queryAndSetMarkers(editor);
-		}
-		f_page.addPartListener(f_listener);
+	public static MarkersHandler getInstance() {
+		return INSTANCE;
 	}
 
-	public static void removeMarkerListener() {
-		f_page.removePartListener(f_listener);
+	public void addMarkerListener() {
+
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
+				.getPartService().getActivePartReference().getPage();
+
+		if (page != null) {
+			IEditorPart editor = page.getActiveEditor();
+			setManager();
+
+			if (editor != null) {
+				queryAndSetMarkers(editor);
+			}
+			page.addPartListener(f_listener);
+		}
+	}
+
+	public void removeMarkerListener() {
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
+				.getActivePage();
+		page.removePartListener(f_listener);
 	}
 
 	private MarkersHandler() {
@@ -64,7 +76,7 @@ public final class MarkersHandler {
 	 * Get the {@link ClientFindingManager} instance only when it has not been
 	 * initialized
 	 */
-	private static void setManager() {
+	private void setManager() {
 		try {
 			if (f_manager == null) {
 				Connection connection = Data.getConnection();
@@ -81,13 +93,19 @@ public final class MarkersHandler {
 		}
 	}
 
-	private static void queryAndSetMarkers(IEditorPart editor) {
+	private void queryAndSetMarkers(IEditorPart editor) {
 		IResource resource = extractResource(editor);
 
 		if (resource != null) {
 			if (resource instanceof IFile) {
-				IFile file = (IFile) resource;
-				ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file);
+
+				if (f_currentFile != null) {
+					clearMarkers(f_currentFile, SIERRA_MARKER);
+				}
+
+				f_currentFile = (IFile) resource;
+				ICompilationUnit cu = JavaCore
+						.createCompilationUnitFrom(f_currentFile);
 				try {
 					IPackageDeclaration[] packageDeclarations = cu
 							.getPackageDeclarations();
@@ -100,7 +118,7 @@ public final class MarkersHandler {
 					String elementName = cu.getElementName();
 					String className = cu.getElementName().substring(0,
 							elementName.length() - 5);
-					String projectName = file.getProject().getName();
+					String projectName = f_currentFile.getProject().getName();
 
 					// System.out.println("package :" + packageName + " class :"
 					// + className + " project :" + projectName);
@@ -111,7 +129,7 @@ public final class MarkersHandler {
 									className);
 
 					if (overview != null) {
-						setMarker(file, overview);
+						setMarker(f_currentFile, overview);
 					}
 				} catch (JavaModelException e) {
 					LOG
@@ -132,15 +150,30 @@ public final class MarkersHandler {
 	}
 
 	/**
+	 * Clear all the markers of the given type in the file
+	 * 
+	 * NOTE: This method will NOT delete the subtype markers
+	 * 
+	 * @param file
+	 * @param type
+	 */
+	private void clearMarkers(IFile file, String type) {
+		try {
+			file.deleteMarkers(type, false, IResource.DEPTH_ONE);
+		} catch (CoreException e) {
+			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
+		}
+	}
+
+	/**
 	 * Set the marker in the given file for the list of FindingOverview
 	 * 
 	 * @param file
 	 * @param overview
 	 */
-	private static void setMarker(IFile file, List<FindingOverview> overview) {
+	private void setMarker(IFile file, List<FindingOverview> overview) {
 		try {
 			file.deleteMarkers(SIERRA_MARKER, false, IResource.DEPTH_ONE);
-			// file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ONE);
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 		}
@@ -150,8 +183,6 @@ public final class MarkersHandler {
 				marker = file.createMarker(SIERRA_MARKER);
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
 				marker.setAttribute(IMarker.MESSAGE, o.getSummary());
-				// marker.setAttribute(IMarker.SEVERITY,
-				// IMarker.SEVERITY_WARNING);
 			}
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
@@ -166,14 +197,14 @@ public final class MarkersHandler {
 	 * @param editor
 	 * @return
 	 */
-	private static IResource extractResource(IEditorPart editor) {
+	private IResource extractResource(IEditorPart editor) {
 		IEditorInput input = editor.getEditorInput();
 		if (!(input instanceof IFileEditorInput))
 			return null;
 		return ((IFileEditorInput) input).getFile();
 	}
 
-	private static class MarkerListener implements IPartListener2 {
+	private class MarkerListener implements IPartListener2 {
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 			IEditorPart editor = partRef.getPage().getActiveEditor();
 			if (editor != null) {

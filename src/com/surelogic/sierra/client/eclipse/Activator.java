@@ -56,7 +56,7 @@ public class Activator extends AbstractUIPlugin {
 		// start observing data changes
 		Projects.getInstance().refresh();
 		// listen changes to the active editor
-		MarkersHandler.addMarkerListener();
+		MarkersHandler.getInstance().addMarkerListener();
 	}
 
 	@Override
