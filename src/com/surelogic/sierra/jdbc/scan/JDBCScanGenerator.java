@@ -129,6 +129,8 @@ class JDBCScanGenerator implements ScanGenerator {
 											.getInstance(conn);
 									fm.generateFindings(projectName, scan
 											.getUid(), filter, null);
+									fm.generateOverview(projectName, scan
+											.getUid(), qualifiers);
 								}
 								conn.commit();
 							} catch (SQLException e) {

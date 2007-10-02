@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -22,7 +23,7 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateSingleTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
-	private final PreparedStatement populateScanOverview;
+
 	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
 	private final PreparedStatement selectFindingsByClass;
@@ -41,17 +42,7 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
-		populateScanOverview = conn
-				.prepareStatement("INSERT INTO SCAN_OVERVIEW"
-						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
-						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE 'Many' END"
-						+ " FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
-						+ " WHERE A.SCAN_ID = ? AND"
-						+ "       SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
-						+ "       AFR.ARTIFACT_ID = A.ID AND"
-						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
-						+ "       T.ID = ART.TOOL_ID"
-						+ " GROUP BY AFR.FINDING_ID");
+
 		populateFindingOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
 						+ " SELECT F.ID,F.PROJECT_ID,"
@@ -239,16 +230,13 @@ public final class ClientFindingManager extends FindingManager {
 			if (scanRecord.select()) {
 				log.info("Populating scan overview for scan "
 						+ scanRecord.getUid() + ".");
-				int idx = 1;
-				populateScanOverview.setLong(idx++, scanRecord.getId());
-				populateScanOverview.setLong(idx++, scanRecord.getId());
-				populateScanOverview.execute();
+				populateScanOverview(scanRecord.getId());
 				log.info("Clearing overview for project " + p.getName() + ".");
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
 				log.info("Calculating ids in overview for project "
 						+ p.getName() + ".");
-				idx = 1;
+				int idx = 1;
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.execute();
@@ -269,6 +257,20 @@ public final class ClientFindingManager extends FindingManager {
 			throw new IllegalArgumentException(projectName
 					+ " is not a valid project name.");
 		}
+	}
+
+	
+	
+	@Override
+	public void deleteFindings(String projectName, SLProgressMonitor monitor)
+			throws SQLException {
+		ProjectRecord pRec = ProjectRecordFactory.getInstance(conn).newProject();
+		pRec.setName(projectName);
+		if(pRec.select()) {
+			deleteOverview.setLong(1, pRec.getId());
+			deleteOverview.execute();
+		}
+		super.deleteFindings(projectName, monitor);
 	}
 
 	/**
