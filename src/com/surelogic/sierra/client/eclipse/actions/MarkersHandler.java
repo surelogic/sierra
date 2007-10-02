@@ -25,7 +25,6 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.SierraConstants;
 
@@ -34,7 +33,6 @@ public final class MarkersHandler {
 	private static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private ClientFindingManager f_manager = null;
 	private IFile f_currentFile = null;
 	private final MarkerListener f_listener = new MarkerListener();
 
@@ -52,8 +50,6 @@ public final class MarkersHandler {
 
 		if (page != null) {
 			IEditorPart editor = page.getActiveEditor();
-			setManager();
-
 			if (editor != null) {
 				queryAndSetMarkers(editor);
 			}
@@ -70,27 +66,6 @@ public final class MarkersHandler {
 
 	private MarkersHandler() {
 		// Nothing to do
-	}
-
-	/**
-	 * Get the {@link ClientFindingManager} instance only when it has not been
-	 * initialized
-	 */
-	private void setManager() {
-		try {
-			if (f_manager == null) {
-				Connection connection = Data.getConnection();
-				connection.setAutoCommit(false);
-				f_manager = ClientFindingManager.getInstance(connection);
-				LOG.fine("Got manager for the marker listener");
-			}
-			// We do not want to close this connection for the duration of
-			// the session
-
-		} catch (SQLException e) {
-			// Could not get a valid connection
-			throw new IllegalStateException(e);
-		}
 	}
 
 	private void queryAndSetMarkers(IEditorPart editor) {
@@ -124,12 +99,17 @@ public final class MarkersHandler {
 					// + className + " project :" + projectName);
 
 					// f_manager should never be null
-					List<FindingOverview> overview = f_manager
-							.showFindingsForClass(projectName, packageName,
-									className);
+					Connection conn = Data.getConnection();
+					try {
+						List<FindingOverview> overview = FindingOverview
+								.getView().showFindingsForClass(conn,
+										projectName, packageName, className);
 
-					if (overview != null) {
-						setMarker(f_currentFile, overview);
+						if (overview != null) {
+							setMarker(f_currentFile, overview);
+						}
+					} finally {
+						conn.close();
 					}
 				} catch (JavaModelException e) {
 					LOG
