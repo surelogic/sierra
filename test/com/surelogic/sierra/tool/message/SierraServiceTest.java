@@ -75,7 +75,7 @@ public class SierraServiceTest {
 		List<Match> matches = new ArrayList<Match>();
 		merge.setMatch(matches);
 		matches.add(new Match("package", "class", 34L,
-				"SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
+				"SwingMethodsShouldBeInvokedInSwingThread"));
 		try {
 			MergeAuditTrailResponse mergeRes = service
 					.mergeAuditTrails(mergeReq);
@@ -85,7 +85,7 @@ public class SierraServiceTest {
 			assertNotNull(trail);
 			assertEquals(trail, newTrail);
 			matches.add(new Match("package2", "class2", 35L,
-					"SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"));
+					"SwingMethodsShouldBeInvokedInSwingThread"));
 			mergeRes = service.mergeAuditTrails(mergeReq);
 			newTrail = mergeRes.getTrail().get(0);
 			assertEquals(trail, newTrail);
