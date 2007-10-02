@@ -10,8 +10,8 @@ public class SettingsProjectRecordFactory {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private final String INSERT = "INSERT INTO SETTINGS_PROJECT_RELTN (PROJECT_NAME, SETTINGS_ID) VALUES (?,?)";
-	private final String DELETE = "DELETE FROM SETTINGS_PROJECT_RELTN WHERE PROJECT_NAME= ? AND SETTINGS_ID= ?";
+	private final String INSERT = "INSERT INTO SETTINGS_PROJECT_RELTN (SETTINGS_ID, PROJECT_NAME) VALUES (?,?)";
+	private final String DELETE = "DELETE FROM SETTINGS_PROJECT_RELTN WHERE SETTINGS_ID= ? AND PROJECT_NAME= ?";
 
 	private final BaseMapper sprMapper;
 

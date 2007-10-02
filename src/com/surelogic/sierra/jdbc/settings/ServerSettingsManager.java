@@ -38,6 +38,8 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private final FindingTypeRecordFactory ftFactory;
 
+	private final SettingsProjectManager spManager;
+
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		listSettingCategories = conn
@@ -68,6 +70,7 @@ public class ServerSettingsManager extends SettingsManager {
 				"DELETE FROM SETTINGS WHERE ID = ?",
 				"UPDATE SETTINGS SET NAME = ? WHERE ID = ?");
 		ftFactory = FindingTypeRecordFactory.getInstance(conn);
+		spManager = SettingsProjectManager.getInstance(conn);
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
@@ -344,7 +347,7 @@ public class ServerSettingsManager extends SettingsManager {
 		return new FindingTypeFilterRecord(findingTypeFilterMapper);
 	}
 
-	public SettingsRecord newSettingsRecord() {
+	private SettingsRecord newSettingsRecord() {
 		return new SettingsRecord(settingsMapper);
 	}
 
@@ -385,4 +388,47 @@ public class ServerSettingsManager extends SettingsManager {
 		return filter;
 	}
 
+	private void addProjects(SettingsRecord settings,
+			Collection<String> projects) throws SQLException {
+		if (projects != null) {
+			for (String projectName : projects) {
+				spManager.addRelation(settings, projectName);
+			}
+		}
+	}
+
+	public void addProjects(String settingsName, Collection<String> projects)
+			throws SQLException {
+
+		if (settingsName == null)
+			throw new SQLException();
+
+		SettingsRecord rec = newSettingsRecord();
+		rec.setName(settingsName);
+
+		/** If this settings file does not exist, throw an error */
+		if (!rec.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		addProjects(rec, projects);
+	}
+
+	public void deleteProjectRelation(String settingsName, String projectName)
+			throws SQLException {
+		if (settingsName == null)
+			throw new SQLException();
+
+		SettingsRecord rec = newSettingsRecord();
+		rec.setName(settingsName);
+
+		/** If this settings file does not exist, throw an error */
+		if (!rec.select()) {
+			// XXX Throw error
+			throw new SQLException();
+		}
+
+		spManager.deleteProjectRelation(rec, projectName);
+	}
 }

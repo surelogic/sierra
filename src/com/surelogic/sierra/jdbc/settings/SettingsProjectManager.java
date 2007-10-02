@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.RecordStringRelationRecord;
 import com.surelogic.sierra.jdbc.record.SettingsProjectRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
@@ -35,23 +37,15 @@ public class SettingsProjectManager {
 		if (settings == null)
 			throw new SQLException();
 
+		SLLogger.getLogger().log(
+				Level.FINE,
+				"Setting: " + settings.getName() + " projectName: "
+						+ projectName);
+
 		SettingsProjectRecord spr = sprFactory.newSettingsProject();
 		spr.setId(new RecordStringRelationRecord.PK<SettingsRecord, String>(
 				settings, projectName));
 		spr.insert();
-	}
-
-	public void addRelation(String selectedSettingName, String selectedSPRItem)
-			throws SQLException {
-		ServerSettingsManager ssm = ServerSettingsManager.getInstance(conn);
-		SettingsRecord rec = ssm.newSettingsRecord();
-		rec.setName(selectedSettingName);
-		if (!rec.select()) {
-			// XXX TODO
-			throw new SQLException();
-		}
-
-		addRelation(rec, selectedSPRItem);
 	}
 
 	public Collection<String> getProjectNames(String setting)

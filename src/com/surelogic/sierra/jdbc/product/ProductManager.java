@@ -83,21 +83,7 @@ public class ProductManager {
 			throws SQLException {
 		if (projects != null) {
 			for (String projectName : projects) {
-				// ProjectRecord project = projectFactory.newProject();
-				// project.setName(projectName);
-				// if (!project.select()) {
-				// // XXX Throw error
-				// throw new SQLException();
-				// }
-
-				/** Add a relation between this project and product to the DB */
-				// ProductProjectRecord rec = pprFactory.newProductProject();
-				// rec.setId(new
-				// RecordStringRelationRecord.PK<ProductRecord,String>(
-				// product, projectName));
-				// rec.insert();
 				ppManager.addProjectRelation(product, projectName);
-
 			}
 		}
 	}
