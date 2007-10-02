@@ -45,7 +45,7 @@ public class SierraServiceTest {
 			JAXBContext context;
 			context = JAXBContext.newInstance(Scan.class);
 			Unmarshaller um = context.createUnmarshaller();
-			InputStream in = getResource("ad-hoc-query.sierra");
+			InputStream in = getResource("sierra-jdbc.sierra");
 			Scan run = (Scan) um.unmarshal(in);
 			service.publishRun(run);
 		} catch (JAXBException e) {
