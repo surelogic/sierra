@@ -21,6 +21,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.logging.SLLogger;
@@ -44,17 +45,30 @@ public final class MarkersHandler {
 
 	public void addMarkerListener() {
 
+		/*
+		 * Try to get the active editor, ensure we check along the way to avoid
+		 * NullPointerException being thrown.
+		 */
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-				.getPartService().getActivePartReference().getPage();
+		if (workbench == null)
+			return;
+		final IWorkbenchWindow activeWindow = workbench
+				.getActiveWorkbenchWindow();
+		if (activeWindow == null)
+			return;
+		final IWorkbenchPartReference ref = activeWindow.getPartService()
+				.getActivePartReference();
+		if (ref == null)
+			return;
+		final IWorkbenchPage page = ref.getPage();
+		if (page == null)
+			return;
 
-		if (page != null) {
-			IEditorPart editor = page.getActiveEditor();
-			if (editor != null) {
-				queryAndSetMarkers(editor);
-			}
-			page.addPartListener(f_listener);
+		final IEditorPart editor = page.getActiveEditor();
+		if (editor != null) {
+			queryAndSetMarkers(editor);
 		}
+		page.addPartListener(f_listener);
 	}
 
 	public void removeMarkerListener() {
