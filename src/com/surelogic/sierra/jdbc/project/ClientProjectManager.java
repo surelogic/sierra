@@ -1,17 +1,12 @@
 package com.surelogic.sierra.jdbc.project;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
@@ -27,38 +22,14 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 
-public class ClientProjectManager {
+public class ClientProjectManager extends ProjectManager {
 
-	private final Connection conn;
-
-	private final ScanManager scanManager;
 	private final ClientFindingManager findingManager;
-	private final ProjectRecordFactory projectFactory;
 
-	private final PreparedStatement findAllProjectNames;
-	private final PreparedStatement findProjectRuns;
 
 	private ClientProjectManager(Connection conn) throws SQLException {
-		this.conn = conn;
-		this.scanManager = ScanManager.getInstance(conn);
+		super(conn);
 		this.findingManager = ClientFindingManager.getInstance(conn);
-		projectFactory = ProjectRecordFactory.getInstance(conn);
-		findAllProjectNames = conn.prepareStatement("SELECT NAME FROM PROJECT");
-		findProjectRuns = conn
-				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
-	}
-
-	public Collection<String> getAllProjectNames() throws SQLException {
-		ResultSet rs = findAllProjectNames.executeQuery();
-		Collection<String> projectNames = new ArrayList<String>();
-		try {
-			while (rs.next()) {
-				projectNames.add(rs.getString(1));
-			}
-		} finally {
-			rs.close();
-		}
-		return projectNames;
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
@@ -158,17 +129,7 @@ public class ClientProjectManager {
 		monitor.worked(1);
 	}
 
-	public Long newProject(String name) throws SQLException {
-		ProjectRecord project = projectFactory.newProject();
-		project.setName(name);
-		if (project.select()) {
-			throw new IllegalArgumentException("Project with name " + name
-					+ " already exists");
-		}
-		project.insert();
-		return project.getId();
-	}
-
+	@Override
 	public void deleteProject(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
 		ProjectRecord rec = projectFactory.newProject();
@@ -182,20 +143,7 @@ public class ClientProjectManager {
 		}
 	}
 
-	private Collection<String> getProjectScans(Long projectId)
-			throws SQLException {
-		Collection<String> runs = new ArrayList<String>();
-		findProjectRuns.setLong(1, projectId);
-		ResultSet set = findProjectRuns.executeQuery();
-		try {
-			while (set.next()) {
-				runs.add(set.getString(1));
-			}
-		} finally {
-			set.close();
-		}
-		return runs;
-	}
+
 
 	public static ClientProjectManager getInstance(Connection conn)
 			throws SQLException {
