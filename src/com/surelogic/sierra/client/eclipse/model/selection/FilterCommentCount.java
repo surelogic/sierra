@@ -17,6 +17,7 @@ public final class FilterCommentCount extends Filter {
 
 	FilterCommentCount(Selection selection, Filter previous, Executor executor) {
 		super(selection, previous, executor);
+		f_quote = false;
 	}
 
 	@Override

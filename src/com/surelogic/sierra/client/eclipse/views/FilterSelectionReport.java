@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -64,15 +63,7 @@ public final class FilterSelectionReport implements IPorousObserver {
 	private void constructFilterReport() {
 		CascadingList.IColumn c = new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
-				boolean showAMenu = f_filter.getSelection()
-						.getAvailableFilters().size() > 0;
-				GridLayout gridLayout = new GridLayout();
-				if (showAMenu)
-					gridLayout.numColumns = 2;
-				panel.setLayout(gridLayout);
 				Group group = new Group(panel, SWT.NONE);
-				group.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false,
-						false));
 				group.setText(f_filter.getFactory().getFilterLabel());
 				RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 				rowLayout.fill = true;
@@ -89,27 +80,28 @@ public final class FilterSelectionReport implements IPorousObserver {
 							total);
 				}
 				f_porousCount = new Label(group, SWT.RIGHT);
-
-				final Link li = new Link(group, SWT.WRAP);
-				li
-						.setText("<A HREF=\"select\">Graph</A> <A HREF=\"deselect\">Show</A>");
 				group.pack();
-
-				if (showAMenu) {
-					Composite rhs = new Composite(panel, SWT.NONE);
-					rhs.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false,
-							false));
-					f_menu = new RadioArrowMenu(rhs);
+			}
+		};
+		f_finder.addColumnAfter(c, f_column);
+		final boolean showAMenu = f_filter.getSelection().getAvailableFilters()
+				.size() > 0;
+		if (showAMenu) {
+			CascadingList.IColumn m = new CascadingList.IColumn() {
+				public void createContents(Composite panel) {
+					f_menu = new RadioArrowMenu(panel);
 					for (ISelectionFilterFactory f : f_filter.getSelection()
 							.getAvailableFilters()) {
 						f_menu.addChoice(f, null);
 					}
+					f_menu.addSeparator();
+					f_menu.addChoice("Show", null);
+					f_menu.addChoice("Graph", null);
 					f_menu.addObserver(f_mediator);
 				}
-			}
-
-		};
-		f_finder.addColumnAfter(c, f_column);
+			};
+			f_finder.addColumnAfter(m, f_column + 1);
+		}
 		setFindingCountPorous();
 		f_filter.addObserver(this);
 	}
