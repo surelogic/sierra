@@ -22,7 +22,8 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateSingleTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
-	private final PreparedStatement populateOverview;
+	private final PreparedStatement populateScanOverview;
+	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
 	private final PreparedStatement selectFindingsByClass;
 
@@ -40,9 +41,20 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
-		populateOverview = conn
+		populateScanOverview = conn
+				.prepareStatement("INSERT INTO SCAN_OVERVIEW"
+						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
+						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE 'Many' END"
+						+ " FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
+						+ " WHERE A.SCAN_ID = ? AND"
+						+ "       SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+						+ "       AFR.ARTIFACT_ID = A.ID AND"
+						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
+						+ "       T.ID = ART.TOOL_ID"
+						+ " GROUP BY AFR.FINDING_ID");
+		populateFindingOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
-						+ " SELECT F.PROJECT_ID,F.ID,"
+						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
 						+ "        CASE"
@@ -57,32 +69,21 @@ public final class ClientFindingManager extends FindingManager {
 						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'New'"
 						+ "	            ELSE 'Unchanged'"
 						+ "        END,"
-						+ "        FAC.LINE_OF_CODE,"
-						+ "        CASE WHEN FAC.COUNT IS NULL THEN 0 ELSE FAC.COUNT END,"
+						+ "        SO.LINE_OF_CODE,"
+						+ "        CASE WHEN SO.ARTIFACT_COUNT IS NULL THEN 0 ELSE SO.ARTIFACT_COUNT END,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
 						+ "        ?,"
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.NAME,"
-						+ "        FAC.TOOL,"
+						+ "        SO.TOOL,"
 						+ "        F.SUMMARY"
 						+ " FROM"
 						+ "    SESSION.TEMP_FINDING_IDS TF"
 						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
-						+ "    LEFT OUTER JOIN ("
-						+ "       SELECT AFR.FINDING_ID \"ID\","
-						+ "              MAX(SL.LINE_OF_CODE) \"LINE_OF_CODE\","
-						+ "              COUNT(AFR.ARTIFACT_ID) \"COUNT\","
-						+ "              CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE 'Many' END \"TOOL\" "
-						+ "       FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
-						+ "       WHERE A.SCAN_ID = ? AND "
-						+ "             SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
-						+ "             AFR.ARTIFACT_ID = A.ID AND "
-						+ "             ART.ID = A.ARTIFACT_TYPE_ID AND "
-						+ "             T.ID = ART.TOOL_ID"
-						+ "       GROUP BY AFR.FINDING_ID) AS FAC ON FAC.ID = F.ID"
+						+ "    LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
@@ -215,8 +216,8 @@ public final class ClientFindingManager extends FindingManager {
 				populateSingleTempId.execute();
 			}
 		}
-		populateOverview.setString(1, projectName);
-		populateOverview.execute();
+		populateFindingOverview.setString(1, projectName);
+		populateFindingOverview.execute();
 	}
 
 	/**
@@ -236,19 +237,28 @@ public final class ClientFindingManager extends FindingManager {
 					.newScan();
 			scanRecord.setUid(scan);
 			if (scanRecord.select()) {
-				log.info("Clearing overview");
+				log.info("Populating scan overview for scan "
+						+ scanRecord.getUid() + ".");
+				int idx = 1;
+				populateScanOverview.setLong(idx++, scanRecord.getId());
+				populateScanOverview.setLong(idx++, scanRecord.getId());
+				populateScanOverview.execute();
+				log.info("Clearing overview for project " + p.getName() + ".");
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
-				log.info("Calculating ids");
-				int idx = 1;
+				log.info("Calculating ids in overview for project "
+						+ p.getName() + ".");
+				idx = 1;
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.execute();
-				log.info("Populating overview");
+				log
+						.info("Populating overview for project " + p.getName()
+								+ ".");
 				idx = 1;
-				populateOverview.setString(idx++, projectName);
-				populateOverview.setLong(idx++, scanRecord.getId());
-				populateOverview.execute();
+				populateFindingOverview.setString(idx++, projectName);
+				populateFindingOverview.setLong(idx++, scanRecord.getId());
+				populateFindingOverview.execute();
 				log.info("Deleting temp ids");
 				deleteTempIds.execute();
 			} else {

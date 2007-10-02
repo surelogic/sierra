@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
