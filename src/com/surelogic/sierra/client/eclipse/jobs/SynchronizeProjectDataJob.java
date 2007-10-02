@@ -21,7 +21,7 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.jdbc.project.ProjectManager;
+import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 
 public class SynchronizeProjectDataJob extends DatabaseJob {
@@ -45,7 +45,7 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 		try {
 			final Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);
-			final ProjectManager manager = ProjectManager.getInstance(conn);
+			final ClientProjectManager manager = ClientProjectManager.getInstance(conn);
 			try {
 				status = synchronize(conn, manager, slMonitor);
 			} catch (Exception e) {
@@ -72,7 +72,7 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 		return status;
 	}
 
-	private IStatus synchronize(Connection conn, ProjectManager manager,
+	private IStatus synchronize(Connection conn, ClientProjectManager manager,
 			SLProgressMonitor slMonitor) throws SQLException {
 		TroubleshootConnection troubleshoot;
 		try {

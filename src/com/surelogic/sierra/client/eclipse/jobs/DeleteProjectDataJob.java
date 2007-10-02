@@ -20,7 +20,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.jdbc.project.ProjectManager;
+import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 
 public final class DeleteProjectDataJob {
 
@@ -46,7 +46,7 @@ public final class DeleteProjectDataJob {
 						final Connection conn = Data.getConnection();
 
 						conn.setAutoCommit(false);
-						final ProjectManager manager = ProjectManager
+						final ClientProjectManager manager = ClientProjectManager
 								.getInstance(conn);
 						try {
 							for (final String projectName : f_projectNames) {
