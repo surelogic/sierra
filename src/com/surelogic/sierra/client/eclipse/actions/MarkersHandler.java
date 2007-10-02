@@ -44,7 +44,6 @@ public final class MarkersHandler {
 	}
 
 	public void addMarkerListener() {
-
 		/*
 		 * Try to get the active editor, ensure we check along the way to avoid
 		 * NullPointerException being thrown.
