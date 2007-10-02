@@ -65,14 +65,14 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Counts broken down by all previous filter values. Should be considered
-	 * immutable after {@link #initAsync(Runnable)} runs.
+	 * Counts broken down by all previous filter values. Only mutated by
+	 * {@link #queryAsync()}.
 	 */
 	protected final Map<LinkedList<String>, Integer> f_counts = new HashMap<LinkedList<String>, Integer>();
 
 	/**
-	 * Summary counts for just this filter. Should be considered immutable after
-	 * {@link #initAsync(Runnable)} runs.
+	 * Summary counts for just this filter. Only mutated by
+	 * {@link #queryAsync()}.
 	 */
 	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
 
@@ -81,14 +81,14 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Set by {@link #deriveSummaryCounts()}. Should be considered immutable
-	 * after that.
+	 * Set by {@link #deriveSummaryCounts()}. Only mutated by
+	 * {@link #queryAsync()}.
 	 */
 	protected int f_countTotal = 0;
 
 	/**
-	 * The set of values in alphabetical order. Should be considered immutable
-	 * after {@link #initAsync(Runnable)} runs.
+	 * The set of values in alphabetical order. Only mutated by
+	 * {@link #queryAsync()}.
 	 */
 	protected final LinkedList<String> f_allValues = new LinkedList<String>();
 
@@ -116,6 +116,7 @@ public abstract class Filter {
 					queryCounts();
 					deriveSummaryCounts();
 					deriveAllValues();
+					fixupPorousValues();
 				} catch (Exception e) {
 					notifyQueryFailure(e);
 					return;
@@ -153,18 +154,20 @@ public abstract class Filter {
 	}
 
 	private void deriveSummaryCounts() {
+		int countTotal = 0;
 		for (Iterator<Map.Entry<LinkedList<String>, Integer>> i = f_counts
 				.entrySet().iterator(); i.hasNext();) {
 			final Map.Entry<LinkedList<String>, Integer> entry = i.next();
 			final String key = entry.getKey().getLast();
 			int count = entry.getValue();
-			f_countTotal += count;
+			countTotal += count;
 			Integer summaryCount = f_summaryCounts.get(key);
 			if (summaryCount != null) {
 				count += summaryCount;
 			}
 			f_summaryCounts.put(key, count);
 		}
+		f_countTotal = countTotal;
 	}
 
 	/**
@@ -174,6 +177,19 @@ public abstract class Filter {
 	protected void deriveAllValues() {
 		f_allValues.addAll(f_summaryCounts.keySet());
 		Collections.sort(f_allValues);
+	}
+
+	protected void fixupPorousValues() {
+		/*
+		 * Keep only those "checked" values that still exist in this filter.
+		 */
+		f_porousValues.retainAll(f_allValues);
+		/*
+		 * If only one choice exists, go ahead and select it. Bill Scherlis had
+		 * this idea for making the filter easier to use.
+		 */
+		if (f_allValues.size() == 1)
+			f_porousValues.addAll(f_allValues);
 	}
 
 	/**
