@@ -22,7 +22,7 @@ public class FindingTypeFilterRecord extends
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		fillWithPk(st, idx);
+		idx = fillWithPk(st, idx);
 		setNullableInt(idx++, st, delta);
 		Integer imp = importance == null ? null : importance.ordinal();
 		setNullableInt(idx++, st, imp);
