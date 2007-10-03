@@ -10,5 +10,4 @@ public interface ISelectionObserver {
 	 *            a findings selection.
 	 */
 	void selectionStructureChanged(Selection selection);
-
 }
