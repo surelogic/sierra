@@ -144,33 +144,28 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 				}
 			}, column);
-			final Filter newFilter = f_workingSelection.construct(filter);
-			newFilter.addObserver(new DrawColumn(column, newFilter, menu));
-			newFilter.queryAsync();
+			f_workingSelection.construct(filter, new DrawColumn(column, menu));
 		}
 	}
 
 	class DrawColumn implements IFilterObserver {
 
 		private final int f_column;
-		private final Filter f_filter;
 		private final RadioArrowMenu f_menu;
 
-		public DrawColumn(int column, Filter filter, RadioArrowMenu menu) {
+		public DrawColumn(int column, RadioArrowMenu menu) {
 			f_column = column;
-			assert filter != null;
-			f_filter = filter;
 			assert menu != null;
 			f_menu = menu;
 		}
 
-		public void queryFailure(Filter filter, final Exception e) {
+		public void queryFailure(final Filter filter, final Exception e) {
 			System.out.println("failure");
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					final String msg = "Applying the '"
-							+ f_filter.getFactory().getFilterLabel()
+							+ filter.getFactory().getFilterLabel()
 							+ "' filter to the current selection failed (bug).";
 					ErrorDialog.openError(PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getShell(),
@@ -182,11 +177,11 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			});
 		}
 
-		public void contentsChanged(Filter filter) {
+		public void contentsChanged(final Filter filter) {
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					constructFilterReport(f_column, f_filter);
+					constructFilterReport(f_column, filter);
 					f_menu.setEnabled(true);
 				}
 			});
@@ -198,6 +193,11 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		}
 
 		public void contentsEmpty(Filter filter) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void dispose(Filter filter) {
 			// TODO Auto-generated method stub
 			
 		}

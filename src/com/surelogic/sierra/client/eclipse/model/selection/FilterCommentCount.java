@@ -2,7 +2,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.concurrent.Executor;
 
-public final class FilterCommentCount extends Filter {
+public final class FilterCommentCount extends FilterNumberValue {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous,

@@ -2,6 +2,10 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 public abstract class AbstractFilterObserver implements IFilterObserver {
 
+	public void porous(Filter filter) {
+		// do nothing
+	}
+
 	public void contentsChanged(Filter filter) {
 		// do nothing
 	}
@@ -10,7 +14,7 @@ public abstract class AbstractFilterObserver implements IFilterObserver {
 		// do nothing
 	}
 
-	public void porous(Filter filter) {
+	public void dispose(Filter filter) {
 		// do nothing
 	}
 

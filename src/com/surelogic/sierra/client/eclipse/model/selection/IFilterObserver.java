@@ -35,6 +35,15 @@ public interface IFilterObserver {
 	void contentsEmpty(Filter filter);
 
 	/**
+	 * Indicates that the filter is in the process of being disposed by its
+	 * owing selection.
+	 * 
+	 * @param filter
+	 *            a filter.
+	 */
+	void dispose(Filter filter);
+
+	/**
 	 * Indicates that the query of findings that enter this filter failed due to
 	 * a database problem.
 	 * 

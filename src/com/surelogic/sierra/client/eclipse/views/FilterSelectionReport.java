@@ -205,4 +205,9 @@ public final class FilterSelectionReport implements IFilterObserver {
 	public void contentsEmpty(Filter filter) {
 		// TODO Auto-generated method stub
 	}
+
+	public void dispose(Filter filter) {
+		// TODO Auto-generated method stub
+		
+	}
 }

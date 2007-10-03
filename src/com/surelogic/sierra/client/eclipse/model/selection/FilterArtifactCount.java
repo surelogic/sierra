@@ -2,7 +2,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.concurrent.Executor;
 
-public final class FilterArtifactCount extends Filter {
+public final class FilterArtifactCount extends FilterNumberValue {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous,
@@ -29,5 +29,4 @@ public final class FilterArtifactCount extends Filter {
 	protected String getColumnName() {
 		return "ARTIFACT_COUNT";
 	}
-
 }

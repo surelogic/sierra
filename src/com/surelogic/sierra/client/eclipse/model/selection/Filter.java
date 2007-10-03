@@ -64,6 +64,10 @@ public abstract class Filter {
 		f_exector = executor;
 	}
 
+	void dispose() {
+		notifyDispose();
+	}
+
 	/**
 	 * Counts broken down by all previous filter values. Only mutated by
 	 * {@link #queryAsync()}.
@@ -144,6 +148,7 @@ public abstract class Filter {
 	}
 
 	private void queryCounts() throws SQLException {
+		f_counts.clear();
 		final Connection c = Data.getConnection();
 		try {
 			final Statement st = c.createStatement();
@@ -170,6 +175,7 @@ public abstract class Filter {
 	}
 
 	private void deriveSummaryCounts() {
+		f_summaryCounts.clear();
 		int countTotal = 0;
 		for (Iterator<Map.Entry<LinkedList<String>, Integer>> i = f_counts
 				.entrySet().iterator(); i.hasNext();) {
@@ -191,6 +197,7 @@ public abstract class Filter {
 	 * be determined from the filter context.
 	 */
 	protected void deriveAllValues() {
+		f_allValues.clear();
 		f_allValues.addAll(f_summaryCounts.keySet());
 		Collections.sort(f_allValues);
 	}
@@ -267,6 +274,12 @@ public abstract class Filter {
 	protected void notifyContentsEmpty() {
 		for (IFilterObserver o : f_observers) {
 			o.contentsEmpty(this);
+		}
+	}
+
+	protected void notifyDispose() {
+		for (IFilterObserver o : f_observers) {
+			o.dispose(this);
 		}
 	}
 

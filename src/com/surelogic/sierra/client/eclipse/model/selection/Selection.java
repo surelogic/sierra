@@ -10,7 +10,10 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
-public final class Selection {
+import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+
+public final class Selection extends AbstractDatabaseObserver {
 
 	protected final Executor f_executor;
 
@@ -37,6 +40,16 @@ public final class Selection {
 		f_allFilters.add(FilterProject.FACTORY);
 		f_allFilters.add(FilterSelection.FACTORY);
 		f_allFilters.add(FilterType.FACTORY);
+	}
+
+	void init() {
+		DatabaseHub.getInstance().addObserver(this);
+	}
+
+	void dispose() {
+		DatabaseHub.getInstance().removeObserver(this);
+		for (Filter f : f_filters)
+			f.dispose();
 	}
 
 	private final SelectionManager f_manager;
@@ -83,11 +96,29 @@ public final class Selection {
 			notifyObservers();
 	}
 
+	/**
+	 * Gets the number of filters used by this selection.
+	 * 
+	 * @return the number of filters used by this selection.
+	 */
 	public int getFilterCount() {
 		return f_filters.size();
 	}
 
-	public Filter construct(ISelectionFilterFactory factory) {
+	/**
+	 * Constructs a filter at the end of this selections chain of filters. Adds
+	 * an optional observer to that filter. Finally, initiates the query to
+	 * populate the filter.
+	 * 
+	 * @param factory
+	 *            a filter factory used to select the filter to be constructed.
+	 * @param observer
+	 *            an observer for the new filter, may be <code>null</code> if
+	 *            no observer is desired.
+	 * @return the new filter.
+	 */
+	public Filter construct(ISelectionFilterFactory factory,
+			IFilterObserver observer) {
 		if (factory == null)
 			throw new IllegalArgumentException("factory must be non-null");
 		if (!getAvailableFilters().contains(factory))
@@ -102,10 +133,19 @@ public final class Selection {
 		}
 		final Filter filter = factory.construct(this, previous, f_executor);
 		f_filters.add(filter);
+		filter.addObserver(observer);
+		filter.queryAsync();
 		notifyObservers();
 		return filter;
 	}
 
+	/**
+	 * Gets the list of filters that are not yet being used as part of this
+	 * selection. Any member of this result could be used to in a call to
+	 * {@link #construct(ISelectionFilterFactory)}.
+	 * 
+	 * @return factories for unused filters.
+	 */
 	public List<ISelectionFilterFactory> getAvailableFilters() {
 		List<ISelectionFilterFactory> result = new ArrayList<ISelectionFilterFactory>(
 				f_allFilters);
@@ -130,4 +170,22 @@ public final class Selection {
 		for (ISelectionObserver o : f_observers)
 			o.selectionStructureChanged(this);
 	}
+
+	@Override
+	public void changed() {
+		/*
+		 * The database has changed.
+		 */
+		super.changed();
+	}
+
+//	private void refresh() {
+//		final Runnable task = new Runnable() {
+//			public void run() {
+//
+//			}
+//		};
+//		f_exector.execute(task);
+//	}
+
 }
