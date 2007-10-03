@@ -1,14 +1,12 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
-import java.util.concurrent.Executor;
 
 public final class FilterSelection extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous,
-				Executor executor) {
-			return new FilterSelection(selection, previous, executor);
+		public Filter construct(Selection selection, Filter previous) {
+			return new FilterSelection(selection, previous);
 		}
 
 		public String getFilterLabel() {
@@ -16,8 +14,8 @@ public final class FilterSelection extends Filter {
 		}
 	};
 
-	FilterSelection(Selection selection, Filter previous, Executor executor) {
-		super(selection, previous, executor);
+	FilterSelection(Selection selection, Filter previous) {
+		super(selection, previous);
 	}
 
 	@Override
@@ -39,10 +37,12 @@ public final class FilterSelection extends Filter {
 	@Override
 	protected void deriveAllValues() {
 		String[] values = new String[] { NEW, UNCHANGED, FIXED };
-		f_allValues.addAll(Arrays.asList(values));
+		synchronized (this) {
+			f_allValues.addAll(Arrays.asList(values));
+		}
 	}
 
-	protected static void addWhereClauseToFilterOutFixed(StringBuilder b) {
+	static void addWhereClauseToFilterOutFixed(StringBuilder b) {
 		b.append(COLUMN_NAME + " != '" + FIXED + "' ");
 	}
 }

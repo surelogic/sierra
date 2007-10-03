@@ -1,13 +1,10 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.concurrent.Executor;
-
 public final class FilterFindingType extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous,
-				Executor executor) {
-			return new FilterFindingType(selection, previous, executor);
+		public Filter construct(Selection selection, Filter previous) {
+			return new FilterFindingType(selection, previous);
 		}
 
 		public String getFilterLabel() {
@@ -15,10 +12,10 @@ public final class FilterFindingType extends Filter {
 		}
 	};
 
-	FilterFindingType(Selection selection, Filter previous, Executor executor) {
-		super(selection, previous, executor);
+	FilterFindingType(Selection selection, Filter previous) {
+		super(selection, previous);
 	}
-	
+
 	@Override
 	public ISelectionFilterFactory getFactory() {
 		return FACTORY;

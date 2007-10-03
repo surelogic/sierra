@@ -3,12 +3,11 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 public abstract class FilterNumberValue extends Filter {
 
-	FilterNumberValue(Selection selection, Filter previous, Executor executor) {
-		super(selection, previous, executor);
+	FilterNumberValue(Selection selection, Filter previous) {
+		super(selection, previous);
 	}
 
 	@Override

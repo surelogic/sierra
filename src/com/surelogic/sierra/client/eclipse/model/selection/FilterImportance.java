@@ -1,14 +1,12 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
-import java.util.concurrent.Executor;
 
 public final class FilterImportance extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous,
-				Executor executor) {
-			return new FilterImportance(selection, previous, executor);
+		public Filter construct(Selection selection, Filter previous) {
+			return new FilterImportance(selection, previous);
 		}
 
 		public String getFilterLabel() {
@@ -16,8 +14,8 @@ public final class FilterImportance extends Filter {
 		}
 	};
 
-	FilterImportance(Selection selection, Filter previous, Executor executor) {
-		super(selection, previous, executor);
+	FilterImportance(Selection selection, Filter previous) {
+		super(selection, previous);
 	}
 
 	@Override
@@ -40,6 +38,8 @@ public final class FilterImportance extends Filter {
 	protected void deriveAllValues() {
 		String[] values = new String[] { CRITICAL, HIGH, MEDIUM, LOW,
 				IRRELEVANT };
-		f_allValues.addAll(Arrays.asList(values));
+		synchronized (this) {
+			f_allValues.addAll(Arrays.asList(values));
+		}
 	}
 }

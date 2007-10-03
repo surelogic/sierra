@@ -1,13 +1,10 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.concurrent.Executor;
-
 public final class FilterCommentCount extends FilterNumberValue {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous,
-				Executor executor) {
-			return new FilterCommentCount(selection, previous, executor);
+		public Filter construct(Selection selection, Filter previous) {
+			return new FilterCommentCount(selection, previous);
 		}
 
 		public String getFilterLabel() {
@@ -15,8 +12,8 @@ public final class FilterCommentCount extends FilterNumberValue {
 		}
 	};
 
-	FilterCommentCount(Selection selection, Filter previous, Executor executor) {
-		super(selection, previous, executor);
+	FilterCommentCount(Selection selection, Filter previous) {
+		super(selection, previous);
 		f_quote = false;
 	}
 

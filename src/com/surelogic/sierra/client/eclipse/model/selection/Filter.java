@@ -45,6 +45,9 @@ public abstract class Filter {
 	 * @return a selection.
 	 */
 	public Selection getSelection() {
+		/*
+		 * Not mutable so we don't need to hold a lock on this.
+		 */
 		return f_selection;
 	}
 
@@ -53,19 +56,17 @@ public abstract class Filter {
 	 */
 	protected final Filter f_previous;
 
-	protected final Executor f_executor;
-
-	Filter(final Selection selection, final Filter previous,
-			final Executor executor) {
+	Filter(final Selection selection, final Filter previous) {
 		assert selection != null;
 		f_selection = selection;
 		f_previous = previous;
-		assert executor != null;
-		f_executor = executor;
 	}
 
 	void dispose() {
 		notifyDispose();
+		synchronized (this) {
+			f_observers.clear();
+		}
 	}
 
 	/**
@@ -81,7 +82,9 @@ public abstract class Filter {
 	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
 
 	public Map<String, Integer> getSummaryCounts() {
-		return new HashMap<String, Integer>(f_summaryCounts);
+		synchronized (this) {
+			return new HashMap<String, Integer>(f_summaryCounts);
+		}
 	}
 
 	/**
@@ -104,19 +107,18 @@ public abstract class Filter {
 	 * @return all possible values for this filter.
 	 */
 	public List<String> getAllValues() {
-		return new LinkedList<String>(f_allValues);
+		synchronized (this) {
+			return new LinkedList<String>(f_allValues);
+		}
 	}
 
 	/**
-	 * Starts a task in the background to query the necessary information about
-	 * this filter. This method doesn't wait for the task to complete, it
-	 * returns immediately.
+	 * This method is intended to be called to refresh the set of findings that
+	 * enter this filter. It could also be called if a prior filter changed the
+	 * set of findings it allows to enter this filter or if something changed in
+	 * the database.
 	 * <p>
-	 * This method is intended to be called upon an update to the database to
-	 * refresh the model within this class. It could also be called if a prior
-	 * filter changed the set of findings it allows to enter this filter.
-	 * <p>
-	 * Observers are notified (later on) via a call to
+	 * Observers are notified via a call to
 	 * {@link IFilterObserver#contentsChanged(Filter)} followed by a call to
 	 * {@link IFilterObserver#porous(Filter)} if the query was successful and at
 	 * least one finding enters this filter. If no findings enter this filter
@@ -124,29 +126,31 @@ public abstract class Filter {
 	 * the worst case, {@link IFilterObserver#queryFailure(Exception)} is called
 	 * if the query failed (a bug).
 	 */
-	public void queryAsync() {
-		final Runnable task = new Runnable() {
-			public void run() {
-				try {
-					queryCounts();
-					deriveSummaryCounts();
-					deriveAllValues();
-					fixupPorousValues();
-				} catch (Exception e) {
-					notifyQueryFailure(e);
-					return;
-				}
-				if (f_countTotal == 0) {
-					notifyContentsEmpty();
-					return;
-				}
-				notifyContentsChanged();
-				notifyPorous();
+	void refresh() {
+		int countTotal = 0;
+		try {
+			synchronized (this) {
+				queryCounts();
+				deriveSummaryCounts();
+				deriveAllValues();
+				fixupPorousValues();
+				countTotal = f_countTotal;
 			}
-		};
-		f_executor.execute(task);
+		} catch (Exception e) {
+			notifyQueryFailure(e);
+			return;
+		}
+		if (countTotal == 0) {
+			notifyContentsEmpty();
+			return;
+		}
+		notifyContentsChanged();
+		notifyPorous();
 	}
 
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
 	private void queryCounts() throws SQLException {
 		f_counts.clear();
 		final Connection c = Data.getConnection();
@@ -174,6 +178,9 @@ public abstract class Filter {
 		}
 	}
 
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
 	private void deriveSummaryCounts() {
 		f_summaryCounts.clear();
 		int countTotal = 0;
@@ -195,6 +202,8 @@ public abstract class Filter {
 	/**
 	 * May need to be overidden if the set of values includes values not able to
 	 * be determined from the filter context.
+	 * <p>
+	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	protected void deriveAllValues() {
 		f_allValues.clear();
@@ -202,6 +211,9 @@ public abstract class Filter {
 		Collections.sort(f_allValues);
 	}
 
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
 	private void fixupPorousValues() {
 		/*
 		 * Keep only those "checked" values that still exist in this filter.
@@ -214,7 +226,8 @@ public abstract class Filter {
 		if (f_allValues.size() == 1)
 			f_porousValues.addAll(f_allValues);
 		/*
-		 * Don't call notifyPorous() here, the caller of this method will do it.
+		 * Don't call notifyPorous() here, the caller of this method will do it
+		 * in a manner where we are not suspectable to deadlock.
 		 */
 	}
 
@@ -234,7 +247,9 @@ public abstract class Filter {
 	 * @return
 	 */
 	public List<String> getValues() {
-		return new LinkedList<String>(f_allValues);
+		synchronized (this) {
+			return new LinkedList<String>(f_allValues);
+		}
 	}
 
 	/**
@@ -252,37 +267,63 @@ public abstract class Filter {
 	protected final Set<IFilterObserver> f_observers = new CopyOnWriteArraySet<IFilterObserver>();
 
 	public final void addObserver(IFilterObserver o) {
+		/*
+		 * No lock needed because we are using a util.concurrent collection.
+		 */
 		f_observers.add(o);
 	}
 
 	public final void removeObserver(IFilterObserver o) {
+		/*
+		 * No lock needed because we are using a util.concurrent collection.
+		 */
 		f_observers.remove(o);
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	protected void notifyPorous() {
 		for (IFilterObserver o : f_observers) {
 			o.porous(this);
 		}
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	protected void notifyContentsChanged() {
 		for (IFilterObserver o : f_observers) {
 			o.contentsChanged(this);
 		}
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	protected void notifyContentsEmpty() {
 		for (IFilterObserver o : f_observers) {
 			o.contentsEmpty(this);
 		}
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	protected void notifyDispose() {
 		for (IFilterObserver o : f_observers) {
 			o.dispose(this);
 		}
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	protected void notifyQueryFailure(final Exception e) {
 		for (IFilterObserver o : f_observers) {
 			o.queryFailure(this, e);
@@ -301,9 +342,12 @@ public abstract class Filter {
 	 *             if <code>getValues().contains(value)</code> is not true.
 	 */
 	public boolean isPorous(String value) {
-		if (!f_allValues.contains(value))
-			throw new IllegalArgumentException("value not filtered by " + this);
-		return f_porousValues.contains(value);
+		synchronized (this) {
+			if (!f_allValues.contains(value))
+				throw new IllegalArgumentException("value not filtered by "
+						+ this);
+			return f_porousValues.contains(value);
+		}
 	}
 
 	/**
@@ -318,14 +362,17 @@ public abstract class Filter {
 	 *             if <code>getValues().contains(value)</code> is not true.
 	 */
 	public void setPorous(String value, boolean porous) {
-		if (!f_allValues.contains(value))
-			throw new IllegalArgumentException("value not filtered by " + this);
-		if (porous == isPorous(value))
-			return;
-		if (porous)
-			f_porousValues.add(value);
-		else
-			f_porousValues.remove(value);
+		synchronized (this) {
+			if (!f_allValues.contains(value))
+				throw new IllegalArgumentException("value not filtered by "
+						+ this);
+			if (porous == isPorous(value))
+				return;
+			if (porous)
+				f_porousValues.add(value);
+			else
+				f_porousValues.remove(value);
+		}
 		notifyPorous();
 	}
 
@@ -334,7 +381,7 @@ public abstract class Filter {
 	 * want values quoted in the SQL query. For example, if the values are
 	 * integers.
 	 */
-	protected boolean f_quote = true;
+	protected volatile boolean f_quote = true;
 
 	/**
 	 * The total count of findings that this filter may filter. This is the
@@ -343,7 +390,9 @@ public abstract class Filter {
 	 * @return a count of findings.
 	 */
 	public int getFindingCountTotal() {
-		return f_countTotal;
+		synchronized (this) {
+			return f_countTotal;
+		}
 	}
 
 	/**
@@ -358,10 +407,12 @@ public abstract class Filter {
 	 */
 	public int getFindingCountPorous() {
 		int result = 0;
-		for (String value : f_porousValues) {
-			Integer count = f_summaryCounts.get(value);
-			if (count != null)
-				result += count;
+		synchronized (this) {
+			for (String value : f_porousValues) {
+				Integer count = f_summaryCounts.get(value);
+				if (count != null)
+					result += count;
+			}
 		}
 		return result;
 	}
@@ -373,10 +424,15 @@ public abstract class Filter {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean isPorous() {
-		return getFindingCountPorous() > 0;
+		synchronized (this) {
+			return getFindingCountPorous() > 0;
+		}
 	}
 
-	protected StringBuilder getCountsQuery() {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
 		b.append("select ");
 		addColumnsTo(b);
@@ -387,7 +443,10 @@ public abstract class Filter {
 		return b;
 	}
 
-	protected void addColumnsTo(StringBuilder b) {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private void addColumnsTo(StringBuilder b) {
 		Filter filter = this;
 		final LinkedList<String> columnNames = new LinkedList<String>();
 		do {
@@ -406,7 +465,10 @@ public abstract class Filter {
 		}
 	}
 
-	protected boolean hasWhereClausePart() {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private boolean hasWhereClausePart() {
 		/*
 		 * We don't need a where clause if everything is checked as being
 		 * porous. This should make the query faster than listing everything
@@ -415,7 +477,10 @@ public abstract class Filter {
 		return !f_porousValues.containsAll(f_allValues);
 	}
 
-	protected void addCountsWhereClauseTo(StringBuilder b) {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private void addCountsWhereClauseTo(StringBuilder b) {
 		boolean stateFilterNotUsed = true;
 		boolean first = true;
 		Filter filter = this.f_previous;
@@ -449,7 +514,10 @@ public abstract class Filter {
 		}
 	}
 
-	protected void addWhereClausePartTo(StringBuilder b) {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private void addWhereClausePartTo(StringBuilder b) {
 		if (!hasWhereClausePart())
 			throw new IllegalStateException(this + " has no where clause");
 		b.append(getColumnName()).append(" in (");
@@ -465,7 +533,10 @@ public abstract class Filter {
 		b.append(") ");
 	}
 
-	protected void addValueTo(StringBuilder b, String dbValue) {
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	private void addValueTo(StringBuilder b, String dbValue) {
 		if (f_quote)
 			b.append("'");
 		/*
