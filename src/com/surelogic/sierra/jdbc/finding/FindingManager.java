@@ -205,7 +205,7 @@ public class FindingManager {
 							findingId));
 					afr.insert();
 					if ((++counter % CHUNK_SIZE) == 0) {
-						conn.commit();
+//						conn.commit();
 					}
 					if ((counter % CHECK_SIZE) == 0) {
 						if (monitor != null) {
@@ -222,7 +222,7 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-			conn.commit();
+//			conn.commit();
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {

@@ -39,7 +39,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement deleteSeriesOverview;
 	private final PreparedStatement populateSeriesOverview;
 	private final PreparedStatement populateTempIds;
-	private final PreparedStatement oldestScanInQualifierExcept;
+	private final PreparedStatement deleteTempIds;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -55,7 +55,11 @@ public final class ServerFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM TIME_SERIES_OVERVIEW WHERE PROJECT_ID = ? AND QUALIFIER_ID = ?");
 		populateTempIds = conn
 				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
-						+ "SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?");
+						+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
+						+ "  EXCEPT"
+						+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+		deleteTempIds = conn
+				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
 		populateSeriesOverview = conn
 				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW"
 						+ " SELECT ?, F.ID,F.PROJECT_ID,"
@@ -68,25 +72,15 @@ public final class ServerFindingManager extends FindingManager {
 						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
 						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
 						+ "        END,"
-						+ "        CASE"
-						+ "             WHEN SO.FINDING_ID IS NULL THEN 'Fixed'"
-						+ "             WHEN PREV.FINDING_ID IS NULL THEN 'New'"
-						+ "             ELSE 'Unchanged'"
-						+ "        END,"
-						+ "        SO.LINE_OF_CODE,"
-						+ "        CASE WHEN SO.ARTIFACT_COUNT IS NULL THEN 0 ELSE SO.ARTIFACT_COUNT END,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
 						+ "        ?,"
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.NAME,"
-						+ "        SO.TOOL,"
 						+ "        F.SUMMARY"
 						+ " FROM"
 						+ "    SESSION.TEMP_FINDING_IDS TF"
 						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
-						+ "    LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
-						+ "    LEFT OUTER JOIN SCAN_OVERVIEW PREV ON PREV.FINDING_ID = F.ID AND PREV.SCAN_ID = ?"
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
@@ -95,7 +89,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
-		oldestScanInQualifierExcept = conn.prepareStatement("SELECT S.ID FROM SCAN S WHERE S.QUALIFIER_SCAN_RELTN QSR, SCAN S");
+
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -126,12 +120,18 @@ public final class ServerFindingManager extends FindingManager {
 				populateScanOverview(scan.getId());
 				for (QualifierRecord q : qualifierRecs) {
 					int idx = 1;
-					deleteSeriesOverview.setLong(idx++, projectRec.getId());
-					deleteSeriesOverview.setLong(idx++, q.getId());
-					deleteSeriesOverview.execute();
+					// Add the new findings to the time series overview
+					populateTempIds.setLong(idx++, scan.getId());
+					populateTempIds.setLong(idx++, q.getId());
+					populateTempIds.setLong(idx++, projectRec.getId());
+					populateTempIds.execute();
 					idx = 1;
-					// Fill out parameters
-					// populateSeriesOverview.execute();
+					// Look up previous scan in qualifier
+					populateSeriesOverview.setLong(idx++, q.getId());
+					populateSeriesOverview.setString(idx++, projectRec
+							.getName());
+					populateSeriesOverview.execute();
+					deleteTempIds.execute();
 				}
 				log.info("Overview for qualifiers " + qualifiers
 						+ " was generated with respect to scan with uid "
