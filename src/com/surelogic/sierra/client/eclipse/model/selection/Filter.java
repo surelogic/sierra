@@ -53,7 +53,7 @@ public abstract class Filter {
 	 */
 	protected final Filter f_previous;
 
-	protected final Executor f_exector;
+	protected final Executor f_executor;
 
 	Filter(final Selection selection, final Filter previous,
 			final Executor executor) {
@@ -61,7 +61,7 @@ public abstract class Filter {
 		f_selection = selection;
 		f_previous = previous;
 		assert executor != null;
-		f_exector = executor;
+		f_executor = executor;
 	}
 
 	void dispose() {
@@ -144,7 +144,7 @@ public abstract class Filter {
 				notifyPorous();
 			}
 		};
-		f_exector.execute(task);
+		f_executor.execute(task);
 	}
 
 	private void queryCounts() throws SQLException {
