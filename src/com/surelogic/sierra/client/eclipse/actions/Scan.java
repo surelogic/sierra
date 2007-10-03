@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.BalloonUtility;
@@ -151,21 +150,6 @@ public final class Scan {
 			}
 
 			try {
-
-				/*
-				 * Remove the editor changes listener The listener for database
-				 * changes is removed at the start of each scan and added back
-				 * at the end
-				 */
-
-				PlatformUI.getWorkbench().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								MarkersHandler.getInstance()
-										.removeMarkerListener();
-							}
-						});
-
 				final AntRunnable antRunnable = new AntRunnable(f_config,
 						slProgressMonitorWrapper, scale);
 				final Thread antThread = new Thread(antRunnable);
@@ -213,18 +197,6 @@ public final class Scan {
 							newScanDocument.delete();
 						}
 						scanDocument.renameTo(newScanDocument);
-
-						/*
-						 * Add the listener back
-						 */
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										MarkersHandler.getInstance()
-												.addMarkerListener();
-
-									}
-								});
 
 					} catch (ScanPersistenceException rpe) {
 						LOG.severe(rpe.getMessage());

@@ -2,18 +2,26 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -26,10 +34,12 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.SierraConstants;
 
-public final class MarkersHandler {
+public final class MarkersHandler extends AbstractDatabaseObserver {
 
 	private static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 	private static final Logger LOG = SLLogger.getLogger("sierra");
@@ -37,12 +47,35 @@ public final class MarkersHandler {
 	private IFile f_currentFile = null;
 	private final MarkerListener f_listener = new MarkerListener();
 
+	private final Executor f_executor = Executors.newSingleThreadExecutor();
+	private String f_packageName;
+	private String f_className;
+	private String f_projectName;
+
 	private static final MarkersHandler INSTANCE = new MarkersHandler();
+
+	static {
+		DatabaseHub.getInstance().addObserver(INSTANCE);
+	}
 
 	public static MarkersHandler getInstance() {
 		return INSTANCE;
 	}
 
+	/**
+	 * Refresh the view if database changed
+	 */
+	@Override
+	public void changed() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(
+				new RefreshMarkersRunnable());
+		super.changed();
+	}
+
+	/**
+	 * This method exists for the case when plugin is being loaded at startup, a
+	 * file is open and the database contains some data for it
+	 */
 	public void addMarkerListener() {
 		/*
 		 * Try to get the active editor, ensure we check along the way to avoid
@@ -71,9 +104,24 @@ public final class MarkersHandler {
 	}
 
 	public void removeMarkerListener() {
+		/*
+		 * Try to get the active editor, ensure we check along the way to avoid
+		 * NullPointerException being thrown.
+		 */
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-				.getActivePage();
+		if (workbench == null)
+			return;
+		final IWorkbenchWindow activeWindow = workbench
+				.getActiveWorkbenchWindow();
+		if (activeWindow == null)
+			return;
+		final IWorkbenchPartReference ref = activeWindow.getPartService()
+				.getActivePartReference();
+		if (ref == null)
+			return;
+		final IWorkbenchPage page = ref.getPage();
+		if (page == null)
+			return;
 		page.removePartListener(f_listener);
 	}
 
@@ -98,52 +146,68 @@ public final class MarkersHandler {
 					IPackageDeclaration[] packageDeclarations = cu
 							.getPackageDeclarations();
 
-					String packageName = SierraConstants.DEFAULT_PACKAGE;
+					f_packageName = SierraConstants.DEFAULT_PACKAGE;
 					if (packageDeclarations.length > 0) {
-						packageName = packageDeclarations[0].getElementName();
+						f_packageName = packageDeclarations[0].getElementName();
 					}
 
 					String elementName = cu.getElementName();
-					String className = cu.getElementName().substring(0,
+					f_className = cu.getElementName().substring(0,
 							elementName.length() - 5);
-					String projectName = f_currentFile.getProject().getName();
+					f_projectName = f_currentFile.getProject().getName();
+					f_executor.execute(new Runnable() {
 
-					// System.out.println("package :" + packageName + " class :"
-					// + className + " project :" + projectName);
+						private List<FindingOverview> f_overview;
 
-					// f_manager should never be null
-					Connection conn = Data.getConnection();
-					try {
-						List<FindingOverview> overview = FindingOverview
-								.getView().showFindingsForClass(conn,
-										projectName, packageName, className);
+						public void run() {
+							try {
+								Connection conn = Data.getConnection();
+								try {
+									f_overview = FindingOverview.getView()
+											.showFindingsForClass(conn,
+													f_projectName,
+													f_packageName, f_className);
 
-						if (overview != null) {
-							setMarker(f_currentFile, overview);
+									if (f_overview != null) {
+
+										PlatformUI.getWorkbench().getDisplay()
+												.asyncExec(new Runnable() {
+													public void run() {
+														setMarker(
+																f_currentFile,
+																f_overview);
+													}
+
+												});
+									}
+								} finally {
+									conn.close();
+								}
+							} catch (SQLException e) {
+								LOG
+										.log(
+												Level.SEVERE,
+												"SQL Exception from occurred when getting findings.",
+												e);
+							}
 						}
-					} finally {
-						conn.close();
-					}
+
+					});
+
 				} catch (JavaModelException e) {
 					LOG
 							.log(
 									Level.SEVERE,
 									"Cannot get the package declarations from compilation unit.",
 									e);
-				} catch (SQLException e) {
-					LOG
-							.log(
-									Level.SEVERE,
-									"SQL Exception from occurred when getting findings.",
-									e);
 				}
-
 			}
 		}
 	}
 
 	/**
-	 * Clear all the markers of the given type in the file
+	 * Clear all the markers of the given type in the file If the file is null,
+	 * this method clear all the markers of given type in the workspace
 	 * 
 	 * NOTE: This method will NOT delete the subtype markers
 	 * 
@@ -151,11 +215,96 @@ public final class MarkersHandler {
 	 * @param type
 	 */
 	private void clearMarkers(IFile file, String type) {
-		try {
-			file.deleteMarkers(type, false, IResource.DEPTH_ONE);
-		} catch (CoreException e) {
-			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
+		if (type != null) {
+			if (file == null) {
+				try {
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+							.getRoot();
+					IProject[] projects = root.getProjects();
+
+					for (IProject p : projects) {
+						if (p.isOpen()) {
+							List<IFile> files = getJavaFiles(p);
+							for (IFile f : files) {
+								IMarker[] markers = f.findMarkers(type, true,
+										IResource.DEPTH_ONE);
+								for (IMarker m : markers) {
+									m.delete();
+								}
+							}
+
+						}
+					}
+
+				} catch (CoreException e) {
+					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
+				}
+
+			} else
+				try {
+					file.deleteMarkers(type, false, IResource.DEPTH_ONE);
+				} catch (CoreException e) {
+					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
+				}
 		}
+
+	}
+
+	/**
+	 * Returns a list of all the java files in a given project
+	 * 
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 */
+	private List<IFile> getJavaFiles(IProject project) throws CoreException {
+
+		List<IFile> files = new ArrayList<IFile>();
+		IResource[] resources = project.members();
+
+		for (IResource r : resources) {
+			if (r.getType() == IResource.FILE) {
+				IFile f = (IFile) r;
+				if (f.getFileExtension() != null
+						&& f.getFileExtension().equals("java")) {
+					files.add((IFile) r);
+				}
+			}
+
+			if (r.getType() == IResource.FOLDER) {
+
+				getJavaFilesInFolder((IFolder) r, files);
+			}
+		}
+		return files;
+	}
+
+	/**
+	 * Recursively add java files in the provided list
+	 * 
+	 * @param folder
+	 * @param files
+	 * @throws CoreException
+	 */
+	private void getJavaFilesInFolder(IFolder folder, List<IFile> files)
+			throws CoreException {
+
+		IResource[] resources = folder.members();
+
+		for (IResource r : resources) {
+			if (r.getType() == IResource.FILE) {
+				IFile f = (IFile) r;
+				if (f.getFileExtension() != null
+						&& f.getFileExtension().equals("java")) {
+					files.add((IFile) r);
+				}
+			}
+
+			if (r.getType() == IResource.FOLDER) {
+				getJavaFilesInFolder((IFolder) r, files);
+			}
+		}
+
 	}
 
 	/**
@@ -211,7 +360,17 @@ public final class MarkersHandler {
 		}
 
 		public void partClosed(IWorkbenchPartReference partRef) {
-			// Nothing to do
+			// When we close an editor, if there are no more editors open clear
+			// all the sierra markers
+
+			if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+				IEditorPart editor = partRef.getPage().getActiveEditor();
+				if (editor == null) {
+					clearMarkers(null, SIERRA_MARKER);
+				}
+
+			}
+
 		}
 
 		public void partDeactivated(IWorkbenchPartReference partRef) {
@@ -234,6 +393,35 @@ public final class MarkersHandler {
 		public void partVisible(IWorkbenchPartReference partRef) {
 			// Nothing to do
 
+		}
+	}
+
+	private class RefreshMarkersRunnable implements Runnable {
+		public void run() {
+			/*
+			 * Try to get the active editor, ensure we check along the way to
+			 * avoid NullPointerException being thrown.
+			 */
+
+			final IWorkbench workbench = PlatformUI.getWorkbench();
+			if (workbench == null)
+				return;
+			final IWorkbenchWindow activeWindow = workbench
+					.getActiveWorkbenchWindow();
+			if (activeWindow == null)
+				return;
+			final IWorkbenchPartReference ref = activeWindow.getPartService()
+					.getActivePartReference();
+			if (ref == null)
+				return;
+			final IWorkbenchPage page = ref.getPage();
+			if (page == null)
+				return;
+
+			final IEditorPart editor = page.getActiveEditor();
+			if (editor != null) {
+				queryAndSetMarkers(editor);
+			}
 		}
 	}
 }
