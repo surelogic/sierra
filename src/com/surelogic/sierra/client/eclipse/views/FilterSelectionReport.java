@@ -201,4 +201,8 @@ public final class FilterSelectionReport implements IFilterObserver {
 		// TODO Auto-generated method stub
 
 	}
+
+	public void contentsEmpty(Filter filter) {
+		// TODO Auto-generated method stub
+	}
 }

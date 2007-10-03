@@ -92,6 +92,13 @@ public abstract class Filter {
 	 */
 	protected final LinkedList<String> f_allValues = new LinkedList<String>();
 
+	/**
+	 * Gets the current list of all possible values for this filter. This set of
+	 * values defines a set of bins that partition the set of findings entering
+	 * this filter.
+	 * 
+	 * @return all possible values for this filter.
+	 */
 	public List<String> getAllValues() {
 		return new LinkedList<String>(f_allValues);
 	}
@@ -102,12 +109,16 @@ public abstract class Filter {
 	 * returns immediately.
 	 * <p>
 	 * This method is intended to be called upon an update to the database to
-	 * refresh the model within this class.
+	 * refresh the model within this class. It could also be called if a prior
+	 * filter changed the set of findings it allows to enter this filter.
 	 * <p>
 	 * Observers are notified (later on) via a call to
-	 * {@link IFilterObserver#contentsChanged(Filter)} if the query was
-	 * successful, or {@link IFilterObserver#queryFailure(Exception)} if the
-	 * query failed.
+	 * {@link IFilterObserver#contentsChanged(Filter)} followed by a call to
+	 * {@link IFilterObserver#porous(Filter)} if the query was successful and at
+	 * least one finding enters this filter. If no findings enter this filter
+	 * then a call to {@link IFilterObserver#contentsEmpty(Filter)} is made. In
+	 * the worst case, {@link IFilterObserver#queryFailure(Exception)} is called
+	 * if the query failed (a bug).
 	 */
 	public void queryAsync() {
 		final Runnable task = new Runnable() {
@@ -121,7 +132,12 @@ public abstract class Filter {
 					notifyQueryFailure(e);
 					return;
 				}
+				if (f_countTotal == 0) {
+					notifyContentsEmpty();
+					return;
+				}
 				notifyContentsChanged();
+				notifyPorous();
 			}
 		};
 		f_exector.execute(task);
@@ -179,7 +195,7 @@ public abstract class Filter {
 		Collections.sort(f_allValues);
 	}
 
-	protected void fixupPorousValues() {
+	private void fixupPorousValues() {
 		/*
 		 * Keep only those "checked" values that still exist in this filter.
 		 */
@@ -190,6 +206,9 @@ public abstract class Filter {
 		 */
 		if (f_allValues.size() == 1)
 			f_porousValues.addAll(f_allValues);
+		/*
+		 * Don't call notifyPorous() here, the caller of this method will do it.
+		 */
 	}
 
 	/**
@@ -218,8 +237,8 @@ public abstract class Filter {
 	 * <code>f_summaryCounts.containsKey(e)</code> is true.
 	 * <p>
 	 * If this set is mutated other than via a call to
-	 * {@link #setPorous(String)} then it is required to invoke
-	 * {@link #notifyPorous()}.
+	 * {@link #setPorous(String)} then it is important to remember to invoke
+	 * {@link #notifyPorous()} to let observers know about this mutation.
 	 */
 	protected final Set<String> f_porousValues = new HashSet<String>();
 
@@ -242,6 +261,12 @@ public abstract class Filter {
 	protected void notifyContentsChanged() {
 		for (IFilterObserver o : f_observers) {
 			o.contentsChanged(this);
+		}
+	}
+
+	protected void notifyContentsEmpty() {
+		for (IFilterObserver o : f_observers) {
+			o.contentsEmpty(this);
 		}
 	}
 
@@ -371,7 +396,8 @@ public abstract class Filter {
 	protected boolean hasWhereClausePart() {
 		/*
 		 * We don't need a where clause if everything is checked as being
-		 * porous.
+		 * porous. This should make the query faster than listing everything
+		 * explicitly.
 		 */
 		return !f_porousValues.containsAll(f_allValues);
 	}
@@ -443,6 +469,6 @@ public abstract class Filter {
 
 	@Override
 	public String toString() {
-		return "[Filter: " + getColumnName() + "]";
+		return "[Filter on " + getColumnName() + "]";
 	}
 }

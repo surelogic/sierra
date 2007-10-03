@@ -196,6 +196,11 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			// TODO Auto-generated method stub
 
 		}
+
+		public void contentsEmpty(Filter filter) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	public void selectionStructureChanged(Selection selection) {
