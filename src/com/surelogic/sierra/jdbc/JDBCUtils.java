@@ -65,6 +65,13 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * Set a parameter to the specified Date, or to null if none is supplied.
+	 * @param idx
+	 * @param st
+	 * @param dateValue
+	 * @throws SQLException
+	 */
 	public static void setNullableTimestamp(int idx, PreparedStatement st,
 			Date dateValue) throws SQLException {
 		if (dateValue == null) {
