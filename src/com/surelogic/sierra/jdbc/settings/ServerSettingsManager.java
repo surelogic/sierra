@@ -62,7 +62,7 @@ public class ServerSettingsManager extends SettingsManager {
 		getSettingsByProject = conn
 				.prepareStatement("SELECT S.ID FROM SETTINGS_PROJECT_RELTN PSR, SETTINGS S WHERE PSR.PROJECT_NAME = ? AND S.ID = PSR.SETTINGS_ID");
 		copySettings = conn
-				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?,FINDING_TYPE_ID,FILTER_TYPE,DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
+				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?,FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
 		settingsMapper = new UpdateBaseMapper(conn,
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
