@@ -120,9 +120,10 @@ public abstract class Filter {
 	 * {@link IFilterObserver#contentsChanged(Filter)} followed by a call to
 	 * {@link IFilterObserver#porous(Filter)} if the query was successful and at
 	 * least one finding enters this filter. If no findings enter this filter
-	 * then a call to {@link IFilterObserver#contentsEmpty(Filter)} is made. In
-	 * the worst case, {@link IFilterObserver#queryFailure(Exception)} is called
-	 * if the query failed (a bug).
+	 * then a call to {@link IFilterObserver#contentsEmpty(Filter)} followed by
+	 * a call to {@link IFilterObserver#porous(Filter)} is made. In the worst
+	 * case, {@link IFilterObserver#queryFailure(Exception)} is called if the
+	 * query failed (a bug).
 	 */
 	void refresh() {
 		int countTotal = 0;
@@ -140,9 +141,9 @@ public abstract class Filter {
 		}
 		if (countTotal == 0) {
 			notifyContentsEmpty();
-			return;
+		} else {
+			notifyContentsChanged();
 		}
-		notifyContentsChanged();
 		notifyPorous();
 	}
 
@@ -532,6 +533,15 @@ public abstract class Filter {
 				b.append(",");
 			}
 			addValueTo(b, value);
+		}
+		if (first) {
+			/*
+			 * Hack to avoid problems with empty query
+			 */
+			if (f_quote)
+				b.append("'xyzzy'");
+			else
+				b.append("-456");
 		}
 		b.append(") ");
 	}

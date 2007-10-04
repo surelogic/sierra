@@ -22,8 +22,8 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.selection.AbstractFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
-import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -85,6 +85,11 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 	}
 
 	public void notify(Projects p) {
+		/*
+		 * We are checking if there is anything in the database at all. If not
+		 * we show a helpful message, if so we display the findings selection
+		 * page.
+		 */
 		final Control page;
 		if (p.isEmpty()) {
 			page = f_noFindingsPage;
@@ -104,18 +109,35 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 
 	private void reset() {
 		f_breadcrumbs.setText("");
+		f_finder.empty();
 		f_workingSelection = f_manager.construct();
 		f_workingSelection.addObserver(this);
-		f_finder.addColumnAfter(new CascadingList.IColumn() {
+		addMenu(null);
+	}
+
+	private void addMenu(final Filter input) {
+		final CascadingList.IColumn m = new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
 				final RadioArrowMenu menu = new RadioArrowMenu(panel);
 				for (ISelectionFilterFactory f : f_workingSelection
 						.getAvailableFilters()) {
 					menu.addChoice(f, null);
 				}
+				if (input != null) {
+					menu.addSeparator();
+					menu.addChoice("Show", null);
+					menu.addChoice("Graph", null);
+					input.addObserver(new AbstractFilterObserver() {
+						@Override
+						public void porous(Filter filter) {
+							menu.setEnabled(filter.isPorous());
+						}
+					});
+				}
 				menu.addObserver(FindingsFinderMediator.this);
 			}
-		}, -1);
+		};
+		f_finder.addColumn(m);
 	}
 
 	public void selected(Object choice, RadioArrowMenu menu) {
@@ -132,7 +154,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			 * get the column to use to "empty after" the list of filters
 			 * applied to the selection.
 			 */
-			f_workingSelection.emptyAfter(column - 1);
+			f_workingSelection.emptyAfter(column / 2);
 			f_finder.addColumnAfter(new CascadingList.IColumn() {
 				public void createContents(Composite panel) {
 					final Display display = panel.getShell().getDisplay();
@@ -144,21 +166,23 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 				}
 			}, column);
-			f_workingSelection.construct(filter, new DrawColumn(column, menu));
+			f_workingSelection.construct(filter, new DrawFilterAndMenu(column,
+					menu));
 		}
 	}
 
-	class DrawColumn implements IFilterObserver {
+	class DrawFilterAndMenu extends AbstractFilterObserver {
 
-		private final int f_column;
-		private final RadioArrowMenu f_menu;
+		private final int f_waitMsgColumn;
+		private final RadioArrowMenu f_selectingMenu;
 
-		public DrawColumn(int column, RadioArrowMenu menu) {
-			f_column = column;
-			assert menu != null;
-			f_menu = menu;
+		public DrawFilterAndMenu(int waitMsgColumn, RadioArrowMenu selectingMenu) {
+			f_waitMsgColumn = waitMsgColumn;
+			assert selectingMenu != null;
+			f_selectingMenu = selectingMenu;
 		}
 
+		@Override
 		public void queryFailure(final Filter filter, final Exception e) {
 			System.out.println("failure");
 			// beware the thread context this method call might be made in.
@@ -172,34 +196,48 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 							"Selection Error", msg, SLStatus.createErrorStatus(
 									"Initialization of the filter failed.", e));
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
-					f_menu.setEnabled(true);
+					f_selectingMenu.setEnabled(true);
 				}
 			});
+			filter.removeObserver(this);
 		}
 
+		@Override
 		public void contentsChanged(final Filter filter) {
+			System.out.println("contentsChanged " + filter + " " + this);
+			constructFilterReport(filter);
+		}
+
+		@Override
+		public void contentsEmpty(Filter filter) {
+			constructFilterReport(filter);
+		}
+
+		private void constructFilterReport(final Filter filter) {
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					constructFilterReport(f_column, filter);
-					f_menu.setEnabled(true);
+					new FilterSelectionReport(f_finder, f_waitMsgColumn,
+							filter, FindingsFinderMediator.this);
+					addMenu(filter);
+					f_selectingMenu.setEnabled(true);
 				}
 			});
+			filter.removeObserver(this);
 		}
 
-		public void porous(Filter filter) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void contentsEmpty(Filter filter) {
-			// TODO Auto-generated method stub
-
-		}
-
+		@Override
 		public void dispose(Filter filter) {
-			// TODO Auto-generated method stub
-			
+			SLLogger.getLogger().log(
+					Level.SEVERE,
+					"Unexpected dispose() callback from " + filter
+							+ " while it was being created (bug)");
+			filter.removeObserver(this);
+		}
+
+		@Override
+		public String toString() {
+			return "[DrawFilterAndMenu waitMsgColumn=" + f_waitMsgColumn + "]";
 		}
 	}
 
@@ -225,13 +263,9 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_breadcrumbs.getParent().layout();
 	}
 
-	private void constructFilterReport(final int column, final Filter filter) {
-		Object data = new FilterSelectionReport(f_finder, column, filter, this);
-		f_finder.setColumnData(column + 1, data);
-	}
-
 	void emptyAfter(final int column) {
-		f_finder.emptyAfter(column);
+		final int finderColumn = column * 2;
+		f_finder.emptyAfter(finderColumn);
 		/*
 		 * Filters start being applied in column 1 of the cascading list. Thus,
 		 * we need to subtract one from the cascading list column to get the
@@ -239,11 +273,5 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		 * selection.
 		 */
 		f_workingSelection.emptyAfter(column - 1);
-		Object data = f_finder.getColumnData(column);
-		if (data instanceof FilterSelectionReport) {
-			FilterSelectionReport report = (FilterSelectionReport) data;
-			if (report.hasAMenu())
-				report.getMenu().clearSelection();
-		}
 	}
 }

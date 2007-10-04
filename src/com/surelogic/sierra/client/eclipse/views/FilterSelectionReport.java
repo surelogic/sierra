@@ -21,11 +21,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
-import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 
 public final class FilterSelectionReport implements IFilterObserver {
 
@@ -33,17 +31,7 @@ public final class FilterSelectionReport implements IFilterObserver {
 	private final int f_column;
 	private final Filter f_filter;
 
-	private RadioArrowMenu f_menu = null;
-
 	private Label f_porousCount = null;
-
-	public boolean hasAMenu() {
-		return f_menu != null;
-	}
-
-	public RadioArrowMenu getMenu() {
-		return f_menu;
-	}
 
 	private final FindingsFinderMediator f_mediator;
 
@@ -84,24 +72,6 @@ public final class FilterSelectionReport implements IFilterObserver {
 			}
 		};
 		f_finder.addColumnAfter(c, f_column);
-		final boolean showAMenu = f_filter.getSelection().getAvailableFilters()
-				.size() > 0;
-		if (showAMenu) {
-			CascadingList.IColumn m = new CascadingList.IColumn() {
-				public void createContents(Composite panel) {
-					f_menu = new RadioArrowMenu(panel);
-					for (ISelectionFilterFactory f : f_filter.getSelection()
-							.getAvailableFilters()) {
-						f_menu.addChoice(f, null);
-					}
-					f_menu.addSeparator();
-					f_menu.addChoice("Show", null);
-					f_menu.addChoice("Graph", null);
-					f_menu.addObserver(f_mediator);
-				}
-			};
-			f_finder.addColumnAfter(m, f_column + 1);
-		}
 		setFindingCountPorous();
 		f_filter.addObserver(this);
 	}
@@ -127,8 +97,6 @@ public final class FilterSelectionReport implements IFilterObserver {
 				final boolean isPorous = f_filter.isPorous(value);
 				final boolean changed = isChecked != isPorous;
 				if (changed) {
-					final int column = f_finder.getColumnIndexOf(b);
-					f_mediator.emptyAfter(column);
 					f_filter.setPorous(b.getText(), isChecked);
 				}
 			}
@@ -188,8 +156,6 @@ public final class FilterSelectionReport implements IFilterObserver {
 	private void setFindingCountPorous() {
 		final int porousCount = f_filter.getFindingCountPorous();
 		f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
-		if (hasAMenu())
-			getMenu().setEnabled(porousCount > 0);
 	}
 
 	public void contentsChanged(Filter filter) {
@@ -208,6 +174,6 @@ public final class FilterSelectionReport implements IFilterObserver {
 
 	public void dispose(Filter filter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

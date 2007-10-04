@@ -149,17 +149,17 @@ public final class Selection extends AbstractDatabaseObserver {
 						+ " already used in selection");
 			final Filter previous = f_filters.isEmpty() ? null : f_filters
 					.getLast();
-			if (previous != null && !previous.isPorous()) {
-				throw new IllegalStateException("unable to construct filter '"
-						+ factory.getFilterLabel()
-						+ "' over non-porous filter '"
-						+ previous.getFactory().getFilterLabel() + "' (bug)");
-			}
+//			if (previous != null && !previous.isPorous()) {
+//				throw new IllegalStateException("unable to construct filter '"
+//						+ factory.getFilterLabel()
+//						+ "' over non-porous filter '"
+//						+ previous.getFactory().getFilterLabel() + "' (bug)");
+//			}
 			filter = factory.construct(this, previous);
 			f_filters.add(filter);
-			filter.addObserver(observer);
 		}
-		// TODO filter.queryAsync();
+		filter.addObserver(observer);
+		filter.refresh();
 		notifyObservers();
 		return filter;
 	}
