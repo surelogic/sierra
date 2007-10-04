@@ -48,7 +48,7 @@ public final class ScanDocumentUtility {
 				ScanGenerator gen = sMan.getScanGenerator();
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
-
+				conn.commit();
 			} catch (RuntimeException e) {
 				exc = e;
 			} finally {
