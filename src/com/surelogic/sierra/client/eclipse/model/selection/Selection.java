@@ -9,40 +9,43 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
+/**
+ * Defines a selection of findings using a series of filters.
+ * <p>
+ * This class is thread-safe.
+ */
 public final class Selection extends AbstractDatabaseObserver {
 
-	private final Executor f_executor;
-
 	/**
-	 * Setup in the constructor and immutable after that point.
+	 * Immutable set of all possible filters.
 	 */
-	private final Set<ISelectionFilterFactory> f_allFilters;
+	private static final Set<ISelectionFilterFactory> f_allFilters;
+	static {
+		Set<ISelectionFilterFactory> allFilters = new HashSet<ISelectionFilterFactory>();
+		/*
+		 * Add in all the filter factories.
+		 */
+		allFilters.add(FilterArtifactCount.FACTORY);
+		allFilters.add(FilterCommentCount.FACTORY);
+		allFilters.add(FilterExamined.FACTORY);
+		allFilters.add(FilterFindingType.FACTORY);
+		allFilters.add(FilterImportance.FACTORY);
+		allFilters.add(FilterPackage.FACTORY);
+		allFilters.add(FilterProject.FACTORY);
+		allFilters.add(FilterSelection.FACTORY);
+		allFilters.add(FilterType.FACTORY);
+		f_allFilters = Collections.unmodifiableSet(allFilters);
+	}
 
-	Selection(SelectionManager manager, final Executor executor) {
+	Selection(SelectionManager manager, Executor executor) {
 		assert manager != null;
 		f_manager = manager;
 		assert executor != null;
 		f_executor = executor;
-		f_allFilters = new HashSet<ISelectionFilterFactory>();
-		/*
-		 * Add in all the filter factories.
-		 */
-		f_allFilters.add(FilterArtifactCount.FACTORY);
-		f_allFilters.add(FilterCommentCount.FACTORY);
-		f_allFilters.add(FilterExamined.FACTORY);
-		f_allFilters.add(FilterFindingType.FACTORY);
-		f_allFilters.add(FilterImportance.FACTORY);
-		f_allFilters.add(FilterPackage.FACTORY);
-		f_allFilters.add(FilterProject.FACTORY);
-		f_allFilters.add(FilterSelection.FACTORY);
-		f_allFilters.add(FilterType.FACTORY);
 	}
 
 	void init() {
@@ -51,16 +54,23 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
-		for (Filter f : f_filters)
-			f.dispose();
-		f_observers.clear();
+		synchronized (this) {
+			for (Filter f : f_filters)
+				f.dispose();
+			f_observers.clear();
+		}
 	}
 
 	private final SelectionManager f_manager;
 
 	public SelectionManager getManager() {
+		/*
+		 * Not mutable so we don't need to hold a lock on this.
+		 */
 		return f_manager;
 	}
+
+	private final Executor f_executor;
 
 	/**
 	 * The ordered list of filters within this selection.
@@ -73,7 +83,9 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * @return
 	 */
 	public final List<Filter> getFilters() {
-		return new LinkedList<Filter>(f_filters);
+		synchronized (this) {
+			return new LinkedList<Filter>(f_filters);
+		}
 	}
 
 	/**
@@ -85,18 +97,19 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            will clear out all filters.
 	 */
 	public void emptyAfter(int filterIndex) {
-		waitUntilRefreshIsCompleted();
 		boolean changed = false;
 		int index = 0;
-		for (Iterator<Filter> iterator = f_filters.iterator(); iterator
-				.hasNext();) {
-			Filter filter = iterator.next();
-			if (index > filterIndex) {
-				filter.dispose();
-				iterator.remove();
-				changed = true;
+		synchronized (this) {
+			for (Iterator<Filter> iterator = f_filters.iterator(); iterator
+					.hasNext();) {
+				Filter filter = iterator.next();
+				if (index > filterIndex) {
+					filter.dispose();
+					iterator.remove();
+					changed = true;
+				}
+				index++;
 			}
-			index++;
 		}
 		if (changed)
 			notifyObservers();
@@ -108,7 +121,9 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * @return the number of filters used by this selection.
 	 */
 	public int getFilterCount() {
-		return f_filters.size();
+		synchronized (this) {
+			return f_filters.size();
+		}
 	}
 
 	/**
@@ -127,19 +142,23 @@ public final class Selection extends AbstractDatabaseObserver {
 			IFilterObserver observer) {
 		if (factory == null)
 			throw new IllegalArgumentException("factory must be non-null");
-		if (!getAvailableFilters().contains(factory))
-			throw new IllegalArgumentException(factory.getFilterLabel()
-					+ " already used in selection");
-		final Filter previous = f_filters.isEmpty() ? null : f_filters
-				.getLast();
-		if (previous != null && !previous.isPorous()) {
-			throw new IllegalStateException("unable to construct filter '"
-					+ factory.getFilterLabel() + "' over non-porous filter '"
-					+ previous.getFactory().getFilterLabel() + "' (bug)");
+		final Filter filter;
+		synchronized (this) {
+			if (!getAvailableFilters().contains(factory))
+				throw new IllegalArgumentException(factory.getFilterLabel()
+						+ " already used in selection");
+			final Filter previous = f_filters.isEmpty() ? null : f_filters
+					.getLast();
+			if (previous != null && !previous.isPorous()) {
+				throw new IllegalStateException("unable to construct filter '"
+						+ factory.getFilterLabel()
+						+ "' over non-porous filter '"
+						+ previous.getFactory().getFilterLabel() + "' (bug)");
+			}
+			filter = factory.construct(this, previous);
+			f_filters.add(filter);
+			filter.addObserver(observer);
 		}
-		final Filter filter = factory.construct(this, previous);
-		f_filters.add(filter);
-		filter.addObserver(observer);
 		// TODO filter.queryAsync();
 		notifyObservers();
 		return filter;
@@ -155,8 +174,10 @@ public final class Selection extends AbstractDatabaseObserver {
 	public List<ISelectionFilterFactory> getAvailableFilters() {
 		List<ISelectionFilterFactory> result = new ArrayList<ISelectionFilterFactory>(
 				f_allFilters);
-		for (Filter filter : f_filters) {
-			result.remove(filter.getFactory());
+		synchronized (this) {
+			for (Filter filter : f_filters) {
+				result.remove(filter.getFactory());
+			}
 		}
 		Collections.sort(result);
 		return result;
@@ -165,13 +186,23 @@ public final class Selection extends AbstractDatabaseObserver {
 	private final Set<ISelectionObserver> f_observers = new CopyOnWriteArraySet<ISelectionObserver>();
 
 	public void addObserver(ISelectionObserver o) {
+		/*
+		 * No lock needed because we are using a util.concurrent collection.
+		 */
 		f_observers.add(o);
 	}
 
 	public void removeObserver(ISelectionObserver o) {
+		/*
+		 * No lock needed because we are using a util.concurrent collection.
+		 */
 		f_observers.remove(o);
 	}
 
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
 	private void notifyObservers() {
 		for (ISelectionObserver o : f_observers)
 			o.selectionStructureChanged(this);
@@ -183,110 +214,73 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		refresh();
+		f_executor.execute(new Runnable() {
+			public void run() {
+				refreshFilters();
+			}
+		});
 	}
 
-	private final AtomicBoolean f_refreshing = new AtomicBoolean(false);
-
-	private void waitUntilRefreshIsCompleted() {
-		while (f_refreshing.get()) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// ignore
+	/**
+	 * Refreshes the data within all the filters that comprise this selection.
+	 * <p>
+	 * Blocks until all the queries are completed.
+	 */
+	private void refreshFilters() {
+		System.out.println("refreshFilters()");
+		synchronized (this) {
+			for (Filter filter : f_filters) {
+				filter.refresh();
 			}
 		}
 	}
 
-	public void refresh() {
-		if (f_refreshing.compareAndSet(false, true)) {
-			if (!f_filters.isEmpty()) {
-				f_executor.execute(new RefreshFilter(f_filters));
+	/**
+	 * Invoked by a filter when the amount of findings allowed through the
+	 * filter changed. This would be a change that occurred in the user
+	 * interface.
+	 * <p>
+	 * This method must never be called during a refresh or an infinite loop of
+	 * refreshes could occur.
+	 * 
+	 * @param changedFilter
+	 *            a filter that is part of this selection.
+	 */
+	void filterChanged(final Filter changedFilter) {
+		f_executor.execute(new Runnable() {
+			public void run() {
+				refreshFiltersAfter(changedFilter);
 			}
-		}
+		});
 	}
 
-	private class RefreshFilter implements Runnable, IFilterObserver {
-
-		private final Filter f_filter;
-		private final LinkedList<Filter> f_workList;
-
-		public RefreshFilter(List<Filter> workList) {
-			if (workList == null || workList.isEmpty())
-				throw new IllegalArgumentException(
-						"refresh work list must be non-null and not empty");
-			f_workList = new LinkedList<Filter>(workList);
-			f_filter = f_workList.removeFirst();
-		}
-
-		private void doNext() {
-			if (!f_workList.isEmpty())
-				f_executor.execute(new RefreshFilter(f_workList));
-			else
-				f_refreshing.set(false);
-		}
-
-		public void run() {
-			f_filter.addObserver(this);
-			// TODO f_filter.queryAsync();
-		}
-
-		public void contentsChanged(Filter filter) {
-			f_filter.removeObserver(this);
-			doNext();
-		}
-
-		public void contentsEmpty(Filter filter) {
-			f_filter.removeObserver(this);
-			doNext();
-		}
-
-		public void dispose(Filter filter) {
+	/**
+	 * Refreshes the data within all the filters after the passed filter.
+	 * <p>
+	 * Blocks until all the queries are completed.
+	 */
+	private void refreshFiltersAfter(Filter changedFilter) {
+		System.out.println("refreshFiltersAfter(" + changedFilter + ")");
+		/*
+		 * Create a work list of all the filters in this selection after the one
+		 * that just changed.
+		 */
+		LinkedList<Filter> workList = new LinkedList<Filter>();
+		boolean add = false;
+		synchronized (this) {
+			for (Filter filter : f_filters) {
+				if (add) {
+					workList.addLast(filter);
+				} else {
+					if (filter == changedFilter)
+						add = true;
+				}
+			}
 			/*
-			 * This is a bug; it should never happen.
+			 * Do an update if the work list is not empty.
 			 */
-			SLLogger.getLogger().log(Level.SEVERE,
-					filter + " disposed during a selection refresh (bug)",
-					new IllegalStateException());
-		}
-
-		public void porous(Filter filter) {
-			f_filter.removeObserver(this);
-		}
-
-		public void queryFailure(Filter filter, Exception e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Query failure during selection refresh " + filter, e);
-			f_filter.removeObserver(this);
-			f_refreshing.set(false);
-		}
-	}
-
-	private class FilterPorousChange extends AbstractFilterObserver {
-
-		@Override
-		public void porous(Filter filter) {
-			if (f_refreshing.compareAndSet(false, true)) {
-				/*
-				 * Create a work list of all the filters in this selection after
-				 * the one that just changed.
-				 */
-				LinkedList<Filter> workList = new LinkedList<Filter>();
-				boolean add = false;
-				for (Filter f : f_filters) {
-					if (add) {
-						workList.addLast(f);
-					} else {
-						if (f == filter)
-							add = true;
-					}
-				}
-				/*
-				 * Do an update if the work list is not empty.
-				 */
-				if (!workList.isEmpty()) {
-					f_executor.execute(new RefreshFilter(workList));
-				}
+			for (Filter filter : workList) {
+				filter.refresh();
 			}
 		}
 	}

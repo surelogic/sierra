@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executor;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -25,8 +24,7 @@ import com.surelogic.sierra.client.eclipse.Data;
  * This class depends upon the form of the <code>FINDINGS_OVERVIEW</code>
  * table in the database.
  * <p>
- * This may not be thread-safe depending upon what the {@link Executor} does
- * w.r.t. thread confinement. So races may lurk here.
+ * This class is thread-safe.
  */
 public abstract class Filter {
 
@@ -367,13 +365,18 @@ public abstract class Filter {
 				throw new IllegalArgumentException("value not filtered by "
 						+ this);
 			if (porous == isPorous(value))
-				return;
+				return; // not a change
 			if (porous)
 				f_porousValues.add(value);
 			else
 				f_porousValues.remove(value);
 		}
 		notifyPorous();
+		/*
+		 * Tell my enclosing selection to update filters after me because I
+		 * changed the set of findings I let through.
+		 */
+		f_selection.filterChanged(this);
 	}
 
 	/**
