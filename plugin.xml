@@ -194,6 +194,14 @@
       
       <view
             category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
+            id="com.surelogic.sierra.client.eclipse.views.DetailsView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            name="Finding Details">
+      </view>
+      
+      <view
+            category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
