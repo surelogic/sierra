@@ -62,6 +62,52 @@ public class SierraServiceTest {
 	}
 
 	@Test
+	public void testPublishMultipleRuns() {
+		try {
+			JAXBContext context;
+			context = JAXBContext.newInstance(Scan.class);
+			Unmarshaller um = context.createUnmarshaller();
+			InputStream in = getResource("sierra-jdbc.sierra");
+			final Scan one = (Scan) um.unmarshal(in);
+			in = getResource("sierra-entity.sierra");
+			final Scan two = (Scan) um.unmarshal(in);
+			in = getResource("ad-hoc-query.sierra");
+			final Scan three = (Scan) um.unmarshal(in);
+			final Runnable run = new Runnable() {
+				public void run() {
+					SierraService s = new SierraServiceClient(
+							new SierraServerLocation("localhost", false, 8080,
+									"test", "test")).getSierraServicePort();
+					for (int i = 0; i < 2; i++) {
+						s.publishRun(one);
+						s.publishRun(two);
+						s.publishRun(three);
+					}
+				}
+			};
+			Thread[] threads = new Thread[2];
+			for (int i = 0; i < threads.length; i++) {
+				threads[i] = new Thread(run);
+			}
+			for (Thread t : threads) {
+				t.start();
+			}
+			for (Thread t : threads) {
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			}
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+	}
+
+	@Test
 	public void testGetQualifiers() {
 		assertTrue(service.getQualifiers(new QualifierRequest()).getQualifier()
 				.contains("Default"));

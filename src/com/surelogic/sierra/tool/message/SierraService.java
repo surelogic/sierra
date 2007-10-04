@@ -18,7 +18,6 @@ public interface SierraService {
 	 * @param run
 	 * @return whether or not the run was successfully generated on the server.
 	 */
-	@Oneway
 	void publishRun(@WebParam(name = "scan")
 	Scan scan);
 
