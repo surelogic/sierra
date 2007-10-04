@@ -61,9 +61,7 @@ public final class FilterSelectionReport implements IFilterObserver {
 				Label lt = new Label(group, SWT.RIGHT);
 				lt.setText(StringUtility.toCommaSepString(total) + " Findings");
 				for (String value : f_filter.getAllValues()) {
-					final Integer countO = f_filter.getSummaryCounts().get(
-							value);
-					final int count = countO == null ? 0 : countO;
+					final int count = f_filter.getSummaryCountFor(value);
 					newReport(group, value, f_filter.getImageFor(value), count,
 							total);
 				}

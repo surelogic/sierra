@@ -85,6 +85,11 @@ public abstract class Filter {
 		}
 	}
 
+	public int getSummaryCountFor(String value) {
+		Integer result = f_summaryCounts.get(value);
+		return result == null ? 0 : result.intValue();
+	}
+
 	/**
 	 * Set by {@link #deriveSummaryCounts()}. Only mutated by
 	 * {@link #queryAsync()}.
@@ -249,6 +254,24 @@ public abstract class Filter {
 		synchronized (this) {
 			return new LinkedList<String>(f_allValues);
 		}
+	}
+
+	public List<String> getValuesOrderedBySummaryCount() {
+		final List<String> values = getValues();
+		final LinkedList<String> result = new LinkedList<String>();
+		int count = 0;
+		while (!values.isEmpty()) {
+			for (Iterator<String> i = values.iterator(); i.hasNext();) {
+				String value = i.next();
+				if (getSummaryCountFor(value) < count) {
+					result.add(value);
+					i.remove();
+				}
+			}
+			count++;
+		}
+		Collections.reverse(result);
+		return result;
 	}
 
 	/**
