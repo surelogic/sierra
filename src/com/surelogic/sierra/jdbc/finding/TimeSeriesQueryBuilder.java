@@ -43,12 +43,12 @@ public class TimeSeriesQueryBuilder {
 		return new TimeSeriesQueryBuilder(conn);
 	}
 
-	public String queryProjectRelevantOrIrrelevantCounts(String project) {
-		builder.setLength(0);
-		
-		return builder.toString();
-	}
-	
+	/**
+	 * Produces a query that gives a breakdown of the number of findings by
+	 * importance for the latest set of scans in this time series.
+	 * 
+	 * @return
+	 */
 	public String queryAllImportanceCounts() {
 		builder.setLength(0);
 		builder
@@ -59,6 +59,13 @@ public class TimeSeriesQueryBuilder {
 		return builder.toString();
 	}
 
+	/**
+	 * Produces a query that gives a breakdown of the number of findings for the
+	 * latest set of scans in this time series based on whether or not they are
+	 * relevant.
+	 * 
+	 * @return
+	 */
 	public String queryAllRelevantOrIrrelevantCounts() {
 		builder.setLength(0);
 		builder.append("SELECT * FROM");
@@ -75,7 +82,13 @@ public class TimeSeriesQueryBuilder {
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') AS RELEVANT");
 		return builder.toString();
 	}
-	
+
+	/**
+	 * Produces a query that lists the number of findings for each kind of
+	 * finding type for the latest set of scans in this time series.
+	 * 
+	 * @return
+	 */
 	public String queryAllFindingTypeCounts() {
 		builder.setLength(0);
 		builder
@@ -86,6 +99,12 @@ public class TimeSeriesQueryBuilder {
 		return builder.toString();
 	}
 
+	/**
+	 * Set the context that these queries build off of.
+	 * 
+	 * @param timeSeries
+	 *            the name of a valid qualifer/timeSeries
+	 */
 	public void setContext(String timeSeries) {
 		QualifierRecord q;
 		try {
