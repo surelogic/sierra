@@ -3,11 +3,15 @@ package com.surelogic.sierra.ant;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
@@ -48,25 +52,38 @@ public class DeploySchemaTask extends Task {
 		String user = null;
 		String pass = null;
 		String location = null;
-		
+
 		if (getProject() != null) {
 			user = getProject().getProperty("sierra.db.user");
 			pass = getProject().getProperty("sierra.db.pass");
-			location= getProject().getProperty("sierra.db.location");
+			location = getProject().getProperty("sierra.db.location");
 		} else {
 			user = System.getProperty("sierra.db.user");
 			pass = System.getProperty("sierra.db.pass");
 			location = System.getProperty("sierra.db.location");
 		}
-		
+
 		String url = "jdbc:derby:" + ((location == null) ? "" : location)
 				+ ((pass == null) ? "" : ";password=" + pass)
 				+ ((user == null) ? "" : ";user=" + user) + ";create=true";
-		
+
 		try {
 			Connection conn = DriverManager.getConnection(url);
 			SierraSchemaUtility.checkAndUpdate(conn, true);
+			conn.createStatement().execute(
+					"INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
 			conn.commit();
+			ServerFindingManager man = ServerFindingManager.getInstance(conn);
+			ResultSet set = conn
+					.createStatement()
+					.executeQuery(
+							"SELECT P.NAME, S.UID FROM SCAN S, PROJECT P WHERE P.ID = S.PROJECT_ID");
+			while (set.next()) {
+				man.generateOverview(set.getString(1), set.getString(2),
+						new TreeSet<String>(Arrays
+								.asList(new String[] { "Default" })));
+				conn.commit();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

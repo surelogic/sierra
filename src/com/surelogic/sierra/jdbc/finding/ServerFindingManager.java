@@ -36,7 +36,6 @@ public final class ServerFindingManager extends FindingManager {
 	// 3. number of new findings
 	// 4. Number of closed findings
 
-	private final PreparedStatement deleteSeriesOverview;
 	private final PreparedStatement populateSeriesOverview;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
@@ -51,8 +50,6 @@ public final class ServerFindingManager extends FindingManager {
 		} catch (SQLException e) {
 			// Do nothing, the table is probably already there.
 		}
-		deleteSeriesOverview = conn
-				.prepareStatement("DELETE FROM TIME_SERIES_OVERVIEW WHERE PROJECT_ID = ? AND QUALIFIER_ID = ?");
 		populateTempIds = conn
 				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
 						+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
