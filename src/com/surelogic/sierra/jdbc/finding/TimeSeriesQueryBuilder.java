@@ -49,7 +49,7 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryAllImportanceCounts() {
+	public String queryLatestImportanceCounts() {
 		builder.setLength(0);
 		builder
 				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
@@ -66,7 +66,7 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryAllRelevantOrIrrelevantCounts() {
+	public String queryLatestRelevantOrIrrelevantCounts() {
 		builder.setLength(0);
 		builder.append("SELECT * FROM");
 		builder
@@ -89,7 +89,7 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryAllFindingTypeCounts() {
+	public String queryLatestFindingTypeCounts() {
 		builder.setLength(0);
 		builder
 				.append("SELECT TSO.FINDING_TYPE, COUNT(TSO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
