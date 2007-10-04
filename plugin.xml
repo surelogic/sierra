@@ -52,7 +52,7 @@
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                 label="Scan Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
@@ -62,6 +62,7 @@
          <action
            		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
                 enablesFor="+">
@@ -102,7 +103,7 @@
           <action
                class="com.surelogic.sierra.client.eclipse.actions.ImportScanAction"
                id="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_run_doc.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_orange_page.gif"
                label="Import Scan..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>     
@@ -126,7 +127,7 @@
                class="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                label="Scan"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
@@ -134,6 +135,7 @@
            		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 enablesFor="+"
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
 

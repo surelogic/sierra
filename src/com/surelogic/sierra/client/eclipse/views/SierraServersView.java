@@ -135,9 +135,13 @@ public final class SierraServersView extends ViewPart {
 		final MenuItem connectProjectItem = new MenuItem(projectListMenu,
 				SWT.PUSH);
 		connectProjectItem.setText("Connect...");
+		connectProjectItem.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_SERVER));
 		final MenuItem disconnectProjectItem = new MenuItem(projectListMenu,
 				SWT.PUSH);
 		disconnectProjectItem.setText("Disconnect");
+		disconnectProjectItem.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_DISCONNECT));
 		projectList.setMenu(projectListMenu);
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
