@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
@@ -23,16 +25,15 @@ public class TimeSeriesQueryBuilder {
 	private final PreparedStatement getLatestScansByQualifierName;
 
 	private Long qualifierId;
-	private final List<Long> scanIds;
+	private List<Long> scanIds;
 	private final StringBuilder builder;
 
 	private TimeSeriesQueryBuilder(Connection conn) {
-		this.scanIds = new ArrayList<Long>();
 		this.builder = new StringBuilder();
 		this.conn = conn;
 		try {
 			this.getLatestScansByQualifierName = conn
-					.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS ");
+					.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE QUALIFIER = ?");
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
@@ -70,13 +71,13 @@ public class TimeSeriesQueryBuilder {
 		builder.setLength(0);
 		builder.append("SELECT * FROM");
 		builder
-				.append("(SELECT COUNT(SO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+				.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') AS IRRELEVANT");
 		builder.append(",");
 		builder
-				.append("(SELECT COUNT(SO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+				.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') AS RELEVANT");
@@ -109,9 +110,10 @@ public class TimeSeriesQueryBuilder {
 		QualifierRecord q;
 		try {
 			q = QualifierRecordFactory.getInstance(conn).newQualifier();
+			q.setName(timeSeries);
 			if (q.select()) {
 				this.qualifierId = q.getId();
-				scanIds.clear();
+				List<Long> scanIds = new ArrayList<Long>();
 				getLatestScansByQualifierName.setString(1, timeSeries);
 				ResultSet set = getLatestScansByQualifierName.executeQuery();
 				try {
@@ -121,6 +123,7 @@ public class TimeSeriesQueryBuilder {
 				} finally {
 					set.close();
 				}
+				this.scanIds = Collections.unmodifiableList(scanIds);
 			} else {
 				throw new IllegalArgumentException(timeSeries
 						+ " is not a valid name for a time series/qualifier.");
@@ -133,9 +136,11 @@ public class TimeSeriesQueryBuilder {
 
 	private static void inClause(StringBuilder builder, List<?> values) {
 		builder.append("(");
-		for (Object o : values) {
-			builder.append(o);
-			builder.append(", ");
+		for (Iterator<?> i = values.iterator(); i.hasNext();) {
+			builder.append(i.next());
+			if (i.hasNext()) {
+				builder.append(", ");
+			}
 		}
 		builder.append(")");
 	}
