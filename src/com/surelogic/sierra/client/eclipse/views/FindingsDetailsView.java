@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -24,20 +26,83 @@ public class FindingsDetailsView extends ViewPart {
 	public void createPartControl(Composite parent) {
 
 		final Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
+		GridLayout layout = new GridLayout(1, false);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		composite.setLayoutData(layoutData);
 		composite.setLayout(layout);
 
-		final Composite infoComposite = new Composite(composite, SWT.NONE);
+		createSummary(composite);
+		createMainTab(composite);
+
+		// final Composite infoComposite = new Composite(composite, SWT.NONE);
+		// layout = new GridLayout(1, false);
+		// layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		// infoComposite.setLayoutData(layoutData);
+		// infoComposite.setLayout(layout);
+		//
+		// createOverviewBlock(infoComposite);
+		// createAuditBlock(infoComposite);
+		// createArtifactsBlock(composite);
+
+	}
+
+	private void createSummary(Composite parent) {
+		// TOP LEFT BLOCK
+		final Composite overviewComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		overviewComposite.setLayoutData(layoutData);
+		overviewComposite.setLayout(layout);
+
+		// Summary text : can be changed
+		final Label summaryLabel = new Label(overviewComposite, SWT.NONE);
+		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
+		summaryLabel.setLayoutData(layoutData);
+		summaryLabel.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+
+		final Label summaryText = new Label(overviewComposite, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layoutData.widthHint = 300;
+		summaryText.setLayoutData(layoutData);
+		summaryText.setText("Sample summary");
+
+	}
+
+	private void createMainTab(Composite parent) {
+		final TabFolder mainTab = new TabFolder(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(1, false);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+
+		mainTab.setLayout(layout);
+		mainTab.setLayoutData(layoutData);
+
+		final TabItem detailsTab = new TabItem(mainTab, SWT.NONE);
+		detailsTab.setText("Details");
+
+		final Composite detailsComposite = new Composite(mainTab, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		detailsComposite.setLayoutData(layoutData);
+		detailsComposite.setLayout(layout);
+
+		createOverviewBlock(detailsComposite);
+		createArtifactsBlock(detailsComposite);
+		detailsTab.setControl(detailsComposite);
+
+		final TabItem auditTab = new TabItem(mainTab, SWT.NONE);
+		auditTab.setText("Audit");
+
+		final Composite infoComposite = new Composite(mainTab, SWT.NONE);
 		layout = new GridLayout(1, false);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		infoComposite.setLayoutData(layoutData);
 		infoComposite.setLayout(layout);
 
-		createOverviewBlock(infoComposite);
 		createAuditBlock(infoComposite);
-		createArtifactsBlock(composite);
+		auditTab.setControl(infoComposite);
+
+		// final TabItem artifactsTable = new TabItem(mainTab, SWT.NONE);
+		// artifactsTable.setText("Artifacts");
 
 	}
 
@@ -71,8 +136,8 @@ public class FindingsDetailsView extends ViewPart {
 		pmdTreeItem.setText("PMD\u2122");
 
 		final TreeItem pmdArtifact = new TreeItem(pmdTreeItem, SWT.NONE);
-		pmdArtifact.setText("All methods are static.  Consider using Singleton"
-				+ " instead.  Alternatively, you could add a private "
+		pmdArtifact.setText("All methods are static. Consider using Singleton"
+				+ " instead. Alternatively, you could add a private "
 				+ "constructor or make the class abstract to silence "
 				+ "this warning.");
 
@@ -169,7 +234,7 @@ public class FindingsDetailsView extends ViewPart {
 		});
 
 		final List logList = new List(completeCommentsComposite, SWT.BORDER
-				| SWT.V_SCROLL);
+				| SWT.V_SCROLL | SWT.H_SCROLL);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		logList.setLayoutData(layoutData);
 
@@ -191,18 +256,6 @@ public class FindingsDetailsView extends ViewPart {
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		overviewComposite.setLayoutData(layoutData);
 		overviewComposite.setLayout(layout);
-
-		// Summary text : can be changed
-		final Label summaryLabel = new Label(overviewComposite, SWT.NONE);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
-		summaryLabel.setLayoutData(layoutData);
-		summaryLabel.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-
-		final Text summaryText = new Text(overviewComposite, SWT.BORDER);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		layoutData.widthHint = 300;
-		summaryText.setLayoutData(layoutData);
-		summaryText.setText("Sample summary");
 
 		// Summary information
 
