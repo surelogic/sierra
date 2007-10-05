@@ -64,7 +64,7 @@ public final class FilterSelectionReport implements IFilterObserver,
 		 */
 		final int total = f_filter.getFindingCountTotal();
 		f_totalCount.setText(StringUtility.toCommaSepString(total)
-				+ " Findings");
+				+ (total == 1 ? " Finding" : " Findings"));
 
 		/*
 		 * Fix the value lines.

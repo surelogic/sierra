@@ -132,7 +132,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 						public void porous(final Filter filter) {
 							f_finder.getDisplay().asyncExec(new Runnable() {
 								public void run() {
-									menu.setEnabled(filter.isPorous());
+									//menu.setEnabled(filter.isPorous());
 								}
 							});
 						}
