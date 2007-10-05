@@ -4,10 +4,13 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -22,8 +25,17 @@ import com.surelogic.common.eclipse.SLImages;
 
 public class FindingsDetailsView extends ViewPart {
 
+	private Font boldFont;
+
 	@Override
 	public void createPartControl(Composite parent) {
+
+		final Font systemFont = Display.getDefault().getSystemFont();
+		final FontData[] fontData = systemFont.getFontData();
+		if (fontData[0] != null) {
+			fontData[0].setStyle(SWT.BOLD);
+		}
+		boldFont = new Font(Display.getCurrent(), fontData[0]);
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
@@ -34,27 +46,18 @@ public class FindingsDetailsView extends ViewPart {
 		createSummary(composite);
 		createMainTab(composite);
 
-		// final Composite infoComposite = new Composite(composite, SWT.NONE);
-		// layout = new GridLayout(1, false);
-		// layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// infoComposite.setLayoutData(layoutData);
-		// infoComposite.setLayout(layout);
-		//
-		// createOverviewBlock(infoComposite);
-		// createAuditBlock(infoComposite);
-		// createArtifactsBlock(composite);
-
 	}
 
 	private void createSummary(Composite parent) {
 		// TOP LEFT BLOCK
 		final Composite overviewComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(3, false);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		overviewComposite.setLayoutData(layoutData);
 		overviewComposite.setLayout(layout);
 
 		// Summary text : can be changed
+
 		final Label summaryLabel = new Label(overviewComposite, SWT.NONE);
 		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
 		summaryLabel.setLayoutData(layoutData);
@@ -64,7 +67,27 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 300;
 		summaryText.setLayoutData(layoutData);
-		summaryText.setText("Sample summary");
+		summaryText
+				.setText("Method invokes inefficient new String(String) constructor");
+
+		final Button summaryChangeButton = new Button(overviewComposite,
+				SWT.PUSH);
+		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
+		summaryChangeButton.setLayoutData(layoutData);
+		summaryChangeButton.setText("Change");
+		summaryChangeButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Open dialog
+				// Accept text
+				// Update DB
+				// Change text
+				summaryText
+						.setText("Don't use String(String) constructor, it's inefficient");
+			}
+
+		});
 
 	}
 
@@ -86,45 +109,52 @@ public class FindingsDetailsView extends ViewPart {
 		detailsComposite.setLayout(layout);
 
 		createOverviewBlock(detailsComposite);
-		createArtifactsBlock(detailsComposite);
 		detailsTab.setControl(detailsComposite);
 
 		final TabItem auditTab = new TabItem(mainTab, SWT.NONE);
 		auditTab.setText("Audit");
 
-		final Composite infoComposite = new Composite(mainTab, SWT.NONE);
+		final Composite auditComposite = new Composite(mainTab, SWT.NONE);
 		layout = new GridLayout(1, false);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		infoComposite.setLayoutData(layoutData);
-		infoComposite.setLayout(layout);
+		auditComposite.setLayoutData(layoutData);
+		auditComposite.setLayout(layout);
 
-		createAuditBlock(infoComposite);
-		auditTab.setControl(infoComposite);
+		createAuditBlock(auditComposite);
+		auditTab.setControl(auditComposite);
 
-		// final TabItem artifactsTable = new TabItem(mainTab, SWT.NONE);
-		// artifactsTable.setText("Artifacts");
+		final TabItem artifactsTab = new TabItem(mainTab, SWT.NONE);
+		artifactsTab.setText("Artifacts (2)");
+
+		final Composite artifactsComposite = new Composite(mainTab, SWT.NONE);
+		layout = new GridLayout(1, false);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		artifactsComposite.setLayoutData(layoutData);
+		artifactsComposite.setLayout(layout);
+
+		createArtifactsBlock(artifactsComposite);
+		artifactsTab.setControl(artifactsComposite);
 
 	}
 
 	private void createArtifactsBlock(Composite parent) {
 		// RIGHT BLOCK
 
-		final Group staticInfoGroup = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
+		// final Group staticInfoGroup = new Group(parent, SWT.NONE);
+		// GridLayout layout = new GridLayout(1, false);
+		// GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		// staticInfoGroup.setText("Artifacts");
+		//
+		// staticInfoGroup.setLayout(layout);
+		// staticInfoGroup.setLayoutData(layoutData);
+
+		final Tree artifactsTree = new Tree(parent, SWT.V_SCROLL | SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		staticInfoGroup.setText("Artifacts");
-
-		staticInfoGroup.setLayout(layout);
-		staticInfoGroup.setLayoutData(layoutData);
-
-		final Tree artifactsTree = new Tree(staticInfoGroup, SWT.V_SCROLL
-				| SWT.BORDER);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		artifactsTree.setLayoutData(layoutData);
 		artifactsTree.setLinesVisible(true);
 
 		final TreeItem fbTreeItem = new TreeItem(artifactsTree, SWT.NONE);
-		fbTreeItem.setText("FindBugs\u2122");
+		fbTreeItem.setText("FindBugs\u2122 (1)");
 
 		final TreeItem fbArtifact = new TreeItem(fbTreeItem, SWT.NONE);
 		fbArtifact
@@ -133,7 +163,7 @@ public class FindingsDetailsView extends ViewPart {
 						+ "annotation that has default retention");
 
 		final TreeItem pmdTreeItem = new TreeItem(artifactsTree, SWT.NONE);
-		pmdTreeItem.setText("PMD\u2122");
+		pmdTreeItem.setText("PMD\u2122 (1)");
 
 		final TreeItem pmdArtifact = new TreeItem(pmdTreeItem, SWT.NONE);
 		pmdArtifact.setText("All methods are static. Consider using Singleton"
@@ -252,38 +282,58 @@ public class FindingsDetailsView extends ViewPart {
 	private void createOverviewBlock(Composite parent) {
 		// TOP LEFT BLOCK
 		final Composite overviewComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(1, false);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		overviewComposite.setLayoutData(layoutData);
 		overviewComposite.setLayout(layout);
 
+		final Label locationDetailsLabel = new Label(overviewComposite,
+				SWT.NONE);
+		locationDetailsLabel.setFont(boldFont);
+		locationDetailsLabel.setText("Location");
+
 		// Summary information
 
-		// final Composite locationInfoComposite = new Composite(
-		// overviewComposite, SWT.NONE);
-		// layout = new GridLayout(2, false);
-		// layoutData = new GridData(SWT.TOP, SWT.LEFT, true, false);
-		// locationInfoComposite.setLayoutData(layoutData);
-		// locationInfoComposite.setLayout(layout);
+		final Composite locationInfoComposite = new Composite(
+				overviewComposite, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layoutData = new GridData(SWT.TOP, SWT.LEFT, true, false);
+		locationInfoComposite.setLayoutData(layoutData);
+		locationInfoComposite.setLayout(layout);
 
-		final Label packageLabel = new Label(overviewComposite, SWT.NONE);
+		final Label packageLabel = new Label(locationInfoComposite, SWT.NONE);
 		packageLabel.setImage(SLImages
 				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
 
-		final Label packageNameText = new Label(overviewComposite, SWT.NONE);
+		final Label packageNameText = new Label(locationInfoComposite, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 300;
 		packageNameText.setLayoutData(layoutData);
-		packageNameText.setText("com.surelogic.adhoc.views");
+		packageNameText
+				.setText("com.surelogic.sierra.client.eclipse.preferences");
 
-		final Label classLabel = new Label(overviewComposite, SWT.NONE);
+		final Label classLabel = new Label(locationInfoComposite, SWT.NONE);
 		classLabel.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
 
-		final Label classNameText = new Label(overviewComposite, SWT.NONE);
+		final Label classNameText = new Label(locationInfoComposite, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 300;
 		classNameText.setLayoutData(layoutData);
 		classNameText.setText("AdHocQueryResultsViewMediator " + "(Line 2)");
+
+		final Label moreInfoLabel = new Label(overviewComposite, SWT.NONE);
+		moreInfoLabel.setFont(boldFont);
+		moreInfoLabel.setText("More Information");
+
+		final Label detailsText = new Label(overviewComposite, SWT.WRAP);
+		detailsText.setText("Using the java.lang.String(String)constructor "
+				+ "wastes memory because the object so constructed will be "
+				+ "functionally indistinguishable from the String passed as "
+				+ "a parameter. \n\nJust use the argument String directly.");
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData.widthHint = 200;
+		layoutData.horizontalIndent = 10;
+		detailsText.setLayoutData(layoutData);
 	}
 
 	@Override
