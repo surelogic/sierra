@@ -141,7 +141,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 				menu.addObserver(FindingsFinderMediator.this);
 			}
 		};
-		f_finder.addColumn(m);
+		f_finder.addColumn(m, true);
 	}
 
 	public void selected(Object choice, RadioArrowMenu menu) {
@@ -158,7 +158,10 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			 * get the column to use to "empty after" the list of filters
 			 * applied to the selection.
 			 */
-			f_workingSelection.emptyAfter(column / 2);
+			final int selectionIndex = (column / 2) - 1;
+			System.out.println("selected: emptyAfter=" + selectionIndex);
+			System.out.println("selected: addColumnAfter=" + column);
+			f_workingSelection.emptyAfter(selectionIndex);
 			f_finder.addColumnAfter(new CascadingList.IColumn() {
 				public void createContents(Composite panel) {
 					final Display display = panel.getShell().getDisplay();
@@ -169,7 +172,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					waitLabel.setBackground(display
 							.getSystemColor(SWT.COLOR_LIST_SELECTION));
 				}
-			}, column);
+			}, column, false);
 			f_workingSelection.construct(filter, new DrawFilterAndMenu(column,
 					menu));
 		}
