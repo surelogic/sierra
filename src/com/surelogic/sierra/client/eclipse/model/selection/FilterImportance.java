@@ -39,6 +39,7 @@ public final class FilterImportance extends Filter {
 		String[] values = new String[] { CRITICAL, HIGH, MEDIUM, LOW,
 				IRRELEVANT };
 		synchronized (this) {
+			f_allValues.clear();
 			f_allValues.addAll(Arrays.asList(values));
 		}
 	}

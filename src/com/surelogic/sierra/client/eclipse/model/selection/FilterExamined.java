@@ -35,6 +35,7 @@ public final class FilterExamined extends Filter {
 	protected void deriveAllValues() {
 		String[] values = new String[] { YES, NO };
 		synchronized (this) {
+			f_allValues.clear();
 			f_allValues.addAll(Arrays.asList(values));
 		}
 	}

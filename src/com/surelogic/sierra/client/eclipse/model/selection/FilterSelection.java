@@ -38,6 +38,7 @@ public final class FilterSelection extends Filter {
 	protected void deriveAllValues() {
 		String[] values = new String[] { NEW, UNCHANGED, FIXED };
 		synchronized (this) {
+			f_allValues.clear();
 			f_allValues.addAll(Arrays.asList(values));
 		}
 	}

@@ -129,8 +129,12 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					menu.addChoice("Graph", null);
 					input.addObserver(new AbstractFilterObserver() {
 						@Override
-						public void porous(Filter filter) {
-							menu.setEnabled(filter.isPorous());
+						public void porous(final Filter filter) {
+							f_finder.getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									menu.setEnabled(filter.isPorous());
+								}
+							});
 						}
 					});
 				}
@@ -217,8 +221,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					new FilterSelectionReport(f_finder, f_waitMsgColumn,
-							filter, FindingsFinderMediator.this);
+					new FilterSelectionReport(f_finder, f_waitMsgColumn, filter);
 					addMenu(filter);
 					f_selectingMenu.setEnabled(true);
 				}
