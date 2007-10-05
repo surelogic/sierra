@@ -6,6 +6,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective;
 
 public final class InvestigateAction implements IWorkbenchWindowActionDelegate {
 
@@ -18,12 +19,10 @@ public final class InvestigateAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void run(IAction action) {
-		ViewUtility
-				.showPerspective("com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective");
+		ViewUtility.showPerspective(SierraPerspective.SIERRA_PERSPECTIVE);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do
 	}
-
 }

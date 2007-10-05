@@ -45,7 +45,7 @@
           <action
                class="com.surelogic.sierra.client.eclipse.actions.InvestigateAction"
                id="com.surelogic.sierra.client.eclipse.actions.InvestigateAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
                label="Investigate"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
           </action>
@@ -188,14 +188,14 @@
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
             name="Investigate Findings">
       </view>
       
       <view
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
-            id="com.surelogic.sierra.client.eclipse.views.DetailsView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
             name="Finding Details">
       </view>
@@ -214,17 +214,17 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Sierra Explorer"
+            name="Sierra Investigating"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            class="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective"
-            id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+            class="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective"
+            id="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
       </perspective>
    </extension>
    
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+            targetID="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
          <perspectiveShortcut
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspectiveShortcut>
@@ -242,20 +242,13 @@
                id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
          </viewShortcut>
          <perspectiveShortcut
-               id="com.surelogic.sierra.client.eclipse.perspectives.SierraExplorerPerspective">
+               id="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
          </perspectiveShortcut>
       </perspectiveExtension>
    </extension>
    
-   <!-- Enable the ad hoc query view on Sierra -->
-
-   <extension
-         point="com.surelogic.adhoc.query">
-      <instance
-            adHocQueryViewId="com.surelogic.sierra.client.eclipse.AdHocQueryView"
-            class="com.surelogic.sierra.client.eclipse.AdHocGlue">
-      </instance>
-   </extension>
+   <!-- Export and import wizards -->
+   
    <extension
          id="sierraexportwizards"
          point="org.eclipse.ui.exportWizards">
@@ -281,6 +274,7 @@
          		</description>
          	</wizard>
    </extension>
+   
    <extension
    		 id="sierraimportwizards"
    		 point="org.eclipse.ui.importWizards">
@@ -296,6 +290,9 @@
          		</description>
          </wizard>
    </extension> 
+   
+   <!-- Enable markers about Sierra findings -->
+   
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarker"
 		 name="Sierra Finding"
@@ -304,6 +301,7 @@
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <persistent value="true"/>
    </extension>
+   
    <extension
 		 point="org.eclipse.ui.ide.markerImageProviders">
 	  <imageprovider
@@ -312,20 +310,32 @@
 			id="com.surelogic.sierra.client.eclipse.sierraMarkerImageProvider">
 	  </imageprovider>
    </extension>
+   
    <extension point="org.eclipse.ui.editors.annotationTypes">
 	  <type
 		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
 		 super="org.eclipse.ui.workbench.texteditor.warning"
 		 markerType="com.surelogic.sierra.client.eclipse.sierraMarker"/>
 	 
-  </extension>
-  <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+   </extension>
+   
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 	  <specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
 			icon="icons/sierra_marker.gif"
 			includeOnPreferencePage="true"
 			label="sierraFinding"
 			quickFixIcon="icons/sierra_marker.gif"/>
-  </extension>
+   </extension>
    
+   <!-- Enable the ad hoc query view on Sierra -->
+
+   <extension
+         point="com.surelogic.adhoc.query">
+      <instance
+            adHocQueryViewId="com.surelogic.sierra.client.eclipse.AdHocQueryView"
+            class="com.surelogic.sierra.client.eclipse.AdHocGlue">
+      </instance>
+   </extension>
+
 </plugin>
