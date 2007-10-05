@@ -106,11 +106,10 @@ public final class FilterSelectionReport implements IFilterObserver,
 		final int porousCount = f_filter.getFindingCountPorous();
 		if (f_porousCount != null && !f_porousCount.isDisposed())
 			f_porousCount.dispose();
-		if (!lines.isEmpty()) {
-			f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
-			f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
-		}
+		f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
+		f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
 		f_panel.pack();
+		f_reportGroup.layout();
 	}
 
 	public void porous(Filter filter) {
