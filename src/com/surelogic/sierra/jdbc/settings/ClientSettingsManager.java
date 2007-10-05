@@ -4,31 +4,72 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
+import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
+import com.surelogic.sierra.jdbc.record.BaseMapper;
+import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
+import com.surelogic.sierra.jdbc.record.ProjectRecord;
+import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Settings;
 
 public class ClientSettingsManager extends SettingsManager {
 
+	private final PreparedStatement deleteProjectSettings;
+	private final PreparedStatement updateSettingsRevision;
 	private final PreparedStatement getSettingsRevision;
+	private final PreparedStatement getFiltersByProjectId;
+	private final BaseMapper findingTypeFilterMapper;
 
 	private ClientSettingsManager(Connection conn) throws SQLException {
 		super(conn);
 		getSettingsRevision = conn
 				.prepareStatement("SELECT SETTINGS_REVISION FROM PROJECT WHERE NAME = ?");
+		updateSettingsRevision = conn
+				.prepareStatement("UPDATE PROJECT SET SETTINGS_REVISION = ? WHERE ID = ?");
+		deleteProjectSettings = conn
+				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ?");
+		findingTypeFilterMapper = new BaseMapper(
+				conn,
+				"INSERT INTO PROJECT_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
+				"SELECT DELTA,IMPORTANCE,FILTERED FROM PROJECT_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
+				"DELETE FROM PROJECT_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
+		getFiltersByProjectId = conn
+				.prepareStatement("SELECT FT.UID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM PROJECT_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 	}
 
+	/**
+	 * Retrieve settings for the given project.
+	 * 
+	 * @param project
+	 * @return
+	 * @throws SQLException
+	 */
 	public Settings getSettings(String project) throws SQLException {
-		// getSettings.setString(1, project);
-		// ResultSet set = getSettings.executeQuery();
-		// if (set.next()) {
-		// Clob clob = set.getClob(1);
-		// if (clob != null) {
-		// return mw.fetchSettings(clob.getCharacterStream());
-		// }
-		// }
-		return new Settings();
+		ProjectRecord record = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		record.setName(project);
+		if (record.select()) {
+			getFiltersByProjectId.setLong(1, record.getId());
+			ResultSet set = getFiltersByProjectId.executeQuery();
+			try {
+				return readSettings(set);
+			} finally {
+				set.close();
+			}
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ project + " exists.");
+		}
 	}
 
+	/**
+	 * Look up the settings revision of the current project.
+	 * 
+	 * @param project
+	 * @return
+	 * @throws SQLException
+	 */
 	public Long getSettingsRevision(String project) throws SQLException {
 		getSettingsRevision.setString(1, project);
 		ResultSet set = getSettingsRevision.executeQuery();
@@ -44,13 +85,42 @@ public class ClientSettingsManager extends SettingsManager {
 		}
 	}
 
+	/**
+	 * Overwrite the current project settings with the given settings.
+	 * 
+	 * @param project
+	 * @param revision
+	 * @param settings
+	 * @throws SQLException
+	 */
 	public void writeSettings(String project, Long revision, Settings settings)
 			throws SQLException {
-		// TODO
+		ProjectRecord record = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		record.setName(project);
+		if (record.select()) {
+			deleteProjectSettings.setLong(1, record.getId());
+			deleteProjectSettings.execute();
+			List<FindingTypeFilter> filters = settings.getFilter();
+			if (filters != null) {
+				applyFilters(record.getId(), filters);
+			}
+			updateSettingsRevision.setLong(1, revision);
+			updateSettingsRevision.setLong(2, record.getId());
+			updateSettingsRevision.execute();
+		} else {
+			throw new IllegalArgumentException("No project with name "
+					+ project + " exists.");
+		}
 	}
 
 	public static ClientSettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientSettingsManager(conn);
+	}
+
+	@Override
+	protected FindingTypeFilterRecord newFilterRecord() {
+		return new FindingTypeFilterRecord(findingTypeFilterMapper);
 	}
 }

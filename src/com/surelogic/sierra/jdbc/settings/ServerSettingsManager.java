@@ -11,13 +11,10 @@ import java.util.List;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
-import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
-import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 
@@ -35,8 +32,6 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private final UpdateBaseMapper settingsMapper;
 	private final BaseMapper findingTypeFilterMapper;
-
-	private final FindingTypeRecordFactory ftFactory;
 
 	private final SettingsProjectManager spManager;
 
@@ -69,7 +64,6 @@ public class ServerSettingsManager extends SettingsManager {
 				"SELECT ID,REVISION FROM SETTINGS WHERE NAME = ?",
 				"DELETE FROM SETTINGS WHERE ID = ?",
 				"UPDATE SETTINGS SET NAME = ? WHERE ID = ?");
-		ftFactory = FindingTypeRecordFactory.getInstance(conn);
 		spManager = SettingsProjectManager.getInstance(conn);
 	}
 
@@ -227,30 +221,7 @@ public class ServerSettingsManager extends SettingsManager {
 		SettingsRecord sRec = newSettingsRecord();
 		sRec.setName(settings);
 		if (sRec.select()) {
-			for (FindingTypeFilter filter : filters) {
-				FindingTypeRecord ftRec = ftFactory.newFindingTypeRecord();
-				ftRec.setUid(filter.getName());
-				if (ftRec.select()) {
-					FindingTypeFilterRecord rec = newFilterRecord();
-					rec.setId(new FindingTypeFilterRecord.PK(sRec.getId(),
-							ftRec.getId()));
-					if (rec.select()) {
-						rec.delete();
-					}
-					if ((filter.getImportance() != null)
-							|| (filter.isFiltered() != null)
-							|| ((filter.getDelta() != null) && (filter
-									.getDelta() != 0))) {
-						rec.setImportance(filter.getImportance());
-						rec.setFiltered(filter.isFiltered());
-						rec.setDelta(filter.getDelta());
-						rec.insert();
-					}
-				} else {
-					throw new IllegalArgumentException(filter.getName()
-							+ " is not a valid filter name.");
-				}
-			}
+			applyFilters(sRec.getId(), filters);
 		} else {
 			throw new IllegalArgumentException(settings
 					+ " is not a valid settings name");
@@ -343,60 +314,6 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 	}
 
-	private FindingTypeFilterRecord newFilterRecord() {
-		return new FindingTypeFilterRecord(findingTypeFilterMapper);
-	}
-
-	private SettingsRecord newSettingsRecord() {
-		return new SettingsRecord(settingsMapper);
-	}
-
-	private Settings readSettings(ResultSet set) throws SQLException {
-		try {
-			Settings settings = new Settings();
-			List<FindingTypeFilter> filters = settings.getFilter();
-			while (set.next()) {
-				filters.add(readFilter(set));
-			}
-			return settings;
-		} finally {
-			set.close();
-		}
-
-	}
-
-	private FindingTypeFilter readFilter(ResultSet set) throws SQLException {
-		int idx = 1;
-		FindingTypeFilter filter = new FindingTypeFilter();
-		filter.setName(set.getString(idx++));
-		boolean hasImportance;
-		boolean hasFiltered;
-		int delta = set.getInt(idx++);
-		int importance = set.getInt(idx++);
-		hasImportance = !set.wasNull();
-		if (hasImportance) {
-			filter.setImportance(Importance.values()[importance]);
-		}
-		String filtered = set.getString(idx++);
-		hasFiltered = !set.wasNull();
-		if (hasFiltered) {
-			filter.setFiltered("Y".equals(filtered));
-		}
-		if (!(hasImportance || hasFiltered)) {
-			filter.setDelta(delta);
-		}
-		return filter;
-	}
-
-	private void addProjects(SettingsRecord settings,
-			Collection<String> projects) throws SQLException {
-		if (projects != null) {
-			for (String projectName : projects) {
-				spManager.addRelation(settings, projectName);
-			}
-		}
-	}
-
 	public void addProjects(String settingsName, Collection<String> projects)
 			throws SQLException {
 
@@ -431,4 +348,23 @@ public class ServerSettingsManager extends SettingsManager {
 
 		spManager.deleteProjectRelation(rec, projectName);
 	}
+
+	@Override
+	protected FindingTypeFilterRecord newFilterRecord() {
+		return new FindingTypeFilterRecord(findingTypeFilterMapper);
+	}
+
+	private SettingsRecord newSettingsRecord() {
+		return new SettingsRecord(settingsMapper);
+	}
+
+	private void addProjects(SettingsRecord settings,
+			Collection<String> projects) throws SQLException {
+		if (projects != null) {
+			for (String projectName : projects) {
+				spManager.addRelation(settings, projectName);
+			}
+		}
+	}
+
 }
