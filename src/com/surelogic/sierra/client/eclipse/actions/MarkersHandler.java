@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -84,11 +85,21 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench == null)
 			return;
+
 		final IWorkbenchWindow activeWindow = workbench
 				.getActiveWorkbenchWindow();
 		if (activeWindow == null)
 			return;
-		final IWorkbenchPartReference ref = activeWindow.getPartService()
+
+		final IPartService partService = activeWindow.getPartService();
+		if (partService == null) {
+			return;
+		}
+
+		partService.addPartListener(f_listener);
+		LOG.fine("Marker listener added for Sierra");
+
+		final IWorkbenchPartReference ref = partService
 				.getActivePartReference();
 		if (ref == null)
 			return;
@@ -100,7 +111,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 		if (editor != null) {
 			queryAndSetMarkers(editor);
 		}
-		page.addPartListener(f_listener);
+
 	}
 
 	public void removeMarkerListener() {
