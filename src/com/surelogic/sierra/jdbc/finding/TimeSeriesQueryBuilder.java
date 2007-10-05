@@ -57,6 +57,13 @@ public class TimeSeriesQueryBuilder {
 		inClause(builder, scanIds);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");
+		builder.append(" ORDER BY CASE");
+		builder.append(" WHEN TSO.IMPORTANCE='Irrelevant' THEN 1");
+		builder.append(" WHEN TSO.IMPORTANCE='Low' THEN 2");
+		builder.append(" WHEN TSO.IMPORTANCE='Medium' THEN 3");
+		builder.append(" WHEN TSO.IMPORTANCE='High' THEN 4");
+		builder.append(" WHEN TSO.IMPORTANCE='Critical' THEN 5");
+		builder.append(" END");
 		return builder.toString();
 	}
 
@@ -93,7 +100,7 @@ public class TimeSeriesQueryBuilder {
 	public String queryLatestFindingTypeCounts() {
 		builder.setLength(0);
 		builder
-				.append("SELECT TSO.FINDING_TYPE, COUNT(TSO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+				.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.FINDING_TYPE");
