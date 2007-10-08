@@ -96,6 +96,10 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 			return;
 		}
 
+		// TODO: This is not the perfect way, the this will register the
+		// listener but will not update the current open file if the file was
+		// not in focus when the eclipse was closed
+
 		partService.addPartListener(f_listener);
 		LOG.fine("Marker listener added for Sierra");
 

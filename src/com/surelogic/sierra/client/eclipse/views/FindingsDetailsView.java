@@ -4,16 +4,12 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -21,21 +17,14 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 
+import com.surelogic.common.eclipse.FontUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ScrollingLabelComposite;
 
 public class FindingsDetailsView extends ViewPart {
 
-	private Font boldFont;
-
 	@Override
 	public void createPartControl(Composite parent) {
-
-		final Font systemFont = Display.getDefault().getSystemFont();
-		final FontData[] fontData = systemFont.getFontData();
-		if (fontData[0] != null) {
-			fontData[0].setStyle(SWT.BOLD);
-		}
-		boldFont = new Font(Display.getCurrent(), fontData[0]);
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
@@ -263,19 +252,20 @@ public class FindingsDetailsView extends ViewPart {
 
 		});
 
-		final List logList = new List(completeCommentsComposite, SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		logList.setLayoutData(layoutData);
+		// Scrolled Composite label
 
-		// Sample
-		logList
-				.add("Jane Doe (Comment, Oct 2, 2007 11:32 AM) : Fixed on John Doe's suggestion");
+		final ScrollingLabelComposite scrollingLabelComposite = new ScrollingLabelComposite(
+				completeCommentsComposite, SWT.NONE);
 
-		logList
-				.add("John Doe (Comment, Oct 1, 2007 10:32 AM) : Do this to fix this bug");
-		logList
-				.add("John Doe (Audit, Oct 1, 2007 10:31 AM) : Audited the finding");
+		for (int i = 0; i < 10; i++) {
+			scrollingLabelComposite.addLabel(i + 1
+					+ ".Jane Doe (Comment, Oct 2, 2007 11:32 AM) : "
+					+ "Fixed on John Doe's suggestion "
+					+ "Audited the finding "
+					+ "Audited the finding Audited the finding "
+					+ "Audited the finding Audited the finding "
+					+ "Audited the finding Audited the finding");
+		}
 
 	}
 
@@ -289,7 +279,7 @@ public class FindingsDetailsView extends ViewPart {
 
 		final Label locationDetailsLabel = new Label(overviewComposite,
 				SWT.NONE);
-		locationDetailsLabel.setFont(boldFont);
+		locationDetailsLabel.setFont(FontUtility.getDefaultBoldFont());
 		locationDetailsLabel.setText("Location");
 
 		// Summary information
@@ -322,7 +312,7 @@ public class FindingsDetailsView extends ViewPart {
 		classNameText.setText("AdHocQueryResultsViewMediator " + "(Line 2)");
 
 		final Label moreInfoLabel = new Label(overviewComposite, SWT.NONE);
-		moreInfoLabel.setFont(boldFont);
+		moreInfoLabel.setFont(FontUtility.getDefaultBoldFont());
 		moreInfoLabel.setText("More Information");
 
 		final Label detailsText = new Label(overviewComposite, SWT.WRAP);
