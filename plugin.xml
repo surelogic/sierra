@@ -196,7 +196,7 @@
             category="com.surelogic.sierra.client.eclipse"
             class="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/asterisk_diamond_orange_100.gif"
             name="Finding Details">
       </view>
       
@@ -322,10 +322,10 @@
    <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 	  <specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
-			icon="lib/icons/asterik_orange_100.gif"
+			icon="lib/icons/asterisk_orange_100.gif"
 			includeOnPreferencePage="true"
 			label="sierraFinding"
-			quickFixIcon="lib/icons/asterik_orange_100.gif"/>
+			quickFixIcon="lib/icons/asterisk_orange_100.gif"/>
    </extension>
    
    <!-- Enable the ad hoc query view on Sierra -->
