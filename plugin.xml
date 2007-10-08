@@ -322,10 +322,10 @@
    <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 	  <specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
-			icon="icons/sierra_marker.gif"
+			icon="lib/icons/asterik_orange_100.gif"
 			includeOnPreferencePage="true"
 			label="sierraFinding"
-			quickFixIcon="icons/sierra_marker.gif"/>
+			quickFixIcon="lib/icons/asterik_orange_100.gif"/>
    </extension>
    
    <!-- Enable the ad hoc query view on Sierra -->
