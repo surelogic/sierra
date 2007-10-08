@@ -149,12 +149,6 @@ public final class Selection extends AbstractDatabaseObserver {
 						+ " already used in selection");
 			final Filter previous = f_filters.isEmpty() ? null : f_filters
 					.getLast();
-//			if (previous != null && !previous.isPorous()) {
-//				throw new IllegalStateException("unable to construct filter '"
-//						+ factory.getFilterLabel()
-//						+ "' over non-porous filter '"
-//						+ previous.getFactory().getFilterLabel() + "' (bug)");
-//			}
 			filter = factory.construct(this, previous);
 			f_filters.add(filter);
 		}
@@ -181,6 +175,54 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 		Collections.sort(result);
 		return result;
+	}
+
+	/**
+	 * The count of findings that this selection, based upon what its filters
+	 * have set to be porous, will allow through.
+	 * 
+	 * @return count of findings that this selection, based upon what its
+	 *         filters have set to be porous, will allow through.
+	 */
+	public int getFindingCountPorous() {
+		synchronized (this) {
+			if (!f_filters.isEmpty()) {
+				return f_filters.getLast().getFindingCountPorous();
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	public String getQuery() {
+		synchronized (this) {
+			if (!f_filters.isEmpty()) {
+				final Filter last = f_filters.getLast();
+				final int porousCount = last.getFindingCountPorous();
+				System.out.println("getQuery() porousCount = " + porousCount);
+				StringBuilder b = new StringBuilder();
+				b.append("select ");
+				b
+						.append("Summary, PROJECT \"Project__PROJECT\", PACKAGE \"Package__PACKAGE\", CLASS \"Class__CLASS\", LINE_OF_CODE \"Line\" ");
+				b.append("from FINDINGS_OVERVIEW ");
+				synchronized (last) {
+					last.addWhereClauseTo(b, true);
+				}
+				return b.toString();
+			} else {
+				throw new IllegalStateException("selection contains no filters");
+			}
+		}
+	}
+
+	/**
+	 * Indicates if this selection allows any possible findings through it.
+	 * 
+	 * @return <code>true</code> if the selection allows findings through it,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isPorous() {
+		return getFindingCountPorous() > 0;
 	}
 
 	private final Set<ISelectionObserver> f_observers = new CopyOnWriteArraySet<ISelectionObserver>();

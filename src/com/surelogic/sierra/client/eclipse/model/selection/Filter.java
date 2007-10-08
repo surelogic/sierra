@@ -447,13 +447,11 @@ public abstract class Filter {
 	/**
 	 * Indicates if this filter allows any possible findings through it.
 	 * 
-	 * @return <code>true</code> if the filter allows rows through it,
+	 * @return <code>true</code> if the filter allows findings through it,
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean isPorous() {
-		synchronized (this) {
-			return getFindingCountPorous() > 0;
-		}
+		return getFindingCountPorous() > 0;
 	}
 
 	/**
@@ -464,7 +462,7 @@ public abstract class Filter {
 		b.append("select ");
 		addColumnsTo(b);
 		b.append(",count(*) from FINDINGS_OVERVIEW ");
-		addCountsWhereClauseTo(b);
+		addWhereClauseTo(b, false);
 		b.append("group by ");
 		addColumnsTo(b);
 		return b;
@@ -507,10 +505,14 @@ public abstract class Filter {
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
-	private void addCountsWhereClauseTo(StringBuilder b) {
+	void addWhereClauseTo(StringBuilder b, boolean includeThis) {
 		boolean stateFilterNotUsed = true;
 		boolean first = true;
-		Filter filter = this.f_previous;
+		/*
+		 * For counts we don't include this, for queries on the whole selection
+		 * we do.
+		 */
+		Filter filter = includeThis ? this : this.f_previous;
 		while (filter != null) {
 			// TODO: fragile base class :-)
 			if (filter instanceof FilterSelection)
