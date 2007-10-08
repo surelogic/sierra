@@ -26,7 +26,7 @@ public final class FilterSelectionReport implements IFilterObserver,
 	private Group f_reportGroup = null;
 	private Composite f_panel = null;
 
-	private final List<FilterSelectionReportLine> lines = new ArrayList<FilterSelectionReportLine>();
+	private final List<FilterSelectionReportLine> f_lines = new ArrayList<FilterSelectionReportLine>();
 
 	private boolean f_sortByCount = false;
 
@@ -77,8 +77,8 @@ public final class FilterSelectionReport implements IFilterObserver,
 			final int count = f_filter.getSummaryCountFor(value);
 
 			FilterSelectionReportLine fsrLine;
-			if (lines.size() > currentIndex) {
-				fsrLine = lines.get(currentIndex);
+			if (f_lines.size() > currentIndex) {
+				fsrLine = f_lines.get(currentIndex);
 				fsrLine.setText(value);
 				fsrLine.setCount(count);
 				fsrLine.setTotal(total);
@@ -86,7 +86,7 @@ public final class FilterSelectionReport implements IFilterObserver,
 				fsrLine = new FilterSelectionReportLine(f_reportGroup, value,
 						null, count, total);
 				fsrLine.addObserver(this);
-				lines.add(fsrLine);
+				f_lines.add(fsrLine);
 			}
 			fsrLine.setSelection(f_filter.isPorous(value));
 			currentIndex++;
@@ -95,10 +95,10 @@ public final class FilterSelectionReport implements IFilterObserver,
 		 * Remove all the extra lines.
 		 */
 		List<FilterSelectionReportLine> extras = new ArrayList<FilterSelectionReportLine>();
-		while (currentIndex < lines.size()) {
-			extras.add(lines.get(currentIndex++));
+		while (currentIndex < f_lines.size()) {
+			extras.add(f_lines.get(currentIndex++));
 		}
-		lines.removeAll(extras);
+		f_lines.removeAll(extras);
 		for (FilterSelectionReportLine line : extras) {
 			line.dispose();
 		}
@@ -106,8 +106,10 @@ public final class FilterSelectionReport implements IFilterObserver,
 		final int porousCount = f_filter.getFindingCountPorous();
 		if (f_porousCount != null && !f_porousCount.isDisposed())
 			f_porousCount.dispose();
-		f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
-		f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
+		if (!f_lines.isEmpty()) {
+			f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
+			f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
+		}
 		f_panel.pack();
 		f_reportGroup.layout();
 	}
