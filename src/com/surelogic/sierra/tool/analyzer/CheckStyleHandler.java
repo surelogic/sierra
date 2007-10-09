@@ -75,8 +75,6 @@ public class CheckStyleHandler extends DefaultHandler {
 				} else {
 					f_packageName = pakkage;
 				}
-
-				System.out.println(f_packageName);
 			} else {
 				/*
 				 * Not a java file
