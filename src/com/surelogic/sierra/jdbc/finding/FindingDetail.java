@@ -22,7 +22,7 @@ public class FindingDetail {
 		try {
 			ResultSet set = st
 					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.SUMMARY,FT.NAME,FT.INFO"
-							+ "   FROM FINDING_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
+							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
 							+ "   WHERE FO.ID = "
 							+ findingId
 							+ " AND LM.FINDING_ID = FO.ID AND FT.ID = LM.FINDING_TYPE_ID");
