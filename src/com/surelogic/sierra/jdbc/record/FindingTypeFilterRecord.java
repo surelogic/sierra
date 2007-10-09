@@ -26,7 +26,7 @@ public class FindingTypeFilterRecord extends
 		setNullableInt(idx++, st, delta);
 		Integer imp = importance == null ? null : importance.ordinal();
 		setNullableInt(idx++, st, imp);
-		String fil = filtered == null ? null : (filtered ? "Y" : "N");
+		String fil = filtered == null ? null : (filtered ? "Y" : null);
 		setNullableString(idx++, st, fil);
 		return idx;
 	}
