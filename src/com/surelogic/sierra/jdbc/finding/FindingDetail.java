@@ -23,9 +23,9 @@ public class FindingDetail {
 			ResultSet set = st
 					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.SUMMARY,FT.NAME,FT.INFO"
 							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
-							+ "   WHERE FO.ID = "
+							+ "   WHERE FO.FINDING_ID = "
 							+ findingId
-							+ " AND LM.FINDING_ID = FO.ID AND FT.ID = LM.FINDING_TYPE_ID");
+							+ " AND LM.FINDING_ID = FO.FINDING_ID AND FT.ID = LM.FINDING_TYPE_ID");
 			if (set.next()) {
 				int idx = 1;
 				packageName = set.getString(idx++);
@@ -34,8 +34,8 @@ public class FindingDetail {
 				findingType = set.getString(idx++);
 				findingTypeDetail = set.getString(idx++);
 				set = st
-						.executeQuery("SELECT U.USER_NAME, A.VALUE, A.DATE_TIME"
-								+ "   FROM AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
+						.executeQuery("SELECT SU.USER_NAME, A.VALUE, A.DATE_TIME"
+								+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
 								+ "   WHERE FINDING_ID = "
 								+ findingId
 								+ " AND EVENT = 'COMMENT'");
