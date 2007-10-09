@@ -17,11 +17,11 @@ public class FindingRecordFactory {
 	private static final String MATCH_SELECT = "SELECT FINDING_ID FROM LOCATION_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	private static final String MATCH_INSERT = "INSERT INTO LOCATION_MATCH (PROJECT_ID, HASH, CLASS_NAME, PACKAGE_NAME, FINDING_TYPE_ID, FINDING_ID) VALUES (?,?,?,?,?,?)";
 	private static final String MATCH_UPDATE = "UPDATE LOCATION_MATCH SET FINDING_ID = ? WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
-	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UID,IMPORTANCE,SUMMARY) VALUES (?,?,?,?)";
-	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IMPORTANCE,SUMMARY FROM FINDING WHERE UID = ?";
+	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UUID,IMPORTANCE,SUMMARY) VALUES (?,?,?,?)";
+	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IMPORTANCE,SUMMARY FROM FINDING WHERE UUID = ?";
 	private static final String FINDING_DELETE = "DELETE FROM FINDING WHERE ID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-	private static final String AUDIT_INSERT = "INSERT INTO AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
 	private final UpdateRecordMapper matchMap;
 	private final RecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;
@@ -29,11 +29,11 @@ public class FindingRecordFactory {
 
 	private FindingRecordFactory(Connection conn) throws SQLException {
 		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT, MATCH_SELECT,
-				null, MATCH_UPDATE);
+				null, MATCH_UPDATE, false);
 		this.findingMap = new BaseMapper(conn, FINDING_INSERT, FINDING_SELECT,
 				FINDING_DELETE);
 		this.artifactFindingMap = new BaseMapper(conn,
-				INSERT_ARTIFACT_FINDING_RELATION, null, null);
+				INSERT_ARTIFACT_FINDING_RELATION, null, null, false);
 		this.auditMap = new BaseMapper(conn, AUDIT_INSERT, null, null);
 	}
 

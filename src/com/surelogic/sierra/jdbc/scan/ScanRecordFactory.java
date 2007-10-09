@@ -24,8 +24,8 @@ public class ScanRecordFactory {
 	private static final String SOURCE_LOCATION_SELECT = "SELECT ID FROM SIERRA.SOURCE_LOCATION SL WHERE SL.COMPILATION_UNIT_ID = ? AND SL.HASH = ? AND SL.LINE_OF_CODE = ? AND SL.END_LINE_OF_CODE = ? AND SL.LOCATION_TYPE = ? AND SL.IDENTIFIER = ?";
 	private static final String ARTIFACT_INSERT = "INSERT INTO SIERRA.ARTIFACT (SCAN_ID,ARTIFACT_TYPE_ID,PRIMARY_SOURCE_LOCATION_ID,PRIORITY,SEVERITY,MESSAGE) VALUES (?,?,?,?,?,?)";
 	private static final String ARTIFACT_SOURCE_RELATION_INSERT = "INSERT INTO SIERRA.ARTIFACT_SOURCE_LOCATION_RELTN (ARTIFACT_ID,SOURCE_LOCATION_ID) VALUES (?,?)";
-	private static final String SCAN_INSERT = "INSERT INTO SCAN (USER_ID,PROJECT_ID,UID,JAVA_VERSION,JAVA_VENDOR,SCAN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?,?)";
-	private static final String SCAN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, SCAN_DATE_TIME, STATUS FROM SCAN WHERE UID = ?";
+	private static final String SCAN_INSERT = "INSERT INTO SCAN (USER_ID,PROJECT_ID,UUID,JAVA_VERSION,JAVA_VENDOR,SCAN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?,?)";
+	private static final String SCAN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, SCAN_DATE_TIME, STATUS FROM SCAN WHERE UUID = ?";
 	private static final String SCAN_DELETE = "DELETE FROM SCAN WHERE ID = ?";
 	private static final String SCAN_UPDATE = "UPDATE SCAN SET STATUS = ? WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
@@ -50,11 +50,11 @@ public class ScanRecordFactory {
 				SOURCE_LOCATION_SELECT, null);
 		artMapper = new BaseMapper(conn, ARTIFACT_INSERT, null, null);
 		artSourceMapper = new BaseMapper(conn, ARTIFACT_SOURCE_RELATION_INSERT,
-				null, null);
+				null, null, false);
 		scanMapper = new UpdateBaseMapper(conn, SCAN_INSERT, SCAN_SELECT,
 				SCAN_DELETE, SCAN_UPDATE);
 		this.classMetricMapper = new BaseMapper(conn, CLASS_METRIC_INSERT,
-				null, null);
+				null, null, false);
 	}
 
 	public static ScanRecordFactory getInstance(Connection conn)
@@ -97,7 +97,7 @@ public class ScanRecordFactory {
 	public QualifierScanRecord newScanQualifierRelation() throws SQLException {
 		if (scanQualMapper == null) {
 			scanQualMapper = new BaseMapper(conn, SCAN_QUALIFIER_INSERT, null,
-					null);
+					null, false);
 		}
 		return new QualifierScanRecord(scanQualMapper);
 	}

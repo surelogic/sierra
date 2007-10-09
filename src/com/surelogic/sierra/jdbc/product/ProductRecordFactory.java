@@ -34,7 +34,7 @@ public class ProductRecordFactory {
 		return new ProductRecordFactory(conn);
 	}
 
-	ProductRecord newProduct() {
+	public ProductRecord newProduct() {
 		return new ProductRecord(productMapper);
 	}
 

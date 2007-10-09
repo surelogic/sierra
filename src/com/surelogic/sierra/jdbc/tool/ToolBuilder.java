@@ -19,8 +19,13 @@ public class ToolBuilder {
 
 	private ToolBuilder(Connection conn) {
 		try {
-			this.insertTool = conn.prepareStatement(INSERT_TOOL,
-					Statement.RETURN_GENERATED_KEYS);
+			if ("Oracle".equals(conn.getMetaData().getDatabaseProductName())) {
+				this.insertTool = conn.prepareStatement(INSERT_TOOL,
+						new String[] { "ID" });
+			} else {
+				this.insertTool = conn.prepareStatement(INSERT_TOOL,
+						Statement.RETURN_GENERATED_KEYS);
+			}
 			this.insertFindingType = conn
 					.prepareStatement(INSERT_ARTIFACT_TYPE);
 		} catch (SQLException e) {

@@ -8,6 +8,8 @@ import java.sql.Statement;
 
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaUtility;
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public final class SierraSchemaUtility {
 
@@ -22,28 +24,32 @@ public final class SierraSchemaUtility {
 	public static final int schemaVersion = 1;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/";
-	public static final String SQL_COMMON = SQL_SCRIPT_PREFIX + "schema_";
-	public static final String SQL_SERVER = SQL_SCRIPT_PREFIX + "server_";
+	public static final String SQL_SCRIPT_SUFFIX = ".sql";
+	public static final String SERVER_PREFIX = "server";
 	public static final String ACTION_PREFIX = "com.surelogic.sierra.schema.";
 	public static final String ACTION_COMMON = ACTION_PREFIX + "Schema_";
 	public static final String ACTION_SERVER = ACTION_PREFIX + "Server_";
-
+	public static final String SEPARATOR = "_";
+	
 	public static void checkAndUpdate(final Connection c, final boolean serverDB)
 			throws SQLException, IOException {
 		final int arrayLength = schemaVersion + 1;
-
+		final DBType db = JDBCUtils.getDb(c);
 		final URL[] scripts = new URL[arrayLength];
 		final SchemaAction[] schemaActions = new SchemaAction[arrayLength];
 		for (int i = 0; i < scripts.length; i++) {
 			final String num = getZeroPadded(i);
-			scripts[i] = SierraSchemaUtility.class.getResource(SQL_COMMON + num
-					+ ".sql");
+			scripts[i] = SierraSchemaUtility.class
+					.getResource(SQL_SCRIPT_PREFIX + db.getPrefix() + SEPARATOR
+							+ num + SQL_SCRIPT_SUFFIX);
 			final SchemaAction commonAction = getSchemaAction(ACTION_COMMON
 					+ num);
 			schemaActions[i] = commonAction;
 			if (serverDB) {
 				final URL serverScript = SierraSchemaUtility.class
-						.getResource(SQL_SERVER + num + ".sql");
+						.getResource(SQL_SCRIPT_PREFIX + db.getPrefix()
+								+ SEPARATOR + SERVER_PREFIX + SEPARATOR + num
+								+ ".sql");
 				final SchemaAction serverAction = getSchemaAction(ACTION_SERVER
 						+ num);
 				final boolean serverScriptOrAction = serverScript != null

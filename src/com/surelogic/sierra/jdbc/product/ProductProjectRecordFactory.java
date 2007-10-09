@@ -19,7 +19,7 @@ public class ProductProjectRecordFactory {
 	private ProductProjectRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 
-		pprMapper = new BaseMapper(conn, INSERT, null, DELETE);
+		pprMapper = new BaseMapper(conn, INSERT, null, DELETE, false);
 	}
 
 	public static ProductProjectRecordFactory getInstance(Connection conn)

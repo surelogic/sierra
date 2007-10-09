@@ -6,19 +6,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
+
 public class BaseMapper implements RecordMapper {
+
+	private static final String[] KEYS = new String[] { "ID" };
 
 	private final PreparedStatement insert;
 	private final PreparedStatement select;
 	private final PreparedStatement delete;
+	private final boolean hasKeys;
 
 	public BaseMapper(Connection conn, String insertSql, String selectSql,
-			String deleteSql) throws SQLException {
-		if (insertSql != null) {
-			this.insert = conn.prepareStatement(insertSql,
-					Statement.RETURN_GENERATED_KEYS);
+			String deleteSql, boolean generateKey) throws SQLException {
+		this.hasKeys = generateKey;
+		if (generateKey) {
+			if (insertSql != null) {
+				if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+					this.insert = conn.prepareStatement(insertSql, KEYS);
+				} else {
+					this.insert = conn.prepareStatement(insertSql,
+							Statement.RETURN_GENERATED_KEYS);
+				}
+			} else {
+				this.insert = null;
+			}
 		} else {
-			this.insert = null;
+			if (insertSql != null) {
+				this.insert = conn.prepareStatement(insertSql);
+			} else {
+				this.insert = null;
+			}
 		}
 		if (selectSql != null) {
 			this.select = conn.prepareStatement(selectSql);
@@ -30,6 +49,12 @@ public class BaseMapper implements RecordMapper {
 		} else {
 			this.delete = null;
 		}
+
+	}
+
+	public BaseMapper(Connection conn, String insertSql, String selectSql,
+			String deleteSql) throws SQLException {
+		this(conn, insertSql, selectSql, deleteSql, true);
 	}
 
 	/*
@@ -42,13 +67,15 @@ public class BaseMapper implements RecordMapper {
 			throw new UnsupportedOperationException();
 		record.fill(insert, 1);
 		insert.executeUpdate();
-		ResultSet keys = insert.getGeneratedKeys();
-		try {
-			if (keys.next()) {
-				record.readPk(keys, 1);
+		if (hasKeys) {
+			ResultSet keys = insert.getGeneratedKeys();
+			try {
+				if (keys.next()) {
+					record.readPk(keys, 1);
+				}
+			} finally {
+				keys.close();
 			}
-		} finally {
-			keys.close();
 		}
 	}
 

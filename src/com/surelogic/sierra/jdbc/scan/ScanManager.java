@@ -40,7 +40,7 @@ public class ScanManager {
 	private static final String DELETE_UNUSED_COMPILATIONS = "DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 			+ " SELECT ID FROM SESSION.TEMP_IDS)";
 
-	private static final String OLDEST_SCAN_BY_PROJECT = "SELECT SCAN_UID FROM OLDEST_SCANS WHERE PROJECT = ?";
+	private static final String OLDEST_SCAN_BY_PROJECT = "SELECT SCAN_UUID FROM OLDEST_SCANS WHERE PROJECT = ?";
 
 	private final Connection conn;
 	private final ScanRecordFactory factory;

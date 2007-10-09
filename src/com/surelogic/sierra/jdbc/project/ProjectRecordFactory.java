@@ -8,10 +8,10 @@ import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
 public class ProjectRecordFactory {
 
-	private static final String PROJECT_SELECT = "SELECT ID,SERVER_UID FROM PROJECT WHERE NAME = ?";
-	private static final String PROJECT_INSERT = "INSERT INTO PROJECT (NAME,SERVER_UID) VALUES (?,?)";
+	private static final String PROJECT_SELECT = "SELECT ID,SERVER_UUID FROM PROJECT WHERE NAME = ?";
+	private static final String PROJECT_INSERT = "INSERT INTO PROJECT (NAME,SERVER_UUID) VALUES (?,?)";
 	private static final String PROJECT_DELETE = "DELETE FROM PROJECT WHERE ID = ?";
-	private static final String PROJECT_UPDATE = "UPDATE PROJECT SET NAME = ?, SERVER_UID = ? WHERE ID = ?";
+	private static final String PROJECT_UPDATE = "UPDATE PROJECT SET NAME = ?, SERVER_UUID = ? WHERE ID = ?";
 	private final UpdateBaseMapper projectMapper;
 
 	private ProjectRecordFactory(Connection conn) throws SQLException {

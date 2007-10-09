@@ -24,7 +24,6 @@ public class TimeSeriesQueryBuilder {
 
 	private final PreparedStatement getLatestScansByQualifierName;
 
-	private Long qualifierId;
 	private List<Long> scanIds;
 	private final StringBuilder builder;
 
@@ -119,7 +118,6 @@ public class TimeSeriesQueryBuilder {
 			q = QualifierRecordFactory.getInstance(conn).newQualifier();
 			q.setName(timeSeries);
 			if (q.select()) {
-				this.qualifierId = q.getId();
 				List<Long> scanIds = new ArrayList<Long>();
 				getLatestScansByQualifierName.setString(1, timeSeries);
 				ResultSet set = getLatestScansByQualifierName.executeQuery();

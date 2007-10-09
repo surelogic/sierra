@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.tool.message.ArtifactType;
@@ -40,21 +42,28 @@ public class FindingTypeManager {
 
 	private FindingTypeManager(Connection conn) throws SQLException {
 		this.checkForArtifactTypeRelation = conn
-				.prepareStatement("SELECT FT.UID FROM ARTIFACT_TYPE_FINDING_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
+				.prepareStatement("SELECT FT.UUID FROM ART_TYPE_FIN_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.selectArtifactTypesByFindingType = conn
-				.prepareStatement("SELECT AR.ID FROM FINDING_TYPE FT, ARTIFACT_TYPE_FINDING_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE FT.NAME = ? AND AFTR.FINDING_TYPE_ID = FT.ID AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
+				.prepareStatement("SELECT AR.ID FROM FINDING_TYPE FT, ART_TYPE_FIN_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE FT.NAME = ? AND AFTR.FINDING_TYPE_ID = FT.ID AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
 		this.selectArtifactTypesByToolAndMnemonic = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.insertArtifactTypeFindingTypeRelation = conn
-				.prepareStatement("INSERT INTO ARTIFACT_TYPE_FINDING_TYPE_RELTN (ARTIFACT_TYPE_ID,FINDING_TYPE_ID) VALUES (?,?)");
+				.prepareStatement("INSERT INTO ART_TYPE_FIN_TYPE_RELTN (ARTIFACT_TYPE_ID,FINDING_TYPE_ID) VALUES (?,?)");
 		this.insertCategoryFindingTypeRelation = conn
 				.prepareStatement("INSERT INTO CATEGORY_FINDING_TYPE_RELTN (CATEGORY_ID,FINDING_TYPE_ID) VALUES (?,?)");
-		this.checkUnassignedArtifactTypes = conn
-				.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) EXCEPT (SELECT ARTIFACT_TYPE_ID FROM ARTIFACT_TYPE_FINDING_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
-		this.checkUncategorizedFindingTypes = conn
-				.prepareStatement("SELECT UID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) EXCEPT (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
+		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+			this.checkUnassignedArtifactTypes = conn
+					.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) MINUS (SELECT ARTIFACT_TYPE_ID FROM ART_TYPE_FIN_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
+			this.checkUncategorizedFindingTypes = conn
+					.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) MINUS (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
+		} else {
+			this.checkUnassignedArtifactTypes = conn
+					.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) EXCEPT (SELECT ARTIFACT_TYPE_ID FROM ART_TYPE_FIN_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
+			this.checkUncategorizedFindingTypes = conn
+					.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) EXCEPT (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
+		}
 		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 

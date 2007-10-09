@@ -10,7 +10,7 @@ public class Server_0001 implements SchemaAction {
 
 	public void run(Connection c) throws SQLException {
 		c.createStatement().execute(
-				"INSERT INTO SERVER (UID) VALUES('"
+				"INSERT INTO SERVER (UUID) VALUES('"
 						+ UUID.randomUUID().toString() + "')");
 
 	}

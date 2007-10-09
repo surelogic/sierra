@@ -8,7 +8,12 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
+
 public class Server {
+
+	private static final String[] KEYS = new String[] { "ID" };
 
 	public static User getUser(String userName, Connection conn)
 			throws SQLException {
@@ -20,9 +25,14 @@ public class Server {
 		try {
 			if (!set.next()) {
 				set.close();
-				st = conn.prepareStatement(
-						"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
-						Statement.RETURN_GENERATED_KEYS);
+				if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+					st = conn.prepareStatement(
+							"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
+							KEYS);
+				} else {
+					st = conn
+							.prepareStatement("INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)");
+				}
 				st.setString(1, userName);
 				st.executeUpdate();
 				set = st.getGeneratedKeys();
@@ -36,9 +46,15 @@ public class Server {
 	}
 
 	public static Long nextRevision(Connection conn) throws SQLException {
-		PreparedStatement st = conn.prepareStatement(
-				"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
-				Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement st;
+		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+			st = conn.prepareStatement(
+					"INSERT INTO REVISION (DATE_TIME) VALUES (?)", KEYS);
+		} else {
+			st = conn.prepareStatement(
+					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS);
+		}
 		st.setTimestamp(1, new Timestamp(new Date().getTime()));
 		st.execute();
 		ResultSet set = st.getGeneratedKeys();
@@ -53,7 +69,7 @@ public class Server {
 
 	public static String getUid(Connection conn) throws SQLException {
 		ResultSet set = conn.createStatement().executeQuery(
-				"SELECT UID FROM SERVER");
+				"SELECT UUID FROM SERVER");
 		try {
 			set.next();
 			return set.getString(1);

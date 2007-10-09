@@ -18,7 +18,7 @@ public class SettingsProjectRecordFactory {
 	private SettingsProjectRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 
-		sprMapper = new BaseMapper(conn, INSERT, null, DELETE);
+		sprMapper = new BaseMapper(conn, INSERT, null, DELETE, false);
 	}
 
 	public static SettingsProjectRecordFactory getInstance(Connection conn)

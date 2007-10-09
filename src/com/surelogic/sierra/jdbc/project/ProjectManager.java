@@ -29,7 +29,7 @@ public class ProjectManager {
 		findingManager = FindingManager.getInstance(conn);
 		scanManager = ScanManager.getInstance(conn);
 		findProjectRuns = conn
-				.prepareStatement("SELECT S.UID FROM SCAN S WHERE S.PROJECT_ID = ?");
+				.prepareStatement("SELECT S.UUID FROM SCAN S WHERE S.PROJECT_ID = ?");
 	}
 
 	public static ProjectManager getInstance(Connection conn)

@@ -1,5 +1,6 @@
 package com.surelogic.sierra.jdbc;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -84,10 +85,16 @@ public class JDBCUtils {
 
 	/**
 	 * Escape a string to be used as input in a JDBC query.
+	 * 
 	 * @param string
 	 * @return
 	 */
 	public static String escapeString(String string) {
 		return string.replaceAll("'", "''");
+	}
+
+	public static DBType getDb(Connection conn) throws SQLException {
+		return "Oracle".equals(conn.getMetaData().getDatabaseProductName()) ? DBType.ORACLE
+				: DBType.DERBY;
 	}
 }

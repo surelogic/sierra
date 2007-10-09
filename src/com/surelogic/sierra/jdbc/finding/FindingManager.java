@@ -44,7 +44,7 @@ public class FindingManager {
 	protected static final Logger log = SLLogger
 			.getLoggerFor(FindingManager.class);
 
-	private static final int CHUNK_SIZE = 1000;
+	private static final int FETCH_SIZE = 1000;
 	private static final int CHECK_SIZE = 10;
 
 	protected final Connection conn;
@@ -69,7 +69,7 @@ public class FindingManager {
 
 	private final PreparedStatement populateScanOverview;
 
-	private final PreparedStatement unassignedArtifacts;
+	private final PreparedStatement scanArtifacts;
 
 	protected FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -84,7 +84,7 @@ public class FindingManager {
 		updateFindingSummary = conn
 				.prepareStatement("UPDATE FINDING SET SUMMARY = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingUid = conn
-				.prepareStatement("UPDATE FINDING SET UID = ? WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET UUID = ? WHERE ID = ?");
 		updateMatchRevision = conn
 				.prepareStatement("UPDATE LOCATION_MATCH SET REVISION = ? WHERE FINDING_ID = ? AND REVISION IS NULL");
 		findLocalMerges = conn
@@ -97,25 +97,25 @@ public class FindingManager {
 						+ " M.FINDING_ID = F.ID AND"
 						+ " FT.ID = M.FINDING_TYPE_ID" + " ORDER BY FINDING_ID");
 		findLocalAudits = conn
-				.prepareStatement("SELECT F.UID,A.DATE_TIME,A.EVENT,A.VALUE"
-						+ " FROM AUDIT A, FINDING F"
+				.prepareStatement("SELECT F.UUID,A.DATE_TIME,A.EVENT,A.VALUE"
+						+ " FROM SIERRA_AUDIT A, FINDING F"
 						+ " WHERE A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
-						+ " AND F.UID IS NOT NULL ORDER BY A.FINDING_ID");
+						+ " AND F.UUID IS NOT NULL ORDER BY A.FINDING_ID");
 		obsoleteAudits = conn
-				.prepareStatement("UPDATE AUDIT SET FINDING_ID = ? WHERE FINDING_ID = ?");
+				.prepareStatement("UPDATE SIERRA_AUDIT SET FINDING_ID = ? WHERE FINDING_ID = ?");
 		obsoleteMatches = conn
 				.prepareStatement("UPDATE LOCATION_MATCH SET FINDING_ID = ? WHERE FINDING_ID = ?");
 		obsoleteFinding = conn
 				.prepareStatement("UPDATE FINDING SET OBSOLETED_BY_ID = ?, OBSOLETED_BY_REVISION = ? WHERE ID = ?");
 		latestAuditRevision = conn
-				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, FINDING F, AUDIT A WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND A.FINDING_ID = F.ID");
+				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, FINDING F, SIERRA_AUDIT A WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND A.FINDING_ID = F.ID");
 		deleteMatches = conn
 				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteFindings = conn
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteLocalAudits = conn
-				.prepareStatement("DELETE FROM AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
+				.prepareStatement("DELETE FROM SIERRA_AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)) AND USER_ID IS NULL");
 		populateScanOverview = conn
 				.prepareStatement("INSERT INTO SCAN_OVERVIEW"
 						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
@@ -127,22 +127,16 @@ public class FindingManager {
 						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
 						+ "       T.ID = ART.TOOL_ID"
 						+ " GROUP BY AFR.FINDING_ID");
-		unassignedArtifacts = conn
-				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,ATFTR.FINDING_TYPE_ID"
-						+ " FROM (SELECT U.ID FROM ARTIFACT U LEFT OUTER JOIN ARTIFACT_FINDING_RELTN AFR ON AFR.ARTIFACT_ID = U.ID WHERE U.SCAN_ID = ? AND AFR.ARTIFACT_ID IS NULL) AS UNASSIGNED, "
-						+ " ARTIFACT A,ARTIFACT_TYPE_FINDING_TYPE_RELTN ATFTR, SCAN R, SOURCE_LOCATION S, COMPILATION_UNIT CU"
+		scanArtifacts = conn
+				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,S.PROJECT_ID,SL.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,ATFTR.FINDING_TYPE_ID"
+						+ " FROM SCAN S, ARTIFACT A,ART_TYPE_FIN_TYPE_RELTN ATFTR, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 						+ " WHERE"
-						+ " A.ID = UNASSIGNED.ID AND R.ID = A.SCAN_ID AND S.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = S.COMPILATION_UNIT_ID AND ATFTR.ARTIFACT_TYPE_ID = A.ARTIFACT_TYPE_ID");
-	}
-
-	protected ResultSet getUnassignedArtifacts(ScanRecord scan)
-			throws SQLException {
-		unassignedArtifacts.setLong(1, scan.getId());
-		return unassignedArtifacts.executeQuery();
+						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ATFTR.ARTIFACT_TYPE_ID = A.ARTIFACT_TYPE_ID");
+		scanArtifacts.setFetchSize(FETCH_SIZE);
 	}
 
 	/**
-	 * Generate findings for the scan with the given uid
+	 * Generate findings for the scan with the given uid.
 	 * 
 	 * @param uid
 	 */
@@ -156,8 +150,8 @@ public class FindingManager {
 						+ " exists in the database");
 			}
 			Long projectId = scan.getProjectId();
-
-			ResultSet result = getUnassignedArtifacts(scan);
+			scanArtifacts.setLong(1, scan.getId());
+			ResultSet result = scanArtifacts.executeQuery();
 			try {
 				int counter = 0;
 				while (result.next()) {
@@ -204,8 +198,8 @@ public class FindingManager {
 					afr.setId(new RelationRecord.PK<Long, Long>(art.id,
 							findingId));
 					afr.insert();
-					if ((++counter % CHUNK_SIZE) == 0) {
-//						conn.commit();
+					if ((++counter % FETCH_SIZE) == 0) {
+						 conn.commit();
 					}
 					if ((counter % CHECK_SIZE) == 0) {
 						if (monitor != null) {
@@ -222,7 +216,7 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-//			conn.commit();
+			// conn.commit();
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {
@@ -239,7 +233,7 @@ public class FindingManager {
 	 */
 	public void deleteFindings(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
-		
+
 		if (monitor != null) {
 			monitor.subTask("Deleting matches for project " + projectName);
 		}

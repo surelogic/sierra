@@ -76,7 +76,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
-						+ "       FROM AUDIT A"
+						+ "       FROM SIERRA_AUDIT A"
 						+ "       WHERE A.EVENT='COMMENT'"
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"

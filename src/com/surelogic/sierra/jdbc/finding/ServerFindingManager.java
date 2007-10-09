@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -50,11 +52,19 @@ public final class ServerFindingManager extends FindingManager {
 		} catch (SQLException e) {
 			// Do nothing, the table is probably already there.
 		}
-		populateTempIds = conn
-				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
-						+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
-						+ "  EXCEPT"
-						+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+			populateTempIds = conn
+			.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
+					+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
+					+ "  MINUS "
+					+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+		} else {
+			populateTempIds = conn
+					.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
+							+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
+							+ "  EXCEPT"
+							+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+		}
 		deleteTempIds = conn
 				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
 		populateSeriesOverview = conn
@@ -81,7 +91,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
-						+ "       FROM AUDIT A"
+						+ "       FROM SIERRA_AUDIT A"
 						+ "       WHERE A.EVENT='COMMENT'"
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
