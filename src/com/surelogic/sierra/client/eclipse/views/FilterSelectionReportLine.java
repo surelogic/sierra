@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 
 import com.surelogic.common.eclipse.StringUtility;
 
@@ -175,5 +176,11 @@ public final class FilterSelectionReportLine {
 		for (ISelectionObserver o : f_observers) {
 			o.selectionChanged(this);
 		}
+	}
+
+	public void setMenu(Menu menu) {
+		f_lineComposite.setMenu(menu);
+		f_check.setMenu(menu);
+		f_countGraph.setMenu(menu);
 	}
 }

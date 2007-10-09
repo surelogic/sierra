@@ -256,6 +256,23 @@ public abstract class Filter {
 		}
 	}
 
+	/**
+	 * Indicates if this filter has any values. Its return value is equal to,
+	 * but more efficient than, using the following expression:
+	 * 
+	 * <pre>
+	 * !(getValues().isEmpty())
+	 * </pre>
+	 * 
+	 * @return <code>true</code> if this filter has any values,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean hasValues() {
+		synchronized (this) {
+			return !f_allValues.isEmpty();
+		}
+	}
+
 	public List<String> getValuesOrderedBySummaryCount() {
 		final List<String> values = getValues();
 		final LinkedList<String> result = new LinkedList<String>();
@@ -394,6 +411,36 @@ public abstract class Filter {
 				f_porousValues.add(value);
 			else
 				f_porousValues.remove(value);
+		}
+		notifyPorous();
+		/*
+		 * Tell my enclosing selection to update filters after me because I
+		 * changed the set of findings I let through.
+		 */
+		f_selection.filterChanged(this);
+	}
+
+	public void setPorousAll() {
+		synchronized (this) {
+			if (f_allValues.equals(f_porousValues))
+				return;
+
+			f_porousValues.clear();
+			f_porousValues.addAll(f_allValues);
+		}
+		notifyPorous();
+		/*
+		 * Tell my enclosing selection to update filters after me because I
+		 * changed the set of findings I let through.
+		 */
+		f_selection.filterChanged(this);
+	}
+
+	public void setPorousNone() {
+		synchronized (this) {
+			if (f_porousValues.isEmpty())
+				return;
+			f_porousValues.clear();
 		}
 		notifyPorous();
 		/*

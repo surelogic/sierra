@@ -6,8 +6,12 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.StringUtility;
@@ -25,6 +29,11 @@ public final class FilterSelectionReport implements IFilterObserver,
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
 	private Composite f_panel = null;
+
+	private Menu f_menu = null;
+	private MenuItem f_selectAllMenuItem = null;
+	private MenuItem f_deselectAllMenuItem = null;
+	private MenuItem f_sortByCountMenuItem = null;
 
 	private final List<FilterSelectionReportLine> f_lines = new ArrayList<FilterSelectionReportLine>();
 
@@ -51,6 +60,46 @@ public final class FilterSelectionReport implements IFilterObserver,
 				f_reportGroup.setLayout(rowLayout);
 
 				f_totalCount = new Label(f_reportGroup, SWT.RIGHT);
+
+				f_menu = new Menu(f_panel.getShell(), SWT.POP_UP);
+				f_menu.addListener(SWT.Show, new Listener() {
+					public void handleEvent(Event event) {
+						final boolean valuesExist = f_filter.hasValues();
+						f_selectAllMenuItem.setEnabled(valuesExist);
+						f_deselectAllMenuItem.setEnabled(valuesExist);
+						f_sortByCountMenuItem.setSelection(f_sortByCount);
+					}
+				});
+
+				f_selectAllMenuItem = new MenuItem(f_menu, SWT.PUSH);
+				f_selectAllMenuItem.setText("Select All");
+				f_selectAllMenuItem.addListener(SWT.Selection, new Listener() {
+					public void handleEvent(Event event) {
+						f_filter.setPorousAll();
+					}
+				});
+				f_deselectAllMenuItem = new MenuItem(f_menu, SWT.PUSH);
+				f_deselectAllMenuItem.setText("Deselect All");
+				f_deselectAllMenuItem.addListener(SWT.Selection,
+						new Listener() {
+							public void handleEvent(Event event) {
+								f_filter.setPorousNone();
+							}
+						});
+				new MenuItem(f_menu, SWT.SEPARATOR);
+				f_sortByCountMenuItem = new MenuItem(f_menu, SWT.CHECK);
+				f_sortByCountMenuItem.setText("Sort By Finding Count");
+				f_sortByCountMenuItem.addListener(SWT.Selection,
+						new Listener() {
+							public void handleEvent(Event event) {
+								f_sortByCount = !f_sortByCount;
+								updateReport();
+							}
+						});
+
+				f_reportGroup.setMenu(f_menu);
+				f_totalCount.setMenu(f_menu);
+
 				updateReport();
 			}
 		};
@@ -85,6 +134,7 @@ public final class FilterSelectionReport implements IFilterObserver,
 			} else {
 				fsrLine = new FilterSelectionReportLine(f_reportGroup, value,
 						null, count, total);
+				fsrLine.setMenu(f_menu);
 				fsrLine.addObserver(this);
 				f_lines.add(fsrLine);
 			}
