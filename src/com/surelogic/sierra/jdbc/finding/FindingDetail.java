@@ -14,6 +14,7 @@ public class FindingDetail {
 	private final String summary;
 	private final String findingType;
 	private final String findingTypeDetail;
+	private int lineOfCode;
 	private List<CommentDetail> comments;
 	private List<ArtifactDetail> artifacts;
 
@@ -21,7 +22,7 @@ public class FindingDetail {
 		Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.SUMMARY,FT.NAME,FT.INFO"
+					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.LINE_OF_CODE,FO.SUMMARY,FT.NAME,FT.INFO"
 							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
 							+ "   WHERE FO.FINDING_ID = "
 							+ findingId
@@ -30,6 +31,7 @@ public class FindingDetail {
 				int idx = 1;
 				packageName = set.getString(idx++);
 				className = set.getString(idx++);
+				lineOfCode = set.getInt(idx++);
 				summary = set.getString(idx++);
 				findingType = set.getString(idx++);
 				findingTypeDetail = set.getString(idx++);
@@ -95,6 +97,10 @@ public class FindingDetail {
 
 	public List<ArtifactDetail> getArtifacts() {
 		return artifacts;
+	}
+
+	public int getLineOfCode() {
+		return lineOfCode;
 	}
 
 	public static FindingDetail getDetail(Connection conn, Long findingId)
