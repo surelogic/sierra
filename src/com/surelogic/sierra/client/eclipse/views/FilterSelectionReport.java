@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
@@ -15,6 +16,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.StringUtility;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 
@@ -150,6 +152,12 @@ public final class FilterSelectionReport implements IFilterObserver,
 		}
 		f_lines.removeAll(extras);
 		for (FilterSelectionReportLine line : extras) {
+			/*
+			 * We have to set the menu to null before we dispose of the line
+			 * because, by default, SWT will dispose the menu of a control that
+			 * is being disposed.
+			 */
+			line.setMenu(null);
 			line.dispose();
 		}
 
@@ -165,6 +173,8 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void porous(Filter filter) {
+		if (f_finder.isDisposed())
+			return;
 		f_finder.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();
@@ -173,6 +183,8 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void contentsChanged(Filter filter) {
+		if (f_finder.isDisposed())
+			return;
 		f_finder.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();
@@ -181,11 +193,13 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void queryFailure(Filter filter, Exception e) {
-		// TODO Auto-generated method stub
-
+		// TODO Something reasonable...not sure what
+		SLLogger.getLogger().log(Level.SEVERE, "query failed on " + filter, e);
 	}
 
 	public void contentsEmpty(Filter filter) {
+		if (f_finder.isDisposed())
+			return;
 		f_finder.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();

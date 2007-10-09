@@ -220,9 +220,9 @@ public abstract class Filter {
 	 */
 	private void fixupPorousValues() {
 		/*
-		 * Keep only those "checked" values that still exist in this filter.
+		 * We don't want to delete values that are no longer in this filter
+		 * because they may be in the future.
 		 */
-		f_porousValues.retainAll(f_allValues);
 		/*
 		 * If only one choice exists, go ahead and select it. Bill Scherlis had
 		 * this idea for making the filter easier to use.
@@ -248,7 +248,7 @@ public abstract class Filter {
 	 * Gets the complete set of all values for this filter. This set is is
 	 * filtered by previous filters.
 	 * 
-	 * @return
+	 * @return a list of all values for this filter.
 	 */
 	public List<String> getValues() {
 		synchronized (this) {
@@ -273,6 +273,12 @@ public abstract class Filter {
 		}
 	}
 
+	/**
+	 * Returns the list of all values for this filter ordered, from highest to
+	 * lowest, by the summary count for that value.
+	 * 
+	 * @return a list of all values ordered by summary count.
+	 */
 	public List<String> getValuesOrderedBySummaryCount() {
 		final List<String> values = getValues();
 		final LinkedList<String> result = new LinkedList<String>();
@@ -420,6 +426,14 @@ public abstract class Filter {
 		f_selection.filterChanged(this);
 	}
 
+	/**
+	 * Makes all values in this filter porous.
+	 * <p>
+	 * Note that this method removes any values that might exist as porous but
+	 * are not currently part of this filter. This situation can happen if a
+	 * previous filter became less porous and a value selected as porous in this
+	 * filter no longer exists.
+	 */
 	public void setPorousAll() {
 		synchronized (this) {
 			if (f_allValues.equals(f_porousValues))
@@ -436,6 +450,14 @@ public abstract class Filter {
 		f_selection.filterChanged(this);
 	}
 
+	/**
+	 * Makes no values in this filter porous.
+	 * <p>
+	 * Note that this method removes any values that might exist as porous but
+	 * are not currently part of this filter. This situation can happen if a
+	 * previous filter became less porous and a value selected as porous in this
+	 * filter no longer exists.
+	 */
 	public void setPorousNone() {
 		synchronized (this) {
 			if (f_porousValues.isEmpty())

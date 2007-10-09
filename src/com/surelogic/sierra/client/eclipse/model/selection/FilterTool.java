@@ -1,18 +1,18 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-public final class FilterType extends Filter {
+public final class FilterTool extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
-			return new FilterType(selection, previous);
+			return new FilterTool(selection, previous);
 		}
 
 		public String getFilterLabel() {
-			return "Java Type";
+			return "Tool";
 		}
 	};
 
-	FilterType(Selection selection, Filter previous) {
+	FilterTool(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 
@@ -23,6 +23,6 @@ public final class FilterType extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "CLASS";
+		return "TOOL";
 	}
 }
