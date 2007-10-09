@@ -11,7 +11,7 @@ import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 
 public class CheckStyleHandler extends DefaultHandler {
 
-	private static final String CHECK_STYLE = "checkstyle";
+	private static final String CHECK_STYLE = "Checkstyle";
 	private static final String FILE = "file";
 	private static final String NAME = "name";
 	private static final String ERROR = "error";
