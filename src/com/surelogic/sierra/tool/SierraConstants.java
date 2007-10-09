@@ -53,4 +53,7 @@ public final class SierraConstants {
 
 	/** The default name of package for files in root folder */
 	public static final String DEFAULT_PACKAGE = "Default Package";
+
+	/** The default name of package for files in root folder */
+	public static final String DEFAULT_PACKAGE_PARENTHESIS = "(Default Package)";
 }

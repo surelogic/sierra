@@ -240,7 +240,7 @@ class FindBugsHandler extends DefaultHandler {
 							className = attributes.getValue(i);
 							int lastPeriod = className.lastIndexOf(".");
 							if (lastPeriod == -1) {
-								packageName = SierraConstants.DEFAULT_PACKAGE;
+								packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							} else {
 
 								packageName = className
@@ -335,7 +335,7 @@ class FindBugsHandler extends DefaultHandler {
 							className = attributes.getValue(i);
 							int lastPeriod = className.lastIndexOf(".");
 							if (lastPeriod == -1) {
-								packageName = SierraConstants.DEFAULT_PACKAGE;
+								packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							} else {
 
 								packageName = className

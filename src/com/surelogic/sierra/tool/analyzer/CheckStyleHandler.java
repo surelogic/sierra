@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 
 public class CheckStyleHandler extends DefaultHandler {
@@ -67,7 +68,15 @@ public class CheckStyleHandler extends DefaultHandler {
 			} else if (f_fileName.endsWith(".java")) {
 				f_className = file.getName().substring(0,
 						file.getName().length() - 5);
-				f_packageName = PackageFinder.getInstance().getPackage(file);
+				String pakkage = PackageFinder.getInstance().getPackage(file);
+
+				if (pakkage.equals(SierraConstants.DEFAULT_PACKAGE)) {
+					f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+				} else {
+					f_packageName = pakkage;
+				}
+
+				System.out.println(f_packageName);
 			} else {
 				/*
 				 * Not a java file

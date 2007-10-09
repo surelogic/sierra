@@ -311,7 +311,7 @@ class PMD40Handler extends DefaultHandler {
 			// Populate package name as default package if there is no
 			// package associated with it
 			if (!hasPackage) {
-				String packageName = SierraConstants.DEFAULT_PACKAGE;
+				String packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
 				sourceLocation.packageName(packageName);
 			}
 			hasPackage = false;
