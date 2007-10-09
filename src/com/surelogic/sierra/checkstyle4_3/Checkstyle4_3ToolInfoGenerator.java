@@ -20,7 +20,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 	public static void generateTool(Connection conn) {
 		try {
 			ArtifactTypeBuilder t = ToolBuilder.getBuilder(conn).build(
-					"checkstyle", "4.3");
+					"Checkstyle", "4.3");
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(
 							Thread

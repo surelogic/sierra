@@ -119,7 +119,7 @@ public class FindingManager {
 		populateScanOverview = conn
 				.prepareStatement("INSERT INTO SCAN_OVERVIEW"
 						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
-						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE 'Many' END"
+						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE '(From Multiple Tools)' END"
 						+ " FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
 						+ " WHERE A.SCAN_ID = ? AND"
 						+ "       SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
