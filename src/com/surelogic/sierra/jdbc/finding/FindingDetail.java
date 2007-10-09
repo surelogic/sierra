@@ -60,8 +60,6 @@ public class FindingDetail {
 					artifacts.add(new ArtifactDetail(set.getString(idx++), set
 							.getString(idx++)));
 				}
-				artifacts = new ArrayList<ArtifactDetail>();
-
 			} else {
 				throw new IllegalArgumentException(findingId
 						+ " is not a valid finding id.");
