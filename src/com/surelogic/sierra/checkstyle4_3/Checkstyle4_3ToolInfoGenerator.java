@@ -104,7 +104,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 							String message = val.substring(val.indexOf(" ")).trim();
 							ArtifactType art = new ArtifactType();
 							art.setMnemonic(mnemonic + "Check");
-							art.setTool("checkstyle");
+							art.setTool("Checkstyle");
 							mnemonic = mnemonic.substring(mnemonic.lastIndexOf(".") + 1);
 							FindingType type = new FindingType();
 							type.setId(mnemonic);
@@ -127,7 +127,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 				String message = val.substring(val.indexOf(" ")).trim();
 				ArtifactType art = new ArtifactType();
 				art.setMnemonic(mnemonic + "Check");
-				art.setTool("checkstyle");
+				art.setTool("Checkstyle");
 				mnemonic = mnemonic.substring(mnemonic.lastIndexOf(".") + 1);
 				FindingType type = new FindingType();
 				type.setId(mnemonic);
