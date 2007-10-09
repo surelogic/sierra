@@ -1,13 +1,17 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
@@ -32,14 +36,14 @@ public final class SierraServersView extends ViewPart {
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		GridData data;
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		parent.setLayout(gridLayout);
 
-		Composite rhs = new Composite(parent, SWT.NONE);
+		final Composite rhs = new Composite(parent, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, false, true);
 		rhs.setLayoutData(data);
 		gridLayout = new GridLayout();
@@ -94,12 +98,30 @@ public final class SierraServersView extends ViewPart {
 		openInBrowser
 				.setToolTipText("Open the selected team server in a Web browser");
 
-		Label banner = new Label(rhs, SWT.NONE);
+		final Label banner = new Label(rhs, SWT.NONE);
 		banner
 				.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false,
 						false));
 		banner.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_SHORT));
+		/*
+		 * Make the banner small if the view isn't given many vertical pixels.
+		 */
+		rhs.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event e) {
+				final Point size = rhs.getSize();
+				final Image image;
+				if (size.y < 150) {
+					image = SLImages
+							.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_REALLY_SHORT);
+				} else {
+					image = SLImages
+							.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_SHORT);
+				}
+				banner.setImage(image);
+				parent.layout();
+			}
+		});
 
 		/*
 		 * Server Information (left-hand side)
