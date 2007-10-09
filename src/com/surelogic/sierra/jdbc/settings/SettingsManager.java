@@ -72,14 +72,14 @@ abstract class SettingsManager {
 				FindingTypeFilterRecord rec = newFilterRecord();
 				rec.setId(new FindingTypeFilterRecord.PK(entityId, ftRec
 						.getId()));
+				PreparedStatement st = (filter.isFiltered() != null) ? getDeleteFilteredFilterByFindingType()
+						: getDeleteImportanceDeltaFiltersByFindingType();
+				st.setLong(1, entityId);
+				st.setLong(2, ftRec.getId());
+				st.execute();
 				if ((filter.getImportance() != null)
-						|| (filter.isFiltered() != null)
+						|| ((filter.isFiltered() != null) && filter.isFiltered())
 						|| ((filter.getDelta() != null) && (filter.getDelta() != 0))) {
-					PreparedStatement st = (filter.isFiltered() != null) ? getDeleteFilteredFilterByFindingType()
-							: getDeleteImportanceDeltaFiltersByFindingType();
-					st.setLong(1, entityId);
-					st.setLong(2, ftRec.getId());
-					st.execute();
 					rec.setImportance(filter.getImportance());
 					rec.setFiltered(filter.isFiltered());
 					rec.setDelta(filter.getDelta());
