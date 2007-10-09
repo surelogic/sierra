@@ -149,72 +149,79 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 
 		if (resource != null) {
 			if (resource instanceof IFile) {
-
 				if (f_currentFile != null) {
 					clearMarkers(f_currentFile, SIERRA_MARKER);
 				}
 
 				f_currentFile = (IFile) resource;
-				ICompilationUnit cu = JavaCore
-						.createCompilationUnitFrom(f_currentFile);
-				try {
-					IPackageDeclaration[] packageDeclarations = cu
-							.getPackageDeclarations();
+				if (f_currentFile.getFileExtension().equalsIgnoreCase("java")) {
 
-					f_packageName = SierraConstants.DEFAULT_PACKAGE;
-					if (packageDeclarations.length > 0) {
-						f_packageName = packageDeclarations[0].getElementName();
-					}
+					ICompilationUnit cu = JavaCore
+							.createCompilationUnitFrom(f_currentFile);
+					try {
+						IPackageDeclaration[] packageDeclarations = cu
+								.getPackageDeclarations();
 
-					String elementName = cu.getElementName();
-					f_className = cu.getElementName().substring(0,
-							elementName.length() - 5);
-					f_projectName = f_currentFile.getProject().getName();
-					f_executor.execute(new Runnable() {
-
-						private List<FindingOverview> f_overview;
-
-						public void run() {
-							try {
-								Connection conn = Data.getConnection();
-								try {
-									f_overview = FindingOverview.getView()
-											.showFindingsForClass(conn,
-													f_projectName,
-													f_packageName, f_className);
-
-									if (f_overview != null) {
-
-										PlatformUI.getWorkbench().getDisplay()
-												.asyncExec(new Runnable() {
-													public void run() {
-														setMarker(
-																f_currentFile,
-																f_overview);
-													}
-
-												});
-									}
-								} finally {
-									conn.close();
-								}
-							} catch (SQLException e) {
-								LOG
-										.log(
-												Level.SEVERE,
-												"SQL Exception from occurred when getting findings.",
-												e);
-							}
+						f_packageName = SierraConstants.DEFAULT_PACKAGE;
+						if (packageDeclarations.length > 0) {
+							f_packageName = packageDeclarations[0]
+									.getElementName();
 						}
 
-					});
+						String elementName = cu.getElementName();
+						f_className = cu.getElementName().substring(0,
+								elementName.length() - 5);
+						f_projectName = f_currentFile.getProject().getName();
+						f_executor.execute(new Runnable() {
 
-				} catch (JavaModelException e) {
-					LOG
-							.log(
-									Level.SEVERE,
-									"Cannot get the package declarations from compilation unit.",
-									e);
+							private List<FindingOverview> f_overview;
+
+							public void run() {
+								try {
+									Connection conn = Data.getConnection();
+									try {
+										f_overview = FindingOverview.getView()
+												.showFindingsForClass(conn,
+														f_projectName,
+														f_packageName,
+														f_className);
+
+										if (f_overview != null) {
+
+											PlatformUI.getWorkbench()
+													.getDisplay().asyncExec(
+															new Runnable() {
+																public void run() {
+																	setMarker(
+																			f_currentFile,
+																			f_overview);
+																}
+
+															});
+										}
+									} finally {
+										conn.close();
+									}
+								} catch (SQLException e) {
+									LOG
+											.log(
+													Level.SEVERE,
+													"SQL Exception from occurred when getting findings.",
+													e);
+								}
+							}
+
+						});
+
+					} catch (JavaModelException e) {
+						LOG
+								.log(
+										Level.SEVERE,
+										"Cannot get the package declarations from compilation unit.",
+										e);
+					}
+				} else {
+					f_currentFile = null;
 				}
 			}
 		}
@@ -310,7 +317,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 			if (r.getType() == IResource.FILE) {
 				IFile f = (IFile) r;
 				if (f.getFileExtension() != null
-						&& f.getFileExtension().equals("java")) {
+						&& f.getFileExtension().equalsIgnoreCase("java")) {
 					files.add((IFile) r);
 				}
 			}
