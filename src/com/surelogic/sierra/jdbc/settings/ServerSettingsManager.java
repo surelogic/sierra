@@ -44,9 +44,7 @@ public class ServerSettingsManager extends SettingsManager {
 		findingTypeFilterMapper = new BaseMapper(
 				conn,
 				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
-				"SELECT DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
-				"DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
-				false);
+				null, null, false);
 		this.deleteFilteredFiltersByFindingType = conn
 				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
 						+ "   AND FILTERED IS NOT NULL");
