@@ -32,10 +32,10 @@ public class ClientSettingsManager extends SettingsManager {
 		deleteProjectSettings = conn
 				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ?");
 		this.deleteFilteredFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
+				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
 						+ "   AND FILTERED IS NOT NULL");
 		this.deleteImportanceDeltaFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
+				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
 						+ "   AND (IMPORTANCE IS NOT NULL OR DELTA IS NOT NULL)");
 		findingTypeFilterMapper = new BaseMapper(
 				conn,
