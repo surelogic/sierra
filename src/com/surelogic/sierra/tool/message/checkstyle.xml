@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
 	<findingType>
 		<id>PackageHtml</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtmlCheck">
 		</artifact>
 		<shortMessage>
@@ -16,7 +16,7 @@
 	</findingType>
 	<findingType>
 		<id>JavadocMethod</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck">
 		</artifact>
 		<shortMessage>
@@ -27,7 +27,7 @@
 	</findingType>
 	<findingType>
 		<id>JavadocStyle</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck">
 		</artifact>
 		<shortMessage>
@@ -38,7 +38,7 @@
 	</findingType>
 	<findingType>
 		<id>JavadocType</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck">
 		</artifact>
 		<shortMessage>Checks the Javadoc of a type.</shortMessage>
@@ -47,7 +47,7 @@
 	</findingType>
 	<findingType>
 		<id>JavadocVariable</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck">
 		</artifact>
 		<shortMessage>
@@ -58,7 +58,7 @@
 	</findingType>
 	<findingType>
 		<id>WriteTag</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.javadoc.WriteTagCheck">
 		</artifact>
 		<shortMessage>
@@ -69,7 +69,7 @@
 	</findingType>
 	<findingType>
 		<id>AbstractClassName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.AbstractClassNameCheck">
 		</artifact>
 		<shortMessage>
@@ -84,7 +84,7 @@
 	</findingType>
 	<findingType>
 		<id>ConstantName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck">
 		</artifact>
 		<shortMessage>
@@ -99,7 +99,7 @@
 	</findingType>
 	<findingType>
 		<id>LocalFinalVariableName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.LocalFinalVariableNameCheck">
 		</artifact>
 		<shortMessage>
@@ -114,7 +114,7 @@
 	</findingType>
 	<findingType>
 		<id>LocalVariableName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck">
 		</artifact>
 		<shortMessage>
@@ -129,7 +129,7 @@
 	</findingType>
 	<findingType>
 		<id>MemberName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.MemberNameCheck">
 		</artifact>
 		<shortMessage>
@@ -144,7 +144,7 @@
 	</findingType>
 	<findingType>
 		<id>MethodName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck">
 		</artifact>
 		<shortMessage>
@@ -159,7 +159,7 @@
 	</findingType>
 	<findingType>
 		<id>PackageName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.PackageNameCheck">
 		</artifact>
 		<shortMessage>
@@ -174,7 +174,7 @@
 	</findingType>
 	<findingType>
 		<id>ParameterName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck">
 		</artifact>
 		<shortMessage>
@@ -189,7 +189,7 @@
 	</findingType>
 	<findingType>
 		<id>StaticVariableName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableNameCheck">
 		</artifact>
 		<shortMessage>
@@ -204,7 +204,7 @@
 	</findingType>
 	<findingType>
 		<id>TypeName</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.naming.TypeNameCheck">
 		</artifact>
 		<shortMessage>
@@ -219,7 +219,7 @@
 	</findingType>
 	<findingType>
 		<id>Header</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.HeaderCheck">
 		</artifact>
 		<shortMessage>
@@ -232,7 +232,7 @@
 	</findingType>
 	<findingType>
 		<id>RegexpHeader</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.RegexpHeaderCheck">
 		</artifact>
 		<shortMessage>
@@ -249,7 +249,7 @@
 	</findingType>
 	<findingType>
 		<id>CrossLanguageRegexpHeader</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.header.CrossLanguageRegexpHeaderCheck">
 		</artifact>
 		<shortMessage>
@@ -266,7 +266,7 @@
 	</findingType>
 	<findingType>
 		<id>AvoidStarImport</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck">
 		</artifact>
 		<shortMessage>
@@ -279,7 +279,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalImport</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.IllegalImportCheck">
 		</artifact>
 		<shortMessage>
@@ -290,7 +290,7 @@
 	</findingType>
 	<findingType>
 		<id>RedundantImport</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.RedundantImportCheck">
 		</artifact>
 		<shortMessage>
@@ -301,7 +301,7 @@
 	</findingType>
 	<findingType>
 		<id>UnusedImports</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck">
 		</artifact>
 		<shortMessage>
@@ -312,7 +312,7 @@
 	</findingType>
 	<findingType>
 		<id>ImportOrder</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.ImportOrderCheck">
 		</artifact>
 		<shortMessage>
@@ -323,7 +323,7 @@
 	</findingType>
 	<findingType>
 		<id>ImportControl</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.ImportControlCheck">
 		</artifact>
 		<shortMessage>
@@ -338,7 +338,7 @@
 	</findingType>
 	<findingType>
 		<id>ExecutableStatementCount</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.ExecutableStatementCountCheck">
 		</artifact>
 		<shortMessage>
@@ -353,7 +353,7 @@
 	</findingType>
 	<findingType>
 		<id>FileLength</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.FileLengthCheck">
 		</artifact>
 		<shortMessage>Checks for long source files.</shortMessage>
@@ -362,7 +362,7 @@
 	</findingType>
 	<findingType>
 		<id>LineLength</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck">
 		</artifact>
 		<shortMessage>Checks for long lines.</shortMessage>
@@ -371,7 +371,7 @@
 	</findingType>
 	<findingType>
 		<id>MethodLength</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.MethodLengthCheck">
 		</artifact>
 		<shortMessage>Checks for long methods.</shortMessage>
@@ -380,7 +380,7 @@
 	</findingType>
 	<findingType>
 		<id>AnonInnerLength</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.AnonInnerLengthCheck">
 		</artifact>
 		<shortMessage>
@@ -391,7 +391,7 @@
 	</findingType>
 	<findingType>
 		<id>ParameterNumber</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.sizes.ParameterNumberCheck">
 		</artifact>
 		<shortMessage>
@@ -406,7 +406,7 @@
 	</findingType>
 	<findingType>
 		<id>EmptyForInitializerPad</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForInitializerPadCheck">
 		</artifact>
 		<shortMessage>
@@ -423,7 +423,7 @@
 	</findingType>
 	<findingType>
 		<id>EmptyForIteratorPad</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForIteratorPadCheck">
 		</artifact>
 		<shortMessage>
@@ -440,7 +440,7 @@
 	</findingType>
 	<findingType>
 		<id>MethodParamPad</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.MethodParamPadCheck">
 		</artifact>
 		<shortMessage>
@@ -459,7 +459,7 @@
 	</findingType>
 	<findingType>
 		<id>NoWhitespaceAfter</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceAfterCheck">
 		</artifact>
 		<shortMessage>
@@ -470,7 +470,7 @@
 	</findingType>
 	<findingType>
 		<id>NoWhitespaceBefore</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceBeforeCheck">
 		</artifact>
 		<shortMessage>
@@ -481,7 +481,7 @@
 	</findingType>
 	<findingType>
 		<id>OperatorWrap</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.OperatorWrapCheck">
 		</artifact>
 		<shortMessage>Checks line wrapping for operators.</shortMessage>
@@ -490,7 +490,7 @@
 	</findingType>
 	<findingType>
 		<id>ParenPad</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.ParenPadCheck">
 		</artifact>
 		<shortMessage>
@@ -511,7 +511,7 @@
 	</findingType>
 	<findingType>
 		<id>TypecastParenPad</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.TypecastParenPadCheck">
 		</artifact>
 		<shortMessage>
@@ -522,7 +522,7 @@
 	</findingType>
 	<findingType>
 		<id>TabCharacter</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.TabCharacterCheck">
 		</artifact>
 		<shortMessage>
@@ -533,7 +533,7 @@
 	</findingType>
 	<findingType>
 		<id>WhitespaceAfter</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAfterCheck">
 		</artifact>
 		<shortMessage>
@@ -550,7 +550,7 @@
 	</findingType>
 	<findingType>
 		<id>WhitespaceAround</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck">
 		</artifact>
 		<shortMessage>
@@ -561,7 +561,7 @@
 	</findingType>
 	<findingType>
 		<id>ModifierOrder</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrderCheck">
 		</artifact>
 		<shortMessage>
@@ -578,7 +578,7 @@
 	</findingType>
 	<findingType>
 		<id>RedundantModifier</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.modifier.RedundantModifierCheck">
 		</artifact>
 		<shortMessage>
@@ -593,7 +593,7 @@
 	</findingType>
 	<findingType>
 		<id>EmptyBlock</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.EmptyBlockCheck">
 		</artifact>
 		<shortMessage>Checks for empty blocks.</shortMessage>
@@ -602,7 +602,7 @@
 	</findingType>
 	<findingType>
 		<id>LeftCurly</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck">
 		</artifact>
 		<shortMessage>
@@ -617,7 +617,7 @@
 	</findingType>
 	<findingType>
 		<id>NeedBraces</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck">
 		</artifact>
 		<shortMessage>
@@ -628,7 +628,7 @@
 	</findingType>
 	<findingType>
 		<id>RightCurly</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck">
 		</artifact>
 		<shortMessage>
@@ -639,7 +639,7 @@
 	</findingType>
 	<findingType>
 		<id>AvoidNestedBlocks</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.blocks.AvoidNestedBlocksCheck">
 		</artifact>
 		<shortMessage>Finds nested blocks.</shortMessage>
@@ -648,7 +648,7 @@
 	</findingType>
 	<findingType>
 		<id>ArrayTrailingComma</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ArrayTrailingCommaCheck">
 		</artifact>
 		<shortMessage>
@@ -663,7 +663,7 @@
 	</findingType>
 	<findingType>
 		<id>AvoidInlineConditionals</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.AvoidInlineConditionalsCheck">
 		</artifact>
 		<shortMessage>Detects inline conditionals.</shortMessage>
@@ -672,7 +672,7 @@
 	</findingType>
 	<findingType>
 		<id>CovariantEquals</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.CovariantEqualsCheck">
 		</artifact>
 		<shortMessage>
@@ -687,7 +687,7 @@
 	</findingType>
 	<findingType>
 		<id>DoubleCheckedLocking</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DoubleCheckedLockingCheck">
 		</artifact>
 		<shortMessage>
@@ -704,7 +704,7 @@
 	</findingType>
 	<findingType>
 		<id>EmptyStatement</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.EmptyStatementCheck">
 		</artifact>
 		<shortMessage>
@@ -715,7 +715,7 @@
 	</findingType>
 	<findingType>
 		<id>EqualsHashCode</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.EqualsHashCodeCheck">
 		</artifact>
 		<shortMessage>
@@ -730,7 +730,7 @@
 	</findingType>
 	<findingType>
 		<id>FinalLocalVariable</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck">
 		</artifact>
 		<shortMessage>
@@ -745,7 +745,7 @@
 	</findingType>
 	<findingType>
 		<id>HiddenField</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck">
 		</artifact>
 		<shortMessage>
@@ -760,7 +760,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalInstantiation</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalInstantiationCheck">
 		</artifact>
 		<shortMessage>
@@ -775,7 +775,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalToken</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTokenCheck">
 		</artifact>
 		<shortMessage>Checks for illegal tokens.</shortMessage>
@@ -784,7 +784,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalTokenText</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTokenTextCheck">
 		</artifact>
 		<shortMessage>Checks for illegal token text.</shortMessage>
@@ -793,7 +793,7 @@
 	</findingType>
 	<findingType>
 		<id>InnerAssignment</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck">
 		</artifact>
 		<shortMessage>
@@ -808,7 +808,7 @@
 	</findingType>
 	<findingType>
 		<id>MagicNumber</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck">
 		</artifact>
 		<shortMessage>Checks for magic numbers.</shortMessage>
@@ -817,7 +817,7 @@
 	</findingType>
 	<findingType>
 		<id>MissingSwitchDefault</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MissingSwitchDefaultCheck">
 		</artifact>
 		<shortMessage>
@@ -830,7 +830,7 @@
 	</findingType>
 	<findingType>
 		<id>ModifiedControlVariable</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariableCheck">
 		</artifact>
 		<shortMessage>
@@ -845,7 +845,7 @@
 	</findingType>
 	<findingType>
 		<id>RedundantThrows</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.RedundantThrowsCheck">
 		</artifact>
 		<shortMessage>
@@ -862,7 +862,7 @@
 	</findingType>
 	<findingType>
 		<id>SimplifyBooleanExpression</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanExpressionCheck">
 		</artifact>
 		<shortMessage>
@@ -873,7 +873,7 @@
 	</findingType>
 	<findingType>
 		<id>SimplifyBooleanReturn</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanReturnCheck">
 		</artifact>
 		<shortMessage>
@@ -886,7 +886,7 @@
 	</findingType>
 	<findingType>
 		<id>StringLiteralEquality</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.StringLiteralEqualityCheck">
 		</artifact>
 		<shortMessage>
@@ -899,7 +899,7 @@
 	</findingType>
 	<findingType>
 		<id>NestedIfDepth</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.NestedIfDepthCheck">
 		</artifact>
 		<shortMessage>
@@ -914,7 +914,7 @@
 	</findingType>
 	<findingType>
 		<id>NestedTryDepth</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.NestedTryDepthCheck">
 		</artifact>
 		<shortMessage>
@@ -929,7 +929,7 @@
 	</findingType>
 	<findingType>
 		<id>SuperClone</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SuperCloneCheck">
 		</artifact>
 		<shortMessage>
@@ -944,7 +944,7 @@
 	</findingType>
 	<findingType>
 		<id>SuperFinalize</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.SuperFinalizeCheck">
 		</artifact>
 		<shortMessage>
@@ -959,7 +959,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalCatch</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalCatchCheck">
 		</artifact>
 		<shortMessage>
@@ -974,7 +974,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalThrows</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalThrowsCheck">
 		</artifact>
 		<shortMessage>
@@ -989,7 +989,7 @@
 	</findingType>
 	<findingType>
 		<id>PackageDeclaration</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.PackageDeclarationCheck">
 		</artifact>
 		<shortMessage>
@@ -1000,7 +1000,7 @@
 	</findingType>
 	<findingType>
 		<id>JUnitTestCase</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.JUnitTestCaseCheck">
 		</artifact>
 		<shortMessage>
@@ -1017,7 +1017,7 @@
 	</findingType>
 	<findingType>
 		<id>ReturnCount</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ReturnCountCheck">
 		</artifact>
 		<shortMessage>
@@ -1032,7 +1032,7 @@
 	</findingType>
 	<findingType>
 		<id>IllegalType</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.IllegalTypeCheck">
 		</artifact>
 		<shortMessage>
@@ -1047,7 +1047,7 @@
 	</findingType>
 	<findingType>
 		<id>DeclarationOrder</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DeclarationOrderCheck">
 		</artifact>
 		<shortMessage>
@@ -1064,7 +1064,7 @@
 	</findingType>
 	<findingType>
 		<id>ParameterAssignment</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ParameterAssignmentCheck">
 		</artifact>
 		<shortMessage>Disallow assignment of parameters.</shortMessage>
@@ -1073,7 +1073,7 @@
 	</findingType>
 	<findingType>
 		<id>ExplicitInitialization</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.ExplicitInitializationCheck">
 		</artifact>
 		<shortMessage>
@@ -1090,7 +1090,7 @@
 	</findingType>
 	<findingType>
 		<id>DefaultComesLast</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DefaultComesLastCheck">
 		</artifact>
 		<shortMessage>
@@ -1105,7 +1105,7 @@
 	</findingType>
 	<findingType>
 		<id>MissingCtor</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MissingCtorCheck">
 		</artifact>
 		<shortMessage>
@@ -1120,7 +1120,7 @@
 	</findingType>
 	<findingType>
 		<id>FallThrough</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.FallThroughCheck">
 		</artifact>
 		<shortMessage>
@@ -1137,7 +1137,7 @@
 	</findingType>
 	<findingType>
 		<id>MultipleStringLiterals</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck">
 		</artifact>
 		<shortMessage>
@@ -1152,7 +1152,7 @@
 	</findingType>
 	<findingType>
 		<id>MultipleVariableDeclarations</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.MultipleVariableDeclarationsCheck">
 		</artifact>
 		<shortMessage>
@@ -1167,7 +1167,7 @@
 	</findingType>
 	<findingType>
 		<id>RequireThis</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.RequireThisCheck">
 		</artifact>
 		<shortMessage>
@@ -1182,7 +1182,7 @@
 	</findingType>
 	<findingType>
 		<id>UnnecessaryParentheses</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.UnnecessaryParenthesesCheck">
 		</artifact>
 		<shortMessage>
@@ -1197,7 +1197,7 @@
 	</findingType>
 	<findingType>
 		<id>VisibilityModifier</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck">
 		</artifact>
 		<shortMessage>Checks visibility of class members.</shortMessage>
@@ -1206,7 +1206,7 @@
 	</findingType>
 	<findingType>
 		<id>FinalClass</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck">
 		</artifact>
 		<shortMessage>
@@ -1221,7 +1221,7 @@
 	</findingType>
 	<findingType>
 		<id>InterfaceIsType</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.InterfaceIsTypeCheck">
 		</artifact>
 		<shortMessage>
@@ -1236,7 +1236,7 @@
 	</findingType>
 	<findingType>
 		<id>HideUtilityClassConstructor</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.HideUtilityClassConstructorCheck">
 		</artifact>
 		<shortMessage>
@@ -1251,7 +1251,7 @@
 	</findingType>
 	<findingType>
 		<id>DesignForExtension</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck">
 		</artifact>
 		<shortMessage>
@@ -1262,7 +1262,7 @@
 	</findingType>
 	<findingType>
 		<id>MutableException</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.MutableExceptionCheck">
 		</artifact>
 		<shortMessage>
@@ -1277,7 +1277,7 @@
 	</findingType>
 	<findingType>
 		<id>ThrowsCount</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.design.ThrowsCountCheck">
 		</artifact>
 		<shortMessage>
@@ -1292,7 +1292,7 @@
 	</findingType>
 	<findingType>
 		<id>StrictDuplicateCode</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.duplicates.StrictDuplicateCodeCheck">
 		</artifact>
 		<shortMessage>
@@ -1309,7 +1309,7 @@
 	</findingType>
 	<findingType>
 		<id>BooleanExpressionComplexity</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.BooleanExpressionComplexityCheck">
 		</artifact>
 		<shortMessage>
@@ -1324,7 +1324,7 @@
 	</findingType>
 	<findingType>
 		<id>ClassDataAbstractionCoupling</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.ClassDataAbstractionCouplingCheck">
 		</artifact>
 		<shortMessage>
@@ -1339,7 +1339,7 @@
 	</findingType>
 	<findingType>
 		<id>ClassFanOutComplexity</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.ClassFanOutComplexityCheck">
 		</artifact>
 		<shortMessage>
@@ -1352,7 +1352,7 @@
 	</findingType>
 	<findingType>
 		<id>CyclomaticComplexity</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck">
 		</artifact>
 		<shortMessage>
@@ -1365,7 +1365,7 @@
 	</findingType>
 	<findingType>
 		<id>NPathComplexity</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.NPathComplexityCheck">
 		</artifact>
 		<shortMessage>
@@ -1380,7 +1380,7 @@
 	</findingType>
 	<findingType>
 		<id>JavaNCSS</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.JavaNCSSCheck">
 		</artifact>
 		<shortMessage>
@@ -1395,7 +1395,7 @@
 	</findingType>
 	<findingType>
 		<id>GenericIllegalRegexp</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck">
 		</artifact>
 		<shortMessage>
@@ -1410,7 +1410,7 @@
 	</findingType>
 	<findingType>
 		<id>NewlineAtEndOfFile</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.NewlineAtEndOfFileCheck">
 		</artifact>
 		<shortMessage>
@@ -1423,7 +1423,7 @@
 	</findingType>
 	<findingType>
 		<id>TodoComment</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck">
 		</artifact>
 		<shortMessage>A check for TODO comments.</shortMessage>
@@ -1432,7 +1432,7 @@
 	</findingType>
 	<findingType>
 		<id>Translation</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.TranslationCheck">
 		</artifact>
 		<shortMessage>
@@ -1449,7 +1449,7 @@
 	</findingType>
 	<findingType>
 		<id>UncommentedMain</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.UncommentedMainCheck">
 		</artifact>
 		<shortMessage>Detects uncommented main methods.</shortMessage>
@@ -1458,7 +1458,7 @@
 	</findingType>
 	<findingType>
 		<id>UpperEll</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.UpperEllCheck">
 		</artifact>
 		<shortMessage>
@@ -1471,7 +1471,7 @@
 	</findingType>
 	<findingType>
 		<id>ArrayTypeStyle</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.ArrayTypeStyleCheck">
 		</artifact>
 		<shortMessage>
@@ -1482,7 +1482,7 @@
 	</findingType>
 	<findingType>
 		<id>FinalParameters</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck">
 		</artifact>
 		<shortMessage>
@@ -1497,7 +1497,7 @@
 	</findingType>
 	<findingType>
 		<id>DescendantToken</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.DescendantTokenCheck">
 		</artifact>
 		<shortMessage>
@@ -1508,7 +1508,7 @@
 	</findingType>
 	<findingType>
 		<id>Indentation</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.IndentationCheck">
 		</artifact>
 		<shortMessage>
@@ -1519,7 +1519,7 @@
 	</findingType>
 	<findingType>
 		<id>TrailingComment</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.TrailingCommentCheck">
 		</artifact>
 		<shortMessage>
@@ -1534,7 +1534,7 @@
 	</findingType>
 	<findingType>
 		<id>RequiredRegexp</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.RequiredRegexpCheck">
 		</artifact>
 		<shortMessage>
@@ -1549,7 +1549,7 @@
 	</findingType>
 	<findingType>
 		<id>Regexp</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.RegexpCheck">
 		</artifact>
 		<shortMessage>
@@ -1564,7 +1564,7 @@
 	</findingType>
 	<findingType>
 		<id>EntityBean</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.EntityBeanCheck">
 		</artifact>
 		<shortMessage>
@@ -1579,7 +1579,7 @@
 	</findingType>
 	<findingType>
 		<id>FinalStatic</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.FinalStaticCheck">
 		</artifact>
 		<shortMessage>
@@ -1590,7 +1590,7 @@
 	</findingType>
 	<findingType>
 		<id>LocalHomeInterface</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.LocalHomeInterfaceCheck">
 		</artifact>
 		<shortMessage>
@@ -1609,7 +1609,7 @@
 	</findingType>
 	<findingType>
 		<id>LocalInterface</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.LocalInterfaceCheck">
 		</artifact>
 		<shortMessage>
@@ -1620,7 +1620,7 @@
 	</findingType>
 	<findingType>
 		<id>MessageBean</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.MessageBeanCheck">
 		</artifact>
 		<shortMessage>
@@ -1635,7 +1635,7 @@
 	</findingType>
 	<findingType>
 		<id>RemoteHomeInterface</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteHomeInterfaceCheck">
 		</artifact>
 		<shortMessage>
@@ -1646,7 +1646,7 @@
 	</findingType>
 	<findingType>
 		<id>RemoteInterface</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteInterfaceCheck">
 		</artifact>
 		<shortMessage>
@@ -1657,7 +1657,7 @@
 	</findingType>
 	<findingType>
 		<id>SessionBean</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.SessionBeanCheck">
 		</artifact>
 		<shortMessage>
@@ -1672,7 +1672,7 @@
 	</findingType>
 	<findingType>
 		<id>ThisParameter</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.ThisParameterCheck">
 		</artifact>
 		<shortMessage>
@@ -1687,7 +1687,7 @@
 	</findingType>
 	<findingType>
 		<id>ThisReturn</id>
-		<artifact tool="checkstyle"
+		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.j2ee.ThisReturnCheck">
 		</artifact>
 		<shortMessage>
