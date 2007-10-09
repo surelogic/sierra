@@ -52,14 +52,14 @@ public class FindingTypeFilterRecord extends
 		hasImportance = !set.wasNull();
 		if (hasImportance) {
 			this.importance = Importance.values()[importance];
-		}
-		String filtered = set.getString(idx++);
-		hasFiltered = !set.wasNull();
-		if (hasFiltered) {
-			this.filtered = "Y".equals(filtered);
-		}
-		if (!(hasImportance || hasFiltered)) {
-			this.delta = delta;
+		} else {
+			String filtered = set.getString(idx++);
+			hasFiltered = !set.wasNull();
+			if (hasFiltered) {
+				this.filtered = "Y".equals(filtered);
+			} else {
+				this.delta = delta;
+			}
 		}
 		return idx;
 	}

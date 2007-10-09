@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.settings;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -71,12 +72,14 @@ abstract class SettingsManager {
 				FindingTypeFilterRecord rec = newFilterRecord();
 				rec.setId(new FindingTypeFilterRecord.PK(entityId, ftRec
 						.getId()));
-				if (rec.select()) {
-					rec.delete();
-				}
 				if ((filter.getImportance() != null)
 						|| (filter.isFiltered() != null)
 						|| ((filter.getDelta() != null) && (filter.getDelta() != 0))) {
+					PreparedStatement st = (filter.isFiltered() != null) ? getDeleteFilteredFilterByFindingType()
+							: getDeleteImportanceDeltaFiltersByFindingType();
+					st.setLong(1, entityId);
+					st.setLong(2, ftRec.getId());
+					st.execute();
 					rec.setImportance(filter.getImportance());
 					rec.setFiltered(filter.isFiltered());
 					rec.setDelta(filter.getDelta());
@@ -88,6 +91,10 @@ abstract class SettingsManager {
 			}
 		}
 	}
+
+	protected abstract PreparedStatement getDeleteImportanceDeltaFiltersByFindingType();
+
+	protected abstract PreparedStatement getDeleteFilteredFilterByFindingType();
 
 	protected abstract FindingTypeFilterRecord newFilterRecord();
 

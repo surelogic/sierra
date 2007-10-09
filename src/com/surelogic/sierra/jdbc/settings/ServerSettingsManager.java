@@ -22,6 +22,8 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
+	private final PreparedStatement deleteFilteredFiltersByFindingType;
+	private final PreparedStatement deleteImportanceDeltaFiltersByFindingType;
 	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement listSettingCategories;
@@ -45,6 +47,12 @@ public class ServerSettingsManager extends SettingsManager {
 				"SELECT DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
 				"DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?",
 				false);
+		this.deleteFilteredFiltersByFindingType = conn
+				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
+						+ "   AND FILTERED IS NOT NULL");
+		this.deleteImportanceDeltaFiltersByFindingType = conn
+				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
+						+ "   AND (IMPORTANCE IS NOT NULL OR DELTA IS NOT NULL)");
 		getFiltersBySettingId = conn
 				.prepareStatement("SELECT FT.UUID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
@@ -348,6 +356,17 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 
 		spManager.deleteProjectRelation(rec, projectName);
+	}
+
+	@Override
+	protected PreparedStatement getDeleteFilteredFilterByFindingType() {
+		return deleteFilteredFiltersByFindingType;
+
+	}
+
+	@Override
+	protected PreparedStatement getDeleteImportanceDeltaFiltersByFindingType() {
+		return deleteImportanceDeltaFiltersByFindingType;
 	}
 
 	@Override
