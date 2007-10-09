@@ -155,20 +155,20 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		if (f_workingSelection == null)
 			throw new IllegalStateException(
 					"null working selection upon cascading list menu selection (bug)");
+		/*
+		 * Filters start being applied in column 1 of the cascading list.
+		 * Thus, we need to subtract one from the cascading list column to
+		 * get the column to use to "empty after" the list of filters
+		 * applied to the selection.
+		 */
+		final int column = f_finder.getColumnIndexOf(menu.getPanel());
+		final int selectionIndex = (column / 2) - 1;
+		f_workingSelection.emptyAfter(selectionIndex);
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			menu.setEnabled(false);
-			final int column = f_finder.getColumnIndexOf(menu.getPanel());
-			/*
-			 * Filters start being applied in column 1 of the cascading list.
-			 * Thus, we need to subtract one from the cascading list column to
-			 * get the column to use to "empty after" the list of filters
-			 * applied to the selection.
-			 */
-			final int selectionIndex = (column / 2) - 1;
 			System.out.println("selected: emptyAfter=" + selectionIndex);
 			System.out.println("selected: addColumnAfter=" + column);
-			f_workingSelection.emptyAfter(selectionIndex);
 			f_finder.addColumnAfter(new CascadingList.IColumn() {
 				public void createContents(Composite panel) {
 					final Display display = panel.getShell().getDisplay();
@@ -193,7 +193,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					try {
 						System.out.println(query);
 						final ResultSet rs = st.executeQuery(query);
-						f_finder.addColumn(new IColumn() {
+						f_finder.addColumnAfter(new IColumn() {
 							public void createContents(Composite panel) {
 								try {
 									QueryUtility.construct(panel, QueryUtility
@@ -204,7 +204,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 									e.printStackTrace();
 								}
 							}
-						}, false);
+						}, column, false);
 
 					} finally {
 						st.close();

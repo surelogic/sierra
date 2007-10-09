@@ -203,8 +203,11 @@ public final class Selection extends AbstractDatabaseObserver {
 				System.out.println("getQuery() porousCount = " + porousCount);
 				StringBuilder b = new StringBuilder();
 				b.append("select ");
-				b
-						.append("Summary, PROJECT \"Project__PROJECT\", PACKAGE \"Package__PACKAGE\", CLASS \"Class__CLASS\", LINE_OF_CODE \"Line\" ");
+				b.append(" Summary ");
+				// b
+				// .append("Summary, PROJECT \"Project__PROJECT\", PACKAGE
+				// \"Package__PACKAGE\", CLASS \"Class__CLASS\", LINE_OF_CODE
+				// \"Line\" ");
 				b.append("from FINDINGS_OVERVIEW ");
 				synchronized (last) {
 					last.addWhereClauseTo(b, true);
