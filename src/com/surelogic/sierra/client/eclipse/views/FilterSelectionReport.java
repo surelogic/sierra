@@ -166,7 +166,11 @@ public final class FilterSelectionReport implements IFilterObserver,
 			f_porousCount.dispose();
 		if (!f_lines.isEmpty()) {
 			f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
-			f_porousCount.setText(StringUtility.toCommaSepString(porousCount));
+			final String porousCountString = StringUtility
+					.toCommaSepString(porousCount);
+			f_porousCount.setText(porousCountString);
+			f_totalCount.setToolTipText(porousCountString
+					+ " findings selected");
 		}
 		f_panel.pack();
 		f_reportGroup.layout();
