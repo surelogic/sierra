@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -80,6 +81,26 @@ public class JDBCUtils {
 			st.setNull(idx, Types.TIMESTAMP);
 		} else {
 			st.setTimestamp(idx, new Timestamp(dateValue.getTime()));
+		}
+	}
+
+	public static Long getNullableLong(int idx, ResultSet set)
+			throws SQLException {
+		long l = set.getLong(idx);
+		if (set.wasNull()) {
+			return null;
+		} else {
+			return l;
+		}
+	}
+
+	public static Integer getNullableInteger(int idx, ResultSet set)
+			throws SQLException {
+		int i = set.getInt(idx);
+		if (set.wasNull()) {
+			return null;
+		} else {
+			return i;
 		}
 	}
 

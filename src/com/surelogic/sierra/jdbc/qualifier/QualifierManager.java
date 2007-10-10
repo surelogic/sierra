@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 
@@ -27,9 +27,9 @@ public class QualifierManager {
 		findAllQualifierNames = conn.prepareStatement(FIND_ALL);
 	}
 
-	public Collection<String> getAllQualifierNames() throws SQLException {
+	public List<String> getAllQualifierNames() throws SQLException {
 		ResultSet rs = findAllQualifierNames.executeQuery();
-		Collection<String> qualifierNames = new ArrayList<String>();
+		List<String> qualifierNames = new ArrayList<String>();
 		try {
 			while (rs.next()) {
 				qualifierNames.add(rs.getString(1));

@@ -1,8 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableInt;
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
-
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +14,8 @@ public final class FindingRecord extends LongRecord {
 	private Importance importance;
 	private String summary;
 	private boolean read;
+	private Long obsoletedById;
+	private Long obsoletedByRevision;
 
 	public FindingRecord(RecordMapper mapper) {
 		super(mapper);
@@ -28,6 +28,8 @@ public final class FindingRecord extends LongRecord {
 		setNullableInt(idx++, st, importance == null ? null : importance
 				.ordinal());
 		setNullableString(idx++, st, summary);
+		setNullableLong(idx++, st, obsoletedById);
+		setNullableLong(idx++, st, obsoletedByRevision);
 		return idx;
 	}
 
@@ -38,11 +40,16 @@ public final class FindingRecord extends LongRecord {
 	}
 
 	@Override
-	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+	public int readAttributes(ResultSet set, int idx) throws SQLException {
 		this.projectId = set.getLong(idx++);
-		this.importance = Importance.values()[set.getInt(idx++)];
+		Integer impInt = getNullableInteger(idx++, set);
+		if (impInt != null) {
+			this.importance = Importance.values()[impInt];
+		}
 		this.summary = set.getString(idx++);
 		this.read = "Y".equals(set.getString(idx++));
+		this.obsoletedById = getNullableLong(idx++, set);
+		this.obsoletedByRevision = getNullableLong(idx++, set);
 		return idx;
 	}
 
@@ -80,6 +87,22 @@ public final class FindingRecord extends LongRecord {
 
 	public boolean isRead() {
 		return read;
+	}
+
+	public Long getObsoletedById() {
+		return obsoletedById;
+	}
+
+	public void setObsoletedByUid(Long obsoletedById) {
+		this.obsoletedById = obsoletedById;
+	}
+
+	public Long getObsoletedByRevision() {
+		return obsoletedByRevision;
+	}
+
+	public void setObsoletedByRevision(Long obsoletedByRevision) {
+		this.obsoletedByRevision = obsoletedByRevision;
 	}
 
 }

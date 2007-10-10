@@ -1,14 +1,20 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableInteger;
+import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableLong;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -22,25 +28,36 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateSingleTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
-
+	private final PreparedStatement selectFindingById;
 	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
 
 	private ClientFindingManager(Connection conn) throws SQLException {
 		super(conn);
+		Statement st = conn.createStatement();
+		String tempTableName;
 		try {
-			conn
-					.createStatement()
-					.execute(
-							"DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
-		} catch (SQLException e) {
-			// Do nothing, the table is probably already there.
-		}
-		deleteFindingFromOverview = conn
-				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
-		deleteOverview = conn
-				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
+			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+				try {
+					st
+							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
+				} catch (SQLException e) {
+					// Do nothing, the table is probably already there.
+				}
+				tempTableName = "TEMP_FINDING_IDS";
+			} else {
 
+				try {
+					st
+							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+				} catch (SQLException e) {
+					// Do nothing, the table is probably already there.
+				}
+				tempTableName = "SESSION.TEMP_FINDING_IDS";
+			}
+		} finally {
+			st.close();
+		}
 		populateFindingOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
 						+ " SELECT F.ID,F.PROJECT_ID,"
@@ -68,7 +85,9 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY"
 						+ " FROM"
-						+ "    SESSION.TEMP_FINDING_IDS TF"
+						+ "    "
+						+ tempTableName
+						+ " TF"
 						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
 						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
 						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
@@ -81,12 +100,12 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
-		deleteTempIds = conn
-				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
-		populateSingleTempId = conn
-				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS (ID) VALUES (?)");
+		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
+		populateSingleTempId = conn.prepareStatement("INSERT INTO "
+				+ tempTableName + " (ID) VALUES (?)");
 		populateTempIds = conn
-				.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS"
+				.prepareStatement("INSERT INTO "
+						+ tempTableName
 						+ "   SELECT AFR.FINDING_ID FROM SCAN S, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
 						+ "   WHERE"
 						+ "      S.ID IN (SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?)"
@@ -98,8 +117,15 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      S.ID IN (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?)"
 						+ "      AND A.SCAN_ID = S.ID"
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
+
 		selectFindingProject = conn
 				.prepareStatement("SELECT P.NAME FROM FINDING F, PROJECT P WHERE F.ID = ? AND P.ID = F.PROJECT_ID");
+		deleteFindingFromOverview = conn
+				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
+		deleteOverview = conn
+				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
+		selectFindingById = conn
+				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
 	}
 
 	/**
@@ -277,6 +303,19 @@ public final class ClientFindingManager extends FindingManager {
 
 	private FindingRecord getFinding(Long findingId) throws SQLException {
 		FindingRecord record = factory.newFinding();
+		selectFindingById.setLong(1, findingId);
+		ResultSet set = selectFindingById.executeQuery();
+		try {
+			if (set.next()) {
+				int idx = 1;
+				record.setUid(set.getString(idx++));
+				record.readAttributes(set, idx++);
+			} else {
+				return null;
+			}
+		} finally {
+			set.close();
+		}
 		record.setId(findingId);
 		if (record.select()) {
 			return record;

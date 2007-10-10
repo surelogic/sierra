@@ -3,6 +3,7 @@ package com.surelogic.sierra.jdbc.finding;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,10 +12,14 @@ import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
+import com.surelogic.sierra.jdbc.record.AuditRecord;
+import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
+import com.surelogic.sierra.tool.message.Audit;
+import com.surelogic.sierra.tool.message.AuditTrail;
 
 public final class ServerFindingManager extends FindingManager {
 
@@ -44,29 +49,40 @@ public final class ServerFindingManager extends FindingManager {
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
+		Statement st = conn.createStatement();
+		String tempTableName;
 		try {
-			conn
-					.createStatement()
-					.execute(
-							"DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
-		} catch (SQLException e) {
-			// Do nothing, the table is probably already there.
+			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+				try {
+					st
+							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
+				} catch (SQLException e) {
+					// Do nothing, the table is probably already there.
+				}
+				tempTableName = "TEMP_FINDING_IDS";
+				populateTempIds = conn
+						.prepareStatement("INSERT INTO TEMP_FINDING_IDS"
+								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
+								+ "  MINUS "
+								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+			} else {
+				try {
+					st
+							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+				} catch (SQLException e) {
+					// Do nothing, the table is probably already there.
+				}
+				tempTableName = "SESSION.TEMP_FINDING_IDS";
+				populateTempIds = conn
+						.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
+								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
+								+ "  EXCEPT"
+								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+			}
+		} finally {
+			st.close();
 		}
-		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
-			populateTempIds = conn
-			.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
-					+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
-					+ "  MINUS "
-					+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
-		} else {
-			populateTempIds = conn
-					.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
-							+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
-							+ "  EXCEPT"
-							+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
-		}
-		deleteTempIds = conn
-				.prepareStatement("DELETE FROM SESSION.TEMP_FINDING_IDS");
+		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
 		populateSeriesOverview = conn
 				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW"
 						+ " SELECT ?, F.ID,F.PROJECT_ID,"
@@ -85,15 +101,16 @@ public final class ServerFindingManager extends FindingManager {
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.NAME,"
 						+ "        F.SUMMARY"
-						+ " FROM"
-						+ "    SESSION.TEMP_FINDING_IDS TF"
+						+ " FROM "
+						+ tempTableName
+						+ " TF"
 						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
 						+ "       FROM SIERRA_AUDIT A"
 						+ "       WHERE A.EVENT='COMMENT'"
-						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
+						+ "       GROUP BY A.FINDING_ID) COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 
@@ -151,6 +168,46 @@ public final class ServerFindingManager extends FindingManager {
 			throw new IllegalArgumentException("No project exists with name"
 					+ projectName);
 		}
+	}
+
+	/**
+	 * Commit the given audit trails.
+	 * 
+	 * @param userId
+	 * @param revision
+	 * @param trails
+	 * @return the in-order list of uids that the audits were applied to.
+	 * @throws SQLException
+	 */
+	public List<String> commitAuditTrails(Long userId, Long revision,
+			List<AuditTrail> trails) throws SQLException {
+		List<String> uids = new ArrayList<String>(trails.size());
+		for (AuditTrail trail : trails) {
+			FindingRecord findingRecord = factory.newFinding();
+			String finding = trail.getFinding();
+			findingRecord.setUid(finding);
+			if (findingRecord.select()) {
+				Long findingId = findingRecord.getId();
+				Long obsoletedById = findingRecord.getObsoletedById();
+				while ((obsoletedById = findingRecord.getObsoletedById()) != null) {
+					findingRecord.setId(obsoletedById);
+					findingRecord.select();
+					findingId = findingRecord.getId();
+				}
+				for (Audit audit : trail.getAudits()) {
+					AuditRecord auditRecord = factory.newAudit();
+					auditRecord.setEvent(audit.getEvent());
+					auditRecord.setFindingId(findingId);
+					auditRecord.setRevision(revision);
+					auditRecord.setTimestamp(audit.getTimestamp());
+					auditRecord.setUserId(userId);
+					auditRecord.setValue(audit.getValue());
+					auditRecord.insert();
+				}
+				uids.add(findingRecord.getUid());
+			}
+		}
+		return uids;
 	}
 
 	public static ServerFindingManager getInstance(Connection conn)
