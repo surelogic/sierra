@@ -20,6 +20,7 @@ import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditTrail;
+import com.surelogic.sierra.tool.message.Merge;
 
 public final class ServerFindingManager extends FindingManager {
 
@@ -208,6 +209,17 @@ public final class ServerFindingManager extends FindingManager {
 			}
 		}
 		return uids;
+	}
+
+	public void mergeAuditTrails(String project, Long revision, List<Merge> merges)
+			throws SQLException {
+		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		projectRecord.setName(project);
+		if (!projectRecord.select()) {
+			projectRecord.insert();
+		}
+		
 	}
 
 	public static ServerFindingManager getInstance(Connection conn)

@@ -122,7 +122,7 @@ public final class ClientFindingManager extends FindingManager {
 		deleteOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		selectFindingById = conn
-				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
+				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,OBSOLETED_BY_ID,IS_READ,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
 	}
 
 	/**
