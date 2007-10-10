@@ -16,6 +16,7 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -28,6 +29,7 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement selectFindingById;
 	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
+	private final PreparedStatement selectLatestScanByProject;
 
 	private ClientFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -123,6 +125,8 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		selectFindingById = conn
 				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
+		selectLatestScanByProject = conn
+				.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?");
 	}
 
 	/**
@@ -196,8 +200,17 @@ public final class ClientFindingManager extends FindingManager {
 				populateSingleTempId.execute();
 			}
 		}
-		populateFindingOverview.setString(1, projectName);
-		populateFindingOverview.execute();
+		selectLatestScanByProject.setString(1, projectName);
+		ResultSet set = selectLatestScanByProject.executeQuery();
+		try {
+			if (set.next()) {
+				populateFindingOverview.setString(1, projectName);
+				populateFindingOverview.setLong(2, set.getLong(1));
+				populateFindingOverview.execute();
+			}
+		} finally {
+			set.close();
+		}
 	}
 
 	/**
