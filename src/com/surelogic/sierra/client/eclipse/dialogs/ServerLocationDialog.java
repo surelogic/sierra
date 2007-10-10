@@ -75,7 +75,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 		newShell.setText(f_title);
 	}
 

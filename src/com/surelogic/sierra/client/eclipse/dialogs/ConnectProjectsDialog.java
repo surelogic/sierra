@@ -93,6 +93,7 @@ public final class ConnectProjectsDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Connect Projects");
+		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 	}
 
 	@Override
