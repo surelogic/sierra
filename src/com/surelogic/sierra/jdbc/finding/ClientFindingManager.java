@@ -118,7 +118,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
 
 		selectFindingProject = conn
-				.prepareStatement("SELECT P.NAME FROM FINDING F, PROJECT P WHERE F.ID = ? AND P.ID = F.PROJECT_ID");
+				.prepareStatement("SELECT PROJECT FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteFindingFromOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
@@ -182,6 +182,7 @@ public final class ClientFindingManager extends FindingManager {
 			throws SQLException {
 		checkIsRead(findingId);
 		changeSummary(null, findingId, summary, new Date(), null);
+		regenerateFindingOverview(findingId);
 	}
 
 	/**
@@ -195,10 +196,9 @@ public final class ClientFindingManager extends FindingManager {
 			throws SQLException {
 		for (Long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
-			if (deleteFindingFromOverview.executeUpdate() == 1) {
-				populateSingleTempId.setLong(1, id);
-				populateSingleTempId.execute();
-			}
+			deleteFindingFromOverview.executeUpdate();
+			populateSingleTempId.setLong(1, id);
+			populateSingleTempId.execute();
 		}
 		selectLatestScanByProject.setString(1, projectName);
 		ResultSet set = selectLatestScanByProject.executeQuery();
@@ -207,6 +207,7 @@ public final class ClientFindingManager extends FindingManager {
 				populateFindingOverview.setString(1, projectName);
 				populateFindingOverview.setLong(2, set.getLong(1));
 				populateFindingOverview.execute();
+				deleteTempIds.execute();
 			}
 		} finally {
 			set.close();
@@ -276,7 +277,7 @@ public final class ClientFindingManager extends FindingManager {
 
 	/**
 	 * For use in the client, this method regenerates the overview for a single
-	 * finding.
+	 * finding, but only if the finding is already in the overview.
 	 * 
 	 * @param findingId
 	 * @throws SQLException
