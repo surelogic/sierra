@@ -154,7 +154,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 				}
 
 				f_currentFile = (IFile) resource;
-				if (f_currentFile.getFileExtension().equalsIgnoreCase("java")) {
+				if (!f_currentFile.getFileExtension().equalsIgnoreCase("java")) {
+					f_currentFile = null;
+				} else {
 
 					ICompilationUnit cu = JavaCore
 							.createCompilationUnitFrom(f_currentFile);
@@ -220,8 +222,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 										"Cannot get the package declarations from compilation unit.",
 										e);
 					}
-				} else {
-					f_currentFile = null;
 				}
 			}
 		}
