@@ -156,10 +156,10 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 			throw new IllegalStateException(
 					"null working selection upon cascading list menu selection (bug)");
 		/*
-		 * Filters start being applied in column 1 of the cascading list.
-		 * Thus, we need to subtract one from the cascading list column to
-		 * get the column to use to "empty after" the list of filters
-		 * applied to the selection.
+		 * Filters start being applied in column 1 of the cascading list. Thus,
+		 * we need to subtract one from the cascading list column to get the
+		 * column to use to "empty after" the list of filters applied to the
+		 * selection.
 		 */
 		final int column = f_finder.getColumnIndexOf(menu.getPanel());
 		final int selectionIndex = (column / 2) - 1;
@@ -310,6 +310,12 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_breadcrumbs.getParent().layout();
 	}
 
+	public void selectionChanged(Selection selecton) {
+		/*
+		 * Nothing to do.
+		 */
+	}
+
 	void emptyAfter(final int column) {
 		final int finderColumn = column * 2;
 		f_finder.emptyAfter(finderColumn);
@@ -321,4 +327,5 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		 */
 		f_workingSelection.emptyAfter(column - 1);
 	}
+
 }

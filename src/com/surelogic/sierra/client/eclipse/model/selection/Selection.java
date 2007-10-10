@@ -112,8 +112,10 @@ public final class Selection extends AbstractDatabaseObserver {
 				index++;
 			}
 		}
-		if (changed)
-			notifyObservers();
+		if (changed) {
+			notifyStructureChanged();
+			notifySelectionChanged();
+		}
 	}
 
 	/**
@@ -155,7 +157,8 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 		filter.addObserver(observer);
 		filter.refresh();
-		notifyObservers();
+		notifyStructureChanged();
+		notifySelectionChanged();
 		return filter;
 	}
 
@@ -249,9 +252,18 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * Do not call this method holding a lock on <code>this</code>. Deadlock
 	 * could occur as we are invoking an alien method.
 	 */
-	private void notifyObservers() {
+	private void notifyStructureChanged() {
 		for (ISelectionObserver o : f_observers)
 			o.selectionStructureChanged(this);
+	}
+
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
+	private void notifySelectionChanged() {
+		for (ISelectionObserver o : f_observers)
+			o.selectionChanged(this);
 	}
 
 	@Override
@@ -263,6 +275,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		f_executor.execute(new Runnable() {
 			public void run() {
 				refreshFilters();
+				notifySelectionChanged();
 			}
 		});
 	}
@@ -296,6 +309,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		f_executor.execute(new Runnable() {
 			public void run() {
 				refreshFiltersAfter(changedFilter);
+				notifySelectionChanged();
 			}
 		});
 	}
