@@ -27,15 +27,18 @@ public final class Data {
 
 		final String connectionURL = getConnectionURL() + ";create=true";
 		final Connection c = DriverManager.getConnection(connectionURL);
+		c.setAutoCommit(false);
 		try {
 			SierraSchemaUtility.checkAndUpdate(c, false);
+			c.commit();
 		} finally {
 			c.close();
 		}
 	}
 
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(getConnectionURL());
+		Connection conn = DriverManager.getConnection(getConnectionURL());
+		return conn;
 	}
 
 	private static String getConnectionURL() {

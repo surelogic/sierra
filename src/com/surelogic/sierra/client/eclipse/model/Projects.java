@@ -113,6 +113,7 @@ public final class Projects extends AbstractDatabaseObserver {
 		List<String> projectNames = new ArrayList<String>();
 		try {
 			final Connection c = Data.getConnection();
+			c.setReadOnly(true);
 			try {
 				final Statement st = c.createStatement();
 				try {
@@ -120,6 +121,13 @@ public final class Projects extends AbstractDatabaseObserver {
 					while (rs.next()) {
 						projectNames.add(rs.getString(1));
 					}
+				} catch (SQLException e) {
+					SLLogger
+							.getLogger()
+							.log(
+									Level.SEVERE,
+									"Unable to read the list of projects in the database",
+									e);
 				} finally {
 					st.close();
 				}
