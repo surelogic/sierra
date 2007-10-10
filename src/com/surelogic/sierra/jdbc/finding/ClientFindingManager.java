@@ -1,8 +1,5 @@
 package com.surelogic.sierra.jdbc.finding;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableInteger;
-import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableLong;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -309,7 +306,7 @@ public final class ClientFindingManager extends FindingManager {
 			if (set.next()) {
 				int idx = 1;
 				record.setUid(set.getString(idx++));
-				record.readAttributes(set, idx++);
+				record.readAttributes(set, idx);
 			} else {
 				return null;
 			}
