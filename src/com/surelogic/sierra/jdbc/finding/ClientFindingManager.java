@@ -16,7 +16,6 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
-import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Importance;
 
