@@ -14,12 +14,14 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
+import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditTrail;
+import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
 
 public final class ServerFindingManager extends FindingManager {
@@ -211,15 +213,35 @@ public final class ServerFindingManager extends FindingManager {
 		return uids;
 	}
 
-	public void mergeAuditTrails(String project, Long revision, List<Merge> merges)
-			throws SQLException {
+	/**
+	 * Find or generate a finding for each merge, and return the trails.
+	 * 
+	 * @param project
+	 * @param revision
+	 * @param merges
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<String> mergeAuditTrails(String project, Long revision,
+			List<Merge> merges) throws SQLException {
 		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		projectRecord.setName(project);
 		if (!projectRecord.select()) {
 			projectRecord.insert();
 		}
-		
+		List<String> trails = new ArrayList<String>();
+		for (Merge merge : merges) {
+			List<Match> matches = merge.getMatch();
+			if (matches != null && !matches.isEmpty()) {
+				for (Match m : matches) {
+					MatchRecord matchRecord = factory.newMatch();
+					MatchRecord.PK pk = new MatchRecord.PK();
+					
+				}
+			}
+		}
+		return trails;
 	}
 
 	public static ServerFindingManager getInstance(Connection conn)
