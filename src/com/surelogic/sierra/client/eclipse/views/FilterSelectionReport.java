@@ -21,7 +21,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 
 public final class FilterSelectionReport implements IFilterObserver,
-		FilterSelectionReportLine.ISelectionObserver {
+		FilterSelectionReportLine.ISelectionChangedObserver {
 
 	private final CascadingList f_finder;
 	private final int f_column;

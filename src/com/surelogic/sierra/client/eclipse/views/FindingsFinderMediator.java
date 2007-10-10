@@ -1,9 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -18,15 +14,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.adhoc.views.QueryUtility;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.RadioArrowMenu;
-import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.AbstractFilterObserver;
@@ -184,38 +177,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 					menu));
 		} else if (choice.equals("Show")) {
 			System.out.println("show");
-			final String query = f_workingSelection.getQuery();
-
-			try {
-				final Connection c = Data.getConnection();
-				try {
-					final Statement st = c.createStatement();
-					try {
-						System.out.println(query);
-						final ResultSet rs = st.executeQuery(query);
-						f_finder.addColumnAfter(new IColumn() {
-							public void createContents(Composite panel) {
-								try {
-									QueryUtility.construct(panel, QueryUtility
-											.getColumnLabels(rs), QueryUtility
-											.getRows(rs, 1000));
-								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-						}, column, false);
-
-					} finally {
-						st.close();
-					}
-				} finally {
-					c.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// TODO
 		}
 	}
 

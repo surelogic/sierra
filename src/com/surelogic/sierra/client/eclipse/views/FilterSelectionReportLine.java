@@ -148,7 +148,7 @@ public final class FilterSelectionReportLine {
 		});
 	}
 
-	public interface ISelectionObserver {
+	public interface ISelectionChangedObserver {
 		/**
 		 * The selection of the filter selection report line changed. It was
 		 * either checked or unchecked in the user interface.
@@ -162,18 +162,18 @@ public final class FilterSelectionReportLine {
 		void selectionChanged(FilterSelectionReportLine line);
 	}
 
-	protected final Set<ISelectionObserver> f_observers = new CopyOnWriteArraySet<ISelectionObserver>();
+	protected final Set<ISelectionChangedObserver> f_observers = new CopyOnWriteArraySet<ISelectionChangedObserver>();
 
-	public final void addObserver(ISelectionObserver o) {
+	public final void addObserver(ISelectionChangedObserver o) {
 		f_observers.add(o);
 	}
 
-	public final void removeObserver(ISelectionObserver o) {
+	public final void removeObserver(ISelectionChangedObserver o) {
 		f_observers.remove(o);
 	}
 
 	protected void notifySelectionChanged() {
-		for (ISelectionObserver o : f_observers) {
+		for (ISelectionChangedObserver o : f_observers) {
 			o.selectionChanged(this);
 		}
 	}
