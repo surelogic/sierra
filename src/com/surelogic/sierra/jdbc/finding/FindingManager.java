@@ -199,7 +199,7 @@ public class FindingManager {
 							findingId));
 					afr.insert();
 					if ((++counter % FETCH_SIZE) == 0) {
-						 conn.commit();
+						conn.commit();
 					}
 					if ((counter % CHECK_SIZE) == 0) {
 						if (monitor != null) {
@@ -472,6 +472,7 @@ public class FindingManager {
 		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
 				.insert();
 		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
+		touchFinding.setLong(2, findingId);
 		touchFinding.execute();
 	}
 
