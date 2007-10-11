@@ -78,6 +78,7 @@ public class FindingDetailsMediator {
 		f_scrollingLabelComposite = scrollingLabelComposite;
 		f_artifactsTab = artifactsTab;
 		f_artifactsTree = artifactsTree;
+
 	}
 
 	public void refreshDetailsPage(long findingID) {
@@ -134,9 +135,7 @@ public class FindingDetailsMediator {
 		f_importanceButtons[0].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Critical");
 				final boolean selection = f_importanceButtons[0].getSelection();
-
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
 							Importance.CRITICAL, f_findingId));
@@ -147,9 +146,7 @@ public class FindingDetailsMediator {
 		f_importanceButtons[1].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("High");
 				final boolean selection = f_importanceButtons[1].getSelection();
-
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
 							Importance.HIGH, f_findingId));
@@ -160,9 +157,7 @@ public class FindingDetailsMediator {
 		f_importanceButtons[2].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Medium");
 				final boolean selection = f_importanceButtons[2].getSelection();
-
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
 							Importance.MEDIUM, f_findingId));
@@ -173,9 +168,7 @@ public class FindingDetailsMediator {
 		f_importanceButtons[3].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Low");
 				final boolean selection = f_importanceButtons[3].getSelection();
-
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
 							Importance.LOW, f_findingId));
@@ -186,9 +179,7 @@ public class FindingDetailsMediator {
 		f_importanceButtons[4].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("irrelevant");
 				final boolean selection = f_importanceButtons[4].getSelection();
-
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
 							Importance.IRRELEVANT, f_findingId));
@@ -202,10 +193,8 @@ public class FindingDetailsMediator {
 				final String commentText = f_commentText.getText();
 
 				f_executor.execute(new Runnable() {
-
 					public void run() {
 						try {
-
 							Connection conn = Data.getConnection();
 							conn.setAutoCommit(false);
 							ClientFindingManager manager = ClientFindingManager
@@ -215,15 +204,12 @@ public class FindingDetailsMediator {
 							manager.comment(f_findingId, commentText);
 							conn.commit();
 							conn.close();
-							System.out.println("Comment added");
 
 							PlatformUI.getWorkbench().getDisplay().asyncExec(
 									new Runnable() {
 										public void run() {
-											// Is this the best way?
 											refreshDetailsPage(f_findingId);
 										}
-
 									});
 						} catch (SQLException se) {
 							SLLogger
@@ -242,7 +228,6 @@ public class FindingDetailsMediator {
 		});
 
 		f_quickAudit.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("Quick Audited");
@@ -252,7 +237,6 @@ public class FindingDetailsMediator {
 		});
 
 		f_summaryChangeButton.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SummaryChangeDialog scd = new SummaryChangeDialog(Display
@@ -260,7 +244,6 @@ public class FindingDetailsMediator {
 				if (Window.OK == scd.open()) {
 					final String summary = scd.getText();
 					f_summaryText.setText(summary.trim());
-
 					f_executor.execute(new Runnable() {
 
 						public void run() {
@@ -276,7 +259,6 @@ public class FindingDetailsMediator {
 								PlatformUI.getWorkbench().getDisplay()
 										.asyncExec(new Runnable() {
 											public void run() {
-												// Is this the best way?
 												refreshDetailsPage(f_findingId);
 											}
 
@@ -335,15 +317,17 @@ public class FindingDetailsMediator {
 				manager.setImportance(findingIdInternal, f_importance);
 				conn.commit();
 				conn.close();
-				// TODO: Add check for empty comment
-				PlatformUI.getWorkbench().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								// Is this the best way?
-								refreshDetailsPage(findingIdInternal);
-							}
 
-						});
+				// Do not refresh the view as it's messing with scrolled
+				// composite
+
+				// PlatformUI.getWorkbench().getDisplay().asyncExec(
+				// new Runnable() {
+				// public void run() {
+				// refreshDetailsPage(findingIdInternal);
+				// }
+				//
+				// });
 			} catch (SQLException se) {
 				SLLogger.getLogger("sierra").log(Level.SEVERE,
 						"SQL exception when trying to set critical importance",
@@ -372,24 +356,46 @@ public class FindingDetailsMediator {
 			String details = f_details.getFindingTypeDetail();
 			details = details.replaceAll("\\t", "");
 			details = details.replaceAll("\\n", "");
-
 			f_detailsText.setText(details);
 
-			// if there are audits
 			f_auditTab.setText("Audit");
-			// else
-			// f_auditTab.setText("No audits");
+
+			final Importance importance = f_details.getImportance();
+
+			// Clear importance buttons
+			for (Button b : f_importanceButtons) {
+				b.setSelection(false);
+			}
+
+			// Set importance
+			if (importance.equals(Importance.CRITICAL)) {
+				f_importanceButtons[0].setSelection(true);
+			} else if (importance.equals(Importance.HIGH)) {
+				f_importanceButtons[1].setSelection(true);
+			} else if (importance.equals(Importance.MEDIUM)) {
+				f_importanceButtons[2].setSelection(true);
+			} else if (importance.equals(Importance.LOW)) {
+				f_importanceButtons[3].setSelection(true);
+			} else {
+				f_importanceButtons[4].setSelection(true);
+			}
 
 			List<CommentDetail> commentDetails = f_details.getComments();
 
+			// Add label
+
 			f_scrollingLabelComposite.removeAll();
+
 			if (commentDetails != null) {
-				for (CommentDetail cd : commentDetails) {
-					f_scrollingLabelComposite.addLabel(cd.getUser() + " ("
+				for (int i = commentDetails.size() - 1; i >= 0; i--) {
+					final CommentDetail cd = commentDetails.get(i);
+					final String holder = cd.getUser() + " ("
 							+ cd.getTime().toString() + ") : "
-							+ cd.getComment());
+							+ cd.getComment();
+					f_scrollingLabelComposite.addLabel(holder);
 				}
 			}
+			f_scrollingLabelComposite.reflow(true);
 
 			List<ArtifactDetail> artifacts = f_details.getArtifacts();
 

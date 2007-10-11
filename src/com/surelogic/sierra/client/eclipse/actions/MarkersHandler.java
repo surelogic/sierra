@@ -164,7 +164,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 						IPackageDeclaration[] packageDeclarations = cu
 								.getPackageDeclarations();
 
-						f_packageName = SierraConstants.DEFAULT_PACKAGE;
+						f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
 						if (packageDeclarations.length > 0) {
 							f_packageName = packageDeclarations[0]
 									.getElementName();
