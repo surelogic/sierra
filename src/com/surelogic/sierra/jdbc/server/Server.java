@@ -13,8 +13,6 @@ import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public class Server {
 
-	private static final String[] KEYS = new String[] { "ID" };
-
 	public static User getUser(String userName, Connection conn)
 			throws SQLException {
 		User user = new User();
@@ -28,7 +26,7 @@ public class Server {
 				if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 					st = conn.prepareStatement(
 							"INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)",
-							KEYS);
+							new String[] { "ID" });
 				} else {
 					st = conn
 							.prepareStatement("INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)");
@@ -49,7 +47,8 @@ public class Server {
 		PreparedStatement st;
 		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 			st = conn.prepareStatement(
-					"INSERT INTO REVISION (DATE_TIME) VALUES (?)", KEYS);
+					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+					new String[] { "REVISION" });
 		} else {
 			st = conn.prepareStatement(
 					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",

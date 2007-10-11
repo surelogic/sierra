@@ -25,7 +25,6 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateSingleTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
-	private final PreparedStatement selectFindingById;
 	private final PreparedStatement populateFindingOverview;
 	private final PreparedStatement selectFindingProject;
 	private final PreparedStatement selectLatestScanByProject;
@@ -122,8 +121,6 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
-		selectFindingById = conn
-				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
 		selectLatestScanByProject = conn
 				.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?");
 	}
@@ -308,24 +305,6 @@ public final class ClientFindingManager extends FindingManager {
 					+ " is not a valid finding id.");
 		if (!f.isRead()) {
 			markAsRead(null, findingId, new Date(), null);
-		}
-	}
-
-	private FindingRecord getFinding(Long findingId) throws SQLException {
-		FindingRecord record = factory.newFinding();
-		selectFindingById.setLong(1, findingId);
-		ResultSet set = selectFindingById.executeQuery();
-		try {
-			if (set.next()) {
-				int idx = 1;
-				record.setUid(set.getString(idx++));
-				record.readAttributes(set, idx);
-				return record;
-			} else {
-				return null;
-			}
-		} finally {
-			set.close();
 		}
 	}
 

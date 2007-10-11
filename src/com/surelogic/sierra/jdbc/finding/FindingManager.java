@@ -51,6 +51,7 @@ public class FindingManager {
 	protected final FindingTypeManager ftManager;
 	protected final FindingRecordFactory factory;
 
+	private final PreparedStatement selectFindingById;
 	private final PreparedStatement touchFinding;
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
@@ -133,6 +134,8 @@ public class FindingManager {
 						+ " WHERE"
 						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ATFTR.ARTIFACT_TYPE_ID = A.ARTIFACT_TYPE_ID");
 		scanArtifacts.setFetchSize(FETCH_SIZE);
+		selectFindingById = conn
+				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
 	}
 
 	/**
@@ -526,6 +529,31 @@ public class FindingManager {
 	}
 
 	/**
+	 * Get a finding by it's id.
+	 * 
+	 * @param findingId
+	 * @return
+	 * @throws SQLException
+	 */
+	protected FindingRecord getFinding(Long findingId) throws SQLException {
+		FindingRecord record = factory.newFinding();
+		selectFindingById.setLong(1, findingId);
+		ResultSet set = selectFindingById.executeQuery();
+		try {
+			if (set.next()) {
+				int idx = 1;
+				record.setUid(set.getString(idx++));
+				record.readAttributes(set, idx);
+				return record;
+			} else {
+				return null;
+			}
+		} finally {
+			set.close();
+		}
+	}
+
+	/**
 	 * Obsolete a finding with another finding. This involves merging all of the
 	 * matches and audits of the old finding into the new finding, and then
 	 * marking the old finding as obsolete.
@@ -535,7 +563,7 @@ public class FindingManager {
 	 * @param revision
 	 * @throws SQLException
 	 */
-	private void obsolete(Long obsolete, Long finding, Long revision)
+	protected void obsolete(Long obsolete, Long finding, Long revision)
 			throws SQLException {
 		obsoleteMatches.setLong(1, finding);
 		obsoleteMatches.setLong(2, obsolete);
@@ -556,8 +584,14 @@ public class FindingManager {
 	 * @param deleted
 	 * @param finding
 	 */
-	private void delete(Long deleted, Long finding) {
-		// TODO
+	protected void delete(Long deleted, Long finding) throws SQLException {
+		obsoleteMatches.setLong(1, finding);
+		obsoleteMatches.setLong(2, deleted);
+		obsoleteMatches.execute();
+		obsoleteAudits.setLong(1, finding);
+		obsoleteAudits.setLong(2, deleted);
+		obsoleteAudits.execute();
+		getFinding(deleted).delete();
 	}
 
 	private void sqlError(SQLException e) {

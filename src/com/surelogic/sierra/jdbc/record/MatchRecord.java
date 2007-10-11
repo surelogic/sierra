@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +13,8 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 
 	private Long findingId;
 
+	private Long revision;
+
 	public MatchRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
@@ -21,6 +23,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithPk(st, idx);
 		setNullableLong(idx++, st, findingId);
+		setNullableLong(idx++, st, revision);
 		return idx;
 	}
 
@@ -42,7 +45,8 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		this.findingId = set.getLong(idx++);
+		this.findingId = getNullableLong(idx++, set);
+		this.revision = getNullableLong(idx++, set);
 		return 0;
 	}
 
@@ -55,6 +59,7 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
 		setNullableLong(idx++, st, findingId);
+		setNullableLong(idx++, st, revision);
 		return idx;
 	}
 
@@ -74,6 +79,14 @@ public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
 		this.findingId = findingId;
 	}
 
+	public Long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Long revision) {
+		this.revision = revision;
+	}
+	
 	/**
 	 * Represents a match record's primary key.
 	 * 

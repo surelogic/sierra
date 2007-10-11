@@ -44,7 +44,7 @@ public class JDBCUtils {
 	public static void setNullableLong(int idx, PreparedStatement st,
 			Long longValue) throws SQLException {
 		if (longValue == null) {
-			st.setNull(idx, Types.VARCHAR);
+			st.setNull(idx, Types.BIGINT);
 		} else {
 			st.setLong(idx, longValue);
 		}
@@ -61,7 +61,7 @@ public class JDBCUtils {
 	public static void setNullableInt(int idx, PreparedStatement st,
 			Integer intValue) throws SQLException {
 		if (intValue == null) {
-			st.setNull(idx, Types.VARCHAR);
+			st.setNull(idx, Types.INTEGER);
 		} else {
 			st.setLong(idx, intValue);
 		}
