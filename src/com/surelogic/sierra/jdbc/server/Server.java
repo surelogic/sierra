@@ -29,7 +29,7 @@ public class Server {
 							new String[] { "ID" });
 				} else {
 					st = conn
-							.prepareStatement("INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)");
+							.prepareStatement("INSERT INTO SIERRA_USER (USER_NAME) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 				}
 				st.setString(1, userName);
 				st.executeUpdate();
