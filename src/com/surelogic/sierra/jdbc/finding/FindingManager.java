@@ -543,6 +543,7 @@ public class FindingManager {
 		try {
 			if (set.next()) {
 				int idx = 1;
+				record.setId(findingId);
 				record.setUid(set.getString(idx++));
 				record.readAttributes(set, idx);
 				return record;
