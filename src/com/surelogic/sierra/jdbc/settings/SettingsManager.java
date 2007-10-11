@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
-import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
-import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -18,12 +17,12 @@ abstract class SettingsManager {
 
 	protected final Connection conn;
 	protected final MessageWarehouse mw;
-	protected final FindingTypeRecordFactory ftFactory;
+	protected final FindingTypeManager ftMan;
 
 	protected SettingsManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		mw = MessageWarehouse.getInstance();
-		ftFactory = FindingTypeRecordFactory.getInstance(conn);
+		ftMan = FindingTypeManager.getInstance(conn);
 	}
 
 	protected Settings readSettings(ResultSet set) throws SQLException {
@@ -44,41 +43,31 @@ abstract class SettingsManager {
 		int idx = 1;
 		FindingTypeFilter filter = new FindingTypeFilter();
 		filter.setName(set.getString(idx++));
-		boolean hasImportance;
-		boolean hasFiltered;
 		int delta = set.getInt(idx++);
 		int importance = set.getInt(idx++);
-		hasImportance = !set.wasNull();
-		if (hasImportance) {
+		if (set.wasNull()) {
+			filter.setDelta(delta);
+		} else {
 			filter.setImportance(Importance.values()[importance]);
 		}
-		String filtered = set.getString(idx++);
-		hasFiltered = !set.wasNull();
-		if (hasFiltered) {
-			filter.setFiltered("Y".equals(filtered));
-		}
-		if (!(hasImportance || hasFiltered)) {
-			filter.setDelta(delta);
-		}
+		filter.setFiltered("Y".equals(set.getString(idx++)));
 		return filter;
 	}
 
 	protected void applyFilters(Long entityId, List<FindingTypeFilter> filters)
 			throws SQLException {
 		for (FindingTypeFilter filter : filters) {
-			FindingTypeRecord ftRec = ftFactory.newFindingTypeRecord();
-			ftRec.setUid(filter.getName());
-			if (ftRec.select()) {
+			Long findingTypeId = ftMan.getFindingTypeId(filter.getName());
+			if (findingTypeId != null) {
 				FindingTypeFilterRecord rec = newFilterRecord();
-				rec.setId(new FindingTypeFilterRecord.PK(entityId, ftRec
-						.getId()));
-				PreparedStatement st = (filter.isFiltered() != null) ? getDeleteFilteredFilterByFindingType()
-						: getDeleteImportanceDeltaFiltersByFindingType();
+				rec.setId(new FindingTypeFilterRecord.PK(entityId,
+						findingTypeId));
+				PreparedStatement st = getDeleteFilterByFindingType();
 				st.setLong(1, entityId);
-				st.setLong(2, ftRec.getId());
+				st.setLong(2, findingTypeId);
 				st.execute();
 				if ((filter.getImportance() != null)
-						|| ((filter.isFiltered() != null) && filter.isFiltered())
+						|| (filter.isFiltered())
 						|| ((filter.getDelta() != null) && (filter.getDelta() != 0))) {
 					rec.setImportance(filter.getImportance());
 					rec.setFiltered(filter.isFiltered());
@@ -92,9 +81,7 @@ abstract class SettingsManager {
 		}
 	}
 
-	protected abstract PreparedStatement getDeleteImportanceDeltaFiltersByFindingType();
-
-	protected abstract PreparedStatement getDeleteFilteredFilterByFindingType();
+	protected abstract PreparedStatement getDeleteFilterByFindingType();
 
 	protected abstract FindingTypeFilterRecord newFilterRecord();
 

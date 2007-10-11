@@ -244,8 +244,6 @@ public final class ServerFindingManager extends FindingManager {
 			List<Merge> merges) throws SQLException {
 		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
 				.newProject();
-		FindingTypeRecord ftRecord = FindingTypeRecordFactory.getInstance(conn)
-				.newFindingTypeRecord();
 		projectRecord.setName(project);
 		if (!projectRecord.select()) {
 			projectRecord.insert();
@@ -259,10 +257,10 @@ public final class ServerFindingManager extends FindingManager {
 				// Generate the list of match ids
 				for (Match m : matches) {
 					MatchRecord.PK matchId = new MatchRecord.PK();
-					ftRecord.setUid(m.getFindingType());
-					if (ftRecord.select()) {
+					Long findingTypeId = ftManager.getFindingTypeId(m.getFindingType());
+					if (findingTypeId != null) {
 						matchId.setClassName(m.getClassName());
-						matchId.setFindingTypeId(ftRecord.getId());
+						matchId.setFindingTypeId(findingTypeId);
 						matchId.setHash(m.getHash());
 						matchId.setPackageName(m.getPackageName());
 						matchId.setProjectId(projectRecord.getId());

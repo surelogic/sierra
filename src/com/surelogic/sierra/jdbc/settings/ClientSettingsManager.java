@@ -16,8 +16,7 @@ import com.surelogic.sierra.tool.message.Settings;
 public class ClientSettingsManager extends SettingsManager {
 
 	private final PreparedStatement deleteProjectSettings;
-	private final PreparedStatement deleteFilteredFiltersByFindingType;
-	private final PreparedStatement deleteImportanceDeltaFiltersByFindingType;
+	private final PreparedStatement deleteFilterByFindingType;
 	private final PreparedStatement updateSettingsRevision;
 	private final PreparedStatement getSettingsRevision;
 	private final PreparedStatement getFiltersByProjectId;
@@ -31,12 +30,8 @@ public class ClientSettingsManager extends SettingsManager {
 				.prepareStatement("UPDATE PROJECT SET SETTINGS_REVISION = ? WHERE ID = ?");
 		deleteProjectSettings = conn
 				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ?");
-		this.deleteFilteredFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ? AND FINDING_TYPE_ID = ?"
-						+ "   AND FILTERED IS NOT NULL");
-		this.deleteImportanceDeltaFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ? AND FINDING_TYPE_ID = ?"
-						+ "   AND (IMPORTANCE IS NOT NULL OR DELTA IS NOT NULL)");
+		this.deleteFilterByFindingType = conn
+				.prepareStatement("DELETE FROM PROJECT_FILTERS WHERE PROJECT_ID = ? AND FINDING_TYPE_ID = ?");
 		findingTypeFilterMapper = new BaseMapper(
 				conn,
 				"INSERT INTO PROJECT_FILTERS (PROJECT_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
@@ -132,12 +127,8 @@ public class ClientSettingsManager extends SettingsManager {
 	}
 
 	@Override
-	protected PreparedStatement getDeleteFilteredFilterByFindingType() {
-		return deleteFilteredFiltersByFindingType;
+	protected PreparedStatement getDeleteFilterByFindingType() {
+		return deleteFilterByFindingType;
 	}
 
-	@Override
-	protected PreparedStatement getDeleteImportanceDeltaFiltersByFindingType() {
-		return deleteImportanceDeltaFiltersByFindingType;
-	}
 }

@@ -18,7 +18,7 @@ public class FindingTypeFilterRecord extends
 	private PK id;
 	private Integer delta;
 	private Importance importance;
-	private Boolean filtered;
+	private boolean filtered;
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
@@ -26,7 +26,7 @@ public class FindingTypeFilterRecord extends
 		setNullableInt(idx++, st, delta);
 		Integer imp = importance == null ? null : importance.ordinal();
 		setNullableInt(idx++, st, imp);
-		String fil = filtered == null ? null : (filtered ? "Y" : null);
+		String fil = filtered ? "Y" : null;
 		setNullableString(idx++, st, fil);
 		return idx;
 	}

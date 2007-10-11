@@ -22,8 +22,7 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
-	private final PreparedStatement deleteFilteredFiltersByFindingType;
-	private final PreparedStatement deleteImportanceDeltaFiltersByFindingType;
+	private final PreparedStatement deleteFilterByFindingType;
 	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
 	private final PreparedStatement listSettingCategories;
@@ -45,12 +44,8 @@ public class ServerSettingsManager extends SettingsManager {
 				conn,
 				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
 				null, null, false);
-		this.deleteFilteredFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
-						+ "   AND FILTERED IS NOT NULL");
-		this.deleteImportanceDeltaFiltersByFindingType = conn
-				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?"
-						+ "   AND (IMPORTANCE IS NOT NULL OR DELTA IS NOT NULL)");
+		this.deleteFilterByFindingType = conn
+				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ? AND FINDING_TYPE_ID = ?");
 		getFiltersBySettingId = conn
 				.prepareStatement("SELECT FT.UUID,F.DELTA,F.IMPORTANCE,F.FILTERED FROM SETTING_FILTERS F, FINDING_TYPE FT WHERE F.SETTINGS_ID = ? AND FT.ID = F.FINDING_TYPE_ID");
 		getFiltersBySettingIdAndCategory = conn
@@ -187,15 +182,14 @@ public class ServerSettingsManager extends SettingsManager {
 	 */
 	public List<FindingTypeFilter> listCategoryFilters(String category,
 			String settings) throws SQLException {
-		CategoryRecord cRec = ftFactory.newCategoryRecord();
-		cRec.setUid(category);
-		if (cRec.select()) {
+		Long categoryId = ftMan.getCategoryId(category);
+		if (categoryId != null) {
 			SettingsRecord sRec = newSettingsRecord();
 			sRec.setName(settings);
 			if (sRec.select()) {
 				List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>();
 				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
-				getFiltersBySettingIdAndCategory.setLong(2, cRec.getId());
+				getFiltersBySettingIdAndCategory.setLong(2, categoryId);
 				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
 				try {
 					while (set.next()) {
@@ -357,14 +351,8 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	@Override
-	protected PreparedStatement getDeleteFilteredFilterByFindingType() {
-		return deleteFilteredFiltersByFindingType;
-
-	}
-
-	@Override
-	protected PreparedStatement getDeleteImportanceDeltaFiltersByFindingType() {
-		return deleteImportanceDeltaFiltersByFindingType;
+	protected PreparedStatement getDeleteFilterByFindingType() {
+		return deleteFilterByFindingType;
 	}
 
 	@Override

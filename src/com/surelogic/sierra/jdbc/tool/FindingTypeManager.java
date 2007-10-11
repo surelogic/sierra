@@ -67,11 +67,47 @@ public class FindingTypeManager {
 		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
-	public Long getFindingTypeId(String name) throws SQLException {
+	public Long getFindingTypeId(String uid) throws SQLException {
 		FindingTypeRecord ft = factory.newFindingTypeRecord();
-		ft.setName(name);
+		ft.setUid(uid);
 		if (ft.select()) {
 			return ft.getId();
+		}
+		return null;
+	}
+	
+	//TODO Return the artifact types that match this finding type
+	public FindingType getFindingType(String uid) throws SQLException {
+		FindingTypeRecord ft = factory.newFindingTypeRecord();
+		ft.setUid(uid);
+		if (ft.select()) {
+			FindingType type = new FindingType();
+			type.setId(uid);
+			type.setInfo(ft.getInfo());
+			type.setName(ft.getName());
+			type.setShortMessage(ft.getShortMessage());
+			return type;
+		}
+		return null;
+	}
+
+	public Long getCategoryId(String uid) throws SQLException {
+		CategoryRecord ctRec = factory.newCategoryRecord();
+		ctRec.setUid(uid);
+		if (ctRec.select()) {
+			return ctRec.getId();
+		}
+		return null;
+	}
+
+	public Category getCategory(String uid) throws SQLException {
+		CategoryRecord ctRec = factory.newCategoryRecord();
+		ctRec.setUid(uid);
+		if (ctRec.select()) {
+			Category c = new Category();
+			c.setDescription(ctRec.getDescription());
+			c.setId(uid);
+			c.setName(ctRec.getName());
 		}
 		return null;
 	}
@@ -98,7 +134,7 @@ public class FindingTypeManager {
 		}
 	}
 
-	private Collection<Long> getArtifactTypes(String tool, String mnemonic)
+	private Collection<Long> getArtifactTypesIds(String tool, String mnemonic)
 			throws SQLException {
 		List<Long> ids = new LinkedList<Long>();
 		selectArtifactTypesByToolAndMnemonic.setString(1, tool);
@@ -171,7 +207,7 @@ public class FindingTypeManager {
 				for (ArtifactType at : ft.getArtifact()) {
 					Collection<Long> typeIds;
 					if (at.getVersion() == null) {
-						typeIds = getArtifactTypes(at.getTool(), at
+						typeIds = getArtifactTypesIds(at.getTool(), at
 								.getMnemonic());
 					} else {
 						typeIds = Collections.singleton(getArtifactTypeId(at
@@ -270,21 +306,6 @@ public class FindingTypeManager {
 			log.severe(message);
 			throw new IllegalStateException(message);
 		}
-	}
-
-	public String getFindingDiscription(String uid) throws SQLException {
-
-		FindingTypeRecord ftr = factory.newFindingTypeRecord();
-
-		ftr.setUid(uid);
-
-		/** Can't get the description for a finding that doesn't exist */
-		if (!ftr.select()) {
-			// XXX fill in
-			throw new SQLException();
-		}
-
-		return ftr.getInfo();
 	}
 
 	public static FindingTypeManager getInstance(Connection conn)
