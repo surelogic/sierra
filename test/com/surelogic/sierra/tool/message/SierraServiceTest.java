@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -61,8 +62,8 @@ public class SierraServiceTest {
 
 	}
 
-	@Test
-	public void testPublishMultipleRuns() {
+	
+	public void xtestPublishMultipleRuns() {
 		try {
 			JAXBContext context;
 			context = JAXBContext.newInstance(Scan.class);
@@ -119,7 +120,7 @@ public class SierraServiceTest {
 		String server = service.getUid(new ServerUIDRequest()).getUid();
 		MergeAuditTrailRequest mergeReq = new MergeAuditTrailRequest();
 		mergeReq.setServer(server);
-		mergeReq.setProject("sierra-entity");
+		mergeReq.setProject("test-project");
 		List<Merge> merges = new ArrayList<Merge>();
 		mergeReq.setMerge(merges);
 		Merge merge = new Merge();
@@ -150,12 +151,12 @@ public class SierraServiceTest {
 			auditTrail.setFinding(trail);
 			List<Audit> audits = new ArrayList<Audit>();
 			auditTrail.setAudits(audits);
-			Audit audit = new Audit(null, AuditEvent.COMMENT, "Some comment");
+			Audit audit = new Audit(new Date(), AuditEvent.COMMENT, "Some comment");
 			audits.add(audit);
 			service.commitAuditTrails(auditTrails);
 			GetAuditTrailRequest request = new GetAuditTrailRequest();
 			request.setServer(server);
-			request.setProject("sierra-entity");
+			request.setProject("test-project");
 			request.setRevision(-1L);
 			AuditTrailResponse response = service.getAuditTrails(request);
 			AuditTrailUpdate update = response.getUpdate().get(0);
