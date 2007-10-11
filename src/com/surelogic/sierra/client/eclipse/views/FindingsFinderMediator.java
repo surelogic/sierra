@@ -155,29 +155,35 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		 * selection.
 		 */
 		final int column = f_finder.getColumnIndexOf(menu.getPanel());
+		f_finder.addColumnAfter(new CascadingList.IColumn() {
+			public void createContents(Composite panel) {
+				final Display display = panel.getShell().getDisplay();
+				panel.setBackground(display
+						.getSystemColor(SWT.COLOR_LIST_SELECTION));
+				final Label waitLabel = new Label(panel, SWT.NONE);
+				waitLabel.setText("Please wait...");
+				waitLabel.setBackground(display
+						.getSystemColor(SWT.COLOR_LIST_SELECTION));
+			}
+		}, column, false);
+
 		final int selectionIndex = (column / 2) - 1;
 		f_workingSelection.emptyAfter(selectionIndex);
+
+		// menu.setEnabled(false);
+		System.out.println("selected: emptyAfter=" + selectionIndex);
+		System.out.println("selected: addColumnAfter=" + column);
+
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
-			menu.setEnabled(false);
-			System.out.println("selected: emptyAfter=" + selectionIndex);
-			System.out.println("selected: addColumnAfter=" + column);
-			f_finder.addColumnAfter(new CascadingList.IColumn() {
-				public void createContents(Composite panel) {
-					final Display display = panel.getShell().getDisplay();
-					panel.setBackground(display
-							.getSystemColor(SWT.COLOR_LIST_SELECTION));
-					final Label waitLabel = new Label(panel, SWT.NONE);
-					waitLabel.setText("Please wait...");
-					waitLabel.setBackground(display
-							.getSystemColor(SWT.COLOR_LIST_SELECTION));
-				}
-			}, column, false);
 			f_workingSelection.construct(filter, new DrawFilterAndMenu(column,
 					menu));
 		} else if (choice.equals("Show")) {
 			System.out.println("show");
-			// TODO
+			final FindingsSelectionReport fsr = new FindingsSelectionReport(
+					f_workingSelection, f_finder, column, f_manager
+							.getExecutor());
+			fsr.init();
 		}
 	}
 

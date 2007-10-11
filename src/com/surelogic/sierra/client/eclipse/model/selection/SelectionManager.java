@@ -14,6 +14,10 @@ public final class SelectionManager {
 
 	private final Executor f_executor = Executors.newSingleThreadExecutor();
 
+	public Executor getExecutor() {
+		return f_executor;
+	}
+
 	private SelectionManager() {
 		// singleton
 	}

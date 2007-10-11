@@ -198,26 +198,22 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
-	public String getQuery() {
+	/**
+	 * Adds the correct <code>from</code> and <code>where</code> clause to
+	 * make a query get the set of findings defined by this selection from the
+	 * <code>FINDINGS_OVERVIEW</code> table.
+	 * 
+	 * @param b
+	 *            the string to mutate.
+	 */
+	public void addWhereClauseTo(final StringBuilder b) {
+		b.append("from FINDINGS_OVERVIEW ");
 		synchronized (this) {
 			if (!f_filters.isEmpty()) {
 				final Filter last = f_filters.getLast();
-				final int porousCount = last.getFindingCountPorous();
-				System.out.println("getQuery() porousCount = " + porousCount);
-				StringBuilder b = new StringBuilder();
-				b.append("select ");
-				b.append(" Summary ");
-				// b
-				// .append("Summary, PROJECT \"Project__PROJECT\", PACKAGE
-				// \"Package__PACKAGE\", CLASS \"Class__CLASS\", LINE_OF_CODE
-				// \"Line\" ");
-				b.append("from FINDINGS_OVERVIEW ");
 				synchronized (last) {
 					last.addWhereClauseTo(b, true);
 				}
-				return b.toString();
-			} else {
-				throw new IllegalStateException("selection contains no filters");
 			}
 		}
 	}
