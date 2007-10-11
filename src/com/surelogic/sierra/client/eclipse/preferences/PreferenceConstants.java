@@ -21,6 +21,13 @@ public class PreferenceConstants {
 				P_SIERRA_BALLOON_FLAG);
 	}
 
+	public static final String P_SIERRA_SHOW_LOWEST_FLAG = "com.surelogic.sierra.show-lowest-importance-flag";
+
+	public static boolean showLowestImportance() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SIERRA_SHOW_LOWEST_FLAG);
+	}
+
 	public static final String P_RUN_FINDBUGS = "com.surelogic.sierra.runFindBugs";
 
 	public static boolean runFindBugs() {

@@ -34,6 +34,7 @@ public class SierraPreferencePage extends PreferencePage implements
 
 	DirectoryFieldEditor f_path;
 	BooleanFieldEditor f_balloonFlag;
+	BooleanFieldEditor f_showLowestFlag;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -45,6 +46,26 @@ public class SierraPreferencePage extends PreferencePage implements
 		final Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
+
+		final Group diGroup = new Group(panel, SWT.NONE);
+		diGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		diGroup.setText("Appearance");
+
+		f_balloonFlag = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_BALLOON_FLAG,
+				"Show 'balloon' notifications for scan start and completion.",
+				diGroup);
+		f_balloonFlag.setPage(this);
+		f_balloonFlag.setPreferenceStore(getPreferenceStore());
+		f_balloonFlag.load();
+
+		f_showLowestFlag = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG,
+				"Show markers for irrelevant findings in the Java editor.",
+				diGroup);
+		f_showLowestFlag.setPage(this);
+		f_showLowestFlag.setPreferenceStore(getPreferenceStore());
+		f_showLowestFlag.load();
 
 		final Group soGroup = new Group(panel, SWT.NONE);
 		soGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -80,14 +101,6 @@ public class SierraPreferencePage extends PreferencePage implements
 		b.setText("Delete Sierra Data");
 		b.setEnabled(false);
 		b.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
-
-		f_balloonFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_BALLOON_FLAG,
-				"Show 'balloon' notifications for scan start and completion.",
-				panel);
-		f_balloonFlag.setPage(this);
-		f_balloonFlag.setPreferenceStore(getPreferenceStore());
-		f_balloonFlag.load();
 
 		(new Mediator(t, b)).init();
 

@@ -38,8 +38,5 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setDescription("Use this page to select rules to include/exclude from the scan.");
-
-
 	}
-
 }
