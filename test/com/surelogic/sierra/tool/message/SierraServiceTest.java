@@ -31,6 +31,9 @@ public class SierraServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		// service = new SierraServiceClient(new
+		// SierraServerLocation("fluid.surelogic.com",
+		// false, 13376, "nathan.boy", "njb628346296@")).getSierraServicePort();
 		service = new SierraServiceClient(new SierraServerLocation("localhost",
 				false, 8080, "test", "test")).getSierraServicePort();
 	}
@@ -62,7 +65,6 @@ public class SierraServiceTest {
 
 	}
 
-	
 	public void xtestPublishMultipleRuns() {
 		try {
 			JAXBContext context;
@@ -151,7 +153,8 @@ public class SierraServiceTest {
 			auditTrail.setFinding(trail);
 			List<Audit> audits = new ArrayList<Audit>();
 			auditTrail.setAudits(audits);
-			Audit audit = new Audit(new Date(), AuditEvent.COMMENT, "Some comment");
+			Audit audit = new Audit(new Date(), AuditEvent.COMMENT,
+					"Some comment");
 			audits.add(audit);
 			service.commitAuditTrails(auditTrails);
 			GetAuditTrailRequest request = new GetAuditTrailRequest();

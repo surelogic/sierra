@@ -15404,7 +15404,7 @@
     <javaVersion>1.5.0_11</javaVersion>
     <multithreaded>false</multithreaded>
     <project>sierra-entity</project>
-    <qualifiers>Default</qualifiers>
+    <qualifiers>Test</qualifiers>
     <scanDocument>/home/nathan/Sierra/sierra-entity - Tue Oct 02 16;21;27 EDT 2007 - 1191356487442.sierra.gz</scanDocument>
     <toolsDirectory>/home/nathan/myeclipse/workspace/sierra-tool/Tools</toolsDirectory>
 </config>

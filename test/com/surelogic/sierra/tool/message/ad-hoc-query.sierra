@@ -25021,7 +25021,7 @@
     <javaVersion>1.5.0_11</javaVersion>
     <multithreaded>false</multithreaded>
     <project>ad-hoc-query</project>
-    <qualifiers>Default</qualifiers>
+    <qualifiers>Test</qualifiers>
     <scanDocument>/home/nathan/Sierra/ad-hoc-query - Tue Oct 02 16;21;27 EDT 2007 - 1191356487441.sierra.gz</scanDocument>
     <toolsDirectory>/home/nathan/myeclipse/workspace/sierra-tool/Tools</toolsDirectory>
 </config>

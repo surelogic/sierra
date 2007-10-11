@@ -111,8 +111,8 @@
     		<choice maxOccurs="1" minOccurs="1">
     			<element name="importance" type="tns:Importance"></element>
     			<element name="delta" type="int"></element>
-    			<element name="filtered" type="boolean"></element>
     		</choice>
+    		<element name="filtered" type="boolean" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
