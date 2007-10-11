@@ -192,7 +192,8 @@ public class FindingManager {
 								AuditEvent.IMPORTANCE, scan.getTimestamp(),
 								null).insert();
 						newAudit(null, f.getId(), art.message,
-								AuditEvent.SUMMARY, scan.getTimestamp(), null);
+								AuditEvent.SUMMARY, scan.getTimestamp(), null)
+								.insert();
 						findingId = f.getId();
 					} else {
 						findingId = art.m.getFindingId();
