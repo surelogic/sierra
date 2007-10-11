@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.TableItem;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -118,7 +119,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 						data.f_packageName = rs.getString(5);
 						data.f_typeName = rs.getString(6);
 						data.f_lineNumber = rs.getInt(7);
-						//System.out.println("adding: " + data);
+						// System.out.println("adding: " + data);
 						f_rows.add(data);
 					}
 				} finally {
@@ -148,6 +149,9 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 				final FindingData data = (FindingData) items[0].getData();
 				JDTUtility.tryToOpenInEditor(data.f_projectName,
 						data.f_packageName, data.f_typeName, data.f_lineNumber);
+				final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
+						.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
+				view.findingSelected(data.f_findingId);
 			}
 		}
 	};

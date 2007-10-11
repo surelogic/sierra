@@ -10,6 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
@@ -26,6 +27,7 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 	private FileDialog fd = null;
 
 	public void run(IAction action) {
+		JDTUtility.tryToOpenInEditor("TestAgain", null, "Bleep", 2);
 		if (fd == null) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
