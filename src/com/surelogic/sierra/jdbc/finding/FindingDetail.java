@@ -7,11 +7,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.surelogic.sierra.tool.message.Importance;
+
 public class FindingDetail {
 
 	private final String packageName;
 	private final String className;
 	private final String summary;
+	private final Importance importance;
+
 	private final String findingType;
 	private final String findingTypeDetail;
 	private int lineOfCode;
@@ -22,7 +26,7 @@ public class FindingDetail {
 		Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.LINE_OF_CODE,FO.SUMMARY,FT.NAME,FT.INFO"
+					.executeQuery("SELECT FO.PACKAGE,FO.CLASS,FO.LINE_OF_CODE,FO.SUMMARY,FO.IMPORTANCE,FT.NAME,FT.INFO"
 							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
 							+ "   WHERE FO.FINDING_ID = "
 							+ findingId
@@ -33,6 +37,8 @@ public class FindingDetail {
 				className = set.getString(idx++);
 				lineOfCode = set.getInt(idx++);
 				summary = set.getString(idx++);
+				importance = Importance.fromValue(set.getString(idx++)
+						.toUpperCase());
 				findingType = set.getString(idx++);
 				findingTypeDetail = set.getString(idx++);
 				set = st
@@ -95,6 +101,10 @@ public class FindingDetail {
 
 	public List<ArtifactDetail> getArtifacts() {
 		return artifacts;
+	}
+	
+	public Importance getImportance() {
+		return importance;
 	}
 
 	public int getLineOfCode() {
