@@ -389,7 +389,11 @@ public class FindingDetailsMediator {
 			if (commentDetails != null) {
 				for (int i = commentDetails.size() - 1; i >= 0; i--) {
 					final CommentDetail cd = commentDetails.get(i);
-					final String holder = cd.getUser() + " ("
+					String userName = cd.getUser();
+					if (userName == null) {
+						userName = "Local";
+					}
+					final String holder = userName + " ("
 							+ cd.getTime().toString() + ") : "
 							+ cd.getComment();
 					f_scrollingLabelComposite.addLabel(holder);
