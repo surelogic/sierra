@@ -262,7 +262,7 @@ public class FindingsDetailsView extends ViewPart {
 
 		auditTab.setControl(auditComposite);
 
-		final TabItem artifactsTab = new TabItem(folder, SWT.NONE);
+		final TabItem artifactTab = new TabItem(folder, SWT.NONE);
 		// artifactsTab.setText("Artifacts (2)");
 
 		final Composite artifactsComposite = new Composite(folder, SWT.NONE);
@@ -305,13 +305,14 @@ public class FindingsDetailsView extends ViewPart {
 		// + " instead. Alternatively, you could add a private "
 		// + "constructor or make the class abstract to silence "
 		// + "this warning.");
-		artifactsTab.setControl(artifactsComposite);
+		artifactTab.setControl(artifactsComposite);
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
-				findingPage, summaryIcon, summaryText, findingSynopsis,
-				projectName, packageName, className, detailsText, auditTab,
-				quickAudit, importanceButtons, commentText, commentButton,
-				scrollingLabelComposite, artifactsTab, artifactsTree);
+				findingPage, summaryIcon, summaryText, folder, synopsisTab,
+				findingSynopsis, projectName, packageName, className,
+				detailsText, auditTab, quickAudit, importanceButtons,
+				commentText, commentButton, scrollingLabelComposite,
+				artifactTab, artifactsTree);
 
 		f_mediator.init();
 

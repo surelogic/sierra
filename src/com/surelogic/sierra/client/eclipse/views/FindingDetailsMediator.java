@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
@@ -49,37 +50,58 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	private final Composite f_findingPage;
 	private final ToolItem f_summaryIcon;
 	private final Text f_summaryText;
+
+	private final TabFolder f_folder;
+
+	private final TabItem f_synopsisTab;
 	private final Link f_findingSynopsis;
 	private final Label f_projectName;
 	private final Label f_packageName;
 	private final Link f_className;
 	private final Label f_detailsText;
+
 	private final TabItem f_auditTab;
 	private final Button f_quickAudit;
 	private final Button[] f_importanceButtons;
 	private final Text f_commentText;
 	private final Button f_commentButton;
 	private final ScrollingLabelComposite f_scrollingLabelComposite;
-	private final TabItem f_artifactsTab;
+
+	private final TabItem f_artifactTab;
 	private final Tree f_artifactsTree;
 
 	private volatile FindingDetail f_finding;
 
 	private final Executor f_executor = Executors.newSingleThreadExecutor();
 
+	private final Listener f_tabLinkListener = new Listener() {
+		public void handleEvent(Event event) {
+			final String target = event.text;
+			if ("audit".equals(target)) {
+				f_folder.setSelection(f_auditTab);
+			} else if ("artifact".equals(target)) {
+				f_folder.setSelection(f_artifactTab);
+			} else if ("synopsis".equals(target)) {
+				f_folder.setSelection(f_synopsisTab);
+			}
+		}
+	};
+
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
-			Link findingSynopsis, Label projectName, Label packageName,
-			Link className, Label detailsText, TabItem auditTab,
-			Button quickAudit, Button[] importanceButtons, Text commentText,
-			Button commentButton,
+			TabFolder folder, TabItem synopsisTab, Link findingSynopsis,
+			Label projectName, Label packageName, Link className,
+			Label detailsText, TabItem auditTab, Button quickAudit,
+			Button[] importanceButtons, Text commentText, Button commentButton,
 			ScrollingLabelComposite scrollingLabelComposite,
-			TabItem artifactsTab, Tree artifactsTree) {
+			TabItem artifactTab, Tree artifactsTree) {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
 		f_summaryIcon = summaryIcon;
 		f_summaryText = summaryText;
+		f_folder = folder;
+		f_synopsisTab = synopsisTab;
 		f_findingSynopsis = findingSynopsis;
 		f_projectName = projectName;
 		f_packageName = packageName;
@@ -91,7 +113,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_commentText = commentText;
 		f_commentButton = commentButton;
 		f_scrollingLabelComposite = scrollingLabelComposite;
-		f_artifactsTab = artifactsTab;
+		f_artifactTab = artifactTab;
 		f_artifactsTree = artifactsTree;
 	}
 
@@ -247,16 +269,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			}
 		});
 
-		f_findingSynopsis.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				final String target = event.text;
-				if ("audit".equals(target)) {
-
-				} else if ("artifact".equals(target)) {
-
-				}
-			}
-		});
+		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
 
 		Projects.getInstance().addObserver(this);
 	}
@@ -383,11 +396,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_artifactsTree.removeAll();
 		if (artifacts != null) {
 			if (artifacts.size() == 0) {
-				f_artifactsTab.setText("No Artifacts");
+				f_artifactTab.setText("No Artifacts");
 			} else if (artifacts.size() == 1) {
-				f_artifactsTab.setText(artifacts.size() + " Artifact");
+				f_artifactTab.setText(artifacts.size() + " Artifact");
 			} else {
-				f_artifactsTab.setText(artifacts.size() + " Artifacts");
+				f_artifactTab.setText(artifacts.size() + " Artifacts");
 			}
 
 			for (ArtifactDetail ad : artifacts) {
@@ -429,9 +442,9 @@ public class FindingDetailsMediator implements IProjectsObserver {
 				b.append("and was discovered by ");
 				b.append("<a href=\"artifact\">");
 				if (tool.startsWith("(")) {
-					b.append("by multiple tools (");
+					b.append("by multiple tools (with ");
 					b.append(f_finding.getNumberOfArtifacts());
-					b.append(" artifacts)");
+					b.append(" artifacts reported)");
 				} else
 					b.append(tool);
 				b.append("</a> during the last scan.");
