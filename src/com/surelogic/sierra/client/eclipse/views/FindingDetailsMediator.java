@@ -337,6 +337,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		 * We have a finding so show the details about it.
 		 */
 		f_summaryIcon.setImage(Utility.getImageFor(f_finding.getImportance()));
+		f_summaryIcon.setToolTipText(f_finding.getImportance().toString());
 		f_summaryText.setText(f_finding.getSummary());
 
 		f_findingSynopsis.setText(getFindingSynopsis());
