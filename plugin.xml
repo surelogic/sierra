@@ -159,6 +159,7 @@
 			id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">
 		 <action
 			   label="Show Finding"
+			   icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/asterisk_orange_100.gif"
 			   class="com.surelogic.sierra.client.eclipse.actions.MarkerAction"
 			   menubarPath="additions"
 			   id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">

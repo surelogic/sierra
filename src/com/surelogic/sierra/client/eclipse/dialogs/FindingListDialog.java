@@ -85,6 +85,8 @@ public class FindingListDialog extends Dialog {
 			f_findingsList.add(text);
 		}
 
+		f_findingsList.setSelection(0);
+
 		f_findingsList.addMouseListener(new MouseListener() {
 
 			public void mouseDoubleClick(MouseEvent e) {
