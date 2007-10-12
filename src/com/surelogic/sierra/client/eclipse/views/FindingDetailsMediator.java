@@ -351,8 +351,6 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		details = details.replaceAll("\\n", "");
 		f_detailsText.setText(details);
 
-		f_auditTab.setText("Audit");
-
 		// Clear importance buttons
 		for (Button button : f_importanceButtons) {
 			button.setSelection(false);
@@ -391,26 +389,15 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		}
 		f_scrollingLabelComposite.reflow(true);
 
-		List<ArtifactDetail> artifacts = f_finding.getArtifacts();
-
 		f_artifactsTree.removeAll();
-		if (artifacts != null) {
-			if (artifacts.size() == 0) {
-				f_artifactTab.setText("No Artifacts");
-			} else if (artifacts.size() == 1) {
-				f_artifactTab.setText(artifacts.size() + " Artifact");
-			} else {
-				f_artifactTab.setText(artifacts.size() + " Artifacts");
-			}
-
-			for (ArtifactDetail ad : artifacts) {
-				final TreeItem ti = new TreeItem(f_artifactsTree, SWT.NONE);
-				ti.setText(ad.getTool() + " : " + ad.getMessage());
-			}
+		for (ArtifactDetail ad : f_finding.getArtifacts()) {
+			final TreeItem ti = new TreeItem(f_artifactsTree, SWT.NONE);
+			ti.setText(ad.getTool() + " : " + ad.getMessage());
 		}
 
 		f_commentText.setText("");
 
+		updateTabTitles();
 		f_findingPage.layout(true, true);
 	}
 
@@ -479,6 +466,23 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			b.append("</a>");
 		}
 		return b.toString();
+	}
+
+	private void updateTabTitles() {
+		final int auditCount = f_finding.getNumberOfComments();
+		final int artifactCount = f_finding.getNumberOfArtifacts();
+		if (auditCount == 0)
+			f_auditTab.setText("No Audits");
+		else {
+			f_auditTab.setText(auditCount + " Audit"
+					+ (auditCount > 1 ? "s" : ""));
+		}
+		if (artifactCount == 0)
+			f_artifactTab.setText("No Artifacts");
+		else {
+			f_artifactTab.setText(artifactCount + " Artifact"
+					+ (artifactCount > 1 ? "s" : ""));
+		}
 	}
 
 	public void notify(Projects p) {
