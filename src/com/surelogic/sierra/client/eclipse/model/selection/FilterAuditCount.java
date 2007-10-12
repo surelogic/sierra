@@ -24,7 +24,7 @@ public final class FilterAuditCount extends FilterNumberValue {
 
 	@Override
 	protected String getColumnName() {
-		return "COMMENT_COUNT";
+		return "AUDIT_COUNT";
 	}
 
 }
