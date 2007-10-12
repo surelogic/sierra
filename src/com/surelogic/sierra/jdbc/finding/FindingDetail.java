@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -128,10 +129,10 @@ public class FindingDetail {
 		for (ArtifactDetail a : artifacts) {
 			lineSet.add(a.getLineOfCode());
 		}
-		Integer[] bigLines = lineSet.toArray(new Integer[lineSet.size()]);
-		int[] lines = new int[bigLines.length];
-		for (int i = 0; i < bigLines.length; i++) {
-			lines[i] = bigLines[i];
+		Iterator<Integer> iter = lineSet.iterator();
+		int lines[] = new int[lineSet.size()];
+		for (int i = 0; i < lines.length; i++) {
+			lines[i] = iter.next();
 		}
 		Arrays.sort(lines);
 		return lines;
