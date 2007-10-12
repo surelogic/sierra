@@ -144,11 +144,12 @@ public class FindingOverview {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
 					.prepareStatement("SELECT FINDING_ID,EXAMINED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,COMMENT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
-							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CLASS = ?");
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?)");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
 			selectFindingsByClass.setString(idx++, packageName);
 			selectFindingsByClass.setString(idx++, className);
+			selectFindingsByClass.setString(idx++, className + "$%");
 			ResultSet set = selectFindingsByClass.executeQuery();
 			try {
 				while (set.next()) {
