@@ -150,7 +150,7 @@ public class FindingDetail {
 		return overview.getPackageName();
 	}
 
-	public String getProject() {
+	public String getProjectName() {
 		return overview.getProject();
 	}
 
