@@ -31,11 +31,11 @@ public class SierraServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		// service = new SierraServiceClient(new
-		// SierraServerLocation("fluid.surelogic.com",
-		// false, 13376, "nathan.boy", "njb628346296@")).getSierraServicePort();
-		service = new SierraServiceClient(new SierraServerLocation("localhost",
-				false, 8080, "test", "test")).getSierraServicePort();
+		 service = new SierraServiceClient(new SierraServerLocation(
+				"fluid.surelogic.com", false, 13376, "nathan.boy",
+				"njb628346296@")).getSierraServicePort();
+//		service = new SierraServiceClient(new SierraServerLocation("localhost",
+//				false, 8080, "test", "test")).getSierraServicePort();
 	}
 
 	@After
