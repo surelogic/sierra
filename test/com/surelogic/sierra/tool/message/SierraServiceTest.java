@@ -126,6 +126,8 @@ public class SierraServiceTest {
 		List<Merge> merges = new ArrayList<Merge>();
 		mergeReq.setMerge(merges);
 		Merge merge = new Merge();
+		merge.setImportance(Importance.MEDIUM);
+		merge.setSummary("test summary");
 		merges.add(merge);
 		List<Match> matches = new ArrayList<Match>();
 		merge.setMatch(matches);
@@ -163,6 +165,8 @@ public class SierraServiceTest {
 			request.setRevision(-1L);
 			AuditTrailResponse response = service.getAuditTrails(request);
 			AuditTrailUpdate update = response.getUpdate().get(0);
+			assertEquals(Importance.MEDIUM, update.getImportance());
+			assertEquals("test summary", update.getSummary());
 			assertEquals(audit.getEvent(), update.getAudit().get(
 					update.getAudit().size() - 1).getEvent());
 			assertEquals(audit.getValue(), update.getAudit().get(

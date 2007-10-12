@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 public class AuditTrailUpdate {
 
 	private String trail;
+	private String summary;
+	private Importance importance;
 	private List<Match> match;
 	private List<Audit> audit;
 
@@ -28,6 +30,22 @@ public class AuditTrailUpdate {
 
 	public void setTrail(String trail) {
 		this.trail = trail;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public Importance getImportance() {
+		return importance;
+	}
+
+	public void setImportance(Importance importance) {
+		this.importance = importance;
 	}
 
 	public List<Match> getMatch() {
