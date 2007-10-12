@@ -154,7 +154,6 @@
                label="Synchronize Explanations"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
-      
    </extension>
    
    <!-- Sierra views -->
