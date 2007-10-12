@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
@@ -173,6 +174,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 						String elementName = cu.getElementName();
 						f_className = cu.getElementName().substring(0,
 								elementName.length() - 5);
+
+						f_className = JDTUtility.scrubTypeName(f_className);
 						f_projectName = f_currentFile.getProject().getName();
 						f_executor.execute(new Runnable() {
 
@@ -264,7 +267,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 
 			} else
 				try {
-					file.deleteMarkers(type, false, IResource.DEPTH_ONE);
+					if (file.exists()) {
+						file.deleteMarkers(type, false, IResource.DEPTH_ONE);
+					}
 				} catch (CoreException e) {
 					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 				}

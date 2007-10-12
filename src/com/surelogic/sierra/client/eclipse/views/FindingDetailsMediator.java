@@ -24,13 +24,15 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.CommentDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsMediator {
+public class FindingDetailsMediator implements IProjectsObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
@@ -276,6 +278,7 @@ public class FindingDetailsMediator {
 		//
 		// });
 
+		Projects.getInstance().addObserver(this);
 	}
 
 	public void dispose() {
@@ -420,4 +423,20 @@ public class FindingDetailsMediator {
 		}
 	}
 
+	public void notify(Projects p) {
+		final Control page;
+		if (p.isEmpty()) {
+			page = f_noFindingPage;
+			// beware the thread context this method call might be made in.
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (page != f_pages.getPage()) {
+						f_pages.showPage(page);
+					}
+				}
+
+			});
+		}
+
+	}
 }
