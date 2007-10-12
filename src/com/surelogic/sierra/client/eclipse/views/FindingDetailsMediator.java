@@ -87,16 +87,19 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			public void run() {
 				try {
 					Connection conn = Data.getConnection();
-					final FindingDetail details = FindingDetail.getDetail(conn,
-							f_findingId);
+					try {
+						conn.setReadOnly(true);
+						final FindingDetail details = FindingDetail.getDetail(
+								conn, f_findingId);
 
-					if (details != null) {
-						// got details, update the view in the UI thread
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new UpdateViewRunnable(details));
+						if (details != null) {
+							// got details, update the view in the UI thread
+							PlatformUI.getWorkbench().getDisplay().asyncExec(
+									new UpdateViewRunnable(details));
+						}
+					} finally {
+						conn.close();
 					}
-
-					conn.close();
 				} catch (SQLException e) {
 					SLLogger.getLogger("sierra").log(Level.SEVERE,
 							"SQL exception when trying to get finding details",
