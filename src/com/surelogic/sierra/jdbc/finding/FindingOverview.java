@@ -114,7 +114,7 @@ public class FindingOverview {
 	public int getNumberOfComments() {
 		return numberOfComments;
 	}
-
+	
 	public static View getView() {
 		return view;
 	}
@@ -128,7 +128,7 @@ public class FindingOverview {
 	public static class View {
 
 		/**
-		 * Get the latest findings for the given class. Only findings with
+		 * Get the latest findings for the given class, and any inner classes. Only findings with
 		 * status New or Unchanged are returned, fixed findings are not shown.
 		 * 
 		 * TODO do we want to also show fixed findings?
