@@ -33,7 +33,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
@@ -43,7 +42,7 @@ import com.surelogic.sierra.tool.SierraConstants;
 
 public final class MarkersHandler extends AbstractDatabaseObserver {
 
-	private static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
+	public static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
 	private IFile f_currentFile = null;
@@ -174,8 +173,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 						String elementName = cu.getElementName();
 						f_className = cu.getElementName().substring(0,
 								elementName.length() - 5);
-
-						f_className = JDTUtility.scrubTypeName(f_className);
 						f_projectName = f_currentFile.getProject().getName();
 						f_executor.execute(new Runnable() {
 
@@ -352,6 +349,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 				marker = file.createMarker(SIERRA_MARKER);
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
 				marker.setAttribute(IMarker.MESSAGE, o.getSummary());
+				marker.setAttribute("findingid", String.valueOf(o
+						.getFindingId()));
 			}
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);

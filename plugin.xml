@@ -154,6 +154,20 @@
                label="Synchronize Explanations"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
+    	  <viewerContribution
+			targetID="#CompilationUnitRulerContext"
+			id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">
+		 <action
+			   label="Show Finding"
+			   class="com.surelogic.sierra.client.eclipse.actions.MarkerAction"
+			   menubarPath="additions"
+			   id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">
+			<selection
+				  class="org.eclipse.core.resources.IMarker">
+			</selection>
+		 </action>
+	  </viewerContribution>
+	  
    </extension>
    
    <!-- Sierra views -->
@@ -299,6 +313,9 @@
 		 point="org.eclipse.core.resources.markers">
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <attribute
+         name="findingid">
+	  </attribute>
 	  <persistent value="true"/>
    </extension>
    
