@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
@@ -37,7 +38,10 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
 	private final Control f_findingPage;
+	private final ToolItem f_summaryIcon;
 	private final Text f_summaryText;
+	private final Link f_findingSynopsis;
+	private final Label f_projectName;
 	private final Label f_packageName;
 	private final Link f_className;
 	private final Label f_detailsText;
@@ -54,7 +58,8 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	private final Executor f_executor = Executors.newSingleThreadExecutor();
 
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
-			Control findingPage, Text summaryText, Label packageName,
+			Control findingPage, ToolItem summaryIcon, Text summaryText,
+			Link findingSynopsis, Label projectName, Label packageName,
 			Link className, Label detailsText, TabItem auditTab,
 			Button quickAudit, Button[] importanceButtons, Text commentText,
 			Button commentButton,
@@ -63,7 +68,10 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
+		f_summaryIcon = summaryIcon;
 		f_summaryText = summaryText;
+		f_findingSynopsis = findingSynopsis;
+		f_projectName = projectName;
 		f_packageName = packageName;
 		f_className = className;
 		f_detailsText = detailsText;
@@ -349,6 +357,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 
 		public void run() {
 			f_summaryText.setText(f_details.getSummary());
+			f_projectName.setText(f_details.getProject());
 			f_packageName.setText(f_details.getPackageName());
 			f_className.setText(f_details.getClassName() + " ("
 					+ f_details.getLineOfCode() + ")");

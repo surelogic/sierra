@@ -13,7 +13,7 @@ public final class FilterPackage extends Filter {
 		}
 
 		public String getFilterLabel() {
-			return "Package";
+			return "Java Package";
 		}
 	};
 

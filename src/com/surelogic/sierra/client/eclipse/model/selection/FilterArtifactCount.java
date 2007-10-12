@@ -8,7 +8,7 @@ public final class FilterArtifactCount extends FilterNumberValue {
 		}
 
 		public String getFilterLabel() {
-			return "Artifact Count";
+			return "Tool Artifacts";
 		}
 	};
 

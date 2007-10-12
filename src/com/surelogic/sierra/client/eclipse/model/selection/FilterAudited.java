@@ -2,19 +2,19 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
 
-public final class FilterExamined extends Filter {
+public final class FilterAudited extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
-			return new FilterExamined(selection, previous);
+			return new FilterAudited(selection, previous);
 		}
 
 		public String getFilterLabel() {
-			return "Examined";
+			return "Audited";
 		}
 	};
 
-	FilterExamined(Selection selection, Filter previous) {
+	FilterAudited(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 

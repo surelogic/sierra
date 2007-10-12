@@ -30,8 +30,8 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * Add in all the filter factories.
 		 */
 		allFilters.add(FilterArtifactCount.FACTORY);
-		allFilters.add(FilterCommentCount.FACTORY);
-		allFilters.add(FilterExamined.FACTORY);
+		allFilters.add(FilterAuditCount.FACTORY);
+		allFilters.add(FilterAudited.FACTORY);
 		allFilters.add(FilterFindingType.FACTORY);
 		allFilters.add(FilterImportance.FACTORY);
 		allFilters.add(FilterPackage.FACTORY);

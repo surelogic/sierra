@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -12,10 +13,12 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
-import com.surelogic.common.eclipse.FontUtility;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
@@ -45,35 +48,62 @@ public class FindingsDetailsView extends ViewPart {
 		 */
 		final Composite top = new Composite(findingPage, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		top.setLayout(layout);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		top.setLayoutData(layoutData);
 
-		final Label importanceIcon = new Label(top, SWT.NONE);
-		layoutData = new GridData(SWT.CENTER, SWT.DEFAULT, false, false);
-		importanceIcon.setLayoutData(layoutData);
-		// TODO: remove set this in the mediator
-		importanceIcon.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+		/*
+		 * Summary panel (importance icon and summary text).
+		 */
+		final Composite summaryPane = new Composite(top, SWT.NONE);
+		summaryPane.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+				false));
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		layout.verticalSpacing = 0;
+		summaryPane.setLayout(layout);
 
-		final Text summaryText = new Text(top, SWT.SINGLE);
+		final ToolBar importanceBar = new ToolBar(summaryPane, SWT.HORIZONTAL
+				| SWT.FLAT);
+		importanceBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
+				false, false));
+		final ToolItem summaryIcon = new ToolItem(importanceBar, SWT.PUSH);
+		summaryIcon.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+		final Text summaryText = new Text(summaryPane, SWT.SINGLE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		summaryText.setLayoutData(layoutData);
 
+		/*
+		 * Tab folder
+		 */
 		final TabFolder folder = new TabFolder(findingPage, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		folder.setLayoutData(layoutData);
 
 		final TabItem synopsisTab = new TabItem(folder, SWT.NONE);
 		synopsisTab.setText("Synopsis");
-		layout = new GridLayout();
 
 		final Composite synopsisPane = new Composite(folder, SWT.NONE);
 		layout = new GridLayout();
+		// layout.numColumns = 2;
 		synopsisPane.setLayout(layout);
+
+		final Link findingSynopsis = new Link(synopsisPane, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		findingSynopsis.setLayoutData(layoutData);
+		StringBuilder b = new StringBuilder();
+		b.append("This finding is of ");
+		b.append("<a href=\"f\">Critical</a>");
+		b.append(" importance. ");
+		b.append("It has been <a href=\"a\">audited</a> 2 times ");
+		b.append("and was discovered by ");
+		b.append("<a href=\"FindBugs\">FindBugs</a>");
+		b.append(" during the last scan.");
+		findingSynopsis.setText(b.toString());
 
 		/*
 		 * Show where the finding is located.
@@ -81,10 +111,24 @@ public class FindingsDetailsView extends ViewPart {
 		final Group where = new Group(synopsisPane, SWT.NONE);
 		where.setText("Location");
 		layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 4;
 		where.setLayout(layout);
 		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
 		where.setLayoutData(layoutData);
+
+		final Label projectIcon = new Label(where, SWT.NONE);
+		projectIcon.setImage(SLImages
+				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
+		projectIcon.setLayoutData(layoutData);
+
+		final Label projectName = new Label(where, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		projectName.setLayoutData(layoutData);
+
+		Label spacer = new Label(where, SWT.NONE);
+		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
+		spacer.setLayoutData(layoutData);
 
 		final Label packageIcon = new Label(where, SWT.NONE);
 		packageIcon.setImage(SLImages
@@ -96,7 +140,10 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		packageName.setLayoutData(layoutData);
 
-		final Label spacer = new Label(where, SWT.NONE);
+		spacer = new Label(where, SWT.NONE);
+		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
+		spacer.setLayoutData(layoutData);
+		spacer = new Label(where, SWT.NONE);
 		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
 		spacer.setLayoutData(layoutData);
 
@@ -109,24 +156,21 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		className.setLayoutData(layoutData);
 
-		final Label moreInfoLabel = new Label(synopsisPane, SWT.NONE);
-		moreInfoLabel.setFont(FontUtility.getDefaultBoldFont());
-		moreInfoLabel.setText("More Information");
-
-		final Label detailsText = new Label(synopsisPane, SWT.WRAP);
-		// detailsText.setText("Using the java.lang.String(String)constructor "
-		// + "wastes memory because the object so constructed will be "
-		// + "functionally indistinguishable from the String passed as "
-		// + "a parameter. \n\nJust use the argument String directly.");
+		/*
+		 * Show a detailed description of the finding.
+		 */
+		final Group description = new Group(synopsisPane, SWT.NONE);
+		description.setText("Description");
+		description.setLayout(new FillLayout());
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.widthHint = 200;
-		layoutData.horizontalIndent = 10;
-		detailsText.setLayoutData(layoutData);
+		description.setLayoutData(layoutData);
+
+		final Label detailsText = new Label(description, SWT.WRAP);
 
 		synopsisTab.setControl(synopsisPane);
 
 		final TabItem auditTab = new TabItem(folder, SWT.NONE);
-		// auditTab.setText("Audit");
+		auditTab.setText("Audits");
 
 		final Composite auditComposite = new Composite(folder, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -275,10 +319,10 @@ public class FindingsDetailsView extends ViewPart {
 		artifactsTab.setControl(artifactsComposite);
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
-				findingPage, summaryText, packageName, className, detailsText,
-				auditTab, quickAudit, importanceButtons, commentText,
-				commentButton, scrollingLabelComposite, artifactsTab,
-				artifactsTree);
+				findingPage, summaryIcon, summaryText, findingSynopsis,
+				projectName, packageName, className, detailsText, auditTab,
+				quickAudit, importanceButtons, commentText, commentButton,
+				scrollingLabelComposite, artifactsTab, artifactsTree);
 
 		f_mediator.init();
 
