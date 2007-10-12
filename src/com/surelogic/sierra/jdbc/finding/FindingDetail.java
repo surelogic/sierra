@@ -120,6 +120,11 @@ public class FindingDetail {
 		return overview.getLineOfCode();
 	}
 
+	public int[] getLinesOfCode() {
+		// TODO in counting order and no duplicates
+		return new int[] { getLineOfCode() };
+	}
+
 	public int getNumberOfArtifacts() {
 		return overview.getNumberOfArtifacts();
 	}
