@@ -23,6 +23,7 @@ import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.tool.message.Importance;
@@ -119,7 +120,6 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 						data.f_packageName = rs.getString(5);
 						data.f_typeName = rs.getString(6);
 						data.f_lineNumber = rs.getInt(7);
-						// System.out.println("adding: " + data);
 						f_rows.add(data);
 					}
 				} finally {
@@ -165,19 +165,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 			for (FindingData data : f_rows) {
 				final TableItem item = new TableItem(f_table, SWT.NONE);
 				item.setText(data.f_summary);
-				String image;
-
-				if (data.f_importance == Importance.IRRELEVANT)
-					image = SLImages.IMG_ASTERISK_ORANGE_0;
-				else if (data.f_importance == Importance.LOW)
-					image = SLImages.IMG_ASTERISK_ORANGE_25;
-				else if (data.f_importance == Importance.MEDIUM)
-					image = SLImages.IMG_ASTERISK_ORANGE_50;
-				else if (data.f_importance == Importance.HIGH)
-					image = SLImages.IMG_ASTERISK_ORANGE_75;
-				else
-					image = SLImages.IMG_ASTERISK_ORANGE_100;
-				item.setImage(SLImages.getImage(image));
+				item.setImage(Utility.getImageFor(data.f_importance));
 				item.setData(data);
 			}
 			for (TableColumn c : f_table.getColumns()) {

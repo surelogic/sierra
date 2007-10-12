@@ -72,7 +72,6 @@ public class FindingsDetailsView extends ViewPart {
 		importanceBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
 				false, false));
 		final ToolItem summaryIcon = new ToolItem(importanceBar, SWT.PUSH);
-		summaryIcon.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
 		final Text summaryText = new Text(summaryPane, SWT.SINGLE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		summaryText.setLayoutData(layoutData);
@@ -89,21 +88,11 @@ public class FindingsDetailsView extends ViewPart {
 
 		final Composite synopsisPane = new Composite(folder, SWT.NONE);
 		layout = new GridLayout();
-		// layout.numColumns = 2;
 		synopsisPane.setLayout(layout);
 
 		final Link findingSynopsis = new Link(synopsisPane, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		findingSynopsis.setLayoutData(layoutData);
-		StringBuilder b = new StringBuilder();
-		b.append("This finding is of ");
-		b.append("<a href=\"f\">Critical</a>");
-		b.append(" importance. ");
-		b.append("It has been <a href=\"a\">audited</a> 2 times ");
-		b.append("and was discovered by ");
-		b.append("<a href=\"FindBugs\">FindBugs</a>");
-		b.append(" during the last scan.");
-		findingSynopsis.setText(b.toString());
 
 		/*
 		 * Show where the finding is located.
@@ -341,7 +330,7 @@ public class FindingsDetailsView extends ViewPart {
 	}
 
 	public void findingSelected(long findingID) {
-		f_mediator.refreshDetailsPage(findingID);
+		f_mediator.asyncQueryAndShow(findingID);
 	}
 
 }

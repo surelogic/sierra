@@ -11,9 +11,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
@@ -21,23 +25,28 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.CommentDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
+import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsMediator implements IProjectsObserver {
 
+	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
+
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
-	private final Control f_findingPage;
+	private final Composite f_findingPage;
 	private final ToolItem f_summaryIcon;
 	private final Text f_summaryText;
 	private final Link f_findingSynopsis;
@@ -53,12 +62,13 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	private final ScrollingLabelComposite f_scrollingLabelComposite;
 	private final TabItem f_artifactsTab;
 	private final Tree f_artifactsTree;
-	private long f_findingId;
+
+	private volatile FindingDetail f_finding;
 
 	private final Executor f_executor = Executors.newSingleThreadExecutor();
 
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
-			Control findingPage, ToolItem summaryIcon, Text summaryText,
+			Composite findingPage, ToolItem summaryIcon, Text summaryText,
 			Link findingSynopsis, Label projectName, Label packageName,
 			Link className, Label detailsText, TabItem auditTab,
 			Button quickAudit, Button[] importanceButtons, Text commentText,
@@ -83,70 +93,49 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_scrollingLabelComposite = scrollingLabelComposite;
 		f_artifactsTab = artifactsTab;
 		f_artifactsTree = artifactsTree;
-
 	}
 
-	public void refreshDetailsPage(long findingID) {
-		f_findingId = findingID;
-
-		// Execute the query in a different thread
+	void asyncQueryAndShow(final long findingId) {
 		f_executor.execute(new Runnable() {
-
 			public void run() {
 				try {
-					Connection conn = Data.getConnection();
+					Connection c = Data.getConnection();
 					try {
-						conn.setReadOnly(true);
-						final FindingDetail details = FindingDetail.getDetail(
-								conn, f_findingId);
+						c.setReadOnly(true);
 
-						if (details != null) {
+						final FindingDetail finding = FindingDetail.getDetail(
+								c, findingId);
+
+						if (finding != null) {
+							f_finding = finding;
 							// got details, update the view in the UI thread
-							PlatformUI.getWorkbench().getDisplay().asyncExec(
-									new UpdateViewRunnable(details));
+							f_display.asyncExec(new Runnable() {
+								public void run() {
+									updateContents();
+								}
+							});
 						}
 					} finally {
-						conn.close();
+						c.close();
 					}
 				} catch (SQLException e) {
-					SLLogger.getLogger("sierra").log(Level.SEVERE,
-							"SQL exception when trying to get finding details",
-							e);
-				}
-
-			}
-
-		});
-	}
-
-	public void setPages() {
-		final Control page;
-		if (f_findingId == 0) {
-			page = f_noFindingPage;
-		} else {
-			page = f_findingPage;
-		}
-
-		// beware the thread context this method call might be made in.
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (page != f_pages.getPage()) {
-					f_pages.showPage(page);
+					SLLogger.getLogger().log(
+							Level.SEVERE,
+							"SQL exception when trying to finding details for finding id="
+									+ findingId, e);
 				}
 			}
-
 		});
 	}
 
 	public void init() {
-		setPages();
 		f_importanceButtons[0].addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final boolean selection = f_importanceButtons[0].getSelection();
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.CRITICAL, f_findingId));
+							Importance.CRITICAL, f_finding.getFindingId()));
 				}
 
 			}
@@ -157,7 +146,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 				final boolean selection = f_importanceButtons[1].getSelection();
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.HIGH, f_findingId));
+							Importance.HIGH, f_finding.getFindingId()));
 				}
 			}
 		});
@@ -168,7 +157,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 				final boolean selection = f_importanceButtons[2].getSelection();
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.MEDIUM, f_findingId));
+							Importance.MEDIUM, f_finding.getFindingId()));
 				}
 			}
 		});
@@ -179,7 +168,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 				final boolean selection = f_importanceButtons[3].getSelection();
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.LOW, f_findingId));
+							Importance.LOW, f_finding.getFindingId()));
 				}
 			}
 		});
@@ -190,7 +179,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 				final boolean selection = f_importanceButtons[4].getSelection();
 				if (selection) {
 					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.IRRELEVANT, f_findingId));
+							Importance.IRRELEVANT, f_finding.getFindingId()));
 				}
 			}
 		});
@@ -209,14 +198,16 @@ public class FindingDetailsMediator implements IProjectsObserver {
 									.getInstance(conn);
 
 							// TODO: Add check for empty comments
-							manager.comment(f_findingId, commentText);
+							manager.comment(f_finding.getFindingId(),
+									commentText);
 							conn.commit();
 							conn.close();
 
 							PlatformUI.getWorkbench().getDisplay().asyncExec(
 									new Runnable() {
 										public void run() {
-											refreshDetailsPage(f_findingId);
+											asyncQueryAndShow(f_finding
+													.getFindingId());
 										}
 									});
 						} catch (SQLException se) {
@@ -227,11 +218,8 @@ public class FindingDetailsMediator implements IProjectsObserver {
 											"SQL exception when trying to get add comments",
 											se);
 						}
-
 					}
-
 				});
-
 			}
 		});
 
@@ -244,50 +232,31 @@ public class FindingDetailsMediator implements IProjectsObserver {
 
 		});
 
-		// f_summaryChangeButton.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// SummaryChangeDialog scd = new SummaryChangeDialog(Display
-		// .getCurrent().getActiveShell(), f_summaryText.getText());
-		// if (Window.OK == scd.open()) {
-		// final String summary = scd.getText();
-		// f_summaryText.setText(summary.trim());
-		// f_executor.execute(new Runnable() {
-		//
-		// public void run() {
-		// try {
-		// Connection conn = Data.getConnection();
-		// conn.setAutoCommit(false);
-		// ClientFindingManager manager = ClientFindingManager
-		// .getInstance(conn);
-		// manager.changeSummary(f_findingId, summary);
-		// conn.commit();
-		// conn.close();
-		// // TODO: Add check for empty comment
-		// PlatformUI.getWorkbench().getDisplay()
-		// .asyncExec(new Runnable() {
-		// public void run() {
-		// refreshDetailsPage(f_findingId);
-		// }
-		//
-		// });
-		// } catch (SQLException se) {
-		// SLLogger
-		// .getLogger("sierra")
-		// .log(
-		// Level.SEVERE,
-		// "SQL exception when trying to set critical importance",
-		// se);
-		// }
-		//
-		// }
-		//
-		// });
-		// }
-		//
-		// }
-		//
-		// });
+		f_className.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final String target = event.text;
+				if (target == null)
+					return;
+				/*
+				 * The target should be the line number.
+				 */
+				int lineNumber = Integer.valueOf(target);
+				JDTUtility.tryToOpenInEditor(f_finding.getProjectName(),
+						f_finding.getPackageName(), f_finding.getClassName(),
+						lineNumber);
+			}
+		});
+
+		f_findingSynopsis.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final String target = event.text;
+				if ("audit".equals(target)) {
+
+				} else if ("artifact".equals(target)) {
+
+				}
+			}
+		});
 
 		Projects.getInstance().addObserver(this);
 	}
@@ -297,13 +266,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	}
 
 	public void setFocus() {
-		// Nothing to do for now
-
-	}
-
-	public void setFindingID(long findingID) {
-		f_findingId = findingID;
-
+		// TODO something reasonable
 	}
 
 	private class UpdateImportanceRunnable implements Runnable {
@@ -342,113 +305,178 @@ public class FindingDetailsMediator implements IProjectsObserver {
 						"SQL exception when trying to set critical importance",
 						se);
 			}
-
 		}
-
 	}
 
-	private class UpdateViewRunnable implements Runnable {
+	/**
+	 * Must be invoked from the SWT thread.
+	 */
+	private void updateContents() {
+		final boolean noFinding = f_finding == null;
+		final Control page = noFinding ? f_noFindingPage : f_findingPage;
+		if (page != f_pages.getPage()) {
+			f_pages.showPage(page);
+		}
+		if (noFinding)
+			return;
 
-		private final FindingDetail f_details;
+		/*
+		 * We have a finding so show the details about it.
+		 */
+		f_summaryIcon.setImage(Utility.getImageFor(f_finding.getImportance()));
+		f_summaryText.setText(f_finding.getSummary());
 
-		public UpdateViewRunnable(FindingDetail details) {
-			f_details = details;
+		f_findingSynopsis.setText(getFindingSynopsis());
+
+		f_projectName.setText(f_finding.getProjectName());
+		f_packageName.setText(f_finding.getPackageName());
+		f_className.setText(getClassName());
+
+		// Remove the tabspaces and newline
+		String details = f_finding.getFindingTypeDetail();
+		details = details.replaceAll("\\t", "");
+		details = details.replaceAll("\\n", "");
+		f_detailsText.setText(details);
+
+		f_auditTab.setText("Audit");
+
+		// Clear importance buttons
+		for (Button button : f_importanceButtons) {
+			button.setSelection(false);
 		}
 
-		public void run() {
-			f_summaryText.setText(f_details.getSummary());
-			f_projectName.setText(f_details.getProject());
-			f_packageName.setText(f_details.getPackageName());
-			f_className.setText(f_details.getClassName() + " ("
-					+ f_details.getLineOfCode() + ")");
+		// Set importance
+		if (f_finding.getImportance() == Importance.CRITICAL) {
+			f_importanceButtons[0].setSelection(true);
+		} else if (f_finding.getImportance() == Importance.HIGH) {
+			f_importanceButtons[1].setSelection(true);
+		} else if (f_finding.getImportance() == Importance.MEDIUM) {
+			f_importanceButtons[2].setSelection(true);
+		} else if (f_finding.getImportance() == Importance.LOW) {
+			f_importanceButtons[3].setSelection(true);
+		} else {
+			f_importanceButtons[4].setSelection(true);
+		}
 
-			// Remove the tabspaces and newline
-			String details = f_details.getFindingTypeDetail();
-			details = details.replaceAll("\\t", "");
-			details = details.replaceAll("\\n", "");
-			f_detailsText.setText(details);
+		List<CommentDetail> commentDetails = f_finding.getComments();
 
-			f_auditTab.setText("Audit");
+		// Add label
 
-			final Importance importance = f_details.getImportance();
+		f_scrollingLabelComposite.removeAll();
 
-			// Clear importance buttons
-			for (Button b : f_importanceButtons) {
-				b.setSelection(false);
+		if (commentDetails != null) {
+			for (int i = commentDetails.size() - 1; i >= 0; i--) {
+				final CommentDetail cd = commentDetails.get(i);
+				String userName = cd.getUser();
+				if (userName == null) {
+					userName = "Local";
+				}
+				final String holder = userName + " (" + cd.getTime().toString()
+						+ ") : " + cd.getComment();
+				f_scrollingLabelComposite.addLabel(holder);
 			}
+		}
+		f_scrollingLabelComposite.reflow(true);
 
-			// Set importance
-			if (importance.equals(Importance.CRITICAL)) {
-				f_importanceButtons[0].setSelection(true);
-			} else if (importance.equals(Importance.HIGH)) {
-				f_importanceButtons[1].setSelection(true);
-			} else if (importance.equals(Importance.MEDIUM)) {
-				f_importanceButtons[2].setSelection(true);
-			} else if (importance.equals(Importance.LOW)) {
-				f_importanceButtons[3].setSelection(true);
+		List<ArtifactDetail> artifacts = f_finding.getArtifacts();
+
+		f_artifactsTree.removeAll();
+		if (artifacts != null) {
+			if (artifacts.size() == 0) {
+				f_artifactsTab.setText("No Artifacts");
+			} else if (artifacts.size() == 1) {
+				f_artifactsTab.setText(artifacts.size() + " Artifact");
 			} else {
-				f_importanceButtons[4].setSelection(true);
+				f_artifactsTab.setText(artifacts.size() + " Artifacts");
 			}
 
-			List<CommentDetail> commentDetails = f_details.getComments();
-
-			// Add label
-
-			f_scrollingLabelComposite.removeAll();
-
-			if (commentDetails != null) {
-				for (int i = commentDetails.size() - 1; i >= 0; i--) {
-					final CommentDetail cd = commentDetails.get(i);
-					String userName = cd.getUser();
-					if (userName == null) {
-						userName = "Local";
-					}
-					final String holder = userName + " ("
-							+ cd.getTime().toString() + ") : "
-							+ cd.getComment();
-					f_scrollingLabelComposite.addLabel(holder);
-				}
+			for (ArtifactDetail ad : artifacts) {
+				final TreeItem ti = new TreeItem(f_artifactsTree, SWT.NONE);
+				ti.setText(ad.getTool() + " : " + ad.getMessage());
 			}
-			f_scrollingLabelComposite.reflow(true);
-
-			List<ArtifactDetail> artifacts = f_details.getArtifacts();
-
-			f_artifactsTree.removeAll();
-			if (artifacts != null) {
-				if (artifacts.size() == 0) {
-					f_artifactsTab.setText("No Artifacts");
-				} else if (artifacts.size() == 1) {
-					f_artifactsTab.setText(artifacts.size() + " Artifact");
-				} else {
-					f_artifactsTab.setText(artifacts.size() + " Artifacts");
-				}
-
-				for (ArtifactDetail ad : artifacts) {
-					final TreeItem ti = new TreeItem(f_artifactsTree, SWT.NONE);
-					ti.setText(ad.getTool() + " : " + ad.getMessage());
-				}
-			}
-
-			f_commentText.setText("");
-			setPages();
-
 		}
+
+		f_commentText.setText("");
+
+		f_findingPage.layout(true, true);
+	}
+
+	private String getFindingSynopsis() {
+		final String importance = f_finding.getImportance().toString()
+				.toLowerCase();
+
+		final int auditCount = f_finding.getNumberOfComments();
+		final String tool = f_finding.getTool();
+		final FindingStatus status = f_finding.getStatus();
+
+		StringBuilder b = new StringBuilder();
+		b.append("This finding (id=" + f_finding.getFindingId() + ") is of ");
+		b.append("<a href=\"audit\">");
+		b.append(importance);
+		b.append("</a>");
+		b.append(" importance. It has ");
+		if (auditCount > 0) {
+			b.append("been <a href=\"audit\">audited ");
+			b.append(auditCount);
+			b.append("2 times</a> ");
+		} else {
+			b.append("not been <a href=\"audit\">audited</a> ");
+		}
+		if (status == FindingStatus.FIXED) {
+			b.append("and was not found in the code during the last scan.");
+		} else {
+			if (status == FindingStatus.NEW) {
+				b.append("and was discovered by ");
+				b.append("<a href=\"artifact\">");
+				if (tool.startsWith("(")) {
+					b.append("by multiple tools (");
+					b.append(f_finding.getNumberOfArtifacts());
+					b.append(" artifacts)");
+				} else
+					b.append(tool);
+				b.append("</a> during the last scan.");
+			} else {
+				b.append("and has been reported by ");
+				b.append("<a href=\"artifact\">");
+				b.append(tool);
+				b.append("</a> for several scans.");
+			}
+		}
+		return b.toString();
+	}
+
+	private String getClassName() {
+		StringBuilder b = new StringBuilder();
+		int[] lines = f_finding.getLinesOfCode();
+		b.append(f_finding.getClassName());
+		b.append(" at line");
+		if (lines.length > 1)
+			b.append("s");
+		b.append(" ");
+		boolean first = true;
+		for (int line : lines) {
+			if (first)
+				first = false;
+			else
+				b.append(" ");
+			b.append("<a href=\"");
+			b.append(line);
+			b.append("\">");
+			b.append(line);
+			b.append("</a>");
+		}
+		return b.toString();
 	}
 
 	public void notify(Projects p) {
-		final Control page;
-		if (p.isEmpty()) {
-			page = f_noFindingPage;
-			// beware the thread context this method call might be made in.
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		if (f_finding == null)
+			return;
+		if (!p.getProjectNames().contains(f_finding.getProjectName())) {
+			f_display.asyncExec(new Runnable() {
 				public void run() {
-					if (page != f_pages.getPage()) {
-						f_pages.showPage(page);
-					}
+					updateContents();
 				}
-
 			});
 		}
-
 	}
 }
