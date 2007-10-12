@@ -143,7 +143,7 @@ public class FindingOverview {
 				throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,EXAMINED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,COMMENT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
+					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?)");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
