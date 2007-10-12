@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -21,7 +22,7 @@ import com.surelogic.common.eclipse.ScrollingLabelComposite;
 
 public class FindingsDetailsView extends ViewPart {
 
-	private static final String SELECT_FINDINGS = "No finding selected...select a finding to view details";
+	private static final String SELECT_FINDINGS = "No finding is selected...select a finding to view its details";
 	private FindingDetailsMediator f_mediator = null;
 
 	@Override
@@ -29,104 +30,90 @@ public class FindingsDetailsView extends ViewPart {
 
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
-		final Label selectFindingsPage = new Label(pages, SWT.WRAP);
-		selectFindingsPage.setText(SELECT_FINDINGS);
+		final Label noFindingPage = new Label(pages, SWT.WRAP);
+		noFindingPage.setText(SELECT_FINDINGS);
 
-		final Composite findingDetailsPage = new Composite(pages, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
+		final Composite findingPage = new Composite(pages, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		findingPage.setLayout(layout);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		findingDetailsPage.setLayoutData(layoutData);
-		findingDetailsPage.setLayout(layout);
+		findingPage.setLayoutData(layoutData);
 
-		// TOP LEFT BLOCK
-		final Composite summaryComposite = new Composite(findingDetailsPage,
-				SWT.NONE);
-		layout = new GridLayout(3, false);
+		/*
+		 * Top of the page showing the mutable finding summary and its
+		 * importance icon
+		 */
+		final Composite top = new Composite(findingPage, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		top.setLayout(layout);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		summaryComposite.setLayoutData(layoutData);
-		summaryComposite.setLayout(layout);
+		top.setLayoutData(layoutData);
 
-		// Summary text : can be changed
+		final Label importanceIcon = new Label(top, SWT.NONE);
+		layoutData = new GridData(SWT.CENTER, SWT.DEFAULT, false, false);
+		importanceIcon.setLayoutData(layoutData);
+		// TODO: remove set this in the mediator
+		importanceIcon.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
 
-		final Label summaryLabel = new Label(summaryComposite, SWT.NONE);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
-		summaryLabel.setLayoutData(layoutData);
-		summaryLabel.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-
-		final Label summaryText = new Label(summaryComposite, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		layoutData.widthHint = 300;
+		final Text summaryText = new Text(top, SWT.SINGLE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		summaryText.setLayoutData(layoutData);
 
-		final Button summaryChangeButton = new Button(summaryComposite,
-				SWT.PUSH);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
-		summaryChangeButton.setLayoutData(layoutData);
-		summaryChangeButton.setText("Change");
-
-		final TabFolder mainTab = new TabFolder(findingDetailsPage, SWT.NONE);
-		layout = new GridLayout(1, false);
+		final TabFolder folder = new TabFolder(findingPage, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		folder.setLayoutData(layoutData);
 
-		mainTab.setLayout(layout);
-		mainTab.setLayoutData(layoutData);
+		final TabItem synopsisTab = new TabItem(folder, SWT.NONE);
+		synopsisTab.setText("Synopsis");
+		layout = new GridLayout();
 
-		final TabItem detailsTab = new TabItem(mainTab, SWT.NONE);
-		detailsTab.setText("Details");
+		final Composite synopsisPane = new Composite(folder, SWT.NONE);
+		layout = new GridLayout();
+		synopsisPane.setLayout(layout);
 
-		final Composite detailsComposite = new Composite(mainTab, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		detailsComposite.setLayoutData(layoutData);
-		detailsComposite.setLayout(layout);
+		/*
+		 * Show where the finding is located.
+		 */
+		final Group where = new Group(synopsisPane, SWT.NONE);
+		where.setText("Location");
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		where.setLayout(layout);
+		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		where.setLayoutData(layoutData);
 
-		// TOP LEFT BLOCK
-		final Composite overviewComposite = new Composite(detailsComposite,
-				SWT.NONE);
-		layout = new GridLayout(1, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		overviewComposite.setLayoutData(layoutData);
-		overviewComposite.setLayout(layout);
-
-		final Label locationDetailsLabel = new Label(overviewComposite,
-				SWT.NONE);
-		locationDetailsLabel.setFont(FontUtility.getDefaultBoldFont());
-		locationDetailsLabel.setText("Location");
-
-		// Summary information
-
-		final Composite locationInfoComposite = new Composite(
-				overviewComposite, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, true, false);
-		locationInfoComposite.setLayoutData(layoutData);
-		locationInfoComposite.setLayout(layout);
-
-		final Label packageLabel = new Label(locationInfoComposite, SWT.NONE);
-		packageLabel.setImage(SLImages
+		final Label packageIcon = new Label(where, SWT.NONE);
+		packageIcon.setImage(SLImages
 				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
+		packageIcon.setLayoutData(layoutData);
 
-		final Label packageNameText = new Label(locationInfoComposite, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		layoutData.widthHint = 300;
-		packageNameText.setLayoutData(layoutData);
-		// packageNameText
-		// .setText("com.surelogic.sierra.client.eclipse.preferences");
+		final Label packageName = new Label(where, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		packageName.setLayoutData(layoutData);
 
-		final Label classLabel = new Label(locationInfoComposite, SWT.NONE);
-		classLabel.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+		final Label spacer = new Label(where, SWT.NONE);
+		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
+		spacer.setLayoutData(layoutData);
 
-		final Label classNameText = new Label(locationInfoComposite, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		layoutData.widthHint = 300;
-		classNameText.setLayoutData(layoutData);
-		// classNameText.setText("AdHocQueryResultsViewMediator " + "(Line 2)");
+		final Label classIcon = new Label(where, SWT.NONE);
+		classIcon.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
+		classIcon.setLayoutData(layoutData);
 
-		final Label moreInfoLabel = new Label(overviewComposite, SWT.NONE);
+		final Link className = new Link(where, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		className.setLayoutData(layoutData);
+
+		final Label moreInfoLabel = new Label(synopsisPane, SWT.NONE);
 		moreInfoLabel.setFont(FontUtility.getDefaultBoldFont());
 		moreInfoLabel.setText("More Information");
 
-		final Label detailsText = new Label(overviewComposite, SWT.WRAP);
+		final Label detailsText = new Label(synopsisPane, SWT.WRAP);
 		// detailsText.setText("Using the java.lang.String(String)constructor "
 		// + "wastes memory because the object so constructed will be "
 		// + "functionally indistinguishable from the String passed as "
@@ -136,12 +123,12 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData.horizontalIndent = 10;
 		detailsText.setLayoutData(layoutData);
 
-		detailsTab.setControl(detailsComposite);
+		synopsisTab.setControl(synopsisPane);
 
-		final TabItem auditTab = new TabItem(mainTab, SWT.NONE);
+		final TabItem auditTab = new TabItem(folder, SWT.NONE);
 		// auditTab.setText("Audit");
 
-		final Composite auditComposite = new Composite(mainTab, SWT.NONE);
+		final Composite auditComposite = new Composite(folder, SWT.NONE);
 		layout = new GridLayout(1, false);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		auditComposite.setLayoutData(layoutData);
@@ -242,10 +229,10 @@ public class FindingsDetailsView extends ViewPart {
 
 		auditTab.setControl(auditComposite);
 
-		final TabItem artifactsTab = new TabItem(mainTab, SWT.NONE);
+		final TabItem artifactsTab = new TabItem(folder, SWT.NONE);
 		// artifactsTab.setText("Artifacts (2)");
 
-		final Composite artifactsComposite = new Composite(mainTab, SWT.NONE);
+		final Composite artifactsComposite = new Composite(folder, SWT.NONE);
 		layout = new GridLayout(1, false);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		artifactsComposite.setLayoutData(layoutData);
@@ -287,11 +274,11 @@ public class FindingsDetailsView extends ViewPart {
 		// + "this warning.");
 		artifactsTab.setControl(artifactsComposite);
 
-		f_mediator = new FindingDetailsMediator(pages, selectFindingsPage,
-				findingDetailsPage, summaryText, summaryChangeButton,
-				packageNameText, classNameText, detailsText, auditTab,
-				quickAudit, importanceButtons, commentText, commentButton,
-				scrollingLabelComposite, artifactsTab, artifactsTree);
+		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
+				findingPage, summaryText, packageName, className, detailsText,
+				auditTab, quickAudit, importanceButtons, commentText,
+				commentButton, scrollingLabelComposite, artifactsTab,
+				artifactsTree);
 
 		f_mediator.init();
 

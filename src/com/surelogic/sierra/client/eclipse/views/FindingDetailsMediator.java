@@ -7,14 +7,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -25,7 +24,6 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.dialogs.SummaryChangeDialog;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.CommentDetail;
@@ -35,12 +33,11 @@ import com.surelogic.sierra.tool.message.Importance;
 public class FindingDetailsMediator {
 
 	private final PageBook f_pages;
-	private final Control f_noFindingsDetailsPage;
-	private final Control f_findingsDetailsPage;
-	private final Label f_summaryText;
-	private final Button f_summaryChangeButton;
-	private final Label f_packageNameText;
-	private final Label f_classNameText;
+	private final Control f_noFindingPage;
+	private final Control f_findingPage;
+	private final Text f_summaryText;
+	private final Label f_packageName;
+	private final Link f_className;
 	private final Label f_detailsText;
 	private final TabItem f_auditTab;
 	private final Button f_quickAudit;
@@ -54,21 +51,19 @@ public class FindingDetailsMediator {
 
 	private final Executor f_executor = Executors.newSingleThreadExecutor();
 
-	public FindingDetailsMediator(PageBook pages, Control noFindingsPage,
-			Control findingsPage, Label summaryText,
-			Button summaryChangeButton, Label packageNameText,
-			Label classNameText, Label detailsText, TabItem auditTab,
+	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
+			Control findingPage, Text summaryText, Label packageName,
+			Link className, Label detailsText, TabItem auditTab,
 			Button quickAudit, Button[] importanceButtons, Text commentText,
 			Button commentButton,
 			ScrollingLabelComposite scrollingLabelComposite,
 			TabItem artifactsTab, Tree artifactsTree) {
 		f_pages = pages;
-		f_noFindingsDetailsPage = noFindingsPage;
-		f_findingsDetailsPage = findingsPage;
+		f_noFindingPage = noFindingPage;
+		f_findingPage = findingPage;
 		f_summaryText = summaryText;
-		f_summaryChangeButton = summaryChangeButton;
-		f_packageNameText = packageNameText;
-		f_classNameText = classNameText;
+		f_packageName = packageName;
+		f_className = className;
 		f_detailsText = detailsText;
 		f_auditTab = auditTab;
 		f_quickAudit = quickAudit;
@@ -114,9 +109,9 @@ public class FindingDetailsMediator {
 	public void setPages() {
 		final Control page;
 		if (f_findingId == 0) {
-			page = f_noFindingsDetailsPage;
+			page = f_noFindingPage;
 		} else {
-			page = f_findingsDetailsPage;
+			page = f_findingPage;
 		}
 
 		// beware the thread context this method call might be made in.
@@ -236,50 +231,50 @@ public class FindingDetailsMediator {
 
 		});
 
-		f_summaryChangeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				SummaryChangeDialog scd = new SummaryChangeDialog(Display
-						.getCurrent().getActiveShell(), f_summaryText.getText());
-				if (Window.OK == scd.open()) {
-					final String summary = scd.getText();
-					f_summaryText.setText(summary.trim());
-					f_executor.execute(new Runnable() {
-
-						public void run() {
-							try {
-								Connection conn = Data.getConnection();
-								conn.setAutoCommit(false);
-								ClientFindingManager manager = ClientFindingManager
-										.getInstance(conn);
-								manager.changeSummary(f_findingId, summary);
-								conn.commit();
-								conn.close();
-								// TODO: Add check for empty comment
-								PlatformUI.getWorkbench().getDisplay()
-										.asyncExec(new Runnable() {
-											public void run() {
-												refreshDetailsPage(f_findingId);
-											}
-
-										});
-							} catch (SQLException se) {
-								SLLogger
-										.getLogger("sierra")
-										.log(
-												Level.SEVERE,
-												"SQL exception when trying to set critical importance",
-												se);
-							}
-
-						}
-
-					});
-				}
-
-			}
-
-		});
+		// f_summaryChangeButton.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// SummaryChangeDialog scd = new SummaryChangeDialog(Display
+		// .getCurrent().getActiveShell(), f_summaryText.getText());
+		// if (Window.OK == scd.open()) {
+		// final String summary = scd.getText();
+		// f_summaryText.setText(summary.trim());
+		// f_executor.execute(new Runnable() {
+		//
+		// public void run() {
+		// try {
+		// Connection conn = Data.getConnection();
+		// conn.setAutoCommit(false);
+		// ClientFindingManager manager = ClientFindingManager
+		// .getInstance(conn);
+		// manager.changeSummary(f_findingId, summary);
+		// conn.commit();
+		// conn.close();
+		// // TODO: Add check for empty comment
+		// PlatformUI.getWorkbench().getDisplay()
+		// .asyncExec(new Runnable() {
+		// public void run() {
+		// refreshDetailsPage(f_findingId);
+		// }
+		//
+		// });
+		// } catch (SQLException se) {
+		// SLLogger
+		// .getLogger("sierra")
+		// .log(
+		// Level.SEVERE,
+		// "SQL exception when trying to set critical importance",
+		// se);
+		// }
+		//
+		// }
+		//
+		// });
+		// }
+		//
+		// }
+		//
+		// });
 
 	}
 
@@ -348,8 +343,8 @@ public class FindingDetailsMediator {
 
 		public void run() {
 			f_summaryText.setText(f_details.getSummary());
-			f_packageNameText.setText(f_details.getPackageName());
-			f_classNameText.setText(f_details.getClassName() + " ("
+			f_packageName.setText(f_details.getPackageName());
+			f_className.setText(f_details.getClassName() + " ("
 					+ f_details.getLineOfCode() + ")");
 
 			// Remove the tabspaces and newline
