@@ -44,6 +44,7 @@ public class FindingManager {
 	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
 	private final PreparedStatement updateFindingSummary;
+	private final PreparedStatement obsoleteArtifacts;
 	private final PreparedStatement obsoleteAudits;
 	private final PreparedStatement obsoleteMatches;
 	private final PreparedStatement obsoleteFinding;
@@ -69,6 +70,8 @@ public class FindingManager {
 				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingSummary = conn
 				.prepareStatement("UPDATE FINDING SET SUMMARY = ?, LAST_CHANGED = ? WHERE ID = ?");
+		obsoleteArtifacts = conn
+				.prepareStatement("UPDATE ARTIFACT_FINDING_RELTN SET FINDING_ID = ? WHERE FINDING_ID = ?");
 		obsoleteAudits = conn
 				.prepareStatement("UPDATE SIERRA_AUDIT SET FINDING_ID = ? WHERE FINDING_ID = ?");
 		obsoleteMatches = conn
@@ -156,12 +159,6 @@ public class FindingManager {
 						f.insert();
 						m.setFindingId(f.getId());
 						m.insert();
-						newAudit(null, f.getId(), importance.toString(),
-								AuditEvent.IMPORTANCE, scan.getTimestamp(),
-								null).insert();
-						newAudit(null, f.getId(), art.message,
-								AuditEvent.SUMMARY, scan.getTimestamp(), null)
-								.insert();
 						findingId = f.getId();
 					} else {
 						findingId = art.m.getFindingId();
@@ -338,6 +335,9 @@ public class FindingManager {
 	 */
 	protected void obsolete(Long obsolete, Long finding, Long revision)
 			throws SQLException {
+		obsoleteArtifacts.setLong(1, finding);
+		obsoleteArtifacts.setLong(2, obsolete);
+		obsoleteArtifacts.execute();
 		obsoleteMatches.setLong(1, finding);
 		obsoleteMatches.setLong(2, obsolete);
 		obsoleteMatches.execute();
@@ -362,14 +362,15 @@ public class FindingManager {
 	 */
 	protected void delete(Long deleted, Long finding) throws SQLException {
 		FindingRecord fRec = getFinding(deleted);
-			obsoleteMatches.setLong(1, finding);
-			obsoleteMatches.setLong(2, deleted);
-			obsoleteMatches.execute();
-			if (fRec.isRead()) {
-			obsoleteAudits.setLong(1, finding);
-			obsoleteAudits.setLong(2, deleted);
-			obsoleteAudits.execute();
-		}
+		obsoleteArtifacts.setLong(1, finding);
+		obsoleteArtifacts.setLong(2, deleted);
+		obsoleteArtifacts.execute();
+		obsoleteMatches.setLong(1, finding);
+		obsoleteMatches.setLong(2, deleted);
+		obsoleteMatches.execute();
+		obsoleteAudits.setLong(1, finding);
+		obsoleteAudits.setLong(2, deleted);
+		obsoleteAudits.execute();
 		obsoleteOverview.setLong(1, finding);
 		obsoleteOverview.setLong(2, deleted);
 		obsoleteOverview.execute();

@@ -38,6 +38,7 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateFindingOverview;
+	private final PreparedStatement checkIfInScans;
 	private final PreparedStatement selectFindingProject;
 	private final PreparedStatement selectLatestScanByProject;
 	private final PreparedStatement updateFindingUid;
@@ -132,7 +133,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
 
 		selectFindingProject = conn
-				.prepareStatement("SELECT PROJECT FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
+				.prepareStatement("SELECT P.NAME FROM FINDING F, PROJECT P WHERE F.ID = ? AND P.ID = F.PROJECT_ID");
 		deleteFindingFromOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
@@ -158,6 +159,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ " WHERE A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " AND F.UUID IS NOT NULL ORDER BY A.FINDING_ID");
+		checkIfInScans = conn
+				.prepareStatement("SELECT SCAN_ID FROM SCAN_OVERVIEW WHERE FINDING_ID = ?");
 	}
 
 	/**
@@ -228,8 +231,16 @@ public final class ClientFindingManager extends FindingManager {
 		for (Long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
-			populateSingleTempId.setLong(1, id);
-			populateSingleTempId.execute();
+			checkIfInScans.setLong(1, id);
+			ResultSet set = checkIfInScans.executeQuery();
+			try {
+				if (set.next()) {
+					populateSingleTempId.setLong(1, id);
+					populateSingleTempId.execute();
+				}
+			} finally {
+				set.close();
+			}
 		}
 		selectLatestScanByProject.setString(1, projectName);
 		ResultSet set = selectLatestScanByProject.executeQuery();
@@ -360,6 +371,8 @@ public final class ClientFindingManager extends FindingManager {
 					finding.setUid(update.getTrail());
 					finding.setProjectId(project.getId());
 					if (!finding.select()) {
+						finding.setImportance(update.getImportance());
+						finding.setSummary(update.getSummary());
 						finding.insert();
 					}
 					MatchRecord mRec = factory.newMatch();
@@ -374,9 +387,6 @@ public final class ClientFindingManager extends FindingManager {
 								if (!mRec.getFindingId()
 										.equals(finding.getId())) {
 									// This must be a local match, so delete it
-									deleteFindingFromOverview.setLong(1, mRec
-											.getFindingId());
-									deleteFindingFromOverview.execute();
 									delete(mRec.getFindingId(), finding.getId());
 								}
 							} else {
@@ -466,15 +476,18 @@ public final class ClientFindingManager extends FindingManager {
 		rec.select();
 		findLocalMerges.setLong(1, rec.getId());
 		ResultSet set = findLocalMerges.executeQuery();
-		Long oldFinding = null;
+		Long findingId = null;
 		List<Match> matches = null;
 		try {
 			while (set.next()) {
 				int idx = 1;
-				Long newFinding = set.getLong(idx++);
-				if (!newFinding.equals(oldFinding)) {
-					oldFinding = newFinding;
+				Long newFindingId = set.getLong(idx++);
+				if (!newFindingId.equals(findingId)) {
+					findingId = newFindingId;
+					FindingRecord finding = getFinding(findingId);
 					Merge merge = new Merge();
+					merge.setImportance(finding.getImportance());
+					merge.setSummary(finding.getSummary());
 					matches = new LinkedList<Match>();
 					merge.setMatch(matches);
 					merges.add(merge);

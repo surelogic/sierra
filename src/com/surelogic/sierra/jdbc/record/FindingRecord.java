@@ -25,9 +25,8 @@ public final class FindingRecord extends LongRecord {
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, projectId);
 		st.setString(idx++, uid);
-		setNullableInt(idx++, st, importance == null ? null : importance
-				.ordinal());
-		setNullableString(idx++, st, summary);
+		st.setInt(idx++, importance.ordinal());
+		st.setString(idx++, summary);
 		setNullableLong(idx++, st, obsoletedById);
 		setNullableLong(idx++, st, obsoletedByRevision);
 		return idx;
@@ -42,10 +41,7 @@ public final class FindingRecord extends LongRecord {
 	@Override
 	public int readAttributes(ResultSet set, int idx) throws SQLException {
 		this.projectId = set.getLong(idx++);
-		Integer impInt = getNullableInteger(idx++, set);
-		if (impInt != null) {
-			this.importance = Importance.values()[impInt];
-		}
+		this.importance = Importance.values()[set.getInt(idx++)];
 		this.summary = set.getString(idx++);
 		this.read = "Y".equals(set.getString(idx++));
 		this.obsoletedById = getNullableLong(idx++, set);

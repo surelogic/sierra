@@ -20,13 +20,11 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
-import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
-import com.surelogic.sierra.jdbc.tool.FindingTypeRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
@@ -134,7 +132,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   A.REVISION IS NOT NULL AND"
 						+ "   A.REVISION > ? AND"
 						+ "   U.ID = A.USER_ID"
-						+ "   ORDER BY F.ID");
+						+ "   ORDER BY F.ID,A.REVISION,A.DATE_TIME");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -257,7 +255,8 @@ public final class ServerFindingManager extends FindingManager {
 				// Generate the list of match ids
 				for (Match m : matches) {
 					MatchRecord.PK matchId = new MatchRecord.PK();
-					Long findingTypeId = ftManager.getFindingTypeId(m.getFindingType());
+					Long findingTypeId = ftManager.getFindingTypeId(m
+							.getFindingType());
 					if (findingTypeId != null) {
 						matchId.setClassName(m.getClassName());
 						matchId.setFindingTypeId(findingTypeId);
@@ -299,6 +298,8 @@ public final class ServerFindingManager extends FindingManager {
 					uuid = UUID.randomUUID().toString();
 					findingRecord.setUid(uuid);
 					findingRecord.setProjectId(projectRecord.getId());
+					findingRecord.setSummary(merge.getSummary());
+					findingRecord.setImportance(merge.getImportance());
 					findingRecord.insert();
 					findingId = findingRecord.getId();
 					for (Long obsoleteId : findings) {
@@ -411,6 +412,11 @@ public final class ServerFindingManager extends FindingManager {
 						uuid = nextUuid;
 						audits = new LinkedList<Audit>();
 						AuditTrailUpdate update = new AuditTrailUpdate();
+						FindingRecord finding = factory.newFinding();
+						finding.setUid(uuid);
+						finding.select();
+						update.setImportance(finding.getImportance());
+						update.setSummary(finding.getSummary());
 						update.setTrail(uuid);
 						update.setMatch(matchMap.get(uuid));
 						update.setAudit(audits);
