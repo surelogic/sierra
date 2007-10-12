@@ -104,7 +104,6 @@ public final class ServerFindingManager extends FindingManager {
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
 						+ "       FROM SIERRA_AUDIT A"
-						+ "       WHERE A.EVENT='COMMENT'"
 						+ "       GROUP BY A.FINDING_ID) COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
