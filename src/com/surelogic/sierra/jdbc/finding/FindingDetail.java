@@ -123,15 +123,18 @@ public class FindingDetail {
 		return overview.getLineOfCode();
 	}
 
-	public Integer[] getLinesOfCode() {
+	public int[] getLinesOfCode() {
 		Set<Integer> lineSet = new TreeSet<Integer>();
 		for (ArtifactDetail a : artifacts) {
 			lineSet.add(a.getLineOfCode());
 		}
-		Integer[] lines = lineSet.toArray(new Integer[lineSet.size()]);	
+		Integer[] bigLines = lineSet.toArray(new Integer[lineSet.size()]);
+		int[] lines = new int[bigLines.length];
+		for (int i = 0; i < bigLines.length; i++) {
+			lines[i] = bigLines[i];
+		}
 		Arrays.sort(lines);
 		return lines;
-
 	}
 
 	public int getNumberOfArtifacts() {
