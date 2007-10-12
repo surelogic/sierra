@@ -5,9 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -120,9 +123,15 @@ public class FindingDetail {
 		return overview.getLineOfCode();
 	}
 
-	public int[] getLinesOfCode() {
-		// TODO in counting order and no duplicates
-		return new int[] { getLineOfCode() };
+	public Integer[] getLinesOfCode() {
+		Set<Integer> lineSet = new TreeSet<Integer>();
+		for (ArtifactDetail a : artifacts) {
+			lineSet.add(a.getLineOfCode());
+		}
+		Integer[] lines = lineSet.toArray(new Integer[lineSet.size()]);	
+		Arrays.sort(lines);
+		return lines;
+
 	}
 
 	public int getNumberOfArtifacts() {
