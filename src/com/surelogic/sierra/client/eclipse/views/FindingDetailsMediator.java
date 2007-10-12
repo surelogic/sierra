@@ -418,7 +418,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		if (auditCount > 0) {
 			b.append("been <a href=\"audit\">audited ");
 			b.append(auditCount);
-			b.append("2 times</a> ");
+			b.append(" times</a> ");
 		} else {
 			b.append("not been <a href=\"audit\">audited</a> ");
 		}
