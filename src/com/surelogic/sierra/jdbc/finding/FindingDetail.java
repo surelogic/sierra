@@ -81,7 +81,7 @@ public class FindingDetail {
 						artSet = artSt
 								.executeQuery("SELECT T.NAME, A.MESSAGE"
 										+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T"
-										+ "   WHERE A.ID = " + artifactId);
+										+ "   WHERE A.ID = " + artifactId + " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID");
 						artSet.next();
 						artifacts.add(new ArtifactDetail(artSet, primary,
 								additionalSources));
