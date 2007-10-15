@@ -54,6 +54,7 @@ public final class DeleteProjectDataJob {
 								conn.commit();
 								SierraServerManager.getInstance().disconnect(
 										projectName);
+								DatabaseHub.getInstance().notifyProjectDeleted();
 							}
 						} catch (Exception e) {
 							final String msg = "Deletion of Sierra data about projects "

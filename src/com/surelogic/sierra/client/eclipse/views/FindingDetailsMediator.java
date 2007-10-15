@@ -36,7 +36,7 @@ import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
-import com.surelogic.sierra.jdbc.finding.CommentDetail;
+import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.tool.message.Importance;
@@ -349,7 +349,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			f_irrelevantButton.setSelection(true);
 		}
 
-		List<CommentDetail> commentDetails = f_finding.getComments();
+		List<AuditDetail> commentDetails = f_finding.getComments();
 
 		// Add label
 
@@ -357,13 +357,13 @@ public class FindingDetailsMediator implements IProjectsObserver {
 
 		if (commentDetails != null) {
 			for (int i = commentDetails.size() - 1; i >= 0; i--) {
-				final CommentDetail cd = commentDetails.get(i);
+				final AuditDetail cd = commentDetails.get(i);
 				String userName = cd.getUser();
 				if (userName == null) {
 					userName = "Local";
 				}
 				final String holder = userName + " (" + cd.getTime().toString()
-						+ ") : " + cd.getComment();
+						+ ") : " + cd.getText();
 				f_scrollingLabelComposite.addLabel(holder);
 			}
 		}
