@@ -433,6 +433,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 				manager.comment(f_finding.getFindingId(), comment);
 				c.commit();
+				DatabaseHub.getInstance().notifyFindingMutated();
 			} finally {
 				c.close();
 			}
@@ -457,6 +458,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 						.getInstance(c);
 				manager.setImportance(f_finding.getFindingId(), importance);
 				c.commit();
+				DatabaseHub.getInstance().notifyFindingMutated();
 			} finally {
 				c.close();
 			}
