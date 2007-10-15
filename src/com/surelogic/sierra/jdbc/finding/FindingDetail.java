@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetail {
 
 	private final FindingOverview overview;
 	private final String findingTypeDetail;
-	private List<CommentDetail> comments;
+	private List<AuditDetail> audits;
 	private List<ArtifactDetail> artifacts;
 
 	private FindingDetail(Connection conn, Long findingId) throws SQLException {
@@ -41,16 +42,37 @@ public class FindingDetail {
 				int idx = 1;
 				findingTypeDetail = set.getString(idx++);
 				set = st
-						.executeQuery("SELECT SU.USER_NAME, A.VALUE, A.DATE_TIME"
+						.executeQuery("SELECT SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
 								+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
 								+ "   WHERE FINDING_ID = "
 								+ findingId
-								+ " AND EVENT = 'COMMENT'");
-				comments = new ArrayList<CommentDetail>();
+								+ " ORDER BY A.DATE_TIME");
+				audits = new ArrayList<AuditDetail>();
 				while (set.next()) {
 					idx = 1;
-					comments.add(new CommentDetail(set.getString(idx++), set
-							.getString(idx++), set.getTimestamp(idx++)));
+					String user = set.getString(idx++);
+					String text;
+					switch (AuditEvent.valueOf(set.getString(idx++))) {
+					case COMMENT:
+						text = set.getString(idx++);
+						break;
+					case IMPORTANCE:
+						text = "Importance changed to " + set.getString(idx++)
+								+ ".";
+						break;
+					case READ:
+						set.getString(idx++);
+						text = "Finding examined.";
+						break;
+					case SUMMARY:
+						text = "Summary changed to " + set.getString(idx++);
+						break;
+					default:
+						text = "Unknown type of audit.";
+						break;
+					}
+					audits.add(new AuditDetail(user, text, set
+							.getTimestamp(idx++)));
 				}
 				artifacts = new ArrayList<ArtifactDetail>();
 				set = st
@@ -81,7 +103,9 @@ public class FindingDetail {
 						artSet = artSt
 								.executeQuery("SELECT T.NAME, A.MESSAGE"
 										+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T"
-										+ "   WHERE A.ID = " + artifactId + " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID");
+										+ "   WHERE A.ID = "
+										+ artifactId
+										+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID");
 						artSet.next();
 						artifacts.add(new ArtifactDetail(artSet, primary,
 								additionalSources));
@@ -174,8 +198,8 @@ public class FindingDetail {
 		return findingTypeDetail;
 	}
 
-	public List<CommentDetail> getComments() {
-		return comments;
+	public List<AuditDetail> getComments() {
+		return audits;
 	}
 
 	public List<ArtifactDetail> getArtifacts() {

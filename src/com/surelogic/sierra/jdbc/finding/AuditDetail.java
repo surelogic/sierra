@@ -2,15 +2,15 @@ package com.surelogic.sierra.jdbc.finding;
 
 import java.util.Date;
 
-public class CommentDetail {
+public class AuditDetail {
 
 	private final Date time;
-	private final String comment;
+	private final String text;
 	private final String user;
 
-	CommentDetail(String user, String comment, Date time) {
+	AuditDetail(String user, String text, Date time) {
 		this.time = time;
-		this.comment = comment;
+		this.text = text;
 		this.user = user;
 	}
 
@@ -18,8 +18,8 @@ public class CommentDetail {
 		return time;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getText() {
+		return text;
 	}
 
 	public String getUser() {
