@@ -386,16 +386,16 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		try {
 			for (FindingOverview o : overview) {
 
-				if (o.getImportance().equals(Importance.CRITICAL)) {
-					marker = file.createMarker(SIERRA_MARKER_CRITICAL);
-				} else if (o.getImportance().equals(Importance.HIGH)) {
-					marker = file.createMarker(SIERRA_MARKER_HIGH);
-				} else if (o.getImportance().equals(Importance.MEDIUM)) {
-					marker = file.createMarker(SIERRA_MARKER_MEDIUM);
+				if (o.getImportance().equals(Importance.IRRELEVANT)) {
+					marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
 				} else if (o.getImportance().equals(Importance.LOW)) {
 					marker = file.createMarker(SIERRA_MARKER_LOW);
-				} else if (o.getImportance().equals(Importance.IRRELEVANT)) {
-					marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
+				} else if (o.getImportance().equals(Importance.MEDIUM)) {
+					marker = file.createMarker(SIERRA_MARKER_MEDIUM);
+				} else if (o.getImportance().equals(Importance.HIGH)) {
+					marker = file.createMarker(SIERRA_MARKER_HIGH);
+				} else if (o.getImportance().equals(Importance.CRITICAL)) {
+					marker = file.createMarker(SIERRA_MARKER_CRITICAL);
 				} else {
 					marker = file.createMarker(SIERRA_MARKER);
 				}
