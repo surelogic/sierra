@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaCore;
@@ -37,10 +39,12 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.SierraConstants;
 
-public final class MarkersHandler extends AbstractDatabaseObserver {
+public final class MarkersHandler extends AbstractDatabaseObserver implements
+		IPropertyChangeListener {
 
 	public static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 	private static final Logger LOG = SLLogger.getLogger("sierra");
@@ -57,6 +61,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 
 	static {
 		DatabaseHub.getInstance().addObserver(INSTANCE);
+
 	}
 
 	public static MarkersHandler getInstance() {
@@ -182,11 +187,24 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 								try {
 									Connection conn = Data.getConnection();
 									try {
-										f_overview = FindingOverview.getView()
-												.showFindingsForClass(conn,
-														f_projectName,
-														f_packageName,
-														f_className);
+
+										if (PreferenceConstants
+												.showLowestImportance()) {
+											f_overview = FindingOverview
+													.getView()
+													.showFindingsForClass(conn,
+															f_projectName,
+															f_packageName,
+															f_className);
+										} else {
+											f_overview = FindingOverview
+													.getView()
+													.showRelevantFindingsForClass(
+															conn,
+															f_projectName,
+															f_packageName,
+															f_className);
+										}
 
 										if (f_overview != null) {
 
@@ -450,4 +468,18 @@ public final class MarkersHandler extends AbstractDatabaseObserver {
 			}
 		}
 	}
+
+	/**
+	 * Refersh markers on property change
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+
+		if (event.getProperty().equals(
+				PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG)) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(
+					new RefreshMarkersRunnable());
+		}
+
+	}
+
 }

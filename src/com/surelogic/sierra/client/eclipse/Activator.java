@@ -57,6 +57,10 @@ public class Activator extends AbstractUIPlugin {
 		Projects.getInstance().refresh();
 		// listen changes to the active editor
 		MarkersHandler.getInstance().addMarkerListener();
+		// add preference listener
+		getDefault().getPluginPreferences().addPropertyChangeListener(
+				MarkersHandler.getInstance());
+
 	}
 
 	@Override

@@ -111,6 +111,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		f_path.loadDefault();
 		f_balloonFlag.loadDefault();
+		f_showLowestFlag.store();
 		super.performDefaults();
 	}
 
@@ -118,6 +119,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		f_path.store();
 		f_balloonFlag.store();
+		f_showLowestFlag.store();
 		return super.performOk();
 	}
 
