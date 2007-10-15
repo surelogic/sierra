@@ -62,7 +62,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 
 	private final TabItem f_auditTab;
 	private final Button f_quickAudit;
-	private final Button[] f_importanceButtons;
+	private final Button f_criticalButton;
+	private final Button f_highButton;
+	private final Button f_mediumButton;
+	private final Button f_lowButton;
+	private final Button f_irrelevantButton;
 	private final Text f_commentText;
 	private final Button f_commentButton;
 	private final ScrollingLabelComposite f_scrollingLabelComposite;
@@ -92,7 +96,9 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			TabFolder folder, TabItem synopsisTab, Link findingSynopsis,
 			Label projectName, Label packageName, Link className,
 			Label detailsText, TabItem auditTab, Button quickAudit,
-			Button[] importanceButtons, Text commentText, Button commentButton,
+			Button criticalButton, Button highButton, Button mediumButton,
+			Button lowButton, Button irrelevantButton, Text commentText,
+			Button commentButton,
 			ScrollingLabelComposite scrollingLabelComposite,
 			TabItem artifactTab, Tree artifactsTree) {
 		f_pages = pages;
@@ -109,7 +115,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_detailsText = detailsText;
 		f_auditTab = auditTab;
 		f_quickAudit = quickAudit;
-		f_importanceButtons = importanceButtons;
+		f_criticalButton = criticalButton;
+		f_highButton = highButton;
+		f_mediumButton = mediumButton;
+		f_lowButton = lowButton;
+		f_irrelevantButton = irrelevantButton;
 		f_commentText = commentText;
 		f_commentButton = commentButton;
 		f_scrollingLabelComposite = scrollingLabelComposite;
@@ -150,61 +160,29 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		});
 	}
 
+	private final Listener f_radioListener = new Listener() {
+		public void handleEvent(Event event) {
+			final Importance current = f_finding.getImportance();
+			if (event.widget != null) {
+				if (event.widget.getData() instanceof Importance) {
+					final Importance desired = (Importance) event.widget
+							.getData();
+					if (desired != current) {
+						f_executor.execute(new UpdateImportanceRunnable(
+								desired, f_finding.getFindingId()));
+					}
+				}
+			}
+		}
+	};
+
 	public void init() {
-		f_importanceButtons[0].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final boolean selection = f_importanceButtons[0].getSelection();
-				if (selection) {
-					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.CRITICAL, f_finding.getFindingId()));
-				}
 
-			}
-		});
-		f_importanceButtons[1].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final boolean selection = f_importanceButtons[1].getSelection();
-				if (selection) {
-					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.HIGH, f_finding.getFindingId()));
-				}
-			}
-		});
-
-		f_importanceButtons[2].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final boolean selection = f_importanceButtons[2].getSelection();
-				if (selection) {
-					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.MEDIUM, f_finding.getFindingId()));
-				}
-			}
-		});
-
-		f_importanceButtons[3].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final boolean selection = f_importanceButtons[3].getSelection();
-				if (selection) {
-					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.LOW, f_finding.getFindingId()));
-				}
-			}
-		});
-
-		f_importanceButtons[4].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final boolean selection = f_importanceButtons[4].getSelection();
-				if (selection) {
-					f_executor.execute(new UpdateImportanceRunnable(
-							Importance.IRRELEVANT, f_finding.getFindingId()));
-				}
-			}
-		});
+		f_criticalButton.addListener(SWT.Selection, f_radioListener);
+		f_highButton.addListener(SWT.Selection, f_radioListener);
+		f_mediumButton.addListener(SWT.Selection, f_radioListener);
+		f_lowButton.addListener(SWT.Selection, f_radioListener);
+		f_irrelevantButton.addListener(SWT.Selection, f_radioListener);
 
 		f_commentButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -282,7 +260,7 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		// TODO something reasonable
 	}
 
-	private class UpdateImportanceRunnable implements Runnable {
+	private static class UpdateImportanceRunnable implements Runnable {
 
 		private final Importance f_importance;
 
@@ -352,22 +330,17 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		details = details.replaceAll("\\n", "");
 		f_detailsText.setText(details);
 
-		// Clear importance buttons
-		for (Button button : f_importanceButtons) {
-			button.setSelection(false);
-		}
-
 		// Set importance
 		if (f_finding.getImportance() == Importance.CRITICAL) {
-			f_importanceButtons[0].setSelection(true);
+			f_criticalButton.setSelection(true);
 		} else if (f_finding.getImportance() == Importance.HIGH) {
-			f_importanceButtons[1].setSelection(true);
+			f_highButton.setSelection(true);
 		} else if (f_finding.getImportance() == Importance.MEDIUM) {
-			f_importanceButtons[2].setSelection(true);
+			f_mediumButton.setSelection(true);
 		} else if (f_finding.getImportance() == Importance.LOW) {
-			f_importanceButtons[3].setSelection(true);
+			f_lowButton.setSelection(true);
 		} else {
-			f_importanceButtons[4].setSelection(true);
+			f_irrelevantButton.setSelection(true);
 		}
 
 		List<CommentDetail> commentDetails = f_finding.getComments();

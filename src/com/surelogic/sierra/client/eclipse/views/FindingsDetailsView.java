@@ -2,9 +2,11 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -22,6 +24,7 @@ import org.eclipse.ui.part.ViewPart;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
+import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsDetailsView extends ViewPart {
 
@@ -83,6 +86,9 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		folder.setLayoutData(layoutData);
 
+		/*
+		 * Synopsis tab
+		 */
 		final TabItem synopsisTab = new TabItem(folder, SWT.NONE);
 		synopsisTab.setText("Synopsis");
 
@@ -158,112 +164,96 @@ public class FindingsDetailsView extends ViewPart {
 
 		synopsisTab.setControl(synopsisPane);
 
+		/*
+		 * Audit tab
+		 */
 		final TabItem auditTab = new TabItem(folder, SWT.NONE);
-		auditTab.setText("Audits");
 
-		final Composite auditComposite = new Composite(folder, SWT.NONE);
-		layout = new GridLayout(1, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		auditComposite.setLayoutData(layoutData);
-		auditComposite.setLayout(layout);
+		final Composite auditPane = new Composite(folder, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		auditPane.setLayout(layout);
 
-		// BOTTOM LEFT BLOCK
+		/*
+		 * Importance selection and quick stamp.
+		 */
+		final Composite lhs = new Composite(auditPane, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, false, true);
+		lhs.setLayoutData(layoutData);
+		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+		rowLayout.fill = true;
+		lhs.setLayout(rowLayout);
 
-		final Group auditGroup = new Group(auditComposite, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		auditGroup.setLayoutData(layoutData);
-		auditGroup.setLayout(layout);
-		auditGroup.setText("Audit");
-
-		final Composite radioButtonsComposite = new Composite(auditGroup,
-				SWT.NONE);
-		layout = new GridLayout(1, false);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
-		radioButtonsComposite.setLayout(layout);
-		radioButtonsComposite.setLayoutData(layoutData);
-
-		final Button quickAudit = new Button(radioButtonsComposite, SWT.RADIO);
-		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, false);
-		quickAudit.setLayoutData(layoutData);
-		quickAudit.setText("Quick Audit");
-		quickAudit.setToolTipText("Select to quickly audit a finding.");
-
-		final Group importanceGroup = new Group(radioButtonsComposite, SWT.NONE);
+		final Group importanceGroup = new Group(lhs, SWT.NONE);
 		layout = new GridLayout(1, false);
 		importanceGroup.setLayout(layout);
 		layoutData = new GridData(SWT.TOP, SWT.LEFT, false, true);
 		importanceGroup.setText("Importance");
 
-		final Button[] importanceButtons = new Button[5];
+		final Button criticalButton = new Button(importanceGroup, SWT.RADIO);
+		criticalButton.setText("Critical");
+		criticalButton.setData(Importance.CRITICAL);
 
-		importanceButtons[0] = new Button(importanceGroup, SWT.RADIO);
-		importanceButtons[0].setText("Critical");
+		final Button highButton = new Button(importanceGroup, SWT.RADIO);
+		highButton.setText("High");
+		highButton.setData(Importance.HIGH);
 
-		importanceButtons[1] = new Button(importanceGroup, SWT.RADIO);
-		importanceButtons[1].setText("High");
+		final Button mediumButton = new Button(importanceGroup, SWT.RADIO);
+		mediumButton.setText("Medium");
+		mediumButton.setData(Importance.MEDIUM);
 
-		importanceButtons[2] = new Button(importanceGroup, SWT.RADIO);
-		importanceButtons[2].setText("Medium");
+		final Button lowButton = new Button(importanceGroup, SWT.RADIO);
+		lowButton.setText("Low");
+		lowButton.setData(Importance.LOW);
 
-		importanceButtons[3] = new Button(importanceGroup, SWT.RADIO);
-		importanceButtons[3].setText("Low");
+		final Button irrelevantButton = new Button(importanceGroup, SWT.RADIO);
+		irrelevantButton.setText("Irrelevant");
+		irrelevantButton.setData(Importance.IRRELEVANT);
 
-		importanceButtons[4] = new Button(importanceGroup, SWT.RADIO);
-		importanceButtons[4].setText("Irrelevant");
+		final Button quickAudit = new Button(lhs, SWT.PUSH | SWT.FLAT);
+		quickAudit.setText("Stamp Finding");
+		quickAudit.setToolTipText("Mark this finding as being examined by me.");
 
-		// Comment text
-
-		final Composite completeCommentsComposite = new Composite(auditGroup,
-				SWT.NONE);
-		layout = new GridLayout(1, false);
+		/*
+		 * Showing the audit trail (on the right-hand-side).
+		 */
+		SashForm rhs = new SashForm(auditPane, SWT.VERTICAL);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		completeCommentsComposite.setLayout(layout);
-		completeCommentsComposite.setLayoutData(layoutData);
+		rhs.setLayoutData(layoutData);
+		rhs.setLayout(new FillLayout());
 
-		final Composite commentComposite = new Composite(
-				completeCommentsComposite, SWT.NONE);
-		layout = new GridLayout(3, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		commentComposite.setLayoutData(layoutData);
+		/*
+		 * Top pane used to enter new audit entries.
+		 */
+		final Composite commentComposite = new Composite(rhs, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
 		commentComposite.setLayout(layout);
 
-		final Label commentLabel = new Label(commentComposite, SWT.NONE);
-		commentLabel.setText("Comment :");
-
-		final Text commentText = new Text(commentComposite, SWT.BORDER);
+		final Text commentText = new Text(commentComposite, SWT.MULTI
+				| SWT.BORDER);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.widthHint = 300;
 		commentText.setLayoutData(layoutData);
-		// commentText.setText("Some comment");
-
-		// Add Comment button
 
 		final Button commentButton = new Button(commentComposite, SWT.PUSH);
 		commentButton.setText("Add");
+		layoutData = new GridData(SWT.FILL, SWT.FILL, false, true);
+		commentButton.setLayoutData(layoutData);
 
-		// Scrolled Composite label
-
+		/*
+		 * Bottom pane used to show existing audits.
+		 */
 		final ScrollingLabelComposite scrollingLabelComposite = new ScrollingLabelComposite(
-				completeCommentsComposite, SWT.NONE);
+				rhs, SWT.NONE);
 		scrollingLabelComposite.setLayout(new GridLayout(1, false));
-		scrollingLabelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-				true, true));
+		rhs.setWeights(new int[] { 20, 80 });
 
-		// for (int i = 0; i < 10; i++) {
-		// scrollingLabelComposite.addLabel(i + 1
-		// + ".Jane Doe (Comment, Oct 2, 2007 11:32 AM) : "
-		// + "Fixed on John Doe's suggestion "
-		// + "Audited the finding "
-		// + "Audited the finding Audited the finding "
-		// + "Audited the finding Audited the finding "
-		// + "Audited the finding Audited the finding");
-		// }
+		auditTab.setControl(auditPane);
 
-		auditTab.setControl(auditComposite);
-
+		/*
+		 * Artifact tab
+		 */
 		final TabItem artifactTab = new TabItem(folder, SWT.NONE);
-		// artifactsTab.setText("Artifacts (2)");
 
 		final Composite artifactsComposite = new Composite(folder, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -310,9 +300,10 @@ public class FindingsDetailsView extends ViewPart {
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
 				findingSynopsis, projectName, packageName, className,
-				detailsText, auditTab, quickAudit, importanceButtons,
-				commentText, commentButton, scrollingLabelComposite,
-				artifactTab, artifactsTree);
+				detailsText, auditTab, quickAudit, criticalButton, highButton,
+				mediumButton, lowButton, irrelevantButton, commentText,
+				commentButton, scrollingLabelComposite, artifactTab,
+				artifactsTree);
 
 		f_mediator.init();
 
