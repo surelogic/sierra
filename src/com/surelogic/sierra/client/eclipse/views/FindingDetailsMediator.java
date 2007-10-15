@@ -429,7 +429,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private void addComment(final String comment) {
 		if (f_finding == null)
 			return;
-		if (comment == null || comment.trim().endsWith(""))
+		if (comment == null || comment.trim().equals(""))
 			return;
 		try {
 			Connection c = Data.getConnection();
