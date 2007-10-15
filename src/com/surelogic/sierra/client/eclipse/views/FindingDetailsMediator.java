@@ -544,4 +544,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			asyncQueryAndShow(f_finding.getFindingId());
 		}
 	}
+
+	@Override
+	public void serverSynchronized() {
+		findingMutated();
+	}
 }
