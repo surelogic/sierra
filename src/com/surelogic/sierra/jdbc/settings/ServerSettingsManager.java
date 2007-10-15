@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.BaseMapper;
-import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
