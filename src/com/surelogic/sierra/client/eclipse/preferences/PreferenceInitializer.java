@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SIERRA_PATH, RAW);
 		store.setDefault(PreferenceConstants.P_SIERRA_BALLOON_FLAG, true);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG, false);
-		store.setDefault(PreferenceConstants.P_RUN_CHECKSTYLE, true);
+		store.setDefault(PreferenceConstants.P_RUN_CHECKSTYLE, false);
 		store.setDefault(PreferenceConstants.P_RUN_FINDBUGS, true);
 		store.setDefault(PreferenceConstants.P_RUN_PMD, true);
 		store.setDefault(PreferenceConstants.P_RUN_RECKONER, true);

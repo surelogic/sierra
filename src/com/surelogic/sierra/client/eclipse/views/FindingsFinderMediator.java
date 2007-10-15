@@ -126,7 +126,6 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 				if (input != null) {
 					menu.addSeparator();
 					menu.addChoice("Show", null);
-					menu.addChoice("Graph", null);
 					input.addObserver(new AbstractFilterObserver() {
 						@Override
 						public void porous(final Filter filter) {

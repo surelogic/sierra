@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.sierra.client.eclipse.Activator;
 
 /**
@@ -52,7 +53,11 @@ public class PreferenceConstants {
 	public static final String P_RUN_CHECKSTYLE = "com.surelogic.sierra.runCheckStyle";
 
 	public static boolean runCheckStyle() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_RUN_CHECKSTYLE);
+		if (XUtil.useExperimental()) {
+			return Activator.getDefault().getPluginPreferences().getBoolean(
+					P_RUN_CHECKSTYLE);
+		} else {
+			return false;
+		}
 	}
 }

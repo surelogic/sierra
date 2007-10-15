@@ -23,6 +23,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
@@ -121,14 +122,16 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 		addSpacedText(toolsGroup, RECKONER_INFO);
 
-		f_runCheckStyleFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_CHECKSTYLE, "CheckStyle\u2122",
-				toolsGroup);
-		f_runCheckStyleFlag.setPage(this);
-		f_runCheckStyleFlag.setPreferenceStore(getPreferenceStore());
-		f_runCheckStyleFlag.load();
+		if (XUtil.useExperimental()) {
+			f_runCheckStyleFlag = new BooleanFieldEditor(
+					PreferenceConstants.P_RUN_CHECKSTYLE, "CheckStyle\u2122",
+					toolsGroup);
+			f_runCheckStyleFlag.setPage(this);
+			f_runCheckStyleFlag.setPreferenceStore(getPreferenceStore());
+			f_runCheckStyleFlag.load();
 
-		addSpacedText(toolsGroup, CHECKSTYLE_INFO);
+			addSpacedText(toolsGroup, CHECKSTYLE_INFO);
+		}
 
 		final Composite warning = new Composite(panel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
