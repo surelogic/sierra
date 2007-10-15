@@ -32,6 +32,8 @@ import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
@@ -41,7 +43,8 @@ import com.surelogic.sierra.jdbc.finding.FindingDetail;
 import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsMediator implements IProjectsObserver {
+public class FindingDetailsMediator extends AbstractDatabaseObserver implements
+		IProjectsObserver {
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
@@ -168,8 +171,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 					final Importance desired = (Importance) event.widget
 							.getData();
 					if (desired != current) {
-						f_executor.execute(new UpdateImportanceRunnable(
-								desired, f_finding.getFindingId()));
+						f_executor.execute(new Runnable() {
+							public void run() {
+								changeImportance(desired);
+							}
+						});
 					}
 				}
 			}
@@ -177,7 +183,6 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	};
 
 	public void init() {
-
 		f_criticalButton.addListener(SWT.Selection, f_radioListener);
 		f_highButton.addListener(SWT.Selection, f_radioListener);
 		f_mediumButton.addListener(SWT.Selection, f_radioListener);
@@ -188,39 +193,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final String commentText = f_commentText.getText();
-
+				if (commentText == null || commentText.trim().equals(""))
+					return;
 				f_executor.execute(new Runnable() {
 					public void run() {
-						try {
-							Connection conn = Data.getConnection();
-							conn.setAutoCommit(false);
-							ClientFindingManager manager = ClientFindingManager
-									.getInstance(conn);
-
-							// TODO: Add check for empty comments
-							manager.comment(f_finding.getFindingId(),
-									commentText);
-							conn.commit();
-							conn.close();
-
-							/**
-							 * BAD TODO; observer this!
-							 */
-							PlatformUI.getWorkbench().getDisplay().asyncExec(
-									new Runnable() {
-										public void run() {
-											asyncQueryAndShow(f_finding
-													.getFindingId());
-										}
-									});
-						} catch (SQLException se) {
-							SLLogger
-									.getLogger("sierra")
-									.log(
-											Level.SEVERE,
-											"SQL exception when trying to get add comments",
-											se);
-						}
+						addComment(commentText);
 					}
 				});
 			}
@@ -229,7 +206,11 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_quickAudit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				f_executor.execute(new Runnable() {
+					public void run() {
+						addComment("I examined this finding.");
+					}
+				});
 			}
 		});
 
@@ -251,10 +232,12 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
 
 		Projects.getInstance().addObserver(this);
+		DatabaseHub.getInstance().addObserver(this);
 	}
 
 	public void dispose() {
-		// TODO This gets called when we exit the workbench
+		Projects.getInstance().removeObserver(this);
+		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	public void setFocus() {
@@ -270,38 +253,6 @@ public class FindingDetailsMediator implements IProjectsObserver {
 			}
 		} else {
 			f_noFindingPage.setFocus();
-		}
-	}
-
-	private static class UpdateImportanceRunnable implements Runnable {
-
-		private final Importance f_importance;
-
-		private final long f_findingId;
-
-		public UpdateImportanceRunnable(Importance importance, long findingID) {
-			f_importance = importance;
-			f_findingId = findingID;
-		}
-
-		public void run() {
-			try {
-				Connection c = Data.getConnection();
-				try {
-					c.setAutoCommit(false);
-					ClientFindingManager manager = ClientFindingManager
-							.getInstance(c);
-					manager.setImportance(f_findingId, f_importance);
-					c.commit();
-				} finally {
-					c.close();
-				}
-			} catch (SQLException e) {
-				SLLogger.getLogger().log(
-						Level.SEVERE,
-						"Failure mutating the importance of finding "
-								+ f_findingId + " to " + f_importance, e);
-			}
 		}
 	}
 
@@ -468,6 +419,57 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		}
 	}
 
+	private void addComment(final String comment) {
+		if (f_finding == null)
+			return;
+		if (comment == null || comment.trim().endsWith(""))
+			return;
+		try {
+			Connection c = Data.getConnection();
+			try {
+				c.setAutoCommit(false);
+				ClientFindingManager manager = ClientFindingManager
+						.getInstance(c);
+
+				manager.comment(f_finding.getFindingId(), comment);
+				c.commit();
+			} finally {
+				c.close();
+			}
+		} catch (SQLException e) {
+			SLLogger.getLogger().log(
+					Level.SEVERE,
+					"Failure adding the comment\"" + comment + "\" to finding "
+							+ f_finding.getFindingId(), e);
+		}
+	}
+
+	private void changeImportance(final Importance importance) {
+		if (f_finding == null)
+			return;
+		if (importance == f_finding.getImportance())
+			return;
+		try {
+			Connection c = Data.getConnection();
+			try {
+				c.setAutoCommit(false);
+				ClientFindingManager manager = ClientFindingManager
+						.getInstance(c);
+				manager.setImportance(f_finding.getFindingId(), importance);
+				c.commit();
+			} finally {
+				c.close();
+			}
+		} catch (SQLException e) {
+			SLLogger.getLogger()
+					.log(
+							Level.SEVERE,
+							"Failure mutating the importance of finding "
+									+ f_finding.getFindingId() + " to "
+									+ importance, e);
+		}
+	}
+
 	public void notify(Projects p) {
 		/*
 		 * Something about the set of projects in the database has changed.
@@ -480,6 +482,13 @@ public class FindingDetailsMediator implements IProjectsObserver {
 					updateContents();
 				}
 			});
+		}
+	}
+
+	@Override
+	public void findingMutated() {
+		if (f_finding != null) {
+			asyncQueryAndShow(f_finding.getFindingId());
 		}
 	}
 }
