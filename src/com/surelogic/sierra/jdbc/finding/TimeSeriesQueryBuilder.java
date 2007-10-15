@@ -52,7 +52,7 @@ public class TimeSeriesQueryBuilder {
 	public String queryLatestImportanceCounts() {
 		builder.setLength(0);
 		builder
-				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");

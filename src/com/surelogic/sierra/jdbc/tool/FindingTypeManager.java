@@ -31,7 +31,7 @@ public class FindingTypeManager {
 			.getLoggerFor(FindingTypeManager.class);
 
 	private final PreparedStatement checkForArtifactTypeRelation;
-	private final PreparedStatement selectArtifactTypesByFindingType;
+	private final PreparedStatement selectArtifactTypesByFindingTypeId;
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
 	private final PreparedStatement insertArtifactTypeFindingTypeRelation;
@@ -45,8 +45,8 @@ public class FindingTypeManager {
 				.prepareStatement("SELECT FT.UUID FROM ART_TYPE_FIN_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
-		this.selectArtifactTypesByFindingType = conn
-				.prepareStatement("SELECT AR.ID FROM FINDING_TYPE FT, ART_TYPE_FIN_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE FT.NAME = ? AND AFTR.FINDING_TYPE_ID = FT.ID AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
+		this.selectArtifactTypesByFindingTypeId = conn
+				.prepareStatement("SELECT AR.ID FROM ART_TYPE_FIN_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE AFTR.FINDING_TYPE_ID = ? AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
 		this.selectArtifactTypesByToolAndMnemonic = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.insertArtifactTypeFindingTypeRelation = conn
@@ -75,8 +75,8 @@ public class FindingTypeManager {
 		}
 		return null;
 	}
-	
-	//TODO Return the artifact types that match this finding type
+
+	// TODO Return the artifact types that match this finding type
 	public FindingType getFindingType(String uid) throws SQLException {
 		FindingTypeRecord ft = factory.newFindingTypeRecord();
 		ft.setUid(uid);
@@ -166,12 +166,13 @@ public class FindingTypeManager {
 					filters.size() * 2);
 			FindingTypeRecord ft = factory.newFindingTypeRecord();
 			for (FindingTypeFilter filter : filters) {
-				ft.setName(filter.getName());
+				ft.setUid(filter.getName());
 				if (ft.select()) {
 					findingMap.put(ft.getId(), filter);
 				}
-				selectArtifactTypesByFindingType.setString(1, filter.getName());
-				ResultSet set = selectArtifactTypesByFindingType.executeQuery();
+				selectArtifactTypesByFindingTypeId.setLong(1, ft.getId());
+				ResultSet set = selectArtifactTypesByFindingTypeId
+						.executeQuery();
 				try {
 					while (set.next()) {
 						artifactMap.put(set.getLong(1), filter);

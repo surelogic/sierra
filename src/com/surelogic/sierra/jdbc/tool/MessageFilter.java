@@ -39,8 +39,8 @@ public class MessageFilter {
 		}
 	}
 
-	public boolean accept(Long findingTypeId) {
-		return !filtered.contains(findingTypeId);
+	public boolean accept(Long artifactTypeId) {
+		return !filtered.contains(artifactTypeId);
 	}
 
 	public Importance calculateImportance(Long findingTypeId,

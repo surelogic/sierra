@@ -52,6 +52,7 @@ public class SettingsRecord extends LongUpdatableRecord {
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
 		st.setString(idx++, name);
+		st.setLong(idx++, revision);
 		return idx;
 	}
 

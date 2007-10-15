@@ -64,7 +64,7 @@ public class ServerSettingsManager extends SettingsManager {
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
 				"SELECT ID,REVISION FROM SETTINGS WHERE NAME = ?",
 				"DELETE FROM SETTINGS WHERE ID = ?",
-				"UPDATE SETTINGS SET NAME = ? WHERE ID = ?");
+				"UPDATE SETTINGS SET NAME = ?, REVISION = ? WHERE ID = ?");
 		spManager = SettingsProjectManager.getInstance(conn);
 	}
 
@@ -222,6 +222,8 @@ public class ServerSettingsManager extends SettingsManager {
 		sRec.setName(settings);
 		if (sRec.select()) {
 			applyFilters(sRec.getId(), filters);
+			sRec.setRevision(Server.nextRevision(conn));
+			sRec.update();
 		} else {
 			throw new IllegalArgumentException(settings
 					+ " is not a valid settings name");
