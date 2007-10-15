@@ -5,45 +5,48 @@
 // Generated on: 2007.10.11 at 01:53:22 PM EDT 
 //
 
-
 package com.surelogic.sierra.tool.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 
-
 /**
- * <p>Java class for Importance.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
- * <pre>
- * &lt;simpleType name="Importance">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="IRRELEVANT"/>
- *     &lt;enumeration value="LOW"/>
- *     &lt;enumeration value="MEDIUM"/>
- *     &lt;enumeration value="HIGH"/>
- *     &lt;enumeration value="CRITICAL"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
+ * Java class for Importance.
  * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
+ * <pre>
+ * &lt;simpleType name=&quot;Importance&quot;&gt;
+ *   &lt;restriction base=&quot;{http://www.w3.org/2001/XMLSchema}string&quot;&gt;
+ *     &lt;enumeration value=&quot;IRRELEVANT&quot;/&gt;
+ *     &lt;enumeration value=&quot;LOW&quot;/&gt;
+ *     &lt;enumeration value=&quot;MEDIUM&quot;/&gt;
+ *     &lt;enumeration value=&quot;HIGH&quot;/&gt;
+ *     &lt;enumeration value=&quot;CRITICAL&quot;/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
+ * </pre>
+ *
  */
 @XmlEnum
 public enum Importance {
 
-    IRRELEVANT,
-    LOW,
-    MEDIUM,
-    HIGH,
-    CRITICAL;
+	IRRELEVANT, LOW, MEDIUM, HIGH, CRITICAL;
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static Importance fromValue(String v) {
-        return valueOf(v);
-    }
+	public static Importance fromValue(String v) {
+		return valueOf(v.toUpperCase());
+	}
+
+	public String toStringSentenceCase() {
+		return toString().substring(0, 1)
+				+ toString().toLowerCase().substring(1);
+	}
 
 }
