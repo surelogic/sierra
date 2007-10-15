@@ -80,13 +80,13 @@ public class TimeSeriesQueryBuilder {
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') AS IRRELEVANT");
+				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') IRRELEVANT");
 		builder.append(",");
 		builder
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, scanIds);
 		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') AS RELEVANT");
+				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') RELEVANT");
 		return builder.toString();
 	}
 
