@@ -139,7 +139,11 @@ public class ClientProjectManager extends ProjectManager {
 				monitor.subTask("Deleting scans for project " + projectName);
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			findingManager.deleteFindings(projectName, monitor);
-			rec.delete();
+			if(monitor != null){
+				if(!monitor.isCanceled()) {
+					rec.delete();					
+				}
+			}
 		}
 	}
 
