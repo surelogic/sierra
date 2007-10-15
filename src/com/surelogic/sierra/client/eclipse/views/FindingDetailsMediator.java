@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
+import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -231,15 +232,16 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
 
-		final Listener tel = new TextEditedListener(new Runnable() {
-			public void run() {
-				f_executor.execute(new Runnable() {
-					public void run() {
-						changeSummary(f_summaryText.getText());
+		final Listener tel = new TextEditedListener(
+				new TextEditedListener.TextEditedAction() {
+					public void textEditedAction(final String newText) {
+						f_executor.execute(new Runnable() {
+							public void run() {
+								changeSummary(newText);
+							}
+						});
 					}
 				});
-			}
-		});
 		f_summaryText.addListener(SWT.Modify, tel);
 		f_summaryText.addListener(SWT.FocusOut, tel);
 
@@ -518,26 +520,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 							"Failure mutating the importance of finding "
 									+ f_finding.getFindingId() + " to "
 									+ importance, e);
-		}
-	}
-
-	private static class TextEditedListener implements Listener {
-
-		private final Runnable f_action;
-		private boolean f_editInProgress = false;
-
-		public TextEditedListener(Runnable action) {
-			f_action = action;
-		}
-
-		public void handleEvent(Event event) {
-			if (event.type == SWT.Modify) {
-				f_editInProgress = true;
-			} else if (event.type == SWT.FocusOut && f_editInProgress) {
-				f_editInProgress = false;
-				if (f_action != null)
-					f_action.run();
-			}
 		}
 	}
 
