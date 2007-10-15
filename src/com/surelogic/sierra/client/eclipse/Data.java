@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.common.eclipse.Derby;
+import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 public final class Data {
@@ -37,7 +38,8 @@ public final class Data {
 	}
 
 	public static Connection getConnection() throws SQLException {
-		Connection conn = DriverManager.getConnection(getConnectionURL());
+		Connection conn = LazyPreparedStatementConnection.wrap(DriverManager
+				.getConnection(getConnectionURL()));
 		return conn;
 	}
 
