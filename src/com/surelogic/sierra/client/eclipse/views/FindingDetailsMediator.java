@@ -282,6 +282,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_className.setText(getClassName());
 
 		// Remove the tabspaces and newline
+		// TODO: Why?
 		String details = f_finding.getFindingTypeDetail();
 		details = details.replaceAll("\\t", "");
 		details = details.replaceAll("\\n", "");
