@@ -160,5 +160,38 @@ public class FindingOverview {
 			}
 			return findings;
 		}
+		/**
+		 * Get the latest findings for the given class, and any inner classes. Only findings with
+		 * status New or Unchanged are returned, fixed findings are not shown.
+		 * 
+		 * TODO do we want to also show fixed findings?
+		 * 
+		 * @param projectName
+		 * @param className
+		 * @param packageName
+		 * @return
+		 */
+		public List<FindingOverview> showRelevantFindingsForClass(Connection conn,
+				String projectName, String packageName, String className)
+				throws SQLException {
+			List<FindingOverview> findings = new ArrayList<FindingOverview>();
+			PreparedStatement selectFindingsByClass = conn
+					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?) AND IMPORTANCE != 'Irrelevant'");
+			int idx = 1;
+			selectFindingsByClass.setString(idx++, projectName);
+			selectFindingsByClass.setString(idx++, packageName);
+			selectFindingsByClass.setString(idx++, className);
+			selectFindingsByClass.setString(idx++, className + "$%");
+			ResultSet set = selectFindingsByClass.executeQuery();
+			try {
+				while (set.next()) {
+					findings.add(new FindingOverview(set));
+				}
+			} finally {
+				set.close();
+			}
+			return findings;
+		}
 	}
 }
