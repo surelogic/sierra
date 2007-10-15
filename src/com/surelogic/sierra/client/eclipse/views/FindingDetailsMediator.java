@@ -37,8 +37,8 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.tool.message.Importance;
@@ -230,6 +230,18 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		});
 
 		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
+
+		final Listener tel = new TextEditedListener(new Runnable() {
+			public void run() {
+				f_executor.execute(new Runnable() {
+					public void run() {
+						changeSummary(f_summaryText.getText());
+					}
+				});
+			}
+		});
+		f_summaryText.addListener(SWT.Modify, tel);
+		f_summaryText.addListener(SWT.FocusOut, tel);
 
 		Projects.getInstance().addObserver(this);
 		DatabaseHub.getInstance().addObserver(this);
@@ -426,6 +438,37 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		}
 	}
 
+	private void changeSummary(String summary) {
+		if (f_finding == null)
+			return;
+		summary = summary.trim();
+		if (summary == null || summary.equals(""))
+			return;
+		final String oldSummary = f_finding.getSummary().trim();
+		if (oldSummary.equals(summary))
+			return;
+		try {
+			Connection c = Data.getConnection();
+			try {
+				c.setAutoCommit(false);
+				ClientFindingManager manager = ClientFindingManager
+						.getInstance(c);
+
+				manager.changeSummary(f_finding.getFindingId(), summary);
+				c.commit();
+				DatabaseHub.getInstance().notifyFindingMutated();
+			} finally {
+				c.close();
+			}
+		} catch (SQLException e) {
+			SLLogger.getLogger().log(
+					Level.SEVERE,
+					"Failure changing summary from \"" + oldSummary
+							+ "\" to \"" + summary + "\" on finding "
+							+ f_finding.getFindingId(), e);
+		}
+	}
+
 	private void addComment(final String comment) {
 		if (f_finding == null)
 			return;
@@ -446,7 +489,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		} catch (SQLException e) {
 			SLLogger.getLogger().log(
 					Level.SEVERE,
-					"Failure adding the comment\"" + comment + "\" to finding "
+					"Failure adding comment \"" + comment + "\" to finding "
 							+ f_finding.getFindingId(), e);
 		}
 	}
@@ -475,6 +518,26 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 							"Failure mutating the importance of finding "
 									+ f_finding.getFindingId() + " to "
 									+ importance, e);
+		}
+	}
+
+	private static class TextEditedListener implements Listener {
+
+		private final Runnable f_action;
+		private boolean f_editInProgress = false;
+
+		public TextEditedListener(Runnable action) {
+			f_action = action;
+		}
+
+		public void handleEvent(Event event) {
+			if (event.type == SWT.Modify) {
+				f_editInProgress = true;
+			} else if (event.type == SWT.FocusOut && f_editInProgress) {
+				f_editInProgress = false;
+				if (f_action != null)
+					f_action.run();
+			}
 		}
 	}
 
