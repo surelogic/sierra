@@ -319,16 +319,53 @@
 	  </attribute>
 	  <persistent value="true"/>
    </extension>
-   
    <extension
-		 point="org.eclipse.ui.ide.markerImageProviders">
-	  <imageprovider
-			markertype="com.surelogic.sierra.client.eclipse.sierraMarker"
-			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-			id="com.surelogic.sierra.client.eclipse.sierraMarkerImageProvider">
-	  </imageprovider>
+		 id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	  <persistent value="true"/>
    </extension>
-   
+   <extension
+		 id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	  <persistent value="true"/>
+   </extension>
+   <extension
+		 id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	  <persistent value="true"/>
+   </extension>
+   <extension
+		 id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	  <persistent value="true"/>
+   </extension>
+   <extension
+		 id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
+		 name="Sierra Finding"
+		 point="org.eclipse.core.resources.markers">
+	  <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
+	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+	  <persistent value="true"/>
+   </extension>
+   <!-- END MARKER DEF -->
+   <!-- Start marker icons -->
    <extension point="org.eclipse.ui.editors.annotationTypes">
 	  <type
 		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
@@ -336,8 +373,7 @@
 		 markerType="com.surelogic.sierra.client.eclipse.sierraMarker"/>
 	 
    </extension>
-   
-   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+     <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 	  <specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
 			icon="lib/icons/asterisk_orange_50.gif"
@@ -345,6 +381,88 @@
 			label="sierraFinding"
 			quickFixIcon="lib/icons/asterisk_orange_50.gif"/>
    </extension>
+   
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationCritical"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"/>
+	 
+   </extension>
+      <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationCritical"
+			icon="lib/icons/asterisk_orange_100.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="lib/icons/asterisk_orange_100.gif"/>
+   </extension>
+   
+    <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationHigh"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"/>
+	 
+   </extension>
+      <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationHigh"
+			icon="lib/icons/asterisk_orange_75.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="lib/icons/asterisk_orange_75.gif"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationMedium"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"/>
+	 
+   </extension>
+      <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationMedium"
+			icon="lib/icons/asterisk_orange_50.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="lib/icons/asterisk_orange_50.gif"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationLow"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarkerLow"/>
+	 
+   </extension>
+      <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationLow"
+			icon="lib/icons/asterisk_orange_25.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="lib/icons/asterisk_orange_25.gif"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+	  <type
+		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationIrrelevant"
+		 super="org.eclipse.ui.workbench.texteditor.warning"
+		 markerType="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"/>
+	 
+   </extension>
+      <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	  <specification
+			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationIrrelevant"
+			icon="lib/icons/asterisk_orange_0.gif"
+			includeOnPreferencePage="true"
+			label="sierraFinding"
+			quickFixIcon="lib/icons/asterisk_orange_0.gif"/>
+   </extension>
+   
+   <!-- END MARKER ICONS -->
    
    <!-- Enable the ad hoc query view on Sierra -->
 

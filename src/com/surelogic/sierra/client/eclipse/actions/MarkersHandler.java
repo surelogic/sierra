@@ -42,11 +42,18 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.message.Importance;
 
 public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IPropertyChangeListener {
 
 	public static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
+	public static final String SIERRA_MARKER_CRITICAL = "com.surelogic.sierra.client.eclipse.sierraMarkerCritical";
+	public static final String SIERRA_MARKER_HIGH = "com.surelogic.sierra.client.eclipse.sierraMarkerHigh";
+	public static final String SIERRA_MARKER_MEDIUM = "com.surelogic.sierra.client.eclipse.sierraMarkerMedium";
+	public static final String SIERRA_MARKER_LOW = "com.surelogic.sierra.client.eclipse.sierraMarkerLow";
+	public static final String SIERRA_MARKER_IRRELEVANT = "com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant";
+
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
 	private IFile f_currentFile = null;
@@ -156,6 +163,11 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			if (resource instanceof IFile) {
 				if (f_currentFile != null) {
 					clearMarkers(f_currentFile, SIERRA_MARKER);
+					clearMarkers(f_currentFile, SIERRA_MARKER_CRITICAL);
+					clearMarkers(f_currentFile, SIERRA_MARKER_HIGH);
+					clearMarkers(f_currentFile, SIERRA_MARKER_MEDIUM);
+					clearMarkers(f_currentFile, SIERRA_MARKER_LOW);
+					clearMarkers(f_currentFile, SIERRA_MARKER_IRRELEVANT);
 				}
 
 				f_currentFile = (IFile) resource;
@@ -358,13 +370,35 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	private void setMarker(IFile file, List<FindingOverview> overview) {
 		try {
 			file.deleteMarkers(SIERRA_MARKER, false, IResource.DEPTH_ONE);
+			file.deleteMarkers(SIERRA_MARKER_CRITICAL, false,
+					IResource.DEPTH_ONE);
+			file.deleteMarkers(SIERRA_MARKER_HIGH, false, IResource.DEPTH_ONE);
+			file
+					.deleteMarkers(SIERRA_MARKER_MEDIUM, false,
+							IResource.DEPTH_ONE);
+			file.deleteMarkers(SIERRA_MARKER_LOW, false, IResource.DEPTH_ONE);
+			file.deleteMarkers(SIERRA_MARKER_IRRELEVANT, false,
+					IResource.DEPTH_ONE);
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 		}
 		IMarker marker = null;
 		try {
 			for (FindingOverview o : overview) {
-				marker = file.createMarker(SIERRA_MARKER);
+
+				if (o.getImportance().equals(Importance.CRITICAL)) {
+					marker = file.createMarker(SIERRA_MARKER_CRITICAL);
+				} else if (o.getImportance().equals(Importance.HIGH)) {
+					marker = file.createMarker(SIERRA_MARKER_HIGH);
+				} else if (o.getImportance().equals(Importance.MEDIUM)) {
+					marker = file.createMarker(SIERRA_MARKER_MEDIUM);
+				} else if (o.getImportance().equals(Importance.LOW)) {
+					marker = file.createMarker(SIERRA_MARKER_LOW);
+				} else if (o.getImportance().equals(Importance.IRRELEVANT)) {
+					marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
+				} else {
+					marker = file.createMarker(SIERRA_MARKER);
+				}
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
 				marker.setAttribute(IMarker.MESSAGE, o.getSummary());
 				marker.setAttribute("findingid", String.valueOf(o
@@ -411,6 +445,11 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				IEditorPart editor = partRef.getPage().getActiveEditor();
 				if (editor == null) {
 					clearMarkers(null, SIERRA_MARKER);
+					clearMarkers(null, SIERRA_MARKER_CRITICAL);
+					clearMarkers(null, SIERRA_MARKER_HIGH);
+					clearMarkers(null, SIERRA_MARKER_MEDIUM);
+					clearMarkers(null, SIERRA_MARKER_LOW);
+					clearMarkers(null, SIERRA_MARKER_IRRELEVANT);
 				}
 
 			}
