@@ -170,15 +170,15 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		f_workingSelection.emptyAfter(selectionIndex);
 
 		// menu.setEnabled(false);
-		System.out.println("selected: emptyAfter=" + selectionIndex);
-		System.out.println("selected: addColumnAfter=" + column);
+		//System.out.println("selected: emptyAfter=" + selectionIndex);
+		//System.out.println("selected: addColumnAfter=" + column);
 
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			f_workingSelection.construct(filter, new DrawFilterAndMenu(column,
 					menu));
 		} else if (choice.equals("Show")) {
-			System.out.println("show");
+			//System.out.println("show");
 			final FindingsSelectionReport fsr = new FindingsSelectionReport(
 					f_workingSelection, f_finder, column, f_manager
 							.getExecutor());
@@ -199,7 +199,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 
 		@Override
 		public void queryFailure(final Filter filter, final Exception e) {
-			System.out.println("failure");
+			//System.out.println("failure");
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -219,7 +219,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 
 		@Override
 		public void contentsChanged(final Filter filter) {
-			System.out.println("contentsChanged " + filter + " " + this);
+			//System.out.println("contentsChanged " + filter + " " + this);
 			constructFilterReport(filter);
 		}
 

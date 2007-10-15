@@ -161,7 +161,7 @@ public abstract class Filter {
 		try {
 			final Statement st = c.createStatement();
 			try {
-				System.out.println(getCountsQuery().toString());
+				//System.out.println(getCountsQuery().toString());
 				final ResultSet rs = st.executeQuery(getCountsQuery()
 						.toString());
 				final int columnCount = rs.getMetaData().getColumnCount();

@@ -282,7 +282,6 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * Blocks until all the queries are completed.
 	 */
 	private void refreshFilters() {
-		System.out.println("refreshFilters()");
 		synchronized (this) {
 			for (Filter filter : f_filters) {
 				filter.refresh();
@@ -316,7 +315,6 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * Blocks until all the queries are completed.
 	 */
 	private void refreshFiltersAfter(Filter changedFilter) {
-		System.out.println("refreshFiltersAfter(" + changedFilter + ")");
 		/*
 		 * Create a work list of all the filters in this selection after the one
 		 * that just changed.

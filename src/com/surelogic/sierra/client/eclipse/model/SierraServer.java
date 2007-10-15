@@ -127,7 +127,7 @@ public final class SierraServer {
 	}
 
 	public URL getAuthorizedURL() throws Exception {
-		System.out.println(this);
+		//System.out.println(this);
 		if (savePassword()) {
 			final StringBuilder b = new StringBuilder();
 			b.append("http://");
@@ -137,7 +137,7 @@ public final class SierraServer {
 			b.append("@");
 			b.append(getHost()).append(":").append(getPort());
 			b.append(SIERRA_WEB_PATH);
-			System.out.println(b);
+			//System.out.println(b);
 			final URI uri = new URI(b.toString());
 			final URL url = uri.toURL();
 			return url;

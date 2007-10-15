@@ -106,7 +106,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 			try {
 				final Statement st = c.createStatement();
 				try {
-					System.out.println(query);
+					//System.out.println(query);
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
 					while (rs.next()) {
