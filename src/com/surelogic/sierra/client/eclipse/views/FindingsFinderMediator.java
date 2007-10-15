@@ -294,5 +294,4 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		 */
 		f_workingSelection.emptyAfter(column - 1);
 	}
-
 }

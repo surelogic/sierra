@@ -287,6 +287,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		details = details.replaceAll("\\n", "");
 		f_detailsText.setText(details);
 
+		f_criticalButton.setSelection(false);
+		f_highButton.setSelection(false);
+		f_mediumButton.setSelection(false);
+		f_lowButton.setSelection(false);
+		f_irrelevantButton.setSelection(false);
+
 		// Set importance
 		if (f_finding.getImportance() == Importance.CRITICAL) {
 			f_criticalButton.setSelection(true);
