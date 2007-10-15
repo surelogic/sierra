@@ -23,7 +23,9 @@ public final class SelectionManager {
 	}
 
 	public Selection construct() {
-		return new Selection(this, f_executor);
+		final Selection result = new Selection(this, f_executor);
+		result.init();
+		return result;
 	}
 
 	public void save(File file) {
