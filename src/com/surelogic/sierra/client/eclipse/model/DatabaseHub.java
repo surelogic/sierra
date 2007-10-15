@@ -45,4 +45,11 @@ public final class DatabaseHub {
 			o.changed();
 		}
 	}
+
+	public void notifyFindingMutated() {
+		for (IDatabaseObserver o : f_observers) {
+			o.serverSynchronized();
+			o.changed();
+		}
+	}
 }

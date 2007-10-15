@@ -25,4 +25,9 @@ public interface IDatabaseObserver {
 	 * server.
 	 */
 	void serverSynchronized();
+
+	/**
+	 * Notification that a finding has been mutated.
+	 */
+	void findingMutated();
 }

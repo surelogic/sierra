@@ -203,6 +203,9 @@ public class FindingDetailsMediator implements IProjectsObserver {
 							conn.commit();
 							conn.close();
 
+							/**
+							 * BAD TODO; observer this!
+							 */
 							PlatformUI.getWorkbench().getDisplay().asyncExec(
 									new Runnable() {
 										public void run() {
@@ -226,10 +229,8 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		f_quickAudit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Quick Audited");
-				f_quickAudit.setEnabled(false);
-			}
 
+			}
 		});
 
 		f_className.addListener(SWT.Selection, new Listener() {
@@ -257,44 +258,49 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	}
 
 	public void setFocus() {
-		// TODO something reasonable
+		if (f_pages.getPage() == f_findingPage) {
+			TabItem[] items = f_folder.getSelection();
+			if (items.length > 0) {
+				TabItem item = items[0];
+				if (item == f_auditTab) {
+					f_commentText.setFocus();
+				} else {
+					f_summaryText.setFocus();
+				}
+			}
+		} else {
+			f_noFindingPage.setFocus();
+		}
 	}
 
 	private static class UpdateImportanceRunnable implements Runnable {
 
 		private final Importance f_importance;
 
-		private final long findingIdInternal;
+		private final long f_findingId;
 
 		public UpdateImportanceRunnable(Importance importance, long findingID) {
 			f_importance = importance;
-			findingIdInternal = findingID;
+			f_findingId = findingID;
 		}
 
 		public void run() {
 			try {
-				Connection conn = Data.getConnection();
-				conn.setAutoCommit(false);
-				ClientFindingManager manager = ClientFindingManager
-						.getInstance(conn);
-				manager.setImportance(findingIdInternal, f_importance);
-				conn.commit();
-				conn.close();
-
-				// Do not refresh the view as it's messing with scrolled
-				// composite
-
-				// PlatformUI.getWorkbench().getDisplay().asyncExec(
-				// new Runnable() {
-				// public void run() {
-				// refreshDetailsPage(findingIdInternal);
-				// }
-				//
-				// });
-			} catch (SQLException se) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
-						"SQL exception when trying to set critical importance",
-						se);
+				Connection c = Data.getConnection();
+				try {
+					c.setAutoCommit(false);
+					ClientFindingManager manager = ClientFindingManager
+							.getInstance(c);
+					manager.setImportance(f_findingId, f_importance);
+					c.commit();
+				} finally {
+					c.close();
+				}
+			} catch (SQLException e) {
+				SLLogger.getLogger().log(
+						Level.SEVERE,
+						"Failure mutating the importance of finding "
+								+ f_findingId + " to " + f_importance, e);
 			}
 		}
 	}
@@ -442,6 +448,9 @@ public class FindingDetailsMediator implements IProjectsObserver {
 		return b.toString();
 	}
 
+	/**
+	 * Must be invoked from the SWT thread.
+	 */
 	private void updateTabTitles() {
 		final int auditCount = f_finding.getNumberOfComments();
 		final int artifactCount = f_finding.getNumberOfArtifacts();
@@ -460,6 +469,9 @@ public class FindingDetailsMediator implements IProjectsObserver {
 	}
 
 	public void notify(Projects p) {
+		/*
+		 * Something about the set of projects in the database has changed.
+		 */
 		if (f_finding == null)
 			return;
 		if (!p.getProjectNames().contains(f_finding.getProjectName())) {
