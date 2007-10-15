@@ -110,6 +110,8 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	private void updateReport() {
+		if (f_finder.isDisposed())
+			return;
 		/*
 		 * Fix total count at the top.
 		 */
