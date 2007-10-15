@@ -48,7 +48,7 @@ public final class DatabaseHub {
 
 	public void notifyFindingMutated() {
 		for (IDatabaseObserver o : f_observers) {
-			o.serverSynchronized();
+			o.findingMutated();
 			o.changed();
 		}
 	}
