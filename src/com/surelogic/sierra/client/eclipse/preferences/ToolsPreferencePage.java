@@ -193,7 +193,9 @@ public class ToolsPreferencePage extends PreferencePage implements
 	@Override
 	protected void performApply() {
 		f_runFindbugsFlag.store();
-		f_runCheckStyleFlag.store();
+		if (XUtil.useExperimental()) {
+			f_runCheckStyleFlag.store();
+		}
 		f_runPMDFlag.store();
 		f_runReckonerFlag.store();
 		super.performApply();
@@ -202,7 +204,9 @@ public class ToolsPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		f_runFindbugsFlag.loadDefault();
-		f_runCheckStyleFlag.loadDefault();
+		if (XUtil.useExperimental()) {
+			f_runCheckStyleFlag.loadDefault();
+		}
 		f_runPMDFlag.loadDefault();
 		f_runReckonerFlag.loadDefault();
 		super.performDefaults();
@@ -211,7 +215,9 @@ public class ToolsPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		f_runFindbugsFlag.store();
-		f_runCheckStyleFlag.store();
+		if (XUtil.useExperimental()) {
+			f_runCheckStyleFlag.store();
+		}
 		f_runPMDFlag.store();
 		f_runReckonerFlag.store();
 		return super.performOk();
