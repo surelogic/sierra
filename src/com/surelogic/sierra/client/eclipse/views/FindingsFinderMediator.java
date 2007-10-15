@@ -119,13 +119,9 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 		final CascadingList.IColumn m = new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
 				final RadioArrowMenu menu = new RadioArrowMenu(panel);
-				for (ISelectionFilterFactory f : f_workingSelection
-						.getAvailableFilters()) {
-					menu.addChoice(f, null);
-				}
 				if (input != null) {
-					menu.addSeparator();
 					menu.addChoice("Show", null);
+					menu.addSeparator();
 					input.addObserver(new AbstractFilterObserver() {
 						@Override
 						public void porous(final Filter filter) {
@@ -136,6 +132,10 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 							});
 						}
 					});
+				}
+				for (ISelectionFilterFactory f : f_workingSelection
+						.getAvailableFilters()) {
+					menu.addChoice(f, null);
 				}
 				menu.addObserver(FindingsFinderMediator.this);
 			}
