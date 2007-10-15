@@ -400,7 +400,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 					marker = file.createMarker(SIERRA_MARKER);
 				}
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
-				marker.setAttribute(IMarker.MESSAGE, o.getSummary());
+				marker.setAttribute(IMarker.MESSAGE, o.getImportance() + " : "
+						+ o.getSummary());
 				marker.setAttribute("findingid", String.valueOf(o
 						.getFindingId()));
 			}
