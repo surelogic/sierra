@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;

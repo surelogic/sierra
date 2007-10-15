@@ -81,7 +81,7 @@ public final class FindingsFinderMediator implements IProjectsObserver,
 	}
 
 	public void dispose() {
-		// TODO
+		Projects.getInstance().removeObserver(this);
 	}
 
 	public void notify(Projects p) {
