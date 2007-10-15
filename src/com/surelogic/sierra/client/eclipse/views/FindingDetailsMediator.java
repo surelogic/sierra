@@ -437,7 +437,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				c.setAutoCommit(false);
 				ClientFindingManager manager = ClientFindingManager
 						.getInstance(c);
-
 				manager.comment(f_finding.getFindingId(), comment);
 				c.commit();
 				DatabaseHub.getInstance().notifyFindingMutated();
