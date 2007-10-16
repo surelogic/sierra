@@ -109,7 +109,16 @@ public class Parser {
 		try {
 			// Parse the input
 			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse(new File(fileName), handler);
+
+			// Fix for Bug
+			// https://fluid.surelogic.com/bugzilla/show_bug.cgi?id=1042
+			// The original PMD output is still unchanged
+			PMDScrubber scrubber = PMDScrubber.getInstance();
+			File pmdScrubbedFile = File.createTempFile("sierra", "pmd");
+			scrubber.scrub(new File(fileName), pmdScrubbedFile);
+
+			saxParser.parse(pmdScrubbedFile, handler);
+			pmdScrubbedFile.delete();
 		} catch (SAXException se) {
 			log.log(Level.SEVERE,
 					"Could not parse the PMD file. Possible errors in the generated file"
