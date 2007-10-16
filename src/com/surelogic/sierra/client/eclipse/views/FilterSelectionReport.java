@@ -172,7 +172,8 @@ public final class FilterSelectionReport implements IFilterObserver,
 					.toCommaSepString(porousCount);
 			f_porousCount.setText(porousCountString);
 			f_totalCount.setToolTipText(porousCountString
-					+ " findings selected");
+					+ (porousCount > 1 ? " findings" : " finding")
+					+ " selected");
 		}
 		f_panel.pack();
 		f_reportGroup.layout();
