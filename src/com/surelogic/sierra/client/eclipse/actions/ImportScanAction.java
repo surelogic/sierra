@@ -41,7 +41,7 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 		if (selectedFilename != null) {
 			File runDocument = new File(selectedFilename);
 			if (runDocument.canRead()) {
-				ImportScanDocumentJob job = new ImportScanDocumentJob(
+				final ImportScanDocumentJob job = new ImportScanDocumentJob(
 						runDocument);
 				job.setUser(true);
 				job.schedule();

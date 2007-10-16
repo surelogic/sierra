@@ -265,7 +265,7 @@ public class ServerExportPage extends WizardPage {
 		return true;
 	}
 
-	private class SierraServerContentProvider implements
+	private static class SierraServerContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -288,7 +288,7 @@ public class ServerExportPage extends WizardPage {
 
 	}
 
-	private class SierraServerLabelProvider implements ILabelProvider {
+	private static class SierraServerLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
 			if (element instanceof SierraServer) {
