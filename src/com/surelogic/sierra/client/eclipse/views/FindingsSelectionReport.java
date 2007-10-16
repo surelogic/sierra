@@ -106,7 +106,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 			try {
 				final Statement st = c.createStatement();
 				try {
-					//System.out.println(query);
+					// System.out.println(query);
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
 					while (rs.next()) {
@@ -148,6 +148,15 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 				final FindingData data = (FindingData) items[0].getData();
 				JDTUtility.tryToOpenInEditor(data.f_projectName,
 						data.f_packageName, data.f_typeName, data.f_lineNumber);
+			}
+		}
+	};
+
+	private final Listener f_singleClick = new Listener() {
+		public void handleEvent(Event event) {
+			TableItem[] items = f_table.getSelection();
+			if (items.length > 0) {
+				final FindingData data = (FindingData) items[0].getData();
 				final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
 						.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
 				view.findingSelected(data.f_findingId);
@@ -160,6 +169,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 			f_table = new Table(panel, SWT.FULL_SELECTION);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
+			f_table.addListener(SWT.Selection, f_singleClick);
 
 			for (FindingData data : f_rows) {
 				final TableItem item = new TableItem(f_table, SWT.NONE);
