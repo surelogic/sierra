@@ -71,9 +71,10 @@ public class TimeSeriesQueryBuilder {
 	 *            the name of a valid qualifer/timeSeries
 	 */
 	public void setTimeSeries(String timeSeries) {
-		QualifierRecord q;
+		queries = new ArrayList<ProductQueries>();
 		try {
-			q = QualifierRecordFactory.getInstance(conn).newQualifier();
+			QualifierRecord q = QualifierRecordFactory.getInstance(conn)
+					.newQualifier();
 			q.setName(timeSeries);
 			if (q.select()) {
 				getLatestScansByQualifierName.setString(1, timeSeries);
@@ -121,6 +122,7 @@ public class TimeSeriesQueryBuilder {
 
 		private ProductQueries(String product, List<Long> scanIds) {
 			this.product = product;
+			this.scanIds = scanIds;
 		}
 
 		/**
