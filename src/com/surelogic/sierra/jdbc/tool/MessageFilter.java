@@ -53,6 +53,11 @@ public class MessageFilter {
 			if (delta != null) {
 				val += delta;
 			}
+			if (val > 3) {
+				val = 3;
+			} else if (val < 1) {
+				val = 1;
+			}
 			i = Importance.values()[val];
 		}
 		return i;
