@@ -27,7 +27,8 @@ public class TimeSeriesQueryBuilder {
 
 	private final PreparedStatement getLatestScansByQualifierName;
 
-	private Map<String, List<Long>> latestScanIds;
+	private List<ProductQueries> queries;
+
 	private Long qualifierId;
 	private final StringBuilder builder;
 
@@ -52,77 +53,6 @@ public class TimeSeriesQueryBuilder {
 	}
 
 	/**
-	 * Produces a query that gives a breakdown of the number of findings by
-	 * importance for the latest set of scans in this time series.
-	 * 
-	 * @return
-	 */
-	public String queryLatestImportanceCounts(String product) {
-		builder.setLength(0);
-		builder
-				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, latestScanIds.get(product));
-		builder.append(" AND TSO.QUALIFIER_ID = ");
-		builder.append(qualifierId);
-		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");
-		builder.append(" ORDER BY CASE");
-		builder.append(" WHEN TSO.IMPORTANCE='Irrelevant' THEN 1");
-		builder.append(" WHEN TSO.IMPORTANCE='Low' THEN 2");
-		builder.append(" WHEN TSO.IMPORTANCE='Medium' THEN 3");
-		builder.append(" WHEN TSO.IMPORTANCE='High' THEN 4");
-		builder.append(" WHEN TSO.IMPORTANCE='Critical' THEN 5");
-		builder.append(" END");
-		return builder.toString();
-	}
-
-	/**
-	 * Produces a query that gives a breakdown of the number of findings for the
-	 * latest set of scans in this time series based on whether or not they are
-	 * relevant.
-	 * 
-	 * @return
-	 */
-	public String queryLatestRelevantOrIrrelevantCounts(String product) {
-		builder.setLength(0);
-		builder.append("SELECT * FROM");
-		builder
-				.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, latestScanIds.get(product));
-		builder.append(" AND TSO.QUALIFIER_ID = ");
-		builder.append(qualifierId);
-		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') IRRELEVANT");
-		builder.append(",");
-		builder
-				.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, latestScanIds.get(product));
-		builder.append(" AND TSO.QUALIFIER_ID = ");
-		builder.append(qualifierId);
-		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') RELEVANT");
-		return builder.toString();
-	}
-
-	/**
-	 * Produces a query that lists the number of findings for each kind of
-	 * finding type for the latest set of scans in this time series.
-	 * 
-	 * @return
-	 */
-	public String queryLatestFindingTypeCounts(String product) {
-		builder.setLength(0);
-		builder
-				.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, latestScanIds.get(product));
-		builder.append(" AND TSO.QUALIFIER_ID = ");
-		builder.append(qualifierId);
-		builder
-				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.FINDING_TYPE");
-		return builder.toString();
-	}
-
-	/**
 	 * Returns a list of all products in this time series with data in them. If
 	 * a project has data for this time series, but does not belong to a
 	 * product, it implicitly belongs to a product with the same name as the
@@ -130,8 +60,8 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public Set<String> getProducts() {
-		return latestScanIds.keySet();
+	public List<ProductQueries> getProductQueries() {
+		return queries;
 	}
 
 	/**
@@ -146,7 +76,6 @@ public class TimeSeriesQueryBuilder {
 			q = QualifierRecordFactory.getInstance(conn).newQualifier();
 			q.setName(timeSeries);
 			if (q.select()) {
-				latestScanIds = new HashMap<String, List<Long>>();
 				getLatestScansByQualifierName.setString(1, timeSeries);
 				ResultSet set = getLatestScansByQualifierName.executeQuery();
 				try {
@@ -158,13 +87,15 @@ public class TimeSeriesQueryBuilder {
 						String project = set.getString(idx++);
 						Long scanId = set.getLong(idx++);
 						if (newProduct == null) {
-							latestScanIds.put(project, Collections
-									.singletonList(scanId));
+							queries.add(new ProductQueries(project, Collections
+									.singletonList(scanId)));
 						} else {
 							if (!newProduct.equals(product)) {
 								product = newProduct;
 								scanIds = new ArrayList<Long>();
-								latestScanIds.put(product, scanIds);
+								queries
+										.add(new ProductQueries(product,
+												scanIds));
 							}
 							scanIds.add(scanId);
 						}
@@ -179,6 +110,92 @@ public class TimeSeriesQueryBuilder {
 			}
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
+		}
+
+	}
+
+	public class ProductQueries {
+
+		private final String product;
+		private List<Long> scanIds;
+
+		private ProductQueries(String product, List<Long> scanIds) {
+			this.product = product;
+		}
+
+		/**
+		 * Produces a query that gives a breakdown of the number of findings by
+		 * importance for the latest set of scans in this time series.
+		 * 
+		 * @return
+		 */
+		public String queryLatestImportanceCounts() {
+			builder.setLength(0);
+			builder
+					.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+			inClause(builder, scanIds);
+			builder.append(" AND TSO.QUALIFIER_ID = ");
+			builder.append(qualifierId);
+			builder
+					.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");
+			builder.append(" ORDER BY CASE");
+			builder.append(" WHEN TSO.IMPORTANCE='Irrelevant' THEN 1");
+			builder.append(" WHEN TSO.IMPORTANCE='Low' THEN 2");
+			builder.append(" WHEN TSO.IMPORTANCE='Medium' THEN 3");
+			builder.append(" WHEN TSO.IMPORTANCE='High' THEN 4");
+			builder.append(" WHEN TSO.IMPORTANCE='Critical' THEN 5");
+			builder.append(" END");
+			return builder.toString();
+		}
+
+		/**
+		 * Produces a query that gives a breakdown of the number of findings for
+		 * the latest set of scans in this time series based on whether or not
+		 * they are relevant.
+		 * 
+		 * @return
+		 */
+		public String queryLatestRelevantOrIrrelevantCounts() {
+			builder.setLength(0);
+			builder.append("SELECT * FROM");
+			builder
+					.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+			inClause(builder, scanIds);
+			builder.append(" AND TSO.QUALIFIER_ID = ");
+			builder.append(qualifierId);
+			builder
+					.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') IRRELEVANT");
+			builder.append(",");
+			builder
+					.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+			inClause(builder, scanIds);
+			builder.append(" AND TSO.QUALIFIER_ID = ");
+			builder.append(qualifierId);
+			builder
+					.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') RELEVANT");
+			return builder.toString();
+		}
+
+		/**
+		 * Produces a query that lists the number of findings for each kind of
+		 * finding type for the latest set of scans in this time series.
+		 * 
+		 * @return
+		 */
+		public String queryLatestFindingTypeCounts() {
+			builder.setLength(0);
+			builder
+					.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
+			inClause(builder, scanIds);
+			builder.append(" AND TSO.QUALIFIER_ID = ");
+			builder.append(qualifierId);
+			builder
+					.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.FINDING_TYPE");
+			return builder.toString();
+		}
+
+		public String getProduct() {
+			return product;
 		}
 
 	}
