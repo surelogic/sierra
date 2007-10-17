@@ -31,7 +31,7 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 	private final SierraServer f_server;
 
 	public SynchronizeProjectDataJob(String projectName, SierraServer server) {
-		super("Synchronizing Sierra data form project '" + projectName + "'");
+		super("Synchronizing Sierra data from project '" + projectName + "'");
 		f_projectName = projectName;
 		f_server = server;
 	}
