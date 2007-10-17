@@ -28,6 +28,7 @@ public class TimeSeriesQueryBuilder {
 	private final PreparedStatement getLatestScansByQualifierName;
 
 	private Map<String, List<Long>> latestScanIds;
+	private Long qualifierId;
 	private final StringBuilder builder;
 
 	private TimeSeriesQueryBuilder(Connection conn) {
@@ -61,6 +62,8 @@ public class TimeSeriesQueryBuilder {
 		builder
 				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, latestScanIds.get(product));
+		builder.append(" AND TSO.QUALIFIER_ID = ");
+		builder.append(qualifierId);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");
 		builder.append(" ORDER BY CASE");
@@ -86,12 +89,16 @@ public class TimeSeriesQueryBuilder {
 		builder
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, latestScanIds.get(product));
+		builder.append(" AND TSO.QUALIFIER_ID = ");
+		builder.append(qualifierId);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') IRRELEVANT");
 		builder.append(",");
 		builder
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, latestScanIds.get(product));
+		builder.append(" AND TSO.QUALIFIER_ID = ");
+		builder.append(qualifierId);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') RELEVANT");
 		return builder.toString();
@@ -108,6 +115,8 @@ public class TimeSeriesQueryBuilder {
 		builder
 				.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
 		inClause(builder, latestScanIds.get(product));
+		builder.append(" AND TSO.QUALIFIER_ID = ");
+		builder.append(qualifierId);
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.FINDING_TYPE");
 		return builder.toString();
@@ -163,7 +172,7 @@ public class TimeSeriesQueryBuilder {
 				} finally {
 					set.close();
 				}
-
+				this.qualifierId = q.getId();
 			} else {
 				throw new IllegalArgumentException(timeSeries
 						+ " is not a valid name for a time series/qualifier.");
