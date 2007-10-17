@@ -16,7 +16,6 @@ public class ProductManager {
 
 	private static final String FIND_ALL = "SELECT NAME FROM PRODUCT";
 	private final PreparedStatement findAllStatement;
-
 	private final ProductRecordFactory productFactory;
 
 	private final ProductProjectManager ppManager;
@@ -48,7 +47,7 @@ public class ProductManager {
 		}
 		return productNames;
 	}
-
+	
 	/**
 	 * 
 	 * @param productName

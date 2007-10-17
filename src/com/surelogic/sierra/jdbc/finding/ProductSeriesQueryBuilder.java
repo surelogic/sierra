@@ -21,6 +21,7 @@ public class ProductSeriesQueryBuilder {
 			.getLoggerFor(ProductSeriesQueryBuilder.class);
 
 	private final Connection conn;
+	
 	private final StringBuilder builder = new StringBuilder();
 
 	private List<Long> scanIds;
@@ -29,23 +30,6 @@ public class ProductSeriesQueryBuilder {
 		this.conn = conn;
 	}
 
-	public String queryLatestRelevantOrIrrelevantCounts() {
-		builder.setLength(0);
-
-		return builder.toString();
-	}
-
-	public String queryLatestImportanceCounts() {
-		builder.setLength(0);
-
-		return builder.toString();
-	}
-
-	public String queryLatestFindingTypes() {
-		builder.setLength(0);
-
-		return builder.toString();
-	}
 
 	public String queryRelevantOrIrrelevantCounts() {
 		builder.setLength(0);
@@ -107,10 +91,6 @@ public class ProductSeriesQueryBuilder {
 			log.severe(e.getMessage());
 		}
 
-	}
-
-	public static ProductSeriesQueryBuilder getInstance(Connection conn) {
-		return new ProductSeriesQueryBuilder(conn);
 	}
 
 	private static void inClause(StringBuilder builder, List<?> values) {

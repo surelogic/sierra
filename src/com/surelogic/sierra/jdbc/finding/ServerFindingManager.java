@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +25,9 @@ import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.record.ScanSummaryRecord;
+import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
+import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
@@ -41,6 +45,13 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement selectObsoletedTrails;
 	private final PreparedStatement selectUpdatedMatches;
 	private final PreparedStatement selectUpdatedAudits;
+	private final PreparedStatement selectNextScan;
+	private final PreparedStatement selectPreviousScan;
+	private final UpdateRecordMapper scanSummaryMapper;
+	private final PreparedStatement findingDifferenceCount;
+	private final PreparedStatement findingIntersectCount;
+	private final PreparedStatement findingCount;
+	private final PreparedStatement artifactCount;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -60,6 +71,10 @@ public final class ServerFindingManager extends FindingManager {
 								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
 								+ "  MINUS "
 								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+				findingDifferenceCount = conn
+						.prepareStatement("SELECT COUNT(*) FROM "
+								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW SO WHERE SCAN_ID = ?) MINUS"
+								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW SO WHERE SCAN_ID = ?))");
 			} else {
 				try {
 					st
@@ -73,6 +88,10 @@ public final class ServerFindingManager extends FindingManager {
 								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
 								+ "  EXCEPT"
 								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
+				findingDifferenceCount = conn
+						.prepareStatement("SELECT COUNT(*) FROM "
+								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) EXCEPT"
+								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
 			}
 		} finally {
 			st.close();
@@ -132,6 +151,42 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   A.REVISION > ? AND"
 						+ "   U.ID = A.USER_ID"
 						+ "   ORDER BY F.ID,A.REVISION,A.DATE_TIME");
+		selectNextScan = conn
+				.prepareStatement("SELECT S.ID,S.SCAN_DATE_TIME FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
+						+ "   QSR.QUALIFIER_ID = ? AND"
+						+ "   S.ID = QSR.SCAN_ID AND"
+						+ "   S.PROJECT_ID = ? AND"
+						+ "   S.SCAN_DATE_TIME = ("
+						+ "      SELECT MIN(S.SCAN_DATE_TIME)"
+						+ "      FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
+						+ "         QSR.QUALIFIER_ID = ? AND"
+						+ "         S.ID = QSR.SCAN_ID AND"
+						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME > ?)");
+		selectPreviousScan = conn
+				.prepareStatement("SELECT S.ID,S.SCAN_DATE_TIME FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
+						+ "   QSR.QUALIFIER_ID = ? AND"
+						+ "   S.ID = QSR.SCAN_ID AND"
+						+ "   S.PROJECT_ID = ? AND"
+						+ "   S.SCAN_DATE_TIME = ("
+						+ "      SELECT MAX(S.SCAN_DATE_TIME)"
+						+ "      FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
+						+ "         QSR.QUALIFIER_ID = ? AND"
+						+ "         S.ID = QSR.SCAN_ID AND"
+						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME < ?)");
+		findingIntersectCount = conn
+				.prepareStatement("SELECT COUNT(*) FROM"
+						+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) INTERSECT"
+						+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
+		findingCount = conn
+				.prepareStatement("SELECT COUNT(*) FROM SCAN_OVERVIEW WHERE SCAN_ID = ?");
+		artifactCount = conn
+				.prepareStatement("SELECT COUNT(*) FROM ARTIFACT WHERE SCAN_ID = ?");
+		scanSummaryMapper = new UpdateBaseMapper(
+				conn,
+				"INSERT INTO SCAN_SUMMARY (SCAN_ID,QUALIFIER_ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT) VALUES (?,?,?,?,?)",
+				"SELECT ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
+				"DELETE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
+				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -156,6 +211,7 @@ public final class ServerFindingManager extends FindingManager {
 						throw new IllegalArgumentException(
 								"No qualifier exists with name " + q);
 					}
+					populateScanSummary(scan, qRec, projectRec);
 				}
 				log.info("Populating scan overview for scan with uid "
 						+ scan.getUid() + ".");
@@ -276,10 +332,9 @@ public final class ServerFindingManager extends FindingManager {
 				// Try to look up any existing matches
 				for (MatchRecord.PK matchId : matchIds) {
 					matchRecord.setId(matchId);
-					if (matchRecord.select()) {
-						if (getFinding(matchRecord.getFindingId()).getUid() != null) {
-							findings.add(matchRecord.getFindingId());
-						}
+					if (matchRecord.select()
+							&& (getFinding(matchRecord.getFindingId()).getUid() != null)) {
+						findings.add(matchRecord.getFindingId());
 					} else {
 						unmatched.add(matchId);
 					}
@@ -311,10 +366,10 @@ public final class ServerFindingManager extends FindingManager {
 					if (matchRecord.select()) {
 						// This is a finding without a uuid
 						Long oldFinding = matchRecord.getFindingId();
-						delete(oldFinding, findingId);
 						matchRecord.setFindingId(findingId);
 						matchRecord.setRevision(revision);
 						matchRecord.update();
+						delete(oldFinding, findingId);
 					} else {
 						matchRecord.setFindingId(findingId);
 						matchRecord.setRevision(revision);
@@ -434,6 +489,131 @@ public final class ServerFindingManager extends FindingManager {
 			}
 		}
 		return updates;
+	}
+
+	/**
+	 * Populate the scan summary row for this scan/qualifier pair. This row
+	 * contains some useful metrics for reporting, and one of these should be
+	 * created for each qualifier a scan is published to.
+	 * 
+	 * @param scan
+	 * @param qualifier
+	 * @param project
+	 * @throws SQLException
+	 */
+	private void populateScanSummary(ScanRecord scan,
+			QualifierRecord qualifier, ProjectRecord project)
+			throws SQLException {
+		Timestamp time = new Timestamp(scan.getTimestamp().getTime());
+		int idx = 1;
+		// Add scan summary information
+		selectNextScan.setLong(idx++, qualifier.getId());
+		selectNextScan.setLong(idx++, project.getId());
+		selectNextScan.setLong(idx++, qualifier.getId());
+		selectNextScan.setLong(idx++, project.getId());
+		selectNextScan.setTimestamp(idx++, new Timestamp(scan.getTimestamp()
+				.getTime()));
+		ResultSet set = selectNextScan.executeQuery();
+		try {
+			if (set.next()) {
+				populateScanSummaryHelper(set.getLong(1), qualifier.getId(),
+						project.getId(), time);
+			}
+		} finally {
+			set.close();
+		}
+		selectPreviousScan.setLong(idx++, qualifier.getId());
+		selectPreviousScan.setLong(idx++, project.getId());
+		selectPreviousScan.setLong(idx++, qualifier.getId());
+		selectPreviousScan.setLong(idx++, project.getId());
+		selectPreviousScan.setTimestamp(idx++, new Timestamp(scan
+				.getTimestamp().getTime()));
+		set = selectPreviousScan.executeQuery();
+		try {
+			if (set.next()) {
+				populateScanSummaryHelper(set.getLong(1), qualifier.getId(),
+						project.getId(), time);
+			}
+		} finally {
+			set.close();
+		}
+	}
+
+	private void populateScanSummaryHelper(Long scanId, Long qualifierId,
+			Long projectId, Timestamp time) throws SQLException {
+		ScanSummaryRecord summary = new ScanSummaryRecord(scanSummaryMapper);
+		summary.setId(new ScanSummaryRecord.PK(scanId, qualifierId));
+		boolean summaryExists = summary.select();
+		int idx = 1;
+		selectPreviousScan.setLong(idx++, qualifierId);
+		selectPreviousScan.setLong(idx++, projectId);
+		selectPreviousScan.setLong(idx++, qualifierId);
+		selectPreviousScan.setLong(idx++, projectId);
+		selectPreviousScan.setTimestamp(idx++, time);
+		ResultSet set = selectPreviousScan.executeQuery();
+		try {
+			if (set.next()) {
+				Long previousScanId = set.getLong(1);
+				findingDifferenceCount.setLong(1, scanId);
+				findingDifferenceCount.setLong(2, previousScanId);
+				ResultSet count = findingDifferenceCount.executeQuery();
+				try {
+					count.next();
+					summary.setNewFindings(count.getLong(1));
+				} finally {
+					count.close();
+				}
+				findingIntersectCount.setLong(1, scanId);
+				findingIntersectCount.setLong(2, previousScanId);
+				count = findingIntersectCount.executeQuery();
+				try {
+					count.next();
+					summary.setUnchangedFindings(count.getLong(1));
+				} finally {
+					count.close();
+				}
+				findingCount.setLong(1, scanId);
+				count = findingCount.executeQuery();
+				try {
+					count.next();
+					summary.setFixedFindings(count.getLong(1)
+							- summary.getNewFindings()
+							- summary.getUnchangedFindings());
+				} finally {
+					count.close();
+				}
+			} else {
+				findingCount.setLong(1, scanId);
+				ResultSet count = artifactCount.executeQuery();
+				try {
+					count.next();
+					Long findings = count.getLong(1);
+					summary.setUnchangedFindings(findings);
+					summary.setNewFindings(findings);
+					summary.setFixedFindings(0L);
+				} finally {
+					count.close();
+				}
+			}
+			if (!summaryExists) {
+				artifactCount.setLong(1, scanId);
+				ResultSet count = artifactCount.executeQuery();
+				try {
+					count.next();
+					summary.setArtifacts(count.getLong(1));
+				} finally {
+					count.close();
+				}
+			}
+		} finally {
+			set.close();
+		}
+
+		if (summaryExists) {
+			summary.update();
+		} else {
+			summary.insert();
+		}
 	}
 
 	public static ServerFindingManager getInstance(Connection conn)

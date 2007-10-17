@@ -154,8 +154,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ " FT.ID = M.FINDING_TYPE_ID" + " ORDER BY FINDING_ID");
 		findLocalAudits = conn
 				.prepareStatement("SELECT F.UUID,A.DATE_TIME,A.EVENT,A.VALUE"
-						+ " FROM SIERRA_AUDIT A, FINDING F"
-						+ " WHERE A.REVISION IS NULL AND"
+						+ " FROM SIERRA_AUDIT A, FINDING F WHERE "
+						+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " AND F.UUID IS NOT NULL ORDER BY A.FINDING_ID");
 		checkIfInScans = conn
@@ -171,7 +171,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @throws SQLException
 	 */
 	public void comment(Long findingId, String comment) throws SQLException {
-		checkIsRead(findingId);
+		checkFinding(findingId);
 		comment(null, findingId, comment, new Date(), null);
 		regenerateFindingOverview(findingId);
 	}
@@ -186,7 +186,7 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void setImportance(Long findingId, Importance importance)
 			throws SQLException {
-		checkIsRead(findingId);
+		checkFinding(findingId);
 		setImportance(null, findingId, importance, new Date(), null);
 		regenerateFindingOverview(findingId);
 	}
@@ -199,7 +199,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @throws SQLException
 	 */
 	public void markAsRead(Long findingId) throws SQLException {
-		checkIsRead(findingId);
+		checkFinding(findingId);
 		markAsRead(null, findingId, new Date(), null);
 		regenerateFindingOverview(findingId);
 	}
@@ -213,7 +213,7 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void changeSummary(Long findingId, String summary)
 			throws SQLException {
-		checkIsRead(findingId);
+		checkFinding(findingId);
 		changeSummary(null, findingId, summary, new Date(), null);
 		regenerateFindingOverview(findingId);
 	}
@@ -540,20 +540,16 @@ public final class ClientFindingManager extends FindingManager {
 	}
 
 	/**
-	 * For use in the client. Checks to see if a finding has been read. If it
-	 * has not, it marks it as read.
+	 * Check for existence of the finding.
 	 * 
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	protected void checkIsRead(Long findingId) throws SQLException {
+	protected void checkFinding(Long findingId) throws SQLException {
 		FindingRecord f = getFinding(findingId);
 		if (f == null)
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
-		if (!f.isRead()) {
-			markAsRead(null, findingId, new Date(), null);
-		}
 	}
 
 	public static ClientFindingManager getInstance(Connection conn)

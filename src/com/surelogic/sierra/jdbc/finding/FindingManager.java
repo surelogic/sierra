@@ -41,7 +41,6 @@ public class FindingManager {
 
 	private final PreparedStatement selectFindingById;
 	private final PreparedStatement touchFinding;
-	private final PreparedStatement markFindingAsRead;
 	private final PreparedStatement updateFindingImportance;
 	private final PreparedStatement updateFindingSummary;
 	private final PreparedStatement obsoleteArtifacts;
@@ -63,9 +62,7 @@ public class FindingManager {
 		this.factory = FindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
 		touchFinding = conn
-				.prepareStatement("UPDATE FINDING SET LAST_CHANGED = ? WHERE ID = ?");
-		markFindingAsRead = conn
-				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = ? WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = MAX(?,LAST_CHANGED) WHERE ID = ?");
 		updateFindingImportance = conn
 				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingSummary = conn
@@ -243,9 +240,7 @@ public class FindingManager {
 			Date time, Long revision) throws SQLException {
 		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
 				.insert();
-		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
-		touchFinding.setLong(2, findingId);
-		touchFinding.execute();
+		touchFinding(findingId, time);
 	}
 
 	protected void setImportance(Long userId, Long findingId,
@@ -257,15 +252,14 @@ public class FindingManager {
 		updateFindingImportance.setTimestamp(2, new Timestamp(time.getTime()));
 		updateFindingImportance.setLong(3, findingId);
 		updateFindingImportance.execute();
+		touchFinding(findingId, time);
 	}
 
 	protected void markAsRead(Long userId, Long findingId, Date time,
 			Long revision) throws SQLException {
 		newAudit(userId, findingId, null, AuditEvent.READ, time, revision)
 				.insert();
-		markFindingAsRead.setTimestamp(1, new Timestamp(time.getTime()));
-		markFindingAsRead.setLong(2, findingId);
-		markFindingAsRead.execute();
+		touchFinding(findingId, time);
 	}
 
 	protected void changeSummary(Long userId, Long findingId, String summary,
@@ -276,6 +270,7 @@ public class FindingManager {
 		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
 		updateFindingSummary.setLong(3, findingId);
 		updateFindingSummary.execute();
+		touchFinding(findingId, time);
 	}
 
 	protected void populateScanOverview(Long scanId) throws SQLException {
@@ -283,6 +278,12 @@ public class FindingManager {
 		populateScanOverview.setLong(idx++, scanId);
 		populateScanOverview.setLong(idx++, scanId);
 		populateScanOverview.execute();
+	}
+
+	private void touchFinding(Long findingId, Date time) throws SQLException {
+		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
+		touchFinding.setLong(2, findingId);
+		touchFinding.execute();
 	}
 
 	private AuditRecord newAudit(Long userId, Long findingId, String value,
