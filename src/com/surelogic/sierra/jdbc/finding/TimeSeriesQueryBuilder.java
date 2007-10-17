@@ -6,11 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
@@ -131,7 +128,7 @@ public class TimeSeriesQueryBuilder {
 		 * 
 		 * @return
 		 */
-		public String queryLatestImportanceCounts() {
+		public String getLatestImportanceCounts() {
 			builder.setLength(0);
 			builder
 					.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
@@ -157,7 +154,7 @@ public class TimeSeriesQueryBuilder {
 		 * 
 		 * @return
 		 */
-		public String queryLatestRelevantOrIrrelevantCounts() {
+		public String getLatestRelevantOrIrrelevantCounts() {
 			builder.setLength(0);
 			builder.append("SELECT * FROM");
 			builder
@@ -184,7 +181,7 @@ public class TimeSeriesQueryBuilder {
 		 * 
 		 * @return
 		 */
-		public String queryLatestFindingTypeCounts() {
+		public String getLatestFindingTypeCounts() {
 			builder.setLength(0);
 			builder
 					.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
