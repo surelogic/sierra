@@ -62,7 +62,7 @@ public class FindingManager {
 		this.factory = FindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
 		touchFinding = conn
-				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = MAX(?,LAST_CHANGED) WHERE ID = ?");
+				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END WHERE ID = ?");
 		updateFindingImportance = conn
 				.prepareStatement("UPDATE FINDING SET IMPORTANCE = ?, LAST_CHANGED = ? WHERE ID = ?");
 		updateFindingSummary = conn
@@ -282,7 +282,8 @@ public class FindingManager {
 
 	private void touchFinding(Long findingId, Date time) throws SQLException {
 		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
-		touchFinding.setLong(2, findingId);
+		touchFinding.setTimestamp(2, new Timestamp(time.getTime()));
+		touchFinding.setLong(3, findingId);
 		touchFinding.execute();
 	}
 
