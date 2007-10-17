@@ -6,8 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
@@ -24,7 +27,7 @@ public class TimeSeriesQueryBuilder {
 
 	private final PreparedStatement getLatestScansByQualifierName;
 
-	private List<Long> scanIds;
+	private Map<String, List<Long>> latestScanIds;
 	private final StringBuilder builder;
 
 	private TimeSeriesQueryBuilder(Connection conn) {
@@ -32,7 +35,11 @@ public class TimeSeriesQueryBuilder {
 		this.conn = conn;
 		try {
 			this.getLatestScansByQualifierName = conn
-					.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE QUALIFIER = ?");
+					.prepareStatement("SELECT P.NAME,LS.PROJECT,LS.SCAN_ID"
+							+ "   FROM LATEST_SCANS LS"
+							+ "   LEFT OUTER JOIN PRODUCT_PROJECT_RELTN PPR ON PPR.PROJECT_NAME = LS.PROJECT"
+							+ "   LEFT JOIN PRODUCT P ON P.ID = PPR.PRODUCT_ID"
+							+ "   WHERE LS.QUALIFIER = ? ORDER BY PPR.PRODUCT_ID");
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
@@ -49,11 +56,11 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryLatestImportanceCounts() {
+	public String queryLatestImportanceCounts(String product) {
 		builder.setLength(0);
 		builder
 				.append("SELECT TSO.IMPORTANCE, COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, scanIds);
+		inClause(builder, latestScanIds.get(product));
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.IMPORTANCE");
 		builder.append(" ORDER BY CASE");
@@ -73,18 +80,18 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryLatestRelevantOrIrrelevantCounts() {
+	public String queryLatestRelevantOrIrrelevantCounts(String product) {
 		builder.setLength(0);
 		builder.append("SELECT * FROM");
 		builder
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Irrelevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, scanIds);
+		inClause(builder, latestScanIds.get(product));
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE='Irrelevant') IRRELEVANT");
 		builder.append(",");
 		builder
 				.append("(SELECT COUNT(SO.FINDING_ID) \"Relevant\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, scanIds);
+		inClause(builder, latestScanIds.get(product));
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID AND TSO.IMPORTANCE!='Irrelevant') RELEVANT");
 		return builder.toString();
@@ -96,14 +103,26 @@ public class TimeSeriesQueryBuilder {
 	 * 
 	 * @return
 	 */
-	public String queryLatestFindingTypeCounts() {
+	public String queryLatestFindingTypeCounts(String product) {
 		builder.setLength(0);
 		builder
 				.append("SELECT TSO.FINDING_TYPE \"Finding Type\", COUNT(TSO.FINDING_ID) \"Count\" FROM SCAN_OVERVIEW SO, TIME_SERIES_OVERVIEW TSO WHERE SO.SCAN_ID IN ");
-		inClause(builder, scanIds);
+		inClause(builder, latestScanIds.get(product));
 		builder
 				.append(" AND TSO.FINDING_ID = SO.FINDING_ID GROUP BY TSO.FINDING_TYPE");
 		return builder.toString();
+	}
+
+	/**
+	 * Returns a list of all products in this time series with data in them. If
+	 * a project has data for this time series, but does not belong to a
+	 * product, it implicitly belongs to a product with the same name as the
+	 * project.
+	 * 
+	 * @return
+	 */
+	public Set<String> getProducts() {
+		return latestScanIds.keySet();
 	}
 
 	/**
@@ -112,23 +131,39 @@ public class TimeSeriesQueryBuilder {
 	 * @param timeSeries
 	 *            the name of a valid qualifer/timeSeries
 	 */
-	public void setContext(String timeSeries) {
+	public void setTimeSeries(String timeSeries) {
 		QualifierRecord q;
 		try {
 			q = QualifierRecordFactory.getInstance(conn).newQualifier();
 			q.setName(timeSeries);
 			if (q.select()) {
-				List<Long> scanIds = new ArrayList<Long>();
+				latestScanIds = new HashMap<String, List<Long>>();
 				getLatestScansByQualifierName.setString(1, timeSeries);
 				ResultSet set = getLatestScansByQualifierName.executeQuery();
 				try {
+					List<Long> scanIds = null;
+					String product = null;
 					while (set.next()) {
-						scanIds.add(set.getLong(1));
+						int idx = 1;
+						String newProduct = set.getString(idx++);
+						String project = set.getString(idx++);
+						Long scanId = set.getLong(idx++);
+						if (newProduct == null) {
+							latestScanIds.put(project, Collections
+									.singletonList(scanId));
+						} else {
+							if (!newProduct.equals(product)) {
+								product = newProduct;
+								scanIds = new ArrayList<Long>();
+								latestScanIds.put(product, scanIds);
+							}
+							scanIds.add(scanId);
+						}
 					}
 				} finally {
 					set.close();
 				}
-				this.scanIds = Collections.unmodifiableList(scanIds);
+
 			} else {
 				throw new IllegalArgumentException(timeSeries
 						+ " is not a valid name for a time series/qualifier.");
