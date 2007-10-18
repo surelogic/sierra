@@ -317,7 +317,8 @@ public class MessageWarehouse {
 
 	public FindingTypes fetchFindingTypes(InputStream in) {
 		try {
-			return (FindingTypes) ((JAXBElement<?>)unmarshaller.unmarshal(in)).getValue();
+			return (FindingTypes) ((JAXBElement<?>) unmarshaller.unmarshal(in))
+					.getValue();
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
@@ -611,10 +612,11 @@ public class MessageWarehouse {
 	}
 
 	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s) {
-		aBuilder.sourceLocation().className(s.getClassName()).packageName(
-				s.getPackageName()).endLine(s.getEndLineOfCode()).lineOfCode(
-				s.getLineOfCode()).type(s.getIdentifierType()).identifier(
-				s.getIdentifier()).hash(s.getHash()).build();
+		aBuilder.sourceLocation().compilation(s.getCompilation()).className(
+				s.getClassName()).packageName(s.getPackageName()).endLine(
+				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
+				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
+				s.getHash()).build();
 	}
 
 	private static boolean cancelled(SLProgressMonitor monitor) {
