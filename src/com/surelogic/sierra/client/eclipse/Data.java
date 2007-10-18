@@ -29,11 +29,23 @@ public final class Data {
 		final String connectionURL = getConnectionURL() + ";create=true";
 		final Connection c = DriverManager.getConnection(connectionURL);
 		c.setAutoCommit(false);
+		Exception e = null;
 		try {
 			SierraSchemaUtility.checkAndUpdate(c, false);
 			c.commit();
+		} catch (Exception exc) {
+			e = exc;
 		} finally {
-			c.close();
+			try {
+				c.close();
+			} catch (Exception exc) {
+				if (e == null) {
+					e = exc;
+				}
+			}
+		}
+		if (e != null) {
+			throw e;
 		}
 	}
 
