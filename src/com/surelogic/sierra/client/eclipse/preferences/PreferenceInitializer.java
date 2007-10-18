@@ -22,6 +22,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		final IPreferenceStore store = Activator.getDefault()
 				.getPreferenceStore();
 		create(RAW);
+		store.setDefault(PreferenceConstants.P_SIERRA_DELETE_DB_ON_STARTUP,
+				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_PATH, RAW);
 		store.setDefault(PreferenceConstants.P_SIERRA_BALLOON_FLAG, true);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG, false);

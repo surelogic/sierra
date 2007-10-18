@@ -9,6 +9,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -16,6 +17,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
@@ -83,26 +85,40 @@ public class SierraPreferencePage extends PreferencePage implements
 		grid.numColumns = 2;
 		pGroup.setLayout(grid);
 
-		Label l = new Label(pGroup, SWT.WRAP);
-		l.setText("The following projects have stored Sierra data."
-				+ " You may want to delete Sierra data about any projects you"
-				+ " no longer work on to conserve resources on your machine.");
+		final Label l = new Label(pGroup, SWT.WRAP);
+		StringBuilder b = new StringBuilder();
+		b.append("The following projects have stored Sierra data.");
+		b.append(" You may want to delete Sierra data about any projects you");
+		b.append(" no longer work on to conserve resources on your machine.");
+		b.append(" Deleting all stored Sierra data requires Eclipse to");
+		b.append(" be restarted. ");
+		l.setText(b.toString());
 		GridData data = new GridData();
 		data.widthHint = 400;
 		data.horizontalSpan = 2;
 		l.setLayoutData(data);
 
-		Table t = new Table(pGroup, SWT.FULL_SELECTION | SWT.MULTI);
+		final Table t = new Table(pGroup, SWT.FULL_SELECTION | SWT.MULTI);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 200;
 		t.setLayoutData(data);
 
-		Button b = new Button(pGroup, SWT.PUSH);
-		b.setText("Delete Sierra Data");
-		b.setEnabled(false);
-		b.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
+		final Composite c = new Composite(pGroup, SWT.NONE);
+		RowLayout rl = new RowLayout(SWT.VERTICAL);
+		rl.fill = true;
+		c.setLayout(rl);
+		c.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 
-		(new Mediator(t, b)).init();
+		final Button deleteSelectedProjectData = new Button(c, SWT.PUSH);
+		deleteSelectedProjectData.setText("Delete Sierra Data");
+		deleteSelectedProjectData.setEnabled(false);
+
+		final Button deleteDatabase = new Button(c, SWT.PUSH);
+		deleteDatabase.setText("Delete All Sierra Data");
+		deleteDatabase.setEnabled(!PreferenceConstants
+				.deleteDatabaseOnStartup());
+
+		(new Mediator(t, deleteSelectedProjectData, deleteDatabase)).init();
 
 		return panel;
 	}
@@ -126,11 +142,14 @@ public class SierraPreferencePage extends PreferencePage implements
 	private static class Mediator {
 
 		private final Table f_projectTable;
-		private final Button f_delete;
+		private final Button f_deleteSelectedProjects;
+		private final Button f_deleteDatabase;
 
-		Mediator(Table projectTable, Button delete) {
+		Mediator(Table projectTable, Button deleteSelectedProjects,
+				Button deleteDatabase) {
 			f_projectTable = projectTable;
-			f_delete = delete;
+			f_deleteSelectedProjects = deleteSelectedProjects;
+			f_deleteDatabase = deleteDatabase;
 		}
 
 		void init() {
@@ -153,12 +172,12 @@ public class SierraPreferencePage extends PreferencePage implements
 
 			f_projectTable.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					f_delete
-							.setEnabled(f_projectTable.getSelectionCount() != 0);
+					f_deleteSelectedProjects.setEnabled(f_projectTable
+							.getSelectionCount() != 0);
 				}
 			});
 
-			f_delete.addListener(SWT.Selection, new Listener() {
+			f_deleteSelectedProjects.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					TableItem[] selection = f_projectTable.getSelection();
 					final List<String> projectNames = new ArrayList<String>();
@@ -171,6 +190,25 @@ public class SierraPreferencePage extends PreferencePage implements
 
 					DeleteProjectDataJob.utility(projectNames, f_projectTable
 							.getShell(), false);
+				}
+			});
+
+			f_deleteDatabase.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					final MessageBox confirmDelete = new MessageBox(
+							f_projectTable.getShell(), SWT.ICON_WARNING
+									| SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+					confirmDelete.setText("Confirm Sierra Data Deletion");
+					confirmDelete
+							.setMessage("Are you sure you want to delete all "
+									+ "Sierra data in your Eclipse workspace?\n"
+									+ "This action will not take effect until you restart Eclipse.\n"
+									+ "This action will not "
+									+ "change or delete data on any Sierra server.");
+					if (confirmDelete.open() == SWT.NO)
+						return; // bail
+					f_deleteDatabase.setEnabled(false);
+					PreferenceConstants.setDeleteDatabaseOnStartup(true);
 				}
 			});
 		}

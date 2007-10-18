@@ -8,6 +8,19 @@ import com.surelogic.sierra.client.eclipse.Activator;
  */
 public class PreferenceConstants {
 
+	public static final String P_SIERRA_DELETE_DB_ON_STARTUP = "com.surelogic.sierra.delete-db-on-startup";
+
+	public static boolean deleteDatabaseOnStartup() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SIERRA_DELETE_DB_ON_STARTUP);
+	}
+
+	public static void setDeleteDatabaseOnStartup(
+			boolean deleteDatabaseOnStartup) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SIERRA_DELETE_DB_ON_STARTUP, deleteDatabaseOnStartup);
+	}
+
 	public static final String P_SIERRA_PATH = "com.surelogic.sierra.path";
 
 	public static String getSierraPath() {
