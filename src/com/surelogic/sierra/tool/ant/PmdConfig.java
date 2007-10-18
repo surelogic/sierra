@@ -24,7 +24,7 @@ import com.surelogic.sierra.tool.config.Config;
  * 
  */
 public class PmdConfig extends ToolConfig {
-	private final static String PMD_JAR = "pmd-4.0.jar";
+	private final static String PMD_JAR = "pmd-4.0-sl.jar";
 	private final static String PMD_CLASS = "net.sourceforge.pmd.PMD";
 	private final static String PMD = "pmd";
 

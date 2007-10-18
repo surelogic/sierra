@@ -46,6 +46,6 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jax-ws/saaj-api.jar,
  Tools/jax-ws/saaj-impl.jar,
  Tools/jax-ws/sjsxp.jar,
- .,
- Tools/pmd-4.0/lib/pmd-4.0.jar
+ Tools/pmd/lib/pmd-4.0-sl.jar,
+ .
 Bundle-Vendor: SureLogic, Inc.

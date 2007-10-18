@@ -1,6 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-import javax.jws.Oneway;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;

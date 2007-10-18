@@ -268,34 +268,38 @@ class FindBugsHandler extends DefaultHandler {
 					// and the last is class declared in the same file
 					// "TestInner" it does different resolution for the
 					// last kind, it uses the same name for the first three
-					// kinds, for the last kind it adds the superclass name
+					// kinds, for the last kind it adds the filename
 					// and makes the name of format "Test$TestInner"
 
-					String superClass = fileName.substring(0,
-							fileName.length() - 5);
+					String javaFileName = fileName.substring(0, fileName
+							.length() - 5);
 
-					if (superClass.equals(className)) {
+					sourceLocation.compilation(javaFileName);
+					sourceLocation.className(className);
+					sourceLocation.packageName(packageName);
 
-						sourceLocation.className(className).packageName(
-								packageName);
-					} else {
-
-						int dollarSign = className.indexOf("$");
-
-						if (dollarSign != -1) {
-							// The inner class is of format Test$1 or
-							// Test$TestInner
-							sourceLocation.className(className).packageName(
-									packageName);
-						} else {
-
-							// Use the name given by findbugs
-							sourceLocation.className(
-									superClass + "$" + className).packageName(
-									packageName);
-						}
-
-					}
+					// if (javaFileName.equals(className)) {
+					//
+					// sourceLocation.className(className).packageName(
+					// packageName);
+					// } else {
+					//
+					// int dollarSign = className.indexOf("$");
+					//
+					// if (dollarSign != -1) {
+					// // The inner class or a default of format Test$1 or
+					// // Test$TestInner
+					// sourceLocation.className(className).packageName(
+					// packageName);
+					// } else {
+					//
+					// // Use the name given by findbugs
+					// sourceLocation.className(
+					// javaFileName + "$" + className)
+					// .packageName(packageName);
+					// }
+					//
+					// }
 				}
 
 			} else {
@@ -402,34 +406,38 @@ class FindBugsHandler extends DefaultHandler {
 					// and the last is class declared in the same file
 					// "TestInner" it does different resolution for the
 					// last kind, it uses the same name for the first three
-					// kinds, for the last kind it adds the superclass name
+					// kinds, for the last kind it adds the filename
 					// and makes the name of format "Test$TestInner"
 
-					String superClass = fileName.substring(0,
-							fileName.length() - 5);
+					String javaFileName = fileName.substring(0, fileName
+							.length() - 5);
 
-					if (superClass.equals(className)) {
+					sourceLocation.compilation(javaFileName);
+					sourceLocation.className(className);
+					sourceLocation.packageName(packageName);
 
-						primarySourceLocation.className(className).packageName(
-								packageName);
-					} else {
-
-						int dollarSign = className.indexOf("$");
-
-						if (dollarSign != -1) {
-							// The inner class is of format Test$1 or
-							// Test$TestInner
-							primarySourceLocation.className(className)
-									.packageName(packageName);
-						} else {
-
-							// Use the name given by findbugs
-							primarySourceLocation.className(
-									superClass + "$" + className).packageName(
-									packageName);
-						}
-
-					}
+					// if (superClass.equals(className)) {
+					//
+					// primarySourceLocation.className(className).packageName(
+					// packageName);
+					// } else {
+					//
+					// int dollarSign = className.indexOf("$");
+					//
+					// if (dollarSign != -1) {
+					// // The inner class is of format Test$1 or
+					// // Test$TestInner
+					// primarySourceLocation.className(className)
+					// .packageName(packageName);
+					// } else {
+					//
+					// // Use the name given by findbugs
+					// primarySourceLocation.className(
+					// superClass + "$" + className).packageName(
+					// packageName);
+					// }
+					//
+					// }
 
 				}
 

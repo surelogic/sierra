@@ -31,7 +31,7 @@ class PMD40Handler extends DefaultHandler {
 
 	private ArtifactGenerator.ErrorBuilder error;
 
-	boolean hasClassName;
+	private boolean hasClassName;
 
 	private ArtifactGenerator.ArtifactBuilder artifact;
 
@@ -188,15 +188,25 @@ class PMD40Handler extends DefaultHandler {
 						int lastSlash = fileName.lastIndexOf(File.separator);
 						String fileNameHolder = fileName.substring(
 								lastSlash + 1, fileName.length());
-						String superClassName = fileNameHolder.substring(0,
+						String javaFileName = fileNameHolder.substring(0,
 								fileNameHolder.length() - 5);
 
-						if (superClassName.equals(className)) {
-							sourceLocation.className(className);
-						} else {
-							sourceLocation.className(superClassName + "$"
-									+ className);
-						}
+						// if (superClassName.equals(className)) {
+						// sourceLocation.className(className);
+						// } else {
+						// sourceLocation.className(superClassName + "$"
+						// + className);
+						// }
+
+						sourceLocation.compilation(javaFileName);
+						sourceLocation.className(className);
+						// if (className.equals(javaFileName)
+						// || className.contains(javaFileName)) {
+						// sourceLocation.className(className);
+						// } else if (!className.contains(javaFileName)) {
+						// sourceLocation.className(javaFileName + "$"
+						// + className);
+						// }
 						hasClassName = true;
 					}
 
@@ -304,7 +314,7 @@ class PMD40Handler extends DefaultHandler {
 						fileName.length());
 				String className = fileNameHolder.substring(0, fileNameHolder
 						.length() - 5);
-				sourceLocation.className(className);
+				sourceLocation.className(className).compilation(className);
 			}
 			hasClassName = false;
 
