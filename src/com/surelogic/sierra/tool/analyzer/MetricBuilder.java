@@ -4,7 +4,7 @@ public interface MetricBuilder {
 
 	MetricBuilder packageName(String name);
 
-	MetricBuilder className(String name);
+	MetricBuilder compilation(String name);
 
 	MetricBuilder linesOfCode(int lines);
 

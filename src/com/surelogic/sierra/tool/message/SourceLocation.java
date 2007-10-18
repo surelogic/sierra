@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SourceLocation {
 	public static class Builder {
 		private IdentifierType type;
+		private String compilation;
 		private String identifier;
 		private String className;
 		private String packageName;
@@ -27,6 +28,11 @@ public class SourceLocation {
 
 		public Builder identifier(String identifier) {
 			this.identifier = identifier;
+			return this;
+		}
+
+		public Builder compilation(String compilation) {
+			this.compilation = compilation;
 			return this;
 		}
 
@@ -72,6 +78,7 @@ public class SourceLocation {
 		}
 	}
 
+	private String compilation;
 	private String pathName;
 	private String className;
 	private Long hash;
@@ -93,10 +100,15 @@ public class SourceLocation {
 		this.endLineOfCode = builder.endLine;
 		this.identifier = builder.identifier;
 		this.identifierType = builder.type;
+		this.compilation = builder.compilation;
 	}
 
 	public String getPathName() {
 		return pathName;
+	}
+
+	public String getCompilation() {
+		return compilation;
 	}
 
 	public String getClassName() {
@@ -129,6 +141,10 @@ public class SourceLocation {
 
 	public void setPathName(String pathName) {
 		this.pathName = pathName;
+	}
+
+	public void setCompilation(String compilation) {
+		this.compilation = compilation;
 	}
 
 	public void setClassName(String className) {
@@ -165,6 +181,8 @@ public class SourceLocation {
 		int result = 1;
 		result = prime * result
 				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result
+				+ ((compilation == null) ? 0 : compilation.hashCode());
 		result = prime * result + endLineOfCode;
 		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
 		result = prime * result
@@ -192,6 +210,11 @@ public class SourceLocation {
 			if (other.className != null)
 				return false;
 		} else if (!className.equals(other.className))
+			return false;
+		if (compilation == null) {
+			if (other.compilation != null)
+				return false;
+		} else if (!compilation.equals(other.compilation))
 			return false;
 		if (endLineOfCode != other.endLineOfCode)
 			return false;

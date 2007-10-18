@@ -44,6 +44,8 @@ public interface ArtifactGenerator {
 
 		SourceLocationBuilder identifier(String name);
 
+		SourceLocationBuilder compilation(String compilation);
+		
 		SourceLocationBuilder className(String className);
 
 		SourceLocationBuilder packageName(String packageName);

@@ -594,7 +594,7 @@ public class MessageWarehouse {
 
 	private static void readClassMetric(ClassMetric metric,
 			MetricBuilder builder) {
-		builder.className(metric.getName()).packageName(metric.getPackage())
+		builder.compilation(metric.getName()).packageName(metric.getPackage())
 				.linesOfCode(metric.getLoc()).build();
 	}
 

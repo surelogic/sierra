@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
 
+import com.surelogic.sierra.tool.analyzer.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -56,6 +57,11 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 
 		public void build() {
 			// Nothing to do
+		}
+
+		public SourceLocationBuilder compilation(String compilation) {
+
+			return null;
 		}
 
 		public SourceLocationBuilder className(String className) {
@@ -130,7 +136,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			// Nothing to do
 		}
 
-		public MetricBuilder className(String name) {
+		public MetricBuilder compilation(String name) {
 			return this;
 		}
 

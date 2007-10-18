@@ -134,6 +134,11 @@ class PublishMessageArtifactGenerator extends DefaultArtifactGenerator
 				return this;
 			}
 
+			public SourceLocationBuilder compilation(String compilation) {
+				sourceBuilder.compilation(compilation);
+				return null;
+			}
+
 		}
 	}
 

@@ -279,7 +279,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			mw.writeClassMetric(metric, artOut);
 		}
 
-		public MetricBuilder className(String name) {
+		public MetricBuilder compilation(String name) {
 			this.clazz = name;
 			return this;
 		}
@@ -388,6 +388,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			public SourceLocationBuilder type(IdentifierType type) {
 				sourceBuilder.type(type);
 				return this;
+			}
+
+			public SourceLocationBuilder compilation(String compilation) {
+				sourceBuilder.compilation(compilation);
+				return null;
 			}
 
 		}
