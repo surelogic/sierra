@@ -38,6 +38,8 @@ public class PmdConfig extends ToolConfig {
 	private File f_rulesFile = null;
 	private int f_scale = 1;
 	private String f_status = null;
+	// String passed to Java's -Xmx flag
+	private String f_memory = "1024m";
 
 	public PmdConfig(org.apache.tools.ant.Project project) {
 		super(PMD, project);
@@ -220,6 +222,9 @@ public class PmdConfig extends ToolConfig {
 		public void run() {
 			// run PMD
 			CommandlineJava cmdj = new CommandlineJava();
+
+			// BUG 1077 Quick Fix - Look bug for details
+			cmdj.setMaxmemory(f_memory);
 
 			// Add the class to run
 			cmdj.setClassname(PMD_CLASS);
