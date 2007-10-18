@@ -25,20 +25,21 @@ public class FindingOverview {
 
 	private long findingId;
 
-	private String project;
-	private String packageName;
-	private String className;
-	private String tool;
-	private String findingType;
-	private String summary;
+	private final String project;
+	private final String packageName;
+	private final String className;
+	private final String compilation;
+	private final String tool;
+	private final String findingType;
+	private final String summary;
 
-	private boolean examined;
-	private Date lastChanged;
-	private Importance importance;
-	private FindingStatus status;
-	private int lineOfCode;
-	private int numberOfArtifacts;
-	private int numberOfComments;
+	private final boolean examined;
+	private final Date lastChanged;
+	private final Importance importance;
+	private final FindingStatus status;
+	private final int lineOfCode;
+	private final int numberOfArtifacts;
+	private final int numberOfComments;
 
 	FindingOverview(ResultSet set) throws SQLException {
 		int idx = 1;
@@ -54,6 +55,7 @@ public class FindingOverview {
 		this.project = set.getString(idx++);
 		this.packageName = set.getString(idx++);
 		this.className = set.getString(idx++);
+		this.compilation = set.getString(idx++);
 		this.findingType = set.getString(idx++);
 		this.tool = set.getString(idx++);
 		this.summary = set.getString(idx++);
@@ -73,6 +75,10 @@ public class FindingOverview {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public String getCompilation() {
+		return compilation;
 	}
 
 	public String getTool() {
@@ -114,7 +120,7 @@ public class FindingOverview {
 	public int getNumberOfComments() {
 		return numberOfComments;
 	}
-	
+
 	public static View getView() {
 		return view;
 	}
@@ -128,8 +134,9 @@ public class FindingOverview {
 	public static class View {
 
 		/**
-		 * Get the latest findings for the given class, and any inner classes. Only findings with
-		 * status New or Unchanged are returned, fixed findings are not shown.
+		 * Get the latest findings for the given class, and any inner classes.
+		 * Only findings with status New or Unchanged are returned, fixed
+		 * findings are not shown.
 		 * 
 		 * TODO do we want to also show fixed findings?
 		 * 
@@ -143,7 +150,7 @@ public class FindingOverview {
 				throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
+					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?)");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
@@ -160,9 +167,11 @@ public class FindingOverview {
 			}
 			return findings;
 		}
+
 		/**
-		 * Get the latest findings for the given class, and any inner classes. Only findings with
-		 * status New or Unchanged are returned, fixed findings are not shown.
+		 * Get the latest findings for the given class, and any inner classes.
+		 * Only findings with status New or Unchanged are returned, fixed
+		 * findings are not shown.
 		 * 
 		 * TODO do we want to also show fixed findings?
 		 * 
@@ -171,9 +180,9 @@ public class FindingOverview {
 		 * @param packageName
 		 * @return
 		 */
-		public List<FindingOverview> showRelevantFindingsForClass(Connection conn,
-				String projectName, String packageName, String className)
-				throws SQLException {
+		public List<FindingOverview> showRelevantFindingsForClass(
+				Connection conn, String projectName, String packageName,
+				String className) throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
 					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
