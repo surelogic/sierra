@@ -160,7 +160,9 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		description.setLayoutData(layoutData);
 
-		final Label detailsText = new Label(description, SWT.WRAP);
+		final Text detailsText = new Text(description, SWT.WRAP | SWT.MULTI
+				| SWT.V_SCROLL);
+		detailsText.setEditable(false);
 
 		synopsisTab.setControl(synopsisPane);
 

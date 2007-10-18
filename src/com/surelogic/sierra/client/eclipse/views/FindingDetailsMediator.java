@@ -62,7 +62,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final Label f_projectName;
 	private final Label f_packageName;
 	private final Link f_className;
-	private final Label f_detailsText;
+	private final Text f_detailsText;
 
 	private final TabItem f_auditTab;
 	private final Button f_quickAudit;
@@ -99,7 +99,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
 			TabFolder folder, TabItem synopsisTab, Link findingSynopsis,
 			Label projectName, Label packageName, Link className,
-			Label detailsText, TabItem auditTab, Button quickAudit,
+			Text detailsText, TabItem auditTab, Button quickAudit,
 			Button criticalButton, Button highButton, Button mediumButton,
 			Button lowButton, Button irrelevantButton, Text commentText,
 			Button commentButton,

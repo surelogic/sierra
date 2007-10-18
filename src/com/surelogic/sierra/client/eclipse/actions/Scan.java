@@ -96,8 +96,8 @@ public final class Scan {
 
 			}
 			if (PreferenceConstants.showBalloonNotifications())
-				BalloonUtility.showMessage("Sierra Scan Started on"
-						+ projectList, "You may continue your work. "
+				BalloonUtility.showMessage("Sierra Scan Started", "Scanning "
+						+ projectList + ". You may continue your work. "
 						+ "You will be notified when the scan has completed.");
 		}
 	}
