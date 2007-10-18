@@ -35,10 +35,10 @@ public final class ScanDocumentUtility {
 	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName)
 			throws ScanPersistenceException {
+		Throwable exc = null;
 		try {
 			Connection conn = Data.getConnection();
 			conn.setAutoCommit(false);
-			RuntimeException exc = null;
 			try {
 				ScanManager sMan = ScanManager.getInstance(conn);
 				if (projectName != null) {
@@ -49,19 +49,20 @@ public final class ScanDocumentUtility {
 				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
 						gen, monitor);
 				conn.commit();
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				exc = e;
+				conn.rollback();
 			} finally {
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					if (exc == null) {
-						throw e;
+						exc = e;
 					}
 				}
 			}
 			if (exc != null) {
-				throw exc;
+				throw new ScanPersistenceException(exc);
 			}
 		} catch (SQLException e) {
 			// Could not get a valid connection
