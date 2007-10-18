@@ -169,8 +169,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			clear();
 		}
 
-		public MetricBuilder className(String name) {
-			compUnit.setClassName(name);
+		public MetricBuilder compilation(String name) {
+			compUnit.setCompilation(name);
 			return this;
 		}
 
@@ -318,7 +318,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			}
 
 			public SourceLocationBuilder className(String className) {
-				compUnit.setClassName(className);
+				sourceIns.setClassName(className);
 				return this;
 			}
 
@@ -350,6 +350,11 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			public SourceLocationBuilder type(IdentifierType type) {
 				sourceIns.setType(type);
 				return this;
+			}
+
+			public SourceLocationBuilder compilation(String compilation) {
+				compUnit.setCompilation(compilation);
+				return null;
 			}
 
 		}

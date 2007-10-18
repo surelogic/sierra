@@ -8,19 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class CompilationUnitRecord extends LongRecord {
-	private String className;
 	private String packageName;
+	private String compilation;
 
 	public CompilationUnitRecord(RecordMapper mapper) {
 		super(mapper);
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
 	}
 
 	public String getPackageName() {
@@ -31,10 +23,18 @@ public final class CompilationUnitRecord extends LongRecord {
 		this.packageName = packageName;
 	}
 
+	public String getCompilation() {
+		return compilation;
+	}
+
+	public void setCompilation(String compilation) {
+		this.compilation = compilation;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setString(idx++, className);
 		st.setString(idx++, packageName);
+		st.setString(idx++, compilation);
 		return idx;
 	}
 
@@ -53,7 +53,7 @@ public final class CompilationUnitRecord extends LongRecord {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((className == null) ? 0 : className.hashCode());
+				+ ((compilation == null) ? 0 : compilation.hashCode());
 		result = prime * result
 				+ ((packageName == null) ? 0 : packageName.hashCode());
 		return result;
@@ -68,10 +68,10 @@ public final class CompilationUnitRecord extends LongRecord {
 		if (getClass() != obj.getClass())
 			return false;
 		final CompilationUnitRecord other = (CompilationUnitRecord) obj;
-		if (className == null) {
-			if (other.className != null)
+		if (compilation == null) {
+			if (other.compilation != null)
 				return false;
-		} else if (!className.equals(other.className))
+		} else if (!compilation.equals(other.compilation))
 			return false;
 		if (packageName == null) {
 			if (other.packageName != null)

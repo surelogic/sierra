@@ -18,6 +18,7 @@ public final class SourceRecord extends LongRecord {
 	private Integer lineOfCode;
 	private Integer endLineOfCode;
 	private IdentifierType type;
+	private String className;
 	private String identifier;
 
 	private CompilationUnitRecord compUnit;
@@ -74,9 +75,18 @@ public final class SourceRecord extends LongRecord {
 		this.compUnit = compUnit;
 	}
 
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, compUnit.getId());
+		st.setString(idx++, className);
 		setNullableLong(idx++, st, hash);
 		st.setInt(idx++, lineOfCode);
 		st.setInt(idx++, endLineOfCode);
@@ -100,6 +110,8 @@ public final class SourceRecord extends LongRecord {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result
 				+ ((compUnit == null) ? 0 : compUnit.hashCode());
 		result = prime * result
 				+ ((endLineOfCode == null) ? 0 : endLineOfCode.hashCode());
@@ -121,6 +133,11 @@ public final class SourceRecord extends LongRecord {
 		if (getClass() != obj.getClass())
 			return false;
 		final SourceRecord other = (SourceRecord) obj;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
+			return false;
 		if (compUnit == null) {
 			if (other.compUnit != null)
 				return false;
