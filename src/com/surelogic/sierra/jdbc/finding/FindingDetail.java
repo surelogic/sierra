@@ -27,7 +27,7 @@ public class FindingDetail {
 		Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY"
+					.executeQuery("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
 							+ " FROM FINDINGS_OVERVIEW WHERE FINDING_ID = "
 							+ findingId);
 			set.next();
@@ -83,7 +83,7 @@ public class FindingDetail {
 					Statement artSt = conn.createStatement();
 					try {
 						ResultSet artSet = artSt
-								.executeQuery("SELECT CU.PACKAGE_NAME,CU.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
+								.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
 										+ "   FROM ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 										+ "   WHERE A.ID = "
 										+ artifactId
@@ -91,7 +91,7 @@ public class FindingDetail {
 						artSet.next();
 						SourceDetail primary = new SourceDetail(artSet);
 						artSet = artSt
-								.executeQuery("SELECT CU.PACKAGE_NAME,CU.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
+								.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
 										+ "   FROM ARTIFACT_SOURCE_LOCATION_RELTN A, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 										+ "   WHERE A.ARTIFACT_ID = "
 										+ artifactId
