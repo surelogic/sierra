@@ -25,6 +25,12 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 
 import com.surelogic.sierra.metrics.model.Metrics;
 
+/**
+ * Visitor for counting LOC
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public class LOCASTVisitor extends ASTVisitor {
 
 	private long count = 0L;
