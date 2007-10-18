@@ -13,9 +13,9 @@ public class Schema_0002 implements SchemaAction {
 
 	public void run(Connection c) throws SQLException {
 		PreparedStatement selectCompilation = c
-				.prepareStatement("SELECT ID FROM COMPILATION_UNIT WHERE PACKAGE_NAME = ? AND COMPILATION = ? AND ID != ?");
+				.prepareStatement("SELECT ID FROM COMPILATION_UNIT WHERE PACKAGE_NAME = ? AND CU = ? AND ID != ?");
 		PreparedStatement updateCompilation = c
-				.prepareStatement("UPDATE COMPILATION_UNIT SET COMPILATION = ? WHERE ID = ?");
+				.prepareStatement("UPDATE COMPILATION_UNIT SET CU = ? WHERE ID = ?");
 		PreparedStatement deleteCompilation = c
 				.prepareStatement("DELETE FROM COMPILATION_UNIT WHERE ID = ?");
 		PreparedStatement updateClass = c
@@ -24,7 +24,7 @@ public class Schema_0002 implements SchemaAction {
 				.prepareStatement("UPDATE SOURCE_LOCATION SET COMPILATION_UNIT_ID = ? WHERE COMPILATION_UNIT_ID = ?");
 		Statement st = c.createStatement();
 		ResultSet set = st
-				.executeQuery("SELECT ID, COMPILATION, PACKAGE_NAME FROM COMPILATION_UNIT");
+				.executeQuery("SELECT ID, CU, PACKAGE_NAME FROM COMPILATION_UNIT");
 		try {
 			while (set.next()) {
 				int idx = 1;
