@@ -180,6 +180,9 @@ class PMD40Handler extends DefaultHandler {
 						hasPackage = true;
 						String packageName = attrs.getValue(i);
 						sourceLocation.packageName(packageName);
+						if (packageName == null) {
+							System.out.println("NULL");
+						}
 					}
 
 					if ("class".equals(aName)) {

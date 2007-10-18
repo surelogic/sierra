@@ -412,10 +412,9 @@ class FindBugsHandler extends DefaultHandler {
 					String javaFileName = fileName.substring(0, fileName
 							.length() - 5);
 
-					sourceLocation.compilation(javaFileName);
-					sourceLocation.className(className);
-					sourceLocation.packageName(packageName);
-
+					primarySourceLocation.compilation(javaFileName);
+					primarySourceLocation.className(className);
+					primarySourceLocation.packageName(packageName);
 					// if (superClass.equals(className)) {
 					//
 					// primarySourceLocation.className(className).packageName(
