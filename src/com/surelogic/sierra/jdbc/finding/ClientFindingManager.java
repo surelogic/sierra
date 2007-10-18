@@ -73,7 +73,7 @@ public final class ClientFindingManager extends FindingManager {
 			st.close();
 		}
 		populateFindingOverview = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY,COMPILATION)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -97,7 +97,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.NAME,"
 						+ "        SO.TOOL,"
-						+ "        F.SUMMARY"
+						+ "        F.SUMMARY,"
+						+ "        SO.COMPILATION"
 						+ " FROM"
 						+ "    "
 						+ tempTableName

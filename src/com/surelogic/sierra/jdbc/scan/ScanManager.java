@@ -5,12 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.project.ProjectManager;
+import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
+import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
@@ -23,6 +28,12 @@ public class ScanManager {
 
 	private final Connection conn;
 	private final ScanRecordFactory factory;
+	private final PreparedStatement selectScan;
+	private final PreparedStatement selectQualifiers;
+	private final PreparedStatement selectArtifacts;
+	private final PreparedStatement selectSources;
+	private final PreparedStatement selectErrors;
+	
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 	private final PreparedStatement insertTempSources;
@@ -57,6 +68,12 @@ public class ScanManager {
 		} finally {
 			st.close();
 		}
+		this.selectScan = conn.prepareStatement("");
+		this.selectQualifiers = conn
+				.prepareStatement("SELECT Q.NAME FROM QUALIFIER_SCAN_RELTN QSR, QUALIFIER Q WHERE QSR.SCAN_ID = ? AND Q.ID = QSR.QUALIFIER_ID");
+		this.selectArtifacts = conn.prepareStatement("");
+		this.selectSources = conn.prepareStatement("");
+		this.selectErrors = conn.prepareStatement("");
 		this.deleteCompilations = conn
 				.prepareStatement("DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 						+ " SELECT ID FROM " + tempTableName + ")");
@@ -90,6 +107,41 @@ public class ScanManager {
 
 	public ScanGenerator getScanGenerator() {
 		return new JDBCScanGenerator(conn, factory, this);
+	}
+
+	public void readScan(String uid, ScanGenerator gen) throws SQLException {
+		selectScan.setString(1, uid);
+		String scaS = "SELECT S.ID,P.NAME,S.JAVA_VENDOR,S.JAVA_VERSION,U.USER_NAME,";
+		ResultSet scan = selectScan.executeQuery();
+		if (scan.next()) {
+			gen.uid(uid);
+
+			int idx = 1;
+			Long id = scan.getLong(idx++);
+			gen.project(scan.getString(idx++));
+			gen.javaVendor(scan.getString(idx++));
+			gen.javaVersion(scan.getString(idx++));
+			gen.user(scan.getString(idx++));
+			
+			selectQualifiers.setLong(1, id);
+			ResultSet qualSet = selectArtifacts.executeQuery();
+			try {
+				List<String> qualifiers = new ArrayList<String>();
+				while (qualSet.next()) {
+					qualifiers.add(qualSet.getString(1));
+				}
+				gen.qualifiers(qualifiers);
+			} finally {
+				qualSet.close();
+			}
+			selectArtifacts.setLong(1, id);
+			
+			ResultSet artifacts = selectArtifacts.executeQuery();
+
+		} else {
+			throw new IllegalArgumentException(uid
+					+ " is not a valid scan uid.");
+		}
 	}
 
 	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)

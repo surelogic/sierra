@@ -53,6 +53,7 @@ public class FindingManager {
 	private final PreparedStatement deleteFindings;
 	private final PreparedStatement deleteLocalAudits;
 
+	private final PreparedStatement deleteScanOverview;
 	private final PreparedStatement populateScanOverview;
 
 	private final PreparedStatement scanArtifacts;
@@ -85,13 +86,17 @@ public class FindingManager {
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteLocalAudits = conn
 				.prepareStatement("DELETE FROM SIERRA_AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?) AND F.IS_READ = 'Y') AND USER_ID IS NULL");
+		deleteScanOverview = conn
+				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ?");
 		populateScanOverview = conn
-				.prepareStatement("INSERT INTO SCAN_OVERVIEW"
+				.prepareStatement("INSERT INTO SCAN_OVERVIEW (FINDING_ID,SCAN_ID,LINE_OF_CODE,ARTIFACT_COUNT,TOOL,COMPILATION)"
 						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
-						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE '(From Multiple Tools)' END"
-						+ " FROM ARTIFACT A, SOURCE_LOCATION SL, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
+						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE '(From Multiple Tools)' END,"
+						+ "        MAX(CU.COMPILATION)"
+						+ " FROM ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU, ARTIFACT_FINDING_RELTN AFR, ARTIFACT_TYPE ART, TOOL T"
 						+ " WHERE A.SCAN_ID = ? AND"
 						+ "       SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+						+ "       CU.ID = SL.COMPILATION_UNIT_ID AND"
 						+ "       AFR.ARTIFACT_ID = A.ID AND"
 						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
 						+ "       T.ID = ART.TOOL_ID"
@@ -274,6 +279,8 @@ public class FindingManager {
 	}
 
 	protected void populateScanOverview(Long scanId) throws SQLException {
+		deleteScanOverview.setLong(1, scanId);
+		deleteScanOverview.execute();
 		int idx = 1;
 		populateScanOverview.setLong(idx++, scanId);
 		populateScanOverview.setLong(idx++, scanId);

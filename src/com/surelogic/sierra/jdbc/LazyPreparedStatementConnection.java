@@ -59,6 +59,8 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 							throw (SQLException) ite.getTargetException();
 						} else if (ite.getTargetException() instanceof RuntimeException) {
 							throw (RuntimeException) ite.getTargetException();
+						} else {
+							throw new IllegalStateException(ite.getTargetException());
 						}
 					} else {
 						// Programming error

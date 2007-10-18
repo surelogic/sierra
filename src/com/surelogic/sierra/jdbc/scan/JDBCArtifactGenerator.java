@@ -354,7 +354,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 			public SourceLocationBuilder compilation(String compilation) {
 				compUnit.setCompilation(compilation);
-				return null;
+				return this;
 			}
 
 		}
