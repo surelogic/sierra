@@ -52,7 +52,7 @@ public class SierraServiceTest {
 			InputStream in = getResource("sierra-jdbc.sierra");
 			Scan scan = (Scan) um.unmarshal(in);
 			service.publishRun(scan);
-			in = getResource("sierra-entity.sierra");
+			in = getResource("sierra-tool.sierra");
 			scan = (Scan) um.unmarshal(in);
 			service.publishRun(scan);
 			in = getResource("ad-hoc-query.sierra");
@@ -72,7 +72,7 @@ public class SierraServiceTest {
 			Unmarshaller um = context.createUnmarshaller();
 			InputStream in = getResource("sierra-jdbc.sierra");
 			final Scan one = (Scan) um.unmarshal(in);
-			in = getResource("sierra-entity.sierra");
+			in = getResource("sierra-tool.sierra");
 			final Scan two = (Scan) um.unmarshal(in);
 			in = getResource("ad-hoc-query.sierra");
 			final Scan three = (Scan) um.unmarshal(in);
