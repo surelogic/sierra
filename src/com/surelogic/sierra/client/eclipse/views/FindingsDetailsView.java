@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -160,9 +161,8 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		description.setLayoutData(layoutData);
 
-		final Text detailsText = new Text(description, SWT.WRAP | SWT.MULTI
-				| SWT.V_SCROLL);
-		detailsText.setEditable(false);
+		final Browser detailsText = new Browser(description, SWT.NONE);
+		// detailsText.setEditable(false);
 
 		synopsisTab.setControl(synopsisPane);
 

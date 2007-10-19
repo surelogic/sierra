@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -62,7 +63,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final Label f_projectName;
 	private final Label f_packageName;
 	private final Link f_className;
-	private final Text f_detailsText;
+	private final Browser f_detailsText;
 
 	private final TabItem f_auditTab;
 	private final Button f_quickAudit;
@@ -99,7 +100,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
 			TabFolder folder, TabItem synopsisTab, Link findingSynopsis,
 			Label projectName, Label packageName, Link className,
-			Text detailsText, TabItem auditTab, Button quickAudit,
+			Browser detailsText, TabItem auditTab, Button quickAudit,
 			Button criticalButton, Button highButton, Button mediumButton,
 			Button lowButton, Button irrelevantButton, Text commentText,
 			Button commentButton,
@@ -295,11 +296,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_packageName.setText(f_finding.getPackageName());
 		f_className.setText(getClassName());
 
-		// Remove the tabspaces and newline
-		// TODO: Why?
 		String details = f_finding.getFindingTypeDetail();
-		details = details.replaceAll("\\t", "");
-		details = details.replaceAll("\\n", "");
 		f_detailsText.setText(details);
 
 		f_criticalButton.setSelection(false);
