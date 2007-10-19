@@ -73,8 +73,8 @@ public final class ServerFindingManager extends FindingManager {
 								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
 				findingDifferenceCount = conn
 						.prepareStatement("SELECT COUNT(*) FROM "
-								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW SO WHERE SCAN_ID = ?) MINUS"
-								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW SO WHERE SCAN_ID = ?))");
+								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) MINUS"
+								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
 			} else {
 				try {
 					st
@@ -90,15 +90,15 @@ public final class ServerFindingManager extends FindingManager {
 								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
 				findingDifferenceCount = conn
 						.prepareStatement("SELECT COUNT(*) FROM "
-								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) EXCEPT"
-								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
+								+ "   (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ? EXCEPT"
+								+ "    SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) FINDINGS");
 			}
 		} finally {
 			st.close();
 		}
 		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
 		populateSeriesOverview = conn
-				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW"
+				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW (QUALIFIER_ID,FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,SUMMARY)"
 						+ " SELECT ?, F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -175,15 +175,15 @@ public final class ServerFindingManager extends FindingManager {
 						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME < ?)");
 		findingIntersectCount = conn
 				.prepareStatement("SELECT COUNT(*) FROM"
-						+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) INTERSECT"
-						+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
+						+ "   (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ? INTERSECT"
+						+ "    SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) FINDINGS");
 		findingCount = conn
 				.prepareStatement("SELECT COUNT(*) FROM SCAN_OVERVIEW WHERE SCAN_ID = ?");
 		artifactCount = conn
 				.prepareStatement("SELECT COUNT(*) FROM ARTIFACT WHERE SCAN_ID = ?");
 		scanSummaryMapper = new UpdateBaseMapper(
 				conn,
-				"INSERT INTO SCAN_SUMMARY (SCAN_ID,QUALIFIER_ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT) VALUES (?,?,?,?,?)",
+				"INSERT INTO SCAN_SUMMARY (SCAN_ID,QUALIFIER_ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT) VALUES (?,?,?,?,?,?)",
 				"SELECT ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				"DELETE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?");
@@ -522,6 +522,7 @@ public final class ServerFindingManager extends FindingManager {
 		} finally {
 			set.close();
 		}
+		idx = 1;
 		selectPreviousScan.setLong(idx++, qualifier.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
 		selectPreviousScan.setLong(idx++, qualifier.getId());

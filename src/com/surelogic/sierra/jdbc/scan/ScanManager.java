@@ -13,10 +13,8 @@ import java.util.List;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.project.ProjectManager;
-import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
-import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
 public class ScanManager {
@@ -32,8 +30,8 @@ public class ScanManager {
 	private final PreparedStatement selectQualifiers;
 	private final PreparedStatement selectArtifacts;
 	private final PreparedStatement selectSources;
-	private final PreparedStatement selectErrors;
-	
+//	private final PreparedStatement selectErrors;
+
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 	private final PreparedStatement insertTempSources;
@@ -68,12 +66,12 @@ public class ScanManager {
 		} finally {
 			st.close();
 		}
-		this.selectScan = conn.prepareStatement("");
+		this.selectScan = conn.prepareStatement("SELECT * FROM SCAN");
 		this.selectQualifiers = conn
 				.prepareStatement("SELECT Q.NAME FROM QUALIFIER_SCAN_RELTN QSR, QUALIFIER Q WHERE QSR.SCAN_ID = ? AND Q.ID = QSR.QUALIFIER_ID");
-		this.selectArtifacts = conn.prepareStatement("");
-		this.selectSources = conn.prepareStatement("");
-		this.selectErrors = conn.prepareStatement("");
+		this.selectArtifacts = conn.prepareStatement("SELECT * FROM ARTIFACT WHERE SCAN_ID = ?");
+		this.selectSources = conn.prepareStatement("SELECT * FROM SOURCE_LOCATION");
+//		this.selectErrors = conn.prepareStatement("SELECT * FROM ERROR");
 		this.deleteCompilations = conn
 				.prepareStatement("DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 						+ " SELECT ID FROM " + tempTableName + ")");
@@ -122,7 +120,6 @@ public class ScanManager {
 			gen.javaVendor(scan.getString(idx++));
 			gen.javaVersion(scan.getString(idx++));
 			gen.user(scan.getString(idx++));
-			
 			selectQualifiers.setLong(1, id);
 			ResultSet qualSet = selectArtifacts.executeQuery();
 			try {
@@ -134,8 +131,9 @@ public class ScanManager {
 			} finally {
 				qualSet.close();
 			}
+			ArtifactGenerator generator = gen.build();
 			selectArtifacts.setLong(1, id);
-			
+
 			ResultSet artifacts = selectArtifacts.executeQuery();
 
 		} else {
