@@ -176,22 +176,21 @@ public class FindingOverview {
 		 * TODO do we want to also show fixed findings?
 		 * 
 		 * @param projectName
-		 * @param className
+		 * @param compilation
 		 * @param packageName
 		 * @return
 		 */
 		public List<FindingOverview> showRelevantFindingsForClass(
 				Connection conn, String projectName, String packageName,
-				String className) throws SQLException {
+				String compilation) throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
 					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
-							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?) AND IMPORTANCE != 'Irrelevant'");
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND IMPORTANCE != 'Irrelevant'");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
 			selectFindingsByClass.setString(idx++, packageName);
-			selectFindingsByClass.setString(idx++, className);
-			selectFindingsByClass.setString(idx++, className + "$%");
+			selectFindingsByClass.setString(idx++, compilation);
 			ResultSet set = selectFindingsByClass.executeQuery();
 			try {
 				while (set.next()) {
