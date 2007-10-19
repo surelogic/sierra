@@ -317,7 +317,8 @@ class PMD40Handler extends DefaultHandler {
 						fileName.length());
 				String className = fileNameHolder.substring(0, fileNameHolder
 						.length() - 5);
-				sourceLocation.className(className).compilation(className);
+				sourceLocation.className(className);
+				sourceLocation.compilation(className);
 			}
 			hasClassName = false;
 
