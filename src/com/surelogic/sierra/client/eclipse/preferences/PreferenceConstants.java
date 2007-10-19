@@ -8,6 +8,13 @@ import com.surelogic.sierra.client.eclipse.Activator;
  */
 public class PreferenceConstants {
 
+	public static final String P_SIERRA_ALWAYS_SAVE_RESOURCES = "com.surelogic.sierra.always-save-resources";
+
+	public static boolean alwaysSaveResources() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SIERRA_ALWAYS_SAVE_RESOURCES);
+	}
+
 	public static final String P_SIERRA_DELETE_DB_ON_STARTUP = "com.surelogic.sierra.delete-db-on-startup";
 
 	public static boolean deleteDatabaseOnStartup() {

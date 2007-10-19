@@ -31,6 +31,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_RUN_FINDBUGS, true);
 		store.setDefault(PreferenceConstants.P_RUN_PMD, true);
 		store.setDefault(PreferenceConstants.P_RUN_RECKONER, true);
+		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
+				false);
 	}
 
 	/**

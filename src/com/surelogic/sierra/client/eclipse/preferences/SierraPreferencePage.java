@@ -37,6 +37,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	DirectoryFieldEditor f_path;
 	BooleanFieldEditor f_balloonFlag;
 	BooleanFieldEditor f_showLowestFlag;
+	BooleanFieldEditor f_saveResources;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -68,6 +69,13 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_showLowestFlag.setPage(this);
 		f_showLowestFlag.setPreferenceStore(getPreferenceStore());
 		f_showLowestFlag.load();
+
+		f_saveResources = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
+				"Always save open editors before running a scan.", diGroup);
+		f_saveResources.setPage(this);
+		f_saveResources.setPreferenceStore(getPreferenceStore());
+		f_saveResources.load();
 
 		final Group soGroup = new Group(panel, SWT.NONE);
 		soGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -128,6 +136,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_path.loadDefault();
 		f_balloonFlag.loadDefault();
 		f_showLowestFlag.store();
+		f_saveResources.store();
 		super.performDefaults();
 	}
 
@@ -136,6 +145,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_path.store();
 		f_balloonFlag.store();
 		f_showLowestFlag.store();
+		f_saveResources.store();
 		return super.performOk();
 	}
 
