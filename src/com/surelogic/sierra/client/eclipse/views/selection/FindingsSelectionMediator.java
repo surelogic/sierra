@@ -13,12 +13,11 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
-import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
-		ISelectionObserver {
+		CascadingList.ICascadingListObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -68,6 +67,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
+		f_cascadingList.addObserver(this);
 		Projects.getInstance().addObserver(this);
 		notify(Projects.getInstance());
 	}
@@ -77,6 +77,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	}
 
 	public void dispose() {
+		f_cascadingList.removeObserver(this);
 		Projects.getInstance().removeObserver(this);
 	}
 
@@ -109,13 +110,12 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_breadcrumbs.setText("");
 		// f_cascadingList.empty();
 		f_workingSelection = f_manager.construct();
-		f_workingSelection.addObserver(this);
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
 	}
 
-	public void selectionStructureChanged(Selection selection) {
+	public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
 	}
 
@@ -124,7 +124,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		int column = 1;
 		boolean first = true;
 		MColumn clColumn = f_first;
-		while (clColumn.hasNextColumn()) {
+		do {
 			if (clColumn instanceof MFilterSelectionColumn) {
 				MFilterSelectionColumn fsc = (MFilterSelectionColumn) clColumn;
 				final Filter filter = fsc.getFilter();
@@ -134,19 +134,29 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				} else {
 					b.append(" | ");
 				}
-				if (fsc.hasNextColumn()) {
+				if (filter.isLastFilter() && !showingFindings(fsc)) {
+					b.append(name);
+				} else {
 					b.append("<a href=\"").append(column++).append("\">");
 					b.append(name).append("</a>");
-				} else {
-					b.append(name);
 				}
 			} else if (clColumn instanceof MListOfFindingsColumn) {
 				b.append(" | Show");
 			}
 			clColumn = clColumn.getNextColumn();
-		}
+		} while (clColumn != null);
 		f_breadcrumbs.setText(b.toString());
 		f_breadcrumbs.getParent().layout();
+	}
+
+	private boolean showingFindings(final MColumn column) {
+		if (column instanceof MListOfFindingsColumn)
+			return true;
+		if (column.hasNextColumn())
+			return showingFindings(column.getNextColumn());
+		else
+			return false;
+
 	}
 
 	public void selectionChanged(Selection selecton) {

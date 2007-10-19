@@ -50,6 +50,26 @@ public abstract class Filter {
 	}
 
 	/**
+	 * Indicates if this is the first filter of its selection.
+	 * 
+	 * @return <code>true</code> if this filter is the first filter of its
+	 *         selection, <code>false</code> otherwise.
+	 */
+	public final boolean isFirstFilter() {
+		return f_selection.isFirstFilter(this);
+	}
+
+	/**
+	 * Indicates if this is the last filter of its selection.
+	 * 
+	 * @return <code>true</code> if this filter is the last filter of its
+	 *         selection, <code>false</code> otherwise.
+	 */
+	public final boolean isLastFilter() {
+		return f_selection.isLastFilter(this);
+	}
+
+	/**
 	 * Link to the previous filter, may be <code>null</code>.
 	 */
 	protected final Filter f_previous;
@@ -161,7 +181,7 @@ public abstract class Filter {
 		try {
 			final Statement st = c.createStatement();
 			try {
-				//System.out.println(getCountsQuery().toString());
+				// System.out.println(getCountsQuery().toString());
 				final ResultSet rs = st.executeQuery(getCountsQuery()
 						.toString());
 				final int columnCount = rs.getMetaData().getColumnCount();

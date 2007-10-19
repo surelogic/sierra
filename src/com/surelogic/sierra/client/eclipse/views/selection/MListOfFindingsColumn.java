@@ -50,13 +50,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	@Override
 	void dispose() {
-		try {
-			getSelection().removeObserver(this);
-			if (f_column != -1)
-				getCascadingList().emptyFrom(f_column);
-		} finally {
-			super.dispose();
-		}
+		super.dispose();
+		getSelection().removeObserver(this);
+		if (f_column != -1)
+			getCascadingList().emptyFrom(f_column);
 	}
 
 	public void selectionChanged(Selection selecton) {

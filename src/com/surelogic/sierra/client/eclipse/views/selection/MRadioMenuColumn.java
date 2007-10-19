@@ -54,13 +54,10 @@ public final class MRadioMenuColumn extends MColumn implements
 
 	@Override
 	void dispose() {
-		try {
-			if (f_menu != null) {
-				f_menu.removeObserver(this);
-				getCascadingList().emptyFrom(f_column);
-			}
-		} finally {
-			super.dispose();
+		super.dispose();
+		if (f_menu != null) {
+			f_menu.removeObserver(this);
+			getCascadingList().emptyFrom(f_column);
 		}
 	}
 

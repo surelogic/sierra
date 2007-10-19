@@ -90,6 +90,30 @@ public final class Selection extends AbstractDatabaseObserver {
 	}
 
 	/**
+	 * Indicates if the passed filter is the first filter of this selection.
+	 * 
+	 * @param filter
+	 *            a filter within this selection.
+	 * @return <code>true</code> if the passed filter is the first filter of
+	 *         this selection, <code>false</code> otherwise.
+	 */
+	public boolean isFirstFilter(Filter filter) {
+		return f_filters.getFirst() == filter;
+	}
+
+	/**
+	 * Indicates if the passed filter is the last filter of this selection.
+	 * 
+	 * @param filter
+	 *            a filter within this selection.
+	 * @return <code>true</code> if the passed filter is the last filter of
+	 *         this selection, <code>false</code> otherwise.
+	 */
+	public boolean isLastFilter(Filter filter) {
+		return f_filters.getLast() == filter;
+	}
+
+	/**
 	 * Removes all the passed filter and all subsequent filters from this
 	 * selection.
 	 * 
@@ -118,7 +142,7 @@ public final class Selection extends AbstractDatabaseObserver {
 			notifySelectionChanged();
 		}
 	}
-	
+
 	/**
 	 * Removes all existing filters from this selection with an index after the
 	 * specified index.

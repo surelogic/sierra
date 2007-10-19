@@ -41,11 +41,8 @@ public abstract class MColumn {
 	 * <pre>
 	 * &#064;Override
 	 * void dispose() {
-	 * 	try {
-	 * 		// subclass work
-	 * 	} finally {
-	 * 		super.dispose();
-	 * 	}
+	 * 	super.dispose();
+	 * 	// do something
 	 * }
 	 * </pre>
 	 * 

@@ -125,13 +125,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	@Override
 	void dispose() {
-		try {
-			f_filter.removeObserver(this);
-			if (f_column != -1)
-				getCascadingList().emptyFrom(f_column);
-		} finally {
-			super.dispose();
-		}
+		super.dispose();
+		f_filter.removeObserver(this);
+		if (f_column != -1)
+			getCascadingList().emptyFrom(f_column);
 	}
 
 	private void updateReport() {
