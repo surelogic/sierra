@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.views;
+package com.surelogic.sierra.client.eclipse.views.selection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -57,8 +57,10 @@ public final class FindingsSelectionView extends ViewPart {
 		breadcrumbs
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-		final CascadingList cascadingList = new CascadingList(findingsPage, SWT.NONE);
-		cascadingList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final CascadingList cascadingList = new CascadingList(findingsPage,
+				SWT.NONE);
+		cascadingList
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		final Link savedSelections = new Link(findingsPage, SWT.WRAP);
 

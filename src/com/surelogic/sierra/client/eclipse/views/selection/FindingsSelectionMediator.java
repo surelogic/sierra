@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.views;
+package com.surelogic.sierra.client.eclipse.views.selection;
 
 import java.util.logging.Level;
 
@@ -67,8 +67,14 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		f_breadcrumbs.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				final int column = Integer.parseInt(event.text);
-				emptyAfter(column);
+				if (event.text.equals("save")) {
+					/*
+					 * TODO: save the current selection
+					 */
+				} else {
+					final int column = Integer.parseInt(event.text);
+					emptyAfter(column);
+				}
 			}
 		});
 
@@ -125,11 +131,12 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					input.addObserver(new AbstractFilterObserver() {
 						@Override
 						public void porous(final Filter filter) {
-							f_cascadingList.getDisplay().asyncExec(new Runnable() {
-								public void run() {
-									// menu.setEnabled(filter.isPorous());
-								}
-							});
+							f_cascadingList.getDisplay().asyncExec(
+									new Runnable() {
+										public void run() {
+											// menu.setEnabled(filter.isPorous());
+										}
+									});
 						}
 					});
 				}
@@ -170,15 +177,15 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_workingSelection.emptyAfter(selectionIndex);
 
 		// menu.setEnabled(false);
-		//System.out.println("selected: emptyAfter=" + selectionIndex);
-		//System.out.println("selected: addColumnAfter=" + column);
+		// System.out.println("selected: emptyAfter=" + selectionIndex);
+		// System.out.println("selected: addColumnAfter=" + column);
 
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			f_workingSelection.construct(filter, new DrawFilterAndMenu(column,
 					menu));
 		} else if (choice.equals("Show")) {
-			//System.out.println("show");
+			// System.out.println("show");
 			final FindingsSelectionReport fsr = new FindingsSelectionReport(
 					f_workingSelection, f_cascadingList, column, f_manager
 							.getExecutor());
@@ -199,7 +206,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		@Override
 		public void queryFailure(final Filter filter, final Exception e) {
-			//System.out.println("failure");
+			// System.out.println("failure");
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -219,7 +226,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		@Override
 		public void contentsChanged(final Filter filter) {
-			//System.out.println("contentsChanged " + filter + " " + this);
+			// System.out.println("contentsChanged " + filter + " " + this);
 			constructFilterReport(filter);
 		}
 
@@ -232,7 +239,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					new FilterSelectionReport(f_cascadingList, f_waitMsgColumn, filter);
+					new FilterSelectionReport(f_cascadingList, f_waitMsgColumn,
+							filter);
 					addMenu(filter);
 					f_selectingMenu.setEnabled(true);
 				}
@@ -293,5 +301,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		 * selection.
 		 */
 		f_workingSelection.emptyAfter(column - 1);
+		/*
+		 * We need to clear the menu choice.
+		 */
 	}
 }

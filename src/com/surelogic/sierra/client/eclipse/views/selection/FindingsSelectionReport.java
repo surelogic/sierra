@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.views;
+package com.surelogic.sierra.client.eclipse.views.selection;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,6 +25,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingsSelectionReport implements ISelectionObserver {

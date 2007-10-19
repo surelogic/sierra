@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse.views;
+package com.surelogic.sierra.client.eclipse.views.selection;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

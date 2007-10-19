@@ -5,8 +5,8 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
-import com.surelogic.sierra.client.eclipse.views.FindingsSelectionView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
+import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 
 /**
  * Defines the Sierra Explorer perspective within the workbench.
