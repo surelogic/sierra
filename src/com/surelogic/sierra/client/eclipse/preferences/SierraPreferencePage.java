@@ -201,7 +201,7 @@ public class SierraPreferencePage extends PreferencePage implements
 					confirmDelete.setText("Confirm Sierra Data Deletion");
 					confirmDelete
 							.setMessage("Are you sure you want to delete all "
-									+ "Sierra data in your Eclipse workspace?\n"
+									+ "Sierra data in your Eclipse workspace?\n\n"
 									+ "This action will not take effect until you restart Eclipse.\n"
 									+ "This action will not "
 									+ "change or delete data on any Sierra server.");
