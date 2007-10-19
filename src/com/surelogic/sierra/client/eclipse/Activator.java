@@ -46,8 +46,8 @@ public class Activator extends AbstractUIPlugin {
 
 		final Runtime rt = Runtime.getRuntime();
 		SLLogger.getLogger().info(
-				"Java runtime: maxMemory=" + (rt.maxMemory() / 1024 / 1024)
-						+ " MB; totalMemory="
+				"Sierra Java runtime: maxMemory="
+						+ (rt.maxMemory() / 1024 / 1024) + " MB; totalMemory="
 						+ (rt.totalMemory() / 1024 / 1024) + " MB; freeMemory="
 						+ (rt.freeMemory() / 1024 / 1024)
 						+ " MB; availableProcessors="
