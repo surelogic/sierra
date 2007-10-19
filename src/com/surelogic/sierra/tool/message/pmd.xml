@@ -2731,19 +2731,7 @@
 		</info>
 		<name>Avoid Duplicate Literals</name>
 	</findingType>
-	<findingType>
-		<id>StringInstantiation</id>
-		<artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
-		<shortMessage>
-			Avoid instantiating String objects; this is usually
-			unnecessary.
-		</shortMessage>
-		<info>
-			Avoid instantiating String objects; this is usually
-			unnecessary.
-		</info>
-		<name>String Instantiation</name>
-	</findingType>
+
 	<findingType>
 		<id>StringToString</id>
 		<artifact tool="PMD" mnemonic="StringToString"></artifact>
@@ -3016,6 +3004,19 @@
 		<name>Override Both Equals And Hashcode</name>
 	</findingType>
 	<!-- Duplicate
+		<findingType>
+		<id>StringInstantiation</id>
+		<artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
+		<shortMessage>
+		Avoid instantiating String objects; this is usually
+		unnecessary.
+		</shortMessage>
+		<info>
+		Avoid instantiating String objects; this is usually
+		unnecessary.
+		</info>
+		<name>String Instantiation</name>
+		</findingType>
 		<findingType>
 		<id>AvoidCallingFinalize</id>
 		<artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
@@ -3636,7 +3637,7 @@
 	<category>
 		<id>String and StringBuffer Rules</id>
 		<findingType>AvoidDuplicateLiterals</findingType>
-		<findingType>StringInstantiation</findingType>
+		<!-- DUP <findingType>StringInstantiation</findingType> -->
 		<findingType>StringToString</findingType>
 		<findingType>InefficientStringBuffering</findingType>
 		<findingType>UnnecessaryCaseChange</findingType>

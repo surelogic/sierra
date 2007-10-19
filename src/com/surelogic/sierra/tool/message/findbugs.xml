@@ -563,6 +563,9 @@
 	<findingType>
 		<id>InefficientStringConstructor</id>
 		<artifact tool="FindBugs" mnemonic="DM_STRING_CTOR"></artifact>
+		<artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
+		<artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
+		</artifact>
 		<shortMessage>
 			Method invokes inefficient new String(String) constructor
 		</shortMessage>
@@ -576,17 +579,8 @@
 			parameter.&amp;nbsp; Just use the argument
 			&lt;code&gt;String&lt;/code&gt; directly.&lt;/p&gt;
 
-		</info>
-		<name>Inefficient String Constructor</name>
-	</findingType>
-	<findingType>
-		<id>InefficientStringVoidConstructor</id>
-		<artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
-		</artifact>
-		<shortMessage>
-			Method invokes inefficient new String() constructor
-		</shortMessage>
-		<info>
+			Avoid instantiating String objects; this is usually
+			unnecessary.
 
 			&lt;p&gt; Creating a new
 			&lt;code&gt;java.lang.String&lt;/code&gt; object using the
@@ -600,7 +594,7 @@
 			string constant directly.&lt;/p&gt;
 
 		</info>
-		<name>Inefficient String Void Constructor</name>
+		<name>Inefficient String Constructor</name>
 	</findingType>
 	<findingType>
 		<id>AvoidCallingtoStringOnString</id>
@@ -6180,6 +6174,32 @@
 		</info>
 		<name>Invoke On Static Date Format Instance</name>
 	</findingType>
+
+	<!-- DUPLICATE ARTIFACTS
+		<findingType>
+		<id>InefficientStringVoidConstructor</id>
+		<artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
+		</artifact>
+		<shortMessage>
+		Method invokes inefficient new String() constructor
+		</shortMessage>
+		<info>
+		
+		&lt;p&gt; Creating a new
+		&lt;code&gt;java.lang.String&lt;/code&gt; object using the
+		no-argument constructor wastes memory because the object so
+		created will be functionally indistinguishable from the
+		empty string constant
+		&lt;code&gt;&quot;&quot;&lt;/code&gt;.&amp;nbsp; Java
+		guarantees that identical string constants will be
+		represented by the same &lt;code&gt;String&lt;/code&gt;
+		object.&amp;nbsp; Therefore, you should just use the empty
+		string constant directly.&lt;/p&gt;
+		
+		</info>
+		<name>Inefficient String Void Constructor</name>
+		</findingType>
+	-->
 	<category>
 		<id>Correctness</id>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
@@ -6519,7 +6539,7 @@
 		<findingType>BlockingMethodsOnURL</findingType>
 		<findingType>AvoidCollectionOfURLS</findingType>
 		<findingType>InefficientStringConstructor</findingType>
-		<findingType>InefficientStringVoidConstructor</findingType>
+		<!-- DUP <findingType>InefficientStringVoidConstructor</findingType> -->
 		<findingType>AvoidCallingtoStringOnString</findingType>
 		<findingType>AvoidExplicitGarbageCollection</findingType>
 		<findingType>InefficientBooleanConstructor</findingType>
