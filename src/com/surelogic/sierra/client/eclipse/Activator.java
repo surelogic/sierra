@@ -66,7 +66,6 @@ public class Activator extends AbstractUIPlugin {
 		// add preference listener
 		getDefault().getPluginPreferences().addPropertyChangeListener(
 				MarkersHandler.getInstance());
-
 	}
 
 	@Override
