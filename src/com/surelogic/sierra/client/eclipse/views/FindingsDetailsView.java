@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -10,9 +11,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -161,9 +164,16 @@ public class FindingsDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		description.setLayoutData(layoutData);
 
-		final Browser detailsText = new Browser(description, SWT.NONE);
-		// detailsText.setEditable(false);
-
+		Browser detailsText = null;
+		try {
+			detailsText = new Browser(description, SWT.NONE);
+		} catch (SWTError e) {
+			MessageBox messageBox = new MessageBox(Display.getCurrent()
+					.getActiveShell(), SWT.ICON_ERROR | SWT.OK);
+			messageBox.setMessage("Browser cannot be initialized.");
+			messageBox.setText("Exit");
+			messageBox.open();
+		}
 		synopsisTab.setControl(synopsisPane);
 
 		/*
