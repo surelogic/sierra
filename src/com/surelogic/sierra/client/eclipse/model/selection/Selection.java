@@ -90,6 +90,36 @@ public final class Selection extends AbstractDatabaseObserver {
 	}
 
 	/**
+	 * Removes all the passed filter and all subsequent filters from this
+	 * selection.
+	 * 
+	 * @param filter
+	 *            a filter within this selection, may be <code>null</code> in
+	 *            which case the selection is not modified.
+	 */
+	public void emptyAfter(Filter filter) {
+		if (filter == null)
+			return;
+		boolean found = false;
+		synchronized (this) {
+			for (Iterator<Filter> iterator = f_filters.iterator(); iterator
+					.hasNext();) {
+				final Filter next = iterator.next();
+				if (filter == next)
+					found = true;
+				if (found) {
+					next.dispose();
+					iterator.remove();
+				}
+			}
+		}
+		if (found) {
+			notifyStructureChanged();
+			notifySelectionChanged();
+		}
+	}
+	
+	/**
 	 * Removes all existing filters from this selection with an index after the
 	 * specified index.
 	 * 

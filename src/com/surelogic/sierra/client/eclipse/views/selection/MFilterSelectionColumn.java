@@ -19,13 +19,20 @@ import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
+import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
-public final class FilterSelectionReport implements IFilterObserver,
-		FilterSelectionReportLine.ISelectionChangedObserver {
+public final class MFilterSelectionColumn extends MColumn implements
+		IFilterObserver, FilterSelectionReportLine.ISelectionChangedObserver {
 
-	private final CascadingList f_finder;
-	private final int f_column;
+	private final int f_addAfterColumn;
+
+	private int f_column = -1;
+
 	private final Filter f_filter;
+
+	Filter getFilter() {
+		return f_filter;
+	}
 
 	private Label f_totalCount = null;
 	private Label f_porousCount = null;
@@ -41,16 +48,16 @@ public final class FilterSelectionReport implements IFilterObserver,
 
 	private boolean f_sortByCount = false;
 
-	FilterSelectionReport(CascadingList finder, int column, Filter filter) {
-		assert finder != null;
-		f_finder = finder;
-		f_column = column;
+	MFilterSelectionColumn(CascadingList cascadingList, Selection selection,
+			MColumn previousColumn, int addAfterColumn, Filter filter) {
+		super(cascadingList, selection, previousColumn);
+		f_addAfterColumn = addAfterColumn;
 		assert filter != null;
 		f_filter = filter;
-		constructFilterReport();
 	}
 
-	private void constructFilterReport() {
+	@Override
+	void init() {
 		CascadingList.IColumn c = new CascadingList.IColumn() {
 			public void createContents(Composite panel) {
 				f_panel = panel;
@@ -105,12 +112,30 @@ public final class FilterSelectionReport implements IFilterObserver,
 				updateReport();
 			}
 		};
-		f_finder.addColumnAfter(c, f_column, false);
+		f_column = getCascadingList()
+				.addColumnAfter(c, f_addAfterColumn, false);
 		f_filter.addObserver(this);
+		/*
+		 * Add the radio menu after this item.
+		 */
+		final MRadioMenuColumn rmc = new MRadioMenuColumn(getCascadingList(),
+				getSelection(), this);
+		rmc.init();
+	}
+
+	@Override
+	void dispose() {
+		try {
+			f_filter.removeObserver(this);
+			if (f_column != -1)
+				getCascadingList().emptyFrom(f_column);
+		} finally {
+			super.dispose();
+		}
 	}
 
 	private void updateReport() {
-		if (f_finder.isDisposed())
+		if (getCascadingList().isDisposed())
 			return;
 		/*
 		 * Fix total count at the top.
@@ -180,9 +205,9 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void porous(Filter filter) {
-		if (f_finder.isDisposed())
+		if (getCascadingList().isDisposed())
 			return;
-		f_finder.getDisplay().asyncExec(new Runnable() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();
 			}
@@ -190,9 +215,9 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void contentsChanged(Filter filter) {
-		if (f_finder.isDisposed())
+		if (getCascadingList().isDisposed())
 			return;
-		f_finder.getDisplay().asyncExec(new Runnable() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();
 			}
@@ -200,14 +225,14 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void queryFailure(Filter filter, Exception e) {
-		// TODO Something reasonable...not sure what
+		// TODO Something more reasonable...not sure what
 		SLLogger.getLogger().log(Level.SEVERE, "query failed on " + filter, e);
 	}
 
 	public void contentsEmpty(Filter filter) {
-		if (f_finder.isDisposed())
+		if (getCascadingList().isDisposed())
 			return;
-		f_finder.getDisplay().asyncExec(new Runnable() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateReport();
 			}
@@ -215,7 +240,7 @@ public final class FilterSelectionReport implements IFilterObserver,
 	}
 
 	public void dispose(Filter filter) {
-		filter.removeObserver(this);
+		dispose();
 	}
 
 	public void selectionChanged(FilterSelectionReportLine line) {

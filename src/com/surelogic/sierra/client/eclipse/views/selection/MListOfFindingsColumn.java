@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
-import java.util.concurrent.Executor;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
@@ -28,30 +27,36 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
-public final class FindingsSelectionReport implements ISelectionObserver {
+public final class MListOfFindingsColumn extends MColumn implements
+		ISelectionObserver {
 
-	private final Selection f_selection;
-	private final CascadingList f_finder;
-	private final int f_column;
+	private final int f_addAfterColumn;
 
-	private final Executor f_executor;
+	private volatile int f_column = -1;
 
 	private Table f_table = null;
 
-	FindingsSelectionReport(Selection selection, CascadingList finder,
-			int column, Executor executor) {
-		assert selection != null;
-		f_selection = selection;
-		assert finder != null;
-		f_finder = finder;
-		f_column = column;
-		assert executor != null;
-		f_executor = executor;
+	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
+			MColumn previousColumn, int addAfterColumn) {
+		super(cascadingList, selection, previousColumn);
+		f_addAfterColumn = addAfterColumn;
 	}
 
-	public void init() {
-		f_selection.addObserver(this);
+	@Override
+	void init() {
+		getSelection().addObserver(this);
 		changed();
+	}
+
+	@Override
+	void dispose() {
+		try {
+			getSelection().removeObserver(this);
+			if (f_column != -1)
+				getCascadingList().emptyFrom(f_column);
+		} finally {
+			super.dispose();
+		}
 	}
 
 	public void selectionChanged(Selection selecton) {
@@ -63,18 +68,19 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 	}
 
 	private void changed() {
-		f_finder.getDisplay().asyncExec(new Runnable() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (f_table != null && f_table.isDisposed()) {
-					f_selection.removeObserver(FindingsSelectionReport.this);
+					getSelection().removeObserver(MListOfFindingsColumn.this);
 					return;
 				}
-				f_executor.execute(new Runnable() {
-					public void run() {
-						refreshData();
-						refreshDisplay();
-					}
-				});
+				getSelection().getManager().getExecutor().execute(
+						new Runnable() {
+							public void run() {
+								refreshData();
+								refreshDisplay();
+							}
+						});
 			}
 		});
 	}
@@ -138,7 +144,7 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 		StringBuilder b = new StringBuilder();
 		b.append("select SUMMARY, IMPORTANCE, FINDING_ID,");
 		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE ");
-		f_selection.addWhereClauseTo(b);
+		getSelection().addWhereClauseTo(b);
 		return b.toString();
 	}
 
@@ -185,9 +191,10 @@ public final class FindingsSelectionReport implements ISelectionObserver {
 	};
 
 	private void refreshDisplay() {
-		f_finder.getDisplay().asyncExec(new Runnable() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				f_finder.addColumnAfter(f_iColumn, f_column, false);
+				f_column = getCascadingList().addColumnAfter(f_iColumn,
+						f_addAfterColumn, false);
 			}
 		});
 	}
