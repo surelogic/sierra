@@ -5,7 +5,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
-import com.surelogic.sierra.client.eclipse.views.FindingsFinderView;
+import com.surelogic.sierra.client.eclipse.views.FindingsSelectionView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 
 /**
@@ -17,7 +17,7 @@ public final class SierraPerspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout layout) {
 		final String editorArea = layout.getEditorArea();
-		final String finderArea = FindingsFinderView.class.getName();
+		final String finderArea = FindingsSelectionView.class.getName();
 
 		layout.addView(finderArea, IPageLayout.LEFT, 0.55f, editorArea);
 

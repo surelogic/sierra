@@ -14,11 +14,11 @@ import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 
-public final class FindingsFinderView extends ViewPart {
+public final class FindingsSelectionView extends ViewPart {
 
 	public static final String NO_FINDINGS = "No findings ... please run Sierra analysis on a project to generate a set of findings";
 
-	private FindingsFinderMediator f_mediator = null;
+	private FindingsSelectionMediator f_mediator = null;
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -57,13 +57,13 @@ public final class FindingsFinderView extends ViewPart {
 		breadcrumbs
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-		final CascadingList finder = new CascadingList(findingsPage, SWT.NONE);
-		finder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final CascadingList cascadingList = new CascadingList(findingsPage, SWT.NONE);
+		cascadingList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		final Link savedSelections = new Link(findingsPage, SWT.WRAP);
 
-		f_mediator = new FindingsFinderMediator(pages, noFindingsPage,
-				findingsPage, finder, clearSelectionItem, breadcrumbs,
+		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
+				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
 				savedSelections);
 		f_mediator.init();
 	}

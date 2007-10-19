@@ -201,8 +201,8 @@
 
       <view
             category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
-            id="com.surelogic.sierra.client.eclipse.views.FindingsFinderView"
+            class="com.surelogic.sierra.client.eclipse.views.FindingsSelectionView"
+            id="com.surelogic.sierra.client.eclipse.views.FindingsSelectionView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
             name="Investigate Findings">
       </view>
