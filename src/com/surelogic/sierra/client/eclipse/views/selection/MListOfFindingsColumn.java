@@ -170,28 +170,49 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	private final IColumn f_iColumn = new IColumn() {
 		public void createContents(Composite panel) {
+			f_panel = panel;
 			f_table = new Table(panel, SWT.FULL_SELECTION);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 
-			for (FindingData data : f_rows) {
-				final TableItem item = new TableItem(f_table, SWT.NONE);
-				item.setText(data.f_summary);
-				item.setImage(Utility.getImageFor(data.f_importance));
-				item.setData(data);
-			}
-			for (TableColumn c : f_table.getColumns()) {
-				c.pack();
-			}
+			updateTableContents();
 		}
 	};
+
+	Composite f_panel = null;
+
+	private void updateTableContents() {
+		if (f_table.isDisposed())
+			return;
+		f_table.setRedraw(false);
+		for (TableItem i : f_table.getItems())
+			i.dispose();
+		f_panel.layout();
+
+		for (FindingData data : f_rows) {
+			final TableItem item = new TableItem(f_table, SWT.NONE);
+			item.setText(data.f_summary);
+			item.setImage(Utility.getImageFor(data.f_importance));
+			item.setData(data);
+		}
+		for (TableColumn c : f_table.getColumns()) {
+			c.pack();
+		}
+		f_table.setRedraw(true);
+	}
 
 	private void refreshDisplay() {
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				f_column = getCascadingList().addColumnAfter(f_iColumn,
-						f_addAfterColumn, false);
+				if (f_table == null) {
+					// create the display table
+					f_column = getCascadingList().addColumnAfter(f_iColumn,
+							f_addAfterColumn, false);
+				} else {
+					// update the table's contents
+					updateTableContents();
+				}
 			}
 		});
 	}
