@@ -108,7 +108,7 @@ public class SierraPreferencePage extends PreferencePage implements
 
 		final Table t = new Table(pGroup, SWT.FULL_SELECTION | SWT.MULTI);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 200;
+		data.heightHint = 150;
 		t.setLayoutData(data);
 
 		final Composite c = new Composite(pGroup, SWT.NONE);
