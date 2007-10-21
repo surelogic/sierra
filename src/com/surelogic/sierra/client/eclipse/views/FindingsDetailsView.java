@@ -281,38 +281,12 @@ public class FindingsDetailsView extends ViewPart {
 
 		// RIGHT BLOCK
 
-		// final Group staticInfoGroup = new Group(parent, SWT.NONE);
-		// GridLayout layout = new GridLayout(1, false);
-		// GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// staticInfoGroup.setText("Artifacts");
-		//
-		// staticInfoGroup.setLayout(layout);
-		// staticInfoGroup.setLayoutData(layoutData);
-
 		final Tree artifactsTree = new Tree(artifactsComposite, SWT.V_SCROLL
 				| SWT.BORDER);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		artifactsTree.setLayoutData(layoutData);
 		artifactsTree.setLinesVisible(true);
 
-		// final TreeItem fbTreeItem = new TreeItem(artifactsTree, SWT.NONE);
-		// fbTreeItem.setText("FindBugs\u2122 (1)");
-		//
-		// final TreeItem fbArtifact = new TreeItem(fbTreeItem, SWT.NONE);
-		// fbArtifact
-		// .setText("sample.fb.Testy.main(String[]) uses reflection to check "
-		// + "for the presence of an "
-		// + "annotation that has default retention");
-		//
-		// final TreeItem pmdTreeItem = new TreeItem(artifactsTree, SWT.NONE);
-		// pmdTreeItem.setText("PMD\u2122 (1)");
-		//
-		// final TreeItem pmdArtifact = new TreeItem(pmdTreeItem, SWT.NONE);
-		// pmdArtifact.setText("All methods are static. Consider using
-		// Singleton"
-		// + " instead. Alternatively, you could add a private "
-		// + "constructor or make the class abstract to silence "
-		// + "this warning.");
 		artifactTab.setControl(artifactsComposite);
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,

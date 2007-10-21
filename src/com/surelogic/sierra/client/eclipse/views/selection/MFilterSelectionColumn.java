@@ -58,7 +58,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	@Override
 	void init() {
-		CascadingList.IColumn c = new CascadingList.IColumn() {
+		CascadingList.IScrolledColumn c = new CascadingList.IScrolledColumn() {
 			public void createContents(Composite panel) {
 				f_panel = panel;
 				f_reportGroup = new Group(panel, SWT.NONE);

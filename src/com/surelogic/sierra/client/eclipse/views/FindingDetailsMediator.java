@@ -292,6 +292,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 		Projects.getInstance().addObserver(this);
 		DatabaseHub.getInstance().addObserver(this);
+
+		updateContents();
 	}
 
 	public void dispose() {

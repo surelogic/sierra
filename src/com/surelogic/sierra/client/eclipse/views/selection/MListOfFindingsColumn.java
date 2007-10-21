@@ -169,18 +169,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 	};
 
 	private final IColumn f_iColumn = new IColumn() {
-		public void createContents(Composite panel) {
-			f_panel = panel;
+		public Composite createContents(Composite panel) {
 			f_table = new Table(panel, SWT.FULL_SELECTION);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 
 			updateTableContents();
+			return f_table;
 		}
 	};
-
-	Composite f_panel = null;
 
 	private void updateTableContents() {
 		if (f_table.isDisposed())
@@ -188,7 +186,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 		f_table.setRedraw(false);
 		for (TableItem i : f_table.getItems())
 			i.dispose();
-		f_panel.layout();
 
 		for (FindingData data : f_rows) {
 			final TableItem item = new TableItem(f_table, SWT.NONE);

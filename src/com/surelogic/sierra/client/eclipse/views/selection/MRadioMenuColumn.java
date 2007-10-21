@@ -33,7 +33,7 @@ public final class MRadioMenuColumn extends MColumn implements
 
 	@Override
 	void init() {
-		final CascadingList.IColumn m = new CascadingList.IColumn() {
+		final CascadingList.IScrolledColumn m = new CascadingList.IScrolledColumn() {
 			final Filter previousFilter = getFilterFromColumn(getPreviousColumn());
 
 			public void createContents(Composite panel) {
@@ -74,8 +74,8 @@ public final class MRadioMenuColumn extends MColumn implements
 		 * column to use to "empty after" the list of filters applied to the
 		 * selection.
 		 */
-		final int column = getCascadingList().getColumnIndexOf(menu.getPanel());
-		getCascadingList().addColumnAfter(new CascadingList.IColumn() {
+		//final int column = getCascadingList().getColumnIndexOf(menu.getPanel());
+		getCascadingList().addColumnAfter(new CascadingList.IScrolledColumn() {
 			public void createContents(Composite panel) {
 				final Display display = panel.getShell().getDisplay();
 				panel.setBackground(display
@@ -85,7 +85,7 @@ public final class MRadioMenuColumn extends MColumn implements
 				waitLabel.setBackground(display
 						.getSystemColor(SWT.COLOR_LIST_SELECTION));
 			}
-		}, column, false);
+		}, f_column, false);
 
 		getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
 
@@ -95,11 +95,11 @@ public final class MRadioMenuColumn extends MColumn implements
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			getSelection().construct(filter,
-					new DrawFilterAndMenu(column, menu));
+					new DrawFilterAndMenu(f_column, menu));
 		} else if (choice.equals("Show")) {
 			// System.out.println("show");
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
-					getCascadingList(), getSelection(), this, column);
+					getCascadingList(), getSelection(), this, f_column);
 			fsr.init();
 		}
 	}
