@@ -325,6 +325,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final Control page = noFinding ? f_noFindingPage : f_findingPage;
 		if (page != f_pages.getPage()) {
 			f_pages.showPage(page);
+			f_detailsText.setVisible(page == f_findingPage);
 		}
 		if (noFinding)
 			return;
