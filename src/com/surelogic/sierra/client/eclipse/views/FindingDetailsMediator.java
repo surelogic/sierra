@@ -325,6 +325,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final Control page = noFinding ? f_noFindingPage : f_findingPage;
 		if (page != f_pages.getPage()) {
 			f_pages.showPage(page);
+			/*
+			 * For some reason on the Mac the browser shows up as a little
+			 * square window covering the view's icon. This seems to fix that.
+			 */
 			f_detailsText.setVisible(page == f_findingPage);
 		}
 		if (noFinding)
