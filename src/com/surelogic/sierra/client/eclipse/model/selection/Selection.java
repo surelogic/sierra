@@ -124,6 +124,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	public void emptyAfter(Filter filter) {
 		if (filter == null)
 			return;
+		final List<Filter> disposeList = new ArrayList<Filter>();
 		boolean found = false;
 		synchronized (this) {
 			for (Iterator<Filter> iterator = f_filters.iterator(); iterator
@@ -132,12 +133,15 @@ public final class Selection extends AbstractDatabaseObserver {
 				if (filter == next)
 					found = true;
 				if (found) {
-					next.dispose();
+					disposeList.add(filter);
 					iterator.remove();
 				}
 			}
 		}
 		if (found) {
+			for (Filter f : disposeList) {
+				f.dispose();
+			}
 			notifyStructureChanged();
 			notifySelectionChanged();
 		}
@@ -152,6 +156,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            will clear out all filters.
 	 */
 	public void emptyAfter(int filterIndex) {
+		final List<Filter> disposeList = new ArrayList<Filter>();
 		boolean changed = false;
 		int index = 0;
 		synchronized (this) {
@@ -159,7 +164,7 @@ public final class Selection extends AbstractDatabaseObserver {
 					.hasNext();) {
 				Filter filter = iterator.next();
 				if (index > filterIndex) {
-					filter.dispose();
+					disposeList.add(filter);
 					iterator.remove();
 					changed = true;
 				}
@@ -167,6 +172,9 @@ public final class Selection extends AbstractDatabaseObserver {
 			}
 		}
 		if (changed) {
+			for (Filter f : disposeList) {
+				f.dispose();
+			}
 			notifyStructureChanged();
 			notifySelectionChanged();
 		}

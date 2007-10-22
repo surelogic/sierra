@@ -56,14 +56,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		f_breadcrumbs.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (event.text.equals("save")) {
-					/*
-					 * TODO: save the current selection
-					 */
-				} else {
-					final int column = Integer.parseInt(event.text);
-					emptyAfter(column);
-				}
+				final int column = Integer.parseInt(event.text);
+				emptyAfter(column);
 			}
 		});
 
@@ -121,7 +115,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	private void updateBreadcrumbs() {
 		final StringBuilder b = new StringBuilder();
-		int column = 1;
+		int column = 0;
 		boolean first = true;
 		MColumn clColumn = f_first;
 		do {
@@ -134,7 +128,9 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				} else {
 					b.append(" | ");
 				}
-				if (filter.isLastFilter() && !showingFindings(fsc)) {
+				final boolean lastFilter = filter.isLastFilter();
+				final boolean showingFindings = showingFindings(fsc);
+				if (lastFilter && !showingFindings) {
 					b.append(name);
 				} else {
 					b.append("<a href=\"").append(column++).append("\">");
@@ -146,6 +142,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			clColumn = clColumn.getNextColumn();
 		} while (clColumn != null);
 		f_breadcrumbs.setText(b.toString());
+		System.out.println(b.toString());
 		f_breadcrumbs.getParent().layout();
 	}
 
@@ -166,11 +163,10 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	}
 
 	void emptyAfter(final int column) {
-		final int after = column - 1;
 		final int filterCount = f_workingSelection.getFilterCount();
 		MColumn col;
-		if (filterCount != column) {
-			f_workingSelection.emptyAfter(after);
+		if (filterCount != column + 1) {
+			f_workingSelection.emptyAfter(column);
 		} else {
 			// remove the last column of the viewer
 			col = f_first;
