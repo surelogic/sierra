@@ -52,6 +52,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	public Selection(Selection source) {
 		f_manager = source.f_manager;
 		f_executor = source.f_executor;
+		f_showing = source.f_showing;
 		Filter prev = null;
 		for (Filter f : source.f_filters) {
 			Filter clone = f.copyNoQuery(this, prev);
@@ -199,6 +200,20 @@ public final class Selection extends AbstractDatabaseObserver {
 	public int getFilterCount() {
 		synchronized (this) {
 			return f_filters.size();
+		}
+	}
+
+	private boolean f_showing = false;
+
+	public boolean showingSelection() {
+		synchronized (this) {
+			return f_showing;
+		}
+	}
+
+	public void setShowing(boolean value) {
+		synchronized (this) {
+			f_showing = value;
 		}
 	}
 
@@ -354,7 +369,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * <p>
 	 * Blocks until all the queries are completed.
 	 */
-	private void refreshFilters() {
+	public void refreshFilters() {
 		synchronized (this) {
 			for (Filter filter : f_filters) {
 				filter.refresh();

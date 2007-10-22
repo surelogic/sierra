@@ -92,12 +92,12 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					 */
 					final Selection selection = f_manager
 							.getSavedSelection(selectionName);
-					if (selection == null)
+					if (selection == null || selection.getFilterCount() < 1)
 						return;
 
 					reset();
 					f_workingSelection = new Selection(selection);
-					f_workingSelection.changed();
+					f_workingSelection.refreshFilters();
 					boolean first = true;
 					MColumn prev = f_first;
 					MRadioMenuColumn menu;
@@ -126,6 +126,12 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 								afterCol++, filter);
 						fCol.init();
 						prev = fCol;
+					}
+					if (f_workingSelection.showingSelection()) {
+						MListOfFindingsColumn list = new MListOfFindingsColumn(
+								f_cascadingList, f_workingSelection, prev,
+								afterCol);
+						list.init();
 					}
 				}
 			}

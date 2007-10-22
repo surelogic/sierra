@@ -44,6 +44,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	@Override
 	void init() {
+		getSelection().setShowing(true);
 		getSelection().addObserver(this);
 		changed();
 	}
@@ -51,6 +52,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	@Override
 	void dispose() {
 		super.dispose();
+		getSelection().setShowing(false);
 		getSelection().removeObserver(this);
 		if (f_column != -1)
 			getCascadingList().emptyFrom(f_column);
