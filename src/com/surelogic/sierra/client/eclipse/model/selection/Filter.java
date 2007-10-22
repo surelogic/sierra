@@ -112,8 +112,7 @@ public abstract class Filter {
 	protected final Map<LinkedList<String>, Integer> f_counts = new HashMap<LinkedList<String>, Integer>();
 
 	/**
-	 * Summary counts for just this filter. Only mutated by
-	 * {@link #refresh()}.
+	 * Summary counts for just this filter. Only mutated by {@link #refresh()}.
 	 */
 	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
 
@@ -508,6 +507,15 @@ public abstract class Filter {
 		 * changed the set of findings I let through.
 		 */
 		f_selection.filterChanged(this);
+	}
+
+	/**
+	 * Returns a copy of the set of porous values for this filter.
+	 * 
+	 * @return a copy of the set of porous values for this filter.
+	 */
+	public Set<String> getPouousValues() {
+		return new HashSet<String>(f_porousValues);
 	}
 
 	/**

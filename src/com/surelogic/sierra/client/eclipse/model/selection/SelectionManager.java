@@ -88,11 +88,11 @@ public final class SelectionManager {
 	}
 
 	public void save(File file) {
-		// TODO
+		SelectionPersistence.save(this, file);
 	}
 
 	public void load(File file) throws Exception {
-		// TODO
+		SelectionPersistence.load(this, file);
 		notifySavedSelectionsChanged();
 	}
 }
