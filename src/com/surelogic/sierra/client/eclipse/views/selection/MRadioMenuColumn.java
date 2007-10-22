@@ -67,6 +67,10 @@ public final class MRadioMenuColumn extends MColumn implements
 		}
 	}
 
+	void setSelection(Object choice) {
+		f_menu.setSelection(choice);
+	}
+
 	public void selected(Object choice, RadioArrowMenu menu) {
 		/*
 		 * Filters start being applied in column 1 of the cascading list. Thus,
@@ -74,7 +78,8 @@ public final class MRadioMenuColumn extends MColumn implements
 		 * column to use to "empty after" the list of filters applied to the
 		 * selection.
 		 */
-		//final int column = getCascadingList().getColumnIndexOf(menu.getPanel());
+		// final int column =
+		// getCascadingList().getColumnIndexOf(menu.getPanel());
 		getCascadingList().addColumnAfter(new CascadingList.IScrolledColumn() {
 			public void createContents(Composite panel) {
 				final Display display = panel.getShell().getDisplay();

@@ -1,8 +1,10 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -50,8 +52,10 @@ public final class SelectionManager {
 		return f_nameToSelection.get(name);
 	}
 
-	public Set<String> getSavedSelectionNames() {
-		return new HashSet<String>(f_nameToSelection.keySet());
+	public List<String> getSavedSelectionNames() {
+		List<String> result = new ArrayList<String>(f_nameToSelection.keySet());
+		Collections.sort(result);
+		return result;
 	}
 
 	public boolean isEmpty() {

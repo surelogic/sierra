@@ -88,14 +88,32 @@ public abstract class Filter {
 	}
 
 	/**
+	 * Clones this filter without its data. Only the set of porous values is
+	 * remembered. {@link #refresh()} must be invoked on the clone before it can
+	 * be used.
+	 * 
+	 * @param selection
+	 *            the selection the new filter should be within.
+	 * @param previous
+	 *            the (new) filter before the new filter.
+	 * @return a clone of this filter without its data.
+	 */
+	Filter copyNoQuery(Selection selection, Filter previous) {
+		// construct a filter of the right type
+		final Filter result = getFactory().construct(selection, previous);
+		result.f_porousValues.addAll(f_porousValues);
+		return result;
+	}
+
+	/**
 	 * Counts broken down by all previous filter values. Only mutated by
-	 * {@link #queryAsync()}.
+	 * {@link #refresh()}.
 	 */
 	protected final Map<LinkedList<String>, Integer> f_counts = new HashMap<LinkedList<String>, Integer>();
 
 	/**
 	 * Summary counts for just this filter. Only mutated by
-	 * {@link #queryAsync()}.
+	 * {@link #refresh()}.
 	 */
 	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
 
@@ -112,13 +130,13 @@ public abstract class Filter {
 
 	/**
 	 * Set by {@link #deriveSummaryCounts()}. Only mutated by
-	 * {@link #queryAsync()}.
+	 * {@link #refresh()}.
 	 */
 	protected int f_countTotal = 0;
 
 	/**
 	 * The set of values in alphabetical order. Only mutated by
-	 * {@link #queryAsync()}.
+	 * {@link #refresh()}.
 	 */
 	protected final LinkedList<String> f_allValues = new LinkedList<String>();
 

@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -10,6 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSelectionDialong;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -64,14 +66,73 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		f_savedSelections.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				final String text = event.text;
-				if (SAVE_LINK.equals(text)) {
+				final String selectionName = event.text;
+				if (SAVE_LINK.equals(selectionName)) {
+					/*
+					 * Save the current selection.
+					 */
+					NameSavedSelectionDialong dialog = new NameSavedSelectionDialong(
+							f_cascadingList.getShell());
+					if (Window.CANCEL != dialog.open()) {
+						/*
+						 * Save the selection
+						 */
+						String name = dialog.getName();
+						if (name == null)
+							return;
+						name = name.trim();
+						if ("".equals(name))
+							return;
+						f_manager.saveSelection(name, new Selection(
+								f_workingSelection));
+					}
+				} else {
+					/*
+					 * Load the current selection.
+					 */
+					final Selection selection = f_manager
+							.getSavedSelection(selectionName);
+					if (selection == null)
+						return;
 
+					reset();
+					f_workingSelection = new Selection(selection);
+					f_workingSelection.changed();
+					boolean first = true;
+					MColumn prev = f_first;
+					MRadioMenuColumn menu;
+					int afterCol = 0;
+					for (Filter filter : f_workingSelection.getFilters()) {
+						if (first) {
+							first = false;
+							/*
+							 * Set the first menu to the right selection.
+							 */
+							menu = (MRadioMenuColumn) f_first;
+						} else {
+							/*
+							 * Create a menu
+							 */
+							menu = new MRadioMenuColumn(f_cascadingList,
+									f_workingSelection, prev);
+							menu.init();
+							afterCol++;
+						}
+						menu.setSelection(filter.getFactory().getFilterLabel());
+						prev = menu;
+
+						MFilterSelectionColumn fCol = new MFilterSelectionColumn(
+								f_cascadingList, f_workingSelection, prev,
+								afterCol++, filter);
+						fCol.init();
+						prev = fCol;
+					}
 				}
 			}
 		});
 
 		f_cascadingList.addObserver(this);
+		f_manager.addObserver(this);
 		Projects.getInstance().addObserver(this);
 		notify(Projects.getInstance());
 		updateSavedSelections();
@@ -83,6 +144,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	public void dispose() {
 		f_cascadingList.removeObserver(this);
+		f_manager.removeObserver(this);
 		Projects.getInstance().removeObserver(this);
 	}
 
@@ -113,7 +175,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		if (f_first != null)
 			f_first.dispose();
 		f_breadcrumbs.setText("");
-		// f_cascadingList.empty();
 		f_workingSelection = f_manager.construct();
 		updateSavedSelections();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,

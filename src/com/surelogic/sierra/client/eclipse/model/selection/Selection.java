@@ -49,6 +49,17 @@ public final class Selection extends AbstractDatabaseObserver {
 		f_executor = executor;
 	}
 
+	public Selection(Selection source) {
+		f_manager = source.f_manager;
+		f_executor = source.f_executor;
+		Filter prev = null;
+		for (Filter f : source.f_filters) {
+			Filter clone = f.copyNoQuery(this, prev);
+			prev = clone;
+			f_filters.add(clone);
+		}
+	}
+
 	void init() {
 		DatabaseHub.getInstance().addObserver(this);
 	}
