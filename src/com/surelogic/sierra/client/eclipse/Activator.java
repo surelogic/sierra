@@ -64,11 +64,11 @@ public class Activator extends AbstractUIPlugin {
 		SelectionManager.getInstance().load(getSelectionSaveFile());
 		// start observing data changes
 		Projects.getInstance().refresh();
-		// listen changes to the active editor
-		MarkersHandler.getInstance().addMarkerListener();
-		// add preference listener
-		getDefault().getPluginPreferences().addPropertyChangeListener(
-				MarkersHandler.getInstance());
+		// listen changes to the active editor and preference listener
+		MarkersHandler handler = MarkersHandler.getInstance();
+		handler.addMarkerListener();
+		getDefault().getPluginPreferences().addPropertyChangeListener(handler);
+
 	}
 
 	@Override

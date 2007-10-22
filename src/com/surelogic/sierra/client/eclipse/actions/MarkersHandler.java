@@ -44,6 +44,14 @@ import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.message.Importance;
 
+/**
+ * Class to handle sierra markers
+ * 
+ * This is a singleton class
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IPropertyChangeListener {
 
@@ -64,14 +72,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	private String f_className;
 	private String f_projectName;
 
-	private static final MarkersHandler INSTANCE = new MarkersHandler();
-
-	static {
-		DatabaseHub.getInstance().addObserver(INSTANCE);
-
-	}
+	private static MarkersHandler INSTANCE = null;
 
 	public static MarkersHandler getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new MarkersHandler();
+			DatabaseHub.getInstance().addObserver(INSTANCE);
+		}
 		return INSTANCE;
 	}
 
@@ -82,6 +89,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	public void changed() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(
 				new RefreshMarkersRunnable());
+
 		super.changed();
 	}
 
@@ -152,6 +160,15 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		page.removePartListener(f_listener);
 	}
 
+	public void clearAllMarkers() {
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER);
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER_CRITICAL);
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER_HIGH);
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER_MEDIUM);
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER_LOW);
+		clearMarkers(null, MarkersHandler.SIERRA_MARKER_IRRELEVANT);
+	}
+
 	private MarkersHandler() {
 		// Nothing to do
 	}
@@ -170,87 +187,39 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 					clearMarkers(f_currentFile, SIERRA_MARKER_IRRELEVANT);
 				}
 
-				f_currentFile = (IFile) resource;
-				if (!f_currentFile.getFileExtension().equalsIgnoreCase("java")) {
-					f_currentFile = null;
-				} else {
+				if (PreferenceConstants.showMarkers()) {
+					f_currentFile = (IFile) resource;
+					if (!f_currentFile.getFileExtension().equalsIgnoreCase(
+							"java")) {
+						f_currentFile = null;
+					} else {
 
-					ICompilationUnit cu = JavaCore
-							.createCompilationUnitFrom(f_currentFile);
-					try {
-						IPackageDeclaration[] packageDeclarations = cu
-								.getPackageDeclarations();
+						ICompilationUnit cu = JavaCore
+								.createCompilationUnitFrom(f_currentFile);
+						try {
+							IPackageDeclaration[] packageDeclarations = cu
+									.getPackageDeclarations();
 
-						f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
-						if (packageDeclarations.length > 0) {
-							f_packageName = packageDeclarations[0]
-									.getElementName();
-						}
-
-						String elementName = cu.getElementName();
-						f_className = cu.getElementName().substring(0,
-								elementName.length() - 5);
-						f_projectName = f_currentFile.getProject().getName();
-						f_executor.execute(new Runnable() {
-
-							private List<FindingOverview> f_overview;
-
-							public void run() {
-								try {
-									Connection conn = Data.getConnection();
-									try {
-
-										if (PreferenceConstants
-												.showLowestImportance()) {
-											f_overview = FindingOverview
-													.getView()
-													.showFindingsForClass(conn,
-															f_projectName,
-															f_packageName,
-															f_className);
-										} else {
-											f_overview = FindingOverview
-													.getView()
-													.showRelevantFindingsForClass(
-															conn,
-															f_projectName,
-															f_packageName,
-															f_className);
-										}
-
-										if (f_overview != null) {
-
-											PlatformUI.getWorkbench()
-													.getDisplay().asyncExec(
-															new Runnable() {
-																public void run() {
-																	setMarker(
-																			f_currentFile,
-																			f_overview);
-																}
-
-															});
-										}
-									} finally {
-										conn.close();
-									}
-								} catch (SQLException e) {
-									LOG
-											.log(
-													Level.SEVERE,
-													"SQL Exception from occurred when getting findings.",
-													e);
-								}
+							f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+							if (packageDeclarations.length > 0) {
+								f_packageName = packageDeclarations[0]
+										.getElementName();
 							}
 
-						});
+							String elementName = cu.getElementName();
+							f_className = cu.getElementName().substring(0,
+									elementName.length() - 5);
+							f_projectName = f_currentFile.getProject()
+									.getName();
+							f_executor.execute(new QueryMarkers());
 
-					} catch (JavaModelException e) {
-						LOG
-								.log(
-										Level.SEVERE,
-										"Cannot get the package declarations from compilation unit.",
-										e);
+						} catch (JavaModelException e) {
+							LOG
+									.log(
+											Level.SEVERE,
+											"Cannot get the package declarations from compilation unit.",
+											e);
+						}
 					}
 				}
 			}
@@ -431,6 +400,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			IEditorPart editor = partRef.getPage().getActiveEditor();
 			if (editor != null) {
 				queryAndSetMarkers(editor);
+
 			}
 		}
 
@@ -508,6 +478,49 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				queryAndSetMarkers(editor);
 			}
 		}
+	}
+
+	private class QueryMarkers implements Runnable {
+		private List<FindingOverview> f_overview;
+
+		public void run() {
+			try {
+				Connection conn = Data.getConnection();
+				try {
+
+					if (PreferenceConstants.showLowestImportance()) {
+						f_overview = FindingOverview.getView()
+								.showFindingsForClass(conn, f_projectName,
+										f_packageName, f_className);
+					} else {
+						f_overview = FindingOverview.getView()
+								.showRelevantFindingsForClass(conn,
+										f_projectName, f_packageName,
+										f_className);
+					}
+
+					if (f_overview != null) {
+
+						PlatformUI.getWorkbench().getDisplay().asyncExec(
+								new Runnable() {
+									public void run() {
+										setMarker(f_currentFile, f_overview);
+									}
+
+								});
+					}
+				} finally {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				LOG
+						.log(
+								Level.SEVERE,
+								"SQL Exception from occurred when getting findings.",
+								e);
+			}
+		}
+
 	}
 
 	/**

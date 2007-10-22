@@ -33,6 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_RUN_RECKONER, true);
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
+		store.setDefault(PreferenceConstants.P_TOGGLE_MARKERS, true);
 	}
 
 	/**

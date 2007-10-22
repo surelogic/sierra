@@ -108,6 +108,15 @@
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>     
           
+           <action
+               class="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
+               id="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
+               icon="lib/icons/asterisk_orange_100.gif"
+               label="Toggle Sierra Markers"
+               toolbarPath="Normal/additions"
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
+          </action>    
+          
         </actionSet>
    </extension>
       
@@ -221,6 +230,14 @@
             id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
             name="Sierra Team Servers">
+      </view>
+      
+       <view
+            category="com.surelogic.sierra.client.eclipse"
+            class="com.surelogic.sierra.client.eclipse.views.ServerSynchronizationView"
+            id="com.surelogic.sierra.client.eclipse.views.ServerSynchronizationView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
+            name="Server Synchronization">
       </view>
    </extension>
 

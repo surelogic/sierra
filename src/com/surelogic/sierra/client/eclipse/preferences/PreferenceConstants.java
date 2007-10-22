@@ -80,4 +80,16 @@ public class PreferenceConstants {
 			return false;
 		}
 	}
+
+	public static final String P_TOGGLE_MARKERS = "com.surelogic.sierra.toggle-markers";
+
+	public static boolean showMarkers() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_TOGGLE_MARKERS);
+	}
+
+	public static void setMarkersVisibility(boolean visible) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_TOGGLE_MARKERS, visible);
+	}
 }
