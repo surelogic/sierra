@@ -144,6 +144,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		b.append("select SUMMARY, IMPORTANCE, FINDING_ID,");
 		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE ");
 		getSelection().addWhereClauseTo(b);
+		b.append(" order by SUMMARY, IMPORTANCE");
 		return b.toString();
 	}
 
