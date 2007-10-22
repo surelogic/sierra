@@ -13,11 +13,14 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
+import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
-		CascadingList.ICascadingListObserver {
+		CascadingList.ICascadingListObserver, ISelectionManagerObserver {
+
+	private static final String SAVE_LINK = "save";
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -46,8 +49,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	}
 
 	public void init() {
-		f_savedSelections.setText("Saved selections:");
-
 		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				reset();
@@ -61,9 +62,19 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
+		f_savedSelections.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final String text = event.text;
+				if (SAVE_LINK.equals(text)) {
+
+				}
+			}
+		});
+
 		f_cascadingList.addObserver(this);
 		Projects.getInstance().addObserver(this);
 		notify(Projects.getInstance());
+		updateSavedSelections();
 	}
 
 	public void setFocus() {
@@ -104,6 +115,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_breadcrumbs.setText("");
 		// f_cascadingList.empty();
 		f_workingSelection = f_manager.construct();
+		updateSavedSelections();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
@@ -111,6 +123,11 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
+		updateSavedSelections();
+	}
+
+	public void savedSelectionsChanged(SelectionManager manager) {
+		updateSavedSelections();
 	}
 
 	private void updateBreadcrumbs() {
@@ -145,6 +162,40 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_breadcrumbs.getParent().layout();
 	}
 
+	private void updateSavedSelections() {
+		StringBuilder b = new StringBuilder();
+		final boolean saveable = f_workingSelection != null
+				&& f_workingSelection.getFilterCount() > 0;
+		final boolean hasSavedSelections = !f_manager.isEmpty();
+
+		if (hasSavedSelections) {
+			if (saveable) {
+				b.append("<a href=\"");
+				b.append(SAVE_LINK);
+				b.append("\">Save</a>d Selections:");
+			} else {
+				b.append("Saved Selections:");
+			}
+
+			for (String link : f_manager.getSavedSelectionNames()) {
+				b.append(" <a href=\"");
+				b.append(link);
+				b.append("\">");
+				b.append(link);
+				b.append("</a>");
+			}
+		} else {
+			if (saveable) {
+				b.append("<a href=\"");
+				b.append(SAVE_LINK);
+				b.append("\">Save Selection</a>");
+			} else {
+				b.append("(no saved selections)");
+			}
+		}
+		f_savedSelections.setText(b.toString());
+	}
+
 	private boolean showingFindings(final MColumn column) {
 		if (column instanceof MListOfFindingsColumn)
 			return true;
@@ -152,7 +203,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			return showingFindings(column.getNextColumn());
 		else
 			return false;
-
 	}
 
 	public void selectionChanged(Selection selecton) {

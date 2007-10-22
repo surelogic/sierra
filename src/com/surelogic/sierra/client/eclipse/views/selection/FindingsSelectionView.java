@@ -63,6 +63,8 @@ public final class FindingsSelectionView extends ViewPart {
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		final Link savedSelections = new Link(findingsPage, SWT.WRAP);
+		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
+				false));
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
