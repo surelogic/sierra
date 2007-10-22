@@ -11,6 +11,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -59,6 +60,8 @@ public class Activator extends AbstractUIPlugin {
 		Data.bootAndCheckSchema();
 		// load up persisted sierra servers
 		SierraServerManager.getInstance().load(getServerSaveFile());
+		// load up persisted sierra selections
+		SelectionManager.getInstance().load(getSelectionSaveFile());
 		// start observing data changes
 		Projects.getInstance().refresh();
 		// listen changes to the active editor
@@ -72,6 +75,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			SierraServerManager.getInstance().save(getServerSaveFile());
+			SelectionManager.getInstance().save(getSelectionSaveFile());
 			f_plugin = null;
 		} finally {
 			super.stop(context);
@@ -91,5 +95,11 @@ public class Activator extends AbstractUIPlugin {
 		IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString()
 				+ System.getProperty("file.separator") + "servers.xml");
+	}
+
+	private File getSelectionSaveFile() {
+		IPath pluginState = Activator.getDefault().getStateLocation();
+		return new File(pluginState.toOSString()
+				+ System.getProperty("file.separator") + "selections.xml");
 	}
 }
