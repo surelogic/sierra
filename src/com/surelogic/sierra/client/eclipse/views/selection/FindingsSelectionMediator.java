@@ -142,7 +142,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			clColumn = clColumn.getNextColumn();
 		} while (clColumn != null);
 		f_breadcrumbs.setText(b.toString());
-		System.out.println(b.toString());
 		f_breadcrumbs.getParent().layout();
 	}
 
