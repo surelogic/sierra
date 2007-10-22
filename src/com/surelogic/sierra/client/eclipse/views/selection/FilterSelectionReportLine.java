@@ -51,6 +51,8 @@ public final class FilterSelectionReportLine {
 
 	private final Canvas f_countGraph;
 
+	private boolean f_mouseOverGraph = false;
+
 	private int f_count;
 
 	public int getCount() {
@@ -121,7 +123,14 @@ public final class FilterSelectionReportLine {
 				int width = (cSize.x - 1) * percent / 100;
 				if (width < 2 && f_count > 0)
 					width = 2;
-				gc.fillGradientRectangle(0, 0, width, cSize.y, true);
+				if (f_mouseOverGraph) {
+					gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+					gc.fillRectangle(0, 0, cSize.x, cSize.y);
+					gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+					gc.fillRectangle(0, 0, width, cSize.y);
+				} else {
+					gc.fillGradientRectangle(0, 0, width, cSize.y, true);
+				}
 				Rectangle rect2 = new Rectangle(0, 0, cSize.x - 1, cSize.y - 1);
 				gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 				gc.drawRectangle(rect2);
@@ -141,9 +150,34 @@ public final class FilterSelectionReportLine {
 				Point size = e.gc.textExtent(text);
 				int offset = Math.max(0, (cSize.y - size.y) / 2);
 				int rightJ = cSize.x - 2 - size.x;
+				if (f_mouseOverGraph) {
+					gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+				}
 				gc.drawText(text, rightJ, 0 + offset, true);
 				gc.setForeground(background);
 				gc.setBackground(foreground);
+			}
+		});
+		f_countGraph.addListener(SWT.MouseEnter, new Listener() {
+			public void handleEvent(Event event) {
+				f_mouseOverGraph = true;
+				f_countGraph.redraw();
+			}
+		});
+		f_countGraph.addListener(SWT.MouseExit, new Listener() {
+			public void handleEvent(Event event) {
+				f_mouseOverGraph = false;
+				f_countGraph.redraw();
+			}
+		});
+		f_countGraph.addListener(SWT.MouseDown, new Listener() {
+			public void handleEvent(Event event) {
+				/*
+				 * Toggle the selection at this line, this doesn't send an event
+				 * so we need to call the observers manually;
+				 */
+				f_check.setSelection(!f_check.getSelection());
+				notifySelectionChanged();
 			}
 		});
 	}
