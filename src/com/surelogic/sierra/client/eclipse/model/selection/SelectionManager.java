@@ -37,8 +37,17 @@ public final class SelectionManager {
 
 	private final Map<String, Selection> f_nameToSelection = new HashMap<String, Selection>();
 
+	/**
+	 * Saves a copy of the passed selection. If a previous saved selection with
+	 * the passed name existed, it is overwritten.
+	 * 
+	 * @param name
+	 *            a name for the saved selection.
+	 * @param selection
+	 *            the selection to save a copy or.
+	 */
 	public void saveSelection(String name, Selection selection) {
-		f_nameToSelection.put(name, selection);
+		f_nameToSelection.put(name, new Selection(selection));
 		notifySavedSelectionsChanged();
 	}
 
@@ -48,8 +57,20 @@ public final class SelectionManager {
 		}
 	}
 
+	/**
+	 * Returns a copy of the saved selection with the passed name, or
+	 * <code>null</code> if no such saved selection exists.
+	 * 
+	 * @param name
+	 *            a saved selection name.
+	 * @return a copy of the saved selection with the passed name, or
+	 *         <code>null</code> if no such saved selection exists.
+	 */
 	public Selection getSavedSelection(String name) {
-		return f_nameToSelection.get(name);
+		Selection result = f_nameToSelection.get(name);
+		if (result != null)
+			result = new Selection(result);
+		return result;
 	}
 
 	public List<String> getSavedSelectionNames() {
@@ -65,6 +86,8 @@ public final class SelectionManager {
 	private final Set<ISelectionManagerObserver> f_observers = new CopyOnWriteArraySet<ISelectionManagerObserver>();
 
 	public void addObserver(ISelectionManagerObserver o) {
+		if (o == null)
+			return;
 		/*
 		 * No lock needed because we are using a util.concurrent collection.
 		 */

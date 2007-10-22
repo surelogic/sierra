@@ -1,10 +1,19 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.logging.Level;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.adhoc.Activator;
 import com.surelogic.common.Entities;
@@ -56,7 +65,8 @@ public final class SelectionPersistence {
 		StringBuilder b = new StringBuilder();
 		b.append("  <").append(SELECTION);
 		Entities.addAttribute(NAME, name, b);
-		Entities.addAttribute(SHOWING, s.showingSelection() ? "Y" : "N", b);
+		if (s.showingSelection())
+			Entities.addAttribute(SHOWING, "Y", b);
 		b.append(">");
 		pw.println(b.toString());
 		b = new StringBuilder();
@@ -92,8 +102,106 @@ public final class SelectionPersistence {
 		pw.println("</" + TOP + ">");
 	}
 
-	public static void load(final SelectionManager manager, final File saveFile) {
-		// TODO
+	public static void load(final SelectionManager manager, final File saveFile)
+			throws Exception {
+		if (saveFile.exists()) {
+			try {
+				InputStream stream = new FileInputStream(saveFile);
+				SAXParserFactory factory = SAXParserFactory.newInstance();
+				SaveFileReader handler = new SaveFileReader(manager);
+				try {
+					// Parse the input
+					SAXParser saxParser = factory.newSAXParser();
+					saxParser.parse(stream, handler);
+				} catch (SAXException e) {
+					SLLogger.getLogger().log(Level.SEVERE,
+							"Problem parsing selections from " + saveFile, e);
+				} finally {
+					stream.close();
+				}
+			} catch (Exception e) {
+				SLLogger.getLogger().log(Level.SEVERE,
+						"Problem reading selections from " + saveFile, e);
+			}
+		}
 	}
 
+	/**
+	 * SAX reader for the query save file.
+	 */
+	static class SaveFileReader extends DefaultHandler {
+
+		private final SelectionManager f_manager;
+
+		SaveFileReader(SelectionManager manager) {
+			f_manager = manager;
+		}
+
+		private Selection f_workingSelection = null;
+		private String f_selectionName = null;
+		private Filter f_filter = null;
+
+		@Override
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			if (name.equals(SELECTION)) {
+				f_selectionName = attributes.getValue(NAME);
+				final boolean showing = attributes.getValue(SHOWING) != null;
+				f_workingSelection = f_manager.construct();
+				f_workingSelection.setShowing(showing);
+			} else if (name.equals(FILTER)) {
+				final String type = attributes.getValue(TYPE);
+				if (f_workingSelection != null) {
+					boolean found = false;
+					for (ISelectionFilterFactory ff : f_workingSelection
+							.getAvailableFilters()) {
+						if (ff.getFilterLabel().equals(type)) {
+							found = true;
+							f_filter = f_workingSelection.construct(ff, null);
+						}
+					}
+					if (!found) {
+						SLLogger.getLogger().log(
+								Level.SEVERE,
+								FILTER + " found in XML but type=" + type
+										+ " is not a filter type");
+					}
+				} else {
+					SLLogger.getLogger().log(
+							Level.SEVERE,
+							FILTER + " found in XML but name="
+									+ f_selectionName + " and selection="
+									+ f_workingSelection);
+				}
+			} else if (name.equals(POROUS)) {
+				final String value = attributes.getValue(VALUE);
+				if (f_filter != null) {
+					f_filter.setPorousOnLoad(value, true);
+				} else {
+					SLLogger.getLogger().log(Level.SEVERE,
+							POROUS + " found in XML but filter is null");
+				}
+			}
+		}
+
+		@Override
+		public void endElement(String uri, String localName, String name)
+				throws SAXException {
+			if (name.equals(SELECTION)) {
+				if (f_selectionName != null && f_workingSelection != null) {
+					f_manager
+							.saveSelection(f_selectionName, f_workingSelection);
+					f_selectionName = null;
+					f_workingSelection = null;
+					f_filter = null; // critical to null (used as previous)
+				} else {
+					SLLogger.getLogger().log(
+							Level.SEVERE,
+							SELECTION + " ended in XML but name="
+									+ f_selectionName + " and selection="
+									+ f_workingSelection);
+				}
+			}
+		}
+	}
 }

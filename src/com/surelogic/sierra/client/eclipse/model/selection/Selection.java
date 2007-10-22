@@ -319,6 +319,8 @@ public final class Selection extends AbstractDatabaseObserver {
 	private final Set<ISelectionObserver> f_observers = new CopyOnWriteArraySet<ISelectionObserver>();
 
 	public void addObserver(ISelectionObserver o) {
+		if (o == null)
+			return;
 		/*
 		 * No lock needed because we are using a util.concurrent collection.
 		 */

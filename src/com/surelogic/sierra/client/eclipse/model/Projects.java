@@ -44,6 +44,8 @@ public final class Projects extends AbstractDatabaseObserver {
 	private final Set<IProjectsObserver> f_observers = new CopyOnWriteArraySet<IProjectsObserver>();
 
 	public void addObserver(final IProjectsObserver o) {
+		if (o == null)
+			return;
 		f_observers.add(o);
 	}
 

@@ -83,8 +83,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 						name = name.trim();
 						if ("".equals(name))
 							return;
-						f_manager.saveSelection(name, new Selection(
-								f_workingSelection));
+						f_manager.saveSelection(name, f_workingSelection);
 					}
 				} else {
 					/*
@@ -96,7 +95,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 						return;
 
 					reset();
-					f_workingSelection = new Selection(selection);
+					f_workingSelection = selection;
 					f_workingSelection.refreshFilters();
 					boolean first = true;
 					MColumn prev = f_first;

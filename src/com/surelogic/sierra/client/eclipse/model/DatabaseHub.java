@@ -18,6 +18,8 @@ public final class DatabaseHub {
 	private final Set<IDatabaseObserver> f_observers = new CopyOnWriteArraySet<IDatabaseObserver>();
 
 	public void addObserver(final IDatabaseObserver o) {
+		if (o == null)
+			return;
 		f_observers.add(o);
 	}
 

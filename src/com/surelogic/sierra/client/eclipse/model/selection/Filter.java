@@ -349,6 +349,8 @@ public abstract class Filter {
 	protected final Set<IFilterObserver> f_observers = new CopyOnWriteArraySet<IFilterObserver>();
 
 	public final void addObserver(IFilterObserver o) {
+		if (o == null)
+			return;
 		/*
 		 * No lock needed because we are using a util.concurrent collection.
 		 */
@@ -461,6 +463,15 @@ public abstract class Filter {
 		 * changed the set of findings I let through.
 		 */
 		f_selection.filterChanged(this);
+	}
+
+	void setPorousOnLoad(String value, boolean porous) {
+		synchronized (this) {
+			if (porous)
+				f_porousValues.add(value);
+			else
+				f_porousValues.remove(value);
+		}
 	}
 
 	/**

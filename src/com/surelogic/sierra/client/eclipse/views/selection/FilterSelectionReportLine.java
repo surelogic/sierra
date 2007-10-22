@@ -199,6 +199,8 @@ public final class FilterSelectionReportLine {
 	protected final Set<ISelectionChangedObserver> f_observers = new CopyOnWriteArraySet<ISelectionChangedObserver>();
 
 	public final void addObserver(ISelectionChangedObserver o) {
+		if (o == null)
+			return;
 		f_observers.add(o);
 	}
 

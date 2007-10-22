@@ -252,6 +252,8 @@ public final class SierraServerManager {
 	 *            the observer.
 	 */
 	public void addObserver(final ISierraServerObserver o) {
+		if (o == null)
+			return;
 		f_serverObservers.add(o);
 	}
 
