@@ -159,7 +159,7 @@ public class HashGenerator {
 
 	private String getChunkBefore(List<String> cachedLines, int lineNumber,
 			int maxChunkSize) {
-		int chunkLine = lineNumber - 1;
+		int chunkLine = lineNumber;
 		if (chunkLine < 0) {
 			return FIRST;
 		}
