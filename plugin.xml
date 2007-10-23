@@ -112,7 +112,8 @@
                class="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
                id="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
                icon="lib/icons/asterisk_orange_100.gif"
-               label="Toggle Sierra Markers"
+               label="Toggle Sierra Marker Visibility"
+               tooltip="Toggle the visibility of Sierra markers in the Java editor"
                toolbarPath="Normal/additions"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>    
