@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -15,6 +16,34 @@ public final class ScanDocumentUtility {
 
 	private ScanDocumentUtility() {
 		// no instances
+	}
+
+	/**
+	 * Parses a partial scan document into the database and generates findings.
+	 * When this method is completed the scan document has been fully loaded
+	 * into the Sierra client and is ready to be examined via the user
+	 * interface.
+	 * 
+	 * @param scanDocument
+	 *            the scan document.
+	 * @param monitor
+	 *            a progress monitor, may be <code>null</code> if progress is
+	 *            not tracked.
+	 * @param projectName
+	 *            the name of the project for the given scan document, may be
+	 *            <code>null</code> NEED FIX
+	 * @param compilationUnit
+	 *            the list of compilation units in this partial scan. If a
+	 *            compilation unit name Foo.java is in package bar.baz, the form
+	 *            of the compilation unit should be bar.baz.Foo
+	 * 
+	 * @throws ScanPersistenceException
+	 */
+	public static void loadPartialScanDocument(final File scanDocument,
+			final SLProgressMonitor monitor, final String projectName,
+			final List<String> compilationUnits)
+			throws ScanPersistenceException {
+		//TODO
 	}
 
 	/**
