@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Map;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -33,16 +33,15 @@ public final class ScanDocumentUtility {
 	 *            the name of the project for the given scan document, may be
 	 *            <code>null</code> NEED FIX
 	 * @param compilationUnit
-	 *            the list of compilation units in this partial scan. If a
-	 *            compilation unit with file name Foo.java is in package
-	 *            bar.baz, the form of the compilation unit should be
-	 *            bar.baz.Foo
+	 *            the map of compilation units in this partial scan. The keys of
+	 *            compilationUnit are package names, and the values are
+	 *            compilation names (without the .java extension)
 	 * 
 	 * @throws ScanPersistenceException
 	 */
 	public static void loadPartialScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName,
-			final List<String> compilationUnits)
+			final Map<String, String> compilationUnits)
 			throws ScanPersistenceException {
 		// TODO
 	}
