@@ -47,7 +47,8 @@ public final class SelectionManager {
 	 *            the selection to save a copy or.
 	 */
 	public void saveSelection(String name, Selection selection) {
-		f_nameToSelection.put(name, new Selection(selection));
+		Selection copy = new Selection(selection);
+		f_nameToSelection.put(name, copy);
 		notifySavedSelectionsChanged();
 	}
 
