@@ -2,30 +2,30 @@ package com.surelogic.sierra.client.eclipse.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public class ServerExportWizard extends Wizard implements IExportWizard {
-
-	private ServerExportPage fMainPage;
+public class FindingQueryImportWizard extends Wizard implements IImportWizard {
+	private FindingQueryImportPage f_mainPage;
 
 	@Override
 	public boolean performFinish() {
-		return fMainPage.exportServers();
+		return f_mainPage.importQueries();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		fMainPage = new ServerExportPage();
-		addPage(fMainPage);
+		f_mainPage = new FindingQueryImportPage();
+		addPage(f_mainPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Export");
+		setWindowTitle("Import");
 		setDefaultPageImageDescriptor(SLImages
 				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
 	}
+
 }

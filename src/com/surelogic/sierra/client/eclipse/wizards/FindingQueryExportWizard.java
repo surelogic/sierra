@@ -7,19 +7,17 @@ import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public class ServerExportWizard extends Wizard implements IExportWizard {
-
-	private ServerExportPage fMainPage;
+public class FindingQueryExportWizard extends Wizard implements IExportWizard {
+	private FindingQueryExportPage fMainPage;
 
 	@Override
 	public boolean performFinish() {
-		return fMainPage.exportServers();
+		return fMainPage.exportQueries();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		fMainPage = new ServerExportPage();
+		fMainPage = new FindingQueryExportPage();
 		addPage(fMainPage);
 	}
 

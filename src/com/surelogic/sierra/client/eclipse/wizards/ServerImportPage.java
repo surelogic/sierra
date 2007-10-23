@@ -385,7 +385,7 @@ public class ServerImportPage extends WizardPage {
 			f_existingServers.clear();
 
 			if (!handler.isValid()) {
-				throw new Exception();
+				throw new IllegalStateException();
 			}
 
 			Set<SierraServer> existingServers = SierraServerManager

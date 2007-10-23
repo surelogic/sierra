@@ -298,6 +298,16 @@
          	</wizard>
          	<wizard
          		category="sierra.export.category" 
+         		name="Queries"
+         		class="com.surelogic.sierra.client.eclipse.wizards.FindingQueryExportWizard"
+         		id="finding.query.export.file.wizard"
+         		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif">
+         		<description>
+         			A wizard to export saved finding queries
+         		</description>
+         	</wizard>
+         	<wizard
+         		category="sierra.export.category" 
          		name="Servers"
          		class="com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard"
          		id="server.export.file.wizard"
@@ -320,6 +330,16 @@
          	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/server.gif">
          		<description>
          			A wizard to import Sierra Servers
+         		</description>
+         </wizard>
+          <wizard
+         	category="sierra.import.category" 
+         	name="Queries"
+         	class="com.surelogic.sierra.client.eclipse.wizards.FindingQueryImportWizard"
+         	id="queries.import.file.wizard"
+         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif">
+         		<description>
+         			A wizard to import finding queries
          		</description>
          </wizard>
    </extension> 

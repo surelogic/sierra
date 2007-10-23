@@ -3,9 +3,7 @@ package com.surelogic.sierra.client.eclipse.wizards;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -34,21 +32,19 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.client.eclipse.model.SierraServerPersistence;
+import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
-public class ServerExportPage extends WizardPage {
+public class FindingQueryExportPage extends WizardPage {
 
 	private CheckboxTableViewer f_TableViewer;
-	private List<SierraServer> f_SelectedSierraServers = new ArrayList<SierraServer>();
+	private List<String> f_savedQueries = new ArrayList<String>();
 	private Text f_exportFilenameText;
 
-	public ServerExportPage() {
-		super("SierraServerExportWizardPage"); //$NON-NLS-1$
+	public FindingQueryExportPage() {
+		super("FindingQueryExportWizardPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Export Sierra Servers");
-		setDescription("Export the selected Sierra Servers");
+		setTitle("Export Finding Queries");
+		setDescription("Export the selected finding queries");
 	}
 
 	/*
@@ -66,7 +62,7 @@ public class ServerExportPage extends WizardPage {
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 
 		Label titel = new Label(workArea, SWT.NONE);
-		titel.setText("Select the servers to export:");
+		titel.setText("Select the finding queries to export:");
 
 		Composite listComposite = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -85,24 +81,24 @@ public class ServerExportPage extends WizardPage {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 300;
 		table.setLayoutData(data);
-		f_TableViewer.setContentProvider(new SierraServerContentProvider());
-		f_TableViewer.setLabelProvider(new SierraServerLabelProvider());
+		f_TableViewer.setContentProvider(new FindingQueryContentProvider());
+		f_TableViewer.setLabelProvider(new FindingQueryLabelProvider());
 		f_TableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getElement() instanceof SierraServer) {
-					SierraServer holder = (SierraServer) event.getElement();
+				if (event.getElement() instanceof String) {
+					String holder = (String) event.getElement();
 					if (event.getChecked()) {
-						f_SelectedSierraServers.add(holder);
+						f_savedQueries.add(holder);
 
 					} else {
-						f_SelectedSierraServers.remove(holder);
+						f_savedQueries.remove(holder);
 					}
 					updateEnablement();
 				}
 			}
 		});
 
-		initializeProjects();
+		initializeQueries();
 		createSelectionButtons(listComposite);
 		createTextFields(workArea);
 		setControl(workArea);
@@ -126,10 +122,9 @@ public class ServerExportPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (int i = 0; i < f_TableViewer.getTable().getItemCount(); i++) {
-					if (f_TableViewer.getElementAt(i) instanceof SierraServer) {
-						SierraServer holder = (SierraServer) f_TableViewer
-								.getElementAt(i);
-						f_SelectedSierraServers.add(holder);
+					if (f_TableViewer.getElementAt(i) instanceof String) {
+						String holder = (String) f_TableViewer.getElementAt(i);
+						f_savedQueries.add(holder);
 					}
 				}
 				f_TableViewer.setAllChecked(true);
@@ -143,7 +138,7 @@ public class ServerExportPage extends WizardPage {
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				f_SelectedSierraServers.clear();
+				f_savedQueries.clear();
 				f_TableViewer.setAllChecked(false);
 				updateEnablement();
 			}
@@ -153,7 +148,7 @@ public class ServerExportPage extends WizardPage {
 
 	private void createTextFields(Composite composite) {
 
-		// Server file name
+		// Query file name
 		Composite containerGroup = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -167,7 +162,7 @@ public class ServerExportPage extends WizardPage {
 
 		f_exportFilenameText = new Text(containerGroup, SWT.SINGLE | SWT.BORDER);
 		f_exportFilenameText.setText(System.getProperty("user.home")
-				+ System.getProperty("file.separator") + "servers.xml");
+				+ System.getProperty("file.separator") + "queries.xml");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		f_exportFilenameText.setLayoutData(data);
@@ -213,16 +208,11 @@ public class ServerExportPage extends WizardPage {
 		f_exportFilenameText.addModifyListener(listener);
 	}
 
-	private void initializeProjects() {
-		Set<SierraServer> servers = SierraServerManager.getInstance()
-				.getServers();
+	private void initializeQueries() {
+		List<String> queries = SelectionManager.getInstance()
+				.getSavedSelectionNames();
 
-		f_TableViewer.setInput(servers);
-		// Check any necessary projects
-		if (f_SelectedSierraServers != null) {
-			f_TableViewer.setCheckedElements(f_SelectedSierraServers
-					.toArray(new IJavaProject[f_SelectedSierraServers.size()]));
-		}
+		f_TableViewer.setInput(queries);
 	}
 
 	private void updateEnablement() {
@@ -231,8 +221,8 @@ public class ServerExportPage extends WizardPage {
 		// TODO: Implement file name check. Filenames with invalid characters
 		// are still permitted
 
-		if (f_SelectedSierraServers.size() == 0) {
-			setErrorMessage("At least one server must be selected");
+		if (f_savedQueries.size() == 0) {
+			setErrorMessage("At least one query must be selected");
 			complete = false;
 		}
 		if (f_exportFilenameText.getText().length() == 0) {
@@ -253,20 +243,19 @@ public class ServerExportPage extends WizardPage {
 		}
 	}
 
-	public boolean exportServers() {
-		SierraServerPersistence.export(SierraServerManager.getInstance(),
-				f_SelectedSierraServers, new File(f_exportFilenameText
-						.getText()));
+	public boolean exportQueries() {
+		SelectionManager.getInstance().save(
+				new File(f_exportFilenameText.getText()));
 		return true;
 	}
 
-	private static class SierraServerContentProvider implements
+	private static class FindingQueryContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof Set) {
-				Set<?> servers = (Set<?>) inputElement;
-				return servers.toArray();
+			if (inputElement instanceof List) {
+				List<?> queries = (List<?>) inputElement;
+				return queries.toArray();
 			}
 			return null;
 		}
@@ -283,19 +272,19 @@ public class ServerExportPage extends WizardPage {
 
 	}
 
-	private static class SierraServerLabelProvider implements ILabelProvider {
+	private static class FindingQueryLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
-			if (element instanceof SierraServer) {
-				return SLImages.getImage(SLImages.IMG_SERVER);
+			if (element instanceof String) {
+				return SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE);
 			}
 			return null;
 		}
 
 		public String getText(Object element) {
-			if (element instanceof SierraServer) {
-				SierraServer holder = (SierraServer) element;
-				return holder.getLabel();
+			if (element instanceof String) {
+				String holder = (String) element;
+				return holder;
 			}
 			return null;
 		}
