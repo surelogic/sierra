@@ -7,11 +7,13 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,11 +36,13 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
+import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.common.eclipse.TextEditedListener;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -56,6 +60,8 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		IProjectsObserver {
+
+	private static final String STAMP_COMMENT = "I examined this finding.";
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
@@ -123,7 +129,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 	private volatile FindingDetail f_finding;
 
-	private final Executor f_executor = Executors.newSingleThreadExecutor();
+	// private final Executor f_executor = Executors.newSingleThreadExecutor();
 
 	private final Listener f_tabLinkListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -175,8 +181,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	}
 
 	void asyncQueryAndShow(final long findingId) {
-		f_executor.execute(new Runnable() {
-			public void run() {
+		final Job job = new DatabaseJob("Querying details of finding "
+				+ findingId) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Querying finding data",
+						IProgressMonitor.UNKNOWN);
 				try {
 					Connection c = Data.getConnection();
 					try {
@@ -197,14 +207,16 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 					} finally {
 						c.close();
 					}
+					monitor.done();
+					return Status.OK_STATUS;
 				} catch (SQLException e) {
-					SLLogger.getLogger().log(
-							Level.SEVERE,
-							"SQL exception when trying to finding details for finding id="
+					return SLStatus.createErrorStatus(
+							"SQL exception when trying to finding details for finding id "
 									+ findingId, e);
 				}
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	private final Listener f_radioListener = new Listener() {
@@ -215,11 +227,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 					final Importance desired = (Importance) event.widget
 							.getData();
 					if (desired != current) {
-						f_executor.execute(new Runnable() {
-							public void run() {
-								changeImportance(desired);
-							}
-						});
+						asyncChangeImportance(desired);
 					}
 				}
 			}
@@ -239,22 +247,14 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				final String commentText = f_commentText.getText();
 				if (commentText == null || commentText.trim().equals(""))
 					return;
-				f_executor.execute(new Runnable() {
-					public void run() {
-						addComment(commentText);
-					}
-				});
+				asyncComment(commentText);
 			}
 		});
 
 		f_quickAudit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				f_executor.execute(new Runnable() {
-					public void run() {
-						addComment("I examined this finding.");
-					}
-				});
+				asyncComment(STAMP_COMMENT);
 			}
 		});
 
@@ -278,11 +278,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final Listener tel = new TextEditedListener(
 				new TextEditedListener.TextEditedAction() {
 					public void textEditedAction(final String newText) {
-						f_executor.execute(new Runnable() {
-							public void run() {
-								changeSummary(newText);
-							}
-						});
+						asyncChangeSummary(newText);
 					}
 				});
 		f_summaryText.addListener(SWT.Modify, tel);
@@ -492,7 +488,29 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		}
 	}
 
-	private void changeSummary(String summary) {
+	private void asyncChangeSummary(final String summary) {
+		final Job job = new DatabaseJob("Changing the summary of finding id "
+				+ f_finding.getFindingId() + " to \"" + summary + "\"") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating finding data",
+						IProgressMonitor.UNKNOWN);
+				try {
+					changeSummary(summary);
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Failed to change the summary of finding id "
+									+ f_finding.getFindingId() + " to \""
+									+ summary + "\"", e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void changeSummary(String summary) throws Exception {
 		if (f_finding == null)
 			return;
 		summary = summary.trim();
@@ -501,77 +519,95 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final String oldSummary = f_finding.getSummary().trim();
 		if (oldSummary.equals(summary))
 			return;
+		Connection c = Data.getConnection();
 		try {
-			Connection c = Data.getConnection();
-			try {
-				c.setAutoCommit(false);
-				ClientFindingManager manager = ClientFindingManager
-						.getInstance(c);
+			c.setAutoCommit(false);
+			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 
-				manager.changeSummary(f_finding.getFindingId(), summary);
-				c.commit();
-				DatabaseHub.getInstance().notifyFindingMutated();
-			} finally {
-				c.close();
-			}
-		} catch (SQLException e) {
-			SLLogger.getLogger().log(
-					Level.SEVERE,
-					"Failure changing summary from \"" + oldSummary
-							+ "\" to \"" + summary + "\" on finding "
-							+ f_finding.getFindingId(), e);
+			manager.changeSummary(f_finding.getFindingId(), summary);
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} finally {
+			c.close();
 		}
 	}
 
-	private void addComment(final String comment) {
+	private void asyncComment(final String comment) {
+		final Job job = new DatabaseJob("Adding the comment \"" + comment
+				+ "\" to finding id " + f_finding.getFindingId()) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating finding data",
+						IProgressMonitor.UNKNOWN);
+				try {
+					comment(comment);
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Failed to add the comment \"" + comment
+									+ "\" to finding id "
+									+ f_finding.getFindingId(), e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void comment(final String comment) throws Exception {
 		if (f_finding == null)
 			return;
 		if (comment == null || comment.trim().equals(""))
 			return;
+		Connection c = Data.getConnection();
 		try {
-			Connection c = Data.getConnection();
-			try {
-				c.setAutoCommit(false);
-				ClientFindingManager manager = ClientFindingManager
-						.getInstance(c);
-				manager.comment(f_finding.getFindingId(), comment);
-				c.commit();
-				DatabaseHub.getInstance().notifyFindingMutated();
-			} finally {
-				c.close();
-			}
-		} catch (SQLException e) {
-			SLLogger.getLogger().log(
-					Level.SEVERE,
-					"Failure adding comment \"" + comment + "\" to finding "
-							+ f_finding.getFindingId(), e);
+			c.setAutoCommit(false);
+			ClientFindingManager manager = ClientFindingManager.getInstance(c);
+			manager.comment(f_finding.getFindingId(), comment);
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} finally {
+			c.close();
 		}
 	}
 
-	private void changeImportance(final Importance importance) {
+	private void asyncChangeImportance(final Importance to) {
+		final Importance from = f_finding.getImportance();
+		final Job job = new DatabaseJob(
+				"Changing the importance of finding id "
+						+ f_finding.getFindingId() + " from " + from + " to "
+						+ to) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating finding data",
+						IProgressMonitor.UNKNOWN);
+				try {
+					changeImportance(to);
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Failed to change the importance of finding id "
+									+ f_finding.getFindingId() + " from "
+									+ from + " to " + to, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void changeImportance(final Importance to) throws Exception {
 		if (f_finding == null)
 			return;
-		if (importance == f_finding.getImportance())
-			return;
+		Connection c = Data.getConnection();
 		try {
-			Connection c = Data.getConnection();
-			try {
-				c.setAutoCommit(false);
-				ClientFindingManager manager = ClientFindingManager
-						.getInstance(c);
-				manager.setImportance(f_finding.getFindingId(), importance);
-				c.commit();
-				DatabaseHub.getInstance().notifyFindingMutated();
-			} finally {
-				c.close();
-			}
-		} catch (SQLException e) {
-			SLLogger.getLogger()
-					.log(
-							Level.SEVERE,
-							"Failure mutating the importance of finding "
-									+ f_finding.getFindingId() + " to "
-									+ importance, e);
+			c.setAutoCommit(false);
+			ClientFindingManager manager = ClientFindingManager.getInstance(c);
+			manager.setImportance(f_finding.getFindingId(), to);
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} finally {
+			c.close();
 		}
 	}
 
