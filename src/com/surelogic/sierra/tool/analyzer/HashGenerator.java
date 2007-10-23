@@ -1,11 +1,12 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -30,15 +31,13 @@ public class HashGenerator {
 
 	private int countFileAccess = 0;
 
-	private long hashValue;
+	private String cachedFileName;
 
-	private int previousLine = -1;
+	private List<String> cachedFileLines;
 
-	private String previousFileName;
+	private long lastHashValue;
 
-	private String currentFileName;
-
-	private File currentFile;
+	private int lastHashLine = -1;
 
 	private static class Singleton {
 		static final HashGenerator hashGenerator = new HashGenerator();
@@ -72,85 +71,28 @@ public class HashGenerator {
 	}
 
 	public Long getHash(String fileName, int lineNumber) {
-
-		currentFileName = fileName;
-
 		try {
-
-			if ((currentFile == null)
-					|| (!previousFileName.equals(currentFileName))) {
-				currentFile = new File(currentFileName);
-				previousFileName = currentFileName;
-				previousLine = -1;
+			// adjust line number to be zero indexed
+			if (lineNumber > 0) {
+				lineNumber--;
 			}
 
-			if (previousLine == -1) {
-				previousLine = lineNumber;
-			} else if ((previousFileName).equals(currentFileName)
-					&& (previousLine == lineNumber)) {
-				return hashValue;
-			} else {
-				previousLine = lineNumber;
+			if (cachedFileName == null || !cachedFileName.equals(fileName)) {
+				cachedFileName = fileName;
+				cachedFileLines = buildCachedLines(fileName);
+			} else if (lastHashLine == lineNumber) {
+				return lastHashValue;
 			}
+			lastHashLine = lineNumber;
 
-			BufferedReader in = new BufferedReader(new FileReader(currentFile));
-			String holder = in.readLine();
-			String valueUp = "";
-			String valueDown = "";
+			String valueUp = getChunkBefore(cachedFileLines, lineNumber, 30);
+			String valueDown = getChunkAfter(cachedFileLines, lineNumber, 30);
 
-			int lineCounter = 0;
-			while (holder != null) {
-
-				lineCounter++;
-
-				String tempHolder[] = holder.split("\\s+");
-				StringBuffer result = new StringBuffer();
-
-				if (tempHolder.length > 0) {
-					for (int i = 0; i < tempHolder.length; i++) {
-						result.append(tempHolder[i]);
-					}
-				}
-
-				holder = result.toString();
-
-				if ((!"FIRST".equals(valueUp)) && (lineCounter < lineNumber)) {
-					valueUp += holder;
-					if (valueUp.length() > 30) {
-						int extraChars = valueUp.length() - 30;
-						valueUp = valueUp.substring(extraChars, valueUp
-								.length());
-					}
-				}
-				if ((!"LAST".equals(valueDown)) && (lineCounter >= lineNumber)) {
-					if (valueDown.length() < 30) {
-						valueDown += holder;
-						if (valueDown.length() > 30) {
-							valueDown = valueDown.substring(0, 30);
-						}
-					}
-				}
-
-				holder = in.readLine();
-			}
-
-			if (valueUp.equals("")) {
-				valueUp = FIRST;
-			}
-
-			if (valueDown.equals("")) {
-				valueDown = LAST;
-			}
-
-			// System.out.println("Value up :" + valueUp);
-			// System.out.println("Value down :" + valueDown);
 			int hashUp = valueUp.hashCode();
 			int hashDown = valueDown.hashCode();
 
-			hashValue = (((long) hashDown) << 32) + hashUp;
-			in.close();
-			return hashValue;
-
+			lastHashValue = (((long) hashDown) << 32) + hashUp;
+			return lastHashValue;
 		} catch (FileNotFoundException e) {
 			log
 					.log(Level.SEVERE, "The file " + fileName
@@ -191,4 +133,68 @@ public class HashGenerator {
 		// countFileAccess);
 
 	}
+
+	private List<String> buildCachedLines(String fileName) throws IOException {
+		List<String> cachedLines = new ArrayList<String>();
+		BufferedReader in = new BufferedReader(new FileReader(fileName));
+		try {
+			String inLine = in.readLine();
+			while (inLine != null) {
+				String[] lineElements = inLine.split("\\s+");
+				// TODO replace split with replaceAll?
+				StringBuilder cachedLine = new StringBuilder();
+				for (String element : lineElements) {
+					cachedLine.append(element);
+				}
+				cachedLines.add(cachedLine.toString());
+
+				inLine = in.readLine();
+			}
+		} finally {
+			in.close();
+		}
+
+		return cachedLines;
+	}
+
+	private String getChunkBefore(List<String> cachedLines, int lineNumber,
+			int maxChunkSize) {
+		int chunkLine = lineNumber - 1;
+		if (chunkLine < 0) {
+			return FIRST;
+		}
+
+		StringBuilder chunkBuf = new StringBuilder();
+		while (chunkLine >= 0 && chunkBuf.length() < maxChunkSize) {
+			chunkBuf.insert(0, cachedLines.get(chunkLine));
+			chunkLine--;
+		}
+
+		if (chunkBuf.length() > maxChunkSize) {
+			int len = chunkBuf.length();
+			return chunkBuf.substring(len - maxChunkSize, len);
+		}
+		return chunkBuf.toString();
+	}
+
+	private String getChunkAfter(List<String> cachedLines, int lineNumber,
+			int maxChunkSize) {
+		int chunkLine = lineNumber + 1;
+		if (chunkLine >= cachedLines.size()) {
+			return LAST;
+		}
+
+		StringBuilder chunkBuf = new StringBuilder();
+		while (chunkLine < cachedLines.size()
+				&& chunkBuf.length() < maxChunkSize) {
+			chunkBuf.append(cachedLines.get(chunkLine));
+			chunkLine++;
+		}
+
+		if (chunkBuf.length() > maxChunkSize) {
+			return chunkBuf.substring(0, maxChunkSize);
+		}
+		return chunkBuf.toString();
+	}
+
 }
