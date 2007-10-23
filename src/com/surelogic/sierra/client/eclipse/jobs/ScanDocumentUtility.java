@@ -34,8 +34,9 @@ public final class ScanDocumentUtility {
 	 *            <code>null</code> NEED FIX
 	 * @param compilationUnit
 	 *            the list of compilation units in this partial scan. If a
-	 *            compilation unit name Foo.java is in package bar.baz, the form
-	 *            of the compilation unit should be bar.baz.Foo
+	 *            compilation unit with file name Foo.java is in package
+	 *            bar.baz, the form of the compilation unit should be
+	 *            bar.baz.Foo
 	 * 
 	 * @throws ScanPersistenceException
 	 */
@@ -43,7 +44,7 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final List<String> compilationUnits)
 			throws ScanPersistenceException {
-		//TODO
+		// TODO
 	}
 
 	/**
