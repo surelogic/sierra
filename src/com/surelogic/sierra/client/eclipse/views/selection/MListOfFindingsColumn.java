@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbenchPage;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -171,8 +172,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 			TableItem[] items = f_table.getSelection();
 			if (items.length > 0) {
 				final FindingData data = (FindingData) items[0].getData();
+				/*
+				 * Ensure the view is visible but don't change the focus.
+				 */
 				final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
-						.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
+						.showView(FindingsDetailsView.class.getName(), null,
+								IWorkbenchPage.VIEW_VISIBLE);
 				f_findingId = data.f_findingId;
 				view.findingSelected(data.f_findingId);
 			}
