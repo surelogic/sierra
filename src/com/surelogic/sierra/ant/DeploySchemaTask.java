@@ -76,8 +76,8 @@ public class DeploySchemaTask extends Task {
 			}
 			log("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
-			conn.createStatement().execute(
-					"INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
+//			conn.createStatement().execute(
+//					"INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
 			conn.commit();
 
 			// ServerFindingManager man =

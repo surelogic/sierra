@@ -18,11 +18,11 @@ import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
-import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
 import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
+import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
@@ -69,7 +69,7 @@ class JDBCScanGenerator implements ScanGenerator {
 			scan.setJavaVendor(javaVendor);
 			scan.setStatus(ScanStatus.LOADING);
 			if (user != null) {
-				scan.setUserId(Server.getUser(user, conn).getId());
+				scan.setUserId(User.getUser(user, conn).getId());
 			}
 			if (scan.select()) {
 				manager.deleteScan(uid, null);

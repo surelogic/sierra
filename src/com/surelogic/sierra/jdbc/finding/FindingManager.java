@@ -18,9 +18,9 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
-import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.tool.MessageFilter;
+import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
@@ -391,7 +391,7 @@ public class FindingManager {
 	}
 
 	protected Long getUserId(String user) throws SQLException {
-		return Server.getUser(user, conn).getId();
+		return User.getUser(user, conn).getId();
 	}
 
 	protected void fillKey(MatchRecord.PK pk, Match match) throws SQLException {

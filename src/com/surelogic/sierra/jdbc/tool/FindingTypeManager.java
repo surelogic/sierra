@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +41,10 @@ public class FindingTypeManager {
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
 
+	private final Connection conn;
+	
 	private FindingTypeManager(Connection conn) throws SQLException {
+		this.conn = conn;
 		this.checkForArtifactTypeRelation = conn
 				.prepareStatement("SELECT FT.UUID FROM ART_TYPE_FIN_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
@@ -190,6 +194,13 @@ public class FindingTypeManager {
 
 	public void updateFindingTypes(List<FindingTypes> types)
 			throws SQLException {
+		Statement st = conn.createStatement();
+		try {
+			st.execute("DELETE FROM ART_TYPE_FIN_TYPE_RELTN");
+			st.execute("DELETE FROM CATEGORY_FINDING_TYPE_RELTN");
+		} finally {
+			st.close();
+		}
 		for (FindingTypes type : types) {
 			FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with

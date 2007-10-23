@@ -522,6 +522,8 @@ public final class ServerFindingManager extends FindingManager {
 		} finally {
 			set.close();
 		}
+		populateScanSummaryHelper(scan.getId(), qualifier.getId(), project
+				.getId(), new Timestamp(scan.getTimestamp().getTime()));
 		idx = 1;
 		selectPreviousScan.setLong(idx++, qualifier.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
@@ -585,7 +587,7 @@ public final class ServerFindingManager extends FindingManager {
 				}
 			} else {
 				findingCount.setLong(1, scanId);
-				ResultSet count = artifactCount.executeQuery();
+				ResultSet count = findingCount.executeQuery();
 				try {
 					count.next();
 					Long findings = count.getLong(1);

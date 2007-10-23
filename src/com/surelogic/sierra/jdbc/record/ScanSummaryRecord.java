@@ -50,7 +50,7 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 		st.setLong(idx++, fixedFindings);
 		st.setLong(idx++, unchangedFindings);
 		st.setLong(idx++, artifacts);
-		return 0;
+		return idx;
 	}
 
 	public Long getNewFindings() {
@@ -118,7 +118,7 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 
 	@Override
 	protected int fillWithPk(PreparedStatement st, int idx) throws SQLException {
-		return fillWithPk(st, idx);
+		return fillWithNk(st, idx);
 	}
 
 	@Override

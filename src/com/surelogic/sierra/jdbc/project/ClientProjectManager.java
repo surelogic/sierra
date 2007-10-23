@@ -1,15 +1,20 @@
 package com.surelogic.sierra.jdbc.project;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
+import com.surelogic.sierra.tool.message.CommitAuditTrailResponse;
 import com.surelogic.sierra.tool.message.GetAuditTrailRequest;
 import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
@@ -25,11 +30,13 @@ import com.surelogic.sierra.tool.message.SierraServiceClient;
 public class ClientProjectManager extends ProjectManager {
 
 	private final ClientFindingManager findingManager;
-
+	private final PreparedStatement insertSynchRecord;
 
 	private ClientProjectManager(Connection conn) throws SQLException {
 		super(conn);
 		this.findingManager = ClientFindingManager.getInstance(conn);
+		this.insertSynchRecord = conn
+				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,USER_ID,DATE_TIME,COMMIT_REIVSION,PRIOR_REVISION VALUES (?,?,?,?,?,?)");
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
@@ -47,16 +54,16 @@ public class ClientProjectManager extends ProjectManager {
 
 		// Look up project. If it doesn't exist, create it and relate it to the
 		// server.
-		ProjectRecord rec = projectFactory.newProject();
-		rec.setName(projectName);
-		if (!rec.select()) {
-			rec.insert();
+		ProjectRecord p = projectFactory.newProject();
+		p.setName(projectName);
+		if (!p.select()) {
+			p.insert();
 		}
-		String serverUid = rec.getServerUid();
+		String serverUid = p.getServerUid();
 		if (serverUid == null) {
 			serverUid = service.getUid(new ServerUIDRequest()).getUid();
-			rec.setServerUid(serverUid);
-			rec.update();
+			p.setServerUid(serverUid);
+			p.update();
 		}
 		if (monitor.isCanceled()) {
 			return;
@@ -88,7 +95,8 @@ public class ClientProjectManager extends ProjectManager {
 		commitRequest.setServer(serverUid);
 		commitRequest.setAuditTrail(findingManager.getNewLocalAudits(
 				projectName, monitor));
-		service.commitAuditTrails(commitRequest);
+		CommitAuditTrailResponse commitResponse = service
+				.commitAuditTrails(commitRequest);
 
 		if (monitor.isCanceled()) {
 			return;
@@ -127,6 +135,12 @@ public class ClientProjectManager extends ProjectManager {
 					.getSettings());
 		}
 		monitor.worked(1);
+		int idx = 1;
+		insertSynchRecord.setLong(idx++, p.getId());
+		insertSynchRecord.setTimestamp(idx++, new Timestamp(new Date()
+				.getTime()));
+		insertSynchRecord.setLong(idx++, commitResponse.getRevision());
+		insertSynchRecord.setLong(idx++, auditRequest.getRevision());
 	}
 
 	@Override
@@ -139,15 +153,13 @@ public class ClientProjectManager extends ProjectManager {
 				monitor.subTask("Deleting scans for project " + projectName);
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			findingManager.deleteFindings(projectName, monitor);
-			if(monitor != null){
-				if(!monitor.isCanceled()) {
-					rec.delete();					
+			if (monitor != null) {
+				if (!monitor.isCanceled()) {
+					rec.delete();
 				}
 			}
 		}
 	}
-
-
 
 	public static ClientProjectManager getInstance(Connection conn)
 			throws SQLException {

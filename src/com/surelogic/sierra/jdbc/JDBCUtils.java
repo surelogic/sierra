@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -114,8 +115,37 @@ public class JDBCUtils {
 		return string.replaceAll("'", "''");
 	}
 
+	/**
+	 * Return the database type, based on what the JDBC metadata reports.
+	 * 
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
 	public static DBType getDb(Connection conn) throws SQLException {
 		return "Oracle".equals(conn.getMetaData().getDatabaseProductName()) ? DBType.ORACLE
 				: DBType.DERBY;
+	}
+
+	/**
+	 * Returns whether the current connection points to a Sierra server or
+	 * client.
+	 * 
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
+	public static boolean isServer(Connection conn) throws SQLException {
+		try {
+			Statement st = conn.createStatement();
+			try {
+				st.executeQuery("SELECT * FROM SERVER");
+				return true;
+			} finally {
+				st.close();
+			}
+		} catch (SQLException e) {
+			return false;
+		}
 	}
 }
