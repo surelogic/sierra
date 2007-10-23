@@ -159,6 +159,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	};
 
+	private long f_findingId = -1;
+
 	private final Listener f_singleClick = new Listener() {
 		public void handleEvent(Event event) {
 			TableItem[] items = f_table.getSelection();
@@ -166,6 +168,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				final FindingData data = (FindingData) items[0].getData();
 				final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
 						.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
+				f_findingId = data.f_findingId;
 				view.findingSelected(data.f_findingId);
 			}
 		}
@@ -190,12 +193,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 		for (TableItem i : f_table.getItems())
 			i.dispose();
 
+		boolean selectionFound = false;
 		for (FindingData data : f_rows) {
 			final TableItem item = new TableItem(f_table, SWT.NONE);
 			item.setText(data.f_summary);
 			item.setImage(Utility.getImageFor(data.f_importance));
 			item.setData(data);
+			if (data.f_findingId == f_findingId) {
+				selectionFound = true;
+				f_table.setSelection(item);
+			}
 		}
+		if (!selectionFound)
+			f_findingId = -1;
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
 		}
