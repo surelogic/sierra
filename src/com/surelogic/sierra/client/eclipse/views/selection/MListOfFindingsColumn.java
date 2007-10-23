@@ -159,6 +159,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	};
 
+	/**
+	 * Remembers the last finding id that was selected in the list. If the list
+	 * is refreshed than an attempt is made to select that finding id again. A
+	 * value of <code>-1</code> indicates that no finding is selected.
+	 */
 	private long f_findingId = -1;
 
 	private final Listener f_singleClick = new Listener() {
