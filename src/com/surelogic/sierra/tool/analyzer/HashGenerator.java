@@ -30,15 +30,15 @@ public class HashGenerator {
 
 	private int countFileAccess = 0;
 
-	private static long hashValue;
+	private long hashValue;
 
-	private static int previousLine = -1;
+	private int previousLine = -1;
 
-	private static String previousFileName;
+	private String previousFileName;
 
-	private static String currentFileName;
+	private String currentFileName;
 
-	private static File currentFile;
+	private File currentFile;
 
 	private static class Singleton {
 		static final HashGenerator hashGenerator = new HashGenerator();
@@ -180,7 +180,7 @@ public class HashGenerator {
 			while (lineNumberIterator.hasNext()) {
 				int lineNumber = lineNumberIterator.next();
 				Long hashValue = getHash(fileName, lineNumber);
-				lineHashMap.put((Integer) lineNumber, hashValue);
+				lineHashMap.put(lineNumber, hashValue);
 			}
 
 			countFileAccess++;
