@@ -3216,6 +3216,8 @@
 		<id>UseNotifyAllInsteadOfNotify</id>
 		<artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL">
 		</artifact>
+		<artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
+		</artifact>
 		<shortMessage>
 			Using notify() rather than notifyAll()
 		</shortMessage>
@@ -3229,6 +3231,11 @@
 			thread, meaning that the thread woken up might not be the
 			one waiting for the condition that the caller just
 			satisfied.&lt;/p&gt;
+			
+			Thread.notify() awakens a thread monitoring the object. If
+			more than one thread is monitoring, then only one is chosen.
+			The thread chosen is arbitrary; thus it's usually safer to
+			call notifyAll() instead.
 
 		</info>
 		<name>Notify Not Notifyall</name>
@@ -6484,9 +6491,6 @@
 		</findingType>
 		<findingType>
 			RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES
-		</findingType>
-		<findingType>
-			RedundantComparisonOfNullAndNonnullValue
 		</findingType>
 		<findingType>SA_LOCAL_SELF_ASSIGNMENT</findingType>
 		<findingType>INT_VACUOUS_COMPARISON</findingType>

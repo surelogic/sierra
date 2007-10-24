@@ -1440,24 +1440,7 @@
 		</info>
 		<name>Missing Break In Switch</name>
 	</findingType>
-	<findingType>
-		<id>UseNotifyAllInsteadOfNotify</id>
-		<artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
-		</artifact>
-		<shortMessage>
-			Thread.notify() awakens a thread monitoring the object. If
-			more than one thread is monitoring, then only one is chosen.
-			The thread chosen is arbitrary; thus it's usually safer to
-			call notifyAll() instead.
-		</shortMessage>
-		<info>
-			Thread.notify() awakens a thread monitoring the object. If
-			more than one thread is monitoring, then only one is chosen.
-			The thread chosen is arbitrary; thus it's usually safer to
-			call notifyAll() instead.
-		</info>
-		<name>Use Notify All Instead Of Notify</name>
-	</findingType>
+
 	<findingType>
 		<id>AvoidInstanceofChecksInCatchClause</id>
 		<artifact tool="PMD"
@@ -3005,6 +2988,25 @@
 	</findingType>
 	<!-- Duplicate
 		<findingType>
+		<id>UseNotifyAllInsteadOfNotify</id>
+		<artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
+		</artifact>
+		<shortMessage>
+		Thread.notify() awakens a thread monitoring the object. If
+		more than one thread is monitoring, then only one is chosen.
+		The thread chosen is arbitrary; thus it's usually safer to
+		call notifyAll() instead.
+		</shortMessage>
+		<info>
+		Thread.notify() awakens a thread monitoring the object. If
+		more than one thread is monitoring, then only one is chosen.
+		The thread chosen is arbitrary; thus it's usually safer to
+		call notifyAll() instead.
+		</info>
+		<name>Use Notify All Instead Of Notify</name>
+		</findingType>
+		
+		<findingType>
 		<id>StringInstantiation</id>
 		<artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
 		<shortMessage>
@@ -3439,7 +3441,7 @@
 		</findingType>
 		<findingType>AvoidSynchronizedAtMethodLevel</findingType>
 		<findingType>MissingBreakInSwitch</findingType>
-		<findingType>UseNotifyAllInsteadOfNotify</findingType>
+		<!-- DUP <findingType>UseNotifyAllInsteadOfNotify</findingType> -->
 		<findingType>AvoidInstanceofChecksInCatchClause</findingType>
 		<findingType>AbstractClassWithoutAbstractMethod</findingType>
 		<findingType>SimplifyConditional</findingType>
