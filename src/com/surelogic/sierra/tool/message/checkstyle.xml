@@ -686,7 +686,7 @@
 		<name>Covariant Equals</name>
 	</findingType>
 	<findingType>
-		<id>DoubleCheckedLocking</id>
+		<id>DoubleCheckedLocking2</id>
 		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.DoubleCheckedLockingCheck">
 		</artifact>
@@ -1792,7 +1792,7 @@
 		<findingType>ArrayTrailingComma</findingType>
 		<findingType>AvoidInlineConditionals</findingType>
 		<findingType>CovariantEquals</findingType>
-		<findingType>DoubleCheckedLocking</findingType>
+		<findingType>DoubleCheckedLocking2</findingType>
 		<findingType>EmptyStatement</findingType>
 		<findingType>EqualsHashCode</findingType>
 		<findingType>FinalLocalVariable</findingType>
