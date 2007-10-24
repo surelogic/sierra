@@ -1737,7 +1737,7 @@
 		<findingType>AvoidStarImport</findingType>
 		<findingType>IllegalImport</findingType>
 		<findingType>RedundantImport</findingType>
-		<findingType>UnusedImports</findingType>
+		<findingType>UnusedImports2</findingType>
 		<findingType>ImportOrder</findingType>
 		<name>Imports</name>
 		<description></description>
@@ -1832,7 +1832,7 @@
 	</category>
 	<category>
 		<id>Class Design</id>
-		<findingType>UnnecessaryParentheses</findingType>
+		<findingType>UnnecessaryParentheses2</findingType>
 		<findingType>VisibilityModifier</findingType>
 		<findingType>FinalClass</findingType>
 		<findingType>InterfaceIsType</findingType>
@@ -1854,8 +1854,8 @@
 		<findingType>BooleanExpressionComplexity</findingType>
 		<findingType>ClassDataAbstractionCoupling</findingType>
 		<findingType>ClassFanOutComplexity</findingType>
-		<findingType>CyclomaticComplexity</findingType>
-		<findingType>NPathComplexity</findingType>
+		<findingType>CyclomaticComplexity2</findingType>
+		<findingType>NPathComplexity2</findingType>
 		<name>Metrics</name>
 		<description></description>
 	</category>
