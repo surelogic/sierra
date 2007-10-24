@@ -74,6 +74,7 @@ public class DeploySchemaTask extends Task {
 			} else {
 				conn = DriverManager.getConnection(url);
 			}
+			conn.setAutoCommit(false);
 			log("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
 //			conn.createStatement().execute(
