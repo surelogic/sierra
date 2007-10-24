@@ -300,7 +300,7 @@
 		<name>Redundant Import</name>
 	</findingType>
 	<findingType>
-		<id>UnusedImports</id>
+		<id>UnusedImports2</id>
 		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck">
 		</artifact>
@@ -1181,7 +1181,7 @@
 		<name>Require This</name>
 	</findingType>
 	<findingType>
-		<id>UnnecessaryParentheses</id>
+		<id>UnnecessaryParentheses2</id>
 		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.coding.UnnecessaryParenthesesCheck">
 		</artifact>
@@ -1351,7 +1351,7 @@
 		<name>Class Fan Out Complexity</name>
 	</findingType>
 	<findingType>
-		<id>CyclomaticComplexity</id>
+		<id>CyclomaticComplexity2</id>
 		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck">
 		</artifact>
@@ -1364,7 +1364,7 @@
 		<name>Cyclomatic Complexity</name>
 	</findingType>
 	<findingType>
-		<id>NPathComplexity</id>
+		<id>NPathComplexity2</id>
 		<artifact tool="Checkstyle"
 			mnemonic="com.puppycrawl.tools.checkstyle.checks.metrics.NPathComplexityCheck">
 		</artifact>
