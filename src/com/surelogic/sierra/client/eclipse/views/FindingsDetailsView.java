@@ -262,8 +262,7 @@ public class FindingsDetailsView extends ViewPart {
 		 * Bottom pane used to show existing audits.
 		 */
 		final ScrollingLabelComposite scrollingLabelComposite = new ScrollingLabelComposite(
-				rhs, SWT.NONE);
-		scrollingLabelComposite.setLayout(new GridLayout(1, false));
+				rhs);
 		rhs.setWeights(new int[] { 20, 80 });
 
 		auditTab.setControl(auditPane);
@@ -273,21 +272,16 @@ public class FindingsDetailsView extends ViewPart {
 		 */
 		final TabItem artifactTab = new TabItem(folder, SWT.NONE);
 
-		final Composite artifactsComposite = new Composite(folder, SWT.NONE);
-		layout = new GridLayout(1, false);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		artifactsComposite.setLayoutData(layoutData);
-		artifactsComposite.setLayout(layout);
+		final Composite artifactsPane = new Composite(folder, SWT.NONE);
+		layout = new GridLayout();
+		artifactsPane.setLayout(layout);
 
-		// RIGHT BLOCK
-
-		final Tree artifactsTree = new Tree(artifactsComposite, SWT.V_SCROLL
-				| SWT.BORDER);
+		final Tree artifactsTree = new Tree(artifactsPane, SWT.V_SCROLL);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		artifactsTree.setLayoutData(layoutData);
 		artifactsTree.setLinesVisible(true);
 
-		artifactTab.setControl(artifactsComposite);
+		artifactTab.setControl(artifactsPane);
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -375,6 +376,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 		f_scrollingLabelComposite.removeAll();
 
+		final SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"dd MMM yyyy 'at' HH:mm:ss");
 		if (commentDetails != null) {
 			for (int i = commentDetails.size() - 1; i >= 0; i--) {
 				final AuditDetail cd = commentDetails.get(i);
@@ -382,12 +385,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				if (userName == null) {
 					userName = "Local";
 				}
-				final String holder = userName + " (" + cd.getTime().toString()
-						+ ") : " + cd.getText();
-				f_scrollingLabelComposite.addLabel(holder);
+				f_scrollingLabelComposite.addEntry(userName + " on "
+						+ dateFormat.format(cd.getTime()), cd.getText());
 			}
 		}
-		f_scrollingLabelComposite.reflow(true);
 
 		f_artifactsTree.removeAll();
 		for (ArtifactDetail ad : f_finding.getArtifacts()) {
