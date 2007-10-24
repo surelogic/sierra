@@ -23,7 +23,7 @@ public class SynchDetail {
 			synchSt.setString(1, project);
 			synchSt.setTimestamp(2, new Timestamp(time.getTime()));
 			ResultSet set = synchSt.executeQuery();
-			
+
 		} finally {
 			synchSt.close();
 		}
@@ -32,4 +32,26 @@ public class SynchDetail {
 		date = null;
 		this.project = null;
 	}
+
+	public static SynchDetail getDetail(Connection conn, String project,
+			Date time) {
+		return null;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public List<AuditDetail> getAudits() {
+		return audits;
+	}
+
+	public List<AuditDetail> getCommits() {
+		return commits;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
 }
