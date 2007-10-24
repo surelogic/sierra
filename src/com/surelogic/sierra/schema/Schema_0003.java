@@ -14,7 +14,7 @@ public class Schema_0003 implements SchemaAction {
 	public void run(final Connection conn) throws SQLException {
 		if (!JDBCUtils.isServer(conn)) {
 			PreparedStatement updateCategory = conn
-					.prepareStatement("UPDATE FINDING_OVERVIEW SET CATEGORY = ? WHERE FINDING_TYPE = ?");
+					.prepareStatement("UPDATE FINDINGS_OVERVIEW SET CATEGORY = ? WHERE FINDING_TYPE = ?");
 			Statement st = conn.createStatement();
 			try {
 				ResultSet set = st

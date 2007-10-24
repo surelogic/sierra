@@ -12,15 +12,14 @@ import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
- * Deploy the SPS schema to a database. Currently, the target database must be a
- * derby database. The database does not need to exist before-hand. The
- * following properties affect this task:
+ * Deploy the SPS schema to a database. The following properties affect this
+ * task:
  * 
  * <dl>
  * <li>sierra.db.type - Accepts <code>oracle</code> or <code>derby</code>.
  * The default is derby.
  * <li>sierra.db.url - The full jdbc url connection string (i.e.
- * "jdbc:oracle:thin:@localhost:1527:sierra" or
+ * "jdbc:oracle:thin:@localhost:1521:xe" or
  * "jdbc:derby://localhost:1527/SIERRA;user=SIERRA")
  * <li>sierra.db.user - The database user</li>
  * <li>sierra.db.pass - The database password</li>
@@ -77,8 +76,8 @@ public class DeploySchemaTask extends Task {
 			conn.setAutoCommit(false);
 			log("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
-//			conn.createStatement().execute(
-//					"INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
+			// conn.createStatement().execute(
+			// "INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
 			conn.commit();
 
 			// ServerFindingManager man =
