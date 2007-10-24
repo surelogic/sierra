@@ -67,19 +67,6 @@ public class Schema_0002 implements SchemaAction {
 		} finally {
 			set.close();
 		}
-		try {
-			st.executeQuery("SELECT * FROM SERVER");
-		} catch (SQLException e) {
-			set = st.executeQuery("SELECT PROJECT,SCAN_UUID FROM LATEST_SCANS");
-			try {
-				ClientFindingManager man = ClientFindingManager.getInstance(c);
-				while (set.next()) {
-					man.generateOverview(set.getString(1), set.getString(2));
-				}
-			} finally {
-				set.close();
-			}
-		}
 		c.commit();
 	}
 
