@@ -7,7 +7,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.logging.SLStatus;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -44,15 +43,6 @@ public class Activator extends AbstractUIPlugin {
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
 		SLStatus.touch();
-
-		final Runtime rt = Runtime.getRuntime();
-		SLLogger.getLogger().info(
-				"Sierra loaded : Java runtime: maxMemory="
-						+ (rt.maxMemory() / 1024 / 1024) + " MB; totalMemory="
-						+ (rt.totalMemory() / 1024 / 1024) + " MB; freeMemory="
-						+ (rt.freeMemory() / 1024 / 1024)
-						+ " MB; availableProcessors="
-						+ rt.availableProcessors());
 
 		// TODO find a better place to define this system property
 		System.setProperty("derby.storage.pageCacheSize", "2500");
