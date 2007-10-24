@@ -42,7 +42,7 @@ public class FindingTypeManager {
 	private final FindingTypeRecordFactory factory;
 
 	private final Connection conn;
-	
+
 	private FindingTypeManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.checkForArtifactTypeRelation = conn
@@ -317,6 +317,23 @@ public class FindingTypeManager {
 			String message = builder.toString();
 			log.severe(message);
 			throw new IllegalStateException(message);
+		}
+		Statement checkSt = conn.createStatement();
+		try {
+			ResultSet checkSet = checkSt
+					.executeQuery("SELECT FT.UUID, COUNT (CFR.FINDING_TYPE_ID) FROM CATEGORY_FINDING_TYPE_RELTN CFR, FINDING_TYPE FT WHERE FT.ID = CFR.FINDING_TYPE_ID GROUP BY FT.UUID HAVING COUNT (CFR.FINDING_TYPE_ID) > 1");
+			ArrayList<String> badTypes = new ArrayList<String>();
+			while (checkSet.next()) {
+				badTypes.add(checkSet.getString(1));
+			}
+			if (!badTypes.isEmpty()) {
+				String message = "The following finding types are in multiple categories: "
+						+ badTypes + ".";
+				log.severe(message);
+				throw new IllegalStateException(message);
+			}
+		} finally {
+			checkSt.close();
 		}
 	}
 
