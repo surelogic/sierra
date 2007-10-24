@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -201,13 +203,21 @@ public class FindingTypeManager {
 		} finally {
 			st.close();
 		}
+		Set<String> idSet = new HashSet<String>();
+		Set<String> duplicates = new HashSet<String>();
 		for (FindingTypes type : types) {
 			FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
 			// artifact
 			// types.
 			for (FindingType ft : type.getFindingType()) {
-				fRec.setUid(ft.getId().trim());
+				String uid = ft.getId().trim();
+				if (idSet.contains(uid)) {
+					duplicates.add(uid);
+				} else {
+					idSet.add(uid);
+				}
+				fRec.setUid(uid);
 				fRec.setName(ft.getName().trim());
 				fRec.setInfo(ft.getInfo());
 				fRec.setShortMessage(ft.getShortMessage());
@@ -334,6 +344,13 @@ public class FindingTypeManager {
 			}
 		} finally {
 			checkSt.close();
+		}
+		// Throw exception if any finding type is defined more than once
+		if (!duplicates.isEmpty()) {
+			String message = "These finding types with the following ids were defined more than once: "
+					+ duplicates + ".";
+			log.severe(message);
+			throw new IllegalStateException(message);
 		}
 	}
 
