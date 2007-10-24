@@ -1,12 +1,40 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
+
+import com.surelogic.sierra.tool.message.AuditEvent;
 
 public class AuditDetail {
 
 	private final Date time;
 	private final String text;
 	private final String user;
+
+	AuditDetail(ResultSet set) throws SQLException {
+		int idx = 1;
+		user = set.getString(idx++);
+		switch (AuditEvent.valueOf(set.getString(idx++))) {
+		case COMMENT:
+			text = set.getString(idx++);
+			break;
+		case IMPORTANCE:
+			text = "Importance changed to " + set.getString(idx++) + ".";
+			break;
+		case READ:
+			set.getString(idx++);
+			text = "Finding examined.";
+			break;
+		case SUMMARY:
+			text = "Summary changed to " + set.getString(idx++);
+			break;
+		default:
+			text = "Unknown type of audit.";
+			break;
+		}
+		time = set.getTimestamp(idx++);
+	}
 
 	AuditDetail(String user, String text, Date time) {
 		this.time = time;

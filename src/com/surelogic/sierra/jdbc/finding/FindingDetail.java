@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetail {
@@ -50,29 +49,7 @@ public class FindingDetail {
 				audits = new ArrayList<AuditDetail>();
 				while (set.next()) {
 					idx = 1;
-					String user = set.getString(idx++);
-					String text;
-					switch (AuditEvent.valueOf(set.getString(idx++))) {
-					case COMMENT:
-						text = set.getString(idx++);
-						break;
-					case IMPORTANCE:
-						text = "Importance changed to " + set.getString(idx++)
-								+ ".";
-						break;
-					case READ:
-						set.getString(idx++);
-						text = "Finding examined.";
-						break;
-					case SUMMARY:
-						text = "Summary changed to " + set.getString(idx++);
-						break;
-					default:
-						text = "Unknown type of audit.";
-						break;
-					}
-					audits.add(new AuditDetail(user, text, set
-							.getTimestamp(idx++)));
+					audits.add(new AuditDetail(set));
 				}
 				artifacts = new ArrayList<ArtifactDetail>();
 				set = st
