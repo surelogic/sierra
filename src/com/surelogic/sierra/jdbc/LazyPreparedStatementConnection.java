@@ -1,12 +1,10 @@
 package com.surelogic.sierra.jdbc;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
 public class LazyPreparedStatementConnection implements InvocationHandler {
@@ -48,25 +46,9 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 			};
 		}
 
-		void check() throws SQLException {
+		void check() throws Exception {
 			if (st == null) {
-				try {
-					st = init.call();
-				} catch (Exception e) {
-					if (e instanceof InvocationTargetException) {
-						InvocationTargetException ite = (InvocationTargetException) e;
-						if (ite.getTargetException() instanceof SQLException) {
-							throw (SQLException) ite.getTargetException();
-						} else if (ite.getTargetException() instanceof RuntimeException) {
-							throw (RuntimeException) ite.getTargetException();
-						} else {
-							throw new IllegalStateException(ite.getTargetException());
-						}
-					} else {
-						// Programming error
-						throw new IllegalStateException(e);
-					}
-				}
+				st = init.call();
 			}
 		}
 

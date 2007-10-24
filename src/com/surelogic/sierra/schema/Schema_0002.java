@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.surelogic.common.jdbc.SchemaAction;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 
 public class Schema_0002 implements SchemaAction {
 

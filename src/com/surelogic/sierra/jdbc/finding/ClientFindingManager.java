@@ -115,7 +115,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-						+ "    INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.FINDING_TYPE_ID =- FT.ID"
+						+ "    INNER JOIN CATEGORY_FINDING_TYPE_RELTN CFR ON CFR.FINDING_TYPE_ID = FT.ID"
 						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = CFR.CATEGORY_ID");
 		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
 		populateSingleTempId = conn.prepareStatement("INSERT INTO "
