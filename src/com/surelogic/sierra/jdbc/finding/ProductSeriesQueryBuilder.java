@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,7 +20,7 @@ public class ProductSeriesQueryBuilder {
 			.getLoggerFor(ProductSeriesQueryBuilder.class);
 
 	private final Connection conn;
-	
+
 	private final StringBuilder builder = new StringBuilder();
 
 	private List<Long> scanIds;
@@ -29,7 +28,6 @@ public class ProductSeriesQueryBuilder {
 	private ProductSeriesQueryBuilder(Connection conn) {
 		this.conn = conn;
 	}
-
 
 	public String queryRelevantOrIrrelevantCounts() {
 		builder.setLength(0);
@@ -93,14 +91,11 @@ public class ProductSeriesQueryBuilder {
 
 	}
 
-	private static void inClause(StringBuilder builder, List<?> values) {
-		builder.append("(");
-		for (Iterator<?> i = values.iterator(); i.hasNext();) {
-			builder.append(i.next());
-			if (i.hasNext()) {
-				builder.append(", ");
-			}
-		}
-		builder.append(")");
-	}
+	/** Unused */
+	/*
+	 * private static void inClause(StringBuilder builder, List<?> values) {
+	 * builder.append("("); for (Iterator<?> i = values.iterator();
+	 * i.hasNext();) { builder.append(i.next()); if (i.hasNext()) {
+	 * builder.append(", "); } } builder.append(")"); }
+	 */
 }

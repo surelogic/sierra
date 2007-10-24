@@ -11,7 +11,6 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
-import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.CommitAuditTrailResponse;
