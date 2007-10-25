@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.sql.Connection;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -118,6 +119,32 @@ public final class FindingMutationUtility {
 				return Status.OK_STATUS;
 			}
 		};
+		job.schedule();
+	}
+
+	public static void asyncChangeImportance(final Set<Long> finding_ids,
+			final Importance to) {
+		final Job job = new DatabaseJob("Changing the importance of "
+				+ finding_ids.size() + " finding(s) to " + to) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating finding data", finding_ids.size());
+				try {
+					for (long finding_id : finding_ids) {
+						changeImportance(finding_id, to);
+						monitor.worked(1);
+					}
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Failed to change the importance of "
+									+ finding_ids.size() + " finding(s) to "
+									+ to, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
 		job.schedule();
 	}
 
