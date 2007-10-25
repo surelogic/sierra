@@ -313,7 +313,7 @@ public class FindingManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	protected FindingRecord getFinding(Long findingId) throws SQLException {
+	protected FindingRecord getFinding(long findingId) throws SQLException {
 		FindingRecord record = factory.newFinding();
 		selectFindingById.setLong(1, findingId);
 		ResultSet set = selectFindingById.executeQuery();

@@ -8,10 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -177,7 +180,7 @@ public final class ClientFindingManager extends FindingManager {
 	public void comment(long findingId, String comment) throws SQLException {
 		checkFinding(findingId);
 		comment(null, findingId, comment, new Date(), null);
-		regenerateFindingOverview(findingId);
+		regenerateFindingsOverview(findingId);
 	}
 
 	/**
@@ -192,29 +195,20 @@ public final class ClientFindingManager extends FindingManager {
 			throws SQLException {
 		checkFinding(findingId);
 		setImportance(null, findingId, importance, new Date(), null);
-		regenerateFindingOverview(findingId);
+		regenerateFindingsOverview(findingId);
 	}
 
 	public void setImportance(Set<Long> findingIds, Importance importance,
-			SLProgressMonitor monitor) {
+			SLProgressMonitor monitor) throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
-		for (long finding_id : findingIds) {
+		Date now = new Date();
+		for (long findingId : findingIds) {
+			checkFinding(findingId);
+			setImportance(null, findingId, importance, now, null);
 			monitor.worked(1);
 		}
+		regenerateFindingsOverview(findingIds);
 		monitor.done();
-	}
-
-	/**
-	 * Indicate that the user has looked over this finding. This method is for
-	 * use by a client.
-	 * 
-	 * @param findingId
-	 * @throws SQLException
-	 */
-	public void markAsRead(Long findingId) throws SQLException {
-		checkFinding(findingId);
-		markAsRead(null, findingId, new Date(), null);
-		regenerateFindingOverview(findingId);
 	}
 
 	/**
@@ -224,48 +218,11 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param summary
 	 * @throws SQLException
 	 */
-	public void changeSummary(Long findingId, String summary)
+	public void changeSummary(long findingId, String summary)
 			throws SQLException {
 		checkFinding(findingId);
 		changeSummary(null, findingId, summary, new Date(), null);
-		regenerateFindingOverview(findingId);
-	}
-
-	/**
-	 * Regenerate findings overview information for the selected findings. This
-	 * method cannot add new findings to the overview, merely regenerate
-	 * existing ones.
-	 * 
-	 * @param findingIds
-	 */
-	public void regenerateOverview(String projectName, List<Long> findingIds)
-			throws SQLException {
-		for (Long id : findingIds) {
-			deleteFindingFromOverview.setLong(1, id);
-			deleteFindingFromOverview.executeUpdate();
-			checkIfInScans.setLong(1, id);
-			ResultSet set = checkIfInScans.executeQuery();
-			try {
-				if (set.next()) {
-					populateSingleTempId.setLong(1, id);
-					populateSingleTempId.execute();
-				}
-			} finally {
-				set.close();
-			}
-		}
-		selectLatestScanByProject.setString(1, projectName);
-		ResultSet set = selectLatestScanByProject.executeQuery();
-		try {
-			if (set.next()) {
-				populateFindingOverview.setString(1, projectName);
-				populateFindingOverview.setLong(2, set.getLong(1));
-				populateFindingOverview.execute();
-				deleteTempIds.execute();
-			}
-		} finally {
-			set.close();
-		}
+		regenerateFindingsOverview(findingId);
 	}
 
 	/**
@@ -330,18 +287,79 @@ public final class ClientFindingManager extends FindingManager {
 	}
 
 	/**
+	 * Regenerate findings overview information for the selected findings. This
+	 * method cannot add new findings to the overview, merely regenerate
+	 * existing ones.
+	 * 
+	 * @param findingIds
+	 */
+	private void regenerateFindingsOverview(String projectName, List<Long> findingIds)
+			throws SQLException {
+		for (Long id : findingIds) {
+			deleteFindingFromOverview.setLong(1, id);
+			deleteFindingFromOverview.executeUpdate();
+			checkIfInScans.setLong(1, id);
+			ResultSet set = checkIfInScans.executeQuery();
+			try {
+				if (set.next()) {
+					populateSingleTempId.setLong(1, id);
+					populateSingleTempId.execute();
+				}
+			} finally {
+				set.close();
+			}
+		}
+		selectLatestScanByProject.setString(1, projectName);
+		ResultSet set = selectLatestScanByProject.executeQuery();
+		try {
+			if (set.next()) {
+				populateFindingOverview.setString(1, projectName);
+				populateFindingOverview.setLong(2, set.getLong(1));
+				populateFindingOverview.execute();
+				deleteTempIds.execute();
+			}
+		} finally {
+			set.close();
+		}
+	}
+
+	private void regenerateFindingsOverview(Set<Long> findingIds)
+			throws SQLException {
+		Map<String, List<Long>> projectMap = new HashMap<String, List<Long>>();
+		for (Long findingId : findingIds) {
+			selectFindingProject.setLong(1, findingId);
+			ResultSet set = selectFindingProject.executeQuery();
+			try {
+				set.next();
+				String project = set.getString(1);
+				List<Long> findingList = projectMap.get(project);
+				if (findingList == null) {
+					findingList = new ArrayList<Long>();
+					projectMap.put(project, findingList);
+				}
+				findingList.add(findingId);
+			} finally {
+				set.close();
+			}
+		}
+		for (Entry<String, List<Long>> entry : projectMap.entrySet()) {
+			regenerateFindingsOverview(entry.getKey(), entry.getValue());
+		}
+	}
+
+	/**
 	 * For use in the client, this method regenerates the overview for a single
 	 * finding, but only if the finding is already in the overview.
 	 * 
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	private void regenerateFindingOverview(Long findingId) throws SQLException {
+	private void regenerateFindingsOverview(long findingId) throws SQLException {
 		selectFindingProject.setLong(1, findingId);
 		ResultSet set = selectFindingProject.executeQuery();
 		try {
 			if (set.next()) {
-				regenerateOverview(set.getString(1), Collections
+				regenerateFindingsOverview(set.getString(1), Collections
 						.singletonList(findingId));
 			}
 		} finally {
@@ -435,7 +453,7 @@ public final class ClientFindingManager extends FindingManager {
 							}
 						}
 					}
-					regenerateFindingOverview(finding.getId());
+					regenerateFindingsOverview(finding.getId());
 				}
 			}
 		} else {
@@ -558,7 +576,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	protected void checkFinding(Long findingId) throws SQLException {
+	protected void checkFinding(long findingId) throws SQLException {
 		FindingRecord f = getFinding(findingId);
 		if (f == null)
 			throw new IllegalArgumentException(findingId

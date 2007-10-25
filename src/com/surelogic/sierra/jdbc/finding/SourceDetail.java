@@ -13,8 +13,7 @@ public class SourceDetail {
 	private final IdentifierType identifierType;
 	private final String identifier;
 
-	SourceDetail(ResultSet set) throws SQLException {
-		int idx = 1;
+	SourceDetail(ResultSet set, int idx) throws SQLException {
 		this.packageName = set.getString(idx++);
 		this.className = set.getString(idx++);
 		this.lineOfCode = set.getInt(idx++);

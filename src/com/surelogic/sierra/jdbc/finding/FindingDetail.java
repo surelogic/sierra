@@ -26,13 +26,7 @@ public class FindingDetail {
 		Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
-							+ " FROM FINDINGS_OVERVIEW WHERE FINDING_ID = "
-							+ findingId);
-			set.next();
-			overview = new FindingOverview(set);
-			set = st
-					.executeQuery("SELECT FT.INFO"
+					.executeQuery("SELECT FT.INFO,FO.FINDING_ID,FO.AUDITED,FO.LAST_CHANGED,FO.IMPORTANCE,FO.STATUS,FO.LINE_OF_CODE,FO.ARTIFACT_COUNT,FO.AUDIT_COUNT,FO.PROJECT,FO.PACKAGE,FO.CLASS,FO.CU,FO.FINDING_TYPE,FO.CATEGORY,FO.TOOL,FO.SUMMARY"
 							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
 							+ "   WHERE FO.FINDING_ID = "
 							+ findingId
@@ -40,6 +34,7 @@ public class FindingDetail {
 			if (set.next()) {
 				int idx = 1;
 				findingTypeDetail = set.getString(idx++);
+				overview = new FindingOverview(set, idx);
 				set = st
 						.executeQuery("SELECT SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
 								+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
@@ -60,32 +55,14 @@ public class FindingDetail {
 					Statement artSt = conn.createStatement();
 					try {
 						ResultSet artSet = artSt
-								.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-										+ "   FROM ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
+								.executeQuery("SELECT T.NAME, A.MESSAGE, CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
+										+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 										+ "   WHERE A.ID = "
 										+ artifactId
+										+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID"
 										+ " AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
 						artSet.next();
-						SourceDetail primary = new SourceDetail(artSet);
-						artSet = artSt
-								.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-										+ "   FROM ARTIFACT_SOURCE_LOCATION_RELTN A, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-										+ "   WHERE A.ARTIFACT_ID = "
-										+ artifactId
-										+ " AND SL.ID = A.SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-						List<SourceDetail> additionalSources = new LinkedList<SourceDetail>();
-						while (artSet.next()) {
-							additionalSources.add(new SourceDetail(artSet));
-						}
-						artSet = artSt
-								.executeQuery("SELECT T.NAME, A.MESSAGE"
-										+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T"
-										+ "   WHERE A.ID = "
-										+ artifactId
-										+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID");
-						artSet.next();
-						artifacts.add(new ArtifactDetail(artSet, primary,
-								additionalSources));
+						artifacts.add(new ArtifactDetail(artSet));
 					} finally {
 						artSt.close();
 					}

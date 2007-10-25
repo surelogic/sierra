@@ -63,6 +63,26 @@ public class FindingOverview {
 		this.summary = set.getString(idx++);
 	}
 
+	FindingOverview(ResultSet set, int idx) throws SQLException {
+		this.findingId = set.getLong(idx++);
+		this.examined = "Yes".equals(set.getString(idx++));
+		this.lastChanged = set.getTimestamp(idx++);
+		this.importance = Importance
+				.valueOf(set.getString(idx++).toUpperCase());
+		this.status = FindingStatus.valueOf(set.getString(idx++).toUpperCase());
+		this.lineOfCode = set.getInt(idx++);
+		this.numberOfArtifacts = set.getInt(idx++);
+		this.numberOfComments = set.getInt(idx++);
+		this.project = set.getString(idx++);
+		this.packageName = set.getString(idx++);
+		this.className = set.getString(idx++);
+		this.compilation = set.getString(idx++);
+		this.findingType = set.getString(idx++);
+		this.category = set.getString(idx++);
+		this.tool = set.getString(idx++);
+		this.summary = set.getString(idx++);
+	}
+	
 	public long getFindingId() {
 		return findingId;
 	}
