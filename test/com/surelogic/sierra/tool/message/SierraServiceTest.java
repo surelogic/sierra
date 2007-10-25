@@ -158,7 +158,8 @@ public class SierraServiceTest {
 			Audit audit = new Audit(new Date(), AuditEvent.COMMENT,
 					"Some comment");
 			audits.add(audit);
-			service.commitAuditTrails(auditTrails);
+			CommitAuditTrailResponse commitResponse = service.commitAuditTrails(auditTrails);
+			assertNotNull(commitResponse.getRevision());
 			GetAuditTrailRequest request = new GetAuditTrailRequest();
 			request.setServer(server);
 			request.setProject("test-project");
