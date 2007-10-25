@@ -26,9 +26,9 @@ import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
-import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -297,7 +297,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						final FindingData data = (FindingData) item.getData();
 						final Importance to = Importance.valueOf(item.getText()
 								.toUpperCase());
-						FindingDetailsMediator.asyncChangeImportance(
+						FindingMutationUtility.asyncChangeImportance(
 								data.f_findingId, data.f_importance, to);
 					}
 				}

@@ -55,11 +55,11 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.tool.message.Importance;
@@ -232,8 +232,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 					final Importance desired = (Importance) event.widget
 							.getData();
 					if (desired != current) {
-						asyncChangeImportance(f_finding.getFindingId(),
-								current, desired);
+						FindingMutationUtility.asyncChangeImportance(f_finding
+								.getFindingId(), current, desired);
 					}
 				}
 			}
@@ -253,14 +253,16 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				final String commentText = f_commentText.getText();
 				if (commentText == null || commentText.trim().equals(""))
 					return;
-				asyncComment(commentText);
+				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
+						commentText);
 			}
 		});
 
 		f_quickAudit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				asyncComment(STAMP_COMMENT);
+				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
+						STAMP_COMMENT);
 			}
 		});
 
@@ -284,7 +286,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final Listener tel = new TextEditedListener(
 				new TextEditedListener.TextEditedAction() {
 					public void textEditedAction(final String newText) {
-						asyncChangeSummary(newText);
+						if (!f_finding.getSummary().equals(newText)) {
+							FindingMutationUtility.asyncChangeSummary(f_finding
+									.getFindingId(), newText);
+						}
 					}
 				});
 		f_summaryText.addListener(SWT.Modify, tel);
@@ -355,7 +360,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		 * We have a finding so show the details about it.
 		 */
 		f_summaryIcon.setImage(Utility.getImageFor(f_finding.getImportance()));
-		f_summaryIcon.setToolTipText(f_finding.getImportance().toString());
+		f_summaryIcon.setToolTipText("The importance of this finding is "
+				+ f_finding.getImportance().toStringSentenceCase());
 		f_summaryText.setText(f_finding.getSummary());
 
 		f_findingSynopsis.setText(getFindingSynopsis());
@@ -538,127 +544,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		else {
 			f_artifactTab.setText(artifactCount + " Artifact"
 					+ (artifactCount > 1 ? "s" : ""));
-		}
-	}
-
-	private void asyncChangeSummary(final String summary) {
-		final Job job = new DatabaseJob("Changing the summary of finding id "
-				+ f_finding.getFindingId() + " to \"" + summary + "\"") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					changeSummary(summary);
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to change the summary of finding id "
-									+ f_finding.getFindingId() + " to \""
-									+ summary + "\"", e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	private void changeSummary(String summary) throws Exception {
-		if (f_finding == null)
-			return;
-		summary = summary.trim();
-		if (summary == null || summary.equals(""))
-			return;
-		final String oldSummary = f_finding.getSummary().trim();
-		if (oldSummary.equals(summary))
-			return;
-		Connection c = Data.getConnection();
-		try {
-			c.setAutoCommit(false);
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-
-			manager.changeSummary(f_finding.getFindingId(), summary);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} finally {
-			c.close();
-		}
-	}
-
-	private void asyncComment(final String comment) {
-		final Job job = new DatabaseJob("Adding the comment \"" + comment
-				+ "\" to finding id " + f_finding.getFindingId()) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					comment(comment);
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to add the comment \"" + comment
-									+ "\" to finding id "
-									+ f_finding.getFindingId(), e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	private void comment(final String comment) throws Exception {
-		if (f_finding == null)
-			return;
-		if (comment == null || comment.trim().equals(""))
-			return;
-		Connection c = Data.getConnection();
-		try {
-			c.setAutoCommit(false);
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.comment(f_finding.getFindingId(), comment);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} finally {
-			c.close();
-		}
-	}
-
-	public static void asyncChangeImportance(final long finding_id,
-			final Importance from, final Importance to) {
-		final Job job = new DatabaseJob(
-				"Changing the importance of finding id " + finding_id
-						+ " from " + from + " to " + to) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					changeImportance(finding_id, to);
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to change the importance of finding id "
-									+ finding_id + " from " + from + " to "
-									+ to, e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	private static void changeImportance(final long finding_id,
-			final Importance to) throws Exception {
-		Connection c = Data.getConnection();
-		try {
-			c.setAutoCommit(false);
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.setImportance(finding_id, to);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} finally {
-			c.close();
 		}
 	}
 
