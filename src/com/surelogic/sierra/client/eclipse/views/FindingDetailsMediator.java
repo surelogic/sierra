@@ -41,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import com.surelogic.adhoc.DatabaseJob;
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -450,12 +451,18 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		final String importance = f_finding.getImportance().toString()
 				.toLowerCase();
 
-		final int auditCount = f_finding.getNumberOfComments();
+		final int auditCount = f_finding.getNumberOfAudits();
 		final String tool = f_finding.getTool();
 		final FindingStatus status = f_finding.getStatus();
 
 		StringBuilder b = new StringBuilder();
-		b.append("This finding (id=" + f_finding.getFindingId() + ") is of ");
+		b.append("This '");
+		b.append(f_finding.getCategory());
+		b.append("' finding ");
+		if (XUtil.useExperimental()) {
+			b.append("(id=" + f_finding.getFindingId() + ") ");
+		}
+		b.append("is of ");
 		b.append("<a href=\"audit\">");
 		b.append(importance);
 		b.append("</a>");
@@ -517,7 +524,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	 * Must be invoked from the SWT thread.
 	 */
 	private void updateTabTitles() {
-		final int auditCount = f_finding.getNumberOfComments();
+		final int auditCount = f_finding.getNumberOfAudits();
 		final int artifactCount = f_finding.getNumberOfArtifacts();
 		if (auditCount == 0)
 			f_auditTab.setText("No Audits");
