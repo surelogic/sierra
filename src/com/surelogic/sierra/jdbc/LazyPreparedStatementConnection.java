@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -28,7 +29,16 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 					.getClassLoader(), new Class[] { PreparedStatement.class },
 					new LazyPreparedStatement(method, args));
 		}
-		return method.invoke(conn, args);
+		try {
+			return method.invoke(conn, args);
+		} catch (InvocationTargetException e) {
+			Throwable target = e.getTargetException();
+			if (target instanceof Exception) {
+				throw (Exception) target;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	private class LazyPreparedStatement implements InvocationHandler {
@@ -40,7 +50,16 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 			init = new Callable<PreparedStatement>() {
 
 				public PreparedStatement call() throws Exception {
-					return (PreparedStatement) method.invoke(conn, args);
+					try {
+						return (PreparedStatement) method.invoke(conn, args);
+					} catch (InvocationTargetException e) {
+						Throwable target = e.getTargetException();
+						if (target instanceof Exception) {
+							throw (Exception) target;
+						} else {
+							throw e;
+						}
+					}
 				}
 
 			};
@@ -55,7 +74,16 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
 			check();
-			return method.invoke(st, args);
+			try {
+				return method.invoke(st, args);
+			} catch (InvocationTargetException e) {
+				Throwable target = e.getTargetException();
+				if (target instanceof Exception) {
+					throw (Exception) target;
+				} else {
+					throw e;
+				}
+			}
 		}
 
 	}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
@@ -42,7 +44,6 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateFindingOverview;
-	private final PreparedStatement checkIfInScans;
 	private final PreparedStatement selectFindingProject;
 	private final PreparedStatement selectLatestScanByProject;
 	private final PreparedStatement updateFindingUid;
@@ -121,8 +122,10 @@ public final class ClientFindingManager extends FindingManager {
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
 						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
 		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
-		populateSingleTempId = conn.prepareStatement("INSERT INTO "
-				+ tempTableName + " (ID) VALUES (?)");
+		populateSingleTempId = conn
+				.prepareStatement("INSERT INTO "
+						+ tempTableName
+						+ " (ID) SELECT DISTINCT FINDING_ID FROM SCAN_OVERVIEW WHERE FINDING_ID = ?");
 		populateTempIds = conn
 				.prepareStatement("INSERT INTO "
 						+ tempTableName
@@ -165,8 +168,6 @@ public final class ClientFindingManager extends FindingManager {
 						+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " AND F.UUID IS NOT NULL ORDER BY A.FINDING_ID");
-		checkIfInScans = conn
-				.prepareStatement("SELECT SCAN_ID FROM SCAN_OVERVIEW WHERE FINDING_ID = ?");
 	}
 
 	/**
@@ -178,9 +179,9 @@ public final class ClientFindingManager extends FindingManager {
 	 * @throws SQLException
 	 */
 	public void comment(long findingId, String comment) throws SQLException {
-		checkFinding(findingId);
+		String project = checkFindingProject(findingId);
 		comment(null, findingId, comment, new Date(), null);
-		regenerateFindingsOverview(findingId);
+		regenerateFindingsOverview(project, findingId);
 	}
 
 	/**
@@ -193,21 +194,34 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void setImportance(long findingId, Importance importance)
 			throws SQLException {
-		checkFinding(findingId);
+		String project = checkFindingProject(findingId);
 		setImportance(null, findingId, importance, new Date(), null);
-		regenerateFindingsOverview(findingId);
+		regenerateFindingsOverview(project, findingId);
 	}
 
 	public void setImportance(Set<Long> findingIds, Importance importance,
 			SLProgressMonitor monitor) throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
 		Date now = new Date();
-		for (long findingId : findingIds) {
-			checkFinding(findingId);
+		Map<String, List<Long>> projectMap = new HashMap<String, List<Long>>();
+		int count = 0;
+		for (Long findingId : findingIds) {
+			String project = checkFindingProject(findingId);
+			List<Long> findingList = projectMap.get(project);
+			if (findingList == null) {
+				findingList = new ArrayList<Long>();
+				projectMap.put(project, findingList);
+			}
+			findingList.add(findingId);
 			setImportance(null, findingId, importance, now, null);
-			monitor.worked(1);
+			if(count++ % 3 == 0) {
+				monitor.worked(1);
+			}
 		}
-		regenerateFindingsOverview(findingIds);
+		for (Entry<String, List<Long>> entry : projectMap.entrySet()) {
+			regenerateFindingsOverview(entry.getKey(), entry.getValue(),
+					monitor);
+		}
 		monitor.done();
 	}
 
@@ -220,9 +234,9 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void changeSummary(long findingId, String summary)
 			throws SQLException {
-		checkFinding(findingId);
+		String project = checkFindingProject(findingId);
 		changeSummary(null, findingId, summary, new Date(), null);
-		regenerateFindingsOverview(findingId);
+		regenerateFindingsOverview(project, findingId);
 	}
 
 	/**
@@ -293,20 +307,17 @@ public final class ClientFindingManager extends FindingManager {
 	 * 
 	 * @param findingIds
 	 */
-	private void regenerateFindingsOverview(String projectName, List<Long> findingIds)
+	private void regenerateFindingsOverview(String projectName,
+			List<Long> findingIds, SLProgressMonitor monitor)
 			throws SQLException {
+		int count = 0;
 		for (Long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
-			checkIfInScans.setLong(1, id);
-			ResultSet set = checkIfInScans.executeQuery();
-			try {
-				if (set.next()) {
-					populateSingleTempId.setLong(1, id);
-					populateSingleTempId.execute();
-				}
-			} finally {
-				set.close();
+			populateSingleTempId.setLong(1, id);
+			populateSingleTempId.execute();
+			if(count++ % 3 == 0) {
+				monitor.worked(1);
 			}
 		}
 		selectLatestScanByProject.setString(1, projectName);
@@ -323,30 +334,6 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	private void regenerateFindingsOverview(Set<Long> findingIds)
-			throws SQLException {
-		Map<String, List<Long>> projectMap = new HashMap<String, List<Long>>();
-		for (Long findingId : findingIds) {
-			selectFindingProject.setLong(1, findingId);
-			ResultSet set = selectFindingProject.executeQuery();
-			try {
-				set.next();
-				String project = set.getString(1);
-				List<Long> findingList = projectMap.get(project);
-				if (findingList == null) {
-					findingList = new ArrayList<Long>();
-					projectMap.put(project, findingList);
-				}
-				findingList.add(findingId);
-			} finally {
-				set.close();
-			}
-		}
-		for (Entry<String, List<Long>> entry : projectMap.entrySet()) {
-			regenerateFindingsOverview(entry.getKey(), entry.getValue());
-		}
-	}
-
 	/**
 	 * For use in the client, this method regenerates the overview for a single
 	 * finding, but only if the finding is already in the overview.
@@ -354,17 +341,10 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	private void regenerateFindingsOverview(long findingId) throws SQLException {
-		selectFindingProject.setLong(1, findingId);
-		ResultSet set = selectFindingProject.executeQuery();
-		try {
-			if (set.next()) {
-				regenerateFindingsOverview(set.getString(1), Collections
-						.singletonList(findingId));
-			}
-		} finally {
-			set.close();
-		}
+	private void regenerateFindingsOverview(String projectName, long findingId)
+			throws SQLException {
+		regenerateFindingsOverview(projectName, Collections
+				.singletonList(findingId), EmptyProgressMonitor.instance());
 	}
 
 	public void updateLocalFindings(String projectName,
@@ -374,6 +354,7 @@ public final class ClientFindingManager extends FindingManager {
 				.newProject();
 		project.setName(projectName);
 		if (project.select()) {
+			Set<Long> findingIds = new HashSet<Long>();
 			if (obsoletions != null) {
 				for (TrailObsoletion to : obsoletions) {
 					FindingRecord obsoletedFinding = factory.newFinding();
@@ -386,6 +367,8 @@ public final class ClientFindingManager extends FindingManager {
 						}
 						obsolete(obsoletedFinding.getId(), newFinding.getId(),
 								to.getRevision());
+						findingIds.add(obsoletedFinding.getId());
+						findingIds.add(newFinding.getId());
 					} else {
 						log.log(Level.WARNING, "A trail obsoletion for uid "
 								+ to.getObsoletedTrail() + " to uid "
@@ -453,9 +436,11 @@ public final class ClientFindingManager extends FindingManager {
 							}
 						}
 					}
-					regenerateFindingsOverview(finding.getId());
+					findingIds.add(finding.getId());
 				}
 			}
+			regenerateFindingsOverview(projectName, new ArrayList<Long>(
+					findingIds), EmptyProgressMonitor.instance());
 		} else {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
@@ -571,16 +556,24 @@ public final class ClientFindingManager extends FindingManager {
 	}
 
 	/**
-	 * Check for existence of the finding.
+	 * Check for existence of the finding, and return it's project.
 	 * 
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	protected void checkFinding(long findingId) throws SQLException {
-		FindingRecord f = getFinding(findingId);
-		if (f == null)
-			throw new IllegalArgumentException(findingId
-					+ " is not a valid finding id.");
+	private String checkFindingProject(long findingId) throws SQLException {
+		selectFindingProject.setLong(1, findingId);
+		ResultSet set = selectFindingProject.executeQuery();
+		try {
+			if (set.next()) {
+				return set.getString(1);
+			} else {
+				throw new IllegalArgumentException(findingId
+						+ " is not a valid finding id.");
+			}
+		} finally {
+			set.close();
+		}
 	}
 
 	public static ClientFindingManager getInstance(Connection conn)

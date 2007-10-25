@@ -35,7 +35,7 @@ public class ClientProjectManager extends ProjectManager {
 		super(conn);
 		this.findingManager = ClientFindingManager.getInstance(conn);
 		this.insertSynchRecord = conn
-				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,USER_ID,DATE_TIME,COMMIT_REIVSION,PRIOR_REVISION VALUES (?,?,?,?,?,?)");
+				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION) VALUES (?,?,?,?)");
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
@@ -138,8 +138,9 @@ public class ClientProjectManager extends ProjectManager {
 		insertSynchRecord.setLong(idx++, p.getId());
 		insertSynchRecord.setTimestamp(idx++, new Timestamp(new Date()
 				.getTime()));
-		insertSynchRecord.setLong(idx++, commitResponse.getRevision());
+		insertSynchRecord.setLong(idx++, commitResponse.getRevision() == null ? -1 : commitResponse.getRevision());
 		insertSynchRecord.setLong(idx++, auditRequest.getRevision());
+		insertSynchRecord.execute();
 	}
 
 	@Override
