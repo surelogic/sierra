@@ -197,7 +197,11 @@ public final class ClientFindingManager extends FindingManager {
 
 	public void setImportance(Set<Long> findingIds, Importance importance,
 			SLProgressMonitor monitor) {
-		// TODO
+		monitor.beginTask("Updating finding data", findingIds.size());
+		for (long finding_id : findingIds) {
+			monitor.worked(1);
+		}
+		monitor.done();
 	}
 
 	/**
