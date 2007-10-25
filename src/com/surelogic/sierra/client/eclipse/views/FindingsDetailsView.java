@@ -197,6 +197,10 @@ public class FindingsDetailsView extends ViewPart {
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.fill = true;
 		lhs.setLayout(rowLayout);
+		
+		final Button quickAudit = new Button(lhs, SWT.PUSH | SWT.FLAT);
+		quickAudit.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
+		quickAudit.setToolTipText("Mark this finding as being examined by me.");
 
 		final Group importanceGroup = new Group(lhs, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -237,10 +241,6 @@ public class FindingsDetailsView extends ViewPart {
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
 		irrelevantButton.setToolTipText("Not an issue in our code");
 		irrelevantButton.setData(Importance.IRRELEVANT);
-
-		final Button quickAudit = new Button(lhs, SWT.PUSH | SWT.FLAT);
-		quickAudit.setText("Stamp Finding");
-		quickAudit.setToolTipText("Mark this finding as being examined by me.");
 
 		/*
 		 * Showing the audit trail (on the right-hand-side).
