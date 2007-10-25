@@ -26,7 +26,7 @@ public class FindingDetail {
 		Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
+					.executeQuery("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
 							+ " FROM FINDINGS_OVERVIEW WHERE FINDING_ID = "
 							+ findingId);
 			set.next();
@@ -102,7 +102,7 @@ public class FindingDetail {
 	}
 
 	public String getCategory() {
-		return "TBD"; // TODO
+		return overview.getCategory();
 	}
 
 	public String getClassName() {

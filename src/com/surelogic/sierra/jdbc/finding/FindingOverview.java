@@ -31,6 +31,7 @@ public class FindingOverview {
 	private final String compilation;
 	private final String tool;
 	private final String findingType;
+	private final String category;
 	private final String summary;
 
 	private final boolean examined;
@@ -57,6 +58,7 @@ public class FindingOverview {
 		this.className = set.getString(idx++);
 		this.compilation = set.getString(idx++);
 		this.findingType = set.getString(idx++);
+		this.category = set.getString(idx++);
 		this.tool = set.getString(idx++);
 		this.summary = set.getString(idx++);
 	}
@@ -121,6 +123,10 @@ public class FindingOverview {
 		return numberOfComments;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
 	public static View getView() {
 		return view;
 	}
@@ -150,13 +156,12 @@ public class FindingOverview {
 				throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
-							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND (CLASS = ? OR CLASS LIKE ?)");
+					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ?");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
 			selectFindingsByClass.setString(idx++, packageName);
 			selectFindingsByClass.setString(idx++, className);
-			selectFindingsByClass.setString(idx++, className + "$%");
 			ResultSet set = selectFindingsByClass.executeQuery();
 			try {
 				while (set.next()) {
@@ -185,7 +190,7 @@ public class FindingOverview {
 				String compilation) throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,TOOL,SUMMARY"
+					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND IMPORTANCE != 'Irrelevant'");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
@@ -202,4 +207,5 @@ public class FindingOverview {
 			return findings;
 		}
 	}
+
 }

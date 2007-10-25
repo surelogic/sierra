@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.tool.message.ArtifactType;
@@ -37,8 +35,8 @@ public class FindingTypeManager {
 	private final PreparedStatement selectArtifactTypesByFindingTypeId;
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
-	private final PreparedStatement insertArtifactTypeFindingTypeRelation;
-	private final PreparedStatement insertCategoryFindingTypeRelation;
+	private final PreparedStatement updateArtifactTypeFindingTypeRelation;
+	private final PreparedStatement updateCategoryFindingTypeRelation;
 	private final PreparedStatement checkUnassignedArtifactTypes;
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
@@ -48,28 +46,21 @@ public class FindingTypeManager {
 	private FindingTypeManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		this.checkForArtifactTypeRelation = conn
-				.prepareStatement("SELECT FT.UUID FROM ART_TYPE_FIN_TYPE_RELTN ATFTR, FINDING_TYPE FT WHERE ATFTR.ARTIFACT_TYPE_ID = ? AND FT.ID = ATFTR.FINDING_TYPE_ID");
+				.prepareStatement("SELECT FT.UUID FROM ARTIFACT_TYPE ART, FINDING_TYPE FT WHERE ART.ID = ? AND ART.FINDING_TYPE_ID IS NOT NULL AND FT.ID = ART.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.selectArtifactTypesByFindingTypeId = conn
-				.prepareStatement("SELECT AR.ID FROM ART_TYPE_FIN_TYPE_RELTN AFTR, ARTIFACT_TYPE AR WHERE AFTR.FINDING_TYPE_ID = ? AND AR.ID = AFTR.ARTIFACT_TYPE_ID");
+				.prepareStatement("SELECT AR.ID FROM ARTIFACT_TYPE AR WHERE AR.FINDING_TYPE_ID = ?");
 		this.selectArtifactTypesByToolAndMnemonic = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
-		this.insertArtifactTypeFindingTypeRelation = conn
-				.prepareStatement("INSERT INTO ART_TYPE_FIN_TYPE_RELTN (ARTIFACT_TYPE_ID,FINDING_TYPE_ID) VALUES (?,?)");
-		this.insertCategoryFindingTypeRelation = conn
-				.prepareStatement("INSERT INTO CATEGORY_FINDING_TYPE_RELTN (CATEGORY_ID,FINDING_TYPE_ID) VALUES (?,?)");
-		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
-			this.checkUnassignedArtifactTypes = conn
-					.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) MINUS (SELECT ARTIFACT_TYPE_ID FROM ART_TYPE_FIN_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
-			this.checkUncategorizedFindingTypes = conn
-					.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) MINUS (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
-		} else {
-			this.checkUnassignedArtifactTypes = conn
-					.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.ID IN ((SELECT ID FROM ARTIFACT_TYPE) EXCEPT (SELECT ARTIFACT_TYPE_ID FROM ART_TYPE_FIN_TYPE_RELTN)) AND T.ID = A.TOOL_ID");
-			this.checkUncategorizedFindingTypes = conn
-					.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE ID IN ((SELECT ID FROM FINDING_TYPE) EXCEPT (SELECT FINDING_TYPE_ID FROM CATEGORY_FINDING_TYPE_RELTN))");
-		}
+		this.updateArtifactTypeFindingTypeRelation = conn
+				.prepareStatement("UPDATE ARTIFACT_TYPE SET FINDING_TYPE_ID = ? WHERE ID = ?");
+		this.updateCategoryFindingTypeRelation = conn
+				.prepareStatement("UPDATE FINDING_TYPE SET CATEGORY_ID = ? WHERE ID = ?");
+		this.checkUnassignedArtifactTypes = conn
+				.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.FINDING_TYPE_ID IS NULL AND T.ID = A.TOOL_ID");
+		this.checkUncategorizedFindingTypes = conn
+				.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE CATEGORY_ID IS NULL");
 		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
@@ -198,13 +189,15 @@ public class FindingTypeManager {
 			throws SQLException {
 		Statement st = conn.createStatement();
 		try {
-			st.execute("DELETE FROM ART_TYPE_FIN_TYPE_RELTN");
-			st.execute("DELETE FROM CATEGORY_FINDING_TYPE_RELTN");
+			st.execute("UPDATE ARTIFACT_TYPE SET FINDING_TYPE_ID = NULL");
+			st.execute("UPDATE FINDING_TYPE SET CATEGORY_ID = NULL");
 		} finally {
 			st.close();
 		}
 		Set<String> idSet = new HashSet<String>();
 		Set<String> duplicates = new HashSet<String>();
+		Set<String> categoryIdSet = new HashSet<String>();
+		Set<String> categoryDuplicates = new HashSet<String>();
 		for (FindingTypes type : types) {
 			FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
@@ -212,53 +205,55 @@ public class FindingTypeManager {
 			// types.
 			for (FindingType ft : type.getFindingType()) {
 				String uid = ft.getId().trim();
-				if (idSet.contains(uid)) {
+				if (!idSet.add(uid)) {
 					duplicates.add(uid);
 				} else {
-					idSet.add(uid);
-				}
-				fRec.setUid(uid);
-				fRec.setName(ft.getName().trim());
-				fRec.setInfo(ft.getInfo());
-				fRec.setShortMessage(ft.getShortMessage());
-				if (fRec.select()) {
-					fRec.update();
-				} else {
-					fRec.insert();
-				}
-				for (ArtifactType at : ft.getArtifact()) {
-					Collection<Long> typeIds;
-					if (at.getVersion() == null) {
-						typeIds = getArtifactTypesIds(at.getTool(), at
-								.getMnemonic());
+					fRec.setUid(uid);
+					fRec.setName(ft.getName().trim());
+					fRec.setInfo(ft.getInfo());
+					fRec.setShortMessage(ft.getShortMessage());
+					if (fRec.select()) {
+						fRec.update();
 					} else {
-						typeIds = Collections.singleton(getArtifactTypeId(at
-								.getTool(), at.getVersion(), at.getMnemonic()));
+						fRec.insert();
 					}
-					for (Long id : typeIds) {
-						checkForArtifactTypeRelation.setLong(1, id);
-						ResultSet set = checkForArtifactTypeRelation
-								.executeQuery();
-						try {
-							if (set.next()) {
-								String message = "The artifact with mnemonic "
-										+ at.getMnemonic()
-										+ " in tool "
-										+ at.getTool()
-										+ " has already been assigned to finding type with uid "
-										+ set.getString(1)
-										+ " and cannot be assigned to the finding type with uid "
-										+ fRec.getUid() + ".";
-								log.severe(message);
-								throw new IllegalStateException(message);
-							}
-						} finally {
-							set.close();
+					for (ArtifactType at : ft.getArtifact()) {
+						Collection<Long> typeIds;
+						if (at.getVersion() == null) {
+							typeIds = getArtifactTypesIds(at.getTool(), at
+									.getMnemonic());
+						} else {
+							typeIds = Collections.singleton(getArtifactTypeId(
+									at.getTool(), at.getVersion(), at
+											.getMnemonic()));
 						}
-						insertArtifactTypeFindingTypeRelation.setLong(1, id);
-						insertArtifactTypeFindingTypeRelation.setLong(2, fRec
-								.getId());
-						insertArtifactTypeFindingTypeRelation.executeUpdate();
+						for (Long id : typeIds) {
+							checkForArtifactTypeRelation.setLong(1, id);
+							ResultSet set = checkForArtifactTypeRelation
+									.executeQuery();
+							try {
+								if (set.next()) {
+									String message = "The artifact with mnemonic "
+											+ at.getMnemonic()
+											+ " in tool "
+											+ at.getTool()
+											+ " has already been assigned to finding type with uid "
+											+ set.getString(1)
+											+ " and cannot be assigned to the finding type with uid "
+											+ fRec.getUid() + ".";
+									log.severe(message);
+									throw new IllegalStateException(message);
+								}
+							} finally {
+								set.close();
+							}
+							updateArtifactTypeFindingTypeRelation.setLong(1,
+									fRec.getId());
+							updateArtifactTypeFindingTypeRelation
+									.setLong(2, id);
+							updateArtifactTypeFindingTypeRelation
+									.executeUpdate();
+						}
 					}
 				}
 			}
@@ -275,20 +270,25 @@ public class FindingTypeManager {
 					cRec.insert();
 				}
 				for (String ftId : cat.getFindingType()) {
-					fRec.setUid(ftId.trim());
-					if (fRec.select()) {
-						insertCategoryFindingTypeRelation.setLong(1, cRec
-								.getId());
-						insertCategoryFindingTypeRelation.setLong(2, fRec
-								.getId());
-						insertCategoryFindingTypeRelation.execute();
+					String uid = ftId.trim();
+					if (!categoryIdSet.add(uid)) {
+						categoryDuplicates.add(uid);
 					} else {
-						String message = "Could not locate a finding type for record with uid "
-								+ ftId
-								+ " while building category "
-								+ cat.getName() + ".";
-						log.severe(message);
-						throw new IllegalStateException(message);
+						fRec.setUid(uid);
+						if (fRec.select()) {
+							updateCategoryFindingTypeRelation.setLong(1, cRec
+									.getId());
+							updateCategoryFindingTypeRelation.setLong(2, fRec
+									.getId());
+							updateCategoryFindingTypeRelation.execute();
+						} else {
+							String message = "Could not locate a finding type for record with uid "
+									+ ftId
+									+ " while building category "
+									+ cat.getName() + ".";
+							log.severe(message);
+							throw new IllegalStateException(message);
+						}
 					}
 				}
 			}
@@ -328,27 +328,17 @@ public class FindingTypeManager {
 			log.severe(message);
 			throw new IllegalStateException(message);
 		}
-		Statement checkSt = conn.createStatement();
-		try {
-			ResultSet checkSet = checkSt
-					.executeQuery("SELECT FT.UUID, COUNT (CFR.FINDING_TYPE_ID) FROM CATEGORY_FINDING_TYPE_RELTN CFR, FINDING_TYPE FT WHERE FT.ID = CFR.FINDING_TYPE_ID GROUP BY FT.UUID HAVING COUNT (CFR.FINDING_TYPE_ID) > 1");
-			ArrayList<String> badTypes = new ArrayList<String>();
-			while (checkSet.next()) {
-				badTypes.add(checkSet.getString(1));
-			}
-			if (!badTypes.isEmpty()) {
-				String message = "The following finding types are in multiple categories: "
-						+ badTypes + ".";
-				log.severe(message);
-				throw new IllegalStateException(message);
-			}
-		} finally {
-			checkSt.close();
-		}
 		// Throw exception if any finding type is defined more than once
 		if (!duplicates.isEmpty()) {
-			String message = "These finding types with the following ids were defined more than once: "
+			String message = "The finding types with the following ids were defined more than once: "
 					+ duplicates + ".";
+			log.severe(message);
+			throw new IllegalStateException(message);
+		}
+		// Throw exception if any finding type belongs to more than one category
+		if (!categoryDuplicates.isEmpty()) {
+			String message = "The finding types with the following ids were defined more than once: "
+					+ categoryDuplicates + ".";
 			log.severe(message);
 			throw new IllegalStateException(message);
 		}
