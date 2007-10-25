@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -173,7 +174,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param comment
 	 * @throws SQLException
 	 */
-	public void comment(Long findingId, String comment) throws SQLException {
+	public void comment(long findingId, String comment) throws SQLException {
 		checkFinding(findingId);
 		comment(null, findingId, comment, new Date(), null);
 		regenerateFindingOverview(findingId);
@@ -187,11 +188,16 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param importance
 	 * @throws SQLException
 	 */
-	public void setImportance(Long findingId, Importance importance)
+	public void setImportance(long findingId, Importance importance)
 			throws SQLException {
 		checkFinding(findingId);
 		setImportance(null, findingId, importance, new Date(), null);
 		regenerateFindingOverview(findingId);
+	}
+
+	public void setImportance(Set<Long> findingIds, Importance importance,
+			SLProgressMonitor monitor) {
+		// TODO
 	}
 
 	/**
