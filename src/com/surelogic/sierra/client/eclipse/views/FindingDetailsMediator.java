@@ -281,6 +281,11 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		});
 
+		f_summaryIcon.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				f_folder.setSelection(f_auditTab);
+			}
+		});
 		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
 
 		final Listener tel = new TextEditedListener(
