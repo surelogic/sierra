@@ -138,7 +138,7 @@
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
-               label="Scan"
+               label="Scan Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action

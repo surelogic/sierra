@@ -27,8 +27,13 @@ public final class FilterSelectionReportLine {
 
 	private final Composite f_lineComposite;
 
+	private final Color f_barColorDark;
+
+	private final Color f_barColorLight;
+
 	public void dispose() {
 		f_lineComposite.dispose();
+		f_barColorDark.dispose();
 	}
 
 	private final Button f_check;
@@ -88,6 +93,10 @@ public final class FilterSelectionReportLine {
 		layout.numColumns = 2;
 		f_lineComposite.setLayout(layout);
 
+		//f_barColorDark = new Color(f_lineComposite.getDisplay(), 255, 118, 26);
+		f_barColorDark = new Color(f_lineComposite.getDisplay(), 255, 113, 18);
+		f_barColorLight = new Color(f_lineComposite.getDisplay(), 238, 216, 198);
+
 		f_check = new Button(f_lineComposite, SWT.CHECK);
 		f_check.setText(text);
 		f_check.setImage(image);
@@ -117,8 +126,6 @@ public final class FilterSelectionReportLine {
 				GC gc = e.gc;
 				Color foreground = gc.getForeground();
 				Color background = gc.getBackground();
-				gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
 				int percent = (int) (((double) f_count / (double) f_total) * 100);
 				int width = (cSize.x - 1) * percent / 100;
 				if (width < 2 && f_count > 0)
@@ -126,10 +133,11 @@ public final class FilterSelectionReportLine {
 				if (f_mouseOverGraph) {
 					gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 					gc.fillRectangle(0, 0, cSize.x, cSize.y);
-					gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+					gc.setBackground(f_barColorLight);
 					gc.fillRectangle(0, 0, width, cSize.y);
 				} else {
-					gc.fillGradientRectangle(0, 0, width, cSize.y, true);
+					gc.setBackground(f_barColorDark);
+					gc.fillRectangle(0, 0, width, cSize.y);
 				}
 				Rectangle rect2 = new Rectangle(0, 0, cSize.x - 1, cSize.y - 1);
 				gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
