@@ -24,6 +24,9 @@ public final class MetricsResultsGenerator {
 	private static XMLSerializer serializer;
 	private static ContentHandler hd;
 
+	/** The default name of package for files in root folder */
+	public static final String DEFAULT_PACKAGE_PARENTHESIS = "(default package)";
+
 	private static void writeAttributes(Map<String, String> attributeMap) {
 
 		atts.clear();
@@ -74,7 +77,12 @@ public final class MetricsResultsGenerator {
 			// Start project tag
 			Map<String, String> attributeMap = new HashMap<String, String>();
 			attributeMap.put("name", metrics.getClassName());
-			attributeMap.put("package", metrics.getPackageName());
+			if (metrics.getPackageName() == null
+					|| metrics.getPackageName().equals("")) {
+				attributeMap.put("package", DEFAULT_PACKAGE_PARENTHESIS);
+			} else {
+				attributeMap.put("package", metrics.getPackageName());
+			}
 			attributeMap.put("loc", String.valueOf(metrics.getLoc()));
 			attributeMap.put("path", metrics.getPath());
 			writeAttributes(attributeMap);
