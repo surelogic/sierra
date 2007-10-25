@@ -15,10 +15,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -30,18 +32,20 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import com.surelogic.adhoc.DatabaseJob;
+import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.common.eclipse.AuditTrail;
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -126,7 +130,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final AuditTrail f_scrollingLabelComposite;
 
 	private final TabItem f_artifactTab;
-	private final Tree f_artifactsTree;
+	private final Table f_artifacts;
 
 	private volatile FindingDetail f_finding;
 
@@ -152,9 +156,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			Browser detailsText, TabItem auditTab, Button quickAudit,
 			Button criticalButton, Button highButton, Button mediumButton,
 			Button lowButton, Button irrelevantButton, Text commentText,
-			Button commentButton,
-			AuditTrail scrollingLabelComposite,
-			TabItem artifactTab, Tree artifactsTree) {
+			Button commentButton, AuditTrail scrollingLabelComposite,
+			TabItem artifactTab, Table artifacts) {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
@@ -178,7 +181,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_commentButton = commentButton;
 		f_scrollingLabelComposite = scrollingLabelComposite;
 		f_artifactTab = artifactTab;
-		f_artifactsTree = artifactsTree;
+		f_artifacts = artifacts;
 	}
 
 	void asyncQueryAndShow(final long findingId) {
@@ -390,10 +393,36 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		}
 
-		f_artifactsTree.removeAll();
-		for (ArtifactDetail ad : f_finding.getArtifacts()) {
-			final TreeItem ti = new TreeItem(f_artifactsTree, SWT.NONE);
-			ti.setText(ad.getTool() + " : " + ad.getMessage());
+		f_artifacts.removeAll();
+		final Image findbugs = SLImages.getImage(SLImages.IMG_FINDBUGS_FINDING);
+		final Image pmd = SLImages.getImage(SLImages.IMG_PMD_FINDING);
+		final Image pkgImage = SLImages
+				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE);
+		final Image classImage = SLImages
+				.getJDTImage(ISharedImages.IMG_OBJS_CLASS);
+
+		for (ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
+			final TableItem item = new TableItem(f_artifacts, SWT.NONE);
+
+			final String tool = artifactDetail.getTool();
+			item.setText(0, tool);
+			if ("FindBugs".equals(tool)) {
+				item.setImage(0, findbugs);
+			} else if ("PMD".equals(tool)) {
+				item.setImage(0, pmd);
+			}
+
+			item.setText(1, artifactDetail.getMessage());
+
+			item.setText(2, artifactDetail.getPackageName());
+			item.setImage(2, pkgImage);
+			item.setText(3, artifactDetail.getClassName());
+			item.setImage(3, classImage);
+
+			item.setText(4, "" + artifactDetail.getLineOfCode());
+		}
+		for (TableColumn c : f_artifacts.getColumns()) {
+			c.pack();
 		}
 
 		f_commentText.setText("");

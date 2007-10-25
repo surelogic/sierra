@@ -18,13 +18,15 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
+import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
@@ -275,10 +277,37 @@ public class FindingsDetailsView extends ViewPart {
 		layout = new GridLayout();
 		artifactsPane.setLayout(layout);
 
-		final Tree artifactsTree = new Tree(artifactsPane, SWT.V_SCROLL);
+		final Label artifactDescription = new Label(artifactsPane, SWT.NONE);
+		StringBuilder b = new StringBuilder();
+		b.append("An artifact is a report from an analysis tool ");
+		b.append("run during a scan.");
+		artifactDescription.setText(b.toString());
+
+		final Table artifacts = new Table(artifactsPane, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		artifactsTree.setLayoutData(layoutData);
-		artifactsTree.setLinesVisible(true);
+		artifacts.setLayoutData(layoutData);
+		artifacts.setLinesVisible(true);
+		artifacts.setHeaderVisible(true);
+		TableColumn col = new TableColumn(artifacts, SWT.NONE);
+		col.setText("Tool");
+		col.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		col.setMoveable(true);
+		col = new TableColumn(artifacts, SWT.NONE);
+		col.setText("Summary");
+		col.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		col.setMoveable(true);
+		col = new TableColumn(artifacts, SWT.NONE);
+		col.setText("Package");
+		col.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		col.setMoveable(true);
+		col = new TableColumn(artifacts, SWT.NONE);
+		col.setText("Class");
+		col.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		col.setMoveable(true);
+		col = new TableColumn(artifacts, SWT.NONE);
+		col.setText("Line");
+		col.addListener(SWT.Selection, TableUtility.SORT_COLUMN_NUMERICALLY);
+		col.setMoveable(true);
 
 		artifactTab.setControl(artifactsPane);
 
@@ -287,8 +316,7 @@ public class FindingsDetailsView extends ViewPart {
 				findingSynopsis, projectName, packageName, className,
 				detailsText, auditTab, quickAudit, criticalButton, highButton,
 				mediumButton, lowButton, irrelevantButton, commentText,
-				commentButton, scrollingLabelComposite, artifactTab,
-				artifactsTree);
+				commentButton, scrollingLabelComposite, artifactTab, artifacts);
 
 		f_mediator.init();
 
