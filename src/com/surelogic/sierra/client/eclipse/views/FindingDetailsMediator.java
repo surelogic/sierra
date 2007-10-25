@@ -74,7 +74,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final StringBuilder fgStyleSheet = new StringBuilder();
 
 	private RGB fBackgroundColorRGB = f_display.getSystemColor(
-			SWT.COLOR_WIDGET_BACKGROUND).getRGB();
+			SWT.COLOR_LIST_BACKGROUND).getRGB();
 
 	private void loadStyleSheet() {
 		Bundle bundle = Activator.getDefault().getBundle();
