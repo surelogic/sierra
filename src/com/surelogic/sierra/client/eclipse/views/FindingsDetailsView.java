@@ -206,27 +206,35 @@ public class FindingsDetailsView extends ViewPart {
 
 		final Button criticalButton = new Button(importanceGroup, SWT.RADIO);
 		criticalButton.setText("Critical");
+		criticalButton.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
 		criticalButton
 				.setToolTipText("An urgent issue\u2014need to handle immediately");
 		criticalButton.setData(Importance.CRITICAL);
 
 		final Button highButton = new Button(importanceGroup, SWT.RADIO);
 		highButton.setText("High");
+		highButton.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
 		highButton.setToolTipText("A serious issue\u2014need to handle soon");
 		highButton.setData(Importance.HIGH);
 
 		final Button mediumButton = new Button(importanceGroup, SWT.RADIO);
 		mediumButton.setText("Medium");
+		mediumButton.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
 		mediumButton.setToolTipText("An issue\u2014handle as we get time");
 		mediumButton.setData(Importance.MEDIUM);
 
 		final Button lowButton = new Button(importanceGroup, SWT.RADIO);
 		lowButton.setText("Low");
+		lowButton.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
 		lowButton.setToolTipText("A minor issue\u2014handle later if at all");
 		lowButton.setData(Importance.LOW);
 
 		final Button irrelevantButton = new Button(importanceGroup, SWT.RADIO);
 		irrelevantButton.setText("Irrelevant");
+		irrelevantButton.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
 		irrelevantButton.setToolTipText("Not an issue in our code");
 		irrelevantButton.setData(Importance.IRRELEVANT);
 
