@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.adhoc.DatabaseJob;
+import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -122,33 +124,6 @@ public final class FindingMutationUtility {
 		job.schedule();
 	}
 
-	public static void asyncChangeImportance(final Set<Long> finding_ids,
-			final Importance to) {
-		final Job job = new DatabaseJob("Changing the importance of "
-				+ finding_ids.size() + " finding(s) to "
-				+ to.toStringSentenceCase()) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data", finding_ids.size());
-				try {
-					for (long finding_id : finding_ids) {
-						changeImportance(finding_id, to);
-						monitor.worked(1);
-					}
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to change the importance of "
-									+ finding_ids.size() + " finding(s) to "
-									+ to.toStringSentenceCase(), e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-	}
-
 	private static void changeImportance(final long finding_id,
 			final Importance to) throws Exception {
 		Connection c = Data.getConnection();
@@ -163,4 +138,42 @@ public final class FindingMutationUtility {
 		}
 	}
 
+	public static void asyncChangeImportance(final Set<Long> finding_ids,
+			final Importance to) {
+		final Job job = new DatabaseJob("Changing the importance of "
+				+ finding_ids.size() + " finding(s) to "
+				+ to.toStringSentenceCase()) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					changeImportance(finding_ids, to,
+							new SLProgressMonitorWrapper(monitor));
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Failed to change the importance of "
+									+ finding_ids.size() + " finding(s) to "
+									+ to.toStringSentenceCase(), e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		job.schedule();
+	}
+
+	private static void changeImportance(final Set<Long> finding_ids,
+			final Importance to, final SLProgressMonitor monitor)
+			throws Exception {
+		Connection c = Data.getConnection();
+		try {
+			c.setAutoCommit(false);
+			ClientFindingManager manager = ClientFindingManager.getInstance(c);
+			manager.setImportance(finding_ids, to, monitor);
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} finally {
+			c.close();
+		}
+	}
 }
