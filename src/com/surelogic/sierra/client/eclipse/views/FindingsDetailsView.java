@@ -283,7 +283,7 @@ public class FindingsDetailsView extends ViewPart {
 		b.append("run during a scan.");
 		artifactDescription.setText(b.toString());
 
-		final Table artifacts = new Table(artifactsPane, SWT.NONE);
+		final Table artifacts = new Table(artifactsPane, SWT.FULL_SELECTION);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		artifacts.setLayoutData(layoutData);
 		artifacts.setLinesVisible(true);

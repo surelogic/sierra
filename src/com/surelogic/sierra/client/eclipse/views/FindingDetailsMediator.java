@@ -288,6 +288,21 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_summaryText.addListener(SWT.Modify, tel);
 		f_summaryText.addListener(SWT.FocusOut, tel);
 
+		f_artifacts.addListener(SWT.MouseDoubleClick, new Listener() {
+			public void handleEvent(Event arg0) {
+				final TableItem[] items = f_artifacts.getSelection();
+				if (items.length > 0) {
+					final TableItem item = items[0];
+					final String projectName = f_finding.getProjectName();
+					final String packageName = item.getText(2);
+					final String className = item.getText(3);
+					int lineNumber = Integer.valueOf(item.getText(4));
+					JDTUtility.tryToOpenInEditor(projectName, packageName,
+							className, lineNumber);
+				}
+			}
+		});
+
 		loadStyleSheet();
 
 		Projects.getInstance().addObserver(this);
