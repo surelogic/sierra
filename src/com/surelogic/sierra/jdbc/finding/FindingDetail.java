@@ -101,6 +101,10 @@ public class FindingDetail {
 		}
 	}
 
+	public String getCategory() {
+		return "TBD"; // TODO
+	}
+
 	public String getClassName() {
 		return overview.getClassName();
 	}
@@ -143,8 +147,8 @@ public class FindingDetail {
 		return overview.getNumberOfArtifacts();
 	}
 
-	public int getNumberOfComments() {
-		return overview.getNumberOfComments();
+	public int getNumberOfAudits() {
+		return overview.getNumberOfAudits();
 	}
 
 	public String getPackageName() {

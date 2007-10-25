@@ -117,7 +117,7 @@ public class FindingOverview {
 		return numberOfArtifacts;
 	}
 
-	public int getNumberOfComments() {
+	public int getNumberOfAudits() {
 		return numberOfComments;
 	}
 
