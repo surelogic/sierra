@@ -16,10 +16,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -375,8 +377,23 @@ public final class MListOfFindingsColumn extends MColumn implements
 								.getData();
 						final Importance to = Importance.valueOf(item.getText()
 								.toUpperCase());
-						FindingMutationUtility.asyncChangeImportance(
-								finding_ids, to);
+						boolean makeChange = true;
+						if (finding_ids.size() > 1) {
+							MessageBox dialog = new MessageBox(PlatformUI
+									.getWorkbench().getDisplay()
+									.getActiveShell(), SWT.ICON_WARNING
+									| SWT.OK | SWT.CANCEL);
+							dialog.setMessage("Are you sure you want to "
+									+ "change the importance of "
+									+ finding_ids.size() + " findings to "
+									+ to.toStringSentenceCase());
+							dialog.setText("Confirm Multiple Finding Change");
+							if (dialog.open() == SWT.CANCEL)
+								makeChange = false;
+						}
+						if (makeChange)
+							FindingMutationUtility.asyncChangeImportance(
+									finding_ids, to);
 					}
 				}
 			}
