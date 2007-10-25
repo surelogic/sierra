@@ -179,7 +179,7 @@ public class FindingDetail {
 		return findingTypeDetail;
 	}
 
-	public List<AuditDetail> getComments() {
+	public List<AuditDetail> getAudits() {
 		return audits;
 	}
 
