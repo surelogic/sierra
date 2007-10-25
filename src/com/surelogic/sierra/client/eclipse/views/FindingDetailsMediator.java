@@ -389,7 +389,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			f_irrelevantButton.setSelection(true);
 		}
 
-		List<AuditDetail> commentDetails = f_finding.getComments();
+		List<AuditDetail> commentDetails = f_finding.getAudits();
 
 		// Add label
 
