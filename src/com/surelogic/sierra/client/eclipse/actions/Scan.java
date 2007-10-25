@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -45,6 +46,9 @@ public final class Scan {
 	/** The list of selected projects */
 	private final List<IJavaProject> f_selectedProjects = new ArrayList<IJavaProject>();
 
+	/** The list of selected compilation units */
+	private final List<ICompilationUnit> f_selectedCompilationUnits = new ArrayList<ICompilationUnit>();
+
 	/** The location to store tool results */
 	private final File f_resultRoot;
 
@@ -52,18 +56,14 @@ public final class Scan {
 	private List<Config> f_configs;
 
 	/**
-	 * The constructor for the Scan
-	 * 
-	 * @param selectedProjects
-	 *            the list of IJavaProjects for scan
+	 * The constructor for the Scanning projects
 	 * 
 	 */
-	public Scan(List<IJavaProject> selectedProjects) {
+	public Scan() {
 		/*
 		 * Get the plug-in directory that has tools folder and append the
 		 * directory
 		 */
-		f_selectedProjects.addAll(selectedProjects);
 		f_resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
 
 		if ((!f_resultRoot.exists()) || (f_resultRoot.exists())
@@ -73,13 +73,29 @@ public final class Scan {
 		}
 	}
 
-	public void execute() {
+	public void executeScanForProjects(List<IJavaProject> projects) {
+		f_selectedProjects.addAll(projects);
+		execute();
+	}
+
+	public void executeScanForCompilationUnits(
+			List<ICompilationUnit> compilationUnits) {
+		f_selectedCompilationUnits.addAll(compilationUnits);
+		execute();
+	}
+
+	private void execute() {
 		f_configs = new ArrayList<Config>();
 
 		final StringBuilder projectList = new StringBuilder();
 
-		f_configs = ConfigGenerator.getInstance()
-				.getConfigs(f_selectedProjects);
+		if (f_selectedProjects.size() != 0) {
+			f_configs = ConfigGenerator.getInstance().getProjectConfigs(
+					f_selectedProjects);
+		} else if (f_selectedCompilationUnits.size() != 0) {
+			f_configs = ConfigGenerator.getInstance()
+					.getCompilationUnitConfigs(f_selectedCompilationUnits);
+		}
 		if (f_configs.size() > 0) {
 
 			/* Run the scan on the all the configs */

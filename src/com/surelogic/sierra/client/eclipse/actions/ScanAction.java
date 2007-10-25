@@ -20,7 +20,7 @@ public class ScanAction extends AbstractProjectSelectedMenuAction {
 			PlatformUI.getWorkbench().saveAllEditors(false);
 		}
 		if (saveCancelled) {
-			new Scan(selectedProjects).execute();
+			new Scan().executeScanForProjects(selectedProjects);
 		}
 	}
 }

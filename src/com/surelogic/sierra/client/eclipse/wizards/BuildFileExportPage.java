@@ -254,7 +254,7 @@ public class BuildFileExportPage extends WizardPage {
 	 * Generate the build files.
 	 */
 	public boolean generateBuildfiles() {
-		List<Config> configs = ConfigGenerator.getInstance().getConfigs(
+		List<Config> configs = ConfigGenerator.getInstance().getProjectConfigs(
 				f_SelectedJavaProjects);
 		BuildFileGenerator.getInstance().writeBuildFiles(configs,
 				f_overrideCheckbox.getSelection());
