@@ -49,13 +49,13 @@ public class SynchronizeJob extends DatabaseJob {
 			final ClientProjectManager manager = ClientProjectManager.getInstance(conn);
 			try {
 				status = synchronize(conn, manager, slMonitor);
-
 			} catch (Exception e) {
 				final String msg = "Synchronization of project '"
 						+ f_projectName + "' to Sierra server '" + f_server
 						+ "' failed.";
 				SLLogger.getLogger().log(Level.SEVERE, msg, e);
 				status = SLStatus.createErrorStatus(msg, e);
+				conn.rollback();
 			} finally {
 				conn.close();
 			}
