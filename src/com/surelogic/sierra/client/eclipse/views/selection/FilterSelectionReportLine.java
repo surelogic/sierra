@@ -93,7 +93,6 @@ public final class FilterSelectionReportLine {
 		layout.numColumns = 2;
 		f_lineComposite.setLayout(layout);
 
-		//f_barColorDark = new Color(f_lineComposite.getDisplay(), 255, 118, 26);
 		f_barColorDark = new Color(f_lineComposite.getDisplay(), 255, 113, 18);
 		f_barColorLight = new Color(f_lineComposite.getDisplay(), 238, 216, 198);
 
