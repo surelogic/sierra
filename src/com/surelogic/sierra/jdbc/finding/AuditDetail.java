@@ -20,14 +20,17 @@ public class AuditDetail {
 			text = set.getString(idx++);
 			break;
 		case IMPORTANCE:
-			text = "Importance changed to " + set.getString(idx++) + ".";
+			String importance = set.getString(idx++);
+			importance = importance.substring(0, 1)
+					+ importance.toLowerCase().substring(1);
+			text = "Importance changed to " + importance + ".";
 			break;
 		case READ:
 			set.getString(idx++);
 			text = "Finding examined.";
 			break;
 		case SUMMARY:
-			text = "Summary changed to " + set.getString(idx++);
+			text = "Summary changed to \"" + set.getString(idx++) + "\"";
 			break;
 		default:
 			text = "Unknown type of audit.";
