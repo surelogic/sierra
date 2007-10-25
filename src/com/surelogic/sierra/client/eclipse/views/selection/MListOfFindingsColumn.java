@@ -11,6 +11,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -18,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;
@@ -25,6 +28,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -196,6 +200,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 
+			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
+			f_table.setMenu(menu);
+
+			setupMenu(menu);
+
 			updateTableContents();
 			return f_table;
 		}
@@ -225,6 +234,80 @@ public final class MListOfFindingsColumn extends MColumn implements
 			c.pack();
 		}
 		f_table.setRedraw(true);
+	}
+
+	private void setupMenu(final Menu menu) {
+		final MenuItem set = new MenuItem(menu, SWT.CASCADE);
+		set.setText("Set Importance");
+		set.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_DIAMOND_ORANGE));
+
+		final Menu importanceMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
+		set.setMenu(importanceMenu);
+		final MenuItem setCritical = new MenuItem(importanceMenu, SWT.CASCADE);
+		setCritical.setText(Importance.CRITICAL.toStringSentenceCase());
+		setCritical.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
+		final MenuItem setHigh = new MenuItem(importanceMenu, SWT.CASCADE);
+		setHigh.setText(Importance.HIGH.toStringSentenceCase());
+		setHigh.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
+		final MenuItem setMedium = new MenuItem(importanceMenu, SWT.CASCADE);
+		setMedium.setText(Importance.MEDIUM.toStringSentenceCase());
+		setMedium.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+		final MenuItem setLow = new MenuItem(importanceMenu, SWT.CASCADE);
+		setLow.setText(Importance.LOW.toStringSentenceCase());
+		setLow.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
+		final MenuItem setIrrelevant = new MenuItem(importanceMenu, SWT.CASCADE);
+		setIrrelevant.setText(Importance.IRRELEVANT.toStringSentenceCase());
+		setIrrelevant.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+
+		menu.addListener(SWT.Show, new Listener() {
+			public void handleEvent(Event event) {
+				TableItem[] items = f_table.getSelection();
+				final boolean findingSelected = items.length > 0;
+				set.setEnabled(findingSelected);
+				if (items.length > 0) {
+					final FindingData data = (FindingData) items[0].getData();
+					final String currentImportance = data.f_importance
+							.toStringSentenceCase();
+					setCritical.setData(data);
+					setHigh.setData(data);
+					setMedium.setData(data);
+					setLow.setData(data);
+					setIrrelevant.setData(data);
+					setCritical.setEnabled(!currentImportance
+							.equals(setCritical.getText()));
+					setHigh.setEnabled(!currentImportance.equals(setHigh
+							.getText()));
+					setMedium.setEnabled(!currentImportance.equals(setMedium
+							.getText()));
+					setLow.setEnabled(!currentImportance.equals(setLow
+							.getText()));
+					setIrrelevant.setEnabled(!currentImportance
+							.equals(setIrrelevant.getText()));
+				}
+			}
+		});
+
+		final Listener f_changeImportance = new Listener() {
+			public void handleEvent(Event event) {
+				if (event.widget instanceof MenuItem) {
+					MenuItem item = (MenuItem) event.widget;
+					if (event.widget.getData() instanceof FindingData) {
+						final FindingData data = (FindingData) item.getData();
+						final Importance to = Importance.valueOf(item.getText()
+								.toUpperCase());
+						FindingDetailsMediator.asyncChangeImportance(
+								data.f_findingId, data.f_importance, to);
+					}
+				}
+			}
+		};
+		setCritical.addListener(SWT.Selection, f_changeImportance);
+		setHigh.addListener(SWT.Selection, f_changeImportance);
+		setMedium.addListener(SWT.Selection, f_changeImportance);
+		setLow.addListener(SWT.Selection, f_changeImportance);
+		setIrrelevant.addListener(SWT.Selection, f_changeImportance);
 	}
 
 	private void refreshDisplay() {

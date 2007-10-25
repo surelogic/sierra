@@ -232,7 +232,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 					final Importance desired = (Importance) event.widget
 							.getData();
 					if (desired != current) {
-						asyncChangeImportance(desired);
+						asyncChangeImportance(f_finding.getFindingId(),
+								current, desired);
 					}
 				}
 			}
@@ -623,23 +624,22 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		}
 	}
 
-	private void asyncChangeImportance(final Importance to) {
-		final Importance from = f_finding.getImportance();
+	public static void asyncChangeImportance(final long finding_id,
+			final Importance from, final Importance to) {
 		final Job job = new DatabaseJob(
-				"Changing the importance of finding id "
-						+ f_finding.getFindingId() + " from " + from + " to "
-						+ to) {
+				"Changing the importance of finding id " + finding_id
+						+ " from " + from + " to " + to) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Updating finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
-					changeImportance(to);
+					changeImportance(finding_id, to);
 				} catch (Exception e) {
 					return SLStatus.createErrorStatus(
 							"Failed to change the importance of finding id "
-									+ f_finding.getFindingId() + " from "
-									+ from + " to " + to, e);
+									+ finding_id + " from " + from + " to "
+									+ to, e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;
@@ -648,14 +648,13 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		job.schedule();
 	}
 
-	private void changeImportance(final Importance to) throws Exception {
-		if (f_finding == null)
-			return;
+	private static void changeImportance(final long finding_id,
+			final Importance to) throws Exception {
 		Connection c = Data.getConnection();
 		try {
 			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.setImportance(f_finding.getFindingId(), to);
+			manager.setImportance(finding_id, to);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} finally {
