@@ -41,7 +41,7 @@ import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.common.eclipse.ScrollingLabelComposite;
+import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -123,7 +123,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final Button f_irrelevantButton;
 	private final Text f_commentText;
 	private final Button f_commentButton;
-	private final ScrollingLabelComposite f_scrollingLabelComposite;
+	private final AuditTrail f_scrollingLabelComposite;
 
 	private final TabItem f_artifactTab;
 	private final Tree f_artifactsTree;
@@ -153,7 +153,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			Button criticalButton, Button highButton, Button mediumButton,
 			Button lowButton, Button irrelevantButton, Text commentText,
 			Button commentButton,
-			ScrollingLabelComposite scrollingLabelComposite,
+			AuditTrail scrollingLabelComposite,
 			TabItem artifactTab, Tree artifactsTree) {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;

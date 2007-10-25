@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
+import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.ScrollingLabelComposite;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsDetailsView extends ViewPart {
@@ -249,7 +249,7 @@ public class FindingsDetailsView extends ViewPart {
 		commentComposite.setLayout(layout);
 
 		final Text commentText = new Text(commentComposite, SWT.MULTI
-				| SWT.BORDER);
+				| SWT.BORDER | SWT.V_SCROLL);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		commentText.setLayoutData(layoutData);
 
@@ -261,8 +261,7 @@ public class FindingsDetailsView extends ViewPart {
 		/*
 		 * Bottom pane used to show existing audits.
 		 */
-		final ScrollingLabelComposite scrollingLabelComposite = new ScrollingLabelComposite(
-				rhs);
+		final AuditTrail scrollingLabelComposite = new AuditTrail(rhs);
 		rhs.setWeights(new int[] { 20, 80 });
 
 		auditTab.setControl(auditPane);
