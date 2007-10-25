@@ -5,8 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
@@ -110,7 +111,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	}
 
-	private final LinkedList<FindingData> f_rows = new LinkedList<FindingData>();
+	private final List<FindingData> f_rows = new CopyOnWriteArrayList<FindingData>();
 
 	public void refreshData() {
 		final String query = getQuery();
@@ -365,6 +366,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		});
 
 		final Listener f_changeAllImportance = new Listener() {
+			@SuppressWarnings("unchecked")
 			public void handleEvent(Event event) {
 				if (event.widget instanceof MenuItem) {
 					MenuItem item = (MenuItem) event.widget;

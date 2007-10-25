@@ -125,7 +125,8 @@ public final class FindingMutationUtility {
 	public static void asyncChangeImportance(final Set<Long> finding_ids,
 			final Importance to) {
 		final Job job = new DatabaseJob("Changing the importance of "
-				+ finding_ids.size() + " finding(s) to " + to) {
+				+ finding_ids.size() + " finding(s) to "
+				+ to.toStringSentenceCase()) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Updating finding data", finding_ids.size());
@@ -138,7 +139,7 @@ public final class FindingMutationUtility {
 					return SLStatus.createErrorStatus(
 							"Failed to change the importance of "
 									+ finding_ids.size() + " finding(s) to "
-									+ to, e);
+									+ to.toStringSentenceCase(), e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;
