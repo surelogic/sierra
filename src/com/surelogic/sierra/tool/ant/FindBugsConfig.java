@@ -87,6 +87,9 @@ public class FindBugsConfig extends ToolConfig {
 				if (f_monitor != null) {
 					f_monitor.subTask("Running FindBugs");
 				}
+
+				// System.out.println("FB : " + cmdj.toString());
+
 				int rc = fork(cmdj.getCommandline());
 				if ((rc == 1) || (rc == Execute.INVALID)) {
 					antProject.log("Findbugs failed to execute with command "
@@ -123,6 +126,7 @@ public class FindBugsConfig extends ToolConfig {
 	/**
 	 * creates the classpath for FindBugs
 	 */
+	@Override
 	protected Path getClasspath() {
 		if (f_classpath == null) {
 			File lib = new File(analysis.getTools().getToolsFolder(), "FB"

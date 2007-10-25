@@ -120,6 +120,7 @@ public class ReckonerConfig extends ToolConfig {
 			for (String string : paths) {
 				cmdj.createArgument().setValue(string);
 			}
+			// System.out.println("Reck : " + cmdj.toString());
 
 			antProject.log("Executing Reckoner with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);

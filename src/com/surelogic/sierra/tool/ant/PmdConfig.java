@@ -187,6 +187,7 @@ public class PmdConfig extends ToolConfig {
 		return f_targetJDK;
 	}
 
+	@Override
 	protected Path getClasspath() {
 		if (f_classpath == null) {
 			File libDir = new File(analysis.getTools().getToolsFolder(), "pmd"
@@ -266,6 +267,8 @@ public class PmdConfig extends ToolConfig {
 
 			// Add the ruleset file
 			cmdj.createArgument().setValue(f_rulesFile.getAbsolutePath());
+
+			// System.out.println("PMD : " + cmdj.toString());
 
 			antProject.log("Executing PMD with the commandline: "
 					+ cmdj.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
