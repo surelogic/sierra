@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -41,8 +43,8 @@ public class Main {
 	public static void main(String args[]) {
 
 		boolean reflect = false;
-		String target = "";
 		String outputFile = null;
+		List<File> targets = null;
 
 		Options options = new Options();
 		options.addOption("reflect", true,
@@ -69,7 +71,20 @@ public class Main {
 				}
 
 				if (cmd.hasOption("target")) {
-					target = cmd.getOptionValue("target");
+					String target = cmd.getOptionValue("target");
+					List<?> holder = cmd.getArgList();
+					targets = new ArrayList<File>();
+
+					if (!"".equals(target)) {
+						targets.add(new File(target));
+						for (Object o : holder) {
+							if (o instanceof String) {
+								File fileHolder = new File(o.toString());
+								targets.add(fileHolder);
+							}
+						}
+					}
+
 				}
 
 				if (cmd.hasOption("outputFile")) {
@@ -78,9 +93,9 @@ public class Main {
 					reflectResult = true;
 				}
 
-				if (!"".equals(target)) {
+				if (targets.size() > 0) {
 					Main llocc = new Main();
-					llocc.getLogicalLOC(target, reflect, outputFile);
+					llocc.getLogicalLOC(targets, reflect, outputFile);
 				} else {
 					throw new ParseException(null);
 				}
@@ -98,55 +113,53 @@ public class Main {
 
 	}
 
-	public void getLogicalLOC(String target, boolean reflect, String outputFile)
-			throws FileNotFoundException, InvalidFileException {
+	public void getLogicalLOC(List<File> targets, boolean reflect,
+			String outputFile) throws FileNotFoundException,
+			InvalidFileException {
 
 		boolean toFile = (outputFile != null);
 		long totalCount = 0L;
+		List<Metrics> metricsList = new ArrayList<Metrics>();
 		if (toFile) {
 			MetricsResultsGenerator.startResultsFile(outputFile);
 		}
 
-		File file = new File(target);
-		if (file.exists() && file.isDirectory()) {
-			String sourceFiles[] = getJavaFiles(file);
-			for (String s : sourceFiles) {
-				File holder = new File(s);
-				Metrics metrics = countLOC(holder, reflect);
+		for (File file : targets) {
+			if (file.exists() && file.isDirectory()) {
+				String sourceFiles[] = getJavaFiles(file);
+				for (String s : sourceFiles) {
+					File holder = new File(s);
+					Metrics metrics = countLOC(holder, reflect);
+					if (reflectResult) {
+						totalCount += metrics.getLoc();
+					}
+					if (toFile) {
+						// MetricsResultsGenerator.writeInFile(metrics);
+						metricsList.add(metrics);
+					}
+				}
+
 				if (reflectResult) {
-					totalCount += metrics.getLoc();
+					System.out.println("Total lines of code in the project :"
+							+ totalCount);
+					totalCount = 0;
 				}
-				if (toFile) {
-					MetricsResultsGenerator.writeInFile(metrics);
-				}
-			}
 
-			if (reflectResult) {
-				System.out.println("Total lines of code in the project :"
-						+ totalCount);
-			}
-
-		} else if (file.exists() && !file.isDirectory()) {
-			File holder = new File(target);
-			if (holder.getName().endsWith(".java")) {
-				Metrics metrics = countLOC(holder, reflect);
-				if (toFile) {
-					MetricsResultsGenerator.writeInFile(metrics);
+			} else if (file.exists() && !file.isDirectory()) {
+				if (file.getName().endsWith(".java")) {
+					Metrics metrics = countLOC(file, reflect);
+					if (toFile) {
+						// MetricsResultsGenerator.writeInFile(metrics);
+						metricsList.add(metrics);
+					}
 				}
-			} else {
-				if (toFile) {
-					MetricsResultsGenerator.endResultsFile();
-				}
-				throw new InvalidFileException();
 			}
-		} else {
-			if (toFile) {
-				MetricsResultsGenerator.endResultsFile();
-			}
-			throw new FileNotFoundException();
 		}
 
 		if (toFile) {
+			for (Metrics m : metricsList) {
+				MetricsResultsGenerator.writeInFile(m);
+			}
 			MetricsResultsGenerator.endResultsFile();
 		}
 
@@ -203,13 +216,6 @@ public class Main {
 		filterdirs(file, filter);
 
 		if (files != null) {
-			// Iterator<String> filesIterator = files.iterator();
-			// while (filesIterator.hasNext()) {
-			// String holder = filesIterator.next();
-			// System.out.println(holder);
-			//
-			// }
-
 			String listOffiles[] = files.toArray(new String[files.size()]);
 			return listOffiles;
 		} else {
