@@ -41,7 +41,6 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import com.surelogic.adhoc.DatabaseJob;
-import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -475,10 +474,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		StringBuilder b = new StringBuilder();
 		b.append("This '");
 		b.append(f_finding.getCategory());
-		b.append("' finding ");
-		if (XUtil.useExperimental()) {
-			b.append("(id=" + f_finding.getFindingId() + ") ");
-		}
+		b.append("' finding (id=");
+		b.append(f_finding.getFindingId());
+		b.append(") ");
 		b.append("is of ");
 		b.append("<a href=\"audit\">");
 		b.append(importance);

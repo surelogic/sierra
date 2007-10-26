@@ -235,10 +235,10 @@
       
        <view
             category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.ServerSynchronizationView"
-            id="com.surelogic.sierra.client.eclipse.views.ServerSynchronizationView"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            name="Server Synchronization">
+            class="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
+            id="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
+            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
+            name="Synchronize History">
       </view>
    </extension>
 

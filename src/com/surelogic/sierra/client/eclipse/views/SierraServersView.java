@@ -176,6 +176,7 @@ public final class SierraServersView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		f_mediator.setFocus();
+		if (f_mediator != null)
+			f_mediator.setFocus();
 	}
 }
