@@ -7,13 +7,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class SynchDetail {
 
 	private final Date time;
 	private final String project;
 	private final List<SynchedFindingDetail> findings;
+
 	private SynchDetail(Connection conn, String project, Date time)
 			throws SQLException {
 		PreparedStatement synchSt = conn
@@ -26,23 +30,34 @@ public class SynchDetail {
 				this.project = project;
 				this.time = time;
 				this.findings = new ArrayList<SynchedFindingDetail>();
-				List<AuditDetail> audits = new ArrayList<AuditDetail>();
-				List<AuditDetail> commits = new ArrayList<AuditDetail>();
 				long commitRevision = set.getLong(1);
 				long priorRevision = set.getLong(2);
-
 				PreparedStatement auditSt = conn
-						.prepareStatement("SELECT U.USER_NAME,A.EVENT,A.VALUE,A.DATE_TIME FROM SIERRA_AUDIT A, SIERRA_USER U WHERE A.REVISION = ? AND U.ID = A.USER_ID");
+						.prepareStatement("SELECT A.FINDING_ID,U.USER_NAME,A.EVENT,A.VALUE,A.DATE_TIME FROM SIERRA_AUDIT A, SIERRA_USER U WHERE A.REVISION = ? AND U.ID = A.USER_ID ORDER BY A.FINDING_ID");
 				try {
 					auditSt.setLong(1, commitRevision);
-					ResultSet auditSet = auditSt.executeQuery();
-					while (auditSet.next()) {
-						commits.add(new AuditDetail(set));
-					}
+					Map<Long, List<AuditDetail>> commitMap = populateAuditMap(auditSt
+							.executeQuery());
 					auditSt.setLong(1, priorRevision);
-					auditSet = auditSt.executeQuery();
-					while (auditSet.next()) {
-						audits.add(new AuditDetail(set));
+					Map<Long, List<AuditDetail>> auditMap = populateAuditMap(auditSt
+							.executeQuery());
+					HashSet<Long> findingIds = new HashSet<Long>(auditMap
+							.keySet());
+					findingIds.addAll(commitMap.keySet());
+					PreparedStatement overviewSt = conn
+							.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+									+ " FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
+					try {
+						for (long findingId : findingIds) {
+							overviewSt.setLong(1, findingId);
+							FindingOverview overview = new FindingOverview(
+									overviewSt.executeQuery());
+							findings.add(new SynchedFindingDetail(overview,
+									auditMap.get(findingId), commitMap
+											.get(findingId)));
+						}
+					} finally {
+						overviewSt.close();
 					}
 				} finally {
 					auditSt.close();
@@ -57,9 +72,33 @@ public class SynchDetail {
 
 	}
 
+	/*
+	 * Fill out the map with a list of audit details for each finding id. The
+	 * set is ordered by finding id.
+	 */
+	private static Map<Long, List<AuditDetail>> populateAuditMap(ResultSet set)
+			throws SQLException {
+		Map<Long, List<AuditDetail>> auditMap = new HashMap<Long, List<AuditDetail>>();
+		long findingId = -1;
+		List<AuditDetail> audits = null;
+		while (set.next()) {
+			long nextFindingId = set.getLong(1);
+			AuditDetail detail = new AuditDetail(set, 2);
+			if (!(nextFindingId == findingId)) {
+				findingId = nextFindingId;
+				audits = new ArrayList<AuditDetail>();
+				audits.add(detail);
+				auditMap.put(findingId, audits);
+			} else {
+				audits.add(detail);
+			}
+		}
+		return auditMap;
+	}
+
 	public static SynchDetail getDetail(Connection conn, String project,
-			Date time) {
-		return null;
+			Date time) throws SQLException {
+		return new SynchDetail(conn, project, time);
 	}
 
 	public Date getTime() {

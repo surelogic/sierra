@@ -12,6 +12,32 @@ public class AuditDetail {
 	private final String text;
 	private final String user;
 
+	AuditDetail(ResultSet set, int idx) throws SQLException {
+		user = set.getString(idx++);
+		switch (AuditEvent.valueOf(set.getString(idx++))) {
+		case COMMENT:
+			text = set.getString(idx++);
+			break;
+		case IMPORTANCE:
+			String importance = set.getString(idx++);
+			importance = importance.substring(0, 1)
+					+ importance.toLowerCase().substring(1);
+			text = "Importance changed to " + importance + ".";
+			break;
+		case READ:
+			set.getString(idx++);
+			text = "Finding examined.";
+			break;
+		case SUMMARY:
+			text = "Summary changed to \"" + set.getString(idx++) + "\"";
+			break;
+		default:
+			text = "Unknown type of audit.";
+			break;
+		}
+		time = set.getTimestamp(idx++);
+	}
+
 	AuditDetail(ResultSet set) throws SQLException {
 		int idx = 1;
 		user = set.getString(idx++);
