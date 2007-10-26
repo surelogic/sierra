@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -41,7 +42,7 @@ public final class ScanDocumentUtility {
 	 */
 	public static void loadPartialScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName,
-			final Map<String, String> compilationUnits)
+			final Map<String, List<String>> compilationUnits)
 			throws ScanPersistenceException {
 		// TODO
 	}
