@@ -127,7 +127,7 @@ public final class SierraServersView extends ViewPart {
 		 * Server Information (left-hand side)
 		 */
 
-		final Composite infoGroup = new Composite(parent, SWT.NONE);
+		final Group infoGroup = new Group(parent, SWT.NONE);
 		infoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		gridLayout = new GridLayout();

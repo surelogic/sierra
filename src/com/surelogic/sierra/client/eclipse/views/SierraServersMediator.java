@@ -7,8 +7,8 @@ import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
@@ -40,7 +40,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_deleteServerItem;
 	final MenuItem f_serverPropertiesItem;
 	final Button f_openInBrowser;
-	final Composite f_infoGroup;
+	final Group f_infoGroup;
 	final Label f_serverURL;
 	final Table f_projectList;
 	final MenuItem f_connectProjectItem;
@@ -96,7 +96,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverPropertiesItem,
-			Button openInBrowser, Composite infoGroup, Label serverURL,
+			Button openInBrowser, Group infoGroup, Label serverURL,
 			Table projectList, MenuItem connectProjectItem,
 			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
@@ -229,6 +229,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 							break;
 						}
 					}
+					f_infoGroup.setText(server.getLabel());
 					f_serverURL.setText(server.toURLString());
 					items = f_projectList.getItems();
 					for (TableItem item : items) {
@@ -243,6 +244,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 										.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 					}
 				} else {
+					f_infoGroup.setText("");
 					f_serverURL.setText("");
 					items = f_projectList.getItems();
 					for (TableItem item : items) {
