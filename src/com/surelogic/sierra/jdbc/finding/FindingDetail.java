@@ -35,7 +35,7 @@ public class FindingDetail {
 				findingTypeDetail = set.getString(idx++);
 				overview = new FindingOverview(set, idx);
 				set = st
-						.executeQuery("SELECT SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
+						.executeQuery("SELECT A.FINDING_ID, SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
 								+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
 								+ "   WHERE FINDING_ID = "
 								+ findingId
