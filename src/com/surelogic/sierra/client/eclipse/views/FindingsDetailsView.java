@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -15,7 +16,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -187,11 +187,8 @@ public class FindingsDetailsView extends ViewPart {
 		try {
 			detailsText = new Browser(description, SWT.NONE);
 		} catch (SWTError e) {
-			MessageBox messageBox = new MessageBox(Display.getCurrent()
-					.getActiveShell(), SWT.ICON_ERROR | SWT.OK);
-			messageBox.setMessage("Browser cannot be initialized.");
-			messageBox.setText("Exit");
-			messageBox.open();
+			MessageDialog.openError(Display.getCurrent().getActiveShell(),
+					"Browser Failure", "Browser cannot be initialized.");
 		}
 		synopsisTab.setControl(synopsisPane);
 

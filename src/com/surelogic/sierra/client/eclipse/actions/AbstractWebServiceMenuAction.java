@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -46,16 +45,16 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Are any servers defined?
 				 */
 				if (manager.isEmpty()) {
-					final MessageBox noServersMsg = new MessageBox(shell,
-							SWT.ICON_ERROR | SWT.APPLICATION_MODAL | SWT.OK);
-					noServersMsg.setText("No Sierra Servers");
-					noServersMsg
-							.setMessage("There are no Sierra server locations defined. "
-									+ "A project must be connected to a Sierra server to perform this action. "
-									+ "The 'Sierra Server' view will be opened so that you can define a location. "
-									+ "Invoke this action again once you have defined a Sierra server location.");
-
-					noServersMsg.open();
+					final StringBuilder b = new StringBuilder();
+					b.append("There are no Sierra server locations defined. ");
+					b.append("A project must be connected to a Sierra ");
+					b.append("server to perform this action. ");
+					b.append("The 'Sierra Team Server' view will be ");
+					b.append("opened so that you can define a location. ");
+					b.append("Invoke this action again once you have ");
+					b.append("defined a Sierra server location.");
+					MessageDialog.openError(shell, "No Sierra Servers", b
+							.toString());
 					ViewUtility.showView(SierraServersView.class.getName());
 					ServerLocationDialog.newServer(shell);
 					return;

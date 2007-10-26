@@ -3,9 +3,8 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
@@ -43,20 +42,22 @@ public final class QualifierPromptFromJob {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				if (f_qualifiers.isEmpty()) {
-					final MessageBox dialog = new MessageBox(PlatformUI
-							.getWorkbench().getActiveWorkbenchWindow()
-							.getShell(), SWT.ICON_ERROR | SWT.APPLICATION_MODAL
-							| SWT.OK);
-					dialog.setText("No Qualifiers on Sierra Team Server");
-					dialog
-							.setMessage("The requested action failed because the Sierra team server '"
-									+ f_serverLabel
-									+ "' has no qualifiers defined.\n\n"
-									+ "Possible resolutions for this problem include:\n"
-									+ " \u25CF Login to the Sierra team server '"
-									+ f_serverLabel
-									+ "' and create a qualifier.");
-					dialog.open();
+					final StringBuilder b = new StringBuilder();
+					b.append("The requested action failed because");
+					b.append(" the Sierra team server '");
+					b.append(f_serverLabel);
+					b.append("' has no qualifiers defined.\n\n");
+					b.append("Possible resolutions for this");
+					b.append(" problem include:\n");
+					b.append(" \u25CF Login to the Sierra team server '");
+					b.append(" \u25CF Login to the Sierra team server '");
+					b.append(f_serverLabel);
+					b.append("' and create a qualifier.");
+					MessageDialog
+							.openError(PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getShell(),
+									"No Qualifiers on Sierra Team Server", b
+											.toString());
 					f_canceled = true; // bail out
 				} else {
 					QualifierSelectionDialog dialog = new QualifierSelectionDialog(

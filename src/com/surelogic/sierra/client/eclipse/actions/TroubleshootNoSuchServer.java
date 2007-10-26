@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -16,33 +15,33 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 	public void fix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				final MessageBox dialog = new MessageBox(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						SWT.ICON_ERROR | SWT.APPLICATION_MODAL | SWT.OK);
-				dialog.setText("Sierra Team Server Connection Failed");
-				dialog
-						.setMessage("The requested action failed because it was not possible to connect to the Sierra team server '"
-								+ f_server.getLabel()
-								+ "'.\n\n"
-								+ "Possible reasons for this problem include:\n"
-								+ " \u25CF The network is down or disconnected.\n"
-								+ " \u25CF The Sierra team server '"
-								+ f_server.getLabel()
-								+ "' is turned off or is not responding.\n"
-								+ " \u25CF The location settings for '"
-								+ f_server.getLabel()
-								+ "' are incorrect.\n\n"
-								+ "Possible resolutions for this problem include:\n"
-								+ " \u25CF Check your network connection to the Sierra team server '"
-								+ f_server.getLabel()
-								+ "'.\n"
-								+ " \u25CF Check the Sierra team server '"
-								+ f_server.getLabel()
-								+ "' is running.\n"
-								+ " \u25CF Fix the location settings for '"
-								+ getServer().getLabel()
-								+ "' so that they are correct.");
-				dialog.open();
+				final StringBuilder b = new StringBuilder();
+				b.append("The requested action failed because it was ");
+				b.append("not possible to connect to the Sierra team server '");
+				b.append(f_server.getLabel());
+				b.append("'.\n\n");
+				b.append("Possible reasons for this problem include:\n");
+				b.append(" \u25CF The network is down or disconnected.\n");
+				b.append(" \u25CF The Sierra team server '");
+				b.append(f_server.getLabel());
+				b.append("' is turned off or is not responding.\n");
+				b.append(" \u25CF The location settings for '");
+				b.append(f_server.getLabel());
+				b.append("' are incorrect.\n\n");
+				b.append("Possible resolutions for this problem include:\n");
+				b.append(" \u25CF Check your network connection");
+				b.append(" to the Sierra team server '");
+				b.append(f_server.getLabel());
+				b.append("'.\n");
+				b.append(" \u25CF Check the Sierra team server '");
+				b.append(f_server.getLabel());
+				b.append("' is running.\n");
+				b.append(" \u25CF Fix the location settings for '");
+				b.append(getServer().getLabel());
+				b.append("' so that they are correct.");
+				MessageDialog.openError(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						"Sierra Team Server Connection Failed", b.toString());
 			}
 		});
 		/*

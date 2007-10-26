@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -404,17 +404,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 								.toUpperCase());
 						boolean makeChange = true;
 						if (finding_ids.size() > 1) {
-							MessageBox dialog = new MessageBox(PlatformUI
-									.getWorkbench().getDisplay()
-									.getActiveShell(), SWT.ICON_WARNING
-									| SWT.OK | SWT.CANCEL);
-							dialog.setMessage("Are you sure you want to "
+							final String msg = "Are you sure you want to "
 									+ "change the importance of "
 									+ finding_ids.size() + " findings to "
-									+ to.toStringSentenceCase());
-							dialog.setText("Confirm Multiple Finding Change");
-							if (dialog.open() == SWT.CANCEL)
+									+ to.toStringSentenceCase();
+							if (!MessageDialog.openConfirm(PlatformUI
+									.getWorkbench().getDisplay()
+									.getActiveShell(),
+									"Confirm Multiple Finding Change", msg)) {
 								makeChange = false;
+							}
 						}
 						if (makeChange)
 							FindingMutationUtility.asyncChangeImportance(

@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -17,7 +18,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
@@ -205,18 +205,17 @@ public class SierraPreferencePage extends PreferencePage implements
 
 			f_deleteDatabase.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					final MessageBox confirmDelete = new MessageBox(
-							f_projectTable.getShell(), SWT.ICON_WARNING
-									| SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-					confirmDelete.setText("Confirm Sierra Data Deletion");
-					confirmDelete
-							.setMessage("Are you sure you want to delete all "
-									+ "Sierra data in your Eclipse workspace?\n\n"
-									+ "This action will not take effect until you restart Eclipse.\n"
-									+ "This action will not "
-									+ "change or delete data on any Sierra server.");
-					if (confirmDelete.open() == SWT.NO)
+					final StringBuilder b = new StringBuilder();
+					b.append("Are you sure you want to delete all ");
+					b.append("Sierra data in your Eclipse workspace?\n\n");
+					b.append("This action will not take effect until");
+					b.append(" you restart Eclipse.\n");
+					b.append("This action will not ");
+					b.append("change or delete data on any Sierra server.");
+					if (!MessageDialog.openConfirm(f_projectTable.getShell(),
+							"Confirm Sierra Data Deletion", b.toString())) {
 						return; // bail
+					}
 					f_deleteDatabase.setEnabled(false);
 					PreferenceConstants.setDeleteDatabaseOnStartup(true);
 				}

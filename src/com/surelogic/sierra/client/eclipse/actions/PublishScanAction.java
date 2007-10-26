@@ -2,8 +2,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
@@ -22,22 +21,27 @@ public final class PublishScanAction extends AbstractWebServiceMenuAction {
 			ShareScanJob job = new ShareScanJob(projectName, server, scanFile);
 			job.schedule();
 		} else {
-			final MessageBox message = new MessageBox(shell, SWT.ICON_ERROR
-					| SWT.APPLICATION_MODAL | SWT.OK);
-			message.setText("No Scan Exists");
-			message.setMessage("You must scan '" + projectName
-					+ "' before you can share the scan results to the server '"
-					+ server.getLabel() + "'.\n\n"
-					+ "Possible reasons for this problem include:\n"
-					+ " \u25CF You have never scanned the project '"
-					+ projectName + "'.\n" + " \u25CF The file '"
-					+ PreferenceConstants.getSierraPath()
-					+ System.getProperty("file.separator") + projectName
-					+ ".sierra.gz' has been deleted from the disk.\n\n"
-					+ "Possible resolutions for this problem include:\n"
-					+ " \u25CF Run a scan on the project '" + projectName
-					+ "'.");
-			message.open();
+			final StringBuilder b = new StringBuilder();
+			b.append("You must scan '");
+			b.append(projectName);
+			b.append("' before you can share the scan results to the server '");
+			b.append(server.getLabel());
+			b.append("'.\n\n");
+			b.append("Possible reasons for this problem include:\n");
+			b.append(" \u25CF You have never scanned the project '");
+			b.append(projectName);
+			b.append("'.\n");
+			b.append(" \u25CF The file '");
+			b.append(PreferenceConstants.getSierraPath());
+			b.append(System.getProperty("file.separator"));
+			b.append(projectName);
+			b.append(".sierra.gz' has been deleted from the disk.\n\n");
+			b.append("Possible resolutions for this problem include:\n");
+			b.append(" \u25CF Run a scan on the project '");
+			b.append(projectName);
+			b.append("'.");
+
+			MessageDialog.openError(shell, "No Scan Exists", b.toString());
 		}
 	}
 }

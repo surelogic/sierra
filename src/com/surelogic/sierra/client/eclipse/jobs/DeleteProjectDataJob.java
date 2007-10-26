@@ -10,8 +10,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -78,14 +76,11 @@ public final class DeleteProjectDataJob {
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
-										final MessageBox dialog = new MessageBox(
-												shell, SWT.ICON_ERROR | SWT.OK);
-										dialog.setText("Failure");
-										dialog
-												.setMessage("Deletion of Sierra data about projects "
-														+ f_projectNames
-														+ " failed. All exceptions have been logged to the Eclipse 'Error Log'");
-										dialog.open();
+										final String msg = "Deletion of Sierra data about projects "
+												+ f_projectNames
+												+ " failed. All exceptions have been logged to the Eclipse 'Error Log'";
+										MessageDialog.openError(shell,
+												"Failure", msg);
 									}
 								});
 					}
