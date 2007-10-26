@@ -50,11 +50,14 @@ public class SynchDetail {
 					try {
 						for (long findingId : findingIds) {
 							overviewSt.setLong(1, findingId);
-							FindingOverview overview = new FindingOverview(
-									overviewSt.executeQuery());
-							findings.add(new SynchedFindingDetail(overview,
-									auditMap.get(findingId), commitMap
-											.get(findingId)));
+							ResultSet overviewSet = overviewSt.executeQuery();
+							if (overviewSet.next()) {
+								FindingOverview overview = new FindingOverview(
+										overviewSet);
+								findings.add(new SynchedFindingDetail(overview,
+										auditMap.get(findingId), commitMap
+												.get(findingId)));
+							}
 						}
 					} finally {
 						overviewSt.close();
@@ -107,6 +110,10 @@ public class SynchDetail {
 
 	public String getProject() {
 		return project;
+	}
+
+	public List<SynchedFindingDetail> getFindings() {
+		return findings;
 	}
 
 }
