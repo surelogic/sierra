@@ -117,7 +117,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 							menu.init();
 							afterCol++;
 						}
-						menu.setSelection(filter.getFactory().getFilterLabel());
+						menu.setSelection(filter.getFactory());
 						prev = menu;
 
 						MFilterSelectionColumn fCol = new MFilterSelectionColumn(
