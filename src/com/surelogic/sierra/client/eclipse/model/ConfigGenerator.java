@@ -4,13 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -63,85 +66,182 @@ public final class ConfigGenerator {
 
 	}
 
-	public List<Config> getCompilationUnitConfigs(
+	public List<ConfigCompilationUnit> getCompilationUnitConfigs(
 			List<ICompilationUnit> compilationUnits) {
+		final List<ConfigCompilationUnit> configCompilationUnit = new ArrayList<ConfigCompilationUnit>();
 
-		List<Config> configs = new ArrayList<Config>();
-
+		Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<String, List<ICompilationUnit>>();
 		for (ICompilationUnit c : compilationUnits) {
-			configs.add(getCompilationUnitConfig(c));
+
+			String projectNameHolder = c.getJavaProject().getElementName();
+
+			Set<String> projectsInMap = projectCompilationUnitMap.keySet();
+			List<ICompilationUnit> compilationUnitsHolder = null;
+			if (projectsInMap.contains(projectNameHolder)) {
+				compilationUnitsHolder = projectCompilationUnitMap
+						.get(projectNameHolder);
+			} else {
+				compilationUnitsHolder = new ArrayList<ICompilationUnit>();
+
+			}
+			compilationUnitsHolder.add(c);
+			projectCompilationUnitMap.put(projectNameHolder,
+					compilationUnitsHolder);
 		}
 
-		return configs;
+		Set<String> projects = projectCompilationUnitMap.keySet();
+
+		for (String s : projects) {
+			List<ICompilationUnit> cus = projectCompilationUnitMap.get(s);
+			if (cus.size() > 0) {
+				final ConfigCompilationUnit ccu = new ConfigCompilationUnit(
+						getCompilationUnitConfig(cus),
+						getPackageCompilationUnitMap(cus));
+				configCompilationUnit.add(ccu);
+			}
+		}
+
+		return configCompilationUnit;
 
 	}
 
-	private Config getCompilationUnitConfig(ICompilationUnit compilationUnit) {
-		String projectPath = compilationUnit.getJavaProject().getResource()
-				.getLocation().toString();
-		File baseDir = new File(projectPath);
-		File scanDocument = new File(f_sierraPath + File.separator
-				+ compilationUnit.getResource().getProject().getName() + " - "
-				+ getTimeStamp() + SierraConstants.PARSED_FILE_SUFFIX);
+	private Map<String, List<String>> getPackageCompilationUnitMap(
+			List<ICompilationUnit> compilationUnits) {
+		Map<String, List<String>> packageCompilationUnitMap = new HashMap<String, List<String>>();
 
-		Config config = new Config();
+		for (ICompilationUnit c : compilationUnits) {
+			try {
+				IType[] types = c.getAllTypes();
+				if (types.length > 0) {
+					String qualifiedName = types[0].getFullyQualifiedName();
 
-		config.setBaseDirectory(baseDir);
-		config.setProject(compilationUnit.getResource().getProject().getName());
-		config.setDestDirectory(f_resultRoot);
-		config.setScanDocument(scanDocument);
-		config.setJavaVendor(System.getProperty("java.vendor"));
-		config.setScanDocument(scanDocument);
-		config.setToolsDirectory(new File(tools));
-		config.setExcludedToolsList(getExcludedTools());
-		String binDirs = null;
-		try {
-			IJavaProject javaProject = compilationUnit.getJavaProject();
-			String outputLocation = javaProject.getOutputLocation()
-					.makeRelative().toOSString();
-			IType[] types = compilationUnit.getAllTypes();
-			Set<IFile> classFiles = new HashSet<IFile>();
-			for (IType t : types) {
+					int lastPeriod = qualifiedName.lastIndexOf(".");
 
-				String qualifiedName = t.getFullyQualifiedName();
+					String packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+					if (lastPeriod != -1) {
+						packageName = qualifiedName.substring(0, lastPeriod);
+					}
 
-				int lastPeriod = qualifiedName.lastIndexOf(".");
+					Set<String> packageInMap = packageCompilationUnitMap
+							.keySet();
+					List<String> compilationUnitsHolder = null;
+					if (packageInMap.contains(packageName)) {
+						compilationUnitsHolder = packageCompilationUnitMap
+								.get(packageName);
+					} else {
+						compilationUnitsHolder = new ArrayList<String>();
 
-				String packageName = qualifiedName.substring(0, lastPeriod);
-				packageName = packageName.replace(".", File.separator);
-
-				String javaType = qualifiedName.substring(lastPeriod + 1);
-				String folder = outputLocation + File.separator + packageName;
-				IFolder classFolder = (IFolder) ResourcesPlugin.getWorkspace()
-						.getRoot().findMember(folder);
-				getClassFiles(classFolder, javaType, classFiles);
-
-			}
-
-			for (IFile f : classFiles) {
-				if (binDirs == null) {
-					binDirs = f.getLocation().toOSString();
-				} else {
-					binDirs = binDirs + ";" + f.getLocation().toOSString();
+					}
+					compilationUnitsHolder.add(c.getElementName());
+					packageCompilationUnitMap.put(packageName,
+							compilationUnitsHolder);
 				}
+			} catch (JavaModelException e) {
+				SLLogger.getLogger("sierra").log(Level.SEVERE,
+						"Error when getting compilation unit types", e);
 			}
 
-			System.out.println("Class file :" + binDirs);
-			config.setBinDirs(binDirs);
-			config.setSourceDirs(compilationUnit.getResource().getLocation()
-					.toOSString());
-
-		} catch (JavaModelException e) {
-			SLLogger.getLogger("sierra").log(Level.SEVERE,
-					"Error when getting compilation unit types", e);
-		} catch (CoreException e) {
-			SLLogger.getLogger("sierra").log(Level.SEVERE,
-					"Error when getting compilation unit types", e);
 		}
+		return packageCompilationUnitMap;
+	}
 
-		// Get clean option
-		// Get included dirs -project specific
-		// Get excluded dirs - project specific
+	private Config getCompilationUnitConfig(
+			List<ICompilationUnit> compilationUnits) {
+		Config config = null;
+		if (compilationUnits.size() > 0) {
+			String projectPath = compilationUnits.get(0).getJavaProject()
+					.getResource().getLocation().toString();
+			File baseDir = new File(projectPath);
+			File scanDocument = new File(f_sierraPath
+					+ File.separator
+					+ compilationUnits.get(0).getResource().getProject()
+							.getName() + " - partial - " + getTimeStamp()
+					+ SierraConstants.PARSED_FILE_SUFFIX);
+
+			config = new Config();
+
+			config.setBaseDirectory(baseDir);
+			config.setProject(compilationUnits.get(0).getResource()
+					.getProject().getName());
+			config.setDestDirectory(f_resultRoot);
+			config.setScanDocument(scanDocument);
+			config.setJavaVendor(System.getProperty("java.vendor"));
+			config.setScanDocument(scanDocument);
+			config.setToolsDirectory(new File(tools));
+			config.setExcludedToolsList(getExcludedTools());
+			String binDirs = null;
+			String srcDirs = null;
+			IJavaProject javaProject = compilationUnits.get(0).getJavaProject();
+
+			try {
+				String outputLocation = javaProject.getOutputLocation()
+						.makeRelative().toOSString();
+
+				for (ICompilationUnit c : compilationUnits) {
+					IType[] types = c.getAllTypes();
+					Set<IFile> classFiles = new HashSet<IFile>();
+					for (IType t : types) {
+
+						String qualifiedName = t.getFullyQualifiedName();
+
+						int lastPeriod = qualifiedName.lastIndexOf(".");
+
+						String packageName = null;
+						String javaType = null;
+						String folder = null;
+						if (lastPeriod != -1) {
+							packageName = qualifiedName
+									.substring(0, lastPeriod);
+							packageName = packageName.replace(".",
+									File.separator);
+							javaType = qualifiedName.substring(lastPeriod + 1);
+							folder = outputLocation + File.separator
+									+ packageName;
+						} else {
+							packageName = "";
+							javaType = qualifiedName;
+							folder = outputLocation;
+						}
+
+						IResource classFolder = ResourcesPlugin.getWorkspace()
+								.getRoot().findMember(folder);
+						getClassFiles(classFolder, javaType, classFiles);
+
+					}
+
+					for (IFile f : classFiles) {
+						if (binDirs == null) {
+							binDirs = f.getLocation().toOSString();
+						} else {
+							binDirs = binDirs + ";"
+									+ f.getLocation().toOSString();
+						}
+					}
+
+					if (srcDirs == null) {
+						srcDirs = c.getResource().getLocation().toOSString();
+					} else {
+						srcDirs = srcDirs + ";"
+								+ c.getResource().getLocation().toOSString();
+					}
+
+				}
+				config.setBinDirs(binDirs);
+				config.setSourceDirs(srcDirs);
+
+			} catch (JavaModelException e) {
+				SLLogger.getLogger("sierra").log(Level.SEVERE,
+						"Error when getting compilation unit types", e);
+			} catch (CoreException e) {
+				SLLogger.getLogger("sierra").log(Level.SEVERE,
+						"Error when getting compilation unit types", e);
+			}
+
+			// Get clean option
+			// Get included dirs -project specific
+			// Get excluded dirs - project specific
+
+		}
 		return config;
 	}
 
@@ -155,8 +255,8 @@ public final class ConfigGenerator {
 		Config config = new Config();
 
 		try {
-			IFolder binDirHolder = (IFolder) ResourcesPlugin.getWorkspace()
-					.getRoot().findMember(project.getOutputLocation());
+			IResource binDirHolder = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(project.getOutputLocation());
 			config.setBinDirs(binDirHolder.getLocation().toOSString());
 			IClasspathEntry[] entries = project.getRawClasspath();
 			String srcDir = null;
@@ -265,10 +365,17 @@ public final class ConfigGenerator {
 	 * @return
 	 * @throws CoreException
 	 */
-	private Set<IFile> getClassFiles(IFolder folder, String javaFileName,
+	private Set<IFile> getClassFiles(IResource resource, String javaFileName,
 			Set<IFile> files) throws CoreException {
+		IResource[] resources = null;
 
-		IResource[] resources = folder.members();
+		if (resource instanceof IProject) {
+			IProject project = (IProject) resource;
+			resources = project.members();
+		} else if (resource instanceof IFolder) {
+			IFolder folder = (IFolder) resource;
+			resources = folder.members();
+		}
 
 		for (IResource r : resources) {
 			if (r.getType() == IResource.FILE) {

@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,7 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.jobs.SierraSchedulingRule;
+import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -51,9 +53,6 @@ public final class Scan {
 
 	/** The location to store tool results */
 	private final File f_resultRoot;
-
-	/** The list of configurations to run scan on */
-	private List<Config> f_configs;
 
 	/**
 	 * The constructor for the Scanning projects
@@ -85,21 +84,39 @@ public final class Scan {
 	}
 
 	private void execute() {
-		f_configs = new ArrayList<Config>();
-
+		List<Config> configProjects = new ArrayList<Config>();
+		List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
 		final StringBuilder projectList = new StringBuilder();
 
 		if (f_selectedProjects.size() != 0) {
-			f_configs = ConfigGenerator.getInstance().getProjectConfigs(
+			configProjects = ConfigGenerator.getInstance().getProjectConfigs(
 					f_selectedProjects);
 		} else if (f_selectedCompilationUnits.size() != 0) {
-			f_configs = ConfigGenerator.getInstance()
+			configCompilationUnits = ConfigGenerator.getInstance()
 					.getCompilationUnitConfigs(f_selectedCompilationUnits);
 		}
-		if (f_configs.size() > 0) {
+
+		if (configCompilationUnits.size() > 0) {
+
+			/* Run scan on compilation units */
+			for (ConfigCompilationUnit ccu : configCompilationUnits) {
+				final Config c = ccu.getConfig();
+				projectList.append(" ").append(c.getProject());
+				final Job runSingleSierraScan = new ScanProjectJob(
+						"Running Sierra on " + c.getProject(), c, SIERRA, ccu
+								.getPackageCompilationUnitMap());
+				runSingleSierraScan.setPriority(Job.SHORT);
+				runSingleSierraScan.belongsTo(c.getProject());
+				runSingleSierraScan
+						.addJobChangeListener(new ScanProjectJobAdapter(c
+								.getProject()));
+				runSingleSierraScan.schedule();
+			}
+
+		} else if (configProjects.size() > 0) {
 
 			/* Run the scan on the all the configs */
-			for (Config c : f_configs) {
+			for (Config c : configProjects) {
 				projectList.append(" ").append(c.getProject());
 				final Job runSingleSierraScan = new ScanProjectJob(
 						"Running Sierra on " + c.getProject(), c, SIERRA);
@@ -111,15 +128,16 @@ public final class Scan {
 				runSingleSierraScan.schedule();
 
 			}
-			if (PreferenceConstants.showBalloonNotifications())
-				BalloonUtility.showMessage("Sierra Scan Started", "Scanning "
-						+ projectList + ". You may continue your work. "
-						+ "You will be notified when the scan has completed.");
 		}
+
+		if (PreferenceConstants.showBalloonNotifications())
+			BalloonUtility.showMessage("Sierra Scan Started", "Scanning "
+					+ projectList + ". You may continue your work. "
+					+ "You will be notified when the scan has completed.");
 	}
 
 	/**
-	 * The job to scan a project. There is one job per project.
+	 * The job to scan a project. There is one job per config object.
 	 * 
 	 * @author Tanmay.Sinha
 	 * 
@@ -128,10 +146,11 @@ public final class Scan {
 
 		private final Config f_config;
 		private final String f_familyName;
+		private final Map<String, List<String>> f_packageCompilationUnitMap;
 
 		/**
 		 * 
-		 * The constructor for a Sierra scan
+		 * The constructor for a Sierra scan on a project
 		 * 
 		 * @param name
 		 *            the name of the job.
@@ -144,6 +163,40 @@ public final class Scan {
 			super(name);
 			f_config = config;
 			f_familyName = familyName;
+			f_packageCompilationUnitMap = null;
+			setRule(SierraSchedulingRule.getInstance());
+		}
+
+		/**
+		 * 
+		 * The constructor for a Sierra scan on a compilation unit
+		 * 
+		 * @param name
+		 *            the name of the job.
+		 * @param config
+		 *            the config object for tool run.
+		 * @param familyName
+		 *            the family name.
+		 * @param packageCompilationUnitMap
+		 *            map of package names to the list of compilation units
+		 *            contained
+		 */
+		public ScanProjectJob(String name, Config config, String familyName,
+				Map<String, List<String>> packageCompilationUnitMap) {
+			super(name);
+			f_config = config;
+			f_familyName = familyName;
+			f_packageCompilationUnitMap = packageCompilationUnitMap;
+			// Set<String> packages = packageCompilationUnitMap.keySet();
+			// for (String s : packages) {
+			//
+			// System.out.println("In Package : " + s);
+			// List<String> cus = packageCompilationUnitMap.get(s);
+			// for (String c : cus) {
+			// System.out.println("\tCompilation unit :" + c);
+			// }
+			//
+			// }
 			setRule(SierraSchedulingRule.getInstance());
 		}
 
@@ -188,20 +241,42 @@ public final class Scan {
 					return Status.CANCEL_STATUS;
 				} else {
 					try {
+
 						/* Start database entry */
-						ScanDocumentUtility.loadScanDocument(f_config
-								.getScanDocument(), slProgressMonitorWrapper,
-								f_config.getProject());
+						if (f_packageCompilationUnitMap == null) {
+							ScanDocumentUtility.loadScanDocument(f_config
+									.getScanDocument(),
+									slProgressMonitorWrapper, f_config
+											.getProject());
+						} else {
+							System.out.println("partial scan in db");
+							ScanDocumentUtility.loadPartialScanDocument(
+									f_config.getScanDocument(),
+									slProgressMonitorWrapper, f_config
+											.getProject(),
+									f_packageCompilationUnitMap);
+						}
 						/* Notify that scan was completed */
 						DatabaseHub.getInstance().notifyScanLoaded();
 
 						/* Rename the scan document */
 						File scanDocument = f_config.getScanDocument();
-						File newScanDocument = new File(PreferenceConstants
-								.getSierraPath()
-								+ File.separator
-								+ f_config.getProject()
-								+ SierraConstants.PARSED_FILE_SUFFIX);
+						File newScanDocument = null;
+
+						if (f_packageCompilationUnitMap == null) {
+							newScanDocument = new File(PreferenceConstants
+									.getSierraPath()
+									+ File.separator
+									+ f_config.getProject()
+									+ SierraConstants.PARSED_FILE_SUFFIX);
+						} else {
+							newScanDocument = new File(PreferenceConstants
+									.getSierraPath()
+									+ File.separator
+									+ f_config.getProject()
+									+ " - partial"
+									+ SierraConstants.PARSED_FILE_SUFFIX);
+						}
 						/*
 						 * This approach assures that the scan document
 						 * generation will not crash. The tool will simply
