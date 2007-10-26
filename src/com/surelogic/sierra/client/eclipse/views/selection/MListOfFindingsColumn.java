@@ -34,6 +34,7 @@ import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -246,22 +247,32 @@ public final class MListOfFindingsColumn extends MColumn implements
 		set.setText("Set Importance");
 		set.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_DIAMOND_ORANGE));
 
+		/*
+		 * Quick audit
+		 */
+
+		final MenuItem quickAudit = new MenuItem(menu, SWT.PUSH);
+		quickAudit.setText("Mark As Examined by Me");
+		quickAudit.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP_SMALL));
+
+		new MenuItem(menu, SWT.SEPARATOR);
+
 		final Menu importanceMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
 		set.setMenu(importanceMenu);
-		final MenuItem setCritical = new MenuItem(importanceMenu, SWT.CASCADE);
+		final MenuItem setCritical = new MenuItem(importanceMenu, SWT.PUSH);
 		setCritical.setText(Importance.CRITICAL.toStringSentenceCase());
 		setCritical.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
-		final MenuItem setHigh = new MenuItem(importanceMenu, SWT.CASCADE);
+		final MenuItem setHigh = new MenuItem(importanceMenu, SWT.PUSH);
 		setHigh.setText(Importance.HIGH.toStringSentenceCase());
 		setHigh.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
-		final MenuItem setMedium = new MenuItem(importanceMenu, SWT.CASCADE);
+		final MenuItem setMedium = new MenuItem(importanceMenu, SWT.PUSH);
 		setMedium.setText(Importance.MEDIUM.toStringSentenceCase());
 		setMedium.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
-		final MenuItem setLow = new MenuItem(importanceMenu, SWT.CASCADE);
+		final MenuItem setLow = new MenuItem(importanceMenu, SWT.PUSH);
 		setLow.setText(Importance.LOW.toStringSentenceCase());
 		setLow.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
-		final MenuItem setIrrelevant = new MenuItem(importanceMenu, SWT.CASCADE);
+		final MenuItem setIrrelevant = new MenuItem(importanceMenu, SWT.PUSH);
 		setIrrelevant.setText(Importance.IRRELEVANT.toStringSentenceCase());
 		setIrrelevant.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
@@ -271,6 +282,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				TableItem[] items = f_table.getSelection();
 				final boolean findingSelected = items.length > 0;
 				set.setEnabled(findingSelected);
+				quickAudit.setEnabled(findingSelected);
 				if (items.length > 0) {
 					final FindingData data = (FindingData) items[0].getData();
 					final String currentImportance = data.f_importance
@@ -290,6 +302,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 							.getText()));
 					setIrrelevant.setEnabled(!currentImportance
 							.equals(setIrrelevant.getText()));
+					quickAudit.setData(data);
 				}
 			}
 		});
@@ -314,6 +327,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setLow.addListener(SWT.Selection, f_changeImportance);
 		setIrrelevant.addListener(SWT.Selection, f_changeImportance);
 
+		quickAudit.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.widget instanceof MenuItem) {
+					MenuItem item = (MenuItem) event.widget;
+					if (event.widget.getData() instanceof FindingData) {
+						final FindingData data = (FindingData) item.getData();
+						FindingMutationUtility.asyncComment(data.f_findingId,
+								FindingDetailsMediator.STAMP_COMMENT);
+					}
+				}
+			}
+		});
+
 		/*
 		 * Change the importance of all shown findings
 		 */
@@ -326,23 +352,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 		final Menu importanceAllMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
 		setAll.setMenu(importanceAllMenu);
 		final MenuItem setAllCritical = new MenuItem(importanceAllMenu,
-				SWT.CASCADE);
+				SWT.PUSH);
 		setAllCritical.setText(Importance.CRITICAL.toStringSentenceCase());
 		setAllCritical.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
-		final MenuItem setAllHigh = new MenuItem(importanceAllMenu, SWT.CASCADE);
+		final MenuItem setAllHigh = new MenuItem(importanceAllMenu, SWT.PUSH);
 		setAllHigh.setText(Importance.HIGH.toStringSentenceCase());
 		setAllHigh.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
-		final MenuItem setAllMedium = new MenuItem(importanceAllMenu,
-				SWT.CASCADE);
+		final MenuItem setAllMedium = new MenuItem(importanceAllMenu, SWT.PUSH);
 		setAllMedium.setText(Importance.MEDIUM.toStringSentenceCase());
 		setAllMedium.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
-		final MenuItem setAllLow = new MenuItem(importanceAllMenu, SWT.CASCADE);
+		final MenuItem setAllLow = new MenuItem(importanceAllMenu, SWT.PUSH);
 		setAllLow.setText(Importance.LOW.toStringSentenceCase());
 		setAllLow.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
 		final MenuItem setAllIrrelevant = new MenuItem(importanceAllMenu,
-				SWT.CASCADE);
+				SWT.PUSH);
 		setAllIrrelevant.setText(Importance.IRRELEVANT.toStringSentenceCase());
 		setAllIrrelevant.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
@@ -403,6 +428,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setAllMedium.addListener(SWT.Selection, f_changeAllImportance);
 		setAllLow.addListener(SWT.Selection, f_changeAllImportance);
 		setAllIrrelevant.addListener(SWT.Selection, f_changeAllImportance);
+
 	}
 
 	private void refreshDisplay() {

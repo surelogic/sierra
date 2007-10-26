@@ -67,7 +67,7 @@ import com.surelogic.sierra.tool.message.Importance;
 public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		IProjectsObserver {
 
-	private static final String STAMP_COMMENT = "I examined this finding.";
+	public static final String STAMP_COMMENT = "I examined this finding.";
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
