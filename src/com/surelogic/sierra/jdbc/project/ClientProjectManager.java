@@ -30,12 +30,15 @@ public class ClientProjectManager extends ProjectManager {
 
 	private final ClientFindingManager findingManager;
 	private final PreparedStatement insertSynchRecord;
+	private final PreparedStatement deleteSynchByProject;
 
 	private ClientProjectManager(Connection conn) throws SQLException {
 		super(conn);
 		this.findingManager = ClientFindingManager.getInstance(conn);
 		this.insertSynchRecord = conn
 				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION) VALUES (?,?,?,?)");
+		this.deleteSynchByProject = conn
+				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
@@ -138,7 +141,9 @@ public class ClientProjectManager extends ProjectManager {
 		insertSynchRecord.setLong(idx++, p.getId());
 		insertSynchRecord.setTimestamp(idx++, new Timestamp(new Date()
 				.getTime()));
-		insertSynchRecord.setLong(idx++, commitResponse.getRevision() == null ? -1 : commitResponse.getRevision());
+		insertSynchRecord.setLong(idx++,
+				commitResponse.getRevision() == null ? -1 : commitResponse
+						.getRevision());
 		insertSynchRecord.setLong(idx++, auditRequest.getRevision());
 		insertSynchRecord.execute();
 	}
@@ -152,6 +157,8 @@ public class ClientProjectManager extends ProjectManager {
 			if (monitor != null)
 				monitor.subTask("Deleting scans for project " + projectName);
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
+			deleteSynchByProject.setLong(1, rec.getId());
+			deleteSynchByProject.execute();
 			findingManager.deleteFindings(projectName, monitor);
 			if (monitor != null) {
 				if (!monitor.isCanceled()) {
