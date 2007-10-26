@@ -51,15 +51,24 @@ public final class FindingMutationUtility {
 		if (summary == null || summary.equals(""))
 			return;
 		Connection c = Data.getConnection();
+		Exception exc = null;
 		try {
 			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-
 			manager.changeSummary(finding_id, summary);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
 		} finally {
-			c.close();
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
 		}
 	}
 
@@ -89,14 +98,24 @@ public final class FindingMutationUtility {
 		if (comment == null || comment.trim().equals(""))
 			return;
 		Connection c = Data.getConnection();
+		Exception exc = null;
 		try {
 			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.comment(finding_id, comment);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
 		} finally {
-			c.close();
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
 		}
 	}
 
@@ -127,14 +146,24 @@ public final class FindingMutationUtility {
 	private static void changeImportance(final long finding_id,
 			final Importance to) throws Exception {
 		Connection c = Data.getConnection();
+		Exception exc = null;
 		try {
 			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.setImportance(finding_id, to);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
 		} finally {
-			c.close();
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
 		}
 	}
 
@@ -166,14 +195,24 @@ public final class FindingMutationUtility {
 			final Importance to, final SLProgressMonitor monitor)
 			throws Exception {
 		Connection c = Data.getConnection();
+		Exception exc = null;
 		try {
 			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.setImportance(finding_ids, to, monitor);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
 		} finally {
-			c.close();
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
 		}
 	}
 }
