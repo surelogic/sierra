@@ -113,6 +113,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final TabFolder f_folder;
 
 	private final TabItem f_synopsisTab;
+	private final Button f_synopsisAudit;
 	private final Link f_findingSynopsis;
 	private final Label f_projectName;
 	private final Label f_packageName;
@@ -152,13 +153,14 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
-			TabFolder folder, TabItem synopsisTab, Link findingSynopsis,
-			Label projectName, Label packageName, Link className,
-			Browser detailsText, TabItem auditTab, Button quickAudit,
-			Button criticalButton, Button highButton, Button mediumButton,
-			Button lowButton, Button irrelevantButton, Text commentText,
-			Button commentButton, AuditTrail scrollingLabelComposite,
-			TabItem artifactTab, Table artifacts) {
+			TabFolder folder, TabItem synopsisTab, Button synopsisAudit,
+			Link findingSynopsis, Label projectName, Label packageName,
+			Link className, Browser detailsText, TabItem auditTab,
+			Button quickAudit, Button criticalButton, Button highButton,
+			Button mediumButton, Button lowButton, Button irrelevantButton,
+			Text commentText, Button commentButton,
+			AuditTrail scrollingLabelComposite, TabItem artifactTab,
+			Table artifacts) {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
@@ -166,6 +168,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_summaryText = summaryText;
 		f_folder = folder;
 		f_synopsisTab = synopsisTab;
+		f_synopsisAudit = synopsisAudit;
 		f_findingSynopsis = findingSynopsis;
 		f_projectName = projectName;
 		f_packageName = packageName;
@@ -258,13 +261,15 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		});
 
-		f_quickAudit.addSelectionListener(new SelectionAdapter() {
+		final SelectionAdapter stampAction = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
 						STAMP_COMMENT);
 			}
-		});
+		};
+		f_synopsisAudit.addSelectionListener(stampAction);
+		f_quickAudit.addSelectionListener(stampAction);
 
 		f_className.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {

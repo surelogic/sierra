@@ -34,6 +34,7 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsDetailsView extends ViewPart {
 
+	private static final String STAMP_TOOLTIP_MESSAGE = "Mark this finding as being examined by me.";
 	private static final String SELECT_FINDINGS = "No finding is selected...select a finding to view its details";
 	private FindingDetailsMediator f_mediator = null;
 
@@ -102,8 +103,24 @@ public class FindingsDetailsView extends ViewPart {
 		layout = new GridLayout();
 		synopsisPane.setLayout(layout);
 
-		final Link findingSynopsis = new Link(synopsisPane, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		final Composite quickSynopsis = new Composite(synopsisPane, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		quickSynopsis.setLayoutData(layoutData);
+		layout = new GridLayout();
+		layout.verticalSpacing = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 2;
+		quickSynopsis.setLayout(layout);
+
+		final Button synopsisAudit = new Button(quickSynopsis, SWT.FLAT
+				| SWT.PUSH);
+		synopsisAudit.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_STAMP_SMALL));
+		synopsisAudit.setToolTipText(STAMP_TOOLTIP_MESSAGE);
+
+		final Link findingSynopsis = new Link(quickSynopsis, SWT.NONE);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		findingSynopsis.setLayoutData(layoutData);
 
 		/*
@@ -197,10 +214,10 @@ public class FindingsDetailsView extends ViewPart {
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.fill = true;
 		lhs.setLayout(rowLayout);
-		
+
 		final Button quickAudit = new Button(lhs, SWT.PUSH | SWT.FLAT);
 		quickAudit.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
-		quickAudit.setToolTipText("Mark this finding as being examined by me.");
+		quickAudit.setToolTipText(STAMP_TOOLTIP_MESSAGE);
 
 		final Group importanceGroup = new Group(lhs, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -321,10 +338,11 @@ public class FindingsDetailsView extends ViewPart {
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
-				findingSynopsis, projectName, packageName, className,
-				detailsText, auditTab, quickAudit, criticalButton, highButton,
-				mediumButton, lowButton, irrelevantButton, commentText,
-				commentButton, scrollingLabelComposite, artifactTab, artifacts);
+				synopsisAudit, findingSynopsis, projectName, packageName,
+				className, detailsText, auditTab, quickAudit, criticalButton,
+				highButton, mediumButton, lowButton, irrelevantButton,
+				commentText, commentButton, scrollingLabelComposite,
+				artifactTab, artifacts);
 
 		f_mediator.init();
 
