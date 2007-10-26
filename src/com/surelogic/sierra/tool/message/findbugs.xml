@@ -3231,7 +3231,7 @@
 			thread, meaning that the thread woken up might not be the
 			one waiting for the condition that the caller just
 			satisfied.&lt;/p&gt;
-			
+
 			Thread.notify() awakens a thread monitoring the object. If
 			more than one thread is monitoring, then only one is chosen.
 			The thread chosen is arbitrary; thus it's usually safer to
@@ -6182,31 +6182,29 @@
 		<name>Invoke On Static Date Format Instance</name>
 	</findingType>
 
-	<!-- DUPLICATE ARTIFACTS
-		<findingType>
+	<!-- This type is no longer used.  Do not assign artifacts to it. -->
+	<findingType>
 		<id>InefficientStringVoidConstructor</id>
-		<artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
-		</artifact>
 		<shortMessage>
-		Method invokes inefficient new String() constructor
+			Method invokes inefficient new String() constructor
 		</shortMessage>
 		<info>
-		
-		&lt;p&gt; Creating a new
-		&lt;code&gt;java.lang.String&lt;/code&gt; object using the
-		no-argument constructor wastes memory because the object so
-		created will be functionally indistinguishable from the
-		empty string constant
-		&lt;code&gt;&quot;&quot;&lt;/code&gt;.&amp;nbsp; Java
-		guarantees that identical string constants will be
-		represented by the same &lt;code&gt;String&lt;/code&gt;
-		object.&amp;nbsp; Therefore, you should just use the empty
-		string constant directly.&lt;/p&gt;
-		
+
+			&lt;p&gt; Creating a new
+			&lt;code&gt;java.lang.String&lt;/code&gt; object using the
+			no-argument constructor wastes memory because the object so
+			created will be functionally indistinguishable from the
+			empty string constant
+			&lt;code&gt;&quot;&quot;&lt;/code&gt;.&amp;nbsp; Java
+			guarantees that identical string constants will be
+			represented by the same &lt;code&gt;String&lt;/code&gt;
+			object.&amp;nbsp; Therefore, you should just use the empty
+			string constant directly.&lt;/p&gt;
+
 		</info>
 		<name>Inefficient String Void Constructor</name>
-		</findingType>
-	-->
+	</findingType>
+
 	<category>
 		<id>Correctness</id>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
@@ -6543,7 +6541,7 @@
 		<findingType>BlockingMethodsOnURL</findingType>
 		<findingType>AvoidCollectionOfURLS</findingType>
 		<findingType>InefficientStringConstructor</findingType>
-		<!-- DUP <findingType>InefficientStringVoidConstructor</findingType> -->
+		<findingType>InefficientStringVoidConstructor</findingType>
 		<findingType>AvoidCallingtoStringOnString</findingType>
 		<findingType>AvoidExplicitGarbageCollection</findingType>
 		<findingType>InefficientBooleanConstructor</findingType>

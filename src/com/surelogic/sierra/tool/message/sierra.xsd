@@ -20,7 +20,7 @@
             	</simpleType>
             </element>
             <element name="artifact" type="tns:ArtifactType"
-				maxOccurs="unbounded" minOccurs="1">
+				maxOccurs="unbounded" minOccurs="0">
 			</element>
 			<element name="shortMessage" type="string" maxOccurs="1"
 				minOccurs="0">

@@ -2986,6 +2986,19 @@
 		</info>
 		<name>Override Both Equals And Hashcode</name>
 	</findingType>
+	<!-- This finding type is no longer in use -->
+	<findingType>
+		<id>StringInstantiation</id>
+		<shortMessage>
+			Avoid instantiating String objects; this is usually
+			unnecessary.
+		</shortMessage>
+		<info>
+			Avoid instantiating String objects; this is usually
+			unnecessary.
+		</info>
+		<name>String Instantiation</name>
+	</findingType>
 	<!-- Duplicate
 		<findingType>
 		<id>UseNotifyAllInsteadOfNotify</id>
@@ -3639,7 +3652,7 @@
 	<category>
 		<id>String and StringBuffer Rules</id>
 		<findingType>AvoidDuplicateLiterals</findingType>
-		<!-- DUP <findingType>StringInstantiation</findingType> -->
+		<findingType>StringInstantiation</findingType>
 		<findingType>StringToString</findingType>
 		<findingType>InefficientStringBuffering</findingType>
 		<findingType>UnnecessaryCaseChange</findingType>

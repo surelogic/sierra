@@ -63,7 +63,6 @@ public class FindingType {
 
     @XmlElement(required = true)
     protected String id;
-    @XmlElement(required = true)
     protected List<ArtifactType> artifact;
     protected String shortMessage;
     protected String info;
