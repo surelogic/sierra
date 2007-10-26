@@ -84,8 +84,8 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement(beginFindingOverviewUpdate
 						+ ", IMPORTANCE = ?" + endFindingOverviewUpdate);
 		updateFindingOverviewSummary = conn
-				.prepareStatement(beginFindingOverviewUpdate
-						+ ", SUMMARY = ?" + endFindingOverviewUpdate);
+				.prepareStatement(beginFindingOverviewUpdate + ", SUMMARY = ?"
+						+ endFindingOverviewUpdate);
 		updateFindingOverviewComment = conn
 				.prepareStatement(beginFindingOverviewUpdate
 						+ endFindingOverviewUpdate);
@@ -530,35 +530,37 @@ public final class ClientFindingManager extends FindingManager {
 	public void updateLocalTrailUids(String projectName, Long revision,
 			List<String> trails, List<Merge> merges, SLProgressMonitor monitor)
 			throws SQLException {
-		ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
-				.newProject();
-		projectRec.setName(projectName);
-		if (projectRec.select()) {
-			MatchRecord match = factory.newMatch();
-			MatchRecord.PK pk = new MatchRecord.PK();
-			match.setId(pk);
-			pk.setProjectId(projectRec.getId());
-			Iterator<String> trailIter = trails.iterator();
-			Iterator<Merge> mergeIter = merges.iterator();
-			while (mergeIter.hasNext() && trailIter.hasNext()) {
-				String trail = trailIter.next();
-				Match m = mergeIter.next().getMatch().get(0);
-				fillKey(pk, m);
-				if (match.select()) {
-					updateFindingUid.setString(1, trail);
-					updateFindingUid.setLong(2, match.getFindingId());
-					updateFindingUid.execute();
-					updateMatchRevision.setLong(1, match.getFindingId());
-					updateMatchRevision.setLong(2, revision);
-					updateMatchRevision.execute();
-				} else {
-					log.log(Level.WARNING, "Could not locate finding for "
-							+ match + ".  The trail will not be updated.");
+		if ((trails != null) && (merges != null)) {
+			ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
+					.newProject();
+			projectRec.setName(projectName);
+			if (projectRec.select()) {
+				MatchRecord match = factory.newMatch();
+				MatchRecord.PK pk = new MatchRecord.PK();
+				match.setId(pk);
+				pk.setProjectId(projectRec.getId());
+				Iterator<String> trailIter = trails.iterator();
+				Iterator<Merge> mergeIter = merges.iterator();
+				while (mergeIter.hasNext() && trailIter.hasNext()) {
+					String trail = trailIter.next();
+					Match m = mergeIter.next().getMatch().get(0);
+					fillKey(pk, m);
+					if (match.select()) {
+						updateFindingUid.setString(1, trail);
+						updateFindingUid.setLong(2, match.getFindingId());
+						updateFindingUid.execute();
+						updateMatchRevision.setLong(1, match.getFindingId());
+						updateMatchRevision.setLong(2, revision);
+						updateMatchRevision.execute();
+					} else {
+						log.log(Level.WARNING, "Could not locate finding for "
+								+ match + ".  The trail will not be updated.");
+					}
 				}
+			} else {
+				throw new IllegalArgumentException("No project with name "
+						+ projectName + " exists.");
 			}
-		} else {
-			throw new IllegalArgumentException("No project with name "
-					+ projectName + " exists.");
 		}
 	}
 

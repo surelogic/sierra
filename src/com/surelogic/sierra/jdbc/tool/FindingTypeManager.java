@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +30,6 @@ public class FindingTypeManager {
 	private static final Logger log = SLLogger
 			.getLoggerFor(FindingTypeManager.class);
 
-	private final PreparedStatement checkForArtifactTypeRelation;
 	private final PreparedStatement selectArtifactTypesByFindingTypeId;
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
@@ -41,12 +39,7 @@ public class FindingTypeManager {
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
 
-	private final Connection conn;
-
 	private FindingTypeManager(Connection conn) throws SQLException {
-		this.conn = conn;
-		this.checkForArtifactTypeRelation = conn
-				.prepareStatement("SELECT FT.UUID FROM ARTIFACT_TYPE ART, FINDING_TYPE FT WHERE ART.ID = ? AND ART.FINDING_TYPE_ID IS NOT NULL AND FT.ID = ART.FINDING_TYPE_ID");
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.selectArtifactTypesByFindingTypeId = conn
@@ -187,17 +180,12 @@ public class FindingTypeManager {
 
 	public void updateFindingTypes(List<FindingTypes> types)
 			throws SQLException {
-		Statement st = conn.createStatement();
-		try {
-			st.execute("UPDATE ARTIFACT_TYPE SET FINDING_TYPE_ID = NULL");
-			st.execute("UPDATE FINDING_TYPE SET CATEGORY_ID = NULL");
-		} finally {
-			st.close();
-		}
 		Set<String> idSet = new HashSet<String>();
 		Set<String> duplicates = new HashSet<String>();
 		Set<String> categoryIdSet = new HashSet<String>();
 		Set<String> categoryDuplicates = new HashSet<String>();
+		Set<Long> artifactIdSet = new HashSet<Long>();
+		Set<Long> artifactDuplicates = new HashSet<Long>();
 		for (FindingTypes type : types) {
 			FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
@@ -217,42 +205,31 @@ public class FindingTypeManager {
 					} else {
 						fRec.insert();
 					}
-					for (ArtifactType at : ft.getArtifact()) {
-						Collection<Long> typeIds;
-						if (at.getVersion() == null) {
-							typeIds = getArtifactTypesIds(at.getTool(), at
-									.getMnemonic());
-						} else {
-							typeIds = Collections.singleton(getArtifactTypeId(
-									at.getTool(), at.getVersion(), at
-											.getMnemonic()));
-						}
-						for (Long id : typeIds) {
-							checkForArtifactTypeRelation.setLong(1, id);
-							ResultSet set = checkForArtifactTypeRelation
-									.executeQuery();
-							try {
-								if (set.next()) {
-									String message = "The artifact with mnemonic "
-											+ at.getMnemonic()
-											+ " in tool "
-											+ at.getTool()
-											+ " has already been assigned to finding type with uid "
-											+ set.getString(1)
-											+ " and cannot be assigned to the finding type with uid "
-											+ fRec.getUid() + ".";
-									log.severe(message);
-									throw new IllegalStateException(message);
-								}
-							} finally {
-								set.close();
+					List<ArtifactType> artifactTypes = ft.getArtifact();
+					if (artifactTypes != null && !artifactTypes.isEmpty()) {
+						for (ArtifactType at : artifactTypes) {
+							Collection<Long> typeIds;
+							if (at.getVersion() == null) {
+								typeIds = getArtifactTypesIds(at.getTool(), at
+										.getMnemonic());
+							} else {
+								typeIds = Collections
+										.singleton(getArtifactTypeId(at
+												.getTool(), at.getVersion(), at
+												.getMnemonic()));
 							}
-							updateArtifactTypeFindingTypeRelation.setLong(1,
-									fRec.getId());
-							updateArtifactTypeFindingTypeRelation
-									.setLong(2, id);
-							updateArtifactTypeFindingTypeRelation
-									.executeUpdate();
+							for (long id : typeIds) {
+								if (!artifactIdSet.add(id)) {
+									artifactDuplicates.add(id);
+								} else {
+									updateArtifactTypeFindingTypeRelation
+											.setLong(1, fRec.getId());
+									updateArtifactTypeFindingTypeRelation
+											.setLong(2, id);
+									updateArtifactTypeFindingTypeRelation
+											.executeUpdate();
+								}
+							}
 						}
 					}
 				}
@@ -339,6 +316,14 @@ public class FindingTypeManager {
 		if (!categoryDuplicates.isEmpty()) {
 			String message = "The finding types with the following ids were defined more than once: "
 					+ categoryDuplicates + ".";
+			log.severe(message);
+			throw new IllegalStateException(message);
+		}
+		// Throw exception if we tried to assign an artifact type to multiple
+		// finding types
+		if (!artifactDuplicates.isEmpty()) {
+			String message = "The artifact types with the following ids were assigned to finding types more than once: "
+					+ artifactDuplicates + ".";
 			log.severe(message);
 			throw new IllegalStateException(message);
 		}
