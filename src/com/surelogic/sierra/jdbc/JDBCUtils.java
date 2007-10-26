@@ -105,6 +105,10 @@ public class JDBCUtils {
 		}
 	}
 
+	public static Timestamp now() {
+		return new Timestamp(System.currentTimeMillis());
+	}
+
 	/**
 	 * Escape a string to be used as input in a JDBC query.
 	 * 

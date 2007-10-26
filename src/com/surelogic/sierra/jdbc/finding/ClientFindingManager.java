@@ -5,17 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -44,7 +40,9 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateFindingOverview;
-	private final PreparedStatement selectFindingProject;
+	private final PreparedStatement updateFindingOverviewImportance;
+	private final PreparedStatement updateFindingOverviewSummary;
+	private final PreparedStatement updateFindingOverviewComment;
 	private final PreparedStatement selectLatestScanByProject;
 	private final PreparedStatement updateFindingUid;
 	private final PreparedStatement updateMatchRevision;
@@ -77,6 +75,20 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			st.close();
 		}
+		String beginFindingOverviewUpdate = "UPDATE FINDINGS_OVERVIEW"
+				+ " SET AUDITED = 'Yes'"
+				+ ", LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END"
+				+ ", AUDIT_COUNT = AUDIT_COUNT + 1";
+		String endFindingOverviewUpdate = " WHERE FINDING_ID = ?";
+		updateFindingOverviewImportance = conn
+				.prepareStatement(beginFindingOverviewUpdate
+						+ ", IMPORTANCE = ?" + endFindingOverviewUpdate);
+		updateFindingOverviewSummary = conn
+				.prepareStatement(beginFindingOverviewUpdate
+						+ ", SUMMARY = ?" + endFindingOverviewUpdate);
+		updateFindingOverviewComment = conn
+				.prepareStatement(beginFindingOverviewUpdate
+						+ endFindingOverviewUpdate);
 		populateFindingOverview = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
@@ -140,9 +152,6 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      S.ID IN (SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?)"
 						+ "      AND A.SCAN_ID = S.ID"
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
-
-		selectFindingProject = conn
-				.prepareStatement("SELECT P.NAME FROM FINDING F, PROJECT P WHERE F.ID = ? AND P.ID = F.PROJECT_ID");
 		deleteFindingFromOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
 		deleteOverview = conn
@@ -179,9 +188,14 @@ public final class ClientFindingManager extends FindingManager {
 	 * @throws SQLException
 	 */
 	public void comment(long findingId, String comment) throws SQLException {
-		String project = checkFindingProject(findingId);
-		comment(null, findingId, comment, new Date(), null);
-		regenerateFindingsOverview(project, findingId);
+		checkFinding(findingId);
+		Timestamp now = JDBCUtils.now();
+		comment(null, findingId, comment, now, null);
+		int idx = 1;
+		updateFindingOverviewComment.setTimestamp(idx++, now);
+		updateFindingOverviewComment.setTimestamp(idx++, now);
+		updateFindingOverviewComment.setLong(idx++, findingId);
+		updateFindingOverviewComment.execute();
 	}
 
 	/**
@@ -194,33 +208,33 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void setImportance(long findingId, Importance importance)
 			throws SQLException {
-		String project = checkFindingProject(findingId);
-		setImportance(null, findingId, importance, new Date(), null);
-		regenerateFindingsOverview(project, findingId);
+		checkFinding(findingId);
+		Timestamp now = JDBCUtils.now();
+		setImportance(null, findingId, importance, now, null);
+		int idx = 1;
+		updateFindingOverviewImportance.setTimestamp(idx++, now);
+		updateFindingOverviewImportance.setTimestamp(idx++, now);
+		updateFindingOverviewImportance.setString(idx++, importance
+				.toStringSentenceCase());
+		updateFindingOverviewImportance.setLong(idx++, findingId);
+		updateFindingOverviewImportance.execute();
 	}
 
 	public void setImportance(Set<Long> findingIds, Importance importance,
 			SLProgressMonitor monitor) throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
-		Date now = new Date();
-		Map<String, List<Long>> projectMap = new HashMap<String, List<Long>>();
-		int count = 0;
+		Timestamp now = JDBCUtils.now();
 		for (Long findingId : findingIds) {
-			String project = checkFindingProject(findingId);
-			List<Long> findingList = projectMap.get(project);
-			if (findingList == null) {
-				findingList = new ArrayList<Long>();
-				projectMap.put(project, findingList);
-			}
-			findingList.add(findingId);
+			checkFinding(findingId);
 			setImportance(null, findingId, importance, now, null);
-			if(count++ % 3 == 0) {
-				monitor.worked(1);
-			}
-		}
-		for (Entry<String, List<Long>> entry : projectMap.entrySet()) {
-			regenerateFindingsOverview(entry.getKey(), entry.getValue(),
-					monitor);
+			int idx = 1;
+			updateFindingOverviewImportance.setTimestamp(idx++, now);
+			updateFindingOverviewImportance.setTimestamp(idx++, now);
+			updateFindingOverviewImportance.setString(idx++, importance
+					.toStringSentenceCase());
+			updateFindingOverviewImportance.setLong(idx++, findingId);
+			updateFindingOverviewImportance.execute();
+			monitor.worked(1);
 		}
 		monitor.done();
 	}
@@ -234,9 +248,15 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void changeSummary(long findingId, String summary)
 			throws SQLException {
-		String project = checkFindingProject(findingId);
-		changeSummary(null, findingId, summary, new Date(), null);
-		regenerateFindingsOverview(project, findingId);
+		checkFinding(findingId);
+		Timestamp now = JDBCUtils.now();
+		changeSummary(null, findingId, summary, now, null);
+		int idx = 1;
+		updateFindingOverviewSummary.setTimestamp(idx++, now);
+		updateFindingOverviewSummary.setTimestamp(idx++, now);
+		updateFindingOverviewSummary.setString(idx++, summary);
+		updateFindingOverviewSummary.setLong(idx++, findingId);
+		updateFindingOverviewSummary.execute();
 	}
 
 	/**
@@ -316,7 +336,7 @@ public final class ClientFindingManager extends FindingManager {
 			deleteFindingFromOverview.executeUpdate();
 			populateSingleTempId.setLong(1, id);
 			populateSingleTempId.execute();
-			if(count++ % 3 == 0) {
+			if (count++ % 3 == 0) {
 				monitor.worked(1);
 			}
 		}
@@ -332,19 +352,6 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			set.close();
 		}
-	}
-
-	/**
-	 * For use in the client, this method regenerates the overview for a single
-	 * finding, but only if the finding is already in the overview.
-	 * 
-	 * @param findingId
-	 * @throws SQLException
-	 */
-	private void regenerateFindingsOverview(String projectName, long findingId)
-			throws SQLException {
-		regenerateFindingsOverview(projectName, Collections
-				.singletonList(findingId), EmptyProgressMonitor.instance());
 	}
 
 	public void updateLocalFindings(String projectName,
@@ -561,18 +568,10 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	private String checkFindingProject(long findingId) throws SQLException {
-		selectFindingProject.setLong(1, findingId);
-		ResultSet set = selectFindingProject.executeQuery();
-		try {
-			if (set.next()) {
-				return set.getString(1);
-			} else {
-				throw new IllegalArgumentException(findingId
-						+ " is not a valid finding id.");
-			}
-		} finally {
-			set.close();
+	private void checkFinding(long findingId) throws SQLException {
+		if (getFinding(findingId) == null) {
+			throw new IllegalArgumentException(findingId
+					+ " is not a valid finding id.");
 		}
 	}
 

@@ -12,10 +12,8 @@ import java.util.List;
 public class SynchDetail {
 
 	private final Date time;
-	private final List<AuditDetail> audits;
-	private final List<AuditDetail> commits;
 	private final String project;
-
+	private final List<SynchedFindingDetail> findings;
 	private SynchDetail(Connection conn, String project, Date time)
 			throws SQLException {
 		PreparedStatement synchSt = conn
@@ -27,8 +25,9 @@ public class SynchDetail {
 			if (set.next()) {
 				this.project = project;
 				this.time = time;
-				this.audits = new ArrayList<AuditDetail>();
-				this.commits = new ArrayList<AuditDetail>();
+				this.findings = new ArrayList<SynchedFindingDetail>();
+				List<AuditDetail> audits = new ArrayList<AuditDetail>();
+				List<AuditDetail> commits = new ArrayList<AuditDetail>();
 				long commitRevision = set.getLong(1);
 				long priorRevision = set.getLong(2);
 
@@ -65,14 +64,6 @@ public class SynchDetail {
 
 	public Date getTime() {
 		return time;
-	}
-
-	public List<AuditDetail> getAudits() {
-		return audits;
-	}
-
-	public List<AuditDetail> getCommits() {
-		return commits;
 	}
 
 	public String getProject() {
