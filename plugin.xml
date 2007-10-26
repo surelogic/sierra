@@ -43,10 +43,10 @@
           </menu>
           
           <action
-               class="com.surelogic.sierra.client.eclipse.actions.InvestigateAction"
-               id="com.surelogic.sierra.client.eclipse.actions.InvestigateAction"
+               class="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
-               label="Investigate"
+               label="Open Code Review Perspective"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
           </action>
           <action
@@ -69,28 +69,35 @@
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
           <action
-           		class="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
-                id="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
-                label="Share Scan"
+                label="Publish Latest Scan"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
          <action
-           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
-                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
+                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
-                label="Synchronize Explanations"
+                label="Synchronize Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
           <action
-               class="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
-               id="com.surelogic.sierra.client.eclipse.actions.ShowSierraServersAction"
+           		class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
+                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
+                label="Synchronize All Connected Projects"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
+          </action>
+          <action
+               class="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
+               id="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
-               label="Show Sierra Team Servers"
+               label="Configure Team Servers"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
           </action>    
 
@@ -100,13 +107,6 @@
                label="Preferences..."
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>   
-          <action
-               class="com.surelogic.sierra.client.eclipse.actions.ImportScanAction"
-               id="com.surelogic.sierra.client.eclipse.actions.ImportRunAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_orange_page.gif"
-               label="Import Scan..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
-          </action>     
           
            <action
                class="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
@@ -150,18 +150,18 @@
                 menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
 
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
+               class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
                enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.ShareScanAction"
+               id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
-               label="Share Scan"
+               label="Publish Latest Scan"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
          <action
-               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
+               class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
                enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAction"
+               id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
-               label="Synchronize Explanations"
+               label="Synchronize Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
       </objectContribution>
     	  <viewerContribution
@@ -214,7 +214,7 @@
             class="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView"
             id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
-            name="Investigate Findings">
+            name="Findings Quick Search">
       </view>
       
       <view
@@ -247,17 +247,17 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Sierra Investigating"
+            name="Code Review"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            class="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective"
-            id="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
+            class="com.surelogic.sierra.client.eclipse.perspectives.CodeReview"
+            id="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
       </perspective>
    </extension>
    
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
+            targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
          <perspectiveShortcut
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspectiveShortcut>
@@ -269,13 +269,13 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <viewShortcut
-               id="com.surelogic.sierra.client.eclipse.views.FindingsView">
+               id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
          </viewShortcut>
          <viewShortcut
-               id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
+               id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView">
          </viewShortcut>
          <perspectiveShortcut
-               id="com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective">
+               id="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
          </perspectiveShortcut>
       </perspectiveExtension>
    </extension>

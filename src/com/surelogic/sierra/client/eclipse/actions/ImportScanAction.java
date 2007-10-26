@@ -13,6 +13,10 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
+/**
+ * TODO: This action got removed from the main menu it needs to be deleted once
+ * it is moved to the File | Import... menu.
+ */
 public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {

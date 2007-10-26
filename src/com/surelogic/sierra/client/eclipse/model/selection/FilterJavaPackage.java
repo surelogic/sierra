@@ -5,11 +5,11 @@ import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class FilterPackage extends Filter {
+public final class FilterJavaPackage extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
-			return new FilterPackage(selection, previous);
+			return new FilterJavaPackage(selection, previous);
 		}
 
 		public String getFilterLabel() {
@@ -17,7 +17,7 @@ public final class FilterPackage extends Filter {
 		}
 	};
 
-	FilterPackage(Selection selection, Filter previous) {
+	FilterJavaPackage(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 

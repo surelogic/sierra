@@ -11,9 +11,7 @@ import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView
 /**
  * Defines the Sierra Explorer perspective within the workbench.
  */
-public final class SierraPerspective implements IPerspectiveFactory {
-
-	public static final String SIERRA_PERSPECTIVE = "com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective";
+public final class CodeReview implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout layout) {
 		final String editorArea = layout.getEditorArea();

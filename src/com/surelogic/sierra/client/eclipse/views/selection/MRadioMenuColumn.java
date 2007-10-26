@@ -4,8 +4,8 @@ import java.util.logging.Level;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
@@ -82,13 +82,12 @@ public final class MRadioMenuColumn extends MColumn implements
 		// getCascadingList().getColumnIndexOf(menu.getPanel());
 		getCascadingList().addColumnAfter(new CascadingList.IScrolledColumn() {
 			public void createContents(Composite panel) {
-				final Display display = panel.getShell().getDisplay();
-				panel.setBackground(display
-						.getSystemColor(SWT.COLOR_LIST_SELECTION));
+				final Color background = getCascadingList()
+						.getContentsBackground();
+				panel.setBackground(background);
 				final Label waitLabel = new Label(panel, SWT.NONE);
 				waitLabel.setText("Please wait...");
-				waitLabel.setBackground(display
-						.getSystemColor(SWT.COLOR_LIST_SELECTION));
+				waitLabel.setBackground(background);
 			}
 		}, f_column, false);
 

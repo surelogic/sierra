@@ -6,9 +6,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.sierra.client.eclipse.perspectives.SierraPerspective;
+import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 
-public final class InvestigateAction implements IWorkbenchWindowActionDelegate {
+public final class ConfigureTeamServersAction implements
+		IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do
@@ -19,7 +20,7 @@ public final class InvestigateAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showPerspective(SierraPerspective.SIERRA_PERSPECTIVE);
+		ViewUtility.showView(SierraServersView.class.getName());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

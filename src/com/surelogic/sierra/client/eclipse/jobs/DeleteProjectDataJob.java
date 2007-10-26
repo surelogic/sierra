@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -54,7 +55,8 @@ public final class DeleteProjectDataJob {
 								conn.commit();
 								SierraServerManager.getInstance().disconnect(
 										projectName);
-								DatabaseHub.getInstance().notifyProjectDeleted();
+								DatabaseHub.getInstance()
+										.notifyProjectDeleted();
 							}
 						} catch (Exception e) {
 							final String msg = "Deletion of Sierra data about projects "
@@ -104,25 +106,30 @@ public final class DeleteProjectDataJob {
 		}
 		final boolean multiDelete = projectNames.size() > 1;
 
-		final MessageBox confirmDelete = new MessageBox(shell, SWT.ICON_WARNING
-				| SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-		confirmDelete.setText("Confirm "
+		final String title = "Confirm "
 				+ (multiDelete ? "Multiple Project" : "Project")
-				+ (disconnect ? " Disconnect" : " Sierra Data Deletion"));
-		confirmDelete.setMessage("Are you sure you want to delete all "
-				+ "Sierra data in your Eclipse workspace for "
-				+ (multiDelete ? "these " + projectNames.size() + " projects"
-						: "the project '" + projectNames.get(0) + "'")
-				+ ". This action will not "
-				+ "change or delete data on any Sierra server.");
-		if (confirmDelete.open() == SWT.NO)
-			return; // bail
-		/*
-		 * Because this job can be run from a modal dialog we need to manage
-		 * showing its progress ourselves. Therefore, this job is not a typical
-		 * workspace job.
-		 */
-		final DeleteProjectDataJob job = new DeleteProjectDataJob(projectNames);
-		job.runModal(shell);
+				+ (disconnect ? " Disconnect" : " Sierra Data Deletion");
+		final StringBuilder b = new StringBuilder();
+		b.append("Disconnecting from the Sierra Team ");
+		b.append("Server will automatically delete ");
+		b.append("data in your Eclipse workspace about ");
+		if (multiDelete) {
+			b.append("these ").append(projectNames.size()).append(" projects,");
+		} else {
+			b.append("the project '").append(projectNames.get(0)).append("',");
+		}
+		b.append(" but will not change or delete any information that ");
+		b.append("you have already published to the server.\n\n");
+		b.append("Are you should that you want to disconnect?");
+		if (MessageDialog.openConfirm(shell, title, b.toString())) {
+			/*
+			 * Because this job can be run from a modal dialog we need to manage
+			 * showing its progress ourselves. Therefore, this job is not a
+			 * typical workspace job.
+			 */
+			final DeleteProjectDataJob job = new DeleteProjectDataJob(
+					projectNames);
+			job.runModal(shell);
+		}
 	}
 }

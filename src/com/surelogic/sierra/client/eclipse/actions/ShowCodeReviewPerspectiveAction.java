@@ -6,10 +6,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.sierra.client.eclipse.views.SierraServersView;
+import com.surelogic.sierra.client.eclipse.perspectives.CodeReview;
 
-public final class ShowSierraServersAction implements
-		IWorkbenchWindowActionDelegate {
+public final class ShowCodeReviewPerspectiveAction implements IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do
@@ -20,7 +19,7 @@ public final class ShowSierraServersAction implements
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showView(SierraServersView.class.getName());
+		ViewUtility.showPerspective(CodeReview.class.getName());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

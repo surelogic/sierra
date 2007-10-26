@@ -11,7 +11,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraConstants;
 
-public final class ShareScanAction extends AbstractWebServiceMenuAction {
+public final class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
 	void run(String projectName, SierraServer server, Shell shell) {
 		final String scanFileName = PreferenceConstants.getSierraPath()
