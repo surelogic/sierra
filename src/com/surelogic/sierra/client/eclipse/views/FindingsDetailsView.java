@@ -6,6 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,9 +15,11 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -206,15 +210,29 @@ public class FindingsDetailsView extends ViewPart {
 		 * Importance selection and quick stamp.
 		 */
 		final Composite lhs = new Composite(auditPane, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, false, true);
+		layoutData = new GridData(SWT.DEFAULT, SWT.DEFAULT, false, true);
 		lhs.setLayoutData(layoutData);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+		rowLayout.wrap = false;
 		rowLayout.fill = true;
 		lhs.setLayout(rowLayout);
 
 		final Button quickAudit = new Button(lhs, SWT.PUSH | SWT.FLAT);
-		quickAudit.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
 		quickAudit.setToolTipText(STAMP_TOOLTIP_MESSAGE);
+		auditPane.addListener(SWT.Resize, new Listener() {
+
+			public void handleEvent(Event event) {
+				final Point size = auditPane.getSize();
+				final Image image;
+				if (size.y < 250) {
+					image = SLImages.getImage(SLImages.IMG_SIERRA_STAMP_SMALL);
+				} else {
+					image = SLImages.getImage(SLImages.IMG_SIERRA_STAMP);
+				}
+				quickAudit.setImage(image);
+				auditPane.layout();
+			}
+		});
 
 		final Group importanceGroup = new Group(lhs, SWT.NONE);
 		layout = new GridLayout(1, false);
@@ -360,5 +378,4 @@ public class FindingsDetailsView extends ViewPart {
 	public void findingSelected(long findingID) {
 		f_mediator.asyncQueryAndShow(findingID);
 	}
-
 }
