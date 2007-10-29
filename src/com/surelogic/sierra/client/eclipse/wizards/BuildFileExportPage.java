@@ -1,7 +1,9 @@
 package com.surelogic.sierra.client.eclipse.wizards;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -10,6 +12,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -24,6 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -256,9 +260,22 @@ public class BuildFileExportPage extends WizardPage {
 	public boolean generateBuildfiles() {
 		List<Config> configs = ConfigGenerator.getInstance().getProjectConfigs(
 				f_SelectedJavaProjects);
-		BuildFileGenerator.getInstance().writeBuildFiles(configs,
-				f_overrideCheckbox.getSelection());
+		Map<Config, File> buildFiles = BuildFileGenerator.getInstance()
+				.writeBuildFiles(configs, f_overrideCheckbox.getSelection(),
+						f_buildfilenameText.getText());
 
+		String message = "No changes were made.";
+		if (buildFiles.size() == 1) {
+			message = "Buildfile generated for " + buildFiles.size()
+					+ " project.";
+		} else if (buildFiles.size() > 1) {
+			message = "Buildfiles generated for " + buildFiles.size()
+					+ " projects.";
+
+		}
+
+		MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
+				"Sierra", message);
 		return true;
 	}
 }
