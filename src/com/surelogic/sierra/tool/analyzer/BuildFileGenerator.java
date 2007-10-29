@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +29,7 @@ public class BuildFileGenerator {
 	private static final Logger log = SLLogger.getLogger("sierra");
 	private AttributesImpl atts;
 	private static final BuildFileGenerator INSTANCE = new BuildFileGenerator();
+	private String f_fileName;
 
 	public static BuildFileGenerator getInstance() {
 		return INSTANCE;
@@ -39,11 +39,15 @@ public class BuildFileGenerator {
 		// Nothing to do
 	}
 
-	public List<File> writeBuildFiles(List<Config> configs, boolean override) {
-		List<File> buildFiles = new ArrayList<File>();
-
+	public Map<Config, File> writeBuildFiles(List<Config> configs,
+			boolean override, String fileName) {
+		Map<Config, File> buildFiles = new HashMap<Config, File>();
+		f_fileName = fileName;
 		for (Config c : configs) {
-			buildFiles.add(writeBuildFile(c, override));
+			File holder = writeBuildFile(c, override);
+			if (holder != null) {
+				buildFiles.put(c, holder);
+			}
 		}
 
 		return buildFiles;
@@ -51,8 +55,15 @@ public class BuildFileGenerator {
 
 	private File writeBuildFile(Config config, boolean override) {
 
-		String fileName = config.getBaseDirectory() + File.separator
-				+ SierraConstants.SIERRA_BUILD_FILE;
+		boolean wasCreated = false;
+		String completeFileName;
+		if (f_fileName != null) {
+			completeFileName = config.getBaseDirectory() + File.separator
+					+ f_fileName;
+		} else {
+			completeFileName = config.getBaseDirectory() + File.separator
+					+ SierraConstants.SIERRA_BUILD_FILE;
+		}
 		String toolDirectory = getToolsDirectory();
 
 		// FIXME: The implementation below assumes that the common project is at
@@ -64,12 +75,12 @@ public class BuildFileGenerator {
 		// For Windows machines - Not required only for consistency
 		commonDirectory = commonDirectory.replace(File.separator, "/");
 
-		File buildFile = new File(fileName);
+		File buildFile = new File(completeFileName);
 
 		if (!buildFile.exists() || override) {
 
 			try {
-				FileOutputStream fos = new FileOutputStream(fileName);
+				FileOutputStream fos = new FileOutputStream(completeFileName);
 				OutputFormat of = new OutputFormat("XML", "ISO-8859-1", true);
 				of.setIndent(1);
 				of.setIndenting(true);
@@ -175,6 +186,8 @@ public class BuildFileGenerator {
 				hd.endDocument();
 				fos.close();
 
+				wasCreated = true;
+
 			} catch (SAXException se) {
 				log.info("SAX Exception while writing build file " + se);
 			} catch (IOException ioe) {
@@ -182,7 +195,12 @@ public class BuildFileGenerator {
 			}
 
 		}
-		return buildFile;
+
+		if (wasCreated) {
+			return buildFile;
+		}
+
+		return null;
 	}
 
 	private void writeAttributes(Map<String, String> attributeMap) {
