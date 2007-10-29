@@ -205,7 +205,14 @@ public final class ConfigGenerator {
 
 						IResource classFolder = ResourcesPlugin.getWorkspace()
 								.getRoot().findMember(folder);
-						getClassFiles(classFolder, javaType, classFiles);
+						if (classFolder != null) {
+							getClassFiles(classFolder, javaType, classFiles);
+						} else {
+							throw new IllegalStateException(
+									"Unable to find binaries for project "
+											+ t.getJavaProject()
+													.getElementName());
+						}
 
 					}
 
@@ -235,6 +242,9 @@ public final class ConfigGenerator {
 			} catch (CoreException e) {
 				SLLogger.getLogger("sierra").log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
+			} catch (IllegalStateException ise) {
+				SLLogger.getLogger("sierra").log(Level.SEVERE,
+						ise.getMessage(), ise);
 			}
 
 			// Get clean option
@@ -257,7 +267,14 @@ public final class ConfigGenerator {
 		try {
 			IResource binDirHolder = ResourcesPlugin.getWorkspace().getRoot()
 					.findMember(project.getOutputLocation());
-			config.setBinDirs(binDirHolder.getLocation().toOSString());
+
+			// If we cannot find the binary directory make the project root as
+			// the binary location
+			if (binDirHolder != null) {
+				config.setBinDirs(binDirHolder.getLocation().toOSString());
+			} else {
+				config.setBinDirs(baseDir.getAbsolutePath());
+			}
 			IClasspathEntry[] entries = project.getRawClasspath();
 			String srcDir = null;
 			for (IClasspathEntry e : entries) {
