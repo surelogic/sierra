@@ -103,7 +103,8 @@ public final class Scan {
 				final Config c = ccu.getConfig();
 				projectList.append(" ").append(c.getProject());
 				final Job runSingleSierraScan = new ScanProjectJob(
-						"Running Sierra on " + c.getProject(), c, SIERRA, ccu
+						"Running Sierra on compilation units from "
+								+ c.getProject(), c, SIERRA, ccu
 								.getPackageCompilationUnitMap());
 				runSingleSierraScan.setPriority(Job.SHORT);
 				runSingleSierraScan.belongsTo(c.getProject());
@@ -249,7 +250,6 @@ public final class Scan {
 									slProgressMonitorWrapper, f_config
 											.getProject());
 						} else {
-							System.out.println("partial scan in db");
 							ScanDocumentUtility.loadPartialScanDocument(
 									f_config.getScanDocument(),
 									slProgressMonitorWrapper, f_config

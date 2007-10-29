@@ -58,7 +58,6 @@
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
-          
          <action
            		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
@@ -120,9 +119,43 @@
           
         </actionSet>
    </extension>
-      
+     
    <extension
          point="org.eclipse.ui.popupMenus">
+         <objectContribution
+            id="Sierra.CompilationUnitPopupMenu"
+            objectClass="org.eclipse.jdt.core.IPackageFragment">
+            <menu
+               id="com.surelogic.sierra.client.eclipse.packageContextMenu"
+               label="Sierra"
+               path="additions">
+            </menu>
+           <action
+           		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
+                label="Scan Package(s)"
+                enablesFor="+"
+                menubarPath="com.surelogic.sierra.client.eclipse.packageContextMenu/additions">
+          </action> 
+      </objectContribution>
+       <objectContribution
+            id="Sierra.CompilationUnitPopupMenu"
+            objectClass="org.eclipse.jdt.core.ICompilationUnit">
+            <menu
+               id="com.surelogic.sierra.client.eclipse.compilationUnitContextMenu"
+               label="Sierra"
+               path="additions">
+            </menu>
+           <action
+           		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
+                label="Scan File(s)"
+                enablesFor="+"
+                menubarPath="com.surelogic.sierra.client.eclipse.compilationUnitContextMenu/additions">
+          </action> 
+      </objectContribution>
       <objectContribution
             id="Sierra.popupMenu"
             objectClass="org.eclipse.jdt.core.IJavaProject">
