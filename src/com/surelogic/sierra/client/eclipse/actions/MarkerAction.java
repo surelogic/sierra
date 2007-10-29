@@ -80,6 +80,8 @@ public class MarkerAction implements IUpdate, IEditorActionDelegate,
 					FindingListDialog fld = new FindingListDialog(PlatformUI
 							.getWorkbench().getDisplay().getActiveShell(),
 							findingsMap);
+
+					fld.setBlockOnOpen(true);
 					fld.open();
 				}
 
@@ -221,17 +223,22 @@ public class MarkerAction implements IUpdate, IEditorActionDelegate,
 	}
 
 	public void mouseDown(MouseEvent e) {
+		// if (e.button == 1) {
+		// obtainSierraMarkers();
+		// if (f_markers.size() > 0) {
+		// update();
+		// }
+		// }
+
+	}
+
+	public void mouseUp(MouseEvent e) {
 		if (e.button == 1) {
 			obtainSierraMarkers();
 			if (f_markers.size() > 0) {
 				update();
 			}
 		}
-
-	}
-
-	public void mouseUp(MouseEvent e) {
-		// Nothing to do
 
 	}
 
