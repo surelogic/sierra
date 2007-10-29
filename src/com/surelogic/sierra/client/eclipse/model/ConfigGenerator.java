@@ -68,7 +68,7 @@ public final class ConfigGenerator {
 
 	public List<ConfigCompilationUnit> getCompilationUnitConfigs(
 			List<ICompilationUnit> compilationUnits) {
-		final List<ConfigCompilationUnit> configCompilationUnit = new ArrayList<ConfigCompilationUnit>();
+		final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
 
 		Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<String, List<ICompilationUnit>>();
 		for (ICompilationUnit c : compilationUnits) {
@@ -97,11 +97,11 @@ public final class ConfigGenerator {
 				final ConfigCompilationUnit ccu = new ConfigCompilationUnit(
 						getCompilationUnitConfig(cus),
 						getPackageCompilationUnitMap(cus));
-				configCompilationUnit.add(ccu);
+				configCompilationUnits.add(ccu);
 			}
 		}
 
-		return configCompilationUnit;
+		return configCompilationUnits;
 
 	}
 
@@ -132,7 +132,14 @@ public final class ConfigGenerator {
 						compilationUnitsHolder = new ArrayList<String>();
 
 					}
-					compilationUnitsHolder.add(c.getElementName());
+
+					String holder = c.getElementName();
+
+					if (holder.endsWith(".java")) {
+						holder = holder.substring(0, holder.length() - 5);
+					}
+
+					compilationUnitsHolder.add(holder);
 					packageCompilationUnitMap.put(packageName,
 							compilationUnitsHolder);
 				}
