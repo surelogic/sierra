@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.corba.se.spi.orbutil.fsm.State;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public class SynchDetail {
