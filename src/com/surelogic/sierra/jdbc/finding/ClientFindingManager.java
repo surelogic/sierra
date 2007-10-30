@@ -358,12 +358,19 @@ public final class ClientFindingManager extends FindingManager {
 	 * Update the findings for a scan that has been partially updated. This
 	 * should also regenerate the findings overview.
 	 * 
+	 * @param projectName
 	 * @param uid
+	 * @param compilations
+	 * @param filter
+	 * @param previousFindingIds
+	 *            the set of finding ids belonging to the compilation units
+	 *            before the scan was altered
+	 * @param monitor
 	 */
 	public void updateScanFindings(String projectName, String uid,
 			Map<String, List<String>> compilations, MessageFilter filter,
-			SLProgressMonitor monitor) {
-		final Set<Long> findingIds = new HashSet<Long>();
+			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
+		final Set<Long> scanFindingIds = new HashSet<Long>();
 		try {
 			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
 			scan.setUid(uid);
@@ -438,7 +445,7 @@ public final class ClientFindingManager extends FindingManager {
 									monitor.worked(1);
 								}
 							}
-							findingIds.add(findingId);
+							scanFindingIds.add(findingId);
 						}
 					} finally {
 						result.close();
@@ -446,8 +453,8 @@ public final class ClientFindingManager extends FindingManager {
 				}
 			}
 			conn.commit();
-			generatePartialScanOverview(scan.getId(), findingIds);
-			regenerateFindingsOverview(projectName, findingIds, monitor);
+			generatePartialScanOverview(scan.getId(), scanFindingIds);
+			regenerateFindingsOverview(projectName, previousFindingIds, monitor);
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {

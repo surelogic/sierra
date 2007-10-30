@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -39,16 +40,18 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	private final ScanManager manager;
 	private final ScanRecord scan;
 	private final Map<String, List<String>> compilations;
+	private final Set<Long> findingIds;
 	private String projectName;
 
 	JDBCPartialScanGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, ScanRecord scan,
-			Map<String, List<String>> compilations) {
+			Map<String, List<String>> compilations, Set<Long> findingIds) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.scan = scan;
 		this.compilations = compilations;
+		this.findingIds = findingIds;
 	}
 
 	public ArtifactGenerator build() {
@@ -84,7 +87,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 								// here.
 								fm.updateScanFindings(projectName, scan
 										.getUid(), compilations, filter,
-										new EmptyProgressMonitor());
+										findingIds, new EmptyProgressMonitor());
 								conn.commit();
 							} catch (SQLException e) {
 								try {

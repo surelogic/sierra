@@ -8,8 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -44,8 +46,9 @@ public class ScanManager {
 	private final PreparedStatement updateArtifactScan;
 	private final PreparedStatement deleteMetricByCompilation;
 	private final PreparedStatement updateMetricScan;
-	private final PreparedStatement deleteScanOverviewByArtifact;
-	private final PreparedStatement updateScanOverviewByArtifact;
+	private final PreparedStatement selectArtifactFinding;
+	private final PreparedStatement deleteScanOverviewByFinding;
+	private final PreparedStatement updateScanOverviewByFinding;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -126,10 +129,12 @@ public class ScanManager {
 				.prepareStatement("DELETE FROM METRIC_CU WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
 		this.updateMetricScan = conn
 				.prepareStatement("UPDATE METRIC_CU SET SCAN_ID = ? WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
-		this.deleteScanOverviewByArtifact = conn
-				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID IN (SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN WHERE ARTIFACT_ID = ?)");
-		this.updateScanOverviewByArtifact = conn
-				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID IN (SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN WHERE ARTIFACT_ID = ?)");
+		this.selectArtifactFinding = conn
+				.prepareStatement("SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN AFR WHERE ARTIFACT_ID = ?");
+		this.deleteScanOverviewByFinding = conn
+				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID = ?");
+		this.updateScanOverviewByFinding = conn
+				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID = ?");
 	}
 
 	public ScanGenerator getScanGenerator() {
@@ -296,6 +301,7 @@ public class ScanManager {
 					oldest.setUid(oldestScan);
 					oldest.select();
 				}
+				final Set<Long> findingIds = new HashSet<Long>();
 				for (Entry<String, List<String>> packageCompilations : compilations
 						.entrySet()) {
 					final String pakkage = packageCompilations.getKey();
@@ -323,24 +329,17 @@ public class ScanManager {
 									updateArtifactScan.setLong(idx++,
 											artifactId);
 									updateArtifactScan.execute();
-								}
-								for (long artifactId : artifactIds) {
-									idx = 1;
-									deleteScanOverviewByArtifact.setLong(idx++,
-											oldest.getId());
-									deleteScanOverviewByArtifact.setLong(idx++,
-											artifactId);
-									deleteScanOverviewByArtifact.execute();
-								}
-								for (long artifactId : artifactIds) {
-									idx = 1;
-									updateScanOverviewByArtifact.setLong(idx++,
-											oldest.getId());
-									updateScanOverviewByArtifact.setLong(idx++,
-											latest.getId());
-									updateScanOverviewByArtifact.setLong(idx++,
-											artifactId);
-									updateScanOverviewByArtifact.execute();
+									selectArtifactFinding
+											.setLong(1, artifactId);
+									ResultSet findingSet = selectArtifactFinding
+											.executeQuery();
+									try {
+										while (findingSet.next()) {
+											findingIds.add(findingSet.getLong(1));
+										}
+									} finally {
+										findingSet.close();
+									}
 								}
 							} finally {
 								set.close();
@@ -358,12 +357,28 @@ public class ScanManager {
 							updateMetricScan.execute();
 						}
 					}
+					for (long findingId : findingIds) {
+						int idx = 1;
+						deleteScanOverviewByFinding.setLong(idx++, oldest
+								.getId());
+						deleteScanOverviewByFinding.setLong(idx++, findingId);
+						deleteScanOverviewByFinding.execute();
+						idx = 1;
+						updateScanOverviewByFinding.setLong(idx++, oldest
+								.getId());
+						updateScanOverviewByFinding.setLong(idx++, latest
+								.getId());
+						updateScanOverviewByFinding.setLong(idx++, findingId);
+						updateScanOverviewByFinding.execute();
+
+					}
+
 				}
 				conn.commit();
 				// Copy the appropriate artifacts to the previous scan, then run
 				// against the latest scan
 				return new JDBCPartialScanGenerator(conn, factory, this,
-						latest, compilations);
+						latest, compilations, findingIds);
 			}
 		} catch (SQLException e) {
 			try {
