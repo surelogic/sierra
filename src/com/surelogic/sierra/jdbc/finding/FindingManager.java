@@ -227,14 +227,14 @@ public class FindingManager {
 		}
 	}
 
-	public Long getLatestAuditRevision(String projectName) throws SQLException {
+	public long getLatestAuditRevision(String projectName) throws SQLException {
 		latestAuditRevision.setString(1, projectName);
 		ResultSet set = latestAuditRevision.executeQuery();
 		try {
 			if (set.next()) {
 				return set.getLong(1);
 			} else {
-				return 0L;
+				return -1L;
 			}
 		} finally {
 			set.close();
