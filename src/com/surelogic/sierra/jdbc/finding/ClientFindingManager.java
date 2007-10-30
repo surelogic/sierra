@@ -75,7 +75,6 @@ public final class ClientFindingManager extends FindingManager {
 				}
 				tempTableName = "TEMP_FINDING_IDS";
 			} else {
-
 				try {
 					st
 							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
