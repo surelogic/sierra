@@ -32,8 +32,8 @@ public class FindingManager {
 	protected static final Logger log = SLLogger
 			.getLoggerFor(FindingManager.class);
 
-	private static final int FETCH_SIZE = 1000;
-	private static final int CHECK_SIZE = 10;
+	protected static final int FETCH_SIZE = 1000;
+	protected static final int CHECK_SIZE = 10;
 
 	protected final Connection conn;
 	protected final FindingTypeManager ftManager;
@@ -386,7 +386,7 @@ public class FindingManager {
 		fRec.delete();
 	}
 
-	private void sqlError(SQLException e) {
+	protected void sqlError(SQLException e) {
 		throw new FindingGenerationException(e);
 	}
 
@@ -402,7 +402,7 @@ public class FindingManager {
 		pk.setFindingTypeId(ftManager.getFindingTypeId(ft));
 	}
 
-	private static class ArtifactResult {
+	protected static class ArtifactResult {
 		Long id;
 		Priority p;
 		Severity s;

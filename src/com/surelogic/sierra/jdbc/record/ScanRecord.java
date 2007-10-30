@@ -1,12 +1,12 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import com.surelogic.sierra.jdbc.scan.ScanStatus;
 
@@ -17,8 +17,9 @@ public final class ScanRecord extends LongUpdatableRecord {
 	private String uid;
 	private String javaVersion;
 	private String javaVendor;
-	private Date timestamp;
+	private Timestamp timestamp;
 	private ScanStatus status;
+	private boolean partial;
 
 	public ScanRecord(UpdateRecordMapper mapper) {
 		super(mapper);
@@ -56,11 +57,11 @@ public final class ScanRecord extends LongUpdatableRecord {
 		this.javaVendor = javaVendor;
 	}
 
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -80,6 +81,14 @@ public final class ScanRecord extends LongUpdatableRecord {
 		this.uid = uid;
 	}
 
+	public boolean isPartial() {
+		return partial;
+	}
+
+	public void setPartial(boolean partial) {
+		this.partial = partial;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		setNullableLong(idx++, st, userId);
@@ -87,8 +96,9 @@ public final class ScanRecord extends LongUpdatableRecord {
 		st.setString(idx++, uid);
 		setNullableString(idx++, st, javaVersion);
 		setNullableString(idx++, st, javaVendor);
-		st.setTimestamp(idx++, new Timestamp(timestamp.getTime()));
+		st.setTimestamp(idx++, timestamp);
 		st.setString(idx++, status.toString());
+		st.setString(idx++, partial ? "Y" : "N");
 		return idx;
 	}
 
@@ -100,19 +110,27 @@ public final class ScanRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		this.userId = set.getLong(idx++);
+		long userId = set.getLong(idx++);
+		if (set.wasNull()) {
+			this.userId = null;
+		} else {
+			this.userId = userId;
+		}
 		this.projectId = set.getLong(idx++);
-		this.javaVendor = set.getString(idx++);
+		this.javaVersion = set.getString(idx++);
 		this.javaVendor = set.getString(idx++);
 		this.timestamp = set.getTimestamp(idx++);
 		this.status = ScanStatus.valueOf(set.getString(idx++));
+		this.partial = "Y".equals(set.getString(idx++));
 		return idx;
 	}
 
 	@Override
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
+		st.setTimestamp(idx++, timestamp);
 		st.setString(idx++, status.toString());
+		st.setString(idx++, partial ? "Y" : "N");
 		return idx;
 	}
 

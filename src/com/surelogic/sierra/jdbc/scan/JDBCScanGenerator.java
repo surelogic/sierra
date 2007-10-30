@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
@@ -34,6 +34,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private final Connection conn;
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
+	private final boolean partial;
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
@@ -47,6 +48,16 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.factory = factory;
 		this.manager = manager;
 		this.qualifiers = Collections.emptySet();
+		this.partial = false;
+	}
+
+	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
+			ScanManager manager, boolean partial) {
+		this.conn = conn;
+		this.factory = factory;
+		this.manager = manager;
+		this.qualifiers = Collections.emptySet();
+		this.partial = partial;
 	}
 
 	public ArtifactGenerator build() {
@@ -64,10 +75,11 @@ class JDBCScanGenerator implements ScanGenerator {
 			final ScanRecord scan = factory.newScan();
 			scan.setProjectId(p.getId());
 			scan.setUid(uid);
-			scan.setTimestamp(new Date());
+			scan.setTimestamp(JDBCUtils.now());
 			scan.setJavaVersion(javaVersion);
 			scan.setJavaVendor(javaVendor);
 			scan.setStatus(ScanStatus.LOADING);
+			scan.setPartial(partial);
 			if (user != null) {
 				scan.setUserId(User.getUser(user, conn).getId());
 			}

@@ -9,10 +9,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Map.Entry;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
@@ -22,21 +26,26 @@ public class ScanManager {
 	private static final String MAKE_TEMP_DERBY = "DECLARE GLOBAL TEMPORARY TABLE TEMP_IDS (ID BIGINT NOT NULL) NOT LOGGED";
 	private static final String MAKE_TEMP_ORACLE = "CREATE GLOBAL TEMPORARY TABLE TEMP_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS";
 
-	private static final String OLDEST_SCAN_BY_PROJECT = "SELECT SCAN_UUID FROM OLDEST_SCANS WHERE PROJECT = ?";
-
 	private final Connection conn;
 	private final ScanRecordFactory factory;
 	private final PreparedStatement selectScan;
 	private final PreparedStatement selectQualifiers;
 	private final PreparedStatement selectArtifacts;
 	private final PreparedStatement selectSources;
-//	private final PreparedStatement selectErrors;
+	// private final PreparedStatement selectErrors;
 
 	private final PreparedStatement deleteSources;
 	private final PreparedStatement deleteCompilations;
 	private final PreparedStatement insertTempSources;
 	private final PreparedStatement insertTempCompilations;
 	private final PreparedStatement getOldestScanByProject;
+	private final PreparedStatement getLatestScanByProject;
+	private final PreparedStatement selectArtifactsByCompilation;
+	private final PreparedStatement updateArtifactScan;
+	private final PreparedStatement deleteMetricByCompilation;
+	private final PreparedStatement updateMetricScan;
+	private final PreparedStatement deleteScanOverviewByArtifact;
+	private final PreparedStatement updateScanOverviewByArtifact;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -69,9 +78,11 @@ public class ScanManager {
 		this.selectScan = conn.prepareStatement("SELECT * FROM SCAN");
 		this.selectQualifiers = conn
 				.prepareStatement("SELECT Q.NAME FROM QUALIFIER_SCAN_RELTN QSR, QUALIFIER Q WHERE QSR.SCAN_ID = ? AND Q.ID = QSR.QUALIFIER_ID");
-		this.selectArtifacts = conn.prepareStatement("SELECT * FROM ARTIFACT WHERE SCAN_ID = ?");
-		this.selectSources = conn.prepareStatement("SELECT * FROM SOURCE_LOCATION");
-//		this.selectErrors = conn.prepareStatement("SELECT * FROM ERROR");
+		this.selectArtifacts = conn
+				.prepareStatement("SELECT * FROM ARTIFACT WHERE SCAN_ID = ?");
+		this.selectSources = conn
+				.prepareStatement("SELECT * FROM SOURCE_LOCATION");
+		// this.selectErrors = conn.prepareStatement("SELECT * FROM ERROR");
 		this.deleteCompilations = conn
 				.prepareStatement("DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 						+ " SELECT ID FROM " + tempTableName + ")");
@@ -100,7 +111,25 @@ public class ScanManager {
 						+ " LEFT OUTER JOIN METRIC_CU CM ON CM.COMPILATION_UNIT_ID = NO_SOURCE.ID"
 						+ " WHERE CM.COMPILATION_UNIT_ID IS NULL");
 		this.getOldestScanByProject = conn
-				.prepareStatement(OLDEST_SCAN_BY_PROJECT);
+				.prepareStatement("SELECT SCAN_UUID FROM OLDEST_SCANS WHERE PROJECT = ?");
+		this.getLatestScanByProject = conn
+				.prepareStatement("SELECT SCAN_UUID FROM LATEST_SCANS WHERE PROJECT = ?");
+		this.selectArtifactsByCompilation = conn
+				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
+						+ "   CU.ID = ? AND"
+						+ "   A.SCAN_ID = ? AND"
+						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
+		this.updateArtifactScan = conn
+				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
+		this.deleteMetricByCompilation = conn
+				.prepareStatement("DELETE FROM METRIC_CU WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
+		this.updateMetricScan = conn
+				.prepareStatement("UPDATE METRIC_CU SET SCAN_ID = ? WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
+		this.deleteScanOverviewByArtifact = conn
+				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID IN (SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN WHERE ARTIFACT_ID = ?)");
+		this.updateScanOverviewByArtifact = conn
+				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID IN (SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN WHERE ARTIFACT_ID = ?)");
 	}
 
 	public ScanGenerator getScanGenerator() {
@@ -209,5 +238,142 @@ public class ScanManager {
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {
 		return new ScanManager(conn);
+	}
+
+	/**
+	 * Return a generator used to persist a partial scan. This is currently only
+	 * allowed in the client.
+	 * 
+	 * @param projectName
+	 * @param compilations
+	 * @return
+	 */
+	public ScanGenerator getPartialScanGenerator(String projectName,
+			Map<String, List<String>> compilations) {
+		try {
+			String oldestScan = null;
+			String latestScan = null;
+			getOldestScanByProject.setString(1, projectName);
+			ResultSet set = getOldestScanByProject.executeQuery();
+			try {
+				if (set.next()) {
+					oldestScan = set.getString(1);
+				}
+			} finally {
+				set.close();
+			}
+			getLatestScanByProject.setString(1, projectName);
+			set = getLatestScanByProject.executeQuery();
+			try {
+				if (set.next()) {
+					latestScan = set.getString(1);
+				}
+			} finally {
+				set.close();
+			}
+			if (latestScan == null) {
+				// New scan, treat this as a normal scan
+				return new JDBCScanGenerator(conn, factory, this, false);
+			} else {
+				final ScanRecord latest = factory.newScan();
+				latest.setUid(latestScan);
+				latest.select();
+				final ScanRecord oldest = factory.newScan();
+				if (oldestScan == null) {
+					// We have to create an older scan. We will copy it over
+					// from the latest scan.
+					oldest.setJavaVendor(latest.getJavaVendor());
+					oldest.setJavaVersion(latest.getJavaVersion());
+					oldest.setPartial(true);
+					oldest.setProjectId(latest.getProjectId());
+					oldest.setStatus(ScanStatus.FINISHED);
+					oldest.setTimestamp(latest.getTimestamp());
+					oldest.setUserId(latest.getUserId());
+					oldest.setUid(UUID.randomUUID().toString());
+					oldest.insert();
+				} else {
+					// Use the existing oldest scan
+					oldest.setUid(oldestScan);
+					oldest.select();
+				}
+				for (Entry<String, List<String>> packageCompilations : compilations
+						.entrySet()) {
+					final String pakkage = packageCompilations.getKey();
+					for (final String compilation : packageCompilations
+							.getValue()) {
+						CompilationUnitRecord cu = factory.newCompilationUnit();
+						cu.setPackageName(pakkage);
+						cu.setCompilation(compilation);
+						if (cu.select()) {
+							int idx = 1;
+							selectArtifactsByCompilation.setLong(idx++, cu
+									.getId());
+							selectArtifactsByCompilation.setLong(idx++, latest
+									.getId());
+							set = selectArtifactsByCompilation.executeQuery();
+							try {
+								final List<Long> artifactIds = new ArrayList<Long>();
+								while (set.next()) {
+									artifactIds.add(set.getLong(1));
+								}
+								for (long artifactId : artifactIds) {
+									idx = 1;
+									updateArtifactScan.setLong(idx++, oldest
+											.getId());
+									updateArtifactScan.setLong(idx++,
+											artifactId);
+									updateArtifactScan.execute();
+								}
+								for (long artifactId : artifactIds) {
+									idx = 1;
+									deleteScanOverviewByArtifact.setLong(idx++,
+											oldest.getId());
+									deleteScanOverviewByArtifact.setLong(idx++,
+											artifactId);
+									deleteScanOverviewByArtifact.execute();
+								}
+								for (long artifactId : artifactIds) {
+									idx = 1;
+									updateScanOverviewByArtifact.setLong(idx++,
+											oldest.getId());
+									updateScanOverviewByArtifact.setLong(idx++,
+											latest.getId());
+									updateScanOverviewByArtifact.setLong(idx++,
+											artifactId);
+									updateScanOverviewByArtifact.execute();
+								}
+							} finally {
+								set.close();
+							}
+							idx = 1;
+							deleteMetricByCompilation
+									.setLong(idx++, cu.getId());
+							deleteMetricByCompilation.setLong(idx++, oldest
+									.getId());
+							deleteMetricByCompilation.execute();
+							idx = 1;
+							updateMetricScan.setLong(idx++, oldest.getId());
+							updateMetricScan.setLong(idx++, cu.getId());
+							updateMetricScan.setLong(idx++, latest.getId());
+							updateMetricScan.execute();
+						}
+					}
+				}
+				conn.commit();
+				// Copy the appropriate artifacts to the previous scan, then run
+				// against the latest scan
+				return new JDBCPartialScanGenerator(conn, factory, this,
+						latest, compilations);
+			}
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				// We already have an exception
+			}
+			throw new ScanPersistenceException(
+					"Could not persist partial scan for project " + projectName
+							+ " and compilations " + compilations + ".", e);
+		}
 	}
 }

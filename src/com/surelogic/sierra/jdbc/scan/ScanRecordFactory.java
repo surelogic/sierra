@@ -24,10 +24,10 @@ public class ScanRecordFactory {
 	private static final String SOURCE_LOCATION_SELECT = "SELECT ID FROM SIERRA.SOURCE_LOCATION SL WHERE SL.COMPILATION_UNIT_ID = ? AND SL.CLASS_NAME = ? AND SL.HASH = ? AND SL.LINE_OF_CODE = ? AND SL.END_LINE_OF_CODE = ? AND SL.LOCATION_TYPE = ? AND SL.IDENTIFIER = ?";
 	private static final String ARTIFACT_INSERT = "INSERT INTO SIERRA.ARTIFACT (SCAN_ID,ARTIFACT_TYPE_ID,PRIMARY_SOURCE_LOCATION_ID,PRIORITY,SEVERITY,MESSAGE) VALUES (?,?,?,?,?,?)";
 	private static final String ARTIFACT_SOURCE_RELATION_INSERT = "INSERT INTO SIERRA.ARTIFACT_SOURCE_LOCATION_RELTN (ARTIFACT_ID,SOURCE_LOCATION_ID) VALUES (?,?)";
-	private static final String SCAN_INSERT = "INSERT INTO SCAN (USER_ID,PROJECT_ID,UUID,JAVA_VERSION,JAVA_VENDOR,SCAN_DATE_TIME,STATUS) VALUES (?,?,?,?,?,?,?)";
-	private static final String SCAN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, SCAN_DATE_TIME, STATUS FROM SCAN WHERE UUID = ?";
+	private static final String SCAN_INSERT = "INSERT INTO SCAN (USER_ID,PROJECT_ID,UUID,JAVA_VERSION,JAVA_VENDOR,SCAN_DATE_TIME,STATUS, IS_PARTIAL) VALUES (?,?,?,?,?,?,?,?)";
+	private static final String SCAN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, SCAN_DATE_TIME, STATUS, IS_PARTIAL FROM SCAN WHERE UUID = ?";
 	private static final String SCAN_DELETE = "DELETE FROM SCAN WHERE ID = ?";
-	private static final String SCAN_UPDATE = "UPDATE SCAN SET STATUS = ? WHERE ID = ?";
+	private static final String SCAN_UPDATE = "UPDATE SCAN SET SCAN_DATE_TIME = ?, STATUS = ?, IS_PARTIAL = ? WHERE ID = ?";
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String SCAN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_SCAN_RELTN (QUALIFIER_ID,SCAN_ID) VALUES(?,?)";
 	private static final String CLASS_METRIC_INSERT = "INSERT INTO METRIC_CU (SCAN_ID, COMPILATION_UNIT_ID, LINES_OF_CODE) VALUES (?,?,?)";
@@ -53,8 +53,8 @@ public class ScanRecordFactory {
 				null, null, false);
 		scanMapper = new UpdateBaseMapper(conn, SCAN_INSERT, SCAN_SELECT,
 				SCAN_DELETE, SCAN_UPDATE);
-		this.classMetricMapper = new BaseMapper(conn, CLASS_METRIC_INSERT,
-				null, null, false);
+		classMetricMapper = new BaseMapper(conn, CLASS_METRIC_INSERT, null,
+				null, false);
 	}
 
 	public static ScanRecordFactory getInstance(Connection conn)

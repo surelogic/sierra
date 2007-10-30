@@ -11,7 +11,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -20,10 +22,14 @@ import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
+import com.surelogic.sierra.jdbc.record.LongRelationRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
+import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
+import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
@@ -31,9 +37,14 @@ import com.surelogic.sierra.tool.message.AuditTrailUpdate;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public final class ClientFindingManager extends FindingManager {
+
+	private final PreparedStatement populatePartialScanOverview;
+	private final PreparedStatement selectArtifactsByCompilation;
 	private final PreparedStatement deleteFindingFromOverview;
 	private final PreparedStatement deleteOverview;
 	private final PreparedStatement populateSingleTempId;
@@ -75,6 +86,22 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			st.close();
 		}
+		populatePartialScanOverview = conn
+				.prepareStatement("INSERT INTO SCAN_OVERVIEW (FINDING_ID,SCAN_ID,LINE_OF_CODE,ARTIFACT_COUNT,TOOL,CU)"
+						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
+						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE '(From Multiple Tools)' END,"
+						+ "        MAX(CU.CU)"
+						+ " FROM "
+						+ tempTableName
+						+ " TF, ARTIFACT_FINDING_RELTN AFR, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU, ARTIFACT_TYPE ART, TOOL T"
+						+ " WHERE AFR.FINDING_ID = TF.ID AND"
+						+ "       A.ID = AFR.ARTIFACT_ID AND"
+						+ "       A.SCAN_ID = ? AND"
+						+ "       SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+						+ "       CU.ID = SL.COMPILATION_UNIT_ID AND"
+						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
+						+ "       T.ID = ART.TOOL_ID"
+						+ " GROUP BY AFR.FINDING_ID");
 		String beginFindingOverviewUpdate = "UPDATE FINDINGS_OVERVIEW"
 				+ " SET AUDITED = 'Yes'"
 				+ ", LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END"
@@ -177,6 +204,11 @@ public final class ClientFindingManager extends FindingManager {
 						+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " AND F.UUID IS NOT NULL ORDER BY A.FINDING_ID");
+		selectArtifactsByCompilation = conn
+				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,S.PROJECT_ID,SL.HASH,SL.CLASS_NAME,CU.PACKAGE_NAME,ART.FINDING_TYPE_ID"
+						+ " FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
+						+ " WHERE"
+						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND CU.PACKAGE_NAME = ? AND CU.CU = ?");
 	}
 
 	/**
@@ -321,6 +353,118 @@ public final class ClientFindingManager extends FindingManager {
 	}
 
 	/**
+	 * Update the findings for a scan that has been partially updated. This
+	 * should also regenerate the findings overview.
+	 * 
+	 * @param uid
+	 */
+	public void updateScanFindings(String projectName, String uid,
+			Map<String, List<String>> compilations, MessageFilter filter,
+			SLProgressMonitor monitor) {
+		final Set<Long> findingIds = new HashSet<Long>();
+		try {
+			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
+			scan.setUid(uid);
+			if (!scan.select()) {
+				throw new IllegalArgumentException("No scan with uid " + uid
+						+ " exists in the database");
+			}
+			Long projectId = scan.getProjectId();
+			for (Entry<String, List<String>> packageCompilations : compilations
+					.entrySet()) {
+				final String pakkage = packageCompilations.getKey();
+				int counter = 0;
+				for (String compilation : packageCompilations.getValue()) {
+					int idx = 1;
+					selectArtifactsByCompilation.setLong(idx++, scan.getId());
+					selectArtifactsByCompilation.setString(idx++, pakkage);
+					selectArtifactsByCompilation.setString(idx++, compilation);
+					ResultSet result = selectArtifactsByCompilation
+							.executeQuery();
+					try {
+						while (result.next()) {
+							ArtifactResult art = new ArtifactResult();
+							idx = 1;
+							art.id = result.getLong(idx++);
+							art.p = Priority.values()[result.getInt(idx++)];
+							art.s = Severity.values()[result.getInt(idx++)];
+							art.message = result.getString(idx++);
+							art.m = factory.newMatch();
+							MatchRecord.PK pk = new MatchRecord.PK();
+							pk.setProjectId(result.getLong(idx++));
+							pk.setHash(result.getLong(idx++));
+							pk.setClassName(result.getString(idx++));
+							pk.setPackageName(result.getString(idx++));
+							pk.setFindingTypeId(result.getLong(idx++));
+							art.m.setId(pk);
+							Long findingId;
+							if (!art.m.select()) {
+								// We don't have a match, so we need to produce
+								// an entirely new finding.
+								MatchRecord m = art.m;
+								Importance importance = filter
+										.calculateImportance(art.m.getId()
+												.getFindingTypeId(), art.p,
+												art.s);
+								FindingRecord f = factory.newFinding();
+								f.setProjectId(projectId);
+								f.setImportance(importance);
+								f.setSummary(art.message);
+								f.insert();
+								m.setFindingId(f.getId());
+								m.insert();
+								findingId = f.getId();
+							} else {
+								findingId = art.m.getFindingId();
+							}
+							LongRelationRecord afr = factory
+									.newArtifactFinding();
+							afr.setId(new RelationRecord.PK<Long, Long>(art.id,
+									findingId));
+							afr.insert();
+							if ((++counter % FETCH_SIZE) == 0) {
+								conn.commit();
+							}
+							if ((counter % CHECK_SIZE) == 0) {
+								if (monitor != null) {
+									if (monitor.isCanceled()) {
+										conn.rollback();
+										ScanManager.getInstance(conn)
+												.deleteScan(uid, null);
+										return;
+									}
+									monitor.worked(1);
+								}
+							}
+							findingIds.add(findingId);
+						}
+					} finally {
+						result.close();
+					}
+				}
+			}
+			conn.commit();
+			generatePartialScanOverview(scan.getId(), findingIds);
+			regenerateFindingsOverview(projectName, findingIds, monitor);
+			log.info("All new findings persisted for scan " + uid
+					+ " in project " + projectName + ".");
+		} catch (SQLException e) {
+			sqlError(e);
+		}
+	}
+
+	private void generatePartialScanOverview(long  scanId, Set<Long> findingIds) throws SQLException {
+		for(long id : findingIds) {
+			populateSingleTempId.setLong(1, id);
+			populateSingleTempId.execute();
+		}
+		populatePartialScanOverview.setLong(1, scanId);
+		populatePartialScanOverview.setLong(2, scanId);
+		populatePartialScanOverview.execute();
+		deleteTempIds.execute();
+	}
+
+	/**
 	 * Regenerate findings overview information for the selected findings. This
 	 * method cannot add new findings to the overview, merely regenerate
 	 * existing ones.
@@ -328,10 +472,10 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param findingIds
 	 */
 	private void regenerateFindingsOverview(String projectName,
-			List<Long> findingIds, SLProgressMonitor monitor)
+			Set<Long> findingIds, SLProgressMonitor monitor)
 			throws SQLException {
 		int count = 0;
-		for (Long id : findingIds) {
+		for (long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
 			populateSingleTempId.setLong(1, id);
@@ -354,6 +498,15 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
+	/**
+	 * Update local findings to reflect data from the server.
+	 * 
+	 * @param projectName
+	 * @param obsoletions
+	 * @param updates
+	 * @param monitor
+	 * @throws SQLException
+	 */
 	public void updateLocalFindings(String projectName,
 			List<TrailObsoletion> obsoletions, List<AuditTrailUpdate> updates,
 			SLProgressMonitor monitor) throws SQLException {
@@ -446,8 +599,8 @@ public final class ClientFindingManager extends FindingManager {
 					findingIds.add(finding.getId());
 				}
 			}
-			regenerateFindingsOverview(projectName, new ArrayList<Long>(
-					findingIds), EmptyProgressMonitor.instance());
+			regenerateFindingsOverview(projectName, findingIds,
+					EmptyProgressMonitor.instance());
 		} else {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
@@ -527,6 +680,16 @@ public final class ClientFindingManager extends FindingManager {
 		return merges;
 	}
 
+	/**
+	 * Add trail uids from the server to local findings.
+	 * 
+	 * @param projectName
+	 * @param revision
+	 * @param trails
+	 * @param merges
+	 * @param monitor
+	 * @throws SQLException
+	 */
 	public void updateLocalTrailUids(String projectName, Long revision,
 			List<String> trails, List<Merge> merges, SLProgressMonitor monitor)
 			throws SQLException {
