@@ -33,7 +33,7 @@ public final class ScanDocumentUtility {
 	 * @param projectName
 	 *            the name of the project for the given scan document, may be
 	 *            <code>null</code> NEED FIX
-	 * @param compilationUnit
+	 * @param compilations
 	 *            the map of compilation units in this partial scan. The keys of
 	 *            compilationUnit are package names, and the values are
 	 *            compilation names (without the .java extension)
@@ -42,9 +42,38 @@ public final class ScanDocumentUtility {
 	 */
 	public static void loadPartialScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName,
-			final Map<String, List<String>> compilationUnits)
+			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
-		// TODO
+		Throwable exc = null;
+		try {
+			Connection conn = Data.getConnection();
+			conn.setAutoCommit(false);
+			try {
+				ScanManager sMan = ScanManager.getInstance(conn);
+				ScanGenerator gen = sMan.getPartialScanGenerator(projectName,
+						compilations);
+				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
+						gen, monitor);
+				conn.commit();
+			} catch (Exception e) {
+				exc = e;
+				conn.rollback();
+			} finally {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					if (exc == null) {
+						exc = e;
+					}
+				}
+			}
+			if (exc != null) {
+				throw new ScanPersistenceException(exc);
+			}
+		} catch (SQLException e) {
+			// Could not get a valid connection
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
