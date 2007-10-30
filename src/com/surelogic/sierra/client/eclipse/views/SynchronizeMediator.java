@@ -9,20 +9,26 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.jdbc.finding.AuditDetail;
+import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeMediator extends AbstractDatabaseObserver {
@@ -37,6 +43,17 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 
 	public void init() {
 		DatabaseHub.getInstance().addObserver(this);
+		f_syncTable.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				updateEventTable();
+			}
+		});
+		f_eventsTable.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				focusOnFindingId();
+			}
+		});
+		asyncUpdateContents();
 	}
 
 	public void dispose() {
@@ -135,12 +152,93 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		packTable(f_syncTable);
 	}
 
+	private void asyncEventTableContents(final SynchOverview so) {
+		final Job job = new DatabaseJob(
+				"Updating reading events from server synchronize") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
+				try {
+					updateEventTableContents(so);
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(
+							"Updating reading events from server synchronize",
+							e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void updateEventTableContents(final SynchOverview so)
+			throws Exception {
+		Connection c = Data.getConnection();
+		Exception exc = null;
+		try {
+			c.setAutoCommit(false);
+			SynchDetail sd = SynchDetail.getSyncDetail(c, so);
+			final List<AuditDetail> auditList = sd.getAudits();
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					updateEventTableContents(auditList);
+				}
+			});
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
+		} finally {
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
+		}
+	}
+
+	private void updateEventTableContents(final List<AuditDetail> auditList) {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"yyyy/MM/dd 'at' HH:mm:ss");
+		f_eventsTable.removeAll();
+		for (AuditDetail ad : auditList) {
+			final TableItem item = new TableItem(f_eventsTable, SWT.NONE);
+			item.setText(0, ad.getUser());
+			item.setText(1, dateFormat.format(ad.getTime()));
+			item.setText(2, "" + ad.getFindingId());
+			item.setText(3, ad.getText());
+		}
+		packTable(f_syncTable);
+	}
+
 	private void updateEventTable() {
 		TableItem[] items = f_syncTable.getSelection();
-		if (items.length > 1) {
+		if (items.length > 0) {
 			TableItem item = items[0];
 			SynchOverview so = (SynchOverview) item.getData();
-			
+			System.out.println("updating event table contents");
+			asyncEventTableContents(so);
+		}
+	}
+
+	private void focusOnFindingId() {
+		TableItem[] items = f_eventsTable.getSelection();
+		if (items.length > 0) {
+			TableItem item = items[0];
+			String findingIdString = item.getText(2);
+			long findingId = Long.parseLong(findingIdString);
+			System.out.println("focus on finding " + findingId);
+			/*
+			 * Ensure the view is visible but don't change the focus.
+			 */
+			final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
+					.showView(FindingsDetailsView.class.getName(), null,
+							IWorkbenchPage.VIEW_VISIBLE);
+			view.findingSelected(findingId);
 		}
 	}
 
