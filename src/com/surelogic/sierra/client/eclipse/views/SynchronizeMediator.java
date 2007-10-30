@@ -212,7 +212,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			item.setText(2, "" + ad.getFindingId());
 			item.setText(3, ad.getText());
 		}
-		packTable(f_syncTable);
+		packTable(f_eventsTable);
 	}
 
 	private void updateEventTable() {
