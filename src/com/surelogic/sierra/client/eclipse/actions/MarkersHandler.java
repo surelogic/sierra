@@ -103,13 +103,15 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		 * NullPointerException being thrown.
 		 */
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench == null)
+		if (workbench == null) {
 			return;
+		}
 
 		final IWorkbenchWindow activeWindow = workbench
 				.getActiveWorkbenchWindow();
-		if (activeWindow == null)
+		if (activeWindow == null) {
 			return;
+		}
 
 		final IPartService partService = activeWindow.getPartService();
 		if (partService == null) {

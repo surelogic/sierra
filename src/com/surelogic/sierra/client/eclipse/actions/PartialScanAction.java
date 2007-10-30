@@ -49,9 +49,8 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate {
 			if (selectedPackageFragments.size() > 0) {
 				for (IPackageFragment packageFragment : selectedPackageFragments) {
 					try {
-						ICompilationUnit[] compilationUnits = packageFragment
-								.getCompilationUnits();
-						for (ICompilationUnit compilationUnit : compilationUnits) {
+						for (ICompilationUnit compilationUnit : packageFragment
+								.getCompilationUnits()) {
 							selectedCompilationUnits.add(compilationUnit);
 						}
 
