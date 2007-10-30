@@ -47,7 +47,8 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement selectArtifactsByCompilation;
 	private final PreparedStatement deleteFindingFromOverview;
 	private final PreparedStatement deleteOverview;
-	private final PreparedStatement populateSingleTempId;
+	private final PreparedStatement checkAndInsertTempId;
+	private final PreparedStatement insertTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateFindingOverview;
@@ -161,7 +162,9 @@ public final class ClientFindingManager extends FindingManager {
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
 						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
 		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
-		populateSingleTempId = conn
+		insertTempId = conn.prepareStatement("INSERT INTO " + tempTableName
+				+ " (ID) VALUES (?)");
+		checkAndInsertTempId = conn
 				.prepareStatement("INSERT INTO "
 						+ tempTableName
 						+ " (ID) SELECT DISTINCT FINDING_ID FROM SCAN_OVERVIEW WHERE FINDING_ID = ?");
@@ -453,10 +456,11 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	private void generatePartialScanOverview(long  scanId, Set<Long> findingIds) throws SQLException {
-		for(long id : findingIds) {
-			populateSingleTempId.setLong(1, id);
-			populateSingleTempId.execute();
+	private void generatePartialScanOverview(long scanId, Set<Long> findingIds)
+			throws SQLException {
+		for (long id : findingIds) {
+			insertTempId.setLong(1, id);
+			insertTempId.execute();
 		}
 		populatePartialScanOverview.setLong(1, scanId);
 		populatePartialScanOverview.setLong(2, scanId);
@@ -478,8 +482,8 @@ public final class ClientFindingManager extends FindingManager {
 		for (long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
-			populateSingleTempId.setLong(1, id);
-			populateSingleTempId.execute();
+			checkAndInsertTempId.setLong(1, id);
+			checkAndInsertTempId.execute();
 			if (count++ % 3 == 0) {
 				monitor.worked(1);
 			}
