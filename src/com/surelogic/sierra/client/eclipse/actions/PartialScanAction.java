@@ -17,17 +17,21 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
+/**
+ * Action for running scans on compilation units and packages
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public class PartialScanAction implements IWorkbenchWindowActionDelegate {
 	private IStructuredSelection f_currentSelection = null;
 
 	public void dispose() {
 		// Nothing for now
-
 	}
 
 	public void init(IWorkbenchWindow window) {
 		// Nothing for now
-
 	}
 
 	public void run(IAction action) {
@@ -65,7 +69,7 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate {
 			}
 
 			boolean saveCancelled = true;
-			// Bug 1075 Fix - Ask for saving editors
+			// Ask for saving editors
 			if (!PreferenceConstants.alwaysSaveResources()) {
 				saveCancelled = PlatformUI.getWorkbench().saveAllEditors(true);
 			} else {
@@ -84,7 +88,6 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate {
 		} else {
 			f_currentSelection = null;
 		}
-
 	}
 
 }

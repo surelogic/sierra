@@ -9,6 +9,12 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
+/**
+ * Action to toggle markers
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public class MarkerToggleAction implements IWorkbenchWindowActionDelegate {
 
 	private final MarkersHandler f_handler = MarkersHandler.getInstance();

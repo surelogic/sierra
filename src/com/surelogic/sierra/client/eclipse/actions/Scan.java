@@ -33,7 +33,7 @@ import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
- * Runs Sierra Scan on an Eclipse project.
+ * Runs Sierra Scan on an Eclipse project or compilation unit.
  * 
  * @author Tanmay.Sinha
  */
@@ -188,16 +188,6 @@ public final class Scan {
 			f_config = config;
 			f_familyName = familyName;
 			f_packageCompilationUnitMap = packageCompilationUnitMap;
-			// Set<String> packages = packageCompilationUnitMap.keySet();
-			// for (String s : packages) {
-			//
-			// System.out.println("In Package : " + s);
-			// List<String> cus = packageCompilationUnitMap.get(s);
-			// for (String c : cus) {
-			// System.out.println("\tCompilation unit :" + c);
-			// }
-			//
-			// }
 			setRule(SierraSchedulingRule.getInstance());
 		}
 

@@ -95,19 +95,6 @@ public class FindingListDialog extends PopupDialog {
 	 * @see org.eclipse.jface.text.IInformationControl#setLocation(org.eclipse.swt.graphics.Point)
 	 */
 	public void setLocation(Point location) {
-		/*
-		 * If the location is persisted, it gets managed by PopupDialog - fine.
-		 * Otherwise, the location is computed in Window#getInitialLocation,
-		 * which will center it in the parent shell / main monitor, which is
-		 * wrong for two reasons: - we want to center over the editor / subject
-		 * control, not the parent shell - the center is computed via the
-		 * initalSize, which may be also wrong since the size may have been
-		 * updated since via min/max sizing of
-		 * AbstractInformationControlManager. In that case, override the
-		 * location with the one computed by the manager. Note that the call to
-		 * constrainShellSize in PopupDialog.open will still ensure that the
-		 * shell is entirely visible.
-		 */
 		if ((getPersistBounds() == false) || (getDialogSettings() == null)) {
 			getShell().setLocation(location);
 		}

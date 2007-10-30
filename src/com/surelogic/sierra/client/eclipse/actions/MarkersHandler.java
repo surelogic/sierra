@@ -47,8 +47,6 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Class to handle sierra markers
  * 
- * This is a singleton class
- * 
  * @author Tanmay.Sinha
  * 
  */

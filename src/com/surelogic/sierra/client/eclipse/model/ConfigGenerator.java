@@ -29,6 +29,13 @@ import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.config.Config;
 
+/**
+ * Utility class for getting configuration objects that are required to run
+ * scans, it handles both project and compilation unit configs
+ * 
+ * @author Tanmay.Sinha
+ * 
+ */
 public final class ConfigGenerator {
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
@@ -54,6 +61,12 @@ public final class ConfigGenerator {
 		return INSTANCE;
 	}
 
+	/**
+	 * Get config objects for the list of {@link IJavaProject} provided
+	 * 
+	 * @param projects
+	 * @return list of {@link Config}
+	 */
 	public List<Config> getProjectConfigs(List<IJavaProject> projects) {
 
 		List<Config> configs = new ArrayList<Config>();
@@ -66,6 +79,13 @@ public final class ConfigGenerator {
 
 	}
 
+	/**
+	 * Get a list of configs for provided compilation units coupled with a
+	 * package - compilation unit map
+	 * 
+	 * @param compilationUnits
+	 * @return list of {@link ConfigCompilationUnit}
+	 */
 	public List<ConfigCompilationUnit> getCompilationUnitConfigs(
 			List<ICompilationUnit> compilationUnits) {
 		final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
@@ -103,6 +123,10 @@ public final class ConfigGenerator {
 
 		return configCompilationUnits;
 
+	}
+
+	public int getNumberofExcludedTools() {
+		return f_numberofExcludedTools;
 	}
 
 	private Map<String, List<String>> getPackageCompilationUnitMap(
@@ -373,10 +397,6 @@ public final class ConfigGenerator {
 		}
 
 		return listOfTools;
-	}
-
-	public int getNumberofExcludedTools() {
-		return f_numberofExcludedTools;
 	}
 
 	/**
