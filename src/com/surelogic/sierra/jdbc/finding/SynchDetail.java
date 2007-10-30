@@ -54,7 +54,12 @@ public class SynchDetail {
 
 	}
 
-	public static SynchDetail getDetail(Connection conn, String project,
+	public static SynchDetail getSyncDetail(Connection conn, SynchOverview so)
+			throws SQLException {
+		return getSyncDetail(conn, so.getProject(), so.getTime());
+	}
+
+	public static SynchDetail getSyncDetail(Connection conn, String project,
 			Date time) throws SQLException {
 		return new SynchDetail(conn, project, time);
 	}
