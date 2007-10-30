@@ -23,7 +23,6 @@ import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeMediator extends AbstractDatabaseObserver {
@@ -130,9 +129,19 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			item.setText(1, serverName);
 			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
-			item.setText(dateFormat.format(so.getTime()));
+			item.setText(2, dateFormat.format(so.getTime()));
+			item.setData(so);
 		}
 		packTable(f_syncTable);
+	}
+
+	private void updateEventTable() {
+		TableItem[] items = f_syncTable.getSelection();
+		if (items.length > 1) {
+			TableItem item = items[0];
+			SynchOverview so = (SynchOverview) item.getData();
+			
+		}
 	}
 
 	private void packTable(final Table table) {
