@@ -205,6 +205,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_eventsTable.removeAll();
+		f_eventsTable.setVisible(true);
 		for (AuditDetail ad : auditList) {
 			final TableItem item = new TableItem(f_eventsTable, SWT.NONE);
 			item.setText(0, ad.getUser());
