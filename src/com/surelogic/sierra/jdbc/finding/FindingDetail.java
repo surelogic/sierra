@@ -47,9 +47,8 @@ public class FindingDetail {
 				}
 				artifacts = new ArrayList<ArtifactDetail>();
 				set = st
-						.executeQuery("SELECT ARTIFACT_ID FROM ARTIFACT A, ARTIFACT_FINDING_RELTN AFR WHERE AFR.FINDING_ID = "
-								+ findingId
-								+ " AND A.ID = AFR.ARTIFACT_ID AND A.SCAN_ID IN (SELECT SCAN_ID FROM LATEST_SCANS)");
+						.executeQuery("SELECT ARTIFACT_ID FROM ARTIFACT_FINDING_RELTN WHERE FINDING_ID = "
+								+ findingId);
 				while (set.next()) {
 					long artifactId = set.getLong(1);
 					Statement artSt = conn.createStatement();
