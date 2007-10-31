@@ -82,7 +82,7 @@ public class FindingOverview {
 		this.tool = set.getString(idx++);
 		this.summary = set.getString(idx++);
 	}
-	
+
 	public long getFindingId() {
 		return findingId;
 	}
@@ -135,6 +135,11 @@ public class FindingOverview {
 		return lineOfCode;
 	}
 
+	/**
+	 * Returns the number of artifacts matching this finding in the latest scan.
+	 * 
+	 * @return
+	 */
 	public int getNumberOfArtifacts() {
 		return numberOfArtifacts;
 	}
