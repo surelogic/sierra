@@ -46,7 +46,7 @@ public class ScanManager {
 	private final PreparedStatement updateArtifactScan;
 	private final PreparedStatement deleteMetricByCompilation;
 	private final PreparedStatement updateMetricScan;
-	private final PreparedStatement selectArtifactFinding;
+	private final PreparedStatement selectCurrentFindingByCompilation;
 	private final PreparedStatement deleteScanOverviewByFinding;
 	private final PreparedStatement updateScanOverviewByFinding;
 
@@ -129,8 +129,12 @@ public class ScanManager {
 				.prepareStatement("DELETE FROM METRIC_CU WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
 		this.updateMetricScan = conn
 				.prepareStatement("UPDATE METRIC_CU SET SCAN_ID = ? WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
-		this.selectArtifactFinding = conn
-				.prepareStatement("SELECT FINDING_ID FROM ARTIFACT_FINDING_RELTN AFR WHERE ARTIFACT_ID = ?");
+		this.selectCurrentFindingByCompilation = conn
+				.prepareStatement("SELECT DISTINCT FINDING_ID FROM SOURCE_LOCATION SL, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+						+ "   WHERE SL.COMPILATION_UNIT_ID = ? AND"
+						+ "      A.PRIMARY_SOURCE_LOCATION_ID = SL.ID AND"
+						+ "      A.SCAN_ID IN (?,?) AND"
+						+ "      AFR.ARTIFACT_ID = A.ID");
 		this.deleteScanOverviewByFinding = conn
 				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID = ?");
 		this.updateScanOverviewByFinding = conn
@@ -329,17 +333,22 @@ public class ScanManager {
 									updateArtifactScan.setLong(idx++,
 											artifactId);
 									updateArtifactScan.execute();
-									selectArtifactFinding
-											.setLong(1, artifactId);
-									ResultSet findingSet = selectArtifactFinding
-											.executeQuery();
-									try {
-										while (findingSet.next()) {
-											findingIds.add(findingSet.getLong(1));
-										}
-									} finally {
-										findingSet.close();
-									}
+								}
+							} finally {
+								set.close();
+							}
+							idx = 1;
+							selectCurrentFindingByCompilation.setLong(idx++, cu
+									.getId());
+							selectCurrentFindingByCompilation.setLong(idx++, latest
+									.getId());
+							selectCurrentFindingByCompilation.setLong(idx++, oldest
+									.getId());
+							set = selectCurrentFindingByCompilation
+									.executeQuery();
+							try {
+								while (set.next()) {
+									findingIds.add(set.getLong(1));
 								}
 							} finally {
 								set.close();
@@ -370,7 +379,6 @@ public class ScanManager {
 								.getId());
 						updateScanOverviewByFinding.setLong(idx++, findingId);
 						updateScanOverviewByFinding.execute();
-
 					}
 
 				}
