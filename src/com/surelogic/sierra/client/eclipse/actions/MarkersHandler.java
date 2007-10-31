@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,8 +15,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaCore;
@@ -35,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
@@ -62,13 +65,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 	private static final Logger LOG = SLLogger.getLogger("sierra");
 
-	private IFile f_currentFile = null;
+	private IFile f_selectedFile = null;
 	private final MarkerListener f_listener = new MarkerListener();
 
-	private final Executor f_executor = Executors.newSingleThreadExecutor();
-	private String f_packageName;
-	private String f_className;
-	private String f_projectName;
+	// private final Executor f_executor = Executors.newSingleThreadExecutor();
+	// private String f_packageName;
+	// private String f_className;
+	// private String f_projectName;
 
 	private static MarkersHandler INSTANCE = null;
 
@@ -178,40 +181,44 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 		if (resource != null) {
 			if (resource instanceof IFile) {
-				if (f_currentFile != null) {
-					clearMarkers(f_currentFile, SIERRA_MARKER);
-					clearMarkers(f_currentFile, SIERRA_MARKER_CRITICAL);
-					clearMarkers(f_currentFile, SIERRA_MARKER_HIGH);
-					clearMarkers(f_currentFile, SIERRA_MARKER_MEDIUM);
-					clearMarkers(f_currentFile, SIERRA_MARKER_LOW);
-					clearMarkers(f_currentFile, SIERRA_MARKER_IRRELEVANT);
+				if (f_selectedFile != null) {
+					clearMarkers(f_selectedFile, SIERRA_MARKER);
+					clearMarkers(f_selectedFile, SIERRA_MARKER_CRITICAL);
+					clearMarkers(f_selectedFile, SIERRA_MARKER_HIGH);
+					clearMarkers(f_selectedFile, SIERRA_MARKER_MEDIUM);
+					clearMarkers(f_selectedFile, SIERRA_MARKER_LOW);
+					clearMarkers(f_selectedFile, SIERRA_MARKER_IRRELEVANT);
 				}
 
 				if (PreferenceConstants.showMarkers()) {
-					f_currentFile = (IFile) resource;
-					if (!f_currentFile.getFileExtension().equalsIgnoreCase(
+					f_selectedFile = (IFile) resource;
+					if (!f_selectedFile.getFileExtension().equalsIgnoreCase(
 							"java")) {
-						f_currentFile = null;
+						f_selectedFile = null;
 					} else {
 
 						ICompilationUnit cu = JavaCore
-								.createCompilationUnitFrom(f_currentFile);
+								.createCompilationUnitFrom(f_selectedFile);
 						try {
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();
 
-							f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+							String packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							if (packageDeclarations.length > 0) {
-								f_packageName = packageDeclarations[0]
+								packageName = packageDeclarations[0]
 										.getElementName();
 							}
 
 							String elementName = cu.getElementName();
-							f_className = cu.getElementName().substring(0,
+							String className = cu.getElementName().substring(0,
 									elementName.length() - 5);
-							f_projectName = f_currentFile.getProject()
+							String projectName = f_selectedFile.getProject()
 									.getName();
-							f_executor.execute(new QueryMarkers());
+							Job queryMarkersJob = new QueryMarkersJob(
+									"Querying markers for " + className,
+									projectName, className, packageName,
+									f_selectedFile);
+							queryMarkersJob.schedule();
 
 						} catch (JavaModelException e) {
 							LOG
@@ -480,14 +487,29 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 	}
 
-	private class QueryMarkers implements Runnable {
-		private List<FindingOverview> f_overview;
+	private class QueryMarkersJob extends DatabaseJob {
 
-		public void run() {
+		private List<FindingOverview> f_overview;
+		private final String f_projectName;
+		private final String f_packageName;
+		private final String f_className;
+		private final IFile f_currentFile;
+
+		public QueryMarkersJob(String name, String projectName,
+				String className, String packageName, IFile currentFile) {
+			super(name);
+			f_className = className;
+			f_packageName = packageName;
+			f_projectName = projectName;
+			f_currentFile = currentFile;
+
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				Connection conn = Data.readOnlyConnection();
 				try {
-
 					if (PreferenceConstants.showLowestImportance()) {
 						f_overview = FindingOverview.getView()
 								.showFindingsForClass(conn, f_projectName,
@@ -500,7 +522,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 					}
 
 					if (f_overview != null) {
-
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
@@ -509,9 +530,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 								});
 					}
+
 				} finally {
 					conn.close();
 				}
+
+				monitor.done();
+				return Status.OK_STATUS;
 			} catch (SQLException e) {
 				LOG
 						.log(
@@ -519,6 +544,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 								"SQL Exception from occurred when getting findings.",
 								e);
 			}
+
+			monitor.done();
+			return Status.CANCEL_STATUS;
 		}
 
 	}
