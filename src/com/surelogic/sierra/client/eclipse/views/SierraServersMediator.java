@@ -251,6 +251,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						item.dispose();
 					}
 				}
+				f_infoGroup.layout();
 				f_projectListAction.handleEvent(null);
 				f_serverList.setRedraw(true);
 			}
