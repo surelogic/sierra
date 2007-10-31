@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -209,6 +210,20 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 								}
 							});
 						}
+
+					} catch (IllegalArgumentException iae) {
+						PlatformUI.getWorkbench().getDisplay().asyncExec(
+								new Runnable() {
+									public void run() {
+										MessageDialog.openInformation(Display
+												.getCurrent().getActiveShell(),
+												"Sierra",
+												"No corresponding finding in "
+														+ "the local database");
+
+									}
+
+								});
 					} finally {
 						c.close();
 					}

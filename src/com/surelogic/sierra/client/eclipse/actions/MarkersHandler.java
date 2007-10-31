@@ -68,11 +68,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	private IFile f_selectedFile = null;
 	private final MarkerListener f_listener = new MarkerListener();
 
-	// private final Executor f_executor = Executors.newSingleThreadExecutor();
-	// private String f_packageName;
-	// private String f_className;
-	// private String f_projectName;
-
 	private static MarkersHandler INSTANCE = null;
 
 	public static MarkersHandler getInstance() {

@@ -219,7 +219,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		if (items.length > 0) {
 			TableItem item = items[0];
 			SynchOverview so = (SynchOverview) item.getData();
-			System.out.println("updating event table contents");
+			// System.out.println("updating event table contents");
 			asyncEventTableContents(so);
 		}
 	}
@@ -230,7 +230,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			TableItem item = items[0];
 			String findingIdString = item.getText(2);
 			long findingId = Long.parseLong(findingIdString);
-			System.out.println("focus on finding " + findingId);
+			// System.out.println("focus on finding " + findingId);
 			/*
 			 * Ensure the view is visible but don't change the focus.
 			 */
