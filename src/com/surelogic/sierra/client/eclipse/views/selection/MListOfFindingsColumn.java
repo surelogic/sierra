@@ -119,7 +119,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	public void refreshData() {
 		final String query = getQuery();
 		try {
-			final Connection c = Data.getConnection();
+			final Connection c = Data.readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {

@@ -195,10 +195,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				monitor.beginTask("Querying finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
-					Connection c = Data.getConnection();
+					Connection c = Data.readOnlyConnection();
 					try {
-						c.setReadOnly(true);
-
 						final FindingDetail finding = FindingDetail.getDetail(
 								c, findingId);
 

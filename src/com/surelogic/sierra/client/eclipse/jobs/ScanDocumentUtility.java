@@ -46,8 +46,7 @@ public final class ScanDocumentUtility {
 			throws ScanPersistenceException {
 		Throwable exc = null;
 		try {
-			Connection conn = Data.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = Data.transactionConnection();
 			try {
 				ScanManager sMan = ScanManager.getInstance(conn);
 				ScanGenerator gen = sMan.getPartialScanGenerator(projectName,
@@ -96,8 +95,7 @@ public final class ScanDocumentUtility {
 			throws ScanPersistenceException {
 		Throwable exc = null;
 		try {
-			Connection conn = Data.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = Data.transactionConnection();
 			try {
 				ScanManager sMan = ScanManager.getInstance(conn);
 				if (projectName != null) {

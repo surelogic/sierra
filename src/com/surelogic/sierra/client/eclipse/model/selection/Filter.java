@@ -194,7 +194,7 @@ public abstract class Filter {
 	 */
 	private void queryCounts() throws SQLException {
 		f_counts.clear();
-		final Connection c = Data.getConnection();
+		final Connection c = Data.readOnlyConnection();
 		try {
 			final Statement st = c.createStatement();
 			try {

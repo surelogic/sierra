@@ -96,10 +96,9 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 	}
 
 	private void updateContents() throws Exception {
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			final List<SynchOverview> synchList = SynchOverview
 					.listOverviews(c);
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -174,10 +173,9 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			SynchDetail sd = SynchDetail.getSyncDetail(c, so);
 			final List<AuditDetail> auditList = sd.getAudits();
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {

@@ -485,7 +485,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 		public void run() {
 			try {
-				Connection conn = Data.getConnection();
+				Connection conn = Data.readOnlyConnection();
 				try {
 
 					if (PreferenceConstants.showLowestImportance()) {

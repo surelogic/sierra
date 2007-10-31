@@ -50,10 +50,9 @@ public final class FindingMutationUtility {
 			final String summary) throws Exception {
 		if (summary == null || summary.equals(""))
 			return;
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.changeSummary(finding_id, summary);
 			c.commit();
@@ -97,10 +96,9 @@ public final class FindingMutationUtility {
 			throws Exception {
 		if (comment == null || comment.trim().equals(""))
 			return;
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.comment(finding_id, comment);
 			c.commit();
@@ -145,10 +143,9 @@ public final class FindingMutationUtility {
 
 	private static void changeImportance(final long finding_id,
 			final Importance to) throws Exception {
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.setImportance(finding_id, to);
 			c.commit();
@@ -194,10 +191,9 @@ public final class FindingMutationUtility {
 	private static void changeImportance(final Set<Long> finding_ids,
 			final Importance to, final SLProgressMonitor monitor)
 			throws Exception {
-		Connection c = Data.getConnection();
+		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
-			c.setAutoCommit(false);
 			ClientFindingManager manager = ClientFindingManager.getInstance(c);
 			manager.setImportance(finding_ids, to, monitor);
 			c.commit();

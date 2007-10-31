@@ -44,7 +44,7 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 				+ f_projectName + ".", 5);
 		IStatus status = null;
 		try {
-			final Connection conn = Data.getConnection();
+			final Connection conn = Data.transactionConnection();
 			conn.setAutoCommit(false);
 			final ClientProjectManager manager = ClientProjectManager
 					.getInstance(conn);

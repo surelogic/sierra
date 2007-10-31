@@ -114,8 +114,7 @@ public final class Projects extends AbstractDatabaseObserver {
 	public void refresh() {
 		List<String> projectNames = new ArrayList<String>();
 		try {
-			final Connection c = Data.getConnection();
-			c.setReadOnly(true);
+			final Connection c = Data.readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {

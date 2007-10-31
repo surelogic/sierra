@@ -42,9 +42,7 @@ public final class DeleteProjectDataJob {
 
 					boolean jobFailed = false;
 					try {
-						final Connection conn = Data.getConnection();
-
-						conn.setAutoCommit(false);
+						final Connection conn = Data.transactionConnection();
 						final ClientProjectManager manager = ClientProjectManager
 								.getInstance(conn);
 						try {

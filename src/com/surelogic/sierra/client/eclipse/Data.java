@@ -76,6 +76,18 @@ public final class Data {
 		}
 	}
 
+	public static Connection readOnlyConnection() throws SQLException {
+		Connection conn = getConnection();
+		conn.setReadOnly(true);
+		return conn;
+	}
+
+	public static Connection transactionConnection() throws SQLException {
+		Connection conn = getConnection();
+		conn.setAutoCommit(false);
+		return conn;
+	}
+
 	public static Connection getConnection() throws SQLException {
 		Connection conn = LazyPreparedStatementConnection.wrap(DriverManager
 				.getConnection(getConnectionURL()));
