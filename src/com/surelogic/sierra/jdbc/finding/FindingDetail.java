@@ -18,8 +18,8 @@ public class FindingDetail {
 
 	private final FindingOverview overview;
 	private final String findingTypeDetail;
-	private List<AuditDetail> audits;
-	private List<ArtifactDetail> artifacts;
+	private final List<AuditDetail> audits;
+	private final List<ArtifactDetail> artifacts;
 
 	private FindingDetail(Connection conn, Long findingId) throws SQLException {
 		Statement st = conn.createStatement();
@@ -50,25 +50,47 @@ public class FindingDetail {
 						.executeQuery("SELECT ARTIFACT_ID FROM ARTIFACT A, ARTIFACT_FINDING_RELTN AFR WHERE AFR.FINDING_ID = "
 								+ findingId
 								+ " AND A.ID = AFR.ARTIFACT_ID AND A.SCAN_ID IN (SELECT SCAN_ID FROM LATEST_SCANS)");
-				while (set.next()) {
-					long artifactId = set.getLong(1);
+				boolean hasArtifacts = set.next();
+				if (!hasArtifacts) {
+					// We didn't find artifacts from the latest scan, so we get
+					// artifacts from the previous scan.
+					set = st
+							.executeQuery("SELECT ARTIFACT_ID FROM ARTIFACT A, ARTIFACT_FINDING_RELTN AFR WHERE AFR.FINDING_ID = "
+									+ findingId + " AND A.ID = AFR.ARTIFACT_ID");
+					hasArtifacts = set.next();
+				}
+				if (hasArtifacts) {
 					Statement artSt = conn.createStatement();
 					try {
-						ResultSet artSet = artSt
-								.executeQuery("SELECT T.NAME, A.MESSAGE, CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-										+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-										+ "   WHERE A.ID = "
-										+ artifactId
-										+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID"
-										+ " AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-						artSet.next();
-						artifacts.add(new ArtifactDetail(artSet));
+						Statement sourceSt = conn.createStatement();
+						try {
+							do {
+								final long artifactId = set.getLong(1);
+								ResultSet artSet = artSt
+										.executeQuery("SELECT T.NAME, A.MESSAGE, CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
+												+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
+												+ "   WHERE A.ID = "
+												+ artifactId
+												+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID"
+												+ " AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
+								artSet.next();
+								ResultSet sourceSet = sourceSt
+										.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
+												+ "   FROM ARTIFACT_SOURCE_LOCATION_RELTN ASLR, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
+												+ "   WHERE ASLR.ARTIFACT_ID = "
+												+ artifactId
+												+ " AND SL.ID = ASLR.SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
+								artifacts.add(new ArtifactDetail(artSet,
+										sourceSet));
+							} while (set.next());
+						} finally {
+							sourceSt.close();
+						}
 					} finally {
 						artSt.close();
 					}
 
 				}
-
 			} else {
 				throw new IllegalArgumentException(findingId
 						+ " is not a valid finding id.");

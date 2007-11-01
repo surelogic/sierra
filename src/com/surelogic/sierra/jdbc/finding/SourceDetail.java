@@ -24,6 +24,18 @@ public class SourceDetail {
 		this.identifier = set.getString(idx++);
 	}
 
+	SourceDetail(ResultSet set) throws SQLException {
+		int idx = 1;
+		this.packageName = set.getString(idx++);
+		this.className = set.getString(idx++);
+		this.lineOfCode = set.getInt(idx++);
+		this.endLineOfCode = set.getInt(idx++);
+		String identType = set.getString(idx++);
+		this.identifierType = (identType == null) ? null : IdentifierType
+				.valueOf(identType);
+		this.identifier = set.getString(idx++);
+	}
+
 	public String getPackageName() {
 		return packageName;
 	}
