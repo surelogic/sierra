@@ -25,6 +25,7 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
@@ -104,6 +105,9 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					updateSyncTableContents(synchList);
+					if (Projects.getInstance().isEmpty()) {
+						f_eventsTable.setVisible(false);
+					}
 				}
 			});
 			c.commit();
@@ -147,6 +151,10 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 			item.setText(2, dateFormat.format(so.getTime()));
 			item.setData(so);
+		}
+
+		if ((synchList.size() == 0) || (Projects.getInstance().isEmpty())) {
+			f_eventsTable.setVisible(false);
 		}
 		packTable(f_syncTable);
 	}

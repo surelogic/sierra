@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -136,8 +135,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 	private volatile FindingDetail f_finding;
 
-	// private final Executor f_executor = Executors.newSingleThreadExecutor();
-
 	private final Listener f_tabLinkListener = new Listener() {
 		public void handleEvent(Event event) {
 			final String target = event.text;
@@ -212,18 +209,13 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 						}
 
 					} catch (IllegalArgumentException iae) {
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										MessageDialog.openInformation(Display
-												.getCurrent().getActiveShell(),
-												"Sierra",
-												"No corresponding finding in "
-														+ "the local database");
+						f_display.asyncExec(new Runnable() {
+							public void run() {
+								f_finding = null;
+								updateContents();
+							}
 
-									}
-
-								});
+						});
 					} finally {
 						c.close();
 					}
@@ -367,6 +359,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private void updateContents() {
 		final boolean noFinding = f_finding == null;
 		final Control page = noFinding ? f_noFindingPage : f_findingPage;
+
 		if (page != f_pages.getPage()) {
 			f_pages.showPage(page);
 			/*
@@ -581,6 +574,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				}
 			});
 		}
+
 	}
 
 	@Override
