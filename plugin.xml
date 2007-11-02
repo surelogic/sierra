@@ -122,6 +122,23 @@
      
    <extension
          point="org.eclipse.ui.popupMenus">
+         <viewerContribution 
+      		id="org.eclipse.ui.articles.action.contribution.popup.editor"
+   			targetID="#CompilationUnitEditorContext"> 
+   			<menu
+               id="com.surelogic.sierra.client.eclipse.editorContextMenu"
+               label="Sierra"
+               path="additions">
+            </menu>
+   			<action
+        		id="org.eclipse.ui.articles.action.contribution.editor.scanAction" 
+         		label="Scan File"
+         		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
+      			menubarPath="com.surelogic.sierra.client.eclipse.editorContextMenu/additions" 
+      			class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"> 
+      		</action> 
+   		</viewerContribution> 
+   		
          <objectContribution
             id="Sierra.CompilationUnitPopupMenu"
             objectClass="org.eclipse.jdt.core.IPackageFragment">
