@@ -16,7 +16,7 @@ import java.util.Date;
  * 
  */
 public class JDBCUtils {
-
+	
 	/**
 	 * Set a paramter to the specified String, or to null if none is supplied.
 	 * 
@@ -85,6 +85,15 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * Returns a Long, or null if the corresponding column was null in the
+	 * result set.
+	 * 
+	 * @param idx
+	 * @param set
+	 * @return
+	 * @throws SQLException
+	 */
 	public static Long getNullableLong(int idx, ResultSet set)
 			throws SQLException {
 		long l = set.getLong(idx);
@@ -95,6 +104,15 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * Returns an Integer, or null if the corresponding column was null in the
+	 * database.
+	 * 
+	 * @param idx
+	 * @param set
+	 * @return
+	 * @throws SQLException
+	 */
 	public static Integer getNullableInteger(int idx, ResultSet set)
 			throws SQLException {
 		int i = set.getInt(idx);
@@ -105,6 +123,11 @@ public class JDBCUtils {
 		}
 	}
 
+	/**
+	 * The current system time as a timestamp.
+	 * 
+	 * @return
+	 */
 	public static Timestamp now() {
 		return new Timestamp(System.currentTimeMillis());
 	}
@@ -143,7 +166,7 @@ public class JDBCUtils {
 		try {
 			Statement st = conn.createStatement();
 			try {
-				st.executeQuery("SELECT * FROM SERVER");
+				st.executeQuery("SELECT UUID FROM SERVER");
 				return true;
 			} finally {
 				st.close();

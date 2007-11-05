@@ -493,9 +493,11 @@ public final class ServerFindingManager extends FindingManager {
 	}
 
 	/**
-	 * Populate the scan summary row for this scan/qualifier pair. This row
-	 * contains some useful metrics for reporting, and one of these should be
-	 * created for each qualifier a scan is published to.
+	 * Update the scan summary row for this scan/qualifier pair, and also the
+	 * adjacent scan summaries in this qualifier, since they may have changed
+	 * with the addition of this scan. This row contains some useful metrics for
+	 * reporting, and one of these should be created for each qualifier a scan
+	 * is published to.
 	 * 
 	 * @param scan
 	 * @param qualifier
@@ -505,26 +507,25 @@ public final class ServerFindingManager extends FindingManager {
 	private void populateScanSummary(ScanRecord scan,
 			QualifierRecord qualifier, ProjectRecord project)
 			throws SQLException {
-		Timestamp time = new Timestamp(scan.getTimestamp().getTime());
+		Timestamp time = scan.getTimestamp();
 		int idx = 1;
 		// Add scan summary information
 		selectNextScan.setLong(idx++, qualifier.getId());
 		selectNextScan.setLong(idx++, project.getId());
 		selectNextScan.setLong(idx++, qualifier.getId());
 		selectNextScan.setLong(idx++, project.getId());
-		selectNextScan.setTimestamp(idx++, new Timestamp(scan.getTimestamp()
-				.getTime()));
+		selectNextScan.setTimestamp(idx++, scan.getTimestamp());
 		ResultSet set = selectNextScan.executeQuery();
 		try {
 			if (set.next()) {
-				populateScanSummaryHelper(set.getLong(1), qualifier.getId(),
-						project.getId(), time);
+				refreshScanSummary(set.getLong(1), qualifier.getId(), project
+						.getId(), time);
 			}
 		} finally {
 			set.close();
 		}
-		populateScanSummaryHelper(scan.getId(), qualifier.getId(), project
-				.getId(), new Timestamp(scan.getTimestamp().getTime()));
+		refreshScanSummary(scan.getId(), qualifier.getId(), project.getId(),
+				scan.getTimestamp());
 		idx = 1;
 		selectPreviousScan.setLong(idx++, qualifier.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
@@ -535,15 +536,25 @@ public final class ServerFindingManager extends FindingManager {
 		set = selectPreviousScan.executeQuery();
 		try {
 			if (set.next()) {
-				populateScanSummaryHelper(set.getLong(1), qualifier.getId(),
-						project.getId(), time);
+				refreshScanSummary(set.getLong(1), qualifier.getId(), project
+						.getId(), time);
 			}
 		} finally {
 			set.close();
 		}
 	}
 
-	private void populateScanSummaryHelper(Long scanId, Long qualifierId,
+	/**
+	 * Insert or update a scan summary for the given scan with respect to the
+	 * given qualifier.
+	 * 
+	 * @param scanId
+	 * @param qualifierId
+	 * @param projectId
+	 * @param time
+	 * @throws SQLException
+	 */
+	public void refreshScanSummary(Long scanId, Long qualifierId,
 			Long projectId, Timestamp time) throws SQLException {
 		ScanSummaryRecord summary = new ScanSummaryRecord(scanSummaryMapper);
 		summary.setId(new ScanSummaryRecord.PK(scanId, qualifierId));

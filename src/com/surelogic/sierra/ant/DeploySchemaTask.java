@@ -3,12 +3,18 @@ package com.surelogic.sierra.ant;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.logging.Logger;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
@@ -32,6 +38,8 @@ public class DeploySchemaTask extends Task {
 
 	private static final String DERBYDRIVER = "org.apache.derby.jdbc.ClientDriver";
 	private static final String ORACLEDRIVER = "oracle.jdbc.driver.OracleDriver";
+
+	private final Logger log = SLLogger.getLoggerFor(DeploySchemaTask.class);
 
 	/**
 	 * @param args
@@ -59,7 +67,6 @@ public class DeploySchemaTask extends Task {
 			} else {
 				Class.forName(DERBYDRIVER);
 			}
-
 		} catch (ClassNotFoundException e) {
 			throw new IllegalStateException(
 					"Could not locate derby client driver", e);
@@ -76,23 +83,23 @@ public class DeploySchemaTask extends Task {
 			conn.setAutoCommit(false);
 			log("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
-			// conn.createStatement().execute(
-			// "INSERT INTO QUALIFIER(NAME) VALUES ('Default')");
+			ServerFindingManager man = ServerFindingManager.getInstance(conn);
+			Statement st = conn.createStatement();
 			conn.commit();
-
-			// ServerFindingManager man =
-			// ServerFindingManager.getInstance(conn);
-			// ResultSet set = conn
-			// .createStatement()
-			// .executeQuery(
-			// "SELECT P.NAME, S.UID FROM SCAN S, PROJECT P WHERE P.ID =
-			// S.PROJECT_ID");
-			// while (set.next()) {
-			// man.generateOverview(set.getString(1), set.getString(2),
-			// new TreeSet<String>(Arrays
-			// .asList(new String[] { "Default" })));
-			// conn.commit();
-			// }
+			ResultSet set = st
+					.executeQuery("SELECT S.ID,Q.QUALIFIER_ID,S.PROJECT_ID,S.SCAN_DATE_TIME FROM SCAN S, QUALIFIER_SCAN_RELTN Q WHERE Q.SCAN_ID = S.ID ORDER BY Q.QUALIFIER_ID,S.SCAN_DATE_TIME");
+			while (set.next()) {
+				int idx = 1;
+				long scanId = set.getLong(idx++);
+				long qualifierId = set.getLong(idx++);
+				long projectId = set.getLong(idx++);
+				Timestamp time = set.getTimestamp(idx++);
+				log.info("Populating scan summary for (" + scanId + ","
+						+ qualifierId + "," + projectId + "," + time + ")");
+				man.refreshScanSummary(scanId, qualifierId, projectId, time);
+				conn.commit();
+			}
+			System.out.println("done");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
