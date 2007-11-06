@@ -340,10 +340,10 @@ public class ScanManager {
 							idx = 1;
 							selectCurrentFindingByCompilation.setLong(idx++, cu
 									.getId());
-							selectCurrentFindingByCompilation.setLong(idx++, latest
-									.getId());
-							selectCurrentFindingByCompilation.setLong(idx++, oldest
-									.getId());
+							selectCurrentFindingByCompilation.setLong(idx++,
+									latest.getId());
+							selectCurrentFindingByCompilation.setLong(idx++,
+									oldest.getId());
 							set = selectCurrentFindingByCompilation
 									.executeQuery();
 							try {
