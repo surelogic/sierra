@@ -161,7 +161,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "      FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
 						+ "         QSR.QUALIFIER_ID = ? AND"
 						+ "         S.ID = QSR.SCAN_ID AND"
-						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME > ?)");
+						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME > (SELECT SCAN_DATE_TIME FROM SCAN WHERE ID = ?))");
 		selectPreviousScan = conn
 				.prepareStatement("SELECT S.ID,S.SCAN_DATE_TIME FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
 						+ "   QSR.QUALIFIER_ID = ? AND"
@@ -172,7 +172,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "      FROM QUALIFIER_SCAN_RELTN QSR, SCAN S WHERE"
 						+ "         QSR.QUALIFIER_ID = ? AND"
 						+ "         S.ID = QSR.SCAN_ID AND"
-						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME < ?)");
+						+ "         S.PROJECT_ID = ? AND S.SCAN_DATE_TIME < (SELECT SCAN_DATE_TIME FROM SCAN WHERE ID = ?))");
 		findingIntersectCount = conn
 				.prepareStatement("SELECT COUNT(*) FROM"
 						+ "   (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ? INTERSECT"
@@ -507,37 +507,34 @@ public final class ServerFindingManager extends FindingManager {
 	private void populateScanSummary(ScanRecord scan,
 			QualifierRecord qualifier, ProjectRecord project)
 			throws SQLException {
-		Timestamp time = scan.getTimestamp();
 		int idx = 1;
 		// Add scan summary information
 		selectNextScan.setLong(idx++, qualifier.getId());
 		selectNextScan.setLong(idx++, project.getId());
 		selectNextScan.setLong(idx++, qualifier.getId());
 		selectNextScan.setLong(idx++, project.getId());
-		selectNextScan.setTimestamp(idx++, scan.getTimestamp());
+		selectNextScan.setLong(idx++, scan.getId());
 		ResultSet set = selectNextScan.executeQuery();
 		try {
 			if (set.next()) {
 				refreshScanSummary(set.getLong(1), qualifier.getId(), project
-						.getId(), time);
+						.getId());
 			}
 		} finally {
 			set.close();
 		}
-		refreshScanSummary(scan.getId(), qualifier.getId(), project.getId(),
-				scan.getTimestamp());
+		refreshScanSummary(scan.getId(), qualifier.getId(), project.getId());
 		idx = 1;
 		selectPreviousScan.setLong(idx++, qualifier.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
 		selectPreviousScan.setLong(idx++, qualifier.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
-		selectPreviousScan.setTimestamp(idx++, new Timestamp(scan
-				.getTimestamp().getTime()));
+		selectPreviousScan.setLong(idx++, scan.getId());
 		set = selectPreviousScan.executeQuery();
 		try {
 			if (set.next()) {
 				refreshScanSummary(set.getLong(1), qualifier.getId(), project
-						.getId(), time);
+						.getId());
 			}
 		} finally {
 			set.close();
@@ -551,11 +548,10 @@ public final class ServerFindingManager extends FindingManager {
 	 * @param scanId
 	 * @param qualifierId
 	 * @param projectId
-	 * @param time
 	 * @throws SQLException
 	 */
-	public void refreshScanSummary(Long scanId, Long qualifierId,
-			Long projectId, Timestamp time) throws SQLException {
+	public void refreshScanSummary(Long scanId, Long qualifierId, Long projectId)
+			throws SQLException {
 		ScanSummaryRecord summary = new ScanSummaryRecord(scanSummaryMapper);
 		summary.setId(new ScanSummaryRecord.PK(scanId, qualifierId));
 		boolean summaryExists = summary.select();
@@ -564,11 +560,11 @@ public final class ServerFindingManager extends FindingManager {
 		selectPreviousScan.setLong(idx++, projectId);
 		selectPreviousScan.setLong(idx++, qualifierId);
 		selectPreviousScan.setLong(idx++, projectId);
-		selectPreviousScan.setTimestamp(idx++, time);
+		selectPreviousScan.setLong(idx++, scanId);
 		ResultSet set = selectPreviousScan.executeQuery();
 		try {
 			if (set.next()) {
-				Long previousScanId = set.getLong(1);
+				final long previousScanId = set.getLong(1);
 				findingDifferenceCount.setLong(1, scanId);
 				findingDifferenceCount.setLong(2, previousScanId);
 				ResultSet count = findingDifferenceCount.executeQuery();
@@ -587,13 +583,20 @@ public final class ServerFindingManager extends FindingManager {
 				} finally {
 					count.close();
 				}
+				findingDifferenceCount.setLong(1, previousScanId);
+				findingDifferenceCount.setLong(2, scanId);
+				count = findingDifferenceCount.executeQuery();
+				try {
+					count.next();
+					summary.setFixedFindings(count.getLong(1));
+				} finally {
+					count.close();
+				}
 				findingCount.setLong(1, scanId);
 				count = findingCount.executeQuery();
 				try {
 					count.next();
-					summary.setFixedFindings(count.getLong(1)
-							- summary.getNewFindings()
-							- summary.getUnchangedFindings());
+					summary.setTotalFindings(count.getLong(1));
 				} finally {
 					count.close();
 				}
@@ -603,9 +606,10 @@ public final class ServerFindingManager extends FindingManager {
 				try {
 					count.next();
 					Long findings = count.getLong(1);
-					summary.setUnchangedFindings(findings);
+					summary.setUnchangedFindings(0L);
 					summary.setNewFindings(findings);
 					summary.setFixedFindings(0L);
+					summary.setTotalFindings(findings);
 				} finally {
 					count.close();
 				}
