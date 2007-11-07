@@ -12,10 +12,11 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 
 	private PK id;
 
-	private Long newFindings;
-	private Long fixedFindings;
-	private Long unchangedFindings;
-	private Long artifacts;
+	private long newFindings;
+	private long fixedFindings;
+	private long unchangedFindings;
+	private long artifacts;
+	private long totalFindings;
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
@@ -53,64 +54,72 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 		return idx;
 	}
 
-	public Long getNewFindings() {
+	public long getTotalFindings() {
+		return totalFindings;
+	}
+
+	public void setTotalFindings(long totalFindings) {
+		this.totalFindings = totalFindings;
+	}
+
+	public long getNewFindings() {
 		return newFindings;
 	}
 
-	public void setNewFindings(Long newFindings) {
+	public void setNewFindings(long newFindings) {
 		this.newFindings = newFindings;
 	}
 
-	public Long getFixedFindings() {
+	public long getFixedFindings() {
 		return fixedFindings;
 	}
 
-	public void setFixedFindings(Long fixedFindings) {
+	public void setFixedFindings(long fixedFindings) {
 		this.fixedFindings = fixedFindings;
 	}
 
-	public Long getUnchangedFindings() {
+	public long getUnchangedFindings() {
 		return unchangedFindings;
 	}
 
-	public void setUnchangedFindings(Long unchangedFindings) {
+	public void setUnchangedFindings(long unchangedFindings) {
 		this.unchangedFindings = unchangedFindings;
 	}
 
-	public Long getArtifacts() {
+	public long getArtifacts() {
 		return artifacts;
 	}
 
-	public void setArtifacts(Long artifacts) {
+	public void setArtifacts(long artifacts) {
 		this.artifacts = artifacts;
 	}
 
 	public static class PK {
-		private Long scanId;
-		private Long qualifierId;
+		private long scanId;
+		private long qualifierId;
 
 		public PK() {
 			// Do nothing
 		}
 
-		public PK(Long scanId, Long qualifierId) {
+		public PK(long scanId, long qualifierId) {
 			this.scanId = scanId;
 			this.qualifierId = qualifierId;
 		}
 
-		public Long getScanId() {
+		public long getScanId() {
 			return scanId;
 		}
 
-		public void setScanId(Long scanId) {
+		public void setScanId(long scanId) {
 			this.scanId = scanId;
 		}
 
-		public Long getQualifierId() {
+		public long getQualifierId() {
 			return qualifierId;
 		}
 
-		public void setQualifierId(Long qualifierId) {
+		public void setQualifierId(long qualifierId) {
 			this.qualifierId = qualifierId;
 		}
 

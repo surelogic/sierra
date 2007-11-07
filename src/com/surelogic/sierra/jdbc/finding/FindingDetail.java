@@ -34,17 +34,7 @@ public class FindingDetail {
 				int idx = 1;
 				findingTypeDetail = set.getString(idx++);
 				overview = new FindingOverview(set, idx);
-				set = st
-						.executeQuery("SELECT A.FINDING_ID, SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
-								+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
-								+ "   WHERE FINDING_ID = "
-								+ findingId
-								+ " ORDER BY A.DATE_TIME");
-				audits = new ArrayList<AuditDetail>();
-				while (set.next()) {
-					idx = 1;
-					audits.add(new AuditDetail(set));
-				}
+				audits = AuditDetail.getDetails(conn, findingId);
 				artifacts = new ArrayList<ArtifactDetail>();
 				set = st
 						.executeQuery("SELECT ARTIFACT_ID FROM ARTIFACT A, ARTIFACT_FINDING_RELTN AFR WHERE AFR.FINDING_ID = "
@@ -60,36 +50,10 @@ public class FindingDetail {
 					hasArtifacts = set.next();
 				}
 				if (hasArtifacts) {
-					Statement artSt = conn.createStatement();
-					try {
-						Statement sourceSt = conn.createStatement();
-						try {
-							do {
-								final long artifactId = set.getLong(1);
-								ResultSet artSet = artSt
-										.executeQuery("SELECT T.NAME, A.MESSAGE, CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-												+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-												+ "   WHERE A.ID = "
-												+ artifactId
-												+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID"
-												+ " AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-								artSet.next();
-								ResultSet sourceSet = sourceSt
-										.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-												+ "   FROM ARTIFACT_SOURCE_LOCATION_RELTN ASLR, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-												+ "   WHERE ASLR.ARTIFACT_ID = "
-												+ artifactId
-												+ " AND SL.ID = ASLR.SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-								artifacts.add(new ArtifactDetail(artSet,
-										sourceSet));
-							} while (set.next());
-						} finally {
-							sourceSt.close();
-						}
-					} finally {
-						artSt.close();
-					}
-
+					do {
+						artifacts.add(ArtifactDetail.getArtifact(conn, set
+								.getLong(1)));
+					} while (set.next());
 				}
 			} else {
 				throw new IllegalArgumentException(findingId

@@ -96,7 +96,7 @@ public class DeploySchemaTask extends Task {
 				Timestamp time = set.getTimestamp(idx++);
 				log.info("Populating scan summary for (" + scanId + ","
 						+ qualifierId + "," + projectId + "," + time + ")");
-				man.refreshScanSummary(scanId, qualifierId, projectId, time);
+				man.refreshScanSummary(scanId, qualifierId, projectId);
 				conn.commit();
 			}
 			System.out.println("done");

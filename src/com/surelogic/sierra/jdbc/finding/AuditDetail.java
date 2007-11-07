@@ -1,8 +1,12 @@
 package com.surelogic.sierra.jdbc.finding;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.surelogic.sierra.tool.message.AuditEvent;
 
@@ -55,6 +59,26 @@ public class AuditDetail {
 
 	public String getUser() {
 		return user;
+	}
+
+	public static List<AuditDetail> getDetails(Connection conn, long findingId)
+			throws SQLException {
+		List<AuditDetail> audits = new ArrayList<AuditDetail>();
+		Statement st = conn.createStatement();
+		try {
+			ResultSet set = st
+					.executeQuery("SELECT A.FINDING_ID, SU.USER_NAME, A.EVENT, A.VALUE, A.DATE_TIME"
+							+ "   FROM SIERRA_AUDIT A LEFT OUTER JOIN SIERRA_USER SU ON SU.ID = A.USER_ID"
+							+ "   WHERE FINDING_ID = "
+							+ findingId
+							+ " ORDER BY A.DATE_TIME");
+			while (set.next()) {
+				audits.add(new AuditDetail(set));
+			}
+		} finally {
+			st.close();
+		}
+		return audits;
 	}
 
 }
