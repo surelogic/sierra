@@ -47,6 +47,7 @@ public class SynchDetail {
 							+ "' AND"
 							+ "      F.PROJECT_ID = P.ID AND"
 							+ "      A.FINDING_ID = F.ID AND"
+							+ "      U.ID = A.USER_ID AND"
 							+ "      A.REVISION > "
 							+ priorRevision
 							+ (upperRangeSet.wasNull() ? ""
