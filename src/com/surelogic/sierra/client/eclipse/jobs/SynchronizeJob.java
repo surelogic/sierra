@@ -47,7 +47,7 @@ public class SynchronizeJob extends DatabaseJob {
 			final Connection conn = Data.transactionConnection();
 			try {
 				status = synchronize(conn, slMonitor);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				final String msg = "Synchronization of project '"
 						+ f_projectName + "' to Sierra server '" + f_server
 						+ "' failed.";
