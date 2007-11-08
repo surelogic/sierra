@@ -29,256 +29,210 @@ import com.surelogic.sierra.metrics.model.Metrics;
  * Visitor for counting LOC
  * 
  * @author Tanmay.Sinha
- * 
  */
 public class LOCASTVisitor extends ASTVisitor {
 
-	private long count = 0L;
-	private Metrics metrics;
-	private boolean reflect = false;
+	private static final boolean DEBUG = false;
 
-	public LOCASTVisitor(boolean reflect) {
-		this.reflect = reflect;
-		metrics = new Metrics();
+	private long f_count = 0L;
+	private final Metrics f_metrics;
+
+	public LOCASTVisitor() {
+		f_metrics = new Metrics();
 	}
 
 	@Override
 	public boolean visit(AssertStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Assert");
 		}
-
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ReturnStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Return");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(BreakStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Break");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(FieldDeclaration node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Field" + node.toString());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
-	// @Override
-	// public boolean visit(AnnotationTypeDeclaration node) {
-	// System.out.println("Annotation" + node.toString());
-	// count++;
-	// return super.visit(node);
-	// }
-	//
-	// @Override
-	// public boolean visit(AnnotationTypeMemberDeclaration node) {
-	// if (reflect) System.out.println("Annotation type mem" + node.toString());
-	// count++;
-	// return super.visit(node);
-	// }
-
 	@Override
 	public boolean visit(CatchClause node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Catch");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ContinueStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Continue");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(DoStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Do ");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(EnhancedForStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Enh For" + node.getExpression());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ForStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("For " + node.getExpression());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(IfStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("If" + node.getExpression());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(TypeDeclaration node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Class " + node.getName());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ImportDeclaration node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Import " + node.toString());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
-
-	// @Override
-	// public boolean visit(CompilationUnit node) {
-	// if (reflect) System.out.println("Class ");
-	// count++;
-	// return super.visit(node);
-	// }
 
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Method " + node.getName());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
-	// @Override
-	// public boolean visit(NormalAnnotation node) {
-	// if (reflect) System.out.println("Annotation " + node.toString());
-	// count++;
-	// return super.visit(node);
-	// }
-
 	@Override
 	public boolean visit(PackageDeclaration node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Package " + node.toString());
 		}
-		metrics.setPackageName(node.getName().toString());
-		count++;
+		f_metrics.setPackageName(node.getName().toString());
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(MarkerAnnotation node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Annotation " + node.toString());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SwitchCase node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Case");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SwitchStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Switch");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(TryStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Try");
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
-	// @Override
-	// public boolean visit(VariableDeclarationExpression node) {
-	// if (reflect) System.out
-	// .println("Variable Declaration Expression " + node.toString());
-	//
-	// return super.visit(node);
-	// }
-
-	// @Override
-	// public boolean visit(VariableDeclarationFragment node) {
-	// if (reflect) System.out.println("Variable Declaration Fragment " +
-	// node.toString());
-	// count++;
-	// return super.visit(node);
-	// }
-
 	@Override
 	public boolean visit(VariableDeclarationStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Variable Declaration Statement "
 					+ node.toString());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(WhileStatement node) {
-		if (reflect)
+		if (DEBUG)
 			System.out.println("while " + node.getExpression());
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ExpressionStatement node) {
-		if (reflect) {
+		if (DEBUG) {
 			System.out.println("Expression " + node.toString());
 		}
-		count++;
+		f_count++;
 		return super.visit(node);
 	}
 
 	public Metrics getMetrics() {
-		metrics.setLoc(count);
-		return metrics;
+		f_metrics.setLoc(f_count);
+		return f_metrics;
 	}
 }

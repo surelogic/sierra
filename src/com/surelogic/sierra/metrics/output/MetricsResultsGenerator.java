@@ -1,113 +1,59 @@
 package com.surelogic.sierra.metrics.output;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.io.PrintWriter;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.surelogic.sierra.metrics.model.Metrics;
 
 public final class MetricsResultsGenerator {
-	
 
-	private static AttributesImpl atts;
-	private static FileOutputStream fos;
-	private static OutputFormat of;
-	private static XMLSerializer serializer;
-	private static ContentHandler hd;
+	/**
+	 * Output encoding.
+	 */
+	public static final String ENCODING = "UTF-8";
+
+	private static final String METRICS = "metrics";
+	private static final String CU = "class";
+	private static final String NAME = "name";
+	private static final String PATH = "path";
+	private static final String PACKAGE = "package";
+	private static final String LOC = "loc";
+
+	private final PrintWriter f_out;
+	private String f_indent = "";
+
+	private void o(final String s) {
+		f_out.print(f_indent);
+		f_out.println(s);
+	}
 
 	/** The default name of package for files in root folder */
 	public static final String DEFAULT_PACKAGE_PARENTHESIS = "(default package)";
 
-	private static void writeAttributes(Map<String, String> attributeMap) {
-
-		atts.clear();
-
-		Set<String> attributes = attributeMap.keySet();
-
-		Iterator<String> attributesIterator = attributes.iterator();
-
-		while (attributesIterator.hasNext()) {
-			String attribute = attributesIterator.next();
-			String value = attributeMap.get(attribute);
-
-			atts.addAttribute("", "", attribute, "CDATA", value);
-		}
-
-		attributeMap.clear();
-
+	public MetricsResultsGenerator(final PrintWriter out) {
+		assert out != null;
+		f_out = out;
+		o("<?xml version='1.0' encoding='" + ENCODING + "' standalone='yes'?>");
+		o("<" + METRICS + ">");
 	}
 
-	public static void startResultsFile(String outputFile) {
-		File resultFile = new File(outputFile);
-
-		try {
-			fos = new FileOutputStream(resultFile);
-			of = new OutputFormat("XML", "ISO-8859-1", true);
-			of.setIndent(1);
-			of.setIndenting(true);
-			of.setOmitXMLDeclaration(true);
-			serializer = new XMLSerializer(fos, of);
-			// SAX2.0 ContentHandler.
-			hd = serializer.asContentHandler();
-			// hd.startDocument();
-			atts = new AttributesImpl();
-			// Start the file
-			hd.startElement("", "", "metrics", atts);
-
-		} catch (SAXException se) {
-			System.out.println("SAX Exception while writing build file " + se);
-		} catch (IOException ioe) {
-			System.out.println("I/O Exception while writing build file " + ioe);
-
+	public void write(final Metrics metrics) {
+		final StringBuilder b = new StringBuilder();
+		b.append("<").append(CU);
+		Entities.addAttribute(NAME, metrics.getClassName(), b);
+		if (metrics.getPackageName() == null
+				|| "".equals(metrics.getPackageName())) {
+			Entities.addAttribute(PACKAGE, DEFAULT_PACKAGE_PARENTHESIS, b);
+		} else {
+			Entities.addAttribute(PACKAGE, metrics.getPackageName(), b);
 		}
-
+		Entities.addAttribute(LOC, String.valueOf(metrics.getLoc()), b);
+		Entities.addAttribute(PATH, metrics.getPath(), b);
+		b.append("/>");
+		o(b.toString());
 	}
 
-	public static void writeInFile(Metrics metrics) {
-		try {
-			// Start project tag
-			Map<String, String> attributeMap = new HashMap<String, String>();
-			attributeMap.put("name", metrics.getClassName());
-			if (metrics.getPackageName() == null
-					|| metrics.getPackageName().equals("")) {
-				attributeMap.put("package", DEFAULT_PACKAGE_PARENTHESIS);
-			} else {
-				attributeMap.put("package", metrics.getPackageName());
-			}
-			attributeMap.put("loc", String.valueOf(metrics.getLoc()));
-			attributeMap.put("path", metrics.getPath());
-			writeAttributes(attributeMap);
-			hd.startElement("", "", "class", atts);
-			hd.endElement("", "", "class");
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	public static void endResultsFile() {
-
-		try {
-			hd.endElement("", "", "metrics");
-			fos.close();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public void close() {
+		o("</" + METRICS + ">");
+		f_out.close();
 	}
 }

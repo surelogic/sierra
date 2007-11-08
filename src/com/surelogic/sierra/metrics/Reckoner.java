@@ -3,12 +3,17 @@ package com.surelogic.sierra.metrics;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -20,7 +25,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import com.surelogic.sierra.metrics.analysis.InvalidFileException;
 import com.surelogic.sierra.metrics.analysis.LOCASTVisitor;
 import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.metrics.output.MetricsResultsGenerator;
@@ -32,9 +36,6 @@ import com.surelogic.sierra.metrics.output.MetricsResultsGenerator;
  */
 public class Reckoner {
 
-	private static HashSet<String> files = new HashSet<String>();
-	private static boolean reflectResult = false;
-
 	private static final String HELP_MESSAGE = "java -jar reckoner.jar [options] -target <name>";
 
 	/**
@@ -44,130 +45,113 @@ public class Reckoner {
 	 */
 	public static void main(String args[]) {
 
-		boolean reflect = false;
 		String outputFile = null;
 		List<File> targets = null;
 
-		Options options = new Options();
-		options.addOption("reflect", true,
-				"[optional] reflect the file (true or false)");
+		final Options options = new Options();
 		options.addOption("target", true,
 				"path of the file/directory to analyze (absolute path)");
 		options.addOption("help", false, "print this message");
-		// options.addOption("xml", false, "[optional] generate xml output");
 		options.addOption("outputFile", true,
 				"[optional] name of the output file (absolute path)");
 
 		CommandLineParser parser = new PosixParser();
+		CommandLine cmd;
 		try {
-			CommandLine cmd = parser.parse(options, args);
-			if (cmd.hasOption("help")) {
-				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp(HELP_MESSAGE, options);
-			}
+			cmd = parser.parse(options, args);
+		} catch (ParseException e) {
+			System.out.println(e.toString());
+			printCommandLineHelp(options);
+			return;
+		}
 
-			else {
-				if (cmd.hasOption("reflect")) {
-					String holder = cmd.getOptionValue("reflect");
-					reflect = Boolean.parseBoolean(holder);
-				}
+		if (cmd.hasOption("help")) {
+			printCommandLineHelp(options);
+		}
 
-				if (cmd.hasOption("target")) {
-					String target = cmd.getOptionValue("target");
-					List<?> holder = cmd.getArgList();
-					targets = new ArrayList<File>();
+		else {
+			if (cmd.hasOption("target")) {
+				String target = cmd.getOptionValue("target");
+				List<?> holder = cmd.getArgList();
+				targets = new ArrayList<File>();
 
-					if (!"".equals(target)) {
-						targets.add(new File(target));
-						for (Object o : holder) {
-							if (o instanceof String) {
-								File fileHolder = new File(o.toString());
-								targets.add(fileHolder);
-							}
+				if (!"".equals(target)) {
+					targets.add(new File(target));
+					for (Object o : holder) {
+						if (o instanceof String) {
+							File fileHolder = new File(o.toString());
+							targets.add(fileHolder);
 						}
 					}
-
 				}
 
-				if (cmd.hasOption("outputFile")) {
-					outputFile = cmd.getOptionValue("outputFile");
-				} else {
-					reflectResult = true;
-				}
-
-				if (targets.size() > 0) {
-					Reckoner llocc = new Reckoner();
-					llocc.getLogicalLOC(targets, reflect, outputFile);
-				} else {
-					throw new ParseException(null);
-				}
 			}
 
-		} catch (ParseException e) {
-			System.out.println("Invalid option");
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(HELP_MESSAGE, options);
-		} catch (FileNotFoundException fnfe) {
-			System.out.println("Invalid file");
-		} catch (InvalidFileException ife) {
-			System.out.println("Non Java file in target");
-		}
+			if (cmd.hasOption("outputFile")) {
+				outputFile = cmd.getOptionValue("outputFile");
+			}
 
+			if (targets.size() > 0) {
+				Reckoner llocc = new Reckoner();
+				try {
+					llocc.getLogicalLOC(targets, outputFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				printCommandLineHelp(options);
+				return;
+			}
+		}
 	}
 
-	public void getLogicalLOC(List<File> targets, boolean reflect,
-			String outputFile) throws FileNotFoundException,
-			InvalidFileException {
+	private static void printCommandLineHelp(final Options options) {
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp(HELP_MESSAGE, options);
+	}
 
-		boolean toFile = (outputFile != null);
-		long totalCount = 0L;
+	public void getLogicalLOC(List<File> targets, String outputFile)
+			throws IOException {
+
 		List<Metrics> metricsList = new ArrayList<Metrics>();
-		if (toFile) {
-			MetricsResultsGenerator.startResultsFile(outputFile);
+
+		PrintWriter w;
+		if (outputFile == null) {
+			w = new PrintWriter(System.out);
+		} else {
+			File dataFile = new File(outputFile);
+			OutputStream stream = new FileOutputStream(dataFile);
+			OutputStreamWriter osw = new OutputStreamWriter(stream,
+					MetricsResultsGenerator.ENCODING);
+			w = new PrintWriter(osw);
 		}
+		final MetricsResultsGenerator f_mrg = new MetricsResultsGenerator(w);
 
 		for (File file : targets) {
 			if (file.exists() && file.isDirectory()) {
-				String sourceFiles[] = getJavaFiles(file);
+				Set<String> sourceFiles = getJavaFiles(file);
 				for (String s : sourceFiles) {
-					File holder = new File(s);
-					Metrics metrics = countLOC(holder, reflect);
-					if (reflectResult) {
-						totalCount += metrics.getLoc();
-					}
-					if (toFile) {
-						// MetricsResultsGenerator.writeInFile(metrics);
+					final File holder = new File(s);
+					final Metrics metrics = countLOC(holder);
+					if (metrics != null)
 						metricsList.add(metrics);
-					}
 				}
-
-				if (reflectResult) {
-					System.out.println("Total lines of code in the project :"
-							+ totalCount);
-					totalCount = 0;
-				}
-
 			} else if (file.exists() && !file.isDirectory()) {
 				if (file.getName().endsWith(".java")) {
-					Metrics metrics = countLOC(file, reflect);
-					if (toFile) {
-						// MetricsResultsGenerator.writeInFile(metrics);
+					final Metrics metrics = countLOC(file);
+					if (metrics != null)
 						metricsList.add(metrics);
-					}
 				}
 			}
 		}
 
-		if (toFile) {
-			for (Metrics m : metricsList) {
-				MetricsResultsGenerator.writeInFile(m);
-			}
-			MetricsResultsGenerator.endResultsFile();
+		for (Metrics m : metricsList) {
+			f_mrg.write(m);
 		}
-
+		f_mrg.close();
 	}
 
-	private Metrics countLOC(File target, boolean reflect) {
+	private Metrics countLOC(File target) {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(target));
 
@@ -186,7 +170,7 @@ public class Reckoner {
 			final CompilationUnit node = (CompilationUnit) parser
 					.createAST(null);
 
-			LOCASTVisitor visitor = new LOCASTVisitor(reflect);
+			LOCASTVisitor visitor = new LOCASTVisitor();
 			node.accept(visitor);
 
 			Metrics metrics = visitor.getMetrics();
@@ -195,11 +179,6 @@ public class Reckoner {
 			metrics.setClassName(holder);
 			metrics.setPath(target.getAbsolutePath());
 
-			if (reflectResult) {
-				System.out.println("For Class \"" + metrics.getClassName()
-						+ "\" in package \"" + metrics.getPackageName()
-						+ "\" LOC : " + metrics.getLoc());
-			}
 			return metrics;
 
 		} catch (FileNotFoundException e) {
@@ -207,47 +186,38 @@ public class Reckoner {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return null;
-
 	}
 
-	private String[] getJavaFiles(File file) {
+	private Set<String> getJavaFiles(File file) {
+		final Set<String> javaFiles = new HashSet<String>();
 		JavaFilter filter = new JavaFilter();
-		files.clear();
-		filterdirs(file, filter);
-
-		if (files != null) {
-			String listOffiles[] = files.toArray(new String[files.size()]);
-			return listOffiles;
-		} else {
-			return null;
-		}
-
+		filterdirs(file, filter, javaFiles);
+		return javaFiles;
 	}
 
 	private static class JavaFilter implements FilenameFilter {
-
 		public boolean accept(File dir, String name) {
-			if (name.endsWith(".java")) {
-				return true;
-			}
-
-			return false;
+			return name.toLowerCase().endsWith(".java");
 		}
 	}
 
-	private static void filterdirs(File root, FilenameFilter filter) {
-
-		File filesHolder[] = root.listFiles(filter);
-
-		for (File f : filesHolder) {
-			files.add(f.getAbsolutePath());
+	private static void filterdirs(File root, FilenameFilter filter,
+			Set<String> javaFiles) {
+		File[] filesHolder = root.listFiles(filter); // can return null
+		if (filesHolder != null) {
+			for (File f : filesHolder) {
+				if (f.isFile())
+					javaFiles.add(f.getAbsolutePath());
+			}
 		}
 
-		for (File f : root.listFiles()) {
-			if (f.isDirectory()) {
-				filterdirs(f, filter);
+		filesHolder = root.listFiles(); // can return null
+		if (filesHolder != null) {
+			for (File f : filesHolder) {
+				if (f.isDirectory())
+					filterdirs(f, filter, javaFiles);
+
 			}
 		}
 	}
