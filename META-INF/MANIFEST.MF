@@ -10,4 +10,4 @@ Class-Path: lib/commons-cli-1.1/commons-cli-1.1.jar
  lib/org.eclipse.osgi.services_3.1.200.v20070605.jar 
  lib/org.eclipse.osgi.util_3.1.200.v20070605.jar 
  lib/org.eclipse.osgi_3.3.0.v20070530.jar
-Main-Class: com.surelogic.sierra.metrics.analysis.Main
+Main-Class: com.surelogic.sierra.metrics.Reckoner

@@ -30,7 +30,7 @@ import com.surelogic.sierra.metrics.output.MetricsResultsGenerator;
  * 
  * @author Tanmay.Sinha
  */
-public class Rekoner {
+public class Reckoner {
 
 	private static HashSet<String> files = new HashSet<String>();
 	private static boolean reflectResult = false;
@@ -96,7 +96,7 @@ public class Rekoner {
 				}
 
 				if (targets.size() > 0) {
-					Rekoner llocc = new Rekoner();
+					Reckoner llocc = new Reckoner();
 					llocc.getLogicalLOC(targets, reflect, outputFile);
 				} else {
 					throw new ParseException(null);
