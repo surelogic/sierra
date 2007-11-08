@@ -17,6 +17,7 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 	private long unchangedFindings;
 	private long artifacts;
 	private long totalFindings;
+	private long linesOfCode;
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
@@ -25,6 +26,8 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 		st.setLong(idx++, fixedFindings);
 		st.setLong(idx++, unchangedFindings);
 		st.setLong(idx++, artifacts);
+		st.setLong(idx++, totalFindings);
+		st.setLong(idx++, linesOfCode);
 		return idx;
 	}
 
@@ -41,6 +44,8 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 		fixedFindings = set.getLong(idx++);
 		unchangedFindings = set.getLong(idx++);
 		artifacts = set.getLong(idx++);
+		totalFindings = set.getLong(idx++);
+		linesOfCode = set.getLong(idx++);
 		return idx;
 	}
 
@@ -51,6 +56,8 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 		st.setLong(idx++, fixedFindings);
 		st.setLong(idx++, unchangedFindings);
 		st.setLong(idx++, artifacts);
+		st.setLong(idx++, totalFindings);
+		st.setLong(idx++, linesOfCode);
 		return idx;
 	}
 
@@ -84,6 +91,14 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 
 	public void setUnchangedFindings(long unchangedFindings) {
 		this.unchangedFindings = unchangedFindings;
+	}
+
+	public long getLinesOfCode() {
+		return linesOfCode;
+	}
+
+	public void setLinesOfCode(long linesOfCode) {
+		this.linesOfCode = linesOfCode;
 	}
 
 	public long getArtifacts() {

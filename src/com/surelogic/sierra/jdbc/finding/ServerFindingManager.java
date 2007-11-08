@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,6 +46,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement selectUpdatedAudits;
 	private final PreparedStatement selectNextScan;
 	private final PreparedStatement selectPreviousScan;
+	private final PreparedStatement linesOfCode;
 	private final UpdateRecordMapper scanSummaryMapper;
 	private final PreparedStatement findingDifferenceCount;
 	private final PreparedStatement findingIntersectCount;
@@ -181,12 +181,14 @@ public final class ServerFindingManager extends FindingManager {
 				.prepareStatement("SELECT COUNT(*) FROM SCAN_OVERVIEW WHERE SCAN_ID = ?");
 		artifactCount = conn
 				.prepareStatement("SELECT COUNT(*) FROM ARTIFACT WHERE SCAN_ID = ?");
+		linesOfCode = conn
+				.prepareStatement("SELECT SUM(LINES_OF_CODE) FROM METRIC_CU WHERE SCAN_ID = ?");
 		scanSummaryMapper = new UpdateBaseMapper(
 				conn,
-				"INSERT INTO SCAN_SUMMARY (SCAN_ID,QUALIFIER_ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT) VALUES (?,?,?,?,?,?)",
-				"SELECT NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
+				"INSERT INTO SCAN_SUMMARY (SCAN_ID,QUALIFIER_ID,NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT,TOTAL_FINDINGS,LINES_OF_CODE) VALUES (?,?,?,?,?,?,?,?)",
+				"SELECT NEW_FINDINGS,FIXED_FINDINGS,UNCHANGED_FINDINGS,ARTIFACT_COUNT,TOTAL_FINDINGS,LINES_OF_CODE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				"DELETE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
-				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
+				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ?, TOTAL_FINDINGS = ?, LINES_OF_CODE = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				false);
 	}
 
@@ -620,6 +622,14 @@ public final class ServerFindingManager extends FindingManager {
 				try {
 					count.next();
 					summary.setArtifacts(count.getLong(1));
+				} finally {
+					count.close();
+				}
+				linesOfCode.setLong(1, scanId);
+				count = linesOfCode.executeQuery();
+				try {
+					count.next();
+					summary.setLinesOfCode(count.getLong(1));
 				} finally {
 					count.close();
 				}
