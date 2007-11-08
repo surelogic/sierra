@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
     <jar path="./sierra-metrics/reckoner.jar"/>
-    <options buildIfNeeded="true" compress="true" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <options buildIfNeeded="true" compress="true" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="false" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="false" manifestLocation="/sierra-metrics/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
