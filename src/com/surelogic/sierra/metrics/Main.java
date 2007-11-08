@@ -1,4 +1,4 @@
-package com.surelogic.sierra.metrics.analysis;
+package com.surelogic.sierra.metrics;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,13 +20,15 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import com.surelogic.sierra.metrics.analysis.InvalidFileException;
+import com.surelogic.sierra.metrics.analysis.LOCASTVisitor;
 import com.surelogic.sierra.metrics.model.Metrics;
+import com.surelogic.sierra.metrics.output.MetricsResultsGenerator;
 
 /**
  * Tool to calculate lines of code
  * 
  * @author Tanmay.Sinha
- * 
  */
 public class Main {
 
@@ -108,7 +110,7 @@ public class Main {
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("Invalid file");
 		} catch (InvalidFileException ife) {
-			System.out.println("Non java file in target");
+			System.out.println("Non Java file in target");
 		}
 
 	}

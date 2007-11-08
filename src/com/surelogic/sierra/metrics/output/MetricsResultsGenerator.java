@@ -1,4 +1,4 @@
-package com.surelogic.sierra.metrics.analysis;
+package com.surelogic.sierra.metrics.output;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +17,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.surelogic.sierra.metrics.model.Metrics;
 
 public final class MetricsResultsGenerator {
+	
 
 	private static AttributesImpl atts;
 	private static FileOutputStream fos;
