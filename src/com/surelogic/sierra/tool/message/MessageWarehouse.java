@@ -47,7 +47,7 @@ public class MessageWarehouse {
 			.getName());
 
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
-	private static final int COUNT = 100000000;
+	private static final int COUNT = 1000;
 	private final JAXBContext ctx;
 	private final Marshaller marshaller;
 	private final Unmarshaller unmarshaller;
