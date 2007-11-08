@@ -31,6 +31,7 @@
 	<classpathentry exported="true" kind="lib" path="Tools/jaxen-1.1.1/jaxen-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="xercesImpl.jar"/>
+	<classpathentry kind="lib" path="Tools/jaxp/jaxp-api.jar"/>
+	<classpathentry kind="lib" path="Tools/jaxp/jaxp-ri.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
