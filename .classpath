@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/stax-ex.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/FastInfoset.jar"/>
@@ -33,5 +34,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="lib" path="Tools/jaxp/jaxp-api.jar"/>
 	<classpathentry kind="lib" path="Tools/jaxp/jaxp-ri.jar"/>
+	<classpathentry kind="lib" path="Tools/jax-ws/streambuffer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
