@@ -32,7 +32,6 @@ public final class MetricsResultsGenerator {
 	public MetricsResultsGenerator(final PrintWriter out) {
 		assert out != null;
 		f_out = out;
-		o("<?xml version='1.0' encoding='" + ENCODING + "' standalone='yes'?>");
 		o("<" + METRICS + ">");
 	}
 
