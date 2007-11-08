@@ -31,6 +31,7 @@ import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -428,6 +429,27 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setAllLow.addListener(SWT.Selection, f_changeAllImportance);
 		setAllIrrelevant.addListener(SWT.Selection, f_changeAllImportance);
 
+		final MenuItem export = new MenuItem(menu, SWT.PUSH);
+		export.setText("Export...");
+		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		export.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				TableItem[] items = f_table.getItems();
+				final boolean findingsExist = items.length > 0;
+				setAll.setEnabled(findingsExist);
+				if (items.length > 0) {
+					final Set<Long> finding_ids = new HashSet<Long>();
+					for (TableItem item : items) {
+						final FindingData data = (FindingData) item.getData();
+						finding_ids.add(data.f_findingId);
+					}
+					final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
+							PlatformUI.getWorkbench().getDisplay()
+									.getActiveShell(), finding_ids);
+					dialog.open();
+				}
+			}
+		});
 	}
 
 	private void refreshDisplay() {
