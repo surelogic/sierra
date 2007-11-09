@@ -31,7 +31,6 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/JDepend/jdepend-2.9.jar,
  Tools/jaxp/jaxp-ri.jar,
  Tools/jaxp/jaxp-api.jar,
- Tools/jax-ws/streambuffer.jar,
  Tools/jax-ws/activation.jar,
  Tools/jax-ws/FastInfoset.jar,
  Tools/jax-ws/http.jar,
@@ -49,6 +48,5 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/jax-ws/saaj-impl.jar,
  Tools/jax-ws/sjsxp.jar,
  Tools/pmd/lib/pmd-4.0-sl.jar,
- Tools/jax-ws/stax-ex.jar,
  .
 Bundle-Vendor: SureLogic, Inc.
