@@ -63,7 +63,7 @@ public final class SierraServer {
 		f_host = host;
 	}
 
-	private int f_port = 8080;
+	private int f_port = 13376;
 
 	public int getPort() {
 		return f_port;
