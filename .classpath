@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/FastInfoset.jar"/>
