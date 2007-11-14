@@ -132,8 +132,8 @@
             </menu>
    			<action
         		id="org.eclipse.ui.articles.action.contribution.editor.scanAction" 
-         		label="Scan File"
-         		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
+         		icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+         		label="Re-Scan"
       			menubarPath="com.surelogic.sierra.client.eclipse.editorContextMenu/additions" 
       			class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"> 
       		</action> 
@@ -150,8 +150,8 @@
            <action
            		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
                 id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
-                label="Scan Package(s)"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_pkg.gif"
+                label="Re-Scan"
                 enablesFor="+"
                 menubarPath="com.surelogic.sierra.client.eclipse.packageContextMenu/additions">
           </action> 
@@ -167,8 +167,8 @@
            <action
            		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
                 id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
-                label="Scan File(s)"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+                label="Re-Scan"
                 enablesFor="+"
                 menubarPath="com.surelogic.sierra.client.eclipse.compilationUnitContextMenu/additions">
           </action> 
