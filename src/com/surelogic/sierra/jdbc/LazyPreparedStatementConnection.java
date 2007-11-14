@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -23,11 +23,11 @@ import java.util.concurrent.Callable;
 public class LazyPreparedStatementConnection implements InvocationHandler {
 
 	private final Connection conn;
-	private final List<PreparedStatement> statements;
+	private final Set<PreparedStatement> statements;
 
 	public LazyPreparedStatementConnection(Connection conn) {
 		this.conn = conn;
-		this.statements = new ArrayList<PreparedStatement>();
+		this.statements = new HashSet<PreparedStatement>();
 	}
 
 	public static Connection wrap(Connection conn) {
@@ -44,9 +44,7 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 					new LazyPreparedStatement(method, args));
 		} else if ("close".equals(method.getName())) {
 			for (PreparedStatement st : statements) {
-				if (!st.isClosed()) {
 					st.close();
-				}
 			}
 		}
 		try {
@@ -98,7 +96,11 @@ public class LazyPreparedStatementConnection implements InvocationHandler {
 				throws Throwable {
 			check();
 			try {
-				return method.invoke(st, args);
+				Object val = method.invoke(st, args);
+				if("close".equals(method.getName())) {
+					statements.remove(st);
+				}
+				return val;
 			} catch (InvocationTargetException e) {
 				Throwable target = e.getTargetException();
 				if (target instanceof Exception) {
