@@ -13,6 +13,7 @@ import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
@@ -178,20 +179,29 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<FindingTypeFilter> listCategoryFilters(String category,
+	public List<FindingTypeFilterDetail> listCategoryFilters(String category,
 			String settings) throws SQLException {
 		Long categoryId = ftMan.getCategoryId(category);
 		if (categoryId != null) {
 			SettingsRecord sRec = newSettingsRecord();
 			sRec.setName(settings);
 			if (sRec.select()) {
-				List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>();
+				List<FindingTypeFilterDetail> filters = new ArrayList<FindingTypeFilterDetail>();
 				getFiltersBySettingIdAndCategory.setLong(1, sRec.getId());
 				getFiltersBySettingIdAndCategory.setLong(2, categoryId);
 				ResultSet set = getFiltersBySettingIdAndCategory.executeQuery();
 				try {
 					while (set.next()) {
-						filters.add(readFilter(set));
+						FindingTypeFilter f = readFilter(set);
+						FindingType ft = ftMan.getFindingType(f.getName());
+						FindingTypeFilterDetail fd = new FindingTypeFilterDetail();
+						fd.setDelta(f.getDelta());
+						fd.setDescription(ft.getInfo());
+						fd.setFiltered(f.isFiltered());
+						fd.setImportance(f.getImportance());
+						fd.setName(ft.getName());
+						fd.setUid(f.getName());
+						filters.add(fd);
 					}
 				} finally {
 					set.close();

@@ -36,6 +36,7 @@ public class FindingTypeRecordFactory {
 		return new CategoryRecord(categoryMapper);
 	}
 
+
 	public static FindingTypeRecordFactory getInstance(Connection conn)
 			throws SQLException {
 		return new FindingTypeRecordFactory(conn);

@@ -8,6 +8,9 @@ import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
+import com.surelogic.sierra.tool.message.FilterEntry;
+import com.surelogic.sierra.tool.message.FilterSet;
+import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -37,6 +40,19 @@ abstract class SettingsManager {
 			set.close();
 		}
 
+	}
+
+	protected FilterSet readFilterSet(ResultSet set) throws SQLException {
+		FilterSet filterSet = new FilterSet();
+		List<FilterEntry> filters = filterSet.getFilter();
+		while (set.next()) {
+			filters.add(readFilterEntry(set));
+		}
+		return filterSet;
+	}
+
+	protected FilterEntry readFilterEntry(ResultSet set) throws SQLException {
+		return null;
 	}
 
 	protected FindingTypeFilter readFilter(ResultSet set) throws SQLException {

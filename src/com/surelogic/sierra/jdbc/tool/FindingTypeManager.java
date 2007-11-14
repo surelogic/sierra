@@ -57,6 +57,13 @@ public class FindingTypeManager {
 		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
+	/**
+	 * Look up a local finding type id by its global identifier.
+	 * 
+	 * @param uid
+	 * @return the local finding type id, or <code>null</code> if none exists
+	 * @throws SQLException
+	 */
 	public Long getFindingTypeId(String uid) throws SQLException {
 		FindingTypeRecord ft = factory.newFindingTypeRecord();
 		ft.setUid(uid);
@@ -66,6 +73,14 @@ public class FindingTypeManager {
 		return null;
 	}
 
+	/**
+	 * Look up finding type information by its global identifier.
+	 * 
+	 * @param uid
+	 * @returnthe the relevant {@link FindingType}, or <code>null</code> if
+	 *            none exists
+	 * @throws SQLException
+	 */
 	// TODO Return the artifact types that match this finding type
 	public FindingType getFindingType(String uid) throws SQLException {
 		FindingTypeRecord ft = factory.newFindingTypeRecord();
@@ -81,6 +96,13 @@ public class FindingTypeManager {
 		return null;
 	}
 
+	/**
+	 * Look up a local category id by its global identifier.
+	 * 
+	 * @param uid
+	 * @return the local category id, or <code>null</code> if none exists
+	 * @throws SQLException
+	 */
 	public Long getCategoryId(String uid) throws SQLException {
 		CategoryRecord ctRec = factory.newCategoryRecord();
 		ctRec.setUid(uid);
@@ -90,6 +112,14 @@ public class FindingTypeManager {
 		return null;
 	}
 
+	/**
+	 * Look up category information by its global identifier.
+	 * 
+	 * @param uid
+	 * @return the relevant {@link Category}, or <code>null</code> if none
+	 *         exists
+	 * @throws SQLException
+	 */
 	public Category getCategory(String uid) throws SQLException {
 		CategoryRecord ctRec = factory.newCategoryRecord();
 		ctRec.setUid(uid);
@@ -102,6 +132,15 @@ public class FindingTypeManager {
 		return null;
 	}
 
+	/**
+	 * Look up a local artifact type id.
+	 * 
+	 * @param tool
+	 * @param version
+	 * @param mnemonic
+	 * @return
+	 * @throws SQLException
+	 */
 	public Long getArtifactTypeId(String tool, String version, String mnemonic)
 			throws SQLException {
 		selectArtifactType.setString(1, tool);
@@ -146,6 +185,8 @@ public class FindingTypeManager {
 		return ids;
 	}
 
+	
+	
 	public MessageFilter getMessageFilter(Settings settings)
 			throws SQLException {
 		if (settings != null) {
@@ -178,6 +219,13 @@ public class FindingTypeManager {
 		}
 	}
 
+	/**
+	 * Update the local finding type reference information to reflect the
+	 * provided {@link FindingTypes} information.
+	 * 
+	 * @param types
+	 * @throws SQLException
+	 */
 	public void updateFindingTypes(List<FindingTypes> types)
 			throws SQLException {
 		Set<String> idSet = new HashSet<String>();

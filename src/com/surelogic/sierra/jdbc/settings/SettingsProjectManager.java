@@ -21,12 +21,12 @@ public class SettingsProjectManager {
 	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM SETTINGS SS, SETTINGS_PROJECT_RELTN SPR, PROJECT PR WHERE SS.NAME = ? AND SPR.SETTINGS_ID = SS.ID AND PR.NAME = SPR.PROJECT_NAME";
 	private final PreparedStatement getProjectNames;
 
-	private final SettingsProjectRecordFactory sprFactory;
+	private final SettingsRecordFactory sprFactory;
 
 	private SettingsProjectManager(Connection conn) throws SQLException {
 		this.conn = conn;
 
-		sprFactory = SettingsProjectRecordFactory.getInstance(conn);
+		sprFactory = SettingsRecordFactory.getInstance(conn);
 
 		getProjectNames = conn.prepareStatement(GET_PROJECT_NAMES);
 	}
