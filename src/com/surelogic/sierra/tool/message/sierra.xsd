@@ -93,7 +93,10 @@
 
 	<complexType name="Settings">
 		<sequence>
-			<element name="filter" type="tns:FindingTypeFilter" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="filter" type="tns:FindingTypeFilter"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+			<element name="filterSets" type="tns:FilterSet" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 	
@@ -125,4 +128,26 @@
     		<enumeration value="CRITICAL"></enumeration>
     	</restriction>
     </simpleType>
+
+    <complexType name="FilterSet">
+    	<sequence>
+    		<element name="uid" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="name" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+            <element name="parent" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="filter" type="tns:FilterEntry"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="FilterEntry">
+    	<sequence>
+    		<element name="type" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="filtered" type="boolean" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
 </schema>
