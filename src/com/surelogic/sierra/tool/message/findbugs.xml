@@ -6141,6 +6141,9 @@
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE">
 		</artifact>
+		<artifact tool="FindBugs" 
+			mnemonic="STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE">
+		</artifact>
 		<shortMessage>Static DateFormat</shortMessage>
 		<info>
 
@@ -6159,12 +6162,12 @@
 
 		</info>
 		<name>Static Simple Data Format Instance</name>
-	</findingType>
+	</findingType>	
 	<findingType>
 		<id>CallToStaticDateFormat</id>
 		<artifact tool="FindBugs"
 			mnemonic="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE">
-		</artifact>
+		</artifact>		
 		<shortMessage>Call to static DateFormat</shortMessage>
 		<info>
 
@@ -6205,6 +6208,383 @@
 		<name>Inefficient String Void Constructor</name>
 	</findingType>
 
+	<!-- FindBugs 1.3.0 Upgrade -->
+    <findingType>
+        <id>DoesntOverrideEquals</id>
+        <artifact tool="FindBugs" mnemonic="EQ_DOESNT_OVERRIDE_EQUALS">
+        </artifact>
+        <shortMessage>Class doesn't override equals in superclass</shortMessage>
+        <info>
+
+  &lt;p&gt; This class extends a class that defines an equals method and adds fields, but doesn't
+define an equals method itself. Thus, equality on instances of this class will
+ignore the identity of the subclass and the added fields. Be sure this is what is intended,
+and that you don't need to override the equals method. Even if you don't need to override
+the equals method, consider overriding it anyone to document the fact
+that the equals method for the subclass just return the result of
+invoking super.equals(o).
+
+    </info>
+        <name>Doesnt Override Equals</name>
+    </findingType>
+    <findingType>
+        <id>SameSimpleNameAsInterface</id>
+        <artifact tool="FindBugs" mnemonic="NM_SAME_SIMPLE_NAME_AS_INTERFACE">
+        </artifact>
+        <shortMessage>Class names shouldn't shadow simple name of implemented interface</shortMessage>
+        <info>
+
+  &lt;p&gt; This class/interface has a simple name that is identical to that of an implemented/extended  interface, except
+that the interface is in a different package (e.g., &lt;code&gt;alpha.Foo&lt;/code&gt; extends &lt;code&gt;beta.Foo&lt;/code&gt;). 
+This can be exceptionally confusing, create lots of situations in which you have to look at import statements
+to resolve references and creates many
+opportunities to accidently define methods that do not override methods in their superclasses.
+&lt;/p&gt;
+
+    </info>
+        <name>Same Simple Name As Interface</name>
+    </findingType>
+    <findingType>
+        <id>SameSimpleNameAsSuperclass</id>
+        <artifact tool="FindBugs" mnemonic="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS">
+        </artifact>
+        <shortMessage>Class names shouldn't shadow simple name of superclass</shortMessage>
+        <info>
+
+  &lt;p&gt; This class has a simple name that is identical to that of its superclass, except
+that its superclass is in a different package (e.g., &lt;code&gt;alpha.Foo&lt;/code&gt; extends &lt;code&gt;beta.Foo&lt;/code&gt;). 
+This can be exceptionally confusing, create lots of situations in which you have to look at import statements
+to resolve references and creates many
+opportunities to accidently define methods that do not override methods in their superclasses.
+&lt;/p&gt;
+
+    </info>
+        <name>Same Simple Name As Superclass</name>
+    </findingType>
+    <findingType>
+        <id>WrongPackage</id>
+        <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE">
+        </artifact>
+        <shortMessage>Method doesn't override method in superclass due to wrong package for parameter</shortMessage>
+        <info>
+
+  &lt;p&gt; The method in the subclass doesn't override a similar method in a superclass because the type of a parameter doesn't exactly match
+the type of the corresponding parameter in the superclass. For example, if you have:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;pre&gt;
+import alpha.Foo;
+public class A {
+  public int f(Foo x) { return 17; }
+}
+----
+import beta.Foo;
+public class B extends A {
+  public int f(Foo x) { return 42; }
+}
+&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &lt;code&gt;f(Foo)&lt;/code&gt; method defined in class &lt;code&gt;B&lt;/code&gt; doesn't
+override the 
+&lt;code&gt;f(Foo)&lt;/code&gt; method defined in class &lt;code&gt;A&lt;/code&gt;, because the argument
+types are &lt;code&gt;Foo&lt;/code&gt;'s from different packages.
+&lt;/p&gt;
+
+    </info>
+        <name>Wrong Package</name>
+    </findingType>
+    <findingType>
+        <id>WrongPackageIntentional</id>
+        <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE_INTENTIONAL">
+        </artifact>
+        <shortMessage>Method doesn't override method in superclass due to wrong package for parameter</shortMessage>
+        <info>
+
+  &lt;p&gt; The method in the subclass doesn't override a similar method in a superclass because the type of a parameter doesn't exactly match
+the type of the corresponding parameter in the superclass. For example, if you have:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;pre&gt;
+import alpha.Foo;
+public class A {
+  public int f(Foo x) { return 17; }
+}
+----
+import beta.Foo;
+public class B extends A {
+  public int f(Foo x) { return 42; }
+  public int f(alpha.Foo x) { return 27; }
+}
+&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &lt;code&gt;f(Foo)&lt;/code&gt; method defined in class &lt;code&gt;B&lt;/code&gt; doesn't
+override the 
+&lt;code&gt;f(Foo)&lt;/code&gt; method defined in class &lt;code&gt;A&lt;/code&gt;, because the argument
+types are &lt;code&gt;Foo&lt;/code&gt;'s from different packages.
+&lt;/p&gt;
+
+&lt;p&gt;In this case, the subclass does define a method with a signature identical to the method in the superclass,
+so this is presumably understood. However, such methods are exceptionally confusing. You should strongly consider
+removing or deprecating the method with the similar but not identical signature.
+&lt;/p&gt;
+
+    </info>
+        <name>Wrong Package Intentional</name>
+    </findingType>
+    <findingType>
+        <id>ReturnValueIgnoredBadPractice</id>
+        <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE">
+        </artifact>
+        <shortMessage>Method ignores return value</shortMessage>
+        <info>
+
+   &lt;p&gt; This method returns a value that is not checked. For
+example, the &lt;code&gt;File.delete()&lt;/code&gt; method returns false
+if the file could not be successfully deleted (rather than 
+throwing an Exception).
+If you don't check the result, you won't notice if the method invocation
+signals unexpected behavior by returning an atypical return value.
+
+    </info>
+        <name>Return Value Ignored Bad Practice</name>
+    </findingType>
+    <findingType>
+        <id>ExceptionNotThrown</id>
+        <artifact tool="FindBugs" mnemonic="RV_EXCEPTION_NOT_THROWN">
+        </artifact>
+        <shortMessage>Exception created and dropped rather than thrown</shortMessage>
+        <info>
+
+   &lt;p&gt; This code creates an exception (or error) object, but doesn't do anything with it. For example,
+something like  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;pre&gt;
+if (x &lt; 0)
+  new IllegalArgumentException(&quot;x must be nonnegative&quot;);
+&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It was probably the intent of the programmer to throw the created exception:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;pre&gt;
+if (x &lt; 0)
+  throw new IllegalArgumentException(&quot;x must be nonnegative&quot;);
+&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+    </info>
+        <name>Exception Not Thrown</name>
+    </findingType>
+    <findingType>
+        <id>UnrelatedTypesUsingPointerEquality</id>
+        <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES_USING_POINTER_EQUALITY">
+        </artifact>
+        <shortMessage>Using pointer equality  to compare  different types</shortMessage>
+        <info>
+
+&lt;p&gt; This method uses using pointer equality to compare two references that seem to be of
+different types.  The result of this comparison will always be false at runtime.
+&lt;/p&gt;
+
+    </info>
+        <name>Unrelated Types Using Pointer Equality</name>
+    </findingType>
+    <findingType>
+        <id>BitSignedCheck</id>
+        <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK">
+        </artifact>
+        <shortMessage>Check for sign of bitwise operation</shortMessage>
+        <info>
+
+&lt;p&gt; This method compares an expression such as
+&lt;pre&gt;((event.detail &amp; SWT.SELECTED) &gt; 0)&lt;/pre&gt;.
+Using bit arithmetic and then comparing with the greater than operator can
+lead to unexpected results (of course depending on the value of
+SWT.SELECTED). If SWT.SELECTED is a negative number, this is a candidate
+for a bug. Even when SWT.SELECTED is not negative, it seems good practice
+to use '!= 0' instead of '&gt; 0'.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;em&gt;Boris Bokowski&lt;/em&gt;
+&lt;/p&gt;
+
+    </info>
+        <name>Signed Check</name>
+    </findingType>
+    <findingType>
+        <id>BitSignedCheckHighBit</id>
+        <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK_HIGH_BIT">
+        </artifact>
+        <shortMessage>Check for sign of bitwise operation</shortMessage>
+        <info>
+
+&lt;p&gt; This method compares an expression such as
+&lt;pre&gt;((event.detail &amp; SWT.SELECTED) &gt; 0)&lt;/pre&gt;.
+Using bit arithmetic and then comparing with the greater than operator can
+lead to unexpected results (of course depending on the value of
+SWT.SELECTED). If SWT.SELECTED is a negative number, this is a candidate
+for a bug. Even when SWT.SELECTED is not negative, it seems good practice
+to use '!= 0' instead of '&gt; 0'.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;em&gt;Boris Bokowski&lt;/em&gt;
+&lt;/p&gt;
+
+    </info>
+        <name>Signed Check High Bit</name>
+    </findingType>
+    <findingType>
+        <id>LazyInitUpdateStatic</id>
+        <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_UPDATE_STATIC">
+        </artifact>
+        <shortMessage>Incorrect lazy initialization and update of static field</shortMessage>
+        <info>
+
+&lt;p&gt; This method contains an unsynchronized lazy initialization of a static field.
+After the field is set, the object stored into that location is further accessed. 
+The setting of the field is visible to other threads as soon as it is set. If the
+futher accesses in the method that set the field serve to initialize the object, then
+you have a &lt;em&gt;very serious&lt;/em&gt; multithreading bug, unless something else prevents
+any other thread from accessing the stored object until it is fully initialized.
+&lt;/p&gt;
+
+    </info>
+        <name>Lazy Init Update Static</name>
+    </findingType>
+    <findingType>
+        <id>DeadStoreOfClassLiteral</id>
+        <artifact tool="FindBugs" mnemonic="DLS_DEAD_STORE_OF_CLASS_LITERAL">
+        </artifact>
+        <shortMessage>Dead store of class literal</shortMessage>
+        <info>
+
+&lt;p&gt;
+This instruction assigns a class literal to a variable and then never uses it.
+&lt;a href=&quot;//java.sun.com/j2se/1.5.0/compatibility.html#literal&quot;&gt;The behavior of this differs in Java 1.4 and in Java 5.&lt;/a&gt;
+In Java 1.4 and earlier, a reference to &lt;code&gt;Foo.class&lt;/code&gt; would force the static initializer
+for &lt;code&gt;Foo&lt;/code&gt; to be executed, if it has not been executed already.
+In Java 5 and later, it does not.
+&lt;/p&gt;
+&lt;p&gt;See Sun's &lt;a href=&quot;//java.sun.com/j2se/1.5.0/compatibility.html#literal&quot;&gt;article on Java SE compatibility&lt;/a&gt;
+for more details and examples, and suggestions on how to force class initialization in Java 5.
+&lt;/p&gt;
+
+    </info>
+        <name>Dead Store Of Class Literal</name>
+    </findingType>
+    <findingType>
+        <id>AlwaysValueUsedWhereNeverRequired</id>
+        <artifact tool="FindBugs" mnemonic="TQ_ALWAYS_VALUE_USED_WHERE_NEVER_REQUIRED">
+        </artifact>
+        <shortMessage>Value annotated as carrying a type qualifier used where a value that must not carry that qualifier is required</shortMessage>
+        <info>
+      
+        &lt;p&gt;
+        A value specified as carrying a type qualifier annotation is
+        consumed in a location or locations requiring that the value not
+        carry that annotation.
+        &lt;/p&gt;
+        
+        &lt;p&gt;
+        More precisely, a value annotated with a type qualifier specifying when=ALWAYS
+        is guaranteed to reach a use or uses where the same type qualifier specifies when=NEVER.
+        &lt;/p&gt;
+        
+        &lt;p&gt;
+        For example, say that @NonNegative is a nickname for
+        the type qualifier annotation @Negative(when=When.NEVER).
+        The following code will generate this warning because
+        the return statement requires a @NonNegative value,
+        but receives one that is marked as @Negative.   
+        &lt;/p&gt;
+        &lt;blockquote&gt;
+&lt;pre&gt;
+public @NonNegative Integer example(@Negative Integer value) {
+    return value;
+}
+&lt;/pre&gt;
+        &lt;/blockquote&gt;
+      
+    </info>
+        <name>Always Value Used Where Never Required</name>
+    </findingType>
+    <findingType>
+        <id>NeverValueUsedWhereAlwaysRequired</id>
+        <artifact tool="FindBugs" mnemonic="TQ_NEVER_VALUE_USED_WHERE_ALWAYS_REQUIRED">
+        </artifact>
+        <shortMessage>Value annotated as never carrying a type qualifier used where value carrying that qualifier is required</shortMessage>
+        <info>
+      
+        &lt;p&gt;
+        A value specified as not carrying a type qualifier annotation is guaranteed
+        to be consumed in a location or locations requiring that the value does
+        carry that annotation.
+        &lt;/p&gt;
+        
+        &lt;p&gt;
+        More precisely, a value annotated with a type qualifier specifying when=NEVER
+        is guaranteed to reach a use or uses where the same type qualifier specifies when=ALWAYS.
+        &lt;/p&gt;
+
+        &lt;p&gt;
+        TODO: example
+        &lt;/p&gt;        
+      
+    </info>
+        <name>Never Value Used Where Always Required</name>
+    </findingType>
+    <findingType>
+        <id>MaybeSourceValueReachesAlwaysSink</id>
+        <artifact tool="FindBugs" mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_ALWAYS_SINK">
+        </artifact>
+        <shortMessage>Value that might not carry a type qualifier reaches a use requiring that type qualifier</shortMessage>
+        <info>
+      
+      &lt;p&gt;
+      A value that might not carry a type qualifier annotation
+      reaches a use which requires that annotation.
+      &lt;/p&gt;
+      
+      &lt;p&gt;
+      For example, consider the following method:
+      &lt;/p&gt;
+      &lt;blockquote&gt;
+&lt;pre&gt;
+public @Untainted Object mustReturnUntainted(Object unknown) {
+    return unknown;
+}
+&lt;/pre&gt;
+      &lt;/blockquote&gt;
+      &lt;p&gt;
+      The &lt;code&gt;mustReturnUntainted&lt;/code&gt; method is required to
+      return a value carrying the @Untainted annotation,
+      but a value not known to carry that annotation is returned.
+      &lt;/p&gt;
+      
+    </info>
+        <name>Maybe Source Value Reaches Always Sink</name>
+    </findingType>
+    <findingType>
+        <id>MaybeSourceValueReachesNeverSink</id>
+        <artifact tool="FindBugs" mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_NEVER_SINK">
+        </artifact>
+        <shortMessage>Unknown value reaches a use which forbids values carrying type qualifier annotation</shortMessage>
+        <info>
+      
+      &lt;p&gt;
+      A value which might carry a type qualifier annotation reaches
+      a use which forbids values carrying that annotation.
+      &lt;/p&gt; 
+      
+      &lt;p&gt;
+      TODO: example.
+      &lt;/p&gt;
+      
+    </info>
+        <name>Maybe Source Value Reaches Never Sink</name>
+    </findingType>
+    
 	<category>
 		<id>Correctness</id>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
@@ -6334,6 +6714,15 @@
 		<findingType>DMI_CALLING_NEXT_FROM_HASNEXT</findingType>
 		<findingType>QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT</findingType>
 		<findingType>GC_UNRELATED_TYPES</findingType>
+		<findingType>WrongPackage</findingType>
+		<findingType>ExceptionNotThrown</findingType>
+		<findingType>UnrelatedTypesUsingPointerEquality</findingType>
+		<findingType>BitSignedCheckHighBit</findingType>
+		<findingType>DeadStoreOfClassLiteral</findingType>
+		<findingType>AlwaysValueUsedWhereNeverRequired</findingType>
+        <findingType>NeverValueUsedWhereAlwaysRequired</findingType>
+		<findingType>MaybeSourceValueReachesAlwaysSink</findingType>
+        <findingType>MaybeSourceValueReachesNeverSink</findingType>
 		<name>Correctness</name>
 		<description>
 			Probable bug - an apparent coding mistake resulting in code
@@ -6441,7 +6830,12 @@
 		</findingType>
 		<findingType>
 			J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION
-		</findingType>
+		</findingType>		
+		<findingType>SameSimpleNameAsInterface</findingType>
+		<findingType>SameSimpleNameAsSuperclass</findingType>
+		<findingType>WrongPackageIntentional</findingType>
+		<findingType>ReturnValueIgnoredBadPractice</findingType>
+		<findingType>BitSignedCheck</findingType>		
 		<name>Bad practice</name>
 		<description>
 			Violations of recommended and essential coding practice.
@@ -6525,6 +6919,7 @@
 		<findingType>USM_USELESS_SUBCLASS_METHOD</findingType>
 		<findingType>USM_USELESS_ABSTRACT_METHOD</findingType>
 		<findingType>CI_CONFUSED_INHERITANCE</findingType>
+		<findingType>DoesntOverrideEquals</findingType>
 		<name>Dodgy</name>
 		<description>
 			code that is confusing, anomalous, or written in a way that
@@ -6638,6 +7033,7 @@
 		<findingType>IncorrectLazyInitializationOfStatic</findingType>
 		<findingType>AvoidCallingSynchronizedOnLock</findingType>
 		<findingType>AvoidCallingSleepWithLockHeld</findingType>
+		<findingType>LazyInitUpdateStatic</findingType>
 		<name>Multithreaded correctness</name>
 		<description>
 			code flaws having to do with threads, locks, and volatiles

@@ -15,7 +15,7 @@ import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
 /**
- * The parser for FindBugs 1.2.1 results
+ * The parser for FindBugs 1.3.0 results
  * 
  * @author Tanmay.Sinha
  * 
@@ -23,7 +23,7 @@ import com.surelogic.sierra.tool.message.Severity;
 class FindBugsHandler extends DefaultHandler {
 
 	private static final String FINDBUGS = "FindBugs";
-	private static final String FINDBUGS_VERSION = "1.2.1";
+	private static final String FINDBUGS_VERSION = "1.3.0";
 
 	private ArtifactGenerator.SourceLocationBuilder sourceLocation;
 
