@@ -21,7 +21,7 @@ public final class SierraSchemaUtility {
 	 * Up this number when you add a new schema version SQL script to this
 	 * package.
 	 */
-	public static final int schemaVersion = 5;
+	public static final int schemaVersion = 6;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/";
 	public static final String SQL_SCRIPT_SUFFIX = ".sql";
@@ -30,7 +30,7 @@ public final class SierraSchemaUtility {
 	public static final String ACTION_COMMON = ACTION_PREFIX + "Schema_";
 	public static final String ACTION_SERVER = ACTION_PREFIX + "Server_";
 	public static final String SEPARATOR = "_";
-	
+
 	public static void checkAndUpdate(final Connection c, final boolean serverDB)
 			throws SQLException, IOException {
 		final int arrayLength = schemaVersion + 1;
@@ -63,8 +63,9 @@ public final class SierraSchemaUtility {
 							 * each schema level. We only run them if they
 							 * exist.
 							 */
-							if (commonAction != null)
+							if (commonAction != null) {
 								SchemaUtility.runAction(commonAction, c);
+							}
 
 							if (serverScript != null) {
 								final Statement st = c.createStatement();
@@ -80,8 +81,9 @@ public final class SierraSchemaUtility {
 								}
 							}
 
-							if (serverAction != null)
+							if (serverAction != null) {
 								SchemaUtility.runAction(serverAction, c);
+							}
 						}
 					};
 				}
@@ -126,8 +128,9 @@ public final class SierraSchemaUtility {
 		assert n >= 0;
 
 		String result = "" + n;
-		while (result.length() < 4)
+		while (result.length() < 4) {
 			result = "0" + result;
+		}
 		return result;
 	}
 }
