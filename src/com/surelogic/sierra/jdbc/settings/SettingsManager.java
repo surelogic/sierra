@@ -10,7 +10,6 @@ import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;
-import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
