@@ -155,7 +155,6 @@ public final class SierraServer {
 		b.append(getProtocol()).append("://");
 		b.append(getHost()).append(":").append(getPort());
 		b.append("/user=\"").append(getUser()).append("\" ");
-		b.append(" password=\"").append(getPassword()).append("\" ");
 		b.append(" password-is-saved=").append(savePassword());
 		return b.toString();
 	}

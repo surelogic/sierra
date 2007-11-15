@@ -195,18 +195,14 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 				try {
 					Connection c = Data.readOnlyConnection();
 					try {
-						final FindingDetail finding = FindingDetail.getDetail(
-								c, findingId);
+						f_finding = FindingDetail.getDetailOrNull(c, findingId);
 
-						if (finding != null) {
-							f_finding = finding;
-							// got details, update the view in the UI thread
-							f_display.asyncExec(new Runnable() {
-								public void run() {
-									updateContents();
-								}
-							});
-						}
+						// got details, update the view in the UI thread
+						f_display.asyncExec(new Runnable() {
+							public void run() {
+								updateContents();
+							}
+						});
 
 					} catch (IllegalArgumentException iae) {
 						f_display.asyncExec(new Runnable() {
