@@ -21,8 +21,8 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.MetricBuilder;
 import com.surelogic.sierra.tool.message.IdentifierType;
@@ -50,7 +50,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final Map<CompilationUnitRecord, CompilationUnitRecord> compUnits;
 	private final Set<ArtifactSourceRecord> relations;
 
-	private final MessageFilter filter;
+	private final FindingFilter filter;
 	@SuppressWarnings("unused")
 	private final String projectName;
 	private final ScanRecord scan;
@@ -60,7 +60,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
-			MessageFilter filter, Runnable callback) throws SQLException {
+			FindingFilter filter, Runnable callback) throws SQLException {
 		log.info("Now persisting artifacts to database for scan "
 				+ scan.getUid() + " in project " + projectName + ".");
 		this.conn = conn;

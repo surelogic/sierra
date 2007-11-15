@@ -6,13 +6,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.surelogic.sierra.jdbc.record.BaseMapper;
+import com.surelogic.sierra.jdbc.record.FilterSetRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
+import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
+import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.tool.message.FilterEntry;
+import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Settings;
@@ -25,21 +34,30 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement deleteFilterByFindingType;
 	private final PreparedStatement getFiltersBySettingId;
 	private final PreparedStatement getFiltersBySettingIdAndCategory;
-	private final PreparedStatement listSettingCategories;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement copySettings;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement getAllSettings;
+	private final PreparedStatement listFilterSetIds;
+	private final PreparedStatement loadFilterEntries;
+	private final PreparedStatement loadFilterSetParents;
+	private final PreparedStatement insertFilterSetParent;
+	private final PreparedStatement insertFilterSetEntry;
+	private final PreparedStatement getSettingsFilterSets;
 
 	private final UpdateBaseMapper settingsMapper;
 	private final BaseMapper findingTypeFilterMapper;
+	private final UpdateRecordMapper filterSetMapper;
 
 	private final SettingsProjectManager spManager;
 
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
-		listSettingCategories = conn
-				.prepareStatement("SELECT UUID,NAME FROM FINDING_CATEGORY");
+		filterSetMapper = new UpdateBaseMapper(conn,
+				"INSERT INTO FILTER_SET (UUID,REVISION,NAME,INFO) VALUES (?,?,?,?)",
+				"SELECT ID,REVISION,INFO FROM FILTER_SET WHERE NAME = ?",
+				"DELETE FROM FILTER_SET WHERE ID = ?",
+				"UPDATE FILTER_SET SET  REVISION = ?, NAME = ?, INFO = ? WHERE ID = ?");
 		findingTypeFilterMapper = new BaseMapper(
 				conn,
 				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
@@ -58,7 +76,7 @@ public class ServerSettingsManager extends SettingsManager {
 		getSettingsByProject = conn
 				.prepareStatement("SELECT S.ID FROM SETTINGS_PROJECT_RELTN PSR, SETTINGS S WHERE PSR.PROJECT_NAME = ? AND S.ID = PSR.SETTINGS_ID");
 		copySettings = conn
-				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?,FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
+				.prepareStatement("INSERT INTO SETTING_FILTER_SETS SELECT ?,FILTER_SET_ID FROM SETTING_FILTER_SETS WHERE SETTINGS_ID = ?");
 		getAllSettings = conn.prepareStatement(FIND_ALL);
 		settingsMapper = new UpdateBaseMapper(conn,
 				"INSERT INTO SETTINGS (NAME, REVISION) VALUES (?,?)",
@@ -66,6 +84,18 @@ public class ServerSettingsManager extends SettingsManager {
 				"DELETE FROM SETTINGS WHERE ID = ?",
 				"UPDATE SETTINGS SET NAME = ?, REVISION = ? WHERE ID = ?");
 		spManager = SettingsProjectManager.getInstance(conn);
+		loadFilterEntries = conn
+				.prepareStatement("SELECT FT.UUID,FE.FILTERED FROM FILTER_ENTRY FE, FINDING_TYPE FT"
+						+ "   WHERE FE.FILTER_SET_ID = ? AND FT.ID = FE.FINDING_TYPE_ID");
+		loadFilterSetParents = conn
+				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
+		listFilterSetIds = conn.prepareStatement("SELECT ID FROM FILTER_SET");
+		insertFilterSetParent = conn
+				.prepareStatement("INSERT INTO FILTER_SET_RELTN (CHILD_ID,PARENT_ID) VALUES (?,?)");
+		insertFilterSetEntry = conn
+				.prepareStatement("INSERT INTO FILTER_ENTRY (FILTER_SET_ID,FINDING_TYPE_ID,FILTERED) VALUES (?,?,?)");
+		getSettingsFilterSets = conn
+				.prepareStatement("SELECT UUID FROM SETTING_FILTER_SETS SFS, FILTER_SET FS WHERE SFS.SETTINGS_ID = ? AND FS.ID = SFS.FILTER_SET_ID");
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
@@ -119,11 +149,19 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 	}
 
+	/**
+	 * Change the name of the given settings
+	 * 
+	 * @param currName
+	 * @param newName
+	 * @throws SQLException
+	 */
 	public void renameSettings(String currName, String newName)
 			throws SQLException {
 
 		SettingsRecord record = newSettingsRecord();
 		record.setName(currName);
+		record.setRevision(Server.nextRevision(conn));
 
 		/** Can't rename a setting which does not exist */
 		if (!record.select()) {
@@ -135,6 +173,12 @@ public class ServerSettingsManager extends SettingsManager {
 		record.update();
 	}
 
+	/**
+	 * Delete settings entirely.
+	 * 
+	 * @param settings
+	 * @throws SQLException
+	 */
 	public void deleteSettings(String settings) throws SQLException {
 		SettingsRecord record = newSettingsRecord();
 		record.setName(settings);
@@ -149,22 +193,75 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Get the list of categories that settings can be defined for.
+	 * List the filter sets for these settings.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<FilterSet> listSettingFilterSets(String name)
+			throws SQLException {
+		SettingsRecord settings = newSettingsRecord();
+		settings.setName(name);
+		if (settings.select()) {
+			List<FilterSet> filterSets = new ArrayList<FilterSet>();
+			getSettingsFilterSets.setLong(1, settings.getId());
+			final ResultSet set = getSettingsFilterSets.executeQuery();
+			try {
+				while (set.next()) {
+					filterSets.add(getFilterSet(set.getString(1)));
+				}
+			} finally {
+				set.close();
+			}
+			return filterSets;
+		} else {
+			return null;
+		}
+	}
+
+	public void writeFilterSet(FilterSet filterSet, long revision) throws SQLException {
+		final FilterSetRecord filterSetRec = newFilterSetRecord();
+		filterSetRec.setUid(filterSet.getUid());
+		filterSetRec.setRevision(revision);
+		filterSetRec.setName(filterSet.getName());
+		filterSetRec.insert();
+		final long filterSetId = filterSetRec.getId();
+		final FilterSetRecord parentRec = newFilterSetRecord();
+		for (final String parent : filterSet.getParent()) {
+			parentRec.setUid(parent);
+			if (parentRec.select()) {
+				final long parentId = parentRec.getId();
+				insertFilterSetParent.setLong(1, filterSetId);
+				insertFilterSetParent.setLong(2, parentId);
+				insertFilterSetParent.execute();
+			} else {
+				throw new IllegalArgumentException("Filter set with name "
+						+ filterSet.getName() + " and uid "
+						+ filterSet.getUid()
+						+ "was being written, but parent with uid " + parent
+						+ " could not be found");
+			}
+		}
+		for (final FilterEntry entry : filterSet.getFilter()) {
+			final long findingTypeId = ftMan.getFindingTypeId(entry.getType());
+			insertFilterSetEntry.setLong(1, filterSetId);
+			insertFilterSetEntry.setLong(2, findingTypeId);
+			insertFilterSetEntry.setString(3, entry.isFiltered() ? "Y" : "N");
+			insertFilterSetEntry.execute();
+		}
+	}
+
+	/**
+	 * Get the list of categories that settings can be defined for. This
+	 * actually belong in the FindingTypeManager
 	 * 
 	 * @return
 	 * @throws SQLException
 	 */
+	@Deprecated
 	public List<CategoryView> listSettingCategories() throws SQLException {
-		ResultSet set = listSettingCategories.executeQuery();
-		List<CategoryView> view = new ArrayList<CategoryView>();
-		try {
-			while (set.next()) {
-				view.add(new CategoryView(set.getString(1), set.getString(2)));
-			}
-		} finally {
-			set.close();
-		}
-		return view;
+		return ftMan.listCategories();
 	}
 
 	/**
@@ -218,28 +315,6 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Insert the specified filters into these settings. Any existing finding
-	 * type filters for the selected finding types will be deleted.
-	 * 
-	 * @param filters
-	 * @param settings
-	 * @throws SQLException
-	 */
-	public void applyFilters(List<FindingTypeFilter> filters, String settings)
-			throws SQLException {
-		SettingsRecord sRec = newSettingsRecord();
-		sRec.setName(settings);
-		if (sRec.select()) {
-			applyFilters(sRec.getId(), filters);
-			sRec.setRevision(Server.nextRevision(conn));
-			sRec.update();
-		} else {
-			throw new IllegalArgumentException(settings
-					+ " is not a valid settings name");
-		}
-	}
-
-	/**
 	 * 
 	 * @return a collection of all the product names
 	 * @throws SQLException
@@ -257,6 +332,13 @@ public class ServerSettingsManager extends SettingsManager {
 		return settingNames;
 	}
 
+	/**
+	 * Retrieve settings by name.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws SQLException
+	 */
 	public Settings getSettingsByName(String name) throws SQLException {
 		SettingsRecord rec = newSettingsRecord();
 		rec.setName(name);
@@ -269,8 +351,8 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Return the latest settings for a given project, but ONLY if there is a
-	 * more recent set of settings than the given ones.
+	 * Return the latest settings for a given project, but ONLY if the settings
+	 * have been updated since the given revision.
 	 * 
 	 * @param project
 	 * @param revision
@@ -278,14 +360,14 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @throws SQLException
 	 */
 	public SettingsReply getLatestSettingsByProject(String project,
-			Long revision) throws SQLException {
+			long revision) throws SQLException {
 		SettingsReply reply = new SettingsReply();
 		getLatestSettingsByProject.setString(1, project);
 		getLatestSettingsByProject.setLong(2, revision);
 		ResultSet set = getLatestSettingsByProject.executeQuery();
 		try {
 			if (set.next()) {
-				Long settings = set.getLong(1);
+				long settings = set.getLong(1);
 				reply.setRevision(set.getLong(2));
 				getFiltersBySettingId.setLong(1, settings);
 				reply.setSettings(readSettings(getFiltersBySettingId
@@ -295,11 +377,6 @@ public class ServerSettingsManager extends SettingsManager {
 			set.close();
 		}
 		return reply;
-	}
-
-	public void writeSettings(Settings settings, String name)
-			throws SQLException {
-		applyFilters(settings.getFilter(), name);
 	}
 
 	/**
@@ -360,6 +437,148 @@ public class ServerSettingsManager extends SettingsManager {
 		spManager.deleteProjectRelation(rec, projectName);
 	}
 
+	/**
+	 * List all of the filter sets available.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<FilterSet> listFilterSets() throws SQLException {
+		final List<FilterSet> filterSets = new ArrayList<FilterSet>();
+		final ResultSet set = listFilterSetIds.executeQuery();
+		try {
+			while (set.next()) {
+				long id = set.getLong(1);
+				filterSets.add(getFilterSet(id));
+			}
+		} finally {
+			set.close();
+		}
+		return filterSets;
+	}
+
+	private FilterSet getFilterSet(final long id) throws SQLException {
+		final FilterSet filterSet = new FilterSet();
+		final List<FilterEntry> filters = filterSet.getFilter();
+		final List<String> parents = filterSet.getParent();
+		loadFilterEntries.setLong(1, id);
+		ResultSet set = loadFilterEntries.executeQuery();
+		try {
+			while (set.next()) {
+				final FilterEntry entry = new FilterEntry();
+				entry.setType(set.getString(1));
+				entry.setFiltered("Y".equals(set.getString(2)));
+				filters.add(entry);
+			}
+		} finally {
+			set.close();
+		}
+		loadFilterSetParents.setLong(1, id);
+		set = loadFilterSetParents.executeQuery();
+		while (set.next()) {
+			final String parent = set.getString(1);
+			parents.add(parent);
+		}
+		return filterSet;
+	}
+
+	private FilterSet getFilterSet(final String uid) throws SQLException {
+		FilterSetRecord rec = newFilterSetRecord();
+		rec.setUid(uid);
+		if (rec.select()) {
+			return getFilterSet(rec.getId());
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Generates the setting finding type filters based off of the filter sets
+	 * associated w/ these settings.
+	 * 
+	 * @param settingsId
+	 * @throws SQLException
+	 */
+	private void regenerateFindingTypeFilters(final SettingsRecord settings)
+			throws SQLException {
+		final Map<String, FilterSet> filterSetMap = new HashMap<String, FilterSet>();
+		final List<FilterSet> filterSets = new ArrayList<FilterSet>();
+		/*
+		 * Retrieve the filters sets directly associated with these settings as
+		 * well as their ancestors.
+		 */
+		getSettingsFilterSets.setLong(1, settings.getId());
+		final ResultSet set = getSettingsFilterSets.executeQuery();
+		try {
+			while (set.next()) {
+				final String uid = set.getString(1);
+				FilterSet filterSet = filterSetMap.get(uid);
+				if (filterSet == null) {
+					filterSet = getFilterSet(uid);
+					filterSetMap.put(uid, filterSet);
+				}
+				filterSets.add(filterSet);
+				for (final String parent : filterSet.getParent()) {
+					if (filterSetMap.get(parent) == null) {
+						filterSetMap.put(parent, getFilterSet(parent));
+					}
+				}
+			}
+		} finally {
+			set.close();
+		}
+		final Set<String> findingTypes = new HashSet<String>();
+		for (FilterSet filterSet : filterSets) {
+			processFilterSet(findingTypes, filterSet, filterSetMap);
+		}
+		final List<FindingTypeFilter> findingTypeFilters = new ArrayList<FindingTypeFilter>();
+		for (String uid : findingTypes) {
+			final FindingTypeFilter ftf = new FindingTypeFilter();
+			ftf.setFiltered(false);
+			ftf.setName(uid);
+			findingTypeFilters.add(ftf);
+		}
+		applyFilters(settings.getId(), findingTypeFilters);
+	}
+
+	/**
+	 * This function recursively process filter sets, modifying the set of
+	 * finding types that will be in the final group of finding type filters.
+	 * 
+	 * @param findingTypes
+	 *            a mutable set of finding types
+	 * @param filterSet
+	 *            the filter set to process
+	 * @param filterSetMap
+	 *            a map of all available filter sets
+	 */
+	private void processFilterSet(Set<String> findingTypes,
+			FilterSet filterSet, Map<String, FilterSet> filterSetMap) {
+		final List<String> parents = filterSet.getParent();
+		if (parents != null) {
+			for (final String parent : parents) {
+				processFilterSet(findingTypes, filterSetMap.get(parent),
+						filterSetMap);
+			}
+		}
+		for (final FilterEntry fe : filterSet.getFilter()) {
+			final String uid = fe.getType();
+			if (fe.isFiltered()) {
+				findingTypes.remove(uid);
+			} else {
+				findingTypes.add(uid);
+			}
+		}
+	}
+
+	private FilterEntry readFilterEntry(ResultSet set) throws SQLException {
+		int idx = 1;
+		FilterEntry entry = new FilterEntry();
+		entry.setType(set.getString(idx++));
+		entry.setFiltered("Y".equals(set.getString(idx++)));
+		return entry;
+	}
+
 	@Override
 	protected PreparedStatement getDeleteFilterByFindingType() {
 		return deleteFilterByFindingType;
@@ -381,6 +600,10 @@ public class ServerSettingsManager extends SettingsManager {
 				spManager.addRelation(settings, projectName);
 			}
 		}
+	}
+
+	private FilterSetRecord newFilterSetRecord() {
+		return new FilterSetRecord(filterSetMapper);
 	}
 
 }

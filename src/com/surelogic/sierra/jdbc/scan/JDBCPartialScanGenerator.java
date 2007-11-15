@@ -14,8 +14,8 @@ import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 
@@ -61,7 +61,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 			scan.setStatus(ScanStatus.LOADING);
 			scan.update();
 			conn.commit();
-			final MessageFilter filter = FindingTypeManager.getInstance(conn)
+			final FindingFilter filter = FindingTypeManager.getInstance(conn)
 					.getMessageFilter(
 							ClientSettingsManager.getInstance(conn)
 									.getSettings(projectName));

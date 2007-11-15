@@ -18,8 +18,8 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
@@ -117,7 +117,7 @@ public class FindingManager {
 	 * @param uid
 	 */
 	public void generateFindings(String projectName, String uid,
-			MessageFilter filter, SLProgressMonitor monitor) {
+			FindingFilter filter, SLProgressMonitor monitor) {
 		try {
 			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
 			scan.setUid(uid);

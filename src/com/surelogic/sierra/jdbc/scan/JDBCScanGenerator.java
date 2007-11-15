@@ -20,8 +20,8 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
 import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.tool.MessageFilter;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.ScanGenerator;
@@ -104,7 +104,7 @@ class JDBCScanGenerator implements ScanGenerator {
 				}
 			}
 			conn.commit();
-			final MessageFilter filter = FindingTypeManager.getInstance(conn)
+			final FindingFilter filter = FindingTypeManager.getInstance(conn)
 					.getMessageFilter(
 							qualifiers.isEmpty() ? ClientSettingsManager
 									.getInstance(conn).getSettings(projectName)

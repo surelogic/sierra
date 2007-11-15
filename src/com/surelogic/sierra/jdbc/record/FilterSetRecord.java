@@ -3,15 +3,13 @@ package com.surelogic.sierra.jdbc.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
-
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 public class FilterSetRecord extends LongUpdatableRecord {
 
 	private String uid;
 	private String name;
 	private String info;
+	private long revision;
 
 	public FilterSetRecord(UpdateRecordMapper mapper) {
 		super(mapper);
@@ -20,12 +18,16 @@ public class FilterSetRecord extends LongUpdatableRecord {
 	@Override
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
-		return fill(st, idx);
+		st.setString(idx++, name);
+		st.setLong(idx++, revision);
+		st.setString(idx++, info);
+		return idx;
 	}
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setString(idx++, uid);
+		st.setLong(idx++, revision);
 		st.setString(idx++, name);
 		st.setString(idx++, info);
 		return idx;
@@ -39,6 +41,7 @@ public class FilterSetRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		this.revision = set.getLong(idx++);
 		this.name = set.getString(idx++);
 		this.info = set.getString(idx++);
 		return idx;
@@ -60,8 +63,20 @@ public class FilterSetRecord extends LongUpdatableRecord {
 		this.info = info;
 	}
 
+	public long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(long revision) {
+		this.revision = revision;
+	}
+
 	public String getUid() {
 		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 }

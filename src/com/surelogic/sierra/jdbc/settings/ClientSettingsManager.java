@@ -41,7 +41,8 @@ public class ClientSettingsManager extends SettingsManager {
 	}
 
 	/**
-	 * Retrieve settings for the given project.
+	 * Retrieve settings for the given project. Returns <code>null</code> if
+	 * no settings currently exist for the project.
 	 * 
 	 * @param project
 	 * @return
@@ -52,8 +53,15 @@ public class ClientSettingsManager extends SettingsManager {
 				.newProject();
 		record.setName(project);
 		if (record.select()) {
+			getSettingsRevision.setString(1, project);
+			ResultSet set = getSettingsRevision.executeQuery();
+			set.next();
+			set.getLong(1);
+			if (set.wasNull()) {
+				return null;
+			}
 			getFiltersByProjectId.setLong(1, record.getId());
-			ResultSet set = getFiltersByProjectId.executeQuery();
+			set = getFiltersByProjectId.executeQuery();
 			try {
 				return readSettings(set);
 			} finally {

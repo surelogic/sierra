@@ -18,18 +18,42 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
+import com.surelogic.sierra.jdbc.settings.CategoryView;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.FindingTypes;
+import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Settings;
+import com.surelogic.sierra.tool.message.Severity;
 
 public class FindingTypeManager {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(FindingTypeManager.class);
 
+	private static final FindingFilter EMPTY_FILTER = new FindingFilter() {
+
+		public boolean accept(Long artifactTypeId) {
+			return true;
+		}
+
+		public Importance calculateImportance(Long findingTypeId,
+				Priority priority, Severity severity) {
+			int val = ((int) (((float) (severity.ordinal() + priority.ordinal())) / 2));
+			if (val > 3) {
+				val = 3;
+			} else if (val < 1) {
+				val = 1;
+			}
+			return Importance.values()[val];
+		}
+	};
+
+	private final PreparedStatement listCategories;
+	private final PreparedStatement listCategoryFindingTypes;
 	private final PreparedStatement selectArtifactTypesByFindingTypeId;
 	private final PreparedStatement selectArtifactType;
 	private final PreparedStatement selectArtifactTypesByToolAndMnemonic;
@@ -54,6 +78,10 @@ public class FindingTypeManager {
 				.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.FINDING_TYPE_ID IS NULL AND T.ID = A.TOOL_ID");
 		this.checkUncategorizedFindingTypes = conn
 				.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE CATEGORY_ID IS NULL");
+		listCategories = conn
+				.prepareStatement("SELECT UUID,NAME FROM FINDING_CATEGORY");
+		listCategoryFindingTypes = conn
+				.prepareStatement("SELECT UUID FROM FINDING_TYPE WHERE CATEGORY_ID = ?");
 		this.factory = FindingTypeRecordFactory.getInstance(conn);
 	}
 
@@ -128,8 +156,20 @@ public class FindingTypeManager {
 			c.setDescription(ctRec.getDescription());
 			c.setId(uid);
 			c.setName(ctRec.getName());
+			listCategoryFindingTypes.setLong(1, ctRec.getId());
+			ResultSet set = listCategoryFindingTypes.executeQuery();
+			try {
+				final List<String> findingTypes = c.getFindingType();
+				while (set.next()) {
+					findingTypes.add(set.getString(1));
+				}
+			} finally {
+				set.close();
+			}
+			return c;
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -185,9 +225,7 @@ public class FindingTypeManager {
 		return ids;
 	}
 
-	
-	
-	public MessageFilter getMessageFilter(Settings settings)
+	public FindingFilter getMessageFilter(Settings settings)
 			throws SQLException {
 		if (settings != null) {
 			Collection<FindingTypeFilter> filters = settings.getFilter();
@@ -214,9 +252,21 @@ public class FindingTypeManager {
 			}
 			return new MessageFilter(findingMap, artifactMap);
 		} else {
-			Map<Long, FindingTypeFilter> map = Collections.emptyMap();
-			return new MessageFilter(map, map);
+			return EMPTY_FILTER;
 		}
+	}
+
+	public List<CategoryView> listCategories() throws SQLException {
+		ResultSet set = listCategories.executeQuery();
+		List<CategoryView> view = new ArrayList<CategoryView>();
+		try {
+			while (set.next()) {
+				view.add(new CategoryView(set.getString(1), set.getString(2)));
+			}
+		} finally {
+			set.close();
+		}
+		return view;
 	}
 
 	/**

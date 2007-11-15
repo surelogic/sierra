@@ -11,7 +11,6 @@ import java.util.Date;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 
-@Deprecated()
 /**
  * I am replacing this with ServerConnection, I think
  */

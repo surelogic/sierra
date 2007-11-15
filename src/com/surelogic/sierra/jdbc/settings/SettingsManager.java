@@ -8,8 +8,6 @@ import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.tool.message.FilterEntry;
-import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -41,18 +39,6 @@ abstract class SettingsManager {
 
 	}
 
-	protected FilterSet readFilterSet(ResultSet set) throws SQLException {
-		FilterSet filterSet = new FilterSet();
-		List<FilterEntry> filters = filterSet.getFilter();
-		while (set.next()) {
-			filters.add(readFilterEntry(set));
-		}
-		return filterSet;
-	}
-
-	protected FilterEntry readFilterEntry(ResultSet set) throws SQLException {
-		return null;
-	}
 
 	protected FindingTypeFilter readFilter(ResultSet set) throws SQLException {
 		int idx = 1;
@@ -68,19 +54,15 @@ abstract class SettingsManager {
 		filter.setFiltered("Y".equals(set.getString(idx++)));
 		return filter;
 	}
-
+	
 	protected void applyFilters(Long entityId, List<FindingTypeFilter> filters)
 			throws SQLException {
+		final FindingTypeFilterRecord rec = newFilterRecord();
 		for (FindingTypeFilter filter : filters) {
-			Long findingTypeId = ftMan.getFindingTypeId(filter.getName());
+			final Long findingTypeId = ftMan.getFindingTypeId(filter.getName());
 			if (findingTypeId != null) {
-				FindingTypeFilterRecord rec = newFilterRecord();
 				rec.setId(new FindingTypeFilterRecord.PK(entityId,
 						findingTypeId));
-				PreparedStatement st = getDeleteFilterByFindingType();
-				st.setLong(1, entityId);
-				st.setLong(2, findingTypeId);
-				st.execute();
 				if ((filter.getImportance() != null)
 						|| (filter.isFiltered())
 						|| ((filter.getDelta() != null) && (filter.getDelta() != 0))) {

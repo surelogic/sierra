@@ -11,7 +11,7 @@ import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
-public class MessageFilter {
+public class MessageFilter implements FindingFilter {
 
 	private Set<Long> filtered;
 	private Map<Long, Importance> importances;
@@ -39,10 +39,16 @@ public class MessageFilter {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.surelogic.sierra.jdbc.tool.FindingTypeFilter#accept(java.lang.Long)
+	 */
 	public boolean accept(Long artifactTypeId) {
 		return !filtered.contains(artifactTypeId);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.surelogic.sierra.jdbc.tool.FindingTypeFilter#calculateImportance(java.lang.Long, com.surelogic.sierra.tool.message.Priority, com.surelogic.sierra.tool.message.Severity)
+	 */
 	public Importance calculateImportance(Long findingTypeId,
 			Priority priority, Severity severity) {
 		Importance i;

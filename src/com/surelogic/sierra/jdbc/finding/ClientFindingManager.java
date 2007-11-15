@@ -29,7 +29,7 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
-import com.surelogic.sierra.jdbc.tool.MessageFilter;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
@@ -370,7 +370,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param monitor
 	 */
 	public void updateScanFindings(String projectName, String uid,
-			Map<String, List<String>> compilations, MessageFilter filter,
+			Map<String, List<String>> compilations, FindingFilter filter,
 			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
 		final Set<Long> scanFindingIds = new HashSet<Long>();
 		try {
