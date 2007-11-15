@@ -463,7 +463,7 @@ public class ServerSettingsManager extends SettingsManager {
 			detail.setName(filterSet.getName());
 			detail.setUid(filterSet.getUid());
 			final List<FilterEntryDetail> filterEntryDetails = detail
-					.getFilterEntries();
+					.getFilters();
 			for (final FilterEntry entry : filterSet.getFilter()) {
 				FilterEntryDetail entryDetail = new FilterEntryDetail();
 				entryDetail.setFiltered(entry.isFiltered());

@@ -30,7 +30,7 @@ public class FilterSetDetail {
 		return parents;
 	}
 
-	public List<FilterEntryDetail> getFilterEntries() {
+	public List<FilterEntryDetail> getFilters() {
 		return filterEntries;
 	}
 
