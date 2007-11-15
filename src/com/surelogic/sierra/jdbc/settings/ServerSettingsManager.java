@@ -15,7 +15,6 @@ import java.util.Set;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.FilterSetRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
-import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
@@ -53,7 +52,8 @@ public class ServerSettingsManager extends SettingsManager {
 
 	private ServerSettingsManager(Connection conn) throws SQLException {
 		super(conn);
-		filterSetMapper = new UpdateBaseMapper(conn,
+		filterSetMapper = new UpdateBaseMapper(
+				conn,
 				"INSERT INTO FILTER_SET (UUID,REVISION,NAME,INFO) VALUES (?,?,?,?)",
 				"SELECT ID,REVISION,INFO FROM FILTER_SET WHERE NAME = ?",
 				"DELETE FROM FILTER_SET WHERE ID = ?",
@@ -89,7 +89,7 @@ public class ServerSettingsManager extends SettingsManager {
 						+ "   WHERE FE.FILTER_SET_ID = ? AND FT.ID = FE.FINDING_TYPE_ID");
 		loadFilterSetParents = conn
 				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		listFilterSetIds = conn.prepareStatement("SELECT ID FROM FILTER_SET");
+		listFilterSetIds = conn.prepareStatement("SELECT UUID FROM FILTER_SET");
 		insertFilterSetParent = conn
 				.prepareStatement("INSERT INTO FILTER_SET_RELTN (CHILD_ID,PARENT_ID) VALUES (?,?)");
 		insertFilterSetEntry = conn
@@ -220,7 +220,8 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 	}
 
-	public void writeFilterSet(FilterSet filterSet, long revision) throws SQLException {
+	public void writeFilterSet(FilterSet filterSet, long revision)
+			throws SQLException {
 		final FilterSetRecord filterSetRec = newFilterSetRecord();
 		filterSetRec.setUid(filterSet.getUid());
 		filterSetRec.setRevision(revision);
@@ -448,8 +449,8 @@ public class ServerSettingsManager extends SettingsManager {
 		final ResultSet set = listFilterSetIds.executeQuery();
 		try {
 			while (set.next()) {
-				long id = set.getLong(1);
-				filterSets.add(getFilterSet(id));
+				String uid = set.getString(1);
+				filterSets.add(getFilterSet(uid));
 			}
 		} finally {
 			set.close();
@@ -457,7 +458,15 @@ public class ServerSettingsManager extends SettingsManager {
 		return filterSets;
 	}
 
-	private FilterSet getFilterSet(final long id) throws SQLException {
+	/**
+	 * Returns a FilterSet with the filter entries and parents populated, but
+	 * not the name, uid, revision, or info.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	private FilterSet getFilterSetHelper(final long id) throws SQLException {
 		final FilterSet filterSet = new FilterSet();
 		final List<FilterEntry> filters = filterSet.getFilter();
 		final List<String> parents = filterSet.getParent();
@@ -482,11 +491,14 @@ public class ServerSettingsManager extends SettingsManager {
 		return filterSet;
 	}
 
-	private FilterSet getFilterSet(final String uid) throws SQLException {
+	public FilterSet getFilterSet(final String uid) throws SQLException {
 		FilterSetRecord rec = newFilterSetRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
-			return getFilterSet(rec.getId());
+			FilterSet filterSet = getFilterSetHelper(rec.getId());
+			filterSet.setName(rec.getName());
+			filterSet.setUid(rec.getUid());
+			return filterSet;
 		} else {
 			return null;
 		}
@@ -569,14 +581,6 @@ public class ServerSettingsManager extends SettingsManager {
 				findingTypes.add(uid);
 			}
 		}
-	}
-
-	private FilterEntry readFilterEntry(ResultSet set) throws SQLException {
-		int idx = 1;
-		FilterEntry entry = new FilterEntry();
-		entry.setType(set.getString(idx++));
-		entry.setFiltered("Y".equals(set.getString(idx++)));
-		return entry;
 	}
 
 	@Override
