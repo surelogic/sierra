@@ -40,13 +40,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
+import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;

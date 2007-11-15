@@ -10,6 +10,10 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +32,8 @@ import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
+import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -85,13 +91,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 					getSelection().removeObserver(MListOfFindingsColumn.this);
 					return;
 				}
-				getSelection().getManager().getExecutor().execute(
-						new Runnable() {
-							public void run() {
-								refreshData();
-								refreshDisplay();
-							}
-						});
+				final Job job = new DatabaseJob("Refresh list of findings") {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							refreshData();
+							refreshDisplay();
+						} catch (Exception e) {
+							return SLStatus.createErrorStatus(e);
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		});
 	}

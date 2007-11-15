@@ -149,7 +149,7 @@
             </menu>
            <action
            		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
-                id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.PartialScanPackage"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_pkg.gif"
                 label="Re-Scan"
                 enablesFor="+"
@@ -166,7 +166,7 @@
             </menu>
            <action
            		class="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
-                id="com.surelogic.sierra.client.eclipse.actions.PartialScanAction"
+                id="com.surelogic.sierra.client.eclipse.actions.PartialScanCU"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
                 label="Re-Scan"
                 enablesFor="+"

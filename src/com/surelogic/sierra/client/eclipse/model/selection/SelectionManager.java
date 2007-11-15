@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public final class SelectionManager {
 
@@ -19,18 +17,12 @@ public final class SelectionManager {
 		return INSTANCE;
 	}
 
-	private final Executor f_executor = Executors.newSingleThreadExecutor();
-
-	public Executor getExecutor() {
-		return f_executor;
-	}
-
 	private SelectionManager() {
 		// singleton
 	}
 
 	public Selection construct() {
-		final Selection result = new Selection(this, f_executor);
+		final Selection result = new Selection(this);
 		result.init();
 		return result;
 	}

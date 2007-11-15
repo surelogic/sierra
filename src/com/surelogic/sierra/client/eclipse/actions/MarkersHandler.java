@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.adhoc.DatabaseJob;
+import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;

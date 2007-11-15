@@ -6,8 +6,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.adhoc.DatabaseJob;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.job.DatabaseJob;
 
 public final class ImportScanDocumentJob extends DatabaseJob {
 

@@ -8,8 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
@@ -43,16 +49,13 @@ public final class Selection extends AbstractDatabaseObserver {
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
-	Selection(SelectionManager manager, Executor executor) {
+	Selection(SelectionManager manager) {
 		assert manager != null;
 		f_manager = manager;
-		assert executor != null;
-		f_executor = executor;
 	}
 
 	public Selection(Selection source) {
 		f_manager = source.f_manager;
-		f_executor = source.f_executor;
 		f_showing = source.f_showing;
 		Filter prev = null;
 		for (Filter f : source.f_filters) {
@@ -83,8 +86,6 @@ public final class Selection extends AbstractDatabaseObserver {
 		 */
 		return f_manager;
 	}
-
-	private final Executor f_executor;
 
 	/**
 	 * The ordered list of filters within this selection.
@@ -359,12 +360,19 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		f_executor.execute(new Runnable() {
-			public void run() {
-				refreshFilters();
-				notifySelectionChanged();
+		final Job job = new DatabaseJob("Refresh selection") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					refreshFilters();
+					notifySelectionChanged();
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(e);
+				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	/**
@@ -392,12 +400,19 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            a filter that is part of this selection.
 	 */
 	void filterChanged(final Filter changedFilter) {
-		f_executor.execute(new Runnable() {
-			public void run() {
-				refreshFiltersAfter(changedFilter);
-				notifySelectionChanged();
+		final Job job = new DatabaseJob("Refresh filter") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					refreshFiltersAfter(changedFilter);
+					notifySelectionChanged();
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(e);
+				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	/**
