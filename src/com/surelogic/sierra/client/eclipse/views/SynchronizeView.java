@@ -49,7 +49,8 @@ public final class SynchronizeView extends ViewPart {
 
 		column = new TableColumn(syncTable, SWT.RIGHT);
 		column.setText("Occurred");
-		column.addListener(SWT.Selection, TableUtility.SORT_COLUMN_NUMERICALLY);
+		column.addListener(SWT.Selection,
+				TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		for (TableColumn c : syncTable.getColumns()) {
