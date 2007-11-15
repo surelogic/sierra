@@ -89,7 +89,8 @@ public class ServerSettingsManager extends SettingsManager {
 						+ "   WHERE FE.FILTER_SET_ID = ? AND FT.ID = FE.FINDING_TYPE_ID");
 		loadFilterSetParents = conn
 				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		listFilterSetUids = conn.prepareStatement("SELECT UUID FROM FILTER_SET");
+		listFilterSetUids = conn
+				.prepareStatement("SELECT UUID FROM FILTER_SET");
 		insertFilterSetParent = conn
 				.prepareStatement("INSERT INTO FILTER_SET_RELTN (CHILD_ID,PARENT_ID) VALUES (?,?)");
 		insertFilterSetEntry = conn
@@ -444,18 +445,42 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<FilterSet> listFilterSets() throws SQLException {
-		final List<FilterSet> filterSets = new ArrayList<FilterSet>();
+	public List<FilterSetDetail> listFilterSets() throws SQLException {
+		final List<FilterSetDetail> filterSetDetails = new ArrayList<FilterSetDetail>();
+		final Map<String, FilterSet> filterSetMap = new HashMap<String, FilterSet>();
 		final ResultSet set = listFilterSetUids.executeQuery();
 		try {
 			while (set.next()) {
 				final String uid = set.getString(1);
-				filterSets.add(getFilterSet(uid));
+				final FilterSet filterSet = getFilterSet(uid);
+				filterSetMap.put(filterSet.getUid(), filterSet);
 			}
 		} finally {
 			set.close();
 		}
-		return filterSets;
+		for (final FilterSet filterSet : filterSetMap.values()) {
+			FilterSetDetail detail = new FilterSetDetail();
+			detail.setName(filterSet.getName());
+			detail.setUid(filterSet.getUid());
+			final List<FilterEntryDetail> filterEntryDetails = detail
+					.getFilterEntries();
+			for (final FilterEntry entry : filterSet.getFilter()) {
+				FilterEntryDetail entryDetail = new FilterEntryDetail();
+				entryDetail.setFiltered(entry.isFiltered());
+				entryDetail.setFindingType(ftMan
+						.getFindingType(entry.getType()));
+				filterEntryDetails.add(entryDetail);
+			}
+			final List<ParentDetail> parentDetails = detail.getParents();
+			for (final String parent : filterSet.getParent()) {
+				ParentDetail parentDetail = new ParentDetail();
+				parentDetail.setUid(parent);
+				parentDetail.setName(filterSetMap.get(parent).getName());
+				parentDetails.add(parentDetail);
+			}
+			filterSetDetails.add(detail);
+		}
+		return filterSetDetails;
 	}
 
 	/**
