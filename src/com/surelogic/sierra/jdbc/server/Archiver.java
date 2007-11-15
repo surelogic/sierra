@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 public class Archiver {
 
-	private final Connection conn;
+//	private final Connection conn;
 	
 	private Archiver(Connection conn) throws SQLException{
-		this.conn = conn;
+//		this.conn = conn;
 	}
 
 	public Archiver getInstance(Connection conn) throws SQLException {

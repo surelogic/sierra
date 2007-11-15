@@ -37,7 +37,7 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement copySettings;
 	private final PreparedStatement getLatestSettingsByProject;
 	private final PreparedStatement getAllSettings;
-	private final PreparedStatement listFilterSetIds;
+	private final PreparedStatement listFilterSetUids;
 	private final PreparedStatement loadFilterEntries;
 	private final PreparedStatement loadFilterSetParents;
 	private final PreparedStatement insertFilterSetParent;
@@ -55,7 +55,7 @@ public class ServerSettingsManager extends SettingsManager {
 		filterSetMapper = new UpdateBaseMapper(
 				conn,
 				"INSERT INTO FILTER_SET (UUID,REVISION,NAME,INFO) VALUES (?,?,?,?)",
-				"SELECT ID,REVISION,INFO FROM FILTER_SET WHERE NAME = ?",
+				"SELECT ID,REVISION,NAME,INFO FROM FILTER_SET WHERE UUID = ?",
 				"DELETE FROM FILTER_SET WHERE ID = ?",
 				"UPDATE FILTER_SET SET  REVISION = ?, NAME = ?, INFO = ? WHERE ID = ?");
 		findingTypeFilterMapper = new BaseMapper(
@@ -89,7 +89,7 @@ public class ServerSettingsManager extends SettingsManager {
 						+ "   WHERE FE.FILTER_SET_ID = ? AND FT.ID = FE.FINDING_TYPE_ID");
 		loadFilterSetParents = conn
 				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		listFilterSetIds = conn.prepareStatement("SELECT UUID FROM FILTER_SET");
+		listFilterSetUids = conn.prepareStatement("SELECT UUID FROM FILTER_SET");
 		insertFilterSetParent = conn
 				.prepareStatement("INSERT INTO FILTER_SET_RELTN (CHILD_ID,PARENT_ID) VALUES (?,?)");
 		insertFilterSetEntry = conn
@@ -446,10 +446,10 @@ public class ServerSettingsManager extends SettingsManager {
 	 */
 	public List<FilterSet> listFilterSets() throws SQLException {
 		final List<FilterSet> filterSets = new ArrayList<FilterSet>();
-		final ResultSet set = listFilterSetIds.executeQuery();
+		final ResultSet set = listFilterSetUids.executeQuery();
 		try {
 			while (set.next()) {
-				String uid = set.getString(1);
+				final String uid = set.getString(1);
 				filterSets.add(getFilterSet(uid));
 			}
 		} finally {
@@ -495,7 +495,7 @@ public class ServerSettingsManager extends SettingsManager {
 		FilterSetRecord rec = newFilterSetRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
-			FilterSet filterSet = getFilterSetHelper(rec.getId());
+			final FilterSet filterSet = getFilterSetHelper(rec.getId());
 			filterSet.setName(rec.getName());
 			filterSet.setUid(rec.getUid());
 			return filterSet;
