@@ -150,8 +150,40 @@ public class FindingDetail {
 		return artifacts;
 	}
 
+	/**
+	 * Queries the details of a finding.
+	 * 
+	 * @param conn
+	 *            an open database connection.
+	 * @param findingId
+	 *            the finding to lookup the details of.
+	 * @return the details of the finding.
+	 * @throws SQLException
+	 *             if the query fails.
+	 */
 	public static FindingDetail getDetail(Connection conn, Long findingId)
 			throws SQLException {
 		return new FindingDetail(conn, findingId);
+	}
+
+	/**
+	 * Queries the details of a finding. Returns <code>null</code> if the
+	 * finding cannot be found.
+	 * 
+	 * @param conn
+	 *            an open database connection.
+	 * @param findingId
+	 *            the finding to lookup the details of.
+	 * @return the details of the finding, or <code>null</code> if the finding
+	 *         cannot be found.
+	 */
+	public static FindingDetail getDetailOrNull(Connection conn, Long findingId) {
+		FindingDetail result;
+		try {
+			result = getDetail(conn, findingId);
+		} catch (SQLException e) {
+			result = null;
+		}
+		return result;
 	}
 }
