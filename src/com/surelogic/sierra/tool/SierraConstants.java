@@ -4,6 +4,13 @@ import java.io.File;
 
 public final class SierraConstants {
 
+	/**
+	 * If running in the client, these reference some plug-in identifiers that
+	 * have no activator
+	 */
+	public static final String COMMON_PLUGIN_ID = "com.surelogic.common";
+	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
+
 	/** The location of tools folder */
 	public static final String TOOLS_FOLDER = "Tools";
 
