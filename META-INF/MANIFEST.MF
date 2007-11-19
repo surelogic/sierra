@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Analysis Tool Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.0.1.qualifier
-Bundle-Activator: com.surelogic.sierra.tool.SierraTool
 Require-Bundle: org.eclipse.core.runtime,
  org.apache.ant,
  com.surelogic.common,
@@ -11,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.surelogic.common.eclipse,
  org.eclipse.jdt.core,
  com.surelogic.sierra.message
-Eclipse-LazyStart: true
+Eclipse-LazyStart: false
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.ant
