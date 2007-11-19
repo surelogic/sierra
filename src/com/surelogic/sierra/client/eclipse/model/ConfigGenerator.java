@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraConstants;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * Utility class for getting configuration objects that are required to run

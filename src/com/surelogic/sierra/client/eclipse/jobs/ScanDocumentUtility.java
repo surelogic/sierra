@@ -10,8 +10,8 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
-import com.surelogic.sierra.tool.analyzer.ScanGenerator;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.ScanGenerator;
 
 public final class ScanDocumentUtility {
 

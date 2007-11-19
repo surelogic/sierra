@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.model;
 import java.util.List;
 import java.util.Map;
 
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 public class ConfigCompilationUnit {
 

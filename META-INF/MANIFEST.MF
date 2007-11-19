@@ -22,5 +22,6 @@ Require-Bundle: org.eclipse.ui,
  org.apache.ant,
  org.eclipse.ui.browser,
  org.eclipse.ui.editors,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ com.surelogic.sierra.message
 Eclipse-LazyStart: true

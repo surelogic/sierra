@@ -30,7 +30,7 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * Runs Sierra Scan on an Eclipse project or compilation unit.

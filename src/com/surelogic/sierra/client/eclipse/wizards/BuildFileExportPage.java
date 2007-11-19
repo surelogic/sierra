@@ -38,7 +38,7 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * The Sierra Build File Export page
