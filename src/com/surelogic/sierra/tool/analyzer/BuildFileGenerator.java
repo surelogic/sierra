@@ -17,7 +17,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
 public class BuildFileGenerator {
@@ -60,7 +60,7 @@ public class BuildFileGenerator {
 					+ f_fileName;
 		} else {
 			completeFileName = config.getBaseDirectory() + File.separator
-					+ SierraConstants.SIERRA_BUILD_FILE;
+					+ SierraToolConstants.SIERRA_BUILD_FILE;
 		}
 
 		// For Windows machines - Not required only for consistency
@@ -86,7 +86,7 @@ public class BuildFileGenerator {
 				Map<String, String> attributeMap = new HashMap<String, String>();
 				attributeMap.put("default", "Sierra-Ant");
 				attributeMap.put("basedir", toolDirectory
-						+ SierraConstants.SIERRA_TOOL_SRC);
+						+ SierraToolConstants.SIERRA_TOOL_SRC);
 				attributeMap.put("name", "SIERRA");
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "project", atts);
@@ -99,43 +99,43 @@ public class BuildFileGenerator {
 				hd.endElement("", "", "property");
 
 				// Include antlib.xml
-				attributeMap.put("resource", SierraConstants.ANTLIB_DIR);
+				attributeMap.put("resource", SierraToolConstants.ANTLIB_DIR);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "taskdef", atts);
 
 				hd.startElement("", "", "classpath", null);
 
 				// Dirset to include everything in project
-				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY);
-				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
+				attributeMap.put("dir", SierraToolConstants.TOOL_PROPERTY);
+				attributeMap.put("includes", SierraToolConstants.INCLUDE_ALL);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "dirset", atts);
 				hd.endElement("", "", "dirset");
 
 				// Dirset to include the common project
 				attributeMap.put("dir", commonDirectory);
-				attributeMap.put("includes", SierraConstants.INCLUDE_ALL);
+				attributeMap.put("includes", SierraToolConstants.INCLUDE_ALL);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "dirset", atts);
 				hd.endElement("", "", "dirset");
 
 				// Backport util concurrent (for FindBugs)
-				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY
-						+ SierraConstants.BUC_LIB_LOCATION);
+				attributeMap.put("dir", SierraToolConstants.TOOL_PROPERTY
+						+ SierraToolConstants.BUC_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
-				attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
+				attributeMap.put("name", SierraToolConstants.INCLUDE_ALL_JARS);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "include", atts);
 				hd.endElement("", "", "include");
 				hd.endElement("", "", "fileset");
 
 				// JAXB file set
-				attributeMap.put("dir", SierraConstants.TOOL_PROPERTY
-						+ SierraConstants.JAX_LIB_LOCATION);
+				attributeMap.put("dir", SierraToolConstants.TOOL_PROPERTY
+						+ SierraToolConstants.JAX_LIB_LOCATION);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "fileset", atts);
-				attributeMap.put("name", SierraConstants.INCLUDE_ALL_JARS);
+				attributeMap.put("name", SierraToolConstants.INCLUDE_ALL_JARS);
 				writeAttributes(attributeMap);
 				hd.startElement("", "", "include", atts);
 				hd.endElement("", "", "include");

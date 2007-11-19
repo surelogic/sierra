@@ -7,7 +7,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
@@ -163,7 +163,7 @@ class PMD39Handler extends DefaultHandler {
 								.getValue(i));
 					}
 
-					if (SierraConstants.PRIORITY.equals(aName)) {
+					if (SierraToolConstants.PRIORITY.equals(aName)) {
 
 						int priority = Integer.valueOf(attrs.getValue(i));
 
@@ -247,7 +247,7 @@ class PMD39Handler extends DefaultHandler {
 			// Populate package name as default package if there is no
 			// package associated with it
 			if (!hasPackage) {
-				String packageName = SierraConstants.DEFAULT_PACKAGE;
+				String packageName = SierraToolConstants.DEFAULT_PACKAGE;
 				sourceLocation.packageName(packageName);
 			}
 			hasPackage = false;

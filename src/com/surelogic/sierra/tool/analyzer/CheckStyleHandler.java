@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 
 public class CheckStyleHandler extends DefaultHandler {
@@ -70,8 +70,8 @@ public class CheckStyleHandler extends DefaultHandler {
 						file.getName().length() - 5);
 				String pakkage = PackageFinder.getInstance().getPackage(file);
 
-				if (pakkage.equals(SierraConstants.DEFAULT_PACKAGE)) {
-					f_packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+				if (pakkage.equals(SierraToolConstants.DEFAULT_PACKAGE)) {
+					f_packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 				} else {
 					f_packageName = pakkage;
 				}

@@ -12,7 +12,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
 /**
@@ -335,17 +335,17 @@ public class BuildFileHandler extends DefaultHandler {
 
 			File scanDocument = new File(runDocumentNameHolder);
 			if (scanDocument == null || "".equals(scanDocument)) {
-				scanDocument = new File(SierraConstants.SIERRA_RESULTS_PATH,
+				scanDocument = new File(SierraToolConstants.SIERRA_RESULTS_PATH,
 						config.getProject()
-								+ SierraConstants.PARSED_FILE_SUFFIX);
+								+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (scanDocument.isDirectory()) {
 				scanDocument = new File(scanDocument, config.getProject()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
+						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (!scanDocument.getName().endsWith(
-					SierraConstants.PARSED_FILE_SUFFIX)) {
+					SierraToolConstants.PARSED_FILE_SUFFIX)) {
 				scanDocument = new File(scanDocument.getParentFile(),
 						scanDocument.getName()
-								+ SierraConstants.PARSED_FILE_SUFFIX);
+								+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			}
 			config.setScanDocument(scanDocument);
 			config.setRunDateTime(Calendar.getInstance().getTime());

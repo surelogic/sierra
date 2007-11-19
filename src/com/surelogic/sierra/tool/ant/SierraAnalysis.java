@@ -90,7 +90,7 @@ import org.apache.tools.ant.types.RedirectorElement;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.analyzer.Parser;
 import com.surelogic.sierra.tool.message.Config;
@@ -408,15 +408,15 @@ public class SierraAnalysis extends Task {
 
 			if (runDocument == null || "".equals(runDocument)) {
 				runDocument = new File(tmpFolder, project.getName()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
+						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (runDocument.isDirectory()) {
 				runDocument = new File(runDocument, project.getName()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
+						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (!runDocument.getName().endsWith(
-					SierraConstants.PARSED_FILE_SUFFIX)) {
+					SierraToolConstants.PARSED_FILE_SUFFIX)) {
 				runDocument = new File(runDocument.getParentFile(), runDocument
 						.getName()
-						+ SierraConstants.PARSED_FILE_SUFFIX);
+						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			}
 
 			if (monitor != null) {

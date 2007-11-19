@@ -2,7 +2,7 @@ package com.surelogic.sierra.tool;
 
 import java.io.File;
 
-public final class SierraConstants {
+public final class SierraToolConstants {
 
 	/**
 	 * If running in the client, these reference some plug-in identifiers that

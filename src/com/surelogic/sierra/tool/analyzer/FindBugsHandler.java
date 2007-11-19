@@ -8,7 +8,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
@@ -117,7 +117,7 @@ class FindBugsHandler extends DefaultHandler {
 								attributes.getValue(i));
 					}
 
-					if (SierraConstants.PRIORITY.equals(aName)) {
+					if (SierraToolConstants.PRIORITY.equals(aName)) {
 
 						int priority = Integer.valueOf(attributes.getValue(i));
 
@@ -240,7 +240,7 @@ class FindBugsHandler extends DefaultHandler {
 							className = attributes.getValue(i);
 							int lastPeriod = className.lastIndexOf(".");
 							if (lastPeriod == -1) {
-								packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+								packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							} else {
 
 								packageName = className
@@ -339,7 +339,7 @@ class FindBugsHandler extends DefaultHandler {
 							className = attributes.getValue(i);
 							int lastPeriod = className.lastIndexOf(".");
 							if (lastPeriod == -1) {
-								packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+								packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							} else {
 
 								packageName = className
