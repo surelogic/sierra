@@ -16,8 +16,8 @@ import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.ScanGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.ScanGenerator;
 
 /**
  * Implements the artifact generation and makes the approprate call to the

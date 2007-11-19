@@ -20,8 +20,8 @@ import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
-import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.ScanGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.ScanGenerator;
 
 public class ScanManager {
 

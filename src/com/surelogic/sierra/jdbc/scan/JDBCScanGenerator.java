@@ -23,8 +23,8 @@ import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.ScanGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.ScanGenerator;
 
 class JDBCScanGenerator implements ScanGenerator {
 
