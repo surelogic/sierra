@@ -1,6 +1,8 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -26,7 +29,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraConstants;
-import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.config.Config;
 
 /**
@@ -47,8 +49,7 @@ public final class ConfigGenerator {
 	private final String f_sierraPath = PreferenceConstants.getSierraPath();
 
 	/** The plug-in directory that has tools folder */
-	private final String tools = BuildFileGenerator.getToolsDirectory()
-			+ SierraConstants.TOOLS_FOLDER;
+	private final String tools = null;
 
 	/** The number of excluded tools : Default 0 */
 	private int f_numberofExcludedTools = 0;

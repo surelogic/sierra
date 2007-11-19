@@ -34,7 +34,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
+import com.surelogic.sierra.tool.SierraConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.config.Config;
 
@@ -261,7 +263,12 @@ public class BuildFileExportPage extends WizardPage {
 		List<Config> configs = ConfigGenerator.getInstance().getProjectConfigs(
 				f_SelectedJavaProjects);
 		Map<Config, File> buildFiles = BuildFileGenerator.getInstance()
-				.writeBuildFiles(configs, f_overrideCheckbox.getSelection(),
+				.writeBuildFiles(
+						Activator.getDefault().getDirectoryOf(
+								SierraConstants.TOOL_PLUGIN_ID),
+						Activator.getDefault().getDirectoryOf(
+								SierraConstants.COMMON_PLUGIN_ID), configs,
+						f_overrideCheckbox.getSelection(),
 						f_buildfilenameText.getText());
 
 		String message = "No changes were made.";

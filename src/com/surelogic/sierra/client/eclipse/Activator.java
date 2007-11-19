@@ -1,9 +1,13 @@
 package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
+import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.logging.SLStatus;
@@ -15,7 +19,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public final class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.surelogic.sierra.client.eclipse";
@@ -58,7 +62,6 @@ public class Activator extends AbstractUIPlugin {
 		MarkersHandler handler = MarkersHandler.getInstance();
 		handler.addMarkerListener();
 		getDefault().getPluginPreferences().addPropertyChangeListener(handler);
-
 	}
 
 	@Override
@@ -91,5 +94,22 @@ public class Activator extends AbstractUIPlugin {
 		IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString()
 				+ System.getProperty("file.separator") + "selections.xml");
+	}
+
+	public String getDirectoryOf(final String plugInId) {
+		final Bundle bundle = Platform.getBundle(plugInId);
+		if (bundle == null) {
+			throw new IllegalStateException("null bundle returned for "
+					+ plugInId);
+		}
+		final URL relativeURL = bundle.getEntry("");
+		try {
+			URL commonPathURL = FileLocator.resolve(relativeURL);
+			final String commonDirectory = commonPathURL.getPath();
+			return commonDirectory;
+		} catch (Exception e) {
+			throw new IllegalStateException(
+					"failed to resolve a path for the URL " + relativeURL);
+		}
 	}
 }
