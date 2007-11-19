@@ -7,7 +7,6 @@ Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
 Require-Bundle: com.surelogic.sierra.tool,
  com.surelogic.common,
- org.apache.ant,
  com.surelogic.sierra.message
 Export-Package: com.surelogic.sierra.jdbc,
  com.surelogic.sierra.jdbc.finding,

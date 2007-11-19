@@ -9,9 +9,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.logging.Logger;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
@@ -34,7 +31,7 @@ import com.surelogic.sierra.schema.SierraSchemaUtility;
  * @author nathan
  * 
  */
-public class DeploySchemaTask extends Task {
+public class DeploySchemaTask {
 
 	private static final String DERBYDRIVER = "org.apache.derby.jdbc.ClientDriver";
 	private static final String ORACLEDRIVER = "oracle.jdbc.driver.OracleDriver";
@@ -48,19 +45,14 @@ public class DeploySchemaTask extends Task {
 		new DeploySchemaTask().execute();
 	}
 
-	@Override
-	public void execute() throws BuildException {
+	public void execute() {
 		String type = System.getProperty("sierra.db.type");
 		String user = null;
 		String pass = null;
 
-		if (getProject() != null) {
-			user = getProject().getProperty("sierra.db.user");
-			pass = getProject().getProperty("sierra.db.pass");
-		} else {
-			user = System.getProperty("sierra.db.user");
-			pass = System.getProperty("sierra.db.pass");
-		}
+		user = System.getProperty("sierra.db.user");
+		pass = System.getProperty("sierra.db.pass");
+
 		try {
 			if ("oracle".equals(type)) {
 				Class.forName(ORACLEDRIVER);
@@ -81,7 +73,7 @@ public class DeploySchemaTask extends Task {
 				conn = DriverManager.getConnection(url);
 			}
 			conn.setAutoCommit(false);
-			log("Database is " + JDBCUtils.getDb(conn));
+			log.info("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
 			ServerFindingManager man = ServerFindingManager.getInstance(conn);
 			Statement st = conn.createStatement();
