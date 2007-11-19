@@ -12,7 +12,7 @@ import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.FileUtils;
 
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * Class representing the definition of a single project

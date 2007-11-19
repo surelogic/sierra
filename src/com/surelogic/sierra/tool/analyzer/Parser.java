@@ -15,8 +15,7 @@ import org.xml.sax.SAXException;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.config.Config;
-import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * XML Parser for results from the tools. Uses SAX parser.

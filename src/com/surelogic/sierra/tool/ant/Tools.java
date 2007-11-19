@@ -28,7 +28,7 @@ import org.apache.tools.ant.Project;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.analyzer.Parser;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * A collection for information pertaining to the tools (i.e., FindBugs, PMD)

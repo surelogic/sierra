@@ -1,4 +1,4 @@
-package com.surelogic.sierra.tool.message;
+package com.surelogic.sierra.tool.analyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,10 +15,17 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.analyzer.ArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.DefaultArtifactGenerator;
-import com.surelogic.sierra.tool.analyzer.MetricBuilder;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Artifact;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.ClassMetric;
+import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.Error;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.MetricBuilder;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
+import com.surelogic.sierra.tool.message.SourceLocation;
 
 /**
  * The scan document generator

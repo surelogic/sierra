@@ -18,7 +18,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.SierraConstants;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 public class BuildFileGenerator {
 

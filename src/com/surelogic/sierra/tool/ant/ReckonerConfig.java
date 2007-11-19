@@ -11,7 +11,7 @@ import org.apache.tools.ant.types.Path;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.Parser;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * The config object for reckoner

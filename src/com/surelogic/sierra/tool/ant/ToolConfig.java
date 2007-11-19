@@ -18,7 +18,7 @@ import org.apache.tools.ant.types.RedirectorElement;
 import org.apache.tools.ant.util.FileUtils;
 
 import com.surelogic.sierra.tool.analyzer.Parser;
-import com.surelogic.sierra.tool.config.Config;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * @author ethan

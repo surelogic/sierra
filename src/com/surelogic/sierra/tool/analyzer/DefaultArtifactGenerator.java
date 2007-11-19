@@ -2,7 +2,9 @@ package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
 
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 

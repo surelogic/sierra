@@ -9,8 +9,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
-import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 

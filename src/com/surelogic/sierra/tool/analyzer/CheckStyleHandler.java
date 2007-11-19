@@ -8,7 +8,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.SierraConstants;
-import com.surelogic.sierra.tool.message.MessageArtifactFileGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 
 public class CheckStyleHandler extends DefaultHandler {
 
