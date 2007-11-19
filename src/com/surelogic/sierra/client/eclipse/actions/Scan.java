@@ -28,7 +28,7 @@ import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.ant.SierraAnalysis;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -63,7 +63,7 @@ public final class Scan {
 		 * Get the plug-in directory that has tools folder and append the
 		 * directory
 		 */
-		f_resultRoot = new File(SierraConstants.SIERRA_RESULTS_PATH);
+		f_resultRoot = new File(SierraToolConstants.SIERRA_RESULTS_PATH);
 
 		if ((!f_resultRoot.exists()) || (f_resultRoot.exists())
 				&& (!f_resultRoot.isDirectory())) {
@@ -258,14 +258,14 @@ public final class Scan {
 									.getSierraPath()
 									+ File.separator
 									+ f_config.getProject()
-									+ SierraConstants.PARSED_FILE_SUFFIX);
+									+ SierraToolConstants.PARSED_FILE_SUFFIX);
 						} else {
 							newScanDocument = new File(PreferenceConstants
 									.getSierraPath()
 									+ File.separator
 									+ f_config.getProject()
 									+ " - partial"
-									+ SierraConstants.PARSED_FILE_SUFFIX);
+									+ SierraToolConstants.PARSED_FILE_SUFFIX);
 						}
 						/*
 						 * This approach assures that the scan document

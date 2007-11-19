@@ -44,7 +44,7 @@ import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -198,7 +198,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();
 
-							String packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+							String packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 							if (packageDeclarations.length > 0) {
 								packageName = packageDeclarations[0]
 										.getElementName();

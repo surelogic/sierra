@@ -36,7 +36,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.analyzer.BuildFileGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -265,9 +265,9 @@ public class BuildFileExportPage extends WizardPage {
 		Map<Config, File> buildFiles = BuildFileGenerator.getInstance()
 				.writeBuildFiles(
 						Activator.getDefault().getDirectoryOf(
-								SierraConstants.TOOL_PLUGIN_ID),
+								SierraToolConstants.TOOL_PLUGIN_ID),
 						Activator.getDefault().getDirectoryOf(
-								SierraConstants.COMMON_PLUGIN_ID), configs,
+								SierraToolConstants.COMMON_PLUGIN_ID), configs,
 						f_overrideCheckbox.getSelection(),
 						f_buildfilenameText.getText());
 

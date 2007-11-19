@@ -8,14 +8,14 @@ import org.eclipse.swt.widgets.Shell;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 
 public final class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
 	void run(String projectName, SierraServer server, Shell shell) {
 		final String scanFileName = PreferenceConstants.getSierraPath()
 				+ File.separator + projectName
-				+ SierraConstants.PARSED_FILE_SUFFIX;
+				+ SierraToolConstants.PARSED_FILE_SUFFIX;
 		final File scanFile = new File(scanFileName);
 		if (scanFile.exists()) {
 			ShareScanJob job = new ShareScanJob(projectName, server, scanFile);

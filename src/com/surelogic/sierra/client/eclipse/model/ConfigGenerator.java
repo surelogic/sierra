@@ -1,8 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -27,8 +24,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.tool.SierraConstants;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
 /**
@@ -43,19 +41,22 @@ public final class ConfigGenerator {
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
 	private final File f_resultRoot = new File(
-			SierraConstants.SIERRA_RESULTS_PATH);
+			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
 	private final String f_sierraPath = PreferenceConstants.getSierraPath();
 
 	/** The plug-in directory that has tools folder */
-	private final String tools = null;
+	private final String tools;
 
 	/** The number of excluded tools : Default 0 */
 	private int f_numberofExcludedTools = 0;
 
 	private ConfigGenerator() {
 		// singleton
+		tools = Activator.getDefault().getDirectoryOf(
+				SierraToolConstants.TOOL_PLUGIN_ID)
+				+ SierraToolConstants.TOOLS_FOLDER;
 	}
 
 	public static ConfigGenerator getInstance() {
@@ -142,7 +143,7 @@ public final class ConfigGenerator {
 
 					int lastPeriod = qualifiedName.lastIndexOf(".");
 
-					String packageName = SierraConstants.DEFAULT_PACKAGE_PARENTHESIS;
+					String packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 					if (lastPeriod != -1) {
 						packageName = qualifiedName.substring(0, lastPeriod);
 					}
@@ -188,7 +189,7 @@ public final class ConfigGenerator {
 					+ File.separator
 					+ compilationUnits.get(0).getResource().getProject()
 							.getName() + " - partial - " + getTimeStamp()
-					+ SierraConstants.PARSED_FILE_SUFFIX);
+					+ SierraToolConstants.PARSED_FILE_SUFFIX);
 
 			config = new Config();
 
@@ -292,7 +293,7 @@ public final class ConfigGenerator {
 		File baseDir = new File(projectPath);
 		File scanDocument = new File(f_sierraPath + File.separator
 				+ project.getProject().getName() + " - " + getTimeStamp()
-				+ SierraConstants.PARSED_FILE_SUFFIX);
+				+ SierraToolConstants.PARSED_FILE_SUFFIX);
 
 		Config config = new Config();
 
