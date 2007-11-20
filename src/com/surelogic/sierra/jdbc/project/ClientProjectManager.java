@@ -24,8 +24,7 @@ import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
-
+import com.surelogic.sierra.tool.message.axis.SierraServiceClient;
 public class ClientProjectManager extends ProjectManager {
 
 	private final ClientFindingManager findingManager;
@@ -52,7 +51,7 @@ public class ClientProjectManager extends ProjectManager {
 		 * if we have any updates to settings.
 		 */
 		SierraService service = new SierraServiceClient(server)
-				.getSierraServicePort();
+				;
 
 		// Look up project. If it doesn't exist, create it and relate it to the
 		// server.
