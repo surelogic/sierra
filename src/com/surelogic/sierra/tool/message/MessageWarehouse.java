@@ -313,8 +313,7 @@ public class MessageWarehouse {
 
 	public FindingTypes fetchFindingTypes(InputStream in) {
 		try {
-			return (FindingTypes) ((JAXBElement<?>) unmarshaller.unmarshal(in))
-					.getValue();
+			return (FindingTypes) unmarshaller.unmarshal(in);
 		} catch (JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}

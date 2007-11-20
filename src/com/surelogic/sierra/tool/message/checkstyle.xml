@@ -1,6 +1,5 @@
-<tns:findingTypes xmlns:tns="http://www.surelogic.com/sierra/1.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
+<?xml version="1.0" encoding="UTF-8"?>
+<findingTypes>
 	<findingType>
 		<id>PackageHtml</id>
 		<artifact tool="Checkstyle"
@@ -1893,4 +1892,4 @@
 		<name>J2EE Checks</name>
 		<description></description>
 	</category>
-</tns:findingTypes>
+</findingTypes>

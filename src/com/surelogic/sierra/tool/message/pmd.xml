@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:findingTypes xmlns:tns="http://www.surelogic.com/sierra/1.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.surelogic.com/sierra/1.0 sierra.xsd ">
+<findingTypes>
 	<findingType>
 		<id>AvoidNonConstructorMethodsWithClassName</id>
 		<artifact tool="PMD"
@@ -3693,4 +3691,4 @@
 			find unused code.
 		</description>
 	</category>
-</tns:findingTypes>
+</findingTypes>
