@@ -27,7 +27,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.axis.SierraServiceClient;
 
 public class ShareScanJob extends DatabaseJob {
 
@@ -93,8 +93,8 @@ public class ShareScanJob extends DatabaseJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			return new TreeSet<String>(new SierraServiceClient(f_server
-					.getServer()).getSierraServicePort().getQualifiers(
-					new QualifierRequest()).getQualifier());
+					.getServer()).getQualifiers(new QualifierRequest())
+					.getQualifier());
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
 					.getMessage())) {
@@ -121,8 +121,7 @@ public class ShareScanJob extends DatabaseJob {
 	private IStatus publishRun(Scan scan, SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
-			new SierraServiceClient(f_server.getServer())
-					.getSierraServicePort().publishRun(scan);
+			new SierraServiceClient(f_server.getServer()).publishRun(scan);
 			return Status.OK_STATUS;
 		} catch (WebServiceException e) {
 			if ("request requires HTTP authentication: Unauthorized".equals(e
