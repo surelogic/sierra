@@ -1,10 +1,16 @@
 package com.surelogic.sierra.tool.message;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class SierraServerLocation {
 
 	private static final int DEFAULT_PORT = 8080;
 
 	private static final String UNLABELED_SERVER = "unlabeled server";
+
+	public static final SierraServerLocation DEFAULT = new SierraServerLocation(
+			"localhost:8080", null, null);
 
 	public SierraServerLocation(String host, boolean secure, int port,
 			String user, String password) {
@@ -81,6 +87,24 @@ public class SierraServerLocation {
 
 	public String getPass() {
 		return f_password;
+	}
+
+	/**
+	 * Create a url that points to the appropriate WSDL document on the target
+	 * host.
+	 * 
+	 * @param host
+	 *            a String of type <em>host</em> or <em>host</em>[<em>:port</em>]
+	 * @return
+	 */
+	public URL createWSDLUrl() {
+		final String host = getHost() + ":" + getPort();
+		try {
+			return new URL("http://" + host
+					+ "/SierraServiceBeanService/SierraServiceBean?wsdl");
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
