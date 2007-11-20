@@ -16,6 +16,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.HttpTransportProperties;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Merge;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrails;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Scan8;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiersResponse;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiers;
@@ -68,8 +71,6 @@ public class SierraServiceClient implements SierraService {
 	public SierraServiceClient(SierraServerLocation server) {
 		// I need this for BASIC HTTP authenticator for connecting to the
 		// WebService
-		Options options = new Options();
-
 		HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
 		auth.setUsername(server.getUser());
 		auth.setPassword(server.getPass());
@@ -88,7 +89,6 @@ public class SierraServiceClient implements SierraService {
 		}
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.CommitAuditTrailResponse commitAuditTrails(
 			com.surelogic.sierra.tool.message.CommitAuditTrailRequest audits)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
@@ -104,7 +104,6 @@ public class SierraServiceClient implements SierraService {
 		}
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.AuditTrailResponse getAuditTrails(
 			com.surelogic.sierra.tool.message.GetAuditTrailRequest request)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
@@ -112,7 +111,6 @@ public class SierraServiceClient implements SierraService {
 		return null;
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.Qualifiers getQualifiers(
 			com.surelogic.sierra.tool.message.QualifierRequest request) {
 		try {
@@ -130,7 +128,6 @@ public class SierraServiceClient implements SierraService {
 		}
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.SettingsReply getSettings(
 			com.surelogic.sierra.tool.message.SettingsRequest request)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
@@ -138,7 +135,6 @@ public class SierraServiceClient implements SierraService {
 		return null;
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.ServerUIDReply getUid(
 			com.surelogic.sierra.tool.message.ServerUIDRequest request) {
 		try {
@@ -151,15 +147,22 @@ public class SierraServiceClient implements SierraService {
 		}
 	}
 
-	@Override
 	public com.surelogic.sierra.tool.message.MergeAuditTrailResponse mergeAuditTrails(
 			com.surelogic.sierra.tool.message.MergeAuditTrailRequest seed)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new MergeAuditTrailResponseConverter().convert(stub
+					.mergeAuditTrails(new MergeAuditTrailsConverter()
+							.convert(seed)));
+		} catch (RemoteException e) {
+			throw new ClientException(e);
+		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
+			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
+					e);
+		}
+
 	}
 
-	@Override
 	public void publishRun(com.surelogic.sierra.tool.message.Scan scan) {
 		try {
 			stub.publishRun(new ScanConverter().convert(scan));
@@ -168,10 +171,57 @@ public class SierraServiceClient implements SierraService {
 		}
 	}
 
+	private static class MergeAuditTrailResponseConverter
+			implements
+			Converter<MergeAuditTrailsResponse, com.surelogic.sierra.tool.message.MergeAuditTrailResponse> {
+
+		public com.surelogic.sierra.tool.message.MergeAuditTrailResponse convert(
+				MergeAuditTrailsResponse in) {
+			final com.surelogic.sierra.tool.message.MergeAuditTrailResponse out = new com.surelogic.sierra.tool.message.MergeAuditTrailResponse();
+			final MergeAuditTrailResponse response = in
+					.getMergeAuditTrailsResponse();
+			out.setRevision(response.getRevision());
+			out.setTrail(Arrays.asList(response.getTrail()));
+			return out;
+		}
+
+	}
+
+	private static class MergeAuditTrailsConverter
+			implements
+			Converter<com.surelogic.sierra.tool.message.MergeAuditTrailRequest, MergeAuditTrails> {
+
+		public MergeAuditTrails convert(
+				com.surelogic.sierra.tool.message.MergeAuditTrailRequest in) {
+			final MergeAuditTrails out = new MergeAuditTrails();
+			final MergeAuditTrailRequest request = new MergeAuditTrailRequest();
+			out.setMergeAuditTrails(request);
+			request.setProject(in.getProject());
+			request.setServer(in.getServer());
+			final List<com.surelogic.sierra.tool.message.Merge> merges = in
+					.getMerge();
+			if (merges != null) {
+				request.setMerge(collToArray(merges, new Merge[merges.size()],
+						new MergeConverter()));
+			}
+			return out;
+		}
+
+	}
+
+	private static class MergeConverter implements
+			Converter<com.surelogic.sierra.tool.message.Merge, Merge> {
+
+		public Merge convert(com.surelogic.sierra.tool.message.Merge a) {
+
+			return null;
+		}
+
+	}
+
 	private static class ScanConverter implements
 			Converter<com.surelogic.sierra.tool.message.Scan, Scan8> {
 
-		@Override
 		public Scan8 convert(com.surelogic.sierra.tool.message.Scan in) {
 			final Scan8 out = new Scan8();
 			final Scan scan = new Scan();
@@ -188,7 +238,6 @@ public class SierraServiceClient implements SierraService {
 	private static class ConfigConverter implements
 			Converter<com.surelogic.sierra.tool.message.Config, Config> {
 
-		@Override
 		public Config convert(com.surelogic.sierra.tool.message.Config in) {
 			final Config out = new Config();
 			out.setBaseDirectory(fromFile(in.getBaseDirectory()));
@@ -219,7 +268,6 @@ public class SierraServiceClient implements SierraService {
 	private static class ToolOutputConverter implements
 			Converter<com.surelogic.sierra.tool.message.ToolOutput, ToolOutput> {
 
-		@Override
 		public ToolOutput convert(
 				com.surelogic.sierra.tool.message.ToolOutput in) {
 			final ToolOutput out = new ToolOutput();
@@ -255,7 +303,6 @@ public class SierraServiceClient implements SierraService {
 	private static class ErrorConverter implements
 			Converter<com.surelogic.sierra.tool.message.Error, Error> {
 
-		@Override
 		public Error convert(com.surelogic.sierra.tool.message.Error in) {
 			final Error out = new Error();
 			out.setMessage(in.getMessage());
@@ -269,7 +316,6 @@ public class SierraServiceClient implements SierraService {
 			implements
 			Converter<com.surelogic.sierra.tool.message.ClassMetric, ClassMetric> {
 
-		@Override
 		public ClassMetric convert(
 				com.surelogic.sierra.tool.message.ClassMetric in) {
 			final ClassMetric out = new ClassMetric();
@@ -284,7 +330,6 @@ public class SierraServiceClient implements SierraService {
 	private static class ArtifactConverter implements
 			Converter<com.surelogic.sierra.tool.message.Artifact, Artifact> {
 
-		@Override
 		public Artifact convert(com.surelogic.sierra.tool.message.Artifact in) {
 			final Artifact out = new Artifact();
 			final List<com.surelogic.sierra.tool.message.SourceLocation> additional = in
@@ -313,7 +358,6 @@ public class SierraServiceClient implements SierraService {
 			implements
 			Converter<com.surelogic.sierra.tool.message.ArtifactType, ArtifactType> {
 
-		@Override
 		public ArtifactType convert(
 				com.surelogic.sierra.tool.message.ArtifactType in) {
 			final ArtifactType out = new ArtifactType();
@@ -329,7 +373,6 @@ public class SierraServiceClient implements SierraService {
 			implements
 			Converter<com.surelogic.sierra.tool.message.SourceLocation, SourceLocation> {
 
-		@Override
 		public SourceLocation convert(
 				com.surelogic.sierra.tool.message.SourceLocation in) {
 			final SourceLocation out = new SourceLocation();
@@ -359,7 +402,6 @@ public class SierraServiceClient implements SierraService {
 			implements
 			Converter<CommitAuditTrailsResponse, com.surelogic.sierra.tool.message.CommitAuditTrailResponse> {
 
-		@Override
 		public com.surelogic.sierra.tool.message.CommitAuditTrailResponse convert(
 				CommitAuditTrailsResponse commit) {
 			final CommitAuditTrailResponse old = commit
@@ -380,7 +422,6 @@ public class SierraServiceClient implements SierraService {
 			implements
 			Converter<com.surelogic.sierra.tool.message.CommitAuditTrailRequest, CommitAuditTrails> {
 
-		@Override
 		public CommitAuditTrails convert(
 				com.surelogic.sierra.tool.message.CommitAuditTrailRequest in) {
 			final SierraServiceBeanServiceStub.CommitAuditTrails out = new SierraServiceBeanServiceStub.CommitAuditTrails();
@@ -402,7 +443,6 @@ public class SierraServiceClient implements SierraService {
 	private static class AuditTrailConverter implements
 			Converter<com.surelogic.sierra.tool.message.AuditTrail, AuditTrail> {
 
-		@Override
 		public AuditTrail convert(
 				com.surelogic.sierra.tool.message.AuditTrail in) {
 			final SierraServiceBeanServiceStub.AuditTrail trail = new SierraServiceBeanServiceStub.AuditTrail();
@@ -425,7 +465,7 @@ public class SierraServiceClient implements SierraService {
 	private static class AuditConverter
 			implements
 			Converter<com.surelogic.sierra.tool.message.Audit, SierraServiceBeanServiceStub.Audit> {
-		@Override
+
 		public Audit convert(com.surelogic.sierra.tool.message.Audit a) {
 			final Audit out = new Audit();
 			out.setEvent(AuditEvent.Factory.fromValue(a.getEvent().name()));
