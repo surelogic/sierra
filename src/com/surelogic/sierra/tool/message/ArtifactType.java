@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * NOTE: This class was modified from its original form in order to remove the "any" annotation.
+ * 
  * <p>
  * Java class for ArtifactType complex type.
  * 
