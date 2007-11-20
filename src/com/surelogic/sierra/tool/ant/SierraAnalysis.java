@@ -99,7 +99,7 @@ import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.axis.SierraServiceClient;
 
 /**
  * @author ethan
@@ -477,8 +477,7 @@ public class SierraAnalysis extends Task {
 				SierraServerLocation location = new SierraServerLocation(
 						server, user, password);
 
-				SierraService ts = new SierraServiceClient(location)
-						.getSierraServicePort();
+				SierraService ts = new SierraServiceClient(location);
 
 				// Verify the qualifiers
 				List<String> list = ts.getQualifiers(new QualifierRequest())
