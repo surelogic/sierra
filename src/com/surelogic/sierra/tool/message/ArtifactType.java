@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArtifactType", propOrder = { "any" })
+@XmlType(name = "ArtifactType")
 public class ArtifactType {
 
 	@XmlAttribute(required = true)
