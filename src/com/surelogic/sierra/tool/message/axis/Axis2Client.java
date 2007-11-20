@@ -1,7 +1,6 @@
 package com.surelogic.sierra.tool.message.axis;
 
 import java.io.File;
-import java.net.Authenticator;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,56 +9,57 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Merge;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailsResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrails;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Scan8;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiersResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiers;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Error;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ClassMetric;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Errors;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifacts;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Metrics;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ToolOutput;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Config;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Severity;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Priority;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ArtifactType;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifact;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.IdentifierType;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SourceLocation;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUid;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditTrail;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditTrailResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrails;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailsResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrailRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUidResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailResponse;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.QualifierRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Qualifiers;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Scan;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ServerMismatchException;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ServerUIDReply;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ServerUIDRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SettingsReply;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SettingsRequest;
+
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClientAuthenticator;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifact;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ArtifactType;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifacts;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Audit;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditEvent;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditTrail;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditTrailResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.AuditTrailUpdate;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ClassMetric;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrails;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Config;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Error;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Errors;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.FindingTypeFilter;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrailRequest;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrails;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrailsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiers;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiersResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetSettings;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetSettingsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUid;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUidResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.IdentifierType;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Importance;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Match;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Merge;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailRequest;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrails;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeAuditTrailsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Metrics;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Priority;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Scan;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Scan8;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Settings;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SettingsReply;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SettingsRequest;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Severity;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SourceLocation;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ToolOutput;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.TrailObsoletion;
 
 public class Axis2Client implements SierraService {
 
@@ -115,8 +115,16 @@ public class Axis2Client implements SierraService {
 	public com.surelogic.sierra.tool.message.AuditTrailResponse getAuditTrails(
 			com.surelogic.sierra.tool.message.GetAuditTrailRequest request)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new AuditTrailResponseConverter().convert(stub
+					.getAuditTrails(new GetAuditTrailsConverter()
+							.convert(request)));
+		} catch (RemoteException e) {
+			throw new ClientException(e);
+		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
+			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
+					e);
+		}
 	}
 
 	public com.surelogic.sierra.tool.message.Qualifiers getQualifiers(
@@ -139,8 +147,15 @@ public class Axis2Client implements SierraService {
 	public com.surelogic.sierra.tool.message.SettingsReply getSettings(
 			com.surelogic.sierra.tool.message.SettingsRequest request)
 			throws com.surelogic.sierra.tool.message.ServerMismatchException {
-
-		return null;
+		try {
+			return new SettingsReplyConverter().convert(stub
+					.getSettings(new GetSettingsConverter().convert(request)));
+		} catch (RemoteException e) {
+			throw new ClientException(e);
+		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
+			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
+					e);
+		}
 	}
 
 	public com.surelogic.sierra.tool.message.ServerUIDReply getUid(
@@ -176,6 +191,176 @@ public class Axis2Client implements SierraService {
 			stub.publishRun(new ScanConverter().convert(scan));
 		} catch (RemoteException e) {
 			throw new ClientException(e);
+		}
+	}
+
+	private static class SettingsReplyConverter
+			implements
+			Converter<GetSettingsResponse, com.surelogic.sierra.tool.message.SettingsReply> {
+
+		public com.surelogic.sierra.tool.message.SettingsReply convert(
+				GetSettingsResponse in) {
+			final com.surelogic.sierra.tool.message.SettingsReply out = new com.surelogic.sierra.tool.message.SettingsReply();
+			final SettingsReply reply = in.getGetSettingsResponse();
+			out.setRevision(reply.getRevision());
+			out.setSettings(new SettingsConverter()
+					.convert(reply.getSettings()));
+			return out;
+		}
+	}
+
+	private static class SettingsConverter implements
+			Converter<Settings, com.surelogic.sierra.tool.message.Settings> {
+
+		public com.surelogic.sierra.tool.message.Settings convert(Settings in) {
+			final com.surelogic.sierra.tool.message.Settings out = new com.surelogic.sierra.tool.message.Settings();
+			final List<com.surelogic.sierra.tool.message.FindingTypeFilter> filters = out
+					.getFilter();
+			final FindingTypeFilter[] inFilters = in.getFilter();
+			if (inFilters != null) {
+				filters.addAll(arrayToList(inFilters,
+						new FindingTypeFilterConverter()));
+			}
+			return out;
+		}
+	}
+
+	private static class FindingTypeFilterConverter
+			implements
+			Converter<FindingTypeFilter, com.surelogic.sierra.tool.message.FindingTypeFilter> {
+
+		public com.surelogic.sierra.tool.message.FindingTypeFilter convert(
+				FindingTypeFilter in) {
+			final com.surelogic.sierra.tool.message.FindingTypeFilter out = new com.surelogic.sierra.tool.message.FindingTypeFilter();
+			out.setDelta(in.getDelta());
+			out.setFiltered(in.getFiltered());
+			Importance imp = in.getImportance();
+			if (imp != null) {
+				out.setImportance(com.surelogic.sierra.tool.message.Importance
+						.valueOf(imp.getValue()));
+			}
+			out.setName(in.getName());
+			return out;
+		}
+	}
+
+	private static class GetSettingsConverter
+			implements
+			Converter<com.surelogic.sierra.tool.message.SettingsRequest, GetSettings> {
+
+		public GetSettings convert(
+				com.surelogic.sierra.tool.message.SettingsRequest in) {
+			final GetSettings out = new GetSettings();
+			final SettingsRequest request = new SettingsRequest();
+			request.setProject(in.getProject());
+			request.setServer(in.getServer());
+			Long revision = in.getRevision();
+			if (revision != null) {
+				request.setRevision(revision);
+			}
+			out.setGetSettings(request);
+			return out;
+		}
+	}
+
+	private static class AuditTrailResponseConverter
+			implements
+			Converter<GetAuditTrailsResponse, com.surelogic.sierra.tool.message.AuditTrailResponse> {
+
+		public com.surelogic.sierra.tool.message.AuditTrailResponse convert(
+				GetAuditTrailsResponse in) {
+			final com.surelogic.sierra.tool.message.AuditTrailResponse out = new com.surelogic.sierra.tool.message.AuditTrailResponse();
+			AuditTrailResponse response = in.getGetAuditTrailsResponse();
+			out.setObsolete(arrayToList(response.getObsolete(),
+					new ObsoleteConverter()));
+			out.setUpdate(arrayToList(response.getUpdate(),
+					new AuditTrailUpdateConverter()));
+			return out;
+		}
+	}
+
+	private static class ObsoleteConverter
+			implements
+			Converter<TrailObsoletion, com.surelogic.sierra.tool.message.TrailObsoletion> {
+
+		public com.surelogic.sierra.tool.message.TrailObsoletion convert(
+				TrailObsoletion in) {
+			final com.surelogic.sierra.tool.message.TrailObsoletion out = new com.surelogic.sierra.tool.message.TrailObsoletion();
+			out.setRevision(in.getRevision());
+			out.setObsoletedTrail(in.getObsoletedTrail());
+			out.setTrail(in.getTrail());
+			return out;
+		}
+	}
+
+	private static class AuditTrailUpdateConverter
+			implements
+			Converter<AuditTrailUpdate, com.surelogic.sierra.tool.message.AuditTrailUpdate> {
+
+		public com.surelogic.sierra.tool.message.AuditTrailUpdate convert(
+				AuditTrailUpdate in) {
+			final com.surelogic.sierra.tool.message.AuditTrailUpdate out = new com.surelogic.sierra.tool.message.AuditTrailUpdate();
+			out
+					.setAudit(arrayToList(in.getAudit(),
+							new MessageAuditConverter()));
+			final Importance imp = in.getImportance();
+			if (imp != null) {
+				out.setImportance(com.surelogic.sierra.tool.message.Importance
+						.valueOf(imp.getValue()));
+			}
+			out
+					.setMatch(arrayToList(in.getMatch(),
+							new MessageMatchConverter()));
+			out.setSummary(in.getSummary());
+			out.setTrail(in.getTrail());
+			return out;
+		}
+	}
+
+	private static class MessageAuditConverter implements
+			Converter<Audit, com.surelogic.sierra.tool.message.Audit> {
+
+		public com.surelogic.sierra.tool.message.Audit convert(Audit in) {
+			final com.surelogic.sierra.tool.message.Audit out = new com.surelogic.sierra.tool.message.Audit();
+			out.setEvent(com.surelogic.sierra.tool.message.AuditEvent
+					.valueOf(in.getEvent().getValue()));
+			out.setRevision(in.getRevision());
+			out.setTimestamp(in.getTimestamp().getTime());
+			out.setUser(in.getUser());
+			out.setValue(in.getValue());
+			return out;
+		}
+	}
+
+	private static class MessageMatchConverter implements
+			Converter<Match, com.surelogic.sierra.tool.message.Match> {
+
+		public com.surelogic.sierra.tool.message.Match convert(Match in) {
+			final com.surelogic.sierra.tool.message.Match out = new com.surelogic.sierra.tool.message.Match();
+			out.setClassName(in.getClassName());
+			out.setFindingType(in.getFindingType());
+			out.setHash(in.getHash());
+			out.setPackageName(in.getPackageName());
+			return out;
+		}
+	}
+
+	private static class GetAuditTrailsConverter
+			implements
+			Converter<com.surelogic.sierra.tool.message.GetAuditTrailRequest, GetAuditTrails> {
+
+		public GetAuditTrails convert(
+				com.surelogic.sierra.tool.message.GetAuditTrailRequest in) {
+			final GetAuditTrails out = new GetAuditTrails();
+			final GetAuditTrailRequest request = new GetAuditTrailRequest();
+			request.setProject(in.getProject());
+			final Long revision = in.getRevision();
+			if (revision != null) {
+				request.setRevision(revision);
+			}
+			request.setServer(in.getServer());
+			out.setGetAuditTrails(request);
+			return out;
 		}
 	}
 
@@ -220,9 +405,34 @@ public class Axis2Client implements SierraService {
 	private static class MergeConverter implements
 			Converter<com.surelogic.sierra.tool.message.Merge, Merge> {
 
-		public Merge convert(com.surelogic.sierra.tool.message.Merge a) {
+		public Merge convert(com.surelogic.sierra.tool.message.Merge in) {
+			final Merge out = new Merge();
+			out.setImportance(Importance.Factory.fromValue(in.getImportance()
+					.name()));
+			final List<com.surelogic.sierra.tool.message.Match> matches = in
+					.getMatch();
+			if (matches != null) {
+				out.setMatch(collToArray(in.getMatch(), new Match[matches
+						.size()], new MatchConverter()));
+			}
+			return out;
+		}
 
-			return null;
+	}
+
+	private static class MatchConverter implements
+			Converter<com.surelogic.sierra.tool.message.Match, Match> {
+
+		public Match convert(com.surelogic.sierra.tool.message.Match in) {
+			final Match out = new Match();
+			out.setClassName(in.getClassName());
+			out.setFindingType(in.getFindingType());
+			Long hash = in.getHash();
+			if (hash != null) {
+				out.setHash(hash);
+			}
+			out.setPackageName(in.getPackageName());
+			return out;
 		}
 
 	}
@@ -503,11 +713,14 @@ public class Axis2Client implements SierraService {
 	}
 
 	private static <A, B> List<B> arrayToList(A[] arr, Converter<A, B> converter) {
-		List<B> list = new ArrayList<B>();
-		for (A a : arr) {
-			list.add(converter.convert(a));
+		if (arr != null) {
+			List<B> list = new ArrayList<B>();
+			for (A a : arr) {
+				list.add(converter.convert(a));
+			}
+			return list;
 		}
-		return list;
+		return null;
 	}
 
 	private static Calendar fromDate(Date date) {
