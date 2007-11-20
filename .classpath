@@ -2,22 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/activation.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/FastInfoset.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/http.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxb-api.jar" sourcepath="/Users/ethan/sierra-workspace/sierra-tool/Tools/jax-ws/JAXB2_src_20070711.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxb-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxb-xjc.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxws-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxws-rt.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jaxws-tools.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jsr173_api.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jsr181-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/jsr250-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/resolver.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/saaj-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/saaj-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/jax-ws/sjsxp.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-analysis-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-commons-3.0.jar"/>
@@ -30,7 +14,5 @@
 	<classpathentry exported="true" kind="lib" path="Tools/jaxen-1.1.1/jaxen-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="Tools/jaxp/jaxp-api.jar"/>
-	<classpathentry kind="lib" path="Tools/jaxp/jaxp-ri.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
