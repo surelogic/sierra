@@ -8,7 +8,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 public final class SynchronizeProjectAction extends AbstractWebServiceMenuAction {
 	@Override
 	void run(String projectName, SierraServer server, Shell shell) {
-		SynchronizeJob job = new SynchronizeJob(
+		final SynchronizeJob job = new SynchronizeJob(
 				projectName, server);
 		job.schedule();
 	}

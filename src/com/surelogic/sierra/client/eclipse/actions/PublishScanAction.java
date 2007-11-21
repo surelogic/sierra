@@ -18,7 +18,8 @@ public final class PublishScanAction extends AbstractWebServiceMenuAction {
 				+ SierraToolConstants.PARSED_FILE_SUFFIX;
 		final File scanFile = new File(scanFileName);
 		if (scanFile.exists()) {
-			ShareScanJob job = new ShareScanJob(projectName, server, scanFile);
+			final ShareScanJob job = new ShareScanJob(projectName, server,
+					scanFile);
 			job.schedule();
 		} else {
 			final StringBuilder b = new StringBuilder();
