@@ -19,13 +19,13 @@ import com.surelogic.sierra.schema.SierraSchemaUtility;
  * task:
  * 
  * <dl>
- * <li>sierra.db.type - Accepts <code>oracle</code> or <code>derby</code>.
- * The default is derby.
- * <li>sierra.db.url - The full jdbc url connection string (i.e.
- * "jdbc:oracle:thin:@localhost:1521:xe" or
- * "jdbc:derby://localhost:1527/SIERRA;user=SIERRA")
- * <li>sierra.db.user - The database user</li>
- * <li>sierra.db.pass - The database password</li>
+ * <li>sierra.db.type - Accepts <tt>oracle</tt> or <tt>derby</tt>. The
+ * default is <tt>derby</tt>.
+ * <li>sierra.db.url - The full jdbc url connection string, e.g.,
+ * <tt>jdbc:oracle:thin:@localhost:1521:xe</tt> or (the default)
+ * <tt>jdbc:derby://localhost:1527/SIERRA;user=SIERRA</tt>
+ * <li>sierra.db.user - The database user, defaults to <tt>sierra</tt></li>
+ * <li>sierra.db.pass - The database password defaults to <tt>sierra</tt></li>
  * </dl>
  * 
  * @author nathan
@@ -46,12 +46,12 @@ public class DeploySchemaTask {
 	}
 
 	public void execute() {
-		String type = System.getProperty("sierra.db.type");
+		String type = System.getProperty("sierra.db.type", "derby");
 		String user = null;
 		String pass = null;
 
-		user = System.getProperty("sierra.db.user");
-		pass = System.getProperty("sierra.db.pass");
+		user = System.getProperty("sierra.db.user", "sierra");
+		pass = System.getProperty("sierra.db.pass", "sierra");
 
 		try {
 			if ("oracle".equals(type)) {
@@ -64,7 +64,8 @@ public class DeploySchemaTask {
 					"Could not locate derby client driver", e);
 		}
 
-		String url = System.getProperty("sierra.db.url");
+		String url = System.getProperty("sierra.db.url",
+				"jdbc:derby://localhost:1527/SIERRA;user=SIERRA");
 		try {
 			Connection conn;
 			if ("oracle".equals(type)) {
