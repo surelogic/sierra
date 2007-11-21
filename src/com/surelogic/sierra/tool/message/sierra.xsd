@@ -39,12 +39,9 @@
     </complexType>
 
     <complexType name="ArtifactType">
-    	<sequence minOccurs="0" maxOccurs="1">
-    		<any></any>
-    	</sequence>
-    	<attribute name="tool" type="string" use="required"></attribute>
-    	<attribute name="version" type="string"></attribute>
-    	<attribute name="mnemonic" type="string" use="required"></attribute>
+        <attribute name="tool" type="string" use="required"></attribute>
+        <attribute name="mnemonic" type="string" use="required"></attribute>
+        <attribute name="version" type="string"></attribute>
     </complexType>
 
     <complexType name="Category">
