@@ -203,8 +203,11 @@ public class Axis2Client implements SierraService {
 			final com.surelogic.sierra.tool.message.SettingsReply out = new com.surelogic.sierra.tool.message.SettingsReply();
 			final SettingsReply reply = in.getGetSettingsResponse();
 			out.setRevision(reply.getRevision());
-			out.setSettings(new SettingsConverter()
-					.convert(reply.getSettings()));
+			Settings s = reply.getSettings();
+			if (s != null) {
+				out.setSettings(new SettingsConverter().convert(reply
+						.getSettings()));
+			}
 			return out;
 		}
 	}
