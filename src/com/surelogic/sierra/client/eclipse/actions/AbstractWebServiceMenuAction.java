@@ -14,6 +14,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
@@ -29,6 +30,11 @@ public abstract class AbstractWebServiceMenuAction extends
 		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
+		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+			public void run(String projectName, SierraServer server, Shell shell) {
+				runServerAction(projectName, server, shell);
+			}
+		};
 
 		for (String projectName : projectNames) {
 			/*
@@ -39,7 +45,8 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Yes, start the job.
 				 */
 				final SierraServer server = manager.getServer(projectName);
-				promptPasswordIfNecessary(projectName, server, shell);
+				ServerAuthenticationDialog.promptPasswordIfNecessary(
+						projectName, server, shell, serverAction);
 			} else {
 				/*
 				 * Are any servers defined?
@@ -89,27 +96,12 @@ public abstract class AbstractWebServiceMenuAction extends
 
 				manager.connect(projectName, server);
 
-				promptPasswordIfNecessary(projectName, server, shell);
+				ServerAuthenticationDialog.promptPasswordIfNecessary(
+						projectName, server, shell, serverAction);
 			}
 		}
 	}
 
-	private void promptPasswordIfNecessary(final String projectName,
-			final SierraServer server, final Shell shell) {
-		if (!server.savePassword() && !server.usedToConnectToAServer()) {
-			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
-					shell, server);
-			if (dialog.open() == Window.CANCEL) {
-				/*
-				 * Just stop, don't try to run the job.
-				 */
-				return;
-			}
-			server.setUsed(); // for this Eclipse session
-		}
-		run(projectName, server, shell);
-	}
-
-	abstract void run(final String projectName, final SierraServer server,
-			final Shell shell);
+	abstract void runServerAction(final String projectName,
+			final SierraServer server, final Shell shell);
 }

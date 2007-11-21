@@ -12,7 +12,7 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 
 public final class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
-	void run(String projectName, SierraServer server, Shell shell) {
+	void runServerAction(String projectName, SierraServer server, Shell shell) {
 		final String scanFileName = PreferenceConstants.getSierraPath()
 				+ File.separator + projectName
 				+ SierraToolConstants.PARSED_FILE_SUFFIX;

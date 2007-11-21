@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -148,5 +149,45 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 	public SierraServer getServer() {
 		return f_server;
+	}
+
+	/**
+	 * The <tt>run</tt> method is called from
+	 * {@link #promptPasswordIfNecessary(String, SierraServer, Shell, ServerActionOnAProject)}.
+	 * Should be implemented by clients of that method.
+	 */
+	public interface ServerActionOnAProject {
+		void run(final String projectName, final SierraServer server,
+				final Shell shell);
+	}
+
+	/**
+	 * Utility routine to prompt for a password if required by the server. If
+	 * the password was entered then the passed action is run.
+	 * 
+	 * @param projectName
+	 *            the project to invoke the action on.
+	 * @param server
+	 *            the server to check if a password needs to be entered.
+	 * @param shell
+	 *            the shell.
+	 * @param action
+	 *            the action to invoke on the project and the server.
+	 */
+	public static void promptPasswordIfNecessary(final String projectName,
+			final SierraServer server, final Shell shell,
+			final ServerActionOnAProject action) {
+		if (!server.savePassword() && !server.usedToConnectToAServer()) {
+			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
+					shell, server);
+			if (dialog.open() == Window.CANCEL) {
+				/*
+				 * Just stop, don't try to run the job.
+				 */
+				return;
+			}
+			server.setUsed(); // for this Eclipse session
+		}
+		action.run(projectName, server, shell);
 	}
 }

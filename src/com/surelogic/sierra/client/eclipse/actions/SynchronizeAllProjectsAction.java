@@ -2,13 +2,13 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -31,27 +31,20 @@ public final class SynchronizeAllProjectsAction implements
 		for (String projectName : Projects.getInstance().getProjectNames()) {
 			if (manager.isConnected(projectName)) {
 				final SierraServer server = manager.getServer(projectName);
-				promptPasswordIfNecessary(projectName, server, PlatformUI
-						.getWorkbench().getDisplay().getActiveShell());
+				final Shell shell = PlatformUI.getWorkbench().getDisplay()
+						.getActiveShell();
+				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+					public void run(String projectName, SierraServer server,
+							Shell shell) {
+						final SynchronizeJob job = new SynchronizeJob(
+								projectName, server);
+						job.schedule();
+					}
+				};
+				ServerAuthenticationDialog.promptPasswordIfNecessary(
+						projectName, server, shell, serverAction);
 			}
 		}
-	}
-
-	private void promptPasswordIfNecessary(final String projectName,
-			final SierraServer server, final Shell shell) {
-		if (!server.savePassword() && !server.usedToConnectToAServer()) {
-			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
-					shell, server);
-			if (dialog.open() == Window.CANCEL) {
-				/*
-				 * Just stop, don't try to run the job.
-				 */
-				return;
-			}
-			server.setUsed(); // for this Eclipse session
-		}
-		final SynchronizeJob job = new SynchronizeJob(projectName, server);
-		job.schedule();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
