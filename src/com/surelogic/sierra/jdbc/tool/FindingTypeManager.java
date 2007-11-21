@@ -196,7 +196,7 @@ public class FindingTypeManager {
 						+ tool + ", mnemonic " + mnemonic + ", and version "
 						+ version + ".";
 				log.severe(message);
-				throw new IllegalStateException(message);
+				throw new IllegalArgumentException(message);
 			}
 		} finally {
 			set.close();
