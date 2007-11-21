@@ -1,4 +1,4 @@
-package com.surelogic.sierra.ant;
+package com.surelogic.sierra.schema;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,24 +12,23 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
-import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
- * Deploy the SPS schema to a database. The following properties affect this
- * task:
+ * Deploy the Sierra schema to a database. The below system properties specifiy
+ * the database this task is performed upon. Note that the database must be
+ * empty or the task will fail (for Derby just delete the files).
  * 
  * <dl>
  * <li>sierra.db.type - Accepts <tt>oracle</tt> or <tt>derby</tt>. The
  * default is <tt>derby</tt>.
  * <li>sierra.db.url - The full jdbc url connection string, e.g.,
  * <tt>jdbc:oracle:thin:@localhost:1521:xe</tt> or (the default)
- * <tt>jdbc:derby://localhost:1527/SIERRA;user=SIERRA</tt>
+ * <tt>jdbc:derby://localhost:1527/SIERRA;create=true;user=SIERRA</tt>
  * <li>sierra.db.user - The database user, defaults to <tt>sierra</tt></li>
  * <li>sierra.db.pass - The database password defaults to <tt>sierra</tt></li>
  * </dl>
  * 
  * @author nathan
- * 
  */
 public class DeploySchemaTask {
 
@@ -46,15 +45,16 @@ public class DeploySchemaTask {
 	}
 
 	public void execute() {
-		String type = System.getProperty("sierra.db.type", "derby");
-		String user = null;
-		String pass = null;
-
-		user = System.getProperty("sierra.db.user", "sierra");
-		pass = System.getProperty("sierra.db.pass", "sierra");
+		final String dbType = System.getProperty("sierra.db.type", "derby");
+		if (!("oracle".equals(dbType) || "derby".equals(dbType))) {
+			throw new IllegalArgumentException("sierra.db.type=\"" + dbType
+					+ "\" is not either \"derby\" or \"oracle\"");
+		}
+		final String dbUser = System.getProperty("sierra.db.user", "sierra");
+		final String dbPass = System.getProperty("sierra.db.pass", "sierra");
 
 		try {
-			if ("oracle".equals(type)) {
+			if ("oracle".equals(dbType)) {
 				Class.forName(ORACLEDRIVER);
 			} else {
 				Class.forName(DERBYDRIVER);
@@ -65,11 +65,14 @@ public class DeploySchemaTask {
 		}
 
 		String url = System.getProperty("sierra.db.url",
-				"jdbc:derby://localhost:1527/SIERRA;user=SIERRA");
+				"jdbc:derby://localhost:1527/SIERRA;create=true;user=SIERRA");
+
+		log.info("Deploying Sierra schema to the " + dbType + " database at "
+				+ url + " [" + dbUser + "]");
 		try {
 			Connection conn;
-			if ("oracle".equals(type)) {
-				conn = DriverManager.getConnection(url, user, pass);
+			if ("oracle".equals(dbType)) {
+				conn = DriverManager.getConnection(url, dbUser, dbPass);
 			} else {
 				conn = DriverManager.getConnection(url);
 			}
@@ -92,12 +95,12 @@ public class DeploySchemaTask {
 				man.refreshScanSummary(scanId, qualifierId, projectId);
 				conn.commit();
 			}
-			System.out.println("done");
+			log.info("Completed deploying Sierra schema to the " + dbType
+					+ " database at " + url + " [" + dbUser + "]");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }
