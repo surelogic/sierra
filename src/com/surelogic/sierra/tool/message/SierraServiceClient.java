@@ -4,6 +4,9 @@ import com.surelogic.sierra.tool.message.axis.Axis2Client;
 
 public class SierraServiceClient {
 
+	private SierraServiceClient() {
+	}
+
 	public static SierraService create() {
 		return new Axis2Client();
 	}
