@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
@@ -20,6 +21,7 @@ import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerUIDRequest;
+import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -130,16 +132,15 @@ public class ClientProjectManager extends ProjectManager {
 		Long revision = settingsManager.getSettingsRevision(projectName);
 		request.setRevision(revision);
 		SettingsReply reply = service.getSettings(request);
-		Long serverRevision = reply.getRevision();
-		if (serverRevision != null) {
-			settingsManager.writeSettings(projectName, serverRevision, reply
+		final Settings settings = reply.getSettings();
+		if (settings != null) {
+			settingsManager.writeSettings(projectName, reply.getRevision(), reply
 					.getSettings());
 		}
 		monitor.worked(1);
 		int idx = 1;
 		insertSynchRecord.setLong(idx++, p.getId());
-		insertSynchRecord.setTimestamp(idx++, new Timestamp(new Date()
-				.getTime()));
+		insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
 		insertSynchRecord.setLong(idx++,
 				commitResponse.getRevision() == null ? -1 : commitResponse
 						.getRevision());
