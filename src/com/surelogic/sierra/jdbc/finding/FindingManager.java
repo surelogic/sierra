@@ -369,7 +369,7 @@ public class FindingManager {
 	 * @param deleted
 	 * @param finding
 	 */
-	protected void delete(Long deleted, Long finding) throws SQLException {
+	protected void delete(long deleted, long finding) throws SQLException {
 		FindingRecord fRec = getFinding(deleted);
 		obsoleteArtifacts.setLong(1, finding);
 		obsoleteArtifacts.setLong(2, deleted);
