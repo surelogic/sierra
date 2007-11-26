@@ -125,7 +125,7 @@ public final class Scan {
 					}
 					b.append("You may continue your work. ");
 					b.append("You will be notified when the");
-					b.append("scan has completed.");
+					b.append(" scan has completed.");
 					BalloonUtility.showMessage("Sierra Scan Started", b
 							.toString());
 				}
@@ -163,7 +163,7 @@ public final class Scan {
 					b.append("Re-scanning.  ");
 					b.append("You may continue your work. ");
 					b.append("You will be notified when the");
-					b.append("scan has completed.");
+					b.append(" scan has completed.");
 					BalloonUtility.showMessage("Sierra Re-Scan Started", b
 							.toString());
 				}
