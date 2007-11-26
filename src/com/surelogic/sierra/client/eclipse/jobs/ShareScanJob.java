@@ -28,7 +28,6 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
-import com.surelogic.sierra.tool.message.axis.Axis2Client;
 
 public class ShareScanJob extends DatabaseJob {
 
