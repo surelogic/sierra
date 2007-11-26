@@ -39,6 +39,7 @@ public final class Projects extends AbstractDatabaseObserver {
 
 	private Projects() {
 		// singleton
+		refresh();
 	}
 
 	private final Set<IProjectsObserver> f_observers = new CopyOnWriteArraySet<IProjectsObserver>();
