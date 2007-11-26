@@ -84,57 +84,92 @@ public final class Scan {
 	}
 
 	private void execute() {
-		List<Config> configProjects = new ArrayList<Config>();
-		List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
-		final StringBuilder projectList = new StringBuilder();
-
 		if (f_selectedProjects.size() != 0) {
-			configProjects = ConfigGenerator.getInstance().getProjectConfigs(
-					f_selectedProjects);
+			/*
+			 * We are to scan projects
+			 */
+			final List<Config> configProjects = ConfigGenerator.getInstance()
+					.getProjectConfigs(f_selectedProjects);
+
+			if (!configProjects.isEmpty()) {
+				final StringBuilder itemStringForBalloon = new StringBuilder();
+				int itemCountForBalloon = 0;
+				/* Run the scan on projects */
+				for (Config c : configProjects) {
+					itemStringForBalloon.append(" ").append(c.getProject());
+					itemCountForBalloon++;
+					final Job runSingleSierraScan = new ScanProjectJob(
+							"Running Sierra on " + c.getProject(), c, SIERRA);
+					runSingleSierraScan.setPriority(Job.SHORT);
+					runSingleSierraScan.belongsTo(c.getProject());
+					runSingleSierraScan
+							.addJobChangeListener(new ScanProjectJobAdapter(c
+									.getProject()));
+					runSingleSierraScan.schedule();
+				}
+
+				if (PreferenceConstants.showBalloonNotifications()) {
+					/*
+					 * Fix for bug 1157. At JPL we encountered 87 projects and
+					 * the balloon pop-up went off the screen.
+					 */
+					StringBuilder b = new StringBuilder();
+					b.append("Scanning");
+					if (itemCountForBalloon <= 5) {
+						b.append(itemStringForBalloon.toString());
+						b.append(". ");
+					} else {
+						b.append(" ");
+						b.append(itemCountForBalloon);
+						b.append(" projects. ");
+					}
+					b.append("You may continue your work. ");
+					b.append("You will be notified when the");
+					b.append("scan has completed.");
+					BalloonUtility.showMessage("Sierra Scan Started", b
+							.toString());
+				}
+			}
+
 		} else if (f_selectedCompilationUnits.size() != 0) {
-			configCompilationUnits = ConfigGenerator.getInstance()
-					.getCompilationUnitConfigs(f_selectedCompilationUnits);
+			/*
+			 * We are to scan compilation units (Java files).
+			 */
+			final List<ConfigCompilationUnit> configCompilationUnits = ConfigGenerator
+					.getInstance().getCompilationUnitConfigs(
+							f_selectedCompilationUnits);
+			if (!configCompilationUnits.isEmpty()) {
+				/* Run scan on compilation units */
+				for (ConfigCompilationUnit ccu : configCompilationUnits) {
+					final Config c = ccu.getConfig();
+					final Job runSingleSierraScan = new ScanProjectJob(
+							"Running Sierra on compilation units from "
+									+ c.getProject(), c, SIERRA, ccu
+									.getPackageCompilationUnitMap());
+					runSingleSierraScan.setPriority(Job.SHORT);
+					runSingleSierraScan.belongsTo(c.getProject());
+					runSingleSierraScan
+							.addJobChangeListener(new ScanProjectJobAdapter(c
+									.getProject()));
+					runSingleSierraScan.schedule();
+				}
+
+				if (PreferenceConstants.showBalloonNotifications()) {
+					/*
+					 * Fix for bug 1157. At JPL we encountered 87 projects and
+					 * the balloon pop-up went off the screen.
+					 */
+					StringBuilder b = new StringBuilder();
+					b.append("Re-scanning.  ");
+					b.append("You may continue your work. ");
+					b.append("You will be notified when the");
+					b.append("scan has completed.");
+					BalloonUtility.showMessage("Sierra Re-Scan Started", b
+							.toString());
+				}
+			}
 		}
 
-		if (configCompilationUnits.size() > 0) {
-
-			/* Run scan on compilation units */
-			for (ConfigCompilationUnit ccu : configCompilationUnits) {
-				final Config c = ccu.getConfig();
-				projectList.append(" ").append(c.getProject());
-				final Job runSingleSierraScan = new ScanProjectJob(
-						"Running Sierra on compilation units from "
-								+ c.getProject(), c, SIERRA, ccu
-								.getPackageCompilationUnitMap());
-				runSingleSierraScan.setPriority(Job.SHORT);
-				runSingleSierraScan.belongsTo(c.getProject());
-				runSingleSierraScan
-						.addJobChangeListener(new ScanProjectJobAdapter(c
-								.getProject()));
-				runSingleSierraScan.schedule();
-			}
-
-		} else if (configProjects.size() > 0) {
-
-			/* Run the scan on the all the configs */
-			for (Config c : configProjects) {
-				projectList.append(" ").append(c.getProject());
-				final Job runSingleSierraScan = new ScanProjectJob(
-						"Running Sierra on " + c.getProject(), c, SIERRA);
-				runSingleSierraScan.setPriority(Job.SHORT);
-				runSingleSierraScan.belongsTo(c.getProject());
-				runSingleSierraScan
-						.addJobChangeListener(new ScanProjectJobAdapter(c
-								.getProject()));
-				runSingleSierraScan.schedule();
-
-			}
-		}
-
-		if (PreferenceConstants.showBalloonNotifications())
-			BalloonUtility.showMessage("Sierra Scan Started", "Scanning "
-					+ projectList + ". You may continue your work. "
-					+ "You will be notified when the scan has completed.");
 	}
 
 	/**
