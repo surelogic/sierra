@@ -382,8 +382,8 @@ public class Tools {
 		if (toolsFolder == null || !toolsFolder.isDirectory()) {
 			String[] paths = analysis.getClasspath().list();
 			for (String path : paths) {
-				if (path.endsWith("jaxb-api.jar")) {
-					int index = path.indexOf("jax-ws");
+				if (path.endsWith("reckoner.jar")) {
+					int index = path.indexOf("reckoner");
 					toolsFolder = new File(path.substring(0, index - 1));
 				}
 			}
