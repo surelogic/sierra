@@ -10,7 +10,6 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
-import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -28,7 +27,8 @@ public final class SynchronizeAllProjectsAction implements
 	public void run(IAction action) {
 
 		final SierraServerManager manager = SierraServerManager.getInstance();
-		for (String projectName : Projects.getInstance().getProjectNames()) {
+		for (String projectName : SierraServerManager.getInstance()
+				.getConnectedProjects()) {
 			if (manager.isConnected(projectName)) {
 				final SierraServer server = manager.getServer(projectName);
 				final Shell shell = PlatformUI.getWorkbench().getDisplay()
