@@ -180,7 +180,6 @@ public class SierraAnalysis extends Task {
 	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
 
 	static {
-		DEPENDENCIES.add("jsr173_api.jar");
 		DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
 
