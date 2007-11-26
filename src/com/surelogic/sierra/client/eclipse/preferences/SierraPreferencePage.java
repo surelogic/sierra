@@ -174,10 +174,8 @@ public class SierraPreferencePage extends PreferencePage implements
 							});
 				}
 			};
-			// TODO: this refresh is a HACK...remove
-			Projects.getInstance().refresh();
 			Projects.getInstance().addObserver(obs);
-			// fill table
+			// fill table of projects for the first time
 			obs.notify(Projects.getInstance());
 
 			f_projectTable.addListener(SWT.Selection, new Listener() {

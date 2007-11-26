@@ -39,7 +39,7 @@ public final class Projects extends AbstractDatabaseObserver {
 
 	private Projects() {
 		// singleton
-		refresh();
+		refresh(); // project names from the database
 	}
 
 	private final Set<IProjectsObserver> f_observers = new CopyOnWriteArraySet<IProjectsObserver>();
@@ -112,7 +112,7 @@ public final class Projects extends AbstractDatabaseObserver {
 		return f_projectNames.getFirst();
 	}
 
-	public void refresh() {
+	private void refresh() {
 		List<String> projectNames = new ArrayList<String>();
 		try {
 			final Connection c = Data.readOnlyConnection();
