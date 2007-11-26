@@ -407,7 +407,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			f_irrelevantButton.setSelection(true);
 		}
 
-		List<AuditDetail> commentDetails = f_finding.getAudits();
+		List<AuditDetail> auditDetails = f_finding.getAudits();
 
 		// Add label
 
@@ -415,15 +415,31 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"dd MMM yyyy 'at' HH:mm:ss");
-		if (commentDetails != null) {
-			for (int i = commentDetails.size() - 1; i >= 0; i--) {
-				final AuditDetail cd = commentDetails.get(i);
+		boolean first = true;
+		if (auditDetails != null) {
+			for (int i = auditDetails.size() - 1; i >= 0; i--) {
+				final AuditDetail cd = auditDetails.get(i);
+				final String auditText = cd.getText();
+				if (first) {
+					/*
+					 * Bug 1024: We only clear out the comment text if it is
+					 * exactly the same as the most recent audit's text.
+					 * 
+					 * This solution depends upon the getAudits() method on
+					 * FindingDetail returning the audits in most recent to
+					 * least recent order, i.e., that the newest audit is first.
+					 */
+					if (f_commentText.getText().equals(auditText)) {
+						f_commentText.setText("");
+					}
+					first = false;
+				}
 				String userName = cd.getUser();
 				if (userName == null) {
 					userName = "Local";
 				}
 				f_scrollingLabelComposite.addEntry(userName + " on "
-						+ dateFormat.format(cd.getTime()), cd.getText());
+						+ dateFormat.format(cd.getTime()), auditText);
 			}
 		}
 
@@ -458,8 +474,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		for (TableColumn c : f_artifacts.getColumns()) {
 			c.pack();
 		}
-
-		f_commentText.setText("");
 
 		updateTabTitles();
 		f_findingPage.layout(true, true);
