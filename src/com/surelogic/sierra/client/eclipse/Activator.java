@@ -57,7 +57,7 @@ public final class Activator extends AbstractUIPlugin {
 		// load up persisted sierra selections
 		SelectionManager.getInstance().load(getSelectionSaveFile());
 		// start observing data changes
-		Projects.getInstance();
+		Projects.getInstance().refresh();
 		// listen changes to the active editor and preference listener
 		MarkersHandler handler = MarkersHandler.getInstance();
 		handler.addMarkerListener();
