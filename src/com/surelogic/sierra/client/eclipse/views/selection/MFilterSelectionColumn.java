@@ -132,7 +132,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	private void updateReport() {
-		if (getCascadingList().isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		/*
 		 * Fix total count at the top.
@@ -202,7 +202,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void porous(Filter filter) {
-		if (getCascadingList().isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -212,7 +212,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsChanged(Filter filter) {
-		if (getCascadingList().isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -227,7 +227,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsEmpty(Filter filter) {
-		if (getCascadingList().isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
