@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSelectionDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSearchDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -73,7 +73,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
-				NameSavedSelectionDialog dialog = new NameSavedSelectionDialog(
+				NameSavedSearchDialog dialog = new NameSavedSearchDialog(
 						f_cascadingList.getShell());
 				if (Window.CANCEL != dialog.open()) {
 					/*
@@ -97,7 +97,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					/*
 					 * Save the current selection.
 					 */
-					NameSavedSelectionDialog dialog = new NameSavedSelectionDialog(
+					NameSavedSearchDialog dialog = new NameSavedSearchDialog(
 							f_cascadingList.getShell());
 					if (Window.CANCEL != dialog.open()) {
 						/*
@@ -262,7 +262,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		final boolean hasSavedSelections = !f_manager.isEmpty();
 
 		if (hasSavedSelections) {
-			b.append("Selections:");
+			b.append("Saved Searches:");
 
 			for (String link : f_manager.getSavedSelectionNames()) {
 				b.append(" <a href=\"");
@@ -272,7 +272,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				b.append("</a>");
 			}
 		} else {
-			b.append("(no saved selections)");
+			b.append("(no saved searches)");
 		}
 		f_savedSelections.setText(b.toString());
 	}

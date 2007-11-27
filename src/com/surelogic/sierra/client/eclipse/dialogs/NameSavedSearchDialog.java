@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class NameSavedSelectionDialog extends Dialog {
+public final class NameSavedSearchDialog extends Dialog {
 
 	private String f_name = null;
 
@@ -22,7 +22,7 @@ public final class NameSavedSelectionDialog extends Dialog {
 		return f_name;
 	}
 
-	public NameSavedSelectionDialog(Shell parentShell) {
+	public NameSavedSearchDialog(Shell parentShell) {
 		super(parentShell);
 	}
 

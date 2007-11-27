@@ -81,12 +81,12 @@ public final class FindingsSelectionView extends ViewPart {
 				searchBar, SWT.PUSH);
 		manageSearchesItem.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		manageSearchesItem.setToolTipText("Manage Saved Searches...");
+		manageSearchesItem.setToolTipText("Manage Saved Searches");
 		final ToolItem saveSearchAsItem = new ToolItem(
 				searchBar, SWT.PUSH);
 		saveSearchAsItem.setImage(SLImages
 				.getImage(SLImages.IMG_SAVEAS_EDIT));
-		saveSearchAsItem.setToolTipText("Save Search As...");
+		saveSearchAsItem.setToolTipText("Save Search As");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
 		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
