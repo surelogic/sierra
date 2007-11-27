@@ -23,7 +23,9 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class SynchronizeJob extends DatabaseJob {
 
@@ -101,9 +103,8 @@ public class SynchronizeJob extends DatabaseJob {
 								+ f_server + " (wrong server)", e);
 				return Status.CANCEL_STATUS;
 			}
-		} catch (WebServiceException e) {
-			if ("request requires HTTP authentication: Unauthorized".equals(e
-					.getMessage())) {
+		} catch (SierraServiceClientException e) {
+			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_server,
 						f_projectName);
 			} else {
