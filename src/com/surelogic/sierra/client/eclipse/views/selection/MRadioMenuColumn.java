@@ -50,6 +50,13 @@ public final class MRadioMenuColumn extends MColumn implements
 			}
 		};
 		f_column = getCascadingList().addColumn(m, true);
+		initOfNextColumnComplete();
+	}
+
+	@Override
+	void initOfNextColumnComplete() {
+		f_menu.setEnabled(true);
+		super.initOfNextColumnComplete();
 	}
 
 	@Override
@@ -72,14 +79,11 @@ public final class MRadioMenuColumn extends MColumn implements
 	}
 
 	public void selected(Object choice, RadioArrowMenu menu) {
+		f_menu.setEnabled(false);
+
 		/*
-		 * Filters start being applied in column 1 of the cascading list. Thus,
-		 * we need to subtract one from the cascading list column to get the
-		 * column to use to "empty after" the list of filters applied to the
-		 * selection.
+		 * Please wait...
 		 */
-		// final int column =
-		// getCascadingList().getColumnIndexOf(menu.getPanel());
 		getCascadingList().addColumnAfter(new CascadingList.IScrolledColumn() {
 			public void createContents(Composite panel) {
 				final Color background = getCascadingList()
@@ -93,15 +97,10 @@ public final class MRadioMenuColumn extends MColumn implements
 
 		getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
 
-		// menu.setEnabled(false);
-		// System.out.println("selected: addColumnAfter=" + column);
-
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
-			getSelection().construct(filter,
-					new DrawFilterAndMenu(f_column, menu));
+			getSelection().construct(filter, new DrawFilterAndMenu(f_column));
 		} else if (choice.equals("Show")) {
-			// System.out.println("show");
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
 					getCascadingList(), getSelection(), this, f_column);
 			fsr.init();
@@ -111,12 +110,9 @@ public final class MRadioMenuColumn extends MColumn implements
 	class DrawFilterAndMenu extends AbstractFilterObserver {
 
 		private final int f_waitMsgColumn;
-		private final RadioArrowMenu f_selectingMenu;
 
-		public DrawFilterAndMenu(int waitMsgColumn, RadioArrowMenu selectingMenu) {
+		public DrawFilterAndMenu(int waitMsgColumn) {
 			f_waitMsgColumn = waitMsgColumn;
-			assert selectingMenu != null;
-			f_selectingMenu = selectingMenu;
 		}
 
 		@Override
@@ -133,7 +129,6 @@ public final class MRadioMenuColumn extends MColumn implements
 							"Selection Error", msg, SLStatus.createErrorStatus(
 									"Initialization of the filter failed.", e));
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
-					f_selectingMenu.setEnabled(true);
 				}
 			});
 			filter.removeObserver(this);
@@ -158,7 +153,6 @@ public final class MRadioMenuColumn extends MColumn implements
 							getCascadingList(), getSelection(),
 							MRadioMenuColumn.this, f_waitMsgColumn, filter);
 					fsc.init();
-					f_selectingMenu.setEnabled(true);
 				}
 			});
 			filter.removeObserver(this);

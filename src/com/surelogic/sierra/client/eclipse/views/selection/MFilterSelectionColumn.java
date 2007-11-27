@@ -115,6 +115,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		f_column = getCascadingList()
 				.addColumnAfter(c, f_addAfterColumn, false);
 		f_filter.addObserver(this);
+		initOfNextColumnComplete();
 		/*
 		 * Add the radio menu after this item.
 		 */

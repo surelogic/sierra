@@ -69,6 +69,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	@Override
+	void initOfNextColumnComplete() {
+		getCascadingList().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				MListOfFindingsColumn.super.initOfNextColumnComplete();
+			}
+		});
+	}
+
+	@Override
 	void dispose() {
 		super.dispose();
 		getSelection().setShowing(false);
@@ -100,6 +109,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 							refreshDisplay();
 						} catch (Exception e) {
 							return SLStatus.createErrorStatus(e);
+						} finally {
+							initOfNextColumnComplete();
 						}
 						return Status.OK_STATUS;
 					}

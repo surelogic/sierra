@@ -35,6 +35,19 @@ public abstract class MColumn {
 	abstract void init();
 
 	/**
+	 * Indicates that a initialization of column after this one has completed
+	 * initialization. Subclasses may override but must call this method.
+	 * 
+	 * <pre>
+	 *   super.initOfNextColumnComplete();
+	 * </pre>
+	 */
+	void initOfNextColumnComplete() {
+		if (hasPreviousColumn())
+			getPreviousColumn().initOfNextColumnComplete();
+	}
+
+	/**
 	 * Subclasses may override, however they must invoke this method with code
 	 * like
 	 * 
