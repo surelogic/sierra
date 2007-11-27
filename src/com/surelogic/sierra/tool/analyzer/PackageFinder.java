@@ -1,6 +1,11 @@
 /**
  * This is a simple class that finds what package a java file is part of given a File object.
- * This also serves as a test class for the unit test
+ * This also serves as a test class for the unit test.
+ * 
+ * The class reads in the file, then uses a regular expression and incremental search to find any lines that match the 
+ * package declaration syntax. Using that and the file's location on the filesystem, the class checks one against the other
+ * returning the package string that is also contained in the file's path. If it doesn't find one that matches or an error
+ * occurs, it returns the default package string as defined in {@link SierraToolConstants}.
  * 
  * Testing:
  * package com.wrong.company.name.package;
