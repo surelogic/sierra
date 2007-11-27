@@ -132,6 +132,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 			getCascadingList().emptyFrom(f_column);
 	}
 
+	/**
+	 * Must be called from the UI thread.
+	 */
 	private void updateReport() {
 		if (f_panel.isDisposed())
 			return;
