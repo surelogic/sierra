@@ -14,8 +14,10 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 
+import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifact;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ArtifactType;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifacts;
@@ -93,7 +95,7 @@ public class Axis2Client implements SierraService {
 			options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(
 					TIMEOUT));
 		} catch (AxisFault e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		}
 	}
 
@@ -105,7 +107,7 @@ public class Axis2Client implements SierraService {
 					.commitAuditTrails(new CommitAuditTrailRequestConverter()
 							.convert(audits)));
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
 			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
 					e);
@@ -120,7 +122,7 @@ public class Axis2Client implements SierraService {
 					.getAuditTrails(new GetAuditTrailsConverter()
 							.convert(request)));
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
 			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
 					e);
@@ -140,7 +142,7 @@ public class Axis2Client implements SierraService {
 			}
 			return q;
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		}
 	}
 
@@ -151,7 +153,7 @@ public class Axis2Client implements SierraService {
 			return new SettingsReplyConverter().convert(stub
 					.getSettings(new GetSettingsConverter().convert(request)));
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
 			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
 					e);
@@ -166,7 +168,7 @@ public class Axis2Client implements SierraService {
 			reply.setUid(uid.getGetUidResponse().getUid());
 			return reply;
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		}
 	}
 
@@ -178,7 +180,7 @@ public class Axis2Client implements SierraService {
 					.mergeAuditTrails(new MergeAuditTrailsConverter()
 							.convert(seed)));
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
 		} catch (com.surelogic.sierra.tool.message.axis.ServerMismatchException e) {
 			throw new com.surelogic.sierra.tool.message.ServerMismatchException(
 					e);
@@ -190,7 +192,26 @@ public class Axis2Client implements SierraService {
 		try {
 			stub.publishRun(new ScanConverter().convert(scan));
 		} catch (RemoteException e) {
-			throw new ClientException(e);
+			throw wrapException(e);
+		}
+	}
+
+	/**
+	 * Convert the client exception into an exception that can be interpreted by
+	 * the client.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	private static SierraServiceClientException wrapException(Throwable t) {
+		if (!(t instanceof AxisFault)) {
+			return new SierraServiceClientException(t);
+		}
+		final AxisFault fault = (AxisFault) t;
+		if (fault.getMessage().equals("Transport error: 401 Error: Unauthorized")) {
+			return new InvalidLoginException(fault);
+		} else {
+			return new SierraServiceClientException(fault);
 		}
 	}
 
@@ -740,31 +761,6 @@ public class Axis2Client implements SierraService {
 			return file.getPath();
 		}
 		return null;
-	}
-
-	public static class ClientException extends RuntimeException {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1505452896619669024L;
-
-		public ClientException() {
-			super();
-		}
-
-		public ClientException(String message, Throwable cause) {
-			super(message, cause);
-		}
-
-		public ClientException(String message) {
-			super(message);
-		}
-
-		public ClientException(Throwable cause) {
-			super(cause);
-		}
-
 	}
 
 }
