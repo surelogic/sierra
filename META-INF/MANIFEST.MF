@@ -25,3 +25,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  com.surelogic.sierra.message
 Eclipse-LazyStart: true
+Bundle-ClassPath: lib/commons-lang-2.3.jar,
+ .

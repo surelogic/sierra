@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -253,6 +254,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 			c.pack();
 		}
 		f_table.setRedraw(true);
+		/*
+		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
+		 * with lines through the row text. Aaron Silinskas found that a second
+		 * call seemed to fix the problem (with a bit of flicker).
+		 */
+		if (SystemUtils.IS_OS_WINDOWS_XP)
+			f_table.setRedraw(true);
 	}
 
 	private void setupMenu(final Menu menu) {
