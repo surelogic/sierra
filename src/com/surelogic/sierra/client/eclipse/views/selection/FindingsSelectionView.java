@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -73,20 +74,21 @@ public final class FindingsSelectionView extends ViewPart {
 		layout.verticalSpacing = 0;
 		selectionPersistencePanel.setLayout(layout);
 
-		final ToolBar searchBar = new ToolBar(
-				selectionPersistencePanel, SWT.HORIZONTAL | SWT.FLAT);
-		searchBar.setLayoutData(new GridData(SWT.DEFAULT,
-				SWT.CENTER, false, false));
-		final ToolItem manageSearchesItem = new ToolItem(
-				searchBar, SWT.PUSH);
-		manageSearchesItem.setImage(SLImages
+		final ToolBar searchBar = new ToolBar(selectionPersistencePanel,
+				SWT.HORIZONTAL | SWT.FLAT);
+		searchBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false,
+				false));
+		final ToolItem selectSearchItem = new ToolItem(searchBar, SWT.PUSH);
+		selectSearchItem.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		manageSearchesItem.setToolTipText("Manage Saved Searches");
-		final ToolItem saveSearchAsItem = new ToolItem(
-				searchBar, SWT.PUSH);
-		saveSearchAsItem.setImage(SLImages
-				.getImage(SLImages.IMG_SAVEAS_EDIT));
+		selectSearchItem.setToolTipText("Select Search");
+		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
+		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
 		saveSearchAsItem.setToolTipText("Save Search As");
+		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
+		deleteSearchItem.setImage(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+		deleteSearchItem.setToolTipText("Delete Search");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
 		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
@@ -94,7 +96,8 @@ public final class FindingsSelectionView extends ViewPart {
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				manageSearchesItem, saveSearchAsItem, savedSelections);
+				selectSearchItem, deleteSearchItem, saveSearchAsItem,
+				savedSelections);
 		f_mediator.init();
 	}
 

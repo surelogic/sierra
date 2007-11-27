@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class NameSavedSearchDialog extends Dialog {
+public final class SaveSearchAsDialog extends Dialog {
 
 	private String f_name = null;
 
@@ -22,14 +22,14 @@ public final class NameSavedSearchDialog extends Dialog {
 		return f_name;
 	}
 
-	public NameSavedSearchDialog(Shell parentShell) {
+	public SaveSearchAsDialog(Shell parentShell) {
 		super(parentShell);
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+		newShell.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
 		newShell.setText("Save Search As");
 	}
 

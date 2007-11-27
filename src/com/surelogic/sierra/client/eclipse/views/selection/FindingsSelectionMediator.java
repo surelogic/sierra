@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSearchDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.SaveSearchAsDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -30,7 +30,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final CascadingList f_cascadingList;
 	private final ToolItem f_clearSelectionItem;
 	private final Link f_breadcrumbs;
-	private final ToolItem f_manageSearchesItem;
+	private final ToolItem f_selectSearchItem;
+	private final ToolItem f_deleteSearchItem;
 	private final ToolItem f_saveSearchesAsItem;
 	private final Link f_savedSelections;
 
@@ -43,15 +44,16 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Control findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
-			ToolItem manageSearchesItem, ToolItem saveSearchesAsItem,
-			Link savedSelections) {
+			ToolItem selectSearchItem, ToolItem deleteSearchItem,
+			ToolItem saveSearchesAsItem, Link savedSelections) {
 		f_pages = pages;
 		f_noFindingsPage = noFindingsPage;
 		f_findingsPage = findingsPage;
 		f_cascadingList = cascadingList;
 		f_clearSelectionItem = clearSelectionItem;
 		f_breadcrumbs = breadcrumbs;
-		f_manageSearchesItem = manageSearchesItem;
+		f_selectSearchItem = selectSearchItem;
+		f_deleteSearchItem = deleteSearchItem;
 		f_saveSearchesAsItem = saveSearchesAsItem;
 		f_savedSelections = savedSelections;
 	}
@@ -73,7 +75,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
-				NameSavedSearchDialog dialog = new NameSavedSearchDialog(
+				SaveSearchAsDialog dialog = new SaveSearchAsDialog(
 						f_cascadingList.getShell());
 				if (Window.CANCEL != dialog.open()) {
 					/*
@@ -97,7 +99,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					/*
 					 * Save the current selection.
 					 */
-					NameSavedSearchDialog dialog = new NameSavedSearchDialog(
+					SaveSearchAsDialog dialog = new SaveSearchAsDialog(
 							f_cascadingList.getShell());
 					if (Window.CANCEL != dialog.open()) {
 						/*
