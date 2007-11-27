@@ -83,6 +83,8 @@ public class PackageFinder {
 		} catch (IOException e) {
 			// Handle exception
 			e.printStackTrace();
+			//Set to the default package
+			pkg = SierraToolConstants.DEFAULT_PACKAGE;
 		} finally {
 			if (in != null) {
 				try {
