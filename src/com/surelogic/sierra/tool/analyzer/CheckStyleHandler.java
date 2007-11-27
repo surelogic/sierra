@@ -70,7 +70,7 @@ public class CheckStyleHandler extends DefaultHandler {
 						file.getName().length() - 5);
 				String pakkage = PackageFinder.getInstance().getPackage(file);
 
-				if (pakkage.equals(SierraToolConstants.DEFAULT_PACKAGE)) {
+				if (SierraToolConstants.DEFAULT_PACKAGE.equals(pakkage)) {
 					f_packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 				} else {
 					f_packageName = pakkage;
