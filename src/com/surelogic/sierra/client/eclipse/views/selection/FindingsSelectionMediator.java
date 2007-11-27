@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSelectionDialong;
+import com.surelogic.sierra.client.eclipse.dialogs.NameSavedSelectionDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -30,6 +30,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final CascadingList f_cascadingList;
 	private final ToolItem f_clearSelectionItem;
 	private final Link f_breadcrumbs;
+	private final ToolItem f_manageSearchesItem;
+	private final ToolItem f_saveSearchesAsItem;
 	private final Link f_savedSelections;
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
@@ -40,13 +42,17 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Control findingsPage, CascadingList cascadingList,
-			ToolItem clearSelectionItem, Link breadcrumbs, Link savedSelections) {
+			ToolItem clearSelectionItem, Link breadcrumbs,
+			ToolItem manageSearchesItem, ToolItem saveSearchesAsItem,
+			Link savedSelections) {
 		f_pages = pages;
 		f_noFindingsPage = noFindingsPage;
 		f_findingsPage = findingsPage;
 		f_cascadingList = cascadingList;
 		f_clearSelectionItem = clearSelectionItem;
 		f_breadcrumbs = breadcrumbs;
+		f_manageSearchesItem = manageSearchesItem;
+		f_saveSearchesAsItem = saveSearchesAsItem;
 		f_savedSelections = savedSelections;
 	}
 
@@ -64,6 +70,26 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
+		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				NameSavedSelectionDialog dialog = new NameSavedSelectionDialog(
+						f_cascadingList.getShell());
+				if (Window.CANCEL != dialog.open()) {
+					/*
+					 * Save the selection
+					 */
+					String name = dialog.getName();
+					if (name == null)
+						return;
+					name = name.trim();
+					if ("".equals(name))
+						return;
+					f_manager.saveSelection(name, f_workingSelection);
+				}
+			}
+		});
+
 		f_savedSelections.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final String selectionName = event.text;
@@ -71,7 +97,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					/*
 					 * Save the current selection.
 					 */
-					NameSavedSelectionDialong dialog = new NameSavedSelectionDialong(
+					NameSavedSelectionDialog dialog = new NameSavedSelectionDialog(
 							f_cascadingList.getShell());
 					if (Window.CANCEL != dialog.open()) {
 						/*
@@ -232,16 +258,11 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		StringBuilder b = new StringBuilder();
 		final boolean saveable = f_workingSelection != null
 				&& f_workingSelection.getFilterCount() > 0;
+		f_saveSearchesAsItem.setEnabled(saveable);
 		final boolean hasSavedSelections = !f_manager.isEmpty();
 
 		if (hasSavedSelections) {
-			if (saveable) {
-				b.append("<a href=\"");
-				b.append(SAVE_LINK);
-				b.append("\">Save</a>d Selections:");
-			} else {
-				b.append("Saved Selections:");
-			}
+			b.append("Selections:");
 
 			for (String link : f_manager.getSavedSelectionNames()) {
 				b.append(" <a href=\"");
@@ -251,13 +272,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				b.append("</a>");
 			}
 		} else {
-			if (saveable) {
-				b.append("<a href=\"");
-				b.append(SAVE_LINK);
-				b.append("\">Save Selection</a>");
-			} else {
-				b.append("(no saved selections)");
-			}
+			b.append("(no saved selections)");
 		}
 		f_savedSelections.setText(b.toString());
 	}

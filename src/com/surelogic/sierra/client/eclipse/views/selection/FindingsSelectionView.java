@@ -62,13 +62,39 @@ public final class FindingsSelectionView extends ViewPart {
 		cascadingList
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		final Link savedSelections = new Link(findingsPage, SWT.WRAP);
-		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true,
-				false));
+		final Composite selectionPersistencePanel = new Composite(findingsPage,
+				SWT.NONE);
+		selectionPersistencePanel.setLayoutData(new GridData(SWT.FILL,
+				SWT.DEFAULT, true, false));
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		layout.verticalSpacing = 0;
+		selectionPersistencePanel.setLayout(layout);
+
+		final ToolBar searchBar = new ToolBar(
+				selectionPersistencePanel, SWT.HORIZONTAL | SWT.FLAT);
+		searchBar.setLayoutData(new GridData(SWT.DEFAULT,
+				SWT.CENTER, false, false));
+		final ToolItem manageSearchesItem = new ToolItem(
+				searchBar, SWT.PUSH);
+		manageSearchesItem.setImage(SLImages
+				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+		manageSearchesItem.setToolTipText("Manage Saved Searches...");
+		final ToolItem saveSearchAsItem = new ToolItem(
+				searchBar, SWT.PUSH);
+		saveSearchAsItem.setImage(SLImages
+				.getImage(SLImages.IMG_SAVEAS_EDIT));
+		saveSearchAsItem.setToolTipText("Save Search As...");
+		final Link savedSelections = new Link(selectionPersistencePanel,
+				SWT.WRAP);
+		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				true));
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				savedSelections);
+				manageSearchesItem, saveSearchAsItem, savedSelections);
 		f_mediator.init();
 	}
 

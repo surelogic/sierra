@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class NameSavedSelectionDialong extends Dialog {
+public final class NameSavedSelectionDialog extends Dialog {
 
 	private String f_name = null;
 
@@ -22,7 +22,7 @@ public final class NameSavedSelectionDialong extends Dialog {
 		return f_name;
 	}
 
-	public NameSavedSelectionDialong(Shell parentShell) {
+	public NameSavedSelectionDialog(Shell parentShell) {
 		super(parentShell);
 	}
 
@@ -30,7 +30,7 @@ public final class NameSavedSelectionDialong extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		newShell.setText("Name Selection");
+		newShell.setText("Save Search As");
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public final class NameSavedSelectionDialong extends Dialog {
 		final Label directions = new Label(panel, SWT.NONE);
 		directions.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false, 2, 1));
-		directions.setText("Enter a name for the current selection");
+		directions.setText("Enter a name for the current search");
 
 		final Label label = new Label(panel, SWT.NONE);
 		label.setText("Name:");
