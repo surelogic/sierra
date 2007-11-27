@@ -103,17 +103,34 @@ public final class DeleteProjectDataJob {
 				+ (multiDelete ? "Multiple Project" : "Project")
 				+ (disconnect ? " Disconnect" : " Sierra Data Deletion");
 		final StringBuilder b = new StringBuilder();
-		b.append("Disconnecting from the Sierra Team ");
-		b.append("Server will automatically delete ");
-		b.append("data in your Eclipse workspace about ");
-		if (multiDelete) {
-			b.append("these ").append(projectNames.size()).append(" projects,");
+		if (disconnect) {
+			b.append("Disconnecting from the Sierra Team ");
+			b.append("Server will automatically delete ");
+			b.append("data in your Eclipse workspace about ");
+			if (multiDelete) {
+				b.append("these ").append(projectNames.size()).append(
+						" projects,");
+			} else {
+				b.append("the project '").append(projectNames.get(0)).append(
+						"',");
+			}
+			b.append(" but will not change or delete any information that ");
+			b.append("you have already published to the server.\n\n");
+			b.append("Are you should that you want to disconnect?");
 		} else {
-			b.append("the project '").append(projectNames.get(0)).append("',");
+			b.append("Deleting the data in your Eclipse workspace about ");
+			if (multiDelete) {
+				b.append("these ").append(projectNames.size()).append(
+						" projects,");
+			} else {
+				b.append("the project '").append(projectNames.get(0)).append(
+						"',");
+			}
+			b.append(" will not change or delete any information that ");
+			b.append("you have already published to the server.\n\n");
+			b.append("Are you should that you want to delete this ");
+			b.append("data from your Eclipse workspace?");
 		}
-		b.append(" but will not change or delete any information that ");
-		b.append("you have already published to the server.\n\n");
-		b.append("Are you should that you want to disconnect?");
 		if (MessageDialog.openConfirm(shell, title, b.toString())) {
 			/*
 			 * Because this job can be run from a modal dialog we need to manage
