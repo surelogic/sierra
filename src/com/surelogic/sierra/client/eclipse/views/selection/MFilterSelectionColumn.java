@@ -116,12 +116,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 				.addColumnAfter(c, f_addAfterColumn, false);
 		f_filter.addObserver(this);
 		initOfNextColumnComplete();
-		/*
-		 * Add the radio menu after this item.
-		 */
-		final MRadioMenuColumn rmc = new MRadioMenuColumn(getCascadingList(),
-				getSelection(), this);
-		rmc.init();
 	}
 
 	@Override

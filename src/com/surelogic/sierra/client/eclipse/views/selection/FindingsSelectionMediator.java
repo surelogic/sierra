@@ -199,38 +199,32 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		reset();
 		f_workingSelection = newSelection;
 		f_workingSelection.refreshFilters();
-		boolean first = true;
-		MColumn prev = f_first;
-		MRadioMenuColumn menu;
+		MRadioMenuColumn prevMenu = (MRadioMenuColumn) f_first;
 		int afterCol = 0;
 		for (Filter filter : f_workingSelection.getFilters()) {
-			if (first) {
-				first = false;
-				/*
-				 * Set the first menu to the right selection.
-				 */
-				menu = (MRadioMenuColumn) f_first;
-			} else {
-				/*
-				 * Create a menu
-				 */
-				menu = new MRadioMenuColumn(f_cascadingList,
-						f_workingSelection, prev);
-				menu.init();
-				afterCol++;
-			}
-			menu.setSelection(filter.getFactory());
-			prev = menu;
-
+			/*
+			 * Set the right choice on the previous menu
+			 */
+			prevMenu.setSelection(filter.getFactory());
+			/*
+			 * Create a filter selection
+			 */
 			MFilterSelectionColumn fCol = new MFilterSelectionColumn(
-					f_cascadingList, f_workingSelection, prev, afterCol++,
+					f_cascadingList, f_workingSelection, prevMenu, afterCol++,
 					filter);
 			fCol.init();
-			prev = fCol;
+			/*
+			 * Create a menu
+			 */
+			prevMenu = new MRadioMenuColumn(f_cascadingList,
+					f_workingSelection, fCol);
+			prevMenu.init();
+			afterCol++;
 		}
 		if (f_workingSelection.showingSelection()) {
+			prevMenu.setSelection("Show");
 			MListOfFindingsColumn list = new MListOfFindingsColumn(
-					f_cascadingList, f_workingSelection, prev, afterCol);
+					f_cascadingList, f_workingSelection, prevMenu, afterCol);
 			list.init();
 		}
 	}

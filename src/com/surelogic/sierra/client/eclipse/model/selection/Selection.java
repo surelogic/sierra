@@ -49,6 +49,15 @@ public final class Selection extends AbstractDatabaseObserver {
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
+	/**
+	 * Gets the immutable set of all possible filters.
+	 * 
+	 * @return the immutable set of all possible filters.
+	 */
+	public static Set<ISelectionFilterFactory> getAllFilters() {
+		return f_allFilters;
+	}
+
 	Selection(SelectionManager manager) {
 		assert manager != null;
 		f_manager = manager;

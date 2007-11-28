@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -42,8 +45,7 @@ public final class MRadioMenuColumn extends MColumn implements
 					f_menu.addChoice("Show", null);
 					f_menu.addSeparator();
 				}
-				for (ISelectionFilterFactory f : getSelection()
-						.getAvailableFilters()) {
+				for (ISelectionFilterFactory f : getFilterChoicesForThisMenu()) {
 					f_menu.addChoice(f, null);
 				}
 				f_menu.addObserver(MRadioMenuColumn.this);
@@ -153,6 +155,12 @@ public final class MRadioMenuColumn extends MColumn implements
 							getCascadingList(), getSelection(),
 							MRadioMenuColumn.this, f_waitMsgColumn, filter);
 					fsc.init();
+					/*
+					 * Add the radio menu after this item.
+					 */
+					final MRadioMenuColumn rmc = new MRadioMenuColumn(
+							getCascadingList(), getSelection(), fsc);
+					rmc.init();
 				}
 			});
 			filter.removeObserver(this);
@@ -180,5 +188,20 @@ public final class MRadioMenuColumn extends MColumn implements
 		} else {
 			return null;
 		}
+	}
+
+	private List<ISelectionFilterFactory> getFilterChoicesForThisMenu() {
+		List<ISelectionFilterFactory> result = new ArrayList<ISelectionFilterFactory>(
+				Selection.getAllFilters());
+		MColumn column = this;
+		do {
+			column = column.getPreviousColumn();
+			Filter f = getFilterFromColumn(column);
+			if (f != null) {
+				result.remove(f.getFactory());
+			}
+		} while (column != null);
+		Collections.sort(result);
+		return result;
 	}
 }
