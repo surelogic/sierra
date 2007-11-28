@@ -15,7 +15,7 @@ public interface ISelectionFilterFactory extends
 	 *            first filter within the selection).
 	 * @return the new filter.
 	 */
-	Filter construct(final Selection selection, final Filter previous);
+	Filter construct(final FindingSearch selection, final Filter previous);
 
 	/**
 	 * Gets the user interface label for this filter.

@@ -15,12 +15,13 @@ import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.OpenSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.SaveSearchAsDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
-import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
@@ -32,21 +33,21 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final CascadingList f_cascadingList;
 	private final ToolItem f_clearSelectionItem;
 	private final Link f_breadcrumbs;
-	private final ToolItem f_selectSearchItem;
+	private final ToolItem f_openSearchItem;
 	private final ToolItem f_deleteSearchItem;
 	private final ToolItem f_saveSearchesAsItem;
 	private final Link f_savedSelections;
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
-	private Selection f_workingSelection = null;
+	private FindingSearch f_workingSelection = null;
 
 	private MColumn f_first = null;
 
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Control findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
-			ToolItem selectSearchItem, ToolItem saveSearchesAsItem,
+			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
 		f_pages = pages;
 		f_noFindingsPage = noFindingsPage;
@@ -54,7 +55,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_cascadingList = cascadingList;
 		f_clearSelectionItem = clearSelectionItem;
 		f_breadcrumbs = breadcrumbs;
-		f_selectSearchItem = selectSearchItem;
+		f_openSearchItem = openSearchItem;
 		f_saveSearchesAsItem = saveSearchesAsItem;
 		f_deleteSearchItem = deleteSearchItem;
 		f_savedSelections = savedSelections;
@@ -74,12 +75,19 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
-		f_selectSearchItem.addListener(SWT.Selection, new Listener() {
+		f_openSearchItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				// DeleteSearchDialog dialog = new DeleteSearchDialog(
-				// f_cascadingList.getShell());
-				// System.out.println("delete search");
-				// dialog.open();
+				OpenSearchDialog dialog = new OpenSearchDialog(f_cascadingList
+						.getShell());
+				if (Window.CANCEL != dialog.open()) {
+					/*
+					 * Save the selection
+					 */
+					FindingSearch newSelection = dialog.getSelection();
+					if (newSelection == null)
+						return;
+					loadSelection(newSelection);
+				}
 			}
 		});
 
@@ -116,7 +124,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				/*
 				 * Load the current selection.
 				 */
-				final Selection newSelection = f_manager
+				final FindingSearch newSelection = f_manager
 						.getSavedSelection(selectionName);
 				if (newSelection == null) {
 					SLLogger.getLogger().log(Level.SEVERE,
@@ -187,7 +195,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first.init();
 	}
 
-	private void loadSelection(final Selection newSelection) {
+	private void loadSelection(final FindingSearch newSelection) {
 		reset();
 		f_workingSelection = newSelection;
 		f_workingSelection.refreshFilters();
@@ -274,7 +282,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				&& f_workingSelection.getFilterCount() > 0;
 		f_saveSearchesAsItem.setEnabled(saveable);
 		final boolean hasSavedSelections = !f_manager.isEmpty();
-		f_selectSearchItem.setEnabled(hasSavedSelections);
+		f_openSearchItem.setEnabled(hasSavedSelections);
 		f_deleteSearchItem.setEnabled(hasSavedSelections);
 
 		if (hasSavedSelections) {
@@ -302,7 +310,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			return false;
 	}
 
-	public void selectionChanged(Selection selecton) {
+	public void selectionChanged(FindingSearch selecton) {
 		/*
 		 * Nothing to do.
 		 */

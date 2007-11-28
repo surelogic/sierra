@@ -35,14 +35,14 @@ public abstract class Filter {
 	 */
 	public abstract ISelectionFilterFactory getFactory();
 
-	private final Selection f_selection;
+	private final FindingSearch f_selection;
 
 	/**
 	 * Gets the selection this filter exists within.
 	 * 
 	 * @return a selection.
 	 */
-	public Selection getSelection() {
+	public FindingSearch getSelection() {
 		/*
 		 * Not mutable so we don't need to hold a lock on this.
 		 */
@@ -74,7 +74,7 @@ public abstract class Filter {
 	 */
 	protected final Filter f_previous;
 
-	Filter(final Selection selection, final Filter previous) {
+	Filter(final FindingSearch selection, final Filter previous) {
 		assert selection != null;
 		f_selection = selection;
 		f_previous = previous;
@@ -98,7 +98,7 @@ public abstract class Filter {
 	 *            the (new) filter before the new filter.
 	 * @return a clone of this filter without its data.
 	 */
-	Filter copyNoQuery(Selection selection, Filter previous) {
+	Filter copyNoQuery(FindingSearch selection, Filter previous) {
 		// construct a filter of the right type
 		final Filter result = getFactory().construct(selection, previous);
 		result.f_porousValues.addAll(f_porousValues);

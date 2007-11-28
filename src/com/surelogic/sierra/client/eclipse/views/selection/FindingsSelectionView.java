@@ -77,10 +77,10 @@ public final class FindingsSelectionView extends ViewPart {
 				SWT.HORIZONTAL | SWT.FLAT);
 		searchBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false,
 				false));
-		final ToolItem selectSearchItem = new ToolItem(searchBar, SWT.PUSH);
-		selectSearchItem.setImage(SLImages
+		final ToolItem openSearchItem = new ToolItem(searchBar, SWT.PUSH);
+		openSearchItem.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		selectSearchItem.setToolTipText("Select Search");
+		openSearchItem.setToolTipText("Open Search");
 		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
 		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
 		saveSearchAsItem.setToolTipText("Save Search As");
@@ -94,7 +94,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				selectSearchItem, saveSearchAsItem, deleteSearchItem,
+				openSearchItem, saveSearchAsItem, deleteSearchItem,
 				savedSelections);
 		f_mediator.init();
 	}

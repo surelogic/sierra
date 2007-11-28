@@ -19,7 +19,7 @@ import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
-import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
 
 public final class MFilterSelectionColumn extends MColumn implements
 		IFilterObserver, FilterSelectionReportLine.ISelectionChangedObserver {
@@ -48,7 +48,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	private boolean f_sortByCount = false;
 
-	MFilterSelectionColumn(CascadingList cascadingList, Selection selection,
+	MFilterSelectionColumn(CascadingList cascadingList, FindingSearch selection,
 			MColumn previousColumn, int addAfterColumn, Filter filter) {
 		super(cascadingList, selection, previousColumn);
 		f_addAfterColumn = addAfterColumn;

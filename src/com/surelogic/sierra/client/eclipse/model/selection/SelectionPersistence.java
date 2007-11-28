@@ -36,7 +36,7 @@ public final class SelectionPersistence {
 			PrintWriter pw = new PrintWriter(new FileWriter(saveFile));
 			outputXMLHeader(pw);
 			for (String name : manager.getSavedSelectionNames()) {
-				Selection s = manager.getSavedSelection(name);
+				FindingSearch s = manager.getSavedSelection(name);
 				if (s == null)
 					throw new IllegalStateException(
 							"null selection returned for \"" + name + "\"");
@@ -61,7 +61,7 @@ public final class SelectionPersistence {
 		pw.println(b.toString());
 	}
 
-	private static void outputSelection(PrintWriter pw, String name, Selection s) {
+	private static void outputSelection(PrintWriter pw, String name, FindingSearch s) {
 		StringBuilder b = new StringBuilder();
 		b.append("  <").append(SELECTION);
 		Entities.addAttribute(NAME, name, b);
@@ -137,7 +137,7 @@ public final class SelectionPersistence {
 			f_manager = manager;
 		}
 
-		private Selection f_workingSelection = null;
+		private FindingSearch f_workingSelection = null;
 		private String f_selectionName = null;
 		private Filter f_filter = null;
 

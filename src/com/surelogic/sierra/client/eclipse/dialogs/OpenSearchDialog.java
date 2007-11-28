@@ -19,15 +19,29 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
-public final class DeleteSearchDialog extends Dialog {
+public final class OpenSearchDialog extends Dialog {
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
 	private Mediator f_mediator = null;
 
-	public DeleteSearchDialog(Shell parentShell) {
+	private FindingSearch f_result = null;
+
+	/**
+	 * Returns the selection chosen by the user, or <code>null</code> if
+	 * nothing was selected.
+	 * 
+	 * @return the selection chosen by the user, or <code>null</code> if
+	 *         nothing was selected.
+	 */
+	public FindingSearch getSelection() {
+		return f_result; // my be null
+	}
+
+	public OpenSearchDialog(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 	}
@@ -48,7 +62,7 @@ public final class DeleteSearchDialog extends Dialog {
 		final Label l = new Label(panel, SWT.WRAP);
 		GridData data = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
 		l.setLayoutData(data);
-		l.setText("Select one or more searches to delete");
+		l.setText("Select a search to open");
 
 		final Group projectGroup = new Group(panel, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -57,8 +71,7 @@ public final class DeleteSearchDialog extends Dialog {
 		projectGroup.setText("Saved Searches");
 		projectGroup.setLayout(new FillLayout());
 
-		final Table projectList = new Table(projectGroup, SWT.MULTI
-				| SWT.FULL_SELECTION);
+		final Table projectList = new Table(projectGroup, SWT.FULL_SELECTION);
 
 		for (String projectName : f_manager.getSavedSelectionNames()) {
 			TableItem item = new TableItem(projectList, SWT.NONE);
@@ -75,7 +88,7 @@ public final class DeleteSearchDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Delete Search");
+		newShell.setText("Open Search");
 		newShell.setImage(SLImages
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 	}
@@ -113,10 +126,9 @@ public final class DeleteSearchDialog extends Dialog {
 		}
 
 		void okPressed() {
-			for (TableItem item : f_searchTable.getSelection()) {
-				if (!item.getChecked()) {
-					f_manager.removeSavedSelection(item.getText());
-				}
+			if (f_searchTable.getSelectionCount() > 0) {
+				f_result = f_manager.getSavedSelection(f_searchTable
+						.getSelection()[0].getText());
 			}
 		}
 	}

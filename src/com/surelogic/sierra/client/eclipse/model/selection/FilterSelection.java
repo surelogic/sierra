@@ -5,7 +5,7 @@ import java.util.Arrays;
 public final class FilterSelection extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		public Filter construct(FindingSearch selection, Filter previous) {
 			return new FilterSelection(selection, previous);
 		}
 
@@ -14,7 +14,7 @@ public final class FilterSelection extends Filter {
 		}
 	};
 
-	FilterSelection(Selection selection, Filter previous) {
+	FilterSelection(FindingSearch selection, Filter previous) {
 		super(selection, previous);
 	}
 

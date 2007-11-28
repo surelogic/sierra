@@ -1,7 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
 
 /**
  * Abstract base class for all mediator columns managed within the
@@ -11,9 +11,9 @@ public abstract class MColumn {
 
 	private final CascadingList f_cascadingList;
 
-	private final Selection f_selection;
+	private final FindingSearch f_selection;
 
-	MColumn(CascadingList cascadingList, Selection selection,
+	MColumn(CascadingList cascadingList, FindingSearch selection,
 			MColumn previousColumn) {
 		assert cascadingList != null;
 		f_cascadingList = cascadingList;
@@ -28,7 +28,7 @@ public abstract class MColumn {
 		return f_cascadingList;
 	}
 
-	Selection getSelection() {
+	FindingSearch getSelection() {
 		return f_selection;
 	}
 

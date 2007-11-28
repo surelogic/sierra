@@ -41,7 +41,7 @@ import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
-import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
@@ -55,7 +55,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	private Table f_table = null;
 
-	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
+	MListOfFindingsColumn(CascadingList cascadingList, FindingSearch selection,
 			MColumn previousColumn, int addAfterColumn) {
 		super(cascadingList, selection, previousColumn);
 		f_addAfterColumn = addAfterColumn;
@@ -86,11 +86,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 			getCascadingList().emptyFrom(f_column);
 	}
 
-	public void selectionChanged(Selection selecton) {
+	public void selectionChanged(FindingSearch selecton) {
 		changed();
 	}
 
-	public void selectionStructureChanged(Selection selection) {
+	public void selectionStructureChanged(FindingSearch selection) {
 		// nothing to do
 	}
 
