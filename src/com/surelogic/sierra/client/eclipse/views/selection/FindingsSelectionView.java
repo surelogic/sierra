@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -86,8 +85,7 @@ public final class FindingsSelectionView extends ViewPart {
 		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
 		saveSearchAsItem.setToolTipText("Save Search As");
 		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
-		deleteSearchItem.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+		deleteSearchItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
 		deleteSearchItem.setToolTipText("Delete Search");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
@@ -96,7 +94,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				selectSearchItem, deleteSearchItem, saveSearchAsItem,
+				selectSearchItem, saveSearchAsItem, deleteSearchItem,
 				savedSelections);
 		f_mediator.init();
 	}

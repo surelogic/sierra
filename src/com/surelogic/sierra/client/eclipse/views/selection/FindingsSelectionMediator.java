@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -11,6 +13,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.SaveSearchAsDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -21,8 +25,6 @@ import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
 		CascadingList.ICascadingListObserver, ISelectionManagerObserver {
-
-	private static final String SAVE_LINK = "save";
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -44,8 +46,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Control findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
-			ToolItem selectSearchItem, ToolItem deleteSearchItem,
-			ToolItem saveSearchesAsItem, Link savedSelections) {
+			ToolItem selectSearchItem, ToolItem saveSearchesAsItem,
+			ToolItem deleteSearchItem, Link savedSelections) {
 		f_pages = pages;
 		f_noFindingsPage = noFindingsPage;
 		f_findingsPage = findingsPage;
@@ -53,8 +55,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_clearSelectionItem = clearSelectionItem;
 		f_breadcrumbs = breadcrumbs;
 		f_selectSearchItem = selectSearchItem;
-		f_deleteSearchItem = deleteSearchItem;
 		f_saveSearchesAsItem = saveSearchesAsItem;
+		f_deleteSearchItem = deleteSearchItem;
 		f_savedSelections = savedSelections;
 	}
 
@@ -72,8 +74,16 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
-		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
+		f_selectSearchItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				// DeleteSearchDialog dialog = new DeleteSearchDialog(
+				// f_cascadingList.getShell());
+				// System.out.println("delete search");
+				// dialog.open();
+			}
+		});
 
+		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				SaveSearchAsDialog dialog = new SaveSearchAsDialog(
 						f_cascadingList.getShell());
@@ -92,75 +102,37 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
+		f_deleteSearchItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				DeleteSearchDialog dialog = new DeleteSearchDialog(
+						f_cascadingList.getShell());
+				dialog.open();
+			}
+		});
+
 		f_savedSelections.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final String selectionName = event.text;
-				if (SAVE_LINK.equals(selectionName)) {
-					/*
-					 * Save the current selection.
-					 */
-					SaveSearchAsDialog dialog = new SaveSearchAsDialog(
-							f_cascadingList.getShell());
-					if (Window.CANCEL != dialog.open()) {
-						/*
-						 * Save the selection
-						 */
-						String name = dialog.getName();
-						if (name == null)
-							return;
-						name = name.trim();
-						if ("".equals(name))
-							return;
-						f_manager.saveSelection(name, f_workingSelection);
-					}
-				} else {
-					/*
-					 * Load the current selection.
-					 */
-					final Selection selection = f_manager
-							.getSavedSelection(selectionName);
-					if (selection == null || selection.getFilterCount() < 1)
-						return;
-
-					reset();
-					f_workingSelection = selection;
-					f_workingSelection.refreshFilters();
-					boolean first = true;
-					MColumn prev = f_first;
-					MRadioMenuColumn menu;
-					int afterCol = 0;
-					for (Filter filter : f_workingSelection.getFilters()) {
-						if (first) {
-							first = false;
-							/*
-							 * Set the first menu to the right selection.
-							 */
-							menu = (MRadioMenuColumn) f_first;
-						} else {
-							/*
-							 * Create a menu
-							 */
-							menu = new MRadioMenuColumn(f_cascadingList,
-									f_workingSelection, prev);
-							menu.init();
-							afterCol++;
-						}
-						menu.setSelection(filter.getFactory());
-						prev = menu;
-
-						MFilterSelectionColumn fCol = new MFilterSelectionColumn(
-								f_cascadingList, f_workingSelection, prev,
-								afterCol++, filter);
-						fCol.init();
-						prev = fCol;
-					}
-					if (f_workingSelection.showingSelection()) {
-						MListOfFindingsColumn list = new MListOfFindingsColumn(
-								f_cascadingList, f_workingSelection, prev,
-								afterCol);
-						list.init();
-					}
+				/*
+				 * Load the current selection.
+				 */
+				final Selection newSelection = f_manager
+						.getSavedSelection(selectionName);
+				if (newSelection == null) {
+					SLLogger.getLogger().log(Level.SEVERE,
+							"Search '" + selectionName + "' is unknown (bug).",
+							new Exception());
+					return;
 				}
+				if (newSelection.getFilterCount() < 1) {
+					SLLogger.getLogger().log(
+							Level.SEVERE,
+							"Search '" + selectionName
+									+ "' defines no filters (bug).",
+							new Exception());
+					return;
+				}
+				loadSelection(newSelection);
 			}
 		});
 
@@ -215,6 +187,46 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first.init();
 	}
 
+	private void loadSelection(final Selection newSelection) {
+		reset();
+		f_workingSelection = newSelection;
+		f_workingSelection.refreshFilters();
+		boolean first = true;
+		MColumn prev = f_first;
+		MRadioMenuColumn menu;
+		int afterCol = 0;
+		for (Filter filter : f_workingSelection.getFilters()) {
+			if (first) {
+				first = false;
+				/*
+				 * Set the first menu to the right selection.
+				 */
+				menu = (MRadioMenuColumn) f_first;
+			} else {
+				/*
+				 * Create a menu
+				 */
+				menu = new MRadioMenuColumn(f_cascadingList,
+						f_workingSelection, prev);
+				menu.init();
+				afterCol++;
+			}
+			menu.setSelection(filter.getFactory());
+			prev = menu;
+
+			MFilterSelectionColumn fCol = new MFilterSelectionColumn(
+					f_cascadingList, f_workingSelection, prev, afterCol++,
+					filter);
+			fCol.init();
+			prev = fCol;
+		}
+		if (f_workingSelection.showingSelection()) {
+			MListOfFindingsColumn list = new MListOfFindingsColumn(
+					f_cascadingList, f_workingSelection, prev, afterCol);
+			list.init();
+		}
+	}
+
 	public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
 		updateSavedSelections();
@@ -262,6 +274,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				&& f_workingSelection.getFilterCount() > 0;
 		f_saveSearchesAsItem.setEnabled(saveable);
 		final boolean hasSavedSelections = !f_manager.isEmpty();
+		f_selectSearchItem.setEnabled(hasSavedSelections);
+		f_deleteSearchItem.setEnabled(hasSavedSelections);
 
 		if (hasSavedSelections) {
 			b.append("Saved Searches:");
