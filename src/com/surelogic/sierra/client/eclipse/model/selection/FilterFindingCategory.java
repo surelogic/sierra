@@ -7,7 +7,7 @@ import com.surelogic.common.eclipse.SLImages;
 public final class FilterFindingCategory extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(FindingSearch selection, Filter previous) {
+		public Filter construct(Selection selection, Filter previous) {
 			return new FilterFindingCategory(selection, previous);
 		}
 
@@ -16,7 +16,7 @@ public final class FilterFindingCategory extends Filter {
 		}
 	};
 
-	FilterFindingCategory(FindingSearch selection, Filter previous) {
+	FilterFindingCategory(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 

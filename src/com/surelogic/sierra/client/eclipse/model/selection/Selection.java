@@ -24,7 +24,7 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
  * <p>
  * This class is thread-safe.
  */
-public final class FindingSearch extends AbstractDatabaseObserver {
+public final class Selection extends AbstractDatabaseObserver {
 
 	/**
 	 * Immutable set of all possible filters.
@@ -49,12 +49,12 @@ public final class FindingSearch extends AbstractDatabaseObserver {
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
-	FindingSearch(SelectionManager manager) {
+	Selection(SelectionManager manager) {
 		assert manager != null;
 		f_manager = manager;
 	}
 
-	public FindingSearch(FindingSearch source) {
+	public Selection(Selection source) {
 		f_manager = source.f_manager;
 		f_showing = source.f_showing;
 		Filter prev = null;

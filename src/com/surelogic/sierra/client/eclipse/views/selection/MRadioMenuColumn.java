@@ -17,7 +17,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.AbstractFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
-import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
+import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
 public final class MRadioMenuColumn extends MColumn implements
 		IRadioMenuObserver {
@@ -26,7 +26,7 @@ public final class MRadioMenuColumn extends MColumn implements
 
 	private RadioArrowMenu f_menu = null;
 
-	MRadioMenuColumn(CascadingList cascadingList, FindingSearch selection,
+	MRadioMenuColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
 	}

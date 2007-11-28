@@ -21,7 +21,7 @@ import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
-import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
+import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
@@ -40,7 +40,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
-	private FindingSearch f_workingSelection = null;
+	private Selection f_workingSelection = null;
 
 	private MColumn f_first = null;
 
@@ -83,7 +83,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					/*
 					 * Save the selection
 					 */
-					FindingSearch newSelection = dialog.getSelection();
+					Selection newSelection = dialog.getSelection();
 					if (newSelection == null)
 						return;
 					loadSelection(newSelection);
@@ -124,7 +124,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				/*
 				 * Load the current selection.
 				 */
-				final FindingSearch newSelection = f_manager
+				final Selection newSelection = f_manager
 						.getSavedSelection(selectionName);
 				if (newSelection == null) {
 					SLLogger.getLogger().log(Level.SEVERE,
@@ -195,7 +195,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first.init();
 	}
 
-	private void loadSelection(final FindingSearch newSelection) {
+	private void loadSelection(final Selection newSelection) {
 		reset();
 		f_workingSelection = newSelection;
 		f_workingSelection.refreshFilters();
@@ -310,7 +310,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			return false;
 	}
 
-	public void selectionChanged(FindingSearch selecton) {
+	public void selectionChanged(Selection selecton) {
 		/*
 		 * Nothing to do.
 		 */

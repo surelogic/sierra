@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class FilterNumberValue extends Filter {
 
-	FilterNumberValue(FindingSearch selection, Filter previous) {
+	FilterNumberValue(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 

@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.model.selection.FindingSearch;
+import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 public final class OpenSearchDialog extends Dialog {
@@ -28,7 +28,7 @@ public final class OpenSearchDialog extends Dialog {
 
 	private Mediator f_mediator = null;
 
-	private FindingSearch f_result = null;
+	private Selection f_result = null;
 
 	/**
 	 * Returns the selection chosen by the user, or <code>null</code> if
@@ -37,7 +37,7 @@ public final class OpenSearchDialog extends Dialog {
 	 * @return the selection chosen by the user, or <code>null</code> if
 	 *         nothing was selected.
 	 */
-	public FindingSearch getSelection() {
+	public Selection getSelection() {
 		return f_result; // my be null
 	}
 

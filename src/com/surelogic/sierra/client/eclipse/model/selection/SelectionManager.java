@@ -21,13 +21,13 @@ public final class SelectionManager {
 		// singleton
 	}
 
-	public FindingSearch construct() {
-		final FindingSearch result = new FindingSearch(this);
+	public Selection construct() {
+		final Selection result = new Selection(this);
 		result.init();
 		return result;
 	}
 
-	private final Map<String, FindingSearch> f_nameToSelection = new HashMap<String, FindingSearch>();
+	private final Map<String, Selection> f_nameToSelection = new HashMap<String, Selection>();
 
 	/**
 	 * Saves a copy of the passed selection. If a previous saved selection with
@@ -38,8 +38,8 @@ public final class SelectionManager {
 	 * @param selection
 	 *            the selection to save a copy or.
 	 */
-	public void saveSelection(String name, FindingSearch selection) {
-		FindingSearch copy = new FindingSearch(selection);
+	public void saveSelection(String name, Selection selection) {
+		Selection copy = new Selection(selection);
 		f_nameToSelection.put(name, copy);
 		notifySavedSelectionsChanged();
 	}
@@ -59,10 +59,10 @@ public final class SelectionManager {
 	 * @return a copy of the saved selection with the passed name, or
 	 *         <code>null</code> if no such saved selection exists.
 	 */
-	public FindingSearch getSavedSelection(String name) {
-		FindingSearch result = f_nameToSelection.get(name);
+	public Selection getSavedSelection(String name) {
+		Selection result = f_nameToSelection.get(name);
 		if (result != null)
-			result = new FindingSearch(result);
+			result = new Selection(result);
 		return result;
 	}
 

@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 public final class FilterArtifactCount extends FilterNumberValue {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(FindingSearch selection, Filter previous) {
+		public Filter construct(Selection selection, Filter previous) {
 			return new FilterArtifactCount(selection, previous);
 		}
 
@@ -12,7 +12,7 @@ public final class FilterArtifactCount extends FilterNumberValue {
 		}
 	};
 
-	FilterArtifactCount(FindingSearch selection, Filter previous) {
+	FilterArtifactCount(Selection selection, Filter previous) {
 		super(selection, previous);
 		f_quote = false;
 	}

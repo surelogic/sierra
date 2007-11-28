@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 public final class FilterJavaClass extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(FindingSearch selection, Filter previous) {
+		public Filter construct(Selection selection, Filter previous) {
 			return new FilterJavaClass(selection, previous);
 		}
 
@@ -12,7 +12,7 @@ public final class FilterJavaClass extends Filter {
 		}
 	};
 
-	FilterJavaClass(FindingSearch selection, Filter previous) {
+	FilterJavaClass(Selection selection, Filter previous) {
 		super(selection, previous);
 	}
 
