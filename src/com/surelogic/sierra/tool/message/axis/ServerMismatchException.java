@@ -6,7 +6,6 @@
  */
 package com.surelogic.sierra.tool.message.axis;
 
-@SuppressWarnings("serial")
 public class ServerMismatchException extends java.lang.Exception {
     private com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ServerMismatchFault faultMessage;
 
