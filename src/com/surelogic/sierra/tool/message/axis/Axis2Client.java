@@ -208,7 +208,8 @@ public class Axis2Client implements SierraService {
 			return new SierraServiceClientException(t);
 		}
 		final AxisFault fault = (AxisFault) t;
-		if (fault.getMessage().equals("Transport error: 401 Error: Unauthorized")) {
+		if (fault.getMessage().equals(
+				"Transport error: 401 Error: Unauthorized")) {
 			return new InvalidLoginException(fault);
 		} else {
 			return new SierraServiceClientException(fault);
@@ -516,23 +517,29 @@ public class Axis2Client implements SierraService {
 			final Artifacts a = new Artifacts();
 			final Errors e = new Errors();
 			final Metrics m = new Metrics();
-			final Collection<com.surelogic.sierra.tool.message.Artifact> inA = in
-					.getArtifacts().getArtifact();
-			if (inA != null) {
-				a.setArtifact(collToArray(inA, new Artifact[inA.size()],
-						new ArtifactConverter()));
+			if (in.getArtifacts() != null) {
+				final Collection<com.surelogic.sierra.tool.message.Artifact> inA = in
+						.getArtifacts().getArtifact();
+				if (inA != null) {
+					a.setArtifact(collToArray(inA, new Artifact[inA.size()],
+							new ArtifactConverter()));
+				}
 			}
-			final Collection<com.surelogic.sierra.tool.message.Error> inE = in
-					.getErrors().getErrors();
-			if (inE != null) {
-				e.setErrors(collToArray(inE, new Error[inE.size()],
-						new ErrorConverter()));
+			if (in.getErrors() != null) {
+				final Collection<com.surelogic.sierra.tool.message.Error> inE = in
+						.getErrors().getErrors();
+				if (inE != null) {
+					e.setErrors(collToArray(inE, new Error[inE.size()],
+							new ErrorConverter()));
+				}
 			}
-			final Collection<com.surelogic.sierra.tool.message.ClassMetric> inM = in
-					.getMetrics().getClassMetric();
-			if (inM != null) {
-				m.set_class(collToArray(inM, new ClassMetric[inM.size()],
-						new ClassMetricConverter()));
+			if (in.getMetrics() != null) {
+				final Collection<com.surelogic.sierra.tool.message.ClassMetric> inM = in
+						.getMetrics().getClassMetric();
+				if (inM != null) {
+					m.set_class(collToArray(inM, new ClassMetric[inM.size()],
+							new ClassMetricConverter()));
+				}
 			}
 			out.setArtifacts(a);
 			out.setErrors(e);
