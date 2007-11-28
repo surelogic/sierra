@@ -138,7 +138,6 @@ public final class MRadioMenuColumn extends MColumn implements
 
 		@Override
 		public void contentsChanged(final Filter filter) {
-			// System.out.println("contentsChanged " + filter + " " + this);
 			constructFilterReport(filter);
 		}
 

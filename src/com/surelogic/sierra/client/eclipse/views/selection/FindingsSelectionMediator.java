@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
@@ -29,7 +30,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
-	private final Control f_findingsPage;
+	private final Composite f_findingsPage;
 	private final CascadingList f_cascadingList;
 	private final ToolItem f_clearSelectionItem;
 	private final Link f_breadcrumbs;
@@ -45,7 +46,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private MColumn f_first = null;
 
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
-			Control findingsPage, CascadingList cascadingList,
+			Composite findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
 			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
@@ -274,6 +275,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		} while (clColumn != null);
 		f_breadcrumbs.setText(b.toString());
 		f_breadcrumbs.getParent().layout();
+		f_findingsPage.layout();
 	}
 
 	private void updateSavedSelections() {
@@ -289,7 +291,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			b.append("Saved Searches:");
 
 			for (String link : f_manager.getSavedSelectionNames()) {
-				b.append(" <a href=\"");
+				b.append("  <a href=\"");
 				b.append(link);
 				b.append("\">");
 				b.append(link);
@@ -299,6 +301,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			b.append("(no saved searches)");
 		}
 		f_savedSelections.setText(b.toString());
+		f_savedSelections.getParent().layout();
+		f_findingsPage.layout();
 	}
 
 	private boolean showingFindings(final MColumn column) {
