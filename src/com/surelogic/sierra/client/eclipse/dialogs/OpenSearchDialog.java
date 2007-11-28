@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -66,7 +65,7 @@ public final class OpenSearchDialog extends Dialog {
 
 		final Group projectGroup = new Group(panel, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 300;
+		data.heightHint = 200;
 		projectGroup.setLayoutData(data);
 		projectGroup.setText("Saved Searches");
 		projectGroup.setLayout(new FillLayout());
@@ -89,8 +88,7 @@ public final class OpenSearchDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Open Search");
-		newShell.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public final class SaveSearchAsDialog extends Dialog {
 		final Label directions = new Label(panel, SWT.NONE);
 		directions.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false, 2, 1));
-		directions.setText("Enter a name for the current search");
+		directions.setText("Enter a name to use for the current search");
 
 		final Label label = new Label(panel, SWT.NONE);
 		label.setText("Name:");
