@@ -106,8 +106,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					if ("".equals(name))
 						return;
 					f_manager.saveSelection(name, f_workingSelection);
-					System.out.println("save as '" + name + "' "
-							+ f_workingSelection);
 				}
 			}
 		});
@@ -206,7 +204,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				null);
 		f_first.init();
 		f_workingSelection.refreshFilters();
-		
+
 		MRadioMenuColumn prevMenu = (MRadioMenuColumn) f_first;
 		int afterCol = 0;
 		for (Filter filter : f_workingSelection.getFilters()) {
