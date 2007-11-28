@@ -453,4 +453,20 @@ public final class Selection extends AbstractDatabaseObserver {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		b.append("[Selection filters={");
+		boolean first = true;
+		for (Filter f : f_filters) {
+			if (first)
+				first = false;
+			else
+				b.append(",");
+			b.append(f.toString());
+		}
+		b.append("}]");
+		return b.toString();
+	}
 }

@@ -86,7 +86,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					Selection newSelection = dialog.getSelection();
 					if (newSelection == null)
 						return;
-					loadSelection(newSelection);
+					openSelection(newSelection);
 				}
 			}
 		});
@@ -106,6 +106,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					if ("".equals(name))
 						return;
 					f_manager.saveSelection(name, f_workingSelection);
+					System.out.println("save as '" + name + "' "
+							+ f_workingSelection);
 				}
 			}
 		});
@@ -122,7 +124,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			public void handleEvent(Event event) {
 				final String selectionName = event.text;
 				/*
-				 * Load the current selection.
+				 * open the current selection.
 				 */
 				final Selection newSelection = f_manager
 						.getSavedSelection(selectionName);
@@ -140,7 +142,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 							new Exception());
 					return;
 				}
-				loadSelection(newSelection);
+				openSelection(newSelection);
 			}
 		});
 
@@ -195,10 +197,16 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first.init();
 	}
 
-	private void loadSelection(final Selection newSelection) {
-		reset();
+	private void openSelection(final Selection newSelection) {
+		if (f_first != null)
+			f_first.dispose();
+		f_breadcrumbs.setText("");
 		f_workingSelection = newSelection;
+		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
+				null);
+		f_first.init();
 		f_workingSelection.refreshFilters();
+		
 		MRadioMenuColumn prevMenu = (MRadioMenuColumn) f_first;
 		int afterCol = 0;
 		for (Filter filter : f_workingSelection.getFilters()) {

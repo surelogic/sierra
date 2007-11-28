@@ -98,6 +98,7 @@ public final class MRadioMenuColumn extends MColumn implements
 		}, f_column, false);
 
 		getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
+		System.out.println("emptyAfter done on " + getSelection());
 
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
