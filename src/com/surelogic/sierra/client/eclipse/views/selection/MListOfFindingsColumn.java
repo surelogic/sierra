@@ -49,16 +49,11 @@ import com.surelogic.sierra.tool.message.Importance;
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
 
-	private final int f_addAfterColumn;
-
-	private volatile int f_column = -1;
-
 	private Table f_table = null;
 
 	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
-			MColumn previousColumn, int addAfterColumn) {
+			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
-		f_addAfterColumn = addAfterColumn;
 	}
 
 	@Override
@@ -82,8 +77,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 		super.dispose();
 		getSelection().setShowing(false);
 		getSelection().removeObserver(this);
-		if (f_column != -1)
-			getCascadingList().emptyFrom(f_column);
+		final int column = getColumnIndex();
+		if (column != -1)
+			getCascadingList().emptyFrom(column);
+	}
+
+	@Override
+	int getColumnIndex() {
+		if (f_table.isDisposed())
+			return -1;
+		else
+			return getCascadingList().getColumnIndexOf(f_table);
 	}
 
 	public void selectionChanged(Selection selecton) {
@@ -487,9 +491,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (f_table == null) {
+					int addAfterColumn = getPreviousColumn().getColumnIndex();
 					// create the display table
-					f_column = getCascadingList().addColumnAfter(f_iColumn,
-							f_addAfterColumn, false);
+					getCascadingList().addColumnAfter(f_iColumn,
+							addAfterColumn, false);
 				} else {
 					// update the table's contents
 					updateTableContents();

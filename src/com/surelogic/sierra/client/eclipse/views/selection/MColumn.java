@@ -35,11 +35,19 @@ public abstract class MColumn {
 	abstract void init();
 
 	/**
+	 * Should only be called after {@link #init()}.
+	 * 
+	 * @return the index of this column within the cascading list control, or -1
+	 *         if it doesn't exist within the cascading list control.
+	 */
+	abstract int getColumnIndex();
+
+	/**
 	 * Indicates that a initialization of column after this one has completed
 	 * initialization. Subclasses may override but must call this method.
 	 * 
 	 * <pre>
-	 *   super.initOfNextColumnComplete();
+	 * super.initOfNextColumnComplete();
 	 * </pre>
 	 */
 	void initOfNextColumnComplete() {

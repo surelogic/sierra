@@ -25,8 +25,6 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 public final class MRadioMenuColumn extends MColumn implements
 		IRadioMenuObserver {
 
-	private int f_column;
-
 	private RadioArrowMenu f_menu = null;
 
 	MRadioMenuColumn(CascadingList cascadingList, Selection selection,
@@ -51,7 +49,7 @@ public final class MRadioMenuColumn extends MColumn implements
 				f_menu.addObserver(MRadioMenuColumn.this);
 			}
 		};
-		f_column = getCascadingList().addColumn(m, true);
+		getCascadingList().addColumn(m, true);
 		initOfNextColumnComplete();
 	}
 
@@ -66,8 +64,21 @@ public final class MRadioMenuColumn extends MColumn implements
 		super.dispose();
 		if (f_menu != null) {
 			f_menu.removeObserver(this);
-			getCascadingList().emptyFrom(f_column);
+			final int column = getColumnIndex();
+			if (column != -1)
+				getCascadingList().emptyFrom(column);
 		}
+	}
+
+	@Override
+	int getColumnIndex() {
+		if (f_menu == null)
+			return -1;
+		final Composite panel = f_menu.getPanel();
+		if (panel.isDisposed())
+			return -1;
+		else
+			return getCascadingList().getColumnIndexOf(panel);
 	}
 
 	void clearMenuSelection() {
@@ -82,6 +93,7 @@ public final class MRadioMenuColumn extends MColumn implements
 
 	public void selected(Object choice, RadioArrowMenu menu) {
 		f_menu.setEnabled(false);
+		final int column = getColumnIndex();
 
 		/*
 		 * Please wait...
@@ -95,27 +107,21 @@ public final class MRadioMenuColumn extends MColumn implements
 				waitLabel.setText("Please wait...");
 				waitLabel.setBackground(background);
 			}
-		}, f_column, false);
+		}, column, false);
 
 		getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
 
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
-			getSelection().construct(filter, new DrawFilterAndMenu(f_column));
+			getSelection().construct(filter, new DrawFilterAndMenu());
 		} else if (choice.equals("Show")) {
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
-					getCascadingList(), getSelection(), this, f_column);
+					getCascadingList(), getSelection(), this);
 			fsr.init();
 		}
 	}
 
 	class DrawFilterAndMenu extends AbstractFilterObserver {
-
-		private final int f_waitMsgColumn;
-
-		public DrawFilterAndMenu(int waitMsgColumn) {
-			f_waitMsgColumn = waitMsgColumn;
-		}
 
 		@Override
 		public void queryFailure(final Filter filter, final Exception e) {
@@ -152,7 +158,7 @@ public final class MRadioMenuColumn extends MColumn implements
 				public void run() {
 					MFilterSelectionColumn fsc = new MFilterSelectionColumn(
 							getCascadingList(), getSelection(),
-							MRadioMenuColumn.this, f_waitMsgColumn, filter);
+							MRadioMenuColumn.this, filter);
 					fsc.init();
 					/*
 					 * Add the radio menu after this item.
@@ -172,11 +178,6 @@ public final class MRadioMenuColumn extends MColumn implements
 					"Unexpected dispose() callback from " + filter
 							+ " while it was being created (bug)");
 			filter.removeObserver(this);
-		}
-
-		@Override
-		public String toString() {
-			return "[DrawFilterAndMenu waitMsgColumn=" + f_waitMsgColumn + "]";
 		}
 	}
 

@@ -207,7 +207,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_workingSelection.refreshFilters();
 
 		MRadioMenuColumn prevMenu = (MRadioMenuColumn) f_first;
-		int afterCol = 0;
 		for (Filter filter : f_workingSelection.getFilters()) {
 			/*
 			 * Set the right choice on the previous menu
@@ -217,8 +216,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			 * Create a filter selection
 			 */
 			MFilterSelectionColumn fCol = new MFilterSelectionColumn(
-					f_cascadingList, f_workingSelection, prevMenu, afterCol++,
-					filter);
+					f_cascadingList, f_workingSelection, prevMenu, filter);
 			fCol.init();
 			/*
 			 * Create a menu
@@ -226,12 +224,11 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			prevMenu = new MRadioMenuColumn(f_cascadingList,
 					f_workingSelection, fCol);
 			prevMenu.init();
-			afterCol++;
 		}
 		if (f_workingSelection.showingSelection()) {
 			prevMenu.setSelection("Show");
 			MListOfFindingsColumn list = new MListOfFindingsColumn(
-					f_cascadingList, f_workingSelection, prevMenu, afterCol);
+					f_cascadingList, f_workingSelection, prevMenu);
 			list.init();
 		}
 	}

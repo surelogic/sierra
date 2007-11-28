@@ -24,10 +24,6 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 public final class MFilterSelectionColumn extends MColumn implements
 		IFilterObserver, FilterSelectionReportLine.ISelectionChangedObserver {
 
-	private final int f_addAfterColumn;
-
-	private int f_column = -1;
-
 	private final Filter f_filter;
 
 	Filter getFilter() {
@@ -49,9 +45,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private boolean f_sortByCount = false;
 
 	MFilterSelectionColumn(CascadingList cascadingList, Selection selection,
-			MColumn previousColumn, int addAfterColumn, Filter filter) {
+			MColumn previousColumn, Filter filter) {
 		super(cascadingList, selection, previousColumn);
-		f_addAfterColumn = addAfterColumn;
 		assert filter != null;
 		f_filter = filter;
 	}
@@ -112,8 +107,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				updateReport();
 			}
 		};
-		f_column = getCascadingList()
-				.addColumnAfter(c, f_addAfterColumn, false);
+		getCascadingList().addColumnAfter(c,
+				getPreviousColumn().getColumnIndex(), false);
 		f_filter.addObserver(this);
 		initOfNextColumnComplete();
 	}
@@ -122,8 +117,17 @@ public final class MFilterSelectionColumn extends MColumn implements
 	void dispose() {
 		super.dispose();
 		f_filter.removeObserver(this);
-		if (f_column != -1)
-			getCascadingList().emptyFrom(f_column);
+		final int column = getColumnIndex();
+		if (column != -1)
+			getCascadingList().emptyFrom(column);
+	}
+
+	@Override
+	int getColumnIndex() {
+		if (f_panel.isDisposed())
+			return -1;
+		else
+			return getCascadingList().getColumnIndexOf(f_panel);
 	}
 
 	/**
