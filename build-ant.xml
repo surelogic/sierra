@@ -1,22 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="build-ant" default="buildjar" basedir=".">
+<project name="build-ant" default="buildzip" basedir=".">
 	<target name="buildjar">
-		<jar destfile="${user.home}/sierra-tool-aoi.jar">
-			<fileset dir="${basedir}/../common/bin">
+		<!-- ################## Properties ################## -->
+		<property name="jar-file" value="sierra-tool-aoi.jar"/>
+		<property name="zip-file" value="sierra-ant.zip"/>
+		<property name="zipbasedir" value="Sierra-Ant"/>
+		<property name="workspace" value="${basedir}/.."/>
+		
+		<!-- These may be overridden by a calling Ant script -->
+		<property name="common-bin" value="${workspace}/common/bin"/>
+		<property name="common-eclipse-bin" value="${workspace}/common-eclipse/bin"/>
+		<property name="message-bin" value="${workspace}/sierra-message/bin"/>
+		<property name="tool-bin" value="${workspace}/sierra-tool/bin"/>
+		<property name="destdir" value="${workspace}"/>
+		
+		<!-- ################## Targets ################## -->
+		<jar destfile="${destdir}/${jar-file}" 
+			description="Builds a single Jar with all of the .class files from common, common-eclipse, sierra-tool and sierra-message">
+			<fileset dir="${common-bin}">
 				<include name="**/*"/>
 			</fileset>
 			
-			<fileset dir="${basedir}/../common-eclipse/bin">
+			<fileset dir="${common-eclipse-bin}">
 				<include name="**/*"/>
 			</fileset>
 			
-			<fileset dir="${basedir}/../sierra-message/bin">
+			<fileset dir="${message-bin}">
 				<include name="**/*"/>
 			</fileset>
 			
-			<fileset dir="${basedir}/../sierra-tool/bin">
+			<fileset dir="${tool-bin}">
 				<include name="**/*"/>
 			</fileset>
 		</jar>
+	</target>
+	
+	<target name="buildzip" description="Builds the ZIP file that contains all jars and tools necessary to run the Ant task" depends="buildjar">
+		<zip destfile="${destdir}/${zip-file}" update="true">
+			<zipfileset file="${destdir}/${jar-file}" prefix="${zipbasedir}/lib"/>
+			<zipfileset dir="${workspace}/sierra-message/axis" prefix="${zipbasedir}/lib"/>
+			<zipfileset dir="${workspace}/sierra-tool/" prefix="${zipbasedir}">
+			  <include name="Tools/**"/>
+			</zipfileset>
+		</zip>
 	</target>
 </project>
