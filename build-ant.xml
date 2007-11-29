@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-ant" default="buildjar" basedir=".">
+	<target name="buildjar">
+		<jar destfile="${user.home}/sierra-tool-aoi.jar">
+			<fileset dir="${basedir}/../common/bin">
+				<include name="**/*"/>
+			</fileset>
+			
+			<fileset dir="${basedir}/../common-eclipse/bin">
+				<include name="**/*"/>
+			</fileset>
+			
+			<fileset dir="${basedir}/../sierra-message/bin">
+				<include name="**/*"/>
+			</fileset>
+			
+			<fileset dir="${basedir}/../sierra-tool/bin">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+</project>
