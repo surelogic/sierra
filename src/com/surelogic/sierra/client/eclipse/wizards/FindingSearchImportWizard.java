@@ -7,18 +7,18 @@ import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public class FindingQueryImportWizard extends Wizard implements IImportWizard {
-	private FindingQueryImportPage f_mainPage;
+public class FindingSearchImportWizard extends Wizard implements IImportWizard {
+	private FindingSearchImportPage f_mainPage;
 
 	@Override
 	public boolean performFinish() {
-		return f_mainPage.importQueries();
+		return f_mainPage.importSearches();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		f_mainPage = new FindingQueryImportPage();
+		f_mainPage = new FindingSearchImportPage();
 		addPage(f_mainPage);
 	}
 
@@ -27,5 +27,4 @@ public class FindingQueryImportWizard extends Wizard implements IImportWizard {
 		setDefaultPageImageDescriptor(SLImages
 				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
 	}
-
 }

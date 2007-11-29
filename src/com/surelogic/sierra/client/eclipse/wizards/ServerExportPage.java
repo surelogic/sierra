@@ -47,8 +47,8 @@ public class ServerExportPage extends WizardPage {
 	public ServerExportPage() {
 		super("SierraServerExportWizardPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Export Sierra Servers");
-		setDescription("Export the selected Sierra Servers");
+		setTitle("Export Sierra Team Server Locations");
+		setDescription("Export the selected Sierra Team Server locations");
 	}
 
 	/*
@@ -66,7 +66,7 @@ public class ServerExportPage extends WizardPage {
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 
 		Label titel = new Label(workArea, SWT.NONE);
-		titel.setText("Select the servers to export:");
+		titel.setText("Select the Sierra Team Server locations to export:");
 
 		Composite listComposite = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -167,7 +167,8 @@ public class ServerExportPage extends WizardPage {
 
 		f_exportFilenameText = new Text(containerGroup, SWT.SINGLE | SWT.BORDER);
 		f_exportFilenameText.setText(System.getProperty("user.home")
-				+ System.getProperty("file.separator") + "servers.xml");
+				+ System.getProperty("file.separator")
+				+ "sierra-team-server-locations.xml");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		f_exportFilenameText.setLayoutData(data);
@@ -232,7 +233,7 @@ public class ServerExportPage extends WizardPage {
 		// are still permitted
 
 		if (f_SelectedSierraServers.size() == 0) {
-			setErrorMessage("At least one server must be selected");
+			setErrorMessage("At least one Sierra Team Server location must be selected");
 			complete = false;
 		}
 		if (f_exportFilenameText.getText().length() == 0) {
@@ -272,22 +273,19 @@ public class ServerExportPage extends WizardPage {
 		}
 
 		public void dispose() {
-			// Nothing to do - FOR NOW
-
+			// Nothing to do
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// Nothing to do - FOR NOW
-
+			// Nothing to do
 		}
-
 	}
 
 	private static class SierraServerLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
 			if (element instanceof SierraServer) {
-				return SLImages.getImage(SLImages.IMG_SERVER);
+				return SLImages.getImage(SLImages.IMG_SIERRA_SERVER);
 			}
 			return null;
 		}
@@ -302,12 +300,10 @@ public class ServerExportPage extends WizardPage {
 
 		public void addListener(ILabelProviderListener listener) {
 			// Nothing to do
-
 		}
 
 		public void dispose() {
 			// Nothing to do
-
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -317,9 +313,6 @@ public class ServerExportPage extends WizardPage {
 
 		public void removeListener(ILabelProviderListener listener) {
 			// Nothing to do
-
 		}
-
 	}
-
 }

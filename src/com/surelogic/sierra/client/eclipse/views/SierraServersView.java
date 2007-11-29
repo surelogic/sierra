@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -18,9 +21,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
+import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
 public final class SierraServersView extends ViewPart {
 
@@ -165,6 +171,36 @@ public final class SierraServersView extends ViewPart {
 		disconnectProjectItem.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_DISCONNECT));
 		projectList.setMenu(projectListMenu);
+
+		/*
+		 * Allow direct access to the import and export wizards from the view.
+		 */
+		final IMenuManager menu = getViewSite().getActionBars()
+				.getMenuManager();
+		final Action importAction = new Action("Import Locations...") {
+			@Override
+			public void run() {
+				final ServerImportWizard wizard = new ServerImportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		menu.add(importAction);
+		final Action exportAction = new Action("Export Locations...") {
+			@Override
+			public void run() {
+				final ServerExportWizard wizard = new ServerExportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		menu.add(exportAction);
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,

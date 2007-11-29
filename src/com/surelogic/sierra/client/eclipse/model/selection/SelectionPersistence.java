@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.xml.parsers.SAXParser;
@@ -32,10 +33,15 @@ public final class SelectionPersistence {
 	public static final String VALUE = "value";
 
 	public static void save(final SelectionManager manager, final File saveFile) {
+		save(manager, manager.getSavedSelectionNames(), saveFile);
+	}
+
+	public static void save(final SelectionManager manager,
+			final List<String> selections, final File saveFile) {
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(saveFile));
 			outputXMLHeader(pw);
-			for (String name : manager.getSavedSelectionNames()) {
+			for (String name : selections) {
 				Selection s = manager.getSavedSelection(name);
 				if (s == null)
 					throw new IllegalStateException(

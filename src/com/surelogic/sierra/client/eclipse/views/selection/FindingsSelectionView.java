@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,6 +18,8 @@ import org.eclipse.ui.part.ViewPart;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
+import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
 public final class FindingsSelectionView extends ViewPart {
 
@@ -95,6 +100,36 @@ public final class FindingsSelectionView extends ViewPart {
 				SWT.WRAP);
 		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				true));
+
+		/*
+		 * Allow direct access to the import and export wizards from the view.
+		 */
+		final IMenuManager menu = getViewSite().getActionBars()
+				.getMenuManager();
+		final Action importAction = new Action("Import Searches...") {
+			@Override
+			public void run() {
+				final FindingSearchImportWizard wizard = new FindingSearchImportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		menu.add(importAction);
+		final Action exportAction = new Action("Export Searches...") {
+			@Override
+			public void run() {
+				final FindingSearchExportWizard wizard = new FindingSearchExportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		menu.add(exportAction);
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,

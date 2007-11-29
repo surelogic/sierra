@@ -33,23 +33,21 @@ import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
+import com.surelogic.sierra.client.eclipse.model.selection.SelectionPersistence;
 
-public class FindingQueryExportPage extends WizardPage {
+public class FindingSearchExportPage extends WizardPage {
 
 	private CheckboxTableViewer f_TableViewer;
-	private List<String> f_savedQueries = new ArrayList<String>();
+	private List<String> f_selectedSavedSearches = new ArrayList<String>();
 	private Text f_exportFilenameText;
 
-	public FindingQueryExportPage() {
-		super("FindingQueryExportWizardPage"); //$NON-NLS-1$
+	public FindingSearchExportPage() {
+		super("FindingSearchExportPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Export Finding Queries");
-		setDescription("Export the selected finding queries");
+		setTitle("Export Finding Searches");
+		setDescription("Export the selected finding searches");
 	}
 
-	/*
-	 * @see IDialogPage#createControl(Composite)
-	 */
 	public void createControl(Composite parent) {
 
 		initializeDialogUnits(parent);
@@ -62,7 +60,7 @@ public class FindingQueryExportPage extends WizardPage {
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 
 		Label titel = new Label(workArea, SWT.NONE);
-		titel.setText("Select the finding queries to export:");
+		titel.setText("Select the finding searches to export:");
 
 		Composite listComposite = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -81,24 +79,24 @@ public class FindingQueryExportPage extends WizardPage {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 300;
 		table.setLayoutData(data);
-		f_TableViewer.setContentProvider(new FindingQueryContentProvider());
-		f_TableViewer.setLabelProvider(new FindingQueryLabelProvider());
+		f_TableViewer.setContentProvider(new FindingSearchContentProvider());
+		f_TableViewer.setLabelProvider(new FindingSearchLabelProvider());
 		f_TableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getElement() instanceof String) {
 					String holder = (String) event.getElement();
 					if (event.getChecked()) {
-						f_savedQueries.add(holder);
+						f_selectedSavedSearches.add(holder);
 
 					} else {
-						f_savedQueries.remove(holder);
+						f_selectedSavedSearches.remove(holder);
 					}
 					updateEnablement();
 				}
 			}
 		});
 
-		initializeQueries();
+		initializeTableOfSearches();
 		createSelectionButtons(listComposite);
 		createTextFields(workArea);
 		setControl(workArea);
@@ -124,7 +122,7 @@ public class FindingQueryExportPage extends WizardPage {
 				for (int i = 0; i < f_TableViewer.getTable().getItemCount(); i++) {
 					if (f_TableViewer.getElementAt(i) instanceof String) {
 						String holder = (String) f_TableViewer.getElementAt(i);
-						f_savedQueries.add(holder);
+						f_selectedSavedSearches.add(holder);
 					}
 				}
 				f_TableViewer.setAllChecked(true);
@@ -138,7 +136,7 @@ public class FindingQueryExportPage extends WizardPage {
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				f_savedQueries.clear();
+				f_selectedSavedSearches.clear();
 				f_TableViewer.setAllChecked(false);
 				updateEnablement();
 			}
@@ -148,7 +146,7 @@ public class FindingQueryExportPage extends WizardPage {
 
 	private void createTextFields(Composite composite) {
 
-		// Query file name
+		// Export file name
 		Composite containerGroup = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -162,7 +160,8 @@ public class FindingQueryExportPage extends WizardPage {
 
 		f_exportFilenameText = new Text(containerGroup, SWT.SINGLE | SWT.BORDER);
 		f_exportFilenameText.setText(System.getProperty("user.home")
-				+ System.getProperty("file.separator") + "queries.xml");
+				+ System.getProperty("file.separator")
+				+ "sierra-finding-searches.xml");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		f_exportFilenameText.setLayoutData(data);
@@ -208,11 +207,11 @@ public class FindingQueryExportPage extends WizardPage {
 		f_exportFilenameText.addModifyListener(listener);
 	}
 
-	private void initializeQueries() {
-		List<String> queries = SelectionManager.getInstance()
+	private void initializeTableOfSearches() {
+		List<String> searchList = SelectionManager.getInstance()
 				.getSavedSelectionNames();
 
-		f_TableViewer.setInput(queries);
+		f_TableViewer.setInput(searchList);
 	}
 
 	private void updateEnablement() {
@@ -221,8 +220,8 @@ public class FindingQueryExportPage extends WizardPage {
 		// TODO: Implement file name check. Filenames with invalid characters
 		// are still permitted
 
-		if (f_savedQueries.size() == 0) {
-			setErrorMessage("At least one query must be selected");
+		if (f_selectedSavedSearches.size() == 0) {
+			setErrorMessage("At least one search must be selected");
 			complete = false;
 		}
 		if (f_exportFilenameText.getText().length() == 0) {
@@ -243,36 +242,34 @@ public class FindingQueryExportPage extends WizardPage {
 		}
 	}
 
-	public boolean exportQueries() {
-		SelectionManager.getInstance().save(
-				new File(f_exportFilenameText.getText()));
+	public boolean exportSearches() {
+		SelectionPersistence.save(SelectionManager.getInstance(),
+				f_selectedSavedSearches, new File(f_exportFilenameText
+						.getText()));
 		return true;
 	}
 
-	private static class FindingQueryContentProvider implements
+	private static class FindingSearchContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List) {
-				List<?> queries = (List<?>) inputElement;
-				return queries.toArray();
+				List<?> searchList = (List<?>) inputElement;
+				return searchList.toArray();
 			}
 			return null;
 		}
 
 		public void dispose() {
-			// Nothing to do - FOR NOW
-
+			// Nothing to do
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// Nothing to do - FOR NOW
-
+			// Nothing to do
 		}
-
 	}
 
-	private static class FindingQueryLabelProvider implements ILabelProvider {
+	private static class FindingSearchLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
 			if (element instanceof String) {
@@ -291,12 +288,10 @@ public class FindingQueryExportPage extends WizardPage {
 
 		public void addListener(ILabelProviderListener listener) {
 			// Nothing to do
-
 		}
 
 		public void dispose() {
 			// Nothing to do
-
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -306,9 +301,6 @@ public class FindingQueryExportPage extends WizardPage {
 
 		public void removeListener(ILabelProviderListener listener) {
 			// Nothing to do
-
 		}
-
 	}
-
 }

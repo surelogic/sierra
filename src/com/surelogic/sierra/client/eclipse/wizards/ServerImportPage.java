@@ -41,8 +41,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ImportPageServerHolder;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 /**
@@ -160,7 +160,7 @@ public class ServerImportPage extends WizardPage {
 		}
 
 		if (f_transfersTable.getItemCount() > 0 && !hasChecked()) {
-			setErrorMessage("No servers selected to import");
+			setErrorMessage("No Sierra Team Server locations selected to import");
 			complete = false;
 		}
 
@@ -174,7 +174,7 @@ public class ServerImportPage extends WizardPage {
 	private void createServersTable(Composite composite) {
 
 		f_tableGroup = new Group(composite, SWT.NONE);
-		f_tableGroup.setText("Servers");
+		f_tableGroup.setText("Available Sierra Team Server Locations");
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
 		f_tableGroup.setLayoutData(data);
@@ -212,7 +212,7 @@ public class ServerImportPage extends WizardPage {
 					f_tableItemDescription.setText(item.getData().toString());
 				} else {
 					f_tableItemDescription
-							.setText("Select a server to get more information"); //$NON-NLS-1$
+							.setText("Select a Sierra Team Server location to get more information"); //$NON-NLS-1$
 				}
 			}
 		};
@@ -304,7 +304,7 @@ public class ServerImportPage extends WizardPage {
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		Label dest = new Label(importFileSelectionGroup, SWT.NONE);
-		dest.setText("From server file:");
+		dest.setText("From file:");
 
 		// import filename entry field
 		f_importFilenameField = new Text(importFileSelectionGroup, SWT.SINGLE
@@ -380,7 +380,7 @@ public class ServerImportPage extends WizardPage {
 					ti.dispose();
 				}
 				f_tableItemDescription
-						.setText("Select a server to get more information");
+						.setText("Select a Sierra Team Server location to get more information");
 			}
 			f_existingServers.clear();
 
@@ -419,7 +419,7 @@ public class ServerImportPage extends WizardPage {
 				f_tableItemDescription.setText(builder.toString());
 			} else {
 				f_tableItemDescription
-						.setText("Select a server to get more information");
+						.setText("Select a Sierra Team Server location to get more information");
 			}
 
 		} catch (SAXException e) {
@@ -431,7 +431,6 @@ public class ServerImportPage extends WizardPage {
 		} catch (Exception e) {
 			f_invalidFile = true;
 		}
-
 	}
 
 	/**

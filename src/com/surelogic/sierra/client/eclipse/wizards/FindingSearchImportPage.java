@@ -24,18 +24,18 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
-public class FindingQueryImportPage extends WizardPage {
+public class FindingSearchImportPage extends WizardPage {
 
-	private static final String IMPORT_QUERY_WARNING = "Importing queries will override existing queries";
+	private static final String IMPORT_SEARCH_WARNING = "Importing finding searches will override existing finding searches using the same name";
 	private Text f_importFilenameField;
 	private Button f_importFileBrowseButton;
 	private boolean f_invalidFile = true;
 
-	public FindingQueryImportPage() {
-		super("FindingQueryImportWizardPage"); //$NON-NLS-1$
+	public FindingSearchImportPage() {
+		super("FindingSearchImportPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Import Finding Queries");
-		setDescription("Select a finding query file to import");
+		setTitle("Import Finding Searches");
+		setDescription("Select a finding search file to import");
 	}
 
 	/*
@@ -75,7 +75,7 @@ public class FindingQueryImportPage extends WizardPage {
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		data.widthHint = 300;
 		deselectWarning.setLayoutData(data);
-		deselectWarning.setText(IMPORT_QUERY_WARNING);
+		deselectWarning.setText(IMPORT_SEARCH_WARNING);
 	}
 
 	private void updateEnablement() {
@@ -159,15 +159,17 @@ public class FindingQueryImportPage extends WizardPage {
 		f_importFilenameField.addModifyListener(listener);
 	}
 
-	public boolean importQueries() {
+	public boolean importSearches() {
 		File holder = new File(f_importFilenameField.getText());
 		if (holder.exists() && !holder.isDirectory()) {
 			try {
 				SelectionManager.getInstance().load(holder);
 				return true;
 			} catch (Exception ex) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
-						"Error when importing queries", ex);
+				SLLogger.getLogger("sierra").log(
+						Level.SEVERE,
+						"Error when importing finding searches from the file "
+								+ holder.getAbsolutePath(), ex);
 			}
 		}
 
