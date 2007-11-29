@@ -72,7 +72,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_breadcrumbs.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final int column = Integer.parseInt(event.text);
-				emptyAfter(column);
+				f_cascadingList.show(column);
+				// emptyAfter(column);
 			}
 		});
 
@@ -254,23 +255,21 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				final String name = filter.getFactory().getFilterLabel();
 				if (first) {
 					first = false;
+					b.append(" ");
 				} else {
 					b.append(" | ");
 				}
-				final boolean lastFilter = filter.isLastFilter();
-				final boolean showingFindings = showingFindings(fsc);
-				if (lastFilter && !showingFindings) {
-					b.append(name);
-				} else {
-					b.append("<a href=\"").append(column++).append("\">");
-					b.append(name).append("</a>");
-				}
+				b.append("<a href=\"").append(column).append("\">");
+				b.append(name).append("</a>");
+				column += 2; // selector and menu
 			} else if (clColumn instanceof MListOfFindingsColumn) {
-				b.append(" | Show");
+				b.append(" | <a href=\"").append(column).append("\">Show</a>");
 			}
 			clColumn = clColumn.getNextColumn();
 		} while (clColumn != null);
 		f_breadcrumbs.setText(b.toString());
+		final boolean somethingToClear = b.length() > 0;
+		f_clearSelectionItem.setEnabled(somethingToClear);
 		f_breadcrumbs.getParent().layout();
 		f_findingsPage.layout();
 	}
@@ -300,15 +299,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_savedSelections.setText(b.toString());
 		f_savedSelections.getParent().layout();
 		f_findingsPage.layout();
-	}
-
-	private boolean showingFindings(final MColumn column) {
-		if (column instanceof MListOfFindingsColumn)
-			return true;
-		if (column.hasNextColumn())
-			return showingFindings(column.getNextColumn());
-		else
-			return false;
 	}
 
 	public void selectionChanged(Selection selecton) {

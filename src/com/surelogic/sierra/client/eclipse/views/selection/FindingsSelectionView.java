@@ -8,6 +8,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -45,17 +47,19 @@ public final class FindingsSelectionView extends ViewPart {
 		layout.verticalSpacing = 0;
 		breadcrumbsPanel.setLayout(layout);
 
+		final Link breadcrumbs = new Link(breadcrumbsPanel, SWT.NORMAL);
+		breadcrumbs.setText("");
+		breadcrumbs
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		final ToolBar clearSelectionBar = new ToolBar(breadcrumbsPanel,
 				SWT.HORIZONTAL | SWT.FLAT);
 		clearSelectionBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
 				false, false));
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
-		clearSelectionItem.setImage(SLImages.getImage(SLImages.IMG_HOME));
-		final Link breadcrumbs = new Link(breadcrumbsPanel, SWT.NORMAL);
-		breadcrumbs.setText("");
-		breadcrumbs
-				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		clearSelectionItem.setImage(PlatformUI.getWorkbench().getSharedImages()
+				.getImage(ISharedImages.IMG_TOOL_DELETE));
+		clearSelectionItem.setToolTipText("Clear Current Search");
 
 		final CascadingList cascadingList = new CascadingList(findingsPage,
 				SWT.NONE);
@@ -80,13 +84,13 @@ public final class FindingsSelectionView extends ViewPart {
 		final ToolItem openSearchItem = new ToolItem(searchBar, SWT.PUSH);
 		openSearchItem.setImage(SLImages
 				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		openSearchItem.setToolTipText("Open Search");
+		openSearchItem.setToolTipText("Open Search...");
 		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
 		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
-		saveSearchAsItem.setToolTipText("Save Search As");
+		saveSearchAsItem.setToolTipText("Save Search As...");
 		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
 		deleteSearchItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
-		deleteSearchItem.setToolTipText("Delete Search");
+		deleteSearchItem.setToolTipText("Delete Saved Search...");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
 		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
