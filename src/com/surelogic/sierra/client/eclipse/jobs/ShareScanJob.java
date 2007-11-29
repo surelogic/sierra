@@ -8,8 +8,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
-import javax.xml.ws.WebServiceException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -97,9 +95,8 @@ public class ShareScanJob extends DatabaseJob {
 			return new TreeSet<String>(SierraServiceClient.create(
 					f_server.getServer()).getQualifiers(new QualifierRequest())
 					.getQualifier());
-		} catch (WebServiceException e) {
-			if ("request requires HTTP authentication: Unauthorized".equals(e
-					.getMessage())) {
+		} catch (SierraServiceClientException e) {
+			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_server,
 						f_projectName);
 			} else {
