@@ -65,7 +65,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	public void init() {
 		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				reset();
+				clearToNewWorkingSelection();
 			}
 		});
 
@@ -73,7 +73,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			public void handleEvent(Event event) {
 				final int column = Integer.parseInt(event.text);
 				f_cascadingList.show(column);
-				// emptyAfter(column);
 			}
 		});
 
@@ -180,17 +179,24 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			public void run() {
 				if (page != f_pages.getPage()) {
 					f_pages.showPage(page);
-					reset();
+					clearToNewWorkingSelection();
 				}
 			}
 		});
 	}
 
-	private void reset() {
+	private void disposeWorkingSelection() {
 		if (f_first != null)
 			f_first.dispose();
 		f_breadcrumbs.setText("");
+		if (f_workingSelection != null)
+			f_workingSelection.dispose();
+	}
+
+	private void clearToNewWorkingSelection() {
+		disposeWorkingSelection();
 		f_workingSelection = f_manager.construct();
+		f_workingSelection.init();
 		updateSavedSelections();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
@@ -198,10 +204,9 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	}
 
 	private void openSelection(final Selection newSelection) {
-		if (f_first != null)
-			f_first.dispose();
-		f_breadcrumbs.setText("");
+		disposeWorkingSelection();
 		f_workingSelection = newSelection;
+		f_workingSelection.init();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
@@ -226,7 +231,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					f_workingSelection, fCol);
 			prevMenu.init();
 		}
-		if (f_workingSelection.showingSelection()) {
+		if (f_workingSelection.isShowingFindings()) {
 			prevMenu.setSelection("Show");
 			MListOfFindingsColumn list = new MListOfFindingsColumn(
 					f_cascadingList, f_workingSelection, prevMenu);

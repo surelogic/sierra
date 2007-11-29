@@ -23,7 +23,6 @@ public final class SelectionManager {
 
 	public Selection construct() {
 		final Selection result = new Selection(this);
-		result.init();
 		return result;
 	}
 

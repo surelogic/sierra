@@ -65,7 +65,7 @@ public final class SelectionPersistence {
 		StringBuilder b = new StringBuilder();
 		b.append("  <").append(SELECTION);
 		Entities.addAttribute(NAME, name, b);
-		if (s.showingSelection())
+		if (s.isShowingFindings())
 			Entities.addAttribute(SHOWING, "Y", b);
 		b.append(">");
 		pw.println(b.toString());
@@ -148,7 +148,7 @@ public final class SelectionPersistence {
 				f_selectionName = attributes.getValue(NAME);
 				final boolean showing = attributes.getValue(SHOWING) != null;
 				f_workingSelection = f_manager.construct();
-				f_workingSelection.setShowing(showing);
+				f_workingSelection.setShowingFindings(showing);
 			} else if (name.equals(FILTER)) {
 				final String type = attributes.getValue(TYPE);
 				if (f_workingSelection != null) {

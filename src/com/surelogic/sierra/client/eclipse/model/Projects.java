@@ -157,7 +157,8 @@ public final class Projects extends AbstractDatabaseObserver {
 		 * Show the list of projects that we read from the database.
 		 */
 		synchronized (this) {
-			return f_projectNames.toString();
+			return "[" + Projects.class.getName() + ": "
+					+ f_projectNames.toString() + "]";
 		}
 	}
 

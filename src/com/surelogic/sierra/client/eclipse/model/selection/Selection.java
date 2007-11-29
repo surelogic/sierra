@@ -65,7 +65,7 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	public Selection(Selection source) {
 		f_manager = source.f_manager;
-		f_showing = source.f_showing;
+		f_showingFindings = source.f_showingFindings;
 		Filter prev = null;
 		for (Filter f : source.f_filters) {
 			Filter clone = f.copyNoQuery(this, prev);
@@ -74,11 +74,15 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
-	void init() {
+	/**
+	 * This just connects this filter to the database. Making it reflect changes
+	 * to the database.
+	 */
+	public void init() {
 		DatabaseHub.getInstance().addObserver(this);
 	}
 
-	void dispose() {
+	public void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
 		synchronized (this) {
 			for (Filter f : f_filters)
@@ -165,7 +169,6 @@ public final class Selection extends AbstractDatabaseObserver {
 			for (Filter f : disposeList) {
 				f.dispose();
 			}
-			notifyStructureChanged();
 			notifySelectionChanged();
 		}
 	}
@@ -198,7 +201,6 @@ public final class Selection extends AbstractDatabaseObserver {
 			for (Filter f : disposeList) {
 				f.dispose();
 			}
-			notifyStructureChanged();
 			notifySelectionChanged();
 		}
 	}
@@ -214,17 +216,34 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
-	private boolean f_showing = false;
+	/**
+	 * Indicates if this selection should show the list of findings selected.
+	 */
+	private boolean f_showingFindings = false;
 
-	public boolean showingSelection() {
+	/**
+	 * Indicates if this selection shows the list of findings in the UI.
+	 * 
+	 * @return <code>true</code> if this selection should show the list of
+	 *         findings, <code>false<code> if it should not.
+	 */
+	public boolean isShowingFindings() {
 		synchronized (this) {
-			return f_showing;
+			return f_showingFindings;
 		}
 	}
 
-	public void setShowing(boolean value) {
+	/**
+	 * Sets the status of this selection with regard to showing the list of
+	 * findings.
+	 * 
+	 * @param value
+	 *            <code>true</code> if this selection should show the list of
+	 *            findings, <code>false<code> if it should not.
+	 */
+	public void setShowingFindings(boolean value) {
 		synchronized (this) {
-			f_showing = value;
+			f_showingFindings = value;
 		}
 	}
 
@@ -256,7 +275,6 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 		filter.addObserver(observer);
 		filter.refresh();
-		notifyStructureChanged();
 		notifySelectionChanged();
 		return filter;
 	}
@@ -343,15 +361,6 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * No lock needed because we are using a util.concurrent collection.
 		 */
 		f_observers.remove(o);
-	}
-
-	/**
-	 * Do not call this method holding a lock on <code>this</code>. Deadlock
-	 * could occur as we are invoking an alien method.
-	 */
-	private void notifyStructureChanged() {
-		for (ISelectionObserver o : f_observers)
-			o.selectionStructureChanged(this);
 	}
 
 	/**

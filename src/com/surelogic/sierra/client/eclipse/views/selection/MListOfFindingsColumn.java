@@ -58,7 +58,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	@Override
 	void init() {
-		getSelection().setShowing(true);
+		getSelection().setShowingFindings(true);
 		getSelection().addObserver(this);
 		changed();
 	}
@@ -75,7 +75,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	@Override
 	void dispose() {
 		super.dispose();
-		getSelection().setShowing(false);
+		getSelection().setShowingFindings(false);
 		getSelection().removeObserver(this);
 		final int column = getColumnIndex();
 		if (column != -1)
@@ -92,10 +92,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	public void selectionChanged(Selection selecton) {
 		changed();
-	}
-
-	public void selectionStructureChanged(Selection selection) {
-		// nothing to do
 	}
 
 	private void changed() {

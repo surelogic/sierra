@@ -224,8 +224,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void queryFailure(Filter filter, Exception e) {
-		// TODO Something more reasonable...not sure what
-		SLLogger.getLogger().log(Level.SEVERE, "query failed on " + filter, e);
+		SLLogger.getLogger().log(
+				Level.SEVERE,
+				"query for " + this.getClass().getName() + " failed on "
+						+ filter, e);
 	}
 
 	public void contentsEmpty(Filter filter) {

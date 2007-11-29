@@ -2,6 +2,9 @@ package com.surelogic.sierra.client.eclipse.model;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
+
+import com.surelogic.common.logging.SLLogger;
 
 public final class DatabaseHub {
 
@@ -28,6 +31,10 @@ public final class DatabaseHub {
 	}
 
 	public void notifyScanLoaded() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyScanLoaded() to " + f_observers);
+		}
 		for (IDatabaseObserver o : f_observers) {
 			o.scanLoaded();
 			o.changed();
@@ -35,6 +42,10 @@ public final class DatabaseHub {
 	}
 
 	public void notifyProjectDeleted() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyProjectDeleted() to " + f_observers);
+		}
 		for (IDatabaseObserver o : f_observers) {
 			o.projectDeleted();
 			o.changed();
@@ -42,6 +53,10 @@ public final class DatabaseHub {
 	}
 
 	public void notifyServerSynchronized() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyServerSynchronized() to " + f_observers);
+		}
 		for (IDatabaseObserver o : f_observers) {
 			o.serverSynchronized();
 			o.changed();
@@ -49,6 +64,10 @@ public final class DatabaseHub {
 	}
 
 	public void notifyFindingMutated() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyFindingMutated() to " + f_observers);
+		}
 		for (IDatabaseObserver o : f_observers) {
 			o.findingMutated();
 			o.changed();
