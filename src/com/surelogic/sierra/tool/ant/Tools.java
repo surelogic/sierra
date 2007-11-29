@@ -47,11 +47,14 @@ public class Tools {
 			PMD, CHECKSTYLE };
 
 	private org.apache.tools.ant.Project antProject = null;
+	//List of tool names - OPTIONAL
 	private List<String> exclude = new ArrayList<String>();
 	private Map<String, ToolConfig> tools = new HashMap<String, ToolConfig>();
 
 	private SierraAnalysis analysis = null;
+	// The path to the Tools folder - OPTIONAL
 	private File toolsFolder = null;
+	// Whether or not the tools are run in parallel - OPTIONAL, defaults to fals
 	private boolean multithreaded = false;
 
 	static {

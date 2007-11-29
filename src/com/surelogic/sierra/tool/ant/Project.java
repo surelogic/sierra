@@ -22,9 +22,13 @@ import com.surelogic.sierra.tool.message.Config;
  */
 public class Project {
 	private FileUtils fileUtils = FileUtils.getFileUtils();
+	//The project name - REQUIRED
 	private String name = null;
+	// The project's directory - REQUIRED
 	private File dir = null;
+	// Nested element containing source locations - OPTIONAL
 	private List<Source> sources = new ArrayList<Source>();
+	// Nested element containing binary locations - OPTIONAL
 	private List<Binary> binaries = new ArrayList<Binary>();
 	private Path src = null;
 	private Path bin = null;
