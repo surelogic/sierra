@@ -187,7 +187,6 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-			// conn.commit();
 			log.info("All new findings persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {

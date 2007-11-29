@@ -1,12 +1,18 @@
 package com.surelogic.sierra.schema;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import com.surelogic.common.jdbc.SchemaAction;
-import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.DBType;
+import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.settings.CategoryView;
 import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
@@ -34,8 +40,25 @@ public class Server_0007 implements SchemaAction {
 				entry.setFiltered(false);
 				entries.add(entry);
 			}
-			final long revision = Server.nextRevision(conn);
-			sMan.writeFilterSet(set, revision);
+			PreparedStatement st;
+			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+				st = conn.prepareStatement(
+						"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+						new String[] { "REVISION" });
+			} else {
+				st = conn.prepareStatement(
+						"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+						Statement.RETURN_GENERATED_KEYS);
+			}
+			st.setTimestamp(1, new Timestamp(new Date().getTime()));
+			st.execute();
+			ResultSet rSet = st.getGeneratedKeys();
+			try {
+				rSet.next();
+				sMan.writeFilterSet(set, rSet.getLong(1));
+			} finally {
+				rSet.close();
+			}
 		}
 		conn.commit();
 	}

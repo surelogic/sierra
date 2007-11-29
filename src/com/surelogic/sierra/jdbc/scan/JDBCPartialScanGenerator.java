@@ -3,19 +3,12 @@ package com.surelogic.sierra.jdbc.scan;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
-import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
-import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
@@ -39,19 +32,16 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
 	private final ScanRecord scan;
-	private final Map<String, List<String>> compilations;
-	private final Set<Long> findingIds;
+	private final FindingFilter filter;
 	private String projectName;
 
 	JDBCPartialScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, ScanRecord scan,
-			Map<String, List<String>> compilations, Set<Long> findingIds) {
+			ScanManager manager, ScanRecord scan, FindingFilter filter) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.scan = scan;
-		this.compilations = compilations;
-		this.findingIds = findingIds;
+		this.filter = filter;
 	}
 
 	public ArtifactGenerator build() {
@@ -61,46 +51,8 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 			scan.setStatus(ScanStatus.LOADING);
 			scan.update();
 			conn.commit();
-			final FindingFilter filter = FindingTypeManager.getInstance(conn)
-					.getMessageFilter(
-							ClientSettingsManager.getInstance(conn)
-									.getSettings(projectName));
 			return new JDBCArtifactGenerator(conn, factory, manager,
-					projectName, scan, filter,
-					// This scannable is called after finish is called in
-					// ArtifactGenerator
-					new Runnable() {
-						public void run() {
-							try {
-								scan.setStatus(ScanStatus.FINISHED);
-								scan.update();
-								log
-										.info("Scan "
-												+ scan.getUid()
-												+ " for project "
-												+ projectName
-												+ " persisted to database, starting finding generation.");
-								conn.commit();
-								ClientFindingManager fm = ClientFindingManager
-										.getInstance(conn);
-								// TODO we need to get the progress monitor in
-								// here.
-								fm.updateScanFindings(projectName, scan
-										.getUid(), compilations, filter,
-										findingIds, new EmptyProgressMonitor());
-								conn.commit();
-							} catch (SQLException e) {
-								try {
-									conn.rollback();
-									manager.deleteScan(scan.getUid(), null);
-									conn.commit();
-								} catch (SQLException e1) {
-									// Do nothing, we already have an exception
-								}
-								throw new ScanPersistenceException(e);
-							}
-						}
-					});
+					projectName, scan, filter);
 		} catch (SQLException e) {
 			try {
 				conn.rollback();
@@ -136,6 +88,19 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 
 	public ScanGenerator user(String user) {
 		return this;
+	}
+
+	public String finished() {
+		scan.setStatus(ScanStatus.FINISHED);
+		try {
+			scan.update();
+			log.info("Scan " + scan.getUid() + " for project " + projectName
+					+ " persisted to database, starting finding generation.");
+			conn.commit();
+			return scan.getUid();
+		} catch (SQLException e) {
+			throw new ScanPersistenceException(e);
+		}
 	}
 
 }

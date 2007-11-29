@@ -32,6 +32,7 @@ class JDBCScanGenerator implements ScanGenerator {
 			.getLoggerFor(JDBCScanGenerator.class);
 
 	private final Connection conn;
+	private final FindingFilter filter;
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
 	private final boolean partial;
@@ -41,23 +42,26 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String uid;
 	private String user;
 	private Set<String> qualifiers;
+	private ScanRecord scan;
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager) {
+			ScanManager manager, FindingFilter filter) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.qualifiers = Collections.emptySet();
 		this.partial = false;
+		this.filter = filter;
 	}
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, boolean partial) {
+			ScanManager manager, FindingFilter filter, boolean partial) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.qualifiers = Collections.emptySet();
 		this.partial = partial;
+		this.filter = filter;
 	}
 
 	public ArtifactGenerator build() {
@@ -72,7 +76,7 @@ class JDBCScanGenerator implements ScanGenerator {
 			if (!p.select()) {
 				p.insert();
 			}
-			final ScanRecord scan = factory.newScan();
+			scan = factory.newScan();
 			scan.setProjectId(p.getId());
 			scan.setUid(uid);
 			scan.setTimestamp(JDBCUtils.now());
@@ -104,59 +108,8 @@ class JDBCScanGenerator implements ScanGenerator {
 				}
 			}
 			conn.commit();
-			final FindingFilter filter = FindingTypeManager.getInstance(conn)
-					.getMessageFilter(
-							qualifiers.isEmpty() ? ClientSettingsManager
-									.getInstance(conn).getSettings(projectName)
-									: ServerSettingsManager.getInstance(conn)
-											.getSettingsByProject(projectName));
 			return new JDBCArtifactGenerator(conn, factory, manager,
-					projectName, scan, filter,
-					// This scannable is called after finish is called in
-					// ArtifactGenerator
-					new Runnable() {
-						public void run() {
-							try {
-								scan.setStatus(ScanStatus.FINISHED);
-								scan.update();
-								log
-										.info("Scan "
-												+ scan.getUid()
-												+ " for project "
-												+ projectName
-												+ " persisted to database, starting finding generation.");
-								conn.commit();
-								if (qualifiers.isEmpty()) {
-									ClientFindingManager fm = ClientFindingManager
-											.getInstance(conn);
-									fm.generateFindings(projectName, scan
-											.getUid(), filter, null);
-									conn.commit();
-									log.info("Generating overview for scan "
-											+ scan.getUid() + "in project "
-											+ projectName);
-									fm.generateOverview(projectName, uid);
-								} else {
-									ServerFindingManager fm = ServerFindingManager
-											.getInstance(conn);
-									fm.generateFindings(projectName, scan
-											.getUid(), filter, null);
-									fm.generateOverview(projectName, scan
-											.getUid(), qualifiers);
-								}
-								conn.commit();
-							} catch (SQLException e) {
-								try {
-									conn.rollback();
-									manager.deleteScan(uid, null);
-									conn.commit();
-								} catch (SQLException e1) {
-									// Do nothing, we already have an exception
-								}
-								throw new ScanPersistenceException(e);
-							}
-						}
-					});
+					projectName, scan, filter);
 		} catch (SQLException e) {
 			try {
 				conn.rollback();
@@ -199,6 +152,19 @@ class JDBCScanGenerator implements ScanGenerator {
 	public ScanGenerator user(String user) {
 		this.user = user;
 		return this;
+	}
+
+	public String finished() {
+		scan.setStatus(ScanStatus.FINISHED);
+		try {
+			scan.update();
+			log.info("Scan " + scan.getUid() + " for project " + projectName
+					+ " persisted to database, starting finding generation.");
+			conn.commit();
+			return scan.getUid();
+		} catch (SQLException e) {
+			throw new ScanPersistenceException(e);
+		}
 	}
 
 }

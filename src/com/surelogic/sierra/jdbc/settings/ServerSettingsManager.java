@@ -111,8 +111,8 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @param name
 	 * @throws SQLException
 	 */
-	public void createSettings(String name) throws SQLException {
-		createSettings(name, null);
+	public void createSettings(String name, long revision) throws SQLException {
+		createSettings(name, null, revision);
 	}
 
 	/**
@@ -125,11 +125,11 @@ public class ServerSettingsManager extends SettingsManager {
 	 *            from. May be null.
 	 * @throws SQLException
 	 */
-	public void createSettings(String name, String from) throws SQLException {
+	public void createSettings(String name, String from, long revision) throws SQLException {
 		SettingsRecord record = newSettingsRecord();
 		record.setName(name);
 		if (!record.select()) {
-			record.setRevision(Server.nextRevision(conn));
+			record.setRevision(revision);
 			record.insert();
 			if (from != null) {
 				SettingsRecord old = newSettingsRecord();
@@ -157,12 +157,12 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @param newName
 	 * @throws SQLException
 	 */
-	public void renameSettings(String currName, String newName)
+	public void renameSettings(String currName, String newName, long revision)
 			throws SQLException {
 
 		SettingsRecord record = newSettingsRecord();
 		record.setName(currName);
-		record.setRevision(Server.nextRevision(conn));
+		record.setRevision(revision);
 
 		/** Can't rename a setting which does not exist */
 		if (!record.select()) {

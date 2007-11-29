@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
-	private final Runnable callback;
 
 	private final List<ArtifactRecord> artifacts;
 	private final List<ClassMetricRecord> classMetrics;
@@ -60,13 +60,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
-			FindingFilter filter, Runnable callback) throws SQLException {
+			FindingFilter filter) throws SQLException {
 		log.info("Now persisting artifacts to database for scan "
 				+ scan.getUid() + " in project " + projectName + ".");
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.callback = callback;
 		this.filter = filter;
 		this.ftMan = FindingTypeManager.getInstance(conn);
 		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
@@ -81,9 +80,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		this.mBuilder = new JDBCMetricBuilder();
 	}
 
-	public void finished() {
+	/*
+	 * Must be called by JDBCScanGenerator to ensure all artifacts and error are
+	 * actually persisted.
+	 */
+	void finished() {
 		persist();
-		callback.run();
 	}
 
 	private void persist() {
@@ -107,22 +109,22 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private void lookupOrInsert(Collection<? extends Record<?>> objects)
 			throws SQLException {
-		for (Record<?> ins : objects) {
-			if (!ins.select()) {
-				ins.insert();
+		final Iterator<? extends Record<?>> i = objects.iterator();
+		while (i.hasNext()) {
+			final Record<?> ins = i.next();
+			if (ins.select()) {
+				i.remove();
 			}
+		}
+		for (final Record<?> ins : objects) {
+			ins.insert();
 		}
 	}
 
 	private void insert(Collection<? extends Record<?>> objects)
 			throws SQLException {
 		for (Record<?> rec : objects) {
-			try {
-				rec.insert();
-			} catch (SQLException e) {
-				System.out.println("here");
-				throw e;
-			}
+			rec.insert();
 		}
 	}
 

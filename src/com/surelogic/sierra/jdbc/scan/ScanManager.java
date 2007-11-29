@@ -20,6 +20,7 @@ import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
@@ -141,8 +142,8 @@ public class ScanManager {
 				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID = ?");
 	}
 
-	public ScanGenerator getScanGenerator() {
-		return new JDBCScanGenerator(conn, factory, this);
+	public ScanGenerator getScanGenerator(FindingFilter filter) {
+		return new JDBCScanGenerator(conn, factory, this, filter);
 	}
 
 	public void readScan(String uid, ScanGenerator gen) throws SQLException {
@@ -255,10 +256,14 @@ public class ScanManager {
 	 * 
 	 * @param projectName
 	 * @param compilations
+	 * @param findingIds
+	 *            a set of finding ids. All findingIds, that are affected by scan
+	 *            persistence will be added to this set.
 	 * @return
 	 */
 	public ScanGenerator getPartialScanGenerator(String projectName,
-			Map<String, List<String>> compilations) {
+			FindingFilter filter, Map<String, List<String>> compilations,
+			Set<Long> findingIds) {
 		try {
 			String oldestScan = null;
 			String latestScan = null;
@@ -282,7 +287,7 @@ public class ScanManager {
 			}
 			if (latestScan == null) {
 				// New scan, treat this as a normal scan
-				return new JDBCScanGenerator(conn, factory, this, false);
+				return new JDBCScanGenerator(conn, factory, this, filter, false);
 			} else {
 				final ScanRecord latest = factory.newScan();
 				latest.setUid(latestScan);
@@ -305,7 +310,6 @@ public class ScanManager {
 					oldest.setUid(oldestScan);
 					oldest.select();
 				}
-				final Set<Long> findingIds = new HashSet<Long>();
 				for (Entry<String, List<String>> packageCompilations : compilations
 						.entrySet()) {
 					final String pakkage = packageCompilations.getKey();
@@ -386,7 +390,7 @@ public class ScanManager {
 				// Copy the appropriate artifacts to the previous scan, then run
 				// against the latest scan
 				return new JDBCPartialScanGenerator(conn, factory, this,
-						latest, compilations, findingIds);
+						latest, filter);
 			}
 		} catch (SQLException e) {
 			try {
