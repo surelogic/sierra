@@ -68,8 +68,7 @@ public class ClientSettingsManager extends SettingsManager {
 				set.close();
 			}
 		} else {
-			throw new IllegalArgumentException("No project with name "
-					+ project + " exists.");
+			return null;
 		}
 	}
 
