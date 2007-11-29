@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
@@ -24,8 +23,9 @@ import com.surelogic.sierra.tool.message.ScanGenerator;
 
 public final class ScanDocumentUtility {
 
-	private static final Logger log = SLLogger.getLoggerFor(ScanDocumentUtility.class);
-	
+	private static final Logger log = SLLogger
+			.getLoggerFor(ScanDocumentUtility.class);
+
 	private ScanDocumentUtility() {
 		// no instances
 	}
@@ -74,8 +74,6 @@ public final class ScanDocumentUtility {
 
 					final ClientFindingManager fm = ClientFindingManager
 							.getInstance(conn);
-					// TODO we need to get the progress monitor in
-					// here.
 					fm.updateScanFindings(projectName, uid, compilations,
 							filter, findingIds, monitor);
 					conn.commit();
@@ -148,8 +146,8 @@ public final class ScanDocumentUtility {
 						.getInstance(conn);
 				fm.generateFindings(projectName, uid, filter, null);
 				conn.commit();
-				log.info("Generating overview for scan " + uid
-						+ "in project " + projectName);
+				log.info("Generating overview for scan " + uid + "in project "
+						+ projectName);
 				fm.generateOverview(projectName, uid);
 				conn.commit();
 			} catch (Exception e) {

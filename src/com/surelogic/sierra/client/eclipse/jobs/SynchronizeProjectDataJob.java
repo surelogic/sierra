@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-import javax.xml.ws.WebServiceException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,7 +21,9 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class SynchronizeProjectDataJob extends DatabaseJob {
 
@@ -101,9 +101,8 @@ public class SynchronizeProjectDataJob extends DatabaseJob {
 								+ f_server + " (wrong server)", e);
 				return Status.CANCEL_STATUS;
 			}
-		} catch (WebServiceException e) {
-			if ("request requires HTTP authentication: Unauthorized".equals(e
-					.getMessage())) {
+		} catch (SierraServiceClientException e) {
+			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_server,
 						f_projectName);
 			} else {
