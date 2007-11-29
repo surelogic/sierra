@@ -196,7 +196,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private void clearToNewWorkingSelection() {
 		disposeWorkingSelection();
 		f_workingSelection = f_manager.construct();
-		f_workingSelection.init();
+		f_workingSelection.initAndSyncToDatabase();
 		updateSavedSelections();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
@@ -206,7 +206,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private void openSelection(final Selection newSelection) {
 		disposeWorkingSelection();
 		f_workingSelection = newSelection;
-		f_workingSelection.init();
+		f_workingSelection.initAndSyncToDatabase();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();

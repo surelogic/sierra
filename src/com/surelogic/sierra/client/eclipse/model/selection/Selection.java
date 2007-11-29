@@ -76,9 +76,10 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	/**
 	 * This just connects this filter to the database. Making it reflect changes
-	 * to the database.
+	 * to the database. Ensure that {@link #dispose()} is called to disconnect
+	 * this selection from the database when the selection is no longer used.
 	 */
-	public void init() {
+	public void initAndSyncToDatabase() {
 		DatabaseHub.getInstance().addObserver(this);
 	}
 
