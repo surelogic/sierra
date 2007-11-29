@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -381,11 +383,46 @@ public class Tools {
 	File getToolsFolder() {
 		if (toolsFolder == null || !toolsFolder.isDirectory()) {
 			String[] paths = analysis.getClasspath().list();
+			//Find the 
+			int index = -1;
+			Pattern pattern = Pattern.compile(Pattern.quote("((.*)+)" + File.separator + "Sierra-Ant.*"));
+			antProject.log( "Pattern: " + pattern.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
+			Matcher matcher = null;
+			
 			for (String path : paths) {
-				if (path.endsWith("reckoner.jar")) {
-					int index = path.indexOf("reckoner");
-					toolsFolder = new File(path.substring(0, index - 1));
+			antProject.log( "Checking: " + path, org.apache.tools.ant.Project.MSG_DEBUG);
+				
+				
+				matcher = pattern.matcher(path);
+				if(matcher.matches()){
+					antProject.log("A MATCH!", org.apache.tools.ant.Project.MSG_DEBUG);
+          			StringBuilder sb = new StringBuilder();
+          			sb.append(matcher.group(1));
+          			sb.append(File.separator);
+          			sb.append("Tools");
+  					toolsFolder = new File(sb.toString());
+  					sb = null;
 				}
+				
+				
+				
+				/*
+				index =  path.indexOf("Sierra-Ant");
+				if(index > 0) {
+					antProject.log("FOUND SIERRA-ANT!", org.apache.tools.ant.Project.MSG_DEBUG);
+					String[] array = path.split(Matcher.quoteReplacement(File.separator));
+					for(int i = 0, len = array.length; i < len; i++){
+						if("Sierra-Ant".equals(array[i]) && i > 0){
+                			StringBuilder sb = new StringBuilder();
+                			sb.append(array[i-1]);
+                			sb.append(File.separator);
+                			sb.append("Tools");
+        					toolsFolder = new File(sb.toString());
+        					sb = null;
+						}
+					}
+				}
+				*/
 			}
 		}
 		antProject.log("The toolsfolder points to: " + toolsFolder,
