@@ -83,14 +83,14 @@ public final class FindingsSelectionView extends ViewPart {
 				false));
 		final ToolItem openSearchItem = new ToolItem(searchBar, SWT.PUSH);
 		openSearchItem.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
-		openSearchItem.setToolTipText("Open Search...");
+				.getImage(SLImages.IMG_SIERRA_INVESTIGATE_DOT));
+		openSearchItem.setToolTipText("Open Search");
 		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
 		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
-		saveSearchAsItem.setToolTipText("Save Search As...");
+		saveSearchAsItem.setToolTipText("Save Search As");
 		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
-		deleteSearchItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
-		deleteSearchItem.setToolTipText("Delete Saved Search...");
+		deleteSearchItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X_DOT));
+		deleteSearchItem.setToolTipText("Delete Saved Search");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
 		savedSelections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
