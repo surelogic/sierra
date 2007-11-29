@@ -328,7 +328,7 @@ public class MessageWarehouse {
 		return null;
 	}
 
-	public void parseScanDocument(final File runDocument,
+	public String parseScanDocument(final File runDocument,
 			ScanGenerator generator, SLProgressMonitor monitor) {
 		try {
 			if (monitor != null) {
@@ -366,7 +366,7 @@ public class MessageWarehouse {
 					readConfig(unmarshaller.unmarshal(xmlr, Config.class)
 							.getValue(), generator);
 					if (cancelled(monitor)) {
-						return;
+						return null;
 					} else {
 						work(monitor);
 					}
@@ -388,6 +388,7 @@ public class MessageWarehouse {
 			log.severe("Error when trying to read compressed file " + e);
 		}
 		parseScanDocument(runDocument, generator.build(), monitor);
+		return generator.finished();
 	}
 
 	private void parseScanDocument(final File runDocument,
@@ -503,7 +504,6 @@ public class MessageWarehouse {
 					if (monitor != null) {
 						monitor.subTask("Generating findings");
 					}
-					generator.finished();
 				} catch (JAXBException e) {
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
@@ -523,14 +523,14 @@ public class MessageWarehouse {
 		}
 	}
 
-	public static void readScan(Scan scan, ScanGenerator generator) {
+	public static String readScan(Scan scan, ScanGenerator generator) {
 		generator.uid(scan.getUid());
 		readConfig(scan.getConfig(), generator);
 		ArtifactGenerator aGen = generator.build();
 		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
 		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
 		readErrors(scan.getToolOutput().getErrors().getErrors(), aGen);
-		aGen.finished();
+		return generator.finished();
 	}
 
 	private static void readArtifacts(Collection<Artifact> artifacts,

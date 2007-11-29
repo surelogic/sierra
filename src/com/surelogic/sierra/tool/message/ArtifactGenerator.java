@@ -16,8 +16,6 @@ public interface ArtifactGenerator {
 
 	public void rollback();
 
-	public void finished();
-
 	public interface ArtifactBuilder {
 		public SourceLocationBuilder sourceLocation();
 

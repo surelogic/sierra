@@ -35,5 +35,11 @@ public interface ScanGenerator {
 	ScanGenerator user(String userName);
 
 	ArtifactGenerator build();
+	
+	/**
+	 * Finished is called when all scan/artifact generation is done
+	 * @return the uuid of the scan;
+	 */
+	public String finished();
 
 }
