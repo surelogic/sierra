@@ -3,18 +3,29 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
+import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
 public final class ScanDocumentUtility {
 
+	private static final Logger log = SLLogger.getLoggerFor(ScanDocumentUtility.class);
+	
 	private ScanDocumentUtility() {
 		// no instances
 	}
@@ -48,12 +59,35 @@ public final class ScanDocumentUtility {
 		try {
 			Connection conn = Data.transactionConnection();
 			try {
-				ScanManager sMan = ScanManager.getInstance(conn);
-				ScanGenerator gen = sMan.getPartialScanGenerator(projectName,
-						compilations);
-				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
-						gen, monitor);
+				final ScanManager sMan = ScanManager.getInstance(conn);
+				final Set<Long> findingIds = new HashSet<Long>();
+				final FindingFilter filter = FindingTypeManager.getInstance(
+						conn).getMessageFilter(
+						ClientSettingsManager.getInstance(conn).getSettings(
+								projectName));
+				final ScanGenerator gen = sMan.getPartialScanGenerator(
+						projectName, filter, compilations, findingIds);
+				final String uid = MessageWarehouse.getInstance()
+						.parseScanDocument(scanDocument, gen, monitor);
 				conn.commit();
+				try {
+
+					final ClientFindingManager fm = ClientFindingManager
+							.getInstance(conn);
+					// TODO we need to get the progress monitor in
+					// here.
+					fm.updateScanFindings(projectName, uid, compilations,
+							filter, findingIds, monitor);
+					conn.commit();
+				} catch (SQLException e) {
+					try {
+						conn.rollback();
+						sMan.deleteScan(uid, null);
+						conn.commit();
+					} catch (SQLException e1) {
+						// Do nothing, we already have an exception
+					}
+				}
 			} catch (Exception e) {
 				exc = e;
 				conn.rollback();
@@ -95,16 +129,28 @@ public final class ScanDocumentUtility {
 			throws ScanPersistenceException {
 		Throwable exc = null;
 		try {
-			Connection conn = Data.transactionConnection();
+			final Connection conn = Data.transactionConnection();
 			try {
-				ScanManager sMan = ScanManager.getInstance(conn);
+				final ScanManager sMan = ScanManager.getInstance(conn);
 				if (projectName != null) {
 					sMan.deleteOldestScan(projectName, monitor);
 				}
 				conn.commit();
-				ScanGenerator gen = sMan.getScanGenerator();
-				MessageWarehouse.getInstance().parseScanDocument(scanDocument,
-						gen, monitor);
+				final FindingFilter filter = FindingTypeManager.getInstance(
+						conn).getMessageFilter(
+						ClientSettingsManager.getInstance(conn).getSettings(
+								projectName));
+				final ScanGenerator gen = sMan.getScanGenerator(filter);
+				final String uid = MessageWarehouse.getInstance()
+						.parseScanDocument(scanDocument, gen, monitor);
+				conn.commit();
+				final ClientFindingManager fm = ClientFindingManager
+						.getInstance(conn);
+				fm.generateFindings(projectName, uid, filter, null);
+				conn.commit();
+				log.info("Generating overview for scan " + uid
+						+ "in project " + projectName);
+				fm.generateOverview(projectName, uid);
 				conn.commit();
 			} catch (Exception e) {
 				exc = e;
