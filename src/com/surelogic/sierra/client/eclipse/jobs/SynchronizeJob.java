@@ -46,9 +46,7 @@ public class SynchronizeJob extends DatabaseJob {
 		try {
 			final Connection conn = Data.transactionConnection();
 			try {
-				final ClientProjectManager manager = ClientProjectManager
-						.getInstance(conn);
-				status = synchronize(conn, manager, slMonitor);
+				status = synchronize(conn, slMonitor);
 			} catch (Throwable e) {
 				final String msg = "Synchronization of project '"
 						+ f_projectName + "' to Sierra server '" + f_server
@@ -74,12 +72,12 @@ public class SynchronizeJob extends DatabaseJob {
 		return status;
 	}
 
-	private IStatus synchronize(Connection conn, ClientProjectManager manager,
-			SLProgressMonitor slMonitor) throws SQLException {
+	private IStatus synchronize(Connection conn, SLProgressMonitor slMonitor)
+			throws SQLException {
 		TroubleshootConnection troubleshoot;
 		try {
-			manager.synchronizeProject(f_server.getServer(), f_projectName,
-					slMonitor);
+			ClientProjectManager.getInstance(conn).synchronizeProject(
+					f_server.getServer(), f_projectName, slMonitor);
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
 				return Status.CANCEL_STATUS;
@@ -93,7 +91,7 @@ public class SynchronizeJob extends DatabaseJob {
 			conn.rollback();
 			troubleshoot.fix();
 			if (troubleshoot.retry()) {
-				return synchronize(conn, manager, slMonitor);
+				return synchronize(conn, slMonitor);
 			} else {
 				SLLogger.getLogger().log(
 						Level.WARNING,
@@ -112,7 +110,7 @@ public class SynchronizeJob extends DatabaseJob {
 			conn.rollback();
 			troubleshoot.fix();
 			if (troubleshoot.retry()) {
-				return synchronize(conn, manager, slMonitor);
+				return synchronize(conn, slMonitor);
 			} else {
 				SLLogger.getLogger().log(
 						Level.WARNING,
