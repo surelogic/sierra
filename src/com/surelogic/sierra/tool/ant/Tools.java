@@ -389,7 +389,7 @@ public class Tools {
 			//Find the 
 			int index = -1;
 			String separator = Matcher.quoteReplacement(File.separator);
-			Pattern pattern = Pattern.compile( "(" + separator + "? (.+" + separator + ")*)sierra-tool-aoi.jar.*");
+			Pattern pattern = Pattern.compile( "(" + separator + "?(.+" + separator + ")*)sierra-tool-aoi.jar.*");
 			antProject.log( "Pattern: " + pattern.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			Matcher matcher = null;
 			
