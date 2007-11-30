@@ -103,6 +103,7 @@ public final class FilterSelectionReportLine {
 		f_check.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		f_check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
+				f_countGraph.redraw();
 				notifySelectionChanged();
 			}
 		});
@@ -157,7 +158,7 @@ public final class FilterSelectionReportLine {
 				Point size = e.gc.textExtent(text);
 				int offset = Math.max(0, (cSize.y - size.y) / 2);
 				int rightJ = cSize.x - 2 - size.x;
-				if (f_mouseOverGraph) {
+				if (f_mouseOverGraph  || f_check.getSelection()) {
 					gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 				}
 				gc.drawText(text, rightJ, 0 + offset, true);
