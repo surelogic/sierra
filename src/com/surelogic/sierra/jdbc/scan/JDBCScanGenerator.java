@@ -36,6 +36,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private final ScanRecordFactory factory;
 	private final ScanManager manager;
 	private final boolean partial;
+	private JDBCArtifactGenerator generator;
 	private String projectName;
 	private String javaVendor;
 	private String javaVersion;
@@ -108,8 +109,9 @@ class JDBCScanGenerator implements ScanGenerator {
 				}
 			}
 			conn.commit();
-			return new JDBCArtifactGenerator(conn, factory, manager,
+			generator = new JDBCArtifactGenerator(conn, factory, manager,
 					projectName, scan, filter);
+			return generator;
 		} catch (SQLException e) {
 			try {
 				conn.rollback();
@@ -155,6 +157,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
+		generator.finished();
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
