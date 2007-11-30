@@ -434,6 +434,7 @@ public class Axis2Client implements SierraService {
 			final Merge out = new Merge();
 			out.setImportance(Importance.Factory.fromValue(in.getImportance()
 					.name()));
+			out.setSummary(in.getSummary());
 			final List<com.surelogic.sierra.tool.message.Match> matches = in
 					.getMatch();
 			if (matches != null) {
