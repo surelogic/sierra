@@ -3,11 +3,14 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.derby.iapi.store.access.Qualifier;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -92,9 +95,13 @@ public class ShareScanJob extends DatabaseJob {
 	private Set<String> getQualifiersOnTheServer(SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
-			return new TreeSet<String>(SierraServiceClient.create(
+			List<String> qualifiers = SierraServiceClient.create(
 					f_server.getServer()).getQualifiers(new QualifierRequest())
-					.getQualifier());
+					.getQualifier();
+			if (qualifiers == null) {
+				qualifiers = Collections.emptyList();
+			}
+			return new TreeSet<String>(qualifiers);
 		} catch (SierraServiceClientException e) {
 			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_server,
