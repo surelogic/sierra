@@ -388,7 +388,7 @@ public class Tools {
 			String[] paths = analysis.getClasspath().list();
 			//Find the 
 			int index = -1;
-			Pattern pattern = Pattern.compile(Pattern.quote("((.*)+)" + File.separator + "sierra-ant.jar.*"));
+			Pattern pattern = Pattern.compile(Pattern.quote("((.*)+)" + File.separator + "sierra-*.jar.*"));
 			antProject.log( "Pattern: " + pattern.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
 			Matcher matcher = null;
 			
@@ -397,6 +397,7 @@ public class Tools {
 				
 				matcher = pattern.matcher(path);
 				if(matcher.matches()){
+					//Should be in ".../Sierra-Ant/lib"
 					antProject.log("A MATCH!", org.apache.tools.ant.Project.MSG_DEBUG);
 					File libDir = new File(matcher.group(1));
   					toolsFolder = new File(libDir.getParentFile(), "Tools");
