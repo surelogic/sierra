@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -33,11 +34,12 @@ public final class MFilterSelectionColumn extends MColumn implements
 		return f_filter;
 	}
 
+	private Composite f_panel = null;
+	private Composite f_reportContents = null;
 	private Label f_totalCount = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
 	private ScrolledComposite f_reportViewport = null;
-	private Composite f_reportContents = null;
 
 	private Menu f_menu = null;
 	private MenuItem f_selectAllMenuItem = null;
@@ -59,7 +61,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 	void init() {
 		CascadingList.IColumn c = new CascadingList.IColumn() {
 			public Composite createContents(Composite panel) {
-				f_reportGroup = new Group(panel, SWT.NONE);
+				f_panel = new Composite(panel, SWT.NONE);
+				f_panel.setLayout(new FillLayout());
+				f_reportGroup = new Group(f_panel, SWT.NONE);
 				f_reportGroup.setText(f_filter.getFactory().getFilterLabel());
 				GridLayout gridLayout = new GridLayout();
 				f_reportGroup.setLayout(gridLayout);
@@ -79,9 +83,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportContents.setLayout(rowLayout);
 
 				f_reportViewport.setContent(f_reportContents);
-				// f_reportViewport.setExpandVertical(true);
-				// f_reportViewport.setExpandHorizontal(true);
-				// f_reportViewport.setAlwaysShowScrollBars(false);
 
 				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
 				f_porousCount.setLayoutData(new GridData(SWT.RIGHT,
@@ -127,7 +128,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_totalCount.setMenu(f_menu);
 
 				updateReport();
-				return f_reportGroup;
+				return f_panel;
 			}
 		};
 		getCascadingList().addColumnAfter(c,
@@ -147,17 +148,17 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	@Override
 	int getColumnIndex() {
-		if (f_reportGroup.isDisposed())
+		if (f_panel.isDisposed())
 			return -1;
 		else
-			return getCascadingList().getColumnIndexOf(f_reportGroup);
+			return getCascadingList().getColumnIndexOf(f_panel);
 	}
 
 	/**
 	 * Must be called from the UI thread.
 	 */
 	private void updateReport() {
-		if (f_reportGroup.isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		/*
 		 * Fix total count at the top.
@@ -222,14 +223,12 @@ public final class MFilterSelectionColumn extends MColumn implements
 					+ " selected");
 		}
 		f_reportContents.pack();
-		f_reportGroup.pack();
-		f_reportGroup.layout();
-		// f_reportViewport.setMinHeight(f_reportContents.computeSize(SWT.DEFAULT,
-		// SWT.DEFAULT).y);
+//		f_panel.pack();
+//		f_panel.layout();
 	}
 
 	public void porous(Filter filter) {
-		if (f_reportGroup.isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -239,7 +238,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsChanged(Filter filter) {
-		if (f_reportGroup.isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -256,7 +255,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsEmpty(Filter filter) {
-		if (f_reportGroup.isDisposed())
+		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
