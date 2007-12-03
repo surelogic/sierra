@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -398,13 +399,15 @@ public class ServerSettingsManager extends SettingsManager {
 	 *            an (optional) brief description of the filter set
 	 * @throws SQLException
 	 */
-	public void createFilterSet(String name, String description, long revision)
+	public String createFilterSet(String name, String description, long revision)
 			throws SQLException {
 		final FilterSetRecord filterSetRec = newFilterSetRecord();
 		filterSetRec.setName(name);
 		filterSetRec.setInfo(description);
 		filterSetRec.setRevision(revision);
+		filterSetRec.setUid(UUID.randomUUID().toString());
 		filterSetRec.insert();
+		return filterSetRec.getUid();
 	}
 
 	/**
