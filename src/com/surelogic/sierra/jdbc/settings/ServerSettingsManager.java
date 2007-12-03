@@ -397,6 +397,7 @@ public class ServerSettingsManager extends SettingsManager {
 	 * @param description
 	 * @param revision
 	 *            an (optional) brief description of the filter set
+	 * @return the uid of this filter set
 	 * @throws SQLException
 	 */
 	public String createFilterSet(String name, String description, long revision)
@@ -408,6 +409,20 @@ public class ServerSettingsManager extends SettingsManager {
 		filterSetRec.setUid(UUID.randomUUID().toString());
 		filterSetRec.insert();
 		return filterSetRec.getUid();
+	}
+
+	/**
+	 * Delete an existing filter set.
+	 * 
+	 * @param uid
+	 * @throws SQLException
+	 */
+	public void deleteFilterSet(String uid) throws SQLException {
+		final FilterSetRecord set = newFilterSetRecord();
+		set.setUid(uid);
+		if (set.select()) {
+			set.delete();
+		}
 	}
 
 	/**
