@@ -11,14 +11,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.FilterSetRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
-import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingType;
@@ -27,6 +28,9 @@ import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.SettingsReply;
 
 public class ServerSettingsManager extends SettingsManager {
+
+	private static final Logger log = SLLogger
+			.getLoggerFor(ServerSettingsManager.class);
 
 	private static final String FIND_ALL = "SELECT NAME FROM SETTINGS";
 
@@ -42,6 +46,8 @@ public class ServerSettingsManager extends SettingsManager {
 	private final PreparedStatement loadFilterSetParents;
 	private final PreparedStatement insertFilterSetParent;
 	private final PreparedStatement insertFilterSetEntry;
+	private final PreparedStatement deleteFilterSetEntries;
+	private final PreparedStatement deleteFilterSetParents;
 	private final PreparedStatement getSettingsFilterSets;
 
 	private final UpdateBaseMapper settingsMapper;
@@ -97,6 +103,10 @@ public class ServerSettingsManager extends SettingsManager {
 				.prepareStatement("INSERT INTO FILTER_ENTRY (FILTER_SET_ID,FINDING_TYPE_ID,FILTERED) VALUES (?,?,?)");
 		getSettingsFilterSets = conn
 				.prepareStatement("SELECT UUID FROM SETTING_FILTER_SETS SFS, FILTER_SET FS WHERE SFS.SETTINGS_ID = ? AND FS.ID = SFS.FILTER_SET_ID");
+		deleteFilterSetParents = conn
+				.prepareStatement("DELETE FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
+		deleteFilterSetEntries = conn
+				.prepareStatement("DELETE FROM FILTER_ENTRY WHERE FILTER_SET_ID = ?");
 	}
 
 	public static ServerSettingsManager getInstance(Connection conn)
@@ -125,7 +135,8 @@ public class ServerSettingsManager extends SettingsManager {
 	 *            from. May be null.
 	 * @throws SQLException
 	 */
-	public void createSettings(String name, String from, long revision) throws SQLException {
+	public void createSettings(String name, String from, long revision)
+			throws SQLException {
 		SettingsRecord record = newSettingsRecord();
 		record.setName(name);
 		if (!record.select()) {
@@ -191,67 +202,6 @@ public class ServerSettingsManager extends SettingsManager {
 		}
 
 		record.delete();
-	}
-
-	/**
-	 * List the filter sets for these settings.
-	 * 
-	 * @param name
-	 * @return
-	 * @throws SQLException
-	 */
-	public List<FilterSet> listSettingFilterSets(String name)
-			throws SQLException {
-		SettingsRecord settings = newSettingsRecord();
-		settings.setName(name);
-		if (settings.select()) {
-			List<FilterSet> filterSets = new ArrayList<FilterSet>();
-			getSettingsFilterSets.setLong(1, settings.getId());
-			final ResultSet set = getSettingsFilterSets.executeQuery();
-			try {
-				while (set.next()) {
-					filterSets.add(getFilterSet(set.getString(1)));
-				}
-			} finally {
-				set.close();
-			}
-			return filterSets;
-		} else {
-			return null;
-		}
-	}
-
-	public void writeFilterSet(FilterSet filterSet, long revision)
-			throws SQLException {
-		final FilterSetRecord filterSetRec = newFilterSetRecord();
-		filterSetRec.setUid(filterSet.getUid());
-		filterSetRec.setRevision(revision);
-		filterSetRec.setName(filterSet.getName());
-		filterSetRec.insert();
-		final long filterSetId = filterSetRec.getId();
-		final FilterSetRecord parentRec = newFilterSetRecord();
-		for (final String parent : filterSet.getParent()) {
-			parentRec.setUid(parent);
-			if (parentRec.select()) {
-				final long parentId = parentRec.getId();
-				insertFilterSetParent.setLong(1, filterSetId);
-				insertFilterSetParent.setLong(2, parentId);
-				insertFilterSetParent.execute();
-			} else {
-				throw new IllegalArgumentException("Filter set with name "
-						+ filterSet.getName() + " and uid "
-						+ filterSet.getUid()
-						+ "was being written, but parent with uid " + parent
-						+ " could not be found");
-			}
-		}
-		for (final FilterEntry entry : filterSet.getFilter()) {
-			final long findingTypeId = ftMan.getFindingTypeId(entry.getType());
-			insertFilterSetEntry.setLong(1, filterSetId);
-			insertFilterSetEntry.setLong(2, findingTypeId);
-			insertFilterSetEntry.setString(3, entry.isFiltered() ? "Y" : "N");
-			insertFilterSetEntry.execute();
-		}
 	}
 
 	/**
@@ -440,6 +390,123 @@ public class ServerSettingsManager extends SettingsManager {
 	}
 
 	/**
+	 * Create an empty filter set.
+	 * 
+	 * @param name
+	 * @param description
+	 * @param revision
+	 *            an (optional) brief description of the filter set
+	 * @throws SQLException
+	 */
+	public void createFilterSet(String name, String description, long revision)
+			throws SQLException {
+		final FilterSetRecord filterSetRec = newFilterSetRecord();
+		filterSetRec.setName(name);
+		filterSetRec.setInfo(description);
+		filterSetRec.setRevision(revision);
+		filterSetRec.insert();
+	}
+
+	/**
+	 * Update an existing filter set. This will overwrite all current
+	 * information about the filter set.
+	 * 
+	 * @param filterSet
+	 * @param revision
+	 * @throws SQLException
+	 */
+	public void updateFilterSet(FilterSet filterSet, long revision)
+			throws SQLException {
+		final FilterSetRecord filterSetRec = newFilterSetRecord();
+		filterSetRec.setUid(filterSet.getUid());
+		if (filterSetRec.select()) {
+			filterSetRec.setRevision(revision);
+			filterSetRec.setName(filterSet.getName());
+			filterSetRec.update();
+			final long filterSetId = filterSetRec.getId();
+			deleteFilterSetParents.setLong(1, filterSetId);
+			deleteFilterSetParents.execute();
+			final FilterSetRecord parentRec = newFilterSetRecord();
+			for (final String parent : filterSet.getParent()) {
+				parentRec.setUid(parent);
+				if (parentRec.select()) {
+					final long parentId = parentRec.getId();
+					insertFilterSetParent.setLong(1, filterSetId);
+					insertFilterSetParent.setLong(2, parentId);
+					insertFilterSetParent.execute();
+				} else {
+					throw new IllegalArgumentException("Filter set with name "
+							+ filterSet.getName() + " and uid "
+							+ filterSet.getUid()
+							+ "was being written, but parent with uid "
+							+ parent + " could not be found");
+				}
+			}
+			deleteFilterSetEntries.setLong(1, filterSetId);
+			deleteFilterSetEntries.execute();
+			for (final FilterEntry entry : filterSet.getFilter()) {
+				final long findingTypeId = ftMan.getFindingTypeId(entry
+						.getType());
+				insertFilterSetEntry.setLong(1, filterSetId);
+				insertFilterSetEntry.setLong(2, findingTypeId);
+				insertFilterSetEntry.setString(3, entry.isFiltered() ? "Y"
+						: "N");
+				insertFilterSetEntry.execute();
+			}
+		} else {
+			log.warning("No filter set exists with the name "
+					+ filterSet.getName() + ", nothing could be updated.");
+		}
+	}
+
+	/**
+	 * 
+	 * @param uid
+	 * @return
+	 * @throws SQLException
+	 */
+	public FilterSet getFilterSet(final String uid) throws SQLException {
+		FilterSetRecord rec = newFilterSetRecord();
+		rec.setUid(uid);
+		if (rec.select()) {
+			final FilterSet filterSet = getFilterSetHelper(rec.getId());
+			filterSet.setName(rec.getName());
+			filterSet.setUid(rec.getUid());
+			return filterSet;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * List the filter sets for these settings.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<FilterSet> listSettingFilterSets(String name)
+			throws SQLException {
+		SettingsRecord settings = newSettingsRecord();
+		settings.setName(name);
+		if (settings.select()) {
+			List<FilterSet> filterSets = new ArrayList<FilterSet>();
+			getSettingsFilterSets.setLong(1, settings.getId());
+			final ResultSet set = getSettingsFilterSets.executeQuery();
+			try {
+				while (set.next()) {
+					filterSets.add(getFilterSet(set.getString(1)));
+				}
+			} finally {
+				set.close();
+			}
+			return filterSets;
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * List all of the filter sets available.
 	 * 
 	 * @return
@@ -514,19 +581,6 @@ public class ServerSettingsManager extends SettingsManager {
 			parents.add(parent);
 		}
 		return filterSet;
-	}
-
-	public FilterSet getFilterSet(final String uid) throws SQLException {
-		FilterSetRecord rec = newFilterSetRecord();
-		rec.setUid(uid);
-		if (rec.select()) {
-			final FilterSet filterSet = getFilterSetHelper(rec.getId());
-			filterSet.setName(rec.getName());
-			filterSet.setUid(rec.getUid());
-			return filterSet;
-		} else {
-			return null;
-		}
 	}
 
 	/**

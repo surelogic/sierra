@@ -1,5 +1,7 @@
 package com.surelogic.sierra.jdbc.record;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +22,7 @@ public class FilterSetRecord extends LongUpdatableRecord {
 			throws SQLException {
 		st.setString(idx++, name);
 		st.setLong(idx++, revision);
-		st.setString(idx++, info);
+		setNullableString(idx++, st, info);
 		return idx;
 	}
 
@@ -29,7 +31,7 @@ public class FilterSetRecord extends LongUpdatableRecord {
 		st.setString(idx++, uid);
 		st.setLong(idx++, revision);
 		st.setString(idx++, name);
-		st.setString(idx++, info);
+		setNullableString(idx++, st, info);
 		return idx;
 	}
 

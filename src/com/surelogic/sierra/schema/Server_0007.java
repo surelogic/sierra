@@ -55,7 +55,9 @@ public class Server_0007 implements SchemaAction {
 			ResultSet rSet = st.getGeneratedKeys();
 			try {
 				rSet.next();
-				sMan.writeFilterSet(set, rSet.getLong(1));
+				final long revision = rSet.getLong(1);
+				sMan.createFilterSet(set.getName(), null, revision);
+				sMan.updateFilterSet(set, rSet.getLong(1));
 			} finally {
 				rSet.close();
 			}
