@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.derby.iapi.store.access.Qualifier;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

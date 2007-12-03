@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -33,7 +36,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private Label f_totalCount = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
-	private Composite f_panel = null;
+	private ScrolledComposite f_reportViewport = null;
+	private Composite f_reportContents = null;
 
 	private Menu f_menu = null;
 	private MenuItem f_selectAllMenuItem = null;
@@ -53,19 +57,37 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	@Override
 	void init() {
-		CascadingList.IScrolledColumn c = new CascadingList.IScrolledColumn() {
-			public void createContents(Composite panel) {
-				f_panel = panel;
+		CascadingList.IColumn c = new CascadingList.IColumn() {
+			public Composite createContents(Composite panel) {
 				f_reportGroup = new Group(panel, SWT.NONE);
 				f_reportGroup.setText(f_filter.getFactory().getFilterLabel());
+				GridLayout gridLayout = new GridLayout();
+				f_reportGroup.setLayout(gridLayout);
+
+				f_totalCount = new Label(f_reportGroup, SWT.RIGHT);
+				f_totalCount.setLayoutData(new GridData(SWT.RIGHT, SWT.DEFAULT,
+						true, false));
+
+				f_reportViewport = new ScrolledComposite(f_reportGroup,
+						SWT.V_SCROLL);
+				f_reportViewport.setLayoutData(new GridData(SWT.RIGHT,
+						SWT.DEFAULT, true, true));
+				f_reportContents = new Composite(f_reportViewport, SWT.NONE);
 				RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 				rowLayout.fill = true;
 				rowLayout.wrap = false;
-				f_reportGroup.setLayout(rowLayout);
+				f_reportContents.setLayout(rowLayout);
 
-				f_totalCount = new Label(f_reportGroup, SWT.RIGHT);
+				f_reportViewport.setContent(f_reportContents);
+				// f_reportViewport.setExpandVertical(true);
+				// f_reportViewport.setExpandHorizontal(true);
+				// f_reportViewport.setAlwaysShowScrollBars(false);
 
-				f_menu = new Menu(f_panel.getShell(), SWT.POP_UP);
+				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
+				f_porousCount.setLayoutData(new GridData(SWT.RIGHT,
+						SWT.DEFAULT, true, false));
+
+				f_menu = new Menu(f_reportGroup.getShell(), SWT.POP_UP);
 				f_menu.addListener(SWT.Show, new Listener() {
 					public void handleEvent(Event event) {
 						final boolean valuesExist = f_filter.hasValues();
@@ -105,6 +127,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_totalCount.setMenu(f_menu);
 
 				updateReport();
+				return f_reportGroup;
 			}
 		};
 		getCascadingList().addColumnAfter(c,
@@ -124,17 +147,17 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 	@Override
 	int getColumnIndex() {
-		if (f_panel.isDisposed())
+		if (f_reportGroup.isDisposed())
 			return -1;
 		else
-			return getCascadingList().getColumnIndexOf(f_panel);
+			return getCascadingList().getColumnIndexOf(f_reportGroup);
 	}
 
 	/**
 	 * Must be called from the UI thread.
 	 */
 	private void updateReport() {
-		if (f_panel.isDisposed())
+		if (f_reportGroup.isDisposed())
 			return;
 		/*
 		 * Fix total count at the top.
@@ -160,8 +183,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				fsrLine.setCount(count);
 				fsrLine.setTotal(total);
 			} else {
-				fsrLine = new FilterSelectionReportLine(f_reportGroup, value,
-						null, count, total);
+				fsrLine = new FilterSelectionReportLine(f_reportContents,
+						value, null, count, total);
 				fsrLine.setMenu(f_menu);
 				fsrLine.addObserver(this);
 				f_lines.add(fsrLine);
@@ -189,9 +212,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 		final int porousCount = f_filter.getFindingCountPorous();
 		if (f_porousCount != null && !f_porousCount.isDisposed())
-			f_porousCount.dispose();
+			f_porousCount.setText("");
 		if (!f_lines.isEmpty()) {
-			f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
 			final String porousCountString = StringUtility
 					.toCommaSepString(porousCount);
 			f_porousCount.setText(porousCountString);
@@ -199,12 +221,15 @@ public final class MFilterSelectionColumn extends MColumn implements
 					+ (porousCount > 1 ? " findings" : " finding")
 					+ " selected");
 		}
-		f_panel.pack();
+		f_reportContents.pack();
+		f_reportGroup.pack();
 		f_reportGroup.layout();
+		// f_reportViewport.setMinHeight(f_reportContents.computeSize(SWT.DEFAULT,
+		// SWT.DEFAULT).y);
 	}
 
 	public void porous(Filter filter) {
-		if (f_panel.isDisposed())
+		if (f_reportGroup.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -214,7 +239,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsChanged(Filter filter) {
-		if (f_panel.isDisposed())
+		if (f_reportGroup.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -231,7 +256,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	public void contentsEmpty(Filter filter) {
-		if (f_panel.isDisposed())
+		if (f_reportGroup.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
 			public void run() {
