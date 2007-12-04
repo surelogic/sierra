@@ -24,7 +24,7 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 				monitor);
 		final String fileName = f_scanDocument.getName();
 		final String projectName = fileName.substring(0, fileName
-				.indexOf(".sierra.gz"));
+				.indexOf(".sierra"));
 		ScanDocumentUtility.loadScanDocument(f_scanDocument,
 				slProgressMonitorWrapper, projectName);
 		if (slProgressMonitorWrapper.isCanceled()) {
