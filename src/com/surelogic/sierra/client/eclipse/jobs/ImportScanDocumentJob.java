@@ -22,9 +22,11 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 	protected IStatus run(IProgressMonitor monitor) {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
-
+		final String fileName = f_scanDocument.getName();
+		final String projectName = fileName.substring(0, fileName
+				.indexOf(".sierra.gz"));
 		ScanDocumentUtility.loadScanDocument(f_scanDocument,
-				slProgressMonitorWrapper, null);
+				slProgressMonitorWrapper, projectName);
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
