@@ -142,14 +142,13 @@ public class Parser {
 			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(new File(fileName), handler);
 		} catch (SAXException se) {
-			log.log(Level.SEVERE,
-					"Could not parse the FindBugs file. Possible errors in the generated file"
-							+ se);
+			log.log(Level.SEVERE, "Could not parse the FindBugs file. "
+					+ "Possible errors in the generated file.", se);
 		} catch (ParserConfigurationException e) {
-			log.log(Level.SEVERE, "Could not parse the FindBugs file." + e);
+			log.log(Level.SEVERE, "Could not parse the FindBugs file.", e);
 		} catch (IOException e) {
 			log.log(Level.SEVERE,
-					"Could not parse the FindBugs file. I/O Error." + e);
+					"Could not parse the FindBugs file. I/O Error.", e);
 		}
 	}
 

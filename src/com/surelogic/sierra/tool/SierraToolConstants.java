@@ -51,10 +51,6 @@ public final class SierraToolConstants {
 	/** The tool property */
 	public static final String TOOL_PROPERTY = "${tool}";
 
-	/** The name of build file for multiple projects */
-	@Deprecated
-	public static final String MULTIPLE_SIERRA_PROJECTS = "multiple-sierra-projects.xml";
-
 	/** Default priority value for database */
 	public static final String PRIORITY = "priority";
 
