@@ -34,7 +34,6 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
  * Action for running scans on compilation units and packages
  * 
  * @author Tanmay.Sinha
- * 
  */
 public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 		IEditorActionDelegate {
@@ -60,7 +59,7 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 		 * project's class path. First we identify all the source folders in the
 		 * the project, then we find whether the selected compilation unit in
 		 * the editor is in those folders, if it is, then we can say that it's
-		 * in the classpath for that project
+		 * in the classpath for that project.
 		 */
 		if (f_currentEditor != null) {
 			try {
@@ -117,8 +116,10 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 
 		} else if (f_currentSelection != null) {
 
-			// If the selection is made from the package explorer we are
-			// guaranteed that it's in classpath
+			/*
+			 * If the selection is made from the package explorer we are
+			 * guaranteed that it's in classpath.
+			 */
 			inClassPath = true;
 
 			for (Object selection : f_currentSelection.toArray()) {
@@ -147,7 +148,6 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 								"Error when trying to get compilation units for package "
 										+ packageFragment.getElementName(), e);
 					}
-
 				}
 			}
 		}
@@ -204,7 +204,6 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -218,6 +217,5 @@ public class PartialScanAction implements IWorkbenchWindowActionDelegate,
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		f_currentEditor = targetEditor;
-
 	}
 }

@@ -11,7 +11,6 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
  * Action to run scan on a project
  * 
  * @author Tanmay.Sinha
- * 
  */
 public class ScanAction extends AbstractProjectSelectedMenuAction {
 

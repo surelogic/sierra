@@ -169,7 +169,6 @@ public final class Scan {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -307,7 +306,6 @@ public final class Scan {
 						 * generation will not crash. The tool will simply
 						 * override the existing scan document no matter how
 						 * recent it is.
-						 * 
 						 */
 						if (newScanDocument.exists()) {
 							newScanDocument.delete();
@@ -338,16 +336,14 @@ public final class Scan {
 		public boolean belongsTo(Object family) {
 			return f_familyName.equals(family);
 		}
-
 	}
 
 	/**
 	 * The thread to run the ant task, it allows polling to check for
 	 * completion. Also provides method to stop the tool runs and determines any
-	 * exception that occured
+	 * exception that occurred.
 	 * 
 	 * @author Tanmay.Sinha
-	 * 
 	 */
 	private static class AntRunnable implements Runnable {
 
@@ -404,7 +400,6 @@ public final class Scan {
 		public String getErrorMessage() {
 			return f_errorMessage;
 		}
-
 	}
 
 	/**
@@ -453,5 +448,4 @@ public final class Scan {
 			}
 		}
 	}
-
 }
