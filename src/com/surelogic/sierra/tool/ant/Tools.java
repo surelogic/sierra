@@ -386,8 +386,6 @@ public class Tools {
 	File getToolsFolder() {
 		if (toolsFolder == null || !toolsFolder.isDirectory()) {
 			String[] paths = analysis.getClasspath().list();
-			//Find the 
-			int index = -1;
 			String separator = Matcher.quoteReplacement(File.separator);
 			Pattern pattern = Pattern.compile( "(" + separator + "?(.+" + separator + ")*)sierra-tool-aoi.jar.*");
 			antProject.log( "Pattern: " + pattern.toString(), org.apache.tools.ant.Project.MSG_DEBUG);
@@ -403,26 +401,6 @@ public class Tools {
 					File libDir = new File(matcher.group(1));
   					toolsFolder = new File(libDir.getParentFile(), "Tools");
 				}
-				
-				
-				
-				/*
-				index =  path.indexOf("Sierra-Ant");
-				if(index > 0) {
-					antProject.log("FOUND SIERRA-ANT!", org.apache.tools.ant.Project.MSG_DEBUG);
-					String[] array = path.split(Matcher.quoteReplacement(File.separator));
-					for(int i = 0, len = array.length; i < len; i++){
-						if("Sierra-Ant".equals(array[i]) && i > 0){
-                			StringBuilder sb = new StringBuilder();
-                			sb.append(array[i-1]);
-                			sb.append(File.separator);
-                			sb.append("Tools");
-        					toolsFolder = new File(sb.toString());
-        					sb = null;
-						}
-					}
-				}
-				*/
 			}
 		}
 		antProject.log("The toolsfolder points to: " + toolsFolder,

@@ -4,6 +4,7 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.util.logging.Level;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -18,7 +19,6 @@ import com.surelogic.sierra.tool.message.Config;
 
 /**
  * @author ethan
- * 
  */
 public class FindBugsConfig extends ToolConfig {
 	private final static String FINDBUGS_CLASS = "edu.umd.cs.findbugs.FindBugs2";
@@ -37,9 +37,6 @@ public class FindBugsConfig extends ToolConfig {
 	private int f_scale = 1;
 	private String f_status = null;
 
-	/**
-	 * @param project
-	 */
 	public FindBugsConfig(Project project) {
 		super("findbugs", project);
 	}
@@ -52,11 +49,6 @@ public class FindBugsConfig extends ToolConfig {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.surelogic.sierra.tool.ant.ToolConfig#runTool()
-	 */
 	public void run() {
 		if (analysis.keepRunning) {
 			analysis.printClasspath(getClasspath());
@@ -92,13 +84,14 @@ public class FindBugsConfig extends ToolConfig {
 
 				int rc = fork(cmdj.getCommandline());
 				if ((rc == 1) || (rc == Execute.INVALID)) {
-					antProject.log("Findbugs failed to execute with command "
-							+ cmdj, org.apache.tools.ant.Project.MSG_ERR);
-					SLLogger.getLogger("sierra").severe(
-							"Findbugs failed to execute with command " + cmdj);
+					final String message = "Findbugs failed to execute with command "
+							+ cmdj;
+					antProject.log(message,
+							org.apache.tools.ant.Project.MSG_ERR);
+					SLLogger.getLogger("sierra").log(Level.SEVERE, message,
+							new Exception());
 					analysis.stop();
-					f_status = "Findbugs execution failed with following command "
-							+ cmdj.toString();
+					f_status = message;
 				}
 			} catch (BuildException e) {
 				antProject.log("Failed to start FindBugs process."
@@ -108,7 +101,6 @@ public class FindBugsConfig extends ToolConfig {
 			} finally {
 				if (latch != null) {
 					latch.countDown();
-
 				}
 				if (f_monitor != null) {
 					f_monitor.worked(f_scale);
@@ -118,9 +110,7 @@ public class FindBugsConfig extends ToolConfig {
 			if (latch != null) {
 				latch.countDown();
 			}
-
 		}
-
 	}
 
 	/**
@@ -137,11 +127,6 @@ public class FindBugsConfig extends ToolConfig {
 		return f_classpath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.surelogic.sierra.tool.ant.ToolConfig#validate()
-	 */
 	@Override
 	public void validate() {
 		super.validate();

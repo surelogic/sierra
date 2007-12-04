@@ -28,7 +28,6 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 
 public class PackageFinder {
 
-	private static final String PACKAGE = "package";
 	private static final PackageFinder INSTANCE = new PackageFinder();
 
 	public static PackageFinder getInstance() {
