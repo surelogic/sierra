@@ -69,7 +69,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportGroup.setLayout(gridLayout);
 
 				f_totalCount = new Label(f_reportGroup, SWT.RIGHT);
-				f_totalCount.setLayoutData(new GridData(SWT.RIGHT, SWT.DEFAULT,
+				f_totalCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
 
 				f_reportViewport = new ScrolledComposite(f_reportGroup,
@@ -85,8 +85,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportViewport.setContent(f_reportContents);
 
 				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
-				f_porousCount.setLayoutData(new GridData(SWT.RIGHT,
-						SWT.DEFAULT, true, false));
+				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
+						true, false));
 
 				f_menu = new Menu(f_reportGroup.getShell(), SWT.POP_UP);
 				f_menu.addListener(SWT.Show, new Listener() {
@@ -124,6 +124,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 							}
 						});
 
+				f_reportViewport.setMenu(f_menu);
+				f_reportContents.setMenu(f_menu);
 				f_reportGroup.setMenu(f_menu);
 				f_totalCount.setMenu(f_menu);
 
@@ -173,6 +175,13 @@ public final class MFilterSelectionColumn extends MColumn implements
 		final List<String> valueList = f_sortByCount ? f_filter
 				.getValuesOrderedBySummaryCount() : f_filter.getAllValues();
 
+		/*
+		 * filterContentsChanged tracks if the rows in this filter selection
+		 * column have changed. We want to avoid a call to pack because the
+		 * scroll bar gets moved back up to the top each time this method is
+		 * called.
+		 */
+		boolean filterContentsChanged = false;
 		int currentIndex = 0;
 		for (String value : valueList) {
 			final int count = f_filter.getSummaryCountFor(value);
@@ -180,15 +189,22 @@ public final class MFilterSelectionColumn extends MColumn implements
 			FilterSelectionReportLine fsrLine;
 			if (f_lines.size() > currentIndex) {
 				fsrLine = f_lines.get(currentIndex);
-				fsrLine.setText(value);
-				fsrLine.setCount(count);
-				fsrLine.setTotal(total);
+				boolean unchanged = fsrLine.getText().equals(value)
+						&& fsrLine.getCount() == count
+						&& fsrLine.getTotal() == total;
+				if (!unchanged) {
+					fsrLine.setText(value);
+					fsrLine.setCount(count);
+					fsrLine.setTotal(total);
+					filterContentsChanged = true;
+				}
 			} else {
 				fsrLine = new FilterSelectionReportLine(f_reportContents,
 						value, null, count, total);
 				fsrLine.setMenu(f_menu);
 				fsrLine.addObserver(this);
 				f_lines.add(fsrLine);
+				filterContentsChanged = true;
 			}
 			fsrLine.setSelection(f_filter.isPorous(value));
 			currentIndex++;
@@ -199,6 +215,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		List<FilterSelectionReportLine> extras = new ArrayList<FilterSelectionReportLine>();
 		while (currentIndex < f_lines.size()) {
 			extras.add(f_lines.get(currentIndex++));
+			filterContentsChanged = true;
 		}
 		f_lines.removeAll(extras);
 		for (FilterSelectionReportLine line : extras) {
@@ -223,8 +240,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 					+ " selected");
 		}
 		f_reportContents.pack();
-//		f_panel.pack();
-//		f_panel.layout();
+		if (filterContentsChanged)
+			f_panel.pack();
+		f_panel.layout();
 	}
 
 	public void porous(Filter filter) {
