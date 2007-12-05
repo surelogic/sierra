@@ -20,8 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
@@ -73,12 +76,47 @@ public final class ConfigGenerator {
 
 		List<Config> configs = new ArrayList<Config>();
 
-		for (IJavaProject p : projects) {
-			configs.add(getProjectConfig(p));
+		for (final IJavaProject p : projects) {
+			if (containsAtLeastOneCompilationUnit(p)) {
+				configs.add(getProjectConfig(p));
+			} else {
+				/*
+				 * Put up a dialog informing the user that no scan will be done
+				 * on a project that contains no compilation units.
+				 */
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						MessageDialog md = new MessageDialog(
+								PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow().getShell(),
+								"Scan Skipped",
+								null,
+								"Sierra cannot scan the project '"
+										+ p.getElementName()
+										+ "' because it contains no Java compilation units",
+								MessageDialog.INFORMATION,
+								new String[] { "OK" }, 0);
+						md.open();
+					}
+				});
+			}
 		}
-
 		return configs;
+	}
 
+	private boolean containsAtLeastOneCompilationUnit(IJavaProject p) {
+		try {
+			for (IPackageFragment pf : p.getPackageFragments()) {
+				if (pf.getCompilationUnits().length > 0)
+					return true;
+			}
+		} catch (JavaModelException e) {
+			SLLogger.getLogger().log(
+					Level.SEVERE,
+					"Failure trying to determine if " + p.getElementName()
+							+ " contains any Java compilation units.", e);
+		}
+		return false;
 	}
 
 	/**
