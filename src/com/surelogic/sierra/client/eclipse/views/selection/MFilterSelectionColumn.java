@@ -128,6 +128,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportContents.setMenu(f_menu);
 				f_reportGroup.setMenu(f_menu);
 				f_totalCount.setMenu(f_menu);
+				f_porousCount.setMenu(f_menu);
 
 				updateReport();
 				return f_panel;
