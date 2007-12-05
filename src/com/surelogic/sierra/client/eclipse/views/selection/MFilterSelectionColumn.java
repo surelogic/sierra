@@ -73,9 +73,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 						true, false));
 
 				f_reportViewport = new ScrolledComposite(f_reportGroup,
-						SWT.V_SCROLL);
-				f_reportViewport.setLayoutData(new GridData(SWT.RIGHT,
-						SWT.DEFAULT, true, true));
+						SWT.V_SCROLL | SWT.BORDER);
+				f_reportViewport.setLayoutData(new GridData(SWT.FILL,
+						SWT.FILL, true, true));
 				f_reportContents = new Composite(f_reportViewport, SWT.NONE);
 				RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 				rowLayout.fill = true;
