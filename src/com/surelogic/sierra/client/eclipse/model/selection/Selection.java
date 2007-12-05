@@ -250,8 +250,8 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	/**
 	 * Constructs a filter at the end of this selections chain of filters. Adds
-	 * an optional observer to that filter. Finally, initiates the query to
-	 * populate the filter.
+	 * an optional observer to that filter. This method does <i>not</i>
+	 * initiate the query to populate the filter.
 	 * 
 	 * @param factory
 	 *            a filter factory used to select the filter to be constructed.
@@ -275,8 +275,6 @@ public final class Selection extends AbstractDatabaseObserver {
 			f_filters.add(filter);
 		}
 		filter.addObserver(observer);
-		filter.refresh();
-		notifySelectionChanged();
 		return filter;
 	}
 
