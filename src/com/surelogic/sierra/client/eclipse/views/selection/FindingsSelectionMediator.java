@@ -311,27 +311,4 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		 * Nothing to do.
 		 */
 	}
-
-	void emptyAfter(final int column) {
-		final int filterCount = f_workingSelection.getFilterCount();
-		MColumn col;
-		if (filterCount != column + 1) {
-			f_workingSelection.emptyAfter(column);
-		} else {
-			// remove the last column of the viewer
-			col = f_first;
-			while (col.hasNextColumn())
-				col = col.getNextColumn();
-			col.dispose();
-		}
-		/*
-		 * We need to clear the menu choice.
-		 */
-		col = f_first;
-		while (col.hasNextColumn())
-			col = col.getNextColumn();
-		if (col instanceof MRadioMenuColumn) {
-			((MRadioMenuColumn) col).clearMenuSelection();
-		}
-	}
 }

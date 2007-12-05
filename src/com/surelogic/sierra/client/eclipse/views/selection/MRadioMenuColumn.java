@@ -81,12 +81,6 @@ public final class MRadioMenuColumn extends MColumn implements
 			return getCascadingList().getColumnIndexOf(panel);
 	}
 
-	void clearMenuSelection() {
-		if (f_menu != null) {
-			f_menu.clearSelection();
-		}
-	}
-
 	void setSelection(Object choice) {
 		f_menu.setSelection(choice);
 	}
