@@ -266,7 +266,6 @@ public final class Scan {
 					return Status.CANCEL_STATUS;
 				} else {
 					try {
-
 						/* Start database entry */
 						if (f_packageCompilationUnitMap == null) {
 							ScanDocumentUtility.loadScanDocument(f_config
