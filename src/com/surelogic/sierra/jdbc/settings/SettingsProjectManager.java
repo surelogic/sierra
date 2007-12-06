@@ -36,11 +36,12 @@ public class SettingsProjectManager {
 
 		if (settings == null)
 			throw new SQLException();
-
-		SLLogger.getLogger().log(
-				Level.FINE,
-				"Setting: " + settings.getName() + " projectName: "
-						+ projectName);
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(
+					Level.FINE,
+					"Setting: " + settings.getName() + " projectName: "
+							+ projectName);
+		}
 
 		SettingsProjectRecord spr = sprFactory.newSettingsProject();
 		spr.setId(new RecordStringRelationRecord.PK<SettingsRecord, String>(
