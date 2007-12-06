@@ -6,7 +6,10 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 public interface IFilterObserver {
 
 	/**
-	 * Indicates that something about the passed filter has changed.
+	 * Indicates that something about the passed filter has changed. This could
+	 * include a change to the set of findings entering the filter, a change to
+	 * the set of values in the filter, and/or a change to the porousness of the
+	 * filter.
 	 * 
 	 * @param filter
 	 *            a filter.
