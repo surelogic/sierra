@@ -74,8 +74,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 				f_reportViewport = new ScrolledComposite(f_reportGroup,
 						SWT.V_SCROLL | SWT.BORDER);
-				f_reportViewport.setLayoutData(new GridData(SWT.FILL,
-						SWT.FILL, true, true));
+				f_reportViewport.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+						true, true));
 				f_reportContents = new Composite(f_reportViewport, SWT.NONE);
 				RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 				rowLayout.fill = true;
@@ -246,7 +246,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		f_panel.layout();
 	}
 
-	public void porous(Filter filter) {
+	public void filterChanged(Filter filter) {
 		if (f_panel.isDisposed())
 			return;
 		getCascadingList().getDisplay().asyncExec(new Runnable() {
@@ -256,34 +256,14 @@ public final class MFilterSelectionColumn extends MColumn implements
 		});
 	}
 
-	public void contentsChanged(Filter filter) {
-		if (f_panel.isDisposed())
-			return;
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateReport();
-			}
-		});
-	}
-
-	public void queryFailure(Filter filter, Exception e) {
+	public void filterQueryFailure(Filter filter, Exception e) {
 		SLLogger.getLogger().log(
 				Level.SEVERE,
 				"query for " + this.getClass().getName() + " failed on "
 						+ filter, e);
 	}
 
-	public void contentsEmpty(Filter filter) {
-		if (f_panel.isDisposed())
-			return;
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateReport();
-			}
-		});
-	}
-
-	public void dispose(Filter filter) {
+	public void filterDisposed(Filter filter) {
 		dispose();
 	}
 

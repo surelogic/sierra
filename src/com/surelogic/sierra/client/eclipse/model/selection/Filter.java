@@ -155,33 +155,23 @@ public abstract class Filter {
 	 * the database.
 	 * <p>
 	 * Observers are notified via a call to
-	 * {@link IFilterObserver#contentsChanged(Filter)} followed by a call to
-	 * {@link IFilterObserver#porous(Filter)} if the query was successful and at
-	 * least one finding enters this filter. If no findings enter this filter
-	 * then a call to {@link IFilterObserver#contentsEmpty(Filter)} followed by
-	 * a call to {@link IFilterObserver#porous(Filter)} is made. In the worst
-	 * case, {@link IFilterObserver#queryFailure(Exception)} is called if the
-	 * query failed (a bug).
+	 * {@link IFilterObserver#filterChanged(Filter)} if the query was
+	 * successful. In the worst case,
+	 * {@link IFilterObserver#filterQueryFailure(Filter, Exception)} is called
+	 * if the query failed (a bug).
 	 */
 	void refresh() {
-		int countTotal = 0;
 		try {
 			synchronized (this) {
 				queryCounts();
 				deriveAllValues();
 				fixupPorousValues();
-				countTotal = f_countTotal;
 			}
 		} catch (Exception e) {
-			notifyQueryFailure(e);
+			notifyFilterQueryFailure(e);
 			return;
 		}
-		if (countTotal == 0) {
-			notifyContentsEmpty();
-		} else {
-			notifyContentsChanged();
-		}
-		notifyPorous();
+		notifyFilterChanged();
 	}
 
 	/**
@@ -197,8 +187,8 @@ public abstract class Filter {
 				final String query = getCountsQuery().toString();
 				if (SLLogger.getLogger().isLoggable(Level.FINE)) {
 					SLLogger.getLogger().fine(
-							getFactory().getFilterLabel() + " counts query: "
-									+ query);
+							getFactory().getFilterLabel()
+									+ " filter counts query: " + query);
 				}
 				final ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
@@ -344,29 +334,9 @@ public abstract class Filter {
 	 * Do not call this method holding a lock on <code>this</code>. Deadlock
 	 * could occur as we are invoking an alien method.
 	 */
-	protected void notifyPorous() {
+	protected void notifyFilterChanged() {
 		for (IFilterObserver o : f_observers) {
-			o.porous(this);
-		}
-	}
-
-	/**
-	 * Do not call this method holding a lock on <code>this</code>. Deadlock
-	 * could occur as we are invoking an alien method.
-	 */
-	protected void notifyContentsChanged() {
-		for (IFilterObserver o : f_observers) {
-			o.contentsChanged(this);
-		}
-	}
-
-	/**
-	 * Do not call this method holding a lock on <code>this</code>. Deadlock
-	 * could occur as we are invoking an alien method.
-	 */
-	protected void notifyContentsEmpty() {
-		for (IFilterObserver o : f_observers) {
-			o.contentsEmpty(this);
+			o.filterChanged(this);
 		}
 	}
 
@@ -376,7 +346,7 @@ public abstract class Filter {
 	 */
 	protected void notifyDispose() {
 		for (IFilterObserver o : f_observers) {
-			o.dispose(this);
+			o.filterDisposed(this);
 		}
 	}
 
@@ -384,9 +354,9 @@ public abstract class Filter {
 	 * Do not call this method holding a lock on <code>this</code>. Deadlock
 	 * could occur as we are invoking an alien method.
 	 */
-	protected void notifyQueryFailure(final Exception e) {
+	protected void notifyFilterQueryFailure(final Exception e) {
 		for (IFilterObserver o : f_observers) {
-			o.queryFailure(this, e);
+			o.filterQueryFailure(this, e);
 		}
 	}
 
@@ -433,7 +403,7 @@ public abstract class Filter {
 			else
 				f_porousValues.remove(value);
 		}
-		notifyPorous();
+		notifyFilterChanged();
 		/*
 		 * Tell my enclosing selection to update filters after me because I
 		 * changed the set of findings I let through.
@@ -466,7 +436,7 @@ public abstract class Filter {
 			f_porousValues.clear();
 			f_porousValues.addAll(f_allValues);
 		}
-		notifyPorous();
+		notifyFilterChanged();
 		/*
 		 * Tell my enclosing selection to update filters after me because I
 		 * changed the set of findings I let through.
@@ -488,7 +458,7 @@ public abstract class Filter {
 				return;
 			f_porousValues.clear();
 		}
-		notifyPorous();
+		notifyFilterChanged();
 		/*
 		 * Tell my enclosing selection to update filters after me because I
 		 * changed the set of findings I let through.

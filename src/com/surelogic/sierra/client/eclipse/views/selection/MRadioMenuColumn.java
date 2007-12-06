@@ -18,8 +18,8 @@ import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.model.selection.AbstractFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
+import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionFilterFactory;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
@@ -123,11 +123,10 @@ public final class MRadioMenuColumn extends MColumn implements
 		}
 	}
 
-	class DrawFilterAndMenu extends AbstractFilterObserver {
+	class DrawFilterAndMenu implements IFilterObserver {
 
-		@Override
-		public void queryFailure(final Filter filter, final Exception e) {
-			// System.out.println("failure");
+		public void filterQueryFailure(final Filter filter, final Exception e) {
+			filter.removeObserver(this);
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -141,20 +140,10 @@ public final class MRadioMenuColumn extends MColumn implements
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
 				}
 			});
+		}
+
+		public void filterChanged(final Filter filter) {
 			filter.removeObserver(this);
-		}
-
-		@Override
-		public void contentsChanged(final Filter filter) {
-			constructFilterReport(filter);
-		}
-
-		@Override
-		public void contentsEmpty(Filter filter) {
-			constructFilterReport(filter);
-		}
-
-		private void constructFilterReport(final Filter filter) {
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -170,16 +159,14 @@ public final class MRadioMenuColumn extends MColumn implements
 					rmc.init();
 				}
 			});
-			filter.removeObserver(this);
 		}
 
-		@Override
-		public void dispose(Filter filter) {
+		public void filterDisposed(Filter filter) {
+			filter.removeObserver(this);
 			SLLogger.getLogger().log(
 					Level.SEVERE,
 					"Unexpected dispose() callback from " + filter
 							+ " while it was being created (bug)");
-			filter.removeObserver(this);
 		}
 	}
 
