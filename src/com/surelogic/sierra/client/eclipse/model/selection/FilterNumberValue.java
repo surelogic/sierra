@@ -18,7 +18,7 @@ public abstract class FilterNumberValue extends Filter {
 		 */
 		f_allValues.clear();
 		List<Integer> f_values = new LinkedList<Integer>();
-		for (String s : f_summaryCounts.keySet()) {
+		for (String s : f_counts.keySet()) {
 			f_values.add(Integer.parseInt(s));
 		}
 		Collections.sort(f_values);

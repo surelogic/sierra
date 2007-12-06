@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 
 /**
@@ -106,24 +108,18 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Counts broken down by all previous filter values. Only mutated by
-	 * {@link #refresh()}.
+	 * Counts for just this filter. Only mutated by {@link #refresh()}.
 	 */
-	protected final Map<LinkedList<String>, Integer> f_counts = new HashMap<LinkedList<String>, Integer>();
-
-	/**
-	 * Summary counts for just this filter. Only mutated by {@link #refresh()}.
-	 */
-	protected final Map<String, Integer> f_summaryCounts = new HashMap<String, Integer>();
+	protected final Map<String, Integer> f_counts = new HashMap<String, Integer>();
 
 	public Map<String, Integer> getSummaryCounts() {
 		synchronized (this) {
-			return new HashMap<String, Integer>(f_summaryCounts);
+			return new HashMap<String, Integer>(f_counts);
 		}
 	}
 
 	public int getSummaryCountFor(String value) {
-		Integer result = f_summaryCounts.get(value);
+		Integer result = f_counts.get(value);
 		return result == null ? 0 : result.intValue();
 	}
 
@@ -172,7 +168,6 @@ public abstract class Filter {
 		try {
 			synchronized (this) {
 				queryCounts();
-				deriveSummaryCounts();
 				deriveAllValues();
 				fixupPorousValues();
 				countTotal = f_countTotal;
@@ -194,48 +189,29 @@ public abstract class Filter {
 	 */
 	private void queryCounts() throws SQLException {
 		f_counts.clear();
+		int countTotal = 0;
 		final Connection c = Data.readOnlyConnection();
 		try {
 			final Statement st = c.createStatement();
 			try {
-				// System.out.println(getCountsQuery().toString());
-				final ResultSet rs = st.executeQuery(getCountsQuery()
-						.toString());
-				final int columnCount = rs.getMetaData().getColumnCount();
+				final String query = getCountsQuery().toString();
+				if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+					SLLogger.getLogger().fine(
+							getFactory().getFilterLabel() + " counts query: "
+									+ query);
+				}
+				final ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
-					final LinkedList<String> valueList = new LinkedList<String>();
-					for (int i = 1; i < columnCount; i++) {
-						final String value = rs.getString(i);
-						valueList.add(value);
-					}
-					int count = rs.getInt(columnCount);
-					f_counts.put(valueList, count);
+					final String value = rs.getString(1);
+					int count = rs.getInt(2);
+					f_counts.put(value, count);
+					countTotal += count;
 				}
 			} finally {
 				st.close();
 			}
 		} finally {
 			c.close();
-		}
-	}
-
-	/**
-	 * Any caller must be holding a lock on <code>this</code>.
-	 */
-	private void deriveSummaryCounts() {
-		f_summaryCounts.clear();
-		int countTotal = 0;
-		for (Iterator<Map.Entry<LinkedList<String>, Integer>> i = f_counts
-				.entrySet().iterator(); i.hasNext();) {
-			final Map.Entry<LinkedList<String>, Integer> entry = i.next();
-			final String key = entry.getKey().getLast();
-			int count = entry.getValue();
-			countTotal += count;
-			Integer summaryCount = f_summaryCounts.get(key);
-			if (summaryCount != null) {
-				count += summaryCount;
-			}
-			f_summaryCounts.put(key, count);
 		}
 		f_countTotal = countTotal;
 	}
@@ -248,7 +224,7 @@ public abstract class Filter {
 	 */
 	protected void deriveAllValues() {
 		f_allValues.clear();
-		f_allValues.addAll(f_summaryCounts.keySet());
+		f_allValues.addAll(f_counts.keySet());
 		Collections.sort(f_allValues);
 	}
 
@@ -562,7 +538,7 @@ public abstract class Filter {
 		int result = 0;
 		synchronized (this) {
 			for (String value : f_porousValues) {
-				Integer count = f_summaryCounts.get(value);
+				Integer count = f_counts.get(value);
 				if (count != null)
 					result += count;
 			}
@@ -586,7 +562,8 @@ public abstract class Filter {
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
 		b.append("select ");
-		addColumnsTo(b);
+		b.append(getColumnName());
+		// addColumnsTo(b);
 		b.append(",count(*) from FINDINGS_OVERVIEW ");
 		addWhereClauseTo(b, false);
 		b.append("group by ");

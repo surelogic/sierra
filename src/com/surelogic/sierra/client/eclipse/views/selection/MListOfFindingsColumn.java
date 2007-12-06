@@ -148,7 +148,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 			try {
 				final Statement st = c.createStatement();
 				try {
-					// System.out.println(query);
+					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+						SLLogger.getLogger().fine("Findings query: " + query);
+					}
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
 					while (rs.next()) {
