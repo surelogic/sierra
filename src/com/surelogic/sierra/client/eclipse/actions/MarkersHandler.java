@@ -175,7 +175,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IResource resource = extractResource(editor);
 
 		if (resource != null) {
-			if (resource instanceof IFile) {
+			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
 					clearMarkers(f_selectedFile, SIERRA_MARKER_CRITICAL);
@@ -497,7 +497,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			f_packageName = packageName;
 			f_projectName = projectName;
 			f_currentFile = currentFile;
-
 		}
 
 		@Override
