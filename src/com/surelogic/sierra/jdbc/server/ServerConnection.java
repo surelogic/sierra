@@ -14,7 +14,6 @@ import javax.sql.DataSource;
 
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 
 /**
  * Represents a connection to the Sierra server.
