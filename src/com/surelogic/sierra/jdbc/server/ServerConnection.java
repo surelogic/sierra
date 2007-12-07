@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 
 /**
  * Represents a connection to the Sierra server.
@@ -27,7 +28,7 @@ public class ServerConnection {
 	private final boolean readOnly;
 
 	private ServerConnection(boolean readOnly) throws SQLException {
-		this.conn = lookup();
+		this.conn = LazyPreparedStatementConnection.wrap(lookup());
 		conn.setReadOnly(readOnly);
 		if (!readOnly) {
 			conn.setAutoCommit(false);
