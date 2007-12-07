@@ -15,10 +15,12 @@ import javax.sql.DataSource;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
+
 /**
  * Represents a connection to the Sierra server.
+ * 
  * @author nathan
- *
+ * 
  */
 public class ServerConnection {
 
@@ -26,7 +28,7 @@ public class ServerConnection {
 	private final boolean readOnly;
 
 	private ServerConnection(boolean readOnly) throws SQLException {
-		this.conn = LazyPreparedStatementConnection.wrap(lookup());
+		this.conn = lookup();
 		conn.setReadOnly(readOnly);
 		if (!readOnly) {
 			conn.setAutoCommit(false);
@@ -111,15 +113,19 @@ public class ServerConnection {
 	}
 
 	public static ServerConnection readOnly() throws SQLException {
-		final Connection conn = lookup();
-		conn.setReadOnly(true);
 		return new ServerConnection(true);
 	}
 
 	private static Connection lookup() throws SQLException {
+
 		try {
-			return (Connection) ((DataSource) new InitialContext()
-					.lookup("jdbc/Sierra")).getConnection();
+			InitialContext context = new InitialContext();
+			try {
+				return (Connection) ((DataSource) new InitialContext()
+						.lookup("jdbc/Sierra")).getConnection();
+			} finally {
+				context.close();
+			}
 		} catch (NamingException e) {
 			throw new IllegalStateException(e);
 		}
