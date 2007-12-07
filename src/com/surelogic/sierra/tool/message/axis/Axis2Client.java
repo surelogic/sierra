@@ -399,10 +399,12 @@ public class Axis2Client implements SierraService {
 			final MergeAuditTrailResponse response = in
 					.getMergeAuditTrailsResponse();
 			out.setRevision(response.getRevision());
-			out.setTrail(Arrays.asList(response.getTrail()));
+			final String[] trail = response.getTrail();
+			if (trail != null) {
+				out.setTrail(Arrays.asList(trail));
+			}
 			return out;
 		}
-
 	}
 
 	private static class MergeAuditTrailsConverter
