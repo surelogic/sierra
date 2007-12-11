@@ -15,7 +15,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
-import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -63,7 +63,7 @@ public final class ScanDocumentUtility {
 				final Set<Long> findingIds = new HashSet<Long>();
 				final FindingFilter filter = FindingTypeManager.getInstance(
 						conn).getMessageFilter(
-						ClientSettingsManager.getInstance(conn).getSettings(
+						SettingsManager.getInstance(conn).getSettingsByProject(
 								projectName));
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
@@ -136,7 +136,7 @@ public final class ScanDocumentUtility {
 				conn.commit();
 				final FindingFilter filter = FindingTypeManager.getInstance(
 						conn).getMessageFilter(
-						ClientSettingsManager.getInstance(conn).getSettings(
+						SettingsManager.getInstance(conn).getSettingsByProject(
 								projectName));
 				final ScanGenerator gen = sMan.getScanGenerator(filter);
 				final String uid = MessageWarehouse.getInstance()
