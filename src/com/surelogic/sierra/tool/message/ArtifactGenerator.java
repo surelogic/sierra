@@ -2,65 +2,61 @@ package com.surelogic.sierra.tool.message;
 
 
 /**
- * 
+ *
  * @author nathan
- * 
+ *
  */
 public interface ArtifactGenerator {
+    public MetricBuilder metric();
 
-	public MetricBuilder metric();
+    public ArtifactBuilder artifact();
 
-	public ArtifactBuilder artifact();
+    public ErrorBuilder error();
 
-	public ErrorBuilder error();
+    public void rollback();
 
-	public void rollback();
+    public interface ArtifactBuilder {
+        public SourceLocationBuilder sourceLocation();
 
-	public interface ArtifactBuilder {
-		public SourceLocationBuilder sourceLocation();
+        public SourceLocationBuilder primarySourceLocation();
 
-		public SourceLocationBuilder primarySourceLocation();
+        public ArtifactBuilder findingType(String tool, String version,
+            String mnemonic);
 
-		public ArtifactBuilder findingType(String tool, String version,
-				String mnemonic);
+        public ArtifactBuilder priority(Priority priority);
 
-		public ArtifactBuilder priority(Priority priority);
+        public ArtifactBuilder severity(Severity severity);
 
-		public ArtifactBuilder severity(Severity severity);
+        public ArtifactBuilder message(String message);
 
-		public ArtifactBuilder message(String message);
+        public void build();
+    }
 
-		public void build();
-	}
+    public interface SourceLocationBuilder {
+        SourceLocationBuilder type(IdentifierType type);
 
-	public interface SourceLocationBuilder {
+        SourceLocationBuilder identifier(String name);
 
-		SourceLocationBuilder type(IdentifierType type);
+        SourceLocationBuilder compilation(String compilation);
 
-		SourceLocationBuilder identifier(String name);
+        SourceLocationBuilder className(String className);
 
-		SourceLocationBuilder compilation(String compilation);
-		
-		SourceLocationBuilder className(String className);
+        SourceLocationBuilder packageName(String packageName);
 
-		SourceLocationBuilder packageName(String packageName);
-		
-		SourceLocationBuilder lineOfCode(int line);
+        SourceLocationBuilder lineOfCode(int line);
 
-		SourceLocationBuilder endLine(int line);
+        SourceLocationBuilder endLine(int line);
 
-		SourceLocationBuilder hash(Long hash);
+        SourceLocationBuilder hash(Long hash);
 
-		void build();
+        void build();
+    }
 
-	}
+    public interface ErrorBuilder {
+        ErrorBuilder message(String message);
 
-	public interface ErrorBuilder {
+        ErrorBuilder tool(String tool);
 
-		ErrorBuilder message(String message);
-
-		ErrorBuilder tool(String tool);
-
-		void build();
-	}
+        void build();
+    }
 }

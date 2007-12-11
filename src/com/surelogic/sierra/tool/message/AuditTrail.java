@@ -7,29 +7,27 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlRootElement
 @XmlType
 public class AuditTrail {
+    private String finding;
+    private List<Audit> audits;
 
-	private String finding;
+    public String getFinding() {
+        return finding;
+    }
 
-	private List<Audit> audits;
+    public void setFinding(String trail) {
+        this.finding = trail;
+    }
 
-	public String getFinding() {
-		return finding;
-	}
+    public List<Audit> getAudits() {
+        return audits;
+    }
 
-	public void setFinding(String trail) {
-		this.finding = trail;
-	}
-
-	public List<Audit> getAudits() {
-		return audits;
-	}
-
-	public void setAudits(List<Audit> audits) {
-		this.audits = audits;
-	}
-
+    public void setAudits(List<Audit> audits) {
+        this.audits = audits;
+    }
 }

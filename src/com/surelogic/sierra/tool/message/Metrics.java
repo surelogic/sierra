@@ -5,17 +5,17 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 @XmlType
 public class Metrics {
-	private Collection<ClassMetric> clazz;
+    private Collection<ClassMetric> clazz;
 
-	@XmlElement(name = "class")
-	public Collection<ClassMetric> getClassMetric() {
-		return clazz;
-	}
+    @XmlElement(name = "class")
+    public Collection<ClassMetric> getClassMetric() {
+        return clazz;
+    }
 
-	public void setClassMetric(Collection<ClassMetric> clazz) {
-		this.clazz = clazz;
-	}
-
+    public void setClassMetric(Collection<ClassMetric> clazz) {
+        this.clazz = clazz;
+    }
 }

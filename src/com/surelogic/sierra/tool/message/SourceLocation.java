@@ -4,248 +4,290 @@ import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlType;
 
+
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 public class SourceLocation {
-	public static class Builder {
-		private IdentifierType type;
-		private String compilation;
-		private String identifier;
-		private String className;
-		private String packageName;
-		private int lineOfCode;
-		private int endLine;
-		private Long hash;
+    private String compilation;
+    private String pathName;
+    private String className;
+    private Long hash;
+    private String packageName;
+    private int lineOfCode;
+    private int endLineOfCode;
+    private String identifier;
+    private IdentifierType identifierType;
 
-		public Builder() {
-			clear();
-		}
+    public SourceLocation() {
+        // Nothing to do
+    }
 
-		public Builder type(IdentifierType type) {
-			this.type = type;
-			return this;
-		}
+    SourceLocation(Builder builder) {
+        this.className = builder.className;
+        this.hash = builder.hash;
+        this.packageName = builder.packageName;
+        this.lineOfCode = builder.lineOfCode;
+        this.endLineOfCode = builder.endLine;
+        this.identifier = builder.identifier;
+        this.identifierType = builder.type;
+        this.compilation = builder.compilation;
+    }
 
-		public Builder identifier(String identifier) {
-			this.identifier = identifier;
-			return this;
-		}
+    public String getPathName() {
+        return pathName;
+    }
 
-		public Builder compilation(String compilation) {
-			this.compilation = compilation;
-			return this;
-		}
+    public String getCompilation() {
+        return compilation;
+    }
 
-		public Builder className(String className) {
-			this.className = className;
-			return this;
-		}
+    public String getClassName() {
+        return className;
+    }
 
-		public Builder packageName(String packageName) {
-			this.packageName = packageName;
-			return this;
-		}
+    public String getPackageName() {
+        return packageName;
+    }
 
-		public Builder lineOfCode(int lineOfCode) {
-			this.lineOfCode = lineOfCode;
-			return this;
-		}
+    public int getLineOfCode() {
+        return lineOfCode;
+    }
 
-		public Builder endLine(int endLine) {
-			this.endLine = endLine;
-			return this;
-		}
+    public int getEndLineOfCode() {
+        return endLineOfCode;
+    }
 
-		public Builder hash(Long hash) {
-			this.hash = hash;
-			return this;
-		}
+    public String getIdentifier() {
+        return identifier;
+    }
 
-		private void clear() {
-			this.type = null;
-			this.identifier = null;
-			this.className = null;
-			this.packageName = null;
-			this.lineOfCode = 0;
-			this.endLine = 0;
-			this.hash = null;
-		}
+    public IdentifierType getIdentifierType() {
+        return identifierType;
+    }
 
-		public SourceLocation build() {
-			SourceLocation s = new SourceLocation(this);
-			clear();
-			return s;
-		}
-	}
+    public Long getHash() {
+        return hash;
+    }
 
-	private String compilation;
-	private String pathName;
-	private String className;
-	private Long hash;
-	private String packageName;
-	private int lineOfCode;
-	private int endLineOfCode;
-	private String identifier;
-	private IdentifierType identifierType;
+    public void setPathName(String pathName) {
+        this.pathName = pathName;
+    }
 
-	public SourceLocation() {
-		// Nothing to do
-	}
+    public void setCompilation(String compilation) {
+        this.compilation = compilation;
+    }
 
-	SourceLocation(Builder builder) {
-		this.className = builder.className;
-		this.hash = builder.hash;
-		this.packageName = builder.packageName;
-		this.lineOfCode = builder.lineOfCode;
-		this.endLineOfCode = builder.endLine;
-		this.identifier = builder.identifier;
-		this.identifierType = builder.type;
-		this.compilation = builder.compilation;
-	}
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
-	public String getPathName() {
-		return pathName;
-	}
+    public void setHash(Long hash) {
+        this.hash = hash;
+    }
 
-	public String getCompilation() {
-		return compilation;
-	}
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
 
-	public String getClassName() {
-		return className;
-	}
+    public void setLineOfCode(int lineOfCode) {
+        this.lineOfCode = lineOfCode;
+    }
 
-	public String getPackageName() {
-		return packageName;
-	}
+    public void setEndLineOfCode(int endLineOfCode) {
+        this.endLineOfCode = endLineOfCode;
+    }
 
-	public int getLineOfCode() {
-		return lineOfCode;
-	}
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
-	public int getEndLineOfCode() {
-		return endLineOfCode;
-	}
+    public void setIdentifierType(IdentifierType locationType) {
+        this.identifierType = locationType;
+    }
 
-	public String getIdentifier() {
-		return identifier;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) +
+            ((className == null) ? 0 : className.hashCode());
+        result = (prime * result) +
+            ((compilation == null) ? 0 : compilation.hashCode());
+        result = (prime * result) + endLineOfCode;
+        result = (prime * result) + ((hash == null) ? 0 : hash.hashCode());
+        result = (prime * result) +
+            ((identifier == null) ? 0 : identifier.hashCode());
+        result = (prime * result) +
+            ((identifierType == null) ? 0 : identifierType.hashCode());
+        result = (prime * result) + lineOfCode;
+        result = (prime * result) +
+            ((packageName == null) ? 0 : packageName.hashCode());
+        result = (prime * result) +
+            ((pathName == null) ? 0 : pathName.hashCode());
 
-	public IdentifierType getIdentifierType() {
-		return identifierType;
-	}
+        return result;
+    }
 
-	public Long getHash() {
-		return hash;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-	public void setPathName(String pathName) {
-		this.pathName = pathName;
-	}
+        if (obj == null) {
+            return false;
+        }
 
-	public void setCompilation(String compilation) {
-		this.compilation = compilation;
-	}
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
+        final SourceLocation other = (SourceLocation) obj;
 
-	public void setHash(Long hash) {
-		this.hash = hash;
-	}
+        if (className == null) {
+            if (other.className != null) {
+                return false;
+            }
+        } else if (!className.equals(other.className)) {
+            return false;
+        }
 
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
+        if (compilation == null) {
+            if (other.compilation != null) {
+                return false;
+            }
+        } else if (!compilation.equals(other.compilation)) {
+            return false;
+        }
 
-	public void setLineOfCode(int lineOfCode) {
-		this.lineOfCode = lineOfCode;
-	}
+        if (endLineOfCode != other.endLineOfCode) {
+            return false;
+        }
 
-	public void setEndLineOfCode(int endLineOfCode) {
-		this.endLineOfCode = endLineOfCode;
-	}
+        if (hash == null) {
+            if (other.hash != null) {
+                return false;
+            }
+        } else if (!hash.equals(other.hash)) {
+            return false;
+        }
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
+        if (identifier == null) {
+            if (other.identifier != null) {
+                return false;
+            }
+        } else if (!identifier.equals(other.identifier)) {
+            return false;
+        }
 
-	public void setIdentifierType(IdentifierType locationType) {
-		this.identifierType = locationType;
-	}
+        if (identifierType == null) {
+            if (other.identifierType != null) {
+                return false;
+            }
+        } else if (!identifierType.equals(other.identifierType)) {
+            return false;
+        }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((className == null) ? 0 : className.hashCode());
-		result = prime * result
-				+ ((compilation == null) ? 0 : compilation.hashCode());
-		result = prime * result + endLineOfCode;
-		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
-		result = prime * result
-				+ ((identifier == null) ? 0 : identifier.hashCode());
-		result = prime * result
-				+ ((identifierType == null) ? 0 : identifierType.hashCode());
-		result = prime * result + lineOfCode;
-		result = prime * result
-				+ ((packageName == null) ? 0 : packageName.hashCode());
-		result = prime * result
-				+ ((pathName == null) ? 0 : pathName.hashCode());
-		return result;
-	}
+        if (lineOfCode != other.lineOfCode) {
+            return false;
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final SourceLocation other = (SourceLocation) obj;
-		if (className == null) {
-			if (other.className != null)
-				return false;
-		} else if (!className.equals(other.className))
-			return false;
-		if (compilation == null) {
-			if (other.compilation != null)
-				return false;
-		} else if (!compilation.equals(other.compilation))
-			return false;
-		if (endLineOfCode != other.endLineOfCode)
-			return false;
-		if (hash == null) {
-			if (other.hash != null)
-				return false;
-		} else if (!hash.equals(other.hash))
-			return false;
-		if (identifier == null) {
-			if (other.identifier != null)
-				return false;
-		} else if (!identifier.equals(other.identifier))
-			return false;
-		if (identifierType == null) {
-			if (other.identifierType != null)
-				return false;
-		} else if (!identifierType.equals(other.identifierType))
-			return false;
-		if (lineOfCode != other.lineOfCode)
-			return false;
-		if (packageName == null) {
-			if (other.packageName != null)
-				return false;
-		} else if (!packageName.equals(other.packageName))
-			return false;
-		if (pathName == null) {
-			if (other.pathName != null)
-				return false;
-		} else if (!pathName.equals(other.pathName))
-			return false;
-		return true;
-	}
+        if (packageName == null) {
+            if (other.packageName != null) {
+                return false;
+            }
+        } else if (!packageName.equals(other.packageName)) {
+            return false;
+        }
 
+        if (pathName == null) {
+            if (other.pathName != null) {
+                return false;
+            }
+        } else if (!pathName.equals(other.pathName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static class Builder {
+        private IdentifierType type;
+        private String compilation;
+        private String identifier;
+        private String className;
+        private String packageName;
+        private int lineOfCode;
+        private int endLine;
+        private Long hash;
+
+        public Builder() {
+            clear();
+        }
+
+        public Builder type(IdentifierType type) {
+            this.type = type;
+
+            return this;
+        }
+
+        public Builder identifier(String identifier) {
+            this.identifier = identifier;
+
+            return this;
+        }
+
+        public Builder compilation(String compilation) {
+            this.compilation = compilation;
+
+            return this;
+        }
+
+        public Builder className(String className) {
+            this.className = className;
+
+            return this;
+        }
+
+        public Builder packageName(String packageName) {
+            this.packageName = packageName;
+
+            return this;
+        }
+
+        public Builder lineOfCode(int lineOfCode) {
+            this.lineOfCode = lineOfCode;
+
+            return this;
+        }
+
+        public Builder endLine(int endLine) {
+            this.endLine = endLine;
+
+            return this;
+        }
+
+        public Builder hash(Long hash) {
+            this.hash = hash;
+
+            return this;
+        }
+
+        private void clear() {
+            this.type = null;
+            this.identifier = null;
+            this.className = null;
+            this.packageName = null;
+            this.lineOfCode = 0;
+            this.endLine = 0;
+            this.hash = null;
+        }
+
+        public SourceLocation build() {
+            SourceLocation s = new SourceLocation(this);
+            clear();
+
+            return s;
+        }
+    }
 }

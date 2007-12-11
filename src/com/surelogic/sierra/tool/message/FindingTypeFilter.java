@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2007.11.14 at 04:39:55 PM EST 
 //
-
-
 package com.surelogic.sierra.tool.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for FindingTypeFilter complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FindingTypeFilter">
  *   &lt;complexContent>
@@ -41,18 +39,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FindingTypeFilter", propOrder = {
-    "name",
-    "importance",
-    "delta",
-    "filtered"
-})
+@XmlType(name = "FindingTypeFilter", propOrder =  {
+    "name", "importance", "delta", "filtered"}
+)
 public class FindingTypeFilter {
-
     @XmlElement(required = true)
     protected String name;
     protected Importance importance;
@@ -61,11 +55,11 @@ public class FindingTypeFilter {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -73,11 +67,11 @@ public class FindingTypeFilter {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -85,11 +79,11 @@ public class FindingTypeFilter {
 
     /**
      * Gets the value of the importance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Importance }
-     *     
+     *
      */
     public Importance getImportance() {
         return importance;
@@ -97,11 +91,11 @@ public class FindingTypeFilter {
 
     /**
      * Sets the value of the importance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Importance }
-     *     
+     *
      */
     public void setImportance(Importance value) {
         this.importance = value;
@@ -109,11 +103,11 @@ public class FindingTypeFilter {
 
     /**
      * Gets the value of the delta property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getDelta() {
         return delta;
@@ -121,11 +115,11 @@ public class FindingTypeFilter {
 
     /**
      * Sets the value of the delta property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setDelta(Integer value) {
         this.delta = value;
@@ -133,7 +127,7 @@ public class FindingTypeFilter {
 
     /**
      * Gets the value of the filtered property.
-     * 
+     *
      */
     public boolean isFiltered() {
         return filtered;
@@ -141,10 +135,9 @@ public class FindingTypeFilter {
 
     /**
      * Sets the value of the filtered property.
-     * 
+     *
      */
     public void setFiltered(boolean value) {
         this.filtered = value;
     }
-
 }

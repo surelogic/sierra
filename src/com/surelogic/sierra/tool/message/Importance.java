@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2007.11.14 at 04:39:55 PM EST 
 //
-
-
 package com.surelogic.sierra.tool.message;
 
 import javax.xml.bind.annotation.XmlEnum;
@@ -13,12 +11,12 @@ import javax.xml.bind.annotation.XmlEnum;
 /**
  * <p>
  * Java class for Importance.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name=&quot;Importance&quot;&gt;
  *   &lt;restriction base=&quot;{http://www.w3.org/2001/XMLSchema}string&quot;&gt;
@@ -30,24 +28,24 @@ import javax.xml.bind.annotation.XmlEnum;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
- * 
+ *
  */
 @XmlEnum
-public enum Importance {
+public enum Importance {IRRELEVANT,
+    LOW,
+    MEDIUM,
+    HIGH,
+    CRITICAL;
+    public String value() {
+        return name();
+    }
 
-	IRRELEVANT, LOW, MEDIUM, HIGH, CRITICAL;
+    public static Importance fromValue(String v) {
+        return valueOf(v.toUpperCase());
+    }
 
-	public String value() {
-		return name();
-	}
-
-	public static Importance fromValue(String v) {
-		return valueOf(v.toUpperCase());
-	}
-
-	public String toStringSentenceCase() {
-		return toString().substring(0, 1)
-				+ toString().toLowerCase().substring(1);
-	}
-
+    public String toStringSentenceCase() {
+        return toString().substring(0, 1) +
+        toString().toLowerCase().substring(1);
+    }
 }

@@ -9,37 +9,35 @@ import java.util.Collection;
  * memory, in the database, or in a message sent to a remote server. The output
  * of a RunGenerator is implementation specific, RunGenerator merely provides an
  * interface that allows runs to be built.
- * 
+ *
  * @author nathan
- * 
+ *
  */
 public interface ScanGenerator {
+    ScanGenerator uid(String uid);
 
-	ScanGenerator uid(String uid);
+    ScanGenerator javaVersion(String version);
 
-	ScanGenerator javaVersion(String version);
+    ScanGenerator javaVendor(String vendor);
 
-	ScanGenerator javaVendor(String vendor);
+    ScanGenerator project(String projectName);
 
-	ScanGenerator project(String projectName);
+    /**
+     * The generated run will belong to the specified set of qualifiers. This
+     * method should never be called to build a run in the client database.
+     *
+     * @param qualifiers
+     * @return
+     */
+    ScanGenerator qualifiers(Collection<String> qualifiers);
 
-	/**
-	 * The generated run will belong to the specified set of qualifiers. This
-	 * method should never be called to build a run in the client database.
-	 * 
-	 * @param qualifiers
-	 * @return
-	 */
-	ScanGenerator qualifiers(Collection<String> qualifiers);
+    ScanGenerator user(String userName);
 
-	ScanGenerator user(String userName);
+    ArtifactGenerator build();
 
-	ArtifactGenerator build();
-	
-	/**
-	 * Finished is called when all scan/artifact generation is done
-	 * @return the uuid of the scan;
-	 */
-	public String finished();
-
+    /**
+     * Finished is called when all scan/artifact generation is done
+     * @return the uuid of the scan;
+     */
+    public String finished();
 }

@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.message;
 
 import java.io.File;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,334 +10,349 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 /**
  * The config object for the run document.
- * 
+ *
  * @author Tanmay.Sinha
- * 
+ *
  */
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
 public class Config {
+    private String project = null;
+    private List<String> qualifiers = null;
+    private String javaVersion = null;
+    private String javaVendor = null;
+    private Date runDateTime = null;
+    private File baseDirectory = null;
+    private File toolsDirectory = null;
 
-	private String project = null;
-	private List<String> qualifiers = null;
-	private String javaVersion = null;
-	private String javaVendor = null;
-	private Date runDateTime = null;
-	private File baseDirectory = null;
-	private File toolsDirectory = null;
-	// directory to store tool output in
-	private File destDirectory = null;
-	// Comma-separated list of tool names that won't be run
-	private String excludedToolsList = null;
-	// The full path and name of the run document
-	private File scanDocument = null;
-	// True if the temp directory inside the destDir should be deleted when done
-	private boolean cleanTempFiles = false;
-	// Path string containing all source directories to be scanned
-	private String sourceDirs = null;
-	// Path string containing all binary directories to be scanned
-	private String binDirs = null;
-	// Path string containing the classpath for Sierra client, the Ant task and
-	// Tools
-	private String classpath = null;
-	// File object for the PMD rules file
-	private File pmdRulesFile = null;
+    // directory to store tool output in
+    private File destDirectory = null;
 
-	// Whether the tools are run in multiple threads
-	private boolean multithreaded = false;
+    // Comma-separated list of tool names that won't be run
+    private String excludedToolsList = null;
 
-	public Config() {
-		// Nothing to do
-	}
+    // The full path and name of the run document
+    private File scanDocument = null;
 
-	public String getProject() {
-		return project;
-	}
+    // True if the temp directory inside the destDir should be deleted when done
+    private boolean cleanTempFiles = false;
 
-	public List<String> getQualifiers() {
-		return qualifiers;
-	}
+    // Path string containing all source directories to be scanned
+    private String sourceDirs = null;
 
-	public String getJavaVersion() {
-		return javaVersion;
-	}
+    // Path string containing all binary directories to be scanned
+    private String binDirs = null;
 
-	public String getJavaVendor() {
-		return javaVendor;
-	}
+    // Path string containing the classpath for Sierra client, the Ant task and
+    // Tools
+    private String classpath = null;
 
-	public Date getRunDateTime() {
-		return runDateTime;
-	}
+    // File object for the PMD rules file
+    private File pmdRulesFile = null;
 
-	public void setProject(String project) {
-		this.project = project;
-	}
+    // Whether the tools are run in multiple threads
+    private boolean multithreaded = false;
 
-	public void setQualifiers(List<String> qualifiers) {
-		this.qualifiers = qualifiers;
-	}
+    public Config() {
+        // Nothing to do
+    }
 
-	public void setJavaVersion(String javaVersion) {
-		this.javaVersion = javaVersion;
-	}
+    public String getProject() {
+        return project;
+    }
 
-	public void setJavaVendor(String javaVendor) {
-		this.javaVendor = javaVendor;
-	}
+    public List<String> getQualifiers() {
+        return qualifiers;
+    }
 
-	public void setRunDateTime(Date runDateTime) {
-		this.runDateTime = runDateTime;
-	}
+    public String getJavaVersion() {
+        return javaVersion;
+    }
 
-	public File getBaseDirectory() {
-		return baseDirectory;
-	}
+    public String getJavaVendor() {
+        return javaVendor;
+    }
 
-	public void setBaseDirectory(File baseDirectory) {
-		this.baseDirectory = baseDirectory;
-	}
+    public Date getRunDateTime() {
+        return runDateTime;
+    }
 
-	public File getToolsDirectory() {
-		return toolsDirectory;
-	}
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-	public void setToolsDirectory(File toolsDirectory) {
-		this.toolsDirectory = toolsDirectory;
-	}
+    public void setQualifiers(List<String> qualifiers) {
+        this.qualifiers = qualifiers;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((javaVendor == null) ? 0 : javaVendor.hashCode());
-		result = prime * result
-				+ ((javaVersion == null) ? 0 : javaVersion.hashCode());
-		result = prime * result
-				+ ((baseDirectory == null) ? 0 : baseDirectory.hashCode());
-		result = prime * result
-				+ ((toolsDirectory == null) ? 0 : toolsDirectory.hashCode());
-		result = prime * result + ((project == null) ? 0 : project.hashCode());
-		result = prime * result
-				+ ((qualifiers == null) ? 0 : qualifiers.hashCode());
-		result = prime * result
-				+ ((runDateTime == null) ? 0 : runDateTime.hashCode());
-		return result;
-	}
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Config other = (Config) obj;
+    public void setJavaVendor(String javaVendor) {
+        this.javaVendor = javaVendor;
+    }
 
-		if (javaVendor == null && other.javaVendor != null) {
-			return false;
-		} else if (!javaVendor.equals(other.javaVendor)) {
-			return false;
-		} else if (javaVersion == null && other.javaVersion != null) {
-			return false;
-		} else if (!javaVersion.equals(other.javaVersion)) {
-			return false;
-		} else if (project == null && other.project != null) {
-			return false;
-		} else if (!project.equals(other.project)) {
-			return false;
-		} else if (qualifiers == null && other.qualifiers != null) {
-			return false;
-		} else if (!qualifiers.equals(other.qualifiers)) {
-			return false;
-		} else if (runDateTime == null && other.runDateTime != null) {
-			return false;
-		} else if (!runDateTime.equals(other.runDateTime)) {
-			return false;
-		} else if (baseDirectory == null & other.baseDirectory != null) {
-			return false;
-		} else if (!baseDirectory.equals(other.baseDirectory)) {
-			return false;
-		} else if (toolsDirectory == null && other.toolsDirectory != null) {
-			return false;
-		} else if (!toolsDirectory.equals(other.toolsDirectory)) {
-			return false;
-		} else if (destDirectory == null && other.toolsDirectory != null) {
-			return false;
-		} else if (!destDirectory.equals(other.getDestDirectory())) {
-			return false;
-		} else if (excludedToolsList == null
-				&& other.getExcludedToolsList() != null) {
-			return false;
-		} else if (!excludedToolsList.equals(other.getExcludedToolsList())) {
-			return false;
-		} else if (scanDocument == null && other.getScanDocument() != null) {
-			return false;
-		} else if (!scanDocument.equals(other.getScanDocument())) {
-			return false;
-		} else if (cleanTempFiles != other.isCleanTempFiles()) {
-			return false;
-		} else if (sourceDirs == null && other.getSourceDirs() != null) {
-			return false;
-		} else if (!sourceDirs.equals(other.getSourceDirs())) {
-			return false;
-		} else if (binDirs == null && other.getBinDirs() != null) {
-			return false;
-		} else if (!binDirs.equals(other.getBinDirs())) {
-			return false;
-		} else if (classpath == null && other.getClasspath() != null) {
-			return false;
-		} else if (!classpath.equals(other.getClasspath())) {
-			return false;
-		} else if (pmdRulesFile == null && other.getPmdRulesFile() != null) {
-			return false;
-		} else if (!pmdRulesFile.equals(other.getPmdRulesFile())) {
-			return false;
-		} else if (multithreaded != other.isMultithreaded()) {
-			return false;
-		}
+    public void setRunDateTime(Date runDateTime) {
+        this.runDateTime = runDateTime;
+    }
 
-		return true;
-	}
+    public File getBaseDirectory() {
+        return baseDirectory;
+    }
 
-	/**
-	 * @return the destDirectory
-	 */
-	public final File getDestDirectory() {
-		return destDirectory;
-	}
+    public void setBaseDirectory(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
 
-	/**
-	 * @param destDirectory
-	 *            the destDirectory to set
-	 */
-	public final void setDestDirectory(File destDirectory) {
-		this.destDirectory = destDirectory;
-	}
+    public File getToolsDirectory() {
+        return toolsDirectory;
+    }
 
-	/**
-	 * @return the excludedToolsList
-	 */
-	public final String getExcludedToolsList() {
-		return excludedToolsList;
-	}
+    public void setToolsDirectory(File toolsDirectory) {
+        this.toolsDirectory = toolsDirectory;
+    }
 
-	/**
-	 * @param excludedToolsList
-	 *            the excludedToolsList to set
-	 */
-	public final void setExcludedToolsList(String excludedToolsList) {
-		this.excludedToolsList = excludedToolsList;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) +
+            ((javaVendor == null) ? 0 : javaVendor.hashCode());
+        result = (prime * result) +
+            ((javaVersion == null) ? 0 : javaVersion.hashCode());
+        result = (prime * result) +
+            ((baseDirectory == null) ? 0 : baseDirectory.hashCode());
+        result = (prime * result) +
+            ((toolsDirectory == null) ? 0 : toolsDirectory.hashCode());
+        result = (prime * result) +
+            ((project == null) ? 0 : project.hashCode());
+        result = (prime * result) +
+            ((qualifiers == null) ? 0 : qualifiers.hashCode());
+        result = (prime * result) +
+            ((runDateTime == null) ? 0 : runDateTime.hashCode());
 
-	/**
-	 * @return the runDocument
-	 */
-	public final File getScanDocument() {
-		return scanDocument;
-	}
+        return result;
+    }
 
-	/**
-	 * @param runDocumentName
-	 *            the runDocumentName to set
-	 */
-	public final void setScanDocument(File scanDocument) {
-		this.scanDocument = scanDocument;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-	/**
-	 * @return the cleanTempFiles
-	 */
-	public final boolean isCleanTempFiles() {
-		return cleanTempFiles;
-	}
+        if (obj == null) {
+            return false;
+        }
 
-	/**
-	 * @param cleanTempFiles
-	 *            the cleanTempFiles to set
-	 */
-	public final void setCleanTempFiles(boolean cleanTempFiles) {
-		this.cleanTempFiles = cleanTempFiles;
-	}
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 
-	/**
-	 * @return the sourceDirs
-	 */
-	public final String getSourceDirs() {
-		return sourceDirs;
-	}
+        final Config other = (Config) obj;
 
-	/**
-	 * @param sourceDirs
-	 *            the sourceDirs to set
-	 */
-	public final void setSourceDirs(String sourceDirs) {
-		this.sourceDirs = sourceDirs;
-	}
+        if ((javaVendor == null) && (other.javaVendor != null)) {
+            return false;
+        } else if (!javaVendor.equals(other.javaVendor)) {
+            return false;
+        } else if ((javaVersion == null) && (other.javaVersion != null)) {
+            return false;
+        } else if (!javaVersion.equals(other.javaVersion)) {
+            return false;
+        } else if ((project == null) && (other.project != null)) {
+            return false;
+        } else if (!project.equals(other.project)) {
+            return false;
+        } else if ((qualifiers == null) && (other.qualifiers != null)) {
+            return false;
+        } else if (!qualifiers.equals(other.qualifiers)) {
+            return false;
+        } else if ((runDateTime == null) && (other.runDateTime != null)) {
+            return false;
+        } else if (!runDateTime.equals(other.runDateTime)) {
+            return false;
+        } else if ((baseDirectory == null) & (other.baseDirectory != null)) {
+            return false;
+        } else if (!baseDirectory.equals(other.baseDirectory)) {
+            return false;
+        } else if ((toolsDirectory == null) && (other.toolsDirectory != null)) {
+            return false;
+        } else if (!toolsDirectory.equals(other.toolsDirectory)) {
+            return false;
+        } else if ((destDirectory == null) && (other.toolsDirectory != null)) {
+            return false;
+        } else if (!destDirectory.equals(other.getDestDirectory())) {
+            return false;
+        } else if ((excludedToolsList == null) &&
+                (other.getExcludedToolsList() != null)) {
+            return false;
+        } else if (!excludedToolsList.equals(other.getExcludedToolsList())) {
+            return false;
+        } else if ((scanDocument == null) && (other.getScanDocument() != null)) {
+            return false;
+        } else if (!scanDocument.equals(other.getScanDocument())) {
+            return false;
+        } else if (cleanTempFiles != other.isCleanTempFiles()) {
+            return false;
+        } else if ((sourceDirs == null) && (other.getSourceDirs() != null)) {
+            return false;
+        } else if (!sourceDirs.equals(other.getSourceDirs())) {
+            return false;
+        } else if ((binDirs == null) && (other.getBinDirs() != null)) {
+            return false;
+        } else if (!binDirs.equals(other.getBinDirs())) {
+            return false;
+        } else if ((classpath == null) && (other.getClasspath() != null)) {
+            return false;
+        } else if (!classpath.equals(other.getClasspath())) {
+            return false;
+        } else if ((pmdRulesFile == null) && (other.getPmdRulesFile() != null)) {
+            return false;
+        } else if (!pmdRulesFile.equals(other.getPmdRulesFile())) {
+            return false;
+        } else if (multithreaded != other.isMultithreaded()) {
+            return false;
+        }
 
-	/**
-	 * @return the binDirs
-	 */
-	public final String getBinDirs() {
-		return binDirs;
-	}
+        return true;
+    }
 
-	/**
-	 * @param binDirs
-	 *            the binDirs to set
-	 */
-	public final void setBinDirs(String binDirs) {
-		this.binDirs = binDirs;
-	}
+    /**
+     * @return the destDirectory
+     */
+    public final File getDestDirectory() {
+        return destDirectory;
+    }
 
-	/**
-	 * @return the classpath
-	 */
-	public final String getClasspath() {
-		return classpath;
-	}
+    /**
+     * @param destDirectory
+     *            the destDirectory to set
+     */
+    public final void setDestDirectory(File destDirectory) {
+        this.destDirectory = destDirectory;
+    }
 
-	/**
-	 * @param classpath
-	 *            the classpath to set
-	 */
-	public final void setClasspath(String classpath) {
-		this.classpath = classpath;
-	}
+    /**
+     * @return the excludedToolsList
+     */
+    public final String getExcludedToolsList() {
+        return excludedToolsList;
+    }
 
-	/**
-	 * @return the pmdRulesFile
-	 */
-	public final File getPmdRulesFile() {
-		return pmdRulesFile;
-	}
+    /**
+     * @param excludedToolsList
+     *            the excludedToolsList to set
+     */
+    public final void setExcludedToolsList(String excludedToolsList) {
+        this.excludedToolsList = excludedToolsList;
+    }
 
-	/**
-	 * @param pmdRulesFile
-	 *            the pmdRulesFile to set
-	 */
-	public final void setPmdRulesFile(File pmdRulesFile) {
-		this.pmdRulesFile = pmdRulesFile;
-	}
+    /**
+     * @return the runDocument
+     */
+    public final File getScanDocument() {
+        return scanDocument;
+    }
 
-	/**
-	 * @return the multithreaded
-	 */
-	public final boolean isMultithreaded() {
-		return multithreaded;
-	}
+    /**
+     * @param runDocumentName
+     *            the runDocumentName to set
+     */
+    public final void setScanDocument(File scanDocument) {
+        this.scanDocument = scanDocument;
+    }
 
-	/**
-	 * @param multithreaded
-	 *            the multithreaded to set
-	 */
-	public final void setMultithreaded(boolean multithreaded) {
-		this.multithreaded = multithreaded;
-	}
+    /**
+     * @return the cleanTempFiles
+     */
+    public final boolean isCleanTempFiles() {
+        return cleanTempFiles;
+    }
 
+    /**
+     * @param cleanTempFiles
+     *            the cleanTempFiles to set
+     */
+    public final void setCleanTempFiles(boolean cleanTempFiles) {
+        this.cleanTempFiles = cleanTempFiles;
+    }
+
+    /**
+     * @return the sourceDirs
+     */
+    public final String getSourceDirs() {
+        return sourceDirs;
+    }
+
+    /**
+     * @param sourceDirs
+     *            the sourceDirs to set
+     */
+    public final void setSourceDirs(String sourceDirs) {
+        this.sourceDirs = sourceDirs;
+    }
+
+    /**
+     * @return the binDirs
+     */
+    public final String getBinDirs() {
+        return binDirs;
+    }
+
+    /**
+     * @param binDirs
+     *            the binDirs to set
+     */
+    public final void setBinDirs(String binDirs) {
+        this.binDirs = binDirs;
+    }
+
+    /**
+     * @return the classpath
+     */
+    public final String getClasspath() {
+        return classpath;
+    }
+
+    /**
+     * @param classpath
+     *            the classpath to set
+     */
+    public final void setClasspath(String classpath) {
+        this.classpath = classpath;
+    }
+
+    /**
+     * @return the pmdRulesFile
+     */
+    public final File getPmdRulesFile() {
+        return pmdRulesFile;
+    }
+
+    /**
+     * @param pmdRulesFile
+     *            the pmdRulesFile to set
+     */
+    public final void setPmdRulesFile(File pmdRulesFile) {
+        this.pmdRulesFile = pmdRulesFile;
+    }
+
+    /**
+     * @return the multithreaded
+     */
+    public final boolean isMultithreaded() {
+        return multithreaded;
+    }
+
+    /**
+     * @param multithreaded
+     *            the multithreaded to set
+     */
+    public final void setMultithreaded(boolean multithreaded) {
+        this.multithreaded = multithreaded;
+    }
 }
