@@ -14,7 +14,7 @@ import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.settings.CategoryView;
-import com.surelogic.sierra.jdbc.settings.ServerSettingsManager;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FilterEntry;
@@ -24,7 +24,7 @@ public class Server_0007 implements SchemaAction {
 
 	public void run(Connection conn) throws SQLException {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
-		final ServerSettingsManager sMan = ServerSettingsManager
+		final SettingsManager sMan = SettingsManager
 				.getInstance(conn);
 		final List<CategoryView> categories = ftMan.listCategories();
 		for (final CategoryView c : categories) {

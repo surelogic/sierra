@@ -7,14 +7,16 @@ import java.sql.SQLException;
 public class SettingsRecord extends LongUpdatableRecord {
 
 	private String name;
+	private String uid;
 	private Long revision;
 
-	public SettingsRecord(UpdateBaseMapper mapper) {
+	public SettingsRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
+		st.setString(idx++, uid);
 		st.setString(idx++, name);
 		st.setLong(idx++, revision);
 		return idx;
@@ -22,13 +24,22 @@ public class SettingsRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		st.setString(idx++, name);
+		st.setString(idx++, uid);
 		return idx;
 	}
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
+		name = set.getString(idx++);
 		revision = set.getLong(idx++);
+		return idx;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setLong(idx++, revision);
+		st.setString(idx++, name);
 		return idx;
 	}
 
@@ -37,6 +48,10 @@ public class SettingsRecord extends LongUpdatableRecord {
 	}
 
 	public void setName(String name) {
+		if (name == null || name.length() > 255) {
+			throw new IllegalArgumentException("The name " + name
+					+ " cannot be longer than 255 characters in length.");
+		}
 		this.name = name;
 	}
 
@@ -48,12 +63,12 @@ public class SettingsRecord extends LongUpdatableRecord {
 		this.revision = revision;
 	}
 
-	@Override
-	protected int fillUpdatedFields(PreparedStatement st, int idx)
-			throws SQLException {
-		st.setString(idx++, name);
-		st.setLong(idx++, revision);
-		return idx;
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 }

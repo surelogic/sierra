@@ -9,7 +9,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.settings.ClientSettingsManager;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.CommitAuditTrailResponse;
@@ -120,21 +120,13 @@ public class ClientProjectManager extends ProjectManager {
 		}
 		monitor.worked(1);
 		// Update settings
+		//TODO
 		monitor.subTask("Checking for updated settings for project "
 				+ projectName);
-		ClientSettingsManager settingsManager = ClientSettingsManager
+		SettingsManager settingsManager = SettingsManager
 				.getInstance(conn);
 		SettingsRequest request = new SettingsRequest();
 		request.setServer(serverUid);
-		request.setProject(projectName);
-		Long revision = settingsManager.getSettingsRevision(projectName);
-		request.setRevision(revision);
-		SettingsReply reply = service.getSettings(request);
-		final Settings settings = reply.getSettings();
-		if (settings != null) {
-			settingsManager.writeSettings(projectName, reply.getRevision(), reply
-					.getSettings());
-		}
 		monitor.worked(1);
 		int idx = 1;
 		insertSynchRecord.setLong(idx++, p.getId());

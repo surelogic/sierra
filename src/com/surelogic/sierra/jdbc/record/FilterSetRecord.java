@@ -20,8 +20,8 @@ public class FilterSetRecord extends LongUpdatableRecord {
 	@Override
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
-		st.setString(idx++, name);
 		st.setLong(idx++, revision);
+		st.setString(idx++, name);
 		setNullableString(idx++, st, info);
 		return idx;
 	}

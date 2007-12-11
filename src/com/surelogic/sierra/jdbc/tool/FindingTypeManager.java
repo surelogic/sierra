@@ -19,8 +19,11 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.settings.CategoryView;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
+import com.surelogic.sierra.tool.message.FilterEntry;
+import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.FindingTypes;
@@ -62,8 +65,10 @@ public class FindingTypeManager {
 	private final PreparedStatement checkUnassignedArtifactTypes;
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
+	private final Connection conn;
 
 	private FindingTypeManager(Connection conn) throws SQLException {
+		this.conn = conn;
 		this.selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		this.selectArtifactTypesByFindingTypeId = conn
@@ -228,7 +233,8 @@ public class FindingTypeManager {
 	public FindingFilter getMessageFilter(Settings settings)
 			throws SQLException {
 		if (settings != null) {
-			Collection<FindingTypeFilter> filters = settings.getFilter();
+			final Collection<FindingTypeFilter> filters = SettingsManager
+					.getInstance(conn).getSettingFilters(settings.getUid());
 			Map<Long, FindingTypeFilter> findingMap = new HashMap<Long, FindingTypeFilter>(
 					filters.size());
 			Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
@@ -276,7 +282,7 @@ public class FindingTypeManager {
 	 * @param types
 	 * @throws SQLException
 	 */
-	public void updateFindingTypes(List<FindingTypes> types)
+	public void updateFindingTypes(List<FindingTypes> types, long revision)
 			throws SQLException {
 		Set<String> idSet = new HashSet<String>();
 		Set<String> duplicates = new HashSet<String>();
@@ -366,6 +372,21 @@ public class FindingTypeManager {
 						}
 					}
 				}
+			}
+			final SettingsManager sMan = SettingsManager.getInstance(conn);
+			for (Category cat : type.getCategory()) {
+				//TODO in the future, this needs to be an update.
+				final String uid = sMan.createFilterSet(cat.getName().trim(), cat.getDescription(), revision);
+				final FilterSet filterSet = sMan.getFilterSet(uid);
+				final List<FilterEntry> entries = filterSet.getFilter();
+				for(String findingType : cat.getFindingType()) {
+					findingType = findingType.trim();
+					FilterEntry entry = new FilterEntry();
+					entry.setFiltered(false);
+					entry.setType(findingType);
+					entries.add(entry);
+				}
+				sMan.updateFilterSet(filterSet, revision);
 			}
 		}
 		// Ensure that all artifact types belong to a finding type, and all
