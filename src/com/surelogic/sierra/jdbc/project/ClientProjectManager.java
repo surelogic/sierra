@@ -19,8 +19,6 @@ import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerUIDRequest;
-import com.surelogic.sierra.tool.message.Settings;
-import com.surelogic.sierra.tool.message.SettingsReply;
 import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
@@ -60,12 +58,8 @@ public class ClientProjectManager extends ProjectManager {
 		if (!p.select()) {
 			p.insert();
 		}
-		String serverUid = p.getServerUid();
-		if (serverUid == null) {
-			serverUid = service.getUid(new ServerUIDRequest()).getUid();
-			p.setServerUid(serverUid);
-			p.update();
-		}
+		// TODO put server uid back into project
+		String serverUid = service.getUid(new ServerUIDRequest()).getUid();
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -120,11 +114,10 @@ public class ClientProjectManager extends ProjectManager {
 		}
 		monitor.worked(1);
 		// Update settings
-		//TODO
+		// TODO
 		monitor.subTask("Checking for updated settings for project "
 				+ projectName);
-		SettingsManager settingsManager = SettingsManager
-				.getInstance(conn);
+		SettingsManager settingsManager = SettingsManager.getInstance(conn);
 		SettingsRequest request = new SettingsRequest();
 		request.setServer(serverUid);
 		monitor.worked(1);
