@@ -302,7 +302,7 @@ public class FindingTypeManager {
 				} else {
 					fRec.setUid(uid);
 					fRec.setName(ft.getName().trim());
-					fRec.setInfo(ft.getInfo());
+					fRec.setInfo(ft.getInfo().trim());
 					fRec.setShortMessage(ft.getShortMessage());
 					if (fRec.select()) {
 						fRec.update();
