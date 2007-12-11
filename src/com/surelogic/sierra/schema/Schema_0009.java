@@ -147,6 +147,5 @@ public class Schema_0009 implements SchemaAction {
 						"com/surelogic/sierra/tool/message/checkstyle.xml");
 		types.add(mw.fetchFindingTypes(in));
 		ftMan.updateFindingTypes(types, 0);
-		c.commit();
 	}
 }
