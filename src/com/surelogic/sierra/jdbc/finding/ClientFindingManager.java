@@ -51,11 +51,13 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement insertTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
-	private final PreparedStatement populateFindingOverview;
+	private final PreparedStatement populateFindingOverviewCurrentFindings;
+	private final PreparedStatement populateFindingOverviewFixedFindings;
 	private final PreparedStatement updateFindingOverviewImportance;
 	private final PreparedStatement updateFindingOverviewSummary;
 	private final PreparedStatement updateFindingOverviewComment;
 	private final PreparedStatement selectLatestScanByProject;
+	private final PreparedStatement selectOldestScanByProject;
 	private final PreparedStatement updateFindingUid;
 	private final PreparedStatement updateMatchRevision;
 	private final PreparedStatement findLocalMerges;
@@ -118,7 +120,7 @@ public final class ClientFindingManager extends FindingManager {
 		updateFindingOverviewComment = conn
 				.prepareStatement(beginFindingOverviewUpdate
 						+ endFindingOverviewUpdate);
-		populateFindingOverview = conn
+		populateFindingOverviewCurrentFindings = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
@@ -131,10 +133,48 @@ public final class ClientFindingManager extends FindingManager {
 						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
 						+ "        END,"
 						+ "        CASE"
-						+ "             WHEN FIXED.ID IS NOT NULL THEN 'Fixed'"
 						+ "	            WHEN RECENT.ID IS NOT NULL THEN 'New'"
 						+ "	            ELSE 'Unchanged'"
 						+ "        END,"
+						+ "        SO.LINE_OF_CODE,"
+						+ "        SO.ARTIFACT_COUNT,"
+						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
+						+ "        ?,"
+						+ "        LM.PACKAGE_NAME,"
+						+ "        LM.CLASS_NAME,"
+						+ "        FT.NAME,"
+						+ "        FC.NAME,"
+						+ "        SO.TOOL,"
+						+ "        F.SUMMARY,"
+						+ "        SO.CU"
+						+ " FROM"
+						+ "    "
+						+ tempTableName
+						+ " TF"
+						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
+						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
+						+ "    INNER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
+						+ "    LEFT OUTER JOIN ("
+						+ "       SELECT"
+						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
+						+ "       FROM SIERRA_AUDIT A"
+						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
+						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
+						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
+		populateFindingOverviewFixedFindings = conn
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
+						+ " SELECT F.ID,F.PROJECT_ID,"
+						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
+						+ "        F.LAST_CHANGED,"
+						+ "        CASE"
+						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
+						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
+						+ "             WHEN F.IMPORTANCE=2 THEN 'Medium'"
+						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
+						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
+						+ "        END,"
+						+ "        'Fixed',"
 						+ "        SO.LINE_OF_CODE,"
 						+ "        CASE WHEN SO.ARTIFACT_COUNT IS NULL THEN 0 ELSE SO.ARTIFACT_COUNT END,"
 						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
@@ -151,9 +191,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ tempTableName
 						+ " TF"
 						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
-						+ "    LEFT OUTER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
-						+ "    LEFT OUTER JOIN RECENT_FINDINGS RECENT ON RECENT.ID = F.ID"
-						+ "    LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
+						+ "    INNER JOIN FIXED_FINDINGS FIXED ON FIXED.ID = F.ID"
+						+ "    INNER JOIN SCAN_OVERVIEW SO ON SO.FINDING_ID = F.ID AND SO.SCAN_ID = ?"
 						+ "    LEFT OUTER JOIN ("
 						+ "       SELECT"
 						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
@@ -189,6 +228,8 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		selectLatestScanByProject = conn
 				.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?");
+		selectOldestScanByProject = conn
+				.prepareStatement("SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?");
 		updateFindingUid = conn
 				.prepareStatement("UPDATE FINDING SET UUID = ? WHERE ID = ?");
 		updateMatchRevision = conn
@@ -328,9 +369,25 @@ public final class ClientFindingManager extends FindingManager {
 						.info("Populating overview for project " + p.getName()
 								+ ".");
 				idx = 1;
-				populateFindingOverview.setString(idx++, projectName);
-				populateFindingOverview.setLong(idx++, scanRecord.getId());
-				populateFindingOverview.execute();
+				populateFindingOverviewCurrentFindings.setString(idx++,
+						projectName);
+				populateFindingOverviewCurrentFindings.setLong(idx++,
+						scanRecord.getId());
+				populateFindingOverviewCurrentFindings.execute();
+				selectOldestScanByProject.setString(1, projectName);
+				final ResultSet set = selectOldestScanByProject.executeQuery();
+				try {
+					if (set.next()) {
+						idx = 1;
+						populateFindingOverviewFixedFindings.setString(idx++,
+								projectName);
+						populateFindingOverviewFixedFindings.setLong(idx++, set
+								.getLong(1));
+						populateFindingOverviewFixedFindings.execute();
+					}
+				} finally {
+					set.close();
+				}
 				log.info("Deleting temp ids");
 				deleteTempIds.execute();
 			} else {
@@ -497,16 +554,32 @@ public final class ClientFindingManager extends FindingManager {
 			}
 		}
 		selectLatestScanByProject.setString(1, projectName);
-		ResultSet set = selectLatestScanByProject.executeQuery();
+		ResultSet latestScanSet = selectLatestScanByProject.executeQuery();
 		try {
-			if (set.next()) {
-				populateFindingOverview.setString(1, projectName);
-				populateFindingOverview.setLong(2, set.getLong(1));
-				populateFindingOverview.execute();
+			if (latestScanSet.next()) {
+				populateFindingOverviewCurrentFindings
+						.setString(1, projectName);
+				populateFindingOverviewCurrentFindings.setLong(2, latestScanSet
+						.getLong(1));
+				populateFindingOverviewCurrentFindings.execute();
+				selectOldestScanByProject.setString(1, projectName);
+				ResultSet oldestScanSet = selectOldestScanByProject
+						.executeQuery();
+				try {
+					if (oldestScanSet.next()) {
+						populateFindingOverviewFixedFindings.setString(1,
+								projectName);
+						populateFindingOverviewFixedFindings.setLong(2,
+								oldestScanSet.getLong(1));
+						populateFindingOverviewFixedFindings.execute();
+					}
+				} finally {
+					oldestScanSet.close();
+				}
 				deleteTempIds.execute();
 			}
 		} finally {
-			set.close();
+			latestScanSet.close();
 		}
 	}
 

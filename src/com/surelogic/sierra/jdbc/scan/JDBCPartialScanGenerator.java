@@ -34,6 +34,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	private final ScanRecord scan;
 	private final FindingFilter filter;
 	private String projectName;
+	private JDBCArtifactGenerator generator;
 
 	JDBCPartialScanGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, ScanRecord scan, FindingFilter filter) {
@@ -51,8 +52,9 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 			scan.setStatus(ScanStatus.LOADING);
 			scan.update();
 			conn.commit();
-			return new JDBCArtifactGenerator(conn, factory, manager,
+			generator = new JDBCArtifactGenerator(conn, factory, manager,
 					projectName, scan, filter);
+			return generator;
 		} catch (SQLException e) {
 			try {
 				conn.rollback();
@@ -91,6 +93,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
+		generator.finished();
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
