@@ -256,7 +256,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
 	private final RGB fBackgroundColorRGB = f_display.getSystemColor(
-			SWT.COLOR_LIST_BACKGROUND).getRGB();
+			SWT.COLOR_WIDGET_BACKGROUND).getRGB();
 
 	/**
 	 * Must be called from the UI thread.
