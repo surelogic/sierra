@@ -536,31 +536,8 @@ public abstract class Filter {
 		// addColumnsTo(b);
 		b.append(",count(*) from FINDINGS_OVERVIEW ");
 		addWhereClauseTo(b, false);
-		b.append("group by ");
-		addColumnsTo(b);
+		b.append("group by ").append(getColumnName());
 		return b;
-	}
-
-	/**
-	 * Any caller must be holding a lock on <code>this</code>.
-	 */
-	private void addColumnsTo(StringBuilder b) {
-		Filter filter = this;
-		final LinkedList<String> columnNames = new LinkedList<String>();
-		do {
-			columnNames.addFirst(filter.getColumnName());
-			filter = filter.f_previous;
-		} while (filter != null);
-
-		boolean first = true;
-		for (String columnName : columnNames) {
-			if (first) {
-				first = false;
-			} else {
-				b.append(",");
-			}
-			b.append(columnName);
-		}
 	}
 
 	/**
