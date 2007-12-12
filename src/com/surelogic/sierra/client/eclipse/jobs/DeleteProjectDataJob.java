@@ -47,8 +47,14 @@ public final class DeleteProjectDataJob {
 								.getInstance(conn);
 						try {
 							for (final String projectName : f_projectNames) {
-								manager.deleteProject(projectName, slMonitor);
-								conn.commit();
+								try {
+									manager.deleteProject(projectName,
+											slMonitor);
+									conn.commit();
+								} catch (SQLException e) {
+									conn.rollback();
+									throw e;
+								}
 								SierraServerManager.getInstance().disconnect(
 										projectName);
 								DatabaseHub.getInstance()
