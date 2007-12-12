@@ -167,7 +167,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	public void clearAllMarkers() {
-	  long startDelete = debug ? 0 : System.currentTimeMillis();
+	  long startDelete = !debug ? 0 : System.currentTimeMillis();
     try {
       IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
       root.deleteMarkers(MarkersHandler.SIERRA_MARKER, true, IResource.DEPTH_INFINITE);
@@ -187,7 +187,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		if (resource != null) {
 			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
-				  long startDelete = debug ? 0 : System.currentTimeMillis();
+				  long startDelete = !debug ? 0 : System.currentTimeMillis();
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
 			    if (debug) System.out.println("Delete last markers: "+(System.currentTimeMillis() - startDelete));    
 				}
@@ -319,7 +319,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 * @param overview
 	 */
 	private void setMarker(IFile file, List<FindingOverview> overview) {
-	  long startDelete = debug ? 0 : System.currentTimeMillis();
+	  long startDelete = !debug ? 0 : System.currentTimeMillis();
 		try {
 			file.deleteMarkers(SIERRA_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
@@ -327,7 +327,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
     if (debug) System.out.println("Delete markers: "+(System.currentTimeMillis() - startDelete));
 		
-    long startCreate = debug ? 0 : System.currentTimeMillis();
+    long startCreate = !debug ? 0 : System.currentTimeMillis();
     IMarker marker = null;
 		try {
 			for (FindingOverview o : overview) {
@@ -499,7 +499,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			try {
 				Connection conn = Data.readOnlyConnection();
 				try {
-				  long start = debug ? 0 : System.currentTimeMillis();
+				  long start = !debug ? 0 : System.currentTimeMillis();
 				  Importance level = PreferenceConstants.showMarkersAtOrAboveImportance();
 					if (level == null) {
 						f_overview = FindingOverview.getView()
