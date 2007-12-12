@@ -56,6 +56,8 @@ import com.surelogic.sierra.tool.message.Importance;
  */
 public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IPropertyChangeListener {
+  private static final boolean debug = false;
+  
   private static final boolean keepMarkersForAllVisibleEditors = false;
   
   /**
@@ -165,12 +167,14 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	public void clearAllMarkers() {
+	  long startDelete = debug ? 0 : System.currentTimeMillis();
     try {
       IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
       root.deleteMarkers(MarkersHandler.SIERRA_MARKER, true, IResource.DEPTH_INFINITE);
     } catch (CoreException e) {
       LOG.log(Level.SEVERE, "Error while deleting all markers.", e);
     }
+    if (debug) System.out.println("Delete all markers: "+(System.currentTimeMillis() - startDelete));    
 	}
 
 	private MarkersHandler() {
@@ -183,7 +187,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		if (resource != null) {
 			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
+				  long startDelete = debug ? 0 : System.currentTimeMillis();
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
+			    if (debug) System.out.println("Delete last markers: "+(System.currentTimeMillis() - startDelete));    
 				}
 
 				if (PreferenceConstants.showMarkers()) {
@@ -313,28 +319,32 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 * @param overview
 	 */
 	private void setMarker(IFile file, List<FindingOverview> overview) {
+	  long startDelete = debug ? 0 : System.currentTimeMillis();
 		try {
 			file.deleteMarkers(SIERRA_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 		}
-		IMarker marker = null;
+    if (debug) System.out.println("Delete markers: "+(System.currentTimeMillis() - startDelete));
+		
+    long startCreate = debug ? 0 : System.currentTimeMillis();
+    IMarker marker = null;
 		try {
 			for (FindingOverview o : overview) {
-
-				if (o.getImportance().equals(Importance.IRRELEVANT)) {
-					marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
-				} else if (o.getImportance().equals(Importance.LOW)) {
-					marker = file.createMarker(SIERRA_MARKER_LOW);
-				} else if (o.getImportance().equals(Importance.MEDIUM)) {
-					marker = file.createMarker(SIERRA_MARKER_MEDIUM);
-				} else if (o.getImportance().equals(Importance.HIGH)) {
-					marker = file.createMarker(SIERRA_MARKER_HIGH);
-				} else if (o.getImportance().equals(Importance.CRITICAL)) {
-					marker = file.createMarker(SIERRA_MARKER_CRITICAL);
-				} else {
-					marker = file.createMarker(SIERRA_MARKER);
-				}
+			  
+			  if (o.getImportance().equals(Importance.MEDIUM)) {
+			    marker = file.createMarker(SIERRA_MARKER_MEDIUM);
+			  } else if (o.getImportance().equals(Importance.LOW)) {
+			    marker = file.createMarker(SIERRA_MARKER_LOW);
+			  } else if (o.getImportance().equals(Importance.HIGH)) {
+			    marker = file.createMarker(SIERRA_MARKER_HIGH);
+			  } else if (o.getImportance().equals(Importance.IRRELEVANT)) {
+			    marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
+			  } else if (o.getImportance().equals(Importance.CRITICAL)) {
+			    marker = file.createMarker(SIERRA_MARKER_CRITICAL);
+			  } else {
+			    marker = file.createMarker(SIERRA_MARKER);
+			  }
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
 				marker.setAttribute(IMarker.MESSAGE, "("
 						+ o.getImportance().toStringSentenceCase() + ") "
@@ -345,6 +355,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
 		}
+    if (debug) System.out.println("Create markers: "+(System.currentTimeMillis() - startCreate));
 	}
 
 	/**
@@ -488,6 +499,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			try {
 				Connection conn = Data.readOnlyConnection();
 				try {
+				  long start = debug ? 0 : System.currentTimeMillis();
 					if (PreferenceConstants.showLowestImportance()) {
 						f_overview = FindingOverview.getView()
 								.showFindingsForClass(conn, f_projectName,
@@ -498,7 +510,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 										f_projectName, f_packageName,
 										f_className);
 					}
-
+          if (debug) System.out.println("DB: "+(System.currentTimeMillis() - start));
+          
 					if (f_overview != null) {
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
