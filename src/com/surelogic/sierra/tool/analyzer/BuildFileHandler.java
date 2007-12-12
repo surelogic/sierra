@@ -334,7 +334,7 @@ public class BuildFileHandler extends DefaultHandler {
 			inSierraAnalysis = false;
 
 			File scanDocument = new File(runDocumentNameHolder);
-			if (scanDocument == null || "".equals(scanDocument)) {
+			if (scanDocument == null || "".equals(runDocumentNameHolder)) {
 				scanDocument = new File(SierraToolConstants.SIERRA_RESULTS_PATH,
 						config.getProject()
 								+ SierraToolConstants.PARSED_FILE_SUFFIX);

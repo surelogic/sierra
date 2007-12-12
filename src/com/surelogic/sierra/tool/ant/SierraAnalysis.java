@@ -403,7 +403,7 @@ public class SierraAnalysis extends Task {
 			sourceDirectories = sourceDirectory
 					.toArray(new String[sourceDirectory.size()]);
 
-			if (runDocument == null || "".equals(runDocument)) {
+			if (runDocument == null /*|| "".equals(runDocument)*/) {
 				runDocument = new File(tmpFolder, project.getName()
 						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (runDocument.isDirectory()) {
