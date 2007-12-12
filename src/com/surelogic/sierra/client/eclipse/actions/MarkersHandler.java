@@ -165,14 +165,12 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	public void clearAllMarkers() {
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER);
-		/*
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER_CRITICAL);
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER_HIGH);
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER_MEDIUM);
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER_LOW);
-		clearMarkers(null, MarkersHandler.SIERRA_MARKER_IRRELEVANT);
-		*/
+    try {
+      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+      root.deleteMarkers(MarkersHandler.SIERRA_MARKER, true, IResource.DEPTH_INFINITE);
+    } catch (CoreException e) {
+      LOG.log(Level.SEVERE, "Error while deleting all markers.", e);
+    }
 	}
 
 	private MarkersHandler() {
@@ -186,13 +184,6 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
-					/*
-					clearMarkers(f_selectedFile, SIERRA_MARKER_CRITICAL);
-					clearMarkers(f_selectedFile, SIERRA_MARKER_HIGH);
-					clearMarkers(f_selectedFile, SIERRA_MARKER_MEDIUM);
-					clearMarkers(f_selectedFile, SIERRA_MARKER_LOW);
-					clearMarkers(f_selectedFile, SIERRA_MARKER_IRRELEVANT);
-					*/
 				}
 
 				if (PreferenceConstants.showMarkers()) {
@@ -247,41 +238,15 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 * @param type
 	 */
 	private void clearMarkers(IFile file, String type) {
-		if (type != null) {
-			if (file == null) {
-				try {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
-					IProject[] projects = root.getProjects();
-
-					for (IProject p : projects) {
-						if (p.isOpen()) {
-							List<IFile> files = getJavaFiles(p);
-							for (IFile f : files) {
-								IMarker[] markers = f.findMarkers(type, true,
-										IResource.DEPTH_ONE);
-								for (IMarker m : markers) {
-									m.delete();
-								}
-							}
-
-						}
-					}
-
-				} catch (CoreException e) {
-					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
-				}
-
-			} else
-				try {
-					if (file.exists()) {
-						file.deleteMarkers(type, true, IResource.DEPTH_ONE);
-					}
-				} catch (CoreException e) {
-					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
-				}
+		if (type != null && file != null) {
+		  try {
+		    if (file.exists()) {
+		      file.deleteMarkers(type, true, IResource.DEPTH_ZERO);
+		    }
+		  } catch (CoreException e) {
+		    LOG.log(Level.SEVERE, "Error while deleting markers.", e);
+		  }
 		}
-
 	}
 
 	/**
@@ -349,16 +314,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 */
 	private void setMarker(IFile file, List<FindingOverview> overview) {
 		try {
-			file.deleteMarkers(SIERRA_MARKER, false, IResource.DEPTH_ONE);
-			file.deleteMarkers(SIERRA_MARKER_CRITICAL, false,
-					IResource.DEPTH_ONE);
-			file.deleteMarkers(SIERRA_MARKER_HIGH, false, IResource.DEPTH_ONE);
-			file
-					.deleteMarkers(SIERRA_MARKER_MEDIUM, false,
-							IResource.DEPTH_ONE);
-			file.deleteMarkers(SIERRA_MARKER_LOW, false, IResource.DEPTH_ONE);
-			file.deleteMarkers(SIERRA_MARKER_IRRELEVANT, false,
-					IResource.DEPTH_ONE);
+			file.deleteMarkers(SIERRA_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 		}
@@ -440,14 +396,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
         if (editor == null) {
           // When we close an editor, if there are no more editors open clear
           // all the sierra markers
-          clearMarkers(null, SIERRA_MARKER);
-          /*
-          clearMarkers(null, SIERRA_MARKER_CRITICAL);
-          clearMarkers(null, SIERRA_MARKER_HIGH);
-          clearMarkers(null, SIERRA_MARKER_MEDIUM);
-          clearMarkers(null, SIERRA_MARKER_LOW);
-          clearMarkers(null, SIERRA_MARKER_IRRELEVANT);
-          */
+          clearAllMarkers();
         } 
         else if (keepMarkersForAllVisibleEditors) {
           // FIX Ensure that markers are cleared for this editor
