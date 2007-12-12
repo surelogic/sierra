@@ -2,15 +2,12 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,21 +45,21 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
- * Class to handle sierra markers
- * Currently keeps markers only for the current active editor
+ * Class to handle sierra markers Currently keeps markers only for the current
+ * active editor
  * 
  * @author Tanmay.Sinha
  * @author Edwin.Chan
  */
 public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IPropertyChangeListener {
-  private static final boolean debug = false;
-  
-  private static final boolean keepMarkersForAllVisibleEditors = false;
-  
-  /**
-   * Supertype for the other (5) marker types
-   */
+	private static final boolean debug = false;
+
+	private static final boolean keepMarkersForAllVisibleEditors = false;
+
+	/**
+	 * Supertype for the other (5) marker types
+	 */
 	public static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
 
 	public static final String SIERRA_MARKER_CRITICAL = "com.surelogic.sierra.client.eclipse.sierraMarkerCritical";
@@ -167,14 +164,17 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	public void clearAllMarkers() {
-	  long startDelete = !debug ? 0 : System.currentTimeMillis();
-    try {
-      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-      root.deleteMarkers(MarkersHandler.SIERRA_MARKER, true, IResource.DEPTH_INFINITE);
-    } catch (CoreException e) {
-      LOG.log(Level.SEVERE, "Error while deleting all markers.", e);
-    }
-    if (debug) System.out.println("Delete all markers: "+(System.currentTimeMillis() - startDelete));    
+		long startDelete = !debug ? 0 : System.currentTimeMillis();
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			root.deleteMarkers(MarkersHandler.SIERRA_MARKER, true,
+					IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			LOG.log(Level.SEVERE, "Error while deleting all markers.", e);
+		}
+		if (debug)
+			System.out.println("Delete all markers: "
+					+ (System.currentTimeMillis() - startDelete));
 	}
 
 	private MarkersHandler() {
@@ -187,9 +187,11 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		if (resource != null) {
 			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
-				  long startDelete = !debug ? 0 : System.currentTimeMillis();
+					long startDelete = !debug ? 0 : System.currentTimeMillis();
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
-			    if (debug) System.out.println("Delete last markers: "+(System.currentTimeMillis() - startDelete));    
+					if (debug)
+						System.out.println("Delete last markers: "
+								+ (System.currentTimeMillis() - startDelete));
 				}
 
 				if (PreferenceConstants.showMarkers()) {
@@ -237,79 +239,22 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 	/**
 	 * Clear all the markers of the given type in the file If the file is null,
-	 * this method clear all the markers of given type (and its subtypes) in 
-	 * the workspace
-   *
+	 * this method clear all the markers of given type (and its subtypes) in the
+	 * workspace
+	 * 
 	 * @param file
 	 * @param type
 	 */
 	private void clearMarkers(IFile file, String type) {
 		if (type != null && file != null) {
-		  try {
-		    if (file.exists()) {
-		      file.deleteMarkers(type, true, IResource.DEPTH_ZERO);
-		    }
-		  } catch (CoreException e) {
-		    LOG.log(Level.SEVERE, "Error while deleting markers.", e);
-		  }
-		}
-	}
-
-	/**
-	 * Returns a list of all the java files in a given project
-	 * 
-	 * @param project
-	 * @return
-	 * @throws CoreException
-	 */
-	private List<IFile> getJavaFiles(IProject project) throws CoreException {
-
-		List<IFile> files = new ArrayList<IFile>();
-		IResource[] resources = project.members();
-
-		for (IResource r : resources) {
-			if (r.getType() == IResource.FILE) {
-				IFile f = (IFile) r;
-				if (f.getFileExtension() != null
-						&& f.getFileExtension().equals("java")) {
-					files.add((IFile) r);
+			try {
+				if (file.exists()) {
+					file.deleteMarkers(type, true, IResource.DEPTH_ZERO);
 				}
-			}
-
-			if (r.getType() == IResource.FOLDER) {
-
-				getJavaFilesInFolder((IFolder) r, files);
+			} catch (CoreException e) {
+				LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 			}
 		}
-		return files;
-	}
-
-	/**
-	 * Recursively add java files in the provided list
-	 * 
-	 * @param folder
-	 * @param files
-	 * @throws CoreException
-	 */
-	private void getJavaFilesInFolder(IFolder folder, List<IFile> files)
-			throws CoreException {
-
-		IResource[] resources = folder.members();
-
-		for (IResource r : resources) {
-			if (r.getType() == IResource.FILE) {
-				IFile f = (IFile) r;
-				if (f.getFileExtension() != null
-						&& f.getFileExtension().equalsIgnoreCase("java")) {
-					files.add((IFile) r);
-				}
-			}
-
-			if (r.getType() == IResource.FOLDER) {
-				getJavaFilesInFolder((IFolder) r, files);
-			}
-		}
-
 	}
 
 	/**
@@ -319,32 +264,34 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 * @param overview
 	 */
 	private void setMarker(IFile file, List<FindingOverview> overview) {
-	  long startDelete = !debug ? 0 : System.currentTimeMillis();
+		long startDelete = !debug ? 0 : System.currentTimeMillis();
 		try {
 			file.deleteMarkers(SIERRA_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while deleting markers.", e);
 		}
-    if (debug) System.out.println("Delete markers: "+(System.currentTimeMillis() - startDelete));
-		
-    long startCreate = !debug ? 0 : System.currentTimeMillis();
-    IMarker marker = null;
+		if (debug)
+			System.out.println("Delete markers: "
+					+ (System.currentTimeMillis() - startDelete));
+
+		long startCreate = !debug ? 0 : System.currentTimeMillis();
+		IMarker marker = null;
 		try {
 			for (FindingOverview o : overview) {
-			  
-			  if (o.getImportance().equals(Importance.MEDIUM)) {
-			    marker = file.createMarker(SIERRA_MARKER_MEDIUM);
-			  } else if (o.getImportance().equals(Importance.LOW)) {
-			    marker = file.createMarker(SIERRA_MARKER_LOW);
-			  } else if (o.getImportance().equals(Importance.HIGH)) {
-			    marker = file.createMarker(SIERRA_MARKER_HIGH);
-			  } else if (o.getImportance().equals(Importance.IRRELEVANT)) {
-			    marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
-			  } else if (o.getImportance().equals(Importance.CRITICAL)) {
-			    marker = file.createMarker(SIERRA_MARKER_CRITICAL);
-			  } else {
-			    marker = file.createMarker(SIERRA_MARKER);
-			  }
+
+				if (o.getImportance().equals(Importance.MEDIUM)) {
+					marker = file.createMarker(SIERRA_MARKER_MEDIUM);
+				} else if (o.getImportance().equals(Importance.LOW)) {
+					marker = file.createMarker(SIERRA_MARKER_LOW);
+				} else if (o.getImportance().equals(Importance.HIGH)) {
+					marker = file.createMarker(SIERRA_MARKER_HIGH);
+				} else if (o.getImportance().equals(Importance.IRRELEVANT)) {
+					marker = file.createMarker(SIERRA_MARKER_IRRELEVANT);
+				} else if (o.getImportance().equals(Importance.CRITICAL)) {
+					marker = file.createMarker(SIERRA_MARKER_CRITICAL);
+				} else {
+					marker = file.createMarker(SIERRA_MARKER);
+				}
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
 				marker.setAttribute(IMarker.MESSAGE, "("
 						+ o.getImportance().toStringSentenceCase() + ") "
@@ -355,7 +302,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
 		}
-    if (debug) System.out.println("Create markers: "+(System.currentTimeMillis() - startCreate));
+		if (debug)
+			System.out.println("Create markers: "
+					+ (System.currentTimeMillis() - startCreate));
 	}
 
 	/**
@@ -374,45 +323,46 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	private class MarkerListener implements IPartListener2 {
-	  /**
-	   * May not actually set markers, if already set
-	   * @param partRef
-	   */
-    private void ensureMarkersSetForPart(IWorkbenchPartReference partRef) {
-      if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
-        if (keepMarkersForAllVisibleEditors) {
-          // FIX do only if it's not already done
-          // the active editor may be different ...
-        }
-        IEditorPart editor = partRef.getPage().getActiveEditor();
-        if (editor != null) {
-          queryAndSetMarkers(editor);        
-        }
-      }
-    }
-	  
+		/**
+		 * May not actually set markers, if already set
+		 * 
+		 * @param partRef
+		 */
+		private void ensureMarkersSetForPart(IWorkbenchPartReference partRef) {
+			if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+				if (keepMarkersForAllVisibleEditors) {
+					// FIX do only if it's not already done
+					// the active editor may be different ...
+				}
+				IEditorPart editor = partRef.getPage().getActiveEditor();
+				if (editor != null) {
+					queryAndSetMarkers(editor);
+				}
+			}
+		}
+
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
-	     ensureMarkersSetForPart(partRef);
+			ensureMarkersSetForPart(partRef);
 		}
 
 		public void partActivated(IWorkbenchPartReference partRef) {
-      if (keepMarkersForAllVisibleEditors) {
-        ensureMarkersSetForPart(partRef);
-      }
+			if (keepMarkersForAllVisibleEditors) {
+				ensureMarkersSetForPart(partRef);
+			}
 		}
 
 		public void partClosed(IWorkbenchPartReference partRef) {
-		  if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
-		    IEditorPart editor = partRef.getPage().getActiveEditor();
-        if (editor == null) {
-          // When we close an editor, if there are no more editors open clear
-          // all the sierra markers
-          clearAllMarkers();
-        } 
-        else if (keepMarkersForAllVisibleEditors) {
-          // FIX Ensure that markers are cleared for this editor
-        }
-		  }
+			if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+				IEditorPart editor = partRef.getPage().getActiveEditor();
+				if (editor == null) {
+					// When we close an editor, if there are no more editors
+					// open clear
+					// all the sierra markers
+					clearAllMarkers();
+				} else if (keepMarkersForAllVisibleEditors) {
+					// FIX Ensure that markers are cleared for this editor
+				}
+			}
 		}
 
 		public void partDeactivated(IWorkbenchPartReference partRef) {
@@ -420,14 +370,14 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 
 		public void partHidden(IWorkbenchPartReference partRef) {
-		  if (keepMarkersForAllVisibleEditors) {
-		    if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
-	        IEditorPart editor = partRef.getPage().getActiveEditor();
-	        if (editor != null) {
-	          // FIX Ensure that markers are cleared for this editor
-	        }
-		    }
-		  }
+			if (keepMarkersForAllVisibleEditors) {
+				if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+					IEditorPart editor = partRef.getPage().getActiveEditor();
+					if (editor != null) {
+						// FIX Ensure that markers are cleared for this editor
+					}
+				}
+			}
 		}
 
 		public void partInputChanged(IWorkbenchPartReference partRef) {
@@ -435,16 +385,16 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 
 		public void partOpened(IWorkbenchPartReference partRef) {
-      if (keepMarkersForAllVisibleEditors) {
-        ensureMarkersSetForPart(partRef);
-      }
+			if (keepMarkersForAllVisibleEditors) {
+				ensureMarkersSetForPart(partRef);
+			}
 
 		}
 
 		public void partVisible(IWorkbenchPartReference partRef) {
-      if (keepMarkersForAllVisibleEditors) {
-        ensureMarkersSetForPart(partRef);
-      }
+			if (keepMarkersForAllVisibleEditors) {
+				ensureMarkersSetForPart(partRef);
+			}
 		}
 	}
 
@@ -499,8 +449,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			try {
 				Connection conn = Data.readOnlyConnection();
 				try {
-				  long start = !debug ? 0 : System.currentTimeMillis();
-				  Importance level = PreferenceConstants.showMarkersAtOrAboveImportance();
+					long start = !debug ? 0 : System.currentTimeMillis();
+					Importance level = PreferenceConstants
+							.showMarkersAtOrAboveImportance();
 					if (level == null) {
 						f_overview = FindingOverview.getView()
 								.showFindingsForClass(conn, f_projectName,
@@ -511,8 +462,10 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 										f_projectName, f_packageName,
 										f_className, level);
 					}
-          if (debug) System.out.println("DB: "+(System.currentTimeMillis() - start));
-          
+					if (debug)
+						System.out.println("DB: "
+								+ (System.currentTimeMillis() - start));
+
 					if (f_overview != null) {
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
@@ -548,8 +501,10 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 
-		if (event.getProperty().equals(
-				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
+		if (event
+				.getProperty()
+				.equals(
+						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(
 					new RefreshMarkersRunnable());
 		}
