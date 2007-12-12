@@ -405,7 +405,7 @@
 	  <attribute
          name="findingid">
 	  </attribute>
-	  <persistent value="true"/>
+	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
@@ -414,7 +414,7 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <persistent value="true"/>
+	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"
@@ -423,7 +423,7 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <persistent value="true"/>
+	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
@@ -432,7 +432,7 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <persistent value="true"/>
+	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"
@@ -441,7 +441,7 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <persistent value="true"/>
+	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
