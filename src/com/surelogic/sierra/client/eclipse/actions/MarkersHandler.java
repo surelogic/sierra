@@ -49,14 +49,20 @@ import com.surelogic.sierra.tool.message.Importance;
 
 /**
  * Class to handle sierra markers
+ * Currently keeps markers for all editors ever opened until all are closed
  * 
  * @author Tanmay.Sinha
- * 
+ * @author Edwin.Chan
  */
 public final class MarkersHandler extends AbstractDatabaseObserver implements
 		IPropertyChangeListener {
-
+  private static final boolean keepMarkersForAllVisibleEditors = false;
+  
+  /**
+   * Supertype for the other (5) marker types
+   */
 	public static final String SIERRA_MARKER = "com.surelogic.sierra.client.eclipse.sierraMarker";
+
 	public static final String SIERRA_MARKER_CRITICAL = "com.surelogic.sierra.client.eclipse.sierraMarkerCritical";
 	public static final String SIERRA_MARKER_HIGH = "com.surelogic.sierra.client.eclipse.sierraMarkerHigh";
 	public static final String SIERRA_MARKER_MEDIUM = "com.surelogic.sierra.client.eclipse.sierraMarkerMedium";
@@ -160,11 +166,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 	public void clearAllMarkers() {
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER);
+		/*
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER_CRITICAL);
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER_HIGH);
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER_MEDIUM);
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER_LOW);
 		clearMarkers(null, MarkersHandler.SIERRA_MARKER_IRRELEVANT);
+		*/
 	}
 
 	private MarkersHandler() {
@@ -178,11 +186,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			if (resource instanceof IFile && resource.exists()) {
 				if (f_selectedFile != null) {
 					clearMarkers(f_selectedFile, SIERRA_MARKER);
+					/*
 					clearMarkers(f_selectedFile, SIERRA_MARKER_CRITICAL);
 					clearMarkers(f_selectedFile, SIERRA_MARKER_HIGH);
 					clearMarkers(f_selectedFile, SIERRA_MARKER_MEDIUM);
 					clearMarkers(f_selectedFile, SIERRA_MARKER_LOW);
 					clearMarkers(f_selectedFile, SIERRA_MARKER_IRRELEVANT);
+					*/
 				}
 
 				if (PreferenceConstants.showMarkers()) {
@@ -230,10 +240,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 	/**
 	 * Clear all the markers of the given type in the file If the file is null,
-	 * this method clear all the markers of given type in the workspace
-	 * 
-	 * NOTE: This method will NOT delete the subtype markers
-	 * 
+	 * this method clear all the markers of given type (and its subtypes) in 
+	 * the workspace
+   *
 	 * @param file
 	 * @param type
 	 */
@@ -266,7 +275,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			} else
 				try {
 					if (file.exists()) {
-						file.deleteMarkers(type, false, IResource.DEPTH_ONE);
+						file.deleteMarkers(type, true, IResource.DEPTH_ONE);
 					}
 				} catch (CoreException e) {
 					LOG.log(Level.SEVERE, "Error while deleting markers.", e);
@@ -398,44 +407,67 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	private class MarkerListener implements IPartListener2 {
+	  /**
+	   * May not actually set markers, if already set
+	   * @param partRef
+	   */
+    private void ensureMarkersSetForPart(IWorkbenchPartReference partRef) {
+      if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+        if (keepMarkersForAllVisibleEditors) {
+          // FIX do only if it's not already done
+          // the active editor may be different ...
+        }
+        IEditorPart editor = partRef.getPage().getActiveEditor();
+        if (editor != null) {
+          queryAndSetMarkers(editor);        
+        }
+      }
+    }
+	  
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
-			IEditorPart editor = partRef.getPage().getActiveEditor();
-			if (editor != null) {
-				queryAndSetMarkers(editor);
-
-			}
+	     ensureMarkersSetForPart(partRef);
 		}
 
 		public void partActivated(IWorkbenchPartReference partRef) {
-			// Nothing to do
-
+      if (keepMarkersForAllVisibleEditors) {
+        ensureMarkersSetForPart(partRef);
+      }
 		}
 
 		public void partClosed(IWorkbenchPartReference partRef) {
-			// When we close an editor, if there are no more editors open clear
-			// all the sierra markers
-
-			if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
-				IEditorPart editor = partRef.getPage().getActiveEditor();
-				if (editor == null) {
-					clearMarkers(null, SIERRA_MARKER);
-					clearMarkers(null, SIERRA_MARKER_CRITICAL);
-					clearMarkers(null, SIERRA_MARKER_HIGH);
-					clearMarkers(null, SIERRA_MARKER_MEDIUM);
-					clearMarkers(null, SIERRA_MARKER_LOW);
-					clearMarkers(null, SIERRA_MARKER_IRRELEVANT);
-				}
-
-			}
-
+		  if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+		    IEditorPart editor = partRef.getPage().getActiveEditor();
+        if (editor == null) {
+          // When we close an editor, if there are no more editors open clear
+          // all the sierra markers
+          clearMarkers(null, SIERRA_MARKER);
+          /*
+          clearMarkers(null, SIERRA_MARKER_CRITICAL);
+          clearMarkers(null, SIERRA_MARKER_HIGH);
+          clearMarkers(null, SIERRA_MARKER_MEDIUM);
+          clearMarkers(null, SIERRA_MARKER_LOW);
+          clearMarkers(null, SIERRA_MARKER_IRRELEVANT);
+          */
+        } 
+        else if (keepMarkersForAllVisibleEditors) {
+          // FIX Ensure that markers are cleared for this editor
+        }
+		  }
 		}
 
 		public void partDeactivated(IWorkbenchPartReference partRef) {
-			// Nothing to do
+			// Nothing to do, since it could still be visible, just not selected
 		}
 
 		public void partHidden(IWorkbenchPartReference partRef) {
-			// Nothing to do
+		  if (keepMarkersForAllVisibleEditors) {
+		    if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
+	        IEditorPart editor = partRef.getPage().getActiveEditor();
+	        if (editor != null) {
+	          // FIX Ensure that markers are cleared for this editor
+	        }
+		    }
+		  }
 		}
 
 		public void partInputChanged(IWorkbenchPartReference partRef) {
@@ -443,13 +475,16 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 
 		public void partOpened(IWorkbenchPartReference partRef) {
-			// Nothing to do
+      if (keepMarkersForAllVisibleEditors) {
+        ensureMarkersSetForPart(partRef);
+      }
 
 		}
 
 		public void partVisible(IWorkbenchPartReference partRef) {
-			// Nothing to do
-
+      if (keepMarkersForAllVisibleEditors) {
+        ensureMarkersSetForPart(partRef);
+      }
 		}
 	}
 
