@@ -9,7 +9,6 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.AuditTrailResponse;
 import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
 import com.surelogic.sierra.tool.message.CommitAuditTrailResponse;
@@ -19,7 +18,6 @@ import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
 import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerUIDRequest;
-import com.surelogic.sierra.tool.message.SettingsRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
@@ -117,9 +115,6 @@ public class ClientProjectManager extends ProjectManager {
 		// TODO
 		monitor.subTask("Checking for updated settings for project "
 				+ projectName);
-		SettingsManager settingsManager = SettingsManager.getInstance(conn);
-		SettingsRequest request = new SettingsRequest();
-		request.setServer(serverUid);
 		monitor.worked(1);
 		int idx = 1;
 		insertSynchRecord.setLong(idx++, p.getId());
