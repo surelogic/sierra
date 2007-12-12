@@ -160,15 +160,7 @@ public class MarkerAction implements IUpdate, IEditorActionDelegate,
 			for (int i = 0; i < allMarkers.length; i++) {
 				if (includesRulerLine(model.getMarkerPosition(allMarkers[i]),
 						document)) {
-					try {
-						if (allMarkers[i]
-								.isSubtypeOf(MarkersHandler.SIERRA_MARKER)) {
-							f_markers.add(allMarkers[i]);
-						}
-					} catch (CoreException e) {
-						SLLogger.getLogger("sierra").log(Level.SEVERE,
-								"Error inspecting markers to find warnings", e);
-					}
+				  f_markers.add(allMarkers[i]);
 				}
 			}
 		}
