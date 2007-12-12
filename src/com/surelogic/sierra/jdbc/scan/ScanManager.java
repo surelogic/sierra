@@ -146,6 +146,9 @@ public class ScanManager {
 		return new JDBCScanGenerator(conn, factory, this, filter);
 	}
 
+	/**
+	 * FIX seemingly unused code
+	 */
 	public void readScan(String uid, ScanGenerator gen) throws SQLException {
 		selectScan.setString(1, uid);
 		String scaS = "SELECT S.ID,P.NAME,S.JAVA_VENDOR,S.JAVA_VERSION,U.USER_NAME,";
@@ -174,7 +177,7 @@ public class ScanManager {
 			selectArtifacts.setLong(1, id);
 
 			ResultSet artifacts = selectArtifacts.executeQuery();
-
+      // FIX what else should this do w/ the artifacts?
 		} else {
 			throw new IllegalArgumentException(uid
 					+ " is not a valid scan uid.");
