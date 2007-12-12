@@ -500,15 +500,16 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				Connection conn = Data.readOnlyConnection();
 				try {
 				  long start = debug ? 0 : System.currentTimeMillis();
-					if (PreferenceConstants.showLowestImportance()) {
+				  Importance level = PreferenceConstants.showMarkersAtOrAboveImportance();
+					if (level == null) {
 						f_overview = FindingOverview.getView()
 								.showFindingsForClass(conn, f_projectName,
 										f_packageName, f_className);
 					} else {
 						f_overview = FindingOverview.getView()
-								.showRelevantFindingsForClass(conn,
+								.showImportantEnoughFindingsForClass(conn,
 										f_projectName, f_packageName,
-										f_className);
+										f_className, level);
 					}
           if (debug) System.out.println("DB: "+(System.currentTimeMillis() - start));
           
@@ -548,7 +549,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	public void propertyChange(PropertyChangeEvent event) {
 
 		if (event.getProperty().equals(
-				PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG)) {
+				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(
 					new RefreshMarkersRunnable());
 		}
