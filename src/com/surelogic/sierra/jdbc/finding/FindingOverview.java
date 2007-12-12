@@ -47,8 +47,7 @@ public class FindingOverview {
 		this.findingId = set.getLong(idx++);
 		this.examined = "Yes".equals(set.getString(idx++));
 		this.lastChanged = set.getTimestamp(idx++);
-		this.importance = Importance
-				.valueOf(set.getString(idx++).toUpperCase());
+		this.importance = Importance.fromValue(set.getString(idx++));
 		this.status = FindingStatus.valueOf(set.getString(idx++).toUpperCase());
 		this.lineOfCode = set.getInt(idx++);
 		this.numberOfArtifacts = set.getInt(idx++);
@@ -231,6 +230,57 @@ public class FindingOverview {
 			}
 			return findings;
 		}
+		
+    /**
+     * Get the latest findings that are above the given importance 
+     * for the given class, and any inner classes.
+     * Only findings with status New or Unchanged are returned, fixed
+     * findings are not shown.
+     * 
+     * TODO do we want to also show fixed findings?
+     */
+    public List<FindingOverview> showImportantEnoughFindingsForClass(
+        Connection conn, String projectName, String packageName,
+        String compilation, Importance importance) throws SQLException {
+      if (importance.ordinal() == 0) {
+        return showFindingsForClass(conn, projectName, packageName, compilation);
+      }
+      if (importance.ordinal() == 1 && Importance.IRRELEVANT.ordinal() == 0) {
+        return showRelevantFindingsForClass(conn, projectName, packageName, compilation);
+      }
+      boolean first = true;
+      StringBuilder importanceClause = new StringBuilder("(");
+      for(Importance i : Importance.values()) {
+        if (i.ordinal() >= importance.ordinal()) {
+          if (first) {
+            first = false;
+          } else {
+            importanceClause.append(" OR ");
+          }
+          importanceClause.append("IMPORTANCE = '").append(i.toStringSentenceCase()).append('\'');
+        }
+      }      
+      importanceClause.append(')');
+      
+      List<FindingOverview> findings = new ArrayList<FindingOverview>();
+      
+      PreparedStatement selectFindingsByClass = conn
+          .prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+              + " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND "+importanceClause);
+      int idx = 1;
+      selectFindingsByClass.setString(idx++, projectName);
+      selectFindingsByClass.setString(idx++, packageName);
+      selectFindingsByClass.setString(idx++, compilation);
+      ResultSet set = selectFindingsByClass.executeQuery();
+      try {
+        while (set.next()) {
+          findings.add(new FindingOverview(set));
+        }
+      } finally {
+        set.close();
+      }
+      return findings;
+    }
 	}
 
 }
