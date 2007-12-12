@@ -49,7 +49,7 @@ import com.surelogic.sierra.tool.message.Importance;
 
 /**
  * Class to handle sierra markers
- * Currently keeps markers for all editors ever opened until all are closed
+ * Currently keeps markers only for the current active editor
  * 
  * @author Tanmay.Sinha
  * @author Edwin.Chan
