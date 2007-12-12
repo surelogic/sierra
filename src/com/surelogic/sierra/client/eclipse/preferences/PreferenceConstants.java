@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.preferences;
 
 import com.surelogic.common.XUtil;
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.tool.message.Importance;
 
 /**
  * Constant definitions for plug-in preferences
@@ -44,9 +45,14 @@ public class PreferenceConstants {
 
 	public static final String P_SIERRA_SHOW_LOWEST_FLAG = "com.surelogic.sierra.show-lowest-importance-flag";
 
+	@Deprecated
 	public static boolean showLowestImportance() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_SIERRA_SHOW_LOWEST_FLAG);
+	}
+
+	public static Importance showMarkersAtOrAboveImportance() {
+		return Importance.HIGH;
 	}
 
 	public static final String P_RUN_FINDBUGS = "com.surelogic.sierra.runFindBugs";
