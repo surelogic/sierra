@@ -1,16 +1,10 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.logging.Level;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -38,7 +32,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
-import org.osgi.framework.Bundle;
 
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
@@ -48,9 +41,8 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
-import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -70,38 +62,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
-	private final StringBuilder fgStyleSheet = new StringBuilder();
-
 	private RGB fBackgroundColorRGB = f_display.getSystemColor(
 			SWT.COLOR_LIST_BACKGROUND).getRGB();
-
-	private void loadStyleSheet() {
-		Bundle bundle = Activator.getDefault().getBundle();
-		URL styleSheetURL = bundle.getEntry("/lib/DetailsViewStyleSheet.css");
-		if (styleSheetURL == null)
-			return;
-
-		try {
-			styleSheetURL = FileLocator.toFileURL(styleSheetURL);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					styleSheetURL.openStream()));
-			StringBuilder buffer = new StringBuilder(200);
-			String line = reader.readLine();
-			while (line != null) {
-				buffer.append(line);
-				buffer.append('\n');
-				line = reader.readLine();
-			}
-
-			// FontData fontData = JFaceResources.getFontRegistry().getFontData(
-			// PreferenceConstants.APPEARANCE_JAVADOC_FONT)[0];
-			fgStyleSheet.append(buffer.toString());
-		} catch (IOException ex) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Failure loading style sheet for details view.", ex);
-			return;
-		}
-	}
 
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
@@ -320,8 +282,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		});
 
-		loadStyleSheet();
-
 		Projects.getInstance().addObserver(this);
 		DatabaseHub.getInstance().addObserver(this);
 
@@ -382,8 +342,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_className.setText(getClassName());
 
 		StringBuffer b = new StringBuffer();
-		HTMLPrinter.insertPageProlog(b, 0, fBackgroundColorRGB, fgStyleSheet
-				.toString());
+		HTMLPrinter.insertPageProlog(b, 0, fBackgroundColorRGB,
+				StyleSheetHelper.getInstance().getStyleSheet());
 		String details = f_finding.getFindingTypeDetail();
 		b.append(details);
 		f_detailsText.setText(b.toString());

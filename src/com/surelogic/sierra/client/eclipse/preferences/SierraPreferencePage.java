@@ -7,6 +7,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,13 +31,15 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.tool.message.Importance;
 
 public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	DirectoryFieldEditor f_path;
 	BooleanFieldEditor f_balloonFlag;
-	BooleanFieldEditor f_showLowestFlag;
+	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
+	RadioGroupFieldEditor f_showAbove;
 	BooleanFieldEditor f_saveResources;
 
 	public void init(IWorkbench workbench) {
@@ -62,13 +65,32 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_balloonFlag.setPreferenceStore(getPreferenceStore());
 		f_balloonFlag.load();
 
-		f_showLowestFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_SHOW_LOWEST_FLAG,
-				"Show markers for irrelevant findings in the Java editor.",
+		f_showMarkersInJavaEditorFlag = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_SHOW_MARKERS,
+				"Show markers for findings in the Java editor.", diGroup);
+		f_showMarkersInJavaEditorFlag.setPage(this);
+		f_showMarkersInJavaEditorFlag.setPreferenceStore(getPreferenceStore());
+		f_showMarkersInJavaEditorFlag.load();
+
+		f_showAbove = new RadioGroupFieldEditor(
+				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
+				"Only show markers for findings in the Java editor at or above",
+				1, new String[][] {
+						{ Importance.CRITICAL.toStringSentenceCase(),
+								Importance.CRITICAL.toString() },
+						{ Importance.HIGH.toStringSentenceCase(),
+								Importance.HIGH.toString() },
+						{ Importance.MEDIUM.toStringSentenceCase(),
+								Importance.MEDIUM.toString() },
+						{ Importance.LOW.toStringSentenceCase(),
+								Importance.LOW.toString() },
+						{ Importance.IRRELEVANT.toStringSentenceCase(),
+								Importance.IRRELEVANT.toString() } },
+
 				diGroup);
-		f_showLowestFlag.setPage(this);
-		f_showLowestFlag.setPreferenceStore(getPreferenceStore());
-		f_showLowestFlag.load();
+		f_showAbove.setPage(this);
+		f_showAbove.setPreferenceStore(getPreferenceStore());
+		f_showAbove.load();
 
 		f_saveResources = new BooleanFieldEditor(
 				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
@@ -135,7 +157,8 @@ public class SierraPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		f_path.loadDefault();
 		f_balloonFlag.loadDefault();
-		f_showLowestFlag.store();
+		f_showMarkersInJavaEditorFlag.store();
+		f_showAbove.store();
 		f_saveResources.store();
 		super.performDefaults();
 	}
@@ -144,7 +167,8 @@ public class SierraPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		f_path.store();
 		f_balloonFlag.store();
-		f_showLowestFlag.store();
+		f_showMarkersInJavaEditorFlag.store();
+		f_showAbove.store();
 		f_saveResources.store();
 		return super.performOk();
 	}

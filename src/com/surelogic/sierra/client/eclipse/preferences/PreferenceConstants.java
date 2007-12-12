@@ -43,18 +43,6 @@ public class PreferenceConstants {
 				P_SIERRA_BALLOON_FLAG);
 	}
 
-	public static final String P_SIERRA_SHOW_LOWEST_FLAG = "com.surelogic.sierra.show-lowest-importance-flag";
-
-	@Deprecated
-	public static boolean showLowestImportance() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_SIERRA_SHOW_LOWEST_FLAG);
-	}
-
-	public static Importance showMarkersAtOrAboveImportance() {
-		return Importance.HIGH;
-	}
-
 	public static final String P_RUN_FINDBUGS = "com.surelogic.sierra.runFindBugs";
 
 	public static boolean runFindBugs() {
@@ -87,15 +75,26 @@ public class PreferenceConstants {
 		}
 	}
 
-	public static final String P_TOGGLE_MARKERS = "com.surelogic.sierra.toggle-markers";
+	public static final String P_SIERRA_SHOW_MARKERS = "com.surelogic.sierra.show-markers";
 
 	public static boolean showMarkers() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_TOGGLE_MARKERS);
+				P_SIERRA_SHOW_MARKERS);
 	}
 
 	public static void setMarkersVisibility(boolean visible) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_TOGGLE_MARKERS, visible);
+		Activator.getDefault().getPluginPreferences().setValue(P_SIERRA_SHOW_MARKERS,
+				visible);
 	}
+
+	public static final String P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = "com.surelogic.sierra.show-markers-at-or-above-importance";
+
+	public static Importance showMarkersAtOrAboveImportance() {
+		final String resultString = Activator.getDefault()
+				.getPluginPreferences().getString(
+						P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE);
+		final Importance result = Importance.fromValue(resultString);
+		return result;
+	}
+
 }
