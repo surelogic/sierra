@@ -94,7 +94,8 @@ public class SierraPreferencePage extends PreferencePage implements
 
 		f_saveResources = new BooleanFieldEditor(
 				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
-				"Always save open editors before running a scan.", diGroup);
+				"Save all modified resources automatically prior to a scan.",
+				diGroup);
 		f_saveResources.setPage(this);
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
