@@ -24,11 +24,12 @@ public class MessageFilter implements FindingFilter {
 		deltas = new HashMap<Long, Integer>(findingMap.size());
 		for (Entry<Long, FindingTypeFilter> entry : findingMap.entrySet()) {
 			FindingTypeFilter ftf = entry.getValue();
-			Importance i;
-			if ((i = ftf.getImportance()) != null) {
+			Importance i = ftf.getImportance();
+			Integer d = ftf.getDelta();
+			if (i != null) {
 				importances.put(entry.getKey(), i);
-			} else {
-				deltas.put(entry.getKey(), ftf.getDelta());
+			} else if (d != null) {
+				deltas.put(entry.getKey(), d);
 			}
 		}
 		for (Entry<Long, FindingTypeFilter> entry : artifactMap.entrySet()) {
@@ -39,20 +40,26 @@ public class MessageFilter implements FindingFilter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.surelogic.sierra.jdbc.tool.FindingTypeFilter#accept(java.lang.Long)
 	 */
 	public boolean accept(Long artifactTypeId) {
 		return !filtered.contains(artifactTypeId);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.surelogic.sierra.jdbc.tool.FindingTypeFilter#calculateImportance(java.lang.Long, com.surelogic.sierra.tool.message.Priority, com.surelogic.sierra.tool.message.Severity)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.surelogic.sierra.jdbc.tool.FindingTypeFilter#calculateImportance(java.lang.Long,
+	 *      com.surelogic.sierra.tool.message.Priority,
+	 *      com.surelogic.sierra.tool.message.Severity)
 	 */
 	public Importance calculateImportance(Long findingTypeId,
 			Priority priority, Severity severity) {
-		Importance i;
-		if ((i = importances.get(findingTypeId)) == null) {
+		Importance i = importances.get(findingTypeId);
+		if (i == null) {
 			Integer val = ((int) (((float) (severity.ordinal() + priority
 					.ordinal())) / 2));
 			Integer delta = deltas.get(findingTypeId);

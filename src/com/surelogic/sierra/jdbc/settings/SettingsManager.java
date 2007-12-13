@@ -128,7 +128,9 @@ public class SettingsManager {
 			rec.setRevision(0L);
 			rec.insert();
 		} 
-		applyFilters(factory.newSettingsFilterRecord(), rec.getId(), filters);
+		final long settingsId = rec.getId();
+		deleteSettingFilters.setLong(1, settingsId);
+		applyFilters(factory.newSettingsFilterRecord(), settingsId, filters);
 	}
 
 	/**

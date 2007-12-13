@@ -230,6 +230,31 @@ public class FindingTypeManager {
 		return ids;
 	}
 
+	public FindingFilter getMessageFilter(Collection<FindingTypeFilter> filters)
+			throws SQLException {
+		Map<Long, FindingTypeFilter> findingMap = new HashMap<Long, FindingTypeFilter>(
+				filters.size());
+		Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
+				filters.size() * 2);
+		FindingTypeRecord ft = factory.newFindingTypeRecord();
+		for (FindingTypeFilter filter : filters) {
+			ft.setUid(filter.getName());
+			if (ft.select()) {
+				findingMap.put(ft.getId(), filter);
+			}
+			selectArtifactTypesByFindingTypeId.setLong(1, ft.getId());
+			ResultSet set = selectArtifactTypesByFindingTypeId.executeQuery();
+			try {
+				while (set.next()) {
+					artifactMap.put(set.getLong(1), filter);
+				}
+			} finally {
+				set.close();
+			}
+		}
+		return new MessageFilter(findingMap, artifactMap);
+	}
+
 	public FindingFilter getMessageFilter(Settings settings)
 			throws SQLException {
 		if (settings != null) {
@@ -375,11 +400,12 @@ public class FindingTypeManager {
 			}
 			final SettingsManager sMan = SettingsManager.getInstance(conn);
 			for (Category cat : type.getCategory()) {
-				//TODO in the future, this needs to be an update.
-				final String uid = sMan.createFilterSet(cat.getName().trim(), cat.getDescription(), revision);
+				// TODO in the future, this needs to be an update.
+				final String uid = sMan.createFilterSet(cat.getName().trim(),
+						cat.getDescription(), revision);
 				final FilterSet filterSet = sMan.getFilterSet(uid);
 				final List<FilterEntry> entries = filterSet.getFilter();
-				for(String findingType : cat.getFindingType()) {
+				for (String findingType : cat.getFindingType()) {
 					findingType = findingType.trim();
 					FilterEntry entry = new FilterEntry();
 					entry.setFiltered(false);
