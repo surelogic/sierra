@@ -33,6 +33,7 @@ public class SettingsManager {
 			.getLoggerFor(SettingsManager.class);
 	private static final String GLOBAL_NAME = "GLOBAL";
 	private static final String GLOBAL_UUID = "de3034ec-65d5-4d4a-b059-1adf8fc7b12d";
+
 	private final FindingTypeManager ftMan;
 	private final SettingsRecordFactory factory;
 
@@ -77,7 +78,7 @@ public class SettingsManager {
 		copySettings = conn
 				.prepareStatement("INSERT INTO SETTING_FILTER_SETS SELECT ?,FILTER_SET_ID FROM SETTING_FILTER_SETS WHERE SETTINGS_ID = ?");
 		selectSettingFilters = conn
-				.prepareStatement("SELECT FINDING_TYPE_ID, DELTA, IMPORTANCE, FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
+				.prepareStatement("SELECT FT.UUID, FTF.DELTA, FTF.IMPORTANCE, FTF.FILTERED FROM SETTING_FILTERS FTF, FINDING_TYPE FT WHERE FTF.SETTINGS_ID = ? AND FT.ID = FTF.FINDING_TYPE_ID");
 		copySettingFilters = conn
 				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?, FINDING_TYPE_ID, DELTA, IMPORTANCE, FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		deleteSettingFilters = conn
@@ -383,6 +384,7 @@ public class SettingsManager {
 				while (set.next()) {
 					final FindingTypeFilter filter = new FindingTypeFilter();
 					int idx = 1;
+					filter.setName(set.getString(idx++));
 					final int delta = set.getInt(idx++);
 					if (!set.wasNull()) {
 						filter.setDelta(delta);
