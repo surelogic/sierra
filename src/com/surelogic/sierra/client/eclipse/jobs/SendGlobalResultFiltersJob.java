@@ -14,7 +14,17 @@ import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.tool.message.GlobalSettings;
+import com.surelogic.sierra.tool.message.GlobalSettingsRequest;
+import com.surelogic.sierra.tool.message.InvalidLoginException;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class SendGlobalResultFiltersJob extends DatabaseJob {
 
@@ -33,7 +43,7 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 		slMonitor.beginTask(msg, 5);
 		IStatus status = null;
 		try {
-			final Connection conn = Data.transactionConnection();
+			final Connection conn = Data.readOnlyConnection();
 			try {
 				status = sendResultFilters(conn, slMonitor);
 			} catch (Throwable e) {
@@ -57,7 +67,33 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 
 	private IStatus sendResultFilters(Connection conn,
 			SLProgressMonitor slMonitor) throws SQLException {
-		// TODO
-		return null;
+		try {
+			final GlobalSettings settings = new GlobalSettings();
+			settings.getFilter().addAll(
+					SettingsManager.getInstance(conn).getGlobalSettings());
+			final SierraService service = SierraServiceClient.create(f_server
+					.getServer());
+			service.writeGlobalSettings(settings);
+		} catch (SierraServiceClientException e) {
+			TroubleshootConnection troubleshoot;
+			if (e instanceof InvalidLoginException) {
+				troubleshoot = new TroubleshootWrongAuthentication(f_server,
+						null);
+			} else {
+				troubleshoot = new TroubleshootNoSuchServer(f_server, null);
+			}
+			// We had a recoverable error. Rollback, run the appropriate
+			// troubleshoot, and try again.
+			troubleshoot.fix();
+			if (troubleshoot.retry()) {
+				return sendResultFilters(conn, slMonitor);
+			} else {
+				SLLogger.getLogger().log(Level.WARNING,
+						"Failed to write settings to " + f_server, e);
+				return SLStatus.createErrorStatus(
+						"Failed to write settings to " + f_server, e);
+			}
+		}
+		return Status.OK_STATUS;
 	}
 }
