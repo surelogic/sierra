@@ -75,7 +75,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 	private static MarkersHandler INSTANCE = null;
 
-	public static MarkersHandler getInstance() {
+	public static synchronized MarkersHandler getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new MarkersHandler();
 			DatabaseHub.getInstance().addObserver(INSTANCE);
