@@ -430,8 +430,9 @@ public abstract class Filter {
 	 */
 	public void setPorousAll() {
 		synchronized (this) {
-			if (f_allValues.equals(f_porousValues))
-				return;
+		  if (f_porousValues.containsAll(f_allValues)) {
+		    return;
+		  }
 
 			f_porousValues.clear();
 			f_porousValues.addAll(f_allValues);
