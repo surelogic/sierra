@@ -38,6 +38,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_newServerItem;
 	final MenuItem f_duplicateServerItem;
 	final MenuItem f_deleteServerItem;
+	final MenuItem f_sendResultFilters;
+	final MenuItem f_getResultFilters;
 	final MenuItem f_serverPropertiesItem;
 	final Button f_openInBrowser;
 	final Group f_infoGroup;
@@ -95,7 +97,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	public SierraServersMediator(Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
-			MenuItem deleteServerItem, MenuItem serverPropertiesItem,
+			MenuItem deleteServerItem, MenuItem sendResultFilters,
+			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			Button openInBrowser, Group infoGroup, Label serverURL,
 			Table projectList, MenuItem connectProjectItem,
 			MenuItem disconnectProjectItem) {
@@ -106,6 +109,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_newServerItem = newServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
+		f_sendResultFilters = sendResultFilters;
+		f_getResultFilters = getResultFilters;
 		f_serverPropertiesItem = serverPropertiesItem;
 		f_openInBrowser = openInBrowser;
 		f_infoGroup = infoGroup;
@@ -146,6 +151,18 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_deleteServer.addListener(SWT.Selection, f_deleteServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
+
+		f_sendResultFilters.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+
+			}
+		});
+
+		f_getResultFilters.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+
+			}
+		});
 
 		f_serverPropertiesItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -218,6 +235,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				f_deleteServer.setEnabled(focusServer);
 				f_duplicateServerItem.setEnabled(focusServer);
 				f_deleteServerItem.setEnabled(focusServer);
+				f_sendResultFilters.setEnabled(focusServer);
+				f_getResultFilters.setEnabled(focusServer);
 				f_serverPropertiesItem.setEnabled(focusServer);
 				f_openInBrowser.setEnabled(focusServer);
 				f_infoGroup.setEnabled(focusServer);

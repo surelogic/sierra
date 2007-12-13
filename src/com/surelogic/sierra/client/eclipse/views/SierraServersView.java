@@ -74,6 +74,12 @@ public final class SierraServersView extends ViewPart {
 				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 		deleteServerItem.setText("Delete");
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
+		final MenuItem sendResultFilters = new MenuItem(serverListMenu,
+				SWT.PUSH);
+		sendResultFilters.setText("Send Result Filters...");
+		final MenuItem getResultFilters = new MenuItem(serverListMenu, SWT.PUSH);
+		getResultFilters.setText("Get Result Filters...");
+		new MenuItem(serverListMenu, SWT.SEPARATOR);
 		final MenuItem serverPropertiesItem = new MenuItem(serverListMenu,
 				SWT.PUSH);
 		serverPropertiesItem.setText("Properties...");
@@ -204,9 +210,10 @@ public final class SierraServersView extends ViewPart {
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
-				duplicateServerItem, deleteServerItem, serverPropertiesItem,
-				openInBrowser, infoGroup, serverURL, projectList,
-				connectProjectItem, disconnectProjectItem);
+				duplicateServerItem, deleteServerItem, sendResultFilters,
+				getResultFilters, serverPropertiesItem, openInBrowser,
+				infoGroup, serverURL, projectList, connectProjectItem,
+				disconnectProjectItem);
 		f_mediator.init();
 	}
 
