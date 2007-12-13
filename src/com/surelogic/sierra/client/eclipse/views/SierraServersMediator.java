@@ -68,7 +68,12 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		public void handleEvent(Event event) {
 			SierraServer server = f_manager.getFocus();
 			if (server != null) {
-				f_manager.delete(server);
+				if (MessageDialog.openConfirm(event.display.getActiveShell(),
+						"Confirm Sierra Server Deletion",
+						"Do you wish to delete the Sierra server '"
+								+ server.getLabel() + "'?")) {
+					f_manager.delete(server);
+				}
 			}
 		}
 	};
