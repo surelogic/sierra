@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -154,13 +155,60 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_sendResultFilters.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-
+				final SierraServer server = f_manager.getFocus();
+				if (server == null) {
+					SLLogger
+							.getLogger()
+							.log(Level.WARNING,
+									"Send result filters pressed with no server focus.");
+					return;
+				}
+				final StringBuilder msg = new StringBuilder();
+				msg.append("Do you want your local result filters to become");
+				msg.append(" the result filters used by (and available from)");
+				msg.append(" the Sierra server \"");
+				msg.append(server.getLabel());
+				msg.append("\"?");
+				MessageDialog dialog = new MessageDialog(f_serverList
+						.getShell(), "Send Result Filters", null, msg
+						.toString(), MessageDialog.QUESTION, new String[] {
+						"Yes", "No" }, 0);
+				if (dialog.open() == 0) {
+					/*
+					 * Yes was selected, so send the result filters to the
+					 * server.
+					 */
+				}
 			}
 		});
 
 		f_getResultFilters.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-
+				final SierraServer server = f_manager.getFocus();
+				if (server == null) {
+					SLLogger
+							.getLogger()
+							.log(Level.WARNING,
+									"Get results filters pressed with no server focus.");
+					return;
+				}
+				final StringBuilder msg = new StringBuilder();
+				msg
+						.append("Do you want overwrite your local result filters with");
+				msg.append(" the result filters on");
+				msg.append(" the Sierra server \"");
+				msg.append(server.getLabel());
+				msg.append("\"?");
+				MessageDialog dialog = new MessageDialog(f_serverList
+						.getShell(), "Get Result Filters", null,
+						msg.toString(), MessageDialog.QUESTION, new String[] {
+								"Yes", "No" }, 0);
+				if (dialog.open() == 0) {
+					/*
+					 * Yes was selected, so get the result filters from the
+					 * server.
+					 */
+				}
 			}
 		});
 
