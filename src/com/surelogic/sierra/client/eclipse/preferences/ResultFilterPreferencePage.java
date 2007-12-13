@@ -144,12 +144,14 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	protected Control createContents(Composite parent) {
 		f_panel = new Composite(parent, SWT.NONE);
 		f_panel.setLayout(new GridLayout());
+		f_panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		GridData layoutData;
 		f_findingTypes = new Tree(f_panel, SWT.CHECK | SWT.FULL_SELECTION);
 		f_findingTypes.setHeaderVisible(true);
 		f_findingTypes.setLinesVisible(true);
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		layoutData.heightHint = 300;
 		f_findingTypes.setLayoutData(layoutData);
 		f_findingTypes.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -365,7 +367,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 			item.setChecked(!f_filterList.contains(row.findingTypeUUID));
 		}
 		fixCategoryChecked();
-		f_panel.getParent().layout();
+		f_panel.layout();
 	}
 
 	/**
