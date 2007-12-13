@@ -471,7 +471,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			if (status == FindingStatus.NEW) {
 				b.append("and was discovered by ");
 				b.append("<a href=\"artifact\">");
-				if (tool.startsWith("(")) {
+				if (tool.charAt(0) == '(') {
 					b.append("by multiple tools (with ");
 					b.append(f_finding.getNumberOfArtifacts());
 					b.append(" artifacts reported)");
