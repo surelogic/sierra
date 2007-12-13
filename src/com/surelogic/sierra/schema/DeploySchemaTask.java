@@ -35,7 +35,7 @@ public class DeploySchemaTask {
 	private static final String DERBYDRIVER = "org.apache.derby.jdbc.ClientDriver";
 	private static final String ORACLEDRIVER = "oracle.jdbc.driver.OracleDriver";
 
-	private final Logger log = SLLogger.getLoggerFor(DeploySchemaTask.class);
+	private static final Logger log = SLLogger.getLoggerFor(DeploySchemaTask.class);
 
 	/**
 	 * @param args
