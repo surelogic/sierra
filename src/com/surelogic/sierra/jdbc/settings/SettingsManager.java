@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +31,8 @@ public class SettingsManager {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(SettingsManager.class);
-
+	private static final String GLOBAL_NAME = "GLOBAL";
+	private static final String GLOBAL_UUID = "de3034ec-65d5-4d4a-b059-1adf8fc7b12d";
 	private final FindingTypeManager ftMan;
 	private final SettingsRecordFactory factory;
 
@@ -109,6 +111,39 @@ public class SettingsManager {
 	public static SettingsManager getInstance(Connection conn)
 			throws SQLException {
 		return new SettingsManager(conn);
+	}
+
+	/**
+	 * 
+	 * @param findingTypes
+	 *            a collection of finding type uid's that will be filtered out
+	 *            by these settings.
+	 * @throws SQLException 
+	 */
+	public void writeGlobalSettings(List<FindingTypeFilter> filters) throws SQLException {
+		final SettingsRecord rec = factory.newSettingsRecord();
+		rec.setUid(GLOBAL_UUID);
+		if (!rec.select()) {
+			rec.setName(GLOBAL_NAME);
+			rec.setRevision(0L);
+			rec.insert();
+		} 
+		applyFilters(factory.newSettingsFilterRecord(), rec.getId(), filters);
+	}
+
+	/**
+	 * 
+	 * @return a collection of finding type uid's that should be filtered out.
+	 * @throws SQLException
+	 */
+	public List<FindingTypeFilter> getGlobalSettings() throws SQLException {
+		final SettingsRecord rec = factory.newSettingsRecord();
+		rec.setUid(GLOBAL_UUID);
+		if (rec.select()) {
+			return getSettingFilters(GLOBAL_UUID);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	/**
@@ -515,8 +550,9 @@ public class SettingsManager {
 		final FilterSet filterSet = getFilterSetHelper(id);
 		selectFilterSetById.setLong(1, id);
 		final ResultSet set = selectFilterSetById.executeQuery();
-		if(!set.next()) {
-			throw new IllegalArgumentException(id + " is not a valid filter set id.");
+		if (!set.next()) {
+			throw new IllegalArgumentException(id
+					+ " is not a valid filter set id.");
 		}
 		try {
 			int idx = 1;
@@ -574,7 +610,7 @@ public class SettingsManager {
 	 * @throws SQLException
 	 */
 	private Set<Long> getFilterSetChildren(final long parentId)
-			throws SQLException {	
+			throws SQLException {
 		final Set<Long> children = new HashSet<Long>();
 		getFilterSetChildrenHelper(children, parentId);
 		return children;
