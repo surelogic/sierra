@@ -13,15 +13,19 @@ public abstract class TroubleshootConnection {
 	 * 
 	 * @param server
 	 *            the mutable server configuration to be fixed.
+	 * @param projectName
+	 *            the project name, or <code>null</code> if no project or it
+	 *            is unknown.
 	 */
 	protected TroubleshootConnection(final SierraServer server,
 			final String projectName) {
 		if (server == null)
 			throw new IllegalStateException("server must be non-null");
 		f_server = server;
-		if (projectName == null)
-			throw new IllegalStateException("projectName must be non-null");
-		f_projectName = projectName;
+		if (projectName != null)
+			f_projectName = projectName;
+		else
+			f_projectName = "(unknown)";
 	}
 
 	public final SierraServer getServer() {
