@@ -20,7 +20,6 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthenticati
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.GlobalSettings;
-import com.surelogic.sierra.tool.message.GlobalSettingsRequest;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
