@@ -432,10 +432,14 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	 */
 	private IStatus updateSettings(List<String> filterUUIDList) {
 		try {
-			final Connection c = Data.getConnection();
+			final Connection c = Data.transactionConnection();
 			try {
 				SettingsManager.getInstance(c).writeGlobalSettingsUUID(
 						filterUUIDList);
+				c.commit();
+			} catch (SQLException e) {
+				c.rollback();
+				throw e;
 			} finally {
 				c.close();
 			}
