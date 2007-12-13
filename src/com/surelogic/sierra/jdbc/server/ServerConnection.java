@@ -7,11 +7,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
@@ -23,6 +26,9 @@ import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
  * 
  */
 public class ServerConnection {
+
+	private static final Logger log = SLLogger
+			.getLoggerFor(ServerConnection.class);
 
 	private final Connection conn;
 	private final boolean readOnly;
@@ -94,6 +100,33 @@ public class ServerConnection {
 			set.close();
 		}
 
+	}
+
+	public String getEmail() throws SQLException {
+		try {
+			final Connection conn = ServerConnection.readOnly().getConnection();
+			try {
+				final Statement st = conn.createStatement();
+				try {
+					final ResultSet set = st
+							.executeQuery("SELECT EMAIL FROM NOTIFICATION");
+					if (set.next()) {
+						return set.getString(1);
+					} else {
+						return null;
+					}
+				} catch (SQLException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				} finally {
+					st.close();
+				}
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
 	}
 
 	public String getUid() throws SQLException {

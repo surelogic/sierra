@@ -43,6 +43,7 @@ public class Schema_0009 implements SchemaAction {
 			while (set.next()) {
 				updateSt.setString(1, UUID.randomUUID().toString());
 				updateSt.setLong(2, set.getLong(1));
+				updateSt.execute();
 			}
 			st
 					.execute("ALTER TABLE SETTINGS ADD CONSTRAINT SETTINGS_UUID_CN CHECK (UUID IS NOT NULL)");
