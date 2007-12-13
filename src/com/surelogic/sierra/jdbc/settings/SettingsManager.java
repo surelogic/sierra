@@ -136,7 +136,14 @@ public class SettingsManager {
 
 	public void writeGlobalSettingsUUID(List<String> filterUUIDList)
 			throws SQLException {
-		// TODO
+		final List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>(filterUUIDList.size());
+		for(String findingType : filterUUIDList) {
+			FindingTypeFilter filter = new FindingTypeFilter();
+			filter.setName(findingType);
+			filter.setFiltered(true);
+			filters.add(filter);
+		}
+		writeGlobalSettings(filters);
 	}
 
 	/**
