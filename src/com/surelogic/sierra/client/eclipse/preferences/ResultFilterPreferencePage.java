@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,9 +37,12 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.tool.message.FindingTypeFilter;
 
 public class ResultFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -98,6 +102,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	private Composite f_panel = null;
 	private Tree f_findingTypes = null;
 	private Browser f_detailsText = null;
+	private String f_selectedFindingTypeUUID = null;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -113,28 +118,52 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 		f_findingTypes.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				boolean clearHTMLDescription = true;
+				/*
+				 * Selection of an item (not the same as checking it).
+				 */
 				TreeItem[] items = f_findingTypes.getSelection();
 				if (items.length > 0) {
 					final Object rawData = items[0].getData();
 					if (rawData instanceof String) {
 						final String findingTypeUUID = (String) rawData;
 						clearHTMLDescription = false;
-						Job job = new DatabaseJob(
-								"Querying Sierra Artifact Type Description") {
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								monitor
-										.beginTask(
-												"Querying Sierra Artifact Type Description",
-												IProgressMonitor.UNKNOWN);
-								return queryFindingTypeHTMLDescriptionOf(findingTypeUUID);
-							}
-						};
-						job.schedule();
+						/*
+						 * The below check avoids lots of extra queries since
+						 * this event is invoked when the selection changes and
+						 * when a check box is checked.
+						 */
+						if (!findingTypeUUID.equals(f_selectedFindingTypeUUID)) {
+							f_selectedFindingTypeUUID = findingTypeUUID;
+							Job job = new DatabaseJob(
+									"Querying Sierra Artifact Type Description") {
+								@Override
+								protected IStatus run(IProgressMonitor monitor) {
+									monitor
+											.beginTask(
+													"Querying Sierra Artifact Type Description",
+													IProgressMonitor.UNKNOWN);
+									return queryFindingTypeHTMLDescriptionOf(findingTypeUUID);
+								}
+							};
+							job.schedule();
+						}
+					}
+				}
+				/*
+				 * Check state of an item.
+				 */
+				if (event.item instanceof TreeItem) {
+					TreeItem item = (TreeItem) event.item;
+					/*
+					 * Only categories have sub-items so pass along the change.
+					 */
+					for (TreeItem sub : item.getItems()) {
+						sub.setChecked(item.getChecked());
 					}
 				}
 				if (clearHTMLDescription)
 					clearHTMLDescription();
+				fixCategoryChecked();
 			}
 		});
 
@@ -175,6 +204,8 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 
 	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
 
+	private final List<String> f_filterList = new ArrayList<String>();
+
 	/**
 	 * Must be called from a database job.
 	 */
@@ -194,6 +225,13 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 						row.findingTypeDescription = rs.getString(3);
 						row.findingTypeUUID = rs.getString(4);
 						f_artifactList.add(row);
+					}
+					for (FindingTypeFilter filter : SettingsManager
+							.getInstance(c).getGlobalSettings()) {
+						/*
+						 * The name is actually the UUID.
+						 */
+						f_filterList.add(filter.getName());
 					}
 				} finally {
 					st.close();
@@ -226,6 +264,12 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 					final List<ArtifactTypeRow> artifactList = new ArrayList<ArtifactTypeRow>();
 					final String artifactQuery = "select distinct T.NAME, A.MNEMONIC, A.LINK, A.CATEGORY from FINDING_TYPE F, ARTIFACT_TYPE A, TOOL T where T.ID=A.TOOL_ID and F.ID=A.FINDING_TYPE_ID and F.UUID='"
 							+ findingTypeUUID + "'";
+					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+						SLLogger.getLogger().fine(
+								"Query of artifacts for findingType="
+										+ findingTypeUUID + ": "
+										+ artifactQuery);
+					}
 					final ResultSet ars = st.executeQuery(artifactQuery);
 					while (ars.next()) {
 						ArtifactTypeRow row = new ArtifactTypeRow();
@@ -237,6 +281,11 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 					}
 					final String query = "select INFO from FINDING_TYPE where UUID='"
 							+ findingTypeUUID + "'";
+					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+						SLLogger.getLogger().fine(
+								"Query of HTML info for findingType="
+										+ findingTypeUUID + ": " + query);
+					}
 					final ResultSet rs = st.executeQuery(query);
 					while (rs.next()) {
 						final String description = rs.getString(1);
@@ -277,8 +326,29 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 			item.setText(0, row.findingTypeName);
 			item.setText(1, row.findingTypeDescription);
 			item.setData(row.findingTypeUUID);
+			item.setChecked(!f_filterList.contains(row.findingTypeUUID));
 		}
+		fixCategoryChecked();
 		f_panel.getParent().layout();
+	}
+
+	/**
+	 * Must be called from the UI thread.
+	 */
+	private void fixCategoryChecked() {
+		for (TreeItem category : f_findingTypes.getItems()) {
+			boolean noneSelected = true;
+			boolean allSelected = true;
+			for (TreeItem item : category.getItems()) {
+				if (item.getChecked()) {
+					noneSelected = false;
+				} else {
+					allSelected = false;
+				}
+			}
+			category.setGrayed(!(allSelected || noneSelected));
+			category.setChecked(!noneSelected);
+		}
 	}
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
