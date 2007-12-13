@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.browser,
  org.eclipse.ui.editors,
  org.eclipse.jface.text,
- com.surelogic.sierra.message
+ com.surelogic.sierra.message,
+ org.eclipse.ui.workbench.texteditor
 Eclipse-LazyStart: true
 Bundle-ClassPath: lib/commons-lang-2.3.jar,
  .
