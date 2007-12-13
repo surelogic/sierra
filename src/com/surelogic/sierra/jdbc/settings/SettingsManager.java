@@ -35,8 +35,11 @@ public class SettingsManager {
 	 * 
 	 * @return the SureLogic default filter set.
 	 */
-	public static String[] getSureLogicDefaultFilterSet() {
-		return new String[] { "ClassNamingConventions" };
+	public static Set<String> getSureLogicDefaultFilterSet() {
+		final Set<String> result = new HashSet<String>();
+		result.add("ShortMethodName");
+		result.add("ShortVariable");
+		return result;
 	}
 
 	private static final Logger log = SLLogger
