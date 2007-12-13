@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -26,6 +27,8 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
+import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -166,9 +169,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				final StringBuilder msg = new StringBuilder();
 				msg.append("Do you want your local result filters to become");
 				msg.append(" the result filters used by (and available from)");
-				msg.append(" the Sierra server \"");
+				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
-				msg.append("\"?");
+				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
 						.getShell(), "Send Result Filters", null, msg
 						.toString(), MessageDialog.QUESTION, new String[] {
@@ -178,6 +181,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					 * Yes was selected, so send the result filters to the
 					 * server.
 					 */
+					final Job job = new SendGlobalResultFiltersJob(server);
+					job.schedule();
 				}
 			}
 		});
@@ -196,9 +201,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				msg
 						.append("Do you want overwrite your local result filters with");
 				msg.append(" the result filters on");
-				msg.append(" the Sierra server \"");
+				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
-				msg.append("\"?");
+				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
 						.getShell(), "Get Result Filters", null,
 						msg.toString(), MessageDialog.QUESTION, new String[] {
@@ -208,6 +213,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					 * Yes was selected, so get the result filters from the
 					 * server.
 					 */
+					final Job job = new GetGlobalResultFiltersJob(server);
+					job.schedule();
 				}
 			}
 		});
