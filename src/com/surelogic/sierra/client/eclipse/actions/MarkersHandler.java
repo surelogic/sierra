@@ -303,7 +303,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
 		}
 		if (debug)
-			System.out.println("Create markers: "
+			System.out.println("Create "+overview.size()+" markers: "
 					+ (System.currentTimeMillis() - startCreate));
 	}
 
