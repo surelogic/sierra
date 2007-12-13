@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
 @XmlRootElement
-public class GlobalSettingsReply {
+public class GlobalSettings {
 
 	private List<FindingTypeFilter> filter;
 

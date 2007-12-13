@@ -1,5 +1,7 @@
 package com.surelogic.sierra.tool.message.axis;
 
+import com.surelogic.sierra.tool.message.GlobalSettings;
+import com.surelogic.sierra.tool.message.GlobalSettingsRequest;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
@@ -201,6 +203,17 @@ public class Axis2Client implements SierraService {
 		} catch (RemoteException e) {
 			throw wrapException(e);
 		}
+	}
+	
+
+	public GlobalSettings getGlobalSettings(GlobalSettingsRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void writeGlobalSettings(GlobalSettings settings) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -847,4 +860,5 @@ public class Axis2Client implements SierraService {
 			return out;
 		}
 	}
+
 }

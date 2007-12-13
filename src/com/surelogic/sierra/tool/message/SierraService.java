@@ -79,5 +79,7 @@ public interface SierraService {
 	 * @param request
 	 * @return the global settings associated with this server.
 	 */
-	GlobalSettingsReply getGlobalSettings(GlobalSettingsRequest request);
+	GlobalSettings getGlobalSettings(GlobalSettingsRequest request);
+
+	void writeGlobalSettings(GlobalSettings settings);
 }
