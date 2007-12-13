@@ -118,19 +118,25 @@ public class SettingsManager {
 	 * @param findingTypes
 	 *            a collection of finding type uid's that will be filtered out
 	 *            by these settings.
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	public void writeGlobalSettings(List<FindingTypeFilter> filters) throws SQLException {
+	public void writeGlobalSettings(List<FindingTypeFilter> filters)
+			throws SQLException {
 		final SettingsRecord rec = factory.newSettingsRecord();
 		rec.setUid(GLOBAL_UUID);
 		if (!rec.select()) {
 			rec.setName(GLOBAL_NAME);
 			rec.setRevision(0L);
 			rec.insert();
-		} 
+		}
 		final long settingsId = rec.getId();
 		deleteSettingFilters.setLong(1, settingsId);
 		applyFilters(factory.newSettingsFilterRecord(), settingsId, filters);
+	}
+
+	public void writeGlobalSettingsUUID(List<String> filterUUIDList)
+			throws SQLException {
+		// TODO
 	}
 
 	/**
