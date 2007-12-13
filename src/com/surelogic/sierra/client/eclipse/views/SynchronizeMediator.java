@@ -227,8 +227,10 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		if (items.length > 0) {
 			TableItem item = items[0];
 			SynchOverview so = (SynchOverview) item.getData();
-			// System.out.println("updating event table contents");
-			asyncEventTableContents(so);
+			if (so != null) {
+			  // System.out.println("updating event table contents");
+			  asyncEventTableContents(so);
+			}
 		}
 	}
 
