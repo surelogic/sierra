@@ -142,6 +142,7 @@ public class SettingsManager {
 		}
 		final long settingsId = rec.getId();
 		deleteSettingFilters.setLong(1, settingsId);
+		deleteSettingFilters.execute();
 		applyFilters(factory.newSettingsFilterRecord(), settingsId, filters);
 	}
 
