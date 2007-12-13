@@ -63,8 +63,7 @@ public final class ScanDocumentUtility {
 				final Set<Long> findingIds = new HashSet<Long>();
 				final FindingFilter filter = FindingTypeManager.getInstance(
 						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getSettingsByProject(
-								projectName));
+						SettingsManager.getInstance(conn).getGlobalSettings());
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
 				final String uid = MessageWarehouse.getInstance()
@@ -136,8 +135,7 @@ public final class ScanDocumentUtility {
 				conn.commit();
 				final FindingFilter filter = FindingTypeManager.getInstance(
 						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getSettingsByProject(
-								projectName));
+						SettingsManager.getInstance(conn).getGlobalSettings());
 				final ScanGenerator gen = sMan.getScanGenerator(filter);
 				final String uid = MessageWarehouse.getInstance()
 						.parseScanDocument(scanDocument, gen, monitor);
