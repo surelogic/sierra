@@ -188,7 +188,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	}
 
-	private class JDBCErrorBuilder implements ErrorBuilder {
+	private static class JDBCErrorBuilder implements ErrorBuilder {
 
 		public void build() {
 			// TODO Auto-generated method stub
