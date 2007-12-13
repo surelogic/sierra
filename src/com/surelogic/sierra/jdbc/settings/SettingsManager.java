@@ -134,10 +134,18 @@ public class SettingsManager {
 		applyFilters(factory.newSettingsFilterRecord(), settingsId, filters);
 	}
 
+	/**
+	 * Write out global settings.
+	 * 
+	 * @param filterUUIDList
+	 *            a list of finding types to be excluded.
+	 * @throws SQLException
+	 */
 	public void writeGlobalSettingsUUID(List<String> filterUUIDList)
 			throws SQLException {
-		final List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>(filterUUIDList.size());
-		for(String findingType : filterUUIDList) {
+		final List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>(
+				filterUUIDList.size());
+		for (String findingType : filterUUIDList) {
 			FindingTypeFilter filter = new FindingTypeFilter();
 			filter.setName(findingType);
 			filter.setFiltered(true);
