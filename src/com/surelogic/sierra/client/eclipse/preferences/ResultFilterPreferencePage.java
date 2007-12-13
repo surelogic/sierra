@@ -367,7 +367,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 			item.setChecked(!f_filterList.contains(row.findingTypeUUID));
 		}
 		fixCategoryChecked();
-		f_panel.layout();
+		getShell().layout();
 	}
 
 	/**
