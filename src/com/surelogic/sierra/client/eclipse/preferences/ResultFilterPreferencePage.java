@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,18 +84,34 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performApply() {
-		// TODO Auto-generated method stub
+		applyChanges();
 		super.performApply();
 	}
 
 	@Override
 	protected void performDefaults() {
-		// TODO Auto-generated method stub
+		final Set<String> sureLogicDefaults = SettingsManager
+				.getSureLogicDefaultFilterSet();
+		for (TreeItem category : f_findingTypes.getItems()) {
+			for (TreeItem item : category.getItems()) {
+				/*
+				 * All of these should have the UUID string as data.
+				 */
+				String uuid = (String) item.getData();
+				item.setChecked(!sureLogicDefaults.contains(uuid));
+			}
+		}
+		fixCategoryChecked();
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
+		applyChanges();
+		return super.performOk();
+	}
+
+	private void applyChanges() {
 		final List<String> filterUUIDList = new ArrayList<String>();
 		for (TreeItem category : f_findingTypes.getItems()) {
 			for (TreeItem item : category.getItems()) {
@@ -107,7 +124,6 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 				}
 			}
 		}
-		System.out.println("OK" + filterUUIDList);
 		final Job job = new DatabaseJob("Updating Global Sierra Settings") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -117,7 +133,6 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 			}
 		};
 		job.schedule();
-		return super.performOk();
 	}
 
 	private Composite f_panel = null;
