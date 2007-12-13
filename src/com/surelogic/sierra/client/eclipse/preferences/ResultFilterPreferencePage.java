@@ -95,7 +95,28 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 
 	@Override
 	public boolean performOk() {
-		// TODO Auto-generated method stub
+		final List<String> filterUUIDList = new ArrayList<String>();
+		for (TreeItem category : f_findingTypes.getItems()) {
+			for (TreeItem item : category.getItems()) {
+				if (!item.getChecked()) {
+					/*
+					 * All of these should have the UUID string as data.
+					 */
+					String uuid = (String) item.getData();
+					filterUUIDList.add(uuid);
+				}
+			}
+		}
+		System.out.println("OK" + filterUUIDList);
+		final Job job = new DatabaseJob("Updating Global Sierra Settings") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating Global Sierra Settings",
+						IProgressMonitor.UNKNOWN);
+				return updateSettings(filterUUIDList);
+			}
+		};
+		job.schedule();
 		return super.performOk();
 	}
 
@@ -134,7 +155,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 						 */
 						if (!findingTypeUUID.equals(f_selectedFindingTypeUUID)) {
 							f_selectedFindingTypeUUID = findingTypeUUID;
-							Job job = new DatabaseJob(
+							final Job job = new DatabaseJob(
 									"Querying Sierra Artifact Type Description") {
 								@Override
 								protected IStatus run(IProgressMonitor monitor) {
@@ -190,7 +211,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 		}
 		clearHTMLDescription();
 
-		Job job = new DatabaseJob("Querying Sierra Artifacts") {
+		final Job job = new DatabaseJob("Querying Sierra Artifacts") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Querying Sierra Artifacts",
@@ -404,6 +425,25 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 			b.append("</table></center>");
 		}
 		f_detailsText.setText(b.toString());
+	}
+
+	/**
+	 * Must be called from a database job.
+	 */
+	private IStatus updateSettings(List<String> filterUUIDList) {
+		try {
+			final Connection c = Data.getConnection();
+			try {
+				SettingsManager.getInstance(c).writeGlobalSettingsUUID(
+						filterUUIDList);
+			} finally {
+				c.close();
+			}
+		} catch (SQLException e) {
+			return SLStatus.createErrorStatus(
+					"Update of Sierra global filter settings failed", e);
+		}
+		return Status.OK_STATUS;
 	}
 
 	public void init(IWorkbench workbench) {
