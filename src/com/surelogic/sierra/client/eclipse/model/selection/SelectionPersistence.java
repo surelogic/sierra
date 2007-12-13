@@ -75,7 +75,7 @@ public final class SelectionPersistence {
 			Entities.addAttribute(SHOWING, "Y", b);
 		b.append(">");
 		pw.println(b.toString());
-		b = new StringBuilder();
+		// UNUSED: b = new StringBuilder();
 		for (Filter f : s.getFilters()) {
 			outputFilter(pw, f);
 		}
