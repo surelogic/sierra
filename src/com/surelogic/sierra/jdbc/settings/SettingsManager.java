@@ -29,6 +29,16 @@ import com.surelogic.sierra.tool.message.Settings;
 
 public class SettingsManager {
 
+	/**
+	 * Gets the default set of finding type UUIDs that have been selected by
+	 * SureLogic to be the default filter set.
+	 * 
+	 * @return the SureLogic default filter set.
+	 */
+	public static String[] getSureLogicDefaultFilterSet() {
+		return new String[] { "ClassNamingConventions" };
+	}
+
 	private static final Logger log = SLLogger
 			.getLoggerFor(SettingsManager.class);
 	private static final String GLOBAL_NAME = "GLOBAL";
