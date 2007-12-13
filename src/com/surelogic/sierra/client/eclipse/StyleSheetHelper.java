@@ -37,21 +37,29 @@ public final class StyleSheetHelper {
 		if (styleSheetURL == null)
 			return;
 
+		
 		try {
-			styleSheetURL = FileLocator.toFileURL(styleSheetURL);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					styleSheetURL.openStream()));
-			StringBuilder buffer = new StringBuilder(200);
-			String line = reader.readLine();
-			while (line != null) {
-				buffer.append(line);
-				buffer.append('\n');
-				line = reader.readLine();
-			}
+		  BufferedReader reader = null;
+		  try {
+		    styleSheetURL = FileLocator.toFileURL(styleSheetURL);
+		    reader = new BufferedReader(new InputStreamReader(
+		        styleSheetURL.openStream()));
+		    StringBuilder buffer = new StringBuilder(200);
+		    String line = reader.readLine();
+		    while (line != null) {
+		      buffer.append(line);
+		      buffer.append('\n');
+		      line = reader.readLine();
+		    }
 
-			// FontData fontData = JFaceResources.getFontRegistry().getFontData(
-			// PreferenceConstants.APPEARANCE_JAVADOC_FONT)[0];
-			styleSheet.append(buffer.toString());
+		    // FontData fontData = JFaceResources.getFontRegistry().getFontData(
+		    // PreferenceConstants.APPEARANCE_JAVADOC_FONT)[0];
+		    styleSheet.append(buffer.toString());
+		  } finally {
+		    if (reader != null) {
+		      reader.close();
+		    }
+		  }
 		} catch (IOException ex) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading style sheet for details view.", ex);
