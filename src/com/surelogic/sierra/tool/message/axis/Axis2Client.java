@@ -358,7 +358,7 @@ public class Axis2Client implements SierraService {
 				out.setFilter(arrayToList(filters,
 						new FindingTypeFilterConverter()));
 			}
-			return null;
+			return out;
 		}
 
 	}
