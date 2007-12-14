@@ -1,5 +1,9 @@
 package com.surelogic.sierra.jdbc.settings;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -30,6 +35,11 @@ import com.surelogic.sierra.tool.message.Settings;
 public class SettingsManager {
 
 	/**
+	 * The full location, on the Java classpath, of the default world file.
+	 */
+	public static final String DEFAULT_FILTER_SET_FILE = "/com/surelogic/sierra/jdbc/settings/SureLogicDefaultFilterSet.txt";
+
+	/**
 	 * Gets the default set of finding type UUIDs that have been selected by
 	 * SureLogic to be the default filter set.
 	 * 
@@ -37,8 +47,37 @@ public class SettingsManager {
 	 */
 	public static Set<String> getSureLogicDefaultFilterSet() {
 		final Set<String> result = new HashSet<String>();
-		result.add("ShortMethodName");
-		result.add("ShortVariable");
+
+		URL defaultURL = Thread.currentThread().getContextClassLoader()
+				.getResource(DEFAULT_FILTER_SET_FILE);
+		if (defaultURL == null) {
+			SLLogger.getLogger().log(
+					Level.WARNING,
+					"Unable to find the SureLogic default filter set file "
+							+ DEFAULT_FILTER_SET_FILE + " on the classpath.");
+			return result;
+		}
+		try {
+			final BufferedReader in = new BufferedReader(new InputStreamReader(
+					defaultURL.openStream()));
+			try {
+				String s = in.readLine();
+				while (s != null) {
+					s = s.trim();
+					if (!s.startsWith("--") && !"".equals(s)) {
+						result.add(s);
+					}
+					s = in.readLine();
+				}
+			} finally {
+				in.close();
+			}
+		} catch (IOException e) {
+			SLLogger.getLogger().log(
+					Level.WARNING,
+					"IO failure reading the SureLogic default filter set file "
+							+ DEFAULT_FILTER_SET_FILE, e);
+		}
 		return result;
 	}
 
