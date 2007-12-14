@@ -41,7 +41,7 @@ import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
  * Refer to MarkerRulerAction from FindBugs eclipse plugin
  * 
  */
-public class MarkerAction implements IUpdate, IEditorActionDelegate,
+public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelegate,
 		MouseListener, IMenuListener {
 
 	private final List<IMarker> f_markers;
@@ -49,7 +49,7 @@ public class MarkerAction implements IUpdate, IEditorActionDelegate,
 	private IVerticalRulerInfo f_ruler;
 	private IAction f_action;
 
-	public MarkerAction() {
+	public MarkerMenuShowFindingAction() {
 		f_markers = new ArrayList<IMarker>();
 	}
 

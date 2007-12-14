@@ -107,16 +107,6 @@
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
           </action>   
           
-           <action
-               class="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
-               id="com.surelogic.sierra.client.eclipse.actions.MarkerToggleAction"
-               icon="lib/icons/asterisk_orange_100.gif"
-               label="Toggle Sierra Marker Visibility"
-               tooltip="Toggle the visibility of Sierra markers in the Java editor"
-               toolbarPath="Normal/additions"
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
-          </action>    
-          
         </actionSet>
    </extension>
      
@@ -216,11 +206,11 @@
       </objectContribution>
     	  <viewerContribution
 			targetID="#CompilationUnitRulerContext"
-			id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">
+			id="com.surelogic.sierra.client.eclipse.actions.MarkerMenuShowFindingAction">
 		 <action
 			   label="Show Finding"
 			   icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/asterisk_orange_100.gif"
-			   class="com.surelogic.sierra.client.eclipse.actions.MarkerAction"
+			   class="com.surelogic.sierra.client.eclipse.actions.MarkerMenuShowFindingAction"
 			   menubarPath="additions"
 			   id="com.surelogic.sierra.client.eclipse.actions.MarkerAction">
 			<selection
@@ -338,16 +328,6 @@
          <category name="Sierra" id="sierra.export.category"/>
          <wizard
          	category="sierra.export.category" 
-         	name="Ant Buildfiles"
-         	class="com.surelogic.sierra.client.eclipse.wizards.BuildFileExportWizard"
-         	id="sierra.build.file.wizard"
-         	icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/ant_export.gif">
-         		<description>
-         			A wizard to generate Sierra Buildfiles
-         		</description>
-         </wizard>
-         <wizard
-         	category="sierra.export.category" 
          	name="Finding Searches"
          	class="com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard"
          	id="finding.search.export.file.wizard"
@@ -405,7 +385,6 @@
 	  <attribute
          name="findingid">
 	  </attribute>
-	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
@@ -414,7 +393,6 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"
@@ -423,7 +401,6 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
@@ -432,7 +409,6 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"
@@ -441,7 +417,6 @@
 	  <super type="org.eclipse.core.resources.problemmarker"/>
 	  <super type="org.eclipse.core.resources.textmarker"/>
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-	  <!--persistent value="true"/-->
    </extension>
    <extension
 		 id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
@@ -452,8 +427,9 @@
 	  <super type="com.surelogic.sierra.client.eclipse.sierraMarker"/>
 	  <persistent value="true"/>
    </extension>
-   <!-- END MARKER DEF -->
-   <!-- Start marker icons -->
+   
+   <!-- Define marker icons -->
+   
    <extension point="org.eclipse.ui.editors.annotationTypes">
 	  <type
 		 name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
@@ -549,8 +525,6 @@
 			label="sierraFinding"
 			quickFixIcon="lib/icons/asterisk_orange_0.gif"/>
    </extension>
-   
-   <!-- END MARKER ICONS -->
    
    <!-- Enable the ad hoc query view on Sierra -->
 
