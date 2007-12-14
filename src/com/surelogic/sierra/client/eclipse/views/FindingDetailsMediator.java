@@ -15,6 +15,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -68,6 +71,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
 	private final Composite f_findingPage;
+	private final Menu f_importanceRadioPopupMenu;
 	private final ToolItem f_summaryIcon;
 	private final Text f_summaryText;
 
@@ -145,6 +149,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_scrollingLabelComposite = scrollingLabelComposite;
 		f_artifactTab = artifactTab;
 		f_artifacts = artifacts;
+
+		f_importanceRadioPopupMenu = new Menu(f_pages.getShell(), SWT.POP_UP);
 	}
 
 	void asyncQueryAndShow(final long findingId) {
@@ -248,9 +254,50 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		});
 
+		final MenuItem criticalItem = new MenuItem(f_importanceRadioPopupMenu,
+				SWT.RADIO);
+		criticalItem.setText("Critical");
+		criticalItem.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
+		criticalItem.setData(Importance.CRITICAL);
+		criticalItem.addListener(SWT.Selection, f_radioListener);
+
+		final MenuItem highItem = new MenuItem(f_importanceRadioPopupMenu,
+				SWT.RADIO);
+		highItem.setText("High");
+		highItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
+		highItem.setData(Importance.HIGH);
+		highItem.addListener(SWT.Selection, f_radioListener);
+
+		final MenuItem mediumItem = new MenuItem(f_importanceRadioPopupMenu,
+				SWT.RADIO);
+		mediumItem.setText("Medium");
+		mediumItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+		mediumItem.setData(Importance.MEDIUM);
+		mediumItem.addListener(SWT.Selection, f_radioListener);
+
+		final MenuItem lowItem = new MenuItem(f_importanceRadioPopupMenu,
+				SWT.RADIO);
+		lowItem.setText("Low");
+		lowItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
+		lowItem.setData(Importance.LOW);
+		lowItem.addListener(SWT.Selection, f_radioListener);
+
+		final MenuItem irrelevantItem = new MenuItem(
+				f_importanceRadioPopupMenu, SWT.RADIO);
+		irrelevantItem.setText("Irrelevant");
+		irrelevantItem.setImage(SLImages
+				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+		irrelevantItem.setData(Importance.IRRELEVANT);
+		irrelevantItem.addListener(SWT.Selection, f_radioListener);
+
 		f_summaryIcon.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				f_folder.setSelection(f_auditTab);
+				Point point = new Point(event.x, event.y);
+				point = f_pages.getDisplay().map(f_summaryIcon.getParent(),
+						null, point);
+				f_importanceRadioPopupMenu.setLocation(point);
+				f_importanceRadioPopupMenu.setVisible(true);
 			}
 		});
 		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
@@ -334,6 +381,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_summaryIcon.setToolTipText("The importance of this finding is "
 				+ f_finding.getImportance().toStringSentenceCase());
 		f_summaryText.setText(f_finding.getSummary());
+
+		for (MenuItem i : f_importanceRadioPopupMenu.getItems()) {
+			i.setSelection(f_finding.getImportance() == i.getData());
+		}
 
 		f_findingSynopsis.setText(getFindingSynopsis());
 

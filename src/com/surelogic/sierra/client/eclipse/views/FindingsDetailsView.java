@@ -86,7 +86,7 @@ public class FindingsDetailsView extends ViewPart {
 				| SWT.FLAT);
 		importanceBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
 				false, false));
-		final ToolItem summaryIcon = new ToolItem(importanceBar, SWT.PUSH);
+		final ToolItem summaryIcon = new ToolItem(importanceBar, SWT.DROP_DOWN);
 		final Text summaryText = new Text(summaryPane, SWT.SINGLE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		summaryText.setLayoutData(layoutData);
