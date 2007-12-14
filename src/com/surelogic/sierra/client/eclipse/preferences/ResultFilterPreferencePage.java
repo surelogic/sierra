@@ -46,7 +46,6 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
-import com.surelogic.sierra.tool.message.FindingTypeFilter;
 
 public class ResultFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -292,13 +291,8 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 						row.findingTypeUUID = rs.getString(4);
 						f_artifactList.add(row);
 					}
-					for (FindingTypeFilter filter : SettingsManager
-							.getInstance(c).getGlobalSettings()) {
-						/*
-						 * The name is actually the UUID.
-						 */
-						f_filterList.add(filter.getName());
-					}
+					f_filterList.addAll(SettingsManager.getInstance(c)
+							.getGlobalSettingsUUID());
 				} finally {
 					st.close();
 				}
