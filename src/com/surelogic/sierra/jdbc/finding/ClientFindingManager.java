@@ -812,6 +812,14 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
+	public void filterFindingTypeFromScans(long finding_id,
+			SLProgressMonitor monitor) throws SQLException {
+		/*
+		 * TODO; for finding_id look it up and find out its finding type UUID
+		 * and add it to the global filter set if it isn't already in there.
+		 */
+	}
+
 	/**
 	 * Check for existence of the finding, and return it's project.
 	 * 
