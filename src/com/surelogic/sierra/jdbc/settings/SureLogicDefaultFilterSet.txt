@@ -1,0 +1,9 @@
+----------------------------------------------------------------
+-- SureLogic, Inc. default set of finding type UUIDs that are
+-- filtered out of all Sierra scans loaded into the client and
+-- the team server.
+--
+-- Each line must be a UUID for a finding type.
+----------------------------------------------------------------
+ShortMethodName
+ShortVariable
