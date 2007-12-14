@@ -1,21 +1,15 @@
 package com.surelogic.sierra.schema;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.tool.message.FindingTypes;
-import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 /**
  * The intent of this schema update is to copy over the server settings
@@ -266,22 +260,5 @@ public class Schema_0009 implements SchemaAction {
 				.execute("CREATE INDEX S_F_FILTERED_INDEX ON SETTING_FILTERS (FILTERED)");
 		st
 				.execute("CREATE INDEX F_S_FILTERED_INDEX ON FILTER_SET_FILTERS (FILTERED)");
-
-		MessageWarehouse mw = MessageWarehouse.getInstance();
-		FindingTypeManager ftMan = FindingTypeManager.getInstance(c);
-		List<FindingTypes> types = new ArrayList<FindingTypes>(3);
-		InputStream in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(
-						"com/surelogic/sierra/tool/message/findbugs.xml");
-		types.add(mw.fetchFindingTypes(in));
-		in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(
-						"com/surelogic/sierra/tool/message/pmd.xml");
-		types.add(mw.fetchFindingTypes(in));
-		in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(
-						"com/surelogic/sierra/tool/message/checkstyle.xml");
-		types.add(mw.fetchFindingTypes(in));
-		ftMan.updateFindingTypes(types, 0);
 	}
 }
