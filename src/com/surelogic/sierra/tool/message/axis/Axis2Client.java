@@ -82,16 +82,16 @@ public class Axis2Client implements SierraService {
 	}
 
 	public Axis2Client(SierraServerLocation server) {
+		// set if realm or domain is known
+		if (server == null) {
+			server = SierraServerLocation.DEFAULT;
+		}
+		
 		// I need this for BASIC HTTP authenticator for connecting to the
 		// WebService
 		HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
 		auth.setUsername(server.getUser());
 		auth.setPassword(server.getPass());
-
-		// set if realm or domain is known
-		if (server == null) {
-			server = SierraServerLocation.DEFAULT;
-		}
 
 		try {
 			stub = new SierraServiceBeanServiceStub(server.createWSDLUrl()
