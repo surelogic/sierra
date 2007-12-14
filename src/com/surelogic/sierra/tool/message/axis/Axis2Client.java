@@ -74,7 +74,7 @@ import java.util.List;
 
 public class Axis2Client implements SierraService {
 	// TODO evaluate a good number for this.
-	private static final int TIMEOUT = 3000000;
+	private static final int TIMEOUT = 10 * 60 * 1000;
 	private final SierraServiceBeanServiceStub stub;
 
 	public Axis2Client() {
