@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -122,6 +125,31 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 					String uuid = (String) item.getData();
 					filterUUIDList.add(uuid);
 				}
+			}
+		}
+		if (SLLogger.getLogger().isLoggable(Level.FINEST)) {
+			/*
+			 * Here we output a file in the users home directory recording the
+			 * settings. This is useful if we want to overwrite the
+			 * SureLogicDefaultFilterSet.txt file in the sierra-jdbc project.
+			 * 
+			 * This will only occur if the logger is set to a level of FINEST.
+			 */
+			File output = new File(System.getProperty("user.home")
+					+ System.getProperty("file.separator")
+					+ "SierraFilterSet.txt");
+			try {
+				PrintWriter p = new PrintWriter(output);
+				try {
+					for (String uuid : filterUUIDList) {
+						p.println(uuid);
+					}
+				} finally {
+					p.close();
+				}
+			} catch (FileNotFoundException e) {
+				SLLogger.getLogger().log(Level.SEVERE,
+						"IO failure writing " + output + " filter set file", e);
 			}
 		}
 		final Job job = new DatabaseJob("Updating Global Sierra Settings") {
