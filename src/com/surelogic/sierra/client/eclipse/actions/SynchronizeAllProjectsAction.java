@@ -25,25 +25,22 @@ public final class SynchronizeAllProjectsAction implements
 	}
 
 	public void run(IAction action) {
-
 		final SierraServerManager manager = SierraServerManager.getInstance();
 		for (String projectName : SierraServerManager.getInstance()
 				.getConnectedProjects()) {
-			if (manager.isConnected(projectName)) {
-				final SierraServer server = manager.getServer(projectName);
-				final Shell shell = PlatformUI.getWorkbench().getDisplay()
-						.getActiveShell();
-				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-					public void run(String projectName, SierraServer server,
-							Shell shell) {
-						final SynchronizeJob job = new SynchronizeJob(
-								projectName, server);
-						job.schedule();
-					}
-				};
-				ServerAuthenticationDialog.promptPasswordIfNecessary(
-						projectName, server, shell, serverAction);
-			}
+			final SierraServer server = manager.getServer(projectName);
+			final Shell shell = PlatformUI.getWorkbench().getDisplay()
+					.getActiveShell();
+			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+				public void run(String projectName, SierraServer server,
+						Shell shell) {
+					final SynchronizeJob job = new SynchronizeJob(projectName,
+							server);
+					job.schedule();
+				}
+			};
+			ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
+					server, shell, serverAction);
 		}
 	}
 

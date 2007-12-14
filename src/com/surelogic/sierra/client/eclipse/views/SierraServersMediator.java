@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
@@ -25,10 +26,13 @@ import org.eclipse.ui.ide.IDE;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -162,6 +166,37 @@ public final class SierraServersMediator implements ISierraServerObserver {
 
 		f_deleteServer.addListener(SWT.Selection, f_deleteServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
+
+		f_synchAllConnectedProjects.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final SierraServer server = f_manager.getFocus();
+				if (server == null) {
+					SLLogger
+							.getLogger()
+							.log(Level.WARNING,
+									"Synchronize all connected projects pressed with no server focus.");
+					return;
+				}
+				final SierraServerManager manager = server.getManager();
+				for (String projectName : manager
+						.getProjectsConnectedTo(server)) {
+					if (manager.isConnected(projectName)) {
+						final Shell shell = PlatformUI.getWorkbench()
+								.getDisplay().getActiveShell();
+						final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+							public void run(String projectName,
+									SierraServer server, Shell shell) {
+								final SynchronizeJob job = new SynchronizeJob(
+										projectName, server);
+								job.schedule();
+							}
+						};
+						ServerAuthenticationDialog.promptPasswordIfNecessary(
+								projectName, server, shell, serverAction);
+					}
+				}
+			}
+		});
 
 		f_sendResultFilters.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -297,6 +332,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				f_deleteServer.setEnabled(focusServer);
 				f_duplicateServerItem.setEnabled(focusServer);
 				f_deleteServerItem.setEnabled(focusServer);
+				f_synchAllConnectedProjects.setEnabled(focusServer);
 				f_sendResultFilters.setEnabled(focusServer);
 				f_getResultFilters.setEnabled(focusServer);
 				f_serverPropertiesItem.setEnabled(focusServer);
