@@ -55,7 +55,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 	 * Returns the category name, the finding type name, a short message about
 	 * the finding type, and the finding type identifier.
 	 */
-	private static final String QUERY = "select C.NAME, T.NAME, T.SHORT_MESSAGE, T.UUID from FINDING_TYPE T, FINDING_CATEGORY C where T.CATEGORY_ID = C.ID and T.ID in (select FINDING_TYPE_ID from ARTIFACT_TYPE where T.NAME != 'Checkstyle') order by 1,2,3";
+	private static final String QUERY = "select C.NAME, T.NAME, T.SHORT_MESSAGE, T.UUID from FINDING_TYPE T, FINDING_CATEGORY C where T.CATEGORY_ID = C.ID and T.ID in (select FINDING_TYPE_ID from ARTIFACT_TYPE, TOOL where TOOL_ID = TOOL.ID and TOOL.NAME != 'Checkstyle') order by 1,2,3";
 
 	private static class FindingTypeRow {
 		private String findingTypeUUID;
@@ -218,7 +218,7 @@ public class ResultFilterPreferencePage extends PreferencePage implements
 				/*
 				 * Check state of an item.
 				 */
-				if (event.item instanceof TreeItem) {
+				if (event.detail == SWT.CHECK && event.item instanceof TreeItem) {
 					TreeItem item = (TreeItem) event.item;
 					/*
 					 * Only categories have sub-items so pass along the change.
