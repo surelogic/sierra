@@ -223,6 +223,17 @@ public class SettingsManager {
 		}
 	}
 
+	public Set<String> getGlobalSettingsUUID() throws SQLException {
+		final Set<String> result = new HashSet<String>();
+		for (FindingTypeFilter filter : getGlobalSettings()) {
+			/*
+			 * The name is actually the UUID.
+			 */
+			result.add(filter.getName());
+		}
+		return result;
+	}
+
 	/**
 	 * Create a new settings entry.
 	 * 
