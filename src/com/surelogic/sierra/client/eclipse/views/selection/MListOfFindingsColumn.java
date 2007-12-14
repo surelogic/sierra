@@ -129,13 +129,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_packageName;
 		int f_lineNumber;
 		String f_typeName;
+		String f_findingTypeName;
 
 		@Override
 		public String toString() {
-			return "finding_id=" + f_findingId + " [" + f_importance + "] \""
-					+ f_summary + "\" in " + f_projectName + " "
-					+ f_packageName + "." + f_typeName + " at line "
-					+ f_lineNumber;
+			return "finding_id=" + f_findingId + " [" + f_importance
+					+ "] of type " + f_findingTypeName + " \"" + f_summary
+					+ "\" in " + f_projectName + " " + f_packageName + "."
+					+ f_typeName + " at line " + f_lineNumber;
 		}
 	}
 
@@ -163,6 +164,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						data.f_packageName = rs.getString(5);
 						data.f_typeName = rs.getString(6);
 						data.f_lineNumber = rs.getInt(7);
+						data.f_findingTypeName = rs.getString(8);
 						f_rows.add(data);
 					}
 				} finally {
@@ -180,7 +182,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	public String getQuery() {
 		StringBuilder b = new StringBuilder();
 		b.append("select SUMMARY, IMPORTANCE, FINDING_ID,");
-		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE ");
+		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE, FINDING_TYPE ");
 		getSelection().addWhereClauseTo(b);
 		b.append(" order by case");
 		b.append(" when IMPORTANCE='Irrelevant' then 5");
@@ -291,6 +293,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
+		final MenuItem filterFindingTypeFromScans = new MenuItem(menu, SWT.PUSH);
+		filterFindingTypeFromScans
+				.setText("Filter Finding Type From Future Scans");
+
+		new MenuItem(menu, SWT.SEPARATOR);
+
 		final Menu importanceMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
 		set.setMenu(importanceMenu);
 		final MenuItem setCritical = new MenuItem(importanceMenu, SWT.PUSH);
@@ -317,6 +325,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				final boolean findingSelected = items.length > 0;
 				set.setEnabled(findingSelected);
 				quickAudit.setEnabled(findingSelected);
+				filterFindingTypeFromScans.setEnabled(findingSelected);
 				if (items.length > 0) {
 					final FindingData data = (FindingData) items[0].getData();
 					final String currentImportance = data.f_importance
@@ -337,11 +346,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 					setIrrelevant.setEnabled(!currentImportance
 							.equals(setIrrelevant.getText()));
 					quickAudit.setData(data);
+					filterFindingTypeFromScans.setData(data);
+					filterFindingTypeFromScans.setText("Filter All '"
+							+ data.f_findingTypeName
+							+ "' Findings From Future Scans");
 				}
 			}
 		});
 
-		final Listener f_changeImportance = new Listener() {
+		final Listener changeImportance = new Listener() {
 			public void handleEvent(Event event) {
 				if (event.widget instanceof MenuItem) {
 					MenuItem item = (MenuItem) event.widget;
@@ -355,11 +368,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 				}
 			}
 		};
-		setCritical.addListener(SWT.Selection, f_changeImportance);
-		setHigh.addListener(SWT.Selection, f_changeImportance);
-		setMedium.addListener(SWT.Selection, f_changeImportance);
-		setLow.addListener(SWT.Selection, f_changeImportance);
-		setIrrelevant.addListener(SWT.Selection, f_changeImportance);
+		setCritical.addListener(SWT.Selection, changeImportance);
+		setHigh.addListener(SWT.Selection, changeImportance);
+		setMedium.addListener(SWT.Selection, changeImportance);
+		setLow.addListener(SWT.Selection, changeImportance);
+		setIrrelevant.addListener(SWT.Selection, changeImportance);
 
 		quickAudit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -369,6 +382,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 						final FindingData data = (FindingData) item.getData();
 						FindingMutationUtility.asyncComment(data.f_findingId,
 								FindingDetailsMediator.STAMP_COMMENT);
+					}
+				}
+			}
+		});
+
+		filterFindingTypeFromScans.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.widget instanceof MenuItem) {
+					MenuItem item = (MenuItem) event.widget;
+					if (event.widget.getData() instanceof FindingData) {
+						final FindingData data = (FindingData) item.getData();
+						FindingMutationUtility.asyncFilterFindingTypeFromScans(
+								data.f_findingId, data.f_findingTypeName);
 					}
 				}
 			}
@@ -426,7 +452,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		});
 
-		final Listener f_changeAllImportance = new Listener() {
+		final Listener changeAllImportance = new Listener() {
 			@SuppressWarnings("unchecked")
 			public void handleEvent(Event event) {
 				if (event.widget instanceof MenuItem) {
@@ -456,11 +482,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 				}
 			}
 		};
-		setAllCritical.addListener(SWT.Selection, f_changeAllImportance);
-		setAllHigh.addListener(SWT.Selection, f_changeAllImportance);
-		setAllMedium.addListener(SWT.Selection, f_changeAllImportance);
-		setAllLow.addListener(SWT.Selection, f_changeAllImportance);
-		setAllIrrelevant.addListener(SWT.Selection, f_changeAllImportance);
+		setAllCritical.addListener(SWT.Selection, changeAllImportance);
+		setAllHigh.addListener(SWT.Selection, changeAllImportance);
+		setAllMedium.addListener(SWT.Selection, changeAllImportance);
+		setAllLow.addListener(SWT.Selection, changeAllImportance);
+		setAllIrrelevant.addListener(SWT.Selection, changeAllImportance);
 
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
 		export.setText("Export...");

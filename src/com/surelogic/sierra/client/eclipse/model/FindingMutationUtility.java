@@ -211,4 +211,48 @@ public final class FindingMutationUtility {
 			}
 		}
 	}
+
+	public static void asyncFilterFindingTypeFromScans(final long finding_id,
+			final String findingTypeName) {
+		final Job job = new DatabaseJob("Filtering out '" + findingTypeName
+				+ "' from future scans") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					filterFindingTypeFromScans(finding_id,
+							new SLProgressMonitorWrapper(monitor));
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus("Failed to filter out '"
+							+ findingTypeName + "' from future scans", e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		job.schedule();
+	}
+
+	private static void filterFindingTypeFromScans(final long finding_id,
+			final SLProgressMonitor monitor) throws Exception {
+		Connection c = Data.transactionConnection();
+		Exception exc = null;
+		try {
+			ClientFindingManager manager = ClientFindingManager.getInstance(c);
+			manager.filterFindingTypeFromScans(finding_id, monitor);
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
+		} finally {
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
+		}
+	}
 }
