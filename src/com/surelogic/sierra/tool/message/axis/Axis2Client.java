@@ -86,7 +86,7 @@ public class Axis2Client implements SierraService {
 		if (server == null) {
 			server = SierraServerLocation.DEFAULT;
 		}
-		
+
 		// I need this for BASIC HTTP authenticator for connecting to the
 		// WebService
 		HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
@@ -101,9 +101,10 @@ public class Axis2Client implements SierraService {
 			options.setProperty(
 					org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
 					auth);
-			options.setProperty(HTTPConstants.SO_TIMEOUT, new Integer(TIMEOUT));
-			options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(
-					TIMEOUT));
+			options.setProperty(HTTPConstants.SO_TIMEOUT, Integer
+					.valueOf(TIMEOUT));
+			options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, Integer
+					.valueOf(TIMEOUT));
 		} catch (AxisFault e) {
 			throw wrapException(e);
 		}
