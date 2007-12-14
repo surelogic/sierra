@@ -42,6 +42,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_newServerItem;
 	final MenuItem f_duplicateServerItem;
 	final MenuItem f_deleteServerItem;
+	final MenuItem f_synchAllConnectedProjects;
 	final MenuItem f_sendResultFilters;
 	final MenuItem f_getResultFilters;
 	final MenuItem f_serverPropertiesItem;
@@ -106,11 +107,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	public SierraServersMediator(Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
-			MenuItem deleteServerItem, MenuItem sendResultFilters,
-			MenuItem getResultFilters, MenuItem serverPropertiesItem,
-			Button openInBrowser, Group infoGroup, Label serverURL,
-			Table projectList, MenuItem connectProjectItem,
-			MenuItem disconnectProjectItem) {
+			MenuItem deleteServerItem, MenuItem synchAllConnectedProjects,
+			MenuItem sendResultFilters, MenuItem getResultFilters,
+			MenuItem serverPropertiesItem, Button openInBrowser,
+			Group infoGroup, Label serverURL, Table projectList,
+			MenuItem connectProjectItem, MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -118,6 +119,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_newServerItem = newServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
+		f_synchAllConnectedProjects = synchAllConnectedProjects;
 		f_sendResultFilters = sendResultFilters;
 		f_getResultFilters = getResultFilters;
 		f_serverPropertiesItem = serverPropertiesItem;
