@@ -34,6 +34,7 @@ LongVariable
 MisleadingVariableName
 ShortMethodName
 ShortVariable
+MethodArgumentCouldBeFinal
 AvoidCatchingNPE
 AvoidRethrowingException
 AvoidThrowingNullPointerException
