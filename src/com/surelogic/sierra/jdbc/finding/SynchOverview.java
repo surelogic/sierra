@@ -32,7 +32,7 @@ public class SynchOverview {
 		List<SynchOverview> overview = new ArrayList<SynchOverview>();
 		try {
 			ResultSet set = oSt
-					.executeQuery("SELECT P.NAME, S.DATE_TIME FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,3,1");
+					.executeQuery("SELECT P.NAME, S.DATE_TIME FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
 			while (set.next()) {
 				overview.add(new SynchOverview(set));
 			}
