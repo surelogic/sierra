@@ -79,22 +79,7 @@ public class DeploySchemaTask {
 			conn.setAutoCommit(false);
 			log.info("Database is " + JDBCUtils.getDb(conn));
 			SierraSchemaUtility.checkAndUpdate(conn, true);
-			ServerFindingManager man = ServerFindingManager.getInstance(conn);
-			Statement st = conn.createStatement();
 			conn.commit();
-			ResultSet set = st
-					.executeQuery("SELECT S.ID,Q.QUALIFIER_ID,S.PROJECT_ID,S.SCAN_DATE_TIME FROM SCAN S, QUALIFIER_SCAN_RELTN Q WHERE Q.SCAN_ID = S.ID ORDER BY Q.QUALIFIER_ID,S.SCAN_DATE_TIME");
-			while (set.next()) {
-				int idx = 1;
-				long scanId = set.getLong(idx++);
-				long qualifierId = set.getLong(idx++);
-				long projectId = set.getLong(idx++);
-				Timestamp time = set.getTimestamp(idx++);
-				log.info("Populating scan summary for (" + scanId + ","
-						+ qualifierId + "," + projectId + "," + time + ")");
-				man.refreshScanSummary(scanId, qualifierId, projectId);
-				conn.commit();
-			}
 			log.info("Completed deploying Sierra schema to the " + dbType
 					+ " database at " + url + " [" + dbUser + "]");
 		} catch (SQLException e) {
