@@ -10,7 +10,7 @@ public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 
 	public static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";
 	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
-	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ShowFilterPreferencePage";
+	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
 
 	public void dispose() {
 		// Nothing to do
