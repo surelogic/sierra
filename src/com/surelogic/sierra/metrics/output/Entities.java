@@ -33,12 +33,12 @@ public final class Entities {
 
 	public static void addAttribute(final String name, final int value,
 			final StringBuilder b) {
-		add(name, "" + value, b);
+		add(name, Integer.toString(value), b);
 	}
 
 	public static void addAttribute(final String name, final long value,
 			final StringBuilder b) {
-		add(name, "" + value, b);
+		add(name, Long.toString(value), b);
 	}
 
 	public static void addEscaped(final String value, final StringBuilder b) {
