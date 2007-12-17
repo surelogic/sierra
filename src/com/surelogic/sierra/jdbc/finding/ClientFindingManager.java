@@ -29,11 +29,13 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
+import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
+import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
@@ -62,6 +64,7 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement updateMatchRevision;
 	private final PreparedStatement findLocalMerges;
 	private final PreparedStatement findLocalAudits;
+	private final PreparedStatement selectFindingFindingType;
 
 	private ClientFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -254,6 +257,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ " FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 						+ " WHERE"
 						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND CU.PACKAGE_NAME = ? AND CU.CU = ?");
+		selectFindingFindingType = conn
+				.prepareStatement("SELECT DISTINCT FT.UUID FROM LOCATION_MATCH LM, FINDING_TYPE FT WHERE FT.ID = LM.FINDING_TYPE_ID AND LM.FINDING_ID = ?");
 	}
 
 	/**
@@ -812,12 +817,34 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	public void filterFindingTypeFromScans(long finding_id,
+	public void filterFindingTypeFromScans(long findingId,
 			SLProgressMonitor monitor) throws SQLException {
-		/*
-		 * TODO; for finding_id look it up and find out its finding type UUID
-		 * and add it to the global filter set if it isn't already in there.
-		 */
+		selectFindingFindingType.setLong(1, findingId);
+		final ResultSet set = selectFindingFindingType.executeQuery();
+		try {
+			final SettingsManager sMan = SettingsManager.getInstance(conn);
+			List<FindingTypeFilter> filters = sMan
+					.getGlobalSettings();
+			while (set.next()) {
+				String type = set.getString(1);
+				boolean exists = false;
+				for (FindingTypeFilter filter : filters) {
+					if (type.equals(filter.getName())) {
+						filter.setFiltered(true);
+						exists = true;
+					}
+				}
+				if (!exists) {
+					FindingTypeFilter newFilter = new FindingTypeFilter();
+					newFilter.setName(type);
+					newFilter.setFiltered(true);
+					filters.add(newFilter);
+				}
+			}
+			sMan.writeGlobalSettings(filters);
+		} finally {
+			set.close();
+		}
 	}
 
 	/**
