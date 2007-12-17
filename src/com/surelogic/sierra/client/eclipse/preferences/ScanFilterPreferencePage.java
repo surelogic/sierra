@@ -47,7 +47,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 
-public class ResultFilterPreferencePage extends PreferencePage implements
+public class ScanFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	/**

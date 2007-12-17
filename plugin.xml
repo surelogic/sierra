@@ -16,9 +16,9 @@
             name="Tools"
             category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
       <page
-            class="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
-            id="com.surelogic.sierra.client.eclipse.preferences.ResultFilterPreferencePage"
-            name="Result Filter"
+            class="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
+            id="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
+            name="Scan Filter"
             category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
    </extension>
    
