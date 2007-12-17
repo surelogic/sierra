@@ -441,9 +441,17 @@ public final class Scan {
 			} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
 				LOG.info("Canceled scan on " + f_projectName);
 			} else {
-				LOG
-						.severe("Error while trying to run scan on "
-								+ f_projectName);
+				Throwable t = event.getResult().getException();
+				LOG.log(Level.SEVERE, "Error while trying to run scan on "
+						+ f_projectName, t);
+				if (event.getResult().isMultiStatus()) {
+					for (IStatus s : event.getResult().getChildren()) {
+						Throwable t1 = s.getException();
+						LOG.log(Level.SEVERE,
+								"Multi-status error while trying to run scan on "
+										+ f_projectName, t1);
+					}
+				}
 			}
 		}
 	}
