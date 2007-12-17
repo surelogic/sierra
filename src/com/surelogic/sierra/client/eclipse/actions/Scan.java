@@ -442,13 +442,14 @@ public final class Scan {
 				LOG.info("Canceled scan on " + f_projectName);
 			} else {
 				Throwable t = event.getResult().getException();
-				LOG.log(Level.SEVERE, "Error while trying to run scan on "
-						+ f_projectName, t);
+				LOG.log(Level.SEVERE,
+						"(top-level) Error while trying to run scan on "
+								+ f_projectName, t);
 				if (event.getResult().isMultiStatus()) {
 					for (IStatus s : event.getResult().getChildren()) {
 						Throwable t1 = s.getException();
 						LOG.log(Level.SEVERE,
-								"Multi-status error while trying to run scan on "
+								"(multi-status) Error while trying to run scan on "
 										+ f_projectName, t1);
 					}
 				}
