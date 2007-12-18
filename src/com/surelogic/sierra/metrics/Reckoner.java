@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,6 +30,7 @@ import com.surelogic.sierra.metrics.output.MetricsResultsGenerator;
  * Tool to calculate lines of code
  * 
  * @author Tanmay.Sinha
+ * @author Edwin.Chan
  */
 public class Reckoner {
 
@@ -142,9 +140,19 @@ public class Reckoner {
 						metricsList.add(metrics);
 				}
 			}
-		}
-
+		}		
+		Map<Metrics,Metrics> metrics = new HashMap<Metrics,Metrics>();		
 		for (Metrics m : metricsList) {
+		  Metrics removed = metrics.put(m, m);
+		  if (removed != null) {
+		    // m is already "in"
+		    final String msg = "Ignoring due to 'duplicate': "+removed.getPath();
+		    System.err.println(msg);
+		    f_mrg.error(msg);
+		  }
+		}
+		for (Metrics m : metrics.keySet()) {    
+    //for (Metrics m : metricsList) {
 			f_mrg.write(m);
 		}
 		f_mrg.close();
