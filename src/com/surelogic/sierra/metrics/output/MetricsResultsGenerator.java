@@ -51,6 +51,14 @@ public final class MetricsResultsGenerator {
 		o(b.toString());
 	}
 
+	public void error(String msg) {
+	  final StringBuilder b = new StringBuilder();
+	  b.append("<error ");
+	  Entities.addAttribute("msg", msg, b);
+	  b.append("/>");
+	  o(b.toString());
+	}
+	
 	public void close() {
 		o("</" + METRICS + ">");
 		f_out.close();
