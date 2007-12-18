@@ -28,6 +28,8 @@ public class HashGenerator {
 	private static final String FIRST = "FIRST";
 
 	private static final String LAST = "LAST";
+	
+	private static final String TOO_FAR = "TOOFAR";
 
 	private int countFileAccess = 0;
 
@@ -83,6 +85,10 @@ public class HashGenerator {
 			} else if (lastHashLine == lineNumber) {
 				return lastHashValue;
 			}
+			if (lineNumber >= cachedFileLines.size()) {
+			  log.severe("line# too big: "+lineNumber+" >= "+cachedFileLines.size());
+			  cachedFileLines = buildCachedLines(fileName);
+			}			
 			lastHashLine = lineNumber;
 
 			String valueUp = getChunkBefore(cachedFileLines, lineNumber, 30);
@@ -163,7 +169,10 @@ public class HashGenerator {
 		if (chunkLine < 0) {
 			return FIRST;
 		}
-
+    if (chunkLine >= cachedLines.size()) {
+      log.severe("line# too big: "+chunkLine+" >= "+cachedLines.size());
+      return TOO_FAR;
+    }
 		StringBuilder chunkBuf = new StringBuilder();
 		while (chunkLine >= 0 && chunkBuf.length() < maxChunkSize) {
 			chunkBuf.insert(0, cachedLines.get(chunkLine));
