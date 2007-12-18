@@ -180,7 +180,7 @@ public class SierraAnalysis extends Task {
 	private static final List<String> DEPENDENCIES = new ArrayList<String>(4);
 
 	static {
-//		DEPENDENCIES.add("backport-util-concurrent.jar");
+		// DEPENDENCIES.add("backport-util-concurrent.jar");
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class SierraAnalysis extends Task {
 			sourceDirectories = sourceDirectory
 					.toArray(new String[sourceDirectory.size()]);
 
-			if (runDocument == null /*|| "".equals(runDocument)*/) {
+			if (runDocument == null /* || "".equals(runDocument) */) {
 				runDocument = new File(tmpFolder, project.getName()
 						+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			} else if (runDocument.isDirectory()) {
@@ -569,7 +569,8 @@ public class SierraAnalysis extends Task {
 				throw new BuildException("'destdir' must be a valid directory.");
 			} else {
 				tmpFolder = new File(destDir, "Sierra-analysis-"
-						+ project.getName() + "-" + +System.currentTimeMillis());
+						+ (project == null ? "(project is null)" : project
+								.getName()) + "-" + +System.currentTimeMillis());
 				if (!tmpFolder.mkdir()) {
 					throw new BuildException(
 							"Could not create temporary output directory");
