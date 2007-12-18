@@ -380,7 +380,8 @@ public final class Scan {
 				f_complete = true;
 			} catch (RuntimeException re) {
 				f_error = true;
-				f_errorMessage = re.getMessage();
+				f_errorMessage = re.getClass().getName()+' '+re.getMessage();
+				LOG.log(Level.SEVERE, "Got exception while scanning", re);
 			}
 		}
 
