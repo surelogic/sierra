@@ -39,6 +39,7 @@ import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
+import com.surelogic.sierra.tool.message.MergeResponse;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.TrailObsoletion;
@@ -649,11 +650,15 @@ public final class ClientFindingManager extends FindingManager {
 							if (mRec.select()) {
 								if (!mRec.getFindingId()
 										.equals(finding.getId())) {
-									// This must be a local match, so delete it
+									// This must be a local match, so delete it.
+									// Update the match revision first.
+									mRec.setRevision(m.getRevision());
+									mRec.update();
 									delete(mRec.getFindingId(), finding.getId());
 								}
 							} else {
 								mRec.setFindingId(finding.getId());
+								mRec.setRevision(m.getRevision());
 								mRec.insert();
 							}
 						}
@@ -780,9 +785,9 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param monitor
 	 * @throws SQLException
 	 */
-	public void updateLocalTrailUids(String projectName, Long revision,
-			List<String> trails, List<Merge> merges, SLProgressMonitor monitor)
-			throws SQLException {
+	public void updateLocalTrailUids(String projectName,
+			List<MergeResponse> trails, List<Merge> merges,
+			SLProgressMonitor monitor) throws SQLException {
 		if ((trails != null) && (merges != null)) {
 			ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
 					.newProject();
@@ -792,18 +797,20 @@ public final class ClientFindingManager extends FindingManager {
 				MatchRecord.PK pk = new MatchRecord.PK();
 				match.setId(pk);
 				pk.setProjectId(projectRec.getId());
-				Iterator<String> trailIter = trails.iterator();
+				Iterator<MergeResponse> trailIter = trails.iterator();
 				Iterator<Merge> mergeIter = merges.iterator();
 				while (mergeIter.hasNext() && trailIter.hasNext()) {
-					String trail = trailIter.next();
+					final MergeResponse response = trailIter.next();
+					String trail = response.getTrail();
+					long revision = response.getRevision();
 					Match m = mergeIter.next().getMatch().get(0);
 					fillKey(pk, m);
 					if (match.select()) {
 						updateFindingUid.setString(1, trail);
 						updateFindingUid.setLong(2, match.getFindingId());
 						updateFindingUid.execute();
-						updateMatchRevision.setLong(1, match.getFindingId());
-						updateMatchRevision.setLong(2, revision);
+						updateMatchRevision.setLong(1, revision);
+						updateMatchRevision.setLong(2, match.getFindingId());
 						updateMatchRevision.execute();
 					} else {
 						log.log(Level.WARNING, "Could not locate finding for "
@@ -823,8 +830,7 @@ public final class ClientFindingManager extends FindingManager {
 		final ResultSet set = selectFindingFindingType.executeQuery();
 		try {
 			final SettingsManager sMan = SettingsManager.getInstance(conn);
-			List<FindingTypeFilter> filters = sMan
-					.getGlobalSettings();
+			List<FindingTypeFilter> filters = sMan.getGlobalSettings();
 			while (set.next()) {
 				String type = set.getString(1);
 				boolean exists = false;

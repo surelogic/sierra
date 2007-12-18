@@ -34,6 +34,7 @@ import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.AuditTrailUpdate;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
+import com.surelogic.sierra.tool.message.MergeResponse;
 import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public final class ServerFindingManager extends FindingManager {
@@ -134,7 +135,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   OBS.OBSOLETED_BY_REVISION > ? AND"
 						+ "   F.ID = OBS.OBSOLETED_BY_ID");
 		selectUpdatedMatches = conn
-				.prepareStatement("SELECT F.UUID,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID"
+				.prepareStatement("SELECT F.UUID,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
 						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
 						+ "   WHERE"
 						+ "   LM.PROJECT_ID = ? AND"
@@ -290,21 +291,25 @@ public final class ServerFindingManager extends FindingManager {
 	/**
 	 * Find or generate a finding for each merge, and return the trails.
 	 * 
+	 * WARNING: This method works for arbitrary-sized merges, EXCEPT that the
+	 * trail revision makes some assumptions. We need to fix up trail revision
+	 * logic if we want to do merges w/ more than one match.
+	 * 
 	 * @param project
 	 * @param revision
 	 * @param merges
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<String> mergeAuditTrails(String project, Long revision,
-			List<Merge> merges) throws SQLException {
+	public List<MergeResponse> mergeAuditTrails(String project,
+			final Long revision, List<Merge> merges) throws SQLException {
 		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		projectRecord.setName(project);
 		if (!projectRecord.select()) {
 			projectRecord.insert();
 		}
-		List<String> trails = new ArrayList<String>();
+		List<MergeResponse> trails = new ArrayList<MergeResponse>();
 		for (Merge merge : merges) {
 			List<Match> matches = merge.getMatch();
 			if (matches != null && !matches.isEmpty()) {
@@ -332,11 +337,13 @@ public final class ServerFindingManager extends FindingManager {
 				List<MatchRecord.PK> unmatched = new ArrayList<MatchRecord.PK>(
 						matchIds.size());
 				Set<Long> findings = new TreeSet<Long>();
+				long trailRevision = revision;
 				// Try to look up any existing matches
 				for (MatchRecord.PK matchId : matchIds) {
 					matchRecord.setId(matchId);
 					if (matchRecord.select()
 							&& (getFinding(matchRecord.getFindingId()).getUid() != null)) {
+						trailRevision = matchRecord.getRevision();
 						findings.add(matchRecord.getFindingId());
 					} else {
 						unmatched.add(matchId);
@@ -379,7 +386,10 @@ public final class ServerFindingManager extends FindingManager {
 						matchRecord.insert();
 					}
 				}
-				trails.add(uuid);
+				final MergeResponse mergeResponse = new MergeResponse();
+				mergeResponse.setRevision(trailRevision);
+				mergeResponse.setTrail(uuid);
+				trails.add(mergeResponse);
 			}
 		}
 		return trails;
@@ -450,6 +460,7 @@ public final class ServerFindingManager extends FindingManager {
 					m.setClassName(set.getString(idx++));
 					m.setHash(set.getLong(idx++));
 					m.setFindingType(set.getString(idx++));
+					m.setRevision(set.getLong(idx++));
 					matches.add(m);
 				}
 			} finally {

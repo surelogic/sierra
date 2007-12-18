@@ -75,7 +75,7 @@ public class ClientProjectManager extends ProjectManager {
 			MergeAuditTrailResponse mergeResponse = service
 					.mergeAuditTrails(mergeRequest);
 			findingManager.updateLocalTrailUids(projectName, mergeResponse
-					.getRevision(), mergeResponse.getTrail(), merges, monitor);
+					.getTrail(), merges, monitor);
 		}
 		if (monitor.isCanceled()) {
 			return;
