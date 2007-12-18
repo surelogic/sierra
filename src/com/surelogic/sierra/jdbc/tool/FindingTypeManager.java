@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.surelogic.common.Entities;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
@@ -328,7 +329,7 @@ public class FindingTypeManager {
 					fRec.setUid(uid);
 					fRec.setName(ft.getName().trim());
 					fRec.setInfo(ft.getInfo().trim());
-					fRec.setShortMessage(ft.getShortMessage().trim());
+					fRec.setShortMessage(Entities.trimInternal(ft.getShortMessage().trim()));
 					if (fRec.select()) {
 						fRec.update();
 					} else {
