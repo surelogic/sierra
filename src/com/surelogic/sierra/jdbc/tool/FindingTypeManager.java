@@ -328,7 +328,7 @@ public class FindingTypeManager {
 					fRec.setUid(uid);
 					fRec.setName(ft.getName().trim());
 					fRec.setInfo(ft.getInfo().trim());
-					fRec.setShortMessage(ft.getShortMessage());
+					fRec.setShortMessage(ft.getShortMessage().trim());
 					if (fRec.select()) {
 						fRec.update();
 					} else {
