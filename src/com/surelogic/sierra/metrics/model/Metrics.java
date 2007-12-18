@@ -48,4 +48,30 @@ public class Metrics {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	@Override
+	public int hashCode() {
+	  if (className == null) {
+	    return packageName == null ? 0 : packageName.hashCode();
+	  }
+	  return className.hashCode() + 
+	        (packageName == null ? 0 : packageName.hashCode());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	  if (o instanceof Metrics) {
+	    Metrics m = (Metrics) o;
+	    if (this.className == null) {
+	      return m.className == null &&
+	            (this.packageName == null ? 
+	             m.packageName == null : this.packageName.equals(m.packageName));
+	    }
+	    return this.className.equals(m.className) && 
+            (this.packageName == null ? 
+             m.packageName == null : this.packageName.equals(m.packageName));
+
+	  }
+	  return false;  
+	}
 }
