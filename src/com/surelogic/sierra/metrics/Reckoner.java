@@ -46,7 +46,7 @@ public class Reckoner {
 	public static void main(String args[]) {
 
 		String outputFile = null;
-		List<File> targets = null;
+		final List<File> targets = new ArrayList<File>();
 
 		final Options options = new Options();
 		options.addOption("target", true,
@@ -73,7 +73,6 @@ public class Reckoner {
 			if (cmd.hasOption("target")) {
 				String target = cmd.getOptionValue("target");
 				List<?> holder = cmd.getArgList();
-				targets = new ArrayList<File>();
 
 				if (!"".equals(target)) {
 					targets.add(new File(target));
