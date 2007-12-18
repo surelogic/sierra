@@ -15,14 +15,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 /**
  * <p>
  * Java class for Settings complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ *
  * <pre>
  * &lt;complexType name=&quot;Settings&quot;&gt;
  *   &lt;complexContent&gt;
@@ -36,93 +37,94 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Settings", propOrder = { "uid", "filterSets", "revision", "name" })
+@XmlType(name = "Settings", propOrder =  {
+    "uid", "filterSets", "revision", "name"}
+)
 @XmlRootElement
 public class Settings {
-	protected List<String> filterSets;
-	protected long revision;
-	@XmlElement(required = true)
-	protected String name;
-	@XmlElement(required = true)
-	protected String uid;
+    protected List<String> filterSets;
+    protected long revision;
+    @XmlElement(required = true)
+    protected String name;
+    @XmlElement(required = true)
+    protected String uid;
 
-	/**
-	 * Gets the value of the filterSets property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the filterSets property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getFilterSets().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
-	 */
-	public List<String> getFilterSets() {
-		if (filterSets == null) {
-			filterSets = new ArrayList<String>();
-		}
+    /**
+     * Gets the value of the filterSets property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the filterSets property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     *
+     * <pre>
+     * getFilterSets().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list {@link String }
+     *
+     *
+     */
+    public List<String> getFilterSets() {
+        if (filterSets == null) {
+            filterSets = new ArrayList<String>();
+        }
 
-		return this.filterSets;
-	}
+        return this.filterSets;
+    }
 
-	/**
-	 * Gets the value of the revision property.
-	 * 
-	 */
-	public long getRevision() {
-		return revision;
-	}
+    /**
+     * Gets the value of the revision property.
+     *
+     */
+    public long getRevision() {
+        return revision;
+    }
 
-	/**
-	 * Sets the value of the revision property.
-	 * 
-	 */
-	public void setRevision(long value) {
-		this.revision = value;
-	}
+    /**
+     * Sets the value of the revision property.
+     *
+     */
+    public void setRevision(long value) {
+        this.revision = value;
+    }
 
-	/**
-	 * Gets the value of the name property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Gets the value of the name property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Sets the value of the name property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setName(String value) {
-		this.name = value;
-	}
+    /**
+     * Sets the value of the name property.
+     *
+     * @param value
+     *            allowed object is {@link String }
+     *
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
 
-	public String getUid() {
-		return uid;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }

@@ -4,11 +4,6 @@ import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.FindingTypeFilter;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GlobalSettings;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.WriteGlobalSettings;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GlobalSettingsRequest;
-import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetGlobalSettings;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifact;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ArtifactType;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Artifacts;
@@ -22,19 +17,24 @@ import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Commi
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrails;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.CommitAuditTrailsResponse;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Config;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.MergeResponse;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Error;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Errors;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.FilterEntry;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.FilterSet;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrailRequest;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrails;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetAuditTrailsResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetGlobalSettings;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiers;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetQualifiersResponse;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetSettings;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetSettingsResponse;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUid;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GetUidResponse;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GlobalSettings;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.GlobalSettingsRequest;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.IdentifierType;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Importance;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Match;
@@ -55,6 +55,7 @@ import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.Sever
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.SourceLocation;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.ToolOutput;
 import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.TrailObsoletion;
+import com.surelogic.sierra.tool.message.axis.SierraServiceBeanServiceStub.WriteGlobalSettings;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
@@ -214,6 +215,7 @@ public class Axis2Client implements SierraService {
 		try {
 			final GetGlobalSettings in = new GetGlobalSettings();
 			in.setGetGlobalSettings(new GlobalSettingsRequest());
+
 			return new GlobalSettingsConverter().convert(stub
 					.getGlobalSettings(in).getGetGlobalSettingsResponse());
 		} catch (RemoteException e) {
@@ -310,7 +312,6 @@ public class Axis2Client implements SierraService {
 	private static class MessageGlobalSettingsConverter
 			implements
 			Converter<com.surelogic.sierra.tool.message.GlobalSettings, GlobalSettings> {
-
 		public GlobalSettings convert(
 				com.surelogic.sierra.tool.message.GlobalSettings in) {
 			GlobalSettings out = new GlobalSettings();
@@ -320,65 +321,70 @@ public class Axis2Client implements SierraService {
 					.size()];
 			out.setFilter(collToArray(in.getFilter(), outFilters,
 					new MessageFindingTypeFilterConverter()));
+
 			return out;
 		}
-
 	}
 
 	private static class MessageFindingTypeFilterConverter
 			implements
 			Converter<com.surelogic.sierra.tool.message.FindingTypeFilter, FindingTypeFilter> {
-
 		public FindingTypeFilter convert(
 				com.surelogic.sierra.tool.message.FindingTypeFilter in) {
 			FindingTypeFilter out = new FindingTypeFilter();
 			com.surelogic.sierra.tool.message.Importance i = in.getImportance();
+
 			if (i != null) {
 				out.setImportance(Importance.Factory.fromValue(i.name()));
 			}
+
 			Integer delta = in.getDelta();
+
 			if (delta != null) {
 				in.setDelta(delta);
 			}
+
 			out.setFiltered(in.isFiltered());
 			out.setName(in.getName());
+
 			return out;
 		}
-
 	}
 
 	private static class GlobalSettingsConverter
 			implements
 			Converter<GlobalSettings, com.surelogic.sierra.tool.message.GlobalSettings> {
-
 		public com.surelogic.sierra.tool.message.GlobalSettings convert(
 				GlobalSettings in) {
 			com.surelogic.sierra.tool.message.GlobalSettings out = new com.surelogic.sierra.tool.message.GlobalSettings();
 			FindingTypeFilter[] filters = in.getFilter();
+
 			if (filters != null) {
 				out.setFilter(arrayToList(filters,
 						new FindingTypeFilterConverter()));
 			}
+
 			return out;
 		}
-
 	}
 
 	private static class FindingTypeFilterConverter
 			implements
 			Converter<FindingTypeFilter, com.surelogic.sierra.tool.message.FindingTypeFilter> {
-
 		public com.surelogic.sierra.tool.message.FindingTypeFilter convert(
 				FindingTypeFilter in) {
 			com.surelogic.sierra.tool.message.FindingTypeFilter out = new com.surelogic.sierra.tool.message.FindingTypeFilter();
 			Importance i = in.getImportance();
+
 			if (i != null) {
 				out.setImportance(com.surelogic.sierra.tool.message.Importance
 						.fromValue(in.getImportance().getValue()));
 			}
+
 			out.setDelta(in.getDelta());
 			out.setFiltered(in.getFiltered());
 			out.setName(in.getName());
+
 			return out;
 		}
 	}
@@ -577,7 +583,7 @@ public class Axis2Client implements SierraService {
 			out.setFindingType(in.getFindingType());
 			out.setHash(in.getHash());
 			out.setPackageName(in.getPackageName());
-
+			out.setRevision(in.getRevision());
 			return out;
 		}
 	}
@@ -612,16 +618,26 @@ public class Axis2Client implements SierraService {
 			final com.surelogic.sierra.tool.message.MergeAuditTrailResponse out = new com.surelogic.sierra.tool.message.MergeAuditTrailResponse();
 			final MergeAuditTrailResponse response = in
 					.getMergeAuditTrailsResponse();
-			out.setRevision(response.getRevision());
-
-			String[] trails = response.getTrail();
-
-			if (trails != null) {
-				out.setTrail(Arrays.asList(trails));
+			MergeResponse[] trail = response.getTrail();
+			if (trail != null) {
+				out.setTrail(arrayToList(trail, new MergeResponseConverter()));
 			}
-
 			return out;
 		}
+	}
+
+	private static class MergeResponseConverter
+			implements
+			Converter<MergeResponse, com.surelogic.sierra.tool.message.MergeResponse> {
+
+		public com.surelogic.sierra.tool.message.MergeResponse convert(
+				MergeResponse in) {
+			com.surelogic.sierra.tool.message.MergeResponse out = new com.surelogic.sierra.tool.message.MergeResponse();
+			out.setRevision(in.getRevision());
+			out.setTrail(in.getTrail());
+			return out;
+		}
+
 	}
 
 	private static class MergeAuditTrailsConverter

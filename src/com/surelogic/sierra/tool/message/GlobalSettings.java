@@ -8,22 +8,22 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
 @XmlRootElement
 public class GlobalSettings {
+    private List<FindingTypeFilter> filter;
 
-	private List<FindingTypeFilter> filter;
+    public List<FindingTypeFilter> getFilter() {
+        if (filter == null) {
+            filter = new ArrayList<FindingTypeFilter>();
+        }
 
-	public List<FindingTypeFilter> getFilter() {
-		if (filter == null) {
-			filter = new ArrayList<FindingTypeFilter>();
-		}
-		return filter;
-	}
+        return filter;
+    }
 
-	public void setFilter(List<FindingTypeFilter> filter) {
-		this.filter = filter;
-	}
-
+    public void setFilter(List<FindingTypeFilter> filter) {
+        this.filter = filter;
+    }
 }

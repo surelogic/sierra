@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
@@ -12,22 +13,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlRootElement
 public class MergeAuditTrailResponse {
-    private List<String> trail;
-    private Long revision;
+    private List<MergeResponse> trail;
 
-    public Long getRevision() {
-        return revision;
-    }
+    public List<MergeResponse> getTrail() {
+        if (trail == null) {
+            trail = new ArrayList<MergeResponse>();
+        }
 
-    public void setRevision(Long revision) {
-        this.revision = revision;
-    }
-
-    public List<String> getTrail() {
         return trail;
     }
 
-    public void setTrail(List<String> trail) {
+    public void setTrail(List<MergeResponse> trail) {
         this.trail = trail;
     }
 }

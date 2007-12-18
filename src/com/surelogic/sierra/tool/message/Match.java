@@ -12,6 +12,7 @@ public class Match {
     private String className;
     private Long hash;
     private String findingType;
+    private Long revision;
 
     public Match() {
         // Do nothing
@@ -55,6 +56,14 @@ public class Match {
 
     public void setFindingType(String findingType) {
         this.findingType = findingType;
+    }
+
+    public Long getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Long revision) {
+        this.revision = revision;
     }
 
     @Override
