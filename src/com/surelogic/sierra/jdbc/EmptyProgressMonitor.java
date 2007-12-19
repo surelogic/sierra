@@ -48,4 +48,11 @@ public class EmptyProgressMonitor implements SLProgressMonitor {
 	public static SLProgressMonitor instance() {
 		return singleton;
 	}
+
+  public void failed(Throwable t) {
+  }
+
+  public Throwable getFailureTrace() {
+    return null;
+  }
 }
