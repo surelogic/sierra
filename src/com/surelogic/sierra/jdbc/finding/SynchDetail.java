@@ -56,7 +56,11 @@ public class SynchDetail {
 					try {
 						ResultSet auditSet = auditSt.executeQuery(auditStmt);
 						while (auditSet.next()) {
-							audits.add(new AuditDetail(auditSet));
+							/*
+							 * TODO: Limit to 2000 for now
+							 */
+							if (audits.size() < 2000)
+								audits.add(new AuditDetail(auditSet));
 						}
 					} finally {
 						auditSt.close();
