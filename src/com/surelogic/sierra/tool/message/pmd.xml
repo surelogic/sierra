@@ -45,7 +45,7 @@
 			Empty If Statement finds instances where a condition is
 			checked but nothing is done about it.
 		</info>
-		<name>Empty If Stmt</name>
+		<name>Empty If Statement</name>
 	</findingType>
 	<findingType>
 		<id>EmptyWhileStmt</id>
@@ -64,7 +64,7 @@
 			does a lot in the exit expression, rewrite it to make it
 			clearer.
 		</info>
-		<name>Empty While Stmt</name>
+		<name>Empty While Statement</name>
 	</findingType>
 	<findingType>
 		<id>EmptyTryBlock</id>
@@ -137,7 +137,6 @@
 
 	<findingType>
 		<id>DoubleCheckedLocking</id>
-		<artifact tool="PMD" mnemonic="DoubleCheckedLocking"></artifact>
 		<shortMessage>
 			Partially created objects can be returned by the Double
 			Checked Locking pattern when used in Java. An optimizing JRE
@@ -156,6 +155,7 @@
 		</info>
 		<name>Double Checked Locking</name>
 	</findingType>
+	
 	<findingType>
 		<id>ReturnFromFinallyBlock</id>
 		<artifact tool="PMD" mnemonic="ReturnFromFinallyBlock">
@@ -442,7 +442,7 @@
 		<info>
 			Avoid using if statements without using curly braces.
 		</info>
-		<name>If Stmts Must Use Braces</name>
+		<name>If Statements Must Use Braces</name>
 	</findingType>
 	<findingType>
 		<id>WhileLoopsMustUseBraces</id>
@@ -466,7 +466,7 @@
 		<info>
 			Avoid using if..else statements without using curly braces.
 		</info>
-		<name>If Else Stmts Must Use Braces</name>
+		<name>If Else Statements Must Use Braces</name>
 	</findingType>
 	<findingType>
 		<id>ForLoopsMustUseBraces</id>
@@ -631,7 +631,7 @@
 			statements. Using this algorithm, lines of code that are
 			split are counted as one.
 		</info>
-		<name>Ncss Method Count</name>
+		<name>NCSS Method Count</name>
 	</findingType>
 	<findingType>
 		<id>NcssTypeCount</id>
@@ -650,7 +650,7 @@
 			statements. Using this algorithm, lines of code that are
 			split are counted as one.
 		</info>
-		<name>Ncss Type Count</name>
+		<name>NCSS Type Count</name>
 	</findingType>
 	<findingType>
 		<id>NcssConstructorCount</id>
@@ -669,7 +669,7 @@
 			statements. Using this algorithm, lines of code that are
 			split are counted as one.
 		</info>
-		<name>Ncss Constructor Count</name>
+		<name>NCSS Constructor Count</name>
 	</findingType>
 	<findingType>
 		<id>UnnecessaryConstructor</id>
@@ -778,7 +778,7 @@
 			Avoid importing anything from the 'sun.*' packages. These
 			packages are not portable and are likely to change.
 		</info>
-		<name>Dont Import Sun</name>
+		<name>Don't Import sun.* Packages</name>
 	</findingType>
 	<findingType>
 		<id>SuspiciousOctalEscape</id>
@@ -1054,7 +1054,7 @@
 			Switch statements should have a default label.
 		</shortMessage>
 		<info>Switch statements should have a default label.</info>
-		<name>Switch Stmts Should Have Default</name>
+		<name>Switch Statements Should Have Default</name>
 	</findingType>
 	<findingType>
 		<id>AvoidDeeplyNestedIfStmts</id>
@@ -1064,7 +1064,7 @@
 			Deeply nested if..then statements are hard to read.
 		</shortMessage>
 		<info>Deeply nested if..then statements are hard to read.</info>
-		<name>Avoid Deeply Nested If Stmts</name>
+		<name>Avoid Deeply Nested If Statements</name>
 	</findingType>
 	<findingType>
 		<id>AvoidReassigningParameters</id>
@@ -1217,7 +1217,7 @@
 			By convention, the default label should be the last label in
 			a switch statement.
 		</info>
-		<name>Default Label Not Last In Switch Stmt</name>
+		<name>Default Label Not Last In Switch Statements</name>
 	</findingType>
 	<findingType>
 		<id>NonCaseLabelInSwitchStatement</id>
@@ -1452,7 +1452,7 @@
 			Each caught exception type should be handled in its own
 			catch clause.
 		</info>
-		<name>Avoid Instanceof Checks In Catch Clause</name>
+		<name>Avoid instanceof Checks In Catch Clause</name>
 	</findingType>
 	<findingType>
 		<id>AbstractClassWithoutAbstractMethod</id>
@@ -1684,8 +1684,6 @@
 		<name>Finalize Overloaded</name>
 	</findingType>
 
-
-
 	<findingType>
 		<id>DuplicateImports</id>
 		<artifact tool="PMD" mnemonic="DuplicateImports"></artifact>
@@ -1704,7 +1702,7 @@
 			Avoid importing anything from the package 'java.lang'. These
 			classes are automatically imported (JLS 7.5.3).
 		</info>
-		<name>Dont Import Java Lang</name>
+		<name>Don't Import java.lang</name>
 	</findingType>
 	<findingType>
 		<id>UnusedImports</id>
@@ -1751,7 +1749,7 @@
 			The EJB Specification state that any MessageDrivenBean or
 			SessionBean should be suffixed by Bean.
 		</info>
-		<name>MDBAnd Session Bean Naming Convention</name>
+		<name>MDB And Session Bean Naming Convention</name>
 	</findingType>
 	<findingType>
 		<id>RemoteSessionInterfaceNamingConvention</id>
@@ -1846,7 +1844,7 @@
 			Classes that are serializable should provide a
 			serialVersionUID field.
 		</info>
-		<name>Missing Serial Version Uid</name>
+		<name>Missing Serial Version UID</name>
 	</findingType>
 	<findingType>
 		<id>JUnitStaticSuite</id>
@@ -2073,7 +2071,7 @@
 		<info>
 			System.(out|err).print is used, consider using a logger.
 		</info>
-		<name>System Println</name>
+		<name>Use of System Println</name>
 	</findingType>
 	<findingType>
 		<id>AvoidPrintStackTrace</id>
@@ -2634,7 +2632,7 @@
 			catch block may hide the original error, causing other more
 			subtle errors in its wake.
 		</info>
-		<name>Avoid Catching Npe</name>
+		<name>Avoid Catching NullPointerException</name>
 	</findingType>
 	<findingType>
 		<id>AvoidThrowingRawExceptionTypes</id>
@@ -2672,7 +2670,7 @@
 			instead; this will be clearly seen as a programmer-initiated
 			exception.
 		</info>
-		<name>Avoid Throwing Null Pointer Exception</name>
+		<name>Avoid Throwing NullPointerException</name>
 	</findingType>
 	<findingType>
 		<id>AvoidRethrowingException</id>
@@ -2696,7 +2694,7 @@
 			[ Errors are system exceptions. Do not extend them.
 		</shortMessage>
 		<info>[ Errors are system exceptions. Do not extend them.</info>
-		<name>Do Not Extend Java Lang Error</name>
+		<name>Do Not Extend java.lang.Error</name>
 	</findingType>
 	<findingType>
 		<id>AvoidDuplicateLiterals</id>
@@ -2724,7 +2722,7 @@
 			Avoid calling toString() on String objects; this is
 			unnecessary.
 		</info>
-		<name>String To String</name>
+		<name>Call to toString() on a String</name>
 	</findingType>
 	<findingType>
 		<id>InefficientStringBuffering</id>
@@ -2873,7 +2871,7 @@
 			No need to call String.valueOf to append to a string; just
 			use the valueOf() argument directly.
 		</info>
-		<name>Useless String Value Of</name>
+		<name>Useless String.valueOf</name>
 	</findingType>
 	<findingType>
 		<id>StringBufferInstantiationWithChar</id>

@@ -887,6 +887,7 @@ thread.</p>]]>
 	<findingType>
 		<id>PossibleDoubleCheckOfField</id>
 		<artifact tool="FindBugs" mnemonic="DC_DOUBLECHECK"></artifact>
+		<artifact tool="PMD" mnemonic="DoubleCheckedLocking"></artifact>
 		<shortMessage>Possible double check of field</shortMessage>
 		<info>
 			&lt;p&gt; This method may contain an instance of
@@ -895,7 +896,11 @@ thread.</p>]]>
 			model.&amp;nbsp; For more information, see the web page
 			&lt;a
 			href=&quot;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&quot;
-			&gt;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&lt;/a&gt;.&lt;/p&gt;
+			&gt;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&lt;/a&gt;
+			as well as &lt;a
+			href=&quot;http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html&quot;
+			&gt;http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html&lt;/a&gt;
+			.&lt;/p&gt;
 		</info>
 		<name>Double-checked Locking</name>
 	</findingType>
