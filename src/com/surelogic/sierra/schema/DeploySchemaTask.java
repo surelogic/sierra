@@ -3,15 +3,11 @@ package com.surelogic.sierra.schema;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 
 /**
  * Deploy the Sierra schema to a database. The below system properties specifiy
