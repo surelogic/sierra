@@ -1,18 +1,20 @@
 package com.surelogic.sierra.tool;
 
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance implements IToolInstance {
+  private final ITool tool;
   private final SLProgressMonitor monitor;
   private List<IToolTarget> targets = new ArrayList<IToolTarget>();
-  private List<URL> paths = new ArrayList<URL>();
+  private List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
   
-  protected AbstractToolInstance(SLProgressMonitor m) {
+  protected AbstractToolInstance(ITool t, SLProgressMonitor m) {
+    tool = t;
     monitor = m;
   }
   
@@ -34,20 +36,20 @@ public abstract class AbstractToolInstance implements IToolInstance {
     targets.add(target);
   }
   
-  public final void addToClassPath(URL loc) {
+  public final void addToClassPath(URI loc) {
     checkArgs(loc);
     paths.add(loc);
   }
 
-  protected final Iterator<IToolTarget> getTargets() {
-    return targets.listIterator();
+  protected final Iterable<IToolTarget> getTargets() {
+    return targets;
   }
   
-  protected final Iterator<URL> getPaths() {
-    return paths.listIterator();
+  protected final Iterable<URI> getPaths() {
+    return paths;
   }
   
-  public void run() {
+  public final void run() {
     if (done) {
       throw new IllegalArgumentException("Tool instance cannot be reused");
     }
@@ -66,4 +68,29 @@ public abstract class AbstractToolInstance implements IToolInstance {
   }
 
   protected abstract void execute() throws Exception;    
+  
+  /**************** ITool **********************/
+  public final String getHtmlDescription() {
+    return tool.getHtmlDescription();
+  }
+
+  public final String getName() {
+    return tool.getName();
+  }
+
+  public final String getTitle() {
+    return tool.getTitle();
+  }
+
+  public final String getVersion() {
+    return tool.getVersion();
+  } 
+  
+  public final Set<String> getArtifactTypes() {
+    return tool.getArtifactTypes();
+  }
+  
+  public final IToolInstance create(SLProgressMonitor m) {
+    throw new UnsupportedOperationException("Instances can't create other instances");
+  }
 }

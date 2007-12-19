@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.targets;
 
-import java.net.URL;
+import java.net.*;
+import java.util.*;
 
 /**
  * A target for a single file
@@ -8,11 +9,11 @@ import java.net.URL;
  * @author Edwin.Chan
  */
 public final class FileTarget extends AbstractToolTarget {
-  public FileTarget(boolean isSrc, URL loc) {
+  public FileTarget(boolean isSrc, URI loc) {
     super(isSrc, loc);
   }
   
-  public FileTarget(URL loc) {
+  public FileTarget(URI loc) {
     super(true, loc);
   }
   
@@ -22,5 +23,30 @@ public final class FileTarget extends AbstractToolTarget {
 
   public final Kind getKind() {
     return Kind.FILE;
+  }
+
+  public Iterable<URI> getFiles() {
+    List<URI> l = new ArrayList<URI>(1);
+    l.add(getLocation());
+    return l;
+    /*
+    return new Iterator<URI>() {
+      private boolean done;
+      public boolean hasNext() {
+        return !done;
+      }
+
+      public URI next() {
+        if (done) {
+          throw new NoSuchElementException();
+        }
+        done = true;
+        return getLocation();
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }};
+      */
   }
 }

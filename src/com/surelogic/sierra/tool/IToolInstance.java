@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool;
 
-import java.net.URL;
+import java.net.*;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.targets.IToolTarget;
@@ -26,5 +26,5 @@ public interface IToolInstance extends ITool, Runnable {
    * Adds a jar, class, etc that may be used if the tool requires 
    * the project class path
    */
-  void addToClassPath(URL loc); 
+  void addToClassPath(URI loc); 
 }

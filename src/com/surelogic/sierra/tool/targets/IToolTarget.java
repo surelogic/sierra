@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.targets;
 
-import java.net.URL;
+import java.net.*;
 
 /**
  * This represents some files to be processed by a tool
@@ -24,7 +24,7 @@ public interface IToolTarget {
   /**
    * @return the location of the file, directory, or jar
    */
-  URL getLocation();
+  URI getLocation();
 
   /**   
    * @param relativePath The path from the location above
@@ -32,4 +32,9 @@ public interface IToolTarget {
    *         not be processed
    */
   boolean exclude(String relativePath);
+  
+  /**
+   * @return A list of URIs for the various files in this target
+   */
+  Iterable<URI> getFiles();
 }

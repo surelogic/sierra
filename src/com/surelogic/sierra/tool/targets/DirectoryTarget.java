@@ -1,9 +1,9 @@
 package com.surelogic.sierra.tool.targets;
 
-import java.net.URL;
+import java.net.*;
 
 public abstract class DirectoryTarget extends AbstractToolTarget {
-  protected DirectoryTarget(boolean isSrc, URL loc) {
+  protected DirectoryTarget(boolean isSrc, URI loc) {
     super(isSrc, loc);
   }
   

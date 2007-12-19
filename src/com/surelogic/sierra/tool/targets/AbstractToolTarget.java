@@ -1,12 +1,12 @@
 package com.surelogic.sierra.tool.targets;
 
-import java.net.URL;
+import java.net.*;
 
 public abstract class AbstractToolTarget implements IToolTarget {
   private final boolean isSource;
-  protected final URL location;
+  protected final URI location;
 
-  protected AbstractToolTarget(boolean isSrc, URL loc) {
+  protected AbstractToolTarget(boolean isSrc, URI loc) {
     location = loc;
     isSource = isSrc;
   }
@@ -15,7 +15,7 @@ public abstract class AbstractToolTarget implements IToolTarget {
     return isSource;
   }
 
-  public final URL getLocation() {
+  public final URI getLocation() {
     return location;
   }
 }
