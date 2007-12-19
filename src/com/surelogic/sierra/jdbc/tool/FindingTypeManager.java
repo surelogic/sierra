@@ -327,10 +327,12 @@ public class FindingTypeManager {
 					duplicates.add(uid);
 				} else {
 					fRec.setUid(uid);
+					boolean exists = fRec.select();
 					fRec.setName(ft.getName().trim());
 					fRec.setInfo(ft.getInfo().trim());
-					fRec.setShortMessage(Entities.trimInternal(ft.getShortMessage().trim()));
-					if (fRec.select()) {
+					fRec.setShortMessage(Entities.trimInternal(ft
+							.getShortMessage().trim()));
+					if (exists) {
 						fRec.update();
 					} else {
 						fRec.insert();
@@ -369,9 +371,10 @@ public class FindingTypeManager {
 			// types
 			for (Category cat : type.getCategory()) {
 				cRec.setUid(cat.getId().trim());
+				boolean exists = cRec.select();
 				cRec.setName(cat.getName().trim());
 				cRec.setDescription(cat.getDescription());
-				if (cRec.select()) {
+				if (exists) {
 					cRec.update();
 				} else {
 					cRec.insert();
