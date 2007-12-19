@@ -107,7 +107,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				for (char c : chars) {
 					boolean number = '0' <= c && c <= '9';
 					boolean alpha = 'A' <= c && c <= 'z';
-					boolean spec = c == '?' || c == ' ' || c == '(' || c == ')';
+					boolean spec = c == '?' || c == ' ' || c == '(' || c == ')'
+							|| c == '.';
 					if (!(number || alpha || spec)) {
 						event.doit = false;
 						return;
