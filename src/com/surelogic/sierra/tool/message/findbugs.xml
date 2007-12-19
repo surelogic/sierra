@@ -225,7 +225,7 @@ thread.</p>]]>
 			Cloneable interface with the exception of a final method
 			that only throws CloneNotSupportedException.
 		</info>
-		<name>Clone method must implement cloneable</name>
+		<name>Clone Method Must Implement Cloneable</name>
 	</findingType>
 	<findingType>
 		<id>NoSuperCloneCall</id>
@@ -295,7 +295,7 @@ thread.</p>]]>
 			general, exceptions should be handled or reported in some
 			way, or they should be thrown out of the method.&lt;/p&gt;
 		</info>
-		<name>Method might drop exception</name>
+		<name>Method Might Drop Exception</name>
 	</findingType>
 	<findingType>
 		<id>MethodMightIgnoreException</id>
@@ -397,7 +397,7 @@ thread.</p>]]>
 			net.jcip.annotations.Immutable, and the rules for that
 			annotation require that all fields are final. .&lt;/p&gt;
 		</info>
-		<name>Field Isnt Final In Immutable Class</name>
+		<name>Field Isn't Final In Immutable Class</name>
 	</findingType>
 	<findingType>
 		<id>ThreadPassedWhereRunnableExpected</id>
@@ -431,7 +431,7 @@ thread.</p>]]>
 			for more information. Consider using
 			&lt;code&gt;java.net.URI&lt;/code&gt; instead. &lt;/p&gt;
 		</info>
-		<name>Avoid Collection Of Urls</name>
+		<name>Avoid Collection Of URLs</name>
 	</findingType>
 	<findingType>
 		<id>BlockingMethodsOnURL</id>
@@ -449,7 +449,7 @@ thread.</p>]]>
 			for more information. Consider using
 			&lt;code&gt;java.net.URI&lt;/code&gt; instead. &lt;/p&gt;
 		</info>
-		<name>Blocking Methods On Url</name>
+		<name>Blocking Methods On URL</name>
 	</findingType>
 	<findingType>
 		<id>AnnotationIsNotVisibleToReflection</id>
@@ -480,7 +480,7 @@ thread.</p>]]>
 			code to be invoked by other code. Consider throwing a
 			RuntimeException instead.&lt;/p&gt;
 		</info>
-		<name>Avoid Calling System Exit</name>
+		<name>Avoid Calling System.exit(...)</name>
 	</findingType>
 	<findingType>
 		<id>AvoidCallingSystemRunFinalizersOnExit</id>
@@ -496,7 +496,7 @@ thread.</p>]]>
 			the most dangerous methods in the Java libraries.&lt;/em&gt;
 			-- Joshua Bloch&lt;/p&gt;
 		</info>
-		<name>Avoid Calling System Run Finalizers On Exit</name>
+		<name>Avoid Calling System.runFinalizersOnExit()</name>
 	</findingType>
 	<findingType>
 		<id>InefficientStringConstructor</id>
@@ -544,7 +544,7 @@ thread.</p>]]>
 			is just a redundant operation. Just use the
 			String.&lt;/p&gt;
 		</info>
-		<name>Avoid Calling toString On String</name>
+		<name>Avoid Calling toString() On String</name>
 	</findingType>
 	<findingType>
 		<id>AvoidExplicitGarbageCollection</id>
@@ -897,7 +897,7 @@ thread.</p>]]>
 			href=&quot;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&quot;
 			&gt;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&lt;/a&gt;.&lt;/p&gt;
 		</info>
-		<name>Doublecheck</name>
+		<name>Double-checked Locking</name>
 	</findingType>
 	<findingType>
 		<id>FI_FINALIZER_NULLS_FIELDS</id>
@@ -1056,7 +1056,7 @@ thread.</p>]]>
 			equals using the covariant enum method, and as not equal
 			when compared normally. Don't do it. &lt;/p&gt;
 		</info>
-		<name>Dont Define Equals For Enum</name>
+		<name>Don't Define Equals For enum</name>
 	</findingType>
 	<findingType>
 		<id>EQ_SELF_USE_OBJECT</id>
@@ -1287,7 +1287,6 @@ thread.</p>]]>
 			Class defines compareTo(...) and uses Object.equals()
 		</shortMessage>
 		<info>
-
 			&lt;p&gt; This class defines a
 			&lt;code&gt;compareTo(...)&lt;/code&gt; method but inherits
 			its &lt;code&gt;equals()&lt;/code&gt; method from
@@ -1309,7 +1308,7 @@ thread.</p>]]>
 			that is inconsistent with equals.&quot; &lt;/blockquote&gt;
 
 		</info>
-		<name>Compareto Use Object Equals</name>
+		<name>Defines compareTo() Uses Object Equals</name>
 	</findingType>
 	<findingType>
 		<id>DefinesHashcodeNotEquals</id>
@@ -1464,7 +1463,7 @@ thread.</p>]]>
 			instead.&lt;/p&gt;
 
 		</info>
-		<name>Comparing Strings With Eq</name>
+		<name>Comparing Strings With == or !=</name>
 	</findingType>
 	<findingType>
 		<id>ES_COMPARING_PARAMETER_STRING_WITH_EQ</id>
@@ -1486,7 +1485,7 @@ thread.</p>]]>
 			instead.&lt;/p&gt;
 
 		</info>
-		<name>Comparing Parameter String With Eq</name>
+		<name>Comparing Parameter String With == or !=</name>
 	</findingType>
 	<findingType>
 		<id>CO_ABSTRACT_SELF</id>
@@ -1811,7 +1810,7 @@ thread.</p>]]>
 			notifications will be ignored. &lt;/p&gt;
 
 		</info>
-		<name>Uncond Wait</name>
+		<name>Unconditional Wait</name>
 	</findingType>
 	<findingType>
 		<id>UR_UNINIT_READ</id>
@@ -1827,7 +1826,7 @@ thread.</p>]]>
 			the constructor's parameters.&lt;/p&gt;
 
 		</info>
-		<name>Uninit Read</name>
+		<name>Uninitialized Read</name>
 	</findingType>
 	<findingType>
 		<id>SynchronizedSetUnsynchronizedGet</id>
@@ -2027,7 +2026,7 @@ thread.</p>]]>
 			protected to avoid this vulnerability.&lt;/p&gt;
 
 		</info>
-		<name>Ooi Pkgprotect</name>
+		<name>Field Out of Interface and Package Protected</name>
 	</findingType>
 	<findingType>
 		<id>FieldShouldBeFinalAndPackageProtected</id>
@@ -2044,7 +2043,7 @@ thread.</p>]]>
 			avoid this vulnerability.&lt;/p&gt;
 
 		</info>
-		<name>Final Pkgprotect</name>
+		<name>Final and Package Protected</name>
 	</findingType>
 	<findingType>
 		<id>FieldShouldBeFinal</id>
@@ -2072,7 +2071,7 @@ thread.</p>]]>
 			package protected to avoid this vulnerability.&lt;/p&gt;
 
 		</info>
-		<name>Package protect field</name>
+		<name>Package Protect Field</name>
 	</findingType>
 	<findingType>
 		<id>MutableHashtable</id>
@@ -2323,7 +2322,7 @@ thread.</p>]]>
 			is probably what was intended.&lt;/p&gt;
 
 		</info>
-		<name>Lcase Tostring</name>
+		<name>Lowercase tostring() Method Defined</name>
 	</findingType>
 	<findingType>
 		<id>SuspiciousEqualsMethodName</id>
@@ -2556,7 +2555,7 @@ thread.</p>]]>
 			consider adding an explicit serialVersionUID.&lt;/p&gt;
 
 		</info>
-		<name>No Serialversionid</name>
+		<name>No Serial Version Id Defined</name>
 	</findingType>
 	<findingType>
 		<id>SE_COMPARATOR_SHOULD_BE_SERIALIZABLE</id>
@@ -2633,7 +2632,7 @@ thread.</p>]]>
 			synchronized.&lt;/p&gt;
 
 		</info>
-		<name>Writeobject Sync</name>
+		<name>writeObject Is Only Synchronized Method</name>
 	</findingType>
 	<findingType>
 		<id>AvoidSynchronizationOfReadObject</id>
@@ -2655,7 +2654,7 @@ thread.</p>]]>
 			is an example of very dubious coding style.&lt;/p&gt;
 
 		</info>
-		<name>Readobject Sync</name>
+		<name>readObject Method is Synchronized</name>
 	</findingType>
 	<findingType>
 		<id>SE_NONSTATIC_SERIALVERSIONID</id>
@@ -2672,7 +2671,7 @@ thread.</p>]]>
 			serialization.&lt;/p&gt;
 
 		</info>
-		<name>Nonstatic Serialversionid</name>
+		<name>Nonstatic Serial Version Id</name>
 	</findingType>
 	<findingType>
 		<id>SE_NONFINAL_SERIALVERSIONID</id>
@@ -2689,7 +2688,7 @@ thread.</p>]]>
 			serialization.&lt;/p&gt;
 
 		</info>
-		<name>Nonfinal Serialversionid</name>
+		<name>Nonfinal Serial Version Id</name>
 	</findingType>
 	<findingType>
 		<id>SE_NONLONG_SERIALVERSIONID</id>
@@ -2706,7 +2705,7 @@ thread.</p>]]>
 			serialization.&lt;/p&gt;
 
 		</info>
-		<name>Nonlong Serialversionid</name>
+		<name>Nonlong Serial Version Id</name>
 	</findingType>
 	<findingType>
 		<id>SE_BAD_FIELD</id>
@@ -2799,7 +2798,7 @@ thread.</p>]]>
 			started.&lt;/p&gt;
 
 		</info>
-		<name>Start In Ctor</name>
+		<name>Start In Constructor</name>
 	</findingType>
 	<findingType>
 		<id>SS_SHOULD_BE_STATIC</id>
@@ -3627,7 +3626,7 @@ thread.</p>]]>
 			erroneous.&lt;/p&gt;
 
 		</info>
-		<name>Redundant Nullcheck Would Have Been A Npe</name>
+		<name>Redundant Nullcheck Would Have Been A NullPointerException</name>
 	</findingType>
 	<findingType>
 		<id>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</id>
@@ -4245,7 +4244,7 @@ thread.</p>]]>
 
 
 		</info>
-		<name>Ior Of Signed Byte</name>
+		<name>Bitwise OR Of Signed Byte</name>
 	</findingType>
 	<findingType>
 		<id>BIT_AND</id>
@@ -4274,7 +4273,7 @@ thread.</p>]]>
 			indicate a logic error or typo.&lt;/p&gt;
 
 		</info>
-		<name>Incompatible Bit Masks And Zz</name>
+		<name>Incompatible Bit Masks And Zero</name>
 	</findingType>
 	<findingType>
 		<id>BIT_IOR</id>
@@ -4293,7 +4292,7 @@ thread.</p>]]>
 			(&quot;&amp;amp;&quot;).&lt;/p&gt;
 
 		</info>
-		<name>Incompatible Bit Masks Ior</name>
+		<name>Incompatible Bit Masks OR</name>
 	</findingType>
 	<findingType>
 		<id>IncorrectLazyInitializationOfInstance</id>
@@ -4337,7 +4336,7 @@ thread.</p>]]>
 			Memory Model web site&lt;/a&gt;. &lt;/p&gt;
 
 		</info>
-		<name>Incorrect lazy initialization of static field</name>
+		<name>Incorrect Lazy Initialization of Static Field</name>
 	</findingType>
 	<findingType>
 		<id>AvoidCallingSynchronizedOnLock</id>
@@ -4357,7 +4356,7 @@ thread.</p>]]>
 			&lt;/p&gt;
 
 		</info>
-		<name>JSR166 Lock Monitorenter</name>
+		<name>JSR166 Lock Monitor Enter</name>
 	</findingType>
 	<findingType>
 		<id>UPM_UNCALLED_PRIVATE_METHOD</id>
@@ -4689,7 +4688,7 @@ thread.</p>]]>
 			of the type requested. &lt;/p&gt;
 
 		</info>
-		<name>Superfluous Instanceof</name>
+		<name>Superfluous instanceof</name>
 	</findingType>
 	<findingType>
 		<id>BAC_BAD_APPLET_CONSTRUCTOR</id>
@@ -4813,7 +4812,7 @@ thread.</p>]]>
 			&lt;/p&gt;
 
 		</info>
-		<name>Interrupted On Unknownthread</name>
+		<name>Interrupted On Unknown Thread</name>
 	</findingType>
 	<findingType>
 		<id>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</id>
@@ -5242,7 +5241,7 @@ thread.</p>]]>
 
 
 		</info>
-		<name>Int Cast To Double Passed To Ceil</name>
+		<name>Int Cast To Double Passed To Math.ceil</name>
 	</findingType>
 	<findingType>
 		<id>ICAST_IDIV_CAST_TO_DOUBLE</id>
@@ -5412,7 +5411,7 @@ thread.</p>]]>
 			some misunderstanding or some other logic error. &lt;/p&gt;
 
 		</info>
-		<name>Null Instanceof</name>
+		<name>Null instanceof</name>
 	</findingType>
 	<findingType>
 		<id>BC_NULL_INSTANCEOF</id>
@@ -5430,7 +5429,7 @@ thread.</p>]]>
 			some misunderstanding or some other logic error. &lt;/p&gt;
 
 		</info>
-		<name>Null Instanceof</name>
+		<name>Null instanceof</name>
 	</findingType>
 	<findingType>
 		<id>BC_IMPOSSIBLE_INSTANCEOF</id>
@@ -5444,7 +5443,7 @@ thread.</p>]]>
 			some misunderstanding or some other logic error. &lt;/p&gt;
 
 		</info>
-		<name>Impossible Instanceof</name>
+		<name>Impossible instanceof</name>
 	</findingType>
 	<findingType>
 		<id>BC_VACUOUS_INSTANCEOF</id>
@@ -5458,7 +5457,7 @@ thread.</p>]]>
 			some misunderstanding or some other logic error. &lt;/p&gt;
 
 		</info>
-		<name>Vacuous Instanceof</name>
+		<name>Vacuous instanceof</name>
 	</findingType>
 	<findingType>
 		<id>BC_UNCONFIRMED_CAST</id>
@@ -5631,7 +5630,7 @@ thread.</p>]]>
 			is (i % 60) * 1000, not i % (60 * 1000). &lt;/p&gt;
 
 		</info>
-		<name>Multiplying Result Of Irem</name>
+		<name>Multiplying Result Of Int Remainder</name>
 	</findingType>
 	<findingType>
 		<id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
@@ -5648,7 +5647,7 @@ thread.</p>]]>
 			Programming Puzzlers, chapter 3, puzzle 12. &lt;/p&gt;
 
 		</info>
-		<name>Invoking Tostring On Array</name>
+		<name>Invoking toString On Array</name>
 	</findingType>
 	<findingType>
 		<id>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</id>
@@ -5759,7 +5758,7 @@ thread.</p>]]>
 			&lt;/p&gt;
 
 		</info>
-		<name>Calling Next From Hasnext</name>
+		<name>Calling Next From hasNext</name>
 	</findingType>
 	<findingType>
 		<id>AvoidCallingSleepWithLockHeld</id>
@@ -5857,7 +5856,7 @@ thread.</p>]]>
 			&lt;/ul&gt; &lt;p&gt;for details.&lt;/p&gt;
 
 		</info>
-		<name>Xml Factory Bypass</name>
+		<name>XML Factory Bypass</name>
 	</findingType>
 	<findingType>
 		<id>USM_USELESS_SUBCLASS_METHOD</id>
@@ -6113,7 +6112,7 @@ thread.</p>]]>
 			just return the result of invoking super.equals(o).
 
 		</info>
-		<name>Doesnt Override Equals</name>
+		<name>Doesn't Override Equals</name>
 	</findingType>
 	<findingType>
 		<id>SameSimpleNameAsInterface</id>
