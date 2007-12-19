@@ -1,13 +1,15 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableLong;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.surelogic.sierra.tool.message.Importance;
 
-public final class FindingRecord extends LongRecord {
+public final class FindingRecord extends LongUpdatableRecord {
 
 	private String uid;
 	private Long projectId;
@@ -17,7 +19,7 @@ public final class FindingRecord extends LongRecord {
 	private Long obsoletedById;
 	private Long obsoletedByRevision;
 
-	public FindingRecord(RecordMapper mapper) {
+	public FindingRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -46,6 +48,13 @@ public final class FindingRecord extends LongRecord {
 		this.read = "Y".equals(set.getString(idx++));
 		this.obsoletedById = getNullableLong(idx++, set);
 		this.obsoletedByRevision = getNullableLong(idx++, set);
+		return idx;
+	}
+
+	@Override
+	protected int fillUpdatedFields(PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, uid);
 		return idx;
 	}
 

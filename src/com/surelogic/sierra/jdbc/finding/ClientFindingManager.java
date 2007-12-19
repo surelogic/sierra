@@ -592,6 +592,11 @@ public final class ClientFindingManager extends FindingManager {
 	/**
 	 * Update local findings to reflect data from the server.
 	 * 
+	 * TODO for now, we only have one match per finding. Therefore, this
+	 * algorithm will work. We need to obsolete existing local findings into the
+	 * created match instead of just updating local findings in the future,
+	 * however.
+	 * 
 	 * @param projectName
 	 * @param obsoletions
 	 * @param updates
@@ -635,32 +640,37 @@ public final class ClientFindingManager extends FindingManager {
 					finding.setUid(update.getTrail());
 					finding.setProjectId(project.getId());
 					if (!finding.select()) {
-						finding.setImportance(update.getImportance());
-						finding.setSummary(update.getSummary());
-						finding.insert();
-					}
-					MatchRecord mRec = factory.newMatch();
-					MatchRecord.PK pk = new MatchRecord.PK();
-					pk.setProjectId(project.getId());
-					mRec.setId(pk);
-					List<Match> matches = update.getMatch();
-					if (matches != null) {
-						for (Match m : matches) {
-							fillKey(pk, m);
-							if (mRec.select()) {
-								if (!mRec.getFindingId()
-										.equals(finding.getId())) {
-									// This must be a local match, so delete it.
-									// Update the match revision first.
-									mRec.setRevision(m.getRevision());
-									mRec.update();
-									delete(mRec.getFindingId(), finding.getId());
-								}
-							} else {
-								mRec.setFindingId(finding.getId());
-								mRec.setRevision(m.getRevision());
-								mRec.insert();
-							}
+						/*
+						 * No finding w/ this uid exists. We will update a local
+						 * finding, if one exists, otherwise we will create an
+						 * entirely new finding.
+						 */
+						List<Match> matches = update.getMatch();
+						if (matches.size() != 1) {
+							throw new IllegalStateException(
+									"The client can currently only handle findings with only one match.");
+						}
+						MatchRecord mRec = factory.newMatch();
+						MatchRecord.PK pk = new MatchRecord.PK();
+						pk.setProjectId(project.getId());
+						mRec.setId(pk);
+						final Match m = matches.get(0);
+						fillKey(pk, m);
+						if (mRec.select()) {
+							// Use the current local finding.
+							finding = getFinding(mRec.getFindingId());
+							finding.setUid(update.getTrail());
+							mRec.setRevision(m.getRevision());
+							mRec.update();
+						} else {
+							// No finding exists w/ this match. Make a new
+							// finding and match
+							finding.setImportance(update.getImportance());
+							finding.setSummary(update.getSummary());
+							finding.insert();
+							mRec.setFindingId(finding.getId());
+							mRec.setRevision(m.getRevision());
+							mRec.insert();
 						}
 					}
 					List<Audit> audits = update.getAudit();
