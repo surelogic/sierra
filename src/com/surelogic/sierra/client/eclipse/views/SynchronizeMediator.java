@@ -216,7 +216,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			final TableItem item = new TableItem(f_eventsTable, SWT.NONE);
 			item.setText(0, ad.getUser());
 			item.setText(1, dateFormat.format(ad.getTime()));
-			item.setText(2, "" + ad.getFindingId());
+			item.setText(2, Long.toString(ad.getFindingId()));
 			item.setText(3, ad.getText());
 		}
 		packTable(f_eventsTable);
