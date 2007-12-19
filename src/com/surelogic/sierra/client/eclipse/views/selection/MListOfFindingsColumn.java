@@ -155,17 +155,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
 					while (rs.next()) {
-						FindingData data = new FindingData();
-						data.f_summary = rs.getString(1);
-						data.f_importance = Importance.valueOf(rs.getString(2)
-								.toUpperCase());
-						data.f_findingId = rs.getLong(3);
-						data.f_projectName = rs.getString(4);
-						data.f_packageName = rs.getString(5);
-						data.f_typeName = rs.getString(6);
-						data.f_lineNumber = rs.getInt(7);
-						data.f_findingTypeName = rs.getString(8);
-						f_rows.add(data);
+						/*
+						 * TODO: Limit to 2000 for now
+						 */
+						if (f_rows.size() < 2000) {
+							FindingData data = new FindingData();
+							data.f_summary = rs.getString(1);
+							data.f_importance = Importance.valueOf(rs
+									.getString(2).toUpperCase());
+							data.f_findingId = rs.getLong(3);
+							data.f_projectName = rs.getString(4);
+							data.f_packageName = rs.getString(5);
+							data.f_typeName = rs.getString(6);
+							data.f_lineNumber = rs.getInt(7);
+							data.f_findingTypeName = rs.getString(8);
+							f_rows.add(data);
+						}
 					}
 				} finally {
 					st.close();

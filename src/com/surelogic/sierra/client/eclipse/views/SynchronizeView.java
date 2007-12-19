@@ -35,22 +35,27 @@ public final class SynchronizeView extends ViewPart {
 		syncTable.setHeaderVisible(true);
 		syncTable.setLinesVisible(true);
 
+		/*
+		 * TODO: The sorts don't work because the data used to query the details
+		 * about the sync with server are lost during the sort. This needs to be
+		 * fixed.
+		 */
 		TableColumn column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("Project");
-		column.addListener(SWT.Selection,
-				TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		// column.addListener(SWT.Selection,
+		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("To Server");
-		column.addListener(SWT.Selection,
-				TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		// column.addListener(SWT.Selection,
+		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		column = new TableColumn(syncTable, SWT.RIGHT);
 		column.setText("Occurred");
-		column.addListener(SWT.Selection,
-				TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		// column.addListener(SWT.Selection,
+		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		for (TableColumn c : syncTable.getColumns()) {
