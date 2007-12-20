@@ -22,6 +22,7 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.findbugs.FindBugs1_3_0Tool;
 import com.surelogic.sierra.tool.pmd.PMD4_0Tool;
+import com.surelogic.sierra.tool.reckoner.Reckoner1_0Tool;
 import com.surelogic.sierra.tool.targets.*;
 
 /**
@@ -49,6 +50,9 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
           final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
           try {
             ITool t = true ? new FindBugs1_3_0Tool() : new PMD4_0Tool();
+            if (true) {
+              t = new Reckoner1_0Tool();
+            }
             IToolInstance ti = t.create(wrapper);  
             
             for(IJavaProject p : selectedProjects) {
