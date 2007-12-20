@@ -70,6 +70,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   
   class Monitor implements FindBugsProgress, BugReporter {
     final SLProgressMonitor monitor;
+    final ProjectStats stats = new ProjectStats();
 
     public Monitor(SLProgressMonitor mon) {
       monitor = mon;
@@ -118,7 +119,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public ProjectStats getProjectStats() {
-      throw new UnsupportedOperationException();
+      return stats;
     }
 
     public BugReporter getRealBugReporter() {
@@ -127,6 +128,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
     public void reportBug(BugInstance bug) {
       System.out.println("Bug reported: "+bug.getAbridgedMessage());
+      stats.addBug(bug);
     }
 
     public void reportQueuedErrors() {
