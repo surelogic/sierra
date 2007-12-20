@@ -110,7 +110,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             }
           }
           URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-          ti.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.AUX : IToolTarget.Type.BINARY, out));
+          ti.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
         }
       }.schedule();
     }
