@@ -75,6 +75,15 @@ public abstract class AbstractToolInstance implements IToolInstance {
     }
     monitor.setTaskName("Starting scan using "+getName()+" v"+getVersion());
     
+    for(IToolTarget t : getSrcTargets()) {
+      System.out.println("Source: "+t.getLocation());
+    }
+    for(IToolTarget t : getBinTargets()) {
+      System.out.println("Binary: "+t.getLocation());
+    }
+    for(IToolTarget t : getAuxTargets()) {
+      System.out.println("Auxiliary: "+t.getLocation());
+    }
     try {
       execute();
     }
