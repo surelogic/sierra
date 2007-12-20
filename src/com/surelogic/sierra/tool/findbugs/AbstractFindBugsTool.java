@@ -167,6 +167,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportMissingClass(ClassDescriptor desc) {
+      if ("package-info".equals(desc.getSimpleName()) ||
+          desc.getClassName().charAt(0) == '[') {
+        return;
+      }
       LOG.warning("Missing class: "+desc.getClassName());
     }
 
