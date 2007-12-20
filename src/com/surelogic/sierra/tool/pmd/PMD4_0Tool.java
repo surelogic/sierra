@@ -35,10 +35,7 @@ public class PMD4_0Tool extends AbstractTool {
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
         
         String excludeMarker = PMD.EXCLUDE_MARKER;
-        for(IToolTarget t : getTargets()) {
-          if (!t.isSource()) {
-            continue;
-          }
+        for(IToolTarget t : getSrcTargets()) {
           // root dir of where the files are
           String inputPath = new File(t.getLocation()).getAbsolutePath();           
           List<DataSource> files = new ArrayList<DataSource>();

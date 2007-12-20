@@ -9,12 +9,12 @@ import java.util.*;
  * @author Edwin.Chan
  */
 public final class FileTarget extends AbstractToolTarget {
-  public FileTarget(boolean isSrc, URI loc) {
-    super(isSrc, loc);
+  public FileTarget(Type type, URI loc) {
+    super(type, loc);
   }
   
   public FileTarget(URI loc) {
-    super(true, loc);
+    super(Type.SOURCE, loc);
   }
   
   public boolean exclude(String relativePath) {

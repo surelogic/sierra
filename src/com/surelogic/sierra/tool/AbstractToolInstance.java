@@ -9,7 +9,9 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 public abstract class AbstractToolInstance implements IToolInstance {
   private final ITool tool;
   private final SLProgressMonitor monitor;
-  private List<IToolTarget> targets = new ArrayList<IToolTarget>();
+  private List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
+  private List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
+  private List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
   private List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
   
@@ -33,7 +35,17 @@ public abstract class AbstractToolInstance implements IToolInstance {
   
   public final void addTarget(IToolTarget target) {
     checkArgs(target);
-    targets.add(target);
+    switch (target.getType()) {
+      case SOURCE:
+        srcTargets.add(target);
+        break;
+      case BINARY:
+        binTargets.add(target);
+        break;
+      case AUX:
+        auxTargets.add(target);
+        break;
+    }
   }
   
   public final void addToClassPath(URI loc) {
@@ -41,8 +53,16 @@ public abstract class AbstractToolInstance implements IToolInstance {
     paths.add(loc);
   }
 
-  protected final Iterable<IToolTarget> getTargets() {
-    return targets;
+  protected final Iterable<IToolTarget> getSrcTargets() {
+    return srcTargets;
+  }
+  
+  protected final Iterable<IToolTarget> getBinTargets() {
+    return binTargets;
+  }
+  
+  protected final Iterable<IToolTarget> getAuxTargets() {
+    return auxTargets;
   }
   
   protected final Iterable<URI> getPaths() {

@@ -10,6 +10,10 @@ import java.net.*;
  * @author Edwin.Chan
  */
 public interface IToolTarget {
+  enum Type {
+    SOURCE, BINARY, AUX    
+  }
+  
   enum Kind {
     FILE, DIRECTORY, JAR  
   }
@@ -18,6 +22,8 @@ public interface IToolTarget {
    * @return true if this refers to Java source files
    */
   boolean isSource();
+  
+  Type getType();
   
   Kind getKind();
   

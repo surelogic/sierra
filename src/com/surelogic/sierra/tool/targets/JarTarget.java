@@ -3,12 +3,12 @@ package com.surelogic.sierra.tool.targets;
 import java.net.*;
 
 public abstract class JarTarget extends AbstractToolTarget {
-  protected JarTarget(boolean isSrc, URI loc) {
-    super(isSrc, loc);
+  protected JarTarget(Type type, URI loc) {
+    super(type, loc);
   }
   
   protected JarTarget(URI loc) {
-    super(false, loc);
+    super(Type.AUX, loc);
   }
   
   public final Kind getKind() {

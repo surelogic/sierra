@@ -11,6 +11,7 @@ import com.surelogic.sierra.tool.targets.*;
 import edu.umd.cs.findbugs.*;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.MethodDescriptor;
+import edu.umd.cs.findbugs.config.UserPreferences;
 
 public abstract class AbstractFindBugsTool extends AbstractTool {
   protected AbstractFindBugsTool(String version) {
@@ -27,7 +28,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       protected void execute() throws Exception { 
         final Project p = createProject();
         engine.setProject(p);
-        //engine.setUserPreferences(arg0); 
+        engine.setUserPreferences(UserPreferences.getUserPreferences()); 
         //engine.setAnalysisFeatureSettings(arg0);
         engine.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
         //engine.setClassScreener(arg0);
@@ -36,14 +37,13 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         //engine.addClassObserver(mon);
         engine.setBugReporter(mon);
         engine.setProgressCallback(mon);        
+        
+        engine.execute();
       }
             
       protected Project createProject() {
         final Project p = new Project();
-        for(IToolTarget t : getTargets()) {
-          if (t.isSource()) {
-            continue;
-          }
+        for(IToolTarget t : getBinTargets()) {
           // Only scanning binaries
           final String path = new File(t.getLocation()).getAbsolutePath(); 
           switch (t.getKind()) {
@@ -122,7 +122,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public BugReporter getRealBugReporter() {
-      throw new UnsupportedOperationException();
+      return this;
     }
 
     public void reportBug(BugInstance bug) {

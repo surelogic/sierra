@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DirectoryTarget extends AbstractToolTarget {
-  protected DirectoryTarget(boolean isSrc, URI loc) {
-    super(isSrc, loc);
+  protected DirectoryTarget(Type type, URI loc) {
+    super(type, loc);
   }
   
   public final Kind getKind() {
