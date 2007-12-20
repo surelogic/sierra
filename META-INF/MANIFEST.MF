@@ -25,6 +25,8 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/FB/lib/findbugs-ant.jar,
  Tools/FB/lib/bcel.jar,
  Tools/FB/lib/dom4j-full.jar,
+ Tools/FB/lib/annotations.jar,
+ Tools/FB/lib/jsr305.jar,
  Tools/jaxen-1.1.1/jaxen-1.1.1.jar,
  Tools/JDepend/jdepend-2.9.jar,
  Tools/pmd/lib/pmd-4.0-sl.jar,

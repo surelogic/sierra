@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/jsr305.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/dom4j-full.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/bcel.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/jaxen-1.1.jar"/>
