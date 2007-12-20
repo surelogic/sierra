@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/dom4j-full.jar"/>
+	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/bcel.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/jaxen-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar" sourcepath="/pmd4jsp-cvs"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-3.0.jar"/>
@@ -9,7 +11,7 @@
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-tree-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-util-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-xml-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs.jar" sourcepath="C:/work/FindBugs/findbugs"/>
+	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs.jar" sourcepath="/findbugs"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs-ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

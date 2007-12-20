@@ -11,7 +11,8 @@ Eclipse-LazyStart: false
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.ant,
- com.surelogic.sierra.tool.pmd40,
+ com.surelogic.sierra.tool.findbugs,
+ com.surelogic.sierra.tool.pmd,
  com.surelogic.sierra.tool.targets
 Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.jar,
  Tools/FB/lib/asm-3.0.jar,
@@ -22,6 +23,8 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/FB/lib/asm-xml-3.0.jar,
  Tools/FB/lib/findbugs.jar,
  Tools/FB/lib/findbugs-ant.jar,
+ Tools/FB/lib/bcel.jar,
+ Tools/FB/lib/dom4j-full.jar,
  Tools/jaxen-1.1.1/jaxen-1.1.1.jar,
  Tools/JDepend/jdepend-2.9.jar,
  Tools/pmd/lib/pmd-4.0-sl.jar,
