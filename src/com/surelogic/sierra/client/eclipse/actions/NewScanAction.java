@@ -48,51 +48,11 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
         protected IStatus run(IProgressMonitor monitor) {
           final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
           try {
-            final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             ITool t = true ? new FindBugs1_3_0Tool() : new PMD4_0Tool();
             IToolInstance ti = t.create(wrapper);  
             
             for(IJavaProject p : selectedProjects) {
-              for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-                
-                switch (cpe.getEntryKind()) {
-                  case IClasspathEntry.CPE_SOURCE:
-                    IResource res = root.findMember(cpe.getPath());
-                    URI loc = res.getLocationURI();
-                    ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
-                      public boolean exclude(String relativePath) {
-                        // TODO Auto-generated method stub
-                        return false;
-                      }
-                    });
-                    break;
-                  case IClasspathEntry.CPE_LIBRARY:
-                    URI lib;
-                    IPath libPath = cpe.getPath();
-                    File libFile = new File(libPath.toOSString());
-                    if (libFile.exists()) {
-                      lib = libFile.toURI();
-                    } else {
-                      lib = root.findMember(libPath).getLocationURI();
-                    }
-                    if (new File(lib).isDirectory()) {
-                      ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, lib));
-                    } else {
-                      ti.addTarget(new JarTarget(lib));
-                    }
-                    break;
-                  case IClasspathEntry.CPE_PROJECT:
-                    String projName = cpe.getPath().lastSegment();
-                    IProject proj = root.getProject(projName);
-                    IPath projOut = JavaCore.create(proj).getOutputLocation();
-                    // FIX is this done correctly?  What about its libraries?                  
-                    URI out = root.findMember(projOut).getLocationURI();
-                    ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, out));
-                    break;
-                }
-              }
-              URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-              ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.BINARY, out));
+              setupToolForProject(ti, p, true);
             }
             ti.run();
           } catch(Throwable ex) {
@@ -104,6 +64,53 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             return SLStatus.createErrorStatus("New Scan failed", ex);
           }
           return Status.OK_STATUS;
+        }
+
+        /**
+         * @param toBeAnalyzed Whether the project will be analyzed, or is simply referred to
+         */
+        private void setupToolForProject(final IToolInstance ti, IJavaProject p, final boolean toBeAnalyzed) 
+        throws JavaModelException 
+        {
+          final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+          for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
+            switch (cpe.getEntryKind()) {
+              case IClasspathEntry.CPE_SOURCE:
+                if (toBeAnalyzed) {
+                  IResource res = root.findMember(cpe.getPath());
+                  URI loc = res.getLocationURI();
+                  ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
+                    public boolean exclude(String relativePath) {
+                      // TODO Auto-generated method stub
+                      return false;
+                    }
+                  });
+                }
+                break;
+              case IClasspathEntry.CPE_LIBRARY:
+                URI lib;
+                IPath libPath = cpe.getPath();
+                File libFile = new File(libPath.toOSString());
+                if (libFile.exists()) {
+                  lib = libFile.toURI();
+                } else {
+                  lib = root.findMember(libPath).getLocationURI();
+                }
+                if (new File(lib).isDirectory()) {
+                  ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, lib));
+                } else {
+                  ti.addTarget(new JarTarget(lib));
+                }
+                break;
+              case IClasspathEntry.CPE_PROJECT:
+                String projName = cpe.getPath().lastSegment();
+                IProject proj = root.getProject(projName);
+                setupToolForProject(ti, JavaCore.create(proj), false);
+                break;
+            }
+          }
+          URI out = root.findMember(p.getOutputLocation()).getLocationURI();
+          ti.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.AUX : IToolTarget.Type.BINARY, out));
         }
       }.schedule();
     }
