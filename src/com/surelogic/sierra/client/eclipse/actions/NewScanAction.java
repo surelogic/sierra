@@ -1,18 +1,17 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.*;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -55,15 +54,41 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             
             for(IJavaProject p : selectedProjects) {
               for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-                if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-                  IResource res = root.findMember(cpe.getPath());
-                  URI loc = res.getLocationURI();
-                  ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
-                    public boolean exclude(String relativePath) {
-                      // TODO Auto-generated method stub
-                      return false;
+                
+                switch (cpe.getEntryKind()) {
+                  case IClasspathEntry.CPE_SOURCE:
+                    IResource res = root.findMember(cpe.getPath());
+                    URI loc = res.getLocationURI();
+                    ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
+                      public boolean exclude(String relativePath) {
+                        // TODO Auto-generated method stub
+                        return false;
+                      }
+                    });
+                    break;
+                  case IClasspathEntry.CPE_LIBRARY:
+                    URI lib;
+                    IPath libPath = cpe.getPath();
+                    File libFile = new File(libPath.toOSString());
+                    if (libFile.exists()) {
+                      lib = libFile.toURI();
+                    } else {
+                      lib = root.findMember(libPath).getLocationURI();
                     }
-                  });
+                    if (new File(lib).isDirectory()) {
+                      ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, lib));
+                    } else {
+                      ti.addTarget(new JarTarget(lib));
+                    }
+                    break;
+                  case IClasspathEntry.CPE_PROJECT:
+                    String projName = cpe.getPath().lastSegment();
+                    IProject proj = root.getProject(projName);
+                    IPath projOut = JavaCore.create(proj).getOutputLocation();
+                    // FIX is this done correctly?  What about its libraries?                  
+                    URI out = root.findMember(projOut).getLocationURI();
+                    ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, out));
+                    break;
                 }
               }
               URI out = root.findMember(p.getOutputLocation()).getLocationURI();
