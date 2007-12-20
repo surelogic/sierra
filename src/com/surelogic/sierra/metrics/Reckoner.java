@@ -18,6 +18,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -109,9 +111,6 @@ public class Reckoner {
 
 	public void getLogicalLOC(List<File> targets, String outputFile)
 			throws IOException {
-
-		List<Metrics> metricsList = new ArrayList<Metrics>();
-
 		PrintWriter w;
 		if (outputFile == null) {
 			w = new PrintWriter(System.out);
@@ -124,23 +123,7 @@ public class Reckoner {
 		}
 		final MetricsResultsGenerator f_mrg = new MetricsResultsGenerator(w);
 
-		for (File file : targets) {
-			if (file.exists() && file.isDirectory()) {
-				Set<String> sourceFiles = getJavaFiles(file);
-				for (String s : sourceFiles) {
-					final File holder = new File(s);
-					final Metrics metrics = countLOC(holder);
-					if (metrics != null)
-						metricsList.add(metrics);
-				}
-			} else if (file.exists() && !file.isDirectory()) {
-				if (file.getName().endsWith(".java")) {
-					final Metrics metrics = countLOC(file);
-					if (metrics != null)
-						metricsList.add(metrics);
-				}
-			}
-		}		
+    List<Metrics> metricsList = computeMetrics(targets, new NullProgressMonitor());		
 		Map<Metrics,Metrics> metrics = new HashMap<Metrics,Metrics>();		
 		for (Metrics m : metricsList) {
 		  Metrics removed = metrics.put(m, m);
@@ -157,6 +140,37 @@ public class Reckoner {
 		}
 		f_mrg.close();
 	}
+
+  public List<Metrics> computeMetrics(List<File> targets, IProgressMonitor mon) {
+    List<Metrics> metricsList = new ArrayList<Metrics>();
+    mon.beginTask("Computing metrics", targets.size());
+    
+		for (File file : targets) {
+		  mon.subTask("Starting on "+file.getName());
+			if (file.exists() && file.isDirectory()) {
+				Set<String> sourceFiles = getJavaFiles(file);
+				for (String s : sourceFiles) {
+					final File holder = new File(s);
+					final Metrics metrics = countLOC(holder);
+					if (metrics != null) {
+						metricsList.add(metrics);
+						mon.subTask("Done with "+metrics.getPath());
+					}
+				}
+			} else if (file.exists() && !file.isDirectory()) {
+				if (file.getName().endsWith(".java")) {
+					final Metrics metrics = countLOC(file);
+          if (metrics != null) {
+            metricsList.add(metrics);
+            mon.subTask("Done with "+metrics.getPath());
+          }
+				}
+			}
+			mon.worked(1);
+		}
+		mon.done();
+    return metricsList;
+  }
 
 	private Metrics countLOC(File target) {
 		try {
