@@ -61,6 +61,18 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
               break;
           }
         }
+        for(IToolTarget t : getAuxTargets()) {
+          final String path = new File(t.getLocation()).getAbsolutePath(); 
+          switch (t.getKind()) {
+            case DIRECTORY:
+            case JAR:
+              p.addAuxClasspathEntry(path);             
+              break;
+            case FILE:
+              System.out.println("Ignored: "+path);
+              break;
+          }
+        }
         return p;
       }
     };
