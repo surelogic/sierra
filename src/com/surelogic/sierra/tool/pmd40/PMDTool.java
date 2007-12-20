@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import net.sourceforge.pmd.*;
@@ -14,7 +15,7 @@ import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class PMDTool extends AbstractTool {
-  protected PMDTool() {
+  public PMDTool() {
     super("PMD", "4.0", "PMD", "");
   }
 
@@ -26,9 +27,10 @@ public class PMDTool extends AbstractTool {
     return new AbstractToolInstance(this, monitor) {
       @Override
       protected void execute() throws Exception {      
-        String encoding = null;
+        int cpus = Runtime.getRuntime().availableProcessors();
+        String encoding = Charset.defaultCharset().name();
         SourceType sourceType = SourceType.JAVA_15;
-        String rulesets = "basic"; // comma-separated list of rules
+        String rulesets = "rulesets/basic.xml"; // location of the XML rule file 
         RuleContext ctx = new RuleContext(); // info about what's getting scanned
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
         
@@ -48,7 +50,7 @@ public class PMDTool extends AbstractTool {
           }
           List<Renderer> renderers = new ArrayList<Renderer>(); // output
           renderers.add(new Output(monitor, inputPath, files.size()));
-          PMD.processFiles(1, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
+          PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
         }
       }      
     };
@@ -58,6 +60,8 @@ public class PMDTool extends AbstractTool {
     private final SLProgressMonitor monitor;
     private final int numFiles;
     private final String inputPath;
+    private boolean first = true;
+    
     public Output(SLProgressMonitor m, String in, int i) {
       monitor = m;
       inputPath = in;
@@ -84,16 +88,26 @@ public class PMDTool extends AbstractTool {
     }
 
     public void start() throws IOException {
-      monitor.beginTask("Starting PMD scanning", numFiles);
+      monitor.beginTask("Starting PMD scanning", numFiles + 500);
     }
 
     public void startFileAnalysis(DataSource dataSource) {
-      monitor.subTask(dataSource.getNiceFileName(false, inputPath)); 
+      String msg = "Scanning "+dataSource.getNiceFileName(false, inputPath);
+      monitor.subTask(msg); 
+      if (first) {
+        first = false;
+      } else {
+        monitor.internalWorked(1.0);
+      }
+      System.out.println(msg);
     }
     
     public void renderFileReport(Report report) throws IOException {
-      monitor.internalWorked(1.0);
-      System.out.println("Time so far: "+report.getElapsedTimeInMillis());
+      Iterator<IRuleViolation> it = report.iterator();
+      while (it.hasNext()) {
+        IRuleViolation v = it.next();
+        System.out.println(v.getFilename()+": "+v.getDescription());
+      }
     }
     
     public void end() throws IOException {
