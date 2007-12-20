@@ -100,7 +100,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
     public void finishClass() {
       System.out.println("Finished a class");
-      monitor.internalWorked(1.0);
+      monitor.worked(1);
     }
 
     public void finishPerClassAnalysis() {

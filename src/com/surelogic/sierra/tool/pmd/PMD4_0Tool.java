@@ -94,7 +94,7 @@ public class PMD4_0Tool extends AbstractTool {
       if (first) {
         first = false;
       } else {
-        monitor.internalWorked(1.0);
+        monitor.worked(1);
       }
       System.out.println(msg);
     }
