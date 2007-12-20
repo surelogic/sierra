@@ -58,7 +58,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
                 if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
                   IResource res = root.findMember(cpe.getPath());
                   URI loc = res.getLocationURI();
-                  ti.addTarget(new DirectoryTarget(true, loc) {
+                  ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
                     public boolean exclude(String relativePath) {
                       // TODO Auto-generated method stub
                       return false;
@@ -67,7 +67,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
                 }
               }
               URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-              ti.addTarget(new FullDirectoryTarget(false, out));
+              ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.BINARY, out));
             }
             ti.run();
           } catch(Throwable ex) {
