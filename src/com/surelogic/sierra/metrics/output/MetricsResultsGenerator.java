@@ -52,11 +52,13 @@ public final class MetricsResultsGenerator {
 	}
 
 	public void error(String msg) {
+	  /*
 	  final StringBuilder b = new StringBuilder();
 	  b.append("<error ");
 	  Entities.addAttribute("msg", msg, b);
 	  b.append("/>");
 	  o(b.toString());
+	  */
 	}
 	
 	public void close() {
