@@ -68,7 +68,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               ti.run();
             }            
           } catch(Throwable ex) {
-            wrapper.failed(ex);
+            wrapper.failed("Caught exception during run()", ex);
           }
           if (wrapper.getFailureTrace() != null) {
             Throwable ex = wrapper.getFailureTrace();
