@@ -4,19 +4,22 @@ import java.net.*;
 import java.util.*;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance implements IToolInstance {
   private final ITool tool;
-  private final SLProgressMonitor monitor;
+  protected final ArtifactGenerator generator;  
+  protected final SLProgressMonitor monitor;
   private List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
   private List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
   private List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
   private List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
   
-  protected AbstractToolInstance(ITool t, SLProgressMonitor m) {
+  protected AbstractToolInstance(ITool t, ArtifactGenerator gen, SLProgressMonitor m) {
     tool = t;
+    generator = gen;
     monitor = m;
   }
   
@@ -119,7 +122,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     return tool.getArtifactTypes();
   }
   
-  public final IToolInstance create(SLProgressMonitor m) {
+  public final IToolInstance create(final ArtifactGenerator generator, SLProgressMonitor m) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
 }

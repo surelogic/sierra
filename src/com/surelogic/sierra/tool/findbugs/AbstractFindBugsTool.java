@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.*;
 
 import edu.umd.cs.findbugs.*;
@@ -18,10 +19,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     super("FindBugs", version, "FindBugs (TM)", "");
   }
   
-  public IToolInstance create(final SLProgressMonitor monitor) {
+  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
     System.setProperty("findbugs.home", "C:/work/workspace/sierra-tool/Tools/FB");
     
-    return new AbstractToolInstance(this, monitor) {     
+    return new AbstractToolInstance(this, generator, monitor) {     
       final IFindBugsEngine engine = createEngine();
       
       @Override

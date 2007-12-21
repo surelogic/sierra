@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool;
 import java.util.*;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 
 /**
  * API for querying the tools about what they are,
@@ -40,5 +41,5 @@ public interface ITool {
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(SLProgressMonitor monitor);
+  IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor);
 }

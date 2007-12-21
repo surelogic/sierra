@@ -12,6 +12,7 @@ import net.sourceforge.pmd.renderers.Renderer;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class PMD4_0Tool extends AbstractTool {
@@ -23,8 +24,8 @@ public class PMD4_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
 
-  public IToolInstance create(final SLProgressMonitor monitor) {
-    return new AbstractToolInstance(this, monitor) {
+  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
+    return new AbstractToolInstance(this, generator, monitor) {
       @Override
       protected void execute() throws Exception {      
         int cpus = Runtime.getRuntime().availableProcessors();

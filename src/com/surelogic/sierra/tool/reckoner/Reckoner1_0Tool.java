@@ -14,6 +14,7 @@ import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.IToolInstance;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Reckoner1_0Tool extends AbstractTool {
@@ -25,8 +26,8 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  public IToolInstance create(final SLProgressMonitor monitor) {
-    return new AbstractToolInstance(this, monitor) {
+  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
+    return new AbstractToolInstance(this, generator, monitor) {
       @Override
       protected void execute() throws Exception {              
         List<File> targets = new ArrayList<File>();
