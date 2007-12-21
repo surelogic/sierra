@@ -326,7 +326,7 @@ public final class ConfigGenerator {
 		return config;
 	}
 
-	private Config getProjectConfig(IJavaProject project) {
+	public Config getProjectConfig(IJavaProject project) {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
 		File scanDocument = new File(f_sierraPath + File.separator
