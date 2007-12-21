@@ -11,7 +11,7 @@ import com.surelogic.common.SLProgressMonitor;
  */
 public class IProgressMonitorWrapper implements SLProgressMonitor, IProgressMonitor {
   private final SLProgressMonitor monitor;
-  
+  private Throwable t;
   public IProgressMonitorWrapper(SLProgressMonitor m) {
     monitor = m;
   }
@@ -24,12 +24,24 @@ public class IProgressMonitorWrapper implements SLProgressMonitor, IProgressMoni
     monitor.done();
   }
 
-  public void failed(Throwable t) {
-    
+  public void error(String msg, Throwable t) {
+    this.t = t;
+  }
+  
+  public void error(String msg) {
+  }
+  
+  public void failed(String msg, Throwable t) {
+    monitor.done();
+    this.t = t;
+  }
+  
+  public void failed(String msg) {
+    monitor.done();
   }
 
   public Throwable getFailureTrace() {
-    return null;
+    return t;
   }
 
   public void internalWorked(double work) {
