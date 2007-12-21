@@ -23,6 +23,10 @@ public abstract class AbstractToolInstance implements IToolInstance {
     monitor = m;
   }
   
+  public final ArtifactGenerator getGenerator() {
+    return generator;
+  }
+  
   public final SLProgressMonitor getProgressMonitor() {
     return monitor;
   }
@@ -91,7 +95,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
       execute();
     }
     catch(Exception e) {
-      monitor.failed(e); 
+      reportError("Exception during run()", e);
     }
     finally {
       done = true;
@@ -99,6 +103,22 @@ public abstract class AbstractToolInstance implements IToolInstance {
     monitor.done();
   }
 
+  public final void reportError(String msg) {
+    generator.error().message(msg).tool(getName());
+    monitor.failed(msg);  
+  }
+  
+  public final void reportError(String msg, Throwable e) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(msg).append('\n');
+    sb.append(e.getClass().getName()).append(' ').append(e.getMessage()).append('\n');
+    for(StackTraceElement ste : e.getStackTrace()) {
+      sb.append("\tat ").append(ste).append('\n');
+    }
+    generator.error().message(sb.toString()).tool(getName());
+    monitor.failed(msg, e);
+  }
+  
   protected abstract void execute() throws Exception;    
   
   /**************** ITool **********************/

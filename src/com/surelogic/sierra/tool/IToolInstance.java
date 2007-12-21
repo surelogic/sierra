@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool;
 import java.net.*;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 /**
@@ -14,8 +15,10 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
  * @author Edwin.Chan
  */
 public interface IToolInstance extends ITool, Runnable {
+  ArtifactGenerator getGenerator();
+  
   SLProgressMonitor getProgressMonitor();
-
+  
   /**
    * Adds a target that will be scanned/processed/etc by the tool 
    * implementation on run()
@@ -27,4 +30,8 @@ public interface IToolInstance extends ITool, Runnable {
    * the project class path
    */
   void addToClassPath(URI loc); 
+  
+  void reportError(String msg, Throwable t);
+  
+  void reportError(String msg);
 }

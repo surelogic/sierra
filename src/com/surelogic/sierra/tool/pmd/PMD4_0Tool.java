@@ -12,7 +12,9 @@ import net.sourceforge.pmd.renderers.Renderer;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.HashGenerator;
+import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class PMD4_0Tool extends AbstractTool {
@@ -47,7 +49,7 @@ public class PMD4_0Tool extends AbstractTool {
             }
           }
           List<Renderer> renderers = new ArrayList<Renderer>(); // output
-          renderers.add(new Output(monitor, inputPath, files.size()));
+          renderers.add(new Output(generator, monitor, inputPath, files.size()));
           PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
         }
       }      
@@ -55,12 +57,14 @@ public class PMD4_0Tool extends AbstractTool {
   }
   
   class Output implements Renderer {
+    private final ArtifactGenerator generator;
     private final SLProgressMonitor monitor;
     private final int numFiles;
     private final String inputPath;
     private boolean first = true;
     
-    public Output(SLProgressMonitor m, String in, int i) {
+    public Output(ArtifactGenerator gen, SLProgressMonitor m, String in, int i) {
+      generator = gen;
       monitor = m;
       inputPath = in;
       numFiles = i;
@@ -105,11 +109,75 @@ public class PMD4_0Tool extends AbstractTool {
       while (it.hasNext()) {
         IRuleViolation v = it.next();
         System.out.println(v.getFilename()+": "+v.getDescription());
+        
+        ArtifactBuilder artifact = generator.artifact();
+        SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
+ 
+        sourceLocation.packageName(v.getPackageName());
+        sourceLocation.compilation(v.getFilename());
+        sourceLocation.className(v.getClassName());
+        
+        String method = v.getMethodName();
+        if ("".equals(method)) {
+          sourceLocation.type(IdentifierType.CLASS);
+          sourceLocation.identifier(v.getClassName());
+        } else {
+          sourceLocation.type(IdentifierType.METHOD);
+          sourceLocation.identifier(method);
+        }
+        
+        HashGenerator hashGenerator = HashGenerator.getInstance();
+        Long hashValue = hashGenerator.getHash(v.getFilename(), v.getBeginLine());
+        //FIX use v.getBeginColumn();
+        //FIX use v.getEndColumn();
+        sourceLocation = sourceLocation.hash(hashValue).lineOfCode(v.getBeginLine());            
+        sourceLocation = sourceLocation.endLine(v.getEndLine());
+        
+        artifact.findingType(getName(), getVersion(), v.getRule().getName());
+        artifact.message(v.getDescription());
+        
+        int priority = v.getRule().getPriority();        
+        Priority assignedPriority = getPMDPriority(priority);
+        Severity assignedSeverity = getPMDSeverity(priority);
+        artifact.priority(assignedPriority).severity(assignedSeverity);
+
       }
     }
     
     public void end() throws IOException {
       monitor.done();
     }
+  }
+  
+  private static Severity getPMDSeverity(int priority) {
+    switch (priority) {
+    case 1:
+      return Severity.ERROR;
+    case 2:
+      return Severity.ERROR;
+    case 3:
+      return Severity.WARNING;
+    case 4:
+      return Severity.WARNING;
+    case 5:
+      return Severity.INFO;
+    }
+    return null;
+  }
+
+  private static Priority getPMDPriority(int priority) {
+    switch (priority) {
+    case 1:
+      return Priority.HIGH;
+    case 2:
+      return Priority.MEDIUM;
+    case 3:
+      return Priority.HIGH;
+    case 4:
+      return Priority.MEDIUM;
+    case 5:
+      return Priority.LOW;
+    }
+    return null;
   }
 }

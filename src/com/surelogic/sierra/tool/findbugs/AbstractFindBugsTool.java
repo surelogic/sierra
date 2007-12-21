@@ -6,7 +6,13 @@ import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.analyzer.HashGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.targets.*;
 
 import edu.umd.cs.findbugs.*;
@@ -34,7 +40,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         engine.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
         //engine.setClassScreener(arg0);
         
-        Monitor mon = new Monitor(getProgressMonitor()); 
+        Monitor mon = new Monitor(this); 
         //engine.addClassObserver(mon);
         engine.setBugReporter(mon);
         engine.setProgressCallback(mon);        
@@ -82,11 +88,15 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   protected abstract IFindBugsEngine createEngine();
   
   class Monitor implements FindBugsProgress, BugReporter {
+    final IToolInstance tool;
+    final ArtifactGenerator generator;
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
 
-    public Monitor(SLProgressMonitor mon) {
-      monitor = mon;
+    public Monitor(IToolInstance ti) {
+      tool = ti;
+      generator = ti.getGenerator();
+      monitor = ti.getProgressMonitor();
     }
 
     /* ******************** For FindBugsProgress ********************* */
@@ -142,6 +152,42 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     public void reportBug(BugInstance bug) {
       System.out.println("Bug reported: "+bug.getAbridgedMessage());
       stats.addBug(bug);
+
+      ArtifactBuilder artifact = generator.artifact();
+      SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();  
+      
+      SourceLineAnnotation line = bug.getPrimarySourceLineAnnotation();
+      sourceLocation.packageName(line.getPackageName());
+      sourceLocation.compilation(line.getSourceFile());
+      sourceLocation.className(line.getClassName());
+      
+      FieldAnnotation field = bug.getPrimaryField();
+      if (field.getSourceLines() == line) {
+        sourceLocation.type(IdentifierType.FIELD);
+        sourceLocation.identifier(field.getFieldName());
+      } else {
+        MethodAnnotation method = bug.getPrimaryMethod();    
+        if (method.getSourceLines() == line) {
+          sourceLocation.type(IdentifierType.METHOD);
+          sourceLocation.identifier(method.getMethodSignature());
+        } else {
+          sourceLocation.type(IdentifierType.CLASS);
+          sourceLocation.identifier(line.getClassName());
+        }
+      }
+      
+      HashGenerator hashGenerator = HashGenerator.getInstance();
+      Long hashValue = hashGenerator.getHash(line.getSourceFile(), line.getStartLine());
+      sourceLocation = sourceLocation.hash(hashValue).lineOfCode(line.getStartLine());            
+      sourceLocation = sourceLocation.endLine(line.getEndLine());
+      
+      artifact.findingType(getName(), getVersion(), bug.getType());
+      artifact.message(bug.getMessageWithoutPrefix());      
+      
+      int priority = bug.getPriority();
+      Priority assignedPriority = getFindBugsPriority(priority);
+      Severity assignedSeverity = getFindBugsSeverity(priority);
+      artifact.priority(assignedPriority).severity(assignedSeverity);
     }
 
     public void reportQueuedErrors() {
@@ -157,14 +203,17 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     
     public void logError(String message) {
       LOG.severe(message);
+      tool.reportError(message);
     }
 
     public void logError(String message, Throwable e) {
       LOG.log(Level.SEVERE, message, e);
+      tool.reportError(message, e);
     }
 
     public void reportMissingClass(ClassNotFoundException ex) {
       LOG.log(Level.WARNING, "Missing class", ex);
+      tool.reportError("Missing class", ex);
     }
 
     public void reportMissingClass(ClassDescriptor desc) {
@@ -172,7 +221,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
           desc.getClassName().charAt(0) == '[') {
         return;
       }
-      LOG.warning("Missing class: "+desc.getClassName());
+      String msg = "Missing class: "+desc.getClassName();
+      LOG.warning(msg);
+      tool.reportError(msg);
     }
 
     public void reportSkippedAnalysis(MethodDescriptor method) {
@@ -184,5 +235,38 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     public void observeClass(ClassDescriptor desc) {
       monitor.subTask("Scanning "+desc.getDottedClassName());
     }
+  }
+  
+  private static Severity getFindBugsSeverity(int priority) {
+    switch (priority) {
+    case 1:
+      return Severity.ERROR;
+    case 2:
+      return Severity.WARNING;
+    case 3:
+      return Severity.WARNING;
+    case 4:
+      return Severity.ERROR;
+    case 5:
+      return Severity.INFO;
+    }
+    return null;
+
+  }
+
+  private static Priority getFindBugsPriority(int priority) {
+    switch (priority) {
+    case 1:
+      return Priority.HIGH;
+    case 2:
+      return Priority.MEDIUM;
+    case 3:
+      return Priority.LOW;
+    case 4:
+      return Priority.EXPERIMENTAL;
+    case 5:
+      return Priority.IGNORE;
+    }
+    return null;
   }
 }
