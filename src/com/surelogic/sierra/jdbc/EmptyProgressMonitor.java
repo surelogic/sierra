@@ -49,10 +49,28 @@ public class EmptyProgressMonitor implements SLProgressMonitor {
 		return singleton;
 	}
 
+  public void failed(String msg) {
+  }
+	
   public void failed(Throwable t) {
   }
 
   public Throwable getFailureTrace() {
     return null;
+  }
+
+  public void error(String msg) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public void error(String msg, Throwable t) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public void failed(String msg, Throwable t) {
+    // TODO Auto-generated method stub
+    
   }
 }
