@@ -78,13 +78,16 @@ public class HashGenerator {
 			if (lineNumber > 0) {
 				lineNumber--;
 			}
-
+			if (cachedFileLines == null) {
+			  cachedFileName = null; 
+			}
 			if (cachedFileName == null || !cachedFileName.equals(fileName)) {
 				cachedFileName = fileName;
 				cachedFileLines = buildCachedLines(fileName);
 			} else if (lastHashLine == lineNumber) {
 				return lastHashValue;
 			}
+	     
 			if (lineNumber >= cachedFileLines.size()) {
 			  log.severe("line# too big: "+lineNumber+" >= "+cachedFileLines.size());
 			  cachedFileLines = buildCachedLines(fileName);
