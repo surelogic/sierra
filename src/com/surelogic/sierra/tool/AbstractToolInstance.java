@@ -60,15 +60,15 @@ public abstract class AbstractToolInstance implements IToolInstance {
     paths.add(loc);
   }
 
-  protected final Iterable<IToolTarget> getSrcTargets() {
+  public final Iterable<IToolTarget> getSrcTargets() {
     return srcTargets;
   }
   
-  protected final Iterable<IToolTarget> getBinTargets() {
+  public final Iterable<IToolTarget> getBinTargets() {
     return binTargets;
   }
   
-  protected final Iterable<IToolTarget> getAuxTargets() {
+  public final Iterable<IToolTarget> getAuxTargets() {
     return auxTargets;
   }
   
