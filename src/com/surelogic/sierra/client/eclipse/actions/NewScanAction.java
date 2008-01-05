@@ -52,10 +52,11 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
         protected IStatus run(IProgressMonitor monitor) {
           final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
           try {
-            ITool t = true ? new FindBugs1_3_0Tool() : new PMD4_0Tool();
-            if (true) {
-              t = new Reckoner1_0Tool();
-            }
+            MultiTool t = new MultiTool();
+            t.addTool(new FindBugs1_3_0Tool());
+            t.addTool(new PMD4_0Tool());
+            t.addTool(new Reckoner1_0Tool());
+            
             for(IJavaProject p : selectedProjects) {
               Config config = ConfigGenerator.getInstance().getProjectConfig(p);
               // FIX this
