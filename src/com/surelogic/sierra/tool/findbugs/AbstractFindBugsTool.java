@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool.findbugs;
 
 import java.io.File;
 import java.net.URI;
+import java.util.*;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -26,7 +27,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   }
   
   public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
-    System.setProperty("findbugs.home", "C:/work/workspace/sierra-tool/Tools/FB");
+    System.setProperty("findbugs.home", "D:/work/workspace/sierra-tool/Tools/FB");
     
     return new AbstractToolInstance(this, generator, monitor) {     
       final IFindBugsEngine engine = createEngine();
@@ -80,6 +81,18 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
               break;
           }
         }
+        for(IToolTarget t : getSrcTargets()) {
+          final String path = new File(t.getLocation()).getAbsolutePath(); 
+          switch (t.getKind()) {
+          case DIRECTORY:
+            p.addSourceDir(path);             
+            break;
+          case JAR:
+          case FILE:
+            System.out.println("Ignored: "+path);
+            break;
+          }
+        }
         return p;
       }
     };
@@ -88,12 +101,13 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   protected abstract IFindBugsEngine createEngine();
   
   class Monitor implements FindBugsProgress, BugReporter {
-    final IToolInstance tool;
+    final AbstractToolInstance tool;
     final ArtifactGenerator generator;
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
+    final Set<String> missingClasses = new HashSet<String>();
 
-    public Monitor(IToolInstance ti) {
+    public Monitor(AbstractToolInstance ti) {
       tool = ti;
       generator = ti.getGenerator();
       monitor = ti.getProgressMonitor();
@@ -162,12 +176,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       sourceLocation.className(line.getClassName());
       
       FieldAnnotation field = bug.getPrimaryField();
-      if (field.getSourceLines() == line) {
+      if (field != null && field.getSourceLines() == line) {
         sourceLocation.type(IdentifierType.FIELD);
         sourceLocation.identifier(field.getFieldName());
       } else {
         MethodAnnotation method = bug.getPrimaryMethod();    
-        if (method.getSourceLines() == line) {
+        if (method != null && method.getSourceLines() == line) {
           sourceLocation.type(IdentifierType.METHOD);
           sourceLocation.identifier(method.getMethodSignature());
         } else {
@@ -177,7 +191,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       }
       
       HashGenerator hashGenerator = HashGenerator.getInstance();
-      Long hashValue = hashGenerator.getHash(line.getSourceFile(), line.getStartLine());
+      // FIX need to find the complete path for the source files
+      String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
+      Long hashValue = hashGenerator.getHash(path, line.getStartLine());
       sourceLocation = sourceLocation.hash(hashValue).lineOfCode(line.getStartLine());            
       sourceLocation = sourceLocation.endLine(line.getEndLine());
       
@@ -211,7 +227,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       tool.reportError(message, e);
     }
 
-    public void reportMissingClass(ClassNotFoundException ex) {
+    public void reportMissingClass(ClassNotFoundException ex) {      
+      if (missingClasses.contains(ex.getMessage())) {
+        LOG.warning("Missing class: "+ex.getMessage());
+        return;
+      }
+      missingClasses.add(ex.getMessage());
       LOG.log(Level.WARNING, "Missing class", ex);
       tool.reportError("Missing class", ex);
     }
@@ -221,8 +242,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
           desc.getClassName().charAt(0) == '[') {
         return;
       }
-      String msg = "Missing class: "+desc.getClassName();
+      String msg = "Class "+desc.getClassName()+" cannot be resolved";
       LOG.warning(msg);
+      
+      if (missingClasses.contains(msg)) {        
+        return;
+      }
       tool.reportError(msg);
     }
 
@@ -234,6 +259,27 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     
     public void observeClass(ClassDescriptor desc) {
       monitor.subTask("Scanning "+desc.getDottedClassName());
+    }
+    
+    private String computeSourceFilePath(String pkg, String srcFile) {
+      String pkgPath = pkg.replace('.', '/');
+      
+      for(IToolTarget t : tool.getSrcTargets()) {
+        final File root = new File(t.getLocation()); 
+        switch (t.getKind()) {
+        case DIRECTORY:
+          File candidate = new File(root, pkgPath+'/'+srcFile);  
+          if (candidate.exists() && candidate.isFile()) {
+            return candidate.getAbsolutePath();
+          }
+          break;
+        case JAR:
+        case FILE:
+          System.out.println("Ignored: "+root);
+          break;
+        }
+      }
+      return null;
     }
   }
   
