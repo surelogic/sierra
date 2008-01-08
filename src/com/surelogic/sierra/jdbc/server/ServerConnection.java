@@ -58,11 +58,11 @@ public class ServerConnection {
 
 	}
 
-	@Deprecated
 	/*
 	 * It's not clear that we want to do this. We probably want a cleaner way to
 	 * finish a transaction.
 	 */
+	// TODO
 	public void finished() throws SQLException {
 		if (!readOnly) {
 			conn.commit();
