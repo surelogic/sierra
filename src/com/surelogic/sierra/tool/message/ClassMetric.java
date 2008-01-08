@@ -3,11 +3,12 @@ package com.surelogic.sierra.tool.message;
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
+@XmlRootElement
 public class ClassMetric {
     private String packageName;
     private String className;
