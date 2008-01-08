@@ -18,7 +18,9 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
@@ -60,14 +62,19 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             for(IJavaProject p : selectedProjects) {
               Config config = ConfigGenerator.getInstance().getProjectConfig(p);
               // FIX this
-              File tempDocument = File.createTempFile("sierra-"+p.getElementName(), ".scan.xml");
+              // File tempDocument = File.createTempFile("sierra-"+p.getElementName(), ".scan.gz");
               ArtifactGenerator generator = 
-                new MessageArtifactFileGenerator(tempDocument, config);
+                new MessageArtifactFileGenerator(config.getScanDocument(), config);
               
               IToolInstance ti = t.create(generator, wrapper);                         
               setupToolForProject(ti, p, true);
               ti.run();
               generator.finished();
+              
+              ScanDocumentUtility.loadScanDocument(config.getScanDocument(), wrapper,
+                                                   config.getProject());
+              /* Notify that scan was completed */
+              DatabaseHub.getInstance().notifyScanLoaded();
             }            
           } catch(Throwable ex) {
             wrapper.failed("Caught exception during run()", ex);
