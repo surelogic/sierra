@@ -15,6 +15,7 @@ import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Reckoner1_0Tool extends AbstractTool {
@@ -40,6 +41,14 @@ public class Reckoner1_0Tool extends AbstractTool {
         List<Metrics> metrics = r.computeMetrics(targets, mon);
         for(Metrics m : metrics) {
           System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
+          MetricBuilder metric = generator.metric();
+          metric.compilation(m.getClassName());
+          if (m.getLoc() > Integer.MAX_VALUE) {
+            reportError("#LOC too big to report: "+m.getClassName()+" - "+m.getLoc());
+          }
+          metric.linesOfCode((int) m.getLoc());
+          metric.packageName(m.getPackageName());
+          metric.build();
         }
       }
     };
