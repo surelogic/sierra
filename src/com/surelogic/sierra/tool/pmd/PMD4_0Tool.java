@@ -141,6 +141,8 @@ public class PMD4_0Tool extends AbstractTool {
         Severity assignedSeverity = getPMDSeverity(priority);
         artifact.priority(assignedPriority).severity(assignedSeverity);
 
+        sourceLocation.build();
+        artifact.build();
       }
     }
     
