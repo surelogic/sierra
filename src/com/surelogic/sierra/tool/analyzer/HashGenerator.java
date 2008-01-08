@@ -144,6 +144,9 @@ public class HashGenerator {
 	}
 
 	private List<String> buildCachedLines(String fileName) throws IOException {
+	  if (fileName == null) {
+	    throw new IllegalArgumentException("Null filename");
+	  }
 		List<String> cachedLines = new ArrayList<String>();
 		BufferedReader in = new BufferedReader(new FileReader(fileName));
 		try {
