@@ -43,4 +43,6 @@ public interface IToolTarget {
    * @return A list of URIs for the various files in this target
    */
   Iterable<URI> getFiles();
+  
+  IToolTarget getAuxSources();
 }
