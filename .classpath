@@ -3,21 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="jax-ws/activation.jar"/>
-	<classpathentry kind="lib" path="jax-ws/FastInfoset.jar"/>
-	<classpathentry kind="lib" path="jax-ws/http.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxb-xjc.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxws-api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxws-rt.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jaxws-tools.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jsr173_api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jsr181-api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/jsr250-api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/resolver.jar"/>
-	<classpathentry kind="lib" path="jax-ws/saaj-api.jar"/>
-	<classpathentry kind="lib" path="jax-ws/saaj-impl.jar"/>
-	<classpathentry kind="lib" path="jax-ws/sjsxp.jar"/>
+	<classpathentry kind="lib" path="srpc/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="srpc/servlet-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,10 +7,12 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 
+import com.surelogic.sierra.message.srpc.Service;
+
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.BARE)
-public interface SierraService {
+public interface SierraService extends Service{
     /**
      * Publish a run to the server.
      *
