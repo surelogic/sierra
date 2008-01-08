@@ -67,6 +67,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               IToolInstance ti = t.create(generator, wrapper);                         
               setupToolForProject(ti, p, true);
               ti.run();
+              generator.finished();
             }            
           } catch(Throwable ex) {
             wrapper.failed("Caught exception during run()", ex);
@@ -87,43 +88,60 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
         {
           final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
           for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-            switch (cpe.getEntryKind()) {
-              case IClasspathEntry.CPE_SOURCE:
-                if (toBeAnalyzed) {
-                  IResource res = root.findMember(cpe.getPath());
-                  URI loc = res.getLocationURI();
-                  ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
-                    public boolean exclude(String relativePath) {
-                      // TODO Auto-generated method stub
-                      return false;
-                    }
-                  });
-                }
-                break;
-              case IClasspathEntry.CPE_LIBRARY:
-                URI lib;
-                IPath libPath = cpe.getPath();
-                File libFile = new File(libPath.toOSString());
-                if (libFile.exists()) {
-                  lib = libFile.toURI();
-                } else {
-                  lib = root.findMember(libPath).getLocationURI();
-                }
-                if (new File(lib).isDirectory()) {
-                  ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, lib));
-                } else {
-                  ti.addTarget(new JarTarget(lib));
-                }
-                break;
-              case IClasspathEntry.CPE_PROJECT:
-                String projName = cpe.getPath().lastSegment();
-                IProject proj = root.getProject(projName);
-                setupToolForProject(ti, JavaCore.create(proj), false);
-                break;
-            }
+            handleClasspathEntry(ti, toBeAnalyzed, root, cpe);
           }
           URI out = root.findMember(p.getOutputLocation()).getLocationURI();
           ti.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
+        }
+
+        private void handleClasspathEntry(final IToolInstance ti, final boolean toBeAnalyzed, 
+                                          final IWorkspaceRoot root, IClasspathEntry cpe) 
+        throws JavaModelException 
+        {
+          switch (cpe.getEntryKind()) {
+            case IClasspathEntry.CPE_SOURCE:
+              if (toBeAnalyzed) {
+                IResource res = root.findMember(cpe.getPath());
+                URI loc = res.getLocationURI();
+                ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
+                  public boolean exclude(String relativePath) {
+                    // TODO Auto-generated method stub
+                    return false;
+                  }
+                });
+              }
+              break;
+            case IClasspathEntry.CPE_LIBRARY:
+              IPath srcPath = cpe.getSourceAttachmentPath();
+              // FIX cpe.getSourceAttachmentRootPath();
+              if (srcPath != null) {
+                IToolTarget srcTarget = createTarget(root, cpe.getSourceAttachmentPath(), null);
+                ti.addTarget(createTarget(root, cpe.getPath(), srcTarget));
+              } else {
+                ti.addTarget(createTarget(root, cpe.getPath(), null));
+              }
+              break;
+            case IClasspathEntry.CPE_PROJECT:
+              String projName = cpe.getPath().lastSegment();
+              IProject proj = root.getProject(projName);
+              setupToolForProject(ti, JavaCore.create(proj), false);
+              break;
+          }
+        }
+
+        private IToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
+          URI lib;
+          File libFile = new File(libPath.toOSString());
+          if (libFile.exists()) {
+            lib = libFile.toURI();
+          } else {
+            lib = root.findMember(libPath).getLocationURI();
+          }
+          if (new File(lib).isDirectory()) {
+            return new FullDirectoryTarget(IToolTarget.Type.AUX, lib);
+          } else {
+            return new JarTarget(lib);
+          }
         }
       }.schedule();
     }
