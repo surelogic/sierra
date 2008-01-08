@@ -75,6 +75,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             case DIRECTORY:
             case JAR:
               p.addAuxClasspathEntry(path);             
+              
+              IToolTarget auxSrc = t.getAuxSources();
+              if (auxSrc != null && auxSrc.getKind() == IToolTarget.Kind.DIRECTORY) {                             
+                p.addSourceDir(new File(t.getLocation()).getAbsolutePath());
+              }              
+              // FIX how to deal w/ jars?
               break;
             case FILE:
               System.out.println("Ignored: "+path);
@@ -209,6 +215,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       Priority assignedPriority = getFindBugsPriority(priority);
       Severity assignedSeverity = getFindBugsSeverity(priority);
       artifact.priority(assignedPriority).severity(assignedSeverity);
+      
+      sourceLocation.build();
+      artifact.build();
     }
 
     public void reportQueuedErrors() {
@@ -257,7 +266,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportSkippedAnalysis(MethodDescriptor method) {
-      LOG.info("Skipped analysis: "+method.getSignature());
+      LOG.info("Skipped analysis: "+method.getName()+method.getSignature());
     }
 
     /* ******************** For IClassObserver ********************* */
