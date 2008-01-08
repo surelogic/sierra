@@ -33,14 +33,15 @@ public class PMD4_0Tool extends AbstractTool {
         int cpus = Runtime.getRuntime().availableProcessors();
         String encoding = Charset.defaultCharset().name();
         SourceType sourceType = SourceType.JAVA_15;
-        String rulesets = "rulesets/basic.xml"; // location of the XML rule file 
+        //String rulesets = "rulesets/basic.xml"; // location of the XML rule file 
+        String rulesets = "all.xml"; // location of the XML rule file 
         RuleContext ctx = new RuleContext(); // info about what's getting scanned
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
         
         String excludeMarker = PMD.EXCLUDE_MARKER;
         for(IToolTarget t : getSrcTargets()) {
           // root dir of where the files are
-          String inputPath = new File(t.getLocation()).getAbsolutePath();           
+          final String inputPath = new File(t.getLocation()).getAbsolutePath();           
           List<DataSource> files = new ArrayList<DataSource>();
           for(URI loc : t.getFiles()) {
             File f = new File(loc);
@@ -55,6 +56,8 @@ public class PMD4_0Tool extends AbstractTool {
       }      
     };
   }
+  
+  private static int SUFFIX_LEN = ".java".length();
   
   class Output implements Renderer {
     private final ArtifactGenerator generator;
@@ -113,17 +116,27 @@ public class PMD4_0Tool extends AbstractTool {
         ArtifactBuilder artifact = generator.artifact();
         SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
  
+        String file = v.getFilename();
         sourceLocation.packageName(v.getPackageName());
-        sourceLocation.compilation(v.getFilename());
-        sourceLocation.className(v.getClassName());
+        sourceLocation.compilation(file);
+        
+        int separator = file.lastIndexOf(File.separatorChar);
+        sourceLocation.className(file.substring(separator+1, 
+                                                file.length() - SUFFIX_LEN));
         
         String method = v.getMethodName();
+        String field  = v.getVariableName();
         if ("".equals(method)) {
           sourceLocation.type(IdentifierType.CLASS);
           sourceLocation.identifier(v.getClassName());
-        } else {
+        } 
+        else if ("".equals(field)) {
           sourceLocation.type(IdentifierType.METHOD);
           sourceLocation.identifier(method);
+        }
+        else {
+          sourceLocation.type(IdentifierType.FIELD);
+          sourceLocation.identifier(field);
         }
         
         HashGenerator hashGenerator = HashGenerator.getInstance();
@@ -131,6 +144,7 @@ public class PMD4_0Tool extends AbstractTool {
         //FIX use v.getBeginColumn();
         //FIX use v.getEndColumn();
         sourceLocation = sourceLocation.hash(hashValue).lineOfCode(v.getBeginLine());            
+        sourceLocation = sourceLocation.lineOfCode(v.getBeginLine());
         sourceLocation = sourceLocation.endLine(v.getEndLine());
         
         artifact.findingType(getName(), getVersion(), v.getRule().getName());
