@@ -13,6 +13,8 @@ public interface ArtifactGenerator {
 
     public ErrorBuilder error();
 
+    public void finished();
+    
     public void rollback();
 
     public interface ArtifactBuilder {
