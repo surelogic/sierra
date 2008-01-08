@@ -84,7 +84,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	 * Must be called by JDBCScanGenerator to ensure all artifacts and error are
 	 * actually persisted.
 	 */
-	void finished() {
+	public void finished() {
 		persist();
 	}
 
