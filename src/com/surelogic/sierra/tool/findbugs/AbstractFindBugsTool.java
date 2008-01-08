@@ -27,7 +27,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   }
   
   public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
-    System.setProperty("findbugs.home", "D:/work/workspace/sierra-tool/Tools/FB");
+    System.setProperty("findbugs.home", "C:/work/workspace/sierra-tool/Tools/FB");
     
     return new AbstractToolInstance(this, generator, monitor) {     
       final IFindBugsEngine engine = createEngine();
@@ -166,11 +166,18 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     public void reportBug(BugInstance bug) {
       System.out.println("Bug reported: "+bug.getAbridgedMessage());
       stats.addBug(bug);
-
+      
+      final SourceLineAnnotation line = bug.getPrimarySourceLineAnnotation();
+      final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
+      if (path == null) {
+        // No identifiable source location
+        logError("Couldn't find source file for "+line.getClassName());
+        return;
+      }
+      
       ArtifactBuilder artifact = generator.artifact();
       SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();  
-      
-      SourceLineAnnotation line = bug.getPrimarySourceLineAnnotation();
+
       sourceLocation.packageName(line.getPackageName());
       sourceLocation.compilation(line.getSourceFile());
       sourceLocation.className(line.getClassName());
@@ -191,8 +198,6 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       }
       
       HashGenerator hashGenerator = HashGenerator.getInstance();
-      // FIX need to find the complete path for the source files
-      String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       Long hashValue = hashGenerator.getHash(path, line.getStartLine());
       sourceLocation = sourceLocation.hash(hashValue).lineOfCode(line.getStartLine());            
       sourceLocation = sourceLocation.endLine(line.getEndLine());
