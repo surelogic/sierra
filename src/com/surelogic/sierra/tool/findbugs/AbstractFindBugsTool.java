@@ -186,7 +186,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
       sourceLocation.packageName(line.getPackageName());
       sourceLocation.compilation(line.getSourceFile());
-      sourceLocation.className(line.getClassName());
+      sourceLocation.className(line.getSimpleClassName());
       
       FieldAnnotation field = bug.getPrimaryField();
       if (field != null && field.getSourceLines() == line) {
@@ -199,13 +199,14 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
           sourceLocation.identifier(method.getMethodSignature());
         } else {
           sourceLocation.type(IdentifierType.CLASS);
-          sourceLocation.identifier(line.getClassName());
+          sourceLocation.identifier(line.getSimpleClassName());
         }
       }
       
       HashGenerator hashGenerator = HashGenerator.getInstance();
       Long hashValue = hashGenerator.getHash(path, line.getStartLine());
       sourceLocation = sourceLocation.hash(hashValue).lineOfCode(line.getStartLine());            
+      sourceLocation = sourceLocation.lineOfCode(line.getStartLine());
       sourceLocation = sourceLocation.endLine(line.getEndLine());
       
       artifact.findingType(getName(), getVersion(), bug.getType());
