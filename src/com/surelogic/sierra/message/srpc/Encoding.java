@@ -114,13 +114,18 @@ class Encoding {
 		try {
 			final String statusStr = reader.readLine();
 			if (statusStr != null) {
-				final ResponseStatus status = ResponseStatus.valueOf(statusStr);
+				ResponseStatus status = null;
+				try {
+					status = ResponseStatus.valueOf(statusStr);
+				} catch (IllegalArgumentException e) {
+				}
 				if (status != null) {
 					return newUnmarshaller().unmarshal(reader);
 				}
 			}
 			throw new SRPCException(
-					"Response did not begin with an acceptable status code");
+					"Response did not begin with an acceptable status code.  The first line was: "
+							+ statusStr);
 
 		} catch (IOException e) {
 			throw new SRPCException(e);
