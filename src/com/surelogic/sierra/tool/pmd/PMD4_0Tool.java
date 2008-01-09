@@ -144,7 +144,6 @@ public class PMD4_0Tool extends AbstractTool {
         //FIX use v.getBeginColumn();
         //FIX use v.getEndColumn();
         sourceLocation = sourceLocation.hash(hashValue).lineOfCode(v.getBeginLine());            
-        sourceLocation = sourceLocation.lineOfCode(v.getBeginLine());
         sourceLocation = sourceLocation.endLine(v.getEndLine());
         
         artifact.findingType(getName(), getVersion(), v.getRule().getName());
