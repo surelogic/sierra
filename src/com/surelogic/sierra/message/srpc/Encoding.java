@@ -53,10 +53,12 @@ class Encoding {
 		writer.println(method.getName());
 		if (args != null) {
 			if (args.length == 1) {
-				try {
-					newMarshaller().marshal(args[0], out);
-				} catch (JAXBException e) {
-					throw new SRPCException(e);
+				if (args[0] != null) {
+					try {
+						newMarshaller().marshal(args[0], out);
+					} catch (JAXBException e) {
+						throw new SRPCException(e);
+					}
 				}
 			} else {
 				throw new SRPCException(
@@ -98,7 +100,9 @@ class Encoding {
 		final PrintWriter writer = new PrintWriter(out);
 		writer.println(status);
 		try {
-			newMarshaller().marshal(o, writer);
+			if (o != null) {
+				newMarshaller().marshal(o, writer);
+			}
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
