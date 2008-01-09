@@ -6,14 +6,18 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 /**
  * Handles method dispatch for remotely invokable SRPC services.
@@ -21,18 +25,19 @@ import org.apache.commons.httpclient.methods.PostMethod;
  * @author nathan
  * 
  */
-public class SRPCProxy implements InvocationHandler {
+public class SRPCClient implements InvocationHandler {
 
 	private final HttpClient client;
 	private final Encoding codec;
-	private final String url;
+	private final URL url;
 	private final Set<Method> methods;
 
-	private SRPCProxy(Method[] methods, Encoding codec, String url) {
+	private SRPCClient(Method[] methods, Encoding codec,
+			SierraServerLocation location, String service) {
 		client = new HttpClient();
 		this.methods = new HashSet<Method>(Arrays.asList(methods));
 		this.codec = codec;
-		this.url = url;
+		this.url = location.createServiceUrl(service);
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args)
@@ -41,8 +46,8 @@ public class SRPCProxy implements InvocationHandler {
 			// This is a normal method for this object. Pass it along.
 			return method.invoke(proxy, args);
 		} else {
-			final PostMethod post = new PostMethod(url);
-			final File temp = File.createTempFile("sl", "sierra");
+			final PostMethod post = new PostMethod(url.toString());
+			final File temp = File.createTempFile("sierra", ".message.gz");
 			try {
 				final GZIPOutputStream zip = new GZIPOutputStream(
 						new BufferedOutputStream(new FileOutputStream(temp)));
@@ -52,7 +57,8 @@ public class SRPCProxy implements InvocationHandler {
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
-				return codec.decodeResponse(post.getResponseBodyAsStream());
+				return codec.decodeResponse(new GZIPInputStream(post
+						.getResponseBodyAsStream()));
 			} finally {
 				temp.delete();
 			}
@@ -60,24 +66,29 @@ public class SRPCProxy implements InvocationHandler {
 	}
 
 	/**
-	 * Create a remotely invokable instance of the specified interface.
+	 * Create a remotely invokable instance of the specified interface. By
+	 * default, this will attempt to invoke a service under the context root
+	 * <code>sierra</code> with the same name as the simple name of the class.
 	 * 
 	 * @param <T>
 	 *            An SRPC interface
+	 * @param user
+	 * @param password
 	 * @param url
 	 *            the remote url to dispatch to
 	 * @param clazz
 	 * @return
 	 */
-	static <T> T createClient(String url, Class<T> clazz) throws SRPCException {
+	public static <T> T createClient(SierraServerLocation location,
+			Class<T> clazz) throws SRPCException {
 		if (!Service.class.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException(
 					clazz
 							+ " must be an implementation of com.surelogic.sierra.message.srpc.Service");
 		}
 		return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),
-				new Class[] { clazz }, new SRPCProxy(
-						clazz.getDeclaredMethods(),
-						Encoding.getEncoding(clazz), url)));
+				new Class[] { clazz }, new SRPCClient(clazz
+						.getDeclaredMethods(), Encoding.getEncoding(clazz),
+						location, clazz.getSimpleName())));
 	}
 }
