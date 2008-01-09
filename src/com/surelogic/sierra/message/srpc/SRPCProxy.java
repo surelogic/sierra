@@ -35,7 +35,6 @@ public class SRPCProxy implements InvocationHandler {
 		this.url = url;
 	}
 
-	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		if (!methods.contains(method)) {
