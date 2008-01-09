@@ -4,7 +4,8 @@ Bundle-Name: SureLogic Sierra Message Specification Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.message
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: SureLogic, Inc.
-Export-Package: com.surelogic.sierra.tool.message,
+Export-Package: com.sun.xml.bind.v2,
+ com.surelogic.sierra.tool.message,
  com.surelogic.sierra.tool.message.jaxws
 Require-Bundle: com.surelogic.common
 Bundle-ClassPath: .,
