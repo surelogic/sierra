@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
-import com.surelogic.sierra.tool.message.jaxws.JAXWSClient;
+import com.surelogic.sierra.message.srpc.SRPCClient;
 
 /**
  * Utility class for generating proxies that call the Sierra client web service.
@@ -12,14 +12,20 @@ import com.surelogic.sierra.tool.message.jaxws.JAXWSClient;
  * 
  */
 public class SierraServiceClient {
-	private SierraServiceClient() {
-	}
 
 	public static SierraService create() {
-		return new JAXWSClient();
+		return SRPCClient.createClient(SierraServerLocation.DEFAULT,
+				SierraService.class);
 	}
 
 	public static SierraService create(SierraServerLocation location) {
-		return new JAXWSClient(location);
+		return SRPCClient.createClient(location, SierraService.class);
 	}
+	// public static SierraService create() {
+	// return new JAXWSClient();
+	// }
+	//
+	// public static SierraService create(SierraServerLocation location) {
+	// return new JAXWSClient(location);
+	// }
 }
