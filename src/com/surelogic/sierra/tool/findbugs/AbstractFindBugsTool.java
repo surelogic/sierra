@@ -173,7 +173,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       System.out.println("Bug reported: "+bug.getAbridgedMessage());
       stats.addBug(bug);
       
-      final SourceLineAnnotation line = bug.getPrimarySourceLineAnnotation();
+      final SourceLineAnnotation line = computePrimarySourceLocation(bug);
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
@@ -298,6 +298,22 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       }
       return null;
     }
+  }
+  
+  private SourceLineAnnotation computePrimarySourceLocation(BugInstance bug) {
+    // From BugInstance.getPrimarySourceLineAnnotation
+    Iterator<BugAnnotation> annos = bug.annotationIterator();
+    SourceLineAnnotation last     = null;
+    while (annos.hasNext()) {
+      BugAnnotation annotation = annos.next();
+      if (annotation instanceof SourceLineAnnotation) {
+        SourceLineAnnotation anno = (SourceLineAnnotation) annotation;
+        if (last == null || anno.getStartLine() > last.getStartLine()) {
+          last = anno;
+        }
+      }    
+    }
+    return bug.getPrimarySourceLineAnnotation();
   }
   
   private static Severity getFindBugsSeverity(int priority) {
