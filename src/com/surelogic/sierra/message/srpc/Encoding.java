@@ -106,6 +106,7 @@ class Encoding {
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
+		writer.flush();
 	}
 
 	Object decodeResponse(InputStream in) throws SRPCException {
