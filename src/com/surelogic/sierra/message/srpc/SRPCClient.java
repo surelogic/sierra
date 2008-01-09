@@ -3,6 +3,7 @@ package com.surelogic.sierra.message.srpc;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -49,16 +50,15 @@ public class SRPCClient implements InvocationHandler {
 			final PostMethod post = new PostMethod(url.toString());
 			final File temp = File.createTempFile("sierra", ".message.gz");
 			try {
-				final GZIPOutputStream zip = new GZIPOutputStream(
-						new BufferedOutputStream(new FileOutputStream(temp)));
-				codec.encodeMethodInvocation(zip, new MethodInvocation(method,
+				final OutputStream out = new BufferedOutputStream(
+						new FileOutputStream(temp));
+				codec.encodeMethodInvocation(out, new MethodInvocation(method,
 						args));
-				zip.close();
+				out.close();
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
-				return codec.decodeResponse(new GZIPInputStream(post
-						.getResponseBodyAsStream()));
+				return codec.decodeResponse(post.getResponseBodyAsStream());
 			} finally {
 				temp.delete();
 			}
