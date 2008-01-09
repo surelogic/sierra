@@ -204,10 +204,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       }
       
       HashGenerator hashGenerator = HashGenerator.getInstance();
-      Long hashValue = hashGenerator.getHash(path, line.getStartLine());
-      sourceLocation = sourceLocation.hash(hashValue).lineOfCode(line.getStartLine());            
-      sourceLocation = sourceLocation.lineOfCode(line.getStartLine());
-      sourceLocation = sourceLocation.endLine(line.getEndLine());
+      final int start = line.getStartLine() < 0 ? 0 : line.getStartLine();
+      Long hashValue = hashGenerator.getHash(path, start);
+      sourceLocation = sourceLocation.hash(hashValue).lineOfCode(start);      
+      
+      final int end = line.getEndLine() < start ? start : line.getEndLine();
+      sourceLocation = sourceLocation.endLine(end);
       
       artifact.findingType(getName(), getVersion(), bug.getType());
       artifact.message(bug.getMessageWithoutPrefix());      
