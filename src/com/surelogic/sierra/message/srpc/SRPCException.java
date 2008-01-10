@@ -1,7 +1,5 @@
 package com.surelogic.sierra.message.srpc;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * SRPCException is thrown when an error occurs during the remote invocation of
@@ -10,8 +8,6 @@ import javax.xml.bind.annotation.XmlType;
  * @author nathan
  * 
  */
-@XmlType
-@XmlRootElement
 public class SRPCException extends RuntimeException {
 
 	/**

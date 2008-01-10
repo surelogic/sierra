@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +47,7 @@ public abstract class SRPCServlet extends HttpServlet {
 				codec.encodeResponse(resp.getOutputStream(), ResponseStatus.OK,
 						response);
 			} catch (SRPCException e) {
-				codec.encodeResponse(out, ResponseStatus.FAIL, e);
+				codec.encodeResponse(out, ResponseStatus.FAIL, new Failure(e));
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage(), e);

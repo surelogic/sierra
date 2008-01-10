@@ -1,6 +1,5 @@
 package com.surelogic.sierra.message.srpc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 class MethodInvocation {
