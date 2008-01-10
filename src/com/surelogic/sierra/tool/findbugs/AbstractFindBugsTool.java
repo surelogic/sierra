@@ -303,16 +303,19 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   private SourceLineAnnotation computePrimarySourceLocation(BugInstance bug) {
     // From BugInstance.getPrimarySourceLineAnnotation
     Iterator<BugAnnotation> annos = bug.annotationIterator();
-    SourceLineAnnotation last     = null;
+    SourceLineAnnotation first     = null;
     while (annos.hasNext()) {
       BugAnnotation annotation = annos.next();
       if (annotation instanceof SourceLineAnnotation) {
         SourceLineAnnotation anno = (SourceLineAnnotation) annotation;
-        if (last == null || anno.getStartLine() > last.getStartLine()) {
-          last = anno;
+        if (first == null || anno.getStartLine() < first.getStartLine()) {
+          first = anno;
         }
       }    
     }
+    if (first != null) {
+      return first;
+    }    
     return bug.getPrimarySourceLineAnnotation();
   }
   
