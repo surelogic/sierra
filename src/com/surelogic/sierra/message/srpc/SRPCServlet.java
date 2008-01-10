@@ -17,7 +17,8 @@ import com.surelogic.common.logging.SLLogger;
 
 /**
  * Implementors of a service should extend this class, and implement the
- * interface they intend to serve.  For example:
+ * interface they intend to serve. For example:
+ * 
  * <pre>
  * public class FooServlet implements Foo extends SRPCServlet {
  *    //Implement service methods.
@@ -47,7 +48,7 @@ public abstract class SRPCServlet extends HttpServlet {
 				final Object response = method.invoke(this);
 				codec.encodeResponse(resp.getOutputStream(), ResponseStatus.OK,
 						response);
-			} catch (Exception e) {
+			} catch (SRPCException e) {
 				codec.encodeResponse(out, ResponseStatus.FAIL, e);
 			}
 		} catch (Exception e) {

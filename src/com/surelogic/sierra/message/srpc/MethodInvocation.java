@@ -22,9 +22,12 @@ class MethodInvocation {
 		return args;
 	}
 
-	public Object invoke(Object target) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
-		return m.invoke(target, args);
+	public Object invoke(Object target) throws SRPCException {
+		try {
+			return m.invoke(target, args);
+		} catch (Exception e) {
+			throw new SRPCException(e);
+		}
 	}
 
 }
