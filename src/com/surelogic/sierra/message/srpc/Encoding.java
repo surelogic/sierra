@@ -56,7 +56,7 @@ class Encoding {
 			if (args.length == 1) {
 				if (args[0] != null) {
 					try {
-						newMarshaller().marshal(args[0], out);
+						newMarshaller().marshal(args[0], writer);
 					} catch (JAXBException e) {
 						throw new SRPCException(e);
 					}
@@ -122,7 +122,19 @@ class Encoding {
 				} catch (IllegalArgumentException e) {
 				}
 				if (status != null) {
-					return newUnmarshaller().unmarshal(reader);
+					switch (status) {
+					case OK:
+						return newUnmarshaller().unmarshal(reader);
+					case FAIL:
+						final Failure failure = (Failure) newUnmarshaller()
+								.unmarshal(reader);
+						throw new ServiceInvocationException(failure
+								.getMessage()
+								+ "\n" + failure.getTrace());
+					default:
+						break;
+					}
+
 				}
 			}
 			throw new SRPCException(
