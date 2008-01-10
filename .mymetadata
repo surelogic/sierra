@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="sierra-services"
+  id="myeclipse.1199989324930"
+  context-root="/sierra-services"
+  j2ee-spec="5.0"
+  archive="sierra-services.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+
