@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 
@@ -34,6 +36,12 @@ public class SRPCClient implements InvocationHandler {
 	private SRPCClient(Method[] methods, Encoding codec,
 			SierraServerLocation location, String service) {
 		client = new HttpClient();
+		client.getParams().setAuthenticationPreemptive(true);
+		client.getState().setCredentials(
+				new AuthScope(location.getHost(), location.getPort(),
+						AuthScope.ANY_REALM),
+				new UsernamePasswordCredentials(location.getUser(), location
+						.getPass()));
 		this.methods = new HashSet<Method>(Arrays.asList(methods));
 		this.codec = codec;
 		this.url = location.createServiceUrl(service);
@@ -56,9 +64,11 @@ public class SRPCClient implements InvocationHandler {
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
-				if (post.getStatusCode() == 404) {
+				if (post.getStatusCode() != 200) {
 					throw new InvalidServiceException(
-							"Reply has a status code of 404");
+							"Problem locating service at " + url + ": Status: "
+									+ post.getStatusCode() + ": "
+									+ post.getStatusText());
 				}
 				return codec.decodeResponse(post.getResponseBodyAsStream());
 			} finally {
