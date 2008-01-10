@@ -30,7 +30,7 @@ class Encoding {
 	private Encoding(Class<?> service) throws SRPCException {
 		this.service = service;
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		classes.add(SRPCException.class);
+		classes.add(Failure.class);
 		for (Method m : service.getDeclaredMethods()) {
 			classes.add(m.getReturnType());
 			for (Class<?> clazz : m.getParameterTypes()) {
