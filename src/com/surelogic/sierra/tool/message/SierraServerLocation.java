@@ -95,7 +95,7 @@ public class SierraServerLocation {
 		final String host = getHost() + ":" + getPort();
 
 		try {
-			return new URL("http://" + host + "/sierra/" + serviceName);
+			return new URL("http://" + host + "/sierra-services/" + serviceName);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
