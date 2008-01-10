@@ -24,6 +24,8 @@ import javax.xml.bind.Unmarshaller;
  */
 class Encoding {
 
+	private static final String NULL = "null";
+
 	private final JAXBContext context;
 	private final Class<?> service;
 
@@ -101,7 +103,10 @@ class Encoding {
 		final PrintWriter writer = new PrintWriter(out);
 		writer.println(status);
 		try {
-			if (o != null) {
+			if (o == null) {
+				writer.println(NULL);
+			} else {
+				writer.println(o.getClass().getName());
 				newMarshaller().marshal(o, writer);
 			}
 		} catch (JAXBException e) {
@@ -122,12 +127,18 @@ class Encoding {
 				} catch (IllegalArgumentException e) {
 				}
 				if (status != null) {
+					final String returnClass = reader.readLine();
+					Object value;
+					if (NULL.equals(returnClass)) {
+						value = null;
+					} else {
+						value = newUnmarshaller().unmarshal(reader);
+					}
 					switch (status) {
 					case OK:
-						return newUnmarshaller().unmarshal(reader);
+						return value;
 					case FAIL:
-						final Failure failure = (Failure) newUnmarshaller()
-								.unmarshal(reader);
+						final Failure failure = (Failure) value;
 						throw new ServiceInvocationException(failure
 								.getMessage()
 								+ "\n" + failure.getTrace());
