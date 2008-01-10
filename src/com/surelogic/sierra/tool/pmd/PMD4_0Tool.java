@@ -2,13 +2,16 @@ package com.surelogic.sierra.tool.pmd;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
 
 import net.sourceforge.pmd.*;
+import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.stat.Metric;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
@@ -30,10 +33,13 @@ public class PMD4_0Tool extends AbstractTool {
     return new AbstractToolInstance(this, generator, monitor) {
       @Override
       protected void execute() throws Exception {      
-        int cpus = Runtime.getRuntime().availableProcessors();
-        String encoding = Charset.defaultCharset().name();
+        int cpus = 0; // Runtime.getRuntime().availableProcessors();
+        String encoding = new InputStreamReader(System.in).getEncoding();
+        String altEncoding = Charset.defaultCharset().name();
+        if (!encoding.equals(altEncoding)) {
+          System.out.println("Encoding '"+encoding+"' != "+altEncoding);
+        }
         SourceType sourceType = SourceType.JAVA_15;
-        //String rulesets = "rulesets/basic.xml"; // location of the XML rule file 
         String rulesets = "all.xml"; // location of the XML rule file 
         RuleContext ctx = new RuleContext(); // info about what's getting scanned
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
@@ -96,7 +102,7 @@ public class PMD4_0Tool extends AbstractTool {
       monitor.beginTask("Starting PMD scanning", numFiles + 500);
     }
 
-    public void startFileAnalysis(DataSource dataSource) {
+    public synchronized void startFileAnalysis(DataSource dataSource) {
       String msg = "Scanning "+dataSource.getNiceFileName(false, inputPath);
       monitor.subTask(msg); 
       if (first) {
@@ -104,14 +110,15 @@ public class PMD4_0Tool extends AbstractTool {
       } else {
         monitor.worked(1);
       }
-      System.out.println(msg);
+      // System.out.println(msg);
+      LOG.info(msg);
     }
     
-    public void renderFileReport(Report report) throws IOException {
+    public synchronized void renderFileReport(Report report) throws IOException {
       Iterator<IRuleViolation> it = report.iterator();
       while (it.hasNext()) {
         IRuleViolation v = it.next();
-        System.out.println(v.getFilename()+": "+v.getDescription());
+        LOG.info(v.getFilename()+": "+v.getDescription());
         
         ArtifactBuilder artifact = generator.artifact();
         SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
@@ -120,9 +127,14 @@ public class PMD4_0Tool extends AbstractTool {
         sourceLocation.packageName(v.getPackageName());
         sourceLocation.compilation(file);
         
-        int separator = file.lastIndexOf(File.separatorChar);
-        sourceLocation.className(file.substring(separator+1, 
-                                                file.length() - SUFFIX_LEN));
+        if ("".equals(v.getClassName())) {
+          // No class name, so use the main class for the compilation unit
+          int separator = file.lastIndexOf(File.separatorChar);
+          sourceLocation.className(file.substring(separator+1, 
+                                                  file.length() - SUFFIX_LEN));
+        } else {
+          sourceLocation.className(v.getClassName());
+        }
         
         String method = v.getMethodName();
         String field  = v.getVariableName();
@@ -157,6 +169,19 @@ public class PMD4_0Tool extends AbstractTool {
         sourceLocation.build();
         artifact.build();
       }
+      
+      Iterator<ProcessingError> errors = report.errors();
+      while (errors.hasNext()) {
+        ProcessingError error = errors.next();
+        System.out.println(error.getFile()+": "+error.getMsg());
+      }
+      /*
+      Iterator<Metric> metrics = report.metrics();
+      while (metrics.hasNext()) {
+        Metric m = metrics.next();
+        System.out.println(m.getMetricName()+"(avg) : "+m.getAverage());
+      }
+      */
     }
     
     public void end() throws IOException {
