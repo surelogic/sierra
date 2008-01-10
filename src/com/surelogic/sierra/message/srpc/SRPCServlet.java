@@ -39,9 +39,8 @@ public abstract class SRPCServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			final Encoding codec = getEncoding();
-			final InputStream in = new GZIPInputStream(req.getInputStream());
-			final OutputStream out = new GZIPOutputStream(resp
-					.getOutputStream());
+			final InputStream in = req.getInputStream();
+			final OutputStream out = resp.getOutputStream();
 			try {
 				final MethodInvocation method = codec
 						.decodeMethodInvocation(in);
@@ -49,7 +48,7 @@ public abstract class SRPCServlet extends HttpServlet {
 				codec.encodeResponse(resp.getOutputStream(), ResponseStatus.OK,
 						response);
 			} catch (Exception e) {
-				codec.encodeResponse(out, ResponseStatus.FAIL, null);
+				codec.encodeResponse(out, ResponseStatus.FAIL, e);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
