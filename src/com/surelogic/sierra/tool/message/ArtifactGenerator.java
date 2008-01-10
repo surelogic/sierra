@@ -18,8 +18,16 @@ public interface ArtifactGenerator {
     public void rollback();
 
     public interface ArtifactBuilder {
+    	/**
+    	 * Add additional source locations to this artifact.
+    	 * @return
+    	 */
         public SourceLocationBuilder sourceLocation();
 
+        /**
+         * Call this to build the primary source location.  This method should only be called once.
+         * @return
+         */
         public SourceLocationBuilder primarySourceLocation();
 
         public ArtifactBuilder findingType(String tool, String version,
