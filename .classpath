@@ -18,7 +18,7 @@
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/dom4j-full.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/bcel.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/jaxen-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar" sourcepath="/pmd4jsp-cvs"/>
+	<classpathentry exported="true" kind="lib" path="Tools/pmd/lib/pmd-4.0-sl.jar" sourcepath="/pmd-sl"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-analysis-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-commons-3.0.jar"/>
