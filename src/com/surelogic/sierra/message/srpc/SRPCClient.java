@@ -64,6 +64,9 @@ public class SRPCClient implements InvocationHandler {
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
+				if(post.getStatusCode() == 401) {
+					throw new InvalidAuthenticationException(post.getStatusCode() + ":" + post.getStatusText());
+				}
 				if (post.getStatusCode() != 200) {
 					throw new InvalidServiceException(
 							"Problem locating service at " + url + ": Status: "
