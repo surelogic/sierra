@@ -11,7 +11,6 @@ import java.util.*;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.renderers.Renderer;
-import net.sourceforge.pmd.stat.Metric;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
@@ -33,7 +32,7 @@ public class PMD4_0Tool extends AbstractTool {
     return new AbstractToolInstance(this, generator, monitor) {
       @Override
       protected void execute() throws Exception {      
-        int cpus = 0; // Runtime.getRuntime().availableProcessors();
+        int cpus = Runtime.getRuntime().availableProcessors();
         String encoding = new InputStreamReader(System.in).getEncoding();
         String altEncoding = Charset.defaultCharset().name();
         if (!encoding.equals(altEncoding)) {
