@@ -56,6 +56,10 @@ public class SRPCClient implements InvocationHandler {
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
+				if (post.getStatusCode() == 404) {
+					throw new InvalidServiceException(
+							"Reply has a status code of 404");
+				}
 				return codec.decodeResponse(post.getResponseBodyAsStream());
 			} finally {
 				temp.delete();
