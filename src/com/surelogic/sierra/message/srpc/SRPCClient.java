@@ -18,7 +18,9 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 
+import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
  * Handles method dispatch for remotely invokable SRPC services.
@@ -64,11 +66,13 @@ public class SRPCClient implements InvocationHandler {
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
 				client.executeMethod(post);
-				if(post.getStatusCode() == 401) {
-					throw new InvalidAuthenticationException(post.getStatusCode() + ":" + post.getStatusText());
+				//TODO these exceptions should be in the right package.
+				if (post.getStatusCode() == 401) {
+					throw new InvalidLoginException(post.getStatusCode() + ":"
+							+ post.getStatusText());
 				}
 				if (post.getStatusCode() != 200) {
-					throw new InvalidServiceException(
+					throw new SierraServiceClientException(
 							"Problem locating service at " + url + ": Status: "
 									+ post.getStatusCode() + ": "
 									+ post.getStatusText());
