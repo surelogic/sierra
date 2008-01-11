@@ -70,15 +70,10 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               }
               System.out.println("Java version: "+config.getJavaVersion());
               System.out.println("Rules file: "+config.getPmdRulesFile());
-              // FIX this
-              // File tempDocument = File.createTempFile("sierra-"+p.getElementName(), ".scan.gz");
-              ArtifactGenerator generator = 
-                new MessageArtifactFileGenerator(config.getScanDocument(), config);
               
-              IToolInstance ti = t.create(generator, wrapper);                         
+              IToolInstance ti = t.create(config, wrapper);                         
               setupToolForProject(ti, p, true);
               ti.run();
-              generator.finished();
               
               ScanDocumentUtility.loadScanDocument(config.getScanDocument(), wrapper,
                                                    config.getProject());
