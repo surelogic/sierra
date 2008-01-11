@@ -42,7 +42,7 @@ public abstract class AbstractTool implements ITool {
     return version;
   }
 
-  public final IToolInstance create(Config config, SLProgressMonitor monitor) {
+  public IToolInstance create(Config config, SLProgressMonitor monitor) {
     ArtifactGenerator generator = 
       new MessageArtifactFileGenerator(config.getScanDocument(), config);
     return create(generator, monitor);
