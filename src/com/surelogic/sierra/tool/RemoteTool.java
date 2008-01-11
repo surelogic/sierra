@@ -40,10 +40,12 @@ public class RemoteTool extends AbstractTool {
   public static void main(String[] args) {
     try {
       System.out.println("JVM started");
+
       JAXBContext ctx = JAXBContext.newInstance(Config.class);
       XMLInputFactory xmlif = XMLInputFactory.newInstance();         
-      XMLStreamReader xmlr = xmlif.createXMLStreamReader(System.in);
+      //XMLStreamReader xmlr = xmlif.createXMLStreamReader(System.in);
       System.out.println("Created reader");
+      /*
       Unmarshaller unmarshaller = ctx.createUnmarshaller();
       
       xmlr.nextTag();
@@ -52,8 +54,9 @@ public class RemoteTool extends AbstractTool {
       System.out.println("Checking for config");
       Config config = unmarshaller.unmarshal(xmlr, Config.class).getValue();
       
-      //Config config = MessageWarehouse.getInstance().parseConfig(xmlr);
-      /*
+      //Config config = MessageWarehouse.getInstance().parseConfig(xmlr);       
+       */
+      
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       String line = br.readLine();
       while (line != null) {
@@ -62,12 +65,11 @@ public class RemoteTool extends AbstractTool {
         }
         System.out.println(line);
         line = br.readLine();
-      }
-      */
+      }      
       System.out.println("Read config");
-      System.out.println("Excluded tools = "+config.getExcludedToolsList());
+      //System.out.println("Excluded tools = "+config.getExcludedToolsList());
     } catch (Throwable e) {
-      System.out.println("Error: "+e.getMessage());
+      e.printStackTrace(System.out);
       System.exit(-1);
     }
   }
