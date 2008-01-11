@@ -119,12 +119,19 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               if (toBeAnalyzed) {
                 IResource res = root.findMember(cpe.getPath());
                 URI loc = res.getLocationURI();
-                ti.addTarget(new DirectoryTarget(IToolTarget.Type.SOURCE, loc) {
-                  public boolean exclude(String relativePath) {
-                    // TODO Auto-generated method stub
-                    return false;
-                  }
-                });
+                IPath[] patterns = cpe.getExclusionPatterns();
+                if (patterns != null && patterns.length > 0) {
+                  final String[] exclusions = new String[patterns.length];
+                  int i = 0;
+                  for(IPath exclusion : patterns) {
+                    exclusions[i] = exclusion.toString();
+                    i++;
+                  }                
+                  ti.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
+                                                           exclusions));
+                } else {
+                  ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
+                }
               }
               break;
             case IClasspathEntry.CPE_LIBRARY:
