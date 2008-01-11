@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.Level;
 
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
@@ -117,8 +118,9 @@ public class PMD4_0Tool extends AbstractTool {
       Iterator<IRuleViolation> it = report.iterator();
       while (it.hasNext()) {
         IRuleViolation v = it.next();
-        LOG.info(v.getFilename()+": "+v.getDescription());
-        
+        if (LOG.isLoggable(Level.FINE)) {
+          System.out.println(v.getFilename()+": "+v.getDescription());
+        }        
         ArtifactBuilder artifact = generator.artifact();
         SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
  

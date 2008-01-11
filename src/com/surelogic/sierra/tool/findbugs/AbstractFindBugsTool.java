@@ -170,7 +170,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportBug(BugInstance bug) {
-      System.out.println("Bug reported: "+bug.getAbridgedMessage());
+      if (LOG.isLoggable(Level.FINE)) {
+        System.out.println("Bug reported: "+bug.getAbridgedMessage());
+      }
       stats.addBug(bug);
       
       final SourceLineAnnotation line = computePrimarySourceLocation(bug);
