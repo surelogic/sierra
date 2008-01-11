@@ -2,7 +2,11 @@ package com.surelogic.sierra.tool;
 
 import java.util.logging.Logger;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 
 public abstract class AbstractTool implements ITool {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
@@ -38,4 +42,9 @@ public abstract class AbstractTool implements ITool {
     return version;
   }
 
+  public final IToolInstance create(Config config, SLProgressMonitor monitor) {
+    ArtifactGenerator generator = 
+      new MessageArtifactFileGenerator(config.getScanDocument(), config);
+    return create(generator, monitor);
+  }
 }

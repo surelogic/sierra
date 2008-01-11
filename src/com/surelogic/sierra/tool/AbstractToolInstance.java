@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance implements IToolInstance {
@@ -100,6 +101,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     finally {
       done = true;
     }
+    generator.finished();
     monitor.done();
   }
 
@@ -140,6 +142,10 @@ public abstract class AbstractToolInstance implements IToolInstance {
   
   public final Set<String> getArtifactTypes() {
     return tool.getArtifactTypes();
+  }
+  
+  public final IToolInstance create(final Config config, SLProgressMonitor m) {
+    throw new UnsupportedOperationException("Instances can't create other instances");
   }
   
   public final IToolInstance create(final ArtifactGenerator generator, SLProgressMonitor m) {
