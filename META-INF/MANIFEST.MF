@@ -5,7 +5,6 @@ Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Require-Bundle: org.apache.ant,
  com.surelogic.common,
- com.surelogic.common.eclipse,
  com.surelogic.sierra.message
 Eclipse-LazyStart: false
 Export-Package: com.surelogic.sierra.tool,
