@@ -379,26 +379,5 @@ public class Config {
 	public final void setMultithreaded(boolean multithreaded) {
 		this.multithreaded = multithreaded;
 	}
-	
-	public static void main(String[] args) {
-		try {
-			JAXBContext ctx = JAXBContext.newInstance(Config.class);
-			Config c = new Config();
-			File file = File.createTempFile("sdfsda", "xml");
-			file.deleteOnExit();
-			OutputStream out = new FileOutputStream(file);
-			ctx.createMarshaller().marshal(c, out);
-			out.close();
-			Config c2 = (Config) ctx.createUnmarshaller().unmarshal(file);
-			System.out.println(c.equals(c2));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 
 }
