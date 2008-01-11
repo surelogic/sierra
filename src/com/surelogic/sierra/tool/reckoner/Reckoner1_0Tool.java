@@ -27,19 +27,72 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
+  private static final boolean batch = false;
+  
+  private interface Filter {
+    boolean exclude(Metrics m);
+  }
+  
   public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
     return new AbstractToolInstance(this, generator, monitor) {
       @Override
-      protected void execute() throws Exception {              
-        List<File> targets = new ArrayList<File>();
-        for(IToolTarget t : getSrcTargets()) {
-          targets.add(new File(t.getLocation()));
+      protected void execute() throws Exception {     
+        final Reckoner r = new Reckoner();
+        final IProgressMonitor mon = new IProgressMonitorWrapper(monitor);
+        if (batch) {
+          List<File> targets = new ArrayList<File>();
+          for(IToolTarget t : getSrcTargets()) {
+            targets.add(new File(t.getLocation()));
+          }
+          buildMetrics(r, mon, targets, new Filter() {
+            public boolean exclude(Metrics m) {
+              final String path = m.getPath();
+              for(IToolTarget t : getSrcTargets()) {
+                if (targetExcludes(t, path)) {
+                  return true;
+                }
+              }
+              return false;
+            }
+            
+          });
+        } else {
+          // Do one target at a time
+          List<File> targets = new ArrayList<File>(1);
+          for(final IToolTarget t : getSrcTargets()) {
+            targets.add(new File(t.getLocation()));
+            
+            buildMetrics(r, mon, targets, new Filter() {
+              public boolean exclude(Metrics m) {
+                return targetExcludes(t, m.getPath());
+              }             
+            });
+            targets.clear();
+          }
         }
-          
-        Reckoner r = new Reckoner();
-        IProgressMonitor mon = new IProgressMonitorWrapper(monitor);
+      }
+
+      private boolean targetExcludes(IToolTarget t, String path) {
+        File root = new File(t.getLocation());
+        String rootPath = root.getAbsolutePath();
+        if (!path.startsWith(rootPath)) {
+          throw new IllegalArgumentException(path+" isn't under "+rootPath);
+        }
+        if (t.exclude(path.substring(rootPath.length()+1).replace(File.separatorChar, '/'))) {
+          return true;
+        }
+        return false;
+      } 
+      
+      private void buildMetrics(final Reckoner r, 
+                                final IProgressMonitor mon, 
+                                List<File> targets, Filter filter) {
         List<Metrics> metrics = r.computeMetrics(targets, mon);
         for(Metrics m : metrics) {
+          if (filter.exclude(m)) {
+            continue;
+          }
+          
           System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
           MetricBuilder metric = generator.metric();
           metric.compilation(m.getClassName());
