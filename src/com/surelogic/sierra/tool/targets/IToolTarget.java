@@ -41,6 +41,7 @@ public interface IToolTarget {
   
   /**
    * @return A list of URIs for the various files in this target
+   *         (filtered, if anything is excluded) 
    */
   Iterable<URI> getFiles();
   

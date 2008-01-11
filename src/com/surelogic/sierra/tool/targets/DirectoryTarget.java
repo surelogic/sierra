@@ -24,6 +24,15 @@ public abstract class DirectoryTarget extends AbstractToolTarget {
     if (!here.exists()) {
       return;
     }
+    URI uri = here.toURI();
+    String uriPath = uri.getPath();
+    String locationPath = location.getPath();
+    if (!uriPath.startsWith(locationPath)) {
+      throw new IllegalArgumentException(uri+" isn't under "+location);
+    }
+    if (exclude(uriPath.substring(locationPath.length()+1))) {
+      return;
+    }
     if (here.isDirectory()) {
       for(File f : here.listFiles()) {
         findFiles(files, f);
