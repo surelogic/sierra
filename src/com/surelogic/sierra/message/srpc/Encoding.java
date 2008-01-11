@@ -83,7 +83,8 @@ class Encoding {
 					if (m.getName().equals(methodStr)) {
 						return new MethodInvocation(m,
 								m.getParameterTypes().length == 0 ? null
-										: newUnmarshaller().unmarshal(reader));
+										: new Object[] { newUnmarshaller()
+												.unmarshal(reader) });
 					}
 				}
 				throw new SRPCException("No method found to match " + methodStr

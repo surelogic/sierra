@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,12 +39,14 @@ public class SRPCClient implements InvocationHandler {
 	private SRPCClient(Method[] methods, Encoding codec,
 			SierraServerLocation location, String service) {
 		client = new HttpClient();
-		client.getParams().setAuthenticationPreemptive(true);
-		client.getState().setCredentials(
-				new AuthScope(location.getHost(), location.getPort(),
-						AuthScope.ANY_REALM),
-				new UsernamePasswordCredentials(location.getUser(), location
-						.getPass()));
+		final String user = location.getUser();
+		if (user != null) {
+			client.getParams().setAuthenticationPreemptive(true);
+			client.getState().setCredentials(
+					new AuthScope(location.getHost(), location.getPort(),
+							AuthScope.ANY_REALM),
+					new UsernamePasswordCredentials(user, location.getPass()));
+		}
 		this.methods = new HashSet<Method>(Arrays.asList(methods));
 		this.codec = codec;
 		this.url = location.createServiceUrl(service);
@@ -65,8 +68,13 @@ public class SRPCClient implements InvocationHandler {
 				out.close();
 				post.setRequestEntity(new FileRequestEntity(temp, codec
 						.getContentType()));
-				client.executeMethod(post);
-				//TODO these exceptions should be in the right package.
+				try {
+					client.executeMethod(post);
+				} catch (ConnectException e) {
+					throw new SierraServiceClientException(
+							"Could not connect to " + url, e);
+				}
+				// TODO these exceptions should be in the right package.
 				if (post.getStatusCode() == 401) {
 					throw new InvalidLoginException(post.getStatusCode() + ":"
 							+ post.getStatusText());

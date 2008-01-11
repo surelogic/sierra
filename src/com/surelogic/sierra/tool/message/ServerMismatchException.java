@@ -1,6 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-import javax.xml.ws.WebFault;
 
 /**
  * Indicates that the request expected a different server instance than actually
@@ -9,7 +8,7 @@ import javax.xml.ws.WebFault;
  * @author nathan
  * 
  */
-@WebFault(name = "ServerMismatchFault")
+
 public class ServerMismatchException extends Exception {
 	/**
 	 * 

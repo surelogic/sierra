@@ -40,9 +40,8 @@ public class SierraServerLocation {
 		 * TODO: fix this to set the protocol properly
 		 */
 		String[] strArr = server.split(":");
-		String strPort = strArr[1];
-
-		if (strPort != null) {
+		if (strArr.length > 1) {
+			String strPort = strArr[1];
 			f_port = Integer.parseInt(strPort);
 		} else {
 			f_port = DEFAULT_PORT;

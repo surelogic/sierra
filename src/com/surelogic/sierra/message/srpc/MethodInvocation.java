@@ -8,7 +8,7 @@ class MethodInvocation {
 
 	private final Object[] args;
 
-	public MethodInvocation(Method m, Object... args) {
+	public MethodInvocation(Method m, Object[] args) {
 		this.m = m;
 		this.args = args;
 	}
