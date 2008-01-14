@@ -5,14 +5,20 @@ package com.surelogic.sierra.tool;
 
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.Set;
 
-import javax.xml.bind.*;
-import javax.xml.stream.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 
 public class RemoteTool extends AbstractTool {
   public RemoteTool() {
