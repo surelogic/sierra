@@ -175,7 +175,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			File configOutput = File.createTempFile("config", "tmp");
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
-
+      fos.close();
+			
 			in = new BufferedReader(new FileReader(configOutput));
 			line = null;
 			while ((line = in.readLine()) != null) {
