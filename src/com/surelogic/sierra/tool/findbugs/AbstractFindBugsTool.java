@@ -113,7 +113,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
     final Set<String> missingClasses = new HashSet<String>();
-
+    
     public Monitor(AbstractToolInstance ti) {
       tool = ti;
       generator = ti.getGenerator();
@@ -121,34 +121,39 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     /* ******************** For FindBugsProgress ********************* */
-    public void startAnalysis(int numClasses) {
-      System.out.println("startAnalysis: "+numClasses);
-      monitor.beginTask("FindBugs", numClasses);
+    
+    public void reportNumberOfArchives(int numArchives) {
+      System.out.println("# Archives: "+numArchives);
+      monitor.beginTask("FindBugs setup", numArchives);
     }
     
     public void finishArchive() {
       System.out.println("Finished an archive");
-    }
-
-    public void finishClass() {
-      System.out.println("Finished a class");
       monitor.worked(1);
-    }
-
-    public void finishPerClassAnalysis() {
-      System.out.println("finishPerClassAnalysis");
     }
 
     public void predictPassCount(int[] classesPerPass) {
       int i = 1;
+      int total = 0;
       for(int count : classesPerPass) {
         System.out.println("Pass\t"+i+": "+count);
         i++;
+        total += count;
       }
+      monitor.beginTask("FindBugs", total);
     }
 
-    public void reportNumberOfArchives(int numArchives) {
-      System.out.println("# Archives: "+numArchives);
+    public void startAnalysis(int numClasses) {
+      System.out.println("startAnalysis: "+numClasses);
+    }
+    
+    public void finishClass() {
+      System.out.println("Finished a class");
+      monitor.worked(1);
+    }
+    
+    public void finishPerClassAnalysis() {
+      System.out.println("finishPerClassAnalysis");
     }
 
     /* ******************** For BugReporter ********************* */
