@@ -14,7 +14,7 @@ import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.message.*;
-import com.surelogic.sierra.tool.targets.IToolTarget;
+import com.surelogic.sierra.tool.targets.*;
 
 public class LocalTool extends AbstractTool {
   public LocalTool() {
@@ -36,20 +36,18 @@ public class LocalTool extends AbstractTool {
   private static class LocalInstance extends LocalTool implements IToolInstance {
     final Config config;
     final SLProgressMonitor monitor;
-
+    
     LocalInstance(Config c, SLProgressMonitor mon) {
       config = c;
       monitor = mon;
     }
 
     public void addTarget(IToolTarget target) {
-      // TODO Auto-generated method stub
-      
+      config.addTarget((ToolTarget) target);
     }
 
     public void addToClassPath(URI loc) {
-      // TODO Auto-generated method stub
-      
+      config.addToClassPath(loc);
     }
 
     public ArtifactGenerator getGenerator() {
@@ -98,15 +96,19 @@ public class LocalTool extends AbstractTool {
       env.put("VAR2", env.get("VAR1") + "suffix");
       pb.directory(new File("myDir"));
       */
+      
       try {
         Process p         = pb.start();
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
         System.out.println(br.readLine());
 
-        JAXBContext ctx = JAXBContext.newInstance(Config.class);
+        JAXBContext ctx = JAXBContext.newInstance(Config.class, 
+                                                  JarTarget.class, 
+                                                  FullDirectoryTarget.class, 
+                                                  FilteredDirectoryTarget.class);
         Marshaller marshaller = ctx.createMarshaller();       
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        File file = File.createTempFile("config", "xml");
+        File file = File.createTempFile("config", ".xml");
         file.deleteOnExit();
 
         OutputStream out = new FileOutputStream(file);

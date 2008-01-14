@@ -5,11 +5,9 @@ package com.surelogic.sierra.tool;
 
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.Set;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -17,8 +15,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.targets.*;
 
 public class RemoteTool extends AbstractTool {
   public RemoteTool() {
@@ -46,7 +44,10 @@ public class RemoteTool extends AbstractTool {
       FileInputStream file = new FileInputStream(configName);
       System.out.println("Got file: "+configName);
       
-      JAXBContext ctx = JAXBContext.newInstance(Config.class);     
+      JAXBContext ctx = JAXBContext.newInstance(Config.class, 
+          JarTarget.class, 
+          FullDirectoryTarget.class, 
+          FilteredDirectoryTarget.class);
       XMLInputFactory xmlif = XMLInputFactory.newInstance();         
       XMLStreamReader xmlr = xmlif.createXMLStreamReader(file);
       System.out.println("Created reader");      
@@ -70,7 +71,14 @@ public class RemoteTool extends AbstractTool {
         line = br.readLine();
       }      
       */
+      for(URI location : config.getPaths()) {
+        System.out.println("URI = "+location);
+      }
+      for(ToolTarget t : config.getTargets()) {
+        System.out.println("Target = "+t.getLocation());
+      }
       System.out.println("Excluded tools = "+config.getExcludedToolsList());
+      System.out.flush();
     } catch (Throwable e) {
       e.printStackTrace(System.out);
       System.exit(-1);
