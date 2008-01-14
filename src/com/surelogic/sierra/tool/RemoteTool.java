@@ -79,9 +79,101 @@ public class RemoteTool extends AbstractTool {
       }
       System.out.println("Excluded tools = "+config.getExcludedToolsList());
       System.out.flush();
+      
+      final ITool t = ToolUtil.create(config, false);                           
+      System.out.println("Java version: "+config.getJavaVersion());
+      System.out.println("Rules file: "+config.getPmdRulesFile());
+      
+      IToolInstance ti = t.create(config, new Monitor(System.out)); 
+      System.out.println("Created tool instance");
+      setupToolForProject(ti, config);
+      System.out.println("Setup tool");
+      System.out.flush();
+      ti.run();
     } catch (Throwable e) {
       e.printStackTrace(System.out);
       System.exit(-1);
     }
+  }
+
+  private static void setupToolForProject(IToolInstance ti, Config config) {
+    for(ToolTarget t : config.getTargets()) {
+      ti.addTarget(t);
+    }
+    for(URI path : config.getPaths()) {
+      ti.addToClassPath(path);
+    }
+  }
+  
+  private static class Monitor implements SLProgressMonitor {
+    public Monitor(PrintStream out) {
+      // TODO Auto-generated constructor stub
+    }
+
+    public void beginTask(String name, int totalWork) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void done() {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void error(String msg) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void error(String msg, Throwable t) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void failed(String msg) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void failed(String msg, Throwable t) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public Throwable getFailureTrace() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    public void internalWorked(double work) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public boolean isCanceled() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    public void setCanceled(boolean value) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void setTaskName(String name) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void subTask(String name) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    public void worked(int work) {
+      // TODO Auto-generated method stub
+      
+    }
+    
   }
 }
