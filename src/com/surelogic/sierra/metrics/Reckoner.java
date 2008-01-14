@@ -143,10 +143,10 @@ public class Reckoner {
 
   public List<Metrics> computeMetrics(List<File> targets, IProgressMonitor mon) {
     List<Metrics> metricsList = new ArrayList<Metrics>();
-    mon.beginTask("Computing metrics", targets.size());
+    mon.beginTask("Reckoner", targets.size());
     
 		for (File file : targets) {
-		  mon.subTask("Starting on "+file.getName());
+		  mon.subTask("Computing metrics for "+file.getName());
 			if (file.exists() && file.isDirectory()) {
 				Set<String> sourceFiles = getJavaFiles(file);
 				for (String s : sourceFiles) {
