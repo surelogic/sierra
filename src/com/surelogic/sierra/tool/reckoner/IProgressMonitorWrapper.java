@@ -6,6 +6,7 @@ import com.surelogic.common.SLProgressMonitor;
 
 /**
  * Copied here from common-eclipse, due to jar versioning differences
+ * Note no longer the same
  * @author Edwin.Chan
  *
  */
@@ -21,7 +22,7 @@ public class IProgressMonitorWrapper implements SLProgressMonitor, IProgressMoni
   }
 
   public void done() {
-    monitor.done();
+    // IGNORE monitor.done();
   }
 
   public void error(String msg, Throwable t) {
