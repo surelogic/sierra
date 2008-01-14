@@ -106,18 +106,18 @@ public class RemoteTool extends AbstractTool {
   }
   
   private static class Monitor implements SLProgressMonitor {
+    final PrintStream out;
+    
     public Monitor(PrintStream out) {
-      // TODO Auto-generated constructor stub
+      this.out = out;
     }
 
     public void beginTask(String name, int totalWork) {
-      // TODO Auto-generated method stub
-      
+      out.println("##"+Remote.TASK+", "+name+", "+totalWork);
     }
 
     public void done() {
-      // TODO Auto-generated method stub
-      
+      out.println("##"+Remote.DONE);
     }
 
     public void error(String msg) {
@@ -141,14 +141,10 @@ public class RemoteTool extends AbstractTool {
     }
 
     public Throwable getFailureTrace() {
-      // TODO Auto-generated method stub
       return null;
     }
 
-    public void internalWorked(double work) {
-      // TODO Auto-generated method stub
-      
-    }
+    public void internalWorked(double work) {}
 
     public boolean isCanceled() {
       // TODO Auto-generated method stub
@@ -166,14 +162,12 @@ public class RemoteTool extends AbstractTool {
     }
 
     public void subTask(String name) {
-      // TODO Auto-generated method stub
-      
+      out.println("##"+Remote.SUBTASK+", "+name);
     }
 
     public void worked(int work) {
       // TODO Auto-generated method stub
       
     }
-    
   }
 }
