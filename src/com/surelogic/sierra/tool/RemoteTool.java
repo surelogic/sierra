@@ -95,6 +95,8 @@ public class RemoteTool extends AbstractTool {
       System.out.println("Setup tool");
       System.out.flush();
       ti.run();
+      System.out.println("Done scanning");
+      System.out.flush();
     } catch (Throwable e) {
       e.printStackTrace(System.out);
       System.exit(-1);
