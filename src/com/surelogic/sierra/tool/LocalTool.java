@@ -74,18 +74,17 @@ public class LocalTool extends AbstractTool {
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
+      cmdj.setMaxmemory("1024m");
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       path.add(new Path(proj, "C:/work/workspace/common/common.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-tool/sierra-tool.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-message/sierra-message.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-message/jax-ws/sjsxp.jar"));
-      for(File f : new File("C:/work/workspace/sierra-message/jaxb").listFiles()) {
-        String name = f.getAbsolutePath();
-        if (name.endsWith(".jar")) {
-          path.add(new Path(proj, name));
-        }
-      }
+      findJars(proj, path, "C:/work/workspace/sierra-message/jaxb");
+      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/pmd/lib");
+      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/FB/lib");
+      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/reckoner/lib");
       
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
       pb.redirectErrorStream(true);
@@ -130,6 +129,15 @@ public class LocalTool extends AbstractTool {
         System.out.println("Process result = "+p.waitFor());
       } catch (Exception e) {
         e.printStackTrace();
+      }
+    }
+
+    private void findJars(Project proj, Path path, String folder) {
+      for(File f : new File(folder).listFiles()) {
+        String name = f.getAbsolutePath();
+        if (name.endsWith(".jar")) {
+          path.add(new Path(proj, name));
+        }
       }
     }
   }
