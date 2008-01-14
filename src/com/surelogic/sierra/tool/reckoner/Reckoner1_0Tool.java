@@ -89,10 +89,13 @@ public class Reckoner1_0Tool extends AbstractTool {
                                 final IProgressMonitor mon, 
                                 List<File> targets, Filter filter) {
         List<Metrics> metrics = r.computeMetrics(targets, mon);
+        
+        mon.beginTask("Reckoner", targets.size());
         for(Metrics m : metrics) {
           if (filter.exclude(m)) {
             continue;
           }
+          mon.subTask("Building metrics for "+m.getPath());
           
           System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
           MetricBuilder metric = generator.metric();
@@ -103,6 +106,7 @@ public class Reckoner1_0Tool extends AbstractTool {
           metric.linesOfCode((int) m.getLoc());
           metric.packageName(m.getPackageName());
           metric.build();
+          mon.worked(1);
         }
       }
     };
