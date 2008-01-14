@@ -1,13 +1,15 @@
 package com.surelogic.sierra.tool.message;
 
 import java.io.File;
-import java.util.Date;
-import java.util.List;
+import java.net.URI;
+import java.util.*;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
  * The config object for the run document.
@@ -54,7 +56,11 @@ public class Config {
 
 	// Whether the tools are run in multiple threads
 	private boolean multithreaded = false;
+	
+	private List<URI> paths = new ArrayList<URI>();
 
+	private List<ToolTarget> targets = new ArrayList<ToolTarget>();
+	
 	public Config() {
 		// Nothing to do
 	}
@@ -373,4 +379,27 @@ public class Config {
 		this.multithreaded = multithreaded;
 	}
 
+	public void addToClassPath(URI path) {
+	  paths.add(path);
+	}
+	
+	public void setPaths(List<URI> p) {
+	  paths = p;
+	}
+	
+	public List<URI> getPaths() {
+	  return paths;
+	}
+	
+	public void addTarget(ToolTarget t) {
+	  targets.add(t);
+	}
+	
+	public void setTargets(List<ToolTarget> t) {
+	  targets = t;  
+	}
+	
+	public List<ToolTarget> getTargets() {
+	  return targets;
+	}
 }
