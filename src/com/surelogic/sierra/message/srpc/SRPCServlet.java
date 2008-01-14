@@ -38,18 +38,31 @@ public abstract class SRPCServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			final Encoding codec = getEncoding();
-			final InputStream in = req.getInputStream();
-			final OutputStream out = resp.getOutputStream();
+			ResponseStatus status;
+			Object response;
 			try {
 				final MethodInvocation method = codec
-						.decodeMethodInvocation(in);
-				final Object response = method.invoke(this);
-				codec.encodeResponse(resp.getOutputStream(), ResponseStatus.OK,
-						response);
+						.decodeMethodInvocation(req.getInputStream());
+				try {
+					response = method.invoke(this);
+					status = ResponseStatus.OK;
+				} catch (Exception e) {
+					// Check for this method's checked exceptions
+					if (method.hasCheckedException(e)) {
+						response = new RaisedException(e);
+						status = ResponseStatus.RAISED;
+					} else {
+						throw new SRPCException(e);
+					}
+				}
 			} catch (SRPCException e) {
-				codec.encodeResponse(out, ResponseStatus.FAIL, new Failure(e));
+				// If we had some type of general messaging/processing exception, send a failure.
+				response = new Failure(e);
+				status = ResponseStatus.FAIL;
 			}
+			codec.encodeResponse(resp.getOutputStream(), status, response);
 		} catch (Exception e) {
+			//We couldn't even send a message back to the client, log out a failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}

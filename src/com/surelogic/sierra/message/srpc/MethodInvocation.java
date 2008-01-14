@@ -29,4 +29,13 @@ class MethodInvocation {
 		}
 	}
 
+	public boolean hasCheckedException(Exception e) {
+		for (Class<?> c : m.getExceptionTypes()) {
+			if (c.isAssignableFrom(e.getClass())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

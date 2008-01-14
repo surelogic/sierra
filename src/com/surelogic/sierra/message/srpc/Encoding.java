@@ -116,7 +116,7 @@ class Encoding {
 		writer.flush();
 	}
 
-	Object decodeResponse(InputStream in) throws SRPCException {
+	Object decodeResponse(InputStream in) throws Exception {
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(
 				in));
 		try {
@@ -138,6 +138,9 @@ class Encoding {
 					switch (status) {
 					case OK:
 						return value;
+					case RAISED:
+						final RaisedException e = (RaisedException) value;
+						throw e.regenerateException();
 					case FAIL:
 						final Failure failure = (Failure) value;
 						throw new ServiceInvocationException(failure
