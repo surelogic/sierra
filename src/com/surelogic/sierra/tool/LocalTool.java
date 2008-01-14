@@ -122,8 +122,28 @@ public class LocalTool extends AbstractTool {
         
         // Copy any output 
         String line = br.readLine();
+      loop:
         while (line != null) {
           System.out.println(line);
+          if (line.startsWith("##")) {
+            StringTokenizer st = new StringTokenizer(line, "#,");
+            if (st.hasMoreTokens()) {            
+              String first = st.nextToken();
+              switch (Remote.valueOf(first)) {
+                case TASK:
+                  monitor.beginTask(st.nextToken(), Integer.valueOf(st.nextToken().trim()));
+                  break;
+                case SUBTASK:
+                  monitor.subTask(st.nextToken());
+                  break;
+                case ERROR:
+                case DONE:
+                  monitor.done();
+                  break loop;
+                default:                
+              }
+            }
+          }
           line = br.readLine();
         }
         System.out.println("Process result = "+p.waitFor());
