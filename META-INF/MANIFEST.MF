@@ -6,6 +6,7 @@ Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: SureLogic, Inc.
 Export-Package: com.sun.xml.bind.v2,
  com.surelogic.sierra.tool.message,
+ com.surelogic.sierra.tool.targets,
  javax.xml.bind,
  javax.xml.stream
 Require-Bundle: com.surelogic.common
