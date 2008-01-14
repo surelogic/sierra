@@ -5,6 +5,7 @@ import com.surelogic.common.logging.SLLogger;
 
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ErrorBuilder;
+import com.surelogic.sierra.tool.targets.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +50,11 @@ public class MessageWarehouse {
 	private MessageWarehouse() {
 		try {
 			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class,
-					FindingTypes.class);
+					FindingTypes.class, 
+					Config.class, ToolTarget.class, 
+					JarTarget.class, 
+          FullDirectoryTarget.class, 
+          FilteredDirectoryTarget.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -429,6 +434,14 @@ public class MessageWarehouse {
 						work(monitor);
 					}
 				} catch (JAXBException e) {
+          /*
+				  Throwable linked = e.getLinkedException();
+	        while (linked instanceof JAXBException) {
+	          JAXBException e2 = (JAXBException) linked; 
+	          linked = e2.getLinkedException();
+	        }
+	        linked.printStackTrace();
+	        */
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
 							+ " is not a valid document", e);
