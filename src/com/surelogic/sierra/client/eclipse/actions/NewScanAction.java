@@ -45,7 +45,18 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
       PlatformUI.getWorkbench().saveAllEditors(false);
     }
     if (saved) {
-      new Job("New Scan") {
+      StringBuffer sb = new StringBuffer("Scan of ");
+      boolean first = true;
+      for(String name : projectNames) {
+        if (first == true) {
+          first = false;
+        } else {
+          sb.append(", ");
+        }
+        sb.append(name);
+      }
+      
+      new Job(sb.toString()) {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
           final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
