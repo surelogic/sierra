@@ -23,11 +23,7 @@ import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
-import com.surelogic.sierra.tool.findbugs.FindBugs1_3_0Tool;
 import com.surelogic.sierra.tool.message.*;
-import com.surelogic.sierra.tool.pmd.PMD4_0Tool;
-import com.surelogic.sierra.tool.reckoner.Reckoner1_0Tool;
 import com.surelogic.sierra.tool.targets.*;
 
 /**
@@ -58,16 +54,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
               System.out.println("Excluded: "+config.getExcludedToolsList());
 
-              final MultiTool t = new MultiTool();
-              if (!config.getExcludedToolsList().contains("findbugs")) {
-                t.addTool(new FindBugs1_3_0Tool());
-              }
-              if (!config.getExcludedToolsList().contains("pmd")) {
-                t.addTool(new PMD4_0Tool());
-              }
-              if (!config.getExcludedToolsList().contains("reckoner")) {
-                t.addTool(new Reckoner1_0Tool());
-              }
+              final ITool t = ToolUtil.create(config);                           
               System.out.println("Java version: "+config.getJavaVersion());
               System.out.println("Rules file: "+config.getPmdRulesFile());
               
