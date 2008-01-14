@@ -33,6 +33,7 @@ class Encoding {
 		this.service = service;
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(Failure.class);
+		classes.add(RaisedException.class);
 		for (Method m : service.getDeclaredMethods()) {
 			classes.add(m.getReturnType());
 			for (Class<?> clazz : m.getParameterTypes()) {

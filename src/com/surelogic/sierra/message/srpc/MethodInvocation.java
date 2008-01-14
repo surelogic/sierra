@@ -1,5 +1,6 @@
 package com.surelogic.sierra.message.srpc;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 class MethodInvocation {
@@ -21,9 +22,11 @@ class MethodInvocation {
 		return args;
 	}
 
-	public Object invoke(Object target) throws SRPCException {
+	public Object invoke(Object target) throws InvocationTargetException {
 		try {
 			return m.invoke(target, args);
+		} catch (InvocationTargetException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SRPCException(e);
 		}

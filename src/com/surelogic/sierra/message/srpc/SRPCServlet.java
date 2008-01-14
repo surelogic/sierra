@@ -1,8 +1,7 @@
 package com.surelogic.sierra.message.srpc;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,23 +45,24 @@ public abstract class SRPCServlet extends HttpServlet {
 				try {
 					response = method.invoke(this);
 					status = ResponseStatus.OK;
-				} catch (Exception e) {
-					// Check for this method's checked exceptions
-					if (method.hasCheckedException(e)) {
-						response = new RaisedException(e);
-						status = ResponseStatus.RAISED;
-					} else {
-						throw new SRPCException(e);
-					}
+				} catch (InvocationTargetException e) {
+					response = new RaisedException(e.getCause());
+					status = ResponseStatus.RAISED;
 				}
 			} catch (SRPCException e) {
-				// If we had some type of general messaging/processing exception, send a failure.
+				// If we had some type of general messaging/processing
+				// exception, send a failure.
+				response = new Failure(e);
+				status = ResponseStatus.FAIL;
+			} catch (Exception e) {
+				log.log(Level.WARNING, e.getMessage(), e);
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
 			}
 			codec.encodeResponse(resp.getOutputStream(), status, response);
 		} catch (Exception e) {
-			//We couldn't even send a message back to the client, log out a failure.
+			// We couldn't even send a message back to the client, log out a
+			// failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}

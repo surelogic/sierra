@@ -14,7 +14,7 @@ class RaisedException {
 		// Do Nothing
 	}
 
-	public RaisedException(Exception e) {
+	public RaisedException(Throwable e) {
 		this.exceptionClass = e.getClass().getName();
 		this.message = e.getMessage();
 	}

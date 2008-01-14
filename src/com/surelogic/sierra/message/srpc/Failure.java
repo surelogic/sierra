@@ -17,7 +17,7 @@ class Failure {
 		// Do nothing
 	}
 
-	public Failure(SRPCException e) {
+	public Failure(Exception e) {
 		this.message = e.getMessage();
 		final StringWriter writer = new StringWriter();
 		e.printStackTrace(new PrintWriter(writer));
