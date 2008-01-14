@@ -7,18 +7,13 @@ import java.io.*;
 import java.net.URI;
 import java.util.*;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.*;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.Scan;
+import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class LocalTool extends AbstractTool {
@@ -86,6 +81,7 @@ public class LocalTool extends AbstractTool {
       path.add(new Path(proj, "C:/work/workspace/common/common.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-tool/sierra-tool.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-message/sierra-message.jar"));
+      path.add(new Path(proj, "C:/work/workspace/sierra-message/jax-ws/sjsxp.jar"));
       for(File f : new File("C:/work/workspace/sierra-message/jaxb").listFiles()) {
         String name = f.getAbsolutePath();
         if (name.endsWith(".jar")) {
@@ -109,13 +105,21 @@ public class LocalTool extends AbstractTool {
 
         JAXBContext ctx = JAXBContext.newInstance(Config.class);
         Marshaller marshaller = ctx.createMarshaller();       
-        // marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(config, p.getOutputStream());
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        File file = File.createTempFile("config", "xml");
+        file.deleteOnExit();
+
+        OutputStream out = new FileOutputStream(file);
+        marshaller.marshal(config, out);
+        out.close();
         
-        //MessageWarehouse.getInstance().writeConfig(config, p.getOutputStream());
-        p.getOutputStream().flush();
-        p.getOutputStream().write('\n');
+        // Send the location of the config file
+        PrintStream pout = new PrintStream(p.getOutputStream());
+        pout.println(file.getAbsolutePath());
+        pout.println();
+        pout.flush();
         
+        // Copy any output 
         String line = br.readLine();
         while (line != null) {
           System.out.println(line);
