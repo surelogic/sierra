@@ -90,6 +90,7 @@ public class LocalTool extends AbstractTool {
       findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/pmd/lib");
       findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/FB/lib");
       findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/reckoner/lib");
+      path.add(new Path(proj, "C:/work/workspace/sierra-tool/Tools/reckoner/reckoner.jar"));
       
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
       pb.redirectErrorStream(true);
@@ -141,6 +142,9 @@ public class LocalTool extends AbstractTool {
                 case SUBTASK:
                   monitor.subTask(st.nextToken());
                   break;
+                case WORK:
+                  monitor.worked(Integer.valueOf(st.nextToken().trim()));
+                  break;
                 case ERROR:
                 case DONE:
                   monitor.done();
@@ -150,6 +154,10 @@ public class LocalTool extends AbstractTool {
             }
           }
           line = br.readLine();
+        }
+        line = br.readLine();
+        if (line != null) {
+          System.out.println(line);
         }
         System.out.println("Process result = "+p.waitFor());
       } catch (Exception e) {
