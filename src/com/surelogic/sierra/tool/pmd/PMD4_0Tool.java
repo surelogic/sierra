@@ -58,6 +58,8 @@ public class PMD4_0Tool extends AbstractTool {
           }
           List<Renderer> renderers = new ArrayList<Renderer>(); // output
           renderers.add(new Output(generator, monitor, inputPath, files.size()));
+          
+          monitor.beginTask("PMD", files.size() + 500);
           PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
         }
       }      
