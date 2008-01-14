@@ -3,12 +3,23 @@ package com.surelogic.sierra.tool.targets;
 import java.net.*;
 import java.util.*;
 
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * A target for a single file
  * 
  * @author Edwin.Chan
  */
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+@XmlType
 public final class FileTarget extends AbstractToolTarget {
+  /**
+   * For JAXB
+   */
+  public FileTarget() {}
+  
   public FileTarget(Type type, URI loc) {
     super(type, loc);
   }

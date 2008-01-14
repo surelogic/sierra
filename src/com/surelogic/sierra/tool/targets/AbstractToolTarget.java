@@ -2,20 +2,32 @@ package com.surelogic.sierra.tool.targets;
 
 import java.net.*;
 
-public abstract class AbstractToolTarget implements IToolTarget {
-  private final Type type;
-  protected final URI location;
-  protected final IToolTarget auxSrcLocation;
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+@XmlType
+public abstract class AbstractToolTarget extends ToolTarget {
+  private Type type;
+  protected URI location;
+  protected ToolTarget auxSources;
+
+  /**
+   * For JAXB
+   */
+  protected AbstractToolTarget() {    
+  }
+  
   protected AbstractToolTarget(Type t, URI loc) {
     this(t, loc, null);
   }
   
-  protected AbstractToolTarget(Type t, URI loc, IToolTarget auxSrcLoc) {
+  protected AbstractToolTarget(Type t, URI loc, ToolTarget auxSrcLoc) {
     location = loc;
     type = t;
     if (auxSrcLoc == null || type == Type.AUX) {          
-      auxSrcLocation = auxSrcLoc;
+      auxSources = auxSrcLoc;
     } else {
       throw new IllegalArgumentException(type+" can't have an aux source location: "+auxSrcLoc);
     }
@@ -34,6 +46,21 @@ public abstract class AbstractToolTarget implements IToolTarget {
   }
   
   public final IToolTarget getAuxSources() {
-    return auxSrcLocation;
+    return auxSources;
+  }
+  
+  /**
+   * For JAXB
+   */
+  public final void setType(Type t) {
+    type = t;
+  }
+
+  public final void setLocation(URI l) {
+    location = l;
+  }
+  
+  public final void getAuxSources(ToolTarget t) {
+    auxSources = t;
   }
 }

@@ -5,7 +5,19 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+@XmlType
 public abstract class DirectoryTarget extends AbstractToolTarget {
+  /**
+   * For JAXB
+   */
+  protected DirectoryTarget() {    
+  }
+  
   protected DirectoryTarget(Type type, URI loc) {
     super(type, loc);
   }
