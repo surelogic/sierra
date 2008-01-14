@@ -17,11 +17,14 @@ public abstract class AbstractToolInstance implements IToolInstance {
   private List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
   private List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
+  private final boolean closeWhenDone;
   
-  protected AbstractToolInstance(ITool t, ArtifactGenerator gen, SLProgressMonitor m) {
+  protected AbstractToolInstance(ITool t, ArtifactGenerator gen, SLProgressMonitor m,
+                                 boolean close) {
     tool = t;
     generator = gen;
     monitor = m;
+    closeWhenDone = close;
   }
   
   public final ArtifactGenerator getGenerator() {
@@ -81,7 +84,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     if (done) {
       throw new IllegalArgumentException("Tool instance cannot be reused");
     }
-    monitor.setTaskName("Starting scan using "+getName()+" v"+getVersion());
+    // monitor.setTaskName("Scanning with "+getName()+" v"+getVersion());
     
     for(IToolTarget t : getSrcTargets()) {
       System.out.println("Source: "+t.getLocation());
@@ -101,8 +104,10 @@ public abstract class AbstractToolInstance implements IToolInstance {
     finally {
       done = true;
     }
-    generator.finished();
-    monitor.done();
+    if (closeWhenDone) {
+      generator.finished();
+      monitor.done();
+    }
   }
 
   public final void reportError(String msg) {

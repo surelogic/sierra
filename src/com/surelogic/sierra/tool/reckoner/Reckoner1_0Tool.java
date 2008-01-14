@@ -33,8 +33,9 @@ public class Reckoner1_0Tool extends AbstractTool {
     boolean exclude(Metrics m);
   }
   
-  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
-    return new AbstractToolInstance(this, generator, monitor) {
+  protected IToolInstance create(final ArtifactGenerator generator, 
+      final SLProgressMonitor monitor, boolean close) {
+    return new AbstractToolInstance(this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {     
         final Reckoner r = new Reckoner();

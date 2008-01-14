@@ -8,7 +8,7 @@ import com.surelogic.sierra.tool.reckoner.*;
 public class ToolUtil {
   public static ITool create(Config config) {
     // FIX look at config
-    return create(config, true);
+    return create(config, false);
   }
   
   public static ITool create(Config config, boolean runRemotely) {

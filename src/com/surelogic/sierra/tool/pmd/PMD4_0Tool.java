@@ -29,8 +29,9 @@ public class PMD4_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
 
-  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
-    return new AbstractToolInstance(this, generator, monitor) {
+  protected IToolInstance create(final ArtifactGenerator generator, 
+      final SLProgressMonitor monitor, boolean close) {
+    return new AbstractToolInstance(this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {      
         int cpus = Runtime.getRuntime().availableProcessors();
@@ -99,7 +100,7 @@ public class PMD4_0Tool extends AbstractTool {
     }
 
     public void start() throws IOException {
-      monitor.beginTask("Starting PMD scanning", numFiles + 500);
+      monitor.beginTask("PMD", numFiles + 500);
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {

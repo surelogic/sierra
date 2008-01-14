@@ -26,10 +26,11 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     super("FindBugs", version, "FindBugs (TM)", "");
   }
   
-  public IToolInstance create(final ArtifactGenerator generator, final SLProgressMonitor monitor) {
+  protected IToolInstance create(final ArtifactGenerator generator, 
+                                 final SLProgressMonitor monitor, boolean close) {
     System.setProperty("findbugs.home", "C:/work/workspace/sierra-tool/Tools/FB");
     
-    return new AbstractToolInstance(this, generator, monitor) {     
+    return new AbstractToolInstance(this, generator, monitor, close) {     
       final IFindBugsEngine engine = createEngine();
       
       @Override
@@ -122,7 +123,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     /* ******************** For FindBugsProgress ********************* */
     public void startAnalysis(int numClasses) {
       System.out.println("startAnalysis: "+numClasses);
-      monitor.beginTask("FindBugs scanning ...", numClasses);
+      monitor.beginTask("FindBugs", numClasses);
     }
     
     public void finishArchive() {

@@ -35,6 +35,11 @@ public class RemoteTool extends AbstractTool {
     throw new UnsupportedOperationException("Generators can't be sent remotely");
   }
 
+  protected IToolInstance create(final ArtifactGenerator generator, 
+      final SLProgressMonitor monitor, boolean close) {
+    throw new UnsupportedOperationException("Generators can't be sent remotely");   
+  }
+  
   public static void main(String[] args) {
     try {
       final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

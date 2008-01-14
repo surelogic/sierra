@@ -18,8 +18,9 @@ public class MultiTool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  public IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor) {
-    return new Instance(this, generator, monitor);
+  protected IToolInstance create(final ArtifactGenerator generator, 
+      final SLProgressMonitor monitor, boolean close) {
+    return new Instance(this, generator, monitor, close);
   }
   
   public void addTool(ITool t) {
@@ -31,8 +32,12 @@ public class MultiTool extends AbstractTool {
   private static class Instance extends MultiTool implements IToolInstance {
     private List<IToolInstance> instances = new ArrayList<IToolInstance>();
     private IToolInstance first = null;
+
+    private ArtifactGenerator generator;
+    private SLProgressMonitor monitor;
+    private boolean closeWhenDone;
     
-    Instance(MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon) {
+    Instance(MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon, boolean close) {
       for(ITool tool : mt.tools) {
         this.tools.add(tool);
         
@@ -42,11 +47,21 @@ public class MultiTool extends AbstractTool {
           first = i;
         }
       }
+      generator = gen;
+      monitor = mon;
+      closeWhenDone = close;
+      
+      mon.beginTask("Multiple tools", 100);
+      mon.subTask("Setting up scans");
     }
 
-    public void run() {
+    public void run() {                 
       for(IToolInstance i : instances) {
         i.run();
+      }
+      if (closeWhenDone) {
+        generator.finished();
+        monitor.done();
       }
     }
 

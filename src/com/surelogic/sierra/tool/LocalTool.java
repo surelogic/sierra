@@ -33,6 +33,11 @@ public class LocalTool extends AbstractTool {
     throw new UnsupportedOperationException("Generators can't be sent remotely");
   }
   
+  protected IToolInstance create(final ArtifactGenerator generator, 
+      final SLProgressMonitor monitor, boolean close) {
+    throw new UnsupportedOperationException("Generators can't be sent remotely");   
+  }
+  
   private static class LocalInstance extends LocalTool implements IToolInstance {
     final Config config;
     final SLProgressMonitor monitor;
