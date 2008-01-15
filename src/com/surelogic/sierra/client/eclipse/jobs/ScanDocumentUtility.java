@@ -124,6 +124,7 @@ public final class ScanDocumentUtility {
 	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName)
 			throws ScanPersistenceException {
+	  monitor.beginTask("Load scan document", 100);
 		Throwable exc = null;
 		try {
 			final Connection conn = Data.transactionConnection();
@@ -142,11 +143,11 @@ public final class ScanDocumentUtility {
 				conn.commit();
 				final ClientFindingManager fm = ClientFindingManager
 						.getInstance(conn);
-				fm.generateFindings(projectName, uid, filter, null);
+				fm.generateFindings(projectName, uid, filter, monitor);
 				conn.commit();
 				log.info("Generating overview for scan " + uid + "in project "
 						+ projectName);
-				fm.generateOverview(projectName, uid);
+				fm.generateOverview(projectName, uid, monitor);
 				conn.commit();
 			} catch (Exception e) {
 				exc = e;
