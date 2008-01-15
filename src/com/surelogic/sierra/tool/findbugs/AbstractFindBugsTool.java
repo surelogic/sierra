@@ -8,12 +8,8 @@ import java.util.logging.Level;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.HashGenerator;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.IdentifierType;
-import com.surelogic.sierra.tool.message.Priority;
-import com.surelogic.sierra.tool.message.Severity;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
+import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.*;
 
 import edu.umd.cs.findbugs.*;
@@ -40,7 +36,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         engine.setUserPreferences(UserPreferences.getUserPreferences()); 
         //engine.setAnalysisFeatureSettings(arg0);
         engine.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
-        //engine.setClassScreener(arg0);
+        //engine.setClassScreener(new Screener());
         
         Monitor mon = new Monitor(this); 
         //engine.addClassObserver(mon);
@@ -106,6 +102,13 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   }
   
   protected abstract IFindBugsEngine createEngine();
+  
+  class Screener implements IClassScreener {
+    public boolean matches(String fileName) {
+      // TODO Auto-generated method stub
+      return false;
+    }  
+  }
   
   class Monitor implements FindBugsProgress, BugReporter {
     final AbstractToolInstance tool;
