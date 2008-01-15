@@ -79,9 +79,11 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               DatabaseHub.getInstance().notifyScanLoaded();
             }            
           } catch(Throwable ex) {
-            wrapper.failed("Caught exception during run()", ex);
+            if (monitor.isCanceled()) {
+              wrapper.failed("Caught exception during run()", ex);
+            }
           }
-          if (wrapper.getFailureTrace() != null) {
+          if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
             Throwable ex = wrapper.getFailureTrace();
             LOG.severe(ex.getMessage());
             return SLStatus.createErrorStatus("New Scan failed", ex);
