@@ -61,6 +61,7 @@ public abstract class SRPCServlet extends HttpServlet {
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
 			}
+			resp.setContentType(codec.getContentType());
 			codec.encodeResponse(resp.getOutputStream(), status, response);
 		} catch (Exception e) {
 			// We couldn't even send a message back to the client, log out a

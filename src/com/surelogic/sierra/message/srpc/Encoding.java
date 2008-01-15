@@ -82,11 +82,12 @@ class Encoding {
 						"Messages w/ more than one request parameter are not currently supported.");
 			}
 		}
-		writer.flush();
+		writer.close();
 	}
 
 	MethodInvocation decodeMethodInvocation(InputStream in)
 			throws SRPCException {
+		//Uncompressed, b/c the servlet handles decoding the compression
 		final BufferedReader reader = wrap(in);
 		try {
 			final String clazzStr = reader.readLine();
@@ -126,7 +127,7 @@ class Encoding {
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
-		writer.flush();
+		writer.close();
 	}
 
 	Object decodeResponse(InputStream in) throws Exception {
@@ -202,6 +203,10 @@ class Encoding {
 				throw new SRPCException(e);
 			}
 		}
+		return new BufferedReader(new InputStreamReader(in));
+	}
+
+	private BufferedReader wrapUncompressed(InputStream in) {
 		return new BufferedReader(new InputStreamReader(in));
 	}
 
