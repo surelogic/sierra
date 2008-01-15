@@ -184,6 +184,7 @@ public class ScanManager {
 
 	public void deleteOldestScan(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
+	  monitor.subTask("Deleting oldest scan");
 		getOldestScanByProject.setString(1, projectName);
 		ResultSet set = getOldestScanByProject.executeQuery();
 		try {

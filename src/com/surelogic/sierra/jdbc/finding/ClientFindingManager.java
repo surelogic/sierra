@@ -348,10 +348,13 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param projectName
 	 * @param scan
 	 *            the uid of the latest scan. This must be the latest scan.
+	 * @param monitor 
 	 * @throws SQLException
 	 */
-	public void generateOverview(String projectName, String scan)
+	public void generateOverview(String projectName, String scan, SLProgressMonitor monitor)
 			throws SQLException {
+	  monitor.subTask("Generating overview");
+	  
 		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
 		p.setName(projectName);
 		if (p.select()) {
@@ -362,15 +365,21 @@ public final class ClientFindingManager extends FindingManager {
 				log.info("Populating scan overview for scan "
 						+ scanRecord.getUid() + ".");
 				populateScanOverview(scanRecord.getId());
+				monitor.worked(1);
+				
 				log.info("Clearing overview for project " + p.getName() + ".");
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
+				monitor.worked(1);
+				
 				log.info("Calculating ids in overview for project "
 						+ p.getName() + ".");
 				int idx = 1;
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.execute();
+				monitor.worked(1);
+				
 				log
 						.info("Populating overview for project " + p.getName()
 								+ ".");
@@ -394,8 +403,11 @@ public final class ClientFindingManager extends FindingManager {
 				} finally {
 					set.close();
 				}
+				monitor.worked(1);
+				
 				log.info("Deleting temp ids");
 				deleteTempIds.execute();
+				monitor.worked(1);
 			} else {
 				throw new IllegalArgumentException("No scan with uid " + scan
 						+ " exists in the database");
