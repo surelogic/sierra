@@ -133,6 +133,7 @@ public class LocalTool extends AbstractTool {
           if (monitor.isCanceled()) {
             pout.println("##"+Local.CANCEL);
             p.destroy();
+            throw new InterruptedException("Scan was cancelled");
           }
           
           System.out.println(line);
@@ -166,7 +167,7 @@ public class LocalTool extends AbstractTool {
         }
         System.out.println("Process result = "+p.waitFor());
       } catch (Exception e) {
-        e.printStackTrace();
+        throw new RuntimeException(e);
       }
     }
 
