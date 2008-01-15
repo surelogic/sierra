@@ -83,7 +83,8 @@ public class LocalTool extends AbstractTool {
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       path.add(new Path(proj, "C:/work/workspace/common/common.jar"));
-      path.add(new Path(proj, "C:/work/workspace/sierra-tool/sierra-tool.jar"));
+      path.add(new Path(proj, config.getToolsDirectory().getParent())); // as plugin
+      path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
       path.add(new Path(proj, "C:/work/workspace/sierra-message/sierra-message.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-message/jax-ws/sjsxp.jar"));
       findJars(proj, path, "C:/work/workspace/sierra-message/jaxb");
