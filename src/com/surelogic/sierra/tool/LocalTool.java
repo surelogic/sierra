@@ -87,10 +87,11 @@ public class LocalTool extends AbstractTool {
       path.add(new Path(proj, "C:/work/workspace/sierra-message/sierra-message.jar"));
       path.add(new Path(proj, "C:/work/workspace/sierra-message/jax-ws/sjsxp.jar"));
       findJars(proj, path, "C:/work/workspace/sierra-message/jaxb");
-      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/pmd/lib");
-      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/FB/lib");
-      findJars(proj, path, "C:/work/workspace/sierra-tool/Tools/reckoner/lib");
-      path.add(new Path(proj, "C:/work/workspace/sierra-tool/Tools/reckoner/reckoner.jar"));
+      findJars(proj, path, new File(config.getToolsDirectory(), "pmd/lib"));
+      findJars(proj, path, new File(config.getToolsDirectory(), "FB/lib"));
+      findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
+      path.add(new Path(proj, new File(config.getToolsDirectory(), 
+                                       "reckoner/reckoner.jar").getAbsolutePath()));
       
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
       pb.redirectErrorStream(true);
@@ -172,7 +173,11 @@ public class LocalTool extends AbstractTool {
     }
 
     private void findJars(Project proj, Path path, String folder) {
-      for(File f : new File(folder).listFiles()) {
+      findJars(proj, path, new File(folder));
+    }
+    
+    private void findJars(Project proj, Path path, File folder) {
+      for(File f : folder.listFiles()) {
         String name = f.getAbsolutePath();
         if (name.endsWith(".jar")) {
           path.add(new Path(proj, name));

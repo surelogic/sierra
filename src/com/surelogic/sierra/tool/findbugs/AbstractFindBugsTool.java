@@ -18,13 +18,15 @@ import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
 public abstract class AbstractFindBugsTool extends AbstractTool {
-  protected AbstractFindBugsTool(String version) {
+  final File toolsDir;
+  protected AbstractFindBugsTool(String version, File toolsDir) {
     super("FindBugs", version, "FindBugs (TM)", "");
+    this.toolsDir = toolsDir;
   }
   
   protected IToolInstance create(final ArtifactGenerator generator, 
                                  final SLProgressMonitor monitor, boolean close) {
-    System.setProperty("findbugs.home", "C:/work/workspace/sierra-tool/Tools/FB");
+    System.setProperty("findbugs.home", new File(toolsDir, "FB").getAbsolutePath());
     
     return new AbstractToolInstance(this, generator, monitor, close) {     
       final IFindBugsEngine engine = createEngine();
