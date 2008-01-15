@@ -173,8 +173,7 @@ public class RemoteTool extends AbstractTool {
     }
 
     public void worked(int work) {
-      // TODO Auto-generated method stub
-      
+      out.println("##"+Remote.WORK+", "+work);
     }
   }
 }
