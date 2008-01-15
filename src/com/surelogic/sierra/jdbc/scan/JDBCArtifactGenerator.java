@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
@@ -84,25 +86,45 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	 * Must be called by JDBCScanGenerator to ensure all artifacts and error are
 	 * actually persisted.
 	 */
-	public void finished() {
-		persist();
+	public void finished(SLProgressMonitor monitor) {
+	  monitor.beginTask("Scan DB", 100);
+		persist(monitor);
 	}
-
-	private void persist() {
+	
+	private void persist(SLProgressMonitor monitor) {
 		try {
+		  monitor.subTask("Persisting comp units");
 			lookupOrInsert(compUnits.values());
+			monitor.worked(1);
 			compUnits.clear();
+			
+			monitor.subTask("Persisting sources");
 			lookupOrInsert(sources.values());
+			monitor.worked(1);
 			sources.clear();
+
+			monitor.subTask("Persisting artifacts");
 			insert(artifacts);
+			monitor.worked(1);
 			artifacts.clear();
+
+			monitor.subTask("Persisting relations");
 			insert(relations);
+			monitor.worked(1);
 			relations.clear();
+
+			monitor.subTask("Persisting metrics");
 			insert(classMetrics);
+			monitor.worked(1);
 			classMetrics.clear();
+
+			monitor.subTask("Committing ...");
 			conn.commit();
+			monitor.worked(1);
 		} catch (SQLException e) {
+		  monitor.subTask("Rolling back ...");
 			quietlyRollback();
+			monitor.worked(1);
 			throw new ScanPersistenceException(e);
 		}
 	}
@@ -166,7 +188,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			rec.setLinesOfCode(linesOfCode);
 			classMetrics.add(rec);
 			if (classMetrics.size() == COMMIT_SIZE) {
-				persist();
+				persist(EmptyProgressMonitor.instance());
 			}
 			clear();
 		}
@@ -250,7 +272,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				}
 				artifacts.add(artifact);
 				if (artifacts.size() == COMMIT_SIZE) {
-					persist();
+				  persist(EmptyProgressMonitor.instance());
 				}
 			}
 			clear();

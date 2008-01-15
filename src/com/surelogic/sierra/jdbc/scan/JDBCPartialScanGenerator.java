@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
@@ -93,7 +94,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
-		generator.finished();
+		generator.finished(EmptyProgressMonitor.instance());
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();

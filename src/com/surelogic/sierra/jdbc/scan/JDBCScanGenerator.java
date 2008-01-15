@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -152,7 +153,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
-		generator.finished();
+		generator.finished(EmptyProgressMonitor.instance());
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
