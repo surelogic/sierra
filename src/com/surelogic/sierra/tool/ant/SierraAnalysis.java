@@ -427,7 +427,7 @@ public class SierraAnalysis extends Task {
 					runDocument, config);
 			Parser parser = new Parser(generator, monitor);
 			tools.parseOutput(parser);
-			generator.finished();
+			generator.finished(monitor);
 
 		}
 	}

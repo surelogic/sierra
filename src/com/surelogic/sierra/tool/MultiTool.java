@@ -60,7 +60,7 @@ public class MultiTool extends AbstractTool {
         i.run();
       }
       if (closeWhenDone) {
-        generator.finished();
+        generator.finished(monitor);
         monitor.done();
       }
     }

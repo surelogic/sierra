@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Artifact;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
@@ -116,8 +117,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 	}
 
 	@Override
-	public void finished() {
+	public void finished(SLProgressMonitor monitor) {
+	  monitor.beginTask("Scan Document", 20);
 		try {
+		  monitor.subTask("Writing header");
 			OutputStream stream = new FileOutputStream(parsedFile);
 			stream = new GZIPOutputStream(stream, 4096);
 			OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
@@ -131,11 +134,13 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(UID_END);
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
-
+			monitor.worked(1);
+			
 			BufferedReader in;
 			String line = null;
-
+			
 			if (metricsFile != null && metricsFile.exists()) {
+			  monitor.subTask("Writing metrics");
 				in = new BufferedReader(new FileReader(metricsFile));
 				while ((line = in.readLine()) != null) {
 					finalFile.write(line);
@@ -143,9 +148,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 				}
 				in.close();
 				finalFile.flush();
+				monitor.worked(1);
 			}
 
 			if (artifactsHolder.exists()) {
+			  monitor.subTask("Writing artifacts");
 				finalFile.write(ARTIFACTS_START);
 				in = new BufferedReader(new FileReader(artifactsHolder));
 				line = null;
@@ -156,9 +163,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 				in.close();
 				finalFile.flush();
 				finalFile.write(ARTIFACTS_END);
+				monitor.worked(1);
 			}
 
-			if (artifactsHolder.exists()) {
+			if (errorsHolder.exists()) {
+			  monitor.subTask("Writing errors");
 				finalFile.write(ERROR_START);
 				in = new BufferedReader(new FileReader(errorsHolder));
 				line = null;
@@ -169,9 +178,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 				in.close();
 				finalFile.flush();
 				finalFile.write(ERROR_END);
+				monitor.worked(1);
 			}
 			finalFile.write(TOOL_OUTPUT_END);
 
+			monitor.subTask("Writing config");
 			File configOutput = File.createTempFile("config", "tmp");
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
@@ -189,6 +200,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.close();
 			osw.close();
 			stream.close();
+			monitor.worked(1);
 
 			// // Create a buffer for reading the files
 			// byte[] buf = new byte[1024];
@@ -223,6 +235,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			// // Testing
 			// }
 
+			monitor.subTask("Cleaning up");
 			// Delete temp files
 			errOut.close();
 			artOut.close();
@@ -231,7 +244,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			errorsHolder.delete();
 			artifactsHolder.delete();
 			configOutput.delete();
-
+			monitor.worked(1);
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
 			throw new RuntimeException(e.getMessage());

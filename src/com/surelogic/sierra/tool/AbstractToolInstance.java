@@ -105,7 +105,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
       done = true;
     }
     if (closeWhenDone) {
-      generator.finished();
+      generator.finished(monitor);
       monitor.done();
     }
   }
