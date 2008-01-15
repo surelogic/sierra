@@ -206,10 +206,6 @@ class Encoding {
 		return new BufferedReader(new InputStreamReader(in));
 	}
 
-	private BufferedReader wrapUncompressed(InputStream in) {
-		return new BufferedReader(new InputStreamReader(in));
-	}
-
 	private PrintWriter wrap(OutputStream out) {
 		if (compressed) {
 			try {
