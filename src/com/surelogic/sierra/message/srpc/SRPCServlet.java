@@ -1,6 +1,8 @@
 package com.surelogic.sierra.message.srpc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +38,7 @@ public abstract class SRPCServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			final Encoding codec = getEncoding();
+			final Encoding codec = getEncoding(req.getContentType());
 			ResponseStatus status;
 			Object response;
 			try {
@@ -67,10 +69,10 @@ public abstract class SRPCServlet extends HttpServlet {
 		}
 	}
 
-	Encoding getEncoding() throws SRPCException {
+	Encoding getEncoding(String contentType) throws SRPCException {
 		for (Class<?> c : this.getClass().getInterfaces()) {
 			if (Service.class.isAssignableFrom(c)) {
-				return Encoding.getEncoding(c);
+				return Encoding.getEncoding(c, contentType);
 			}
 		}
 		throw new SRPCException(

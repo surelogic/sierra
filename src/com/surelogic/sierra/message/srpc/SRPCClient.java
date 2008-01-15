@@ -107,7 +107,7 @@ public class SRPCClient implements InvocationHandler {
 	 * @return
 	 */
 	public static <T> T createClient(SierraServerLocation location,
-			Class<T> clazz) throws SRPCException {
+			Class<T> clazz, boolean compressed) throws SRPCException {
 		if (!Service.class.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException(
 					clazz
@@ -115,7 +115,7 @@ public class SRPCClient implements InvocationHandler {
 		}
 		return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),
 				new Class[] { clazz }, new SRPCClient(clazz
-						.getDeclaredMethods(), Encoding.getEncoding(clazz),
-						location, clazz.getSimpleName())));
+						.getDeclaredMethods(), Encoding.getEncoding(clazz,
+						compressed), location, clazz.getSimpleName())));
 	}
 }

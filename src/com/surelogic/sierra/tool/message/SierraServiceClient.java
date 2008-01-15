@@ -15,17 +15,10 @@ public class SierraServiceClient {
 
 	public static SierraService create() {
 		return SRPCClient.createClient(SierraServerLocation.DEFAULT,
-				SierraService.class);
+				SierraService.class, false);
 	}
 
 	public static SierraService create(SierraServerLocation location) {
-		return SRPCClient.createClient(location, SierraService.class);
+		return SRPCClient.createClient(location, SierraService.class, false);
 	}
-	// public static SierraService create() {
-	// return new JAXWSClient();
-	// }
-	//
-	// public static SierraService create(SierraServerLocation location) {
-	// return new JAXWSClient(location);
-	// }
 }

@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,12 +27,23 @@ import javax.xml.bind.Unmarshaller;
 class Encoding {
 
 	private static final String NULL = "null";
+	private static final String GZIP = "application/x-gzip";
+	private static final String PLAINTEXT = "text/plain; charset=UTF-8";
 
 	private final JAXBContext context;
 	private final Class<?> service;
+	private final boolean compressed;
 
-	private Encoding(Class<?> service) throws SRPCException {
+	private Encoding(Class<?> service, String contentType) throws SRPCException {
 		this.service = service;
+		if (GZIP.equals(contentType)) {
+			compressed = true;
+		} else if (PLAINTEXT.equals(contentType)) {
+			compressed = false;
+		} else {
+			throw new IllegalArgumentException(contentType
+					+ " is not a valid content type");
+		}
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(Failure.class);
 		classes.add(RaisedException.class);
@@ -50,7 +63,7 @@ class Encoding {
 
 	void encodeMethodInvocation(OutputStream out, MethodInvocation invocation)
 			throws SRPCException {
-		final PrintWriter writer = new PrintWriter(out);
+		final PrintWriter writer = wrap(out);
 		final Method method = invocation.getMethod();
 		final Object[] args = invocation.getArgs();
 		writer.println(method.getDeclaringClass().getName());
@@ -74,8 +87,7 @@ class Encoding {
 
 	MethodInvocation decodeMethodInvocation(InputStream in)
 			throws SRPCException {
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				in));
+		final BufferedReader reader = wrap(in);
 		try {
 			final String clazzStr = reader.readLine();
 			if (service.getName().equals(clazzStr)) {
@@ -102,7 +114,7 @@ class Encoding {
 
 	void encodeResponse(OutputStream out, ResponseStatus status, Object o)
 			throws SRPCException {
-		final PrintWriter writer = new PrintWriter(out);
+		final PrintWriter writer = wrap(out);
 		writer.println(status);
 		try {
 			if (o == null) {
@@ -118,8 +130,7 @@ class Encoding {
 	}
 
 	Object decodeResponse(InputStream in) throws Exception {
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				in));
+		final BufferedReader reader = wrap(in);
 		try {
 			final String statusStr = reader.readLine();
 			if (statusStr != null) {
@@ -165,8 +176,14 @@ class Encoding {
 
 	}
 
-	static Encoding getEncoding(Class<?> service) throws SRPCException {
-		return new Encoding(service);
+	static Encoding getEncoding(Class<?> service, boolean compressed)
+			throws SRPCException {
+		return new Encoding(service, compressed ? GZIP : PLAINTEXT);
+	}
+
+	static Encoding getEncoding(Class<?> service, String contentType)
+			throws SRPCException {
+		return new Encoding(service, contentType);
 	}
 
 	String getCharSet() {
@@ -174,7 +191,29 @@ class Encoding {
 	}
 
 	String getContentType() {
-		return "text/plain; charset=UTF-8";
+		return compressed ? GZIP : PLAINTEXT;
+	}
+
+	private BufferedReader wrap(InputStream in) {
+		if (compressed) {
+			try {
+				in = new GZIPInputStream(in);
+			} catch (IOException e) {
+				throw new SRPCException(e);
+			}
+		}
+		return new BufferedReader(new InputStreamReader(in));
+	}
+
+	private PrintWriter wrap(OutputStream out) {
+		if (compressed) {
+			try {
+				out = new GZIPOutputStream(out);
+			} catch (IOException e) {
+				throw new SRPCException(e);
+			}
+		}
+		return new PrintWriter(out);
 	}
 
 	private Marshaller newMarshaller() throws SRPCException {
