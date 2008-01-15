@@ -1,5 +1,7 @@
 package com.surelogic.sierra.tool.message;
 
+import com.surelogic.common.SLProgressMonitor;
+
 
 /**
  *
@@ -13,7 +15,7 @@ public interface ArtifactGenerator {
 
     public ErrorBuilder error();
 
-    public void finished();
+    public void finished(SLProgressMonitor monitor);
     
     public void rollback();
 
