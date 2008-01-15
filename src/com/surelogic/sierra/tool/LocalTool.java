@@ -121,7 +121,7 @@ public class LocalTool extends AbstractTool {
         out.close();
         
         // Send the location of the config file
-        PrintStream pout = new PrintStream(p.getOutputStream());
+        final PrintStream pout = new PrintStream(p.getOutputStream());
         pout.println(file.getAbsolutePath());
         pout.println();
         pout.flush();
@@ -130,6 +130,11 @@ public class LocalTool extends AbstractTool {
         String line = br.readLine();
       loop:
         while (line != null) {
+          if (monitor.isCanceled()) {
+            pout.println("##"+Local.CANCEL);
+            p.destroy();
+          }
+          
           System.out.println(line);
           if (line.startsWith("##")) {
             StringTokenizer st = new StringTokenizer(line, "#,");

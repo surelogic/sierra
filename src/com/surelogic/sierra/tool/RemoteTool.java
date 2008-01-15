@@ -40,6 +40,8 @@ public class RemoteTool extends AbstractTool {
     throw new UnsupportedOperationException("Generators can't be sent remotely");   
   }
   
+  private static final String CANCEL = "##"+Local.CANCEL;
+  
   public static void main(String[] args) {
     try {
       final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -76,6 +78,7 @@ public class RemoteTool extends AbstractTool {
         line = br.readLine();
       }      
       */
+      
       for(URI location : config.getPaths()) {
         System.out.println("URI = "+location);
       }
@@ -89,18 +92,34 @@ public class RemoteTool extends AbstractTool {
       System.out.println("Java version: "+config.getJavaVersion());
       System.out.println("Rules file: "+config.getPmdRulesFile());
       
-      IToolInstance ti = t.create(config, new Monitor(System.out)); 
-      System.out.println("Created tool instance");
+      final Monitor mon = new Monitor(System.out);
+      checkInput(br, mon, "Created monitor");
+      
+      IToolInstance ti = t.create(config, mon); 
+      checkInput(br, mon, "Created tool instance");
+      
       setupToolForProject(ti, config);
-      System.out.println("Setup tool");
-      System.out.flush();
+      checkInput(br, mon, "Setup tool");
+
       ti.run();
-      System.out.println("Done scanning");
-      System.out.flush();
+      checkInput(br, mon, "Done scanning");
     } catch (Throwable e) {
       e.printStackTrace(System.out);
       System.exit(-1);
     }
+  }
+
+  private static void checkInput(final BufferedReader br, final Monitor mon, String msg)
+      throws IOException {
+    System.out.println(msg);        
+    if (br.ready()) {
+      String line = br.readLine();
+      System.out.println("Received: "+line);
+      if (CANCEL.equals(line)) {
+        mon.setCanceled(true); 
+      }
+    }
+    System.out.flush();
   }
 
   private static void setupToolForProject(IToolInstance ti, Config config) {
@@ -114,6 +133,7 @@ public class RemoteTool extends AbstractTool {
   
   private static class Monitor implements SLProgressMonitor {
     final PrintStream out;
+    boolean cancelled = false;
     
     public Monitor(PrintStream out) {
       this.out = out;
@@ -154,13 +174,11 @@ public class RemoteTool extends AbstractTool {
     public void internalWorked(double work) {}
 
     public boolean isCanceled() {
-      // TODO Auto-generated method stub
-      return false;
+      return cancelled;
     }
 
     public void setCanceled(boolean value) {
-      // TODO Auto-generated method stub
-      
+      cancelled = value;
     }
 
     public void setTaskName(String name) {
