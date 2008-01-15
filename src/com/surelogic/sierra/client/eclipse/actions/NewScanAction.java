@@ -114,16 +114,15 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               if (toBeAnalyzed) {
                 IResource res = root.findMember(cpe.getPath());
                 URI loc = res.getLocationURI();
-                IPath[] patterns = cpe.getExclusionPatterns();
-                if (patterns != null && patterns.length > 0) {
-                  final String[] exclusions = new String[patterns.length];
-                  int i = 0;
-                  for(IPath exclusion : patterns) {
-                    exclusions[i] = exclusion.toString();
-                    i++;
-                  }                
+                
+                IPath[] includePatterns = cpe.getInclusionPatterns();                
+                IPath[] excludePatterns = cpe.getExclusionPatterns();
+                if ((excludePatterns != null && excludePatterns.length > 0) || 
+                    (includePatterns != null && includePatterns.length > 0)) {
+                  final String[] inclusions = convertPaths(includePatterns);
+                  final String[] exclusions = convertPaths(excludePatterns);                
                   ti.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
-                                                           exclusions));
+                                                           inclusions, exclusions));
                 } else {
                   ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
                 }
@@ -145,6 +144,19 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               setupToolForProject(ti, JavaCore.create(proj), false);
               break;
           }
+        }
+
+        private String[] convertPaths(IPath[] patterns) {
+          if (patterns == null || patterns.length == 0) {
+            return null;
+          }
+          final String[] exclusions = new String[patterns.length];
+          int i = 0;
+          for(IPath exclusion : patterns) {
+            exclusions[i] = exclusion.toString();
+            i++;
+          }
+          return exclusions;
         }
 
         private IToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
