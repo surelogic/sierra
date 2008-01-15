@@ -13,18 +13,30 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
    * For JAXB
    */
   public FilteredDirectoryTarget() {}
-  
+  private String[] inclusions; 
   private String[] exclusions; 
   
-  public FilteredDirectoryTarget(Type type, URI loc, String... exclusions) {
+  public FilteredDirectoryTarget(Type type, URI loc, String[] inclusions, String[] exclusions) {
     super(type, loc);
+    this.inclusions = inclusions;
     this.exclusions = exclusions;
   }
 
   public boolean exclude(String relativePath) {
-    for(String ex : exclusions) {
-      if (relativePath.startsWith(ex)) {
-        return true;
+   include:
+    if (inclusions != null) {
+      for(String ex : inclusions) {
+        if (relativePath.startsWith(ex)) {
+          break include; // now check exclusions
+        }
+      }      
+      return true; // Not included
+    }
+    if (exclusions != null) {
+      for(String ex : exclusions) {
+        if (relativePath.startsWith(ex)) {
+          return true;
+        }
       }
     }
     return false;
