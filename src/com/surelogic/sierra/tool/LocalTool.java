@@ -82,12 +82,14 @@ public class LocalTool extends AbstractTool {
       cmdj.setMaxmemory("1024m");
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
-      path.add(new Path(proj, "C:/work/workspace/common/common.jar"));
+      path.add(new Path(proj, config.getCommonDirectory())); // as plugin
+      path.add(new Path(proj, config.getCommonDirectory()+"/bin")); // in workspace
       path.add(new Path(proj, config.getToolsDirectory().getParent())); // as plugin
       path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
-      path.add(new Path(proj, "C:/work/workspace/sierra-message/sierra-message.jar"));
-      path.add(new Path(proj, "C:/work/workspace/sierra-message/jax-ws/sjsxp.jar"));
-      findJars(proj, path, "C:/work/workspace/sierra-message/jaxb");
+      path.add(new Path(proj, config.getMessageDirectory())); // as plugin
+      path.add(new Path(proj, config.getMessageDirectory()+"/bin")); // in workspace
+      path.add(new Path(proj, config.getMessageDirectory()+"/jax-ws/sjsxp.jar"));
+      findJars(proj, path, config.getMessageDirectory()+"/jaxb");
       findJars(proj, path, new File(config.getToolsDirectory(), "pmd/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "FB/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));

@@ -9,6 +9,7 @@ public final class SierraToolConstants {
 	 * have no activator
 	 */
 	public static final String COMMON_PLUGIN_ID = "com.surelogic.common";
+	public static final String MESSAGE_PLUGIN_ID = "com.surelogic.sierra.message";
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 
 	/** The location of tools folder */
