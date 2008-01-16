@@ -116,6 +116,7 @@ public class LocalTool extends AbstractTool {
         System.out.println(br.readLine());
 
         JAXBContext ctx = JAXBContext.newInstance(Config.class, 
+                                                  FileTarget.class,
                                                   JarTarget.class, 
                                                   FullDirectoryTarget.class, 
                                                   FilteredDirectoryTarget.class);
