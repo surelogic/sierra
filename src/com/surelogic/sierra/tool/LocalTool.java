@@ -82,8 +82,12 @@ public class LocalTool extends AbstractTool {
       cmdj.setMaxmemory("1024m");
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
-      path.add(new Path(proj, config.getCommonDirectory())); // as plugin
-      path.add(new Path(proj, config.getCommonDirectory()+"/bin")); // in workspace
+      String common = config.getCommonDirectory();
+      if (common.endsWith(".jar")) {
+        path.add(new Path(proj, common)); // as plugin
+      } else {
+        path.add(new Path(proj, config.getCommonDirectory()+"/bin")); // in workspace
+      }
       path.add(new Path(proj, config.getToolsDirectory().getParent())); // as plugin
       path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
       path.add(new Path(proj, config.getMessageDirectory())); // as plugin
