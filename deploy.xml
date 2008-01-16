@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy-app" name="server-deployment" >
+	<description>Jetty web deployment file</description>
+	<target name="deploy-app">
+		<war destfile="../jetty/webapps/sierra-services.war" basedir="WebRoot" webxml="WebRoot/WEB-INF/web.xml"></war>
+	</target>
+</project>
