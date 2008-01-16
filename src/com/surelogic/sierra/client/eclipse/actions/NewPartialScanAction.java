@@ -142,7 +142,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 
 		if ((f_currentEditor != null || f_currentSelection != null)
 				&& inClassPath) {
-		  NewScan.scanCompilationUnits(selectedCompilationUnits);		
+		  new NewPartialScan().scan(selectedCompilationUnits);		
 		}
 	}
 

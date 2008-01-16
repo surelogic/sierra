@@ -12,6 +12,6 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
   @Override
   protected void run(final List<IJavaProject> selectedProjects,
       final List<String> projectNames) {
-    NewScan.scan(selectedProjects, projectNames);
+    new NewScan().scan(selectedProjects, projectNames);
   }
 }
