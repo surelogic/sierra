@@ -122,15 +122,6 @@ public class RemoteTool extends AbstractTool {
     System.out.flush();
   }
 
-  private static void setupToolForProject(IToolInstance ti, Config config) {
-    for(ToolTarget t : config.getTargets()) {
-      ti.addTarget(t);
-    }
-    for(URI path : config.getPaths()) {
-      ti.addToClassPath(path);
-    }
-  }
-  
   private static class Monitor implements SLProgressMonitor {
     final PrintStream out;
     boolean cancelled = false;
