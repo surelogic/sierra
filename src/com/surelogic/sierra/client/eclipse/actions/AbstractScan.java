@@ -1,12 +1,15 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.BalloonUtility;
+import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
@@ -31,6 +34,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     } else {
       saved = PlatformUI.getWorkbench().saveAllEditors(false);
     }
+
     return saved;
   }
 
@@ -63,13 +67,23 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       return;
     }
     boolean saved = trySavingEditors();
-    
-    if (saved) {
-      final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
-      startScanJob(elements);      
-      showStartBalloon(sb);
-    } else {
-      // Scan not run, because of modified editors
+    try {
+      boolean compiled = JavaUtil.noCompilationErrors(elements);
+
+      if (saved & compiled) {
+        final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
+        startScanJob(elements);      
+        showStartBalloon(sb);
+      } else if (!compiled) {
+        BalloonUtility.showMessage("Something doesn't compile", 
+                                   "Sierra cannot run properly if your code does not compile");
+      } else {
+        // Scan not run, because of modified editors
+      }
+      
+    } catch(CoreException e) {
+      //BalloonUtility.showMessage("Problem while checking if your code compiles", );
+      LOG.log(Level.SEVERE, "Problem while checking if your code compiles", e);
     }
   } 
   
