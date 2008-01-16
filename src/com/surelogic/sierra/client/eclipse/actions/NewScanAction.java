@@ -62,8 +62,9 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
           } else {
             sb.append(", ");
           }
-          sb.append(name);
+          sb.append(name);          
         }
+        sb.append(". ");
       } else {
         sb.append(projectNames.size()).append(" projects. ");
       }
