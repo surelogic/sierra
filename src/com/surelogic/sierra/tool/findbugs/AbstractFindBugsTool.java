@@ -94,7 +94,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             break;
           case JAR:
           case FILE:
-            System.out.println("Ignored: "+path);
+            // System.out.println("Ignored: "+path);
+            FileTarget ft = (FileTarget) t;
+            p.addSourceDir(new File(ft.getRoot()).getAbsolutePath());
             break;
           }
         }
@@ -305,6 +307,16 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
           break;
         case JAR:
         case FILE:
+          FileTarget ft = (FileTarget) t;
+          if (ft.getRoot() != null) {
+            File candidate2 = new File(new File(ft.getRoot()), pkgPath+'/'+srcFile);
+            if (candidate2.exists() && candidate2.isFile()) {
+              String path2 = candidate2.getAbsolutePath();
+              if (path2.equals(root.getAbsolutePath())) {
+                return path2;
+              }
+            }
+          }
           System.out.println("Ignored: "+root);
           break;
         }
