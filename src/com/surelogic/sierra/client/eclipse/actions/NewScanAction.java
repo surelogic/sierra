@@ -76,7 +76,6 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
             try {            
               final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
-              setupToolForProject(config, p, true);
               System.out.println("Excluded: "+config.getExcludedToolsList());
 
               final ITool t = ToolUtil.create(config);                           
@@ -126,89 +125,6 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               return SLStatus.createErrorStatus("New Scan failed", ex);
             }
             return Status.OK_STATUS;
-          }
-
-          /**
-           * @param toBeAnalyzed Whether the project will be analyzed, or is simply referred to
-           */
-          private void setupToolForProject(final Config cfg, IJavaProject p, final boolean toBeAnalyzed) 
-          throws JavaModelException 
-          {
-            final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-              handleClasspathEntry(cfg, toBeAnalyzed, root, cpe);
-            }
-            URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-            cfg.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
-          }
-
-          private void handleClasspathEntry(final Config cfg, final boolean toBeAnalyzed, 
-              final IWorkspaceRoot root, IClasspathEntry cpe) 
-          throws JavaModelException 
-          {
-            switch (cpe.getEntryKind()) {
-              case IClasspathEntry.CPE_SOURCE:
-                if (toBeAnalyzed) {
-                  IResource res = root.findMember(cpe.getPath());
-                  URI loc = res.getLocationURI();
-
-                  IPath[] includePatterns = cpe.getInclusionPatterns();                
-                  IPath[] excludePatterns = cpe.getExclusionPatterns();
-                  if ((excludePatterns != null && excludePatterns.length > 0) || 
-                      (includePatterns != null && includePatterns.length > 0)) {
-                    final String[] inclusions = convertPaths(includePatterns);
-                    final String[] exclusions = convertPaths(excludePatterns);                
-                    cfg.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
-                        inclusions, exclusions));
-                  } else {
-                    cfg.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
-                  }
-                }
-                break;
-              case IClasspathEntry.CPE_LIBRARY:
-                IPath srcPath = cpe.getSourceAttachmentPath();
-                // FIX cpe.getSourceAttachmentRootPath();
-                if (srcPath != null) {
-                  IToolTarget srcTarget = createTarget(root, cpe.getSourceAttachmentPath(), null);
-                  cfg.addTarget(createTarget(root, cpe.getPath(), srcTarget));
-                } else {
-                  cfg.addTarget(createTarget(root, cpe.getPath(), null));
-                }
-                break;
-              case IClasspathEntry.CPE_PROJECT:
-                String projName = cpe.getPath().lastSegment();
-                IProject proj = root.getProject(projName);
-                setupToolForProject(cfg, JavaCore.create(proj), false);
-                break;
-            }
-          }
-
-          private String[] convertPaths(IPath[] patterns) {
-            if (patterns == null || patterns.length == 0) {
-              return null;
-            }
-            final String[] exclusions = new String[patterns.length];
-            int i = 0;
-            for(IPath exclusion : patterns) {
-              exclusions[i] = exclusion.toString();
-              i++;
-            }
-            return exclusions;
-          }
-
-          private ToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
-            URI lib;
-            File libFile = new File(libPath.toOSString());
-            if (libFile.exists()) {
-              lib = libFile.toURI();
-            } else {
-              lib = root.findMember(libPath).getLocationURI();
-            }
-            if (new File(lib).isDirectory()) {
-              return new FullDirectoryTarget(IToolTarget.Type.AUX, lib);
-            } else {
-              return new JarTarget(lib);
-            }
           }
         };
         job.schedule();

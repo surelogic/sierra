@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,13 +16,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
@@ -31,6 +35,11 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
+import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
+import com.surelogic.sierra.tool.targets.IToolTarget;
+import com.surelogic.sierra.tool.targets.JarTarget;
+import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
  * Utility class for getting configuration objects that are required to run
@@ -374,6 +383,8 @@ public final class ConfigGenerator {
 				}
 			}
 			config.setSourceDirs(srcDir);
+					
+	    setupToolForProject(config, project, true);
 		} catch (JavaModelException e) {
 			SLLogger.getLogger("sierra").log(Level.SEVERE,
 					"Error when getting outputlocation", e);
@@ -391,7 +402,6 @@ public final class ConfigGenerator {
 		// Get clean option
 		// Get included dirs -project specific
 		// Get excluded dirs - project specific
-
 		return config;
 	}
 
@@ -536,6 +546,88 @@ public final class ConfigGenerator {
 				getClassFilesInFolder((IFolder) r, files, javaFileName);
 			}
 		}
-
 	}
+	
+  /**
+   * @param toBeAnalyzed Whether the project will be analyzed, or is simply referred to
+   */
+  private static void setupToolForProject(final Config cfg, IJavaProject p, final boolean toBeAnalyzed) 
+  throws JavaModelException 
+  {
+    final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
+      handleClasspathEntry(cfg, toBeAnalyzed, root, cpe);
+    }
+    URI out = root.findMember(p.getOutputLocation()).getLocationURI();
+    cfg.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
+  }
+  
+  private static void handleClasspathEntry(final Config cfg, final boolean toBeAnalyzed, 
+      final IWorkspaceRoot root, IClasspathEntry cpe) 
+  throws JavaModelException 
+  {
+    switch (cpe.getEntryKind()) {
+      case IClasspathEntry.CPE_SOURCE:
+        if (toBeAnalyzed) {
+          IResource res = root.findMember(cpe.getPath());
+          URI loc = res.getLocationURI();
+
+          IPath[] includePatterns = cpe.getInclusionPatterns();                
+          IPath[] excludePatterns = cpe.getExclusionPatterns();
+          if ((excludePatterns != null && excludePatterns.length > 0) || 
+              (includePatterns != null && includePatterns.length > 0)) {
+            final String[] inclusions = convertPaths(includePatterns);
+            final String[] exclusions = convertPaths(excludePatterns);                
+            cfg.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
+                inclusions, exclusions));
+          } else {
+            cfg.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
+          }
+        }
+        break;
+      case IClasspathEntry.CPE_LIBRARY:
+        IPath srcPath = cpe.getSourceAttachmentPath();
+        // FIX cpe.getSourceAttachmentRootPath();
+        if (srcPath != null) {
+          IToolTarget srcTarget = createTarget(root, cpe.getSourceAttachmentPath(), null);
+          cfg.addTarget(createTarget(root, cpe.getPath(), srcTarget));
+        } else {
+          cfg.addTarget(createTarget(root, cpe.getPath(), null));
+        }
+        break;
+      case IClasspathEntry.CPE_PROJECT:
+        String projName = cpe.getPath().lastSegment();
+        IProject proj = root.getProject(projName);
+        setupToolForProject(cfg, JavaCore.create(proj), false);
+        break;
+    }
+  }
+  
+  private static String[] convertPaths(IPath[] patterns) {
+    if (patterns == null || patterns.length == 0) {
+      return null;
+    }
+    final String[] exclusions = new String[patterns.length];
+    int i = 0;
+    for(IPath exclusion : patterns) {
+      exclusions[i] = exclusion.toString();
+      i++;
+    }
+    return exclusions;
+  }
+
+  private static ToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
+    URI lib;
+    File libFile = new File(libPath.toOSString());
+    if (libFile.exists()) {
+      lib = libFile.toURI();
+    } else {
+      lib = root.findMember(libPath).getLocationURI();
+    }
+    if (new File(lib).isDirectory()) {
+      return new FullDirectoryTarget(IToolTarget.Type.AUX, lib);
+    } else {
+      return new JarTarget(lib);
+    }
+  }
 }
