@@ -51,6 +51,12 @@ public final class ConfigGenerator {
 
 	/** The plug-in directory that has tools folder */
 	private final String tools;
+	
+	/** The plug-in directory for common */
+  private final String common;
+  
+  /** The plug-in directory for sierra-message */
+  private final String message;
 
 	/** The number of excluded tools : Default 0 */
 	private int f_numberofExcludedTools = 0;
@@ -60,6 +66,12 @@ public final class ConfigGenerator {
 		tools = Activator.getDefault().getDirectoryOf(
 				SierraToolConstants.TOOL_PLUGIN_ID)
 				+ SierraToolConstants.TOOLS_FOLDER;
+		
+		message = Activator.getDefault().getDirectoryOf(
+        SierraToolConstants.MESSAGE_PLUGIN_ID);
+		
+		common = Activator.getDefault().getDirectoryOf(
+        SierraToolConstants.COMMON_PLUGIN_ID);
 	}
 
 	public static ConfigGenerator getInstance() {
@@ -238,7 +250,7 @@ public final class ConfigGenerator {
 			config.setScanDocument(scanDocument);
 			config.setJavaVendor(System.getProperty("java.vendor"));
 			config.setScanDocument(scanDocument);
-			config.setToolsDirectory(new File(tools));
+			setupTools(config);
 			config.setExcludedToolsList(getExcludedTools());
 			String binDirs = null;
 			String srcDirs = null;
@@ -373,7 +385,7 @@ public final class ConfigGenerator {
 		config.setScanDocument(scanDocument);
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setScanDocument(scanDocument);
-		config.setToolsDirectory(new File(tools));
+		setupTools(config);
 		config.setExcludedToolsList(getExcludedTools());
 
 		// Get clean option
@@ -382,6 +394,12 @@ public final class ConfigGenerator {
 
 		return config;
 	}
+
+  private void setupTools(Config config) {
+    config.setToolsDirectory(new File(tools));
+    config.setCommonDirectory(common);
+    config.setMessageDirectory(message);
+  }
 
 	private String getTimeStamp() {
 		Date date = Calendar.getInstance().getTime();
