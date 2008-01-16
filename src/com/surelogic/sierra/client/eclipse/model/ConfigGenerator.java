@@ -2,31 +2,13 @@ package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
@@ -35,11 +17,7 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
-import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
-import com.surelogic.sierra.tool.targets.IToolTarget;
-import com.surelogic.sierra.tool.targets.JarTarget;
-import com.surelogic.sierra.tool.targets.ToolTarget;
+import com.surelogic.sierra.tool.targets.*;
 
 /**
  * Utility class for getting configuration objects that are required to run
@@ -309,21 +287,27 @@ public final class ConfigGenerator {
 					}
 
 					for (IFile f : classFiles) {
+					  String osLoc = f.getLocation().toOSString();
 						if (binDirs == null) {
-							binDirs = f.getLocation().toOSString();
+							binDirs = osLoc;
 						} else {
-							binDirs = binDirs + ";"
-									+ f.getLocation().toOSString();
+							binDirs = binDirs + ";" + osLoc;
 						}
+						File osFile = new File(osLoc);
+						config.addTarget(new FileTarget(IToolTarget.Type.BINARY, osFile.toURI(), null));
 					}
 
+					String srcLoc = c.getResource().getLocation().toOSString();
 					if (srcDirs == null) {
-						srcDirs = c.getResource().getLocation().toOSString();
+						srcDirs = srcLoc;
 					} else {
 						srcDirs = srcDirs + ";"
-								+ c.getResource().getLocation().toOSString();
+								+ srcLoc;
 					}
-
+					File srcFile = new File(srcLoc);
+					IPackageFragmentRoot p = (IPackageFragmentRoot) c.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+					File rootFile = new File(p.getResource().getLocation().toOSString());
+					config.addTarget(new FileTarget(srcFile.toURI(), rootFile.toURI())); 
 				}
 				config.setBinDirs(binDirs);
 				config.setSourceDirs(srcDirs);
