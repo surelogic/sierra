@@ -42,7 +42,9 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
-		  runAfter.run();
+		  if (runAfter != null) {
+		    runAfter.run();
+		  }
 			return Status.OK_STATUS;
 		}
 	}
