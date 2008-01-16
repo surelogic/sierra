@@ -15,17 +15,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 public final class FileTarget extends AbstractToolTarget {
+  URI root;
+  
   /**
    * For JAXB
    */
   public FileTarget() {}
   
-  public FileTarget(Type type, URI loc) {
+  public FileTarget(Type type, URI loc, URI root) {
     super(type, loc);
+    this.root = root;
   }
   
-  public FileTarget(URI loc) {
-    super(Type.SOURCE, loc);
+  public FileTarget(URI loc, URI root) {
+    this(Type.SOURCE, loc, root);
   }
   
   public boolean exclude(String relativePath) {
@@ -59,5 +62,9 @@ public final class FileTarget extends AbstractToolTarget {
         throw new UnsupportedOperationException();
       }};
       */
+  }
+  
+  public URI getRoot() {
+    return root;
   }
 }
