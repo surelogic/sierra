@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -37,6 +38,9 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
   @Override
   protected void run(final List<IJavaProject> selectedProjects,
       List<String> projectNames) {
+    if (selectedProjects.size() <= 0) {
+      return;
+    }
     boolean saved = true;
     // Bug 1075 Fix - Ask for saving editors
     if (!PreferenceConstants.alwaysSaveResources()) {
@@ -45,18 +49,26 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
       PlatformUI.getWorkbench().saveAllEditors(false);
     }
     if (saved) {
-      StringBuffer sb = new StringBuffer("Scan of ");
-      boolean first = true;
-      for(String name : projectNames) {
-        if (first == true) {
-          first = false;
-        } else {
-          sb.append(", ");
+      final StringBuilder sb = new StringBuilder("Scanning ");
+      /*
+       * Fix for bug 1157. At JPL we encountered 87 projects and
+       * the balloon pop-up went off the screen.
+       */
+      if (projectNames.size() <= 5) {
+        boolean first = true;
+        for(String name : projectNames) {
+          if (first == true) {
+            first = false;
+          } else {
+            sb.append(", ");
+          }
+          sb.append(name);
         }
-        sb.append(name);
+      } else {
+        sb.append(projectNames.size()).append(" projects. ");
       }
       
-      new Job(sb.toString()) {
+      Job job = new Job(sb.toString()) {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
           final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
@@ -173,7 +185,18 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             return new JarTarget(lib);
           }
         }
-      }.schedule();
+      };
+      // FIX for multiple projects
+      job.addJobChangeListener(new ScanProjectJobAdapter(projectNames.get(0)));
+      job.schedule();
+
+      if (PreferenceConstants.showBalloonNotifications()) {
+        sb.append("You may continue your work. ");
+        sb.append("You will be notified when the");
+        sb.append(" scan has completed.");
+        BalloonUtility.showMessage("Sierra Scan Started", sb
+            .toString());
+      }
     }
   }
 }
