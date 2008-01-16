@@ -35,6 +35,7 @@ public class ServerConnection {
 
 	private ServerConnection(boolean readOnly) throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(lookup());
+		conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		conn.setReadOnly(readOnly);
 		if (!readOnly) {
 			conn.setAutoCommit(false);
