@@ -79,7 +79,9 @@ public class Reckoner1_0Tool extends AbstractTool {
         if (!path.startsWith(rootPath)) {
           throw new IllegalArgumentException(path+" isn't under "+rootPath);
         }
-        if (t.exclude(path.substring(rootPath.length()+1).replace(File.separatorChar, '/'))) {
+        String partialPath = path.equals(rootPath) ? "" : path.substring(rootPath.length()+1);
+        
+        if (t.exclude(partialPath.replace(File.separatorChar, '/'))) {
           return true;
         }
         return false;
