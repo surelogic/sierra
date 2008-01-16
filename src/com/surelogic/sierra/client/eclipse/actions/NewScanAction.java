@@ -76,6 +76,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
             try {            
               final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
+              setupToolForProject(config, p, true);
               System.out.println("Excluded: "+config.getExcludedToolsList());
 
               final ITool t = ToolUtil.create(config);                           
@@ -83,7 +84,6 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
               System.out.println("Rules file: "+config.getPmdRulesFile());
 
               IToolInstance ti = t.create(config, wrapper);                         
-              setupToolForProject(ti, p, true);
               ti.run();
 
               final Runnable runAfter = new Runnable() {
@@ -131,18 +131,18 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
           /**
            * @param toBeAnalyzed Whether the project will be analyzed, or is simply referred to
            */
-          private void setupToolForProject(final IToolInstance ti, IJavaProject p, final boolean toBeAnalyzed) 
+          private void setupToolForProject(final Config cfg, IJavaProject p, final boolean toBeAnalyzed) 
           throws JavaModelException 
           {
             final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-              handleClasspathEntry(ti, toBeAnalyzed, root, cpe);
+              handleClasspathEntry(cfg, toBeAnalyzed, root, cpe);
             }
             URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-            ti.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
+            cfg.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
           }
 
-          private void handleClasspathEntry(final IToolInstance ti, final boolean toBeAnalyzed, 
+          private void handleClasspathEntry(final Config cfg, final boolean toBeAnalyzed, 
               final IWorkspaceRoot root, IClasspathEntry cpe) 
           throws JavaModelException 
           {
@@ -158,10 +158,10 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
                       (includePatterns != null && includePatterns.length > 0)) {
                     final String[] inclusions = convertPaths(includePatterns);
                     final String[] exclusions = convertPaths(excludePatterns);                
-                    ti.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
+                    cfg.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc,
                         inclusions, exclusions));
                   } else {
-                    ti.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
+                    cfg.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
                   }
                 }
                 break;
@@ -170,15 +170,15 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
                 // FIX cpe.getSourceAttachmentRootPath();
                 if (srcPath != null) {
                   IToolTarget srcTarget = createTarget(root, cpe.getSourceAttachmentPath(), null);
-                  ti.addTarget(createTarget(root, cpe.getPath(), srcTarget));
+                  cfg.addTarget(createTarget(root, cpe.getPath(), srcTarget));
                 } else {
-                  ti.addTarget(createTarget(root, cpe.getPath(), null));
+                  cfg.addTarget(createTarget(root, cpe.getPath(), null));
                 }
                 break;
               case IClasspathEntry.CPE_PROJECT:
                 String projName = cpe.getPath().lastSegment();
                 IProject proj = root.getProject(projName);
-                setupToolForProject(ti, JavaCore.create(proj), false);
+                setupToolForProject(cfg, JavaCore.create(proj), false);
                 break;
             }
           }
@@ -196,7 +196,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
             return exclusions;
           }
 
-          private IToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
+          private ToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
             URI lib;
             File libFile = new File(libPath.toOSString());
             if (libFile.exists()) {
