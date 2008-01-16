@@ -223,8 +223,11 @@
 		<Arg>jdbc/Sierra</Arg>
 		<Arg>
 			<New class="org.apache.derby.jdbc.ClientDataSource">
-				<Set name="DatabaseName">//localhost:1527/SIERRA</Set>
-			</New>
+      			<Set name="serverName">localhost</Set>
+				<Set name="portNumber">1527</Set>
+				<Set name="databaseName">SIERRA</Set>
+				<Set name="user">SIERRA</Set>
+    		</New>
 		</Arg>
 	</New>
 
