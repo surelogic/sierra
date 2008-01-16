@@ -12,24 +12,37 @@ import com.surelogic.common.eclipse.job.DatabaseJob;
 public final class ImportScanDocumentJob extends DatabaseJob {
 
 	private final File f_scanDocument;
-
+	private final String projectName;
+  private final Runnable runAfter;
+	
 	public ImportScanDocumentJob(File scanDocument) {
-		super("Loading " + scanDocument.getName());
+	  this(scanDocument, null, null);
+	}
+
+	public ImportScanDocumentJob(File scanDocument, String proj, Runnable r) {
+		super("Loading " + (proj != null ? "scan document for "+proj : scanDocument.getName()));
 		f_scanDocument = scanDocument;
+		if (proj == null)  {
+	    final String fileName = f_scanDocument.getName();
+	    projectName = fileName.substring(0, fileName.indexOf(".sierra"));
+		} else {
+		  projectName = proj;
+		}
+		runAfter = r;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
-		final String fileName = f_scanDocument.getName();
-		final String projectName = fileName.substring(0, fileName
-				.indexOf(".sierra"));
+
 		ScanDocumentUtility.loadScanDocument(f_scanDocument,
 				slProgressMonitorWrapper, projectName);
+		
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
+		  runAfter.run();
 			return Status.OK_STATUS;
 		}
 	}
