@@ -216,4 +216,16 @@
     <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
   </Array>
 
+	<!-- =========================================================== -->
+	<!-- BEGIN SIERRA APP CONFIGURATION                              -->
+	<!-- =========================================================== -->
+	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>jdbc/Sierra</Arg>
+		<Arg>
+			<New class="org.apache.derby.jdbc.ClientDataSource">
+				<Set name="DatabaseName">//localhost:1527/SIERRA</Set>
+			</New>
+		</Arg>
+	</New>
+
 </Configure>
