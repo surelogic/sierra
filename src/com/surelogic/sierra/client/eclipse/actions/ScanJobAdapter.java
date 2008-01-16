@@ -13,57 +13,62 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 /**
- * The adapter for the {@link ScanProjectJob}, handles all the possible
+ * The adapter for various scan jobs, handles all the possible
  * cases for status messages from the job and displays and logs appropriate
  * message.
  * 
  * @author Tanmay.Sinha
- * 
+ * @author Edwin.Chan
  */
-class ScanProjectJobAdapter extends JobChangeAdapter {
+class ScanJobAdapter extends JobChangeAdapter {
   /** The logger */
   private static final Logger LOG = SLLogger.getLogger("sierra");
   
-	private final String f_projectName;
+	private final String f_scanName;
+	private final String scan;
 
 	/**
 	 * 
-	 * @param projectName
-	 *            the name of the project
+	 * @param name The name of the project/comp unit being scanned
 	 */
-	public ScanProjectJobAdapter(String projectName) {
-		super();
-		this.f_projectName = projectName;
+	public ScanJobAdapter(String name) {
+	  this(name, false);
 	}
-
+	
+	public ScanJobAdapter(String name, boolean isRescan) {
+		super();
+		f_scanName = name;
+		scan = isRescan ? "re-scan" : "scan";
+	}
+	
 	@Override
 	public void running(IJobChangeEvent event) {
-		LOG.info("Starting scan on " + f_projectName);
+	  LOG.info("Starting "+scan+" on " + f_scanName);
 	}
 
 	@Override
 	public void done(IJobChangeEvent event) {
 		if (event.getResult().equals(Status.OK_STATUS)) {
-			LOG.info("Completed scan for " + f_projectName);
+			LOG.info("Completed "+scan+" for " + f_scanName);
 			if (PreferenceConstants.showBalloonNotifications())
 				BalloonUtility
-						.showMessage("Sierra Scan Completed on "
-								+ f_projectName,
+						.showMessage("Sierra "+scan+" completed on "
+								+ f_scanName,
 								"You may now examine the results.");
 
 		} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
-			LOG.info("Canceled scan on " + f_projectName);
+			LOG.info("Canceled "+scan+" on " + f_scanName);
 		} else {
 			Throwable t = event.getResult().getException();
 			LOG.log(Level.SEVERE,
-					"(top-level) Error while trying to run scan on "
-							+ f_projectName, t);
+					"(top-level) Error while trying to run "+scan+" on "
+							+ f_scanName, t);
 			if (event.getResult().isMultiStatus()) {
 				for (IStatus s : event.getResult().getChildren()) {
 					Throwable t1 = s.getException();
 					LOG.log(Level.SEVERE,
-							"(multi-status) Error while trying to run scan on "
-									+ f_projectName, t1);
+							"(multi-status) Error while trying to run "+scan+" on "
+									+ f_scanName, t1);
 				}
 			}
 		}

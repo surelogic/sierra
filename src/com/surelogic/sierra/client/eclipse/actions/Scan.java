@@ -101,7 +101,7 @@ public final class Scan {
 					runSingleSierraScan.setPriority(Job.SHORT);
 					runSingleSierraScan.belongsTo(c.getProject());
 					runSingleSierraScan
-							.addJobChangeListener(new ScanProjectJobAdapter(c
+							.addJobChangeListener(new ScanJobAdapter(c
 									.getProject()));
 					runSingleSierraScan.schedule();
 				}
@@ -147,7 +147,7 @@ public final class Scan {
 					runSingleSierraScan.setPriority(Job.SHORT);
 					runSingleSierraScan.belongsTo(c.getProject());
 					runSingleSierraScan
-							.addJobChangeListener(new ScanProjectJobAdapter(c
+							.addJobChangeListener(new ScanJobAdapter(c
 									.getProject()));
 					runSingleSierraScan.schedule();
 				}
