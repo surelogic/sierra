@@ -28,6 +28,8 @@ public class Config {
 	private Date runDateTime = null;
 	private File baseDirectory = null;
 	private File toolsDirectory = null;
+	private String messageDirectory = null;
+	private String commonDirectory = null;
 
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -119,6 +121,22 @@ public class Config {
 
 	public void setToolsDirectory(File toolsDirectory) {
 		this.toolsDirectory = toolsDirectory;
+	}
+	
+	public String getCommonDirectory() {
+	  return commonDirectory;
+	}
+
+	public void setCommonDirectory(String commonDirectory) {
+	  this.commonDirectory = commonDirectory;
+	}
+
+	public String getMessageDirectory() {
+	  return messageDirectory;
+	}
+
+	public void setMessageDirectory(String messageDirectory) {
+	  this.messageDirectory = messageDirectory;
 	}
 
 	@Override
