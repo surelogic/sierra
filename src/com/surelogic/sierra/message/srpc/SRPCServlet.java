@@ -2,6 +2,7 @@ package com.surelogic.sierra.message.srpc;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,10 +33,16 @@ public abstract class SRPCServlet extends HttpServlet {
 
 	protected final Logger log = SLLogger.getLoggerFor(this.getClass());
 
+	private final ThreadLocal<String> principal = new ThreadLocal<String>();
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
+			final Principal p = req.getUserPrincipal();
+			if (p != null) {
+				principal.set(p.getName());
+			}
 			final Encoding codec = getEncoding(req.getContentType());
 			ResponseStatus status;
 			Object response;
@@ -46,16 +53,17 @@ public abstract class SRPCServlet extends HttpServlet {
 					response = method.invoke(this);
 					status = ResponseStatus.OK;
 				} catch (InvocationTargetException e) {
-					response = new RaisedException(e.getCause());
+					e.printStackTrace();response = new RaisedException(e.getCause());
 					status = ResponseStatus.RAISED;
 				}
 			} catch (SRPCException e) {
 				// If we had some type of general messaging/processing
 				// exception, send a failure.
-				response = new Failure(e);
+				e.printStackTrace();response = new Failure(e);
 				status = ResponseStatus.FAIL;
 			} catch (Exception e) {
 				log.log(Level.WARNING, e.getMessage(), e);
+				e.printStackTrace();
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
 			}
@@ -65,10 +73,21 @@ public abstract class SRPCServlet extends HttpServlet {
 			// We couldn't even send a message back to the client, log out a
 			// failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			principal.remove();
 		}
 	}
 
-	Encoding getEncoding(String contentType) throws SRPCException {
+	/**
+	 * Returns the user name of the request in context.
+	 * 
+	 * @return
+	 */
+	protected String getUserName() {
+		return principal.get();
+	}
+
+	private Encoding getEncoding(String contentType) throws SRPCException {
 		for (Class<?> c : this.getClass().getInterfaces()) {
 			if (Service.class.isAssignableFrom(c)) {
 				return Encoding.getEncoding(c, contentType);

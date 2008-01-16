@@ -39,13 +39,16 @@ class RaisedException {
 		try {
 			Class<?> clazz = Thread.currentThread().getContextClassLoader()
 					.loadClass(exceptionClass);
-			Exception e = (Exception) clazz.newInstance();
-			// TODO get the message information in here
-			return e;
+			if (clazz != null) {
+				// TODO get the message information in here
+				return (Exception) clazz.newInstance();
+			} else {
+				return new IllegalArgumentException("Unknown exception type:"
+						+ clazz);
+			}
 		} catch (Exception e) {
 			// TODO is this the right exception?
 			throw new ServiceInvocationException(e);
 		}
 	}
-
 }
