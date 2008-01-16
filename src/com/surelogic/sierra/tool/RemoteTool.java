@@ -52,6 +52,7 @@ public class RemoteTool extends AbstractTool {
       System.out.println("Got file: "+configName);
       
       JAXBContext ctx = JAXBContext.newInstance(Config.class, 
+          FileTarget.class,
           JarTarget.class, 
           FullDirectoryTarget.class, 
           FilteredDirectoryTarget.class);
