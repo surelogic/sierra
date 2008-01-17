@@ -123,13 +123,6 @@ public class Tools {
 		tools.put(findbugs.getToolName(), findbugs);
 		antProject.log("Added " + findbugs.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
-
-		CheckStyleConfig checkstyle = new CheckStyleConfig(antProject, monitor,
-				scale);
-		tools.put(checkstyle.getToolName(), checkstyle);
-		antProject.log("Added " + checkstyle.getToolName(),
-				org.apache.tools.ant.Project.MSG_INFO);
-
 	}
 
 	/**
@@ -153,12 +146,6 @@ public class Tools {
 		tools.put(findbugs.getToolName(), findbugs);
 		antProject.log("Added " + findbugs.getToolName(),
 				org.apache.tools.ant.Project.MSG_INFO);
-
-		CheckStyleConfig checkstyle = new CheckStyleConfig(antProject);
-		tools.put(checkstyle.getToolName(), checkstyle);
-		antProject.log("Added " + checkstyle.getToolName(),
-				org.apache.tools.ant.Project.MSG_INFO);
-
 	}
 
 	/**
