@@ -10,8 +10,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
+import com.surelogic.sierra.client.eclipse.jetty.EmbeddedJettyUtility;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
@@ -62,6 +64,10 @@ public final class Activator extends AbstractUIPlugin {
 		MarkersHandler handler = MarkersHandler.getInstance();
 		handler.addMarkerListener();
 		getDefault().getPluginPreferences().addPropertyChangeListener(handler);
+		if (XUtil.useExperimental()) {
+			// embedded Jetty server
+			EmbeddedJettyUtility.startup();
+		}
 	}
 
 	@Override
@@ -69,6 +75,7 @@ public final class Activator extends AbstractUIPlugin {
 		try {
 			SierraServerManager.getInstance().save(getServerSaveFile());
 			SelectionManager.getInstance().save(getSelectionSaveFile());
+			EmbeddedJettyUtility.shutdown();
 			f_plugin = null;
 		} finally {
 			super.stop(context);
