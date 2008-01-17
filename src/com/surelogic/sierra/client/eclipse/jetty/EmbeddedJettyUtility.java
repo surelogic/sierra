@@ -2,8 +2,10 @@ package com.surelogic.sierra.client.eclipse.jetty;
 
 import java.util.logging.Level;
 
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.log.Log;
 import org.mortbay.log.Logger;
@@ -87,9 +89,14 @@ public final class EmbeddedJettyUtility {
 			// use the default value
 		}
 		f_server = new Server(port);
-		final Context root = new Context(f_server, "", Context.SESSIONS);
+		final Context root = new Context(f_server, "/chart", Context.SESSIONS);
+
 		root.addServlet(new ServletHolder(new ImportanceChartServlet()),
 				"/importance.png");
+		final Context sc = new Context(f_server, "/static", Context.SESSIONS);
+		sc.setResourceBase(System.getProperty("webbase", "set -Dwebbase"));
+		sc.addServlet(new ServletHolder(new DefaultServlet()), "/");
+
 		f_server.start();
 		SLLogger.getLogger().info(
 				"Embedded Jetty started listening on port " + port);
