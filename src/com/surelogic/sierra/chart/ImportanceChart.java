@@ -86,11 +86,11 @@ public final class ImportanceChart implements IDatabasePlot {
 		dataset.setValue(highCount, projectName, "High");
 		dataset.setValue(mediumCount, projectName, "Medium");
 		dataset.setValue(lowCount, projectName, "Low");
-		JFreeChart chart = ChartFactory.createBarChart(
+		final JFreeChart chart = ChartFactory.createBarChart(
 				"Findings by Importance for " + projectName, "Importance",
 				"Findings", dataset, PlotOrientation.HORIZONTAL, false, true,
 				false);
-
+		chart.setBackgroundPaint(null);
 		return chart;
 	}
 }
