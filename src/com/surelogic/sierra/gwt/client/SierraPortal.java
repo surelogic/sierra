@@ -60,7 +60,17 @@ public class SierraPortal implements EntryPoint {
 	}
 
 	private String buildChartUrl(ListBox projectList) {
-		// TODO build the chart URL
-		return "http://chart.apis.google.com/chart?cht=p3&chd=s:hW&chs=250x100&chl=Hello|World";
+		StringBuffer chartUrl = new StringBuffer();
+		// FIXME hardcode full url for now
+		chartUrl.append("http://localhost:8080/importance.png?");
+
+		int projectIndex = projectList.getSelectedIndex();
+		if (projectIndex != -1) {
+			chartUrl.append("project=").append(
+					projectList.getItemText(projectIndex));
+		}
+		chartUrl.append("&height=200");
+
+		return chartUrl.toString();
 	}
 }
