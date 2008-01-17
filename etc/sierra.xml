@@ -171,6 +171,13 @@
             <Set name="refreshInterval">0</Set>
           </New>
         </Item>
+         <Item>
+          <New class="org.mortbay.jetty.security.HashUserRealm">
+            <Set name="name">sierraRealm</Set>
+            <Set name="config"><SystemProperty name="jetty.home" default="."/>/etc/sierraRealm.properties</Set>
+            <Set name="refreshInterval">0</Set>
+          </New>
+        </Item>
       </Array>
     </Set>
 
