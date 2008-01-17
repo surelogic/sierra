@@ -39,7 +39,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
   }
 
   protected StringBuilder computeLabel(final List<String> names) {
-    final StringBuilder sb = new StringBuilder(isRescan ? "Re-scanning" : "Scanning ");
+    final StringBuilder sb = new StringBuilder(isRescan ? "Re-scanning " : "Scanning ");
     /*
      * Fix for bug 1157. At JPL we encountered 87 projects and
      * the balloon pop-up went off the screen.
