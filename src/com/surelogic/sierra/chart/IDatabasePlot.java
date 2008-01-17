@@ -20,7 +20,8 @@ public interface IDatabasePlot {
 	 *            the non-null, but possibly empty, map of the parameters to be
 	 *            considered when creating the chart.
 	 * @param c
-	 *            a non-null connection to the Sierra database.
+	 *            a non-null connection to the Sierra database. This connection
+	 *            will be closed by the caller of this method.
 	 * @return the resulting chart.
 	 */
 	JFreeChart plot(final Map<String, String[]> parameterMap, final Connection c)
