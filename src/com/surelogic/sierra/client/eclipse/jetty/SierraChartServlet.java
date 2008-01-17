@@ -58,7 +58,10 @@ public abstract class SierraChartServlet extends HttpServlet {
 			 * Wrap the SQL exception into an IOException and let the container
 			 * report it.
 			 */
-			throw new IOException("Using the Sierra db to plot a chart.", e);
+			IOException ioe = new IOException(
+					"Using the Sierra db to plot a chart.");
+			ioe.initCause(e);
+			throw ioe;
 		}
 	}
 
