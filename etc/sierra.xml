@@ -237,5 +237,13 @@
     		</New>
 		</Arg>
 	</New>
-
+	
+	<!-- Transaction handler                                         -->
+	<New id="SierraTH" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>SierraTransactionHandler</Arg>
+		<Arg>
+			<New class="com.surelogic.common.exec.SierraExecutorService">
+    		</New>
+		</Arg>
+	</New>
 </Configure>
