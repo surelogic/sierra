@@ -1,5 +1,7 @@
 package com.surelogic.sierra.jdbc.server;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,9 +9,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Properties;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.MimeMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -20,7 +29,9 @@ import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 
 /**
- * Represents a connection to the Sierra server.
+ * Represents a connection to the Sierra server. This connection allows people
+ * to execute SQL transactions against the server, both synchronously and
+ * asynchronously.
  * 
  * @author nathan
  * 
@@ -32,6 +43,7 @@ public class ServerConnection {
 
 	private final Connection conn;
 	private final boolean readOnly;
+	private final Server server;
 
 	private ServerConnection(boolean readOnly) throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(lookup());
@@ -41,22 +53,15 @@ public class ServerConnection {
 			conn.setAutoCommit(false);
 		}
 		this.readOnly = readOnly;
+		this.server = new Server(conn, readOnly);
 	}
 
 	public Connection getConnection() {
 		return conn;
 	}
 
-	public String getUid(Connection conn) throws SQLException {
-		ResultSet set = conn.createStatement().executeQuery(
-				"SELECT UUID FROM SERVER");
-		try {
-			set.next();
-			return set.getString(1);
-		} finally {
-			set.close();
-		}
-
+	public Server getServer() {
+		return server;
 	}
 
 	/*
@@ -72,74 +77,34 @@ public class ServerConnection {
 	}
 
 	/**
-	 * Increments and returns the server revision number.
+	 * Perform the specified transaction. If an exception occurs while executing
+	 * this method, the server notifies the administrator of an error. In
+	 * addition, the transaction is rolled back.
 	 * 
+	 * @throws TransactionException
+	 *             when an error occurs while executing the transaction
+	 * @param <T>
+	 * @param t
 	 * @return
-	 * @throws SQLException
 	 */
-	public long nextRevision() throws SQLException {
-		if (readOnly) {
-			throw new IllegalStateException("This connection is read-only");
-		}
-		PreparedStatement st;
-		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
-			st = conn.prepareStatement(
-					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
-					new String[] { "REVISION" });
-		} else {
-			st = conn.prepareStatement(
-					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
-					Statement.RETURN_GENERATED_KEYS);
-		}
-		st.setTimestamp(1, new Timestamp(new Date().getTime()));
-		st.execute();
-		ResultSet set = st.getGeneratedKeys();
+	public <T> T perform(UserTransaction<T> t) {
 		try {
-			set.next();
-			return set.getLong(1);
-		} finally {
-			set.close();
-		}
-
-	}
-
-	public String getEmail() throws SQLException {
-		try {
-			final Connection conn = ServerConnection.readOnly().getConnection();
-			try {
-				final Statement st = conn.createStatement();
-				try {
-					final ResultSet set = st
-							.executeQuery("SELECT EMAIL FROM NOTIFICATION");
-					if (set.next()) {
-						return set.getString(1);
-					} else {
-						return null;
-					}
-				} catch (SQLException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				} finally {
-					st.close();
-				}
-			} finally {
-				conn.close();
+			final T val = t.perform(conn, server);
+			if(!readOnly) {
+				conn.commit();
 			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			return val;
+		} catch (Exception e) {
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (SQLException e1) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+			exceptionNotify(t.getPrincipal().getName(), e.getMessage(), e);
+			throw new TransactionException(e);
 		}
-		return null;
-	}
-
-	public String getUid() throws SQLException {
-		ResultSet set = conn.createStatement().executeQuery(
-				"SELECT UUID FROM SERVER");
-		try {
-			set.next();
-			return set.getString(1);
-		} finally {
-			set.close();
-		}
-
 	}
 
 	public static ServerConnection transaction() throws SQLException {
@@ -150,8 +115,101 @@ public class ServerConnection {
 		return new ServerConnection(true);
 	}
 
-	private static Connection lookup() throws SQLException {
+	public static <T> Future<T> delayTransaction(UserTransaction<T> t) {
+		return null;
+	}
 
+	public static <T> Future<T> delayReadOnly(UserTransaction<T> t) {
+		return null;
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> T withTransaction(UserTransaction<T> t) {
+		try {
+			return with(transaction(), t);
+		} catch (SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given read-only user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> T withReadOnly(UserTransaction<T> t) {
+		try {
+			return with(readOnly(), t);
+		} catch (SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	private static <T> T with(ServerConnection server, UserTransaction<T> t) {
+		RuntimeException exc = null;
+		try {
+			return server.perform(t);
+		} catch (RuntimeException exc0) {
+			exc = exc0;
+		} finally {
+			try {
+				server.finished();
+			} catch (SQLException e) {
+				if (exc == null) {
+					exc = new TransactionException(e);
+				} else {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+		}
+		throw exc;
+	}
+
+	/*
+	 * Send mail to the listed admin email that an exception has occurred while
+	 * processing a transaction.
+	 */
+	private void exceptionNotify(String userName, String message, Throwable t) {
+		log.log(Level.SEVERE, message, t);
+		try {
+			String email = server.getEmail();
+			if (email != null) {
+				Properties props = new Properties();
+				props.put("mail.smtp.host", "zimbra.surelogic.com");
+				props.put("mail.from", email);
+				Session session = Session.getInstance(props, null);
+				try {
+					MimeMessage msg = new MimeMessage(session);
+					msg.setFrom();
+					msg.setRecipients(Message.RecipientType.TO, email);
+					StringWriter s = new StringWriter();
+					t.printStackTrace(new PrintWriter(s));
+					msg.setSubject(userName + " reports: " + message);
+					msg.setSentDate(new Date());
+					msg.setText(s.toString());
+					Transport.send(msg);
+				} catch (MessagingException mex) {
+					log.log(Level.SEVERE,
+							"Mail notification of exception failed.", mex);
+				}
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * Look up the JDBC data source.
+	 */
+	private static Connection lookup() throws SQLException {
 		try {
 			InitialContext context = new InitialContext();
 			try {
