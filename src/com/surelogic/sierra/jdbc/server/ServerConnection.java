@@ -3,13 +3,11 @@ package com.surelogic.sierra.jdbc.server;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,8 +22,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 
 /**
@@ -46,7 +42,7 @@ public class ServerConnection {
 	private final Server server;
 
 	private ServerConnection(boolean readOnly) throws SQLException {
-		this.conn = LazyPreparedStatementConnection.wrap(lookup());
+		this.conn = LazyPreparedStatementConnection.wrap(lookupConnection());
 		conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		conn.setReadOnly(readOnly);
 		if (!readOnly) {
@@ -90,7 +86,7 @@ public class ServerConnection {
 	public <T> T perform(UserTransaction<T> t) {
 		try {
 			final T val = t.perform(conn, server);
-			if(!readOnly) {
+			if (!readOnly) {
 				conn.commit();
 			}
 			return val;
@@ -107,20 +103,54 @@ public class ServerConnection {
 		}
 	}
 
+	/**
+	 * Return a connection to the server capable of executing transactions.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public static ServerConnection transaction() throws SQLException {
 		return new ServerConnection(false);
 	}
 
+	/**
+	 * Return a connection to the server in read-only mode.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public static ServerConnection readOnly() throws SQLException {
 		return new ServerConnection(true);
 	}
 
-	public static <T> Future<T> delayTransaction(UserTransaction<T> t) {
-		return null;
+	/**
+	 * Queue a transaction to occur at a later time.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> Future<T> delayTransaction(final UserTransaction<T> t) {
+		return lookupExecutor().submit(new Callable<T>() {
+
+			public T call() throws Exception {
+				return ServerConnection.withTransaction(t);
+			}});
 	}
 
-	public static <T> Future<T> delayReadOnly(UserTransaction<T> t) {
-		return null;
+	/**
+	 * Queue a transaction to occur at a later time.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> Future<T> delayReadOnly(final UserTransaction<T> t) {
+		return lookupExecutor().submit(new Callable<T>() {
+
+			public T call() throws Exception {
+				return ServerConnection.withReadOnly(t);
+			}});
 	}
 
 	/**
@@ -209,7 +239,7 @@ public class ServerConnection {
 	/*
 	 * Look up the JDBC data source.
 	 */
-	private static Connection lookup() throws SQLException {
+	private static Connection lookupConnection() throws SQLException {
 		try {
 			InitialContext context = new InitialContext();
 			try {
@@ -222,4 +252,22 @@ public class ServerConnection {
 			throw new IllegalStateException(e);
 		}
 	}
+
+	/*
+	 * Look up the transaction handler.
+	 */
+	private static ExecutorService lookupExecutor() {
+		try {
+			InitialContext context = new InitialContext();
+			try {
+				return (ExecutorService) new InitialContext()
+						.lookup("SierraTransactionHandler");
+			} finally {
+				context.close();
+			}
+		} catch (NamingException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 }
