@@ -606,7 +606,11 @@ public final class ConfigGenerator {
     if (libFile.exists()) {
       lib = libFile.toURI();
     } else {
-      lib = root.findMember(libPath).getLocationURI();
+      IResource res = root.findMember(libPath);
+      if (res == null) {
+        return null;
+      }
+      lib = res.getLocationURI();
     }
     if (new File(lib).isDirectory()) {
       return new FullDirectoryTarget(IToolTarget.Type.AUX, lib);
