@@ -1,32 +1,39 @@
 package com.surelogic.sierra.tool.message;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.qualifier.QualifierManager;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
+import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerConnection;
+import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.jdbc.tool.FindingFilter;
+import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.message.srpc.SRPCServlet;
 
+/**
+ * Implementation of {@link SierraService}.
+ * 
+ * TODO this implementation does not currently validate server uid. We need to
+ * fix this.
+ * 
+ * @author nathan
+ * 
+ */
 public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	/**
@@ -53,99 +60,126 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	public SettingsReply getSettings(SettingsRequest request)
 			throws ServerMismatchException {
 		SettingsReply reply = new SettingsReply();
-		try {
-			final ServerConnection server = ServerConnection.readOnly();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					checkServer(server, request.getServer());
-					// return ServerSettingsManager.getInstance(conn)
-					// .getLatestSettingsByProject(request.getProject(),
-					// request.getRevision());
-				} catch (Exception e) {
-					exceptionNotify(
-							server,
-							"An error occurred attempting to retrieve the latest settings from the database.",
-							e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
+		// TODO
 		return reply;
 	}
 
-	public void publishRun(Scan scan) {
-		// TODO
+	public void publishRun(final Scan scan) {
+		// We can't publish a run without a qualifier on the server
+		final List<String> q = scan.getConfig().getQualifiers();
+		if (q == null || q.isEmpty()) {
+			log
+					.fine("No qualifiers were specified in this scan, could not persist scan "
+							+ scan.getUid());
+			return;
+		}
+
+		ServerConnection.withTransaction(new WebTransaction<Object>() {
+
+			@Override
+			public Object perform(Connection conn, Server server)
+					throws SQLException {
+				final String uid = scan.getUid();
+				final String project = scan.getConfig().getProject();
+				final ScanManager manager = ScanManager.getInstance(conn);
+				final FindingFilter filter = FindingTypeManager.getInstance(
+						conn).getMessageFilter(
+						SettingsManager.getInstance(conn).getSettingsByProject(
+								project));
+				final ScanGenerator generator = manager
+						.getScanGenerator(filter);
+				generator.qualifiers(q).user(getPrincipal().getName());
+				MessageWarehouse.readScan(scan, generator);
+				conn.commit();
+				ServerConnection.delayTransaction(new WebTransaction<Object>() {
+					@Override
+					public Object perform(Connection conn, Server server)
+							throws SQLException {
+						ServerFindingManager fm = ServerFindingManager
+								.getInstance(conn);
+						fm.generateFindings(project, uid, filter, null);
+						fm.generateOverview(project, uid,
+								new HashSet<String>(q));
+						return null;
+					}
+				});
+				return null;
+			}
+		});
 	}
 
-	@SuppressWarnings("unchecked")
 	public Qualifiers getQualifiers(QualifierRequest request) {
-		Qualifiers q = new Qualifiers();
-		try {
-			final ServerConnection server = ServerConnection.readOnly();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					q.setQualifier(QualifierManager.getInstance(conn)
-							.getAllQualifierNames());
-				} catch (SQLException e) {
-					exceptionNotify(server, e.getMessage(), e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
+		return ServerConnection.withReadOnly(new WebTransaction<Qualifiers>() {
+
+			@Override
+			public Qualifiers perform(Connection conn, Server server)
+					throws SQLException {
+				Qualifiers q = new Qualifiers();
+				q.setQualifier(QualifierManager.getInstance(conn)
+						.getAllQualifierNames());
+				return q;
 			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return q;
+		});
 	}
 
 	public CommitAuditTrailResponse commitAuditTrails(
-			CommitAuditTrailRequest audits) throws ServerMismatchException {
-		Connection conn;
-		final CommitAuditTrailResponse response = new CommitAuditTrailResponse();
+			final CommitAuditTrailRequest audits)
+			throws ServerMismatchException {
 		final List<AuditTrail> trails = audits.getAuditTrail();
 		if (trails != null && !trails.isEmpty()) {
-			try {
-				final ServerConnection server = ServerConnection.transaction();
-				try {
-					conn = server.getConnection();
-					try {
-						checkServer(server, audits.getServer());
-						try {
+			final CommitAuditTrailResponse response = ServerConnection
+					.withTransaction(new WebTransaction<CommitAuditTrailResponse>() {
+
+						@Override
+						public CommitAuditTrailResponse perform(
+								Connection conn, Server server)
+								throws SQLException {
+							final CommitAuditTrailResponse response = new CommitAuditTrailResponse();
 							final long revision = server.nextRevision();
 							response.setRevision(revision);
 							response.setUid(ServerFindingManager.getInstance(
 									conn).commitAuditTrails(
-									User.getUser(getUserName(), conn).getId(),
-									revision, trails));
-							conn.commit();
-						} catch (SQLException e) {
-							conn.rollback();
-							exceptionNotify(server, e.getMessage(), e);
+									User
+											.getUser(getPrincipal().getName(),
+													conn).getId(), revision,
+									trails));
+							return response;
 						}
-					} finally {
-						try {
-							conn.close();
-						} catch (SQLException e) {
-							exceptionNotify(server, e.getMessage(), e);
-						}
-					}
-				} catch (SQLException e) {
-					exceptionNotify(server, e.getMessage(), e);
-				}
-			} catch (SQLException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
+					});
+			return response;
+		} else {
+			return new CommitAuditTrailResponse();
 		}
-		return response;
+	}
+
+	/**
+	 * @throws ServerMismatchException
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public AuditTrailResponse getAuditTrails(final GetAuditTrailRequest request)
+			throws ServerMismatchException {
+		return ServerConnection
+				.withReadOnly(new WebTransaction<AuditTrailResponse>() {
+
+					@Override
+					public AuditTrailResponse perform(Connection conn,
+							Server server) throws SQLException {
+						AuditTrailResponse response = new AuditTrailResponse();
+						String project = request.getProject();
+						Long revision = request.getRevision();
+						ServerFindingManager man = ServerFindingManager
+								.getInstance(conn);
+						response.setObsolete(man.getObsoletedTrails(project,
+								revision));
+						response.setUpdate(man.getAuditUpdates(project,
+								revision));
+
+						return response;
+					}
+
+				});
+
 	}
 
 	/**
@@ -158,187 +192,72 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	 * 
 	 * @throws ServerMismatchException
 	 */
-	public MergeAuditTrailResponse mergeAuditTrails(MergeAuditTrailRequest seed)
-			throws ServerMismatchException {
-		MergeAuditTrailResponse response = new MergeAuditTrailResponse();
-		try {
-			final ServerConnection server = ServerConnection.transaction();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					checkServer(server, seed.getServer());
-					List<Merge> merges = seed.getMerge();
-					final long revision = server.nextRevision();
-					response.setTrail(ServerFindingManager.getInstance(conn)
-							.mergeAuditTrails(seed.getProject(), revision,
-									merges));
-					conn.commit();
-				} catch (SQLException e) {
-					conn.rollback();
-					exceptionNotify(server, e.getMessage(), e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return response;
-	}
+	public MergeAuditTrailResponse mergeAuditTrails(
+			final MergeAuditTrailRequest seed) throws ServerMismatchException {
+		return ServerConnection
+				.withTransaction(new WebTransaction<MergeAuditTrailResponse>() {
 
-	/**
-	 * @throws ServerMismatchException
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public AuditTrailResponse getAuditTrails(GetAuditTrailRequest request)
-			throws ServerMismatchException {
-		AuditTrailResponse response = new AuditTrailResponse();
-		try {
-			final ServerConnection server = ServerConnection.readOnly();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					String project = request.getProject();
-					Long revision = request.getRevision();
-					checkServer(server, request.getServer());
-					ServerFindingManager man = ServerFindingManager
-							.getInstance(conn);
-					response.setObsolete(man.getObsoletedTrails(project,
-							revision));
-					response.setUpdate(man.getAuditUpdates(project, revision));
-				} catch (SQLException e) {
-					exceptionNotify(server, e.getMessage(), e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return response;
+					@Override
+					public MergeAuditTrailResponse perform(Connection conn,
+							Server server) throws SQLException {
+						final MergeAuditTrailResponse response = new MergeAuditTrailResponse();
+						final List<Merge> merges = seed.getMerge();
+						final long revision = server.nextRevision();
+						response.setTrail(ServerFindingManager
+								.getInstance(conn).mergeAuditTrails(
+										seed.getProject(), revision, merges));
+						return response;
+					}
+				});
 	}
 
 	public ServerUIDReply getUid(ServerUIDRequest request) {
 		ServerUIDReply reply = new ServerUIDReply();
-		try {
-			final ServerConnection server = ServerConnection.readOnly();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					reply.setUid(server.getUid());
-				} catch (SQLException e) {
-					exceptionNotify(server, e.getMessage(), e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
+		reply.setUid(ServerConnection
+				.withReadOnly(new WebTransaction<String>() {
+					@Override
+					public String perform(Connection conn, Server server)
+							throws SQLException {
+						return server.getUid();
+					}
+				}));
 		return reply;
 	}
 
-	private void checkServer(ServerConnection conn, String server)
-			throws ServerMismatchException {
-		String uid;
-		try {
-			uid = conn.getUid();
-			if (!uid.equals(server)) {
-				throw new ServerMismatchException(
-						"The request's expected server did not match this server.");
-			}
-		} catch (SQLException e) {
-			exceptionNotify(conn, e.getMessage(), e);
-		}
-	}
-
-	private void exceptionNotify(ServerConnection server, String message,
-			Throwable t) {
-		log.log(Level.SEVERE, message, t);
-		try {
-			String email = server.getEmail();
-			if (email != null) {
-				Properties props = new Properties();
-				props.put("mail.smtp.host", "zimbra.surelogic.com");
-				props.put("mail.from", email);
-				Session session = Session.getInstance(props, null);
-				try {
-					MimeMessage msg = new MimeMessage(session);
-					msg.setFrom();
-					msg.setRecipients(Message.RecipientType.TO, email);
-					StringWriter s = new StringWriter();
-					t.printStackTrace(new PrintWriter(s));
-					msg.setSubject(getUserName() + " reports: " + message);
-					msg.setSentDate(new Date());
-					msg.setText(s.toString());
-					Transport.send(msg);
-				} catch (MessagingException mex) {
-					log.log(Level.SEVERE,
-							"Mail notification of exception failed.", mex);
-				}
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-
-	}
-
 	public GlobalSettings getGlobalSettings(GlobalSettingsRequest request) {
-		try {
-			final ServerConnection server = ServerConnection.readOnly();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					final GlobalSettings settings = new GlobalSettings();
-					settings.setFilter(SettingsManager.getInstance(conn)
-							.getGlobalSettings());
-					return settings;
-				} catch (SQLException e) {
-					exceptionNotify(server, e.getMessage(), e);
-				} finally {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
-			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return new GlobalSettings();
+		return ServerConnection
+				.withReadOnly(new WebTransaction<GlobalSettings>() {
+
+					@Override
+					public GlobalSettings perform(Connection conn, Server server)
+							throws SQLException {
+						final GlobalSettings settings = new GlobalSettings();
+						settings.setFilter(SettingsManager.getInstance(conn)
+								.getGlobalSettings());
+						return settings;
+					}
+				});
 	}
 
-	public void writeGlobalSettings(GlobalSettings settings) {
-		try {
-			final ServerConnection server = ServerConnection.transaction();
-			try {
-				final Connection conn = server.getConnection();
-				try {
-					SettingsManager.getInstance(conn).writeGlobalSettings(
-							settings.getFilter());
-					conn.commit();
-				} catch (SQLException e) {
-					conn.rollback();
-					throw e;
-				} finally {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						exceptionNotify(server, e.getMessage(), e);
-					}
-				}
-			} catch (SQLException e) {
-				exceptionNotify(server, e.getMessage(), e);
+	public void writeGlobalSettings(final GlobalSettings settings) {
+		ServerConnection.withTransaction(new WebTransaction<Object>() {
+			@Override
+			public Object perform(Connection conn, Server server)
+					throws SQLException {
+				SettingsManager.getInstance(conn).writeGlobalSettings(
+						settings.getFilter());
+				return null;
 			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+		});
+	}
+
+	private abstract class WebTransaction<T> implements UserTransaction<T> {
+
+		@Override
+		public Principal getPrincipal() {
+			return getCurrentPrincipal();
 		}
+
 	}
 
 }
