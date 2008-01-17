@@ -1,0 +1,12 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name='com.google.gwt.user.User'/>
+
+	<!-- Specify the app entry point class.                   -->
+	<entry-point class='com.surelogic.sierra.gwt.client.SierraPortal'/>
+  
+    <!-- Test Service servlet                                 -->
+    <servlet path="/test" class="com.surelogic.sierra.gwt.server.test.TestServiceImpl"/>
+    
+</module>
