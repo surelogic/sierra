@@ -75,7 +75,6 @@ public class PMD4_0Tool extends AbstractTool {
     private final int numFiles;
     private final String inputPath;
     private boolean first = true;
-    private DataSource source;
     
     public Output(ArtifactGenerator gen, SLProgressMonitor m, String in, int i) {
       generator = gen;
@@ -108,7 +107,6 @@ public class PMD4_0Tool extends AbstractTool {
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {
-      source = dataSource;
       String msg = "Scanning "+dataSource.getNiceFileName(false, inputPath);
       monitor.subTask(msg); 
       if (first) {
@@ -190,7 +188,7 @@ public class PMD4_0Tool extends AbstractTool {
         //System.out.println(m.getMetricName()+"(total) : "+m.getTotal());
         if ("NcssTypeCount".equals(m.getMetricName())) {
           MetricBuilder mb = generator.metric();
-          String fileName = source.getNiceFileName(true, inputPath);
+          String fileName = report.getSource().getNiceFileName(true, inputPath);
           int lastSeparator = fileName.lastIndexOf(File.separatorChar);
           if (lastSeparator > 0) {
             mb.packageName(fileName.substring(0, lastSeparator).replace(File.separatorChar, '.'));
