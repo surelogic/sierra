@@ -138,7 +138,11 @@ public class Config {
 	}
 	
 	public String getPluginDir(String id) {
-	  return pluginDirs.get(id);
+	  String loc = pluginDirs.get(id);
+	  if (loc == null) {
+	    throw new NullPointerException("No location for "+id);
+	  }
+	  return loc;
 	}
 	
 	@Override
