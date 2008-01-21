@@ -68,6 +68,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
                         "C:/work/workspace/common");
     config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, 
                         "C:/work/workspace/sierra-message");
+    config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, 
+                        "C:/work/workspace/sierra-pmd");
+    config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, 
+                        "C:/work/workspace/sierra-fb");
     
     String project = "sierra-tool";
     File tmp = File.createTempFile("sierra", ".xml");
