@@ -99,7 +99,8 @@ public class LocalTool extends AbstractTool {
 
       final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
       findJars(proj, path, new File(pmd+"/lib"));
-      findJars(proj, path, new File(config.getToolsDirectory(), "FB/lib"));
+      final String fb = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
+      findJars(proj, path, new File(fb+"/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
                                        "reckoner/reckoner.jar").getAbsolutePath()));
