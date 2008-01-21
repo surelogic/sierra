@@ -6,4 +6,9 @@
 		name="sierra-analysis"
 		classname="com.surelogic.sierra.tool.ant.SierraAnalysis"
 		onerror="ignore" />
+		
+	<taskdef
+		name="sierra-scan"
+		classname="com.surelogic.sierra.tool.ant.SierraScan"
+		onerror="ignore" />		
 </antlib>
