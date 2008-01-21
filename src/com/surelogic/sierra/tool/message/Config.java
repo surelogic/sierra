@@ -28,8 +28,9 @@ public class Config {
 	private Date runDateTime = null;
 	private File baseDirectory = null;
 	private File toolsDirectory = null;
-	private String messageDirectory = null;
-	private String commonDirectory = null;
+	
+	// Map from plugin id to their locations
+	private Map<String,String> pluginDirs = new HashMap<String,String>();
 
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -123,22 +124,23 @@ public class Config {
 		this.toolsDirectory = toolsDirectory;
 	}
 	
-	public String getCommonDirectory() {
-	  return commonDirectory;
+	public Map<String,String> getPluginDirs() {
+    return pluginDirs;
+  }
+	
+	public void setPluginDirs(Map<String,String> dirs) {
+	  this.pluginDirs.clear();
+	  this.pluginDirs.putAll(dirs);
 	}
 
-	public void setCommonDirectory(String commonDirectory) {
-	  this.commonDirectory = commonDirectory;
+	public void putPluginDir(String id, String location) {
+	  pluginDirs.put(id, location);
 	}
-
-	public String getMessageDirectory() {
-	  return messageDirectory;
+	
+	public String getPluginDir(String id) {
+	  return pluginDirs.get(id);
 	}
-
-	public void setMessageDirectory(String messageDirectory) {
-	  this.messageDirectory = messageDirectory;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
