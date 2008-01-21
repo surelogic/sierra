@@ -82,19 +82,23 @@ public class LocalTool extends AbstractTool {
       cmdj.setMaxmemory("1024m");
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
-      String common = config.getCommonDirectory();
+      final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
       if (common.endsWith(".jar")) {
         path.add(new Path(proj, common)); // as plugin
       } else {
-        path.add(new Path(proj, config.getCommonDirectory()+"/bin")); // in workspace
+        path.add(new Path(proj, common+"/bin")); // in workspace
       }
       path.add(new Path(proj, config.getToolsDirectory().getParent())); // as plugin
       path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
-      path.add(new Path(proj, config.getMessageDirectory())); // as plugin
-      path.add(new Path(proj, config.getMessageDirectory()+"/bin")); // in workspace
-      path.add(new Path(proj, config.getMessageDirectory()+"/jax-ws/sjsxp.jar"));
-      findJars(proj, path, config.getMessageDirectory()+"/jaxb");
-      findJars(proj, path, new File(config.getToolsDirectory(), "pmd/lib"));
+
+      final String message = config.getPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID);
+      path.add(new Path(proj, message)); // as plugin
+      path.add(new Path(proj, message+"/bin")); // in workspace
+      path.add(new Path(proj, message+"/jax-ws/sjsxp.jar"));
+      findJars(proj, path, message+"/jaxb");
+
+      final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
+      findJars(proj, path, new File(pmd+"/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "FB/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 

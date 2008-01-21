@@ -64,8 +64,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     config.setExcludedToolsList("checkstyle");
     config.setToolsDirectory(new File("C:/work/workspace/sierra-tool/Tools"));
-    config.setCommonDirectory("C:/work/workspace/common");
-    config.setMessageDirectory("C:/work/workspace/sierra-message");
+    config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID, 
+                        "C:/work/workspace/common");
+    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, 
+                        "C:/work/workspace/sierra-message");
     
     String project = "sierra-tool";
     File tmp = File.createTempFile("sierra", ".xml");
