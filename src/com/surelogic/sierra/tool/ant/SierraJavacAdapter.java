@@ -7,6 +7,8 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.Project;
@@ -21,24 +23,48 @@ import com.surelogic.sierra.tool.targets.*;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;;
 
 public class SierraJavacAdapter extends DefaultCompilerAdapter {
+  Path sourcepath = null;
+  
   public boolean execute() throws BuildException {
+    try {
     Config config = createConfig();
-    ToolUtil.scan(config, new Monitor(), true);
-
-    return false;
+    ToolUtil.scan(config, new Monitor(), false);
+    } catch(Throwable t) {
+      t.printStackTrace();
+      throw new BuildException("Exception while scanning", t);
+    }
+    return true;
   }
 
-  private Config createConfig() {
+  private Config createConfig() throws IOException {
     Config config = new Config();
     setupConfig(config, false);
     logAndAddFilesToCompile(config);
 
+    config.setExcludedToolsList("checkstyle");
+    config.setToolsDirectory(new File("C:/work/workspace/sierra-tool/Tools"));
+    config.setCommonDirectory("C:/work/workspace/common");
+    config.setMessageDirectory("C:/work/workspace/sierra-message");
+    
+    String project = "sierra-tool";
+    File tmp = File.createTempFile("sierra", ".xml");
+    File scanDocument = new File(tmp.getParent() + File.separator
+        + project + " - " + ToolUtil.getTimeStamp()
+        + SierraToolConstants.PARSED_FILE_SUFFIX);
+    config.setScanDocument(scanDocument);
     return config;
   }
 
-  private void addPath(Config config, Type aux, Path path) {
-    // TODO Auto-generated method stub
-    path.list();
+  private void addPath(Config config, Type type, Path path) {
+    for(String elt : path.list()) {
+      System.out.println(elt);
+      File f = new File(elt);
+      if (f.exists()) {
+        if (f.isDirectory()) {
+          config.addTarget(new FullDirectoryTarget(type, f.toURI()));
+        }
+      }
+    }
   }
 
   /**
@@ -78,6 +104,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     //  output any sourcepath.
     if (sourcepath.size() > 0) {
       addPath(cmd, Type.SOURCE, sourcepath);
+      this.sourcepath = sourcepath;
     }
 
     Path bp = getBootClassPath();
@@ -111,7 +138,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     for (int i = 0; i < compileList.length; i++) {
       String arg = compileList[i].getAbsolutePath();
-      config.addTarget(new FileTarget(Type.SOURCE, new File(arg).toURI(), null));
+      config.addTarget(new FileTarget(Type.SOURCE, new File(arg).toURI(), findSrcDir(arg)));
       niceSourceList.append("    ");
       niceSourceList.append(arg);
       niceSourceList.append(StringUtils.LINE_SEP);
@@ -127,6 +154,15 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     */
     
     attributes.log(niceSourceList.toString(), Project.MSG_VERBOSE);
+  }
+
+  private URI findSrcDir(String arg) {
+    for(String src : sourcepath.list()) {
+      if (arg.startsWith(src)) {
+        return new File(src).toURI();
+      }
+    }
+    return null;
   }
 
   class Monitor implements SLProgressMonitor {
@@ -151,13 +187,12 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     }
 
     public void failed(String msg) {
-      // TODO Auto-generated method stub
-
+      System.err.println(msg);
     }
 
     public void failed(String msg, Throwable t) {
-      // TODO Auto-generated method stub
-
+      System.err.println(msg);
+      t.printStackTrace(System.err);
     }
 
     public Throwable getFailureTrace() {
