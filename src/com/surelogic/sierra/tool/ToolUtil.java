@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.findbugs.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.pmd.*;
@@ -26,5 +27,16 @@ public class ToolUtil {
       t.addTool(new Reckoner1_0Tool());
     }
     return t;
+  }
+  
+  public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {
+    System.out.println("Excluded: "+config.getExcludedToolsList());
+    
+    final ITool t = ToolUtil.create(config, runRemotely);                           
+    System.out.println("Java version: "+config.getJavaVersion());
+    System.out.println("Rules file: "+config.getPmdRulesFile());
+  
+    IToolInstance ti = t.create(config, mon);                         
+    ti.run();
   }
 }
