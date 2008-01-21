@@ -26,22 +26,12 @@ public class NewScanJob extends Job {
     afterJob = after;
   }
   
-  protected void runTools(final SLProgressMonitor mon) {
-    System.out.println("Excluded: "+config.getExcludedToolsList());
-  
-    final ITool t = ToolUtil.create(config);                           
-    System.out.println("Java version: "+config.getJavaVersion());
-    System.out.println("Rules file: "+config.getPmdRulesFile());
-  
-    IToolInstance ti = t.create(config, mon);                         
-    ti.run();
-  }
-  
   @Override
   protected IStatus run(IProgressMonitor monitor) {
     final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
     try {            
-      runTools(wrapper);
+      ToolUtil.scan(config, wrapper, true);
+      
       if (afterJob != null) {
         afterJob.schedule();
       }
