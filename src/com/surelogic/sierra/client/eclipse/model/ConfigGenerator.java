@@ -33,6 +33,7 @@ public final class ConfigGenerator {
     SierraToolConstants.COMMON_PLUGIN_ID,
     SierraToolConstants.TOOL_PLUGIN_ID,
     SierraToolConstants.PMD_PLUGIN_ID,
+    SierraToolConstants.FB_PLUGIN_ID,
   };
   
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
