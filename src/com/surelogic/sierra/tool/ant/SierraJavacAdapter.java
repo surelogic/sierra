@@ -7,8 +7,12 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.Project;
@@ -19,16 +23,33 @@ import org.apache.tools.ant.util.StringUtils;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.QualifierRequest;
+import com.surelogic.sierra.tool.message.Scan;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.targets.*;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;;
 
 public class SierraJavacAdapter extends DefaultCompilerAdapter {
-  Path sourcepath = null;
+  boolean keepRunning = true;
   
+  Path sourcepath = null;
+  final SierraScan scan;
+  
+  public SierraJavacAdapter(SierraScan sierraScan) {
+    scan = sierraScan;
+  }
+
   public boolean execute() throws BuildException {
     try {
     Config config = createConfig();
-    ToolUtil.scan(config, new Monitor(), false);
+    ToolUtil.scan(config, new Monitor(), true);
+    
+    if (scan.getServer() != null && !"".equals(scan.getServer())) {
+      uploadRunDocument(config);
+    }
     } catch(Throwable t) {
       t.printStackTrace();
       throw new BuildException("Exception while scanning", t);
@@ -206,13 +227,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     }
 
     public boolean isCanceled() {
-      // TODO Auto-generated method stub
-      return false;
+      return !keepRunning;
     }
 
     public void setCanceled(boolean value) {
-      // TODO Auto-generated method stub
-
+      keepRunning = false;
     }
 
     public void setTaskName(String name) {
@@ -230,5 +249,55 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     }
 
+  }
+
+  /**
+   * Modified from SierraAnalysis.uploadRunDocument()
+   * 
+   * Optional action. Uploads the generated scan document to the desired
+   * server.
+   * @param config 
+   */
+  private void uploadRunDocument(final Config config) {
+    if (keepRunning) {
+      scan.log("Uploading the Run document to " + scan.getServer() + "...",
+               org.apache.tools.ant.Project.MSG_INFO);
+      MessageWarehouse warehouse = MessageWarehouse.getInstance();
+      Scan run;
+      try {
+        run = warehouse.fetchScan(new GZIPInputStream(
+            new FileInputStream(config.getScanDocument().getAbsolutePath())));
+
+        SierraServerLocation location = new SierraServerLocation(
+            scan.getServer(), scan.getUser(), scan.getPassword());
+
+        SierraService ts = SierraServiceClient.create(location);
+
+        // Verify the qualifiers
+        List<String> list = ts.getQualifiers(new QualifierRequest())
+            .getQualifier();
+        if (list == null || list.isEmpty()) {
+          throw new BuildException(
+              "The target build server does not have any valid qualifiers to publish to.");
+        }
+        if (!list.containsAll(scan.getQualifiers())) {
+          StringBuilder sb = new StringBuilder();
+          sb.append("Invalid qualifiers. Valid qualifiers are:\n");
+          for (String string : list) {
+            sb.append(string);
+            sb.append("\n");
+          }
+          throw new BuildException(sb.toString());
+        }
+        // FIXME utilize the return value once Bug 867 is resolved
+        ts.publishRun(run);
+      } catch (FileNotFoundException e) {
+        throw new IllegalStateException(config.getScanDocument()
+            + " is not a valid document", e);
+      } catch (IOException e) {
+        throw new IllegalStateException(config.getScanDocument()
+            + " is not a valid document", e);
+      }
+    }
   }
 }

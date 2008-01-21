@@ -4,6 +4,8 @@
 package com.surelogic.sierra.tool.ant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -13,6 +15,24 @@ import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 //import org.apache.tools.ant.util.SourceFileScanner;
 
 public class SierraScan extends Javac { 
+  /***************************************************************************
+   * Ant Task Attributes
+   **************************************************************************/
+
+  // Optional attribute, if present, we send the scan document will be sent to
+  // this server
+  private String server = null;
+
+  // Optional attribute, required when we send the scan document will be sent
+  // to this server.
+  private String user;
+  // Optional attribute, required when we send the scan document will be sent
+  // to this server.
+  private String password;
+  
+  // Optional, but req'd if URL is set. Comma-separated list of qualifiers
+  private final List<String> qualifiers = new ArrayList<String>();
+  
   @Override
   protected void scanDir(File srcDir, File destDir, String[] files) {
     /*
@@ -61,7 +81,7 @@ public class SierraScan extends Javac {
             }
         }
 
-        CompilerAdapter adapter = new SierraJavacAdapter();
+        CompilerAdapter adapter = new SierraJavacAdapter(this);
 
         // now we need to populate the compiler adapter
         adapter.setJavac(this);
@@ -75,5 +95,51 @@ public class SierraScan extends Javac {
             }
         }
     }
-}
+  }
+  
+  /***************************************************************************
+   * Getters and Setters for attributes
+   **************************************************************************/
+
+  public void setServer(String server) {
+    this.server = server;
+  }
+
+  public String getServer() {
+    return server;
+  }
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+  
+  /**
+   * @return the serverQualifier
+   */
+  public final List<String> getQualifiers() {
+    return qualifiers;
+  }
+
+  /**
+   * @param serverQualifier
+   *            the serverQualifier to set
+   */
+  public final void setQualifiers(String qualifiers) {
+    String[] q = qualifiers.split(",");
+    for (String qualifier : q) {
+      this.qualifiers.add(qualifier.trim());
+    }
+  }
 }
