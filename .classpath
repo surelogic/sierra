@@ -13,18 +13,6 @@
 	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.osgi.services_3.1.200.v20070605.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.osgi.util_3.1.200.v20070605.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/reckoner/reckoner.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/jsr305.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/dom4j-full.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/bcel.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-analysis-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-commons-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-tree-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-util-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/asm-xml-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs.jar" sourcepath="/findbugs"/>
-	<classpathentry exported="true" kind="lib" path="Tools/FB/lib/findbugs-ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
