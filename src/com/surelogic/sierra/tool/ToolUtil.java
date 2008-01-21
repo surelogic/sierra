@@ -1,5 +1,8 @@
 package com.surelogic.sierra.tool;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.findbugs.*;
 import com.surelogic.sierra.tool.message.Config;
@@ -38,5 +41,18 @@ public class ToolUtil {
   
     IToolInstance ti = t.create(config, mon);                         
     ti.run();
+  }
+  
+  public static String getTimeStamp() {
+    Date date = Calendar.getInstance().getTime();
+    long time = Calendar.getInstance().getTimeInMillis();
+
+    /*
+     * Change the colon on date to semi-colon as file name with a colon is
+     * invalid
+     */
+    String timeStamp = date.toString().replace(":", ";") + " - "
+        + String.valueOf(time);
+    return timeStamp;
   }
 }
