@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.stat.Metric;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
@@ -74,6 +75,7 @@ public class PMD4_0Tool extends AbstractTool {
     private final int numFiles;
     private final String inputPath;
     private boolean first = true;
+    private DataSource source;
     
     public Output(ArtifactGenerator gen, SLProgressMonitor m, String in, int i) {
       generator = gen;
@@ -106,6 +108,7 @@ public class PMD4_0Tool extends AbstractTool {
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {
+      source = dataSource;
       String msg = "Scanning "+dataSource.getNiceFileName(false, inputPath);
       monitor.subTask(msg); 
       if (first) {
@@ -117,7 +120,7 @@ public class PMD4_0Tool extends AbstractTool {
       LOG.info(msg);
     }
     
-    public synchronized void renderFileReport(Report report) throws IOException {
+    public synchronized void renderFileReport(Report report) throws IOException {      
       Iterator<IRuleViolation> it = report.iterator();
       while (it.hasNext()) {
         IRuleViolation v = it.next();
@@ -179,13 +182,30 @@ public class PMD4_0Tool extends AbstractTool {
         ProcessingError error = errors.next();
         System.out.println(error.getFile()+": "+error.getMsg());
       }
+
       /*
       Iterator<Metric> metrics = report.metrics();
       while (metrics.hasNext()) {
         Metric m = metrics.next();
-        System.out.println(m.getMetricName()+"(avg) : "+m.getAverage());
+        //System.out.println(m.getMetricName()+"(total) : "+m.getTotal());
+        if ("NcssTypeCount".equals(m.getMetricName())) {
+          MetricBuilder mb = generator.metric();
+          String fileName = source.getNiceFileName(true, inputPath);
+          int lastSeparator = fileName.lastIndexOf(File.separatorChar);
+          if (lastSeparator > 0) {
+            mb.packageName(fileName.substring(0, lastSeparator).replace(File.separatorChar, '.'));
+            mb.compilation(fileName.substring(lastSeparator+1));
+          } else {
+            mb.packageName("");
+            mb.compilation(fileName);
+          }
+          mb.linesOfCode((int) m.getTotal());
+          System.out.println(fileName+" : "+m.getTotal()+" LOC");
+          // mb.build();
+        }
       }
       */
+      //System.out.println("Done with report");
     }
     
     public void end() throws IOException {
