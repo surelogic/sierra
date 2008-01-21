@@ -11,6 +11,9 @@ public final class SierraToolConstants {
 	public static final String COMMON_PLUGIN_ID = "com.surelogic.common";
 	public static final String MESSAGE_PLUGIN_ID = "com.surelogic.sierra.message";
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
+	public static final String PMD_PLUGIN_ID = "com.surelogic.sierra.pmd";
+	public static final String FB_PLUGIN_ID = "com.surelogic.sierra.fb";
+	public static final String RECKONER_PLUGIN_ID = "com.surelogic.sierra.reckoner";
 
 	/** The location of tools folder */
 	public static final String TOOLS_FOLDER = "Tools";
