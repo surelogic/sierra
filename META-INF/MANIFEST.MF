@@ -5,7 +5,8 @@ Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Require-Bundle: org.apache.ant,
  com.surelogic.common,
- com.surelogic.sierra.message
+ com.surelogic.sierra.message,
+ com.surelogic.sierra.pmd
 Eclipse-LazyStart: false
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
@@ -23,12 +24,10 @@ Bundle-ClassPath: Tools/backport-util-concurrent-3.0/backport-util-concurrent.ja
  Tools/FB/lib/findbugs.jar,
  Tools/FB/lib/findbugs-ant.jar,
  Tools/FB/lib/bcel.jar,
- Tools/pmd/lib/jaxen-1.1.jar,
  Tools/FB/lib/dom4j-full.jar,
  Tools/FB/lib/annotations.jar,
  Tools/FB/lib/jsr305.jar,
  Tools/JDepend/jdepend-2.9.jar,
- Tools/pmd/lib/pmd-4.0-sl.jar,
  .,
  Tools/reckoner/lib/org.eclipse.core.contenttype_3.2.100.v20070319.jar,
  Tools/reckoner/lib/org.eclipse.core.jobs_3.3.0.v20070423.jar,
