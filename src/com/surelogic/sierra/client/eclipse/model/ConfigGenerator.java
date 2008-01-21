@@ -28,7 +28,13 @@ import com.surelogic.sierra.tool.targets.*;
  * 
  */
 public final class ConfigGenerator {
-
+  private static final String[] PLUGINS = {
+    SierraToolConstants.MESSAGE_PLUGIN_ID, 
+    SierraToolConstants.COMMON_PLUGIN_ID,
+    SierraToolConstants.TOOL_PLUGIN_ID,
+    SierraToolConstants.PMD_PLUGIN_ID,
+  };
+  
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
 	private final File f_resultRoot = new File(
@@ -40,26 +46,20 @@ public final class ConfigGenerator {
 	/** The plug-in directory that has tools folder */
 	private final String tools;
 	
-	/** The plug-in directory for common */
-  private final String common;
-  
-  /** The plug-in directory for sierra-message */
-  private final String message;
+	private final Map<String,String> pluginDirs = new HashMap<String,String>();
 
 	/** The number of excluded tools : Default 0 */
 	private int f_numberofExcludedTools = 0;
-
+	
 	private ConfigGenerator() {
 		// singleton
 		tools = Activator.getDefault().getDirectoryOf(
 				SierraToolConstants.TOOL_PLUGIN_ID)
 				+ SierraToolConstants.TOOLS_FOLDER;
 		
-		message = Activator.getDefault().getDirectoryOf(
-        SierraToolConstants.MESSAGE_PLUGIN_ID);
-		
-		common = Activator.getDefault().getDirectoryOf(
-        SierraToolConstants.COMMON_PLUGIN_ID);
+		for(String id : PLUGINS) {
+		  pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+		}
 	}
 
 	public static ConfigGenerator getInstance() {
@@ -392,8 +392,7 @@ public final class ConfigGenerator {
 
   private void setupTools(Config config) {
     config.setToolsDirectory(new File(tools));
-    config.setCommonDirectory(common);
-    config.setMessageDirectory(message);
+    config.setPluginDirs(pluginDirs);
   }
 
 	/**
