@@ -18,15 +18,15 @@ import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
 public abstract class AbstractFindBugsTool extends AbstractTool {
-  final File toolsDir;
-  protected AbstractFindBugsTool(String version, File toolsDir) {
+  final String fbDir;
+  protected AbstractFindBugsTool(String version, String fbDir) {
     super("FindBugs", version, "FindBugs (TM)", "");
-    this.toolsDir = toolsDir;
+    this.fbDir = fbDir;
   }
   
   protected IToolInstance create(final ArtifactGenerator generator, 
                                  final SLProgressMonitor monitor, boolean close) {
-    System.setProperty("findbugs.home", new File(toolsDir, "FB").getAbsolutePath());
+    System.setProperty("findbugs.home", fbDir);
     
     return new AbstractToolInstance(this, generator, monitor, close) {     
       final IFindBugsEngine engine = createEngine();
