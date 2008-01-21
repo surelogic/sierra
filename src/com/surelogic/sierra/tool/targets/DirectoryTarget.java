@@ -42,7 +42,13 @@ public abstract class DirectoryTarget extends AbstractToolTarget {
     if (!uriPath.startsWith(locationPath)) {
       throw new IllegalArgumentException(uri+" isn't under "+location);
     }
-    if (exclude(uriPath.substring(locationPath.length()+1))) {
+    String relativePath;
+    if (uriPath.equals(locationPath)) {
+      relativePath = "";
+    } else {
+      relativePath = uriPath.substring(locationPath.length()+1);
+    }
+    if (exclude(relativePath)) {
       return;
     }
     if (here.isDirectory()) {
