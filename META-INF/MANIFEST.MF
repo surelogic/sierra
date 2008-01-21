@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PMD Plugin for Sierra
 Bundle-SymbolicName: com.surelogic.sierra.pmd
-Bundle-Version: 4.0.0
+Bundle-Version: 4.0.0.qualifier
 Bundle-ClassPath: lib/jaxen-1.1.jar,
  lib/pmd-4.0-sl.jar,
  .
