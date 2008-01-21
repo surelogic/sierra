@@ -16,6 +16,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
+import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.*;
 
@@ -225,7 +226,7 @@ public final class ConfigGenerator {
 			File scanDocument = new File(f_sierraPath
 					+ File.separator
 					+ compilationUnits.get(0).getResource().getProject()
-							.getName() + " - partial - " + getTimeStamp()
+							.getName() + " - partial - " + ToolUtil.getTimeStamp()
 					+ SierraToolConstants.PARSED_FILE_SUFFIX);
 
 			config = new Config();
@@ -335,7 +336,7 @@ public final class ConfigGenerator {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
 		File scanDocument = new File(f_sierraPath + File.separator
-				+ project.getProject().getName() + " - " + getTimeStamp()
+				+ project.getProject().getName() + " - " + ToolUtil.getTimeStamp()
 				+ SierraToolConstants.PARSED_FILE_SUFFIX);
 
 		Config config = new Config();
@@ -394,19 +395,6 @@ public final class ConfigGenerator {
     config.setCommonDirectory(common);
     config.setMessageDirectory(message);
   }
-
-	private String getTimeStamp() {
-		Date date = Calendar.getInstance().getTime();
-		long time = Calendar.getInstance().getTimeInMillis();
-
-		/*
-		 * Change the colon on date to semi-colon as file name with a colon is
-		 * invalid
-		 */
-		String timeStamp = date.toString().replace(":", ";") + " - "
-				+ String.valueOf(time);
-		return timeStamp;
-	}
 
 	/**
 	 * Generates a comma separated string of the exluded tools
