@@ -92,7 +92,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       label.append(". ");
       label.append("You may continue your work. ");
       label.append("You will be notified when the");
-      if (isRescan) {
+      if (!isRescan) {
         label.append(" scan has completed.");
         BalloonUtility.showMessage("Sierra scan started", label
             .toString());
