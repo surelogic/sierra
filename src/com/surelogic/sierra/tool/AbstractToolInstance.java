@@ -112,7 +112,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
 
   public final void reportError(String msg) {
     generator.error().message(msg).tool(getName());
-    monitor.failed(msg);  
+    monitor.error(msg);  
   }
   
   public final void reportError(String msg, Throwable e) {
@@ -123,7 +123,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
       sb.append("\tat ").append(ste).append('\n');
     }
     generator.error().message(sb.toString()).tool(getName());
-    monitor.failed(msg, e);
+    monitor.error(msg, e);
   }
   
   protected abstract void execute() throws Exception;    
