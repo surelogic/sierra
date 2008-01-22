@@ -6,9 +6,10 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+	<!-- 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>services</web-resource-name>
+			<web-resource-name>portal</web-resource-name>
 			<url-pattern>/*</url-pattern>
 			<http-method>DELETE</http-method>
 			<http-method>GET</http-method>
@@ -20,6 +21,7 @@
 		<auth-method>FORM</auth-method>
 		<realm-name>sierraRealm</realm-name>
 	</login-config>
+	 -->
 	<servlet>
 		<servlet-name>Test Service</servlet-name>
 		<servlet-class>
