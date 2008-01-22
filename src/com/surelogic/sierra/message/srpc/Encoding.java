@@ -17,6 +17,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.surelogic.sierra.tool.targets.FileTarget;
+import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
+import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
+import com.surelogic.sierra.tool.targets.JarTarget;
+
 /**
  * An instance of SRPCEncoding represents the encoding for a particular SPRC
  * interface. This class is thread-safe.
@@ -47,6 +52,12 @@ class Encoding {
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(Failure.class);
 		classes.add(RaisedException.class);
+		// TODO rework this to use MessageWarehouse, or figure out how to
+		// properly annotate extension.
+		classes.add(FileTarget.class);
+		classes.add(JarTarget.class);
+		classes.add(FullDirectoryTarget.class);
+		classes.add(FilteredDirectoryTarget.class);
 		for (Method m : service.getDeclaredMethods()) {
 			classes.add(m.getReturnType());
 			for (Class<?> clazz : m.getParameterTypes()) {
@@ -87,7 +98,7 @@ class Encoding {
 
 	MethodInvocation decodeMethodInvocation(InputStream in)
 			throws SRPCException {
-		//Uncompressed, b/c the servlet handles decoding the compression
+		// Uncompressed, b/c the servlet handles decoding the compression
 		final BufferedReader reader = wrap(in);
 		try {
 			final String clazzStr = reader.readLine();
