@@ -166,6 +166,11 @@ public class LocalTool extends AbstractTool {
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
                 case ERROR:
+                  line = copyException(st.nextToken(), br);
+                  break;
+                case FAILED:
+                  line = copyException(st.nextToken(), br);
+                  break loop;
                 case DONE:
                   monitor.done();
                   break loop;
@@ -185,6 +190,21 @@ public class LocalTool extends AbstractTool {
       }
     }
 
+    private String copyException(String msg, BufferedReader br) throws IOException {
+      StringBuilder sb = new StringBuilder();
+      System.out.println(msg);
+      sb.append(msg).append('\n');
+      
+      String line = br.readLine();
+      while (line != null && line.startsWith("\t")) {
+        System.out.println(line);
+        sb.append(msg).append('\n');
+        line = br.readLine();
+      }
+      monitor.error(sb.toString());
+      return line;
+    }
+    
     private void findJars(Project proj, Path path, String folder) {
       findJars(proj, path, new File(folder));
     }
