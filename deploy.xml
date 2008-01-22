@@ -10,7 +10,7 @@
 		<war destfile="../jetty/webapps/sierra-portal.war" webxml="../sierra-portal/web.xml">
 			<fileset dir="../sierra-portal/www" />
 			<classes dir="../sierra-portal/bin" />
-			<lib file="../sierra-portal/lib/gwt/gwt-servlet.jar"></lib>
+			<lib file="../sierra-portal/lib/gwt/gwt-servlet.jar" />
 		</war>
 	</target>
 </project>
