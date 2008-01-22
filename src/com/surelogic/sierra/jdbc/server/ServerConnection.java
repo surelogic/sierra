@@ -98,7 +98,7 @@ public class ServerConnection {
 					log.log(Level.WARNING, e.getMessage(), e);
 				}
 			}
-			exceptionNotify(t.getPrincipal().getName(), e.getMessage(), e);
+			exceptionNotify(t.getUserName(), e.getMessage(), e);
 			throw new TransactionException(e);
 		}
 	}

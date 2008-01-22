@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.server;
 
-import java.security.Principal;
 
 /**
  * Represents an SQL transaction with a principal in context.
@@ -16,6 +15,6 @@ public interface UserTransaction<T> extends Transaction<T> {
 	 * 
 	 * @return
 	 */
-	Principal getPrincipal();
+	String getUserName();
 
 }
