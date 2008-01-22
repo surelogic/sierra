@@ -6,7 +6,8 @@ Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .,
  lib/jcommon-1.0.12.jar,
- lib/jfreechart-1.0.9.jar
+ lib/jfreechart-1.0.9.jar,
+ lib/mail.jar
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message
 Export-Package: com.keypoint,
