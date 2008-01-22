@@ -27,6 +27,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   protected IToolInstance create(final ArtifactGenerator generator, 
                                  final SLProgressMonitor monitor, boolean close) {
     System.setProperty("findbugs.home", fbDir);
+    monitor.subTask("Set FB home to "+fbDir);
     
     return new AbstractToolInstance(this, generator, monitor, close) {     
       final IFindBugsEngine engine = createEngine();
