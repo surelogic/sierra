@@ -36,8 +36,8 @@ public class NewScanJob extends Job {
         afterJob.schedule();
       }
     } catch(Throwable ex) {
-      if (monitor.isCanceled()) {
-        wrapper.failed("Caught exception in run() while "+getName(), ex);
+      if (!monitor.isCanceled()) {
+        wrapper.failed("Caught exception while "+getName(), ex);
       }
     }
     if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
