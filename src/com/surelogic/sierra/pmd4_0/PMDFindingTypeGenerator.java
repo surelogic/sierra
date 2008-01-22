@@ -66,7 +66,9 @@ public class PMDFindingTypeGenerator extends AbstractFindingTypeGenerator {
 		for (StringTokenizer st = new StringTokenizer(rulesetFilenames, ","); st
 				.hasMoreTokens();) {
 			String fileName = st.nextToken();
-	    XMLUtil.parseResource(log, sp, "com/surelogic/sierra/pmd4_0/" + fileName, 
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+	    XMLUtil.parseResource(log, sp, 
+	                          cl.getResourceAsStream("com/surelogic/sierra/pmd4_0/" + fileName), 
 	                          this, "Could not parse a PMD ruleset");
 		}
 		printFindingTypes();

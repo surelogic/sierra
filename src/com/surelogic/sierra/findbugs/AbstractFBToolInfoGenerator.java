@@ -1,5 +1,6 @@
 package com.surelogic.sierra.findbugs;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -23,13 +24,18 @@ public abstract class AbstractFBToolInfoGenerator {
     return t;
   }
   
-  private static void parseResource(Logger log, SAXParser sp, String resource,
+  /**
+   * This needs to be in the package that has the resources
+   */
+  protected abstract InputStream getStream(String resource);
+  
+  private void parseResource(Logger log, SAXParser sp, String resource,
       DefaultHandler handler) {
-    XMLUtil.parseResource(log, sp, resource, handler, 
+    XMLUtil.parseResource(log, sp, getStream(resource), handler, 
                           "Could not parse a FindBugs pattern");
   }
   
-  protected static void parseResources(Logger log, SAXParser sp, 
+  protected void parseResources(Logger log, SAXParser sp, 
                                        ArtifactTypeBuilder t, 
                                        String messages, String fb) {
     FindBugsMessageParser messageParser = new FindBugsMessageParser();
