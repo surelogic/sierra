@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy-app" name="server-deployment" >
+	<description>Jetty web deployment file</description>
+	<target name="deploy-app">
+		<jar destfile="../jetty/lib/ext/common.jar" basedir="../common/bin"></jar>
+		<jar destfile="../sierra-services/WebRoot/WEB-INF/lib/common.jar" basedir="../common/bin"></jar>
+		<jar destfile="../sierra-services/WebRoot/WEB-INF/lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
+		<jar destfile="../sierra-services/WebRoot/WEB-INF/lib/sierra-message.jar" basedir="../sierra-message/bin"></jar>
+		<war destfile="../jetty/webapps/sierra-services.war" basedir="../sierra-services/WebRoot" webxml="../sierra-services/WebRoot/WEB-INF/web.xml"></war>
+		<war destfile="../jetty/webapps/sierra-portal.war" webxml="../sierra-portal/web.xml">
+			<fileset dir="../sierra-portal/www" />
+			<classes dir="../sierra-portal/bin" />
+			<lib file="../sierra-portal/lib/gwt/gwt-servlet.jar"></lib>
+		</war>
+	</target>
+</project>
