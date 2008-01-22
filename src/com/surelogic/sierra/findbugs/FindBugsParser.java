@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.surelogic.sierra.findbugs1_3_0;
+package com.surelogic.sierra.findbugs;
 
 import java.sql.SQLException;
 import java.util.Map;
