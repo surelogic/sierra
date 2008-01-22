@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.renderers.Renderer;
-import net.sourceforge.pmd.stat.Metric;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
