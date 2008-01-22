@@ -2,7 +2,6 @@ package com.surelogic.sierra.client.eclipse.jetty;
 
 import java.util.logging.Level;
 
-import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
