@@ -2,8 +2,6 @@ package com.surelogic.sierra.findbugs;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -13,15 +11,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.sierra.setup.AbstractFindingTypeGenerator;
 import com.surelogic.sierra.tool.message.*;
 
-public class AbstractFBFindingTypeGenerator {
+public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator {
   protected static final String TOOL = "FindBugs";
 
-  protected List<FindingType> types = new ArrayList<FindingType>();
-  protected List<Category> categories = new ArrayList<Category>();
-  protected HashMap<String, Category> cMap = new HashMap<String, Category>();
-  protected HashMap<String, FindingType> fMap = new HashMap<String, FindingType>();
+  protected final HashMap<String, Category> cMap = new HashMap<String, Category>();
+  protected final HashMap<String, FindingType> fMap = new HashMap<String, FindingType>();
 
   public void parse(String messages, String findbugs) {
     SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -37,9 +34,7 @@ public class AbstractFBFindingTypeGenerator {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    FindingTypes ft = new FindingTypes();
-    ft.getFindingType().addAll(types);
-    ft.getCategory().addAll(categories);
+
     try {
       SAXParser parser = factory.newSAXParser();
       parser.parse(Thread.currentThread().getContextClassLoader()
@@ -52,32 +47,18 @@ public class AbstractFBFindingTypeGenerator {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    MessageWarehouse.getInstance().writeFindingTypes(ft, System.out);
+    printFindingTypes();
   } 
   
-  private final Pattern underscoresToSpaces = Pattern.compile("_");
-  private final Pattern breakUpWords = Pattern
-      .compile("([A-Z][a-z]+)(?=[A-Z])");
-  private final Pattern allButFirstLetter = Pattern
-      .compile("(?<=\\b[A-Z])([A-Z]+)(?=\\b)");
-  private final StringBuffer sb = new StringBuffer();
-  
-  protected String prettyPrint(String s) {
-    s = underscoresToSpaces.matcher(s).replaceAll(" ");
-    s = breakUpWords.matcher(s).replaceAll("$1 ");
-    Matcher m = allButFirstLetter.matcher(s);
-    while (m.find()) {
-      String replacement = m.group().toLowerCase();
-      m.appendReplacement(sb, replacement);
-    }
-    m.appendTail(sb);
+  @Override
+  protected String finishPrettyPrint(StringBuffer sb) {
+    String s;
     int firstSpace = sb.indexOf(" ");
     if (firstSpace > 0) {
       s = sb.substring(++firstSpace);
     } else {
       s = sb.toString();
     }
-    sb.setLength(0);
     return s;
   }
   

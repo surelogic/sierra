@@ -1,30 +1,23 @@
 package com.surelogic.sierra.pmd4_0;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
+import com.surelogic.common.xml.XMLUtil;
+import com.surelogic.sierra.setup.AbstractFindingTypeGenerator;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
-import com.surelogic.sierra.tool.message.FindingTypes;
-import com.surelogic.sierra.tool.message.MessageWarehouse;
 
-public class PMDFindingTypeGenerator extends DefaultHandler {
+public class PMDFindingTypeGenerator extends AbstractFindingTypeGenerator {
 
 	private static final Logger log = Logger.getAnonymousLogger();
 
@@ -44,8 +37,6 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 
 	private boolean isInfo;
 	private boolean isExample;
-	private final List<Category> categories = new ArrayList<Category>();
-	private final List<FindingType> types = new ArrayList<FindingType>();
 
 	private Category category;
 	private FindingType type;
@@ -58,17 +49,7 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 	}
 
 	public void parse() {
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-		spf.setValidating(true);
-		spf.setNamespaceAware(true);
-		SAXParser sp;
-		try {
-			sp = spf.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			throw new IllegalStateException("Could not create SAX parser.", e);
-		} catch (SAXException e) {
-			throw new IllegalStateException("Could not create SAX parser.", e);
-		}
+		SAXParser sp = XMLUtil.createSAXParser();
 		Properties props = new Properties();
 		try {
 			props.load(Thread.currentThread().getContextClassLoader()
@@ -85,24 +66,13 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 		for (StringTokenizer st = new StringTokenizer(rulesetFilenames, ","); st
 				.hasMoreTokens();) {
 			String fileName = st.nextToken();
-			try {
-				sp.parse(Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(
-								"com/surelogic/sierra/pmd4_0/" + fileName),
-						this);
-			} catch (SAXException e) {
-				log.log(Level.WARNING, "Could not parse a PMD ruleset", e);
-			} catch (IOException e) {
-				log.log(Level.WARNING, "Could not parse a PMD ruleset", e);
-			}
+	    XMLUtil.parseResource(log, sp, "com/surelogic/sierra/pmd4_0/" + fileName, 
+	                          this, "Could not parse a PMD ruleset");
 		}
-		FindingTypes ft = new FindingTypes();
-		ft.getCategory().addAll(categories);
-		ft.getFindingType().addAll(types);
-		MessageWarehouse.getInstance().writeFindingTypes(ft, System.out);
+		printFindingTypes();
 	}
 
-	@Override
+  @Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (isInfo || isExample) {
@@ -164,26 +134,5 @@ public class PMDFindingTypeGenerator extends DefaultHandler {
 				// type.setInfo(type.getInfo() + "\n\nExample:\n" + example);
 			}
 		}
-	}
-
-	private final Pattern underscoresToSpaces = Pattern.compile("_");
-	private final Pattern breakUpWords = Pattern
-			.compile("([A-Z][a-z]+)(?=[A-Z])");
-	private final Pattern allButFirstLetter = Pattern
-			.compile("(?<=\\b[A-Z])([A-Z]+)(?=\\b)");
-	private final StringBuffer sb = new StringBuffer();
-
-	private String prettyPrint(String s) {
-		s = underscoresToSpaces.matcher(s).replaceAll(" ");
-		s = breakUpWords.matcher(s).replaceAll("$1 ");
-		Matcher m = allButFirstLetter.matcher(s);
-		while (m.find()) {
-			String replacement = m.group().toLowerCase();
-			m.appendReplacement(sb, replacement);
-		}
-		m.appendTail(sb);
-		s = sb.toString();
-		sb.setLength(0);
-		return s;
 	}
 }
