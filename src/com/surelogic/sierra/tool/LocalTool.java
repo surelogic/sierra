@@ -166,10 +166,10 @@ public class LocalTool extends AbstractTool {
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
                 case ERROR:
-                  line = copyException(st.nextToken(), br);
+                  line = copyException(first, st.nextToken(), br);
                   break;
                 case FAILED:
-                  line = copyException(st.nextToken(), br);
+                  line = copyException(first, st.nextToken(), br);
                   break loop;
                 case DONE:
                   monitor.done();
@@ -190,10 +190,10 @@ public class LocalTool extends AbstractTool {
       }
     }
 
-    private String copyException(String msg, BufferedReader br) throws IOException {
-      StringBuilder sb = new StringBuilder();
+    private String copyException(String type, String msg, BufferedReader br) throws IOException {
+      StringBuilder sb = new StringBuilder(type);      
       System.out.println(msg);
-      sb.append(msg).append('\n');
+      sb.append(": ").append(msg).append('\n');
       
       String line = br.readLine();
       while (line != null && line.startsWith("\t")) {
