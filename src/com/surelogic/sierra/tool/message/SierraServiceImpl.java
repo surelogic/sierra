@@ -1,6 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -88,7 +87,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								project));
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
-				generator.qualifiers(q).user(getPrincipal().getName());
+				generator.qualifiers(q).user(getUserName());
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
 				ServerConnection.delayTransaction(new WebTransaction<Object>() {
@@ -140,7 +139,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 							response.setUid(ServerFindingManager.getInstance(
 									conn).commitAuditTrails(
 									User
-											.getUser(getPrincipal().getName(),
+											.getUser(getUserName(),
 													conn).getId(), revision,
 									trails));
 							return response;
@@ -252,16 +251,16 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	private abstract class WebTransaction<T> implements UserTransaction<T> {
-		
-		private final Principal principal;
-		
+
+		private final String userName;
+
 		WebTransaction() {
-			principal = getCurrentPrincipal();
+			userName = getCurrentPrincipal().getName();
 		}
-		
+
 		@Override
-		public Principal getPrincipal() {
-			return principal;
+		public String getUserName() {
+			return userName;
 		}
 
 	}
