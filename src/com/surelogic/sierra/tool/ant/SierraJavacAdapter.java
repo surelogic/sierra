@@ -134,10 +134,12 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
       this.sourcepath = sourcepath;
     }
 
+    /*
     Path bp = getBootClassPath();
     if (bp.size() > 0) {
       addPath(cmd, Type.AUX, bp);
     }
+    */
 
     /*
     if (verbose) {
