@@ -252,10 +252,16 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	private abstract class WebTransaction<T> implements UserTransaction<T> {
-
+		
+		private final Principal principal;
+		
+		WebTransaction() {
+			principal = getCurrentPrincipal();
+		}
+		
 		@Override
 		public Principal getPrincipal() {
-			return getCurrentPrincipal();
+			return principal;
 		}
 
 	}
