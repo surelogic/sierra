@@ -2,14 +2,19 @@ package com.surelogic.sierra.tool;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.findbugs.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.pmd.*;
 import com.surelogic.sierra.tool.reckoner.*;
 
 public class ToolUtil {
+  /** The logger */
+  protected static final Logger LOG = SLLogger.getLogger("sierra");
+  
   public static ITool create(Config config) {
     // FIX look at config
     return create(config, true);
@@ -33,13 +38,14 @@ public class ToolUtil {
   }
   
   public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {
-    System.out.println("Excluded: "+config.getExcludedToolsList());
+    LOG.info("Excluded: "+config.getExcludedToolsList());
     
     final ITool t = ToolUtil.create(config, runRemotely);                           
-    System.out.println("Java version: "+config.getJavaVersion());
-    System.out.println("Rules file: "+config.getPmdRulesFile());
+    LOG.info("Java version: "+config.getJavaVersion());
+    LOG.info("Rules file: "+config.getPmdRulesFile());
   
-    IToolInstance ti = t.create(config, mon);                         
+    IToolInstance ti = t.create(config, mon);     
+    LOG.info("Created "+ti.getClass().getSimpleName());
     ti.run();
   }
   
