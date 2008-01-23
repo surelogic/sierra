@@ -66,7 +66,7 @@ public class PMD4_0Tool extends AbstractTool {
     };
   }
   
-  private static int SUFFIX_LEN = ".java".length();
+  private static final int SUFFIX_LEN = ".java".length();
   
   class Output implements Renderer {
     private final ArtifactGenerator generator;
