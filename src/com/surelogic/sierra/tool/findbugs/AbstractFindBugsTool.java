@@ -97,7 +97,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
           case FILE:
             // System.out.println("Ignored: "+path);
             FileTarget ft = (FileTarget) t;
-            p.addSourceDir(new File(ft.getRoot()).getAbsolutePath());
+            URI root = ft.getRoot();
+            String rootPath = new File(root).getAbsolutePath();
+            p.addSourceDir(rootPath);
             break;
           }
         }
