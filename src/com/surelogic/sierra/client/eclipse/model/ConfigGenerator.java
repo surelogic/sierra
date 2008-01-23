@@ -314,6 +314,7 @@ public final class ConfigGenerator {
 				config.setBinDirs(binDirs.toString());
 				config.setSourceDirs(srcDirs.toString());
 
+				setupToolForProject(config, javaProject, false);
 			} catch (JavaModelException e) {
 				SLLogger.getLogger("sierra").log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
@@ -526,15 +527,26 @@ public final class ConfigGenerator {
   private static void setupToolForProject(final Config cfg, IJavaProject p, final boolean toBeAnalyzed) 
   throws JavaModelException 
   {
+    setupToolForProject(cfg, new HashSet<IJavaProject>(), p, toBeAnalyzed);
+  }
+  
+  private static void setupToolForProject(final Config cfg, Set<IJavaProject> handled, IJavaProject p, final boolean toBeAnalyzed) 
+  throws JavaModelException 
+  {
+    if (handled.contains(p)) {
+      return;
+    }
+    handled.add(p);
+    
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     for(IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-      handleClasspathEntry(cfg, toBeAnalyzed, root, cpe);
+      handleClasspathEntry(cfg, handled, toBeAnalyzed, root, cpe);
     }
     URI out = root.findMember(p.getOutputLocation()).getLocationURI();
     cfg.addTarget(new FullDirectoryTarget(toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX, out));
   }
   
-  private static void handleClasspathEntry(final Config cfg, final boolean toBeAnalyzed, 
+  private static void handleClasspathEntry(final Config cfg, Set<IJavaProject> handled, final boolean toBeAnalyzed, 
       final IWorkspaceRoot root, IClasspathEntry cpe) 
   throws JavaModelException 
   {
@@ -570,7 +582,7 @@ public final class ConfigGenerator {
       case IClasspathEntry.CPE_PROJECT:
         String projName = cpe.getPath().lastSegment();
         IProject proj = root.getProject(projName);
-        setupToolForProject(cfg, JavaCore.create(proj), false);
+        setupToolForProject(cfg, handled, JavaCore.create(proj), false);
         break;
     }
   }
