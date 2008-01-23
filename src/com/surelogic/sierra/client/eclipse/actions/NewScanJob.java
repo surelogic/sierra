@@ -28,6 +28,7 @@ public class NewScanJob extends Job {
   
   @Override
   protected IStatus run(IProgressMonitor monitor) {
+    LOG.info(this.getName());
     final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
     try {            
       ToolUtil.scan(config, wrapper, true);

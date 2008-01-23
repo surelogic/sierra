@@ -24,6 +24,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
    */
   @Override
   void startScanJob(List<IJavaProject> selectedProjects) {
+    LOG.info("Starting new scan jobs");
     for(final IJavaProject p : selectedProjects) {
       final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
       
