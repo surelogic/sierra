@@ -57,7 +57,10 @@ public final class ConfigGenerator {
 		tools = Activator.getDefault().getDirectoryOf(
 				SierraToolConstants.TOOL_PLUGIN_ID)
 				+ SierraToolConstants.TOOLS_FOLDER;
-		
+		/*
+		String jdt = Activator.getDefault().getDirectoryOf("org.eclipse.jdt.core");
+		System.out.println(jdt);
+		*/
 		for(String id : PLUGINS) {
 		  pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
 		}
