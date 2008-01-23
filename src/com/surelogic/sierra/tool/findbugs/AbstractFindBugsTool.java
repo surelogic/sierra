@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.findbugs;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
@@ -45,8 +45,15 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         //engine.addClassObserver(mon);
         engine.setBugReporter(mon);
         engine.setProgressCallback(mon);        
-        
-        engine.execute();
+        try {
+          engine.execute();
+        } catch(IOException e) {
+          if (!e.getMessage().startsWith("No classes found to analyze")) {
+            throw e;
+          } else {
+            // Ignored
+          }
+        }
       }
             
       protected Project createProject() {
