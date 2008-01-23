@@ -1,5 +1,6 @@
 package com.surelogic.sierra.jdbc.server;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
  * Server represents the global database server state, including server uid and
@@ -31,6 +33,54 @@ public class Server {
 	Server(Connection conn, boolean readOnly) {
 		this.conn = conn;
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * Returns the current schema version of this server. Possible values
+	 * consist of <code>None</code>, <code>Error</code>, and the natural
+	 * numbers including 0.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public String getSchemaVersion() throws SQLException {
+		final Statement st = conn.createStatement();
+		try {
+			final ResultSet set = st.executeQuery("SELECT N FROM VERSION");
+			if (set.next()) {
+				return Integer.toString(set.getInt(1));
+			} else {
+				return "None";
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			st.close();
+		}
+		return "Error";
+	}
+
+	/**
+	 * Returns the available schema version of this server. Possible values
+	 * consist of the set of natural numbers including 0.xs
+	 * 
+	 * @return
+	 */
+	public String getAvailableSchemaVersion() {
+		return Integer.toString(SierraSchemaUtility.schemaVersion);
+	}
+
+	/**
+	 * Updates the schema to the highest available version.
+	 * 
+	 * @throws SQLException
+	 */
+	public void updateSchema() throws SQLException {
+		try {
+			SierraSchemaUtility.checkAndUpdate(conn, true);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -83,8 +133,6 @@ public class Server {
 					} else {
 						return null;
 					}
-				} catch (SQLException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
 				} finally {
 					st.close();
 				}
@@ -98,32 +146,29 @@ public class Server {
 	}
 
 	/**
+	 * Change the notification email address.
+	 * 
+	 * @param address
+	 * @throws SQLException
+	 */
+	public void setEmail(String address) throws SQLException {
+		final Statement st = conn.createStatement();
+		try {
+			st.execute("DELETE FROM NOTIFICATION");
+			st.execute("INSERT INTO NOTIFICATION (EMAIL) VALUES ('"
+					+ JDBCUtils.escapeString(address) + "')");
+		} finally {
+			st.close();
+		}
+	}
+
+	/**
 	 * Get the server uid.
 	 * 
 	 * @return
 	 * @throws SQLException
 	 */
 	public String getUid() throws SQLException {
-		ResultSet set = conn.createStatement().executeQuery(
-				"SELECT UUID FROM SERVER");
-		try {
-			set.next();
-			return set.getString(1);
-		} finally {
-			set.close();
-		}
-
-	}
-	
-
-	/**
-	 * Get the server uid.
-	 * 
-	 * @param conn
-	 * @return
-	 * @throws SQLException
-	 */
-	public static String getUid(Connection conn) throws SQLException {
 		ResultSet set = conn.createStatement().executeQuery(
 				"SELECT UUID FROM SERVER");
 		try {

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,9 +38,6 @@ import com.surelogic.sierra.tool.message.TrailObsoletion;
 
 public final class ServerFindingManager extends FindingManager {
 
-	private final PreparedStatement populateSeriesOverview;
-	private final PreparedStatement populateTempIds;
-	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement selectObsoletedTrails;
 	private final PreparedStatement selectUpdatedMatches;
 	private final PreparedStatement selectUpdatedAudits;
@@ -56,77 +52,17 @@ public final class ServerFindingManager extends FindingManager {
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
-		Statement st = conn.createStatement();
-		String tempTableName;
-		try {
-			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
-				try {
-					st
-							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
-				} catch (SQLException e) {
-					// Do nothing, the table is probably already there.
-				}
-				tempTableName = "TEMP_FINDING_IDS";
-				populateTempIds = conn
-						.prepareStatement("INSERT INTO TEMP_FINDING_IDS"
-								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
-								+ "  MINUS "
-								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
-				findingDifferenceCount = conn
-						.prepareStatement("SELECT COUNT(*) FROM "
-								+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) MINUS"
-								+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
-			} else {
-				try {
-					st
-							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
-				} catch (SQLException e) {
-					// Do nothing, the table is probably already there.
-				}
-				tempTableName = "SESSION.TEMP_FINDING_IDS";
-				populateTempIds = conn
-						.prepareStatement("INSERT INTO SESSION.TEMP_FINDING_IDS "
-								+ "  SELECT SO.FINDING_ID FROM SCAN_OVERVIEW SO WHERE SO.SCAN_ID = ?"
-								+ "  EXCEPT"
-								+ "  SELECT TSO.FINDING_ID FROM TIME_SERIES_OVERVIEW TSO WHERE QUALIFIER_ID = ? AND PROJECT_ID = ?");
-				findingDifferenceCount = conn
-						.prepareStatement("SELECT COUNT(*) FROM "
-								+ "   (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ? EXCEPT"
-								+ "    SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) FINDINGS");
-			}
-		} finally {
-			st.close();
+		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+			findingDifferenceCount = conn
+					.prepareStatement("SELECT COUNT(*) FROM "
+							+ "   ((SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) MINUS"
+							+ "    (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?))");
+		} else {
+			findingDifferenceCount = conn
+					.prepareStatement("SELECT COUNT(*) FROM "
+							+ "   (SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ? EXCEPT"
+							+ "    SELECT FINDING_ID FROM SCAN_OVERVIEW WHERE SCAN_ID = ?) FINDINGS");
 		}
-		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
-		populateSeriesOverview = conn
-				.prepareStatement("INSERT INTO TIME_SERIES_OVERVIEW (QUALIFIER_ID,FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,SUMMARY)"
-						+ " SELECT ?, F.ID,F.PROJECT_ID,"
-						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
-						+ "        F.LAST_CHANGED,"
-						+ "        CASE"
-						+ "             WHEN F.IMPORTANCE=0 THEN 'Irrelevant'"
-						+ " 	        WHEN F.IMPORTANCE=1 THEN 'Low'"
-						+ "             WHEN F.IMPORTANCE=2 THEN 'Medium'"
-						+ "             WHEN F.IMPORTANCE=3 THEN 'High'"
-						+ "             WHEN F.IMPORTANCE=4 THEN 'Critical'"
-						+ "        END,"
-						+ "        CASE WHEN COUNT.COUNT IS NULL THEN 0 ELSE COUNT.COUNT END,"
-						+ "        ?,"
-						+ "        LM.PACKAGE_NAME,"
-						+ "        LM.CLASS_NAME,"
-						+ "        FT.NAME,"
-						+ "        F.SUMMARY"
-						+ " FROM "
-						+ tempTableName
-						+ " TF"
-						+ "    INNER JOIN FINDING F ON F.ID = TF.ID"
-						+ "    LEFT OUTER JOIN ("
-						+ "       SELECT"
-						+ "          A.FINDING_ID \"ID\", COUNT(*) \"COUNT\""
-						+ "       FROM SIERRA_AUDIT A"
-						+ "       GROUP BY A.FINDING_ID) COUNT ON COUNT.ID = F.ID"
-						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 		selectObsoletedTrails = conn
 				.prepareStatement("SELECT OBS.UUID,OBS.OBSOLETED_BY_REVISION,F.UUID FROM FINDING OBS, FINDING F"
 						+ "   WHERE"
@@ -220,24 +156,6 @@ public final class ServerFindingManager extends FindingManager {
 				log.info("Populating scan overview for scan with uid "
 						+ scan.getUid() + ".");
 				populateScanOverview(scan.getId());
-				for (QualifierRecord q : qualifierRecs) {
-					int idx = 1;
-					// Add the new findings to the time series overview
-					populateTempIds.setLong(idx++, scan.getId());
-					populateTempIds.setLong(idx++, q.getId());
-					populateTempIds.setLong(idx++, projectRec.getId());
-					populateTempIds.execute();
-					idx = 1;
-					// Look up previous scan in qualifier
-					populateSeriesOverview.setLong(idx++, q.getId());
-					populateSeriesOverview.setString(idx++, projectRec
-							.getName());
-					populateSeriesOverview.execute();
-					deleteTempIds.execute();
-				}
-				log.info("Overview for qualifiers " + qualifiers
-						+ " was generated with respect to scan with uid "
-						+ scan.getUid() + ".");
 			} else {
 				throw new IllegalArgumentException("No scan exists with uid "
 						+ scanUid);
