@@ -426,4 +426,17 @@ public class Config {
 	public List<ToolTarget> getTargets() {
 	  return targets;
 	}
+
+  public boolean hasNothingToScan() {
+    for(ToolTarget t : targets) {
+      switch (t.getType()) {
+        case BINARY:
+        case SOURCE:
+          return false;
+        default:
+          continue;
+      }
+    }
+    return true;
+  }
 }
