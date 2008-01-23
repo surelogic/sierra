@@ -116,15 +116,9 @@ public class HashGenerator {
 	}
 
 	public void generateHash(Map<String, Map<Integer, Long>> hashHolder) {
-
-		Set<String> fileNames = hashHolder.keySet();
-
-		Iterator<String> fileNameIterator = fileNames.iterator();
-
-		while (fileNameIterator.hasNext()) {
-			String fileName = fileNameIterator.next();
-
-			Map<Integer, Long> lineHashMap = hashHolder.get(fileName);
+		for(Map.Entry<String, Map<Integer, Long>> entry : hashHolder.entrySet()) {
+			String fileName = entry.getKey();
+			Map<Integer, Long> lineHashMap = entry.getValue();
 			Set<Integer> lineNumbers = lineHashMap.keySet();
 			Iterator<Integer> lineNumberIterator = lineNumbers.iterator();
 
