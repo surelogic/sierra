@@ -153,10 +153,8 @@ public final class ConfigGenerator {
 					compilationUnitsHolder);
 		}
 
-		Set<String> projects = projectCompilationUnitMap.keySet();
-
-		for (String s : projects) {
-			List<ICompilationUnit> cus = projectCompilationUnitMap.get(s);
+		for (Map.Entry<String,List<ICompilationUnit>> entry : projectCompilationUnitMap.entrySet()) {			
+			List<ICompilationUnit> cus = entry.getValue();
 			if (cus.size() > 0) {
 				final ConfigCompilationUnit ccu = new ConfigCompilationUnit(
 						getCompilationUnitConfig(cus),
@@ -244,8 +242,8 @@ public final class ConfigGenerator {
 			config.setScanDocument(scanDocument);
 			setupTools(config);
 			config.setExcludedToolsList(getExcludedTools());
-			String binDirs = null;
-			String srcDirs = null;
+			StringBuilder binDirs = null;
+			StringBuilder srcDirs = null;
 			IJavaProject javaProject = compilationUnits.get(0).getJavaProject();
 
 			try {
@@ -294,9 +292,9 @@ public final class ConfigGenerator {
 					for (IFile f : classFiles) {
 					  String osLoc = f.getLocation().toOSString();
 						if (binDirs == null) {
-							binDirs = osLoc;
+							binDirs = new StringBuilder(osLoc);
 						} else {
-							binDirs = binDirs + ";" + osLoc;
+							binDirs = binDirs.append(';').append(osLoc);
 						}
 						File osFile = new File(osLoc);
 						config.addTarget(new FileTarget(IToolTarget.Type.BINARY, osFile.toURI(), null));
@@ -304,18 +302,17 @@ public final class ConfigGenerator {
 
 					String srcLoc = c.getResource().getLocation().toOSString();
 					if (srcDirs == null) {
-						srcDirs = srcLoc;
+						srcDirs = new StringBuilder(srcLoc);
 					} else {
-						srcDirs = srcDirs + ";"
-								+ srcLoc;
+						srcDirs = srcDirs.append(';').append(srcLoc);
 					}
 					File srcFile = new File(srcLoc);
 					IPackageFragmentRoot p = (IPackageFragmentRoot) c.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
 					File rootFile = new File(p.getResource().getLocation().toOSString());
 					config.addTarget(new FileTarget(srcFile.toURI(), rootFile.toURI())); 
 				}
-				config.setBinDirs(binDirs);
-				config.setSourceDirs(srcDirs);
+				config.setBinDirs(binDirs.toString());
+				config.setSourceDirs(srcDirs.toString());
 
 			} catch (JavaModelException e) {
 				SLLogger.getLogger("sierra").log(Level.SEVERE,
