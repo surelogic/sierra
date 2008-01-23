@@ -27,7 +27,9 @@ public class NewScan extends AbstractScan<IJavaProject> {
     LOG.info("Starting new scan jobs");
     for(final IJavaProject p : selectedProjects) {
       final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
-      
+      if (config.hasNothingToScan()) {
+        return;
+      }
       final Runnable runAfterImport = new Runnable() {
         public void run() {
           /* Notify that scan was completed */
