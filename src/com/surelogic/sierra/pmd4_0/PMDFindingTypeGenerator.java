@@ -17,6 +17,10 @@ import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
 
+/**
+ * Massages the data into the format we want
+ * @author Edwin.Chan
+ */
 public class PMDFindingTypeGenerator extends AbstractFindingTypeGenerator {
 
 	private static final Logger log = Logger.getAnonymousLogger();

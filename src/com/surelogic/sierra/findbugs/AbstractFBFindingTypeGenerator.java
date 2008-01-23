@@ -14,6 +14,13 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.surelogic.sierra.setup.AbstractFindingTypeGenerator;
 import com.surelogic.sierra.tool.message.*;
 
+
+/**
+ * Common code used by FindBugs apps that help massage the data into
+ * the format we want
+ * 
+ * @author Edwin.Chan
+ */
 public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator {
   protected static final String TOOL = "FindBugs";
 

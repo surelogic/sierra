@@ -2,6 +2,10 @@ package com.surelogic.sierra.findbugs1_3_0;
 
 import com.surelogic.sierra.findbugs.AbstractFBFindingTypeGenerator;
 
+/**
+ * Massages the data into the format we want
+ * @author Edwin.Chan
+ */
 public class FindBugsFindingTypeGenerator extends AbstractFBFindingTypeGenerator {
 	/**
 	 * @param args

@@ -12,6 +12,12 @@ import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
+/**
+ * Common code used by apps that help massage the data into
+ * the format we want
+ * 
+ * @author Edwin.Chan
+ */
 public class AbstractFindingTypeGenerator extends DefaultHandler {
   protected final List<FindingType> types = new ArrayList<FindingType>();
   protected final List<Category> categories = new ArrayList<Category>();
