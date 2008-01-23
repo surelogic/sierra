@@ -57,7 +57,7 @@ public class PMD4_0Tool extends AbstractTool {
             }
           }
           List<Renderer> renderers = new ArrayList<Renderer>(); // output
-          renderers.add(new Output(generator, monitor, inputPath, files.size()));
+          renderers.add(new Output(generator, monitor, inputPath));
           
           monitor.beginTask("PMD", files.size() + 500);
           PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
@@ -71,15 +71,13 @@ public class PMD4_0Tool extends AbstractTool {
   class Output implements Renderer {
     private final ArtifactGenerator generator;
     private final SLProgressMonitor monitor;
-    private final int numFiles;
     private final String inputPath;
     private boolean first = true;
     
-    public Output(ArtifactGenerator gen, SLProgressMonitor m, String in, int i) {
+    public Output(ArtifactGenerator gen, SLProgressMonitor m, String in) {
       generator = gen;
       monitor = m;
       inputPath = in;
-      numFiles = i;
     }
 
     public Writer getWriter() {
@@ -102,7 +100,6 @@ public class PMD4_0Tool extends AbstractTool {
     }
 
     public void start() throws IOException {
-      monitor.beginTask("PMD", numFiles + 500);
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {
@@ -206,7 +203,6 @@ public class PMD4_0Tool extends AbstractTool {
     }
     
     public void end() throws IOException {
-      monitor.done();
     }
   }
   

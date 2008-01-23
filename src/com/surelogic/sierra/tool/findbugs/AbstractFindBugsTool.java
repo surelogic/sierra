@@ -136,7 +136,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
     
     public void finishArchive() {
-      System.out.println("Finished an archive");
+      //System.out.println("Finished an archive");
       monitor.worked(1);
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
     
     public void finishClass() {
-      System.out.println("Finished a class");
+      //System.out.println("Finished a class");
       monitor.worked(1);
     }
     
