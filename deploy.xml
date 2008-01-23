@@ -7,10 +7,13 @@
 		<jar destfile="../sierra-services/WebRoot/WEB-INF/lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
 		<jar destfile="../sierra-services/WebRoot/WEB-INF/lib/sierra-message.jar" basedir="../sierra-message/bin"></jar>
 		<war destfile="../jetty/webapps/sierra-services.war" basedir="../sierra-services/WebRoot" webxml="../sierra-services/WebRoot/WEB-INF/web.xml"></war>
+
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" basedir="../sierra-portal-rpc/bin"></jar>
 		<war destfile="../jetty/webapps/sierra-portal.war" webxml="../sierra-portal/web.xml">
-			<fileset dir="../sierra-portal/www" />
+			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
 			<classes dir="../sierra-portal/bin" />
-			<lib file="../sierra-portal/lib/gwt/gwt-servlet.jar" />
+			<lib dir="../sierra-portal/lib/web-dependencies" />
 		</war>
 	</target>
 </project>
