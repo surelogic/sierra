@@ -38,7 +38,7 @@ import com.surelogic.sierra.tool.message.Config;
  * @author ethan
  * 
  */
-public class Tools {
+public final class Tools {
 	private final static String PMD = "pmd";
 	private final static String FINDBUGS = "findbugs";
 	private final static String RECKONER = "reckoner";
