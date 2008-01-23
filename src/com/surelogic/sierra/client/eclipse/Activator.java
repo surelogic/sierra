@@ -113,6 +113,11 @@ public final class Activator extends AbstractUIPlugin {
 		try {
 			URL commonPathURL = FileLocator.resolve(relativeURL);
 			final String commonDirectory = commonPathURL.getPath();
+			if (commonDirectory.startsWith("file:") && 
+			    commonDirectory.endsWith(".jar!/")) {
+			  // Jar file
+			  return commonDirectory.substring(5, commonDirectory.length()-2);
+			}
 			return commonDirectory;
 		} catch (Exception e) {
 			throw new IllegalStateException(
