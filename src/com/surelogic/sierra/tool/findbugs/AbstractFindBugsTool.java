@@ -108,7 +108,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   
   protected abstract IFindBugsEngine createEngine();
   
-  class Screener implements IClassScreener {
+  static class Screener implements IClassScreener {
     public boolean matches(String fileName) {
       // TODO Auto-generated method stub
       return false;
