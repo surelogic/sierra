@@ -123,21 +123,17 @@ public class Server {
 	 */
 	public String getEmail() throws SQLException {
 		try {
+			final Statement st = conn.createStatement();
 			try {
-				final Statement st = conn.createStatement();
-				try {
-					final ResultSet set = st
-							.executeQuery("SELECT EMAIL FROM NOTIFICATION");
-					if (set.next()) {
-						return set.getString(1);
-					} else {
-						return null;
-					}
-				} finally {
-					st.close();
+				final ResultSet set = st
+						.executeQuery("SELECT EMAIL FROM NOTIFICATION");
+				if (set.next()) {
+					return set.getString(1);
+				} else {
+					return null;
 				}
 			} finally {
-				conn.close();
+				st.close();
 			}
 		} catch (SQLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
