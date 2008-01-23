@@ -83,6 +83,7 @@ public class LocalTool extends AbstractTool {
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
+      LOG.info("common = "+common);
       if (common.endsWith(".jar")) {
         path.add(new Path(proj, common)); // as plugin
       } else {
@@ -92,21 +93,28 @@ public class LocalTool extends AbstractTool {
       path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
 
       final String message = config.getPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID);
+      LOG.info("message = "+message);
       path.add(new Path(proj, message)); // as plugin
       path.add(new Path(proj, message+"/bin")); // in workspace
       path.add(new Path(proj, message+"/jax-ws/sjsxp.jar"));
       findJars(proj, path, message+"/jaxb");
 
       final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
+      LOG.info("pmd = "+pmd);
       findJars(proj, path, new File(pmd+"/lib"));
       final String fb = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
+      LOG.info("fb = "+fb);
       findJars(proj, path, new File(fb+"/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
                                        "reckoner/reckoner.jar").getAbsolutePath()));
       
+      LOG.info("Starting process:");
+      for(String arg : cmdj.getCommandline()) {
+        LOG.info("\t"+arg);
+      }
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
-      pb.redirectErrorStream(true);
+      pb.redirectErrorStream(true);      
       /*
       Map<String, String> env = pb.environment();
       env.put("VAR1", "myValue");
