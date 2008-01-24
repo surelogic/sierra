@@ -13,6 +13,17 @@
 		</war>
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" basedir="../sierra-portal-rpc/bin"></jar>
+		<path id="gwt.class.path">
+		 <pathelement path="${java.class.path}/"/>
+		 <pathelement location="../sierra-portal/src"/>
+		 <pathelement path="../sierra-portal/lib/gwt/gwt-user.jar"/>
+		 <pathelement path="../sierra-portal/lib/gwt/gwt-dev-linux.jar"/>
+		</path>
+		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.GWTCompiler" fork="true">
+			<arg value="-out"/>
+			<arg value="../sierra-portal/www"/>
+			<arg value="com.surelogic.sierra.gwt.SierraPortal"/>
+		</java>
 		<war destfile="../jetty/webapps/sierra-portal.war" webxml="../sierra-portal/web.xml">
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
 			<classes dir="../sierra-portal/bin" />
