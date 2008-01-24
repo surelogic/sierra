@@ -445,7 +445,7 @@ public class FindingTypeManager {
 			}
 			if (!uncategorizedFindings.isEmpty()) {
 				builder
-						.append("The following finding types do nat have an assigned category:\n");
+						.append("The following finding types do not have an assigned category:\n");
 				for (String s : uncategorizedFindings) {
 					builder.append(s);
 				}
