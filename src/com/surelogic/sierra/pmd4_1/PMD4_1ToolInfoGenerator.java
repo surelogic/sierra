@@ -29,7 +29,7 @@ public class PMD4_1ToolInfoGenerator extends AbstractPMDToolInfoGenerator {
     SAXParser sp = XMLUtil.createSAXParser();
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     String rulesetFilenames = getRulesetNames(log, cl.getResourceAsStream(
-                                                   "com/surelogic/sierra/pmd4_1/rulesets.properties"));
+                                                   "com/surelogic/sierra/pmd4_1/rulesets/rulesets.properties"));
 
 		for (StringTokenizer st = new StringTokenizer(rulesetFilenames, ","); st
 				.hasMoreTokens();) {
@@ -41,6 +41,6 @@ public class PMD4_1ToolInfoGenerator extends AbstractPMDToolInfoGenerator {
 	}
 
 	private PMD4_1ToolInfoGenerator(Connection conn) {
-    super(conn, "4.0");
+    super(conn, "4.1");
 	}
 }
