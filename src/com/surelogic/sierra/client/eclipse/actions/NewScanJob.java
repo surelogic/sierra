@@ -24,6 +24,8 @@ public class NewScanJob extends Job {
     super(name);
     config = cfg;
     afterJob = after;
+    setPriority(Job.DECORATE);
+    afterJob.setPriority(Job.DECORATE);
   }
   
   @Override
