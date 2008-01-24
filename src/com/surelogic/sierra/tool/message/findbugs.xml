@@ -1452,6 +1452,8 @@ thread.</p>]]>
 		<artifact tool="FindBugs"
 			mnemonic="ES_COMPARING_STRINGS_WITH_EQ">
 		</artifact>
+		<artifact tool="PMD"
+			mnemonic="UseEqualsToCompareStrings"/>				
 		<shortMessage>
 			Comparison of String objects using == or !=
 		</shortMessage>
@@ -6492,8 +6494,87 @@ thread.</p>]]>
 		<name>Maybe Source Value Reaches Never Sink</name>
 	</findingType>
 
+	<!-- For FB 1.3.1 -->
+	<findingType>
+		<id>BooleanMethodReturnsNull</id>
+		<artifact tool="FindBugs"
+			mnemonic="NP_BOOLEAN_RETURN_NULL">
+		</artifact>
+		<shortMessage>
+			Method with Boolean return type returns explicit null
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This method can be invoked as though it returned a value of type boolean, and
+	the compiler will insert automatic unboxing of the Boolean value. If a null value is returned,
+	this will result in a NullPointerException. &lt;/p&gt;
+
+		</info>
+		<name>Boolean-typed Method Returns Null</name>
+	</findingType>
+	<findingType>
+		<id>AppendingToObjectOutputStream</id>
+		<artifact tool="FindBugs"
+			mnemonic="IO_APPENDING_TO_OBJECT_OUTPUT_STREAM">
+		</artifact>
+		<shortMessage>
+			Appending to an ObjectOutputStream
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This code opens a file in append mode and that wraps the result in an object output stream. 
+     This won't allow you to append to an existing object output stream stored in a file. If you want to be
+     able to append to an object output stream, you need to keep the object output stream open. &lt;/p&gt;
+
+      &lt;p&gt; The only situation in which opening a file in append mode and the writing an object output stream
+      could work is if on reading the file you plan to open it in random access mode and seek to the byte offset
+      where the append started. &lt;/p&gt;
+
+		</info>
+		<name>Appending To ObjectOutputStream</name>
+	</findingType>
+	<findingType>
+		<id>FormatStringArgsMismatch</id>
+		<artifact tool="FindBugs"
+			mnemonic="VA_FORMAT_STRING_ARG_MISMATCH">
+		</artifact>
+		<shortMessage>
+      Number of format-string arguments does not correspond to number of placeholders
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; A format-string method with a variable number of arguments is called,
+      but the number of arguments passed does not match with the number of
+      % placeholders in the format string.  This is probably not what the
+      author intended.. &lt;/p&gt;
+
+		</info>
+		<name>Mismatch Of Number Of Args For Format String</name>
+	</findingType>
+	<findingType>
+		<id>InvokingToStringOnArray</id>
+		<artifact tool="FindBugs"
+			mnemonic="DMI_INVOKING_TOSTRING_ON_ANONYMOUS_ARRAY">
+		</artifact>
+		<shortMessage>
+      Invocation of toString() on an array
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; The code invokes toString on an array, which will generate a fairly useless result
+      such as [C@16f0472. Consider using Arrays.toString to convert the array into a readable
+      String that gives the contents of the array. 
+      See Programming Puzzlers, chapter 3, puzzle 12. &lt;/p&gt;
+
+		</info>
+		<name>Invocation Of toString() On Array</name>
+	</findingType>
+	
 	<category>
 		<id>Correctness</id>
+		<findingType>InvokingToStringOnArray</findingType>
+		<findingType>FormatStringArgsMismatch</findingType>
+		<findingType>AppendingToObjectOutputStream</findingType>
 		<findingType>VR_UNRESOLVABLE_REFERENCE</findingType>
 		<findingType>CaughtInfiniteLoop</findingType>
 		<findingType>CaughtInfiniteRecursiveLoop</findingType>
@@ -6743,6 +6824,7 @@ thread.</p>]]>
 		<findingType>WrongPackageIntentional</findingType>
 		<findingType>ReturnValueIgnoredBadPractice</findingType>
 		<findingType>BitSignedCheck</findingType>
+		<findingType>BooleanMethodReturnsNull</findingType>
 		<name>Bad practice</name>
 		<description>
 			Violations of recommended and essential coding practice.

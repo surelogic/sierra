@@ -3301,6 +3301,232 @@
 		<name>Empty Synchronized Block</name>
 		</findingType>
 	-->
+	
+	<!-- For PMD 4.1 -->
+	<findingType>
+		<id>AvoidUsingHardCodedIP</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidUsingHardCodedIP">
+		</artifact>
+		<shortMessage>Avoid using hard-coded IP address</shortMessage>
+		<info>
+
+			&lt;p&gt; An application with hard coded IP may become impossible to deploy in some cases. 
+			It never hurts to externalize IP addresses. &lt;/p&gt;
+			
+			&lt;p&gt; . &lt;/p&gt;
+
+		</info>
+		<name>Avoid Using Hardcoded IP Addresses</name>
+	</findingType>	
+	<findingType>
+		<id>CheckResultSet</id>
+		<artifact tool="PMD"
+			mnemonic="CheckResultSet">
+		</artifact>
+		<shortMessage>Check the return values from methods on ResultSet</shortMessage>
+		<info> &lt;p&gt; Always check the return value from calling 
+		       ResultSet.{next,previous,first,last}.  If the return value is 'false', 
+		       the developer should deal with it. &lt;/p&gt;
+		</info>
+		<name>Check Return Values from ResultSet Methods</name>
+	</findingType>		
+	<findingType>
+		<id>AvoidFinalLocalVariable</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidFinalLocalVariable">
+		</artifact>
+		<shortMessage>
+			Avoid using final local variables 
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; Instead, use fields. &lt;/p&gt;
+
+		</info>
+		<name>Avoid Final Local Variables</name>
+	</findingType>	
+	<findingType>
+		<id>AvoidUsingShortType</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidUsingShortType">
+		</artifact>
+		<shortMessage>
+			Avoid using the "short" type
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; Java uses the short type to reduce memory usage, not to optimize
+			calculation. On the contrary, the JVM does not has any arithmetic capabilities
+			with the "short" type, so it must convert the short into int, then do the proper 
+			calculation and then convert int back to short. Therefore, use of the "short" type
+			may actually take more time
+			&lt;/p&gt;
+
+		</info>
+		<name>Avoid Using Short Type</name>
+	</findingType>	
+	<findingType>
+		<id>AvoidUsingVolatile</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidUsingVolatile">
+		</artifact>
+		<shortMessage>
+			Avoid using "volatile" fields
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; The 'volatile' keyword is generally used to fine tune a concurrent Java 
+			application, and therefore, requires a expert knowledge of the Java Memory Model. 
+			Moreover, it is often misused. Therefore, the 'volatile'	keyword should not be used
+			for maintenance purposes and portability. 
+			&lt;/p&gt;
+
+		</info>
+		<name>Avoid Using Volatile Fields</name>
+	</findingType>	
+	<findingType>
+		<id>AvoidUsingNativeCode</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidUsingNativeCode">
+		</artifact>
+		<shortMessage>
+			Avoid using native code
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; 
+			The JVM and Java language allows for a wide range of functionality, so it should be
+      very rare to have to rely on non-Java code, and in particular, on the 
+      Java Native Interface (JNI).  Since the use of JNI often makes an application 
+      less portable, and harder to maintain, it is not recommended. &lt;/p&gt;
+
+		</info>
+		<name>Avoid Using Native Code</name>
+	</findingType>	
+	<findingType>
+		<id>AvoidAccessibilityAlteration</id>
+		<artifact tool="PMD"
+			mnemonic="AvoidAccessibilityAlteration">
+		</artifact>
+		<shortMessage>
+			Avoid changing class/method accessibility at runtime
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; 		
+			Methods in java.lang.reflect, such as getDeclaredConstructors(), 
+			getDeclaredConstructor(Class[]) and setAccessible(), allow someone to alter, 
+			at runtime, the accessibility of fields, classes, or methods, even if they 
+			are private. &lt;/p&gt;
+
+		</info>
+		<name>Avoid Changing Class/Method Accessibility At Runtime</name>
+	</findingType>	
+	<findingType>
+		<id>ClassWithOnlyPrivateConstructorsShouldBeFinal</id>
+		<artifact tool="PMD"
+			mnemonic="ClassWithOnlyPrivateConstructorsShouldBeFinal">
+		</artifact>
+		<shortMessage>
+			A class which only has private constructors should be final
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; A class with only private constructors should be final, 
+			unless the private constructor is called by a inner class. &lt;/p&gt;
+
+		</info>
+		<name>Class With Only Private Constructors Should Be Final</name>
+	</findingType>	
+	<findingType>
+		<id>EmptyMethodInAbstractClassShouldBeAbstract</id>
+		<artifact tool="PMD"
+			mnemonic="EmptyMethodInAbstractClassShouldBeAbstract">
+		</artifact>
+		<shortMessage>
+			An empty method in an abstract class should instead be abstract
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; An empty method in an abstract class should instead be abstract,
+			as developer may rely on this empty implementation, rather than code an 
+			appropriate one. 
+			&lt;/p&gt;
+
+		</info>
+		<name>Empty Method In Abstract Class Should Be Abstract</name>
+	</findingType>	
+	<findingType>
+		<id>TooManyStaticImports</id>
+		<artifact tool="PMD"
+			mnemonic="TooManyStaticImports">
+		</artifact>
+		<shortMessage>
+			Too many static imports may lead to messy code
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; If you overuse the static import feature, it can make your program
+			unreadable and unmaintainable, polluting its namespace with all the static 
+			members you import.  Readers of your code (including you, a few months after
+			you wrote it) will not know which class a static member comes from (Sun 1.5 
+			Language Guide). 
+			&lt;/p&gt;
+
+		</info>
+		<name>Too Many Static Imports</name>
+	</findingType>	
+	<findingType>
+		<id>DoNotCallSystemExit</id>
+		<artifact tool="PMD"
+			mnemonic="DoNotCallSystemExit">
+		</artifact>
+		<shortMessage>
+			System.exit() should not be used in J2EE/JEE apps
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; Web applications should not call System.exit(), 
+			since only the web container or the application server should stop the JVM. &lt;/p&gt;
+
+		</info>
+		<name>Do Not Call System.exit()</name>
+	</findingType>	
+	<findingType>
+		<id>StaticEJBFieldShouldBeFinal</id>
+		<artifact tool="PMD"
+			mnemonic="StaticEJBFieldShouldBeFinal">
+		</artifact>
+		<shortMessage>
+			EJB's shouldn't have non-final static fields
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; According to the J2EE specification (p.494), an EJB should not have
+			any static fields with write access. However, static read-only fields are allowed. 
+			This ensures proper behavior, especially when instances are distributed by the 
+			container on several JREs.. &lt;/p&gt;
+
+		</info>
+		<name>Static EJB Fields Should Be Final</name>
+	</findingType>	
+	<findingType>
+		<id>DoNotUseThreads</id>
+		<artifact tool="PMD"
+			mnemonic="DoNotUseThreads">
+		</artifact>
+		<shortMessage>
+			To be J2EE-compliant, a web app should not use any threads
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; The J2EE specification explicitly forbid use of threads. &lt;/p&gt;
+
+		</info>
+		<name>Do Not Use Threads</name>
+	</findingType>	
+
 	<category>
 		<id>Basic Rules</id>
 		<findingType>EmptyCatchBlock</findingType>
@@ -3335,6 +3561,8 @@
 		<findingType>BrokenNullCheck</findingType>
 		<findingType>BigIntegerInstantiation</findingType>
 		<findingType>AvoidUsingOctalValues</findingType>
+		<findingType>AvoidUsingHardCodedIP</findingType>
+		<findingType>CheckResultSet</findingType>
 		<name>Basic Rules</name>
 		<description>
 			The Basic Ruleset contains a collection of good practices
@@ -3354,7 +3582,8 @@
 	</category>
 	<category>
 		<id>Clone Implementation Rules</id>
-		<!-- DUP <findingType>ProperCloneImplementation</findingType> -->
+		<!-- DUP <findingType>ProperCloneImplementation<
+		/findingType> -->
 		<findingType>CloneThrowsCloneNotSupportedException</findingType>
 		<!-- DUP <findingType>CloneMethodMustImplementCloneable</findingType>-->
 		<name>Clone Implementation Rules</name>
@@ -3397,6 +3626,11 @@
 		<findingType>DefaultPackage</findingType>
 		<findingType>BooleanInversion</findingType>
 		<findingType>DataflowAnomalyAnalysis</findingType>
+		<findingType>AvoidAccessibilityAlteration</findingType>
+		<findingType>AvoidFinalLocalVariable</findingType>
+		<findingType>AvoidUsingNativeCode</findingType>
+		<findingType>AvoidUsingShortType</findingType>
+		<findingType>AvoidUsingVolatile</findingType>
 		<name>Controversial Rules</name>
 		<description>
 			The Controversial Ruleset contains rules that, for whatever
@@ -3464,6 +3698,8 @@
 		<findingType>UnsynchronizedStaticDateFormatter</findingType>
 		<findingType>PreserveStackTrace</findingType>
 		<findingType>UseCollectionIsEmpty</findingType>
+		<findingType>ClassWithOnlyPrivateConstructorsShouldBeFinal</findingType>
+		<findingType>EmptyMethodInAbstractClassShouldBeAbstract</findingType>
 		<name>Design Rules</name>
 		<description>
 			The Design Ruleset contains a collection of rules that find
@@ -3490,6 +3726,7 @@
 		<findingType>DontImportJavaLang</findingType>
 		<findingType>UnusedImports</findingType>
 		<findingType>ImportFromSamePackage</findingType>
+		<findingType>TooManyStaticImports</findingType>
 		<name>Import Statement Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
@@ -3506,6 +3743,9 @@
 		<findingType>LocalInterfaceSessionNamingConvention</findingType>
 		<findingType>LocalHomeNamingConvention</findingType>
 		<findingType>RemoteInterfaceNamingConvention</findingType>
+		<findingType>DoNotCallSystemExit</findingType>
+		<findingType>DoNotUseThreads</findingType>
+		<findingType>StaticEJBFieldShouldBeFinal</findingType>
 		<name>J2EE Rules</name>
 		<description>These are rules for J2EE</description>
 	</category>
