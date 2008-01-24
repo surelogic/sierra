@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PMD Plugin for Sierra
 Bundle-SymbolicName: com.surelogic.sierra.pmd
-Bundle-Version: 4.0.0.qualifier
+Bundle-Version: 4.1.0.qualifier
 Bundle-ClassPath: lib/jaxen-1.1.jar,
- lib/pmd-4.0-sl.jar,
+ lib/pmd-4.1-sl.jar,
  .
 Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.ant,
@@ -48,3 +48,4 @@ Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.util.viewer.gui.menu,
  net.sourceforge.pmd.util.viewer.model,
  net.sourceforge.pmd.util.viewer.util
+Require-Bundle: org.junit4
