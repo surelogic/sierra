@@ -8,6 +8,7 @@ public final class SierraToolConstants {
 	 * If running in the client, these reference some plug-in identifiers that
 	 * have no activator
 	 */
+  public static final String JUNIT_PLUGIN_ID = "org.junit4";
 	public static final String COMMON_PLUGIN_ID = "com.surelogic.common";
 	public static final String MESSAGE_PLUGIN_ID = "com.surelogic.sierra.message";
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
