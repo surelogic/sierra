@@ -44,9 +44,10 @@ public class ServerInfo implements Serializable {
 	 */
 	static ServerInfo getDefault() {
 		ServerInfo info = new ServerInfo();
-		info.setAvailableVersion("");
-		info.setCurrentVersion("");
-		info.setEmail("");
+		final String waiting = "Waiting...";
+		info.setAvailableVersion(waiting);
+		info.setCurrentVersion(waiting);
+		info.setEmail(waiting);
 		return info;
 	}
 
