@@ -121,6 +121,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     public boolean matches(String fileName) {
       // TODO Auto-generated method stub
       return false;
+    }
+
+    public boolean vacuous() {
+      return true;
     }  
   }
   
