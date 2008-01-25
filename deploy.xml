@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="deploy-app" name="server-deployment" >
+<project default="jetty-java-5-deployment" name="server-deployment" >
 	<description>Jetty web deployment file</description>
+	
+	<target name="jetty-java-5-deployment" depends="deploy-app,deploy-java-5-libs"></target>
+	<target name="jetty-java-6-deployment" depends="deploy-app"></target>
+	
+	<target name="deploy-java-5-libs">
+		<copy todir="../jetty/lib/ext/">
+			<fileset dir="../sierra-message/jaxb"></fileset>
+		</copy>
+	</target>
+	
 	<target name="deploy-app">
 		<mkdir dir="../jetty/logs"/>
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/"></copy>
