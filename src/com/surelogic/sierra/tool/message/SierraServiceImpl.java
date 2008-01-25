@@ -21,7 +21,7 @@ import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.user.User;
+import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.message.srpc.SRPCServlet;
 
 /**
@@ -42,19 +42,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(SierraServiceImpl.class);
-
-	JAXBContext ctx;
-
-	@PostConstruct
-	public void init() {
-		try {
-			ctx = JAXBContext.newInstance(Settings.class);
-		} catch (JAXBException e) {
-			log.log(Level.SEVERE,
-					"An error occurred while initializing a web service bean.",
-					e);
-		}
-	}
 
 	public SettingsReply getSettings(SettingsRequest request)
 			throws ServerMismatchException {
@@ -138,10 +125,8 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 							response.setRevision(revision);
 							response.setUid(ServerFindingManager.getInstance(
 									conn).commitAuditTrails(
-									User
-											.getUser(getUserName(),
-													conn).getId(), revision,
-									trails));
+									ClientUser.getUser(getUserName(), conn)
+											.getId(), revision, trails));
 							return response;
 						}
 					});
