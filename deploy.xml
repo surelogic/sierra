@@ -3,6 +3,7 @@
 	<description>Jetty web deployment file</description>
 	<target name="deploy-app">
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/"></copy>
+		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/"></copy>
 		<jar destfile="../jetty/lib/ext/common.jar" basedir="../common/bin"></jar>
 		<jar destfile="../sierra-services/lib/web-dependencies/common.jar" basedir="../common/bin"></jar>
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
