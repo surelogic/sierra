@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jetty-java-5-deployment" name="jetty-java-5" >
-	<import file="deploy.xml" />
+	<import file="lib/deploy.xml" />
 
 	<target name="deploy-java-5-libs">
 		<copy todir="../jetty/lib/ext/">
