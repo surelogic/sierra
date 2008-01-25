@@ -95,7 +95,7 @@ public class ServerConnection {
 				try {
 					conn.rollback();
 				} catch (SQLException e1) {
-					log.log(Level.WARNING, e.getMessage(), e);
+					log.log(Level.WARNING, e1.getMessage(), e1);
 				}
 			}
 			exceptionNotify(t.getUserName(), e.getMessage(), e);
