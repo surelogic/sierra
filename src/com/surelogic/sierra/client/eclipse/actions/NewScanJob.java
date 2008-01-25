@@ -2,6 +2,8 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.util.logging.Logger;
 
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -13,7 +15,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 
-public class NewScanJob extends Job {
+public class NewScanJob extends WorkspaceJob {
   /** The logger */
   protected static final Logger LOG = SLLogger.getLogger("sierra");
   
@@ -24,12 +26,13 @@ public class NewScanJob extends Job {
     super(name);
     config = cfg;
     afterJob = after;
-    setPriority(Job.DECORATE);
+    setPriority(Job.DECORATE);    
+    setRule(new ResourceRuleFactory() {/* Nothing to do here */}.buildRule());
     afterJob.setPriority(Job.DECORATE);
   }
   
   @Override
-  protected IStatus run(IProgressMonitor monitor) {
+  public IStatus runInWorkspace(IProgressMonitor monitor) {
     LOG.info(this.getName());
     final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
     try {            
