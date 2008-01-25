@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jetty-java-5-deployment" name="jetty-java-5" >
 	<import file="deploy.xml" />
+
+	<target name="deploy-java-5-libs">
+		<copy todir="../jetty/lib/ext/">
+			<fileset dir="../sierra-message/jaxb"></fileset>
+		</copy>
+	</target>
+	
 	<target name="jetty-java-5-deployment" depends="deploy-app,deploy-java-5-libs"></target>
 </project>

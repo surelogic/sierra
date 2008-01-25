@@ -2,12 +2,6 @@
 <project name="server-deployment" >
 	<description>Base Jetty web deployment file</description>
 	
-	<target name="deploy-java-5-libs">
-		<copy todir="../jetty/lib/ext/">
-			<fileset dir="../sierra-message/jaxb"></fileset>
-		</copy>
-	</target>
-	
 	<target name="deploy-app">
 		<mkdir dir="../jetty/logs"/>
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/"></copy>
