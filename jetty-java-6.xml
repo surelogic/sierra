@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="jetty-java-6-deployment" name="jetty-java-6" >
+	<import file="deploy.xml" />
+	<target name="jetty-java-6-deployment" depends="deploy-app"></target>
+</project>
