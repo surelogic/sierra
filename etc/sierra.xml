@@ -2,10 +2,14 @@
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 
 <!-- =============================================================== -->
-<!-- Configure the Jetty Server                                      -->
+<!-- Configure the Jetty Server for the Sierra Team Server           -->
 <!--                                                                 -->
 <!-- Documentation of this file format can be found at:              -->
 <!-- http://docs.codehaus.org/display/JETTY/jetty.xml                -->
+<!--                                                                 -->
+<!--                                                                 -->
+<!--   DO NOT AUTOFORMAT THIS FILE IN ECLIPSE AS WHITESPACE MATTERS  -->
+<!--   TO DERBY (SETs)                                               -->
 <!--                                                                 -->
 <!-- =============================================================== -->
 
@@ -226,18 +230,28 @@
 	<!-- =========================================================== -->
 	<!-- BEGIN SIERRA APP CONFIGURATION                              -->
 	<!-- =========================================================== -->
-	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
+	<!-- <New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
 		<Arg>jdbc/Sierra</Arg>
 		<Arg>
 			<New class="org.apache.derby.jdbc.ClientDataSource">
-      			<Set name="serverName">localhost</Set>
+				<Set name="serverName">localhost</Set>
 				<Set name="portNumber">1527</Set>
 				<Set name="databaseName">SIERRA</Set>
 				<Set name="user">SIERRA</Set>
-    		</New>
+			</New>
+		</Arg>
+	</New> -->
+
+	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>jdbc/Sierra</Arg>
+		<Arg>
+			<New class="org.apache.derby.jdbc.EmbeddedDataSource">
+				<Set name="DatabaseName"><SystemProperty name="user.home" /><SystemProperty name="file.separator" />Sierra<SystemProperty name="file.separator" />Server<SystemProperty name="file.separator" />db</Set>
+				<Set name="createDatabase">create</Set>
+			</New>
 		</Arg>
 	</New>
-	
+
 	<!-- Transaction handler                                         -->
 	<New id="SierraTH" class="org.mortbay.jetty.plus.naming.Resource">
 		<Arg>SierraTransactionHandler</Arg>
