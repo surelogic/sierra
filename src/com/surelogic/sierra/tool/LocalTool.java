@@ -80,6 +80,7 @@ public class LocalTool extends AbstractTool {
       
       CommandlineJava cmdj   = new CommandlineJava();
       cmdj.setMaxmemory("1024m");
+      cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");      
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
