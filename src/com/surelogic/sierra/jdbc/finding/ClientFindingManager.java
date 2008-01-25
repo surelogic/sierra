@@ -456,6 +456,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ " exists in the database");
 			}
 			Long projectId = scan.getProjectId();
+      int total = 0;
 			for (Entry<String, List<String>> packageCompilations : compilations
 					.entrySet()) {
 				final String pakkage = packageCompilations.getKey();
@@ -528,11 +529,12 @@ public final class ClientFindingManager extends FindingManager {
 						result.close();
 					}
 				}
+        total += counter;
 			}
 			conn.commit();
 			generatePartialScanOverview(scan.getId(), scanFindingIds);
 			regenerateFindingsOverview(projectName, previousFindingIds, monitor);
-			log.info("All new findings persisted for scan " + uid
+			log.info("All new findings ("+total+") persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {
 			sqlError(e);

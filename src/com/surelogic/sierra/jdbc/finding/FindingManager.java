@@ -128,8 +128,8 @@ public class FindingManager {
 			Long projectId = scan.getProjectId();
 			scanArtifacts.setLong(1, scan.getId());
 			ResultSet result = scanArtifacts.executeQuery();
+      int counter = 0;
 			try {
-				int counter = 0;
 				while (result.next()) {
 					ArtifactResult art = new ArtifactResult();
 					int idx = 1;
@@ -187,7 +187,7 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-			log.info("All new findings persisted for scan " + uid
+			log.info("All new findings ("+counter+") persisted for scan " + uid
 					+ " in project " + projectName + ".");
 		} catch (SQLException e) {
 			sqlError(e);
