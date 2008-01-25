@@ -2,6 +2,7 @@
 <project default="deploy-app" name="server-deployment" >
 	<description>Jetty web deployment file</description>
 	<target name="deploy-app">
+		<mkdir dir="../jetty/logs"/>
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/"></copy>
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/"></copy>
 		<jar destfile="../jetty/lib/ext/common.jar" basedir="../common/bin"></jar>
@@ -14,6 +15,7 @@
 			<lib dir="../sierra-services/lib/web-dependencies" />
 		</war>
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin"></jar>
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin"></jar>		
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" basedir="../sierra-portal-rpc/bin"></jar>
 		<path id="gwt.class.path">
 		 <pathelement path="${java.class.path}/"/>
