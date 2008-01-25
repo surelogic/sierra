@@ -57,7 +57,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 		ServerConnection.withTransaction(new WebTransaction<Object>() {
 
-			@Override
 			public Object perform(Connection conn, Server server)
 					throws SQLException {
 				final String uid = scan.getUid();
@@ -73,7 +72,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
 				ServerConnection.delayTransaction(new WebTransaction<Object>() {
-					@Override
+
 					public Object perform(Connection conn, Server server)
 							throws SQLException {
 						ServerFindingManager fm = ServerFindingManager
@@ -92,7 +91,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	public Qualifiers getQualifiers(QualifierRequest request) {
 		return ServerConnection.withReadOnly(new WebTransaction<Qualifiers>() {
 
-			@Override
 			public Qualifiers perform(Connection conn, Server server)
 					throws SQLException {
 				Qualifiers q = new Qualifiers();
@@ -111,7 +109,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			final CommitAuditTrailResponse response = ServerConnection
 					.withTransaction(new WebTransaction<CommitAuditTrailResponse>() {
 
-						@Override
 						public CommitAuditTrailResponse perform(
 								Connection conn, Server server)
 								throws SQLException {
@@ -141,7 +138,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		return ServerConnection
 				.withReadOnly(new WebTransaction<AuditTrailResponse>() {
 
-					@Override
 					public AuditTrailResponse perform(Connection conn,
 							Server server) throws SQLException {
 						AuditTrailResponse response = new AuditTrailResponse();
@@ -176,7 +172,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		return ServerConnection
 				.withTransaction(new WebTransaction<MergeAuditTrailResponse>() {
 
-					@Override
 					public MergeAuditTrailResponse perform(Connection conn,
 							Server server) throws SQLException {
 						final MergeAuditTrailResponse response = new MergeAuditTrailResponse();
@@ -194,7 +189,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		ServerUIDReply reply = new ServerUIDReply();
 		reply.setUid(ServerConnection
 				.withReadOnly(new WebTransaction<String>() {
-					@Override
+
 					public String perform(Connection conn, Server server)
 							throws SQLException {
 						return server.getUid();
@@ -207,7 +202,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		return ServerConnection
 				.withReadOnly(new WebTransaction<GlobalSettings>() {
 
-					@Override
 					public GlobalSettings perform(Connection conn, Server server)
 							throws SQLException {
 						final GlobalSettings settings = new GlobalSettings();
@@ -220,7 +214,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	public void writeGlobalSettings(final GlobalSettings settings) {
 		ServerConnection.withTransaction(new WebTransaction<Object>() {
-			@Override
+
 			public Object perform(Connection conn, Server server)
 					throws SQLException {
 				SettingsManager.getInstance(conn).writeGlobalSettings(
@@ -238,7 +232,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			userName = getCurrentPrincipal().getName();
 		}
 
-		@Override
 		public String getUserName() {
 			return userName;
 		}
