@@ -4,12 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
