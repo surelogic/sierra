@@ -62,7 +62,9 @@ public abstract class SierraChartServlet extends HttpServlet {
 							getHeight(parameterMap), true, 9);
 					return null;
 				} catch (IOException e) {
-					throw new SQLException(e);
+					SQLException sqle = new SQLException();
+					sqle.initCause(e);
+					throw sqle;
 				}
 			}
 		});
