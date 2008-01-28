@@ -33,16 +33,13 @@ public abstract class SRPCServlet extends HttpServlet {
 
 	protected final Logger log = SLLogger.getLoggerFor(this.getClass());
 
-	private final ThreadLocal<Principal> principal = new ThreadLocal<Principal>();
+	private final ThreadLocal<HttpServletRequest> localRequest = new ThreadLocal<HttpServletRequest>();
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			final Principal p = req.getUserPrincipal();
-			if (p != null) {
-				principal.set(p);
-			}
+			localRequest.set(req);
 			final Encoding codec = getEncoding(req.getContentType());
 			ResponseStatus status;
 			Object response;
@@ -76,7 +73,7 @@ public abstract class SRPCServlet extends HttpServlet {
 			// failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
-			principal.remove();
+			localRequest.remove();
 		}
 	}
 
@@ -86,7 +83,7 @@ public abstract class SRPCServlet extends HttpServlet {
 	 * @return
 	 */
 	protected Principal getCurrentPrincipal() {
-		return principal.get();
+		return (Principal)localRequest.get().getAttribute("SierraUser");
 	}
 
 	private Encoding getEncoding(String contentType) throws SRPCException {
