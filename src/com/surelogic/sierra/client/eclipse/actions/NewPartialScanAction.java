@@ -4,17 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.logging.SLLogger;
 
 /**
@@ -25,7 +37,6 @@ import com.surelogic.common.logging.SLLogger;
  */
 public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 		IEditorActionDelegate {
-	private static final String NOT_IN_CLASSPATH = "This compilation unit is not in the classpath of the project, please include it in the class path and try again";
 	private IStructuredSelection f_currentSelection = null;
 	private IEditorPart f_currentEditor = null;
 
@@ -51,7 +62,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 		 */
 		if (f_currentEditor != null) {
 			try {
-				IFile file = ((FileEditorInput) (f_currentEditor
+				final IFile file = ((FileEditorInput) (f_currentEditor
 						.getEditorInput())).getFile();
 				ICompilationUnit compilationUnit = JavaCore
 						.createCompilationUnitFrom(file);
@@ -86,18 +97,30 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 					PlatformUI.getWorkbench().getDisplay().asyncExec(
 							new Runnable() {
 								public void run() {
-									MessageDialog.openInformation(Display
-											.getCurrent().getActiveShell(),
-											"Sierra", NOT_IN_CLASSPATH);
+									final StringBuilder msg = new StringBuilder();
+									msg.append("The compilation unit ");
+									msg.append(file.getName());
+									msg.append(" is not in the classpath of");
+									msg.append(" the project, please include");
+									msg.append(" it in the class path and");
+									msg.append(" re-scan it again.");
+									final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+											PlatformUI.getWorkbench()
+													.getActiveWorkbenchWindow()
+													.getShell(),
+											"Not in Classpath", null, msg
+													.toString(), null,
+											Activator.getDefault());
+									report.open();
 								}
 							});
 				}
 			} catch (JavaModelException jme) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when trying to get compilation unit for class",
 						jme);
 			} catch (CoreException ce) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when trying to get compilation unit for class",
 						ce);
 			}
@@ -142,7 +165,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 
 		if ((f_currentEditor != null || f_currentSelection != null)
 				&& inClassPath) {
-		  new NewPartialScan().scan(selectedCompilationUnits);		
+			new NewPartialScan().scan(selectedCompilationUnits);
 		}
 	}
 
