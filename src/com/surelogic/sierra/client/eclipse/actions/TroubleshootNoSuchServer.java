@@ -1,8 +1,9 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 public final class TroubleshootNoSuchServer extends TroubleshootConnection {
@@ -39,9 +40,12 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 				b.append(" \u25CF Fix the location settings for '");
 				b.append(getServer().getLabel());
 				b.append("' so that they are correct.");
-				MessageDialog.openError(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						"Sierra Team Server Connection Failed", b.toString());
+				final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getShell(),
+						"Sierra Team Server Connection Failed", null, b
+								.toString(), null, Activator.getDefault());
+				report.open();
 			}
 		});
 		/*

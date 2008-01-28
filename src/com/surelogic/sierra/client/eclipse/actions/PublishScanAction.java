@@ -2,9 +2,10 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -42,7 +43,10 @@ public final class PublishScanAction extends AbstractWebServiceMenuAction {
 			b.append(projectName);
 			b.append("'.");
 
-			MessageDialog.openError(shell, "No Scan Exists", b.toString());
+			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+					shell, "No Scan Exists", null, b.toString(), null,
+					Activator.getDefault());
+			report.open();
 		}
 	}
 }

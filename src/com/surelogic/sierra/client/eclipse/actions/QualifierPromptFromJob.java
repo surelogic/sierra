@@ -3,10 +3,11 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
 
 /**
@@ -53,11 +54,12 @@ public final class QualifierPromptFromJob {
 					b.append(" \u25CF Login to the Sierra team server '");
 					b.append(f_serverLabel);
 					b.append("' and create a qualifier.");
-					MessageDialog
-							.openError(PlatformUI.getWorkbench()
+					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+							PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getShell(),
-									"No Qualifiers on Sierra Team Server", b
-											.toString());
+							"No Qualifiers on Sierra Team Server", null, b
+									.toString(), null, Activator.getDefault());
+					report.open();
 					f_canceled = true; // bail out
 				} else {
 					QualifierSelectionDialog dialog = new QualifierSelectionDialog(

@@ -1,8 +1,9 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 public final class TroubleshootWrongServer extends TroubleshootConnection {
@@ -43,10 +44,12 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 				b.append("' so that they point the the Sierra team server");
 				b.append(" that the project has previously");
 				b.append(" exchanged data with.");
-				MessageDialog.openError(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						"Connected to the Wrong Sierra Team Server", b
-								.toString());
+				final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getShell(),
+						"Connected to the Wrong Sierra Team Server", null, b
+								.toString(), null, Activator.getDefault());
+				report.open();
 			}
 		});
 		/*
