@@ -15,6 +15,7 @@ import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
 public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   NewPartialScan() {
@@ -55,6 +56,10 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
       ScanDocumentUtility.loadPartialScanDocument(config.getConfig().getScanDocument(),
                                                   wrapper, config.getConfig().getProject(),
                                                   config.getPackageCompilationUnitMap());
+      
+      /* Notify that scan was completed */
+      DatabaseHub.getInstance().notifyScanLoaded();  
+      
       if (wrapper.isCanceled()) {
         return Status.CANCEL_STATUS;
       } else {
