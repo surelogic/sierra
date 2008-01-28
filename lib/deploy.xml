@@ -19,7 +19,7 @@
 		</war>
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
-		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" basedir="../sierra-portal-rpc/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
 		<path id="gwt.class.path">
 			<pathelement path="${java.class.path}/" />
 			<pathelement location="../sierra-portal/src" />
@@ -50,7 +50,7 @@
 		<delete quiet="true" file="../jetty/webapps/sierra-services.war" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
-		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" />
 		<delete quiet="true" includeemptydirs="true">
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" includes="**/*" />
 		</delete>
