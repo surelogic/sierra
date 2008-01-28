@@ -206,7 +206,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       SourceLocations locations = computeSourceLocations(bug);
       final SourceLineAnnotation primary = locations.getPrimary();
       if (primary != null) {
-        SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
+        final SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
         MethodAnnotation method = locations.getPrimaryMethod();    
         if (method != null && method.getSourceLines() == primary) {
           sourceLocation.type(IdentifierType.METHOD);
@@ -228,8 +228,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             }
           }
         } 
-        sourceLocation = setupSourceLocation(primary, sourceLocation);        
-        sourceLocation.build();
+        SourceLocationBuilder sourceLocation2 = setupSourceLocation(primary, sourceLocation);     
+        if (sourceLocation2 != null) {
+          sourceLocation2.build();
+        } else {
+          return;
+        }
       } else {
         throw new IllegalArgumentException("No primary location for "+bug);
       }
