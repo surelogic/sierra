@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.user;
 
 import java.io.Serializable;
+import java.security.Principal;
 
 /**
  * Represents a sierra database user.
@@ -8,9 +9,7 @@ import java.io.Serializable;
  * @author nathan
  * 
  */
-public interface User extends Serializable {
-
-	String getUserName();
+public interface User extends Serializable, Principal {
 
 	long getId();
 

@@ -44,7 +44,8 @@ public class ServerUserManager {
 	 * 
 	 * @param userName
 	 * @param password
-	 * @return a valid User object if the login is successful, <code>null</code> if not
+	 * @return a valid User object if the login is successful, <code>null</code>
+	 *         if not
 	 * @throws SQLException
 	 */
 	public User login(String userName, String password) throws SQLException {
@@ -163,8 +164,37 @@ public class ServerUserManager {
 			return id;
 		}
 
-		public String getUserName() {
+		public String getName() {
 			return userName;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (id ^ (id >>> 32));
+			result = prime * result
+					+ ((userName == null) ? 0 : userName.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final ServerUser other = (ServerUser) obj;
+			if (id != other.id)
+				return false;
+			if (userName == null) {
+				if (other.userName != null)
+					return false;
+			} else if (!userName.equals(other.userName))
+				return false;
+			return true;
 		}
 
 	}

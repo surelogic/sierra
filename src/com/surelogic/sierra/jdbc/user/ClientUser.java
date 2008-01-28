@@ -14,8 +14,8 @@ public class ClientUser implements User {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5440911229476307762L;	
-	
+	private static final long serialVersionUID = -5440911229476307762L;
+
 	private final long id;
 	private final String userName;
 
@@ -28,8 +28,37 @@ public class ClientUser implements User {
 		return id;
 	}
 
-	public String getUserName() {
+	public String getName() {
 		return userName;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result
+				+ ((userName == null) ? 0 : userName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ClientUser other = (ClientUser) obj;
+		if (id != other.id)
+			return false;
+		if (userName == null) {
+			if (other.userName != null)
+				return false;
+		} else if (!userName.equals(other.userName))
+			return false;
+		return true;
 	}
 
 	public static User getUser(String userName, Connection conn)
