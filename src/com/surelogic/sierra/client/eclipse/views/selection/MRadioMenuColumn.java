@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
@@ -13,9 +12,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -133,10 +134,14 @@ public final class MRadioMenuColumn extends MColumn implements
 					final String msg = "Applying the '"
 							+ filter.getFactory().getFilterLabel()
 							+ "' filter to the current selection failed (bug).";
-					ErrorDialog.openError(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell(),
-							"Selection Error", msg, SLStatus.createErrorStatus(
-									"Initialization of the filter failed.", e));
+					final ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getShell(),
+							"Selection Error", null, msg,
+							SLStatus.createErrorStatus(
+									"Initialization of the filter failed.", e),
+							Activator.getDefault());
+					dialog.open();
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
 				}
 			});
