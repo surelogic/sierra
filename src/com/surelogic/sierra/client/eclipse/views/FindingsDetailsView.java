@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -14,12 +13,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
@@ -34,6 +34,8 @@ import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsDetailsView extends ViewPart {
@@ -192,8 +194,12 @@ public class FindingsDetailsView extends ViewPart {
 		try {
 			detailsText = new Browser(description, SWT.NONE);
 		} catch (SWTError e) {
-			MessageDialog.openError(Display.getCurrent().getActiveShell(),
-					"Browser Failure", "Browser cannot be initialized.");
+			final Shell shell = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell();
+			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+					shell, "Browser Failure", null,
+					"Browser cannot be initialized.", e, Activator.getDefault());
+			report.open();
 		}
 		synopsisTab.setControl(synopsisPane);
 

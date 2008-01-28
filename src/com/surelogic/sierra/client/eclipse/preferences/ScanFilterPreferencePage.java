@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.HTMLPrinter;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -250,8 +251,12 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		try {
 			f_detailsText = new Browser(description, SWT.NONE);
 		} catch (SWTError e) {
-			MessageDialog.openError(Display.getCurrent().getActiveShell(),
-					"Browser Failure", "Browser cannot be initialized.");
+			final Shell shell = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell();
+			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+					shell, "Browser Failure", null,
+					"Browser cannot be initialized.", e, Activator.getDefault());
+			report.open();
 		}
 		clearHTMLDescription();
 

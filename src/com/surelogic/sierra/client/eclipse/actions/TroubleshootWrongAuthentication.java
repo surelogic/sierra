@@ -9,7 +9,8 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
-	public TroubleshootWrongAuthentication(SierraServer server, String projectName) {
+	public TroubleshootWrongAuthentication(SierraServer server,
+			String projectName) {
 		super(server, projectName);
 	}
 

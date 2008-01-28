@@ -14,7 +14,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -83,8 +85,14 @@ public final class DeleteProjectDataJob {
 										final String msg = "Deletion of Sierra data about projects "
 												+ f_projectNames
 												+ " failed. All exceptions have been logged to the Eclipse 'Error Log'";
-										MessageDialog.openError(shell,
-												"Failure", msg);
+										final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+												PlatformUI
+														.getWorkbench()
+														.getActiveWorkbenchWindow()
+														.getShell(), "Failure",
+												null, msg.toString(), null,
+												Activator.getDefault());
+										report.open();
 									}
 								});
 					}
