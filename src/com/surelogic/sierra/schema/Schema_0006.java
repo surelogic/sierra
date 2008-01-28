@@ -10,6 +10,5 @@ public class Schema_0006 implements SchemaAction {
 
 	public void run(Connection conn) throws SQLException {
 		FindBugs1_3_0ToolInfoGenerator.generateTool(conn);
-		conn.commit();
 	}
 }

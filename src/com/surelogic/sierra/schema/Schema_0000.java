@@ -16,7 +16,6 @@ public class Schema_0000 implements SchemaAction {
 		PMD4_0ToolInfoGenerator.generateTool(conn);
 		FindBugs1_2_1ToolInfoGenerator.generateTool(conn);
 		Checkstyle4_3ToolInfoGenerator.generateTool(conn);
-		conn.commit();
 	}
 
 }

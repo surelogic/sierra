@@ -66,7 +66,6 @@ public class Schema_0002 implements SchemaAction {
 		} finally {
 			set.close();
 		}
-		c.commit();
 	}
 
 }
