@@ -4,6 +4,8 @@
 
 	<target name="deploy-app">
 		<!-- Update undeploy-app with any changes made to the deployment -->
+		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
+		<copy file="./etc/sierraRealm.properties" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
 		<jar destfile="../jetty/lib/ext/common.jar" basedir="../common/bin" />
@@ -37,6 +39,8 @@
 	</target>
 
 	<target name="undeploy-app">
+		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
+		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />
 		<delete quiet="true" file="../jetty/lib/ext/derby.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/common.jar" />
