@@ -202,44 +202,43 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       }
       stats.addBug(bug);
       
-      final SourceLineAnnotation line = computePrimarySourceLocation(bug);
-      final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
-      if (path == null) {
-        // No identifiable source location
-        logError("Couldn't find source file for "+line.getClassName());
-        return;
-      }
-      
       ArtifactBuilder artifact = generator.artifact();
-      SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();  
-
-      sourceLocation.packageName(line.getPackageName());
-      sourceLocation.compilation(line.getSourceFile());
-      sourceLocation.className(line.getSimpleClassName());
-      
-      FieldAnnotation field = bug.getPrimaryField();
-      if (field != null && field.getSourceLines() == line) {
-        sourceLocation.type(IdentifierType.FIELD);
-        sourceLocation.identifier(field.getFieldName());
-      } else {
-        MethodAnnotation method = bug.getPrimaryMethod();    
-        if (method != null && method.getSourceLines() == line) {
+      SourceLocations locations = computeSourceLocations(bug);
+      final SourceLineAnnotation primary = locations.getPrimary();
+      if (primary != null) {
+        SourceLocationBuilder sourceLocation = artifact.primarySourceLocation();
+        MethodAnnotation method = locations.getPrimaryMethod();    
+        if (method != null && method.getSourceLines() == primary) {
           sourceLocation.type(IdentifierType.METHOD);
           sourceLocation.identifier(method.getMethodSignature());
         } else {
-          sourceLocation.type(IdentifierType.CLASS);
-          sourceLocation.identifier(line.getSimpleClassName());
-        }
+          FieldAnnotation field = locations.getPrimaryField();
+          if (field != null && field.getSourceLines() == primary) {
+            sourceLocation.type(IdentifierType.FIELD);
+            sourceLocation.identifier(field.getFieldName());
+          } else {
+            ClassAnnotation clazz = locations.getPrimaryClass();
+            if (clazz != null && clazz.getSourceLines() == primary) {
+              sourceLocation.type(IdentifierType.CLASS);
+              sourceLocation.identifier(clazz.getClassName());
+            } else {
+              // No match for primary location
+              sourceLocation.type(IdentifierType.CLASS);
+              sourceLocation.identifier(primary.getSimpleClassName());
+            }
+          }
+        } 
+        sourceLocation = setupSourceLocation(primary, sourceLocation);        
+        sourceLocation.build();
+      } else {
+        throw new IllegalArgumentException("No primary location for "+bug);
       }
       
-      HashGenerator hashGenerator = HashGenerator.getInstance();
-      final int start = line.getStartLine() < 0 ? 0 : line.getStartLine();
-      Long hashValue = hashGenerator.getHash(path, start);
-      sourceLocation = sourceLocation.hash(hashValue).lineOfCode(start);      
-      
-      final int end = line.getEndLine() < start ? start : line.getEndLine();
-      sourceLocation = sourceLocation.endLine(end);
-      
+      for(final SourceLineAnnotation line : locations.getRest()) {      
+        SourceLocationBuilder sourceLocation = artifact.sourceLocation();                                                      
+        sourceLocation = setupSourceLocation(line, sourceLocation);        
+        sourceLocation.build();
+      }
       artifact.findingType(getName(), getVersion(), bug.getType());
       artifact.message(bug.getMessageWithoutPrefix());      
       
@@ -247,9 +246,36 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       Priority assignedPriority = getFindBugsPriority(priority);
       Severity assignedSeverity = getFindBugsSeverity(priority);
       artifact.priority(assignedPriority).severity(assignedSeverity);
-      
-      sourceLocation.build();
       artifact.build();
+    }
+    
+    private String getCompUnitName(String file) {
+      if (file.endsWith(".java")) {
+        return file.substring(0, file.length()-5);
+      }
+      return file;
+    }
+    
+    private SourceLocationBuilder setupSourceLocation(final SourceLineAnnotation line, 
+                                                      SourceLocationBuilder sourceLocation) {
+      sourceLocation.packageName(line.getPackageName());      
+      sourceLocation.compilation(getCompUnitName(line.getSourceFile()));
+      sourceLocation.className(line.getSimpleClassName());
+      
+      final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
+      if (path == null) {
+        // No identifiable source location
+        logError("Couldn't find source file for "+line.getClassName());
+        return null;
+      }  
+      HashGenerator hashGenerator = HashGenerator.getInstance();
+      final int start = line.getStartLine() < 0 ? 0 : line.getStartLine();
+      Long hashValue = hashGenerator.getHash(path, start);
+      sourceLocation = sourceLocation.hash(hashValue).lineOfCode(start); 
+      
+      final int end = line.getEndLine() < start ? start : line.getEndLine();
+      sourceLocation = sourceLocation.endLine(end);
+      return sourceLocation;
     }
 
     public void reportQueuedErrors() {
@@ -339,23 +365,117 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
   }
   
-  private SourceLineAnnotation computePrimarySourceLocation(BugInstance bug) {
-    // From BugInstance.getPrimarySourceLineAnnotation
+  /**
+   * Originally from BugInstance.getPrimarySourceLineAnnotation
+   */
+  private SourceLocations computeSourceLocations(BugInstance bug) {
+    SourceLineAnnotation first = null;
+    List<SourceLineAnnotation> rest = null;
+    MethodAnnotation method = null;
+    FieldAnnotation field = null;
+    ClassAnnotation clazz = null;
+
     Iterator<BugAnnotation> annos = bug.annotationIterator();
-    SourceLineAnnotation first     = null;
     while (annos.hasNext()) {
       BugAnnotation annotation = annos.next();
       if (annotation instanceof SourceLineAnnotation) {
         SourceLineAnnotation anno = (SourceLineAnnotation) annotation;
-        if (first == null || anno.getStartLine() < first.getStartLine()) {
+        if (first == null) {
           first = anno;
+        } else {
+          /*
+          if (!anno.getDescription().equals("SOURCE_LINE_ANOTHER_INSTANCE") &&
+              !anno.getDescription().equals("SOURCE_LINE_DEFAULT") &&
+              !anno.getDescription().contains("_NULL")) {
+            LOG.severe(anno.getDescription());
+          }
+          */
+          if (rest == null) {
+            rest = new ArrayList<SourceLineAnnotation>();
+          } 
+          rest.add(anno);
         }
-      }    
+      }
+      else if (annotation instanceof PackageMemberAnnotation) {
+        if (annotation instanceof MethodAnnotation) {   
+          if (method != null) {
+            //LOG.info("Got another "+annotation);
+          } else {
+            method = (MethodAnnotation) annotation;
+          }
+        }
+        else if (annotation instanceof FieldAnnotation) {
+          if (field != null) {
+            //LOG.info("Got another "+annotation);
+          } else {
+            field = (FieldAnnotation) annotation;
+          }
+        }
+        else if (annotation instanceof ClassAnnotation) {
+          if (clazz != null) {
+            //LOG.info("Got another "+annotation);
+          } else {
+            clazz = (ClassAnnotation) annotation;
+          }
+        }
+      }
+      else {
+        //LOG.info("Got a "+annotation);
+      }
     }
-    if (first != null) {
-      return first;
-    }    
-    return bug.getPrimarySourceLineAnnotation();
+    return new SourceLocations(first, rest, method, field, clazz);
+  }
+  
+  private static class SourceLocations {
+    final SourceLineAnnotation primary;
+    final Iterable<SourceLineAnnotation> rest;
+    final MethodAnnotation method;
+    final FieldAnnotation field;
+    final ClassAnnotation clazz;
+    
+    SourceLocations(SourceLineAnnotation first,
+                           List<SourceLineAnnotation> r, MethodAnnotation m,
+                           FieldAnnotation f, ClassAnnotation c) {
+      if (first == null) {
+        if (m != null) {
+          first = m.getSourceLines();
+        } else if (f != null) {
+          first = f.getSourceLines();
+        } else if (c != null) {
+          first = c.getSourceLines();
+        } else {
+          throw new IllegalArgumentException("No primary location");
+        }
+      }
+      if (r == null) {
+        r = Collections.emptyList();
+      }
+      primary = first;
+      rest = r;
+      method = m;
+      field = f;
+      clazz = c;
+    }
+
+    public SourceLineAnnotation getPrimary() {
+      return primary;
+    }
+    
+    public Iterable<SourceLineAnnotation> getRest() {
+      return rest;
+    }
+    
+    public FieldAnnotation getPrimaryField() {
+      return field;
+    }
+    
+    public MethodAnnotation getPrimaryMethod() {
+      return method;
+    }
+    
+    public ClassAnnotation getPrimaryClass() {
+      return clazz;
+    }
   }
   
   private static Severity getFindBugsSeverity(int priority) {
