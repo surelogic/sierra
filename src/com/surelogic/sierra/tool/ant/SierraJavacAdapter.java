@@ -72,6 +72,8 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
                         "C:/work/workspace/sierra-pmd");
     config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, 
                         "C:/work/workspace/sierra-fb");
+    config.putPluginDir(SierraToolConstants.JUNIT_PLUGIN_ID, 
+                        "C:/eclipse/plugins/org.junit4_4.3.1");
     
     String project = "sierra-tool";
     File tmp = File.createTempFile("sierra", ".xml");
