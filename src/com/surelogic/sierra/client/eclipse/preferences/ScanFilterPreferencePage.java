@@ -331,13 +331,17 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 										+ artifactQuery);
 					}
 					final ResultSet ars = st.executeQuery(artifactQuery);
-					while (ars.next()) {
-						ArtifactTypeRow row = new ArtifactTypeRow();
-						row.toolName = ars.getString(1);
-						row.mnemonic = ars.getString(2);
-						row.link = ars.getString(3);
-						row.categoryName = ars.getString(4);
-						artifactList.add(row);
+					try {
+						while (ars.next()) {
+							ArtifactTypeRow row = new ArtifactTypeRow();
+							row.toolName = ars.getString(1);
+							row.mnemonic = ars.getString(2);
+							row.link = ars.getString(3);
+							row.categoryName = ars.getString(4);
+							artifactList.add(row);
+						}
+					} finally {
+						ars.close();
 					}
 					final String query = "select INFO from FINDING_TYPE where UUID='"
 							+ findingTypeUUID + "'";
@@ -347,15 +351,19 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 										+ findingTypeUUID + ": " + query);
 					}
 					final ResultSet rs = st.executeQuery(query);
-					while (rs.next()) {
-						final String description = rs.getString(1);
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										setHTMLDescription(description,
-												artifactList);
-									}
-								});
+					try {
+						while (rs.next()) {
+							final String description = rs.getString(1);
+							PlatformUI.getWorkbench().getDisplay().asyncExec(
+									new Runnable() {
+										public void run() {
+											setHTMLDescription(description,
+													artifactList);
+										}
+									});
+						}
+					} finally {
+						rs.close();
 					}
 				} finally {
 					st.close();
