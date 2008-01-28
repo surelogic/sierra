@@ -101,6 +101,13 @@ public final class SierraServerManager {
 				i.remove();
 			}
 		}
+		for (Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
+				.entrySet().iterator(); j.hasNext();) {
+			Map.Entry<String, SierraServer> entry = j.next();
+			if (entry.getValue() == server) {
+				j.remove();
+			}
+		}
 		notifyObservers();
 	}
 

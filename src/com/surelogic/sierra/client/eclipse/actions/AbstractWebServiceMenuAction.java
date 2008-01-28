@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -60,8 +61,10 @@ public abstract class AbstractWebServiceMenuAction extends
 					b.append("opened so that you can define a location. ");
 					b.append("Invoke this action again once you have ");
 					b.append("defined a Sierra server location.");
-					MessageDialog.openError(shell, "No Sierra Servers", b
-							.toString());
+					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+							shell, "No Sierra Servers", null, b.toString(),
+							null, Activator.getDefault());
+					report.open();
 					ViewUtility.showView(SierraServersView.class.getName());
 					ServerLocationDialog.newServer(shell);
 					return;
@@ -82,10 +85,16 @@ public abstract class AbstractWebServiceMenuAction extends
 					}
 					server = dialog.getServer();
 					if (server == null) {
-						SLLogger
-								.getLogger()
-								.log(Level.SEVERE,
-										"null Sierra server returned from ServerSelectionDialog (bug).");
+						final StringBuilder b = new StringBuilder();
+						b.append("Sierra server returned from ");
+						b.append("ServerSelectionDialog must ");
+						b.append("be non-null (bug).");
+						final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+								shell, "Sierra server must be non-null", null,
+								b.toString(), new Exception(), Activator
+										.getDefault());
+						report.open();
+						SLLogger.getLogger().log(Level.SEVERE, b.toString());
 						return;
 					}
 					if (dialog.useForAllUnconnectedProjects())
