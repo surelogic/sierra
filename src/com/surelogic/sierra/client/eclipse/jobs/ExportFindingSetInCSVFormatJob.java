@@ -18,7 +18,7 @@ public final class ExportFindingSetInCSVFormatJob extends ExportFindingSetJob {
 	protected void openOutput() throws Exception {
 		f_out = new PrintWriter(f_file);
 		f_out.println("Project,Package,Class,Line,"
-				+ "FindingType,FindingCategory,Tool,Summary");
+				+ "FindingType,FindingCategory,Importance,Tool,Summary");
 	}
 
 	@Override
@@ -35,6 +35,8 @@ public final class ExportFindingSetInCSVFormatJob extends ExportFindingSetJob {
 		b.append('"').append(finding.getFindingType()).append('"');
 		b.append(',');
 		b.append('"').append(finding.getCategory()).append('"');
+		b.append(',');
+		b.append('"').append(finding.getImportance().toStringSentenceCase()).append('"');
 		b.append(',');
 		b.append('"').append(finding.getTool()).append('"');
 		b.append(',');

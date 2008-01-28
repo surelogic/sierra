@@ -70,6 +70,12 @@ public final class ExportFindingSetInXMLFormatJob extends ExportFindingSetJob {
 		o(b.toString());
 
 		b = new StringBuilder();
+		b.append("<importance>");
+		Entities.addEscaped(finding.getImportance().toStringSentenceCase(), b);
+		b.append("</importance>");
+		o(b.toString());
+
+		b = new StringBuilder();
 		b.append("<tool>");
 		Entities.addEscaped(finding.getTool(), b);
 		b.append("</tool>");
