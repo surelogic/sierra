@@ -43,6 +43,7 @@ public class RemoteTool extends AbstractTool {
   private static final String CANCEL = "##"+Local.CANCEL;
   
   public static void main(String[] args) {
+    Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
     try {
       final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       System.out.println("JVM started");
