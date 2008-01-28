@@ -90,7 +90,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
               // FIX how to deal w/ jars?
               break;
             case FILE:
-              System.out.println("Ignored: "+path);
+              System.out.println("FB ignored AUX file: "+path);
               break;
           }
         }
