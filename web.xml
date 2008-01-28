@@ -6,25 +6,20 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>services</web-resource-name>
-			<url-pattern>/*</url-pattern>
-			<http-method>DELETE</http-method>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-			<http-method>PUT</http-method>
-		</web-resource-collection>
-		<!-- 
-		<auth-constraint>		
-			<role-name>user</role-name>
-		</auth-constraint>
-		 -->
-	</security-constraint>
-	<login-config>
-		<auth-method>BASIC</auth-method>
-		<realm-name>sierraRealm</realm-name>
-	</login-config>
+
+    <filter>
+        <description>
+			Validates that requests from Sierra Clients are correctly authenticated.
+        </description>    
+        <filter-name>Security Filter</filter-name>
+		<filter-class>com.surelogic.sierra.jdbc.server.BasicSecurityFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Security Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>    
+
 	<servlet>
 		<servlet-name>Sierra Service</servlet-name>
 		<servlet-class>
