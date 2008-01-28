@@ -110,6 +110,14 @@ public abstract class AbstractPMDTool extends AbstractTool {
       LOG.info(msg);
     }
     
+    private String getCompUnitName(String file) {
+      int separator = file.lastIndexOf(File.separatorChar);
+      if (separator < 0) {
+        return file.substring(0, file.length() - SUFFIX_LEN);
+      }
+      return file.substring(separator+1, file.length() - SUFFIX_LEN);
+    }
+    
     public synchronized void renderFileReport(Report report) throws IOException {      
       Iterator<IRuleViolation> it = report.iterator();
       while (it.hasNext()) {
@@ -122,13 +130,12 @@ public abstract class AbstractPMDTool extends AbstractTool {
  
         String file = v.getFilename();
         sourceLocation.packageName(v.getPackageName());
-        sourceLocation.compilation(file);
+        String cuName = getCompUnitName(file);
+        sourceLocation.compilation(cuName);
         
         if ("".equals(v.getClassName())) {
           // No class name, so use the main class for the compilation unit
-          int separator = file.lastIndexOf(File.separatorChar);
-          sourceLocation.className(file.substring(separator+1, 
-                                                  file.length() - SUFFIX_LEN));
+          sourceLocation.className(cuName);
         } else {
           sourceLocation.className(v.getClassName());
         }
