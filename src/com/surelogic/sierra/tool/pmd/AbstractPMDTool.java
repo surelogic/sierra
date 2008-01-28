@@ -177,7 +177,11 @@ public abstract class AbstractPMDTool extends AbstractTool {
       Iterator<ProcessingError> errors = report.errors();
       while (errors.hasNext()) {
         ProcessingError error = errors.next();
-        System.out.println(error.getFile()+": "+error.getMsg());
+        LOG.warning(error.getFile()+": "+error.getMsg());
+        ErrorBuilder eb = generator.error();
+        eb.message(error.getMsg());
+        eb.tool(getName()+" v."+getVersion());        
+        eb.build();
       }
 
       /*
