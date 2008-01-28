@@ -33,6 +33,16 @@
 	 	<url-pattern>/ManageServerService</url-pattern>
 	 </servlet-mapping>
 	 
+	 <servlet>
+		<servlet-name>Manage User</servlet-name>
+		<servlet-class>com.surelogic.sierra.gwt.server.ManageUserServiceImpl</servlet-class>
+	</servlet>
+	 
+	 <servlet-mapping>
+	 	<servlet-name>Manage User</servlet-name>
+	 	<url-pattern>/ManageUserService</url-pattern>
+	 </servlet-mapping>
+	 
 	<servlet>
 		<servlet-name>Test Service</servlet-name>
 		<servlet-class>
