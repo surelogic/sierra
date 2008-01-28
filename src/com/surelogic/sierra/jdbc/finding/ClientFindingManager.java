@@ -348,13 +348,13 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param projectName
 	 * @param scan
 	 *            the uid of the latest scan. This must be the latest scan.
-	 * @param monitor 
+	 * @param monitor
 	 * @throws SQLException
 	 */
-	public void generateOverview(String projectName, String scan, SLProgressMonitor monitor)
-			throws SQLException {
-	  monitor.subTask("Generating overview");
-	  
+	public void generateOverview(String projectName, String scan,
+			SLProgressMonitor monitor) throws SQLException {
+		monitor.subTask("Generating overview");
+
 		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
 		p.setName(projectName);
 		if (p.select()) {
@@ -366,12 +366,12 @@ public final class ClientFindingManager extends FindingManager {
 						+ scanRecord.getUid() + ".");
 				populateScanOverview(scanRecord.getId());
 				monitor.worked(1);
-				
+
 				log.info("Clearing overview for project " + p.getName() + ".");
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
 				monitor.worked(1);
-				
+
 				log.info("Calculating ids in overview for project "
 						+ p.getName() + ".");
 				int idx = 1;
@@ -379,7 +379,7 @@ public final class ClientFindingManager extends FindingManager {
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.execute();
 				monitor.worked(1);
-				
+
 				log
 						.info("Populating overview for project " + p.getName()
 								+ ".");
@@ -404,7 +404,7 @@ public final class ClientFindingManager extends FindingManager {
 					set.close();
 				}
 				monitor.worked(1);
-				
+
 				log.info("Deleting temp ids");
 				deleteTempIds.execute();
 				monitor.worked(1);
@@ -456,7 +456,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ " exists in the database");
 			}
 			Long projectId = scan.getProjectId();
-      int total = 0;
+			int total = 0;
 			for (Entry<String, List<String>> packageCompilations : compilations
 					.entrySet()) {
 				final String pakkage = packageCompilations.getKey();
@@ -529,13 +529,13 @@ public final class ClientFindingManager extends FindingManager {
 						result.close();
 					}
 				}
-        total += counter;
+				total += counter;
 			}
 			conn.commit();
 			generatePartialScanOverview(scan.getId(), scanFindingIds);
 			regenerateFindingsOverview(projectName, previousFindingIds, monitor);
-			log.info("All new findings ("+total+") persisted for scan " + uid
-					+ " in project " + projectName + ".");
+			log.info("All new findings (" + total + ") persisted for scan "
+					+ uid + " in project " + projectName + ".");
 		} catch (SQLException e) {
 			sqlError(e);
 		}
