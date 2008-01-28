@@ -35,7 +35,7 @@ public final class Password {
 	/**
 	 * Check to see if the provided password matches this password.
 	 * 
-	 * @param password
+	 * @param password may not be null
 	 * @return
 	 */
 	public boolean check(String password) {
@@ -56,7 +56,7 @@ public final class Password {
 	/**
 	 * Create a new password from the specified password.
 	 * 
-	 * @param password
+	 * @param password may not be null
 	 * @return
 	 */
 	public static Password newPassword(String password) {
