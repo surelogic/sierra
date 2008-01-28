@@ -19,6 +19,16 @@ import com.surelogic.sierra.jdbc.user.User;
 
 import sun.misc.BASE64Decoder;
 
+/**
+ * This filter accepts basic authentication credentials from the client, and
+ * validates them against the server database. If the credentials are not valid,
+ * a <code>401 - UNAUTHORIZED</code> response is sent. Otherwise, the filter
+ * sets a request attribute named <code>SierraUser</code> to contain a valid
+ * {@link User}.
+ * 
+ * @author nathan
+ * 
+ */
 public class BasicSecurityFilter implements Filter {
 
 	public void destroy() {
