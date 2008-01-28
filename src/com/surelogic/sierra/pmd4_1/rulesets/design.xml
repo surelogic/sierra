@@ -1348,7 +1348,7 @@ Comparing the value of size() to 0 merely duplicates existing behavior.
 A class with only private constructors should be final, unless the private 
 constructor is called by a inner class.
         </description>
-        <priority>1</priority>
+        <priority>3</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
@@ -1376,7 +1376,7 @@ public class Foo {  //Should be final
 An empty method in an abstract class should be abstract instead, as developer may rely on this empty implementation
 rather than code the appropriate one.
         </description>
-        <priority>1</priority>
+        <priority>3</priority>
         <properties>
             <property name="xpath">
                 <value>
