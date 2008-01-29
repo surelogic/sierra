@@ -6,23 +6,31 @@
 	<welcome-file-list>
 		<welcome-file>SierraPortal.html</welcome-file>
 	</welcome-file-list>
-	<!-- 
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>portal</web-resource-name>
-			<url-pattern>/*</url-pattern>
-			<http-method>DELETE</http-method>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-			<http-method>PUT</http-method>
-		</web-resource-collection>
-	</security-constraint>
-	<login-config>
-		<auth-method>FORM</auth-method>
-		<realm-name>sierraRealm</realm-name>
-	</login-config>
-	 -->
+
+    <filter>
+        <description>
+			Form-based login mechanism
+        </description>    
+        <filter-name>Security Filter</filter-name>
+		<filter-class>com.surelogic.sierra.jdbc.server.FormSecurityFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Security Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    
+    <servlet>
+		<servlet-name>Server Login</servlet-name>
+		<servlet-class>com.surelogic.sierra.jdbc.server.UserLoginServlet</servlet-class>
+	</servlet>
 	 
+	 <servlet-mapping>
+	 	<servlet-name>Server Login</servlet-name>
+	 	<url-pattern>/login</url-pattern>
+	 </servlet-mapping>
+    
 	<servlet>
 		<servlet-name>Manage Server</servlet-name>
 		<servlet-class>com.surelogic.sierra.gwt.server.ManageServerServiceImpl</servlet-class>
