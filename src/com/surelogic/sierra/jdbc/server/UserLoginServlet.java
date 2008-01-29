@@ -20,7 +20,7 @@ import com.surelogic.sierra.jdbc.user.User;
  * <dd>A user name</dd>
  * <dt>SierraAuthPass</dt>
  * <dd>The user's password.</dd>
- * <dt>SierraAuthUrl</dt>
+ * <dt>SierraAuthRedirect</dt>
  * <dd>A url to redirect to upon successful authentication.
  * </dl>
  * 
