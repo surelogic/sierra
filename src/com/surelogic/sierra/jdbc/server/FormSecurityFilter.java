@@ -49,7 +49,7 @@ public class FormSecurityFilter implements Filter {
 					HttpServletResponse response = (HttpServletResponse) resp;
 					final OutputStream out = response.getOutputStream();
 					SecurityHelper.writeLoginForm(out,
-							request.getContextPath(), false);
+							request.getServletPath(), false);
 				} else {
 					chain.doFilter(req, resp);
 				}
