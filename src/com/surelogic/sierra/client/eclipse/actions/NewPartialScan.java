@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
@@ -24,8 +25,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 
   @Override
   boolean checkIfBuilt(List<ICompilationUnit> elements) {
-    // TODO Auto-generated method stub
-    return true;
+    return JavaUtil.compUnitsUpToDate(elements);
   }
   
   void scan(List<ICompilationUnit> selectedCompilationUnits) {
