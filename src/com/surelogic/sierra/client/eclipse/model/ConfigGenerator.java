@@ -576,12 +576,21 @@ public final class ConfigGenerator {
 		for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
 			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, cpe);
 		}
-		URI out = root.findMember(p.getOutputLocation()).getLocationURI();
-		cfg.addTarget(new FullDirectoryTarget(
-				toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
-				out));
+		handleOutputLocation(cfg, p.getOutputLocation(), toBeAnalyzed);
 	}
 
+	private static void handleOutputLocation(final Config cfg, IPath outLoc,
+                                      	   final boolean toBeAnalyzed) {
+	  if (outLoc == null) {
+	    return;
+	  }
+	  final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	  URI out = root.findMember(outLoc).getLocationURI();
+    cfg.addTarget(new FullDirectoryTarget(
+        toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
+        out));
+	}
+	
 	private static void handleClasspathEntry(final Config cfg,
 			Set<IJavaProject> handled, final boolean toBeAnalyzed,
 			final IWorkspaceRoot root, IClasspathEntry cpe)
@@ -605,7 +614,8 @@ public final class ConfigGenerator {
 					cfg.addTarget(new FullDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc));
 				}
-			}
+			} 			
+			handleOutputLocation(cfg, cpe.getOutputLocation(), toBeAnalyzed);
 			break;
 		case IClasspathEntry.CPE_LIBRARY:
 			IPath srcPath = cpe.getSourceAttachmentPath();
