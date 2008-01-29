@@ -37,6 +37,14 @@
 			<lib dir="../sierra-portal/lib/web-dependencies" />
 		</war>
 	</target>
+	
+	<target name="deploy-root">
+		<war destfile="../jetty/webapps/root.war" webxml="./webroot/web.xml">
+			<fileset dir="./webroot">
+			    <exclude name="web.xml"/>
+			</fileset>
+		</war>
+	</target>
 
 	<target name="undeploy-app">
 		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
@@ -55,5 +63,9 @@
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" includes="**/*" />
 		</delete>
 		<delete quiet="true" file="../jetty/webapps/sierra-portal.war" />
+	</target>
+	
+	<target name="undeploy-root">
+	    <delete quiet="true" file="../jetty/webapps/root.war" />
 	</target>
 </project>
