@@ -68,12 +68,16 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     }
     boolean saved = trySavingEditors();
     try {
+      boolean built    = checkIfBuilt(elements);
       boolean compiled = JavaUtil.noCompilationErrors(elements);
 
-      if (saved & compiled) {
+      if (saved & built & compiled) {
         final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
         startScanJob(elements);      
         showStartBalloon(sb);
+      } else if (!built) {
+        BalloonUtility.showMessage("Something isn't built", 
+        "Sierra cannot run properly if your code isn't fully compiled");
       } else if (!compiled) {
         BalloonUtility.showMessage("Something doesn't compile", 
                                    "Sierra cannot run properly if your code does not compile");
@@ -86,7 +90,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       LOG.log(Level.SEVERE, "Problem while checking if your code compiles", e);
     }
   } 
-  
+
   protected void showStartBalloon(final StringBuilder label) {
     if (PreferenceConstants.showBalloonNotifications()) {
       label.append(". ");
@@ -103,6 +107,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       }
     }
   }
+  abstract boolean checkIfBuilt(List<T> elements);
   
   abstract void startScanJob(List<T> elements);
 }

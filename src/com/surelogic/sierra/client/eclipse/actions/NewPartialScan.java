@@ -22,6 +22,12 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
     super(true);
   }
 
+  @Override
+  boolean checkIfBuilt(List<ICompilationUnit> elements) {
+    // TODO Auto-generated method stub
+    return true;
+  }
+  
   void scan(List<ICompilationUnit> selectedCompilationUnits) {
     List<String> cuNames = new ArrayList<String>(selectedCompilationUnits.size());
     for(ICompilationUnit cu : selectedCompilationUnits) {

@@ -6,6 +6,7 @@ import java.util.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
@@ -19,6 +20,11 @@ public class NewScan extends AbstractScan<IJavaProject> {
     super(false);
   }
 
+  @Override
+  boolean checkIfBuilt(List<IJavaProject> elements) {
+    return JavaUtil.projectsUpToDate(elements);    
+  }
+  
   /**
    * Starts a job for each project
    */
