@@ -11,6 +11,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -34,8 +35,8 @@ public final class Activator extends AbstractUIPlugin {
 	 */
 	public Activator() {
 		if (f_plugin != null)
-			throw new IllegalStateException(PLUGIN_ID + " class instance ("
-					+ Activator.class.getName() + ") already exits");
+			throw new IllegalStateException(I18N.err(1, PLUGIN_ID,
+					Activator.class.getName()));
 		f_plugin = this;
 	}
 
