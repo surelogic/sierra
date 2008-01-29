@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
@@ -48,7 +48,7 @@ public class NewScanJob extends WorkspaceJob {
     }
     if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
       Throwable ex = wrapper.getFailureTrace();
-      LOG.severe(ex.getMessage());
+      LOG.log(Level.SEVERE, ex.getMessage(), ex);
       return SLStatus.createErrorStatus("Failed "+getName(), ex);
     }
     return Status.OK_STATUS;
