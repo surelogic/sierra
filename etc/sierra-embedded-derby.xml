@@ -111,6 +111,7 @@
     <!-- in the $JETTY_HOME/contexts directory                       -->
     <!--                                                             -->
     <!-- =========================================================== -->
+    <!--
     <Call name="addLifeCycle">
       <Arg>
         <New class="org.mortbay.jetty.deployer.ContextDeployer">
@@ -120,7 +121,8 @@
         </New>
       </Arg>
     </Call>
-
+    -->
+    
     <!-- =========================================================== -->
     <!-- Configure the webapp deployer.                              -->
     <!-- A webapp  deployer will deploy standard webapps discovered  -->
