@@ -130,6 +130,45 @@ public class ScanManager {
 		return new JDBCScanGenerator(conn, factory, this, filter);
 	}
 
+	/**
+	 * Returns information about the latest scan of this project, or
+	 * <code>null</code> if there are no scans for this project.
+	 * 
+	 * @param projectName
+	 * @return
+	 * @throws SQLException
+	 */
+	public ScanInfo getLatestScanInfo(String projectName) throws SQLException {
+		getLatestScanByProject.setString(1, projectName);
+		final ResultSet set = getLatestScanByProject.executeQuery();
+		try {
+			if (set.next()) {
+				return getScanInfo(set.getString(1));
+			} else {
+				return null;
+			}
+		} finally {
+			set.close();
+		}
+	}
+
+	/**
+	 * Return information about the specified scan, or <code>null</code> if no
+	 * scan with this uid exists.
+	 * 
+	 * @param scanUid
+	 * @return
+	 */
+	public ScanInfo getScanInfo(String scanUid) throws SQLException {
+		final ScanRecord record = factory.newScan();
+		record.setUid(scanUid);
+		if (record.select()) {
+			return new ScanInfo(record);
+		} else {
+			return null;
+		}
+	}
+
 	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)
 			throws SQLException {
 		for (String uid : uids) {
@@ -184,7 +223,7 @@ public class ScanManager {
 
 	public void deleteOldestScan(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
-	  monitor.subTask("Deleting oldest scan");
+		monitor.subTask("Deleting oldest scan");
 		getOldestScanByProject.setString(1, projectName);
 		ResultSet set = getOldestScanByProject.executeQuery();
 		try {
@@ -207,8 +246,8 @@ public class ScanManager {
 	 * @param projectName
 	 * @param compilations
 	 * @param findingIds
-	 *            a set of finding ids. All findingIds, that are affected by scan
-	 *            persistence will be added to this set.
+	 *            a set of finding ids. All findingIds, that are affected by
+	 *            scan persistence will be added to this set.
 	 * @return
 	 */
 	public ScanGenerator getPartialScanGenerator(String projectName,
