@@ -17,17 +17,9 @@ import com.surelogic.sierra.jdbc.user.User;
 
 /**
  * FormSecurityFilter is responsible for Sierra's form-based authentication
- * mechanism. The following steps will be taken before a resource request can be
- * processed.
- * 
- * <ol>
- * <li>Check to see if a session is in context w/ a {@link User} object.</li>
- * <li>If no {@link User} is available, check for posted credentials.</li>
- * <li>If no credentials are found, intercept the request and send back a form
- * login page.</li>
- * <li>If credentials are found, authenticate the user. Failed authentication
- * will result in the form login page being sent back again.</li>
- * </ol>
+ * mechanism. It does this by checking for a {@link User} in the session. If
+ * none exists, then a form is sent instead that allows the user to login and
+ * return to the originally requested resource.
  * 
  * @author nathan
  * 
