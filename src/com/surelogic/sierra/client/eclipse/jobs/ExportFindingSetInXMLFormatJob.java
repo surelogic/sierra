@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import com.surelogic.common.Entities;
+import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 
 public final class ExportFindingSetInXMLFormatJob extends ExportFindingSetJob {

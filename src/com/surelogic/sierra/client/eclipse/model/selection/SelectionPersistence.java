@@ -17,8 +17,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.adhoc.Activator;
-import com.surelogic.common.Entities;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.xml.Entities;
 
 public final class SelectionPersistence {
 
