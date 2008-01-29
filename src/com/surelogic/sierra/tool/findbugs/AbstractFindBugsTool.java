@@ -360,8 +360,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
                 return path2;
               }
             }
+          } else {
+            System.out.println("Ignored FB source file: "+root);
           }
-          System.out.println("Ignored: "+root);
           break;
         }
       }
