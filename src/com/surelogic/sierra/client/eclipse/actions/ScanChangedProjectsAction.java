@@ -42,7 +42,9 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
             times.put(p, info.getScanTime());
           }
           List<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
-          new NewPartialScan().scan(selectedCompilationUnits);
+          if (selectedCompilationUnits.size() > 0) {
+            new NewPartialScan().scan(selectedCompilationUnits);
+          }
         } catch (SQLException ex) {
           LOG.log(Level.SEVERE, ex.getMessage(), ex);
           return SLStatus.createErrorStatus("Failed "+getName(), ex);
