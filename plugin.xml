@@ -536,4 +536,14 @@
       </instance>
    </extension>
 
+   <!-- Definition for the Sierra builder -->
+   <extension
+         id="sierraBuilder"
+         name="Sierra Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="com.surelogic.sierra.client.eclipse.builder.Builder">
+         </run>
+      </builder>
+   </extension>
 </plugin>
