@@ -21,6 +21,7 @@
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-services/lib/web-dependencies" />
 		</war>
+		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
@@ -63,6 +64,7 @@
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />
 		<delete quiet="true" file="../jetty/webapps/sierra-services.war" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" />
