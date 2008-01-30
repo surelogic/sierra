@@ -42,6 +42,7 @@ import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -254,8 +255,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			final Shell shell = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell();
 			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-					shell, "Browser Failure", null,
-					"Browser cannot be initialized.", e, Activator.getDefault());
+					shell, "Browser Failure", null, I18N.err(26), e, Activator
+							.getDefault());
 			report.open();
 		}
 		clearHTMLDescription();

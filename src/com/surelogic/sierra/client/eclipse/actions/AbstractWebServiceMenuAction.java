@@ -11,6 +11,7 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -53,18 +54,12 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Are any servers defined?
 				 */
 				if (manager.isEmpty()) {
-					final StringBuilder b = new StringBuilder();
-					b.append("There are no Sierra server locations defined. ");
-					b.append("A project must be connected to a Sierra ");
-					b.append("server to perform this action. ");
-					b.append("The 'Sierra Team Server' view will be ");
-					b.append("opened so that you can define a location. ");
-					b.append("Invoke this action again once you have ");
-					b.append("defined a Sierra server location.");
+					final String msg = I18N.err(17);
 					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-							shell, "No Sierra Servers", null, b.toString(),
-							null, Activator.getDefault());
+							shell, "No Sierra Servers", null, msg, null,
+							Activator.getDefault());
 					report.open();
+					SLLogger.getLogger().warning(msg);
 					ViewUtility.showView(SierraServersView.class.getName());
 					ServerLocationDialog.newServer(shell);
 					return;
@@ -85,16 +80,12 @@ public abstract class AbstractWebServiceMenuAction extends
 					}
 					server = dialog.getServer();
 					if (server == null) {
-						final StringBuilder b = new StringBuilder();
-						b.append("Sierra server returned from ");
-						b.append("ServerSelectionDialog must ");
-						b.append("be non-null (bug).");
+						final String msg = I18N.err(18);
 						final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
 								shell, "Sierra server must be non-null", null,
-								b.toString(), new Exception(), Activator
-										.getDefault());
+								msg, new Exception(), Activator.getDefault());
 						report.open();
-						SLLogger.getLogger().log(Level.SEVERE, b.toString());
+						SLLogger.getLogger().log(Level.SEVERE, msg);
 						return;
 					}
 					if (dialog.useForAllUnconnectedProjects())

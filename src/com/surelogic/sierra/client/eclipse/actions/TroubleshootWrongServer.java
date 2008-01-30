@@ -4,6 +4,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 public final class TroubleshootWrongServer extends TroubleshootConnection {
@@ -16,40 +18,17 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 	public void fix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				final StringBuilder b = new StringBuilder();
-				b.append("The requested action failed because");
-				b.append(" the Sierra team server '");
-				b.append(f_server.getLabel());
-				b.append("' is not the Sierra team server that the project '");
-				b.append(f_projectName);
-				b.append("' has previously connected to");
-				b.append(" and exchanged data with.\n\n");
-				b.append("Possible reasons for this problem include:\n");
-				b.append(" \u25CF The Sierra team server '");
-				b.append(f_server.getLabel());
-				b.append("' has been reinstalled (or its database");
-				b.append(" has been erased or mutated).\n");
-				b.append(" \u25CF The location settings for '");
-				b.append(getServer().getLabel());
-				b.append("' have been changed or are incorrect.\n\n");
-				b.append("Possible resolutions for this problem include:\n");
-				b.append(" \u25CF Disconnect the project '");
-				b.append(f_projectName);
-				b.append("' from the Sierra team server '");
-				b.append(f_server.getLabel());
-				b.append("'.  The project can then be connected");
-				b.append(" to any Sierra team server.\n");
-				b.append(" \u25CF Fix the location settings for '");
-				b.append(getServer().getLabel());
-				b.append("' so that they point the the Sierra team server");
-				b.append(" that the project has previously");
-				b.append(" exchanged data with.");
+				final String sl = f_server.getLabel();
+				final String msg = I18N.err(24, sl, f_projectName, sl,
+						getServer().getLabel(), f_projectName, sl, getServer()
+								.getLabel());
 				final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 								.getShell(),
-						"Connected to the Wrong Sierra Team Server", null, b
-								.toString(), null, Activator.getDefault());
+						"Connected to the Wrong Sierra Team Server", null, msg,
+						null, Activator.getDefault());
 				report.open();
+				SLLogger.getLogger().warning(msg);
 			}
 		});
 		/*

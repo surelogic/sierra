@@ -8,6 +8,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
 
 /**
@@ -43,23 +45,15 @@ public final class QualifierPromptFromJob {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				if (f_qualifiers.isEmpty()) {
-					final StringBuilder b = new StringBuilder();
-					b.append("The requested action failed because");
-					b.append(" the Sierra team server '");
-					b.append(f_serverLabel);
-					b.append("' has no qualifiers defined.\n\n");
-					b.append("Possible resolutions for this");
-					b.append(" problem include:\n");
-					b.append(" \u25CF Login to the Sierra team server '");
-					b.append(" \u25CF Login to the Sierra team server '");
-					b.append(f_serverLabel);
-					b.append("' and create a qualifier.");
+					final String msg = I18N.err(22, f_serverLabel,
+							f_serverLabel);
 					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
 							PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getShell(),
-							"No Qualifiers on Sierra Team Server", null, b
-									.toString(), null, Activator.getDefault());
+							"No Qualifiers on Sierra Team Server", null, msg,
+							null, Activator.getDefault());
 					report.open();
+					SLLogger.getLogger().warning(msg);
 					f_canceled = true; // bail out
 				} else {
 					QualifierSelectionDialog dialog = new QualifierSelectionDialog(

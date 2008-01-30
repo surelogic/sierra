@@ -17,6 +17,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -33,6 +34,7 @@ public final class DeleteProjectDataJob {
 
 	public void runModal(final Shell shell) {
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+		final String jobFailureMsg = I18N.err(25, f_projectNames);
 		try {
 			dialog.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
@@ -63,17 +65,15 @@ public final class DeleteProjectDataJob {
 										.notifyProjectDeleted();
 							}
 						} catch (Exception e) {
-							final String msg = "Deletion of Sierra data about projects "
-									+ f_projectNames + " failed.";
-							SLLogger.getLogger().log(Level.SEVERE, msg, e);
+							SLLogger.getLogger().log(Level.SEVERE,
+									jobFailureMsg, e);
 							jobFailed = true;
 						} finally {
 							conn.close();
 						}
 					} catch (SQLException e1) {
-						final String msg = "Deletion of Sierra data about projects "
-								+ f_projectNames + " failed.";
-						SLLogger.getLogger().log(Level.SEVERE, msg, e1);
+						SLLogger.getLogger().log(Level.SEVERE, jobFailureMsg,
+								e1);
 						jobFailed = true;
 					}
 					monitor.done();
@@ -82,15 +82,12 @@ public final class DeleteProjectDataJob {
 						PlatformUI.getWorkbench().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
-										final String msg = "Deletion of Sierra data about projects "
-												+ f_projectNames
-												+ " failed. All exceptions have been logged to the Eclipse 'Error Log'";
 										final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
 												PlatformUI
 														.getWorkbench()
 														.getActiveWorkbenchWindow()
 														.getShell(), "Failure",
-												null, msg.toString(), null,
+												null, jobFailureMsg, null,
 												Activator.getDefault());
 										report.open();
 									}
@@ -99,9 +96,7 @@ public final class DeleteProjectDataJob {
 				}
 			});
 		} catch (Exception e) {
-			final String msg = "Deletion of Sierra data about projects "
-					+ f_projectNames + " failed.";
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			SLLogger.getLogger().log(Level.SEVERE, jobFailureMsg, e);
 		}
 	}
 

@@ -27,6 +27,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
 /**
@@ -97,32 +98,23 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 					PlatformUI.getWorkbench().getDisplay().asyncExec(
 							new Runnable() {
 								public void run() {
-									final StringBuilder msg = new StringBuilder();
-									msg.append("The compilation unit ");
-									msg.append(file.getName());
-									msg.append(" is not in the classpath of");
-									msg.append(" the project, please include");
-									msg.append(" it in the class path and");
-									msg.append(" re-scan it again.");
+									final String msg = I18N.err(19, file
+											.getName());
 									final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
 											PlatformUI.getWorkbench()
 													.getActiveWorkbenchWindow()
 													.getShell(),
-											"Not in Classpath", null, msg
-													.toString(), null,
-											Activator.getDefault());
+											"Not in Classpath", null, msg,
+											null, Activator.getDefault());
 									report.open();
+									SLLogger.getLogger().warning(msg);
 								}
 							});
 				}
 			} catch (JavaModelException jme) {
-				SLLogger.getLogger().log(Level.SEVERE,
-						"Error when trying to get compilation unit for class",
-						jme);
+				SLLogger.getLogger().log(Level.SEVERE, I18N.err(20), jme);
 			} catch (CoreException ce) {
-				SLLogger.getLogger().log(Level.SEVERE,
-						"Error when trying to get compilation unit for class",
-						ce);
+				SLLogger.getLogger().log(Level.SEVERE, I18N.err(20), ce);
 			}
 
 		} else if (f_currentSelection != null) {

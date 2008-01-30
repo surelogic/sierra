@@ -22,16 +22,11 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -94,60 +89,6 @@ public final class ConfigGenerator {
 
 	public static ConfigGenerator getInstance() {
 		return INSTANCE;
-	}
-
-	/**
-	 * Get config objects for the list of {@link IJavaProject} provided
-	 * 
-	 * @param projects
-	 * @return list of {@link Config}
-	 */
-	public List<Config> getProjectConfigs(List<IJavaProject> projects) {
-
-		List<Config> configs = new ArrayList<Config>();
-
-		for (final IJavaProject p : projects) {
-			if (containsAtLeastOneCompilationUnit(p)) {
-				configs.add(getProjectConfig(p));
-			} else {
-				/*
-				 * Put up a dialog informing the user that no scan will be done
-				 * on a project that contains no compilation units.
-				 */
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-					public void run() {
-						final StringBuilder msg = new StringBuilder();
-						msg.append("Sierra cannot scan the project '");
-						msg.append(p.getElementName());
-						msg.append("' because it contains no Java");
-						msg.append("compilation units.");
-						final Shell shell = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getShell();
-						final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-								shell, "Scan Skipped", shell.getDisplay()
-										.getSystemImage(SWT.ICON_INFORMATION),
-								msg.toString(), null, Activator.getDefault());
-						report.open();
-					}
-				});
-			}
-		}
-		return configs;
-	}
-
-	private boolean containsAtLeastOneCompilationUnit(IJavaProject p) {
-		try {
-			for (IPackageFragment pf : p.getPackageFragments()) {
-				if (pf.getCompilationUnits().length > 0)
-					return true;
-			}
-		} catch (JavaModelException e) {
-			SLLogger.getLogger().log(
-					Level.SEVERE,
-					"Failure trying to determine if " + p.getElementName()
-							+ " contains any Java compilation units.", e);
-		}
-		return false;
 	}
 
 	/**
@@ -580,17 +521,17 @@ public final class ConfigGenerator {
 	}
 
 	private static void handleOutputLocation(final Config cfg, IPath outLoc,
-                                      	   final boolean toBeAnalyzed) {
-	  if (outLoc == null) {
-	    return;
-	  }
-	  final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	  URI out = root.findMember(outLoc).getLocationURI();
-    cfg.addTarget(new FullDirectoryTarget(
-        toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
-        out));
+			final boolean toBeAnalyzed) {
+		if (outLoc == null) {
+			return;
+		}
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		URI out = root.findMember(outLoc).getLocationURI();
+		cfg.addTarget(new FullDirectoryTarget(
+				toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
+				out));
 	}
-	
+
 	private static void handleClasspathEntry(final Config cfg,
 			Set<IJavaProject> handled, final boolean toBeAnalyzed,
 			final IWorkspaceRoot root, IClasspathEntry cpe)
@@ -614,7 +555,7 @@ public final class ConfigGenerator {
 					cfg.addTarget(new FullDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc));
 				}
-			} 			
+			}
 			handleOutputLocation(cfg, cpe.getOutputLocation(), toBeAnalyzed);
 			break;
 		case IClasspathEntry.CPE_LIBRARY:
