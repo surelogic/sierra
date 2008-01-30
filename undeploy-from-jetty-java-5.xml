@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="deploy" name="deploy-to-jetty-java-5">
+<project default="undeploy" name="undeploy-from-jetty-java-5">
 	<import file="lib/deploy.xml" />
 
 	<!-- JAXB is not included in Java 5 JREs so we have to add it -->
@@ -10,5 +10,9 @@
 		</copy>
 	</target>
 
-	<target name="deploy" depends="deploy-site,deploy-java-5-libs" />
+	<target name="undeploy-java-5-libs">
+		<!-- TODO -->
+	</target>
+
+	<target name="undeploy" depends="undeploy-site,undeploy-java-5-libs" />
 </project>

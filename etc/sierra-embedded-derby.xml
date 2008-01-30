@@ -227,8 +227,7 @@
 	<New id="SierraTH" class="org.mortbay.jetty.plus.naming.Resource">
 		<Arg>SierraTransactionHandler</Arg>
 		<Arg>
-			<New class="com.surelogic.common.exec.SierraExecutorService">
-    		</New>
+			<Call name="newSingleThreadExecutor" class="java.util.concurrent.Executors"/>
 		</Arg>
 	</New>
 </Configure>

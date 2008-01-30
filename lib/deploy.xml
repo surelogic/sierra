@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="server-deployment">
+
+	<!-- NOTE: This script is included from .. so its paths are WRONG if it is run directly -->
+
 	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
 
-	<target name="deploy-all" depends="deploy-app, deploy-root"/>
-	
-	<target name="deploy-app">
+	<target name="deploy-site" depends="deploy-team-server, deploy-root" />
+
+	<target name="deploy-team-server">
 		<!-- Update undeploy-app with any changes made to the deployment -->
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
 		<copy file="./etc/sierraRealm.properties" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
-		<jar destfile="../jetty/lib/ext/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
@@ -39,22 +41,23 @@
 			<lib dir="../sierra-portal/lib/web-dependencies" />
 		</war>
 	</target>
-	
+
 	<target name="deploy-root">
 		<war destfile="../jetty/webapps/root.war" webxml="./webroot/web.xml">
 			<fileset dir="./webroot">
-			    <exclude name="web.xml"/>
+				<exclude name="web.xml" />
 			</fileset>
 		</war>
 	</target>
 
-	<target name="undeploy-all" depends="undeploy-app, undeploy-root"/>
-	
-	<target name="undeploy-app">
+	<target name="undeploy-site" depends="undeploy-team-server, undeploy-root" />
+
+	<target name="undeploy-team-server">
 		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
 		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />
 		<delete quiet="true" file="../jetty/lib/ext/derby.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
+		<!-- ../jetty/lib/ext/common.jar is obsolete after Jan 08 -->
 		<delete quiet="true" file="../jetty/lib/ext/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
@@ -68,8 +71,8 @@
 		</delete>
 		<delete quiet="true" file="../jetty/webapps/sierra-portal.war" />
 	</target>
-	
+
 	<target name="undeploy-root">
-	    <delete quiet="true" file="../jetty/webapps/root.war" />
+		<delete quiet="true" file="../jetty/webapps/root.war" />
 	</target>
 </project>
