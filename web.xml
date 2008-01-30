@@ -3,22 +3,45 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
-    <filter>
-        <description>
-			Validates that requests from Sierra Clients are correctly authenticated.
-        </description>    
-        <filter-name>Security Filter</filter-name>
-		<filter-class>com.surelogic.sierra.jdbc.server.BasicSecurityFilter</filter-class>
-    </filter>
+	<listener>
+		<description>
+			Configures logging based upon the context-param SLLogger
+			below.
+		</description>
+		<listener-class>
+			com.surelogic.sierra.server.lifecycle.LogServletContextListener
+		</listener-class>
+	</listener>
 
-    <filter-mapping>
-        <filter-name>Security Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>    
+	<context-param>
+		<description>
+			Tells the server to put its log files under the
+			~Sierra/Server directory.
+		</description>
+		<param-name>SLLogger</param-name>
+		<param-value>Use Sierra Directory</param-value>
+	</context-param>
+
+	<filter>
+		<description>
+			Validates that requests from Sierra Clients are correctly
+			authenticated.
+		</description>
+		<filter-name>Security Filter</filter-name>
+		<filter-class>
+			com.surelogic.sierra.jdbc.server.BasicSecurityFilter
+		</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>Security Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>Sierra Service</servlet-name>
@@ -31,5 +54,4 @@
 		<servlet-name>Sierra Service</servlet-name>
 		<url-pattern>/SierraService</url-pattern>
 	</servlet-mapping>
-
 </web-app>
