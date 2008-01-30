@@ -62,7 +62,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     return sb;
   }
 
-  protected void scan(List<T> elements, List<String> names) {
+  protected void scan(Collection<T> elements, List<String> names) {
     if (elements.size() <= 0) {
       return;
     }
@@ -107,7 +107,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       }
     }
   }
-  abstract boolean checkIfBuilt(List<T> elements);
+  abstract boolean checkIfBuilt(Collection<T> elements);
   
-  abstract void startScanJob(List<T> elements);
+  abstract void startScanJob(Collection<T> elements);
 }

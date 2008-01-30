@@ -21,7 +21,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
   }
 
   @Override
-  boolean checkIfBuilt(List<IJavaProject> elements) {
+  boolean checkIfBuilt(Collection<IJavaProject> elements) {
     return JavaUtil.projectsUpToDate(elements);    
   }
   
@@ -29,7 +29,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
    * Starts a job for each project
    */
   @Override
-  void startScanJob(List<IJavaProject> selectedProjects) {
+  void startScanJob(Collection<IJavaProject> selectedProjects) {
     LOG.info("Starting new scan jobs");
     for(final IJavaProject p : selectedProjects) {
       final Config config = ConfigGenerator.getInstance().getProjectConfig(p);

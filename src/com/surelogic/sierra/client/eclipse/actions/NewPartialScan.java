@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,11 +23,11 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   }
 
   @Override
-  boolean checkIfBuilt(List<ICompilationUnit> elements) {
+  boolean checkIfBuilt(Collection<ICompilationUnit> elements) {
     return JavaUtil.compUnitsUpToDate(elements);
   }
   
-  void scan(List<ICompilationUnit> selectedCompilationUnits) {
+  void scan(Collection<ICompilationUnit> selectedCompilationUnits) {
     List<String> cuNames = new ArrayList<String>(selectedCompilationUnits.size());
     for(ICompilationUnit cu : selectedCompilationUnits) {
       cuNames.add(cu.getElementName());
@@ -37,7 +36,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   }
 
   @Override
-  void startScanJob(List<ICompilationUnit> selectedCUs) {
+  void startScanJob(Collection<ICompilationUnit> selectedCUs) {
     // One per project that had a CU selected
     final List<ConfigCompilationUnit> configs = 
       ConfigGenerator.getInstance().getCompilationUnitConfigs(selectedCUs);
