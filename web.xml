@@ -7,6 +7,11 @@
 		<welcome-file>SierraPortal.html</welcome-file>
 	</welcome-file-list>
 
+	<listener>
+		<description>Bootstraps the schema on startup.</description>
+		<listener-class>com.surelogic.sierra.lifecycle.SierraContextListener</listener-class>
+	</listener>
+
     <filter>
         <description>
 			Form-based login mechanism
