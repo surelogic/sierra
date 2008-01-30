@@ -38,14 +38,35 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
         try {
           Connection conn = Data.readOnlyConnection();
           Map<IJavaProject,Date> times = new HashMap<IJavaProject,Date>(projects.size()); 
+          List<IJavaProject> noScanYet = null;
+          List<String> projectNames = null;
+          
           for(IJavaProject p : projects) {
             ScanInfo info = ScanManager.getInstance(conn).getLatestScanInfo(p.getElementName());
-            times.put(p, info.getScanTime());
+            if (info != null) {
+              times.put(p, info.getScanTime());
+            } else {
+              // No scan on the project yet
+              if (noScanYet == null) {
+                noScanYet = new ArrayList<IJavaProject>(); 
+                projectNames = new ArrayList<String>();
+              }
+              noScanYet.add(p);
+              projectNames.add(p.getElementName());
+            }
           }
           List<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
+          boolean startedScan = false;
           if (selectedCompilationUnits.size() > 0) {
             new NewPartialScan().scan(selectedCompilationUnits);
-          } else {
+            startedScan = true;
+          }
+          if (noScanYet != null) {
+            new NewScan().scan(noScanYet, projectNames);
+            startedScan = true;
+          }
+          
+          if (!startedScan) {
             BalloonUtility.showMessage("Nothing changed", 
             "Sierra did not detect any files that changed since your last scan(s)");
           }
