@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project default="undeploy" name="undeploy-from-jetty-java-6">
-	<import file="lib/deploy.xml" />
-
-	<target name="undeploy" depends="undeploy-site" />
-</project>
