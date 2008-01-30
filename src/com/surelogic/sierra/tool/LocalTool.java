@@ -6,6 +6,7 @@ package com.surelogic.sierra.tool;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+import java.util.logging.*;
 
 import javax.xml.bind.*;
 
@@ -17,6 +18,38 @@ import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
 public class LocalTool extends AbstractTool {
+  private static final JAXBContext ctx = createContext();
+  
+  private static final Marshaller marshaller = createMarshaller(ctx);
+  
+  private static JAXBContext createContext() {
+    try {
+      return JAXBContext.newInstance(Config.class, 
+        FileTarget.class,
+        JarTarget.class, 
+        FullDirectoryTarget.class, 
+        FilteredDirectoryTarget.class);
+    } catch (JAXBException e) {
+      LOG.log(Level.SEVERE, "Couldn't create JAXB context", e);
+      return null;
+    }
+  }
+  
+  private static Marshaller createMarshaller(JAXBContext ctx) {
+    if (ctx == null) {
+      LOG.severe("No JAXB context to create marshaller with");
+      return null;
+    }
+    try {
+      Marshaller marshaller = ctx.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      return marshaller;
+    } catch (JAXBException e) {
+      LOG.log(Level.SEVERE, "Couldn't create JAXB marshaller", e);
+      return null;
+    }    
+  }
+  
   public LocalTool() {
     super("Local", "1.0", "Local", "Local tool for running other tools in another JVM");
   }
@@ -159,13 +192,6 @@ public class LocalTool extends AbstractTool {
           throw new NullPointerException("No input from the remote JVM (possibly a classpath issue)");
         }
 
-        JAXBContext ctx = JAXBContext.newInstance(Config.class, 
-                                                  FileTarget.class,
-                                                  JarTarget.class, 
-                                                  FullDirectoryTarget.class, 
-                                                  FilteredDirectoryTarget.class);
-        Marshaller marshaller = ctx.createMarshaller();       
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         File file = File.createTempFile("config", ".xml");
         file.deleteOnExit();
 
