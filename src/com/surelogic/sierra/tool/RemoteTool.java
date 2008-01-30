@@ -15,6 +15,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
@@ -44,6 +45,7 @@ public class RemoteTool extends AbstractTool {
 
   public static void main(String[] args) {
     System.out.println("JVM started");
+    System.out.println("Log level: "+SLLogger.LEVEL.get());
     /*
     try {
       Logger LOG = SLLogger.getLogger("sierra");
