@@ -14,8 +14,8 @@ public class Server_0014 implements SchemaAction {
 		for (SierraGroup g : SierraGroup.values()) {
 			man.createGroup(g.getName(), g.getDescription());
 		}
-		man.createUser("admin", "admin");
-		man.addUserToGroup("admin", SierraGroup.ADMIN.getName());
+		man.createUser("sierra", "sierra");
+		man.addUserToGroup("sierra", SierraGroup.ADMIN.getName());
 	}
 
 }
