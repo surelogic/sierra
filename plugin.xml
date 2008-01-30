@@ -62,7 +62,7 @@
            		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
-                label="Scan Changed Files in Project"
+                label="Scan Unscanned Files in Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
@@ -188,6 +188,14 @@
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                label="Scan Project"
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
+
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+               enablesFor="+"
+               id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+               label="Scan Unscanned Files in Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action
