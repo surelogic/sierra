@@ -55,7 +55,7 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
               projectNames.add(p.getElementName());
             }
           }
-          List<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
+          Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
           boolean startedScan = false;
           if (selectedCompilationUnits.size() > 0) {
             new NewPartialScan().scan(selectedCompilationUnits);
