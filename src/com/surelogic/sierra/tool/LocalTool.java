@@ -76,11 +76,15 @@ public class LocalTool extends AbstractTool {
     }
 
     public void run() {
+      final boolean debug = false; //LOG.isLoggable(Level.FINE);
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
       cmdj.setMaxmemory("1024m");
-      cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");      
+      cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
+      if (debug) {
+        cmdj.createVmArgument().setValue("-verbose");
+      }
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
@@ -97,7 +101,6 @@ public class LocalTool extends AbstractTool {
       LOG.info("message = "+message);
       path.add(new Path(proj, message)); // as plugin
       path.add(new Path(proj, message+"/bin")); // in workspace
-      path.add(new Path(proj, message+"/jax-ws/sjsxp.jar"));
       findJars(proj, path, message+"/jaxb");
 
       final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
@@ -112,6 +115,13 @@ public class LocalTool extends AbstractTool {
       final String junit = config.getPluginDir(SierraToolConstants.JUNIT_PLUGIN_ID);
       path.add(new Path(proj, junit+"/junit.jar"));
       path.add(new Path(proj, junit+"/junit-4.1.jar"));
+      if (debug) {
+        for(String p : path.list()) {
+          if (!new File(p).exists()) {
+            System.out.println("Does not exist: "+p);
+          }
+        }
+      }
       
       LOG.info("Starting process:");
       for(String arg : cmdj.getCommandline()) {
@@ -130,7 +140,24 @@ public class LocalTool extends AbstractTool {
       try {
         Process p         = pb.start();
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        System.out.println(br.readLine());
+        String firstLine  = br.readLine();
+        if (debug) {
+          while (firstLine != null) {
+            if (firstLine.startsWith("[")) {
+              //if (!firstLine.endsWith("rt.jar]")) {
+              System.out.println(firstLine);
+              //}
+              firstLine = br.readLine();
+            } else {
+              break;
+            }
+          }
+        }
+        System.out.println("First line = "+firstLine);
+        
+        if (firstLine == null) {
+          throw new NullPointerException("No input from the remote JVM (possibly a classpath issue)");
+        }
 
         JAXBContext ctx = JAXBContext.newInstance(Config.class, 
                                                   FileTarget.class,
