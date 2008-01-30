@@ -22,7 +22,7 @@ public class RemoteTool extends AbstractTool {
   public RemoteTool() {
     super("Remote", "1.0", "Remote", "Remote tool for running other tools in another JVM");
   }
-  
+
   public Set<String> getArtifactTypes() {
     return Collections.emptySet();
   }
@@ -41,13 +41,23 @@ public class RemoteTool extends AbstractTool {
   }
   
   private static final String CANCEL = "##"+Local.CANCEL;
-  
+
   public static void main(String[] args) {
-    Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+    System.out.println("JVM started");
+    /*
+    try {
+      Logger LOG = SLLogger.getLogger("sierra");
+    } catch(Throwable t) {
+      t.printStackTrace();
+    }
+    */
     try {
       final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-      System.out.println("JVM started");
-
+      System.out.println("Created reader");
+      
+      Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+      System.out.println("Lowered thread priority");
+      
       String configName = br.readLine();
       FileInputStream file = new FileInputStream(configName);
       System.out.println("Got file: "+configName);
@@ -70,16 +80,15 @@ public class RemoteTool extends AbstractTool {
       Config config = unmarshaller.unmarshal(xmlr, Config.class).getValue();
       //Config config = (Config) unmarshaller.unmarshal(file);
       System.out.println("Read config");
-      /*
-      String line = br.readLine();
-      while (line != null) {
-        if (line.equals("\n")) {
-          break;
-        }
-        System.out.println(line);
-        line = br.readLine();
-      }      
-      */
+
+//      String line = br.readLine();
+//      while (line != null) {
+//        if (line.equals("\n")) {
+//          break;
+//        }
+//        System.out.println(line);
+//        line = br.readLine();
+//      }      
       
       for(URI location : config.getPaths()) {
         System.out.println("URI = "+location);
