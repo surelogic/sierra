@@ -2,6 +2,8 @@
 <project name="server-deployment">
 	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
 
+	<target name="deploy-all" depends="deploy-app, deploy-root"/>
+	
 	<target name="deploy-app">
 		<!-- Update undeploy-app with any changes made to the deployment -->
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
@@ -46,6 +48,8 @@
 		</war>
 	</target>
 
+	<target name="undeploy-all" depends="undeploy-app, undeploy-root"/>
+	
 	<target name="undeploy-app">
 		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
 		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />

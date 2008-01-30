@@ -2,6 +2,6 @@
 <project default="jetty-java-6-deploy" name="jetty-java-6">
 	<import file="lib/deploy.xml" />
 
-	<target name="jetty-java-6-deploy" depends="deploy-app" />
-	<target name="jetty-java-6-undeploy" depends="undeploy-app" />
+	<target name="jetty-java-6-deploy" depends="deploy-all" />
+	<target name="jetty-java-6-undeploy" depends="undeploy-all" />
 </project>

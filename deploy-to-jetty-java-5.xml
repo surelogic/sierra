@@ -14,6 +14,6 @@
 		<!-- TODO -->
 	</target>
 
-	<target name="jetty-java-5-deploy" depends="deploy-app,deploy-java-5-libs" />
-	<target name="jetty-java-5-undeploy" depends="undeploy-app,undeploy-java-5-libs" />
+	<target name="jetty-java-5-deploy" depends="deploy-all,deploy-java-5-libs" />
+	<target name="jetty-java-5-undeploy" depends="undeploy-all,undeploy-java-5-libs" />
 </project>
