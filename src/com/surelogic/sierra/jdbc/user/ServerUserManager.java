@@ -88,6 +88,7 @@ public class ServerUserManager {
 		if (!record.select()) {
 			record.setPassword(Password.newPassword(password));
 			record.insert();
+			addUserToGroup(userName, SierraGroup.USER.getName());
 			return true;
 		} else {
 			return false;
