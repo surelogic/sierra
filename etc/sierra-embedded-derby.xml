@@ -7,12 +7,10 @@
 <!-- Documentation of this file format can be found at:              -->
 <!-- http://docs.codehaus.org/display/JETTY/jetty.xml                -->
 <!--                                                                 -->
-<!--                                                                 -->
-<!--   DO NOT AUTOFORMAT THIS FILE IN ECLIPSE AS WHITESPACE MATTERS  -->
-<!--   TO DERBY (SETs)                                               -->
+<!-- DO NOT AUTOFORMAT THIS FILE IN ECLIPSE AS WHITESPACE MATTERS    -->
+<!-- TO DERBY (SETs)                                                 -->
 <!--                                                                 -->
 <!-- =============================================================== -->
-
 
 <Configure id="Server" class="org.mortbay.jetty.Server">
 
@@ -27,16 +25,7 @@
         <Set name="maxThreads">250</Set>
         <Set name="lowThreads">25</Set>
       </New>
-
-      <!-- Optional Java 5 bounded threadpool with job queue 
-      <New class="org.mortbay.thread.concurrent.ThreadPool">
-        <Set name="corePoolSize">250</Set>
-        <Set name="maximumPoolSize">250</Set>
-      </New>
-      -->
     </Set>
-
-
 
     <!-- =========================================================== -->
     <!-- Set connectors                                              -->
