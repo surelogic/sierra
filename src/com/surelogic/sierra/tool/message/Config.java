@@ -3,12 +3,14 @@ package com.surelogic.sierra.tool.message;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
+import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
@@ -21,6 +23,8 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 @XmlType
 @XmlRootElement
 public class Config {
+	protected static final Logger LOG = SLLogger.getLogger("sierra");
+	
 	private String project = null;
 	private List<String> qualifiers = null;
 	private String javaVersion = null;
@@ -140,7 +144,8 @@ public class Config {
 	public String getPluginDir(String id) {
 	  String loc = pluginDirs.get(id);
 	  if (loc == null) {
-	    throw new NullPointerException("No location for "+id);
+	    LOG.warning("No location for "+id);		
+	    return null;
 	  }
 	  return loc;
 	}
