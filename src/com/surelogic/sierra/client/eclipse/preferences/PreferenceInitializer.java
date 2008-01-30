@@ -16,7 +16,7 @@ import com.surelogic.sierra.tool.message.Importance;
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	static private final String RAW = System.getProperty("user.home")
-			+ System.getProperty("file.separator") + "Sierra";
+			+ File.separator + "Sierra";
 
 	@Override
 	public void initializeDefaultPreferences() {
