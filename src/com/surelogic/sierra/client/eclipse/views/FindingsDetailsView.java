@@ -35,6 +35,7 @@ import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -197,8 +198,8 @@ public class FindingsDetailsView extends ViewPart {
 			final Shell shell = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell();
 			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-					shell, "Browser Failure", null,
-					"Browser cannot be initialized.", e, Activator.getDefault());
+					shell, "Browser Failure", null, I18N.err(26), e, Activator
+							.getDefault());
 			report.open();
 		}
 		synopsisTab.setControl(synopsisPane);

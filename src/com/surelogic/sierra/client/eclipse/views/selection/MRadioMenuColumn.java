@@ -18,6 +18,7 @@ import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
@@ -131,16 +132,14 @@ public final class MRadioMenuColumn extends MColumn implements
 			// beware the thread context this method call might be made in.
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					final String msg = "Applying the '"
-							+ filter.getFactory().getFilterLabel()
-							+ "' filter to the current selection failed (bug).";
+					final String msg = I18N.err(27, filter.getFactory()
+							.getFilterLabel());
 					final ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(
 							PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getShell(),
-							"Selection Error", null, msg,
-							SLStatus.createErrorStatus(
-									"Initialization of the filter failed.", e),
-							Activator.getDefault());
+							"Selection Error", null, msg, SLStatus
+									.createErrorStatus(msg, e), Activator
+									.getDefault());
 					dialog.open();
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
 				}
@@ -168,10 +167,8 @@ public final class MRadioMenuColumn extends MColumn implements
 
 		public void filterDisposed(Filter filter) {
 			filter.removeObserver(this);
-			SLLogger.getLogger().log(
-					Level.SEVERE,
-					"Unexpected dispose() callback from " + filter
-							+ " while it was being created (bug)");
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(28, filter),
+					new Exception());
 		}
 	}
 
