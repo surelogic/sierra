@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.*;
 
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
@@ -44,6 +45,9 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
           List<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
           if (selectedCompilationUnits.size() > 0) {
             new NewPartialScan().scan(selectedCompilationUnits);
+          } else {
+            BalloonUtility.showMessage("Nothing changed", 
+            "Sierra did not detect any files that changed since your last scan(s)");
           }
         } catch (SQLException ex) {
           LOG.log(Level.SEVERE, ex.getMessage(), ex);
