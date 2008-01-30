@@ -2,12 +2,7 @@ package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
@@ -105,7 +100,7 @@ public final class ConfigGenerator {
 	 * @return list of {@link ConfigCompilationUnit}
 	 */
 	public List<ConfigCompilationUnit> getCompilationUnitConfigs(
-			List<ICompilationUnit> compilationUnits) {
+	    Collection<ICompilationUnit> compilationUnits) {
 		final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
 
 		Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<String, List<ICompilationUnit>>();
