@@ -54,7 +54,9 @@ public final class ConfigGenerator {
 			SierraToolConstants.TOOL_PLUGIN_ID,
 			SierraToolConstants.PMD_PLUGIN_ID,
 			SierraToolConstants.FB_PLUGIN_ID,
-			SierraToolConstants.JUNIT_PLUGIN_ID, };
+			SierraToolConstants.JUNIT4_PLUGIN_ID,
+			SierraToolConstants.JUNIT_PLUGIN_ID,
+	};
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
@@ -83,7 +85,11 @@ public final class ConfigGenerator {
 		 * System.out.println(jdt);
 		 */
 		for (String id : PLUGINS) {
-			pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+		  try {
+		    pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+		  } catch (IllegalStateException e) {
+		    System.out.println("Couldn't find plugin: "+id);
+		  }
 		}
 	}
 
