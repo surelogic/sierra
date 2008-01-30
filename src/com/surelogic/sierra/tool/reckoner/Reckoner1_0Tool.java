@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -99,7 +100,9 @@ public class Reckoner1_0Tool extends AbstractTool {
           }
           mon.subTask("Building metrics for "+m.getPath());
           
-          System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
+          if (LOG.isLoggable(Level.FINE)) {
+            System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
+          }
           MetricBuilder metric = generator.metric();
           metric.compilation(m.getClassName());
           if (m.getLoc() > Integer.MAX_VALUE) {
