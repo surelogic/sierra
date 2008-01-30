@@ -3,6 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<context-param>
+		<description>
+			Tells the server to put its log files under the
+			~Sierra/Server directory.
+		</description>
+		<param-name>SLLogger</param-name>
+		<param-value>Use Sierra Directory</param-value>
+	</context-param>
+
 	<welcome-file-list>
 		<welcome-file>SierraPortal.html</welcome-file>
 	</welcome-file-list>
