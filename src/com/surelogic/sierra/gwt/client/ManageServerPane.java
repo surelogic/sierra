@@ -4,10 +4,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,8 +17,6 @@ public class ManageServerPane extends Composite {
 	private HTML currentVersion = new HTML();
 
 	private HTML availableVersion = new HTML();
-
-	private Button deploySchemaButton = new Button("Deploy Schema");
 
 	private TextBox emailTextBox = new TextBox();
 
@@ -35,32 +33,15 @@ public class ManageServerPane extends Composite {
 	};
 
 	public ManageServerPane() {
-		deploySchemaButton.addClickListener(new ClickListener() {
-
-			public void onClick(Widget sender) {
-				getService().deploySchema(updateServerInfo);
-			}
-		});
 		updateEmailButton.addClickListener(new ClickListener() {
 
 			public void onClick(Widget sender) {
 				getService().setEmail(emailTextBox.getText(), updateServerInfo);
 			}
 		});
-		updateEmailButton.setEnabled(false);
-		emailTextBox.addKeyboardListener(new KeyboardListenerAdapter() {
-
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-				String text = emailTextBox.getText();
-				if (text != null && text.length() > 0) {
-					updateEmailButton.setEnabled(true);
-				}
-			}
-		});
 		VerticalPanel panel = new VerticalPanel();
 		panel.add(currentVersion);
 		panel.add(availableVersion);
-		panel.add(deploySchemaButton);
 		panel.add(emailTextBox);
 		panel.add(updateEmailButton);
 		updateInfo(ServerInfo.getDefault());
@@ -84,11 +65,6 @@ public class ManageServerPane extends Composite {
 	}
 
 	private void updateInfo(ServerInfo info) {
-		if (info.getAvailableVersion().equals(info.getCurrentVersion())) {
-			deploySchemaButton.setEnabled(false);
-		} else {
-			deploySchemaButton.setEnabled(true);
-		}
 		currentVersion.setHTML("<div>Current Version: "
 				+ info.getCurrentVersion() + "</div>");
 		availableVersion.setHTML("<div>Available Version: "
