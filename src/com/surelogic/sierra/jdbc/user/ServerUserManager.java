@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
-import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
+import com.surelogic.sierra.jdbc.record.GroupRecord;
+import com.surelogic.sierra.jdbc.record.UserGroupRelationRecord;
 import com.surelogic.sierra.jdbc.record.UserRecord;
+import com.surelogic.sierra.jdbc.record.RelationRecord.PK;
 
 /**
  * ServerUserManager is responsible for managing server's user accounts.
@@ -19,16 +20,12 @@ import com.surelogic.sierra.jdbc.record.UserRecord;
  */
 public class ServerUserManager {
 
-	private final UpdateRecordMapper userMapper;
+	private final UserRecordFactory factory;
 	private final PreparedStatement selectUsers;
 	private final PreparedStatement selectSomeUsers;
 
 	private ServerUserManager(Connection conn) throws SQLException {
-		userMapper = new UpdateBaseMapper(conn,
-				"INSERT INTO SIERRA_USER (USER_NAME,SALT,HASH) VALUES (?,?,?)",
-				"SELECT ID, SALT, HASH FROM SIERRA_USER WHERE USER_NAME = ?",
-				"DELETE FROM SIERRA_USER WHERE ID = ?",
-				"UPDATE SIERRA_USER SET SALT = ?, HASH = ? WHERE ID = ?");
+		this.factory = UserRecordFactory.getInstance(conn);
 		selectUsers = conn
 				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER");
 		selectSomeUsers = conn
@@ -57,13 +54,62 @@ public class ServerUserManager {
 		}
 	}
 
+	public boolean isUserInGroup(String user, String group) throws SQLException {
+		final UserGroupRelationRecord record = factory.newGroupUser();
+		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
+				.getId()));
+		return record.select();
+	}
+
+	public boolean addUserToGroup(String user, String group)
+			throws SQLException {
+		final UserGroupRelationRecord record = factory.newGroupUser();
+		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
+				.getId()));
+		final boolean exists = record.select();
+		if (!exists) {
+			record.insert();
+		}
+		return exists;
+	}
+
+	/**
+	 * Create a new user with the given name and password.
+	 * 
+	 * @param userName
+	 * @param password
+	 * @return
+	 * @throws SQLException
+	 */
 	public boolean createUser(String userName, String password)
 			throws SQLException {
-		final UserRecord record = new UserRecord(userMapper);
+		final UserRecord record = factory.newUser();
 		record.setUserName(userName);
 		if (!record.select()) {
 			record.setPassword(Password.newPassword(password));
 			record.insert();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Create a new group with the given name and and description
+	 * 
+	 * @param name
+	 * @param description
+	 *            may be <code>null</code>
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean createGroup(String name, String description)
+			throws SQLException {
+		final GroupRecord group = factory.newGroup();
+		group.setName(name);
+		if (!group.select()) {
+			group.setInfo(description);
+			group.insert();
 			return true;
 		} else {
 			return false;
@@ -136,8 +182,18 @@ public class ServerUserManager {
 	}
 
 	private UserRecord getUser(String userName) throws SQLException {
-		UserRecord rec = new UserRecord(userMapper);
+		UserRecord rec = factory.newUser();
 		rec.setUserName(userName);
+		if (rec.select()) {
+			return rec;
+		} else {
+			return null;
+		}
+	}
+
+	private GroupRecord getGroup(String groupName) throws SQLException {
+		GroupRecord rec = factory.newGroup();
+		rec.setName(groupName);
 		if (rec.select()) {
 			return rec;
 		} else {
