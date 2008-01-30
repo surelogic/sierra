@@ -145,9 +145,13 @@ public class LocalTool extends AbstractTool {
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
                                        "reckoner/reckoner.jar").getAbsolutePath()));
+
+      final String junit4 = config.getPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID);
+      path.add(new Path(proj, junit4+"/junit.jar"));
+      path.add(new Path(proj, junit4+"/junit-4.1.jar"));
+      
       final String junit = config.getPluginDir(SierraToolConstants.JUNIT_PLUGIN_ID);
       path.add(new Path(proj, junit+"/junit.jar"));
-      path.add(new Path(proj, junit+"/junit-4.1.jar"));
       if (debug) {
         for(String p : path.list()) {
           if (!new File(p).exists()) {
