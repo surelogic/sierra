@@ -37,15 +37,24 @@ public class LogServletContextListener implements ServletContextListener {
 			return;
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"-yyyy.MM.dd-'at'-HH.mm.ss.SSS");
+		String servletContextName = sce.getServletContext()
+				.getServletContextName();
+		if (servletContextName.length() < 2) {
+			servletContextName = "root";
+		}
+		if (servletContextName.startsWith("/")) {
+			servletContextName = servletContextName.substring(1);
+		}
+
 		final String logFileName;
 		if ("Use Sierra Directory".equals(loggerOption)) {
 			logFileName = System.getProperty("user.home") + File.separator
 					+ "Sierra" + File.separator + "Server" + File.separator
-					+ sce.getServletContext().getServletContextName()
+					+ "log-" + servletContextName
 					+ dateFormat.format(new Date()) + ".txt";
 		} else {
 			logFileName = System.getProperty("java.io.tmpdir") + File.separator
-					+ sce.getServletContext().getServletContextName()
+					+ "log-" + servletContextName
 					+ dateFormat.format(new Date()) + ".txt";
 		}
 		try {
