@@ -52,7 +52,8 @@ public class LogServletContextListener implements ServletContextListener {
 			final FileHandler fh = new FileHandler(logFileName);
 			SLLogger.addHandler(fh);
 		} catch (Exception e) {
-			SLLogger.getLogger().log(Level.SEVERE, I18N.err(29, logFileName));
+			SLLogger.getLogger()
+					.log(Level.SEVERE, I18N.err(29, logFileName), e);
 		}
 	}
 }
