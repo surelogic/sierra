@@ -35,6 +35,7 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
     new DatabaseJob("Checking last scan times") {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
+        monitor.beginTask(getName(), projects.size() + 1);
         try {
           Connection conn = Data.readOnlyConnection();
           Map<IJavaProject,Date> times = new HashMap<IJavaProject,Date>(projects.size()); 
@@ -54,8 +55,11 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
               noScanYet.add(p);
               projectNames.add(p.getElementName());
             }
+            monitor.worked(1);
           }
           Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
+          monitor.worked(1);
+          
           boolean startedScan = false;
           if (selectedCompilationUnits.size() > 0) {
             new NewPartialScan().scan(selectedCompilationUnits);
