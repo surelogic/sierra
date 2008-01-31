@@ -15,7 +15,7 @@ public class SierraPortal implements EntryPoint {
 	public void onModuleLoad() {
 		VerticalPanel paneHolder = new VerticalPanel();
 		paneHolder.add(new ManageServerPane());
-		paneHolder.add(new ManageUserPane());
+		paneHolder.add(new ManageUserAdminPane());
 		RootPanel.get("content-pane").add(paneHolder);
 	}
 

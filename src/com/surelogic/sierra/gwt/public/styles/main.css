@@ -66,6 +66,12 @@ h2 {
 	color: #FD8537
 }
 
+/* Class for items that can be clicked */
+.clickable {
+	color:#005596; 
+	text-decoration:underline;
+}
+
 a {
 	color:#005596; 
 	text-decoration:underline;
