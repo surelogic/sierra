@@ -50,6 +50,17 @@
 		</war>
 	</target>
 
+	<!-- JAXB is not included in Java 5 JREs so we have to add it -->
+	<target name="deploy-missing-java-5-libs">
+		<copy file="../sierra-message/jaxb/activation.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/jaxb-api.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/jaxb-impl.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/jaxb-xjc.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/jaxb1-impl.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/jsr173_1.0_api.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-message/jaxb/sjsxp.jar" todir="../jetty/lib/ext/" />
+	</target>
+
 	<target name="undeploy-site" depends="undeploy-team-server, undeploy-root" />
 
 	<target name="undeploy-team-server">
@@ -59,6 +70,16 @@
 		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
 		<!-- ../jetty/lib/ext/common.jar is obsolete after Jan 08 -->
 		<delete quiet="true" file="../jetty/lib/ext/common.jar" />
+
+		<!-- If the deployment was Java 5 then we need to clean out JAXB libraries -->
+		<delete quiet="true" file="../jetty/lib/ext/activation.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-api.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-impl.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-xjc.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb1-impl.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jsr173_1.0_api.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/sjsxp.jar" />
+
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />

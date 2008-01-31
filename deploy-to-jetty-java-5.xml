@@ -2,13 +2,5 @@
 <project default="deploy" name="deploy-to-jetty-java-5">
 	<import file="lib/deploy.xml" />
 
-	<!-- JAXB is not included in Java 5 JREs so we have to add it -->
-	<target name="deploy-java-5-libs">
-		<copy todir="../jetty/lib/ext/">
-			<fileset dir="../sierra-message/jaxb">
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="deploy" depends="deploy-site,deploy-java-5-libs" />
+	<target name="deploy" depends="deploy-site,deploy-missing-java-5-libs" />
 </project>

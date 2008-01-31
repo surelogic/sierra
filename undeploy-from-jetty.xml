@@ -2,9 +2,5 @@
 <project default="undeploy" name="undeploy-from-jetty">
 	<import file="lib/deploy.xml" />
 
-	<target name="undeploy-java-5-libs">
-		<!-- TODO -->
-	</target>
-
-	<target name="undeploy" depends="undeploy-site,undeploy-java-5-libs" />
+	<target name="undeploy" depends="undeploy-site" />
 </project>
