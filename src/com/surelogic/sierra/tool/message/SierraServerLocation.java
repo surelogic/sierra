@@ -17,22 +17,24 @@ public class SierraServerLocation {
 	private final boolean f_secure;
 	private final String f_host;
 	private final int f_port;
+	private final String f_contextPath;
 	private final String f_user;
 	private final String f_password;
 
 	public SierraServerLocation(String host, boolean secure, int port,
-			String user, String password) {
-		this(UNLABELED_SERVER, host, secure, port, user, password);
+			String contextPath, String user, String password) {
+		this(UNLABELED_SERVER, host, secure, port, contextPath, user, password);
 	}
 
 	public SierraServerLocation(String label, String host, boolean secure,
-			int port, String user, String pass) {
+			int port, String contextPath, String user, String pass) {
 		f_host = host;
 		f_secure = secure;
 		f_port = port;
 		f_user = user;
 		f_password = pass;
 		f_label = label;
+		f_contextPath = contextPath;
 	}
 
 	public SierraServerLocation(String server, String user, String pass) {
@@ -46,7 +48,7 @@ public class SierraServerLocation {
 		} else {
 			f_port = DEFAULT_PORT;
 		}
-
+		f_contextPath = "/";
 		f_host = strArr[0];
 		f_secure = false;
 		f_user = user;
@@ -94,26 +96,8 @@ public class SierraServerLocation {
 		final String host = getHost() + ":" + getPort();
 
 		try {
-			return new URL("http://" + host + "/services/" + serviceName);
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	/**
-	 * Create a url that points to the appropriate WSDL document on the target
-	 * host.
-	 * 
-	 * @param host
-	 *            a String of type <em>host</em> or <em>host</em>[<em>:port</em>]
-	 * @return
-	 */
-	public URL createWSDLUrl() {
-		final String host = getHost() + ":" + getPort();
-
-		try {
-			return new URL("http://" + host
-					+ "/SierraServiceBeanService/SierraServiceBean?wsdl");
+			return new URL((f_secure ? "https://" : "http://") + host
+					+ f_contextPath + "services/" + serviceName);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
