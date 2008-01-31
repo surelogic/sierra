@@ -41,11 +41,11 @@ public class LogServletContextListener implements ServletContextListener {
 		if ("Use Sierra Directory".equals(loggerOption)) {
 			logFileName = System.getProperty("user.home") + File.separator
 					+ "Sierra" + File.separator + "Server" + File.separator
-					+ sce.getServletContext().getServletContextName()
+					+ "log-" + sce.getServletContext().getServletContextName()
 					+ dateFormat.format(new Date()) + ".txt";
 		} else {
 			logFileName = System.getProperty("java.io.tmpdir") + File.separator
-					+ sce.getServletContext().getServletContextName()
+					+ "log-" + sce.getServletContext().getServletContextName()
 					+ dateFormat.format(new Date()) + ".txt";
 		}
 		try {
