@@ -15,7 +15,7 @@
 		<jar destfile="../sierra-services/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
-		<war destfile="../jetty/webapps/sierra-services.war" webxml="../sierra-services/web.xml">
+		<war destfile="../jetty/webapps/services.war" webxml="../sierra-services/web.xml">
 			<fileset dir="../sierra-services/www" />
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-services/lib/web-dependencies" />
@@ -35,7 +35,7 @@
 			<arg value="../sierra-portal/www" />
 			<arg value="com.surelogic.sierra.gwt.SierraPortal" />
 		</java>
-		<war destfile="../jetty/webapps/sierra-portal.war" webxml="../sierra-portal/web.xml">
+		<war destfile="../jetty/webapps/portal.war" webxml="../sierra-portal/web.xml">
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
 			<classes dir="../sierra-portal/bin" />
 			<lib dir="../sierra-portal/lib/web-dependencies" />
@@ -83,7 +83,9 @@
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />
+		<!-- sierra-services.war is obsolete after Jan 31 -->
 		<delete quiet="true" file="../jetty/webapps/sierra-services.war" />
+		<delete quiet="true" file="../jetty/webapps/services.war" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
@@ -91,7 +93,9 @@
 		<delete quiet="true" includeemptydirs="true">
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" includes="**/*" />
 		</delete>
+		<!-- sierra-portal.war is obsolete after Jan 31 -->
 		<delete quiet="true" file="../jetty/webapps/sierra-portal.war" />
+		<delete quiet="true" file="../jetty/webapps/portal.war" />
 	</target>
 
 	<target name="undeploy-root">
