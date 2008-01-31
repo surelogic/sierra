@@ -42,6 +42,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
@@ -158,11 +159,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
+					final int findingsListLimit = PreferenceConstants
+							.getFindingsListLimit();
 					while (rs.next()) {
-						/*
-						 * TODO: Limit to 2000 for now
-						 */
-						if (f_rows.size() < 2000) {
+						if (f_rows.size() < findingsListLimit) {
 							FindingData data = new FindingData();
 							data.f_summary = rs.getString(1);
 							data.f_importance = Importance.valueOf(rs

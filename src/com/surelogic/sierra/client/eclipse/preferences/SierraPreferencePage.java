@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
@@ -39,6 +40,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	RadioGroupFieldEditor f_showAbove;
 	BooleanFieldEditor f_saveResources;
+	IntegerFieldEditor f_findingsListLimit;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -54,6 +56,14 @@ public class SierraPreferencePage extends PreferencePage implements
 		final Group diGroup = new Group(panel, SWT.NONE);
 		diGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		diGroup.setText("Appearance");
+
+		f_findingsListLimit = new IntegerFieldEditor(
+				PreferenceConstants.P_FINDINGS_LIST_LIMIT,
+				"Maximum number of findings shown in 'Findings Quick Search' queries:",
+				diGroup);
+		f_findingsListLimit.setPage(this);
+		f_findingsListLimit.setPreferenceStore(getPreferenceStore());
+		f_findingsListLimit.load();
 
 		f_balloonFlag = new BooleanFieldEditor(
 				PreferenceConstants.P_SIERRA_BALLOON_FLAG,
@@ -146,9 +156,10 @@ public class SierraPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
-		f_showMarkersInJavaEditorFlag.store();
-		f_showAbove.store();
-		f_saveResources.store();
+		f_showMarkersInJavaEditorFlag.loadDefault();
+		f_showAbove.loadDefault();
+		f_saveResources.loadDefault();
+		f_findingsListLimit.loadDefault();
 		super.performDefaults();
 	}
 
@@ -158,6 +169,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_showMarkersInJavaEditorFlag.store();
 		f_showAbove.store();
 		f_saveResources.store();
+		f_findingsListLimit.store();
 		return super.performOk();
 	}
 

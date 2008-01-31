@@ -29,6 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_MARKERS, true);
+		store.setDefault(PreferenceConstants.P_FINDINGS_LIST_LIMIT, 2000);
 	}
 
 }

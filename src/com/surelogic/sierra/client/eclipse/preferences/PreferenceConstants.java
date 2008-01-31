@@ -76,8 +76,8 @@ public class PreferenceConstants {
 	}
 
 	public static void setMarkersVisibility(boolean visible) {
-		Activator.getDefault().getPluginPreferences().setValue(P_SIERRA_SHOW_MARKERS,
-				visible);
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SIERRA_SHOW_MARKERS, visible);
 	}
 
 	public static final String P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = "com.surelogic.sierra.show-markers-at-or-above-importance";
@@ -90,4 +90,10 @@ public class PreferenceConstants {
 		return result;
 	}
 
+	public static final String P_FINDINGS_LIST_LIMIT = "com.surelogic.sierra.findings-list-limit";
+
+	public static int getFindingsListLimit() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_FINDINGS_LIST_LIMIT);
+	}
 }
