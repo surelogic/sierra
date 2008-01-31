@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.server;
 
+import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import com.surelogic.sierra.gwt.client.ManageUserAdminService;
 import com.surelogic.sierra.gwt.client.UserInfo;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerConnection;
+import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.SierraGroup;
 import com.surelogic.sierra.jdbc.user.User;
@@ -127,7 +129,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					if (isAdmin) {
 						man.addUserToGroup(user, SierraGroup.ADMIN.getName());
 					} else {
-						man.removeUserFromGroup(user, SierraGroup.ADMIN.getName());
+						man.removeUserFromGroup(user, SierraGroup.ADMIN
+								.getName());
 					}
 					return new UserInfo(user, man.isUserInGroup(user,
 							SierraGroup.ADMIN.getName()));
@@ -161,9 +164,25 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					throws Exception {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
-				return man.isUserInGroup(getUserName(), SierraGroup.ADMIN.getName());
+				return man.isUserInGroup(getUserName(), SierraGroup.ADMIN
+						.getName());
 			}
 		});
 	}
 
+	protected abstract class WebTransaction<T> implements UserTransaction<T> {
+
+		private final String userName;
+
+		protected WebTransaction() {
+			final Principal p = (Principal) getThreadLocalRequest()
+					.getSession().getAttribute("SierraUser");
+			userName = p == null ? null : p.getName();
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+	}
 }
