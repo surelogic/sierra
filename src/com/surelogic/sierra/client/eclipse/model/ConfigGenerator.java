@@ -206,19 +206,16 @@ public final class ConfigGenerator {
 					.getProject().getName());
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
-			config.setJavaVendor(System.getProperty("java.vendor"));
-			config.setScanDocument(scanDocument);
 			setupTools(config);
 			config.setExcludedToolsList(getExcludedTools());
-			StringBuilder binDirs = null;
-			StringBuilder srcDirs = null;
 			IJavaProject javaProject = compilationUnits.get(0).getJavaProject();
 
 			try {
-				String outputLocation = javaProject.getOutputLocation()
+				String defaultOutputLocation = javaProject.getOutputLocation()
 						.makeRelative().toOSString();
 
 				for (ICompilationUnit c : compilationUnits) {
+				  String outputLocation = computeOutputLocation(javaProject, c, defaultOutputLocation);
 					IType[] types = c.getAllTypes();
 					Set<IFile> classFiles = new HashSet<IFile>();
 					for (IType t : types) {
@@ -259,22 +256,12 @@ public final class ConfigGenerator {
 
 					for (IFile f : classFiles) {
 						String osLoc = f.getLocation().toOSString();
-						if (binDirs == null) {
-							binDirs = new StringBuilder(osLoc);
-						} else {
-							binDirs = binDirs.append(';').append(osLoc);
-						}
 						File osFile = new File(osLoc);
 						config.addTarget(new FileTarget(
 								IToolTarget.Type.BINARY, osFile.toURI(), null));
 					}
 
 					String srcLoc = c.getResource().getLocation().toOSString();
-					if (srcDirs == null) {
-						srcDirs = new StringBuilder(srcLoc);
-					} else {
-						srcDirs = srcDirs.append(';').append(srcLoc);
-					}
 					File srcFile = new File(srcLoc);
 					IPackageFragmentRoot p = (IPackageFragmentRoot) c
 							.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
@@ -283,8 +270,6 @@ public final class ConfigGenerator {
 					config.addTarget(new FileTarget(srcFile.toURI(), rootFile
 							.toURI()));
 				}
-				config.setBinDirs(binDirs.toString());
-				config.setSourceDirs(srcDirs.toString());
 
 				setupToolForProject(config, javaProject, false);
 			} catch (JavaModelException e) {
@@ -305,7 +290,22 @@ public final class ConfigGenerator {
 		return config;
 	}
 
-	public Config getProjectConfig(IJavaProject project) {
+	private String computeOutputLocation(IJavaProject p, ICompilationUnit c, String defaultOut) 
+	throws JavaModelException 
+	{	  
+	  final IPath cuPath = c.getResource().getFullPath();
+	  for(IClasspathEntry e : p.getRawClasspath()) {
+	    final IPath out = e.getOutputLocation();
+	    if (out != null && e.getEntryKind() == IClasspathEntry.CPE_SOURCE &&
+	        e.getPath().isPrefixOf(cuPath)) {	      	          
+	      // FIX Need to check include/excludes
+	      return out.makeRelative().toOSString();	      
+	    }
+	  }
+    return defaultOut;
+  }
+
+  public Config getProjectConfig(IJavaProject project) {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
 		File scanDocument = new File(f_sierraPath + File.separator
@@ -316,33 +316,6 @@ public final class ConfigGenerator {
 		Config config = new Config();
 
 		try {
-			IResource binDirHolder = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(project.getOutputLocation());
-
-			// If we cannot find the binary directory make the project root as
-			// the binary location
-			if (binDirHolder != null) {
-				config.setBinDirs(binDirHolder.getLocation().toOSString());
-			} else {
-				config.setBinDirs(baseDir.getAbsolutePath());
-			}
-			IClasspathEntry[] entries = project.getRawClasspath();
-			String srcDir = null;
-			for (IClasspathEntry e : entries) {
-				if (e.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					IResource resourceHolder = ResourcesPlugin.getWorkspace()
-							.getRoot().findMember(e.getPath());
-
-					if (srcDir == null) {
-						srcDir = resourceHolder.getLocation().toOSString();
-					} else {
-						srcDir = srcDir + ";"
-								+ resourceHolder.getLocation().toOSString();
-					}
-				}
-			}
-			config.setSourceDirs(srcDir);
-
 			setupToolForProject(config, project, true);
 		} catch (JavaModelException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
@@ -353,8 +326,6 @@ public final class ConfigGenerator {
 		config.setProject(project.getProject().getName());
 		config.setDestDirectory(f_resultRoot);
 		config.setScanDocument(scanDocument);
-		config.setJavaVendor(System.getProperty("java.vendor"));
-		config.setScanDocument(scanDocument);
 		setupTools(config);
 		config.setExcludedToolsList(getExcludedTools());
 
@@ -363,8 +334,10 @@ public final class ConfigGenerator {
 		// Get excluded dirs - project specific
 		return config;
 	}
-
+	
 	private void setupTools(Config config) {
+	  config.setJavaVendor(System.getProperty("java.vendor"));
+	  config.setJavaVersion(System.getProperty("java.version"));
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
 	}
