@@ -24,6 +24,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
@@ -347,7 +348,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						}
 					}
 					f_infoGroup.setText(server.getLabel());
-					f_serverURL.setText(server.toURLString());
+					f_serverURL.setText(server.toURLWithContextPath());
 					items = f_projectList.getItems();
 					for (TableItem item : items) {
 						item.dispose();
@@ -396,11 +397,10 @@ public final class SierraServersMediator implements ISierraServerObserver {
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
 							server.getLabel(), name, name);
-			final URL url = server.getAuthorizedURL();
+			final URL url = server.toAuthorizedURL();
 			browser.openURL(url);
 		} catch (Exception e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Exception occurred when opening " + server);
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
 		}
 	}
 }

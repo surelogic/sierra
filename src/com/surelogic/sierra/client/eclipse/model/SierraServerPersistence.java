@@ -34,6 +34,7 @@ public final class SierraServerPersistence {
 	public static final String LABEL = "label";
 	public static final String NAME = "name";
 	public static final String PORT = "port";
+	public static final String CONTEXT_PATH = "context-path";
 	public static final String PROTOCOL = "protocol";
 	public static final String SAVE_PASSWORD = "save-password";
 	public static final String SERVER = "server";
@@ -66,7 +67,7 @@ public final class SierraServerPersistence {
 				outputServer(pw, server,
 						manager.getProjectsConnectedTo(server), true);
 
-				/* Store the passoword in the keyring */
+				/* Store the password in the keyring */
 				if (map == null) {
 					map = new java.util.HashMap<String, String>();
 				}
@@ -127,6 +128,7 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(HOST, server.getHost(), b);
 		Entities.addAttribute(PROTOCOL, server.getProtocol(), b);
 		Entities.addAttribute(PORT, server.getPort(), b);
+		Entities.addAttribute(CONTEXT_PATH, server.getContextPath(), b);
 		Entities.addAttribute(USER, server.getUser(), b);
 		if (save) {
 			Entities.addAttribute(SAVE_PASSWORD, server.savePassword() + "", b);
@@ -204,6 +206,9 @@ public final class SierraServerPersistence {
 				final String host = attributes.getValue(HOST);
 				final String protocol = attributes.getValue(PROTOCOL);
 				final String portString = attributes.getValue(PORT);
+				String contextPath = attributes.getValue(CONTEXT_PATH);
+				if (contextPath == null)
+					contextPath = "/";
 				final int port = Integer.parseInt(portString);
 				final String user = attributes.getValue(USER);
 				final String savePasswordString = attributes
@@ -214,6 +219,7 @@ public final class SierraServerPersistence {
 				f_server.setHost(host);
 				f_server.setSecure(protocol.equals("https"));
 				f_server.setPort(port);
+				f_server.setContextPath(contextPath);
 				f_server.setUser(user);
 				f_server.setSavePassword(savePassword);
 

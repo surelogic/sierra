@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -159,6 +160,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			}
 		});
 
+		final Label contextPathLabel = new Label(locGroup, SWT.RIGHT);
+		contextPathLabel.setText("Context:");
+		data = new GridData(SWT.RIGHT);
+		data.widthHint = INFO_WIDTH_HINT;
+		contextPathLabel.setLayoutData(data);
+		Text contextPathText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
+		contextPathText.setText(f_server.getContextPath());
+		contextPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		final Label protLabel = new Label(locGroup, SWT.RIGHT);
 		protLabel.setText("Protocol:");
 		data = new GridData(SWT.RIGHT);
@@ -243,8 +253,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		setTitle(TITLE);
 
-		f_mediator = new Mediator(labelText, hostText, portText, userText,
-				passwordText);
+		f_mediator = new Mediator(labelText, hostText, portText,
+				contextPathText, userText, passwordText);
 		f_mediator.init();
 
 		Dialog.applyDialogFont(panel);
@@ -284,14 +294,16 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		private final Text f_labelText;
 		private final Text f_hostText;
 		private final Text f_portText;
+		private final Text f_contextPathText;
 		private final Text f_userText;
 		private final Text f_passwordText;
 
-		Mediator(Text labelText, Text hostText, Text portText, Text userText,
-				Text passwordText) {
+		Mediator(Text labelText, Text hostText, Text portText,
+				Text contextPathText, Text userText, Text passwordText) {
 			f_labelText = labelText;
 			f_hostText = hostText;
 			f_portText = portText;
+			f_contextPathText = contextPathText;
 			f_userText = userText;
 			f_passwordText = passwordText;
 		}
@@ -305,6 +317,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_labelText.addListener(SWT.Modify, checkContentsListener);
 			f_hostText.addListener(SWT.Modify, checkContentsListener);
 			f_portText.addListener(SWT.Modify, checkContentsListener);
+			f_contextPathText.addListener(SWT.Modify, checkContentsListener);
 			f_userText.addListener(SWT.Modify, checkContentsListener);
 			f_labelText.addListener(SWT.Modify, checkContentsListener);
 		}
@@ -325,6 +338,18 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				valid = false;
 			}
 
+			final String cp = f_contextPathText.getText().trim();
+			boolean slashStartEnd = cp.startsWith("/") && cp.endsWith("/");
+			boolean noSpaces = cp.indexOf(' ') == -1;
+			boolean validCP = slashStartEnd && noSpaces;
+			if (!validCP) {
+				valid = false;
+				showInfo = false;
+				setMessage(I18N
+						.msg("sierra.eclipse.badServerLocationContextPath"),
+						IMessageProvider.ERROR);
+			}
+
 			final String labelText = f_labelText.getText().trim();
 			if (labelText.equals("")) {
 				valid = false;
@@ -332,9 +357,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 					&& f_manager.exists(labelText)) {
 				valid = false;
 				showInfo = false;
-				setMessage("The label '" + labelText
-						+ "' is used by another server configuration",
-						IMessageProvider.ERROR);
+				setMessage(I18N.msg("sierra.eclipse.badServerLocationLabel",
+						labelText), IMessageProvider.ERROR);
 			}
 
 			if (showInfo)
@@ -346,6 +370,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_server.setLabel(f_labelText.getText().trim());
 			f_server.setHost(f_hostText.getText().trim());
 			f_server.setPort(Integer.parseInt(f_portText.getText().trim()));
+			f_server.setContextPath(f_contextPathText.getText().trim());
 			f_server.setSecure(f_isSecure);
 			f_server.setUser(f_userText.getText().trim());
 			f_server.setPassword(f_passwordText.getText());

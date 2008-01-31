@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class SierraServer {
@@ -73,6 +74,16 @@ public final class SierraServer {
 		f_port = port;
 	}
 
+	private String f_contextPath = "/";
+
+	public String getContextPath() {
+		return f_contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		f_contextPath = contextPath;
+	}
+
 	private String f_user = "";
 
 	public String getUser() {
@@ -116,45 +127,41 @@ public final class SierraServer {
 		f_usedToConnectToAServer = true;
 	}
 
-	private static final String SIERRA_WEB_PATH = "/sierra/";
+	/**
+	 * The path off the site context path where the portal is located.
+	 */
+	private static final String SIERRA_PORTAL_PATH = "portal/";
 	private static final String ENCODING = "UTF-8";
 
-	public String toURLString() {
+	public String toURLWithContextPath() {
 		final StringBuilder b = new StringBuilder();
 		b.append(getProtocol()).append("://");
 		b.append(getHost()).append(":").append(getPort());
+		b.append(getContextPath());
 		return b.toString();
 	}
 
-	public URL getAuthorizedURL() throws Exception {
-		//System.out.println(this);
+	public URL toAuthorizedURL() throws Exception {
+		final StringBuilder b = new StringBuilder(toURLWithContextPath());
+		b.append(SIERRA_PORTAL_PATH);
 		if (savePassword()) {
-			final StringBuilder b = new StringBuilder();
-			b.append("http://");
+			b.append("login?SierraAuthName=");
 			b.append(URLEncoder.encode(getUser(), ENCODING));
-			b.append(":");
+			b.append("&SierraAuthPass=");
 			b.append(URLEncoder.encode(getPassword(), ENCODING));
-			b.append("@");
-			b.append(getHost()).append(":").append(getPort());
-			b.append(SIERRA_WEB_PATH);
-			//System.out.println(b);
-			final URI uri = new URI(b.toString());
-			final URL url = uri.toURL();
-			return url;
-		} else {
-			final URI uri = new URI(toURLString() + SIERRA_WEB_PATH);
-			final URL url = uri.toURL();
-			return url;
 		}
+		SLLogger.getLogger().fine("getAuthorizedURL() = " + b.toString());
+		final URI uri = new URI(b.toString());
+		final URL url = uri.toURL();
+		return url;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder();
 		b.append("'").append(getLabel()).append("' is ");
-		b.append(getProtocol()).append("://");
-		b.append(getHost()).append(":").append(getPort());
-		b.append("/user=\"").append(getUser()).append("\" ");
+		b.append(toURLWithContextPath());
+		b.append(" user=\"").append(getUser()).append("\" ");
 		b.append(" password-is-saved=").append(savePassword());
 		return b.toString();
 	}
