@@ -54,11 +54,11 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
               }
               noScanYet.add(p);
               projectNames.add(p.getElementName());
-            }
-            monitor.worked(1);
+            }            
           }
-          Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times);
           monitor.worked(1);
+          
+          Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times, monitor);
           
           boolean startedScan = false;
           if (selectedCompilationUnits.size() > 0) {
