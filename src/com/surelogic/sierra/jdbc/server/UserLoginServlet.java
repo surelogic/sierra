@@ -40,8 +40,10 @@ public class UserLoginServlet extends HttpServlet {
 		final HttpSession session = request.getSession();
 		final String userName = request.getParameter(SecurityHelper.AUTH_NAME);
 		final String password = request.getParameter(SecurityHelper.AUTH_PASS);
-		final String context = request
-				.getParameter(SecurityHelper.AUTH_REDIRECT);
+		String context = request.getParameter(SecurityHelper.AUTH_REDIRECT);
+		if (context == null) {
+			context = "/";
+		}
 		if (userName != null && password != null) {
 			final User u = ServerConnection
 					.withReadOnly(new UserTransaction<User>() {
