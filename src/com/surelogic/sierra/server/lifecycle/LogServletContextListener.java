@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -47,15 +48,15 @@ public class LogServletContextListener implements ServletContextListener {
 		}
 
 		final String logFileName;
+		final String tail = File.separator + "log-" + servletContextName
+				+ dateFormat.format(new Date()) + ".txt";
 		if ("Use Sierra Directory".equals(loggerOption)) {
-			logFileName = System.getProperty("user.home") + File.separator
-					+ "Sierra" + File.separator + "Server" + File.separator
-					+ "log-" + servletContextName
-					+ dateFormat.format(new Date()) + ".txt";
+			final String serverDirectory = FileUtility.getSierraDataDirectory()
+					+ File.separator + "server";
+			FileUtility.createDirectory(serverDirectory);
+			logFileName = serverDirectory + tail;
 		} else {
-			logFileName = System.getProperty("java.io.tmpdir") + File.separator
-					+ "log-" + servletContextName
-					+ dateFormat.format(new Date()) + ".txt";
+			logFileName = System.getProperty("java.io.tmpdir") + tail;
 		}
 		try {
 			final FileHandler fh = new FileHandler(logFileName);
