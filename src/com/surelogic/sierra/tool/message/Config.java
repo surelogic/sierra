@@ -48,12 +48,6 @@ public class Config {
 	// True if the temp directory inside the destDir should be deleted when done
 	private boolean cleanTempFiles = false;
 
-	// Path string containing all source directories to be scanned
-	private String sourceDirs = null;
-
-	// Path string containing all binary directories to be scanned
-	private String binDirs = null;
-
 	// Path string containing the classpath for Sierra client, the Ant task and
 	// Tools
 	private String classpath = null;
@@ -156,7 +150,6 @@ public class Config {
 		int result = 1;
 		result = prime * result
 				+ ((baseDirectory == null) ? 0 : baseDirectory.hashCode());
-		result = prime * result + ((binDirs == null) ? 0 : binDirs.hashCode());
 		result = prime * result
 				+ ((classpath == null) ? 0 : classpath.hashCode());
 		result = prime * result + (cleanTempFiles ? 1231 : 1237);
@@ -181,8 +174,6 @@ public class Config {
 		result = prime * result
 				+ ((scanDocument == null) ? 0 : scanDocument.hashCode());
 		result = prime * result
-				+ ((sourceDirs == null) ? 0 : sourceDirs.hashCode());
-		result = prime * result
 				+ ((toolsDirectory == null) ? 0 : toolsDirectory.hashCode());
 		return result;
 	}
@@ -200,11 +191,6 @@ public class Config {
 			if (other.baseDirectory != null)
 				return false;
 		} else if (!baseDirectory.equals(other.baseDirectory))
-			return false;
-		if (binDirs == null) {
-			if (other.binDirs != null)
-				return false;
-		} else if (!binDirs.equals(other.binDirs))
 			return false;
 		if (classpath == null) {
 			if (other.classpath != null)
@@ -260,11 +246,7 @@ public class Config {
 				return false;
 		} else if (!scanDocument.equals(other.scanDocument))
 			return false;
-		if (sourceDirs == null) {
-			if (other.sourceDirs != null)
-				return false;
-		} else if (!sourceDirs.equals(other.sourceDirs))
-			return false;
+
 		if (toolsDirectory == null) {
 			if (other.toolsDirectory != null)
 				return false;
@@ -331,36 +313,6 @@ public class Config {
 	 */
 	public final void setCleanTempFiles(boolean cleanTempFiles) {
 		this.cleanTempFiles = cleanTempFiles;
-	}
-
-	/**
-	 * @return the sourceDirs
-	 */
-	public final String getSourceDirs() {
-		return sourceDirs;
-	}
-
-	/**
-	 * @param sourceDirs
-	 *            the sourceDirs to set
-	 */
-	public final void setSourceDirs(String sourceDirs) {
-		this.sourceDirs = sourceDirs;
-	}
-
-	/**
-	 * @return the binDirs
-	 */
-	public final String getBinDirs() {
-		return binDirs;
-	}
-
-	/**
-	 * @param binDirs
-	 *            the binDirs to set
-	 */
-	public final void setBinDirs(String binDirs) {
-		this.binDirs = binDirs;
 	}
 
 	/**
