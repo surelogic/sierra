@@ -50,6 +50,15 @@
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
           </action>
           <action
+           		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+                id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+                label="Re-Scan Changes in Project(s)"
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+                enablesFor="+">
+             <selection class="org.eclipse.jdt.core.IJavaProject"/>
+          </action>                
+          <action
            		class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
@@ -57,16 +66,7 @@
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
-          </action>
-          <action
-           		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-                id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
-                label="Scan Unscanned Files in Project(s)"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-                enablesFor="+">
-             <selection class="org.eclipse.jdt.core.IJavaProject"/>
-          </action>          
+          </action>    
          <action
            		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
@@ -182,20 +182,21 @@
             <groupMarker name="client"/>
             <separator name="server"/>
          </menu>
+         
+         <action
+               class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+               enablesFor="+"
+               id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+               label="Re-Scan Changes in Project(s)"
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
+         
          <action
                class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                label="Scan Project(s)"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
-
-         <action
-               class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-               enablesFor="+"
-               id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
-               label="Scan Unscanned Files in Project(s)"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action
