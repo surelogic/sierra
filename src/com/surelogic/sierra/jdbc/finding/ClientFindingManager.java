@@ -533,7 +533,11 @@ public final class ClientFindingManager extends FindingManager {
 			}
 			conn.commit();
 			generatePartialScanOverview(scan.getId(), scanFindingIds);
-			regenerateFindingsOverview(projectName, previousFindingIds, monitor);
+			/*
+			 * Regenerate the findings overview for all current and previous findings.
+			 */
+			scanFindingIds.addAll(previousFindingIds);
+			regenerateFindingsOverview(projectName, scanFindingIds, monitor);
 			log.info("All new findings (" + total + ") persisted for scan "
 					+ uid + " in project " + projectName + ".");
 		} catch (SQLException e) {
