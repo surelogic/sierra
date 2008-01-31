@@ -44,9 +44,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = null;
-
-					newScanDocument = new File(FileUtility
+					File newScanDocument = new File(FileUtility
 							.getSierraDataDirectory()
 							+ File.separator
 							+ config.getProject()
