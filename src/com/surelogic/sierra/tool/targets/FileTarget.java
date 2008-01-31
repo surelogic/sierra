@@ -67,4 +67,11 @@ public final class FileTarget extends AbstractToolTarget {
   public URI getRoot() {
     return root;
   }
+  
+  /**
+   * For JAXB
+   */
+  public void setRoot(URI r) {
+    root = r;
+  }
 }
