@@ -32,11 +32,6 @@ public class ServerUserManager {
 				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER WHERE USER_NAME LIKE ?");
 	}
 
-	public static ServerUserManager getInstance(Connection conn)
-			throws SQLException {
-		return new ServerUserManager(conn);
-	}
-
 	/**
 	 * 
 	 * @param userName
@@ -54,6 +49,14 @@ public class ServerUserManager {
 		}
 	}
 
+	/**
+	 * Checks to see whether or not a user has access to a particular group.
+	 * 
+	 * @param user
+	 * @param group
+	 * @return
+	 * @throws SQLException
+	 */
 	public boolean isUserInGroup(String user, String group) throws SQLException {
 		final UserGroupRelationRecord record = factory.newGroupUser();
 		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
@@ -61,8 +64,16 @@ public class ServerUserManager {
 		return record.select();
 	}
 
-	public boolean addUserToGroup(String user, String group)
-			throws SQLException {
+	/**
+	 * Adds a user to the given group. If the user is already part of the group,
+	 * does nothing.
+	 * 
+	 * @param user
+	 * @param group
+	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
+	 * @throws SQLException
+	 */
+	public void addUserToGroup(String user, String group) throws SQLException {
 		final UserGroupRelationRecord record = factory.newGroupUser();
 		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
 				.getId()));
@@ -70,7 +81,26 @@ public class ServerUserManager {
 		if (!exists) {
 			record.insert();
 		}
-		return exists;
+	}
+
+	/**
+	 * Remove a user from the given group. If the user is not part of the group,
+	 * does nothing.
+	 * 
+	 * @param user
+	 * @param group
+	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
+	 * @throws SQLException
+	 */
+	public void removeUserFromGroup(String user, String group)
+			throws SQLException {
+		final UserGroupRelationRecord record = factory.newGroupUser();
+		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
+				.getId()));
+		final boolean exists = record.select();
+		if (exists) {
+			record.delete();
+		}
 	}
 
 	/**
@@ -92,6 +122,20 @@ public class ServerUserManager {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	/**
+	 * Delete an existing user.
+	 * 
+	 * @param user
+	 * @throws SQLException
+	 */
+	public void deleteUser(String user) throws SQLException {
+		final UserRecord record = factory.newUser();
+		record.setUserName(user);
+		if (record.select()) {
+			record.delete();
 		}
 	}
 
@@ -138,6 +182,24 @@ public class ServerUserManager {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Changes the user's password. This does not check the user's current
+	 * password, and should only be used by someone in an administrative role.
+	 * 
+	 * @param userName
+	 * @param newPassword
+	 * @return <code>true</code> if the password has been changed,
+	 *         <code>false</code> otherwise.
+	 * @throws SQLException
+	 */
+	public void changeUserPassword(String userName, String newPassword)
+			throws SQLException {
+		final UserRecord record = getUser(userName);
+		final Password password = Password.newPassword(newPassword);
+		record.setPassword(password);
+		record.update();
 	}
 
 	/**
@@ -202,6 +264,11 @@ public class ServerUserManager {
 		}
 	}
 
+	public static ServerUserManager getInstance(Connection conn)
+			throws SQLException {
+		return new ServerUserManager(conn);
+	}
+
 	private static class ServerUser implements User {
 
 		/**
@@ -255,4 +322,5 @@ public class ServerUserManager {
 		}
 
 	}
+
 }

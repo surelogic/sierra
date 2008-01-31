@@ -32,7 +32,8 @@ public class UserRecordFactory {
 				conn,
 				"INSERT INTO GROUP_USER_RELTN (USER_ID, GROUP_ID) VALUES (?,?)",
 				"SELECT USER_ID,GROUP_ID FROM GROUP_USER_RELTN WHERE USER_ID = ? AND GROUP_ID = ?",
-				null, false);
+				"DELETE FROM GROUP_USER_RELTN WHERE USER_ID = ? AND GROUP_ID = ?",
+				false);
 	}
 
 	public static UserRecordFactory getInstance(Connection conn)
