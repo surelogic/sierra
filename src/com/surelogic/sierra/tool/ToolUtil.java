@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -50,15 +51,8 @@ public class ToolUtil {
   }
   
   public static String getTimeStamp() {
-    Date date = Calendar.getInstance().getTime();
-    long time = Calendar.getInstance().getTimeInMillis();
-
-    /*
-     * Change the colon on date to semi-colon as file name with a colon is
-     * invalid
-     */
-    String timeStamp = date.toString().replace(":", ";") + " - "
-        + String.valueOf(time);
-    return timeStamp;
+    final Date date = Calendar.getInstance().getTime();
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd-'at'-HH.mm.ss.SSS");    
+    return dateFormat.format(date);
   }
 }
