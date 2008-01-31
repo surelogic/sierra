@@ -551,6 +551,7 @@ public final class ClientFindingManager extends FindingManager {
 		populatePartialScanOverview.setLong(2, scanId);
 		populatePartialScanOverview.execute();
 		deleteTempIds.execute();
+		log.info("Generated partial scan overview for scan "+scanId+": "+findingIds.size()+" new");
 	}
 
 	/**
@@ -601,6 +602,7 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			latestScanSet.close();
 		}
+		log.info("Regenerated findings overview for project "+projectName+": "+findingIds.size()+" old");
 	}
 
 	/**
