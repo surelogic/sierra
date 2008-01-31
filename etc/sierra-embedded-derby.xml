@@ -90,29 +90,6 @@
     </Set>
     
     <!-- =========================================================== -->
-    <!-- Configure the context deployer                              -->
-    <!-- A context deployer will deploy contexts described in        -->
-    <!-- configuration files discovered in a directory.              -->
-    <!-- The configuration directory can be scanned for hot          -->
-    <!-- deployments at the configured scanInterval.                 -->
-    <!--                                                             -->
-    <!-- This deployer is configured to deploy contexts configured   -->
-    <!-- in the $JETTY_HOME/contexts directory                       -->
-    <!--                                                             -->
-    <!-- =========================================================== -->
-    <!--
-    <Call name="addLifeCycle">
-      <Arg>
-        <New class="org.mortbay.jetty.deployer.ContextDeployer">
-          <Set name="contexts"><Ref id="Contexts"/></Set>
-          <Set name="configurationDir"><SystemProperty name="jetty.home" default="."/>/contexts</Set>
-          <Set name="scanInterval">1</Set>
-        </New>
-      </Arg>
-    </Call>
-    -->
-    
-    <!-- =========================================================== -->
     <!-- Configure the webapp deployer.                              -->
     <!-- A webapp  deployer will deploy standard webapps discovered  -->
     <!-- in a directory at startup, without the need for additional  -->
@@ -137,25 +114,6 @@
         </New>
       </Arg>
     </Call>
-
-    <!-- =========================================================== -->
-    <!-- Configure Authentication Realms                             -->
-    <!-- Realms may be configured for the entire server here, or     -->
-    <!-- they can be configured for a specific web app in a context  -->
-    <!-- configuration (see $(jetty.home)/contexts/test.xml for an   -->
-    <!-- example).                                                   -->
-    <!-- =========================================================== -->
-    <Set name="UserRealms">
-      <Array type="org.mortbay.jetty.security.UserRealm">      
-         <Item>
-          <New class="org.mortbay.jetty.security.HashUserRealm">
-            <Set name="name">sierraRealm</Set>
-            <Set name="config"><SystemProperty name="jetty.home" default="."/>/etc/sierraRealm.properties</Set>
-            <Set name="refreshInterval">0</Set>
-          </New>
-        </Item>
-      </Array>
-    </Set>
 
     <!-- =========================================================== -->
     <!-- Configure Request Log                                       -->

@@ -10,7 +10,6 @@
 	<target name="deploy-team-server">
 		<!-- Update undeploy-app with any changes made to the deployment -->
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
-		<copy file="./etc/sierraRealm.properties" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
 		<jar destfile="../sierra-services/lib/web-dependencies/common.jar" basedir="../common/bin" />
