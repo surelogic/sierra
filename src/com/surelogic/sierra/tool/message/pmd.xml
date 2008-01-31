@@ -2691,9 +2691,9 @@
 		<artifact tool="PMD" mnemonic="DoNotExtendJavaLangError">
 		</artifact>
 		<shortMessage>
-			[ Errors are system exceptions. Do not extend them.
+			Errors are system exceptions. Do not extend them.
 		</shortMessage>
-		<info>[ Errors are system exceptions. Do not extend them.</info>
+		<info>Errors are system exceptions. Do not extend them.</info>
 		<name>Do Not Extend java.lang.Error</name>
 	</findingType>
 	<findingType>
