@@ -17,7 +17,8 @@ public abstract class SierraServiceServlet extends RemoteServiceServlet {
 		private final String userName;
 
 		protected WebTransaction() {
-			final Principal p = getThreadLocalRequest().getUserPrincipal();
+			final Principal p = (Principal) getThreadLocalRequest()
+					.getSession().getAttribute("SierraUser");
 			userName = p == null ? null : p.getName();
 		}
 
