@@ -27,7 +27,7 @@ public class SchemaServletContextListener extends LogServletContextListener {
 		ServerConnection.withTransaction(new UserTransaction<Void>() {
 
 			public String getUserName() {
-				return "admin";
+				return "sierra";
 			}
 
 			public Void perform(Connection conn, Server server)
