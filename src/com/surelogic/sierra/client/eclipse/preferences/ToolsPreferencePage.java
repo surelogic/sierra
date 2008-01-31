@@ -222,5 +222,4 @@ public class ToolsPreferencePage extends PreferencePage implements
 		f_runReckonerFlag.store();
 		return super.performOk();
 	}
-
 }

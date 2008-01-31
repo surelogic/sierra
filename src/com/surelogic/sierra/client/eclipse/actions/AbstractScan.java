@@ -15,7 +15,7 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public abstract class AbstractScan<T extends IJavaElement>  {
   /** The logger */
-  protected static final Logger LOG = SLLogger.getLogger("sierra");
+  protected static final Logger LOG = SLLogger.getLogger();
 
   private final boolean isRescan;
   

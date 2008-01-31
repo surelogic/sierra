@@ -22,7 +22,7 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
  */
 class ScanJobAdapter extends JobChangeAdapter {
   /** The logger */
-  private static final Logger LOG = SLLogger.getLogger("sierra");
+  private static final Logger LOG = SLLogger.getLogger();
   
 	private final String f_scanName;
 	private final String scan;

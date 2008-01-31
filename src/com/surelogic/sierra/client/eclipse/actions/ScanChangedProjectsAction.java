@@ -24,7 +24,7 @@ import com.surelogic.sierra.jdbc.scan.*;
  * @author Edwin.Chan
  */
 public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction {
-  protected static final Logger LOG = SLLogger.getLogger("sierra");
+  protected static final Logger LOG = SLLogger.getLogger();
   
   @Override
   protected void run(final List<IJavaProject> projects,

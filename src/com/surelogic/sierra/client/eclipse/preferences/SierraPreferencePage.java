@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
@@ -36,7 +35,6 @@ import com.surelogic.sierra.tool.message.Importance;
 public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	DirectoryFieldEditor f_path;
 	BooleanFieldEditor f_balloonFlag;
 	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	RadioGroupFieldEditor f_showAbove;
@@ -100,15 +98,6 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
 
-		final Group soGroup = new Group(panel, SWT.NONE);
-		soGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		soGroup.setText("Scan Output");
-		f_path = new DirectoryFieldEditor(PreferenceConstants.P_SIERRA_PATH,
-				"Directory:", soGroup);
-		f_path.setPage(this);
-		f_path.setPreferenceStore(getPreferenceStore());
-		f_path.load();
-
 		final Group pGroup = new Group(panel, SWT.NONE);
 		pGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		pGroup.setText("Scanned Projects");
@@ -156,7 +145,6 @@ public class SierraPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performDefaults() {
-		f_path.loadDefault();
 		f_balloonFlag.loadDefault();
 		f_showMarkersInJavaEditorFlag.store();
 		f_showAbove.store();
@@ -166,7 +154,6 @@ public class SierraPreferencePage extends PreferencePage implements
 
 	@Override
 	public boolean performOk() {
-		f_path.store();
 		f_balloonFlag.store();
 		f_showMarkersInJavaEditorFlag.store();
 		f_showAbove.store();

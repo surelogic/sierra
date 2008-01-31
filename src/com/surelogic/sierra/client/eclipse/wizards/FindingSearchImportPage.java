@@ -166,7 +166,7 @@ public class FindingSearchImportPage extends WizardPage {
 				SelectionManager.getInstance().load(holder);
 				return true;
 			} catch (Exception ex) {
-				SLLogger.getLogger("sierra").log(
+				SLLogger.getLogger().log(
 						Level.SEVERE,
 						"Error when importing finding searches from the file "
 								+ holder.getAbsolutePath(), ex);

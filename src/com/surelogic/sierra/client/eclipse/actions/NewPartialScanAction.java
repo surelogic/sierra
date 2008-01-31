@@ -146,7 +146,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 						}
 
 					} catch (JavaModelException e) {
-						SLLogger.getLogger("sierra").log(
+						SLLogger.getLogger().log(
 								Level.SEVERE,
 								"Error when trying to get compilation units for package "
 										+ packageFragment.getElementName(), e);

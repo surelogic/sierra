@@ -17,7 +17,7 @@ import com.surelogic.sierra.tool.message.Config;
 
 public class NewScanJob extends WorkspaceJob {
   /** The logger */
-  protected static final Logger LOG = SLLogger.getLogger("sierra");
+  protected static final Logger LOG = SLLogger.getLogger();
   
   final Config config;
   final DatabaseJob afterJob;

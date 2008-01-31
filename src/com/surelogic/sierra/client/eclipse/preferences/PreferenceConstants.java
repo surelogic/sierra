@@ -29,13 +29,6 @@ public class PreferenceConstants {
 				P_SIERRA_DELETE_DB_ON_STARTUP, deleteDatabaseOnStartup);
 	}
 
-	public static final String P_SIERRA_PATH = "com.surelogic.sierra.path";
-
-	public static String getSierraPath() {
-		return Activator.getDefault().getPluginPreferences().getString(
-				P_SIERRA_PATH);
-	}
-
 	public static final String P_SIERRA_BALLOON_FLAG = "com.surelogic.sierra.balloon-flag";
 
 	public static boolean showBalloonNotifications() {

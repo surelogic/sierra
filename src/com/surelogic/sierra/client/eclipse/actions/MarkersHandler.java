@@ -68,7 +68,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	public static final String SIERRA_MARKER_LOW = "com.surelogic.sierra.client.eclipse.sierraMarkerLow";
 	public static final String SIERRA_MARKER_IRRELEVANT = "com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant";
 
-	private static final Logger LOG = SLLogger.getLogger("sierra");
+	private static final Logger LOG = SLLogger.getLogger();
 
 	private IFile f_selectedFile = null;
 	private final MarkerListener f_listener = new MarkerListener();
@@ -303,7 +303,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
 		}
 		if (debug)
-			System.out.println("Create "+overview.size()+" markers: "
+			System.out.println("Create " + overview.size() + " markers: "
 					+ (System.currentTimeMillis() - startCreate));
 	}
 

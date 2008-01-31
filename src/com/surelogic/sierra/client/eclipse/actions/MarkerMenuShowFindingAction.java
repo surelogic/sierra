@@ -41,8 +41,8 @@ import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
  * Refer to MarkerRulerAction from FindBugs eclipse plugin
  * 
  */
-public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelegate,
-		MouseListener, IMenuListener {
+public class MarkerMenuShowFindingAction implements IUpdate,
+		IEditorActionDelegate, MouseListener, IMenuListener {
 
 	private final List<IMarker> f_markers;
 	private ITextEditor f_editor;
@@ -86,7 +86,7 @@ public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelega
 				}
 
 			} catch (CoreException e) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error getting the findingid", e);
 			}
 		}
@@ -148,7 +148,7 @@ public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelega
 			allMarkers = resource.findMarkers(MarkersHandler.SIERRA_MARKER,
 					true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
-			SLLogger.getLogger("sierra").log(
+			SLLogger.getLogger().log(
 					Level.SEVERE,
 					"Error when trying to retrieve markers for sierra "
 							+ resource.getName(), e);
@@ -160,7 +160,7 @@ public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelega
 			for (int i = 0; i < allMarkers.length; i++) {
 				if (includesRulerLine(model.getMarkerPosition(allMarkers[i]),
 						document)) {
-				  f_markers.add(allMarkers[i]);
+					f_markers.add(allMarkers[i]);
 				}
 			}
 		}
@@ -179,7 +179,7 @@ public class MarkerMenuShowFindingAction implements IUpdate, IEditorActionDelega
 				}
 			} catch (BadLocationException x) {
 				SLLogger
-						.getLogger("sierra")
+						.getLogger()
 						.log(
 								Level.SEVERE,
 								"Error inspecting markers to find FindBugs warnings",

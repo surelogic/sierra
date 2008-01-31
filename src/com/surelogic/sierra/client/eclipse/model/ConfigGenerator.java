@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -38,9 +39,6 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 /**
  * Utility class for getting configuration objects that are required to run
  * scans, it handles both project and compilation unit configs
- * 
- * @author Tanmay.Sinha
- * 
  */
 public final class ConfigGenerator {
 	private static final String[] PLUGINS = {
@@ -50,8 +48,7 @@ public final class ConfigGenerator {
 			SierraToolConstants.PMD_PLUGIN_ID,
 			SierraToolConstants.FB_PLUGIN_ID,
 			SierraToolConstants.JUNIT4_PLUGIN_ID,
-			SierraToolConstants.JUNIT_PLUGIN_ID,
-	};
+			SierraToolConstants.JUNIT_PLUGIN_ID, };
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
@@ -59,7 +56,7 @@ public final class ConfigGenerator {
 			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
-	private final String f_sierraPath = PreferenceConstants.getSierraPath();
+	private final String f_sierraPath = FileUtility.getSierraDataDirectory();
 
 	/** The plug-in directory that has tools folder */
 	private final String tools;
@@ -80,11 +77,11 @@ public final class ConfigGenerator {
 		 * System.out.println(jdt);
 		 */
 		for (String id : PLUGINS) {
-		  try {
-		    pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
-		  } catch (IllegalStateException e) {
-		    System.out.println("Couldn't find plugin: "+id);
-		  }
+			try {
+				pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+			} catch (IllegalStateException e) {
+				System.out.println("Couldn't find plugin: " + id);
+			}
 		}
 	}
 
@@ -100,7 +97,7 @@ public final class ConfigGenerator {
 	 * @return list of {@link ConfigCompilationUnit}
 	 */
 	public List<ConfigCompilationUnit> getCompilationUnitConfigs(
-	    Collection<ICompilationUnit> compilationUnits) {
+			Collection<ICompilationUnit> compilationUnits) {
 		final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
 
 		Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<String, List<ICompilationUnit>>();
@@ -180,7 +177,7 @@ public final class ConfigGenerator {
 							compilationUnitsHolder);
 				}
 			} catch (JavaModelException e) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
 			}
 
@@ -291,14 +288,13 @@ public final class ConfigGenerator {
 
 				setupToolForProject(config, javaProject, false);
 			} catch (JavaModelException e) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
 			} catch (CoreException e) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
+				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
 			} catch (IllegalStateException ise) {
-				SLLogger.getLogger("sierra").log(Level.SEVERE,
-						ise.getMessage(), ise);
+				SLLogger.getLogger().log(Level.SEVERE, ise.getMessage(), ise);
 			}
 
 			// Get clean option
@@ -349,8 +345,8 @@ public final class ConfigGenerator {
 
 			setupToolForProject(config, project, true);
 		} catch (JavaModelException e) {
-			SLLogger.getLogger("sierra").log(Level.SEVERE,
-					"Error when getting outputlocation", e);
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Error when getting output location", e);
 		}
 
 		config.setBaseDirectory(baseDir);
