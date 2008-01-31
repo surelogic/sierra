@@ -67,7 +67,7 @@
 	<servlet>
 		<servlet-name>Manage User</servlet-name>
 		<servlet-class>
-			com.surelogic.sierra.gwt.server.ManageUserServiceImpl
+			com.surelogic.sierra.gwt.server.ManageUserAdminServiceImpl
 		</servlet-class>
 	</servlet>
 
