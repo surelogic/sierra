@@ -16,6 +16,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.tool.message.Config;
 
 public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   NewPartialScan() {
@@ -42,9 +43,12 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
       ConfigGenerator.getInstance().getCompilationUnitConfigs(selectedCUs);
         
     for(final ConfigCompilationUnit ccu : configs) {
+      final Config config = ccu.getConfig();
       DatabaseJob importJob = new ImportPartialScanDocumentJob(ccu);      
-      Job job = new NewScanJob("Running Sierra on comp units in " + ccu.getConfig().getProject(),
-                               ccu.getConfig(), importJob);
+      importJob.addJobChangeListener(new ScanJobAdapter(config.getProject(), true));
+      
+      Job job = new NewScanJob("Running Sierra on comp units in " + config.getProject(),
+                               config, importJob);
       job.schedule();
     }
   }
