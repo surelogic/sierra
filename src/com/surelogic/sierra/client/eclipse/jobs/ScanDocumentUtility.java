@@ -55,6 +55,8 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
+		log.info("Loading scan document " + scanDocument
+				+ " with compilations " + compilations + ".");
 		Throwable exc = null;
 		try {
 			Connection conn = Data.transactionConnection();
@@ -124,7 +126,8 @@ public final class ScanDocumentUtility {
 	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName)
 			throws ScanPersistenceException {
-	  monitor.beginTask("Load scan document", 100);
+		log.info("Loading scan document " + scanDocument);
+		monitor.beginTask("Load scan document", 100);
 		Throwable exc = null;
 		try {
 			final Connection conn = Data.transactionConnection();
