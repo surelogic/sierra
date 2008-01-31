@@ -105,6 +105,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             // System.out.println("Ignored: "+path);
             FileTarget ft = (FileTarget) t;
             URI root = ft.getRoot();
+            //System.out.println(path+" : "+root);
             String rootPath = new File(root).getAbsolutePath();
             p.addSourceDir(rootPath);
             break;
