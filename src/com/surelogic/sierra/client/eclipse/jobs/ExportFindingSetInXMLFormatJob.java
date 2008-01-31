@@ -2,15 +2,15 @@ package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.Set;
 
 import com.surelogic.common.xml.Entities;
-import com.surelogic.sierra.jdbc.finding.FindingDetail;
+import com.surelogic.sierra.tool.message.Importance;
 
 public final class ExportFindingSetInXMLFormatJob extends ExportFindingSetJob {
 
-	public ExportFindingSetInXMLFormatJob(Set<Long> findingIds, File file) {
-		super(findingIds, file);
+	public ExportFindingSetInXMLFormatJob(final String listOfFindingsQuery,
+			File file) {
+		super(listOfFindingsQuery, file);
 	}
 
 	PrintWriter f_out;
@@ -26,64 +26,67 @@ public final class ExportFindingSetInXMLFormatJob extends ExportFindingSetJob {
 	}
 
 	@Override
-	protected void outputFinding(FindingDetail finding) throws Exception {
+	protected void outputFinding(String summary, Importance importance,
+			long findingId, String projectName, String packageName,
+			String typeName, int lineNumber, String findingTypeName,
+			String categoryName, String toolName) throws Exception {
 		StringBuilder b = new StringBuilder();
 		b.append("<finding");
-		Entities.addAttribute("id", finding.getFindingId(), b);
+		Entities.addAttribute("id", findingId, b);
 		b.append('>');
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<project>");
-		Entities.addEscaped(finding.getProjectName(), b);
+		Entities.addEscaped(projectName, b);
 		b.append("</project>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<package>");
-		Entities.addEscaped(finding.getPackageName(), b);
+		Entities.addEscaped(packageName, b);
 		b.append("</package>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<class>");
-		Entities.addEscaped(finding.getClassName(), b);
+		Entities.addEscaped(typeName, b);
 		b.append("</class>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<line>");
-		b.append(finding.getLineOfCode());
+		b.append(lineNumber);
 		b.append("</line>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<finding-type>");
-		Entities.addEscaped(finding.getFindingType(), b);
+		Entities.addEscaped(findingTypeName, b);
 		b.append("</finding-type>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<finding-category>");
-		Entities.addEscaped(finding.getCategory(), b);
+		Entities.addEscaped(categoryName, b);
 		b.append("</finding-category>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<importance>");
-		Entities.addEscaped(finding.getImportance().toStringSentenceCase(), b);
+		Entities.addEscaped(importance.toStringSentenceCase(), b);
 		b.append("</importance>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<tool>");
-		Entities.addEscaped(finding.getTool(), b);
+		Entities.addEscaped(toolName, b);
 		b.append("</tool>");
 		o(b.toString());
 
 		b = new StringBuilder();
 		b.append("<summary>");
-		Entities.addEscaped(finding.getSummary(), b);
+		Entities.addEscaped(summary, b);
 		b.append("</summary>");
 		o(b.toString());
 

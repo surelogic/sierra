@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
 import java.io.File;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -26,23 +25,23 @@ import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetJob;
 
 public final class ExportFindingSetDialog extends Dialog {
 
-	private final Set<Long> f_findingIds;
+	private final String f_listOfFindingsQuery;
 
 	private Text f_exportFilenameText;
 	private Button f_csvFormat;
 	private Button f_xmlFormat;
 
-	public ExportFindingSetDialog(Shell shell, Set<Long> findingIds) {
+	public ExportFindingSetDialog(Shell shell, String listOfFindingsQuery) {
 		super(shell);
-		assert findingIds != null;
-		f_findingIds = findingIds;
+		assert listOfFindingsQuery != null;
+		f_listOfFindingsQuery = listOfFindingsQuery;
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
-		newShell.setText("Export " + f_findingIds.size() + " Findings");
+		newShell.setText("Export Findings");
 	}
 
 	@Override
@@ -137,11 +136,11 @@ public final class ExportFindingSetDialog extends Dialog {
 			ExportFindingSetJob job;
 			if (f_csvFormat.getSelection()) {
 				// CSV format
-				job = new ExportFindingSetInCSVFormatJob(f_findingIds,
+				job = new ExportFindingSetInCSVFormatJob(f_listOfFindingsQuery,
 						exportfile);
 			} else {
 				// XML format
-				job = new ExportFindingSetInXMLFormatJob(f_findingIds,
+				job = new ExportFindingSetInXMLFormatJob(f_listOfFindingsQuery,
 						exportfile);
 			}
 			job.setUser(true);

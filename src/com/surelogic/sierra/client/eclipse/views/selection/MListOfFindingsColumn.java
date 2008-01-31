@@ -130,13 +130,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 		int f_lineNumber;
 		String f_typeName;
 		String f_findingTypeName;
+		String f_categoryName;
+		String f_toolName;
 
 		@Override
 		public String toString() {
 			return "finding_id=" + f_findingId + " [" + f_importance
-					+ "] of type " + f_findingTypeName + " \"" + f_summary
-					+ "\" in " + f_projectName + " " + f_packageName + "."
-					+ f_typeName + " at line " + f_lineNumber;
+					+ "] of type " + f_findingTypeName + " and category "
+					+ f_categoryName + " \"" + f_summary + "\" in "
+					+ f_projectName + " " + f_packageName + "." + f_typeName
+					+ " at line " + f_lineNumber + " from " + f_toolName;
 		}
 	}
 
@@ -150,7 +153,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 				final Statement st = c.createStatement();
 				try {
 					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-						SLLogger.getLogger().fine("Findings query: " + query);
+						SLLogger.getLogger().fine(
+								"List of findings query: " + query);
 					}
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
@@ -169,6 +173,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 							data.f_typeName = rs.getString(6);
 							data.f_lineNumber = rs.getInt(7);
 							data.f_findingTypeName = rs.getString(8);
+							data.f_categoryName = rs.getString(9);
+							data.f_toolName = rs.getString(10);
 							f_rows.add(data);
 						}
 					}
@@ -184,10 +190,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	}
 
+	/**
+	 * Generates a query that is used in this class and by the export of
+	 * findings. The category and tool are only used by the export.
+	 * <p>
+	 * The design here is suspect and probably needs some re-work.
+	 * 
+	 * @return Query on the overview of findings.
+	 */
 	public String getQuery() {
 		StringBuilder b = new StringBuilder();
 		b.append("select SUMMARY, IMPORTANCE, FINDING_ID,");
-		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE, FINDING_TYPE ");
+		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE,");
+		b.append(" FINDING_TYPE, CATEGORY, TOOL ");
 		getSelection().addWhereClauseTo(b);
 		b.append(" order by case");
 		b.append(" when IMPORTANCE='Irrelevant' then 5");
@@ -498,20 +513,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
 		export.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				TableItem[] items = f_table.getItems();
-				final boolean findingsExist = items.length > 0;
-				setAll.setEnabled(findingsExist);
-				if (items.length > 0) {
-					final Set<Long> finding_ids = new HashSet<Long>();
-					for (TableItem item : items) {
-						final FindingData data = (FindingData) item.getData();
-						finding_ids.add(data.f_findingId);
-					}
-					final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
-							PlatformUI.getWorkbench().getDisplay()
-									.getActiveShell(), finding_ids);
-					dialog.open();
-				}
+				final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
+						PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+						getQuery());
+				dialog.open();
 			}
 		});
 	}
