@@ -189,26 +189,22 @@ public final class ConfigGenerator {
 			List<ICompilationUnit> compilationUnits) {
 		Config config = null;
 		if (compilationUnits.size() > 0) {
-			String projectPath = compilationUnits.get(0).getJavaProject()
+		  final ICompilationUnit firstCU = compilationUnits.get(0);
+			String projectPath = firstCU.getJavaProject()
 					.getResource().getLocation().toString();
 			File baseDir = new File(projectPath);
-			File scanDocument = new File(f_sierraPath
-					+ File.separator
-					+ compilationUnits.get(0).getResource().getProject()
-							.getName() + " - partial - "
-					+ ToolUtil.getTimeStamp()
-					+ SierraToolConstants.PARSED_FILE_SUFFIX);
+			IJavaProject javaProject = firstCU.getJavaProject();
+			File scanDocument = new File(computeScanDocumentName(javaProject, true));
 
 			config = new Config();
 
 			config.setBaseDirectory(baseDir);
-			config.setProject(compilationUnits.get(0).getResource()
+			config.setProject(firstCU.getResource()
 					.getProject().getName());
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
 			setupTools(config);
 			config.setExcludedToolsList(getExcludedTools());
-			IJavaProject javaProject = compilationUnits.get(0).getJavaProject();
 
 			try {
 				String defaultOutputLocation = javaProject.getOutputLocation()
@@ -308,10 +304,7 @@ public final class ConfigGenerator {
   public Config getProjectConfig(IJavaProject project) {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
-		File scanDocument = new File(f_sierraPath + File.separator
-				+ project.getProject().getName() + " - "
-				+ ToolUtil.getTimeStamp()
-				+ SierraToolConstants.PARSED_FILE_SUFFIX);
+		File scanDocument = new File(computeScanDocumentName(project, false));
 
 		Config config = new Config();
 
@@ -334,6 +327,13 @@ public final class ConfigGenerator {
 		// Get excluded dirs - project specific
 		return config;
 	}
+  
+  private String computeScanDocumentName(IJavaProject project, boolean partial) {
+    return f_sierraPath + File.separator
+				+ project.getProject().getName() + (partial ? ".partial." : ".")
+				+ ToolUtil.getTimeStamp()
+				+ SierraToolConstants.PARSED_FILE_SUFFIX;
+  }
 	
 	private void setupTools(Config config) {
 	  config.setJavaVendor(System.getProperty("java.vendor"));
