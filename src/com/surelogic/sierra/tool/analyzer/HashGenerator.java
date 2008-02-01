@@ -31,7 +31,7 @@ public class HashGenerator {
 	
 	private static final String TOO_FAR = "TOOFAR";
 
-	private int countFileAccess = 0;
+	//private int countFileAccess = 0;
 
 	private String cachedFileName;
 
@@ -128,7 +128,7 @@ public class HashGenerator {
 				lineHashMap.put(lineNumber, hashValue);
 			}
 
-			countFileAccess++;
+			//countFileAccess++;
 
 		}
 
