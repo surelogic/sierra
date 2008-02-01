@@ -132,6 +132,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			
 			if (metricsFile != null && metricsFile.exists()) {
 			  monitor.subTask("Writing metrics");
+			  
 			  copyContents(metricsFile, finalFile);
 				finalFile.flush();
 				monitor.worked(1);
@@ -139,6 +140,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 			if (artifactsHolder.exists()) {
 			  monitor.subTask("Writing artifacts");
+			  artOut.flush();
+			  
 				finalFile.write(ARTIFACTS_START);
 				BufferedReader in = new BufferedReader(new FileReader(artifactsHolder));
 				line = null;
@@ -154,6 +157,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 			if (errorsHolder.exists()) {
 			  monitor.subTask("Writing errors");
+			  errOut.flush();
+			  
 				finalFile.write(ERROR_START);
 				copyContents(errorsHolder, finalFile);
 				finalFile.write(ERROR_END);
