@@ -1,14 +1,6 @@
 package com.surelogic.sierra.tool.analyzer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -136,17 +128,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(TOOL_OUTPUT_START);
 			monitor.worked(1);
 			
-			BufferedReader in;
 			String line = null;
 			
 			if (metricsFile != null && metricsFile.exists()) {
 			  monitor.subTask("Writing metrics");
-				in = new BufferedReader(new FileReader(metricsFile));
-				while ((line = in.readLine()) != null) {
-					finalFile.write(line);
-					finalFile.write("\n");
-				}
-				in.close();
+			  copyContents(metricsFile, finalFile);
 				finalFile.flush();
 				monitor.worked(1);
 			}
@@ -154,7 +140,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			if (artifactsHolder.exists()) {
 			  monitor.subTask("Writing artifacts");
 				finalFile.write(ARTIFACTS_START);
-				in = new BufferedReader(new FileReader(artifactsHolder));
+				BufferedReader in = new BufferedReader(new FileReader(artifactsHolder));
 				line = null;
 				while ((line = in.readLine()) != null) {
 					finalFile.write(line);
@@ -169,14 +155,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			if (errorsHolder.exists()) {
 			  monitor.subTask("Writing errors");
 				finalFile.write(ERROR_START);
-				in = new BufferedReader(new FileReader(errorsHolder));
-				line = null;
-				while ((line = in.readLine()) != null) {
-					finalFile.write(line);
-					finalFile.write("\n");
-				}
-				in.close();
-				finalFile.flush();
+				copyContents(errorsHolder, finalFile);
 				finalFile.write(ERROR_END);
 				monitor.worked(1);
 			}
@@ -188,13 +167,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			MessageWarehouse.getInstance().writeConfig(config, fos);
       fos.close();
 			
-			in = new BufferedReader(new FileReader(configOutput));
-			line = null;
-			while ((line = in.readLine()) != null) {
-				finalFile.write(line);
-				finalFile.write("\n");
-			}
-			in.close();
+      copyContents(configOutput, finalFile);
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
@@ -259,6 +232,42 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	}
 
+  private static void copyContents(File file, PrintWriter out)
+      throws FileNotFoundException, IOException {
+    BufferedReader in = new BufferedReader(new FileReader(file));
+    /*
+    String line;
+
+    while ((line = in.readLine()) != null) {
+    	out.write(line);
+    	out.write("\n");
+    }
+    in.close();
+    out.flush();
+    */
+ // Transfer bytes from in to out
+    char[] buf = new char[4096];
+    int len;
+    while ((len = in.read(buf)) > 0) {
+      out.write(buf, 0, len);
+    }
+    in.close();
+  }
+  
+  /*
+  private static void copyContents(File file, FileChannel dstChannel)
+  throws FileNotFoundException, IOException {
+    // Create channel on the source
+    FileChannel srcChannel = new FileInputStream(file).getChannel();
+
+    // Copy file contents from source to destination
+    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+
+    // Close the channel
+    srcChannel.close();
+  }
+  */
+  
 	private class MessageErrorBuilder implements ErrorBuilder {
 
 		private String message;
