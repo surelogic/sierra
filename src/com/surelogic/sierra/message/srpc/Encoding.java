@@ -30,7 +30,7 @@ import com.surelogic.sierra.tool.targets.JarTarget;
  * 
  */
 class Encoding {
-
+    private static final Class<?>[] NO_CLASSES = new Class[0];
 	private static final String NULL = "null";
 	private static final String GZIP = "application/x-gzip";
 	private static final String PLAINTEXT = "text/plain; charset=UTF-8";
@@ -66,7 +66,7 @@ class Encoding {
 		}
 		try {
 			this.context = JAXBContext.newInstance(classes
-					.toArray(new Class[] {}));
+					.toArray(NO_CLASSES));
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
