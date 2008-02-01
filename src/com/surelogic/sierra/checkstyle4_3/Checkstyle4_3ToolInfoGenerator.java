@@ -71,8 +71,9 @@ public class Checkstyle4_3ToolInfoGenerator {
 	}
 
 	public static void generateFindingTypes() {
+
 		try {
-			BufferedReader reader = new BufferedReader(
+		  BufferedReader reader = new BufferedReader(
 					new InputStreamReader(
 							Thread
 									.currentThread()
@@ -141,6 +142,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 
 			MessageWarehouse.getInstance()
 					.writeFindingTypes(parent, System.out);
+			reader.close();
 		} catch (IOException e) {
 			// Do nothing
 		}
