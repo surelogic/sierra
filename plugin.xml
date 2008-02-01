@@ -52,7 +52,7 @@
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
                 label="Re-Scan Changes in Project(s)"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
@@ -187,7 +187,7 @@
                class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
-               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
+               icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
                label="Re-Scan Changes in Project(s)"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
          

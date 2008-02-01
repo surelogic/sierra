@@ -59,7 +59,7 @@ public class SierraPreferencePage extends PreferencePage implements
 
 		f_findingsListLimit = new IntegerFieldEditor(
 				PreferenceConstants.P_FINDINGS_LIST_LIMIT,
-				"Maximum number of findings shown in 'Findings Quick Search' queries:",
+				"Maximum number of findings shown in 'Findings Quick Search' results:",
 				diGroup);
 		f_findingsListLimit.setPage(this);
 		f_findingsListLimit.setPreferenceStore(getPreferenceStore());

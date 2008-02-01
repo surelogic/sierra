@@ -32,7 +32,7 @@ import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 public class ToolsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private static final String DESELECT_TOOL_WARNING = "A tool that is not checked will be skipped during all scans.  For more fine-grained control of scan results, setup a <A HREF=\"results filter\">'Results Filter'</A> instead.";
+	private static final String DESELECT_TOOL_WARNING = "A tool that is not checked will be skipped during all scans.  For more fine-grained control of scan results, setup a <A HREF=\"scan filter\">'Scan Filter'</A> instead.";
 	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is a static analysis tool created at University of Maryland for finding bugs in Java code.";
 	private static final String PMD_INFO = "<A HREF=\"http://pmd.sourceforge.net\">PMD</A> is a static analysis tool to look for multiple issues like potential bugs, dead, duplicate and sub-optimal code, and over-complicated expressions.";
 	private static final String RECKONER_INFO = "<A HREF=\"http://www.surelogic.com\">Reckoner</A> is a static analysis tool created by SureLogic, Inc. that collects metrics about Java code.";

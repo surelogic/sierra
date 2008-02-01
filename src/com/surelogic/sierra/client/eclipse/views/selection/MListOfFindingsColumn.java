@@ -28,13 +28,16 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -176,6 +179,44 @@ public final class MListOfFindingsColumn extends MColumn implements
 							data.f_categoryName = rs.getString(9);
 							data.f_toolName = rs.getString(10);
 							f_rows.add(data);
+						} else {
+							/*
+							 * We skipped a row so inform the user
+							 */
+							class WarningDialog implements Runnable {
+
+								final private int f_findingsLimit;
+								final private int f_findingsCount;
+
+								public WarningDialog(int findingsLimit,
+										int findingsCount) {
+									f_findingsLimit = findingsListLimit;
+									f_findingsCount = findingsCount;
+								}
+
+								public void run() {
+									final String msg = I18N.err(33,
+											f_findingsCount, f_findingsLimit,
+											f_findingsCount, f_findingsLimit);
+									SLLogger.getLogger().warning(msg);
+									final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+											PlatformUI.getWorkbench()
+													.getActiveWorkbenchWindow()
+													.getShell(),
+											"Findings List Limited", PlatformUI
+													.getWorkbench()
+													.getDisplay()
+													.getSystemImage(
+															SWT.ICON_WARNING),
+											msg, null, Activator.getDefault());
+									report.open();
+								}
+							}
+							PlatformUI.getWorkbench().getDisplay().asyncExec(
+									new WarningDialog(findingsListLimit,
+											getSelection()
+													.getFindingCountPorous()));
+							break;
 						}
 					}
 				} finally {
