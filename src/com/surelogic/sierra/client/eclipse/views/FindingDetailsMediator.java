@@ -480,7 +480,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			item.setText(3, artifactDetail.getClassName());
 			item.setImage(3, classImage);
 
-			item.setText(4, "" + artifactDetail.getLineOfCode());
+			item.setText(4, Integer.toString(artifactDetail.getLineOfCode()));
 		}
 		for (TableColumn c : f_artifacts.getColumns()) {
 			c.pack();
