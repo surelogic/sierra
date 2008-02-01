@@ -142,7 +142,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		portLabel.setLayoutData(data);
 		Text portText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
-		portText.setText(f_server.getPort() + "");
+		portText.setText(Integer.toString(f_server.getPort()));
 		portText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portText.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(Event event) {
