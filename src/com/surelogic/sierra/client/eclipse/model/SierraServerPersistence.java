@@ -131,7 +131,7 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(CONTEXT_PATH, server.getContextPath(), b);
 		Entities.addAttribute(USER, server.getUser(), b);
 		if (save) {
-			Entities.addAttribute(SAVE_PASSWORD, server.savePassword() + "", b);
+			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server.savePassword()), b);
 		}
 		b.append(">");
 		pw.println(b.toString());
