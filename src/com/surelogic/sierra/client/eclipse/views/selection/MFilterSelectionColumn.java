@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,9 +20,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.StringUtility;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
@@ -249,11 +254,14 @@ public final class MFilterSelectionColumn extends MColumn implements
 	public void filterChanged(Filter filter) {
 		if (f_panel.isDisposed())
 			return;
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				updateReport();
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	public void filterQueryFailure(Filter filter, Exception e) {

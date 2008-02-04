@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -35,6 +36,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -68,11 +70,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	@Override
 	void initOfNextColumnComplete() {
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				MListOfFindingsColumn.super.initOfNextColumnComplete();
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	@Override
@@ -98,29 +103,32 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private void changed() {
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (f_table != null && f_table.isDisposed()) {
 					getSelection().removeObserver(MListOfFindingsColumn.this);
-					return;
-				}
-				final Job job = new DatabaseJob("Refresh list of findings") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						try {
-							refreshData();
-							refreshDisplay();
-						} catch (Exception e) {
-							return SLStatus.createErrorStatus(e);
-						} finally {
-							initOfNextColumnComplete();
+				} else {
+					final Job job = new DatabaseJob("Refresh list of findings") {
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								refreshData();
+								refreshDisplay();
+							} catch (Exception e) {
+								return SLStatus.createErrorStatus(e);
+							} finally {
+								initOfNextColumnComplete();
+							}
+							return Status.OK_STATUS;
 						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.schedule();
+					};
+					job.schedule();
+				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	private static class FindingData {
@@ -182,7 +190,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 							/*
 							 * We skipped a row so inform the user
 							 */
-							class WarningDialog implements Runnable {
+							class WarningDialog extends SLUIJob {
 
 								final private int f_findingsLimit;
 								final private int f_findingsCount;
@@ -193,7 +201,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 									f_findingsCount = findingsCount;
 								}
 
-								public void run() {
+								@Override
+								public IStatus runInUIThread(
+										IProgressMonitor monitor) {
 									if (PreferenceConstants
 											.warnAboutMaximumFindingsShown()) {
 										Dialog dialog = new MaximumFindingsShownDialog(
@@ -201,12 +211,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 												f_findingsCount);
 										dialog.open();
 									}
+									return Status.OK_STATUS;
 								}
 							}
-							PlatformUI.getWorkbench().getDisplay().asyncExec(
-									new WarningDialog(findingsListLimit,
-											getSelection()
-													.getFindingCountPorous()));
+							final UIJob job = new WarningDialog(
+									findingsListLimit, getSelection()
+											.getFindingCountPorous());
+							job.schedule();
 							break;
 						}
 					}
@@ -554,8 +565,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private void refreshDisplay() {
-		getCascadingList().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (f_table == null) {
 					int addAfterColumn = getPreviousColumn().getColumnIndex();
 					// create the display table
@@ -565,7 +577,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 					// update the table's contents
 					updateTableContents();
 				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 }

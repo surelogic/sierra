@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -22,8 +25,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
@@ -203,10 +208,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			public void handleEvent(Event event) {
 				final SierraServer server = f_manager.getFocus();
 				if (server == null) {
-					SLLogger
-							.getLogger()
-							.log(Level.WARNING,
-									"Send scan filters pressed with no server focus.");
+					SLLogger.getLogger().log(Level.WARNING,
+							"Send scan filters pressed with no server focus.");
 					return;
 				}
 				final StringBuilder msg = new StringBuilder();
@@ -216,9 +219,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				msg.append(server.getLabel());
 				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
-						.getShell(), "Send Scan Filters", null, msg
-						.toString(), MessageDialog.QUESTION, new String[] {
-						"Yes", "No" }, 0);
+						.getShell(), "Send Scan Filters", null, msg.toString(),
+						MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
 				if (dialog.open() == 0) {
 					/*
 					 * Yes was selected, so send the result filters to the
@@ -234,22 +236,20 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			public void handleEvent(Event event) {
 				final SierraServer server = f_manager.getFocus();
 				if (server == null) {
-					SLLogger
-							.getLogger()
-							.log(Level.WARNING,
-									"Get scan filters pressed with no server focus.");
+					SLLogger.getLogger().log(Level.WARNING,
+							"Get scan filters pressed with no server focus.");
 					return;
 				}
 				final StringBuilder msg = new StringBuilder();
-				msg.append("Do you want overwrite your local scan filters with");
+				msg
+						.append("Do you want overwrite your local scan filters with");
 				msg.append(" the scan filters on");
 				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
 				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
-						.getShell(), "Get Scan Filters", null,
-						msg.toString(), MessageDialog.QUESTION, new String[] {
-								"Yes", "No" }, 0);
+						.getShell(), "Get Scan Filters", null, msg.toString(),
+						MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
 				if (dialog.open() == 0) {
 					/*
 					 * Yes was selected, so get the result filters from the
@@ -311,8 +311,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	}
 
 	public void notify(SierraServerManager manager) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				f_serverList.setRedraw(false);
 				String[] labels = f_manager.getLabels();
 				TableItem[] items = f_serverList.getItems();
@@ -371,8 +372,10 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				f_infoGroup.layout();
 				f_projectListAction.handleEvent(null);
 				f_serverList.setRedraw(true);
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	private static boolean same(TableItem[] items, String[] labels) {

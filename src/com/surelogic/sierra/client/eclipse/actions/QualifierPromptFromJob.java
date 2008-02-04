@@ -3,11 +3,16 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
@@ -42,8 +47,9 @@ public final class QualifierPromptFromJob {
 	}
 
 	public void open() {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (f_qualifiers.isEmpty()) {
 					final String msg = I18N.err(22, f_serverLabel,
 							f_serverLabel);
@@ -69,8 +75,10 @@ public final class QualifierPromptFromJob {
 						f_canceled = true;
 					}
 				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	/**

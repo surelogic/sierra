@@ -7,16 +7,20 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -79,19 +83,21 @@ public final class DeleteProjectDataJob {
 					monitor.done();
 					DatabaseHub.getInstance().notifyProjectDeleted();
 					if (jobFailed) {
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-												PlatformUI
-														.getWorkbench()
-														.getActiveWorkbenchWindow()
-														.getShell(), "Failure",
-												null, jobFailureMsg, null,
-												Activator.getDefault());
-										report.open();
-									}
-								});
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
+								final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+										PlatformUI.getWorkbench()
+												.getActiveWorkbenchWindow()
+												.getShell(), "Failure", null,
+										jobFailureMsg, null, Activator
+												.getDefault());
+								report.open();
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
 					}
 				}
 			});

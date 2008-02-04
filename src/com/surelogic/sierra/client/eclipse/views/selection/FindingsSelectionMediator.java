@@ -2,6 +2,9 @@ package com.surelogic.sierra.client.eclipse.views.selection;
 
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -10,10 +13,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.OpenSearchDialog;
@@ -175,14 +179,17 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			page = f_findingsPage;
 		}
 		// beware the thread context this method call might be made in.
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (page != f_pages.getPage()) {
 					f_pages.showPage(page);
 					clearToNewWorkingSelection();
 				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 	}
 
 	private void disposeWorkingSelection() {

@@ -3,6 +3,9 @@ package com.surelogic.sierra.client.eclipse.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -23,10 +26,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
@@ -190,12 +194,14 @@ public class SierraPreferencePage extends PreferencePage implements
 			final IProjectsObserver obs = new IProjectsObserver() {
 				public void notify(final Projects p) {
 					// Get into a UI thread!
-					PlatformUI.getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
-								public void run() {
-									setTableContents(p.getProjectNames());
-								}
-							});
+					final UIJob job = new SLUIJob() {
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							setTableContents(p.getProjectNames());
+							return Status.OK_STATUS;
+						}
+					};
+					job.schedule();
 				}
 			};
 			Projects.getInstance().addObserver(obs);

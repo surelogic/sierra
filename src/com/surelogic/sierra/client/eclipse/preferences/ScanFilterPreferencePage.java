@@ -25,21 +25,33 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
-import com.surelogic.sierra.client.eclipse.dialogs.*;
+import com.surelogic.sierra.client.eclipse.dialogs.FilterServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -257,34 +269,34 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		}
 		clearHTMLDescription();
 
-    final Group actions = new Group(f_panel, SWT.NONE);
-    actions.setText("Server Actions");
-    actions.setLayout(new GridLayout());
-    layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-    actions.setLayoutData(layoutData);
+		final Group actions = new Group(f_panel, SWT.NONE);
+		actions.setText("Server Actions");
+		actions.setLayout(new GridLayout());
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		actions.setLayoutData(layoutData);
 		final Button sendButton = new Button(actions, SWT.NONE);
 		sendButton.setText("Send Filters ...");
 		sendButton.addListener(SWT.Selection, new Listener() {
-      public void handleEvent(Event event) {
-        SierraServer s = askForServer(getShell(), true);
-        if (s != null) {
-          final Job job = new SendGlobalResultFiltersJob(s);
-          job.schedule();
-        }
-      }
-		});		
+			public void handleEvent(Event event) {
+				SierraServer s = askForServer(getShell(), true);
+				if (s != null) {
+					final Job job = new SendGlobalResultFiltersJob(s);
+					job.schedule();
+				}
+			}
+		});
 		final Button getButton = new Button(actions, SWT.NONE);
 		getButton.setText("Get Filters ...");
 		getButton.addListener(SWT.Selection, new Listener() {
-      public void handleEvent(Event event) {
-        SierraServer s = askForServer(getShell(), false);
-        if (s != null) {
-          final Job job = new GetGlobalResultFiltersJob(s);
-          job.schedule();
-        }
-      }
-    }); 
-		
+			public void handleEvent(Event event) {
+				SierraServer s = askForServer(getShell(), false);
+				if (s != null) {
+					final Job job = new GetGlobalResultFiltersJob(s);
+					job.schedule();
+				}
+			}
+		});
+
 		final Job job = new DatabaseJob("Querying Sierra Artifacts") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -298,23 +310,23 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	}
 
 	private static SierraServer askForServer(Shell shell, boolean sendFilters) {
-	  /*
-     * Select a server to connect this project to.
-     */
-	  FilterServerSelectionDialog dialog = 
-	    new FilterServerSelectionDialog(shell, sendFilters);
-    if (dialog.open() == Window.CANCEL) {
-      /*
-       * Just stop
-       */
-      return null;
-    }
-    if (!dialog.confirmNonnullServer()) {
-      return null;
-    }
-    return dialog.getServer();
+		/*
+		 * Select a server to connect this project to.
+		 */
+		FilterServerSelectionDialog dialog = new FilterServerSelectionDialog(
+				shell, sendFilters);
+		if (dialog.open() == Window.CANCEL) {
+			/*
+			 * Just stop
+			 */
+			return null;
+		}
+		if (!dialog.confirmNonnullServer()) {
+			return null;
+		}
+		return dialog.getServer();
 	}
-	
+
 	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
 
 	private final List<String> f_filterList = new ArrayList<String>();
@@ -351,11 +363,14 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			return SLStatus.createErrorStatus(
 					"Query of Sierra tool artifacts failed", e);
 		}
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				fillTableContents();
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.schedule();
 		return Status.OK_STATUS;
 	}
 
@@ -402,13 +417,16 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 					try {
 						while (rs.next()) {
 							final String description = rs.getString(1);
-							PlatformUI.getWorkbench().getDisplay().asyncExec(
-									new Runnable() {
-										public void run() {
-											setHTMLDescription(description,
-													artifactList);
-										}
-									});
+							final UIJob job = new SLUIJob() {
+								@Override
+								public IStatus runInUIThread(
+										IProgressMonitor monitor) {
+									setHTMLDescription(description,
+											artifactList);
+									return Status.OK_STATUS;
+								}
+							};
+							job.schedule();
 						}
 					} finally {
 						rs.close();

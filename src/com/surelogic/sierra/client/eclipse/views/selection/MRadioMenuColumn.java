@@ -5,18 +5,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -130,8 +135,9 @@ public final class MRadioMenuColumn extends MColumn implements
 		public void filterQueryFailure(final Filter filter, final Exception e) {
 			filter.removeObserver(this);
 			// beware the thread context this method call might be made in.
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					final String msg = I18N.err(27, filter.getFactory()
 							.getFilterLabel());
 					final ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(
@@ -142,15 +148,18 @@ public final class MRadioMenuColumn extends MColumn implements
 									.getDefault());
 					dialog.open();
 					SLLogger.getLogger().log(Level.SEVERE, msg, e);
+					return Status.OK_STATUS;
 				}
-			});
+			};
+			job.schedule();
 		}
 
 		public void filterChanged(final Filter filter) {
 			filter.removeObserver(this);
 			// beware the thread context this method call might be made in.
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					MFilterSelectionColumn fsc = new MFilterSelectionColumn(
 							getCascadingList(), getSelection(),
 							MRadioMenuColumn.this, filter);
@@ -161,8 +170,10 @@ public final class MRadioMenuColumn extends MColumn implements
 					final MRadioMenuColumn rmc = new MRadioMenuColumn(
 							getCascadingList(), getSelection(), fsc);
 					rmc.init();
+					return Status.OK_STATUS;
 				}
-			});
+			};
+			job.schedule();
 		}
 
 		public void filterDisposed(Filter filter) {

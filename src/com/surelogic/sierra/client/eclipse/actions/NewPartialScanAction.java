@@ -9,6 +9,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -24,9 +27,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -95,21 +100,21 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 				if (inClassPath) {
 					selectedCompilationUnits.add(compilationUnit);
 				} else {
-					PlatformUI.getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
-								public void run() {
-									final String msg = I18N.err(19, file
-											.getName());
-									final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-											PlatformUI.getWorkbench()
-													.getActiveWorkbenchWindow()
-													.getShell(),
-											"Not in Classpath", null, msg,
-											null, Activator.getDefault());
-									report.open();
-									SLLogger.getLogger().warning(msg);
-								}
-							});
+					final UIJob job = new SLUIJob() {
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							final String msg = I18N.err(19, file.getName());
+							final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+									PlatformUI.getWorkbench()
+											.getActiveWorkbenchWindow()
+											.getShell(), "Not in Classpath",
+									null, msg, null, Activator.getDefault());
+							report.open();
+							SLLogger.getLogger().warning(msg);
+							return Status.OK_STATUS;
+						}
+					};
+					job.schedule();
 				}
 			} catch (JavaModelException jme) {
 				SLLogger.getLogger().log(Level.SEVERE, I18N.err(20), jme);

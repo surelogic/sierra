@@ -15,12 +15,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
@@ -102,14 +103,17 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		try {
 			final List<SynchOverview> synchList = SynchOverview
 					.listOverviews(c);
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					updateSyncTableContents(synchList);
 					if (Projects.getInstance().isEmpty()) {
 						f_eventsTable.setVisible(false);
 					}
+					return Status.OK_STATUS;
 				}
-			});
+			};
+			job.schedule();
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {
@@ -186,11 +190,14 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		try {
 			SynchDetail sd = SynchDetail.getSyncDetail(c, so);
 			final List<AuditDetail> auditList = sd.getAudits();
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					updateEventTableContents(auditList);
+					return Status.OK_STATUS;
 				}
-			});
+			};
+			job.schedule();
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {
@@ -228,8 +235,8 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			TableItem item = items[0];
 			SynchOverview so = (SynchOverview) item.getData();
 			if (so != null) {
-			  // System.out.println("updating event table contents");
-			  asyncEventTableContents(so);
+				// System.out.println("updating event table contents");
+				asyncEventTableContents(so);
 			}
 		}
 	}

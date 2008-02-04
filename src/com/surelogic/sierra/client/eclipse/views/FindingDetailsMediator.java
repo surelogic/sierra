@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.HTMLPrinter;
@@ -43,6 +44,7 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
@@ -166,20 +168,27 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 						f_finding = FindingDetail.getDetailOrNull(c, findingId);
 
 						// got details, update the view in the UI thread
-						f_display.asyncExec(new Runnable() {
-							public void run() {
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
 								updateContents();
+								return Status.OK_STATUS;
 							}
-						});
+						};
+						job.schedule();
 
 					} catch (IllegalArgumentException iae) {
-						f_display.asyncExec(new Runnable() {
-							public void run() {
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
 								f_finding = null;
 								updateContents();
+								return Status.OK_STATUS;
 							}
-
-						});
+						};
+						job.schedule();
 					} finally {
 						c.close();
 					}
@@ -589,13 +598,15 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		if (f_finding == null)
 			return;
 		if (!p.getProjectNames().contains(f_finding.getProjectName())) {
-			f_display.asyncExec(new Runnable() {
-				public void run() {
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					updateContents();
+					return Status.OK_STATUS;
 				}
-			});
+			};
+			job.schedule();
 		}
-
 	}
 
 	@Override
