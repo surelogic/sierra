@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.adhoc.IAdHoc;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class AdHocGlue implements IAdHoc {
 
@@ -15,7 +16,7 @@ public final class AdHocGlue implements IAdHoc {
 	}
 
 	public int getMaxRowsPerQuery() {
-		return 5000;
+		return PreferenceConstants.getFindingsListLimit();
 	}
 
 	public File getQuerySaveFile() {
