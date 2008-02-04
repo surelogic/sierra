@@ -206,17 +206,17 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					SLLogger
 							.getLogger()
 							.log(Level.WARNING,
-									"Send result filters pressed with no server focus.");
+									"Send scan filters pressed with no server focus.");
 					return;
 				}
 				final StringBuilder msg = new StringBuilder();
-				msg.append("Do you want your local result filters to become");
-				msg.append(" the result filters used by (and available from)");
+				msg.append("Do you want your local scan filters to become");
+				msg.append(" the scan filters used by (and available from)");
 				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
 				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
-						.getShell(), "Send Result Filters", null, msg
+						.getShell(), "Send Scan Filters", null, msg
 						.toString(), MessageDialog.QUESTION, new String[] {
 						"Yes", "No" }, 0);
 				if (dialog.open() == 0) {
@@ -237,18 +237,17 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					SLLogger
 							.getLogger()
 							.log(Level.WARNING,
-									"Get results filters pressed with no server focus.");
+									"Get scan filters pressed with no server focus.");
 					return;
 				}
 				final StringBuilder msg = new StringBuilder();
-				msg
-						.append("Do you want overwrite your local result filters with");
-				msg.append(" the result filters on");
+				msg.append("Do you want overwrite your local scan filters with");
+				msg.append(" the scan filters on");
 				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
 				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_serverList
-						.getShell(), "Get Result Filters", null,
+						.getShell(), "Get Scan Filters", null,
 						msg.toString(), MessageDialog.QUESTION, new String[] {
 								"Yes", "No" }, 0);
 				if (dialog.open() == 0) {
