@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Client
 Bundle-SymbolicName: com.surelogic.sierra.client.eclipse;singleton:=true
 Bundle-Vendor: SureLogic, Inc.
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: com.surelogic.sierra.client.eclipse.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.console,
