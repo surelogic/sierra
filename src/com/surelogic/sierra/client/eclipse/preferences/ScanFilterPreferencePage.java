@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -24,16 +25,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -47,6 +39,10 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
+import com.surelogic.sierra.client.eclipse.dialogs.*;
+import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 
 public class ScanFilterPreferencePage extends PreferencePage implements
@@ -175,7 +171,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		f_panel.setLayout(new GridLayout());
 		f_panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		GridData layoutData;
+		GridData layoutData; // temp used to configure the layout
 		f_findingTypes = new Tree(f_panel, SWT.CHECK | SWT.FULL_SELECTION);
 		f_findingTypes.setHeaderVisible(true);
 		f_findingTypes.setLinesVisible(true);
@@ -261,6 +257,34 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		}
 		clearHTMLDescription();
 
+    final Group actions = new Group(f_panel, SWT.NONE);
+    actions.setText("Server Actions");
+    actions.setLayout(new GridLayout());
+    layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+    actions.setLayoutData(layoutData);
+		final Button sendButton = new Button(actions, SWT.NONE);
+		sendButton.setText("Send Filters ...");
+		sendButton.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        SierraServer s = askForServer(getShell(), true);
+        if (s != null) {
+          final Job job = new SendGlobalResultFiltersJob(s);
+          job.schedule();
+        }
+      }
+		});		
+		final Button getButton = new Button(actions, SWT.NONE);
+		getButton.setText("Get Filters ...");
+		getButton.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        SierraServer s = askForServer(getShell(), false);
+        if (s != null) {
+          final Job job = new GetGlobalResultFiltersJob(s);
+          job.schedule();
+        }
+      }
+    }); 
+		
 		final Job job = new DatabaseJob("Querying Sierra Artifacts") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -273,6 +297,24 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		return f_panel;
 	}
 
+	private static SierraServer askForServer(Shell shell, boolean sendFilters) {
+	  /*
+     * Select a server to connect this project to.
+     */
+	  FilterServerSelectionDialog dialog = 
+	    new FilterServerSelectionDialog(shell, sendFilters);
+    if (dialog.open() == Window.CANCEL) {
+      /*
+       * Just stop
+       */
+      return null;
+    }
+    if (!dialog.confirmNonnullServer()) {
+      return null;
+    }
+    return dialog.getServer();
+	}
+	
 	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
 
 	private final List<String> f_filterList = new ArrayList<String>();
