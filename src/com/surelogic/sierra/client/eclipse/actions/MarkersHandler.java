@@ -33,8 +33,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.job.SLUIJob;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
@@ -88,8 +91,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	 */
 	@Override
 	public void changed() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(
-				new RefreshMarkersRunnable());
+		final UIJob job = new RefreshMarkersUIJob();
+		job.schedule();
 
 		super.changed();
 	}
@@ -398,8 +401,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 	}
 
-	private class RefreshMarkersRunnable implements Runnable {
-		public void run() {
+	private class RefreshMarkersUIJob extends SLUIJob {
+		@Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
 			/*
 			 * Try to get the active editor, ensure we check along the way to
 			 * avoid NullPointerException being thrown.
@@ -407,23 +411,24 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench == null)
-				return;
+				return Status.OK_STATUS;
 			final IWorkbenchWindow activeWindow = workbench
 					.getActiveWorkbenchWindow();
 			if (activeWindow == null)
-				return;
+				return Status.OK_STATUS;
 			final IWorkbenchPartReference ref = activeWindow.getPartService()
 					.getActivePartReference();
 			if (ref == null)
-				return;
+				return Status.OK_STATUS;
 			final IWorkbenchPage page = ref.getPage();
 			if (page == null)
-				return;
+				return Status.OK_STATUS;
 
 			final IEditorPart editor = page.getActiveEditor();
 			if (editor != null) {
 				queryAndSetMarkers(editor);
 			}
+			return Status.OK_STATUS;
 		}
 	}
 
@@ -467,15 +472,16 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 								+ (System.currentTimeMillis() - start));
 
 					if (f_overview != null) {
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										setMarker(f_currentFile, f_overview);
-									}
-
-								});
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
+								setMarker(f_currentFile, f_overview);
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
 					}
-
 				} finally {
 					conn.close();
 				}
@@ -483,13 +489,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				monitor.done();
 				return Status.OK_STATUS;
 			} catch (SQLException e) {
-				LOG
-						.log(
-								Level.SEVERE,
-								"SQL Exception from occurred when getting findings.",
-								e);
+				LOG.log(Level.SEVERE, I18N.err(36), e);
 			}
-
 			monitor.done();
 			return Status.CANCEL_STATUS;
 		}
@@ -505,10 +506,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				.getProperty()
 				.equals(
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(
-					new RefreshMarkersRunnable());
+			final UIJob job = new RefreshMarkersUIJob();
+			job.schedule();
 		}
-
 	}
-
 }
