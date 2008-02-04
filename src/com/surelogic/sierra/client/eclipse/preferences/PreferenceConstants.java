@@ -96,4 +96,16 @@ public class PreferenceConstants {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_FINDINGS_LIST_LIMIT);
 	}
+
+	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = "com.surelogic.common.eclipse.warn-maximum-findings-shown";
+
+	public static boolean warnAboutMaximumFindingsShown() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_WARN_MAXIMUM_FINDINGS_SHOWN);
+	}
+
+	public static void setWarnAboutMaximumFindingsShown(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_WARN_MAXIMUM_FINDINGS_SHOWN, value);
+	}
 }

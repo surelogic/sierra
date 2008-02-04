@@ -30,6 +30,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_MARKERS, true);
 		store.setDefault(PreferenceConstants.P_FINDINGS_LIST_LIMIT, 2000);
+		store.setDefault(PreferenceConstants.P_WARN_MAXIMUM_FINDINGS_SHOWN,
+				true);
 	}
-
 }

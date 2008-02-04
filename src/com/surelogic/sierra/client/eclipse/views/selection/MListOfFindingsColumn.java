@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -28,20 +29,18 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
-import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.MaximumFindingsShownDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -195,21 +194,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 								}
 
 								public void run() {
-									final String msg = I18N.err(33,
-											f_findingsCount, f_findingsLimit,
-											f_findingsCount, f_findingsLimit);
-									SLLogger.getLogger().warning(msg);
-									final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-											PlatformUI.getWorkbench()
-													.getActiveWorkbenchWindow()
-													.getShell(),
-											"Findings List Limited", PlatformUI
-													.getWorkbench()
-													.getDisplay()
-													.getSystemImage(
-															SWT.ICON_WARNING),
-											msg, null, Activator.getDefault());
-									report.open();
+									if (PreferenceConstants
+											.warnAboutMaximumFindingsShown()) {
+										Dialog dialog = new MaximumFindingsShownDialog(
+												f_findingsLimit,
+												f_findingsCount);
+										dialog.open();
+									}
 								}
 							}
 							PlatformUI.getWorkbench().getDisplay().asyncExec(
