@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -7,7 +9,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -98,5 +104,19 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 
 	private final void setOKState() {
 		getButton(IDialogConstants.OK_ID).setEnabled(f_server != null);
+	}
+	
+	public final boolean confirmNonnullServer() {
+	  if (f_server == null) {
+      final String msg = I18N.err(18);
+      final ExceptionDetailsDialog report = 
+        new ExceptionDetailsDialog(getParentShell(), 
+                                   "Sierra server must be non-null", null,
+                                   msg, new Exception(), Activator.getDefault());
+      report.open();
+      SLLogger.getLogger().log(Level.SEVERE, msg);
+      return false;
+    } 
+	  return true;
 	}
 }

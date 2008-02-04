@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.window.Window;
@@ -79,14 +78,8 @@ public abstract class AbstractWebServiceMenuAction extends
 						return;
 					}
 					server = dialog.getServer();
-					if (server == null) {
-						final String msg = I18N.err(18);
-						final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-								shell, "Sierra server must be non-null", null,
-								msg, new Exception(), Activator.getDefault());
-						report.open();
-						SLLogger.getLogger().log(Level.SEVERE, msg);
-						return;
+					if (!dialog.confirmNonnullServer()) {
+					  return;
 					}
 					if (dialog.useForAllUnconnectedProjects())
 						unconnectedProjectsServer = server;
