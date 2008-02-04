@@ -93,7 +93,9 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		return panel;
 	}
 
-	protected abstract void addToEntryPanel(Composite entryPanel);
+	protected void addToEntryPanel(Composite entryPanel) {
+	  // Do nothing
+	}
 
   @Override
 	protected final Control createContents(Composite parent) {
