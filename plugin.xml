@@ -319,6 +319,18 @@
          <perspectiveShortcut
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspectiveShortcut>
+         <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
+         </viewShortcut>
+         <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView">
+         </viewShortcut>
+         <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
+         </viewShortcut>
+          <viewShortcut
+               id="com.surelogic.sierra.client.eclipse.AdHocQueryView">
+         </viewShortcut>
       </perspectiveExtension>
    </extension>
    
