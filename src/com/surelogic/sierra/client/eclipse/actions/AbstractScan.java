@@ -54,7 +54,6 @@ public abstract class AbstractScan<T extends IJavaElement>  {
         }
         sb.append(name);          
       }
-      sb.append(". ");
     } else {
       sb.append(names.size());
       sb.append(isRescan ? " comp units" : " projects");
