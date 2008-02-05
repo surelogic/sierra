@@ -1,5 +1,8 @@
 package com.surelogic.sierra.jdbc.server;
 
+import java.sql.Connection;
+
+import com.surelogic.sierra.jdbc.user.User;
 
 /**
  * Represents an SQL transaction with a principal in context.
@@ -7,14 +10,8 @@ package com.surelogic.sierra.jdbc.server;
  * @author nathan
  * 
  */
-public interface UserTransaction<T> extends Transaction<T> {
+public interface UserTransaction<T> {
 
-	/**
-	 * Returns the principal in context. May not be null. If you do not have a
-	 * principal, you should consider using Transaction.
-	 * 
-	 * @return
-	 */
-	String getUserName();
+	T perform(Connection conn, Server server, User user) throws Exception;
 
 }

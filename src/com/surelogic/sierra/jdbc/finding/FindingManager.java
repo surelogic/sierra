@@ -24,6 +24,7 @@ import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
+import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -57,6 +58,7 @@ public class FindingManager {
 	private final PreparedStatement populateScanOverview;
 
 	private final PreparedStatement scanArtifacts;
+	private final PreparedStatement selectMergeInfo;
 
 	protected FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -109,6 +111,10 @@ public class FindingManager {
 		scanArtifacts.setFetchSize(FETCH_SIZE);
 		selectFindingById = conn
 				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
+		selectMergeInfo = conn
+				.prepareStatement("SELECT F.SUMMARY,F.IMPORTANCE,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
+						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
+						+ "   WHERE F.UUID = ? AND LM.FINDING_ID = F.ID AND FT.ID = LM.FINDING_TYPE_ID");
 	}
 
 	/**
@@ -128,7 +134,7 @@ public class FindingManager {
 			Long projectId = scan.getProjectId();
 			scanArtifacts.setLong(1, scan.getId());
 			ResultSet result = scanArtifacts.executeQuery();
-      int counter = 0;
+			int counter = 0;
 			try {
 				while (result.next()) {
 					ArtifactResult art = new ArtifactResult();
@@ -187,8 +193,8 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-			log.info("All new findings ("+counter+") persisted for scan " + uid
-					+ " in project " + projectName + ".");
+			log.info("All new findings (" + counter + ") persisted for scan "
+					+ uid + " in project " + projectName + ".");
 		} catch (SQLException e) {
 			sqlError(e);
 		}
@@ -383,6 +389,27 @@ public class FindingManager {
 		obsoleteOverview.setLong(2, deleted);
 		obsoleteOverview.execute();
 		fRec.delete();
+	}
+
+	protected Merge getMergeInfo(String findingUid) throws SQLException {
+		selectMergeInfo.setString(1, findingUid);
+		ResultSet set = selectMergeInfo.executeQuery();
+		final Merge merge = new Merge();
+		final Match match = new Match();
+		merge.setMatch(match);
+		try {
+			int mergeIdx = 1;
+			merge.setSummary(set.getString(mergeIdx++));
+			merge.setImportance(Importance.values()[set
+					.getInt(mergeIdx++)]);
+			match.setClassName(set.getString(mergeIdx++));
+			match.setHash(set.getLong(mergeIdx++));
+			match.setFindingType(set.getString(mergeIdx++));
+			match.setRevision(set.getLong(mergeIdx++));
+		} finally {
+			set.close();
+		}
+		return merge;
 	}
 
 	protected void sqlError(SQLException e) {

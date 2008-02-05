@@ -55,6 +55,8 @@ public final class FindingRecord extends LongUpdatableRecord {
 	protected int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
 		st.setString(idx++, uid);
+		st.setInt(idx++, importance.ordinal());
+		st.setString(idx++, summary);
 		return idx;
 	}
 

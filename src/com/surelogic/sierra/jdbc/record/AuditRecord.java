@@ -26,18 +26,17 @@ public final class AuditRecord extends LongRecord {
 
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		// USER_ID, FINDING_ID, DATE_TIME, VALUE, EVENT
-		fillWithPk(st, idx);
-		return idx;
-	}
-
-	@Override
-	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, findingId);
 		st.setString(idx++, event.toString());
 		setNullableLong(idx++, st, userId);
 		setNullableTimestamp(idx++, st, timestamp);
 		setNullableString(idx++, st, value);
+		return idx;
+	}
+
+	@Override
+	protected int fill(PreparedStatement st, int idx) throws SQLException {
+		idx = fillWithNk(st, idx);
 		setNullableLong(idx++, st, revision);
 		return idx;
 	}

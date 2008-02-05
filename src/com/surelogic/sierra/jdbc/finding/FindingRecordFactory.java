@@ -20,9 +20,10 @@ public class FindingRecordFactory {
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UUID,IMPORTANCE,SUMMARY,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION) VALUES (?,?,?,?,?,?)";
 	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE UUID = ?";
 	private static final String FINDING_DELETE = "DELETE FROM FINDING WHERE ID = ?";
-	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ? WHERE FINDING_ID = ?";
+	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ?, IMPORTANCE = ?, SUMMARY = ? WHERE FINDING_ID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
 	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
+	private static final String AUDIT_SELECT = "SELECT ID,REVISION FROM SIERRA_AUDIT WHERE FINDING_ID = ? AND EVENT = ? AND USER_ID = ? AND DATE_TIME = ? AND VALUE = ?";
 	private final UpdateRecordMapper matchMap;
 	private final UpdateRecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;
@@ -35,7 +36,7 @@ public class FindingRecordFactory {
 				FINDING_DELETE, FINDING_UPDATE);
 		this.artifactFindingMap = new BaseMapper(conn,
 				INSERT_ARTIFACT_FINDING_RELATION, null, null, false);
-		this.auditMap = new BaseMapper(conn, AUDIT_INSERT, null, null);
+		this.auditMap = new BaseMapper(conn, AUDIT_INSERT, AUDIT_SELECT, null);
 	}
 
 	public AuditRecord newAudit() {

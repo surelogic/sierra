@@ -45,12 +45,8 @@ public class UserLoginServlet extends HttpServlet {
 			context = "/";
 		}
 		if (userName != null && password != null) {
-			final User u = ServerConnection
-					.withReadOnly(new UserTransaction<User>() {
-
-						public String getUserName() {
-							return userName;
-						}
+			final User u = ConnectionFactory
+					.withReadOnly(new ServerTransaction<User>() {
 
 						public User perform(Connection conn, Server server)
 								throws Exception {

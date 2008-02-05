@@ -4,9 +4,9 @@ import java.sql.Connection;
 
 import javax.servlet.ServletContextEvent;
 
+import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.ServerConnection;
-import com.surelogic.sierra.jdbc.server.UserTransaction;
+import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
@@ -24,11 +24,7 @@ public class SchemaServletContextListener extends LogServletContextListener {
 		/*
 		 * Bootstrap or update up the database as necessary.
 		 */
-		ServerConnection.withTransaction(new UserTransaction<Void>() {
-
-			public String getUserName() {
-				return "sierra";
-			}
+		ConnectionFactory.withTransaction(new ServerTransaction<Void>() {
 
 			public Void perform(Connection conn, Server server)
 					throws Exception {

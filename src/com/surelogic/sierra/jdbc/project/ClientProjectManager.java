@@ -3,24 +3,18 @@ package com.surelogic.sierra.jdbc.project;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.tool.message.AuditTrailResponse;
-import com.surelogic.sierra.tool.message.CommitAuditTrailRequest;
-import com.surelogic.sierra.tool.message.CommitAuditTrailResponse;
-import com.surelogic.sierra.tool.message.GetAuditTrailRequest;
-import com.surelogic.sierra.tool.message.Merge;
-import com.surelogic.sierra.tool.message.MergeAuditTrailRequest;
-import com.surelogic.sierra.tool.message.MergeAuditTrailResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerUIDRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.SyncRequest;
+import com.surelogic.sierra.tool.message.SyncResponse;
 
 public class ClientProjectManager extends ProjectManager {
 
@@ -40,76 +34,37 @@ public class ClientProjectManager extends ProjectManager {
 	public void synchronizeProject(SierraServerLocation server,
 			String projectName, SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
-		/*
-		 * Synchronization consists of four steps. First, we need to find any
-		 * findings that have been created/merged locally, and merge them on the
-		 * database. Second, we commit our audits. Third, we get our updates
-		 * from the server and apply them locally. Finally, we also check to see
-		 * if we have any updates to settings.
-		 */
-		SierraService service = SierraServiceClient.create(server);
+		final SierraService service = SierraServiceClient.create(server);
 
 		// Look up project. If it doesn't exist, create it and relate it to the
 		// server.
-		ProjectRecord p = projectFactory.newProject();
+		final ProjectRecord p = projectFactory.newProject();
 		p.setName(projectName);
 		if (!p.select()) {
 			p.insert();
 		}
-		// TODO put server uid back into project
-		String serverUid = service.getUid(new ServerUIDRequest()).getUid();
-		if (monitor.isCanceled()) {
-			return;
-		}
-		monitor.worked(1);
-		// Commit merges
-		monitor.subTask("Committing local merges from project " + projectName
-				+ ".");
-		MergeAuditTrailRequest mergeRequest = new MergeAuditTrailRequest();
-		mergeRequest.setServer(serverUid);
-		mergeRequest.setProject(projectName);
-		List<Merge> merges = findingManager.getNewLocalMerges(projectName,
-				monitor);
-		if (!merges.isEmpty()) {
-			mergeRequest.setMerge(merges);
-			MergeAuditTrailResponse mergeResponse = service
-					.mergeAuditTrails(mergeRequest);
-			findingManager.updateLocalTrailUids(projectName, mergeResponse
-					.getTrail(), merges, monitor);
-		}
-		if (monitor.isCanceled()) {
-			return;
-		}
-		monitor.worked(1);
-		// Commit Audits
-		monitor.subTask("Committing local audits for project " + projectName
-				+ ".");
-		CommitAuditTrailRequest commitRequest = new CommitAuditTrailRequest();
-		commitRequest.setServer(serverUid);
-		commitRequest.setAuditTrail(findingManager.getNewLocalAudits(
-				projectName, monitor));
-		CommitAuditTrailResponse commitResponse = service
-				.commitAuditTrails(commitRequest);
 
+		// TODO put server uid back into project
+		final String serverUid = service.getUid(new ServerUIDRequest())
+				.getUid();
 		if (monitor.isCanceled()) {
 			return;
 		}
 		monitor.worked(1);
-		// Get updated audits from server
-		monitor.subTask("Updating findings for project " + projectName
-				+ " from server.");
+		monitor.subTask("Sending local updates to the server.");
+		// Commit audits
+		final SyncRequest request = new SyncRequest();
+		request.setProject(projectName);
+		request.setServer(serverUid);
+		request.setRevision(findingManager.getLatestAuditRevision(projectName));
+		request.setTrails(findingManager
+				.getNewLocalAudits(projectName, monitor));
+		final SyncResponse reply = service.synchronizeProject(request);
+		monitor.worked(1);
+		monitor.subTask("Writing remote updates into local database.");
 		findingManager.deleteLocalAudits(projectName, monitor);
-		GetAuditTrailRequest auditRequest = new GetAuditTrailRequest();
-		auditRequest.setProject(projectName);
-		auditRequest.setRevision(findingManager
-				.getLatestAuditRevision(projectName));
-		auditRequest.setServer(serverUid);
-		AuditTrailResponse auditResponse = service.getAuditTrails(auditRequest);
-		findingManager.updateLocalFindings(projectName, auditResponse
-				.getObsolete(), auditResponse.getUpdate(), monitor);
-		if (monitor.isCanceled()) {
-			return;
-		}
+		findingManager.updateLocalFindings(projectName, reply.getTrails(),
+				monitor);
 		monitor.worked(1);
 		// Update settings
 		// TODO
@@ -119,10 +74,9 @@ public class ClientProjectManager extends ProjectManager {
 		int idx = 1;
 		insertSynchRecord.setLong(idx++, p.getId());
 		insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
-		insertSynchRecord.setLong(idx++,
-				commitResponse.getRevision() == null ? -1 : commitResponse
-						.getRevision());
-		insertSynchRecord.setLong(idx++, auditRequest.getRevision());
+		insertSynchRecord.setLong(idx++, findingManager
+				.getLatestAuditRevision(projectName));
+		insertSynchRecord.setLong(idx++, request.getRevision());
 		insertSynchRecord.execute();
 	}
 

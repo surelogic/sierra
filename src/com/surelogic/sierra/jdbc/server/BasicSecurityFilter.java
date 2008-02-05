@@ -14,10 +14,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import sun.misc.BASE64Decoder;
+
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.User;
-
-import sun.misc.BASE64Decoder;
 
 /**
  * This filter accepts basic authentication credentials from the client, and
@@ -80,12 +80,8 @@ public class BasicSecurityFilter implements Filter {
 						// In this example, we simply check
 						// that neither field is blank
 
-						user = ServerConnection
-								.withReadOnly(new UserTransaction<User>() {
-
-									public String getUserName() {
-										return null;
-									}
+						user = ConnectionFactory
+								.withReadOnly(new ServerTransaction<User>() {
 
 									public User perform(Connection conn,
 											Server server) throws SQLException {
