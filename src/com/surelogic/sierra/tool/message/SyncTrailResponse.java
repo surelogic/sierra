@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 public class SyncTrailResponse {
-	
+
 	private String finding;
 	private Merge merge;
 	private List<Audit> audits;
@@ -33,7 +33,7 @@ public class SyncTrailResponse {
 
 	public List<Audit> getAudits() {
 		if (audits == null) {
-			return new ArrayList<Audit>();
+			audits = new ArrayList<Audit>();
 		}
 		return audits;
 	}
