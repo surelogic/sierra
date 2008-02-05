@@ -1,22 +1,30 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.qualifier.QualifierManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
+import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.ServerConnection;
+import com.surelogic.sierra.jdbc.server.UserContext;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
-import com.surelogic.sierra.jdbc.user.ClientUser;
+import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.message.srpc.SRPCServlet;
 
 /**
@@ -55,9 +63,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			return;
 		}
 
-		ServerConnection.withTransaction(new WebTransaction<Object>() {
+		ConnectionFactory.withUserTransaction(new UserTransaction<Object>() {
 
-			public Object perform(Connection conn, Server server)
+			public Object perform(Connection conn, Server server, User user)
 					throws SQLException {
 				final String uid = scan.getUid();
 				final String project = scan.getConfig().getProject();
@@ -68,130 +76,115 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								project));
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
-				generator.qualifiers(q).user(getUserName());
+				generator.qualifiers(q).user(user.getName());
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
-				ServerConnection.delayTransaction(new WebTransaction<Object>() {
+				ConnectionFactory
+						.delayUserTransaction(new UserTransaction<Object>() {
 
-					public Object perform(Connection conn, Server server)
-							throws SQLException {
-						ServerFindingManager fm = ServerFindingManager
-								.getInstance(conn);
-						fm.generateFindings(project, uid, filter, null);
-						fm.generateOverview(project, uid,
-								new HashSet<String>(q));
-						return null;
-					}
-				});
+							public Object perform(Connection conn,
+									Server server, User user)
+									throws SQLException {
+								ServerFindingManager fm = ServerFindingManager
+										.getInstance(conn);
+								fm.generateFindings(project, uid, filter, null);
+								fm.generateOverview(project, uid,
+										new HashSet<String>(q));
+								return null;
+							}
+						});
 				return null;
 			}
 		});
 	}
 
 	public Qualifiers getQualifiers(QualifierRequest request) {
-		return ServerConnection.withReadOnly(new WebTransaction<Qualifiers>() {
+		return ConnectionFactory
+				.withUserReadOnly(new UserTransaction<Qualifiers>() {
 
-			public Qualifiers perform(Connection conn, Server server)
-					throws SQLException {
-				Qualifiers q = new Qualifiers();
-				q.setQualifier(QualifierManager.getInstance(conn)
-						.getAllQualifierNames());
-				return q;
-			}
-		});
+					public Qualifiers perform(Connection conn, Server server,
+							User user) throws SQLException {
+						Qualifiers q = new Qualifiers();
+						q.setQualifier(QualifierManager.getInstance(conn)
+								.getAllQualifierNames());
+						return q;
+					}
+				});
 	}
 
-	public CommitAuditTrailResponse commitAuditTrails(
-			final CommitAuditTrailRequest audits)
-			throws ServerMismatchException {
-		final List<AuditTrail> trails = audits.getAuditTrail();
-		if (trails != null && !trails.isEmpty()) {
-			final CommitAuditTrailResponse response = ServerConnection
-					.withTransaction(new WebTransaction<CommitAuditTrailResponse>() {
+	public SyncResponse synchronizeProject(SyncRequest request) {
+		final String serverUid = request.getServer();
+		final String project = request.getProject();
+		final List<SyncTrailRequest> trails = request.getTrails();
+		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
+			public Void perform(Connection conn, Server server, User user)
+					throws Exception {
+				if (server.getUid().equals(serverUid)) {
+					throw new IllegalArgumentException(serverUid
+							+ " does not match the server's uid: "
+							+ server.getUid());
+				}
+				final long revision = server.nextRevision();
+				final List<Merge> merges = new ArrayList<Merge>(trails.size());
+				final List<AuditTrail> audits = new ArrayList<AuditTrail>(
+						trails.size());
+				for (SyncTrailRequest trail : trails) {
+					merges.add(trail.getMerge());
+					final AuditTrail audit = new AuditTrail();
+					audit.setAudits(trail.getAudits());
+				}
+				final ServerFindingManager man = ServerFindingManager
+						.getInstance(conn);
+				final List<String> uids = man.mergeAuditTrails(project,
+						revision, merges);
+				final Iterator<AuditTrail> auditIter = audits.iterator();
+				for (String uid : uids) {
+					auditIter.next().setFinding(uid);
+				}
+				man.commitAuditTrails(user.getId(), revision, audits);
+				return null;
+			}
+		};
+		final long revision = request.getRevision();
+		final UserTransaction<SyncResponse> readChanges = new UserTransaction<SyncResponse>() {
 
-						public CommitAuditTrailResponse perform(
-								Connection conn, Server server)
-								throws SQLException {
-							final CommitAuditTrailResponse response = new CommitAuditTrailResponse();
-							final long revision = server.nextRevision();
-							response.setRevision(revision);
-							response.setUid(ServerFindingManager.getInstance(
-									conn).commitAuditTrails(
-									ClientUser.getUser(getUserName(), conn)
-											.getId(), revision, trails));
-							return response;
+			public SyncResponse perform(Connection conn, Server server,
+					User user) throws Exception {
+				return ServerFindingManager.getInstance(conn).getAuditUpdates(
+						project, revision);
+
+			}
+		};
+		// Begin transaction
+		if (trails != null && !trails.isEmpty()) {
+			return ConnectionFactory
+					.withUserTransaction(new UserTransaction<SyncResponse>() {
+
+						public SyncResponse perform(Connection conn,
+								Server server, User user) throws Exception {
+							commitChanges.perform(conn, server, user);
+							return readChanges.perform(conn, server, user);
 						}
 					});
-			return response;
 		} else {
-			return new CommitAuditTrailResponse();
+			return ConnectionFactory
+					.withUserReadOnly(new UserTransaction<SyncResponse>() {
+
+						public SyncResponse perform(Connection conn,
+								Server server, User user) throws Exception {
+							return readChanges.perform(conn, server, user);
+						}
+					});
 		}
-	}
-
-	/**
-	 * @throws ServerMismatchException
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public AuditTrailResponse getAuditTrails(final GetAuditTrailRequest request)
-			throws ServerMismatchException {
-		return ServerConnection
-				.withReadOnly(new WebTransaction<AuditTrailResponse>() {
-
-					public AuditTrailResponse perform(Connection conn,
-							Server server) throws SQLException {
-						AuditTrailResponse response = new AuditTrailResponse();
-						String project = request.getProject();
-						Long revision = request.getRevision();
-						ServerFindingManager man = ServerFindingManager
-								.getInstance(conn);
-						response.setObsolete(man.getObsoletedTrails(project,
-								revision));
-						response.setUpdate(man.getAuditUpdates(project,
-								revision));
-
-						return response;
-					}
-
-				});
-
-	}
-
-	/**
-	 * Finds or creates an trail that contains all of the provided matches for
-	 * each requested merge. If none of the matches exist, we create a new trail
-	 * and assign it to each match. If some of the matches belong to one trail,
-	 * and the others none, then we merely assign the others to the existing
-	 * trail. Finally, if we have multiple trails, we create an entirely new
-	 * one, and obsolete each existing trail with the new one.
-	 * 
-	 * @throws ServerMismatchException
-	 */
-	public MergeAuditTrailResponse mergeAuditTrails(
-			final MergeAuditTrailRequest seed) throws ServerMismatchException {
-		return ServerConnection
-				.withTransaction(new WebTransaction<MergeAuditTrailResponse>() {
-
-					public MergeAuditTrailResponse perform(Connection conn,
-							Server server) throws SQLException {
-						final MergeAuditTrailResponse response = new MergeAuditTrailResponse();
-						final List<Merge> merges = seed.getMerge();
-						final long revision = server.nextRevision();
-						response.setTrail(ServerFindingManager
-								.getInstance(conn).mergeAuditTrails(
-										seed.getProject(), revision, merges));
-						return response;
-					}
-				});
 	}
 
 	public ServerUIDReply getUid(ServerUIDRequest request) {
 		ServerUIDReply reply = new ServerUIDReply();
-		reply.setUid(ServerConnection
-				.withReadOnly(new WebTransaction<String>() {
+		reply.setUid(ConnectionFactory
+				.withUserReadOnly(new UserTransaction<String>() {
 
-					public String perform(Connection conn, Server server)
-							throws SQLException {
+					public String perform(Connection conn, Server server,
+							User user) throws SQLException {
 						return server.getUid();
 					}
 				}));
@@ -199,11 +192,11 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	public GlobalSettings getGlobalSettings(GlobalSettingsRequest request) {
-		return ServerConnection
-				.withReadOnly(new WebTransaction<GlobalSettings>() {
+		return ConnectionFactory
+				.withUserReadOnly(new UserTransaction<GlobalSettings>() {
 
-					public GlobalSettings perform(Connection conn, Server server)
-							throws SQLException {
+					public GlobalSettings perform(Connection conn,
+							Server server, User user) throws SQLException {
 						final GlobalSettings settings = new GlobalSettings();
 						settings.setFilter(SettingsManager.getInstance(conn)
 								.getGlobalSettings());
@@ -213,9 +206,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	public void writeGlobalSettings(final GlobalSettings settings) {
-		ServerConnection.withTransaction(new WebTransaction<Object>() {
+		ConnectionFactory.withUserTransaction(new UserTransaction<Object>() {
 
-			public Object perform(Connection conn, Server server)
+			public Object perform(Connection conn, Server server, User user)
 					throws SQLException {
 				SettingsManager.getInstance(conn).writeGlobalSettings(
 						settings.getFilter());
@@ -224,18 +217,15 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		});
 	}
 
-	private abstract class WebTransaction<T> implements UserTransaction<T> {
-
-		private final String userName;
-
-		WebTransaction() {
-			userName = getCurrentPrincipal().getName();
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			UserContext.set((User)req
+					.getSession().getAttribute("SierraUser"));
+		super.service(req, resp);
+		} finally {
+			UserContext.remove();
 		}
-
-		public String getUserName() {
-			return userName;
-		}
-
 	}
-
 }
