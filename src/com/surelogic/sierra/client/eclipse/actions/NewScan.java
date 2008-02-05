@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.job.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
@@ -29,13 +30,17 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	 * Starts a job for each project
 	 */
 	@Override
-	void startScanJob(Collection<IJavaProject> selectedProjects) {
-		LOG.info("Starting new scan jobs");
+	boolean startScanJob(Collection<IJavaProject> selectedProjects) {
+	  boolean started = false;
+		LOG.info("Starting new scan jobs");		
+		
 		for (final IJavaProject p : selectedProjects) {
 			final Config config = ConfigGenerator.getInstance()
 					.getProjectConfig(p);
 			if (config.hasNothingToScan()) {
-				return;
+			  BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in "+p.getElementName());
+			} else {
+			  started = true;
 			}
 			final Runnable runAfterImport = new Runnable() {
 				public void run() {
@@ -69,5 +74,6 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					config, importJob);
 			job.schedule();
 		}
+		return started;
 	}
 }

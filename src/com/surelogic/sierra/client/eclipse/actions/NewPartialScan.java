@@ -37,7 +37,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   }
 
   @Override
-  void startScanJob(Collection<ICompilationUnit> selectedCUs) {
+  boolean startScanJob(Collection<ICompilationUnit> selectedCUs) {
     // One per project that had a CU selected
     final List<ConfigCompilationUnit> configs = 
       ConfigGenerator.getInstance().getCompilationUnitConfigs(selectedCUs);
@@ -51,6 +51,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
                                config, importJob);
       job.schedule();
     }
+    return true;
   }
   
   static class ImportPartialScanDocumentJob extends DatabaseJob {

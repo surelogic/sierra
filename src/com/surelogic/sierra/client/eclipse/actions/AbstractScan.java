@@ -72,8 +72,9 @@ public abstract class AbstractScan<T extends IJavaElement>  {
 
       if (saved & built & compiled) {
         final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
-        startScanJob(elements);      
-        showStartBalloon(sb);
+        if (startScanJob(elements)) {      
+          showStartBalloon(sb);
+        }
       } else if (!built) {
         BalloonUtility.showMessage("Something isn't built", 
         "Sierra cannot run properly if your code isn't fully compiled");
@@ -108,5 +109,8 @@ public abstract class AbstractScan<T extends IJavaElement>  {
   }
   abstract boolean checkIfBuilt(Collection<T> elements);
   
-  abstract void startScanJob(Collection<T> elements);
+  /**
+   * @return true if we started one or more scan jobs
+   */
+  abstract boolean startScanJob(Collection<T> elements);
 }
