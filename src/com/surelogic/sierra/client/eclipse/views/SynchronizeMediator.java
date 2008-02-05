@@ -20,8 +20,8 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.job.DatabaseJob;
-import com.surelogic.common.eclipse.job.SLUIJob;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;

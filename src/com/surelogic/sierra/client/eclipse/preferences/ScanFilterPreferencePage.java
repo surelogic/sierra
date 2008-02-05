@@ -41,8 +41,8 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
-import com.surelogic.common.eclipse.job.DatabaseJob;
-import com.surelogic.common.eclipse.job.SLUIJob;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;

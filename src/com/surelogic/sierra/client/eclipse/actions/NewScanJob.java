@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.*;

@@ -21,7 +21,7 @@ import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
-import com.surelogic.common.eclipse.job.SLUIJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;

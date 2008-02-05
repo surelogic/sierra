@@ -19,7 +19,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
-import com.surelogic.common.eclipse.job.SLUIJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.eclipse.update.VersionUtil;
 import com.surelogic.common.i18n.I18N;

@@ -13,7 +13,7 @@ import org.eclipse.jdt.core.*;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
-import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;

@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
-import com.surelogic.common.eclipse.job.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
