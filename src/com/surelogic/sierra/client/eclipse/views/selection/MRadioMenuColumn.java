@@ -122,7 +122,7 @@ public final class MRadioMenuColumn extends MColumn implements
 		if (choice instanceof ISelectionFilterFactory) {
 			final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
 			getSelection().construct(filter, new DrawFilterAndMenu());
-			getSelection().refreshFilters();
+			getSelection().changed();
 		} else if (choice.equals("Show")) {
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
 					getCascadingList(), getSelection(), this);
