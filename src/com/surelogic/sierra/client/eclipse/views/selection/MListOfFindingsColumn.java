@@ -532,8 +532,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 									+ finding_ids.size() + " findings to "
 									+ to.toStringSentenceCase();
 							if (!MessageDialog.openConfirm(PlatformUI
-									.getWorkbench().getDisplay()
-									.getActiveShell(),
+									.getWorkbench().getActiveWorkbenchWindow()
+									.getShell(),
 									"Confirm Multiple Finding Change", msg)) {
 								makeChange = false;
 							}
@@ -557,8 +557,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 		export.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
-						PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-						getQuery());
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getShell(), getQuery());
 				dialog.open();
 			}
 		});

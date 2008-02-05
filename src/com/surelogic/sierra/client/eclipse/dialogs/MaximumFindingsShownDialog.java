@@ -28,7 +28,7 @@ public final class MaximumFindingsShownDialog extends Dialog {
 	private static final int f_widthHint = 350;
 
 	public MaximumFindingsShownDialog(int findingsLimit, int findingsCount) {
-		super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
+		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		f_findingsLimit = findingsLimit;
 		f_findingsCount = findingsCount;
 	}

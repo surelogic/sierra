@@ -29,8 +29,8 @@ public final class SynchronizeAllProjectsAction implements
 		for (String projectName : SierraServerManager.getInstance()
 				.getConnectedProjects()) {
 			final SierraServer server = manager.getServer(projectName);
-			final Shell shell = PlatformUI.getWorkbench().getDisplay()
-					.getActiveShell();
+			final Shell shell = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell();
 			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 				public void run(String projectName, SierraServer server,
 						Shell shell) {

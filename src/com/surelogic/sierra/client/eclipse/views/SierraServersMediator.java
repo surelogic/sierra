@@ -79,7 +79,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		public void handleEvent(Event event) {
 			SierraServer server = f_manager.getFocus();
 			if (server != null) {
-				if (MessageDialog.openConfirm(event.display.getActiveShell(),
+				if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
 						"Confirm Sierra Server Deletion",
 						"Do you wish to delete the Sierra server '"
 								+ server.getLabel() + "'?")) {
@@ -188,7 +189,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						.getProjectsConnectedTo(server)) {
 					if (manager.isConnected(projectName)) {
 						final Shell shell = PlatformUI.getWorkbench()
-								.getDisplay().getActiveShell();
+								.getActiveWorkbenchWindow().getShell();
 						final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 							public void run(String projectName,
 									SierraServer server, Shell shell) {

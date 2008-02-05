@@ -78,8 +78,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 					}
 
 					FindingListDialog fld = new FindingListDialog(PlatformUI
-							.getWorkbench().getDisplay().getActiveShell(),
-							findingsMap);
+							.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), findingsMap);
 
 					fld.setBlockOnOpen(true);
 					fld.open();
