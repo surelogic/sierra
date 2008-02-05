@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.sierra.jdbc.DBType;
@@ -32,7 +33,7 @@ public final class SierraSchemaUtility {
 	public static final String SEPARATOR = "_";
 
 	public static void checkAndUpdate(final Connection c, final boolean serverDB)
-			throws SQLException, IOException {
+			throws SQLException, IOException, FutureDatabaseException {
 		final int arrayLength = schemaVersion + 1;
 		final DBType db = JDBCUtils.getDb(c);
 		final URL[] scripts = new URL[arrayLength];

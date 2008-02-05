@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
@@ -74,8 +75,9 @@ public class Server {
 	 * Updates the schema to the highest available version.
 	 * 
 	 * @throws SQLException
+	 * @throws FutureDatabaseException 
 	 */
-	public void updateSchema() throws SQLException {
+	public void updateSchema() throws SQLException, FutureDatabaseException {
 		try {
 			SierraSchemaUtility.checkAndUpdate(conn, true);
 		} catch (IOException e) {
