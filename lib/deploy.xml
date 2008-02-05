@@ -89,6 +89,8 @@
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
+		<!-- sierra-portal-rpc.jar is obsolete after Jan 08 -->
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" />
 		<delete quiet="true" includeemptydirs="true">
 			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" includes="**/*" />
