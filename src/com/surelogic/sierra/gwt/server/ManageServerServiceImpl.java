@@ -7,8 +7,10 @@ import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.ManageServerService;
 import com.surelogic.sierra.gwt.client.ServerInfo;
+import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.ServerConnection;
+import com.surelogic.sierra.jdbc.server.UserTransaction;
+import com.surelogic.sierra.jdbc.user.User;
 
 public class ManageServerServiceImpl extends SierraServiceServlet implements
 		ManageServerService {
@@ -19,12 +21,16 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = 4174730158310056800L;
 
 	public ServerInfo deploySchema() {
-		return ServerConnection
-				.withTransaction(new WebTransaction<ServerInfo>() {
+		return ConnectionFactory
+				.withUserTransaction(new UserTransaction<ServerInfo>() {
 
-					public ServerInfo perform(Connection conn, Server server)
-							throws SQLException, FutureDatabaseException {
-						server.updateSchema();
+					public ServerInfo perform(Connection conn, Server server, User user)
+							throws SQLException {
+						try {
+							server.updateSchema();
+						} catch (FutureDatabaseException e) {
+							//Do Nothing
+						}
 						return readServerInfo(server);
 					}
 				});
@@ -32,9 +38,9 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ServerInfo getServerInfo() {
-		return ServerConnection.withReadOnly(new WebTransaction<ServerInfo>() {
+		return ConnectionFactory.withUserReadOnly(new UserTransaction<ServerInfo>() {
 
-			public ServerInfo perform(Connection conn, Server server)
+			public ServerInfo perform(Connection conn, Server server, User user)
 					throws SQLException {
 				return readServerInfo(server);
 			}
@@ -42,10 +48,10 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ServerInfo setEmail(final String address) {
-		return ServerConnection
-				.withTransaction(new WebTransaction<ServerInfo>() {
+		return ConnectionFactory
+				.withUserTransaction(new UserTransaction<ServerInfo>() {
 
-					public ServerInfo perform(Connection conn, Server server)
+					public ServerInfo perform(Connection conn, Server server, User user)
 							throws SQLException {
 						server.setEmail(address);
 						return readServerInfo(server);
