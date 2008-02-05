@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.server;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.ManageServerService;
 import com.surelogic.sierra.gwt.client.ServerInfo;
@@ -22,7 +23,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 				.withTransaction(new WebTransaction<ServerInfo>() {
 
 					public ServerInfo perform(Connection conn, Server server)
-							throws SQLException {
+							throws SQLException, FutureDatabaseException {
 						server.updateSchema();
 						return readServerInfo(server);
 					}
