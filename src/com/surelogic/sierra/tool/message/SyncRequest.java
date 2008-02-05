@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
@@ -34,6 +35,9 @@ public class SyncRequest {
 	}
 
 	public List<SyncTrailRequest> getTrails() {
+		if(trails == null) {
+			trails = new ArrayList<SyncTrailRequest>();
+		}
 		return trails;
 	}
 
