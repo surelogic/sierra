@@ -381,7 +381,7 @@ public final class Selection extends AbstractDatabaseObserver {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					refreshFilters();
+					refreshFiltersDatabaseJob();
 					notifySelectionChanged();
 				} catch (Exception e) {
 					return SLStatus.createErrorStatus(e);
@@ -395,9 +395,35 @@ public final class Selection extends AbstractDatabaseObserver {
 	/**
 	 * Refreshes the data within all the filters that comprise this selection.
 	 * <p>
+	 * Queries the database.
+	 * <p>
 	 * Blocks until all the queries are completed.
 	 */
 	public void refreshFilters() {
+		final Job job = new DatabaseJob("Refresh selection") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					refreshFiltersDatabaseJob();
+				} catch (Exception e) {
+					return SLStatus.createErrorStatus(e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+		boolean joined = false;
+		while (!joined) {
+			try {
+				job.join();
+				joined = true;
+			} catch (InterruptedException e) {
+				// ignore, as we'll try again if necessary.
+			}
+		}
+	}
+
+	private void refreshFiltersDatabaseJob() {
 		synchronized (this) {
 			for (Filter filter : f_filters) {
 				filter.refresh();
@@ -434,6 +460,8 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	/**
 	 * Refreshes the data within all the filters after the passed filter.
+	 * <p>
+	 * Queries the database.
 	 * <p>
 	 * Blocks until all the queries are completed.
 	 */
