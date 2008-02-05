@@ -119,7 +119,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
 			public Void perform(Connection conn, Server server, User user)
 					throws Exception {
-				if (server.getUid().equals(serverUid)) {
+				if (!server.getUid().equals(serverUid)) {
 					throw new IllegalArgumentException(serverUid
 							+ " does not match the server's uid: "
 							+ server.getUid());
@@ -129,9 +129,10 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				final List<AuditTrail> audits = new ArrayList<AuditTrail>(
 						trails.size());
 				for (SyncTrailRequest trail : trails) {
-					merges.add(trail.getMerge());
 					final AuditTrail audit = new AuditTrail();
 					audit.setAudits(trail.getAudits());
+					audits.add(audit);
+					merges.add(trail.getMerge());
 				}
 				final ServerFindingManager man = ServerFindingManager
 						.getInstance(conn);
@@ -221,9 +222,8 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			UserContext.set((User)req
-					.getSession().getAttribute("SierraUser"));
-		super.service(req, resp);
+			UserContext.set((User) req.getAttribute("SierraUser"));
+			super.service(req, resp);
 		} finally {
 			UserContext.remove();
 		}
