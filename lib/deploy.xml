@@ -30,6 +30,7 @@
 			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-dev-linux.jar" />
 		</path>
+		<delete dir="../sierra-portal/www"/>
 		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.GWTCompiler" fork="true">
 			<arg value="-out" />
 			<arg value="../sierra-portal/www" />
