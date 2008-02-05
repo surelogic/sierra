@@ -7,14 +7,19 @@ import java.util.logging.Level;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.job.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
@@ -99,7 +104,14 @@ public final class Activator extends AbstractUIPlugin {
 									SWT.ICON_WARNING), msg, null, Activator
 							.getDefault());
 			report.open();
-			PlatformUI.getWorkbench().restart();
+			final UIJob restartEclipseJob = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					PlatformUI.getWorkbench().restart();
+					return Status.OK_STATUS;
+				}
+			};
+			restartEclipseJob.schedule();
 		}
 	}
 
