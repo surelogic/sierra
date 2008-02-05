@@ -21,9 +21,8 @@ public abstract class SierraServiceServlet extends RemoteServiceServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			UserContext.set((User)req
-					.getSession().getAttribute("SierraUser"));
-		super.service(req, resp);
+			UserContext.set((User) req.getSession().getAttribute("SierraUser"));
+			super.service(req, resp);
 		} finally {
 			UserContext.remove();
 		}
