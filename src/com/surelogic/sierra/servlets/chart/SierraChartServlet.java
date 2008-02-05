@@ -14,9 +14,9 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 
 import com.surelogic.sierra.chart.IDatabasePlot;
+import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.ServerConnection;
-import com.surelogic.sierra.jdbc.server.UserTransaction;
+import com.surelogic.sierra.jdbc.server.ServerTransaction;
 
 /**
  * Abstract base class for all Sierra charts. Subclasses typically only need to
@@ -45,13 +45,7 @@ public abstract class SierraChartServlet extends HttpServlet {
 
 		resp.setContentType("image/png");
 
-		ServerConnection.withReadOnly(new UserTransaction<Void>() {
-
-			public String getUserName() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
+		ConnectionFactory.withReadOnly(new ServerTransaction<Void>() {
 			public Void perform(Connection conn, Server server)
 					throws SQLException {
 				try {

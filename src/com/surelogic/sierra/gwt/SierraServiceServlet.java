@@ -1,9 +1,14 @@
 package com.surelogic.sierra.gwt;
 
-import java.security.Principal;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.surelogic.sierra.jdbc.server.UserTransaction;
+import com.surelogic.sierra.jdbc.server.UserContext;
+import com.surelogic.sierra.jdbc.user.User;
 
 /**
  * 
@@ -12,19 +17,15 @@ import com.surelogic.sierra.jdbc.server.UserTransaction;
  */
 public abstract class SierraServiceServlet extends RemoteServiceServlet {
 
-	protected abstract class WebTransaction<T> implements UserTransaction<T> {
-
-		private final String userName;
-
-		protected WebTransaction() {
-			final Principal p = (Principal) getThreadLocalRequest()
-					.getSession().getAttribute("SierraUser");
-			userName = p == null ? null : p.getName();
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			UserContext.set((User)req
+					.getSession().getAttribute("SierraUser"));
+		super.service(req, resp);
+		} finally {
+			UserContext.remove();
 		}
-
-		public String getUserName() {
-			return userName;
-		}
-
 	}
 }
