@@ -496,7 +496,11 @@ public final class ConfigGenerator {
 			return;
 		}
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		URI out = root.findMember(outLoc).getLocationURI();
+		IResource res = root.findMember(outLoc);
+		if (res == null) {
+		  return;
+		}
+		URI out = res.getLocationURI();
 		cfg.addTarget(new FullDirectoryTarget(
 				toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
 				out));
