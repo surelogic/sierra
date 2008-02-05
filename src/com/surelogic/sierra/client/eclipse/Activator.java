@@ -2,20 +2,28 @@ package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -29,6 +37,13 @@ public final class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator f_plugin;
+
+	/**
+	 * Indicates that the schema versions in the code and in the database are in
+	 * sync.
+	 */
+	private static final AtomicBoolean f_databaseInSync = new AtomicBoolean(
+			true);
 
 	/**
 	 * The constructor
@@ -49,27 +64,52 @@ public final class Activator extends AbstractUIPlugin {
 		 */
 		SLStatus.touch();
 
-		// TODO find a better place to define this system property
-		System.setProperty("derby.storage.pageCacheSize", "2500");
-		// startup the database and ensure its schema is up to date
-		Data.bootAndCheckSchema();
-		// load up persisted sierra servers
-		SierraServerManager.getInstance().load(getServerSaveFile());
-		// load up persisted sierra selections
-		SelectionManager.getInstance().load(getSelectionSaveFile());
-		// start observing data changes
-		Projects.getInstance().refresh();
-		// listen changes to the active editor and preference listener
-		MarkersHandler handler = MarkersHandler.getInstance();
-		handler.addMarkerListener();
-		getDefault().getPluginPreferences().addPropertyChangeListener(handler);
+		try {
+			// startup the database and ensure its schema is up to date
+			System.setProperty("derby.storage.pageCacheSize", "2500");
+			Data.bootAndCheckSchema();
+			// load up persisted sierra servers
+			SierraServerManager.getInstance().load(getServerSaveFile());
+			// load up persisted sierra selections
+			SelectionManager.getInstance().load(getSelectionSaveFile());
+			// start observing data changes
+			Projects.getInstance().refresh();
+			// listen changes to the active editor and preference listener
+			MarkersHandler handler = MarkersHandler.getInstance();
+			handler.addMarkerListener();
+			getDefault().getPluginPreferences().addPropertyChangeListener(
+					handler);
+		} catch (FutureDatabaseException e) {
+			/*
+			 * The database schema version is too new, we need to delete it to
+			 * run with this version of the code.
+			 * 
+			 * This could occur if the user reverted to a previously installed
+			 * version of Sierra. (RFR requirement 3.1.15)
+			 */
+			f_databaseInSync.set(false);
+			PreferenceConstants.setDeleteDatabaseOnStartup(true);
+			final String msg = I18N.err(37, e.getSchemaVersion(), e
+					.getCodeVersion());
+			SLLogger.getLogger().log(Level.WARNING, msg, e);
+			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), "No Such Query", PlatformUI
+							.getWorkbench().getDisplay().getSystemImage(
+									SWT.ICON_WARNING), msg, null, Activator
+							.getDefault());
+			report.open();
+			PlatformUI.getWorkbench().restart();
+		}
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			SierraServerManager.getInstance().save(getServerSaveFile());
-			SelectionManager.getInstance().save(getSelectionSaveFile());
+			if (f_databaseInSync.get()) {
+				SierraServerManager.getInstance().save(getServerSaveFile());
+				SelectionManager.getInstance().save(getSelectionSaveFile());
+			}
 			f_plugin = null;
 		} finally {
 			super.stop(context);
