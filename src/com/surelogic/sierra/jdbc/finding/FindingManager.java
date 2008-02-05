@@ -398,10 +398,12 @@ public class FindingManager {
 		final Match match = new Match();
 		merge.setMatch(match);
 		try {
+			set.next();
 			int mergeIdx = 1;
 			merge.setSummary(set.getString(mergeIdx++));
 			merge.setImportance(Importance.values()[set
 					.getInt(mergeIdx++)]);
+			match.setPackageName(set.getString(mergeIdx++));
 			match.setClassName(set.getString(mergeIdx++));
 			match.setHash(set.getLong(mergeIdx++));
 			match.setFindingType(set.getString(mergeIdx++));

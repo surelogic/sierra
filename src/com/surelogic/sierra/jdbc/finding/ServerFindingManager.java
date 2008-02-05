@@ -315,23 +315,25 @@ public final class ServerFindingManager extends FindingManager {
 			String findingId = null;
 			List<Audit> audits = null;
 			try {
-				idx = 1;
-				final String nextId = set.getString(idx++);
-				if (!(nextId.equals(findingId))) {
-					findingId = nextId;
-					final SyncTrailResponse trail = new SyncTrailResponse();
-					trail.setFinding(findingId);
-					trail.setMerge(getMergeInfo(findingId));
-					trails.add(trail);
-					audits = trail.getAudits();
+				while (set.next()) {
+					idx = 1;
+					final String nextId = set.getString(idx++);
+					if (!(nextId.equals(findingId))) {
+						findingId = nextId;
+						final SyncTrailResponse trail = new SyncTrailResponse();
+						trail.setFinding(findingId);
+						trail.setMerge(getMergeInfo(findingId));
+						trails.add(trail);
+						audits = trail.getAudits();
+					}
+					final Audit audit = new Audit();
+					audit.setEvent(AuditEvent.valueOf(set.getString(idx++)));
+					audit.setValue(set.getString(idx++));
+					audit.setTimestamp(set.getTimestamp(idx++));
+					audit.setRevision(set.getLong(idx++));
+					audit.setUser(set.getString(idx++));
+					audits.add(audit);
 				}
-				final Audit audit = new Audit();
-				audit.setEvent(AuditEvent.values()[set.getInt(idx++)]);
-				audit.setValue(set.getString(idx++));
-				audit.setTimestamp(set.getTimestamp(idx++));
-				audit.setRevision(set.getLong(idx++));
-				audit.setUser(set.getString(idx++));
-				audits.add(audit);
 			} finally {
 				set.close();
 			}

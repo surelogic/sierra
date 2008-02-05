@@ -20,7 +20,7 @@ public class FindingRecordFactory {
 	private static final String FINDING_INSERT = "INSERT INTO FINDING (PROJECT_ID,UUID,IMPORTANCE,SUMMARY,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION) VALUES (?,?,?,?,?,?)";
 	private static final String FINDING_SELECT = "SELECT ID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE UUID = ?";
 	private static final String FINDING_DELETE = "DELETE FROM FINDING WHERE ID = ?";
-	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ?, IMPORTANCE = ?, SUMMARY = ? WHERE FINDING_ID = ?";
+	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ?, IMPORTANCE = ?, SUMMARY = ? WHERE ID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
 	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
 	private static final String AUDIT_SELECT = "SELECT ID,REVISION FROM SIERRA_AUDIT WHERE FINDING_ID = ? AND EVENT = ? AND USER_ID = ? AND DATE_TIME = ? AND VALUE = ?";
@@ -32,8 +32,8 @@ public class FindingRecordFactory {
 	private FindingRecordFactory(Connection conn) throws SQLException {
 		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT, MATCH_SELECT,
 				null, MATCH_UPDATE, false);
-		this.findingMap = new UpdateBaseMapper(conn, FINDING_INSERT, FINDING_SELECT,
-				FINDING_DELETE, FINDING_UPDATE);
+		this.findingMap = new UpdateBaseMapper(conn, FINDING_INSERT,
+				FINDING_SELECT, FINDING_DELETE, FINDING_UPDATE);
 		this.artifactFindingMap = new BaseMapper(conn,
 				INSERT_ARTIFACT_FINDING_RELATION, null, null, false);
 		this.auditMap = new BaseMapper(conn, AUDIT_INSERT, AUDIT_SELECT, null);

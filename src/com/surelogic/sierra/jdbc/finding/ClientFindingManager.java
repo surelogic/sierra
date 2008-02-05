@@ -621,10 +621,12 @@ public final class ClientFindingManager extends FindingManager {
 						final Match match = new Match();
 						merge.setMatch(match);
 						try {
+							mergeSet.next();
 							int mergeIdx = 1;
 							merge.setSummary(mergeSet.getString(mergeIdx++));
 							merge.setImportance(Importance.values()[mergeSet
 									.getInt(mergeIdx++)]);
+							match.setPackageName(mergeSet.getString(mergeIdx++));
 							match.setClassName(mergeSet.getString(mergeIdx++));
 							match.setHash(mergeSet.getLong(mergeIdx++));
 							match
