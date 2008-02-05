@@ -76,15 +76,4 @@
 		<url-pattern>/ManageUserService</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>Test Service</servlet-name>
-		<servlet-class>
-			com.surelogic.sierra.gwt.server.test.TestServiceImpl
-		</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Test Service</servlet-name>
-		<url-pattern>/TestService</url-pattern>
-	</servlet-mapping>
 </web-app>
