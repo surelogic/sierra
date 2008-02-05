@@ -2,7 +2,6 @@ package com.surelogic.sierra.message.srpc;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.security.Principal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,13 +32,10 @@ public abstract class SRPCServlet extends HttpServlet {
 
 	protected final Logger log = SLLogger.getLoggerFor(this.getClass());
 
-	private final ThreadLocal<HttpServletRequest> localRequest = new ThreadLocal<HttpServletRequest>();
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			localRequest.set(req);
 			final Encoding codec = getEncoding(req.getContentType());
 			ResponseStatus status;
 			Object response;
@@ -72,18 +68,7 @@ public abstract class SRPCServlet extends HttpServlet {
 			// We couldn't even send a message back to the client, log out a
 			// failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			localRequest.remove();
 		}
-	}
-
-	/**
-	 * Returns the user name of the request in context.
-	 * 
-	 * @return
-	 */
-	protected Principal getCurrentPrincipal() {
-		return (Principal)localRequest.get().getAttribute("SierraUser");
 	}
 
 	private Encoding getEncoding(String contentType) throws SRPCException {

@@ -26,36 +26,12 @@ public interface SierraService extends Service {
 	ServerUIDReply getUid(ServerUIDRequest request);
 
 	/**
-	 * Return the uid of an audit trail that matches the given seed. If none
-	 * matches, a new audit trail will be created.
-	 * 
-	 * @param seed
-	 * @return the unique identifier of a global audit trail.
-	 */
-	MergeAuditTrailResponse mergeAuditTrails(MergeAuditTrailRequest seed)
-			throws ServerMismatchException;
-
-	/**
-	 * Commit an audit trail of transactions. The audit trail consists of any
-	 * new match locations that have been added to the trail, as well as any new
-	 * auditing events.
-	 * 
-	 * @param audits
-	 * @return the server revision containing the new audits
-	 */
-	CommitAuditTrailResponse commitAuditTrails(CommitAuditTrailRequest audits)
-			throws ServerMismatchException;
-
-	/**
-	 * Get all of the auditing events for the given qualifier and project
-	 * occurring after the specified revision.
+	 * Synchronize the projects between a client and server.
 	 * 
 	 * @param request
-	 * @return all audit trails and the audits they contain after the specified
-	 *         revision
+	 * @return
 	 */
-	AuditTrailResponse getAuditTrails(GetAuditTrailRequest request)
-			throws ServerMismatchException;
+	SyncResponse synchronizeProject(SyncRequest request);
 
 	/**
 	 * Return the settings associated with a given qualifier.
