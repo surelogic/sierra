@@ -7,16 +7,19 @@ import java.io.OutputStreamWriter;
 /**
  * Internal utility class. Not for use outside of the server package.
  * 
+ * Aaron note: need to make this external or provide a framework for standard session attrib access.
+ * I made this public for now.
+ * 
  * @author nathan
  * 
  */
-class SecurityHelper {
+public class SecurityHelper {
 
 	static final String AUTH_NAME = "SierraAuthName";
 	static final String AUTH_PASS = "SierraAuthPass";
 	static final String AUTH_REDIRECT = "SierraAuthRedirect";
-	static final String USER = "SierraUser";
-
+	public static final String USER = "SierraUser";
+	
 	static void writeLoginForm(OutputStream out, String redirect, boolean retry)
 			throws IOException {
 		final OutputStreamWriter writer = new OutputStreamWriter(out);
