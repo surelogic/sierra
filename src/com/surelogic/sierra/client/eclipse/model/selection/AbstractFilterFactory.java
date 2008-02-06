@@ -16,6 +16,11 @@ public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 	}
 	
 	@Override
+  public final int hashCode() {
+	  return getFilterLabel().hashCode();
+  }
+	
+	@Override
 	public String toString() {
 		return getFilterLabel();
 	}
