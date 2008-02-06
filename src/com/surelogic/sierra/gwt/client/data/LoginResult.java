@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-import com.surelogic.sierra.gwt.client.UserAccount;
 
 public class LoginResult implements Serializable {
 	private static final long serialVersionUID = -5472919019159995448L;

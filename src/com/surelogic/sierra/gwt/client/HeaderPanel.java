@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public class HeaderPanel extends Composite {
 	private final DockPanel rootPanel = new DockPanel();

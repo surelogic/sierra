@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public interface ManageUserAdminService extends RemoteService {
 	/**
