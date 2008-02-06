@@ -161,7 +161,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     StringBuffer niceSourceList = new StringBuffer("File");
     if (compileList.length != 1) {
-      niceSourceList.append("s");
+      niceSourceList.append('s');
     }
     niceSourceList.append(" to be compiled:");
 
