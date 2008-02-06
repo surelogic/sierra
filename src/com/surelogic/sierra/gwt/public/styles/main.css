@@ -90,6 +90,7 @@ h2 {
 .clickable {
 	color:#005596; 
 	text-decoration:underline;
+	cursor: pointer;
 }
 
 a {
