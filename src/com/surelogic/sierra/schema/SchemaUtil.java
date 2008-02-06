@@ -12,22 +12,20 @@ import com.surelogic.sierra.tool.message.*;
 
 public class SchemaUtil {
   static void updateFindingTypes(Connection conn) throws SQLException {
-    MessageWarehouse mw = MessageWarehouse.getInstance();
     FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
     List<FindingTypes> types = new ArrayList<FindingTypes>(3);
-    InputStream in = Thread.currentThread().getContextClassLoader()
-        .getResourceAsStream(
-            "com/surelogic/sierra/tool/message/findbugs.xml");
-    types.add(mw.fetchFindingTypes(in));
-    in = Thread.currentThread().getContextClassLoader()
-        .getResourceAsStream(
-            "com/surelogic/sierra/tool/message/pmd.xml");
-    types.add(mw.fetchFindingTypes(in));
-    in = Thread.currentThread().getContextClassLoader()
-        .getResourceAsStream(
-            "com/surelogic/sierra/tool/message/checkstyle.xml");
-    types.add(mw.fetchFindingTypes(in));
+
+    types.add(getFindingTypes("findbugs.xml"));
+    types.add(getFindingTypes("pmd.xml"));
+    types.add(getFindingTypes("cpd.xml"));
+    types.add(getFindingTypes("checkstyle.xml"));
     ftMan.updateFindingTypes(types, 0);
+  }
+  
+  private static FindingTypes getFindingTypes(String file) {
+    InputStream in = Thread.currentThread().getContextClassLoader()
+    .getResourceAsStream("com/surelogic/sierra/tool/message/"+file);
+    return MessageWarehouse.getInstance().fetchFindingTypes(in);
   }
   
   static void setupFilters(Connection c) throws SQLException {

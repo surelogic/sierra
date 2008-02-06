@@ -11,8 +11,9 @@ public class Schema_0012 implements SchemaAction {
 	public void run(Connection conn) throws SQLException {
 	  PMD4_1ToolInfoGenerator.generateTool(conn);
     FindBugs1_3_1ToolInfoGenerator.generateTool(conn);
-    
+    /* Moved to schema 14 (after adding CPD)
     SchemaUtil.updateFindingTypes(conn);
     SchemaUtil.setupFilters(conn);
+    */
 	}
 }
