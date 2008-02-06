@@ -5,6 +5,7 @@ import java.sql.Connection;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.SessionService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
+import com.surelogic.sierra.jdbc.server.SecurityHelper;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.jdbc.server.UserContext;
@@ -31,7 +32,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 						}
 					});
 			if (u != null) {
-				getThreadLocalRequest().getSession().setAttribute("SierraUser",
+				getThreadLocalRequest().getSession().setAttribute(SecurityHelper.USER,
 						u);
 				UserContext.set(u);
 				return null;
