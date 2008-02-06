@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
@@ -42,7 +42,7 @@ public class ServerInfo implements Serializable {
 	 * 
 	 * @return
 	 */
-	static ServerInfo getDefault() {
+	public static ServerInfo getDefault() {
 		ServerInfo info = new ServerInfo();
 		final String waiting = "Waiting...";
 		info.setAvailableVersion(waiting);
