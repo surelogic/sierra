@@ -70,7 +70,7 @@ public class BasicSecurityFilter implements Filter {
 					// The decoded string is in the form
 					// "userID:password".
 
-					int p = userPass.indexOf(":");
+					int p = userPass.indexOf(':');
 					if (p != -1) {
 						final String userID = userPass.substring(0, p);
 						final String password = userPass.substring(p + 1);

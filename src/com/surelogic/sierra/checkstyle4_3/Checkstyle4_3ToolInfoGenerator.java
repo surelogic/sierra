@@ -38,14 +38,14 @@ public class Checkstyle4_3ToolInfoGenerator {
 				line = reader.readLine();
 				while (line != null && !"".equals(line.trim())) {
 					if (line.startsWith("\t")) {
-						artifactType.append("\n");
+						artifactType.append('\n');
 						artifactType.append(line.substring(1));
 					} else {
 						if (artifactType.length() > 0) {
 							String val = artifactType.toString();
 							String mnemonic = val
-									.substring(0, val.indexOf(" "));
-							String message = val.substring(val.indexOf(" "))
+									.substring(0, val.indexOf(' '));
+							String message = val.substring(val.indexOf(' '))
 									.trim();
 							t.mnemonic(mnemonic + "Check").info(message).category(
 									category).build();
@@ -58,8 +58,8 @@ public class Checkstyle4_3ToolInfoGenerator {
 			}
 			if (artifactType.length() > 0) {
 				String val = artifactType.toString();
-				String mnemonic = val.substring(0, val.indexOf(" "));
-				String message = val.substring(val.indexOf(" ")).trim();
+				String mnemonic = val.substring(0, val.indexOf(' '));
+				String message = val.substring(val.indexOf(' ')).trim();
 				t.mnemonic(mnemonic + "Check").info(message).category(category).build();
 				artifactType.setLength(0);
 			}
@@ -124,12 +124,12 @@ public class Checkstyle4_3ToolInfoGenerator {
 			}
 			if (fullLine.length() > 0) {
 				String val = fullLine.toString();
-				String mnemonic = val.substring(0, val.indexOf(" "));
-				String message = val.substring(val.indexOf(" ")).trim();
+				String mnemonic = val.substring(0, val.indexOf(' '));
+				String message = val.substring(val.indexOf(' ')).trim();
 				ArtifactType art = new ArtifactType();
 				art.setMnemonic(mnemonic + "Check");
 				art.setTool("Checkstyle");
-				mnemonic = mnemonic.substring(mnemonic.lastIndexOf(".") + 1);
+				mnemonic = mnemonic.substring(mnemonic.lastIndexOf('.') + 1);
 				FindingType type = new FindingType();
 				type.setId(mnemonic);
 				type.setName(mnemonic.replaceAll("([a-z])([A-Z])", "$1 $2"));

@@ -32,7 +32,7 @@ public class Schema_0002 implements SchemaAction {
 				String packageName = set.getString(idx++);
 				int strIndex;
 				String compilation = className;
-				if ((strIndex = className.indexOf("$")) > -1) {
+				if ((strIndex = className.indexOf('$')) > -1) {
 					compilation = className.substring(0, strIndex);
 				}
 				idx = 1;
