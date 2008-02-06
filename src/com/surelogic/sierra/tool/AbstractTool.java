@@ -12,6 +12,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 
 public abstract class AbstractTool implements ITool {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
+  protected static final int JAVA_SUFFIX_LEN = ".java".length();
   
   protected static void setupToolForProject(IToolInstance ti, Config config) {
     for(ToolTarget t : config.getTargets()) {

@@ -132,10 +132,10 @@ public abstract class AbstractCPDTool extends AbstractTool {
           if (separator < 0) {
             // Default package
             packageName = "";
-            cuName = file.substring(0, file.length() - SUFFIX_LEN);
+            cuName = file.substring(0, file.length() - JAVA_SUFFIX_LEN);
           } else {
             packageName = file.substring(0, separator).replace(File.separatorChar, '.');
-            cuName = file.substring(separator+1, file.length() - SUFFIX_LEN);
+            cuName = file.substring(separator+1, file.length() - JAVA_SUFFIX_LEN);
           }          
           startLine = mark.getBeginLine();
           endLine = mark.getBeginLine() + lineCount;

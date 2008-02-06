@@ -62,8 +62,6 @@ public abstract class AbstractPMDTool extends AbstractTool {
     };
   }
   
-  private static final int SUFFIX_LEN = ".java".length();
-  
   class Output implements Renderer {
     private final ArtifactGenerator generator;
     private final SLProgressMonitor monitor;
@@ -113,9 +111,9 @@ public abstract class AbstractPMDTool extends AbstractTool {
     private String getCompUnitName(String file) {
       int separator = file.lastIndexOf(File.separatorChar);
       if (separator < 0) {
-        return file.substring(0, file.length() - SUFFIX_LEN);
+        return file.substring(0, file.length() - JAVA_SUFFIX_LEN);
       }
-      return file.substring(separator+1, file.length() - SUFFIX_LEN);
+      return file.substring(separator+1, file.length() - JAVA_SUFFIX_LEN);
     }
     
     public synchronized void renderFileReport(Report report) throws IOException {      
