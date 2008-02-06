@@ -148,7 +148,7 @@ public final class SierraServerManager {
 	private String newUniqueLabel(String prefix) {
 		// strip off any previous number, e.g., (1)
 		if (prefix.endsWith(")")) {
-			int index = prefix.lastIndexOf("(");
+			int index = prefix.lastIndexOf('(');
 			if (index != -1 && index > 1) {
 				if (prefix.charAt(index - 1) == ' ')
 					prefix = prefix.substring(0, index - 1);

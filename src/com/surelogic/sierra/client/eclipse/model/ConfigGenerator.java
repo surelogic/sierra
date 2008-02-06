@@ -148,7 +148,7 @@ public final class ConfigGenerator {
 				if (types.length > 0) {
 					String qualifiedName = types[0].getFullyQualifiedName();
 
-					int lastPeriod = qualifiedName.lastIndexOf(".");
+					int lastPeriod = qualifiedName.lastIndexOf('.');
 
 					String packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
 					if (lastPeriod != -1) {
@@ -218,7 +218,7 @@ public final class ConfigGenerator {
 
 						String qualifiedName = t.getFullyQualifiedName();
 
-						int lastPeriod = qualifiedName.lastIndexOf(".");
+						int lastPeriod = qualifiedName.lastIndexOf('.');
 
 						String packageName = null;
 						String javaType = null;
