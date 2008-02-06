@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.ManageUserAdminService;
-import com.surelogic.sierra.gwt.client.UserInfo;
+import com.surelogic.sierra.gwt.client.UserAccount;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
@@ -96,18 +96,18 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public UserInfo getUserInfo(final String user) {
+	public UserAccount getUserInfo(final String user) {
 		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<UserInfo>() {
+				.withUserReadOnly(new UserTransaction<UserAccount>() {
 
-					public UserInfo perform(Connection conn, Server server,
+					public UserAccount perform(Connection conn, Server server,
 							User serverUser) throws SQLException {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						if (man.isUserInGroup(serverUser.getName(),
 								SierraGroup.ADMIN.getName())) {
-							return new UserInfo(user, man.isUserInGroup(user,
-									SierraGroup.ADMIN.getName()));
+							return new UserAccount(user, man.isUserInGroup(
+									user, SierraGroup.ADMIN.getName()));
 						} else {
 							return null;
 						}
@@ -115,12 +115,12 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public UserInfo updateUser(final String user, final String password,
+	public UserAccount updateUser(final String user, final String password,
 			final boolean isAdmin) {
 		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<UserInfo>() {
+				.withUserTransaction(new UserTransaction<UserAccount>() {
 
-					public UserInfo perform(Connection conn, Server server,
+					public UserAccount perform(Connection conn, Server server,
 							User serverUser) throws SQLException {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
@@ -136,8 +136,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 								man.removeUserFromGroup(user, SierraGroup.ADMIN
 										.getName());
 							}
-							return new UserInfo(user, man.isUserInGroup(user,
-									SierraGroup.ADMIN.getName()));
+							return new UserAccount(user, man.isUserInGroup(
+									user, SierraGroup.ADMIN.getName()));
 						} else {
 							return null;
 						}
