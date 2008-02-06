@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.LoginResult;
 
 public class LoginPanel extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
@@ -126,9 +127,11 @@ public class LoginPanel extends Composite {
 		login.setEnabled(false);
 		waitPanel.add(wait);
 
+		final String usernameText = username.getText().trim();
+		final String passwordText = password.getText().trim();
+
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.login(username.getText().trim(), password.getText()
-				.trim(), new AsyncCallback() {
+		sessionService.login(usernameText, passwordText, new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
@@ -137,14 +140,17 @@ public class LoginPanel extends Composite {
 			}
 
 			public void onSuccess(Object result) {
-				if (result == null) {
-					// the login attempt was successful					
-					// TODO in the future, will redirect back to an original page also
-					ContentPanel.getInstance().showDefault();
-				} else {
-					// the login attempt failed, display the reason
-					errorMessage.setText(result.toString());
+				LoginResult lr = (LoginResult) result;
+				if (lr.getErrorMessage() != null) {
+					errorMessage.setText(lr.getErrorMessage());
 					reset();
+				} else if (lr.getUserAccount() == null) {
+					errorMessage.setText("No user account available");
+					reset();
+				} else {
+					HeaderPanel.getInstance().updateAccountPanel(
+							lr.getUserAccount());
+					ContentPanel.getInstance().showDefault();
 				}
 			}
 		});

@@ -41,7 +41,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 * @param user
 	 * @return
 	 */
-	UserInfo getUserInfo(String user);
+	UserAccount getUserInfo(String user);
 
 	/**
 	 * 
@@ -54,7 +54,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 *            the user's admin status
 	 * @return
 	 */
-	UserInfo updateUser(String user, String password, boolean isAdmin);
+	UserAccount updateUser(String user, String password, boolean isAdmin);
 
 	/**
 	 * Delete and existing user.

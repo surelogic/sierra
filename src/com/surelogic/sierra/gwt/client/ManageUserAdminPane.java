@@ -71,7 +71,7 @@ public class ManageUserAdminPane extends Composite {
 		}
 
 		public void onSuccess(Object result) {
-			updateUserInfo((UserInfo) result);
+			updateUserInfo((UserAccount) result);
 		}
 	};
 
@@ -166,7 +166,7 @@ public class ManageUserAdminPane extends Composite {
 		initWidget(panel);
 	}
 
-	private void updateUserInfo(UserInfo info) {
+	private void updateUserInfo(UserAccount info) {
 		detailUser = info.getUserName();
 		detailUserName.setHTML("<h3>" + detailUser + "</h3>");
 		detailIsAdminBox.setChecked(info.isAdministrator());

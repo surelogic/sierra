@@ -2,22 +2,18 @@ package com.surelogic.sierra.gwt.client;
 
 import java.io.Serializable;
 
-public class UserInfo implements Serializable {
-
-	/**
-	 * 
-	 */
+public class UserAccount implements Serializable {
 	private static final long serialVersionUID = 6808103119746833312L;
 
 	private String userName;
-
 	private boolean isAdministrator;
 
-	public UserInfo() {
-		// Do nothing
+	public UserAccount() {
+		super();
 	}
 
-	public UserInfo(String user, boolean isAdministrator) {
+	public UserAccount(String user, boolean isAdministrator) {
+		super();
 		this.userName = user;
 		this.isAdministrator = isAdministrator;
 	}
