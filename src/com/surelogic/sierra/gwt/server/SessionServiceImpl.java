@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.SessionService;
-import com.surelogic.sierra.gwt.client.UserAccount;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.SecurityHelper;
 import com.surelogic.sierra.jdbc.server.Server;

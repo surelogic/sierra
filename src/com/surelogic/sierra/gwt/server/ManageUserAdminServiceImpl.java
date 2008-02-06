@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.ManageUserAdminService;
-import com.surelogic.sierra.gwt.client.UserAccount;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
