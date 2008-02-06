@@ -27,6 +27,7 @@
 		<param-value>Use Sierra Directory</param-value>
 	</context-param>
 
+<!--
 	<filter>
 		<description>Form-based login mechanism</description>
 		<filter-name>Security Filter</filter-name>
@@ -39,7 +40,9 @@
 		<filter-name>Security Filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+-->
 
+<!--
 	<servlet>
 		<servlet-name>Server Login</servlet-name>
 		<servlet-class>
@@ -51,7 +54,20 @@
 		<servlet-name>Server Login</servlet-name>
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
+-->
 
+    <servlet>
+        <servlet-name>Session Service</servlet-name>
+        <servlet-class>
+            com.surelogic.sierra.gwt.server.SessionServiceImpl
+        </servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>Session Service</servlet-name>
+        <url-pattern>/SessionService</url-pattern>
+    </servlet-mapping>
+    
 	<servlet>
 		<servlet-name>Manage Server</servlet-name>
 		<servlet-class>

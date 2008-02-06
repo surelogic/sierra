@@ -13,13 +13,23 @@ p, td {
 	padding:5px 5px 5px 5px;
 }
 
+/* Login Panel */
+.login-panel {
+	border: 2px groove;
+	padding: 10px;
+}
+
+.login-errormessage {
+    color: #FF3333;
+}
+
+/* OLD STUFF - Everything beyond this point is no longer used, but keep it here until the new styles are built */
 select {
 	font-size:  11px;
 }
-
-/*Header*/		
+		
 .header {
-	background-image:url('/images/SIERRA-header_bg.gif'); 
+	background-image:url('../images/header-bg2.gif'); 
 	background-repeat:repeat-x; 
 	padding:0px 0px 0px 0px; 
 	margin:0px 0px 0px 0px;
@@ -41,6 +51,16 @@ select {
 	text-transform:uppercase; 
 	text-decoration:none; 
 	margin-left:50px;
+}
+
+.header_text3{
+	color:#ffffff; 
+	text-transform:uppercase; 
+	text-decoration:none; 
+	font-size:14px; 
+	font-weight:bold; 
+	white-space: nowrap;
+	margin:5px;
 }
 
 /*Content*/
@@ -82,14 +102,4 @@ a.hover {
 	text-decoration:underline;
 }
 
-input.btn {
-	background-image:url(images/button_orange.gif); 
-	background-repeat:no-repeat; 
-	background-color:#ffffff; 
-	width:139px; 
-	height:24px; 
-	border-style:none; 
-	color:#ffffff; 
-	font-size:  12px;
-	padding-bottom:3px;
-}
+
