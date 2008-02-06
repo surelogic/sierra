@@ -64,14 +64,17 @@ public final class Selection extends AbstractDatabaseObserver {
 	}
 
 	public Selection(Selection source) {
-		f_manager = source.f_manager;
-		f_showingFindings = source.f_showingFindings;
-		Filter prev = null;
-		for (Filter f : source.f_filters) {
-			Filter clone = f.copyNoQuery(this, prev);
-			prev = clone;
-			f_filters.add(clone);
-		}
+	  synchronized(source) {
+	    f_manager = source.f_manager;
+	    f_showingFindings = source.f_showingFindings;
+		
+	    Filter prev = null;
+	    for (Filter f : source.f_filters) {
+	      Filter clone = f.copyNoQuery(this, prev);
+	      prev = clone;
+	      f_filters.add(clone);
+	    }
+	  }
 	}
 
 	/**
