@@ -31,7 +31,7 @@ public class ToolUtil {
     }
     if (!config.getExcludedToolsList().contains("pmd")) {
       t.addTool(new PMD4_1Tool());
-      //t.addTool(new CPD4_1Tool());
+      t.addTool(new CPD4_1Tool());
     }
     if (!config.getExcludedToolsList().contains("reckoner")) {
       t.addTool(new Reckoner1_0Tool());
