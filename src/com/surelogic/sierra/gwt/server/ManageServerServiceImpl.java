@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.ManageServerService;
-import com.surelogic.sierra.gwt.client.ServerInfo;
+import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
