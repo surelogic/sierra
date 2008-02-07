@@ -132,25 +132,26 @@ public class FindingDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		findingSynopsis.setLayoutData(layoutData);
 
+		SashForm sash = new SashForm(synopsisPane, SWT.VERTICAL);
+		sash.setLayout(new FillLayout());
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		sash.setLayoutData(layoutData);
+
 		/*
 		 * Show where the finding is located.
 		 */
-		final Group where = new Group(synopsisPane, SWT.NONE);
+		final Group where = new Group(sash, SWT.NONE);
 		where.setText("Location");
 		where.setLayout(new FillLayout());
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		where.setLayoutData(layoutData);
 
 		final Tree locationTree = new Tree(where, SWT.NONE);
 
 		/*
 		 * Show a detailed description of the finding.
 		 */
-		final Group description = new Group(synopsisPane, SWT.NONE);
+		final Group description = new Group(sash, SWT.NONE);
 		description.setText("Description");
 		description.setLayout(new FillLayout());
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		description.setLayoutData(layoutData);
 
 		Browser detailsText = null;
 		try {
@@ -163,6 +164,7 @@ public class FindingDetailsView extends ViewPart {
 							.getDefault());
 			report.open();
 		}
+		sash.setWeights(new int[] { 50, 50 });
 		synopsisTab.setControl(synopsisPane);
 
 		/*
