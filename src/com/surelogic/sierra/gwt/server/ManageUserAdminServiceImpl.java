@@ -166,7 +166,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				.withUserReadOnly(new UserTransaction<Boolean>() {
 
 					public Boolean perform(Connection conn, Server server,
-							User user) throws Exception {
+							User user) throws SQLException {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						return man.isUserInGroup(user.getName(),

@@ -36,7 +36,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 					.withReadOnly(new ServerTransaction<User>() {
 
 						public User perform(Connection conn, Server server)
-								throws Exception {
+								throws SQLException {
 							return ServerUserManager.getInstance(conn).login(
 									userName, password);
 						}
