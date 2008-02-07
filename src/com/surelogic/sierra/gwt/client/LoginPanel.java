@@ -109,17 +109,6 @@ public class LoginPanel extends ContentComposite {
 		login.addStyleName("login-button");
 	}
 
-	/**
-	 * Grab the focus. This will put the cursor in the text field for the user.
-	 */
-	public void focus() {
-		if (username.getText().trim().length() > 0) {
-			password.setFocus(true);
-		} else {
-			username.setFocus(true);
-		}
-	}
-
 	public void login() {
 		login.setEnabled(false);
 		waitPanel.add(wait);
@@ -138,7 +127,7 @@ public class LoginPanel extends ContentComposite {
 
 			public void onSuccess(Object result) {
 				reset();
-				
+
 				LoginResult lr = (LoginResult) result;
 				if (lr.getErrorMessage() != null) {
 					errorMessage.setText(lr.getErrorMessage());
@@ -162,8 +151,13 @@ public class LoginPanel extends ContentComposite {
 
 	public void activate() {
 		reset();
+		if (username.getText().trim().length() > 0) {
+			password.setFocus(true);
+		} else {
+			username.setFocus(true);
+		}
 	}
-	
+
 	private void updateLoginEnabled() {
 		login.setEnabled(!username.getText().trim().equals(""));
 	}
