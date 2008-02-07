@@ -11,6 +11,10 @@ public final class ClientContext {
 	private static UserAccount userAccount;
 	private static List listeners = new ArrayList();
 
+	private ClientContext() {
+		//Not instantiable
+	}
+	
 	public static UserAccount getUser() {
 		return userAccount;
 	}
