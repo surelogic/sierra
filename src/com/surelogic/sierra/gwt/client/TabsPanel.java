@@ -1,20 +1,14 @@
 package com.surelogic.sierra.gwt.client;
 
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.TabBar;
 
-public class TabsPanel extends Composite {
-	private final DockPanel rootPanel = new DockPanel();
+public class TabsPanel extends ContentComposite {
 	private final TabBar tabBar = new TabBar();
 
 	public TabsPanel() {
 		super();
-		initWidget(rootPanel);
-
-		rootPanel.setWidth("100%");
-		rootPanel.setHeight("100%");
-
+		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(tabBar, DockPanel.NORTH);
 		tabBar.addTab("Home");
 	}
@@ -31,6 +25,12 @@ public class TabsPanel extends Composite {
 					}
 				}
 			}
+		}
+	}
+
+	public void activate() {
+		if (tabBar.getSelectedTab() == -1) {
+			selectTab(null);
 		}
 	}
 

@@ -24,13 +24,13 @@ public class ContentPanel extends Composite {
 	public void showDefault() {
 		showAdmin();
 	}
-	
+
 	public void showLogin(String errorMessage) {
-		setContentPanel(loginPanel);
+		setContent(loginPanel);
 	}
 
 	public void showTabs() {
-		setContentPanel(tabsPanel);
+		setContent(tabsPanel);
 	}
 
 	public void showTab(String tabName) {
@@ -39,13 +39,14 @@ public class ContentPanel extends Composite {
 	}
 
 	public void showAdmin() {
-		setContentPanel(adminPanel);
+		setContent(adminPanel);
 	}
 
-	private void setContentPanel(Composite panel) {
+	private void setContent(ContentComposite panel) {
 		if (rootPanel.getWidgetIndex(panel) == -1) {
 			rootPanel.clear();
 			rootPanel.add(panel, DockPanel.CENTER);
+			panel.activate();
 		}
 	}
 }

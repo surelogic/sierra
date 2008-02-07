@@ -5,7 +5,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -21,8 +20,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
 
-public class LoginPanel extends Composite {
-	private final DockPanel rootPanel = new DockPanel();
+public class LoginPanel extends ContentComposite {
 	private final VerticalPanel loginPanel = new VerticalPanel();
 	private final Label message = new Label();
 	private final Label errorMessage = new Label();
@@ -42,10 +40,7 @@ public class LoginPanel extends Composite {
 
 	public LoginPanel() {
 		super();
-		initWidget(rootPanel);
-
-		rootPanel.setWidth("100%");
-		rootPanel.setHeight("100%");
+		final DockPanel rootPanel = getRootPanel();
 		rootPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
 		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
 
@@ -163,6 +158,10 @@ public class LoginPanel extends Composite {
 		updateLoginEnabled();
 	}
 
+	public void activate() {
+		reset();
+	}
+	
 	private void updateLoginEnabled() {
 		login.setEnabled(!username.getText().trim().equals(""));
 	}
