@@ -38,10 +38,12 @@ public class AdminServerTab extends TabComposite {
 				msService.setEmail(emailTextBox.getText(), updateServerInfo);
 			}
 		});
-		final VerticalPanel panel = new VerticalPanel();
+		VerticalPanel panel = new VerticalPanel();
+		panel.add(new HTML("<h3>Server Version</h3>"));
 		panel.add(currentVersion);
 		panel.add(availableVersion);
 		emailTextBox.setWidth("40ex");
+		panel.add(new HTML("<h3>Admin Email</h3>"));
 		panel.add(emailTextBox);
 		panel.add(updateEmailButton);
 		updateInfo(ServerInfo.getDefault());
