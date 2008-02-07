@@ -13,7 +13,7 @@ import com.surelogic.sierra.jdbc.record.RecordStringRelationRecord;
 import com.surelogic.sierra.jdbc.record.SettingsProjectRecord;
 import com.surelogic.sierra.jdbc.record.SettingsRecord;
 
-public class SettingsProjectManager {
+public final class SettingsProjectManager {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;
@@ -53,13 +53,15 @@ public class SettingsProjectManager {
 			throws SQLException {
 
 		getProjectNames.setString(1, setting);
-		ResultSet rs = getProjectNames.executeQuery();
-
-		Collection<String> projectNames = new ArrayList<String>();
-		while (rs.next()) {
-			projectNames.add(rs.getString(1));
+		final Collection<String> projectNames = new ArrayList<String>();
+		final ResultSet rs = getProjectNames.executeQuery();
+		try {
+			while (rs.next()) {
+				projectNames.add(rs.getString(1));
+			}
+		} finally {
+			rs.close();
 		}
-		rs.close();
 		return projectNames;
 	}
 

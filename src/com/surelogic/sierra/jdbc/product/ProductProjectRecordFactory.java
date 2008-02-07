@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 
-public class ProductProjectRecordFactory {
+public final class ProductProjectRecordFactory {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;

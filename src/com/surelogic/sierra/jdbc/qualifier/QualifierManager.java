@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 
-public class QualifierManager {
+public final class QualifierManager {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;

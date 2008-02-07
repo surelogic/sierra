@@ -11,7 +11,7 @@ import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.record.UserRecord;
 
-public class UserRecordFactory {
+public final class UserRecordFactory {
 
 	private final UpdateRecordMapper userMapper;
 	private final UpdateRecordMapper groupMapper;

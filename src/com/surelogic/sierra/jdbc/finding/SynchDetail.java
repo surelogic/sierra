@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.surelogic.sierra.jdbc.JDBCUtils;
 
-public class SynchDetail {
+public final class SynchDetail {
 
 	private final Date time;
 	private final String project;

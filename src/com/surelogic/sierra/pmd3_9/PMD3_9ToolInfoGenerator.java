@@ -16,7 +16,7 @@ import com.surelogic.sierra.pmd.AbstractPMDToolInfoGenerator;
  * @author nathan
  * 
  */
-public class PMD3_9ToolInfoGenerator extends AbstractPMDToolInfoGenerator {
+public final class PMD3_9ToolInfoGenerator extends AbstractPMDToolInfoGenerator {
 	private static final Logger log = Logger
 			.getLogger(PMD3_9ToolInfoGenerator.class.getName());
 

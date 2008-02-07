@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SynchOverview {
+public final class SynchOverview {
 
 	private final String project;
 	private final Date time;

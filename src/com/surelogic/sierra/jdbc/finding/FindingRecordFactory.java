@@ -12,7 +12,7 @@ import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
-public class FindingRecordFactory {
+public final class FindingRecordFactory {
 
 	private static final String MATCH_SELECT = "SELECT FINDING_ID,REVISION FROM LOCATION_MATCH WHERE PROJECT_ID = ? AND HASH = ? AND CLASS_NAME = ? AND PACKAGE_NAME = ? AND FINDING_TYPE_ID = ?";
 	private static final String MATCH_INSERT = "INSERT INTO LOCATION_MATCH (PROJECT_ID,HASH,CLASS_NAME,PACKAGE_NAME,FINDING_TYPE_ID,FINDING_ID,REVISION) VALUES (?,?,?,?,?,?,?)";

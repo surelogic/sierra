@@ -33,7 +33,7 @@ import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.Severity;
 
-public class FindingTypeManager {
+public final class FindingTypeManager {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(FindingTypeManager.class);
@@ -424,15 +424,23 @@ public class FindingTypeManager {
 		ArrayList<String> unassignedArtifacts = new ArrayList<String>();
 		ArrayList<String> uncategorizedFindings = new ArrayList<String>();
 		ResultSet set = checkUnassignedArtifactTypes.executeQuery();
-		while (set.next()) {
-			unassignedArtifacts.add("\tTool: " + set.getString(1)
-					+ " Version: " + set.getString(2) + " Mnemonic: "
-					+ set.getString(3) + "\n");
+		try {
+			while (set.next()) {
+				unassignedArtifacts.add("\tTool: " + set.getString(1)
+						+ " Version: " + set.getString(2) + " Mnemonic: "
+						+ set.getString(3) + "\n");
+			}
+		} finally {
+			set.close();
 		}
 		set = checkUncategorizedFindingTypes.executeQuery();
-		while (set.next()) {
-			uncategorizedFindings.add("\tId: " + set.getString(1) + " Name: "
-					+ set.getString(2) + "\n");
+		try {
+			while (set.next()) {
+				uncategorizedFindings.add("\tId: " + set.getString(1)
+						+ " Name: " + set.getString(2) + "\n");
+			}
+		} finally {
+			set.close();
 		}
 		if (!unassignedArtifacts.isEmpty() || !uncategorizedFindings.isEmpty()) {
 			StringBuilder builder = new StringBuilder();

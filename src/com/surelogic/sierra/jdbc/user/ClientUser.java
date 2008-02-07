@@ -9,7 +9,7 @@ import java.sql.Statement;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 
-public class ClientUser implements User {
+public final class ClientUser implements User {
 
 	/**
 	 * 

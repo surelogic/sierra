@@ -81,7 +81,7 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
     private Category category;
     private boolean inCategory;
     private FindingType type;
-    private StringBuilder buffer = new StringBuilder();
+    private final StringBuilder buffer = new StringBuilder();
     private boolean inType;
     private boolean isInfo;
     private boolean isMessage;

@@ -37,7 +37,7 @@ public class PMDFindingTypeGenerator extends AbstractFindingTypeGenerator {
 
 	private static final String EXAMPLE = "example";
 
-	private StringBuilder buffer = new StringBuilder();
+	private final StringBuilder buffer = new StringBuilder();
 
 	private boolean isInfo;
 	private boolean isExample;

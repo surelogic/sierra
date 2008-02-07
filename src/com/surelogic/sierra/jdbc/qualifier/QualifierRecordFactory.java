@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
-public class QualifierRecordFactory {
+public final class QualifierRecordFactory {
 
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String QUALIFIER_INSERT = "INSERT INTO QUALIFIER (NAME) VALUES (?)";

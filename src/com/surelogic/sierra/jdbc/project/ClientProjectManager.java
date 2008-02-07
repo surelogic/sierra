@@ -16,7 +16,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SyncRequest;
 import com.surelogic.sierra.tool.message.SyncResponse;
 
-public class ClientProjectManager extends ProjectManager {
+public final class ClientProjectManager extends ProjectManager {
 
 	private final ClientFindingManager findingManager;
 	private final PreparedStatement insertSynchRecord;

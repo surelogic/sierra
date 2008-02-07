@@ -9,7 +9,7 @@ import java.util.Collection;
 
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 
-public class ProductManager {
+public final class ProductManager {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;

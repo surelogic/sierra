@@ -13,9 +13,9 @@ import com.surelogic.sierra.tool.message.Severity;
 
 public class MessageFilter implements FindingFilter {
 
-	private Set<Long> filtered;
-	private Map<Long, Importance> importances;
-	private Map<Long, Integer> deltas;
+	private final Set<Long> filtered;
+	private final Map<Long, Importance> importances;
+	private final Map<Long, Integer> deltas;
 
 	MessageFilter(Map<Long, FindingTypeFilter> findingMap,
 			Map<Long, FindingTypeFilter> artifactMap) {

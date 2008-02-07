@@ -8,7 +8,7 @@ import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
-public class FindingTypeRecordFactory {
+public final class FindingTypeRecordFactory {
 
 	private final UpdateRecordMapper findingTypeMapper;
 	private final UpdateRecordMapper categoryMapper;

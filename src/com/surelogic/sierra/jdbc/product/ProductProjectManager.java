@@ -11,7 +11,7 @@ import com.surelogic.sierra.jdbc.record.ProductProjectRecord;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 import com.surelogic.sierra.jdbc.record.RecordStringRelationRecord;
 
-public class ProductProjectManager {
+public final class ProductProjectManager {
 
 	@SuppressWarnings("unused")
 	private final Connection conn;

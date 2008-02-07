@@ -14,7 +14,7 @@ import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 
-public class ProductSeriesQueryBuilder {
+public final class ProductSeriesQueryBuilder {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(ProductSeriesQueryBuilder.class);

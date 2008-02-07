@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetail {
+public final class FindingDetail {
 
 	private final FindingOverview overview;
 	private final String findingTypeDetail;

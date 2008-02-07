@@ -12,7 +12,7 @@ import com.surelogic.sierra.jdbc.record.SettingsRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
-public class SettingsRecordFactory {
+public final class SettingsRecordFactory {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 

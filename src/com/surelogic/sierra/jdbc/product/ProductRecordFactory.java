@@ -10,7 +10,7 @@ import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
  * @author Spencer.Whitman
  * 
  */
-public class ProductRecordFactory {
+public final class ProductRecordFactory {
 
 	private static final String PRODUCT_INSERT = "INSERT INTO PRODUCT (NAME) VALUES (?)";
 	private static final String PRODUCT_DELETE = "DELETE FROM PRODUCT WHERE ID = ?";

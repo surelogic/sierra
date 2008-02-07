@@ -32,7 +32,7 @@ import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Settings;
 
-public class SettingsManager {
+public final class SettingsManager {
 
 	/**
 	 * The full location, on the Java classpath, of the default world file.

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
-public class ProjectRecordFactory {
+public final class ProjectRecordFactory {
 
 	private static final String PROJECT_SELECT = "SELECT ID FROM PROJECT WHERE NAME = ?";
 	private static final String PROJECT_INSERT = "INSERT INTO PROJECT (NAME) VALUES (?)";

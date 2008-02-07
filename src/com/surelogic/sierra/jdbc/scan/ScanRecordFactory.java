@@ -16,7 +16,7 @@ import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
-public class ScanRecordFactory {
+public final class ScanRecordFactory {
 
 	private static final String COMPILATION_UNIT_INSERT = "INSERT INTO SIERRA.COMPILATION_UNIT (PACKAGE_NAME,CU) VALUES (?,?)";
 	private static final String COMPILATION_UNIT_SELECT = "SELECT ID FROM SIERRA.COMPILATION_UNIT CU WHERE CU.PACKAGE_NAME = ? AND CU.CU = ?";
@@ -40,7 +40,7 @@ public class ScanRecordFactory {
 	private final UpdateRecordMapper scanMapper;
 	private UpdateRecordMapper qualifierMapper;
 	private RecordMapper scanQualMapper;
-	private RecordMapper classMetricMapper;
+	private final RecordMapper classMetricMapper;
 
 	private ScanRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;

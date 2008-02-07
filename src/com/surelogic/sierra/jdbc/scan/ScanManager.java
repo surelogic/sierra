@@ -22,7 +22,7 @@ import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
-public class ScanManager {
+public final class ScanManager {
 
 	private static final String MAKE_TEMP_DERBY = "DECLARE GLOBAL TEMPORARY TABLE TEMP_IDS (ID BIGINT NOT NULL) NOT LOGGED";
 	private static final String MAKE_TEMP_ORACLE = "CREATE GLOBAL TEMPORARY TABLE TEMP_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS";
