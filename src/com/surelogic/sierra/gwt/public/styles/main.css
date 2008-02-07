@@ -59,6 +59,8 @@ body {
 .gwt-TabBar .gwt-TabBarItem {
   cursor: pointer;
   cursor: hand;
+  padding-left: 1ex;
+  padding-right: 1ex;
 }
 
 /* Class for items that can be clicked */
