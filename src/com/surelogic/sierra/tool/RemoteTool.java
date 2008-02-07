@@ -117,8 +117,8 @@ public class RemoteTool extends AbstractTool {
       ti.run();
       checkInput(br, mon, "Done scanning");
     } catch (Throwable e) {
-      System.out.println("##"+Remote.FAILED+", "+e.getMessage());
       e.printStackTrace(System.out);
+      System.out.println("##"+Remote.FAILED+", "+e.getMessage());
       System.exit(-1);
     }
   }
@@ -163,12 +163,14 @@ public class RemoteTool extends AbstractTool {
 
     public void failed(String msg) {
       setCanceled(true);
+      new Throwable().printStackTrace(out);
       out.println("##"+Remote.FAILED+", "+msg);
     }
 
     public void failed(String msg, Throwable t) {
       setCanceled(true);
-      out.println("##"+Remote.FAILED+", "+msg);
+      new Throwable().printStackTrace(out);
+      out.println("##"+Remote.FAILED+", "+msg+" ...");
       t.printStackTrace(out);
     }
 
