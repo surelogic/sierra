@@ -14,6 +14,18 @@ body {
     color: #FF3333;
 }
 
+/* User Prefs, Logout Panel */
+.header-user-label {
+	color: #FFFFFF;
+	margin: 5px;
+}
+
+.header-user-clickable {
+	text-decoration:underline;
+	cursor: pointer;
+	cursor: hand;
+}
+
 /* Tab Panel Styling */
 
 .gwt-TabPanel {
