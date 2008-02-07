@@ -121,13 +121,18 @@ public class LoginPanel extends ContentComposite {
 
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
-				errorMessage.setText("Authentication service unavailable: "
-						+ caught.getMessage());
+
+				reset();
+				String errorMsg = "Authentication service unavailable";
+				final String caughtMsg = caught.getMessage();
+				if (caughtMsg != null && !"".equals(caughtMsg)) {
+					errorMsg += ": " + caughtMsg;
+				}
+				errorMessage.setText(errorMsg);
 			}
 
 			public void onSuccess(Object result) {
 				reset();
-
 				LoginResult lr = (LoginResult) result;
 				if (lr.getErrorMessage() != null) {
 					errorMessage.setText(lr.getErrorMessage());
