@@ -3,9 +3,7 @@ package com.surelogic.sierra.gwt.client;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,6 +16,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.ManageUserAdminServiceAsync;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 public class ManageUserAdminPane extends Composite {
 
@@ -56,7 +56,8 @@ public class ManageUserAdminPane extends Composite {
 					html.addClickListener(new ClickListener() {
 
 						public void onClick(Widget sender) {
-							getService().getUserInfo(user, userInfoCallback);
+							ServiceHelper.getManageUserService().getUserInfo(
+									user, userInfoCallback);
 						}
 					});
 					userListPanel.add(html);
@@ -77,6 +78,9 @@ public class ManageUserAdminPane extends Composite {
 	};
 
 	ManageUserAdminPane() {
+		final ManageUserAdminServiceAsync muaService = ServiceHelper
+				.getManageUserService();
+
 		/*
 		 * User search panel initialization
 		 */
@@ -85,12 +89,12 @@ public class ManageUserAdminPane extends Composite {
 		searchPanel.add(userSearch);
 		searchPanel.add(new Button("Search for User", new ClickListener() {
 			public void onClick(Widget sender) {
-				getService().findUser(userSearch.getText(), userListCallback);
+				muaService.findUser(userSearch.getText(), userListCallback);
 			}
 		}));
 		searchPanel.add(new Button("List all Users", new ClickListener() {
 			public void onClick(Widget sender) {
-				getService().getUsers(userListCallback);
+				muaService.getUsers(userListCallback);
 			}
 		}));
 		panel.add(searchPanel);
@@ -119,8 +123,8 @@ public class ManageUserAdminPane extends Composite {
 								.getText()))) {
 					password = detailPassword.getText();
 				}
-				getService().updateUser(detailUser, password,
-						detailIsAdminBox.isChecked(), userInfoCallback);
+				muaService.updateUser(detailUser, password, detailIsAdminBox
+						.isChecked(), userInfoCallback);
 			}
 		}));
 		userDetailPanel.add(detailUserUpdateMessage);
@@ -149,7 +153,7 @@ public class ManageUserAdminPane extends Composite {
 					userCreationMessage
 							.setHTML("The given password is invalid.  Please make sure that you have specified a password and that both entries match.");
 				} else {
-					getService().createUser(userText, passText,
+					muaService.createUser(userText, passText,
 							new AsyncCallback() {
 
 								public void onFailure(Throwable caught) {
@@ -176,17 +180,4 @@ public class ManageUserAdminPane extends Composite {
 		userDetailPanel.setVisible(true);
 	}
 
-	private ManageUserAdminServiceAsync getService() {
-		ManageUserAdminServiceAsync serverService = (ManageUserAdminServiceAsync) GWT
-				.create(ManageUserAdminService.class);
-
-		// (2) Specify the URL at which our service implementation is running.
-		// Note that the target URL must reside on the same domain and port from
-		// which the host page was served.
-		//
-		ServiceDefTarget endpoint = (ServiceDefTarget) serverService;
-		String moduleRelativeURL = GWT.getModuleBaseURL() + "ManageUserService";
-		endpoint.setServiceEntryPoint(moduleRelativeURL);
-		return serverService;
-	}
 }

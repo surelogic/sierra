@@ -4,6 +4,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

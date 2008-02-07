@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
 public class LoginPanel extends ContentComposite {
 	private final VerticalPanel loginPanel = new VerticalPanel();

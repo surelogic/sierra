@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.service;
 
 import java.util.List;
 
