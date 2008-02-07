@@ -131,7 +131,7 @@ public final class DeleteProjectDataJob {
 			}
 			b.append(" but will not change or delete any information that ");
 			b.append("you have already published to the server.\n\n");
-			b.append("Are you should that you want to disconnect?");
+			b.append("Are you sure that you want to disconnect?");
 		} else {
 			b.append("Deleting the data in your Eclipse workspace about ");
 			if (multiDelete) {
