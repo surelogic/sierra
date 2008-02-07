@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 
@@ -430,9 +431,9 @@ public abstract class Filter {
 	 */
 	public void setPorousAll() {
 		synchronized (this) {
-		  if (f_porousValues.containsAll(f_allValues)) {
-		    return;
-		  }
+			if (f_porousValues.containsAll(f_allValues)) {
+				return;
+			}
 
 			f_porousValues.clear();
 			f_porousValues.addAll(f_allValues);
@@ -626,14 +627,11 @@ public abstract class Filter {
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	private void addValueTo(StringBuilder b, String dbValue) {
-		if (f_quote)
-			b.append("'");
-		/*
-		 * TODO: We should turn all ' in this string to ''
-		 */
-		b.append(dbValue);
-		if (f_quote)
-			b.append("'");
+		if (f_quote) {
+			b.append("'").append(JDBCUtils.escapeString(dbValue)).append("'");
+		} else {
+			b.append(dbValue);
+		}
 	}
 
 	public Image getImageFor(String value) {
