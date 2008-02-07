@@ -1,19 +1,15 @@
 @CHARSET "ISO-8859-1";
 body {
-	font-family: Helvetica, Verdana, Arial;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
 	font-size: medium;
 }
 
 
 h1 {
-	font-size: x-large;
-	font-style: bold;
 	color:  #005395;
 	}
 
 h2 {
-	font-size: large;
-	font-style: bold;
 	color:  #FF7010;
 }
 
@@ -26,6 +22,44 @@ a {
 a.hover {
 	color:#005596; 
 	text-decoration:underline;
+}
+
+/* Header */
+
+		
+.header {
+	background-image:url('../images/header-bg2.gif'); 
+	background-repeat:repeat-x; 
+	padding:0px 0px 0px 0px; 
+	margin:0px 0px 0px 0px;
+}
+
+.header_text {
+	position:absolute;
+	left:725px;
+	top:110px;
+	z-index:20; 
+	color:#ffffff; 
+	font-size:14px; 
+	font-weight:bold; 
+	white-space: nowrap;
+}
+
+.header_text2{
+	color:#ffffff; 
+	text-transform:uppercase; 
+	text-decoration:none; 
+	margin-left:50px;
+}
+
+.header_text3{
+	color:#ffffff; 
+	text-transform:uppercase; 
+	text-decoration:none; 
+	font-size:14px; 
+	font-weight:bold; 
+	white-space: nowrap;
+	margin:5px;
 }
 
 /* Login Panel */
