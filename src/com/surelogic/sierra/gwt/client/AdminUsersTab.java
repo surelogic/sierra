@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
@@ -19,7 +19,7 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class AdminUsersTab extends Composite {
+public class AdminUsersTab extends TabComposite {
 
 	private final Panel userListPanel = new VerticalPanel();
 	private final TextBox userSearch = new TextBox();
@@ -168,7 +168,7 @@ public class AdminUsersTab extends Composite {
 				}
 			}
 		}));
-		initWidget(panel);
+		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
 	private void updateUserInfo(UserAccount info) {

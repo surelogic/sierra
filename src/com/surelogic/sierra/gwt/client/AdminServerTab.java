@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -12,14 +12,11 @@ import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class AdminServerTab extends Composite {
+public class AdminServerTab extends TabComposite {
 
 	private final HTML currentVersion = new HTML();
-
 	private final HTML availableVersion = new HTML();
-
 	private final TextBox emailTextBox = new TextBox();
-
 	private final Button updateEmailButton = new Button("Update Email Address");
 
 	private final AsyncCallback updateServerInfo = new AsyncCallback() {
@@ -28,7 +25,7 @@ public class AdminServerTab extends Composite {
 		}
 
 		public void onFailure(Throwable caught) {
-			// do some UI stuff to show failure
+			// TODO do some UI stuff to show failure
 		}
 	};
 
@@ -41,14 +38,15 @@ public class AdminServerTab extends Composite {
 				msService.setEmail(emailTextBox.getText(), updateServerInfo);
 			}
 		});
-		VerticalPanel panel = new VerticalPanel();
+		final VerticalPanel panel = new VerticalPanel();
 		panel.add(currentVersion);
 		panel.add(availableVersion);
+		emailTextBox.setWidth("40ex");
 		panel.add(emailTextBox);
 		panel.add(updateEmailButton);
 		updateInfo(ServerInfo.getDefault());
 		msService.getServerInfo(updateServerInfo);
-		initWidget(panel);
+		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
 	private void updateInfo(ServerInfo info) {
