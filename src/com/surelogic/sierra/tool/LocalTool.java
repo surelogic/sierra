@@ -159,6 +159,12 @@ public class LocalTool extends AbstractTool {
           }
         }
       }
+      // FIX to support PMD's type resolution
+      for(IToolTarget t : config.getTargets()) {
+        if (t.getType() == IToolTarget.Type.AUX) {
+          path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
+        }
+      }
       
       LOG.info("Starting process:");
       for(String arg : cmdj.getCommandline()) {
@@ -272,6 +278,9 @@ public class LocalTool extends AbstractTool {
         line = br.readLine();
       }
       monitor.error(sb.toString());
+      if (line != null) {
+        System.out.println(line);
+      }
       return line;
     }
     
