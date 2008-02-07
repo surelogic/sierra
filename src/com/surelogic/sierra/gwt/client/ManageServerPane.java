@@ -14,15 +14,15 @@ import com.surelogic.sierra.gwt.client.data.ServerInfo;
 
 public class ManageServerPane extends Composite {
 
-	private HTML currentVersion = new HTML();
+	private final HTML currentVersion = new HTML();
 
-	private HTML availableVersion = new HTML();
+	private final HTML availableVersion = new HTML();
 
-	private TextBox emailTextBox = new TextBox();
+	private final TextBox emailTextBox = new TextBox();
 
-	private Button updateEmailButton = new Button("Update Email Address");
+	private final Button updateEmailButton = new Button("Update Email Address");
 
-	private AsyncCallback updateServerInfo = new AsyncCallback() {
+	private final AsyncCallback updateServerInfo = new AsyncCallback() {
 		public void onSuccess(Object result) {
 			updateInfo((ServerInfo) result);
 		}

@@ -65,7 +65,7 @@ public class ManageUserAdminPane extends Composite {
 		}
 	};
 
-	private AsyncCallback userInfoCallback = new AsyncCallback() {
+	private final AsyncCallback userInfoCallback = new AsyncCallback() {
 
 		public void onFailure(Throwable caught) {
 			// TODO handle gracefully
