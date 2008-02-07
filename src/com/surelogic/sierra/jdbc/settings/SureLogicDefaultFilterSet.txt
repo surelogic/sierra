@@ -12,6 +12,7 @@ IfStmtsMustUseBraces
 WhileLoopsMustUseBraces
 AssignmentInOperand
 AtLeastOneConstructor
+BeanMembersShouldSerialize
 BooleanInversion
 CallSuperInConstructor
 DataflowAnomalyAnalysis
