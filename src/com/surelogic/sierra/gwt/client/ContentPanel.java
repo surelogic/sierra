@@ -22,7 +22,7 @@ public class ContentPanel extends Composite {
 	}
 
 	public void showDefault() {
-		showTabs();
+		showAdmin();
 	}
 	
 	public void showLogin(String errorMessage) {
