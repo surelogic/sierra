@@ -12,7 +12,7 @@ import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class ManageServerPane extends Composite {
+public class AdminServerTab extends Composite {
 
 	private final HTML currentVersion = new HTML();
 
@@ -32,7 +32,7 @@ public class ManageServerPane extends Composite {
 		}
 	};
 
-	public ManageServerPane() {
+	public AdminServerTab() {
 		final ManageServerServiceAsync msService = ServiceHelper
 				.getManageServerService();
 		updateEmailButton.addClickListener(new ClickListener() {

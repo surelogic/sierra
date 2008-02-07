@@ -19,7 +19,7 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class ManageUserAdminPane extends Composite {
+public class AdminUsersTab extends Composite {
 
 	private final Panel userListPanel = new VerticalPanel();
 	private final TextBox userSearch = new TextBox();
@@ -77,7 +77,7 @@ public class ManageUserAdminPane extends Composite {
 		}
 	};
 
-	ManageUserAdminPane() {
+	AdminUsersTab() {
 		final ManageUserAdminServiceAsync muaService = ServiceHelper
 				.getManageUserService();
 
