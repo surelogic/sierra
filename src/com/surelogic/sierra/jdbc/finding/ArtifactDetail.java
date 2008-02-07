@@ -34,6 +34,10 @@ public class ArtifactDetail {
 		return message;
 	}
 
+	public SourceDetail getPrimarySource() {
+	  return primary;
+	}
+	
 	public String getClassName() {
 		return primary.getClassName();
 	}
