@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -26,8 +25,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.adhoc.views.TableUtility;
@@ -136,6 +135,10 @@ public class FindingsDetailsView extends ViewPart {
 		 */
 		final Group where = new Group(synopsisPane, SWT.NONE);
 		where.setText("Location");
+		where.setLayout(new GridLayout());
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		where.setLayoutData(layoutData);
+		/*
 		layout = new GridLayout();
 		layout.numColumns = 4;
 		where.setLayout(layout);
@@ -181,7 +184,11 @@ public class FindingsDetailsView extends ViewPart {
 		final Link className = new Link(where, SWT.NONE);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		className.setLayoutData(layoutData);
-
+		*/
+		
+		final Tree locationTree = new Tree(where, SWT.NONE);
+		locationTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 		/*
 		 * Show a detailed description of the finding.
 		 */
@@ -361,8 +368,8 @@ public class FindingsDetailsView extends ViewPart {
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
-				synopsisAudit, findingSynopsis, projectName, packageName,
-				className, detailsText, auditTab, quickAudit, criticalButton,
+				synopsisAudit, findingSynopsis, locationTree,
+				detailsText, auditTab, quickAudit, criticalButton,
 				highButton, mediumButton, lowButton, irrelevantButton,
 				commentText, commentButton, scrollingLabelComposite,
 				artifactTab, artifacts);
