@@ -1,16 +1,7 @@
 @CHARSET "ISO-8859-1";
 body {
 	font-family: Helvetica, Verdana, Arial;
-	margin:0px 0px 0px 0px;
-	padding:0px 0px 0px;
-}
-
-p, td {
-	font-size:  11px;
-}
-	
-.layout {
-	padding:5px 5px 5px 5px;
+	font-size: medium;
 }
 
 /* Login Panel */
@@ -36,32 +27,34 @@ p, td {
 .gwt-TabBar {
   border-bottom: 4px solid #005495;
   background-color: #005495;
+  font-size: large;
+  color: white;
+  
 }
-
 .gwt-TabBar .gwt-TabBarFirst {
 }
-
 .gwt-TabBar .gwt-TabBarRest {
 }
 .gwt-TabBar .gwt-TabBarItem-selected { 
   cursor: pointer;
   cursor: hand;
   background-color: #ff7011;
-  font-size: 16px;
-  color: white;
 }
-
 .gwt-TabBar .gwt-TabBarItem {
   cursor: pointer;
   cursor: hand;
-  font-size: 16px;
-  color: white;
+}
+
+/* Class for items that can be clicked */
+.clickable {
+	color:#005596; 
+	text-decoration:underline;
+	cursor: pointer;
+	cursor: hand;
 }
 
 /* OLD STUFF - Everything beyond this point is no longer used, but keep it here until the new styles are built */
-select {
-	font-size:  11px;
-}
+
 		
 .header {
 	background-image:url('../images/header-bg2.gif'); 
@@ -119,14 +112,6 @@ h2 {
 .cookiecrumb {
 	font-size: 12px;
 	color: #FD8537
-}
-
-/* Class for items that can be clicked */
-.clickable {
-	color:#005596; 
-	text-decoration:underline;
-	cursor: pointer;
-	cursor: hand;
 }
 
 a {
