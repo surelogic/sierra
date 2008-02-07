@@ -85,8 +85,8 @@ public class AdminUsersTab extends TabComposite {
 		 * User search panel initialization
 		 */
 		VerticalPanel panel = new VerticalPanel();
+		panel.add(new HTML("<h2>Find A User</h2>"));
 		HorizontalPanel searchPanel = new HorizontalPanel();
-		searchPanel.add(new HTML("<h2>Find A User</h2>"));
 		searchPanel.add(userSearch);
 		searchPanel.add(new Button("Search for User", new ClickListener() {
 			public void onClick(Widget sender) {
