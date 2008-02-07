@@ -5,12 +5,14 @@ body {
 }
 
 
-h1 {
-	color:  #005395;
-	}
-
 h2 {
+	color:  #005395;
+	font-size: 120%;
+}
+
+h3 {
 	color:  #FF7010;
+	font-size: 110%;
 }
 
 
