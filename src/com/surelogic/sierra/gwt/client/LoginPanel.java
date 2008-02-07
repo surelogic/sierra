@@ -140,13 +140,13 @@ public class LoginPanel extends Composite {
 			}
 
 			public void onSuccess(Object result) {
+				reset();
+				
 				LoginResult lr = (LoginResult) result;
 				if (lr.getErrorMessage() != null) {
 					errorMessage.setText(lr.getErrorMessage());
-					reset();
 				} else if (lr.getUserAccount() == null) {
 					errorMessage.setText("No user account available");
-					reset();
 				} else {
 					HeaderPanel.getInstance().updateAccountPanel(
 							lr.getUserAccount());
@@ -157,6 +157,8 @@ public class LoginPanel extends Composite {
 	}
 
 	public void reset() {
+		password.setText("");
+		errorMessage.setText("");
 		waitPanel.clear();
 		updateLoginEnabled();
 	}

@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -30,23 +31,25 @@ public class HeaderPanel extends Composite {
 				+ "images/header-sierra-logo.gif");
 		rootPanel.add(sierraLogo, DockPanel.WEST);
 
-		
 		rootPanel.add(userPanel, DockPanel.EAST);
 		rootPanel.setCellHorizontalAlignment(userPanel, DockPanel.ALIGN_RIGHT);
 	}
 
 	public void updateAccountPanel(UserAccount user) {
 		if (user != null) {
-			userPanel.add(createUserLabel("Logged in as " + user.getUserName(), null));
+			userPanel.add(createUserLabel("Logged in as " + user.getUserName(),
+					null));
 			userPanel.add(createUserLabel("|", null));
-			userPanel.add(createUserLabel("Preferences", new PreferencesListener()));
-			userPanel.add(createUserLabel("|", null));
+			// TODO disabled Preferences label until functionality is built
+			// userPanel.add(createUserLabel("Preferences", new
+			// PreferencesListener()));
+			// userPanel.add(createUserLabel("|", null));
 			userPanel.add(createUserLabel("Log out", new LogoutListener()));
 		} else {
 			userPanel.clear();
 		}
 	}
-	
+
 	private Label createUserLabel(String text, ClickListener clickListener) {
 		final Label lbl = new Label(text);
 		lbl.addStyleName("header-user-label");
@@ -56,21 +59,31 @@ public class HeaderPanel extends Composite {
 		}
 		return lbl;
 	}
-	
-	private static class PreferencesListener implements ClickListener {
+
+	/*
+	 * private class PreferencesListener implements ClickListener {
+	 * 
+	 * public void onClick(Widget sender) { // TODO nothing yet }
+	 *  }
+	 */
+
+	private class LogoutListener implements ClickListener {
 
 		public void onClick(Widget sender) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	private static class LogoutListener implements ClickListener {
+			final SessionServiceAsync svc = ServiceHelper.getSessionService();
+			svc.logout(new AsyncCallback() {
 
-		public void onClick(Widget sender) {
-			// TODO Auto-generated method stub
-			
+				public void onFailure(Throwable caught) {
+					ExceptionTracker.logException(caught);
+					updateAccountPanel(null);
+					ContentPanel.getInstance().showLogin("Unable to contact server");					
+				}
+
+				public void onSuccess(Object result) {
+					updateAccountPanel(null);
+					ContentPanel.getInstance().showLogin(null);
+				}});
 		}
-		
+
 	}
 }

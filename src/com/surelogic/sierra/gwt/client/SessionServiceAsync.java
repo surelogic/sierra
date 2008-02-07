@@ -8,4 +8,6 @@ public interface SessionServiceAsync {
 
 	void login(String username, String password, AsyncCallback callback);
 
+	void logout(AsyncCallback callback);
+	
 }
