@@ -54,6 +54,15 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 		}
 	}
 
+	public void logout() {
+		try {
+			getThreadLocalRequest().getSession().invalidate();
+		} catch (IllegalStateException ise) {
+			// ignore exception if already logged out
+		}
+		UserContext.set(null);
+	}
+
 	private UserAccount getUserAccount(final User user) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserTransaction<UserAccount>() {
@@ -68,4 +77,5 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 					}
 				});
 	}
+
 }
