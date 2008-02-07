@@ -30,16 +30,22 @@ public final class FindingDetailsPersistence {
 	private static final String FINDING_DETAILS_VIEW = "finding-details-view";
 	private static final String SHOWING = "showing-finding-id";
 	private static final String NONE = "none";
+	private static final String SASH_LOCATION_WEIGHT = "sash-location-weight";
+	private static final String SASH_DESCRIPTION_WEIGHT = "sash-description-weight";
 
-	static void save(long findingId) {
-		save(Long.toString(findingId));
+	static void save(long findingId, int sashLocationWeight,
+			int sashDescriptionWeight) {
+		save(Long.toString(findingId), sashLocationWeight,
+				sashDescriptionWeight);
 	}
 
-	static void saveNull() {
-		save(NONE);
+	static void saveNoFindingShown(int sashLocationWeight,
+			int sashDescriptionWeight) {
+		save(NONE, sashLocationWeight, sashDescriptionWeight);
 	}
 
-	static private void save(String findingId) {
+	static private void save(String findingId, int sashLocationWeight,
+			int sashDescriptionWeight) {
 		final File file = Activator.getDefault()
 				.getFindingDetailsViewSaveFile();
 		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
@@ -49,22 +55,21 @@ public final class FindingDetailsPersistence {
 		}
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
-			outputXML(pw, findingId);
+			pw.println("<?xml version='1.0' encoding='"
+					+ Activator.XML_ENCODING + "' standalone='yes'?>");
+			StringBuilder b = new StringBuilder();
+			b.append("<").append(FINDING_DETAILS_VIEW);
+			Entities.addAttribute(SHOWING, findingId, b);
+			Entities.addAttribute(SASH_LOCATION_WEIGHT, sashLocationWeight, b);
+			Entities.addAttribute(SASH_DESCRIPTION_WEIGHT,
+					sashDescriptionWeight, b);
+			b.append("/>");
+			pw.println(b.toString());
 			pw.close();
 		} catch (IOException e) {
 			final String msg = I18N.err(38, "Finding Details View state", file);
 			SLLogger.getLogger().log(Level.SEVERE, msg, e);
 		}
-	}
-
-	private static void outputXML(PrintWriter pw, String findingId) {
-		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
-				+ "' standalone='yes'?>");
-		StringBuilder b = new StringBuilder();
-		b.append("<").append(FINDING_DETAILS_VIEW);
-		Entities.addAttribute(SHOWING, findingId, b);
-		b.append("/>");
-		pw.println(b.toString());
 	}
 
 	static void load(final FindingDetailsMediator view) {
@@ -107,6 +112,20 @@ public final class FindingDetailsPersistence {
 				};
 				job.schedule();
 			}
+			// regardless set the sash weights
+			final int sashLocationWeight = handler.getSashLocationWeight();
+			final int sashDescriptionWeight = handler
+					.getSashDescriptionWeight();
+			final Job job = new Job(
+					"Restore Findings Details View sash weights") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					view.asyncSetSynopsisSashWeights(sashLocationWeight,
+							sashDescriptionWeight);
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(40, file), e);
 		}
@@ -129,6 +148,18 @@ public final class FindingDetailsPersistence {
 			return f_findingId;
 		}
 
+		private int f_sashLocationWeight = 50;
+
+		public int getSashLocationWeight() {
+			return f_sashLocationWeight;
+		}
+
+		private int f_sashDescriptionWeight = 50;
+
+		public int getSashDescriptionWeight() {
+			return f_sashDescriptionWeight;
+		}
+
 		@Override
 		public void startElement(String uri, String localName, String name,
 				Attributes attributes) throws SAXException {
@@ -137,6 +168,22 @@ public final class FindingDetailsPersistence {
 				if (!NONE.equals(showing)) {
 					f_findingId = Long.parseLong(showing);
 					f_found = true;
+				}
+				final String sashLocationWeightString = attributes
+						.getValue(SASH_LOCATION_WEIGHT);
+				try {
+					f_sashLocationWeight = Integer
+							.parseInt(sashLocationWeightString);
+				} catch (NumberFormatException e) {
+					// ingore, take the default
+				}
+				final String sashDescriptionWeightString = attributes
+						.getValue(SASH_DESCRIPTION_WEIGHT);
+				try {
+					f_sashDescriptionWeight = Integer
+							.parseInt(sashDescriptionWeightString);
+				} catch (NumberFormatException e) {
+					// ingore, take the default
 				}
 			}
 		}

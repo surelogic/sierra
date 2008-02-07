@@ -132,15 +132,15 @@ public class FindingDetailsView extends ViewPart {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		findingSynopsis.setLayoutData(layoutData);
 
-		SashForm sash = new SashForm(synopsisPane, SWT.VERTICAL);
-		sash.setLayout(new FillLayout());
+		SashForm synopsisSash = new SashForm(synopsisPane, SWT.VERTICAL);
+		synopsisSash.setLayout(new FillLayout());
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		sash.setLayoutData(layoutData);
+		synopsisSash.setLayoutData(layoutData);
 
 		/*
 		 * Show where the finding is located.
 		 */
-		final Group where = new Group(sash, SWT.NONE);
+		final Group where = new Group(synopsisSash, SWT.NONE);
 		where.setText("Location");
 		where.setLayout(new FillLayout());
 
@@ -149,7 +149,7 @@ public class FindingDetailsView extends ViewPart {
 		/*
 		 * Show a detailed description of the finding.
 		 */
-		final Group description = new Group(sash, SWT.NONE);
+		final Group description = new Group(synopsisSash, SWT.NONE);
 		description.setText("Description");
 		description.setLayout(new FillLayout());
 
@@ -164,7 +164,7 @@ public class FindingDetailsView extends ViewPart {
 							.getDefault());
 			report.open();
 		}
-		sash.setWeights(new int[] { 50, 50 });
+		synopsisSash.setWeights(new int[] { 50, 50 });
 		synopsisTab.setControl(synopsisPane);
 
 		/*
@@ -324,10 +324,10 @@ public class FindingDetailsView extends ViewPart {
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
-				synopsisAudit, findingSynopsis, locationTree, detailsText,
-				auditTab, quickAudit, criticalButton, highButton, mediumButton,
-				lowButton, irrelevantButton, commentText, commentButton,
-				scrollingLabelComposite, artifactTab, artifacts);
+				synopsisSash, synopsisAudit, findingSynopsis, locationTree,
+				detailsText, auditTab, quickAudit, criticalButton, highButton,
+				mediumButton, lowButton, irrelevantButton, commentText,
+				commentButton, scrollingLabelComposite, artifactTab, artifacts);
 
 		f_mediator.init();
 

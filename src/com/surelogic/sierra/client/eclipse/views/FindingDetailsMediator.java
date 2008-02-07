@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -14,6 +15,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -50,6 +52,7 @@ import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -82,6 +85,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 	private final TabFolder f_folder;
 
 	private final TabItem f_synopsisTab;
+	private final SashForm f_synopsisSash;
 	private final Button f_synopsisAudit;
 	private final Link f_findingSynopsis;
 	private final Tree f_locationTree;
@@ -103,6 +107,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private volatile FindingDetail f_finding;
 
+	private int f_sashLocationWeight = 50;
+	private int f_sashDescriptionWeight = 50;
+
 	private final Listener f_tabLinkListener = new Listener() {
 		public void handleEvent(Event event) {
 			final String target = event.text;
@@ -118,13 +125,13 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
-			TabFolder folder, TabItem synopsisTab, Button synopsisAudit,
-			Link findingSynopsis, Tree locationTree, Browser detailsText,
-			TabItem auditTab, Button quickAudit, Button criticalButton,
-			Button highButton, Button mediumButton, Button lowButton,
-			Button irrelevantButton, Text commentText, Button commentButton,
-			AuditTrail scrollingLabelComposite, TabItem artifactTab,
-			Table artifacts) {
+			TabFolder folder, TabItem synopsisTab, SashForm synopsisSash,
+			Button synopsisAudit, Link findingSynopsis, Tree locationTree,
+			Browser detailsText, TabItem auditTab, Button quickAudit,
+			Button criticalButton, Button highButton, Button mediumButton,
+			Button lowButton, Button irrelevantButton, Text commentText,
+			Button commentButton, AuditTrail scrollingLabelComposite,
+			TabItem artifactTab, Table artifacts) {
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
@@ -132,6 +139,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_summaryText = summaryText;
 		f_folder = folder;
 		f_synopsisTab = synopsisTab;
+		f_synopsisSash = synopsisSash;
 		f_synopsisAudit = synopsisAudit;
 		f_findingSynopsis = findingSynopsis;
 		f_locationTree = locationTree;
@@ -196,6 +204,25 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 							"SQL exception when trying to finding details for finding id "
 									+ findingId, e);
 				}
+			}
+		};
+		job.schedule();
+	}
+
+	void asyncSetSynopsisSashWeights(final int sashLocationWeight,
+			final int sashDescriptionWeight) {
+		if (SLLogger.getLogger().isLoggable(Level.FINER)) {
+			SLLogger.getLogger().finer(
+					"Sash weights set to: location at " + sashLocationWeight
+							+ " and description at " + sashDescriptionWeight
+							+ ".");
+		}
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				f_synopsisSash.setWeights(new int[] { sashLocationWeight,
+						sashDescriptionWeight });
+				return Status.OK_STATUS;
 			}
 		};
 		job.schedule();
@@ -337,6 +364,28 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			}
 		});
 
+		/*
+		 * When the location tree is resized we'll just guess that the sash is
+		 * involved. Hopefully, this is conservative. This seems to be the only
+		 * way to do this.
+		 */
+		f_locationTree.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				int[] weights = f_synopsisSash.getWeights();
+				if (weights != null && weights.length == 2) {
+					f_sashLocationWeight = weights[0];
+					f_sashDescriptionWeight = weights[1];
+					if (SLLogger.getLogger().isLoggable(Level.FINER)) {
+						SLLogger.getLogger().finer(
+								"Sash weights changed to: location at "
+										+ f_sashLocationWeight
+										+ " and description at "
+										+ f_sashDescriptionWeight + ".");
+					}
+				}
+			}
+		});
+
 		DatabaseHub.getInstance().addObserver(this);
 
 		updateContents();
@@ -345,9 +394,11 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	public void dispose() {
 		if (f_finding == null)
-			FindingDetailsPersistence.saveNull();
+			FindingDetailsPersistence.saveNoFindingShown(
+					f_sashLocationWeight, f_sashDescriptionWeight);
 		else
-			FindingDetailsPersistence.save(f_finding.getFindingId());
+			FindingDetailsPersistence.save(f_finding.getFindingId(),
+					f_sashLocationWeight, f_sashDescriptionWeight);
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 
@@ -570,80 +621,80 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			pkg.setText(firstArtifact.getPackageName());
 			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
 
-	    TreeItem clazz = new TreeItem(pkg, SWT.NULL);
+			TreeItem clazz = new TreeItem(pkg, SWT.NULL);
 			clazz.setText(firstArtifact.getClassName() + " at line "
 					+ firstArtifact.getLineOfCode());
-	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));	   
-	    clazz.setData(firstArtifact.getPrimarySource());
-	    //clazz.addListener(SWT.Selection, f_locationListener);
-	    tree.showItem(clazz);
-	  } else {
-	    // Deal with multiple artifacts, and multiple locations
-	    Map<String,TreeItem> packages = new HashMap<String,TreeItem>();
-      Map<String,TreeItem> classes = new HashMap<String,TreeItem>();      
-      Map<String,TreeItem> lines = new HashMap<String,TreeItem>();      
-      for(ArtifactDetail artifact : finding.getArtifacts()) {
+			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			clazz.setData(firstArtifact.getPrimarySource());
+			// clazz.addListener(SWT.Selection, f_locationListener);
+			tree.showItem(clazz);
+		} else {
+			// Deal with multiple artifacts, and multiple locations
+			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
+			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
+			Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
+			for (ArtifactDetail artifact : finding.getArtifacts()) {
 				TreeItem loc = createLocation(proj, packages, classes, lines,
-				                              artifact.getPrimarySource());
-        tree.showItem(loc);
-        boolean first = true;
-        for(SourceDetail src : artifact.getAdditionalSources()) {
-          loc = createLocation(proj, packages, classes, lines, src);
-          if (first) {
-            tree.showItem(loc);
-            first = false;
-          }
-        }
-      }
-	  }	  	  
+						artifact.getPrimarySource());
+				tree.showItem(loc);
+				boolean first = true;
+				for (SourceDetail src : artifact.getAdditionalSources()) {
+					loc = createLocation(proj, packages, classes, lines, src);
+					if (first) {
+						tree.showItem(loc);
+						first = false;
+					}
+				}
+			}
+		}
 	}
-	
-	private TreeItem createLocation(TreeItem proj, Map<String, TreeItem> packages, 
-	                                Map<String, TreeItem> classes,
-	                                Map<String, TreeItem> lines, SourceDetail loc) {    
-	  TreeItem pkg = packages.get(loc.getPackageName());	  
-	  TreeItem clazz; 
-	  TreeItem line;
-	  String qualifiedClassName = null;
-	  String qualifiedClassLine = null;
-	  if (pkg == null) {
-	    pkg = new TreeItem(proj, SWT.NULL);
-	    pkg.setText(loc.getPackageName());
-	    pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
-	    packages.put(loc.getPackageName(), pkg);
-	    clazz = null; // This can't exist if the package didn't
-	  } else {
+
+	private TreeItem createLocation(TreeItem proj,
+			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
+			Map<String, TreeItem> lines, SourceDetail loc) {
+		TreeItem pkg = packages.get(loc.getPackageName());
+		TreeItem clazz;
+		TreeItem line;
+		String qualifiedClassName = null;
+		String qualifiedClassLine = null;
+		if (pkg == null) {
+			pkg = new TreeItem(proj, SWT.NULL);
+			pkg.setText(loc.getPackageName());
+			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+			packages.put(loc.getPackageName(), pkg);
+			clazz = null; // This can't exist if the package didn't
+		} else {
 			qualifiedClassName = loc.getPackageName() + '.'
 					+ loc.getClassName();
-	    clazz = classes.get(qualifiedClassName);
-	  }
-	  if (clazz == null) {
-	    clazz = new TreeItem(pkg, SWT.NULL);
-	    clazz.setText(loc.getClassName());
-	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));   
-	    if (qualifiedClassName == null)  {
+			clazz = classes.get(qualifiedClassName);
+		}
+		if (clazz == null) {
+			clazz = new TreeItem(pkg, SWT.NULL);
+			clazz.setText(loc.getClassName());
+			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			if (qualifiedClassName == null) {
 				qualifiedClassName = loc.getPackageName() + '.'
 						+ loc.getClassName();
-	    }	    
-	    classes.put(qualifiedClassName, clazz);
-	    line = null;
-	  } else {
-	    qualifiedClassLine = qualifiedClassName+':'+loc.getLineOfCode();
-      line = lines.get(qualifiedClassLine);
-	  }
-	  if (line == null) {
-	    line = new TreeItem(clazz, SWT.NULL);
-	    if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
-			line.setText("Lines " + loc.getLineOfCode() + " to "
-					+ loc.getEndLineOfCode());
-	    } else {
-	      line.setText("Line "+loc.getLineOfCode());
-	    }	  	  
-	    line.setData(loc);
-	    lines.put(qualifiedClassLine, line);
-	  }
-	  return line;
-  }
+			}
+			classes.put(qualifiedClassName, clazz);
+			line = null;
+		} else {
+			qualifiedClassLine = qualifiedClassName + ':' + loc.getLineOfCode();
+			line = lines.get(qualifiedClassLine);
+		}
+		if (line == null) {
+			line = new TreeItem(clazz, SWT.NULL);
+			if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
+				line.setText("Lines " + loc.getLineOfCode() + " to "
+						+ loc.getEndLineOfCode());
+			} else {
+				line.setText("Line " + loc.getLineOfCode());
+			}
+			line.setData(loc);
+			lines.put(qualifiedClassLine, line);
+		}
+		return line;
+	}
 
 	/*
 	 * private String getClassName() { StringBuilder b = new StringBuilder();

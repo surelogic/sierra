@@ -143,20 +143,19 @@ public final class Activator extends AbstractUIPlugin {
 
 	private File getServerSaveFile() {
 		IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString()
-				+ System.getProperty("file.separator") + "servers.xml");
+		return new File(pluginState.toOSString() + File.separator
+				+ "servers.xml");
 	}
 
 	private File getSelectionSaveFile() {
 		IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString()
-				+ System.getProperty("file.separator") + "selections.xml");
+		return new File(pluginState.toOSString() + File.separator
+				+ "selections.xml");
 	}
 
 	public File getFindingDetailsViewSaveFile() {
 		IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString()
-				+ System.getProperty("file.separator")
+		return new File(pluginState.toOSString() + File.separator
 				+ "finding-details-view.xml");
 	}
 
