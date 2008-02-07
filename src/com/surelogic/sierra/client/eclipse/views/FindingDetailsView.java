@@ -135,60 +135,12 @@ public class FindingDetailsView extends ViewPart {
 		 */
 		final Group where = new Group(synopsisPane, SWT.NONE);
 		where.setText("Location");
-		where.setLayout(new GridLayout());
+		where.setLayout(new FillLayout());
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		where.setLayoutData(layoutData);
-		/*
-		layout = new GridLayout();
-		layout.numColumns = 4;
-		where.setLayout(layout);
-		layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
-		where.setLayoutData(layoutData);
 
-		final Label projectIcon = new Label(where, SWT.NONE);
-		projectIcon.setImage(SLImages
-				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
-		projectIcon.setLayoutData(layoutData);
-
-		final Label projectName = new Label(where, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
-		projectName.setLayoutData(layoutData);
-
-		Label spacer = new Label(where, SWT.NONE);
-		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
-		spacer.setLayoutData(layoutData);
-
-		final Label packageIcon = new Label(where, SWT.NONE);
-		packageIcon.setImage(SLImages
-				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
-		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
-		packageIcon.setLayoutData(layoutData);
-
-		final Label packageName = new Label(where, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-		packageName.setLayoutData(layoutData);
-
-		spacer = new Label(where, SWT.NONE);
-		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
-		spacer.setLayoutData(layoutData);
-		spacer = new Label(where, SWT.NONE);
-		layoutData = new GridData(SWT.NONE, SWT.NONE, false, false);
-		spacer.setLayoutData(layoutData);
-
-		final Label classIcon = new Label(where, SWT.NONE);
-		classIcon.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
-		layoutData = new GridData(SWT.DEFAULT, SWT.CENTER, false, false);
-		classIcon.setLayoutData(layoutData);
-
-		final Link className = new Link(where, SWT.NONE);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		className.setLayoutData(layoutData);
-		*/
-		
 		final Tree locationTree = new Tree(where, SWT.NONE);
-		locationTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		/*
 		 * Show a detailed description of the finding.
 		 */
@@ -368,11 +320,10 @@ public class FindingDetailsView extends ViewPart {
 
 		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
-				synopsisAudit, findingSynopsis, locationTree,
-				detailsText, auditTab, quickAudit, criticalButton,
-				highButton, mediumButton, lowButton, irrelevantButton,
-				commentText, commentButton, scrollingLabelComposite,
-				artifactTab, artifacts);
+				synopsisAudit, findingSynopsis, locationTree, detailsText,
+				auditTab, quickAudit, criticalButton, highButton, mediumButton,
+				lowButton, irrelevantButton, commentText, commentButton,
+				scrollingLabelComposite, artifactTab, artifacts);
 
 		f_mediator.init();
 
