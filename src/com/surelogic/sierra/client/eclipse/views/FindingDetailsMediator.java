@@ -570,71 +570,80 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			pkg.setText(firstArtifact.getPackageName());
 			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
 
-			TreeItem clazz = new TreeItem(pkg, SWT.NULL);
+	    TreeItem clazz = new TreeItem(pkg, SWT.NULL);
 			clazz.setText(firstArtifact.getClassName() + " at line "
 					+ firstArtifact.getLineOfCode());
-			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
-			clazz.setData(firstArtifact.getPrimarySource());
-			// clazz.addListener(SWT.Selection, f_locationListener);
-			tree.showItem(clazz);
-		} else {
-			// Deal with multiple artifacts, and multiple locations
-			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
-			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
-			for (ArtifactDetail artifact : finding.getArtifacts()) {
-				TreeItem loc = createLocation(proj, packages, classes, artifact
-						.getPrimarySource());
-				tree.showItem(loc);
-				boolean first = true;
-				for (SourceDetail src : artifact.getAdditionalSources()) {
-					loc = createLocation(proj, packages, classes, src);
-					if (first) {
-						tree.showItem(loc);
-						first = false;
-					}
-				}
-			}
-		}
+	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));	   
+	    clazz.setData(firstArtifact.getPrimarySource());
+	    //clazz.addListener(SWT.Selection, f_locationListener);
+	    tree.showItem(clazz);
+	  } else {
+	    // Deal with multiple artifacts, and multiple locations
+	    Map<String,TreeItem> packages = new HashMap<String,TreeItem>();
+      Map<String,TreeItem> classes = new HashMap<String,TreeItem>();      
+      Map<String,TreeItem> lines = new HashMap<String,TreeItem>();      
+      for(ArtifactDetail artifact : finding.getArtifacts()) {
+				TreeItem loc = createLocation(proj, packages, classes, lines,
+				                              artifact.getPrimarySource());
+        tree.showItem(loc);
+        boolean first = true;
+        for(SourceDetail src : artifact.getAdditionalSources()) {
+          loc = createLocation(proj, packages, classes, lines, src);
+          if (first) {
+            tree.showItem(loc);
+            first = false;
+          }
+        }
+      }
+	  }	  	  
 	}
-
-	private TreeItem createLocation(TreeItem proj,
-			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
-			SourceDetail loc) {
-		TreeItem pkg = packages.get(loc.getPackageName());
-		TreeItem clazz;
-		String qualifiedClassName = null;
-		if (pkg == null) {
-			pkg = new TreeItem(proj, SWT.NULL);
-			pkg.setText(loc.getPackageName());
-			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
-			packages.put(loc.getPackageName(), pkg);
-			clazz = null; // This can't exist if the package didn't
-		} else {
+	
+	private TreeItem createLocation(TreeItem proj, Map<String, TreeItem> packages, 
+	                                Map<String, TreeItem> classes,
+	                                Map<String, TreeItem> lines, SourceDetail loc) {    
+	  TreeItem pkg = packages.get(loc.getPackageName());	  
+	  TreeItem clazz; 
+	  TreeItem line;
+	  String qualifiedClassName = null;
+	  String qualifiedClassLine = null;
+	  if (pkg == null) {
+	    pkg = new TreeItem(proj, SWT.NULL);
+	    pkg.setText(loc.getPackageName());
+	    pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+	    packages.put(loc.getPackageName(), pkg);
+	    clazz = null; // This can't exist if the package didn't
+	  } else {
 			qualifiedClassName = loc.getPackageName() + '.'
 					+ loc.getClassName();
-			clazz = classes.get(qualifiedClassName);
-		}
-		if (clazz == null) {
-			clazz = new TreeItem(pkg, SWT.NULL);
-			clazz.setText(loc.getClassName());
-			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
-			if (qualifiedClassName == null) {
+	    clazz = classes.get(qualifiedClassName);
+	  }
+	  if (clazz == null) {
+	    clazz = new TreeItem(pkg, SWT.NULL);
+	    clazz.setText(loc.getClassName());
+	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));   
+	    if (qualifiedClassName == null)  {
 				qualifiedClassName = loc.getPackageName() + '.'
 						+ loc.getClassName();
-			}
-			classes.put(qualifiedClassName, clazz);
-		}
-		TreeItem line = new TreeItem(clazz, SWT.NULL);
-		if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
-			line.setText("From lines " + loc.getLineOfCode() + " to "
+	    }	    
+	    classes.put(qualifiedClassName, clazz);
+	    line = null;
+	  } else {
+	    qualifiedClassLine = qualifiedClassName+':'+loc.getLineOfCode();
+      line = lines.get(qualifiedClassLine);
+	  }
+	  if (line == null) {
+	    line = new TreeItem(clazz, SWT.NULL);
+	    if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
+			line.setText("Lines " + loc.getLineOfCode() + " to "
 					+ loc.getEndLineOfCode());
-		} else {
-			line.setText("At line " + loc.getLineOfCode());
-		}
-		line.setData(loc);
-		// line.addListener(SWT.Selection, f_locationListener);
-		return line;
-	}
+	    } else {
+	      line.setText("Line "+loc.getLineOfCode());
+	    }	  	  
+	    line.setData(loc);
+	    lines.put(qualifiedClassLine, line);
+	  }
+	  return line;
+  }
 
 	/*
 	 * private String getClassName() { StringBuilder b = new StringBuilder();
