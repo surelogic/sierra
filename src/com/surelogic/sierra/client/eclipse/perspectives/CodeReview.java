@@ -4,7 +4,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeView;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
@@ -25,7 +25,7 @@ public final class CodeReview implements IPerspectiveFactory {
 
 		final IFolderLayout belowFinder = layout.createFolder("belowFinder",
 				IPageLayout.BOTTOM, 0.45f, finderArea);
-		belowFinder.addView(FindingsDetailsView.class.getName());
+		belowFinder.addView(FindingDetailsView.class.getName());
 
 		final IFolderLayout belowEditor = layout.createFolder("belowEditor",
 				IPageLayout.BOTTOM, 0.70f, editorArea);

@@ -38,7 +38,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingsDetailsView extends ViewPart {
+public class FindingDetailsView extends ViewPart {
 
 	private static final String STAMP_TOOLTIP_MESSAGE = "Mark this finding as being examined by me.";
 	private static final String SELECT_FINDINGS = "No finding is selected or no findings exist in the local database for the selection...select a finding to view its details";

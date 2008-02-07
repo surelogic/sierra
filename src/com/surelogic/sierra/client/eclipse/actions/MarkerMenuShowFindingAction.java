@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.FindingListDialog;
-import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 
 /**
  * Refer to MarkerRulerAction from FindBugs eclipse plugin
@@ -61,7 +61,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 					String s = (String) f_markers.get(0).getAttribute(
 							"findingid");
-					FindingsDetailsView view = (FindingsDetailsView) ViewUtility
+					FindingDetailsView view = (FindingDetailsView) ViewUtility
 							.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
 					view.findingSelected(Long.parseLong(s));
 

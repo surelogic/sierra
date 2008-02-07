@@ -277,7 +277,7 @@
       
       <view
             category="com.surelogic.sierra.client.eclipse"
-            class="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
+            class="com.surelogic.sierra.client.eclipse.views.FindingDetailsView"
             id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView"
             icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/asterisk_diamond_orange.gif"
             name="Finding Details">

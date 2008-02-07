@@ -48,7 +48,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
-import com.surelogic.sierra.client.eclipse.views.FindingsDetailsView;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
@@ -282,8 +282,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 				/*
 				 * Ensure the view is visible but don't change the focus.
 				 */
-				final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
-						.showView(FindingsDetailsView.class.getName(), null,
+				final FindingDetailsView view = (FindingDetailsView) ViewUtility
+						.showView(FindingDetailsView.class.getName(), null,
 								IWorkbenchPage.VIEW_VISIBLE);
 				f_findingId = data.f_findingId;
 				view.findingSelected(data.f_findingId);

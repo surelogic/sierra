@@ -251,8 +251,8 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			/*
 			 * Ensure the view is visible but don't change the focus.
 			 */
-			final FindingsDetailsView view = (FindingsDetailsView) ViewUtility
-					.showView(FindingsDetailsView.class.getName(), null,
+			final FindingDetailsView view = (FindingDetailsView) ViewUtility
+					.showView(FindingDetailsView.class.getName(), null,
 							IWorkbenchPage.VIEW_VISIBLE);
 			view.findingSelected(findingId);
 		}
