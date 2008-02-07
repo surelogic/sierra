@@ -210,7 +210,7 @@ public class FindingListDialog extends PopupDialog {
 
 						if (id != -1) {
 							FindingDetailsView view = (FindingDetailsView) ViewUtility
-									.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
+									.showView(FindingDetailsView.ID);
 							view.findingSelected(id);
 							close();
 
@@ -220,12 +220,10 @@ public class FindingListDialog extends PopupDialog {
 
 				public void mouseDown(MouseEvent e) {
 					// Nothing to do
-
 				}
 
 				public void mouseUp(MouseEvent e) {
 					// Nothing to do
-
 				}
 
 			});

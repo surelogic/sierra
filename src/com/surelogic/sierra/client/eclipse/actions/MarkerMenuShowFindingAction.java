@@ -62,7 +62,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 					String s = (String) f_markers.get(0).getAttribute(
 							"findingid");
 					FindingDetailsView view = (FindingDetailsView) ViewUtility
-							.showView("com.surelogic.sierra.client.eclipse.views.FindingsDetailsView");
+							.showView(FindingDetailsView.ID);
 					view.findingSelected(Long.parseLong(s));
 
 					// System.out.println(o);

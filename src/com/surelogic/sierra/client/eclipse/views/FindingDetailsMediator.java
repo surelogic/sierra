@@ -3,8 +3,9 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +19,24 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
@@ -38,8 +56,6 @@ import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
-import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
-import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
@@ -47,8 +63,7 @@ import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.jdbc.finding.SourceDetail;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsMediator extends AbstractDatabaseObserver implements
-		IProjectsObserver {
+public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	public static final String STAMP_COMMENT = "I examined this finding.";
 
@@ -104,11 +119,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
 			TabFolder folder, TabItem synopsisTab, Button synopsisAudit,
-			Link findingSynopsis, Tree locationTree, 
-			Browser detailsText, TabItem auditTab,
-			Button quickAudit, Button criticalButton, Button highButton,
-			Button mediumButton, Button lowButton, Button irrelevantButton,
-			Text commentText, Button commentButton,
+			Link findingSynopsis, Tree locationTree, Browser detailsText,
+			TabItem auditTab, Button quickAudit, Button criticalButton,
+			Button highButton, Button mediumButton, Button lowButton,
+			Button irrelevantButton, Text commentText, Button commentButton,
 			AuditTrail scrollingLabelComposite, TabItem artifactTab,
 			Table artifacts) {
 		f_pages = pages;
@@ -204,21 +218,20 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	};
 
 	private final Listener f_locationListener = new Listener() {
-	  public void handleEvent(Event event) {
-	    final TreeItem item = (TreeItem) event.item;
-	    if (item == null) {
-	      return;
-	    }
-	    final SourceDetail src = (SourceDetail) item.getData();
-	    if (src == null)
-	      return;
+		public void handleEvent(Event event) {
+			final TreeItem item = (TreeItem) event.item;
+			if (item == null) {
+				return;
+			}
+			final SourceDetail src = (SourceDetail) item.getData();
+			if (src == null)
+				return;
 
-	    JDTUtility.tryToOpenInEditor(f_finding.getProjectName(),
-	        src.getPackageName(), src.getClassName(),
-	        src.getLineOfCode());
-	  }
+			JDTUtility.tryToOpenInEditor(f_finding.getProjectName(), src
+					.getPackageName(), src.getClassName(), src.getLineOfCode());
+		}
 	};
-	
+
 	public void init() {
 		f_criticalButton.addListener(SWT.Selection, f_radioListener);
 		f_highButton.addListener(SWT.Selection, f_radioListener);
@@ -248,7 +261,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		f_quickAudit.addSelectionListener(stampAction);
 
 		f_locationTree.addListener(SWT.Selection, f_locationListener);
-		
+
 		final MenuItem criticalItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		criticalItem.setText("Critical");
@@ -324,7 +337,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			}
 		});
 
-		Projects.getInstance().addObserver(this);
 		DatabaseHub.getInstance().addObserver(this);
 
 		updateContents();
@@ -336,7 +348,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 			FindingDetailsPersistence.saveNull();
 		else
 			FindingDetailsPersistence.save(f_finding.getFindingId());
-		Projects.getInstance().removeObserver(this);
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 
@@ -538,109 +549,103 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 	}
 
 	private void initLocationTree(Tree tree, FindingDetail finding) {
-	  tree.removeAll();
-	  
-	  // TODO reuse old TreeItems?
-    final TreeItem proj = new TreeItem(tree, SWT.NULL);
-    proj.setText(finding.getProjectName());
-    proj.setImage(SLImages.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-    
-    int numArtifacts = finding.getNumberOfArtifacts();
-    if (numArtifacts < 1) {
-      throw new IllegalArgumentException("Bad number of artifacts: "+numArtifacts);
-    }
-    final ArtifactDetail firstArtifact = finding.getArtifacts().get(0);
-	  if (finding.getNumberOfArtifacts() == 1 && firstArtifact.getAdditionalSources().isEmpty()) {
-	    // Just one source location to show
-	    TreeItem pkg = new TreeItem(proj, SWT.NULL);
-	    pkg.setText(firstArtifact.getPackageName());
-	    pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+		tree.removeAll();
 
-	    TreeItem clazz = new TreeItem(pkg, SWT.NULL);
-	    clazz.setText(firstArtifact.getClassName()+" at line "+firstArtifact.getLineOfCode());
-	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));	   
-	    clazz.setData(firstArtifact.getPrimarySource());
-	    //clazz.addListener(SWT.Selection, f_locationListener);
-	    tree.showItem(clazz);
-	  } else {
-	    // Deal with multiple artifacts, and multiple locations
-	    Map<String,TreeItem> packages = new HashMap<String,TreeItem>();
-      Map<String,TreeItem> classes = new HashMap<String,TreeItem>();      
-      for(ArtifactDetail artifact : finding.getArtifacts()) {
-        TreeItem loc = createLocation(proj, packages, classes, artifact.getPrimarySource());
-        tree.showItem(loc);
-        boolean first = true;
-        for(SourceDetail src : artifact.getAdditionalSources()) {
-          loc = createLocation(proj, packages, classes, src);
-          if (first) {
-            tree.showItem(loc);
-            first = false;
-          }
-        }
-      }
-	  }	  	  
-	}
-	
-	private TreeItem createLocation(TreeItem proj, Map<String, TreeItem> packages, 
-	                                       Map<String, TreeItem> classes, SourceDetail loc) {    
-	  TreeItem pkg = packages.get(loc.getPackageName());	  
-	  TreeItem clazz; 
-	  String qualifiedClassName = null;
-	  if (pkg == null) {
-	    pkg = new TreeItem(proj, SWT.NULL);
-	    pkg.setText(loc.getPackageName());
-	    pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
-	    packages.put(loc.getPackageName(), pkg);
-	    clazz = null; // This can't exist if the package didn't
-	  } else {
-	    qualifiedClassName = loc.getPackageName()+'.'+loc.getClassName();
-	    clazz = classes.get(qualifiedClassName);
-	  }
-	  if (clazz == null) {
-	    clazz = new TreeItem(pkg, SWT.NULL);
-	    clazz.setText(loc.getClassName());
-	    clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));   
-	    if (qualifiedClassName == null)  {
-	      qualifiedClassName = loc.getPackageName()+'.'+loc.getClassName();
-	    }	    
-	    classes.put(qualifiedClassName, clazz);
-	  }
-	  TreeItem line = new TreeItem(clazz, SWT.NULL);
-	  if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
-	    line.setText("From lines "+loc.getLineOfCode()+" to "+loc.getEndLineOfCode());
-	  } else {
-	    line.setText("At line "+loc.getLineOfCode());
-	  }	  	  
-	  line.setData(loc);
-	  //line.addListener(SWT.Selection, f_locationListener);
-	  return line;
-  }
+		// TODO reuse old TreeItems?
+		final TreeItem proj = new TreeItem(tree, SWT.NULL);
+		proj.setText(finding.getProjectName());
+		proj.setImage(SLImages
+				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 
-  /*
-	private String getClassName() {
-		StringBuilder b = new StringBuilder();
-		int[] lines = f_finding.getLinesOfCode();
-		b.append(f_finding.getClassName());
-		b.append(" at line");
-		if (lines.length > 1)
-			b.append("s");
-		b.append(" ");
-		boolean first = true;
-		for (int line : lines) {
-			if (first)
-				first = false;
-			else
-				b.append(" ");
-			b.append("<a href=\"");
-			b.append(line);
-			b.append("\">");
-			b.append(line);
-			b.append("</a>");
+		int numArtifacts = finding.getNumberOfArtifacts();
+		if (numArtifacts < 1) {
+			throw new IllegalArgumentException("Bad number of artifacts: "
+					+ numArtifacts);
 		}
-		return b.toString();
+		final ArtifactDetail firstArtifact = finding.getArtifacts().get(0);
+		if (finding.getNumberOfArtifacts() == 1
+				&& firstArtifact.getAdditionalSources().isEmpty()) {
+			// Just one source location to show
+			TreeItem pkg = new TreeItem(proj, SWT.NULL);
+			pkg.setText(firstArtifact.getPackageName());
+			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+
+			TreeItem clazz = new TreeItem(pkg, SWT.NULL);
+			clazz.setText(firstArtifact.getClassName() + " at line "
+					+ firstArtifact.getLineOfCode());
+			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			clazz.setData(firstArtifact.getPrimarySource());
+			// clazz.addListener(SWT.Selection, f_locationListener);
+			tree.showItem(clazz);
+		} else {
+			// Deal with multiple artifacts, and multiple locations
+			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
+			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
+			for (ArtifactDetail artifact : finding.getArtifacts()) {
+				TreeItem loc = createLocation(proj, packages, classes, artifact
+						.getPrimarySource());
+				tree.showItem(loc);
+				boolean first = true;
+				for (SourceDetail src : artifact.getAdditionalSources()) {
+					loc = createLocation(proj, packages, classes, src);
+					if (first) {
+						tree.showItem(loc);
+						first = false;
+					}
+				}
+			}
+		}
 	}
-  */
-	
+
+	private TreeItem createLocation(TreeItem proj,
+			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
+			SourceDetail loc) {
+		TreeItem pkg = packages.get(loc.getPackageName());
+		TreeItem clazz;
+		String qualifiedClassName = null;
+		if (pkg == null) {
+			pkg = new TreeItem(proj, SWT.NULL);
+			pkg.setText(loc.getPackageName());
+			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+			packages.put(loc.getPackageName(), pkg);
+			clazz = null; // This can't exist if the package didn't
+		} else {
+			qualifiedClassName = loc.getPackageName() + '.'
+					+ loc.getClassName();
+			clazz = classes.get(qualifiedClassName);
+		}
+		if (clazz == null) {
+			clazz = new TreeItem(pkg, SWT.NULL);
+			clazz.setText(loc.getClassName());
+			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			if (qualifiedClassName == null) {
+				qualifiedClassName = loc.getPackageName() + '.'
+						+ loc.getClassName();
+			}
+			classes.put(qualifiedClassName, clazz);
+		}
+		TreeItem line = new TreeItem(clazz, SWT.NULL);
+		if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
+			line.setText("From lines " + loc.getLineOfCode() + " to "
+					+ loc.getEndLineOfCode());
+		} else {
+			line.setText("At line " + loc.getLineOfCode());
+		}
+		line.setData(loc);
+		// line.addListener(SWT.Selection, f_locationListener);
+		return line;
+	}
+
+	/*
+	 * private String getClassName() { StringBuilder b = new StringBuilder();
+	 * int[] lines = f_finding.getLinesOfCode();
+	 * b.append(f_finding.getClassName()); b.append(" at line"); if
+	 * (lines.length > 1) b.append("s"); b.append(" "); boolean first = true;
+	 * for (int line : lines) { if (first) first = false; else b.append(" ");
+	 * b.append("<a href=\""); b.append(line); b.append("\">"); b.append(line);
+	 * b.append("</a>"); } return b.toString(); }
+	 */
+
 	/**
 	 * Must be invoked from the SWT thread.
 	 */
@@ -661,26 +666,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		}
 	}
 
-	public void notify(Projects p) {
-		/*
-		 * Something about the set of projects in the database has changed.
-		 */
-		if (f_finding == null)
-			return;
-		if (!p.getProjectNames().contains(f_finding.getProjectName())) {
-			final UIJob job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateContents();
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
-	}
-
 	@Override
-	public void findingMutated() {
+	public void changed() {
 		if (f_finding != null) {
 			asyncQueryAndShow(f_finding.getFindingId());
 		}

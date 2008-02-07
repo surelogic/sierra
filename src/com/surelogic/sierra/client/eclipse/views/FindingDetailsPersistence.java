@@ -44,8 +44,8 @@ public final class FindingDetailsPersistence {
 				.getFindingDetailsViewSaveFile();
 		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
 			SLLogger.getLogger().fine(
-					"Saving Findings Details View on finding " + findingId
-							+ " to " + file);
+					"Saving that the Findings Details View was showing the finding "
+							+ findingId + " to " + file);
 		}
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
@@ -70,10 +70,6 @@ public final class FindingDetailsPersistence {
 	static void load(final FindingDetailsMediator view) {
 		final File file = Activator.getDefault()
 				.getFindingDetailsViewSaveFile();
-		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-			SLLogger.getLogger().fine(
-					"Loading Findings Details View state from " + file);
-		}
 		InputStream stream;
 		try {
 			try {
@@ -97,6 +93,11 @@ public final class FindingDetailsPersistence {
 			}
 			if (handler.isFindingIdFound()) {
 				final long findingId = handler.getFindingId();
+				if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+					SLLogger.getLogger().fine(
+							"Findings Details View was showing the finding "
+									+ findingId + " according to " + file);
+				}
 				final Job job = new Job("Restore Finding Details View") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
