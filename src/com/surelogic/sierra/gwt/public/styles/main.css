@@ -25,16 +25,19 @@ body {
 }
 
 .gwt-TabBar {
-  border-bottom: 4px solid #005495;
   background-color: #005495;
   font-size: large;
+  font-weight: bold;
+  text-align: center;
   color: white;
-  
 }
 .gwt-TabBar .gwt-TabBarFirst {
+	display: none;
 }
+
 .gwt-TabBar .gwt-TabBarRest {
 }
+
 .gwt-TabBar .gwt-TabBarItem-selected { 
   cursor: pointer;
   cursor: hand;
