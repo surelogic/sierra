@@ -23,35 +23,36 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.adhoc.Activator;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
 
 public final class SierraServerPersistence {
 
-	public static final String SIERRA_SERVERS = "sierra-servers";
-	public static final String CONNECTED_PROJECT = "connected-project";
-	public static final String HOST = "host";
-	public static final String LABEL = "label";
-	public static final String NAME = "name";
-	public static final String PORT = "port";
-	public static final String CONTEXT_PATH = "context-path";
-	public static final String PROTOCOL = "protocol";
-	public static final String SAVE_PASSWORD = "save-password";
-	public static final String SERVER = "server";
-	public static final String USER = "user";
-	public static final String VERSION = "version";
+	private static final String TEAM_SERVERS = "team-servers";
+	private static final String CONNECTED_PROJECT = "connected-project";
+	private static final String HOST = "host";
+	private static final String LABEL = "label";
+	private static final String NAME = "name";
+	private static final String PORT = "port";
+	private static final String CONTEXT_PATH = "context-path";
+	private static final String PROTOCOL = "protocol";
+	private static final String SAVE_PASSWORD = "save-password";
+	private static final String SERVER = "server";
+	private static final String USER = "user";
+	private static final String VERSION = "version";
 
 	// fields needed for caching the password
 	private static final String AUTH_SCHEME = "";
 	private static final URL FAKE_URL;
 
 	static {
+		final String urlString = "http://com.surelogic.sierra";
 		URL temp = null;
 		try {
-			temp = new URL("http://com.surelogic.sierra");
+			temp = new URL(urlString);
 		} catch (MalformedURLException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"unable to form valid URL for server persistence", e);
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(41, urlString), e);
 		}
 		FAKE_URL = temp;
 	}
@@ -86,10 +87,9 @@ public final class SierraServerPersistence {
 			pw.close();
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					"Failure to persist Sierra servers to " + file, e);
+					I18N.err(38, "Team Servers", file), e);
 		} catch (CoreException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Failure to add authorization info", e);
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 		}
 	}
 
@@ -106,7 +106,7 @@ public final class SierraServerPersistence {
 			pw.close();
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					"Failure to persist Sierra servers to " + file, e);
+					I18N.err(38, "Team Servers", file), e);
 		}
 	}
 
@@ -114,7 +114,7 @@ public final class SierraServerPersistence {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
 		StringBuilder b = new StringBuilder();
-		b.append("<").append(SIERRA_SERVERS);
+		b.append("<").append(TEAM_SERVERS);
 		Entities.addAttribute(VERSION, "1.0", b);
 		b.append(">"); // don't end this element
 		pw.println(b.toString());
@@ -131,7 +131,8 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(CONTEXT_PATH, server.getContextPath(), b);
 		Entities.addAttribute(USER, server.getUser(), b);
 		if (save) {
-			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server.savePassword()), b);
+			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server
+					.savePassword()), b);
 		}
 		b.append(">");
 		pw.println(b.toString());
@@ -150,7 +151,7 @@ public final class SierraServerPersistence {
 	}
 
 	private static void outputXMLFooter(PrintWriter pw) {
-		pw.println("</" + SIERRA_SERVERS + ">");
+		pw.println("</" + TEAM_SERVERS + ">");
 	}
 
 	public static void load(final SierraServerManager manager, final File file)
@@ -171,8 +172,7 @@ public final class SierraServerPersistence {
 			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(stream, handler);
 		} catch (SAXException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Problem parsing Sierra servers from " + file, e);
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(39, file), e);
 		} finally {
 			stream.close();
 			/*
@@ -239,10 +239,8 @@ public final class SierraServerPersistence {
 			} else if (name.equals(CONNECTED_PROJECT)) {
 				final String projectName = attributes.getValue(NAME);
 				if (f_server == null) {
-					SLLogger.getLogger().log(
-							Level.SEVERE,
-							"connected project " + projectName
-									+ " not associated with a server",
+					SLLogger.getLogger().log(Level.SEVERE,
+							I18N.err(43, projectName),
 							new Exception("XML Format Error"));
 				} else {
 					f_manager.connect(projectName, f_server);

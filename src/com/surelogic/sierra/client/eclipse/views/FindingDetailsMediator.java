@@ -328,9 +328,14 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver implements
 		DatabaseHub.getInstance().addObserver(this);
 
 		updateContents();
+		FindingDetailsPersistence.load(this);
 	}
 
 	public void dispose() {
+		if (f_finding == null)
+			FindingDetailsPersistence.saveNull();
+		else
+			FindingDetailsPersistence.save(f_finding.getFindingId());
 		Projects.getInstance().removeObserver(this);
 		DatabaseHub.getInstance().removeObserver(this);
 	}

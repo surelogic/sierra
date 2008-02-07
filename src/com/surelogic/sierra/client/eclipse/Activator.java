@@ -85,8 +85,9 @@ public final class Activator extends AbstractUIPlugin {
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
-			
-	    VersionUtil.popupIfNewerFeatureExists("Sierra", "com.surelogic.sierra.feature");
+
+			VersionUtil.popupIfNewerFeatureExists("Sierra",
+					"com.surelogic.sierra.feature");
 		} catch (FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
@@ -150,6 +151,13 @@ public final class Activator extends AbstractUIPlugin {
 		IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString()
 				+ System.getProperty("file.separator") + "selections.xml");
+	}
+
+	public File getFindingDetailsViewSaveFile() {
+		IPath pluginState = Activator.getDefault().getStateLocation();
+		return new File(pluginState.toOSString()
+				+ System.getProperty("file.separator")
+				+ "finding-details-view.xml");
 	}
 
 	public String getDirectoryOf(final String plugInId) {
