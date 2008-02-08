@@ -261,6 +261,7 @@ public class LocalTool extends AbstractTool {
         }
         System.out.println("Process result = "+p.waitFor());
         br.close();
+        pout.close();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
