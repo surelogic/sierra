@@ -15,8 +15,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -255,6 +256,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 		return b.toString();
 	}
 
+	private final KeyListener f_keyListener = new KeyListener() {
+    public void keyPressed(KeyEvent e) {
+      if (e.character == 0x01 && f_table != null) {
+        f_table.selectAll();
+      }
+    }
+    public void keyReleased(KeyEvent e) {
+      // Nothing to do
+    }
+	};
+	
 	private final AtomicReference<FindingData> lastSelected = 
 	  new AtomicReference<FindingData>();
 	
@@ -300,6 +312,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
+			f_table.addKeyListener(f_keyListener);
 
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
@@ -512,94 +525,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 				}
 			}
 		});
-
-		/*
-		 * Change the importance of all shown findings
-		 */
-		final MenuItem setAll = new MenuItem(menu, SWT.CASCADE);
-		setAll.setText("Set Importance of All");
-		setAll
-				.setImage(SLImages
-						.getImage(SLImages.IMG_ASTERISK_DIAMOND_ORANGE));
-
-		final Menu importanceAllMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
-		setAll.setMenu(importanceAllMenu);
-		final MenuItem setAllCritical = new MenuItem(importanceAllMenu,
-				SWT.PUSH);
-		setAllCritical.setText(Importance.CRITICAL.toStringSentenceCase());
-		setAllCritical.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
-		final MenuItem setAllHigh = new MenuItem(importanceAllMenu, SWT.PUSH);
-		setAllHigh.setText(Importance.HIGH.toStringSentenceCase());
-		setAllHigh.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
-		final MenuItem setAllMedium = new MenuItem(importanceAllMenu, SWT.PUSH);
-		setAllMedium.setText(Importance.MEDIUM.toStringSentenceCase());
-		setAllMedium.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
-		final MenuItem setAllLow = new MenuItem(importanceAllMenu, SWT.PUSH);
-		setAllLow.setText(Importance.LOW.toStringSentenceCase());
-		setAllLow.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
-		final MenuItem setAllIrrelevant = new MenuItem(importanceAllMenu,
-				SWT.PUSH);
-		setAllIrrelevant.setText(Importance.IRRELEVANT.toStringSentenceCase());
-		setAllIrrelevant.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
-
-		menu.addListener(SWT.Show, new Listener() {
-			public void handleEvent(Event event) {
-				TableItem[] items = f_table.getItems();
-				final boolean findingsExist = items.length > 0;
-				setAll.setEnabled(findingsExist);
-				if (items.length > 0) {
-					final Set<Long> finding_ids = new HashSet<Long>();
-					for (TableItem item : items) {
-						final FindingData data = (FindingData) item.getData();
-						finding_ids.add(data.f_findingId);
-					}
-					setAllCritical.setData(finding_ids);
-					setAllHigh.setData(finding_ids);
-					setAllMedium.setData(finding_ids);
-					setAllLow.setData(finding_ids);
-					setAllIrrelevant.setData(finding_ids);
-				}
-			}
-		});
-
-		final Listener changeAllImportance = new Listener() {
-			@SuppressWarnings("unchecked")
-			public void handleEvent(Event event) {
-				if (event.widget instanceof MenuItem) {
-					MenuItem item = (MenuItem) event.widget;
-					if (event.widget.getData() instanceof Set) {
-						final Set<Long> finding_ids = (Set<Long>) event.widget
-								.getData();
-						final Importance to = Importance.valueOf(item.getText()
-								.toUpperCase());
-						boolean makeChange = true;
-						if (finding_ids.size() > 1) {
-							final String msg = "Are you sure you want to "
-									+ "change the importance of "
-									+ finding_ids.size() + " findings to "
-									+ to.toStringSentenceCase();
-							if (!MessageDialog.openConfirm(PlatformUI
-									.getWorkbench().getActiveWorkbenchWindow()
-									.getShell(),
-									"Confirm Multiple Finding Change", msg)) {
-								makeChange = false;
-							}
-						}
-						if (makeChange)
-							FindingMutationUtility.asyncChangeImportance(
-									finding_ids, to);
-					}
-				}
-			}
-		};
-		setAllCritical.addListener(SWT.Selection, changeAllImportance);
-		setAllHigh.addListener(SWT.Selection, changeAllImportance);
-		setAllMedium.addListener(SWT.Selection, changeAllImportance);
-		setAllLow.addListener(SWT.Selection, changeAllImportance);
-		setAllIrrelevant.addListener(SWT.Selection, changeAllImportance);
 
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
 		export.setText("Export...");
