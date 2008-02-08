@@ -626,7 +626,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 					+ firstArtifact.getLineOfCode());
 			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
 			clazz.setData(firstArtifact.getPrimarySource());
-			clazz.setForeground(clazz.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			showAsLink(clazz);
 			// clazz.addListener(SWT.Selection, f_locationListener);
 			tree.showItem(clazz);
 		} else {
@@ -649,6 +649,11 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			}
 		}
 	}
+
+  private void showAsLink(TreeItem item) {
+    Display d = item.getDisplay();
+    item.setForeground(d.getSystemColor(SWT.COLOR_BLUE));
+  }
 
 	private TreeItem createLocation(TreeItem proj,
 			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
@@ -691,7 +696,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			} else {			  
 				line.setText("line " + loc.getLineOfCode());
 			}
-      line.setForeground(line.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+      showAsLink(line);
 			line.setData(loc);
 			lines.put(qualifiedClassLine, line);
 		}
