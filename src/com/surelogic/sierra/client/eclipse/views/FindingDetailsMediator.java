@@ -601,7 +601,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private void initLocationTree(Tree tree, FindingDetail finding) {
 		tree.removeAll();
-
+		
 		// TODO reuse old TreeItems?
 		final TreeItem proj = new TreeItem(tree, SWT.NULL);
 		proj.setText(finding.getProjectName());
@@ -626,6 +626,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 					+ firstArtifact.getLineOfCode());
 			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
 			clazz.setData(firstArtifact.getPrimarySource());
+			clazz.setForeground(clazz.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 			// clazz.addListener(SWT.Selection, f_locationListener);
 			tree.showItem(clazz);
 		} else {
@@ -685,11 +686,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		if (line == null) {
 			line = new TreeItem(clazz, SWT.NULL);
 			if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
-				line.setText("Lines " + loc.getLineOfCode() + " to "
+				line.setText("lines " + loc.getLineOfCode() + " to "
 						+ loc.getEndLineOfCode());
-			} else {
-				line.setText("Line " + loc.getLineOfCode());
+			} else {			  
+				line.setText("line " + loc.getLineOfCode());
 			}
+      line.setForeground(line.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 			line.setData(loc);
 			lines.put(qualifiedClassLine, line);
 		}
