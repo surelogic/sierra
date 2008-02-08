@@ -23,7 +23,7 @@ public class PrefsPanel extends ContentComposite {
 		final VerticalPanel vp = new VerticalPanel();
 		vp
 				.add(new HTML(
-						"<h2>Change Password</h3><h2>Enter your current password</h2>"));
+						"<h2>Change Password</h2><h3>Enter your current password</h3>"));
 		vp.add(oldPass = new PasswordTextBox());
 		vp.add(new HTML("<h3>Enter your new password</h3>"));
 		vp.add(pass = new PasswordTextBox());
