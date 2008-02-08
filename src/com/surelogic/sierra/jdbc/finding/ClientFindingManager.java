@@ -6,12 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -288,7 +283,7 @@ public final class ClientFindingManager extends FindingManager {
 		updateFindingOverviewImportance.execute();
 	}
 
-	public void setImportance(Set<Long> findingIds, Importance importance,
+	public void setImportance(Collection<Long> findingIds, Importance importance,
 			SLProgressMonitor monitor) throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
 		Timestamp now = JDBCUtils.now();
