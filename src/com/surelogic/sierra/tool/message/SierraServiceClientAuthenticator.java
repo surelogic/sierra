@@ -14,7 +14,7 @@ public class SierraServiceClientAuthenticator extends Authenticator {
     }
 
     public PasswordAuthentication getPasswordAuthentication() {
-        return (new PasswordAuthentication(this.username,
-            ((this.password == null) ? null : this.password.toCharArray())));
+        return new PasswordAuthentication(this.username,
+            ((this.password == null) ? null : this.password.toCharArray()));
     }
 }
