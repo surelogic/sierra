@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.ant.*;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.compilers.*;
 import org.apache.tools.ant.types.*;
 import org.apache.tools.ant.util.StringUtils;
