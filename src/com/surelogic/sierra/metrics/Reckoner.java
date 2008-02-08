@@ -173,16 +173,8 @@ public class Reckoner {
   }
 
 	private Metrics countLOC(File target) {
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(target));
-
-			StringBuffer buffer = new StringBuffer();
-			String line = null;
-			while (null != (line = in.readLine())) {
-				buffer.append("\t" + line);
-				buffer.append("\n");
-			}
-			in.close();
+		try {			
+			StringBuffer buffer = readSourcefile(target);
 
 			ASTParser parser = ASTParser.newParser(AST.JLS3);
 			parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -208,6 +200,19 @@ public class Reckoner {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private StringBuffer readSourcefile(File target) throws FileNotFoundException, IOException {
+		BufferedReader in = new BufferedReader(new FileReader(target));
+		long length = target.length();
+		StringBuffer buffer = new StringBuffer(length > 65536 ? 65536 : (int) length);
+		char[] buf = new char[4096];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+		  buffer.append(buf, 0, len);
+		}
+		in.close();
+		return buffer;
 	}
 
 	private Set<String> getJavaFiles(File file) {
