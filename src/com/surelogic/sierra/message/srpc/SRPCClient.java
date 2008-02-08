@@ -29,7 +29,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  * @author nathan
  * 
  */
-public class SRPCClient implements InvocationHandler {
+public final class SRPCClient implements InvocationHandler {
 
 	private final HttpClient client;
 	private final Encoding codec;

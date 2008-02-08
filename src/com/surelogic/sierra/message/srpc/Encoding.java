@@ -29,7 +29,7 @@ import com.surelogic.sierra.tool.targets.JarTarget;
  * @author nathan
  * 
  */
-class Encoding {
+final class Encoding {
     private static final Class<?>[] NO_CLASSES = new Class[0];
 	private static final String NULL = "null";
 	private static final String GZIP = "application/x-gzip";
