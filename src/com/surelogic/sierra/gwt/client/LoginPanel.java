@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -34,8 +33,7 @@ public class LoginPanel extends ContentComposite {
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final Label passwordLabel = new Label("Password");
 
-	private final Image wait = new Image(GWT.getModuleBaseURL()
-			+ "images/wait-24x24.gif");
+	private final Image waitImage = ImageHelper.getWaitImage(24);
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final SimplePanel waitPanel = new SimplePanel();
 	private final Button login = new Button("Log In");
@@ -111,7 +109,7 @@ public class LoginPanel extends ContentComposite {
 
 	public void login() {
 		login.setEnabled(false);
-		waitPanel.add(wait);
+		waitPanel.add(waitImage);
 
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
