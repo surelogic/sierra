@@ -204,7 +204,7 @@ public final class FilterSelectionReportLine {
 		void selectionChanged(FilterSelectionReportLine line);
 	}
 
-	protected final Set<ISelectionChangedObserver> f_observers = new CopyOnWriteArraySet<ISelectionChangedObserver>();
+	private final Set<ISelectionChangedObserver> f_observers = new CopyOnWriteArraySet<ISelectionChangedObserver>();
 
 	public final void addObserver(ISelectionChangedObserver o) {
 		if (o == null)
