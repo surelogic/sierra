@@ -689,6 +689,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			line = lines.get(qualifiedClassLine);
 		}
 		if (line == null) {
+		  qualifiedClassLine = qualifiedClassName + ':' + loc.getLineOfCode();
 			line = new TreeItem(clazz, SWT.NULL);
 			if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
 				line.setText("lines " + loc.getLineOfCode() + " to "
