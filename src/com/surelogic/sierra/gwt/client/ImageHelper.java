@@ -18,7 +18,7 @@ public final class ImageHelper {
 		}
 		final StringBuffer filename = new StringBuffer();
 		filename.append("wait-");
-		filename.append(adjustedSize).append("x").append(adjustedSize);
+		filename.append(adjustedSize).append('x').append(adjustedSize);
 		filename.append(".gif");
 		return new Image(IMAGE_BASE_URL + filename.toString());
 	}
