@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * @author Tanmay.Sinha
  * 
  */
-public class SierraSchedulingRule implements ISchedulingRule {
+public final class SierraSchedulingRule implements ISchedulingRule {
 
 	private SierraSchedulingRule() {
 		// singleton
