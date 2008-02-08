@@ -38,7 +38,7 @@ import javax.xml.stream.XMLStreamReader;
  * @author nathan
  * 
  */
-public class MessageWarehouse {
+public final class MessageWarehouse {
 	private static final Logger log = SLLogger.getLogger(MessageWarehouse.class
 			.getName());
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
