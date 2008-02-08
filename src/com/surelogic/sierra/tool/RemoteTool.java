@@ -46,6 +46,7 @@ public class RemoteTool extends AbstractTool {
   public static void main(String[] args) {
     System.out.println("JVM started");
     System.out.println("Log level: "+SLLogger.LEVEL.get());
+    long start = System.currentTimeMillis();
     /*
     try {
       Logger LOG = SLLogger.getLogger("sierra");
@@ -111,11 +112,9 @@ public class RemoteTool extends AbstractTool {
       IToolInstance ti = t.create(config, mon); 
       checkInput(br, mon, "Created tool instance");
       
-      setupToolForProject(ti, config);
-      checkInput(br, mon, "Setup tool");
-
       ti.run();
-      checkInput(br, mon, "Done scanning");
+      long end = System.currentTimeMillis();
+      checkInput(br, mon, "Done scanning: "+(end-start)+" ms");      
     } catch (Throwable e) {
       e.printStackTrace(System.out);
       System.out.println("##"+Remote.FAILED+", "+e.getMessage());
