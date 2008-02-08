@@ -495,7 +495,7 @@ public class ServerImportPage extends WizardPage {
 				f_connectedProjects = new ArrayList<String>();
 				f_server.setLabel(label);
 				f_server.setHost(host);
-				f_server.setSecure(protocol.equals("https"));
+				f_server.setSecure("https".equals(protocol));
 				f_server.setPort(port);
 				f_server.setUser(user);
 

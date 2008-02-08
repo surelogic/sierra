@@ -217,7 +217,7 @@ public final class SierraServerPersistence {
 						.parseBoolean(savePasswordString);
 				f_server = f_manager.getOrCreate(label);
 				f_server.setHost(host);
-				f_server.setSecure(protocol.equals("https"));
+				f_server.setSecure("https".equals(protocol));
 				f_server.setPort(port);
 				f_server.setContextPath(contextPath);
 				f_server.setUser(user);

@@ -378,7 +378,7 @@ public final class ConfigGenerator {
 			listOfTools = listOfTools.substring(0, listOfTools.length() - 2);
 		}
 
-		if (listOfTools.equals("")) {
+		if ("".equals(listOfTools)) {
 			return null;
 		}
 

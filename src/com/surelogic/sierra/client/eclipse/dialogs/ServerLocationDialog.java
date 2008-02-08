@@ -351,7 +351,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			}
 
 			final String labelText = f_labelText.getText().trim();
-			if (labelText.equals("")) {
+			if ("".equals(labelText)) {
 				valid = false;
 			} else if (!f_server.getLabel().equals(labelText)
 					&& f_manager.exists(labelText)) {
