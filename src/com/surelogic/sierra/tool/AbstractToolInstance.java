@@ -56,6 +56,8 @@ public abstract class AbstractToolInstance implements IToolInstance {
       case AUX:
         auxTargets.add(target);
         break;
+      default:
+    	System.out.println("Ignoring target "+target.getLocation());
     }
   }
   

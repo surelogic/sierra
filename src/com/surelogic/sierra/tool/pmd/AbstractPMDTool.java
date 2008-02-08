@@ -222,9 +222,9 @@ public abstract class AbstractPMDTool extends AbstractTool {
     case 4:
       return Severity.WARNING;
     case 5:
+    default:
       return Severity.INFO;
     }
-    return null;
   }
 
   private static Priority getPMDPriority(int priority) {
@@ -238,8 +238,8 @@ public abstract class AbstractPMDTool extends AbstractTool {
     case 4:
       return Priority.MEDIUM;
     case 5:
+    default:
       return Priority.LOW;
     }
-    return null;
   }
 }

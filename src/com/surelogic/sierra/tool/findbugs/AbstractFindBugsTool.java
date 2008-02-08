@@ -72,8 +72,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
                 if (f.exists()) {              
                   p.addFile(f.getAbsolutePath());
                 }
-              }
+              }              
               break;
+            default:
+              System.out.println("Ignoring target "+t.getLocation());              
           }
         }
         for(IToolTarget t : getAuxTargets()) {
@@ -92,6 +94,8 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             case FILE:
               System.out.println("FB ignored AUX file: "+path);
               break;
+            default:
+            	System.out.println("Ignoring target "+t.getLocation());              
           }
         }
         for(IToolTarget t : getSrcTargets()) {
@@ -109,6 +113,8 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             String rootPath = new File(root).getAbsolutePath();
             p.addSourceDir(rootPath);
             break;
+          default:
+          	System.out.println("Ignoring target "+t.getLocation());            
           }
         }
         return p;
@@ -365,6 +371,8 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             System.out.println("Ignored FB source file: "+root);
           }
           break;
+        default:
+        	System.out.println("Ignoring target "+t.getLocation());
         }
       }
       return null;
@@ -495,10 +503,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     case 4:
       return Severity.ERROR;
     case 5:
+    default:
       return Severity.INFO;
     }
-    return null;
-
   }
 
   private static Priority getFindBugsPriority(int priority) {
@@ -512,8 +519,8 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     case 4:
       return Priority.EXPERIMENTAL;
     case 5:
+    default:    	
       return Priority.IGNORE;
     }
-    return null;
   }
 }
