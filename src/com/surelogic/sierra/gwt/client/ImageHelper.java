@@ -9,9 +9,9 @@ public final class ImageHelper {
 
 	public static Image getWaitImage(int size) {
 		int adjustedSize;
-		if (size < 16) {
+		if (size <= 16) {
 			adjustedSize = 16;
-		} else if (size > 16 && size < 24) {
+		} else if (size > 16 && size <= 24) {
 			adjustedSize = 24;
 		} else {
 			adjustedSize = 32;
