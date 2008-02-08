@@ -35,6 +35,9 @@ public class HeaderPanel extends Composite {
 
 		rootPanel.add(userPanel, DockPanel.EAST);
 		rootPanel.setCellHorizontalAlignment(userPanel, DockPanel.ALIGN_RIGHT);
+		
+		//Listen for users
+		ClientContext.addChangeListener(new HeaderAccountListener());
 	}
 
 	public void updateAccountPanel(UserAccount user) {
@@ -42,10 +45,9 @@ public class HeaderPanel extends Composite {
 			userPanel.add(createUserLabel("Logged in as " + user.getUserName(),
 					null));
 			userPanel.add(createUserLabel("|", null));
-			// TODO disabled Preferences label until functionality is built
-			// userPanel.add(createUserLabel("Preferences", new
-			// PreferencesListener()));
-			// userPanel.add(createUserLabel("|", null));
+			userPanel.add(createUserLabel("Preferences",
+					new PreferencesListener()));
+			userPanel.add(createUserLabel("|", null));
 			userPanel.add(createUserLabel("Log out", new LogoutListener()));
 		} else {
 			userPanel.clear();
@@ -65,11 +67,10 @@ public class HeaderPanel extends Composite {
 	/*
 	 * private class PreferencesListener implements ClickListener {
 	 * 
-	 * public void onClick(Widget sender) { // TODO nothing yet }
-	 *  }
+	 * public void onClick(Widget sender) { // TODO nothing yet } }
 	 */
 
-	private class LogoutListener implements ClickListener {
+	private static class LogoutListener implements ClickListener {
 
 		public void onClick(Widget sender) {
 			final SessionServiceAsync svc = ServiceHelper.getSessionService();
@@ -77,15 +78,32 @@ public class HeaderPanel extends Composite {
 
 				public void onFailure(Throwable caught) {
 					ExceptionTracker.logException(caught);
-					updateAccountPanel(null);
-					ContentPanel.getInstance().showLogin("Unable to contact server");					
+					ClientContext.setUser(null);
+					ContentPanel.getInstance().showLogin(
+							"Unable to contact server");
 				}
 
 				public void onSuccess(Object result) {
-					updateAccountPanel(null);
+					ClientContext.setUser(null);
 					ContentPanel.getInstance().showLogin(null);
-				}});
+				}
+			});
 		}
 
 	}
+
+	private static class PreferencesListener implements ClickListener {
+
+		public void onClick(Widget sender) {
+			ContentPanel.getInstance().showPreferences();
+		}
+	}
+
+	private class HeaderAccountListener implements UserAccountListener {
+
+		public void onChange(UserAccount account) {
+			updateAccountPanel(account);
+		}
+	}
+
 }

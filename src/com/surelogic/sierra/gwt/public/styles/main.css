@@ -130,3 +130,8 @@ a.hover {
 	cursor: pointer;
 	cursor: hand;
 }
+
+/* Items that indicate an error */
+.error {
+	color: red;
+}

@@ -139,8 +139,7 @@ public class LoginPanel extends ContentComposite {
 				} else if (lr.getUserAccount() == null) {
 					errorMessage.setText("No user account available");
 				} else {
-					HeaderPanel.getInstance().updateAccountPanel(
-							lr.getUserAccount());
+					ClientContext.setUser(lr.getUserAccount());
 					ContentPanel.getInstance().showDefault();
 				}
 			}

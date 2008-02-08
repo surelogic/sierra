@@ -9,7 +9,7 @@ public class ContentPanel extends Composite {
 	private final LoginPanel loginPanel = new LoginPanel();
 	private final TabsPanel tabsPanel = new TabsPanel();
 	private final AdminPanel adminPanel = new AdminPanel();
-
+	private final PrefsPanel prefsPanel = new PrefsPanel();
 	public static ContentPanel getInstance() {
 		return (ContentPanel) RootPanel.get("content-pane").getWidget(0);
 	}
@@ -48,5 +48,9 @@ public class ContentPanel extends Composite {
 			rootPanel.add(panel, DockPanel.CENTER);
 			panel.activate();
 		}
+	}
+
+	public void showPreferences() {
+		setContent(prefsPanel);
 	}
 }
