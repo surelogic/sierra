@@ -1,7 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.sql.Connection;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,241 +18,161 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingMutationUtility {
 
-	private FindingMutationUtility() {
-		// no instances
-	}
+  private FindingMutationUtility() {
+    // no instances
+  }
 
-	public static void asyncChangeSummary(final long finding_id,
-			final String summary) {
-		final Job job = new DatabaseJob("Changing the summary of finding id "
-				+ finding_id + " to \"" + summary + "\"") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					changeSummary(finding_id, summary);
-				} catch (Exception e) {
-					return SLStatus
-							.createErrorStatus(
-									"Failed to change the summary of finding id "
-											+ finding_id + " to \"" + summary
-											+ "\"", e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
+  static abstract class MutationJob extends DatabaseJob {
+    public MutationJob(String name) {
+      super(name);
+    }
 
-	private static void changeSummary(final long finding_id,
-			final String summary) throws Exception {
-		if (summary == null || summary.equals(""))
-			return;
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.changeSummary(finding_id, summary);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
-	}
+    @Override
+    protected final IStatus run(IProgressMonitor monitor) {
+      monitor.beginTask("Updating finding data",
+          IProgressMonitor.UNKNOWN);
+      try {
+        Connection c = Data.transactionConnection();
+        Exception exc = null;
+        try {
+          ClientFindingManager manager = ClientFindingManager.getInstance(c);
+          updateFindings(monitor, manager);
+          c.commit();
+          DatabaseHub.getInstance().notifyFindingMutated();
+        } catch (Exception e) {
+          c.rollback();
+          exc = e;
+        } finally {
+          try {
+            c.close();
+          } finally {
+            if (exc != null) {
+              throw exc;
+            }
+          }
+        }
+      } catch (Exception e) {
+        return SLStatus.createErrorStatus("Failed: "+getName(), e);
+      }
+      monitor.done();
+      return Status.OK_STATUS;
+    }
+    protected abstract void updateFindings(IProgressMonitor monitor,
+        ClientFindingManager manager) throws Exception;
+  }
 
-	public static void asyncComment(final long finding_id, final String comment) {
-		final Job job = new DatabaseJob("Adding the comment \"" + comment
-				+ "\" to finding id " + finding_id) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					comment(finding_id, comment);
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to add the comment \"" + comment
-									+ "\" to finding id " + finding_id, e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
+  public static void asyncChangeSummary(final long finding_id,
+      final String summary) {
+    if (summary == null || summary.trim().equals(""))
+      return;
 
-	private static void comment(final long finding_id, final String comment)
-			throws Exception {
-		if (comment == null || comment.trim().equals(""))
-			return;
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.comment(finding_id, comment);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
-	}
+    final Job job = new MutationJob("Changing the summary of finding id "
+        + finding_id + " to \"" + summary + "\"") {
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) 
+      throws Exception {
+        manager.changeSummary(finding_id, summary);
+      }
+    };
+    job.schedule();
+  }
 
-	public static void asyncChangeImportance(final long finding_id,
-			final Importance from, final Importance to) {
-		final Job job = new DatabaseJob(
-				"Changing the importance of finding id " + finding_id
-						+ " from " + from + " to " + to) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					changeImportance(finding_id, to);
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to change the importance of finding id "
-									+ finding_id + " from " + from + " to "
-									+ to, e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
+  public static void asyncComment(final long finding_id, final String comment) {
+    if (comment == null || comment.trim().equals(""))
+      return;
 
-	private static void changeImportance(final long finding_id,
-			final Importance to) throws Exception {
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.setImportance(finding_id, to);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
-	}
+    final Job job = new MutationJob("Adding the comment \"" + comment
+        + "\" to finding id " + finding_id) {
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) throws Exception {
+        manager.comment(finding_id, comment);
+      }
+    };
+    job.schedule();
+  }
 
-	public static void asyncChangeImportance(final Set<Long> finding_ids,
+  public static void asyncComment(final Collection<Long> finding_ids, final String comment) {
+    if (comment == null || comment.trim().equals(""))
+      return;
+
+    final Job job = new MutationJob("Adding the comment \"" + comment
+        + "\" to "+finding_ids.size()+" findings") {
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) throws Exception {
+        for(Long finding_id : finding_ids) {
+          if (finding_id != null) {
+            manager.comment(finding_id, comment);
+          }
+        }
+      }
+    };
+    job.schedule();
+  }
+
+  public static void asyncChangeImportance(final long finding_id,
+      final Importance from, final Importance to) {
+    final Job job = new MutationJob(
+        "Changing the importance of finding id " + finding_id
+        + " from " + from + " to " + to) {
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) throws Exception {
+        manager.setImportance(finding_id, to);
+      }
+    };
+    job.schedule();
+  }
+
+	public static void asyncChangeImportance(final Collection<Long> finding_ids,
 			final Importance to) {
-		final Job job = new DatabaseJob("Changing the importance of "
+		final Job job = new MutationJob("Changing the importance of "
 				+ finding_ids.size() + " finding(s) to "
 				+ to.toStringSentenceCase()) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					changeImportance(finding_ids, to,
-							new SLProgressMonitorWrapper(monitor));
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Failed to change the importance of "
-									+ finding_ids.size() + " finding(s) to "
-									+ to.toStringSentenceCase(), e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) throws Exception {
+        manager.setImportance(finding_ids, to, 
+                              new SLProgressMonitorWrapper(monitor));
+      }
 		};
 		job.setUser(true);
 		job.schedule();
-	}
-
-	private static void changeImportance(final Set<Long> finding_ids,
-			final Importance to, final SLProgressMonitor monitor)
-			throws Exception {
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.setImportance(finding_ids, to, monitor);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
 	}
 
 	public static void asyncFilterFindingTypeFromScans(final long finding_id,
 			final String findingTypeName) {
-		final Job job = new DatabaseJob("Filtering out '" + findingTypeName
+		final Job job = new MutationJob("Filtering out '" + findingTypeName
 				+ "' from future scans") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					filterFindingTypeFromScans(finding_id,
-							new SLProgressMonitorWrapper(monitor));
-				} catch (Exception e) {
-					return SLStatus.createErrorStatus("Failed to filter out '"
-							+ findingTypeName + "' from future scans", e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
+      @Override
+      protected void updateFindings(IProgressMonitor monitor,
+          ClientFindingManager manager) throws Exception {
+        manager.filterFindingTypeFromScans(finding_id, 
+            new SLProgressMonitorWrapper(monitor));
+      }
 		};
 		job.setUser(true);
 		job.schedule();
 	}
-
-	private static void filterFindingTypeFromScans(final long finding_id,
-			final SLProgressMonitor monitor) throws Exception {
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			ClientFindingManager manager = ClientFindingManager.getInstance(c);
-			manager.filterFindingTypeFromScans(finding_id, monitor);
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
-	}
+	
+	public static void asyncFilterFindingTypeFromScans(final Collection<Long> finding_ids, 
+	                                                   final String findingTypeName) {
+	    final Job job = new MutationJob("Filtering out '" + findingTypeName
+	        + "' from future scans") {
+	      @Override
+	      protected void updateFindings(IProgressMonitor monitor,
+	          ClientFindingManager manager) throws Exception {
+	        SLProgressMonitor mon = new SLProgressMonitorWrapper(monitor);
+	        for(Long finding_id : finding_ids) {
+	          if (finding_id != null) {
+	            manager.filterFindingTypeFromScans(finding_id, mon);
+	          }
+	        }
+	      }
+	    };
+	    job.setUser(true);
+	    job.schedule();
+	  }
 }
