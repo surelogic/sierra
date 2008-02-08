@@ -8,11 +8,15 @@ body {
 h2 {
 	color:  #005395;
 	font-size: large;
+	margin-bottom: 1ex;
+	margin-top: 1ex;
 }
 
 h3 {
 	color:  #FF7010;
 	font-size: medium;
+	margin-bottom: 1ex;
+	margin-top: 1ex;
 }
 
 
