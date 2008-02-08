@@ -95,7 +95,7 @@ public class FindingListDialog extends PopupDialog {
 	 * @see org.eclipse.jface.text.IInformationControl#setLocation(org.eclipse.swt.graphics.Point)
 	 */
 	public void setLocation(Point location) {
-		if ((getPersistBounds() == false) || (getDialogSettings() == null)) {
+		if (!getPersistBounds() || getDialogSettings() == null) {
 			getShell().setLocation(location);
 		}
 	}

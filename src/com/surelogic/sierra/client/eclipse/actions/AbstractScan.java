@@ -47,7 +47,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     if (names.size() <= 5) {
       boolean first = true;
       for(String name : names) {
-        if (first == true) {
+        if (first) {
           first = false;
         } else {
           sb.append(", ");
