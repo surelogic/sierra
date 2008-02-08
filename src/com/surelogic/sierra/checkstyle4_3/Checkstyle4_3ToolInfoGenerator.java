@@ -63,6 +63,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 				t.mnemonic(mnemonic + "Check").info(message).category(category).build();
 				artifactType.setLength(0);
 			}
+			reader.close();
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not build FindBugs tool.", e);
 		} catch (IOException e) {
@@ -101,12 +102,12 @@ public class Checkstyle4_3ToolInfoGenerator {
 					} else {
 						if (fullLine.length() > 0) {
 							String val = fullLine.toString();
-							String mnemonic = val.substring(0, val.indexOf(" "));
-							String message = val.substring(val.indexOf(" ")).trim();
+							String mnemonic = val.substring(0, val.indexOf(' '));
+							String message = val.substring(val.indexOf(' ')).trim();
 							ArtifactType art = new ArtifactType();
 							art.setMnemonic(mnemonic + "Check");
 							art.setTool("Checkstyle");
-							mnemonic = mnemonic.substring(mnemonic.lastIndexOf(".") + 1);
+							mnemonic = mnemonic.substring(mnemonic.lastIndexOf('.') + 1);
 							FindingType type = new FindingType();
 							type.setId(mnemonic);
 							type.setName(mnemonic.replaceAll("([a-z])([A-Z])", "$1 $2"));
