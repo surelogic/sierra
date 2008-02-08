@@ -1,9 +1,6 @@
 package com.surelogic.sierra.tool;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.sierra.tool.AbstractTool;
-import com.surelogic.sierra.tool.AbstractToolInstance;
-import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 
 /**
