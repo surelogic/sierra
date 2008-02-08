@@ -38,6 +38,7 @@ public class HeaderPanel extends Composite {
 		
 		//Listen for users
 		ClientContext.addChangeListener(new HeaderAccountListener());
+		updateAccountPanel(ClientContext.getUser());
 	}
 
 	public void updateAccountPanel(UserAccount user) {
