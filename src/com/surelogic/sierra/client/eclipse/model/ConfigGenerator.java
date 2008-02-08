@@ -548,6 +548,7 @@ public final class ConfigGenerator {
 			IProject proj = root.getProject(projName);
 			setupToolForProject(cfg, handled, JavaCore.create(proj), false);
 			break;
+		default:
 		}
 	}
 
