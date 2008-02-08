@@ -27,7 +27,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 	private SierraServer f_server = null;
 
 	private final String label;
-	
+
 	public final SierraServer getServer() {
 		return f_server;
 	}
@@ -56,7 +56,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
 				1));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_GLOBE));
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -94,10 +94,10 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 	}
 
 	protected void addToEntryPanel(Composite entryPanel) {
-	  // Do nothing
+		// Do nothing
 	}
 
-  @Override
+	@Override
 	protected final Control createContents(Composite parent) {
 		final Control contents = super.createContents(parent);
 		setOKState();
@@ -107,18 +107,17 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 	private final void setOKState() {
 		getButton(IDialogConstants.OK_ID).setEnabled(f_server != null);
 	}
-	
+
 	public final boolean confirmNonnullServer() {
-	  if (f_server == null) {
-      final String msg = I18N.err(18);
-      final ExceptionDetailsDialog report = 
-        new ExceptionDetailsDialog(getParentShell(), 
-                                   "Sierra server must be non-null", null,
-                                   msg, new Exception(), Activator.getDefault());
-      report.open();
-      SLLogger.getLogger().log(Level.SEVERE, msg);
-      return false;
-    } 
-	  return true;
+		if (f_server == null) {
+			final String msg = I18N.err(18);
+			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
+					getParentShell(), "Sierra server must be non-null", null,
+					msg, new Exception(), Activator.getDefault());
+			report.open();
+			SLLogger.getLogger().log(Level.SEVERE, msg);
+			return false;
+		}
+		return true;
 	}
 }

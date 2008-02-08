@@ -79,7 +79,7 @@ public final class QualifierSelectionDialog extends Dialog {
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
 				1));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_GLOBE));
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));

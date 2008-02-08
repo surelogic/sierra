@@ -51,7 +51,7 @@ public final class MaximumFindingsShownDialog extends Dialog {
 		Label banner = new Label(panel, SWT.NONE);
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC_GLOBE));
+				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite msgPanel = new Composite(panel, SWT.NONE);
 		msgPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
