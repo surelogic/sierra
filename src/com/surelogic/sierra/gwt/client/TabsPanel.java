@@ -8,9 +8,10 @@ public class TabsPanel extends ContentComposite {
 
 	public TabsPanel() {
 		super();
+		tabBar.addTab("Home");
+
 		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(tabBar, DockPanel.NORTH);
-		tabBar.addTab("Home");
 	}
 
 	public void selectTab(String tabName) {
