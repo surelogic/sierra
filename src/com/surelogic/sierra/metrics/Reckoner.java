@@ -90,7 +90,7 @@ public class Reckoner {
 				outputFile = cmd.getOptionValue("outputFile");
 			}
 
-			if (targets.size() > 0) {
+			if (!targets.isEmpty()) {
 				Reckoner llocc = new Reckoner();
 				try {
 					llocc.getLogicalLOC(targets, outputFile);
