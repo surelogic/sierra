@@ -51,11 +51,15 @@ public final class ImportanceChart implements IDatabasePlot {
 						"Importance plot counts query: " + query);
 			}
 			final ResultSet rs = st.executeQuery(query);
-			while (rs.next()) {
-				final String value = rs.getString(1);
-				int count = rs.getInt(2);
-				counts.put(value, count);
-			}
+      try {
+        while (rs.next()) {
+          final String value = rs.getString(1);
+          int count = rs.getInt(2);
+          counts.put(value, count);
+        }
+      } finally {
+        rs.close();
+      }
 		} finally {
 			st.close();
 		}

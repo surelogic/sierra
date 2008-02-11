@@ -72,8 +72,12 @@ public class AuditDetail {
 							+ "   WHERE FINDING_ID = "
 							+ findingId
 							+ " ORDER BY A.DATE_TIME");
-			while (set.next()) {
-				audits.add(new AuditDetail(set));
+			try {
+			  while (set.next()) {
+			    audits.add(new AuditDetail(set));
+			  }
+			} finally {
+			  set.close();
 			}
 		} finally {
 			st.close();

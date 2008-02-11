@@ -31,11 +31,15 @@ public final class SynchOverview {
 		Statement oSt = conn.createStatement();
 		List<SynchOverview> overview = new ArrayList<SynchOverview>();
 		try {
-			ResultSet set = oSt
-					.executeQuery("SELECT P.NAME, S.DATE_TIME FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
-			while (set.next()) {
-				overview.add(new SynchOverview(set));
-			}
+		  ResultSet set = oSt
+		  .executeQuery("SELECT P.NAME, S.DATE_TIME FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
+		  try {
+		    while (set.next()) {
+		      overview.add(new SynchOverview(set));
+		    }
+		  } finally {
+		    set.close();
+		  }
 		} finally {
 			oSt.close();
 		}

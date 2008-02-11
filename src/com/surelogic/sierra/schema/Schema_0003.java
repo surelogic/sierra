@@ -21,11 +21,15 @@ public class Schema_0003 implements SchemaAction {
 						.executeQuery("SELECT C.NAME,FT.NAME"
 								+ "   FROM FINDING_TYPE FT, CATEGORY_FINDING_TYPE_RELTN CFR,FINDING_CATEGORY C"
 								+ "   WHERE CFR.FINDING_TYPE_ID = FT.ID AND C.ID = CFR.CATEGORY_ID");
-				while (set.next()) {
-					int idx = 1;
-					updateCategory.setString(idx++, set.getString(1));
-					updateCategory.setString(idx++, set.getString(2));
-					updateCategory.execute();
+				try {
+				  while (set.next()) {
+				    int idx = 1;
+				    updateCategory.setString(idx++, set.getString(1));
+				    updateCategory.setString(idx++, set.getString(2));
+				    updateCategory.execute();
+				  }
+				} finally {
+				  set.close();
 				}
 			} finally {
 				st.close();

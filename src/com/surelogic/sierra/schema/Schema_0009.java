@@ -26,21 +26,28 @@ public class Schema_0009 implements SchemaAction {
 		final DBType type = JDBCUtils.getDb(c);
 		if (JDBCUtils.isServer(c)) {
 			final Statement st = c.createStatement();
-			if (type == DBType.DERBY) {
-				st.execute("ALTER TABLE SETTINGS ADD COLUMN UUID CHAR(36)");
-			} else {
-				st.execute("ALTER TABLE SETTINGS ADD UUID CHAR(36)");
-			}
-			final ResultSet set = st.executeQuery("SELECT ID FROM SETTINGS");
-			final PreparedStatement updateSt = c
-					.prepareStatement("UPDATE SETTINGS SET UUID = ? WHERE ID = ?");
-			while (set.next()) {
-				updateSt.setString(1, UUID.randomUUID().toString());
-				updateSt.setLong(2, set.getLong(1));
-				updateSt.execute();
-			}
-			st
-					.execute("ALTER TABLE SETTINGS ADD CONSTRAINT SETTINGS_UUID_CN CHECK (UUID IS NOT NULL)");
+      try {
+        if (type == DBType.DERBY) {
+          st.execute("ALTER TABLE SETTINGS ADD COLUMN UUID CHAR(36)");
+        } else {
+          st.execute("ALTER TABLE SETTINGS ADD UUID CHAR(36)");
+        }
+        final ResultSet set = st.executeQuery("SELECT ID FROM SETTINGS");
+        try {
+          final PreparedStatement updateSt = c
+          .prepareStatement("UPDATE SETTINGS SET UUID = ? WHERE ID = ?");
+          while (set.next()) {
+            updateSt.setString(1, UUID.randomUUID().toString());
+            updateSt.setLong(2, set.getLong(1));
+            updateSt.execute();
+          }
+        } finally {
+          set.close();
+        }
+        st.execute("ALTER TABLE SETTINGS ADD CONSTRAINT SETTINGS_UUID_CN CHECK (UUID IS NOT NULL)");
+      } finally {
+        st.close();
+      }
 		} else {
 			Statement st = c.createStatement();
 			// NOTE: Dropping this column drops some views as well. We will need
@@ -236,16 +243,20 @@ public class Schema_0009 implements SchemaAction {
 		}
 		if (type == DBType.DERBY) {
 			Statement st = c.createStatement();
-			st
-					.execute("CREATE TABLE FILTER_SET_FILTERS ("
-							+ "FILTER_SET_ID   BIGINT  NOT NULL CONSTRAINT F_S_F_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE,"
-							+ "FINDING_TYPE_ID BIGINT  NOT NULL CONSTRAINT F_S_F_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
-							+ "DELTA           INTEGER,"
-							+ "IMPORTANCE      INTEGER,"
-							+ " FILTERED       CHAR(1) CONSTRAINT F_S_F_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
-							+ ")");
+			try {
+			  st.execute("CREATE TABLE FILTER_SET_FILTERS ("
+			      + "FILTER_SET_ID   BIGINT  NOT NULL CONSTRAINT F_S_F_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE,"
+			      + "FINDING_TYPE_ID BIGINT  NOT NULL CONSTRAINT F_S_F_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
+			      + "DELTA           INTEGER,"
+			      + "IMPORTANCE      INTEGER,"
+			      + " FILTERED       CHAR(1) CONSTRAINT F_S_F_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
+			      + ")");
+			} finally {
+			  st.close();
+			}
 		} else {
 			Statement st = c.createStatement();
+      try {
 			st
 					.execute("CREATE TABLE FILTER_SET_FILTERS ("
 							+ "FILTER_SET_ID   NUMBER  NOT NULL CONSTRAINT F_S_F_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE,"
@@ -254,11 +265,18 @@ public class Schema_0009 implements SchemaAction {
 							+ "IMPORTANCE      INTEGER,"
 							+ " FILTERED       CHAR(1) CONSTRAINT F_S_F_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
 							+ ")");
+      } finally {
+        st.close();
+      }
 		}
 		Statement st = c.createStatement();
+    try {
 		st
 				.execute("CREATE INDEX S_F_FILTERED_INDEX ON SETTING_FILTERS (FILTERED)");
 		st
 				.execute("CREATE INDEX F_S_FILTERED_INDEX ON FILTER_SET_FILTERS (FILTERED)");
+    } finally {
+      st.close();
+    }
 	}
 }

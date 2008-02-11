@@ -70,9 +70,13 @@ public final class ProductSeriesQueryBuilder {
 										+ q.getId()
 										+ " AND S.ID = QSR.SCAN_ID AND S.PROJECT_ID = "
 										+ p.getId());
-						scanIds = new ArrayList<Long>();
-						while (set.next()) {
-							scanIds.add(set.getLong(1));
+						try {
+						  scanIds = new ArrayList<Long>();
+						  while (set.next()) {
+						    scanIds.add(set.getLong(1));
+						  }
+						} finally {
+						  set.close();
 						}
 					} finally {
 						st.close();

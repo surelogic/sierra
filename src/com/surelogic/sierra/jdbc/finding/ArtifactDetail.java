@@ -86,7 +86,12 @@ public class ArtifactDetail {
 								+ "   WHERE ASLR.ARTIFACT_ID = "
 								+ artifactId
 								+ " AND SL.ID = ASLR.SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-				return new ArtifactDetail(artSet, sourceSet);
+        try {
+          return new ArtifactDetail(artSet, sourceSet);
+        } finally {
+          artSet.close();
+          sourceSet.close();
+        }
 			} finally {
 				sourceSt.close();
 			}

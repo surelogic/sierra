@@ -48,10 +48,14 @@ public class Server {
 		final Statement st = conn.createStatement();
 		try {
 			final ResultSet set = st.executeQuery("SELECT N FROM VERSION");
-			if (set.next()) {
-				return Integer.toString(set.getInt(1));
-			} else {
-				return "None";
+			try {
+			  if (set.next()) {
+			    return Integer.toString(set.getInt(1));
+			  } else {
+			    return "None";
+			  }
+			} finally {
+			  set.close();
 			}
 		} catch (SQLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -129,11 +133,15 @@ public class Server {
 			try {
 				final ResultSet set = st
 						.executeQuery("SELECT EMAIL FROM NOTIFICATION");
-				if (set.next()) {
-					return set.getString(1);
-				} else {
-					return null;
-				}
+        try {
+          if (set.next()) {
+            return set.getString(1);
+          } else {
+            return null;
+          }
+        } finally {
+          set.close();
+        }
 			} finally {
 				st.close();
 			}
