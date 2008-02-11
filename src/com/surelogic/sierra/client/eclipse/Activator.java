@@ -21,7 +21,6 @@ import org.osgi.framework.BundleContext;
 import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
-import com.surelogic.common.eclipse.update.VersionUtil;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
@@ -85,9 +84,6 @@ public final class Activator extends AbstractUIPlugin {
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
-
-			VersionUtil.popupIfNewerFeatureExists("Sierra",
-					"com.surelogic.sierra.feature");
 		} catch (FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to

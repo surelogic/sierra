@@ -18,7 +18,6 @@ import org.eclipse.ui.part.ViewPart;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.update.VersionUtil;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
@@ -30,8 +29,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 	@Override
 	public void createPartControl(final Composite parent) {
-	  VersionUtil.popupIfNewerFeatureExists("Sierra", "com.surelogic.sierra.feature");
-	  
+
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
 		final Label noFindingsPage = new Label(pages, SWT.WRAP);
