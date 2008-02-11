@@ -113,8 +113,8 @@ public class Server {
 			return set.getLong(1);
 		} finally {
 			set.close();
+      st.close();
 		}
-
 	}
 
 	/**
@@ -167,15 +167,16 @@ public class Server {
 	 * @throws SQLException
 	 */
 	public String getUid() throws SQLException {
-		ResultSet set = conn.createStatement().executeQuery(
+    Statement s = conn.createStatement();
+		ResultSet set = s.executeQuery(
 				"SELECT UUID FROM SERVER");
 		try {
 			set.next();
 			return set.getString(1);
 		} finally {
 			set.close();
+      s.close();
 		}
-
 	}
 
 }
