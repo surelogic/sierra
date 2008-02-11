@@ -12,10 +12,10 @@ public abstract class AbstractToolInstance implements IToolInstance {
   private final ITool tool;
   protected final ArtifactGenerator generator;  
   protected final SLProgressMonitor monitor;
-  private List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
-  private List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
-  private List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
-  private List<URI> paths = new ArrayList<URI>();
+  private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
+  private final List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
+  private final List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
+  private final List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
   private final boolean closeWhenDone;
   

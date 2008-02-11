@@ -30,12 +30,12 @@ public class MultiTool extends AbstractTool {
   }
   
   private static class Instance extends MultiTool implements IToolInstance {
-    private List<IToolInstance> instances = new ArrayList<IToolInstance>();
+    private final List<IToolInstance> instances = new ArrayList<IToolInstance>();
     private IToolInstance first = null;
 
-    private ArtifactGenerator generator;
-    private SLProgressMonitor monitor;
-    private boolean closeWhenDone;
+    private final ArtifactGenerator generator;
+    private final SLProgressMonitor monitor;
+    private final boolean closeWhenDone;
     
     Instance(MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon, boolean close) {
       for(ITool tool : mt.tools) {

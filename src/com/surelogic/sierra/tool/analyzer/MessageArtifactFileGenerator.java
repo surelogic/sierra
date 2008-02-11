@@ -52,8 +52,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 
 	private FileOutputStream artOut;
 
-	private File parsedFile;
-	private Config config;
+	private final File parsedFile;
+	private final Config config;
 	private File artifactsHolder;
 	private File metricsFile;
 	private File errorsHolder;
