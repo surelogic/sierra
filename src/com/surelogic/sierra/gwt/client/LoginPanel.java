@@ -82,11 +82,25 @@ public class LoginPanel extends ContentComposite {
 			}
 		});
 
-		final LoginKeyboardListener keyboardListener = new LoginKeyboardListener();
+		final KeyboardListenerAdapter keyboardListener = new KeyboardListenerAdapter() {
+			public void onKeyUp(final Widget sender, final char keyCode,
+					final int modifiers) {
+				updateLoginEnabled();
+				if (keyCode == KEY_ENTER) {
+					if (login.isEnabled()) {
+						login.click();
+					}
+				}
+			}
+		};
 		username.addKeyboardListener(keyboardListener);
 		password.addKeyboardListener(keyboardListener);
 
-		final LoginChangeListener loginChangeListener = new LoginChangeListener();
+		final ChangeListener loginChangeListener = new ChangeListener() {
+			public void onChange(final Widget sender) {
+				updateLoginEnabled();
+			}
+		};
 		username.addChangeListener(loginChangeListener);
 		password.addChangeListener(loginChangeListener);
 
@@ -164,21 +178,4 @@ public class LoginPanel extends ContentComposite {
 		login.setEnabled(!username.getText().trim().equals(""));
 	}
 
-	private class LoginKeyboardListener extends KeyboardListenerAdapter {
-		public void onKeyUp(final Widget sender, final char keyCode,
-				final int modifiers) {
-			updateLoginEnabled();
-			if (keyCode == KEY_ENTER) {
-				if (login.isEnabled()) {
-					login.click();
-				}
-			}
-		}
-	}
-
-	private class LoginChangeListener implements ChangeListener {
-		public void onChange(final Widget sender) {
-			updateLoginEnabled();
-		}
-	}
 }
