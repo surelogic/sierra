@@ -29,53 +29,51 @@ public class PrefsPanel extends ContentComposite {
 		vp.add(pass = new PasswordTextBox());
 		vp.add(new HTML("<h3>Enter your new password again</h3>"));
 		vp.add(passAgain = new PasswordTextBox());
-		vp.add(new Button("Change Password", new PasswordListener()));
+		vp.add(new Button("Change Password", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				final String oldPassText = oldPass.getText();
+				final String passText = pass.getText();
+				final String passAgainText = passAgain.getText();
+				if (!isFilled(oldPassText) || !isFilled(passText)
+						|| !isFilled(passAgainText)) {
+					message
+							.setHTML("<span class=\"error\">Please fill out all of the password fields.</span>");
+				} else if (passText.equals(passAgainText)) {
+					ServiceHelper.getManagePrefsService().changePassword(
+							oldPassText, passText, new AsyncCallback() {
+
+								public void onFailure(Throwable caught) {
+									// TODO handle failure
+								}
+
+								public void onSuccess(Object result) {
+									Boolean success = (Boolean) result;
+									if (success.booleanValue()) {
+										message
+												.setHTML("<span class=\"success\">Your password was changed.</span>");
+										oldPass.setText("");
+										pass.setText("");
+										passAgain.setText("");
+									} else {
+										// TODO This should not happen. Consider
+										// handling this
+										// differently.
+										message
+												.setHTML("<span class=\"error\">Your password could not be changed.  Please make sure that you have entered your old password correctly.</span>");
+									}
+								}
+
+							});
+				} else {
+					message
+							.setHTML("<span class=\"error\">Your password fields do not match.  Please enter your new password twice.</span>");
+				}
+			}
+		}));
+
 		vp.add(message = new HTML());
 		rootPanel.add(vp, DockPanel.CENTER);
-	}
-
-	private class PasswordListener implements ClickListener {
-
-		public void onClick(Widget sender) {
-			final String oldPassText = oldPass.getText();
-			final String passText = pass.getText();
-			final String passAgainText = passAgain.getText();
-			if (!isFilled(oldPassText) || !isFilled(passText)
-					|| !isFilled(passAgainText)) {
-				message
-						.setHTML("<span class=\"error\">Please fill out all of the password fields.</span>");
-			} else if (passText.equals(passAgainText)) {
-				ServiceHelper.getManagePrefsService().changePassword(
-						oldPassText, passText, new PasswordCallback());
-			} else {
-				message
-						.setHTML("<span class=\"error\">Your password fields do not match.  Please enter your new password twice.</span>");
-			}
-		}
-	}
-
-	private class PasswordCallback implements AsyncCallback {
-
-		public void onFailure(Throwable caught) {
-			// TODO handle failure
-		}
-
-		public void onSuccess(Object result) {
-			Boolean success = (Boolean) result;
-			if (success.booleanValue()) {
-				message
-						.setHTML("<span class=\"success\">Your password was changed.</span>");
-				oldPass.setText("");
-				pass.setText("");
-				passAgain.setText("");
-			} else {
-				// TODO This should not happen. Consider handling this
-				// differently.
-				message
-						.setHTML("<span class=\"error\">Your password could not be changed.  Please make sure that you have entered your old password correctly.</span>");
-			}
-		}
-
 	}
 
 	private static boolean isFilled(String str) {
