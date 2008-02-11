@@ -34,7 +34,7 @@ public class Config {
 	private File toolsDirectory = null;
 	
 	// Map from plugin id to their locations
-	private Map<String,String> pluginDirs = new HashMap<String,String>();
+	private final Map<String,String> pluginDirs = new HashMap<String,String>();
 
 	// directory to store tool output in
 	private File destDirectory = null;

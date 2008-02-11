@@ -180,7 +180,7 @@ public class Artifact {
         private ArtifactType artifactType;
         private Priority priority;
         private Severity severity;
-        private List<SourceLocation> sources = new ArrayList<SourceLocation>();
+        private final List<SourceLocation> sources = new ArrayList<SourceLocation>();
         private String message;
         private SourceLocation primarySourceLocation;
 
