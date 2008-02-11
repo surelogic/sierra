@@ -137,40 +137,8 @@ public class FindingManager {
 			int counter = 0;
 			try {
 				while (result.next()) {
-					ArtifactResult art = new ArtifactResult();
-					int idx = 1;
-					art.id = result.getLong(idx++);
-					art.p = Priority.values()[result.getInt(idx++)];
-					art.s = Severity.values()[result.getInt(idx++)];
-					art.message = result.getString(idx++);
-					art.m = factory.newMatch();
-					// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
-					MatchRecord.PK pk = new MatchRecord.PK();
-					pk.setProjectId(result.getLong(idx++));
-					pk.setHash(result.getLong(idx++));
-					pk.setClassName(result.getString(idx++));
-					pk.setPackageName(result.getString(idx++));
-					pk.setFindingTypeId(result.getLong(idx++));
-					art.m.setId(pk);
-					Long findingId;
-					if (!art.m.select()) {
-						// We don't have a match, so we need to produce an
-						// entirely
-						// new finding
-						MatchRecord m = art.m;
-						Importance importance = filter.calculateImportance(
-								art.m.getId().getFindingTypeId(), art.p, art.s);
-						FindingRecord f = factory.newFinding();
-						f.setProjectId(projectId);
-						f.setImportance(importance);
-						f.setSummary(art.message);
-						f.insert();
-						m.setFindingId(f.getId());
-						m.insert();
-						findingId = f.getId();
-					} else {
-						findingId = art.m.getFindingId();
-					}
+					ArtifactResult art = createArtifactResult(result);     
+					Long findingId = getFindingId(filter, projectId, art);
 					LongRelationRecord afr = factory.newArtifactFinding();
 					afr.setId(new RelationRecord.PK<Long, Long>(art.id,
 							findingId));
@@ -200,6 +168,48 @@ public class FindingManager {
 		}
 	}
 
+  protected Long getFindingId(FindingFilter filter, Long projectId, ArtifactResult art) throws SQLException {
+    Long findingId;
+    if (!art.m.select()) {
+    	// We don't have a match, so we need to produce an
+    	// entirely
+    	// new finding
+    	MatchRecord m = art.m;
+    	Importance importance = filter.calculateImportance(
+    			art.m.getId().getFindingTypeId(), art.p, art.s);
+    	FindingRecord f = factory.newFinding();
+    	f.setProjectId(projectId);
+    	f.setImportance(importance);
+    	f.setSummary(art.message);
+    	f.insert();
+    	m.setFindingId(f.getId());
+    	m.insert();
+    	findingId = f.getId();
+    } else {
+    	findingId = art.m.getFindingId();
+    }
+    return findingId;
+  }
+
+  protected ArtifactResult createArtifactResult(ResultSet result) throws SQLException {
+    ArtifactResult art = new ArtifactResult();
+    int idx = 1;
+    art.id = result.getLong(idx++);
+    art.p = Priority.values()[result.getInt(idx++)];
+    art.s = Severity.values()[result.getInt(idx++)];
+    art.message = result.getString(idx++);
+    art.m = factory.newMatch();
+    // R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
+    MatchRecord.PK pk = new MatchRecord.PK();
+    pk.setProjectId(result.getLong(idx++));
+    pk.setHash(result.getLong(idx++));
+    pk.setClassName(result.getString(idx++));
+    pk.setPackageName(result.getString(idx++));
+    pk.setFindingTypeId(result.getLong(idx++));
+    art.m.setId(pk);   
+    return art;
+  }
+  
 	/**
 	 * Delete all findings for the given project.
 	 * 

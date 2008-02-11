@@ -30,8 +30,6 @@ import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
-import com.surelogic.sierra.tool.message.Priority;
-import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.SyncTrailRequest;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
@@ -450,40 +448,8 @@ public final class ClientFindingManager extends FindingManager {
 							.executeQuery();
 					try {
 						while (result.next()) {
-							ArtifactResult art = new ArtifactResult();
-							idx = 1;
-							art.id = result.getLong(idx++);
-							art.p = Priority.values()[result.getInt(idx++)];
-							art.s = Severity.values()[result.getInt(idx++)];
-							art.message = result.getString(idx++);
-							art.m = factory.newMatch();
-							MatchRecord.PK pk = new MatchRecord.PK();
-							pk.setProjectId(result.getLong(idx++));
-							pk.setHash(result.getLong(idx++));
-							pk.setClassName(result.getString(idx++));
-							pk.setPackageName(result.getString(idx++));
-							pk.setFindingTypeId(result.getLong(idx++));
-							art.m.setId(pk);
-							Long findingId;
-							if (!art.m.select()) {
-								// We don't have a match, so we need to produce
-								// an entirely new finding.
-								MatchRecord m = art.m;
-								Importance importance = filter
-										.calculateImportance(art.m.getId()
-												.getFindingTypeId(), art.p,
-												art.s);
-								FindingRecord f = factory.newFinding();
-								f.setProjectId(projectId);
-								f.setImportance(importance);
-								f.setSummary(art.message);
-								f.insert();
-								m.setFindingId(f.getId());
-								m.insert();
-								findingId = f.getId();
-							} else {
-								findingId = art.m.getFindingId();
-							}
+              ArtifactResult art = createArtifactResult(result);    
+              Long findingId = getFindingId(filter, projectId, art);
 							LongRelationRecord afr = factory
 									.newArtifactFinding();
 							afr.setId(new RelationRecord.PK<Long, Long>(art.id,
