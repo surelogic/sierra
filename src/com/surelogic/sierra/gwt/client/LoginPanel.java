@@ -40,21 +40,24 @@ public class LoginPanel extends ContentComposite {
 
 	public LoginPanel() {
 		super();
-		final DockPanel rootPanel = getRootPanel();
-		rootPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
 
+		loginPanel.addStyleName("login-panel");
 		loginPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 		loginPanel.add(message);
+		message.addStyleName("login-message");
 		loginPanel.add(errorMessage);
+		errorMessage.addStyleName("login-errormessage");
 		loginPanel.add(userPassGrid);
-		rootPanel.add(loginPanel, DockPanel.CENTER);
 
 		userPassGrid.setWidget(0, 0, usernameLabel);
+		usernameLabel.addStyleName("login-label");
 		userPassGrid.setWidget(0, 1, username);
+		username.addStyleName("login-textbox");
 
 		userPassGrid.setWidget(1, 0, passwordLabel);
+		passwordLabel.addStyleName("login-label");
 		userPassGrid.setWidget(1, 1, password);
+		password.addStyleName("login-textbox");
 
 		actionPanel.setWidth("100%");
 		actionPanel.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
@@ -63,6 +66,7 @@ public class LoginPanel extends ContentComposite {
 		grouper.add(login);
 		actionPanel.add(grouper);
 		login.setEnabled(false);
+		login.addStyleName("login-button");
 		userPassGrid.setWidget(2, 1, actionPanel);
 
 		final HTMLTable.CellFormatter cellFormatter = userPassGrid
@@ -110,15 +114,11 @@ public class LoginPanel extends ContentComposite {
 			}
 		});
 
+		final DockPanel rootPanel = getRootPanel();
 		rootPanel.addStyleName("login-root");
-		loginPanel.addStyleName("login-panel");
-		message.addStyleName("login-message");
-		errorMessage.addStyleName("login-errormessage");
-		username.addStyleName("login-textbox");
-		password.addStyleName("login-textbox");
-		usernameLabel.addStyleName("login-label");
-		passwordLabel.addStyleName("login-label");
-		login.addStyleName("login-button");
+		rootPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
+		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
+		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
 	public void login() {
