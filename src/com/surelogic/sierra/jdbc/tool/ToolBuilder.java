@@ -118,7 +118,7 @@ public class ToolBuilder {
 			return s;
 		}
 
-		private ArtifactTypeBuilder(long toolId) {
+		ArtifactTypeBuilder(long toolId) {
 			this.toolId = toolId;
 		}
 
