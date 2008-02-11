@@ -46,6 +46,22 @@ public final class SierraServer {
 		return f_secure;
 	}
 
+	/**
+	 * Is this server the current focus of its model.
+	 * 
+	 * @return <code>true</code> if it is the focus, <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see SierraServerManager#getFocus()
+	 */
+	public boolean isFocus() {
+		return f_manager.getFocus() == this;
+	}
+
+	public void setFocus() {
+		f_manager.setFocus(this);
+	}
+
 	public String getProtocol() {
 		return f_secure ? "https" : "http";
 	}

@@ -41,6 +41,7 @@ public final class SierraServerPersistence {
 	private static final String SERVER = "server";
 	private static final String USER = "user";
 	private static final String VERSION = "version";
+	private static final String IS_FOCUS = "is-focus";
 
 	// fields needed for caching the password
 	private static final String AUTH_SCHEME = "";
@@ -125,6 +126,9 @@ public final class SierraServerPersistence {
 		StringBuilder b = new StringBuilder();
 		b.append("  <").append(SERVER);
 		Entities.addAttribute(LABEL, server.getLabel(), b);
+		if (save && server.isFocus()) {
+			Entities.addAttribute(IS_FOCUS, "yes", b);
+		}
 		Entities.addAttribute(HOST, server.getHost(), b);
 		Entities.addAttribute(PROTOCOL, server.getProtocol(), b);
 		Entities.addAttribute(PORT, server.getPort(), b);
@@ -203,6 +207,7 @@ public final class SierraServerPersistence {
 				Attributes attributes) throws SAXException {
 			if (name.equals(SERVER)) {
 				final String label = attributes.getValue(LABEL);
+				final boolean isFocus = attributes.getValue(IS_FOCUS) != null;
 				final String host = attributes.getValue(HOST);
 				final String protocol = attributes.getValue(PROTOCOL);
 				final String portString = attributes.getValue(PORT);
@@ -234,6 +239,10 @@ public final class SierraServerPersistence {
 					} else {
 						f_server.setSavePassword(false);
 					}
+				}
+
+				if (isFocus) {
+					f_server.setFocus();
 				}
 
 			} else if (name.equals(CONNECTED_PROJECT)) {
