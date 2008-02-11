@@ -16,7 +16,7 @@ public final class QualifierRecordFactory {
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private UpdateBaseMapper qualifierMapper;
+	private final UpdateBaseMapper qualifierMapper;
 
 	private QualifierRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;

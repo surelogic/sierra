@@ -7,8 +7,8 @@ public class FilterSetDetail {
 
 	private String uid;
 	private String name;
-	private List<ParentDetail> parents = new ArrayList<ParentDetail>();
-	private List<FilterEntryDetail> filterEntries = new ArrayList<FilterEntryDetail>();
+	private final List<ParentDetail> parents = new ArrayList<ParentDetail>();
+	private final List<FilterEntryDetail> filterEntries = new ArrayList<FilterEntryDetail>();
 
 	public String getUid() {
 		return uid;

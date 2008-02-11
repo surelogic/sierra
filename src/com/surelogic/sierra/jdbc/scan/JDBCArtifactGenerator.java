@@ -232,7 +232,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private class JDBCArtifactBuilder implements ArtifactBuilder {
 
 		private ArtifactRecord artifact;
-		private long scanId;
+		private final long scanId;
 		private final List<SourceRecord> aSources;
 		private SourceRecord pSource;
 

@@ -35,7 +35,7 @@ public class AbstractPMDToolInfoGenerator extends DefaultHandler {
   // Indicates that we are currently parsing the description attribute.
   private boolean isInfo;
 
-  private StringBuilder info = new StringBuilder();
+  private final StringBuilder info = new StringBuilder();
 
   protected AbstractPMDToolInfoGenerator(Connection conn, String version) {
     try {

@@ -25,13 +25,13 @@ class FindBugsMessageParser extends DefaultHandler {
 
 	private static final String INFO = "Details";
 
-	private Map<String, String> infoMap = new HashMap<String, String>();
+	private final Map<String, String> infoMap = new HashMap<String, String>();
 
 	private String name;
 
 	private boolean isInfo;
 
-	private StringBuilder info = new StringBuilder();
+	private final StringBuilder info = new StringBuilder();
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {

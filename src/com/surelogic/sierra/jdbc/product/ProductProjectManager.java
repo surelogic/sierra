@@ -19,7 +19,7 @@ public final class ProductProjectManager {
 	private static final String GET_PROJECT_NAMES = "SELECT PR.NAME FROM PRODUCT PD, PRODUCT_PROJECT_RELTN PPR, PROJECT PR WHERE PD.NAME = ? AND PPR.PRODUCT_ID = PD.ID AND PR.NAME = PPR.PROJECT_NAME";
 	private final PreparedStatement getProjectNames;
 
-	private ProductProjectRecordFactory pprFactory;
+	private final ProductProjectRecordFactory pprFactory;
 	private final ProductRecordFactory productFactory;
 
 	private ProductProjectManager(Connection conn) throws SQLException {

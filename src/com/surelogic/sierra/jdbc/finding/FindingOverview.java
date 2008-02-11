@@ -23,7 +23,7 @@ public class FindingOverview {
 
 	private static View view = new View();
 
-	private long findingId;
+	private final long findingId;
 
 	private final String project;
 	private final String packageName;
