@@ -20,6 +20,11 @@
             id="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
             name="Scan Filter"
             category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
+       <page
+            class="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
+            id="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
+            name="Scan Data"
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
    </extension>
    
    <extension

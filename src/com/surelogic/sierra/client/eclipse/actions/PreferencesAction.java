@@ -11,6 +11,7 @@ public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 	public static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";
 	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
 	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
+	public static final String DATA_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage";
 
 	public void dispose() {
 		// Nothing to do
@@ -22,7 +23,8 @@ public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 
 	public void run(IAction action) {
 		PreferencesUtil.createPreferenceDialogOn(null, PREF_ID,
-				new String[] { PREF_ID, TOOLS_ID, FILTER_ID }, null).open();
+				new String[] { PREF_ID, TOOLS_ID, FILTER_ID, DATA_ID }, null)
+				.open();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

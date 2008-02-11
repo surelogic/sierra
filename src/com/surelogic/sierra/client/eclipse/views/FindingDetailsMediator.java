@@ -150,16 +150,6 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 	}
 
-	/**
-	 * This listener helps the hyperlinks control the three tabs.
-	 */
-	private final Listener f_tabLinkListener = new Listener() {
-		public void handleEvent(Event event) {
-			final String target = event.text;
-			showTab(target);
-		}
-	};
-
 	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
 			Composite findingPage, ToolItem summaryIcon, Text summaryText,
 			TabFolder folder, TabItem synopsisTab, SashForm synopsisSash,
@@ -400,7 +390,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 				f_importanceRadioPopupMenu.setVisible(true);
 			}
 		});
-		f_findingSynopsis.addListener(SWT.Selection, f_tabLinkListener);
+		f_findingSynopsis.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final String target = event.text;
+				showTab(target);
+			}
+		});
 
 		final Listener tel = new TextEditedListener(
 				new TextEditedListener.TextEditedAction() {
