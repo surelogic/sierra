@@ -144,17 +144,19 @@ public class HashGenerator {
 		List<String> cachedLines = new ArrayList<String>();
 		BufferedReader in = new BufferedReader(new FileReader(fileName));
 		try {
+		  final StringBuilder cachedLine = new StringBuilder();
 			String inLine = in.readLine();
 			while (inLine != null) {
 				String[] lineElements = inLine.split("\\s+");
 				// TODO replace split with replaceAll?
-				StringBuilder cachedLine = new StringBuilder();
+				
 				for (String element : lineElements) {
 					cachedLine.append(element);
 				}
 				cachedLines.add(cachedLine.toString());
 
 				inLine = in.readLine();
+				cachedLine.setLength(0);
 			}
 		} finally {
 			in.close();
