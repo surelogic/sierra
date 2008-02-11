@@ -41,20 +41,23 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
           Map<IJavaProject,Date> times = new HashMap<IJavaProject,Date>(projects.size()); 
           List<IJavaProject> noScanYet = null;
           List<String> projectNames = null;
-          
-          for(IJavaProject p : projects) {
-            ScanInfo info = ScanManager.getInstance(conn).getLatestScanInfo(p.getElementName());
-            if (info != null) {
-              times.put(p, info.getScanTime());
-            } else {
-              // No scan on the project yet
-              if (noScanYet == null) {
-                noScanYet = new ArrayList<IJavaProject>(); 
-                projectNames = new ArrayList<String>();
-              }
-              noScanYet.add(p);
-              projectNames.add(p.getElementName());
-            }            
+          try {
+            for(IJavaProject p : projects) {
+              ScanInfo info = ScanManager.getInstance(conn).getLatestScanInfo(p.getElementName());
+              if (info != null) {
+                times.put(p, info.getScanTime());
+              } else {
+                // No scan on the project yet
+                if (noScanYet == null) {
+                  noScanYet = new ArrayList<IJavaProject>(); 
+                  projectNames = new ArrayList<String>();
+                }
+                noScanYet.add(p);
+                projectNames.add(p.getElementName());
+              }            
+            }
+          } finally {
+            conn.close();
           }
           monitor.worked(1);
           

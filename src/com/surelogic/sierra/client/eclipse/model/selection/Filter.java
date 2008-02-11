@@ -192,11 +192,15 @@ public abstract class Filter {
 									+ " filter counts query: " + query);
 				}
 				final ResultSet rs = st.executeQuery(query);
-				while (rs.next()) {
-					final String value = rs.getString(1);
-					int count = rs.getInt(2);
-					f_counts.put(value, count);
-					countTotal += count;
+				try {
+				  while (rs.next()) {
+				    final String value = rs.getString(1);
+				    int count = rs.getInt(2);
+				    f_counts.put(value, count);
+				    countTotal += count;
+				  }
+				} finally {
+				  rs.close();
 				}
 			} finally {
 				st.close();

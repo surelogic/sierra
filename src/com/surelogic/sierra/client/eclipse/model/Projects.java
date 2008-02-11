@@ -119,9 +119,13 @@ public final class Projects extends AbstractDatabaseObserver {
 				final Statement st = c.createStatement();
 				try {
 					final ResultSet rs = st.executeQuery(QUERY);
-					while (rs.next()) {
-						projectNames.add(rs.getString(1));
-					}
+          try {
+            while (rs.next()) {
+              projectNames.add(rs.getString(1));
+            }
+          } finally {
+            rs.close();
+          }
 				} catch (SQLException e) {
 					SLLogger
 							.getLogger()

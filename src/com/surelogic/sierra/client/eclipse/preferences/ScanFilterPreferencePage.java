@@ -291,16 +291,20 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				try {
 					final String query = QUERY;
 					final ResultSet rs = st.executeQuery(query);
-					while (rs.next()) {
-						FindingTypeRow row = new FindingTypeRow();
-						row.categoryName = rs.getString(1);
-						row.findingTypeName = rs.getString(2);
-						row.findingTypeDescription = rs.getString(3);
-						row.findingTypeUUID = rs.getString(4);
-						f_artifactList.add(row);
-					}
-					f_filterList.addAll(SettingsManager.getInstance(c)
-							.getGlobalSettingsUUID());
+          try {
+            while (rs.next()) {
+              FindingTypeRow row = new FindingTypeRow();
+              row.categoryName = rs.getString(1);
+              row.findingTypeName = rs.getString(2);
+              row.findingTypeDescription = rs.getString(3);
+              row.findingTypeUUID = rs.getString(4);
+              f_artifactList.add(row);
+            }
+            f_filterList.addAll(SettingsManager.getInstance(c)
+                .getGlobalSettingsUUID());
+          } finally {
+            rs.close();
+          }
 				} finally {
 					st.close();
 				}

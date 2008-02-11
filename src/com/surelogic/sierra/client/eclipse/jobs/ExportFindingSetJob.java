@@ -48,21 +48,25 @@ public abstract class ExportFindingSetJob extends DatabaseJob {
 								"Export list of findings query: " + query);
 					}
 					final ResultSet rs = st.executeQuery(query);
-					while (rs.next()) {
-						String summary = rs.getString(1);
-						Importance importance = Importance.valueOf(rs
-								.getString(2).toUpperCase());
-						long findingId = rs.getLong(3);
-						String projectName = rs.getString(4);
-						String packageName = rs.getString(5);
-						String typeName = rs.getString(6);
-						int lineNumber = rs.getInt(7);
-						String findingTypeName = rs.getString(8);
-						String categoryName = rs.getString(9);
-						String toolName = rs.getString(10);
-						outputFinding(summary, importance, findingId,
-								projectName, packageName, typeName, lineNumber,
-								findingTypeName, categoryName, toolName);
+					try {
+					  while (rs.next()) {
+					    String summary = rs.getString(1);
+					    Importance importance = Importance.valueOf(rs
+					        .getString(2).toUpperCase());
+					    long findingId = rs.getLong(3);
+					    String projectName = rs.getString(4);
+					    String packageName = rs.getString(5);
+					    String typeName = rs.getString(6);
+					    int lineNumber = rs.getInt(7);
+					    String findingTypeName = rs.getString(8);
+					    String categoryName = rs.getString(9);
+					    String toolName = rs.getString(10);
+					    outputFinding(summary, importance, findingId,
+					        projectName, packageName, typeName, lineNumber,
+					        findingTypeName, categoryName, toolName);
+					  }
+					} finally {
+					  rs.close();
 					}
 				} finally {
 					st.close();
