@@ -50,9 +50,11 @@ public class EmptyProgressMonitor implements SLProgressMonitor {
 	}
 
   public void failed(String msg) {
+    // Do nothing
   }
 	
   public void failed(Throwable t) {
+    // Do nothing
   }
 
   public Throwable getFailureTrace() {
@@ -60,17 +62,14 @@ public class EmptyProgressMonitor implements SLProgressMonitor {
   }
 
   public void error(String msg) {
-    // TODO Auto-generated method stub
-    
+    // Do nothing
   }
 
   public void error(String msg, Throwable t) {
-    // TODO Auto-generated method stub
-    
+    // Do nothing
   }
 
   public void failed(String msg, Throwable t) {
-    // TODO Auto-generated method stub
-    
+    // Do nothing
   }
 }

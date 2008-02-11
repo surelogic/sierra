@@ -8,7 +8,7 @@ import com.surelogic.common.jdbc.SchemaAction;
 public class Server_0002 implements SchemaAction {
 
 	public void run(Connection c) throws SQLException {
-		
+    // Nothing to do
 	}
 
 }
