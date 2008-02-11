@@ -35,9 +35,14 @@ public class HeaderPanel extends Composite {
 
 		rootPanel.add(userPanel, DockPanel.EAST);
 		rootPanel.setCellHorizontalAlignment(userPanel, DockPanel.ALIGN_RIGHT);
-		
-		//Listen for users
-		ClientContext.addChangeListener(new HeaderAccountListener());
+
+		// Listen for users
+		ClientContext.addChangeListener(new UserAccountListener() {
+
+			public void onChange(UserAccount account) {
+				updateAccountPanel(account);
+			}
+		});
 		updateAccountPanel(ClientContext.getUser());
 	}
 
@@ -46,10 +51,35 @@ public class HeaderPanel extends Composite {
 			userPanel.add(createUserLabel("Logged in as " + user.getUserName(),
 					null));
 			userPanel.add(createUserLabel("|", null));
-			userPanel.add(createUserLabel("Preferences",
-					new PreferencesListener()));
+			userPanel.add(createUserLabel("Preferences", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					ContentPanel.getInstance().showPreferences();
+				}
+			}));
+
 			userPanel.add(createUserLabel("|", null));
-			userPanel.add(createUserLabel("Log out", new LogoutListener()));
+			userPanel.add(createUserLabel("Log out", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					final SessionServiceAsync svc = ServiceHelper
+							.getSessionService();
+					svc.logout(new AsyncCallback() {
+
+						public void onFailure(Throwable caught) {
+							ExceptionTracker.logException(caught);
+							ClientContext.setUser(null);
+							ContentPanel.getInstance().showLogin(
+									"Unable to contact server");
+						}
+
+						public void onSuccess(Object result) {
+							ClientContext.setUser(null);
+							ContentPanel.getInstance().showLogin(null);
+						}
+					});
+				}
+			}));
 		} else {
 			userPanel.clear();
 		}
@@ -63,48 +93,6 @@ public class HeaderPanel extends Composite {
 			lbl.addClickListener(clickListener);
 		}
 		return lbl;
-	}
-
-	/*
-	 * private class PreferencesListener implements ClickListener {
-	 * 
-	 * public void onClick(Widget sender) { // TODO nothing yet } }
-	 */
-
-	private static class LogoutListener implements ClickListener {
-
-		public void onClick(Widget sender) {
-			final SessionServiceAsync svc = ServiceHelper.getSessionService();
-			svc.logout(new AsyncCallback() {
-
-				public void onFailure(Throwable caught) {
-					ExceptionTracker.logException(caught);
-					ClientContext.setUser(null);
-					ContentPanel.getInstance().showLogin(
-							"Unable to contact server");
-				}
-
-				public void onSuccess(Object result) {
-					ClientContext.setUser(null);
-					ContentPanel.getInstance().showLogin(null);
-				}
-			});
-		}
-
-	}
-
-	private static class PreferencesListener implements ClickListener {
-
-		public void onClick(Widget sender) {
-			ContentPanel.getInstance().showPreferences();
-		}
-	}
-
-	private class HeaderAccountListener implements UserAccountListener {
-
-		public void onChange(UserAccount account) {
-			updateAccountPanel(account);
-		}
 	}
 
 }
