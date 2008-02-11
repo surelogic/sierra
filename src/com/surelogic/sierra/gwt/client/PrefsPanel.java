@@ -12,23 +12,22 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 public class PrefsPanel extends ContentComposite {
 
-	private PasswordTextBox oldPass;
-	private PasswordTextBox pass;
-	private PasswordTextBox passAgain;
-	private HTML message;
+	private final PasswordTextBox oldPass = new PasswordTextBox();
+	private final PasswordTextBox pass = new PasswordTextBox();
+	private final PasswordTextBox passAgain = new PasswordTextBox();
+	private final HTML message = new HTML();
 
-	public void activate() {
-		final DockPanel rootPanel = getRootPanel();
-		rootPanel.clear();
+	public PrefsPanel() {
+		super();
 		final VerticalPanel vp = new VerticalPanel();
 		vp
 				.add(new HTML(
 						"<h2>Change Password</h2><h3>Enter your current password</h3>"));
-		vp.add(oldPass = new PasswordTextBox());
+		vp.add(oldPass);
 		vp.add(new HTML("<h3>Enter your new password</h3>"));
-		vp.add(pass = new PasswordTextBox());
+		vp.add(pass);
 		vp.add(new HTML("<h3>Enter your new password again</h3>"));
-		vp.add(passAgain = new PasswordTextBox());
+		vp.add(passAgain);
 		vp.add(new Button("Change Password", new ClickListener() {
 
 			public void onClick(Widget sender) {
@@ -50,11 +49,9 @@ public class PrefsPanel extends ContentComposite {
 								public void onSuccess(Object result) {
 									Boolean success = (Boolean) result;
 									if (success.booleanValue()) {
+										reset();
 										message
 												.setHTML("<span class=\"success\">Your password was changed.</span>");
-										oldPass.setText("");
-										pass.setText("");
-										passAgain.setText("");
 									} else {
 										// TODO This should not happen. Consider
 										// handling this
@@ -72,8 +69,22 @@ public class PrefsPanel extends ContentComposite {
 			}
 		}));
 
-		vp.add(message = new HTML());
+		vp.add(message);
+
+		final DockPanel rootPanel = getRootPanel();
+		rootPanel.clear();
 		rootPanel.add(vp, DockPanel.CENTER);
+	}
+
+	public void activate() {
+		reset();
+	}
+
+	private void reset() {
+		oldPass.setText("");
+		pass.setText("");
+		passAgain.setText("");
+		message.setHTML("");
 	}
 
 	private static boolean isFilled(String str) {
