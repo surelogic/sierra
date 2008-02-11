@@ -19,7 +19,7 @@ public final class MetricsResultsGenerator {
 	private static final String LOC = "loc";
 
 	private final PrintWriter f_out;
-	private String f_indent = "";
+	private final String f_indent = "";
 
 	private void o(final String s) {
 		f_out.print(f_indent);
