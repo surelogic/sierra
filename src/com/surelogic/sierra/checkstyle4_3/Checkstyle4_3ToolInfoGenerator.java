@@ -101,21 +101,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 						fullLine.append(line.substring(1));
 					} else {
 						if (fullLine.length() > 0) {
-							String val = fullLine.toString();
-							String mnemonic = val.substring(0, val.indexOf(' '));
-							String message = val.substring(val.indexOf(' ')).trim();
-							ArtifactType art = new ArtifactType();
-							art.setMnemonic(mnemonic + "Check");
-							art.setTool("Checkstyle");
-							mnemonic = mnemonic.substring(mnemonic.lastIndexOf('.') + 1);
-							FindingType type = new FindingType();
-							type.setId(mnemonic);
-							type.setName(mnemonic.replaceAll("([a-z])([A-Z])", "$1 $2"));
-							type.getArtifact().add(art);
-							type.setShortMessage(message);
-							type.setInfo(message);
-							category.getFindingType().add(type.getId());
-							types.add(type);
+							addArtifactFindingType(types, category, fullLine);
 							fullLine.setLength(0);
 						}
 						fullLine.append(line);
@@ -124,21 +110,7 @@ public class Checkstyle4_3ToolInfoGenerator {
 				}
 			}
 			if (fullLine.length() > 0) {
-				String val = fullLine.toString();
-				String mnemonic = val.substring(0, val.indexOf(' '));
-				String message = val.substring(val.indexOf(' ')).trim();
-				ArtifactType art = new ArtifactType();
-				art.setMnemonic(mnemonic + "Check");
-				art.setTool("Checkstyle");
-				mnemonic = mnemonic.substring(mnemonic.lastIndexOf('.') + 1);
-				FindingType type = new FindingType();
-				type.setId(mnemonic);
-				type.setName(mnemonic.replaceAll("([a-z])([A-Z])", "$1 $2"));
-				type.getArtifact().add(art);
-				type.setShortMessage(message);
-				type.setInfo(message);
-				category.getFindingType().add(type.getId());
-				types.add(type);
+        addArtifactFindingType(types, category, fullLine);
 			}
 
 			MessageWarehouse.getInstance()
@@ -148,6 +120,24 @@ public class Checkstyle4_3ToolInfoGenerator {
 			// Do nothing
 		}
 	}
+
+  private static void addArtifactFindingType(List<FindingType> types, Category category, StringBuilder fullLine) {
+    String val = fullLine.toString();
+    String mnemonic = val.substring(0, val.indexOf(' '));
+    String message = val.substring(val.indexOf(' ')).trim();
+    ArtifactType art = new ArtifactType();
+    art.setMnemonic(mnemonic + "Check");
+    art.setTool("Checkstyle");
+    mnemonic = mnemonic.substring(mnemonic.lastIndexOf('.') + 1);
+    FindingType type = new FindingType();
+    type.setId(mnemonic);
+    type.setName(mnemonic.replaceAll("([a-z])([A-Z])", "$1 $2"));
+    type.getArtifact().add(art);
+    type.setShortMessage(message);
+    type.setInfo(message);
+    category.getFindingType().add(type.getId());
+    types.add(type);
+  }
 
 	public static void main(String[] args) {
 		generateFindingTypes();
