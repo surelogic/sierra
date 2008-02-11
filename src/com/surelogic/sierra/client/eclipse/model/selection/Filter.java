@@ -477,7 +477,7 @@ public abstract class Filter {
 	 * 
 	 * @return a copy of the set of porous values for this filter.
 	 */
-	public Set<String> getPouousValues() {
+	public Set<String> getPorousValues() {
 		return new HashSet<String>(f_porousValues);
 	}
 
