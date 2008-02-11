@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.ReturnRunnable;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.logging.SLLogger;
@@ -27,15 +28,18 @@ public abstract class AbstractScan<T extends IJavaElement>  {
    * @return if editors were saved   
    */
   protected boolean trySavingEditors() {
-    boolean saved;
-    // Bug 1075 Fix - Ask for saving editors
-    if (!PreferenceConstants.alwaysSaveResources()) {
-      saved = PlatformUI.getWorkbench().saveAllEditors(true);
-    } else {
-      saved = PlatformUI.getWorkbench().saveAllEditors(false);
-    }
-
-    return saved;
+    ReturnRunnable<Boolean> r = new ReturnRunnable<Boolean>() {
+      public void run() {
+        // Bug 1075 Fix - Ask for saving editors
+        if (!PreferenceConstants.alwaysSaveResources()) {
+          value = PlatformUI.getWorkbench().saveAllEditors(true);
+        } else {
+          value = PlatformUI.getWorkbench().saveAllEditors(false);
+        }
+      }      
+    };
+    PlatformUI.getWorkbench().getDisplay().syncExec(r);
+    return r.getReturnValue();
   }
 
   protected StringBuilder computeLabel(final List<String> names) {
