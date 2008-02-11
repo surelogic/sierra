@@ -45,7 +45,7 @@ public class HashGenerator {
 		static final HashGenerator hashGenerator = new HashGenerator();
 	}
 
-	private HashGenerator() {
+	HashGenerator() {
 		// Nothing do to
 	}
 
