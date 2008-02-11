@@ -18,6 +18,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -107,19 +108,55 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private volatile FindingDetail f_finding;
 
+	/*
+	 * For view state persistence only.
+	 */
 	private int f_sashLocationWeight = 50;
 	private int f_sashDescriptionWeight = 50;
 
+	static private final String AUDIT_TAB = "audit";
+	static private final String ARTIFACT_TAB = "artifact";
+	static private final String SYNOPSIS_TAB = "synopsis";
+
+	/*
+	 * For view state persistence only.
+	 */
+	private String f_tabNameShown = SYNOPSIS_TAB;
+
+	private void memoTabShown() {
+		int index = f_folder.getSelectionIndex();
+		if (index != -1) {
+			TabItem tab = f_folder.getItem(index);
+			if (f_auditTab == tab) {
+				f_tabNameShown = AUDIT_TAB;
+			} else if (f_artifactTab == tab) {
+				f_tabNameShown = ARTIFACT_TAB;
+			} else if (f_synopsisTab == tab) {
+				f_tabNameShown = SYNOPSIS_TAB;
+			}
+		}
+	}
+
+	private void showTab(final String tabName) {
+		if (AUDIT_TAB.equals(tabName)) {
+			f_folder.setSelection(f_auditTab);
+			f_tabNameShown = AUDIT_TAB;
+		} else if (ARTIFACT_TAB.equals(tabName)) {
+			f_folder.setSelection(f_artifactTab);
+			f_tabNameShown = ARTIFACT_TAB;
+		} else if (SYNOPSIS_TAB.equals(tabName)) {
+			f_folder.setSelection(f_synopsisTab);
+			f_tabNameShown = SYNOPSIS_TAB;
+		}
+	}
+
+	/**
+	 * This listener helps the hyperlinks control the three tabs.
+	 */
 	private final Listener f_tabLinkListener = new Listener() {
 		public void handleEvent(Event event) {
 			final String target = event.text;
-			if ("audit".equals(target)) {
-				f_folder.setSelection(f_auditTab);
-			} else if ("artifact".equals(target)) {
-				f_folder.setSelection(f_artifactTab);
-			} else if ("synopsis".equals(target)) {
-				f_folder.setSelection(f_synopsisTab);
-			}
+			showTab(target);
 		}
 	};
 
@@ -228,6 +265,21 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		job.schedule();
 	}
 
+	void asyncSetTabShown(final String tabName) {
+		if (SLLogger.getLogger().isLoggable(Level.FINER)) {
+			SLLogger.getLogger().finer(
+					"Finding Details showing tab " + tabName + ".");
+		}
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				showTab(tabName);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
 	private final Listener f_radioListener = new Listener() {
 		public void handleEvent(Event event) {
 			final Importance current = f_finding.getImportance();
@@ -265,6 +317,19 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_mediumButton.addListener(SWT.Selection, f_radioListener);
 		f_lowButton.addListener(SWT.Selection, f_radioListener);
 		f_irrelevantButton.addListener(SWT.Selection, f_radioListener);
+
+		f_folder.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// I'm not sure when this is called (if ever) for a tab folder.
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				/*
+				 * Invoked when the tab selection changes.
+				 */
+				memoTabShown();
+			}
+		});
 
 		f_commentButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -394,11 +459,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	public void dispose() {
 		if (f_finding == null)
-			FindingDetailsPersistence.saveNoFindingShown(
-					f_sashLocationWeight, f_sashDescriptionWeight);
+			FindingDetailsPersistence.saveNoFindingShown(f_sashLocationWeight,
+					f_sashDescriptionWeight, f_tabNameShown);
 		else
 			FindingDetailsPersistence.save(f_finding.getFindingId(),
-					f_sashLocationWeight, f_sashDescriptionWeight);
+					f_sashLocationWeight, f_sashDescriptionWeight,
+					f_tabNameShown);
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 
@@ -565,23 +631,31 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		b.append(f_finding.getFindingId());
 		b.append(") ");
 		b.append("is of ");
-		b.append("<a href=\"audit\">");
+		b.append("<a href=\"");
+		b.append(AUDIT_TAB);
+		b.append("\">");
 		b.append(importance);
 		b.append("</a>");
 		b.append(" importance. It has ");
 		if (auditCount > 0) {
-			b.append("been <a href=\"audit\">audited ");
+			b.append("been <a href=\"");
+			b.append(AUDIT_TAB);
+			b.append("\">audited ");
 			b.append(auditCount);
 			b.append(" times</a> ");
 		} else {
-			b.append("not been <a href=\"audit\">audited</a> ");
+			b.append("not been <a href=\"");
+			b.append(AUDIT_TAB);
+			b.append("\">audited</a> ");
 		}
 		if (status == FindingStatus.FIXED) {
 			b.append("and was not found in the code during the last scan.");
 		} else {
 			if (status == FindingStatus.NEW) {
 				b.append("and was discovered by ");
-				b.append("<a href=\"artifact\">");
+				b.append("<a href=\"");
+				b.append(ARTIFACT_TAB);
+				b.append("\">");
 				if (tool.charAt(0) == '(') {
 					b.append("by multiple tools (with ");
 					b.append(f_finding.getNumberOfArtifacts());
@@ -591,7 +665,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 				b.append("</a> during the last scan.");
 			} else {
 				b.append("and has been reported by ");
-				b.append("<a href=\"artifact\">");
+				b.append("<a href=\"");
+				b.append(ARTIFACT_TAB);
+				b.append("\">");
 				b.append(tool);
 				b.append("</a> for several scans.");
 			}
@@ -601,7 +677,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private void initLocationTree(Tree tree, FindingDetail finding) {
 		tree.removeAll();
-		
+
 		// TODO reuse old TreeItems?
 		final TreeItem proj = new TreeItem(tree, SWT.NULL);
 		proj.setText(finding.getProjectName());
@@ -650,10 +726,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 	}
 
-  private void showAsLink(TreeItem item) {
-    Display d = item.getDisplay();
-    item.setForeground(d.getSystemColor(SWT.COLOR_BLUE));
-  }
+	private void showAsLink(TreeItem item) {
+		Display d = item.getDisplay();
+		item.setForeground(d.getSystemColor(SWT.COLOR_BLUE));
+	}
 
 	private TreeItem createLocation(TreeItem proj,
 			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
@@ -689,15 +765,15 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			line = lines.get(qualifiedClassLine);
 		}
 		if (line == null) {
-		  qualifiedClassLine = qualifiedClassName + ':' + loc.getLineOfCode();
+			qualifiedClassLine = qualifiedClassName + ':' + loc.getLineOfCode();
 			line = new TreeItem(clazz, SWT.NULL);
 			if (loc.getLineOfCode() != loc.getEndLineOfCode()) {
 				line.setText("lines " + loc.getLineOfCode() + " to "
 						+ loc.getEndLineOfCode());
-			} else {			  
+			} else {
 				line.setText("line " + loc.getLineOfCode());
 			}
-      showAsLink(line);
+			showAsLink(line);
 			line.setData(loc);
 			lines.put(qualifiedClassLine, line);
 		}

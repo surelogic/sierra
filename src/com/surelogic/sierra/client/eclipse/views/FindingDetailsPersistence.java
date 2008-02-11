@@ -12,10 +12,6 @@ import java.util.logging.Level;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -32,20 +28,21 @@ public final class FindingDetailsPersistence {
 	private static final String NONE = "none";
 	private static final String SASH_LOCATION_WEIGHT = "sash-location-weight";
 	private static final String SASH_DESCRIPTION_WEIGHT = "sash-description-weight";
+	private static final String TAB_NAME_SHOWING = "tab-name-showing";
 
 	static void save(long findingId, int sashLocationWeight,
-			int sashDescriptionWeight) {
+			int sashDescriptionWeight, String tabNameShowing) {
 		save(Long.toString(findingId), sashLocationWeight,
-				sashDescriptionWeight);
+				sashDescriptionWeight, tabNameShowing);
 	}
 
 	static void saveNoFindingShown(int sashLocationWeight,
-			int sashDescriptionWeight) {
-		save(NONE, sashLocationWeight, sashDescriptionWeight);
+			int sashDescriptionWeight, String tabNameShowing) {
+		save(NONE, sashLocationWeight, sashDescriptionWeight, tabNameShowing);
 	}
 
 	static private void save(String findingId, int sashLocationWeight,
-			int sashDescriptionWeight) {
+			int sashDescriptionWeight, String tabNameShowing) {
 		final File file = Activator.getDefault()
 				.getFindingDetailsViewSaveFile();
 		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
@@ -63,6 +60,9 @@ public final class FindingDetailsPersistence {
 			Entities.addAttribute(SASH_LOCATION_WEIGHT, sashLocationWeight, b);
 			Entities.addAttribute(SASH_DESCRIPTION_WEIGHT,
 					sashDescriptionWeight, b);
+			if (tabNameShowing != null) {
+				Entities.addAttribute(TAB_NAME_SHOWING, tabNameShowing, b);
+			}
 			b.append("/>");
 			pw.println(b.toString());
 			pw.close();
@@ -103,29 +103,19 @@ public final class FindingDetailsPersistence {
 							"Findings Details View was showing the finding "
 									+ findingId + " according to " + file);
 				}
-				final Job job = new Job("Restore Finding Details View") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						view.asyncQueryAndShow(findingId);
-						return Status.OK_STATUS;
-					}
-				};
-				job.schedule();
+				view.asyncQueryAndShow(findingId);
 			}
 			// regardless set the sash weights
 			final int sashLocationWeight = handler.getSashLocationWeight();
 			final int sashDescriptionWeight = handler
 					.getSashDescriptionWeight();
-			final Job job = new Job(
-					"Restore Findings Details View sash weights") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					view.asyncSetSynopsisSashWeights(sashLocationWeight,
-							sashDescriptionWeight);
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
+			view.asyncSetSynopsisSashWeights(sashLocationWeight,
+					sashDescriptionWeight);
+			// also set which tab is showing
+			final String tabName = handler.getTabNameShowing();
+			if (tabName != null) {
+				view.asyncSetTabShown(tabName);
+			}
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(40, file), e);
 		}
@@ -160,6 +150,12 @@ public final class FindingDetailsPersistence {
 			return f_sashDescriptionWeight;
 		}
 
+		private String f_tabNameShowing = null;
+
+		public String getTabNameShowing() {
+			return f_tabNameShowing;
+		}
+
 		@Override
 		public void startElement(String uri, String localName, String name,
 				Attributes attributes) throws SAXException {
@@ -185,6 +181,7 @@ public final class FindingDetailsPersistence {
 				} catch (NumberFormatException e) {
 					// ingore, take the default
 				}
+				f_tabNameShowing = attributes.getValue(TAB_NAME_SHOWING);
 			}
 		}
 	}
