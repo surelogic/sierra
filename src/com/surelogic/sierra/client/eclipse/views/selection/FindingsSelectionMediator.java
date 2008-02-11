@@ -153,7 +153,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_manager.addObserver(this);
 		Projects.getInstance().addObserver(this);
 		notify(Projects.getInstance());
-		updateSavedSelections();
 	}
 
 	public void setFocus() {
@@ -163,6 +162,9 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	public void dispose() {
 		f_cascadingList.removeObserver(this);
 		f_manager.removeObserver(this);
+		if (f_workingSelection != null) {
+			f_manager.saveViewState(f_workingSelection);
+		}
 		Projects.getInstance().removeObserver(this);
 	}
 
@@ -183,8 +185,13 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (page != f_pages.getPage()) {
+					/*
+					 * Only gets run when the page actually has changed.
+					 */
 					f_pages.showPage(page);
-					clearToNewWorkingSelection();
+					if (page == f_findingsPage) {
+						clearToPersistedViewState();
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -198,6 +205,21 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_breadcrumbs.setText("");
 		if (f_workingSelection != null)
 			f_workingSelection.dispose();
+	}
+
+	private void clearToPersistedViewState() {
+		final Selection persistedViewState = f_manager.getViewState();
+		if (persistedViewState != null) {
+			/*
+			 * We only want to restore the view state once per session of
+			 * Eclipse so now we clear the view state out of the selection
+			 * manager.
+			 */
+			f_manager.removeViewState();
+			openSelection(persistedViewState);
+		} else {
+			clearToNewWorkingSelection();
+		}
 	}
 
 	private void clearToNewWorkingSelection() {

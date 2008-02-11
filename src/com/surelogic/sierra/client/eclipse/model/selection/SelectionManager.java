@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.surelogic.common.i18n.I18N;
+
 public final class SelectionManager {
 
 	private static final SelectionManager INSTANCE = new SelectionManager();
@@ -20,6 +22,19 @@ public final class SelectionManager {
 	private SelectionManager() {
 		// singleton
 	}
+
+	/**
+	 * This is a bit of a hack to meet Ready for Rational requirement 3.5.19
+	 * (persistence of view state). We make the view state use a special key
+	 * that we deem unlikely to be used by the user.
+	 * <p>
+	 * Special methods use this key
+	 * <p>
+	 * The value is set right before Eclipse exit and then read (once) and
+	 * removed before the user would ever see it (unless they looked into the
+	 * save file).
+	 */
+	private static final String VIEW_STATE_KEY = "persist-view-state-of-findings-quick-search";
 
 	public Selection construct() {
 		final Selection result = new Selection(this);
@@ -38,15 +53,27 @@ public final class SelectionManager {
 	 *            the selection to save a copy or.
 	 */
 	public void saveSelection(String name, Selection selection) {
+		if (name == null)
+			throw new IllegalArgumentException(I18N.err(44, "name"));
+		if (selection == null)
+			throw new IllegalArgumentException(I18N.err(44, "selection"));
 		Selection copy = new Selection(selection);
 		f_nameToSelection.put(name, copy);
 		notifySavedSelectionsChanged();
+	}
+
+	public void saveViewState(Selection selection) {
+		saveSelection(VIEW_STATE_KEY, selection);
 	}
 
 	public void removeSavedSelection(String name) {
 		if (f_nameToSelection.remove(name) != null) {
 			notifySavedSelectionsChanged();
 		}
+	}
+
+	public void removeViewState() {
+		removeSavedSelection(VIEW_STATE_KEY);
 	}
 
 	/**
@@ -63,6 +90,10 @@ public final class SelectionManager {
 		if (result != null)
 			result = new Selection(result);
 		return result;
+	}
+
+	public Selection getViewState() {
+		return getSavedSelection(VIEW_STATE_KEY);
 	}
 
 	public List<String> getSavedSelectionNames() {
