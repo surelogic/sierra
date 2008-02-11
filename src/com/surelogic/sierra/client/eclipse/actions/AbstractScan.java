@@ -4,11 +4,15 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.ReturnRunnable;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.logging.SLLogger;
@@ -28,18 +32,15 @@ public abstract class AbstractScan<T extends IJavaElement>  {
    * @return if editors were saved   
    */
   protected boolean trySavingEditors() {
-    ReturnRunnable<Boolean> r = new ReturnRunnable<Boolean>() {
-      public void run() {
-        // Bug 1075 Fix - Ask for saving editors
-        if (!PreferenceConstants.alwaysSaveResources()) {
-          value = PlatformUI.getWorkbench().saveAllEditors(true);
-        } else {
-          value = PlatformUI.getWorkbench().saveAllEditors(false);
-        }
-      }      
-    };
-    PlatformUI.getWorkbench().getDisplay().syncExec(r);
-    return r.getReturnValue();
+    boolean saved;
+
+    // Bug 1075 Fix - Ask for saving editors
+    if (!PreferenceConstants.alwaysSaveResources()) {
+      saved = PlatformUI.getWorkbench().saveAllEditors(true);
+    } else {
+      saved = PlatformUI.getWorkbench().saveAllEditors(false);
+    }
+    return saved;
   }
 
   protected StringBuilder computeLabel(final List<String> names) {
@@ -65,34 +66,48 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     return sb;
   }
 
-  protected void scan(Collection<T> elements, List<String> names) {
+  protected void scan(final Collection<T> elements, final List<String> names) {
     if (elements.size() <= 0) {
       return;
     }
-    boolean saved = trySavingEditors();
-    try {
-      boolean built    = checkIfBuilt(elements);
-      boolean compiled = JavaUtil.noCompilationErrors(elements);
+    new UIJob(PlatformUI.getWorkbench().getDisplay(), "Checking if editors need to be saved") {
+      @Override
+      public IStatus runInUIThread(IProgressMonitor monitor) {
+        final boolean saved = trySavingEditors();
+        new WorkspaceJob("Checking if source code is built and compiles") {
+          @Override
+          public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+            try {
+              boolean built    = checkIfBuilt(elements);
+              boolean compiled = JavaUtil.noCompilationErrors(elements);
 
-      if (saved & built & compiled) {
-        final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
-        if (startScanJob(elements)) {      
-          showStartBalloon(sb);
-        }
-      } else if (!built) {
-        BalloonUtility.showMessage("Something isn't built", 
-        "Sierra cannot run properly if your code isn't fully compiled");
-      } else if (!compiled) {
-        BalloonUtility.showMessage("Something doesn't compile", 
-                                   "Sierra cannot run properly if your code does not compile");
-      } else {
-        // Scan not run, because of modified editors
+              if (saved & built & compiled) {
+                final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
+                if (startScanJob(elements)) {      
+                  showStartBalloon(sb);
+                }
+              } else if (!built) {
+                BalloonUtility.showMessage("Something isn't built", 
+                "Sierra cannot run properly if your code isn't fully compiled");
+              } else if (!compiled) {
+                BalloonUtility.showMessage("Something doesn't compile", 
+                "Sierra cannot run properly if your code does not compile");
+              } else {
+                // Scan not run, because of modified editors   
+                BalloonUtility.showMessage("Modified editors", 
+                "Sierra did not run a scan due to unsaved editors");
+              }
+            } catch(CoreException e) {
+              //BalloonUtility.showMessage("Problem while checking if your code compiles", );
+              LOG.log(Level.SEVERE, "Problem while checking if your code compiles", e);
+            }
+            return Status.OK_STATUS;
+          }          
+        }.schedule();
+
+        return Status.OK_STATUS;
       }
-      
-    } catch(CoreException e) {
-      //BalloonUtility.showMessage("Problem while checking if your code compiles", );
-      LOG.log(Level.SEVERE, "Problem while checking if your code compiles", e);
-    }
+    }.schedule();
   } 
 
   protected void showStartBalloon(final StringBuilder label) {
