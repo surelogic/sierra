@@ -36,55 +36,55 @@ public final class ExportFindingSetInXMLFormatJob extends ExportFindingSetJob {
 		b.append('>');
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<project>");
 		Entities.addEscaped(projectName, b);
 		b.append("</project>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<package>");
 		Entities.addEscaped(packageName, b);
 		b.append("</package>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<class>");
 		Entities.addEscaped(typeName, b);
 		b.append("</class>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<line>");
 		b.append(lineNumber);
 		b.append("</line>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<finding-type>");
 		Entities.addEscaped(findingTypeName, b);
 		b.append("</finding-type>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<finding-category>");
 		Entities.addEscaped(categoryName, b);
 		b.append("</finding-category>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<importance>");
 		Entities.addEscaped(importance.toStringSentenceCase(), b);
 		b.append("</importance>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<tool>");
 		Entities.addEscaped(toolName, b);
 		b.append("</tool>");
 		o(b.toString());
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("<summary>");
 		Entities.addEscaped(summary, b);
 		b.append("</summary>");

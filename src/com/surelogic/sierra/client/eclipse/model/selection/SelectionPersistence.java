@@ -85,21 +85,21 @@ public final class SelectionPersistence {
 	}
 
 	private static void outputFilter(PrintWriter pw, Filter f) {
-		StringBuilder b = new StringBuilder();
+		final StringBuilder b = new StringBuilder();
 		b.append("    <").append(FILTER);
 		Entities.addAttribute(TYPE, f.getFactory().getFilterLabel(), b);
 		b.append(">");
 		pw.println(b.toString());
-		b = new StringBuilder();
-		for (String p : f.getPouousValues()) {
+		b.setLength(0);
+		for (String p : f.getPorousValues()) {
 			b.append("      <");
 			b.append(POROUS);
 			Entities.addAttribute(VALUE, p, b);
 			b.append("/>");
 			pw.println(b.toString());
-			b = new StringBuilder();
+			b.setLength(0);
 		}
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("    </").append(FILTER).append(">");
 		pw.println(b.toString());
 	}

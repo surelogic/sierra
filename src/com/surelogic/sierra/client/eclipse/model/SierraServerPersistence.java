@@ -123,7 +123,7 @@ public final class SierraServerPersistence {
 
 	private static void outputServer(PrintWriter pw, SierraServer server,
 			List<String> connectedProjectNames, boolean save) {
-		StringBuilder b = new StringBuilder();
+		final StringBuilder b = new StringBuilder();
 		b.append("  <").append(SERVER);
 		Entities.addAttribute(LABEL, server.getLabel(), b);
 		if (save && server.isFocus()) {
@@ -142,14 +142,14 @@ public final class SierraServerPersistence {
 		pw.println(b.toString());
 
 		for (String projectName : connectedProjectNames) {
-			b = new StringBuilder();
+		  b.setLength(0);
 			b.append("    <").append(CONNECTED_PROJECT);
 			Entities.addAttribute(NAME, projectName, b);
 			b.append("/>");
 			pw.println(b.toString());
 		}
 
-		b = new StringBuilder();
+		b.setLength(0);
 		b.append("  </").append(SERVER).append(">");
 		pw.println(b.toString());
 	}
