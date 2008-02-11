@@ -290,12 +290,15 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportQueuedErrors() {
+      // Do nothing
     }
 
     public void setErrorVerbosity(int level) {
+      // Do nothing
     }
 
     public void setPriorityThreshold(int threshold) {
+      // Do nothing
     }
 
     /* ******************** For IErrorLogger ********************* */

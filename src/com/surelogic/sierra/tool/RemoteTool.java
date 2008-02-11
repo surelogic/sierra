@@ -177,7 +177,9 @@ public class RemoteTool extends AbstractTool {
       return null;
     }
 
-    public void internalWorked(double work) {}
+    public void internalWorked(double work) {
+      // Do nothing
+    }
 
     public boolean isCanceled() {
       return cancelled;

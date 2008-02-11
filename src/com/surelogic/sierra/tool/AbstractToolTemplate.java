@@ -19,7 +19,7 @@ public abstract class AbstractToolTemplate extends AbstractTool {
     return new AbstractToolInstance(this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {      
-        
+        // Nothing to do yet
       }
     };
   }

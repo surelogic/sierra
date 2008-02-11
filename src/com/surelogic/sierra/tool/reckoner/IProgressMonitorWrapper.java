@@ -30,6 +30,7 @@ public class IProgressMonitorWrapper implements SLProgressMonitor, IProgressMoni
   }
   
   public void error(String msg) {
+    // Do nothing
   }
   
   public void failed(String msg, Throwable t) {

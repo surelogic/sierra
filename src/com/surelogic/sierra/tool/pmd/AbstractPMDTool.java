@@ -91,9 +91,11 @@ public abstract class AbstractPMDTool extends AbstractTool {
     }
 
     public void showSuppressedViolations(boolean show) {
+      // Do nothing
     }
 
     public void start() throws IOException {
+      // Do nothing
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {
@@ -208,6 +210,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
     }
     
     public void end() throws IOException {
+      // Do nothing
     }
   }
   
