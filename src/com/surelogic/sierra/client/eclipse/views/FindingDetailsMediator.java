@@ -72,7 +72,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
 
-	private RGB fBackgroundColorRGB = f_display.getSystemColor(
+	private final RGB fBackgroundColorRGB = f_display.getSystemColor(
 			SWT.COLOR_LIST_BACKGROUND).getRGB();
 
 	private final PageBook f_pages;

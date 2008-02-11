@@ -188,7 +188,7 @@ public final class SierraServerPersistence {
 	static class SaveFileReader extends DefaultHandler {
 
 		private final SierraServerManager f_manager;
-		private Map<String, String> f_map;
+		private final Map<String, String> f_map;
 
 		@SuppressWarnings("unchecked")
 		SaveFileReader(SierraServerManager manager) {

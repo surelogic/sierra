@@ -41,7 +41,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerPersistence;
 public class ServerExportPage extends WizardPage {
 
 	private CheckboxTableViewer f_TableViewer;
-	private List<SierraServer> f_SelectedSierraServers = new ArrayList<SierraServer>();
+	private final List<SierraServer> f_SelectedSierraServers = new ArrayList<SierraServer>();
 	private Text f_exportFilenameText;
 
 	public ServerExportPage() {

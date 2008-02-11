@@ -249,7 +249,7 @@ public final class SierraServerManager {
 	/**
 	 * The set of observers to changes to the state of this class.
 	 */
-	private Set<ISierraServerObserver> f_serverObservers = new HashSet<ISierraServerObserver>();
+	private final Set<ISierraServerObserver> f_serverObservers = new HashSet<ISierraServerObserver>();
 
 	/**
 	 * Registers a {@link ISierraServerObserver} object to receive notifications

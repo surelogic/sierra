@@ -38,7 +38,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.SelectionPersistence;
 public class FindingSearchExportPage extends WizardPage {
 
 	private CheckboxTableViewer f_TableViewer;
-	private List<String> f_selectedSavedSearches = new ArrayList<String>();
+	private final List<String> f_selectedSavedSearches = new ArrayList<String>();
 	private Text f_exportFilenameText;
 
 	public FindingSearchExportPage() {
