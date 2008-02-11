@@ -61,7 +61,7 @@ public class ScanChangedProjectsAction extends AbstractProjectSelectedMenuAction
           Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil.modifiedCompUnits(times, monitor);
           
           boolean startedScan = false;
-          if (selectedCompilationUnits.size() > 0) {
+          if (!selectedCompilationUnits.isEmpty()) {
             new NewPartialScan().scan(selectedCompilationUnits);
             startedScan = true;
           }

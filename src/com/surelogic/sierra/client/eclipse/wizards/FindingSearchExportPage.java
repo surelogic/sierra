@@ -220,7 +220,7 @@ public class FindingSearchExportPage extends WizardPage {
 		// TODO: Implement file name check. Filenames with invalid characters
 		// are still permitted
 
-		if (f_selectedSavedSearches.size() == 0) {
+		if (f_selectedSavedSearches.isEmpty()) {
 			setErrorMessage("At least one search must be selected");
 			complete = false;
 		}

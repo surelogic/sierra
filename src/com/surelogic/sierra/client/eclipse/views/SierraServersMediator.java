@@ -296,7 +296,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				for (TableItem item : si) {
 					projectNames.add(item.getText());
 				}
-				if (projectNames.size() > 0) {
+				if (!projectNames.isEmpty()) {
 					DeleteProjectDataJob.utility(projectNames, null, true);
 				}
 			}

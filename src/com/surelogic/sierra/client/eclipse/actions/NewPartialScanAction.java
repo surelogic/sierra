@@ -142,7 +142,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 				}
 			}
 
-			if (selectedPackageFragments.size() > 0) {
+			if (!selectedPackageFragments.isEmpty()) {
 				for (IPackageFragment packageFragment : selectedPackageFragments) {
 					try {
 						for (ICompilationUnit compilationUnit : packageFragment

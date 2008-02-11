@@ -223,7 +223,7 @@ public class SierraPreferencePage extends PreferencePage implements
 						final String projectName = item.getText();
 						projectNames.add(projectName);
 					}
-					if (projectNames.size() == 0)
+					if (projectNames.isEmpty())
 						return;
 
 					DeleteProjectDataJob.utility(projectNames, f_projectTable

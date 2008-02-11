@@ -232,7 +232,7 @@ public class ServerExportPage extends WizardPage {
 		// TODO: Implement file name check. Filenames with invalid characters
 		// are still permitted
 
-		if (f_SelectedSierraServers.size() == 0) {
+		if (f_SelectedSierraServers.isEmpty()) {
 			setErrorMessage("At least one Sierra Team Server location must be selected");
 			complete = false;
 		}

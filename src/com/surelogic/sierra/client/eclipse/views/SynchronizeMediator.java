@@ -157,7 +157,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			item.setData(so);
 		}
 
-		if ((synchList.size() == 0) || (Projects.getInstance().isEmpty())) {
+		if ((synchList.isEmpty()) || (Projects.getInstance().isEmpty())) {
 			f_eventsTable.setVisible(false);
 		}
 		packTable(f_syncTable);

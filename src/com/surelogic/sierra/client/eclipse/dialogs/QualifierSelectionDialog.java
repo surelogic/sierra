@@ -135,6 +135,6 @@ public final class QualifierSelectionDialog extends Dialog {
 
 	private void setOKState() {
 		getButton(IDialogConstants.OK_ID).setEnabled(
-				f_selectedQualifiers.size() > 0);
+				!f_selectedQualifiers.isEmpty());
 	}
 }

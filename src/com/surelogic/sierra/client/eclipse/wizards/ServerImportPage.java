@@ -408,7 +408,7 @@ public class ServerImportPage extends WizardPage {
 
 			}
 
-			if (f_existingServers.size() > 0) {
+			if (!f_existingServers.isEmpty()) {
 				StringBuilder builder = new StringBuilder();
 				for (String s : f_existingServers) {
 					builder.append("'" + s + "' ");

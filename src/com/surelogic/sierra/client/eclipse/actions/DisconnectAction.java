@@ -11,7 +11,7 @@ public final class DisconnectAction extends AbstractProjectSelectedMenuAction {
 	@Override
 	protected void run(List<IJavaProject> selectedProjects,
 			List<String> projectNames) {
-		if (projectNames.size() > 0)
+		if (!projectNames.isEmpty())
 			DeleteProjectDataJob.utility(projectNames, null, true);
 	}
 }

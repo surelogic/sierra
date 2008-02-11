@@ -122,7 +122,7 @@ public final class ConfigGenerator {
 		for (Map.Entry<String, List<ICompilationUnit>> entry : projectCompilationUnitMap
 				.entrySet()) {
 			List<ICompilationUnit> cus = entry.getValue();
-			if (cus.size() > 0) {
+			if (!cus.isEmpty()) {
 				final ConfigCompilationUnit ccu = new ConfigCompilationUnit(
 						getCompilationUnitConfig(cus),
 						getPackageCompilationUnitMap(cus));
@@ -188,7 +188,7 @@ public final class ConfigGenerator {
 	private Config getCompilationUnitConfig(
 			List<ICompilationUnit> compilationUnits) {
 		Config config = null;
-		if (compilationUnits.size() > 0) {
+		if (!compilationUnits.isEmpty()) {
 		  final ICompilationUnit firstCU = compilationUnits.get(0);
 			String projectPath = firstCU.getJavaProject()
 					.getResource().getLocation().toString();
@@ -405,7 +405,9 @@ public final class ConfigGenerator {
 		} else if (resource instanceof IFolder) {
 			IFolder folder = (IFolder) resource;
 			resources = folder.members();
-		}
+		} else {
+		  return files;  
+    }
 
 		for (IResource r : resources) {
 			if (r.getType() == IResource.FILE) {
