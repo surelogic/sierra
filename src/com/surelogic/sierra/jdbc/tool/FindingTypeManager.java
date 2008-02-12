@@ -261,28 +261,7 @@ public final class FindingTypeManager {
 		if (settings != null) {
 			final Collection<FindingTypeFilter> filters = SettingsManager
 					.getInstance(conn).getSettingFilters(settings.getUid());
-			Map<Long, FindingTypeFilter> findingMap = new HashMap<Long, FindingTypeFilter>(
-					filters.size());
-			Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
-					filters.size() * 2);
-			FindingTypeRecord ft = factory.newFindingTypeRecord();
-			for (FindingTypeFilter filter : filters) {
-				ft.setUid(filter.getName());
-				if (ft.select()) {
-					findingMap.put(ft.getId(), filter);
-				}
-				selectArtifactTypesByFindingTypeId.setLong(1, ft.getId());
-				ResultSet set = selectArtifactTypesByFindingTypeId
-						.executeQuery();
-				try {
-					while (set.next()) {
-						artifactMap.put(set.getLong(1), filter);
-					}
-				} finally {
-					set.close();
-				}
-			}
-			return new MessageFilter(findingMap, artifactMap);
+      return getMessageFilter(filters);
 		} else {
 			return EMPTY_FILTER;
 		}
