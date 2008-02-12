@@ -14,27 +14,14 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -54,7 +41,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  * @author Tanmay.Sinha
  * 
  */
-public class ServerImportPage extends WizardPage {
+public class ServerImportPage extends AbstractImportWizardPage {
 
 	public static final String SIERRA_SERVERS = "sierra-servers";
 	public static final String CONNECTED_PROJECT = "connected-project";
@@ -68,13 +55,10 @@ public class ServerImportPage extends WizardPage {
 	public static final String USER = "user";
 	public static final String VERSION = "version";
 
-	private Text f_importFilenameField;
-	private Button f_importFileBrowseButton;
 	private Group f_tableGroup;
 	private Table f_transfersTable;
 	private Text f_tableItemDescription;
 	private Composite f_selectButtonsComposite;
-	private boolean f_invalidFile = true;
 	private final List<String> f_existingServers;
 
 	public ServerImportPage() {
@@ -142,35 +126,15 @@ public class ServerImportPage extends WizardPage {
 		return true;
 	}
 
-	private void updateEnablement() {
-		boolean complete = true;
-
-		// TODO: Implement file name check. Filenames with invalid characters
-		// are still permitted
-
-		if (f_invalidFile) {
-			setErrorMessage("Invalid import file");
-			f_tableItemDescription.setText("");
-			complete = false;
-		}
-
-		if (f_importFilenameField.getText().length() == 0) {
-			setErrorMessage("Import file name is required");
-			complete = false;
-		}
-
-		if (f_transfersTable.getItemCount() > 0 && !hasChecked()) {
-			setErrorMessage("No Sierra Team Server locations selected to import");
-			complete = false;
-		}
-
-		if (complete) {
-			setErrorMessage(null);
-		}
-
-		setPageComplete(complete);
-	}
-
+	@Override
+  protected boolean areCustomFieldsComplete() {
+    if (f_transfersTable.getItemCount() > 0 && !hasChecked()) {
+      setErrorMessage("No Sierra Team Server locations selected to import");
+      return false;
+    }
+    return true;
+  }
+  
 	private void createServersTable(Composite composite) {
 
 		f_tableGroup = new Group(composite, SWT.NONE);
@@ -293,67 +257,27 @@ public class ServerImportPage extends WizardPage {
 		deselectButton.setFont(parentFont);
 	}
 
-	private void createImportFileGroup(Composite parent) {
-
-		// import file selection group
-		Composite importFileSelectionGroup = new Composite(parent, SWT.NONE);
+  @Override
+	protected void layoutImportFileGroup(Composite importFileSelectionGroup) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		importFileSelectionGroup.setLayout(layout);
 		importFileSelectionGroup.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
-		Label dest = new Label(importFileSelectionGroup, SWT.NONE);
-		dest.setText("From file:");
-
-		// import filename entry field
-		f_importFilenameField = new Text(importFileSelectionGroup, SWT.SINGLE
-				| SWT.BORDER);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		f_importFilenameField.setLayoutData(data);
 
-		// import file browse button
-		f_importFileBrowseButton = new Button(importFileSelectionGroup,
-				SWT.PUSH);
-		f_importFileBrowseButton.setText("Browse");
 		f_importFileBrowseButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL));
-		f_importFileBrowseButton.addListener(SWT.Selection, new Listener() {
-			private FileDialog fd;
-
-			public void handleEvent(Event event) {
-				if (fd == null) {
-					fd = new FileDialog(getShell(), SWT.OPEN);
-					fd.setText("Destination File");
-					fd.setFilterExtensions(new String[] { "*.xml", "*.*" });
-					fd.setFilterNames(new String[] { "XML Files (*.xml)",
-							"All Files (*.*)" });
-				}
-
-				final String selectedFilename = fd.open();
-				if (selectedFilename != null) {
-					f_importFilenameField.setText(selectedFilename);
-				}
-			}
-		});
-
-		new Label(parent, SWT.NONE); // vertical spacer
-
-		ModifyListener listener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				File holder = new File(f_importFilenameField.getText());
-
-				if (holder.exists() && !holder.isDirectory()) {
-					getServers(holder);
-				}
-				updateEnablement();
-			}
-		};
-
-		f_importFilenameField.addModifyListener(listener);
 	}
 
+  @Override
+  protected void updateState(File holder) {
+    getServers(holder);
+  }
+  
 	/**
 	 * Parse the provided server document and obtain the information about the
 	 * servers. It uses exceptions to notify validity of the page.
