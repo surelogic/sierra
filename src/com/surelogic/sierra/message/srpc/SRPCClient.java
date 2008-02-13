@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.ConnectException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,6 +74,9 @@ public final class SRPCClient implements InvocationHandler {
 				} catch (ConnectException e) {
 					throw new SierraServiceClientException(
 							"Could not connect to " + url, e);
+				} catch (UnknownHostException e) {
+					throw new SierraServiceClientException(
+							"Could not resolve host for " + url, e);
 				}
 				// TODO these exceptions should be in the right package.
 				if (post.getStatusCode() == 401) {
