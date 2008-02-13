@@ -72,6 +72,7 @@ public final class Activator extends AbstractUIPlugin {
 		try {
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.storage.pageCacheSize", "2500");
+			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			Data.bootAndCheckSchema();
 			// load up persisted sierra servers
 			SierraServerManager.getInstance().load(getServerSaveFile());
@@ -153,6 +154,11 @@ public final class Activator extends AbstractUIPlugin {
 		IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString() + File.separator
 				+ "finding-details-view.xml");
+	}
+
+	private String getDerbyLogFile() {
+		IPath pluginState = Activator.getDefault().getStateLocation();
+		return pluginState.toOSString() + File.separator + "derby.log";
 	}
 
 	public String getDirectoryOf(final String plugInId) {
