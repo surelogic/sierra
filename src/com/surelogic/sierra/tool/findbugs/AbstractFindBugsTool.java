@@ -498,13 +498,11 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
   private static Severity getFindBugsSeverity(int priority) {
     switch (priority) {
     case 1:
-      return Severity.ERROR;
-    case 2:
-      return Severity.WARNING;
-    case 3:
-      return Severity.WARNING;
     case 4:
       return Severity.ERROR;
+    case 2:
+    case 3:      
+      return Severity.WARNING;
     case 5:
     default:
       return Severity.INFO;

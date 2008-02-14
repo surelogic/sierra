@@ -217,11 +217,9 @@ public abstract class AbstractPMDTool extends AbstractTool {
   private static Severity getPMDSeverity(int priority) {
     switch (priority) {
     case 1:
-      return Severity.ERROR;
     case 2:
       return Severity.ERROR;
     case 3:
-      return Severity.WARNING;
     case 4:
       return Severity.WARNING;
     case 5:
@@ -233,12 +231,10 @@ public abstract class AbstractPMDTool extends AbstractTool {
   private static Priority getPMDPriority(int priority) {
     switch (priority) {
     case 1:
-      return Priority.HIGH;
-    case 2:
-      return Priority.MEDIUM;
     case 3:
       return Priority.HIGH;
     case 4:
+    case 2:
       return Priority.MEDIUM;
     case 5:
     default:
