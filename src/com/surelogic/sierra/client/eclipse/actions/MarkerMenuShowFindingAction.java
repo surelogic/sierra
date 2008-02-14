@@ -54,10 +54,10 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 	}
 
 	public void update() {
-
-		if (f_markers.size() > 0) {
+	  final int numMarkers = f_markers.size();
+		if (numMarkers > 0) {
 			try {
-				if (f_markers.size() == 1) {
+				if (numMarkers == 1) {
 
 					String s = (String) f_markers.get(0).getAttribute(
 							"findingid");
@@ -131,7 +131,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 	public void run(IAction action) {
 		f_action = action;
 		obtainSierraMarkers();
-		if (f_markers.size() > 0) {
+		if (!f_markers.isEmpty()) {
 			update();
 		}
 
@@ -227,7 +227,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 	public void mouseUp(MouseEvent e) {
 		if (e.button == 1) {
 			obtainSierraMarkers();
-			if (f_markers.size() > 0) {
+			if (!f_markers.isEmpty()) {
 				update();
 			}
 		}
@@ -237,7 +237,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 	public void menuAboutToShow(IMenuManager manager) {
 		if (f_action != null) {
 			obtainSierraMarkers();
-			f_action.setEnabled((f_markers.size() > 0));
+			f_action.setEnabled(!f_markers.isEmpty());
 		}
 
 	}
