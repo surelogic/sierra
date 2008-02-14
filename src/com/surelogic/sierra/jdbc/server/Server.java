@@ -109,15 +109,18 @@ public class Server {
 					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
 					Statement.RETURN_GENERATED_KEYS);
 		}
-		st.setTimestamp(1, new Timestamp(new Date().getTime()));
-		st.execute();
-		ResultSet set = st.getGeneratedKeys();
 		try {
-			set.next();
-			return set.getLong(1);
+		  st.setTimestamp(1, new Timestamp(new Date().getTime()));
+		  st.execute();
+		  ResultSet set = st.getGeneratedKeys();
+		  try {
+		    set.next();
+		    return set.getLong(1);
+		  } finally {
+		    set.close();
+		  }
 		} finally {
-			set.close();
-      st.close();
+		  st.close();
 		}
 	}
 
@@ -176,13 +179,16 @@ public class Server {
 	 */
 	public String getUid() throws SQLException {
     Statement s = conn.createStatement();
-		ResultSet set = s.executeQuery(
-				"SELECT UUID FROM SERVER");
-		try {
-			set.next();
-			return set.getString(1);
-		} finally {
-			set.close();
+    try {
+      ResultSet set = s.executeQuery(
+      "SELECT UUID FROM SERVER");
+      try {
+        set.next();
+        return set.getString(1);
+      } finally {
+        set.close();
+      }
+    } finally {
       s.close();
 		}
 	}
