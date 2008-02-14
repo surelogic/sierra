@@ -395,7 +395,7 @@ public final class MessageWarehouse {
 
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr = null;
+			XMLStreamReader xmlr;
 
 			FileInputStream stream = new FileInputStream(runDocument);
 
@@ -471,7 +471,7 @@ public final class MessageWarehouse {
 		try {
 			// set up a parser
 			XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr = null;
+			XMLStreamReader xmlr;
 			InputStream stream = new FileInputStream(runDocument);
 
 			try {
