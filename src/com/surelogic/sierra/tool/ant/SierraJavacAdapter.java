@@ -102,7 +102,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     Path classpath = getCompileClasspath();
     //  For -sourcepath, use the "sourcepath" value if present.
     //  Otherwise default to the "srcdir" value.
-    Path sourcepath = null;
+    Path sourcepath;
     if (compileSourcepath != null) {
       sourcepath = compileSourcepath;
     } else {
