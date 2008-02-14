@@ -24,7 +24,28 @@ import org.eclipse.swt.widgets.Menu;
 import com.surelogic.common.eclipse.StringUtility;
 
 public final class FilterSelectionReportLine {
-
+  public static class Factory {
+    private final Composite parent;
+    private final Color f_barColorDark;
+    private final Color f_barColorLight;
+    
+    Factory(Composite parent) {
+      this.parent = parent;
+      f_barColorDark = new Color(parent.getDisplay(), 255, 113, 18);
+      f_barColorLight = new Color(parent.getDisplay(), 238, 216, 198);
+    }
+    
+    FilterSelectionReportLine create(String text,
+        Image image, int count, int total) {
+      return new FilterSelectionReportLine(parent, text, image, count, total, f_barColorDark, f_barColorLight);
+    }
+    
+    void dispose() {
+      f_barColorDark.dispose();
+      f_barColorLight.dispose();
+    }
+  }
+  
 	private final Composite f_lineComposite;
 
 	private final Color f_barColorDark;
@@ -85,8 +106,8 @@ public final class FilterSelectionReportLine {
 		}
 	}
 
-	public FilterSelectionReportLine(Composite parent, String text,
-			Image image, int count, int total) {
+	FilterSelectionReportLine(Composite parent, String text,
+			Image image, int count, int total, Color dark, Color light) {
 		f_lineComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -94,8 +115,8 @@ public final class FilterSelectionReportLine {
 		layout.numColumns = 2;
 		f_lineComposite.setLayout(layout);
 
-		f_barColorDark = new Color(f_lineComposite.getDisplay(), 255, 113, 18);
-		f_barColorLight = new Color(f_lineComposite.getDisplay(), 238, 216, 198);
+		f_barColorDark = dark; //new Color(f_lineComposite.getDisplay(), 255, 113, 18);
+		f_barColorLight = light; //new Color(f_lineComposite.getDisplay(), 238, 216, 198);
 
 		f_check = new Button(f_lineComposite, SWT.CHECK);
 		f_check.setText(text);

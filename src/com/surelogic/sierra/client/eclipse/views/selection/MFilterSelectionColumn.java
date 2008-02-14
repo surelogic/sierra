@@ -51,6 +51,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private MenuItem f_deselectAllMenuItem = null;
 	private MenuItem f_sortByCountMenuItem = null;
 
+	private FilterSelectionReportLine.Factory lineFactory = null;
 	private final List<FilterSelectionReportLine> f_lines = new ArrayList<FilterSelectionReportLine>();
 
 	private boolean f_sortByCount = false;
@@ -86,9 +87,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 				rowLayout.fill = true;
 				rowLayout.wrap = false;
 				f_reportContents.setLayout(rowLayout);
-
+				
 				f_reportViewport.setContent(f_reportContents);
 
+				lineFactory = new FilterSelectionReportLine.Factory(f_reportContents);
+				
 				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
 				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
@@ -152,6 +155,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 		final int column = getColumnIndex();
 		if (column != -1)
 			getCascadingList().emptyFrom(column);
+		
+		if (lineFactory != null) {
+		  lineFactory.dispose();
+		}
 	}
 
 	@Override
@@ -205,8 +212,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 					filterContentsChanged = true;
 				}
 			} else {
-				fsrLine = new FilterSelectionReportLine(f_reportContents,
-						value, null, count, total);
+				fsrLine = lineFactory.create(value, null, count, total);
 				fsrLine.setMenu(f_menu);
 				fsrLine.addObserver(this);
 				f_lines.add(fsrLine);
