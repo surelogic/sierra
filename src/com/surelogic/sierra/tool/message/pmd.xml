@@ -876,42 +876,10 @@
 		<id>BooleanInversion</id>
 		<artifact tool="PMD" mnemonic="BooleanInversion"></artifact>
 		<shortMessage>
-			3
-
-
-
-			//ClassOrInterfaceDeclaration[@Interface='false']
-			/ClassOrInterfaceBody /ClassOrInterfaceBodyDeclaration [
-			FieldDeclaration[@PackagePrivate='true'] or
-			MethodDeclaration[@PackagePrivate='true'] ]
-
-
-
-
-
-
-
 			Use bitwise inversion to invert boolean values - it's the
-			fastest way to do this. See
-			http://www.javaspecialists.co.za/archive/newsletter.do?issue=042&amp;locale=en_US
-			for specific details
+			fastest way to do this.
 		</shortMessage>
 		<info>
-			3
-
-
-
-			//ClassOrInterfaceDeclaration[@Interface='false']
-			/ClassOrInterfaceBody /ClassOrInterfaceBodyDeclaration [
-			FieldDeclaration[@PackagePrivate='true'] or
-			MethodDeclaration[@PackagePrivate='true'] ]
-
-
-
-
-
-
-
 			Use bitwise inversion to invert boolean values - it's the
 			fastest way to do this. See
 			http://www.javaspecialists.co.za/archive/newsletter.do?issue=042&amp;locale=en_US
