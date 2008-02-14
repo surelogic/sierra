@@ -50,196 +50,200 @@ public class Schema_0009 implements SchemaAction {
       }
 		} else {
 			Statement st = c.createStatement();
-			// NOTE: Dropping this column drops some views as well. We will need
-			// to recreate these.
-			st.execute("ALTER TABLE PROJECT DROP COLUMN SERVER_UUID");
-			if (type == DBType.DERBY) {
-				st
-						.execute("CREATE VIEW PROJECT_OVERVIEW (PROJECT) AS SELECT NAME FROM PROJECT");
-				st
-						.execute("CREATE VIEW LATEST_SCANS"
-								+ "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
-								+ " AS SELECT "
-								+ "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME "
-								+ " FROM SCAN R, PROJECT P,"
-								+ "   ("
-								+ "    SELECT MAX(R2.SCAN_DATE_TIME) AS TIME"
-								+ "    FROM"
-								+ "        SCAN R2,"
-								+ "        PROJECT P2"
-								+ "    WHERE"
-								+ "        P2.ID = R2.PROJECT_ID"
-								+ "    GROUP BY"
-								+ "        P2.NAME"
-								+ "   ) AS TIMES"
-								+ " WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID");
-				st
-						.execute("CREATE VIEW OLDEST_SCANS"
-								+ "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
-								+ " AS SELECT "
-								+ "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME "
-								+ " FROM SCAN R, PROJECT P,"
-								+ "   ("
-								+ "    SELECT MIN(R2.SCAN_DATE_TIME) AS TIME"
-								+ "    FROM"
-								+ "        SCAN R2,"
-								+ "        PROJECT P2"
-								+ "    WHERE"
-								+ "        P2.ID = R2.PROJECT_ID"
-								+ "    GROUP BY"
-								+ "        P2.NAME"
-								+ "   ) AS TIMES"
-								+ " WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID AND R.ID NOT IN (SELECT SCAN_ID FROM LATEST_SCANS)");
-				st
-						.execute("CREATE VIEW FIXED_FINDINGS "
-								+ "   (ID) "
-								+ " AS "
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID"
-								+ "   EXCEPT"
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID");
-				st
-						.execute("CREATE VIEW RECENT_FINDINGS "
-								+ "   (ID) "
-								+ " AS "
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID"
-								+ "   EXCEPT"
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID"
+			try {
+			  // NOTE: Dropping this column drops some views as well. We will need
+			  // to recreate these.
+			  st.execute("ALTER TABLE PROJECT DROP COLUMN SERVER_UUID");
+			  if (type == DBType.DERBY) {
+			    st
+			    .execute("CREATE VIEW PROJECT_OVERVIEW (PROJECT) AS SELECT NAME FROM PROJECT");
+			    st
+			    .execute("CREATE VIEW LATEST_SCANS"
+			        + "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
+			        + " AS SELECT "
+			        + "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME "
+			        + " FROM SCAN R, PROJECT P,"
+			        + "   ("
+			        + "    SELECT MAX(R2.SCAN_DATE_TIME) AS TIME"
+			        + "    FROM"
+			        + "        SCAN R2,"
+			        + "        PROJECT P2"
+			        + "    WHERE"
+			        + "        P2.ID = R2.PROJECT_ID"
+			        + "    GROUP BY"
+			        + "        P2.NAME"
+			        + "   ) AS TIMES"
+			        + " WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID");
+			    st
+			    .execute("CREATE VIEW OLDEST_SCANS"
+			        + "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
+			        + " AS SELECT "
+			        + "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME "
+			        + " FROM SCAN R, PROJECT P,"
+			        + "   ("
+			        + "    SELECT MIN(R2.SCAN_DATE_TIME) AS TIME"
+			        + "    FROM"
+			        + "        SCAN R2,"
+			        + "        PROJECT P2"
+			        + "    WHERE"
+			        + "        P2.ID = R2.PROJECT_ID"
+			        + "    GROUP BY"
+			        + "        P2.NAME"
+			        + "   ) AS TIMES"
+			        + " WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID AND R.ID NOT IN (SELECT SCAN_ID FROM LATEST_SCANS)");
+			    st
+			    .execute("CREATE VIEW FIXED_FINDINGS "
+			        + "   (ID) "
+			        + " AS "
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID"
+			        + "   EXCEPT"
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID");
+			    st
+			    .execute("CREATE VIEW RECENT_FINDINGS "
+			        + "   (ID) "
+			        + " AS "
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID"
+			        + "   EXCEPT"
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID"
 
-						);
-				st
-						.execute("CREATE VIEW CURRENT_FINDINGS"
-								+ "   (ID) "
-								+ "AS"
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID"
-								+ "   UNION"
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID");
-				st
-						.execute("CREATE TABLE SETTINGS ("
-								+ "  ID       BIGINT       NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,"
-								+ "  NAME     VARCHAR(255) NOT NULL,"
-								+ "  UUID     CHAR(36)     UNIQUE NOT NULL,"
-								+ "  REVISION BIGINT       NOT NULL" + ")");
-				st
-						.execute("CREATE TABLE SETTING_FILTER_SETS ("
-								+ "SETTINGS_ID   BIGINT NOT NULL CONSTRAINT PFS_SETTING_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
-								+ "FILTER_SET_ID BIGINT NOT NULL CONSTRAINT PFS_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE"
-								+ ")");
-				st
-						.execute("CREATE TABLE SETTING_FILTERS ("
-								+ "SETTINGS_ID     BIGINT  NOT NULL CONSTRAINT SETTING_SETTINGS_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
-								+ "FINDING_TYPE_ID BIGINT  NOT NULL CONSTRAINT SETTING_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
-								+ "DELTA           INTEGER,"
-								+ "IMPORTANCE      INTEGER,"
-								+ " FILTERED        CHAR(1) CONSTRAINT SETTING_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
-								+ ")");
-				st
-						.execute("CREATE TABLE SETTINGS_PROJECT_RELTN ("
-								+ "SETTINGS_ID    BIGINT       NOT NULL CONSTRAINT PSR_SETTINGS_FK REFERENCES SETTINGS(ID) ON DELETE CASCADE,"
-								+ "PROJECT_NAME   VARCHAR(255) NOT NULL,"
-								+ "PRIMARY KEY (SETTINGS_ID,PROJECT_NAME)"
-								+ ")");
-			} else {
-				st.execute("CREATE VIEW PROJECT_OVERVIEW " + "  (PROJECT) "
-						+ "AS SELECT NAME FROM PROJECT ");
-				st
-						.execute("CREATE VIEW LATEST_SCANS "
-								+ "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
-								+ "AS SELECT  "
-								+ "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME  "
-								+ "FROM SCAN R, PROJECT P, "
-								+ "   ( "
-								+ "    SELECT MAX(R2.SCAN_DATE_TIME) AS TIME "
-								+ "    FROM "
-								+ "        SCAN R2, "
-								+ "        PROJECT P2 "
-								+ "    WHERE "
-								+ "        P2.ID = R2.PROJECT_ID "
-								+ "    GROUP BY "
-								+ "        P2.NAME "
-								+ "   ) TIMES "
-								+ "WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID ");
-				st
-						.execute("CREATE VIEW OLDEST_SCANS "
-								+ "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
-								+ "AS SELECT  "
-								+ "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME  "
-								+ "FROM SCAN R, PROJECT P, "
-								+ "   ( "
-								+ "    SELECT MIN(R2.SCAN_DATE_TIME) AS TIME "
-								+ "    FROM "
-								+ "        SCAN R2, "
-								+ "        PROJECT P2 "
-								+ "    WHERE "
-								+ "        P2.ID = R2.PROJECT_ID "
-								+ "    GROUP BY "
-								+ "        P2.NAME "
-								+ "   ) TIMES "
-								+ "WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID AND R.ID NOT IN (SELECT SCAN_ID FROM LATEST_SCANS) ");
-				st
-						.execute("CREATE VIEW FIXED_FINDINGS  "
-								+ "   (ID) "
-								+ "AS  "
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID "
-								+ "   MINUS "
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
-				st
-						.execute(
+			    );
+			    st
+			    .execute("CREATE VIEW CURRENT_FINDINGS"
+			        + "   (ID) "
+			        + "AS"
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID"
+			        + "   UNION"
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO"
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID");
+			    st
+			    .execute("CREATE TABLE SETTINGS ("
+			        + "  ID       BIGINT       NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,"
+			        + "  NAME     VARCHAR(255) NOT NULL,"
+			        + "  UUID     CHAR(36)     UNIQUE NOT NULL,"
+			        + "  REVISION BIGINT       NOT NULL" + ")");
+			    st
+			    .execute("CREATE TABLE SETTING_FILTER_SETS ("
+			        + "SETTINGS_ID   BIGINT NOT NULL CONSTRAINT PFS_SETTING_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
+			        + "FILTER_SET_ID BIGINT NOT NULL CONSTRAINT PFS_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE"
+			        + ")");
+			    st
+			    .execute("CREATE TABLE SETTING_FILTERS ("
+			        + "SETTINGS_ID     BIGINT  NOT NULL CONSTRAINT SETTING_SETTINGS_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
+			        + "FINDING_TYPE_ID BIGINT  NOT NULL CONSTRAINT SETTING_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
+			        + "DELTA           INTEGER,"
+			        + "IMPORTANCE      INTEGER,"
+			        + " FILTERED        CHAR(1) CONSTRAINT SETTING_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
+			        + ")");
+			    st
+			    .execute("CREATE TABLE SETTINGS_PROJECT_RELTN ("
+			        + "SETTINGS_ID    BIGINT       NOT NULL CONSTRAINT PSR_SETTINGS_FK REFERENCES SETTINGS(ID) ON DELETE CASCADE,"
+			        + "PROJECT_NAME   VARCHAR(255) NOT NULL,"
+			        + "PRIMARY KEY (SETTINGS_ID,PROJECT_NAME)"
+			        + ")");
+			  } else {
+			    st.execute("CREATE VIEW PROJECT_OVERVIEW " + "  (PROJECT) "
+			        + "AS SELECT NAME FROM PROJECT ");
+			    st
+			    .execute("CREATE VIEW LATEST_SCANS "
+			        + "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
+			        + "AS SELECT  "
+			        + "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME  "
+			        + "FROM SCAN R, PROJECT P, "
+			        + "   ( "
+			        + "    SELECT MAX(R2.SCAN_DATE_TIME) AS TIME "
+			        + "    FROM "
+			        + "        SCAN R2, "
+			        + "        PROJECT P2 "
+			        + "    WHERE "
+			        + "        P2.ID = R2.PROJECT_ID "
+			        + "    GROUP BY "
+			        + "        P2.NAME "
+			        + "   ) TIMES "
+			        + "WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID ");
+			    st
+			    .execute("CREATE VIEW OLDEST_SCANS "
+			        + "  (PROJECT,SCAN_ID,SCAN_UUID,TIME) "
+			        + "AS SELECT  "
+			        + "   P.NAME \"PROJECT\", R.ID \"SCAN_ID\", R.UUID, TIMES.TIME  "
+			        + "FROM SCAN R, PROJECT P, "
+			        + "   ( "
+			        + "    SELECT MIN(R2.SCAN_DATE_TIME) AS TIME "
+			        + "    FROM "
+			        + "        SCAN R2, "
+			        + "        PROJECT P2 "
+			        + "    WHERE "
+			        + "        P2.ID = R2.PROJECT_ID "
+			        + "    GROUP BY "
+			        + "        P2.NAME "
+			        + "   ) TIMES "
+			        + "WHERE R.SCAN_DATE_TIME = TIMES.TIME AND P.ID = R.PROJECT_ID AND R.ID NOT IN (SELECT SCAN_ID FROM LATEST_SCANS) ");
+			    st
+			    .execute("CREATE VIEW FIXED_FINDINGS  "
+			        + "   (ID) "
+			        + "AS  "
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID "
+			        + "   MINUS "
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
+			    st
+			    .execute(
 
-						"CREATE VIEW RECENT_FINDINGS  "
-								+ "   (ID) "
-								+ "AS  "
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID "
-								+ "   MINUS "
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
-				st
-						.execute(
+			        "CREATE VIEW RECENT_FINDINGS  "
+			        + "   (ID) "
+			        + "AS  "
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID "
+			        + "   MINUS "
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
+			    st
+			    .execute(
 
-						"CREATE VIEW CURRENT_FINDINGS "
-								+ "   (ID) "
-								+ "AS "
-								+ "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID "
-								+ "   UNION "
-								+ "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
-								+ "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
-				st
-						.execute("CREATE TABLE SETTINGS ("
-								+ "  ID       NUMBER       NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,"
-								+ "  NAME     VARCHAR(255) NOT NULL,"
-								+ "  UUID     CHAR(36)     UNIQUE NOT NULL,"
-								+ "  REVISION NUMBER       NOT NULL" + ")");
-				st
-						.execute("CREATE TABLE SETTING_FILTER_SETS ("
-								+ "SETTINGS_ID   NUMBER NOT NULL CONSTRAINT PFS_SETTING_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
-								+ "FILTER_SET_ID NUMBER NOT NULL CONSTRAINT PFS_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE"
-								+ ")");
-				st
-						.execute("CREATE TABLE SETTING_FILTERS ("
-								+ "SETTINGS_ID     NUMBER  NOT NULL CONSTRAINT SETTING_SETTINGS_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
-								+ "FINDING_TYPE_ID NUMBER  NOT NULL CONSTRAINT SETTING_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
-								+ "DELTA           INTEGER,"
-								+ "IMPORTANCE      INTEGER,"
-								+ " FILTERED        CHAR(1) CONSTRAINT SETTING_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
-								+ ")");
-				st
-						.execute("CREATE TABLE SETTINGS_PROJECT_RELTN ("
-								+ "SETTINGS_ID    NUMBER       NOT NULL CONSTRAINT PSR_SETTINGS_FK REFERENCES SETTINGS(ID) ON DELETE CASCADE,"
-								+ "PROJECT_NAME   VARCHAR(255) NOT NULL,"
-								+ "PRIMARY KEY (SETTINGS_ID,PROJECT_NAME)"
-								+ ")");
-			}
-			st.execute("DELETE FROM PROJECT_FILTERS");
-			st.execute("DROP TABLE PROJECT_FILTERS");
+			        "CREATE VIEW CURRENT_FINDINGS "
+			        + "   (ID) "
+			        + "AS "
+			        + "   SELECT SO.FINDING_ID FROM OLDEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID "
+			        + "   UNION "
+			        + "   SELECT SO.FINDING_ID FROM LATEST_SCANS OS, SCAN_OVERVIEW SO "
+			        + "   WHERE SO.SCAN_ID = OS.SCAN_ID ");
+			    st
+			    .execute("CREATE TABLE SETTINGS ("
+			        + "  ID       NUMBER       NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,"
+			        + "  NAME     VARCHAR(255) NOT NULL,"
+			        + "  UUID     CHAR(36)     UNIQUE NOT NULL,"
+			        + "  REVISION NUMBER       NOT NULL" + ")");
+			    st
+			    .execute("CREATE TABLE SETTING_FILTER_SETS ("
+			        + "SETTINGS_ID   NUMBER NOT NULL CONSTRAINT PFS_SETTING_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
+			        + "FILTER_SET_ID NUMBER NOT NULL CONSTRAINT PFS_FILTER_SET_FK REFERENCES FILTER_SET (ID) ON DELETE CASCADE"
+			        + ")");
+			    st
+			    .execute("CREATE TABLE SETTING_FILTERS ("
+			        + "SETTINGS_ID     NUMBER  NOT NULL CONSTRAINT SETTING_SETTINGS_FK REFERENCES SETTINGS (ID) ON DELETE CASCADE,"
+			        + "FINDING_TYPE_ID NUMBER  NOT NULL CONSTRAINT SETTING_FINDING_TYPE_FK REFERENCES FINDING_TYPE (ID),"
+			        + "DELTA           INTEGER,"
+			        + "IMPORTANCE      INTEGER,"
+			        + " FILTERED        CHAR(1) CONSTRAINT SETTING_FILTERED_FK CHECK (FILTERED IS NULL OR FILTERED IN ('Y'))"
+			        + ")");
+			    st
+			    .execute("CREATE TABLE SETTINGS_PROJECT_RELTN ("
+			        + "SETTINGS_ID    NUMBER       NOT NULL CONSTRAINT PSR_SETTINGS_FK REFERENCES SETTINGS(ID) ON DELETE CASCADE,"
+			        + "PROJECT_NAME   VARCHAR(255) NOT NULL,"
+			        + "PRIMARY KEY (SETTINGS_ID,PROJECT_NAME)"
+			        + ")");
+			  }
+			  st.execute("DELETE FROM PROJECT_FILTERS");
+			  st.execute("DROP TABLE PROJECT_FILTERS");
+			} finally {
+			  st.close();
+      }
 		}
 		if (type == DBType.DERBY) {
 			Statement st = c.createStatement();
