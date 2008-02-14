@@ -47,8 +47,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         engine.setProgressCallback(mon);        
         try {
           engine.execute();
+          System.out.println("Done with FB execute()");
         } catch(IOException e) {
           if (!e.getMessage().startsWith("No classes found to analyze")) {
+            e.printStackTrace();
             throw e;
           } else {
             // Ignored
@@ -187,7 +189,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     /* ******************** For BugReporter ********************* */
     
     public void finish() {
-      System.out.println("Finished");
+      System.out.println("Called finish()");
     }    
     
     public void addObserver(BugReporterObserver observer) {
