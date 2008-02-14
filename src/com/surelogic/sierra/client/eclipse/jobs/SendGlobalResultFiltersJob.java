@@ -89,8 +89,7 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			} else {
 				SLLogger.getLogger().log(Level.WARNING,
 						"Failed to write settings to " + f_server, e);
-				return SLStatus.createErrorStatus(
-						"Failed to write settings to " + f_server, e);
+				return Status.CANCEL_STATUS;
 			}
 		}
 		return Status.OK_STATUS;
