@@ -291,20 +291,20 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				try {
 					final String query = QUERY;
 					final ResultSet rs = st.executeQuery(query);
-          try {
-            while (rs.next()) {
-              FindingTypeRow row = new FindingTypeRow();
-              row.categoryName = rs.getString(1);
-              row.findingTypeName = rs.getString(2);
-              row.findingTypeDescription = rs.getString(3);
-              row.findingTypeUUID = rs.getString(4);
-              f_artifactList.add(row);
-            }
-            f_filterList.addAll(SettingsManager.getInstance(c)
-                .getGlobalSettingsUUID());
-          } finally {
-            rs.close();
-          }
+					try {
+						while (rs.next()) {
+							FindingTypeRow row = new FindingTypeRow();
+							row.categoryName = rs.getString(1);
+							row.findingTypeName = rs.getString(2);
+							row.findingTypeDescription = rs.getString(3);
+							row.findingTypeUUID = rs.getString(4);
+							f_artifactList.add(row);
+						}
+						f_filterList.addAll(SettingsManager.getInstance(c)
+								.getGlobalSettingsUUID());
+					} finally {
+						rs.close();
+					}
 				} finally {
 					st.close();
 				}
@@ -400,6 +400,11 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 * Must be called from the UI thread.
 	 */
 	private void fillTableContents() {
+		/**
+		 * Fix to bug 1355, we should have checked if the panel is still up.
+		 */
+		if (f_findingTypes.isDisposed())
+			return;
 		String currentCategoryName = null;
 		TreeItem currentCategoryItem = null;
 		for (FindingTypeRow row : f_artifactList) {
