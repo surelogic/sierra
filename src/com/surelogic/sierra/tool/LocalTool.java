@@ -241,8 +241,6 @@ public class LocalTool extends AbstractTool {
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
                 case ERROR:
-                  line = copyException(first, st.nextToken(), br);
-                  break;
                 case FAILED:
                   line = copyException(first, st.nextToken(), br);
                   break loop;
