@@ -6,8 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class MatchRecord extends UpdatableRecord<MatchRecord.PK>
-		implements Record<MatchRecord.PK> {
+public final class MatchRecord extends UpdatableRecord<MatchRecord.PK> {
 
 	private PK id;
 
