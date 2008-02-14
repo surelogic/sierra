@@ -91,7 +91,7 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			} else {
 				SLLogger.getLogger().log(Level.WARNING,
 						"Failed to get settings from " + f_server, e);
-				return SLStatus.createErrorStatus("Failed to get settings from " + f_server, e);
+				return Status.CANCEL_STATUS;
 			}
 		}
 		return Status.OK_STATUS;
