@@ -9,7 +9,6 @@ import java.util.zip.GZIPOutputStream;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Artifact;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ClassMetric;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.Error;
@@ -30,8 +29,7 @@ import com.surelogic.sierra.tool.message.SourceLocation;
  * @author Tanmay.Sinha
  * 
  */
-public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
-		implements ArtifactGenerator {
+public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";
@@ -128,7 +126,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator
 			finalFile.write(TOOL_OUTPUT_START);
 			monitor.worked(1);
 			
-			String line = null;
+			String line;
 			
 			if (metricsFile != null && metricsFile.exists()) {
 			  monitor.subTask("Writing metrics");
