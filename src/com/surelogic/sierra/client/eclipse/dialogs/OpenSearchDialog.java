@@ -26,8 +26,7 @@ public final class OpenSearchDialog extends AbstractSearchDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-	  Composite panel = setupDialogArea(parent, "Select a search to open", SWT.FULL_SELECTION);
-		return panel;
+	  return setupDialogArea(parent, "Select a search to open", SWT.FULL_SELECTION);
 	}
 
   @Override
