@@ -245,6 +245,7 @@ public class LocalTool extends AbstractTool {
                   break;
                 case FAILED:
                   line = copyException(first, st.nextToken(), br);
+                  System.out.println("Terminating run");
                   break loop;
                 case DONE:
                   monitor.done();
