@@ -36,7 +36,7 @@ public class SierraPortal implements EntryPoint, HistoryListener {
 
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
-				headerPanel.updateAccountPanel(null);
+				ClientContext.setUser(null);
 				contentPanel.showLogin("Unable to verify session: "
 						+ caught.getMessage());
 			}
