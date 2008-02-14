@@ -278,7 +278,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 					+ (System.currentTimeMillis() - startDelete));
 
 		long startCreate = !debug ? 0 : System.currentTimeMillis();
-		IMarker marker = null;
+		IMarker marker;
 		try {
 			for (FindingOverview o : overview) {
 

@@ -733,7 +733,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		TreeItem clazz;
 		TreeItem line;
 		String qualifiedClassName = null;
-		String qualifiedClassLine = null;
+		String qualifiedClassLine;
 		if (pkg == null) {
 			pkg = new TreeItem(proj, SWT.NULL);
 			pkg.setText(loc.getPackageName());

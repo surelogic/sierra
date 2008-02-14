@@ -106,7 +106,7 @@ public final class ConfigGenerator {
 			String projectNameHolder = c.getJavaProject().getElementName();
 
 			Set<String> projectsInMap = projectCompilationUnitMap.keySet();
-			List<ICompilationUnit> compilationUnitsHolder = null;
+			List<ICompilationUnit> compilationUnitsHolder;
 			if (projectsInMap.contains(projectNameHolder)) {
 				compilationUnitsHolder = projectCompilationUnitMap
 						.get(projectNameHolder);
@@ -157,7 +157,7 @@ public final class ConfigGenerator {
 
 					Set<String> packageInMap = packageCompilationUnitMap
 							.keySet();
-					List<String> compilationUnitsHolder = null;
+					List<String> compilationUnitsHolder;
 					if (packageInMap.contains(packageName)) {
 						compilationUnitsHolder = packageCompilationUnitMap
 								.get(packageName);
@@ -220,9 +220,9 @@ public final class ConfigGenerator {
 
 						int lastPeriod = qualifiedName.lastIndexOf('.');
 
-						String packageName = null;
-						String javaType = null;
-						String folder = null;
+						String packageName;
+						String javaType;
+						String folder;
 						if (lastPeriod != -1) {
 							packageName = qualifiedName
 									.substring(0, lastPeriod);
