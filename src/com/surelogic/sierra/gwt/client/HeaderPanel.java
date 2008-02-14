@@ -46,7 +46,7 @@ public class HeaderPanel extends Composite {
 		updateAccountPanel(ClientContext.getUser());
 	}
 
-	public void updateAccountPanel(UserAccount user) {
+	public final void updateAccountPanel(UserAccount user) {
 		if (user != null) {
 			userPanel.add(createUserLabel("Logged in as " + user.getUserName(),
 					null));
