@@ -34,6 +34,7 @@ public final class FilterSelectionReportLine {
 	public void dispose() {
 		f_lineComposite.dispose();
 		f_barColorDark.dispose();
+		f_barColorLight.dispose();
 	}
 
 	private final Button f_check;
