@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.surelogic.sierra.tool.message.IdentifierType;
 
-public class SourceDetail {
+public class SourceDetail implements Comparable<SourceDetail> {
 	private final String packageName;
 	private final String className;
 	private final int lineOfCode;
@@ -60,4 +60,30 @@ public class SourceDetail {
 		return identifier;
 	}
 
+  public int compareTo(SourceDetail other) {
+    int rv = packageName.compareTo(other.packageName);
+    if (rv == 0) {
+      rv = className.compareTo(other.className);
+      if (rv == 0) {
+        rv = lineOfCode - other.lineOfCode;
+        if (rv == 0) {
+          return endLineOfCode - other.endLineOfCode;
+        }
+      }
+    }
+    return rv;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof SourceDetail) {
+      return compareTo((SourceDetail) o) == 0;   
+    }
+    return false;
+  }
+  
+  @Override 
+  public int hashCode() {
+    return packageName.hashCode() + className.hashCode() + lineOfCode + endLineOfCode;
+  }
 }
