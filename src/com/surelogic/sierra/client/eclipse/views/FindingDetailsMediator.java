@@ -3,9 +3,8 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -701,10 +700,30 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			// clazz.addListener(SWT.Selection, f_locationListener);
 			tree.showItem(clazz);
 		} else {
+		  List<SourceDetail> srcs = new ArrayList<SourceDetail>();
+		  for (ArtifactDetail artifact : finding.getArtifacts()) {
+		    srcs.add(artifact.getPrimarySource());
+		    for (SourceDetail src : artifact.getAdditionalSources()) {
+		      srcs.add(src);
+		    }
+		  }
+		  Collections.sort(srcs);
+		  
 			// Deal with multiple artifacts, and multiple locations
+		  // TODO eliminate these if the sources are ordered?
 			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
 			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
 			Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
+			TreeItem first = null;
+			for (SourceDetail src : srcs) {
+			  TreeItem loc = createLocation(proj, packages, classes, lines, src);
+        tree.showItem(loc);
+        if (first == null) {
+          first = loc;
+        }
+			}
+			tree.showItem(first);
+			/*
 			for (ArtifactDetail artifact : finding.getArtifacts()) {
 				TreeItem loc = createLocation(proj, packages, classes, lines,
 						artifact.getPrimarySource());
@@ -718,6 +737,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 					}
 				}
 			}
+			*/
 		}
 	}
 
