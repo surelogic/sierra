@@ -339,7 +339,6 @@ public final class MListOfFindingsColumn extends MColumn implements
       public void handleEvent(Event event) {
         final TableItem item = (TableItem) event.item;
         final int index = event.index;
-        System.out.println("Init "+index);
         FindingData data = f_rows.get(index);
         initTableItem(data, item);
       }
