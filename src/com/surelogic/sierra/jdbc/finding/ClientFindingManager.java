@@ -340,27 +340,35 @@ public final class ClientFindingManager extends FindingManager {
 					.newScan();
 			scanRecord.setUid(scan);
 			if (scanRecord.select()) {
-				log.info("Populating scan overview for scan "
+			  final boolean debug = log.isLoggable(Level.FINE);
+			  if (debug) {
+	        log.fine("Populating scan overview for scan "
 						+ scanRecord.getUid() + ".");
+			  }
 				populateScanOverview(scanRecord.getId());
 				monitor.worked(1);
 
-				log.info("Clearing overview for project " + p.getName() + ".");
+				if (debug) {
+          log.fine("Clearing overview for project " + p.getName() + ".");
+				}
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
 				monitor.worked(1);
 
-				log.info("Calculating ids in overview for project "
+				if (debug) {
+          log.fine("Calculating ids in overview for project "
 						+ p.getName() + ".");
+				}
 				int idx = 1;
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.setString(idx++, projectName);
 				populateTempIds.execute();
 				monitor.worked(1);
 
-				log
-						.info("Populating overview for project " + p.getName()
+				if (debug) {
+          log.fine("Populating overview for project " + p.getName()
 								+ ".");
+				}
 				idx = 1;
 				populateFindingOverviewCurrentFindings.setString(idx++,
 						projectName);
@@ -383,7 +391,7 @@ public final class ClientFindingManager extends FindingManager {
 				}
 				monitor.worked(1);
 
-				log.info("Deleting temp ids");
+				log.fine("Deleting temp ids");
 				deleteTempIds.execute();
 				monitor.worked(1);
 			} else {
@@ -485,8 +493,10 @@ public final class ClientFindingManager extends FindingManager {
 			 */
 			scanFindingIds.addAll(previousFindingIds);
 			regenerateFindingsOverview(projectName, scanFindingIds, monitor);
-			log.info("All new findings (" + total + ") persisted for scan "
+			if (log.isLoggable(Level.FINE)) {
+			  log.fine("All new findings (" + total + ") persisted for scan "
 					+ uid + " in project " + projectName + ".");
+			}
 		} catch (SQLException e) {
 			sqlError(e);
 		}
@@ -502,8 +512,10 @@ public final class ClientFindingManager extends FindingManager {
 		populatePartialScanOverview.setLong(2, scanId);
 		populatePartialScanOverview.execute();
 		deleteTempIds.execute();
-		log.info("Generated partial scan overview for scan " + scanId + ": "
+		if (log.isLoggable(Level.FINE)) {
+		  log.fine("Generated partial scan overview for scan " + scanId + ": "
 				+ findingIds.size() + " new");
+		}
 	}
 
 	/**
@@ -554,8 +566,10 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			latestScanSet.close();
 		}
-		log.info("Regenerated findings overview for project " + projectName
+    if (log.isLoggable(Level.FINE)) {
+      log.info("Regenerated findings overview for project " + projectName
 				+ ": " + findingIds.size() + " old");
+    }
 	}
 
 	public List<SyncTrailRequest> getNewLocalAudits(String projectName,

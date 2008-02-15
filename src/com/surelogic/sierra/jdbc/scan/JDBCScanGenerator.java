@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -157,8 +158,10 @@ class JDBCScanGenerator implements ScanGenerator {
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
-			log.info("Scan " + scan.getUid() + " for project " + projectName
+			if (log.isLoggable(Level.FINE)) {
+        log.fine("Scan " + scan.getUid() + " for project " + projectName
 					+ " persisted to database, starting finding generation.");
+			}
 			conn.commit();
 			return scan.getUid();
 		} catch (SQLException e) {

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -63,8 +64,10 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
 			FindingFilter filter) throws SQLException {
-		log.info("Now persisting artifacts to database for scan "
-				+ scan.getUid() + " in project " + projectName + ".");
+	  if (log.isLoggable(Level.FINE)) {
+	    log.fine("Now persisting artifacts to database for scan "
+	        + scan.getUid() + " in project " + projectName + ".");
+	  }
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -161,8 +162,10 @@ public class FindingManager {
 			} finally {
 				result.close();
 			}
-			log.info("All new findings (" + counter + ") persisted for scan "
+			if (log.isLoggable(Level.FINE)) {
+			  log.fine("All new findings (" + counter + ") persisted for scan "
 					+ uid + " in project " + projectName + ".");
+			}
 		} catch (SQLException e) {
 			sqlError(e);
 		}

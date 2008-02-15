@@ -3,6 +3,7 @@ package com.surelogic.sierra.jdbc.scan;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -98,8 +99,10 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
-			log.info("Scan " + scan.getUid() + " for project " + projectName
-					+ " persisted to database, starting finding generation.");
+			if (log.isLoggable(Level.FINE)) {
+			  log.fine("Scan " + scan.getUid() + " for project " + projectName
+			      + " persisted to database, starting finding generation.");
+			}
 			conn.commit();
 			return scan.getUid();
 		} catch (SQLException e) {
