@@ -54,6 +54,10 @@ public class AdminServerTab extends TabComposite {
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
+	public String getName() {
+		return "Admin Server";
+	}
+
 	private void updateInfo(ServerInfo info) {
 		currentVersion.setHTML("<div>Current Version: "
 				+ info.getCurrentVersion() + "</div>");

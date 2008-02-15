@@ -172,6 +172,10 @@ public class AdminUsersTab extends TabComposite {
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
+	public String getName() {
+		return "Admin Users";
+	}
+
 	private void updateUserInfo(UserAccount info) {
 		detailUser = info.getUserName();
 		detailUserName.setHTML("<h3>" + detailUser + "</h3>");

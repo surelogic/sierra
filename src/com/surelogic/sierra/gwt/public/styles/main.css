@@ -31,41 +31,23 @@ a.hover {
 }
 
 /* Header */
-
-		
 .header {
-	background-image:url('../images/header-bg2.gif'); 
+	background-image:url('../images/header-bg.gif'); 
 	background-repeat:repeat-x; 
+	width:100%;
 	padding:0px 0px 0px 0px; 
 	margin:0px 0px 0px 0px;
 }
 
-.header_text {
-	position:absolute;
-	left:725px;
-	top:110px;
-	z-index:20; 
-	color:#ffffff; 
-	font-size:14px; 
-	font-weight:bold; 
-	white-space: nowrap;
+.header-session {
+	color: #FFFFFF;
+	margin: 5px;
 }
 
-.header_text2{
-	color:#ffffff; 
-	text-transform:uppercase; 
-	text-decoration:none; 
-	margin-left:50px;
-}
-
-.header_text3{
-	color:#ffffff; 
-	text-transform:uppercase; 
-	text-decoration:none; 
-	font-size:14px; 
-	font-weight:bold; 
-	white-space: nowrap;
-	margin:5px;
+.header-session-clickable {
+	text-decoration:underline;
+	cursor: pointer;
+	cursor: hand;
 }
 
 /* Login Panel */
@@ -76,18 +58,6 @@ a.hover {
 
 .login-errormessage {
     color: #FF3333;
-}
-
-/* User Prefs, Logout Panel */
-.header-user-label {
-	color: #FFFFFF;
-	margin: 5px;
-}
-
-.header-user-clickable {
-	text-decoration:underline;
-	cursor: pointer;
-	cursor: hand;
 }
 
 /* Tab Panel Styling */
@@ -124,6 +94,19 @@ a.hover {
   cursor: pointer;
   cursor: hand;
   padding-left: 1ex;
+  padding-right: 1ex;
+}
+
+/* Action panel styling - holds a horizontal set of action links */
+.action-panel {
+  margin: 1ex;
+}
+
+.action-item {
+  color:#005596; 
+  text-decoration:underline;
+  cursor: pointer;
+  cursor: hand;
   padding-right: 1ex;
 }
 
