@@ -82,9 +82,9 @@ public final class SierraServersView extends ViewPart {
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = new MenuItem(serverListMenu,
 				SWT.PUSH);
-		sendResultFilters.setText("Send Result Filters...");
+		sendResultFilters.setText("Send Scan Filter...");
 		final MenuItem getResultFilters = new MenuItem(serverListMenu, SWT.PUSH);
-		getResultFilters.setText("Get Result Filters...");
+		getResultFilters.setText("Get Scan Filter...");
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
 		final MenuItem serverPropertiesItem = new MenuItem(serverListMenu,
 				SWT.PUSH);
