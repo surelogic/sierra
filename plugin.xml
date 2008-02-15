@@ -58,7 +58,7 @@
            		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
-                label="Re-Scan Changes in Project(s)"
+                label="Re-Scan Changes in Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
@@ -67,7 +67,7 @@
            		class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
                 id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
-                label="Scan Project(s)"
+                label="Scan Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
                 enablesFor="+">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
@@ -193,7 +193,7 @@
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
-               label="Re-Scan Changes in Project(s)"
+               label="Re-Scan Changes in Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
          
          <action
@@ -201,7 +201,7 @@
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
-               label="Scan Project(s)"
+               label="Scan Project"
                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
 
          <action
