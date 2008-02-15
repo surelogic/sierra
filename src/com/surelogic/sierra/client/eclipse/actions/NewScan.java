@@ -32,7 +32,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	@Override
 	boolean startScanJob(Collection<IJavaProject> selectedProjects) {
 	  boolean started = false;
-		LOG.info("Starting new scan jobs");		
+		LOG.fine("Starting new scan jobs");		
 		
 		for (final IJavaProject p : selectedProjects) {
 			final Config config = ConfigGenerator.getInstance()
