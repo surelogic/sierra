@@ -109,7 +109,7 @@ public class LocalTool extends AbstractTool {
     }
 
     public void run() {
-      final boolean debug = false; //LOG.isLoggable(Level.FINE);
+      final boolean debug = LOG.isLoggable(Level.FINE);
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
@@ -121,7 +121,9 @@ public class LocalTool extends AbstractTool {
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
-      LOG.info("common = "+common);
+      if (debug) {
+        LOG.fine("common = "+common);
+      }
       if (common.endsWith(".jar")) {
         path.add(new Path(proj, common)); // as plugin
       } else {
@@ -131,16 +133,22 @@ public class LocalTool extends AbstractTool {
       path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
 
       final String message = config.getPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID);
-      LOG.info("message = "+message);
+      if (debug) {
+        LOG.fine("message = "+message);
+      }
       path.add(new Path(proj, message)); // as plugin
       path.add(new Path(proj, message+"/bin")); // in workspace
       findJars(proj, path, message+"/jaxb");
 
       final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
-      LOG.info("pmd = "+pmd);
+      if (debug) {
+        LOG.fine("pmd = "+pmd);
+      }
       findJars(proj, path, new File(pmd+"/lib"));
       final String fb = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
-      LOG.info("fb = "+fb);
+      if (debug) {
+        LOG.fine("fb = "+fb);
+      }
       findJars(proj, path, new File(fb+"/lib"));
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
@@ -165,10 +173,11 @@ public class LocalTool extends AbstractTool {
           path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
         }
       }
-      
-      LOG.info("Starting process:");
-      for(String arg : cmdj.getCommandline()) {
-        LOG.info("\t"+arg);
+      if (debug) {
+        LOG.fine("Starting process:");
+        for(String arg : cmdj.getCommandline()) {
+          LOG.fine("\t"+arg);
+        }
       }
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
       pb.redirectErrorStream(true);      

@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -39,15 +40,19 @@ public class ToolUtil {
     return t;
   }
   
-  public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {
-    LOG.info("Excluded: "+config.getExcludedToolsList());
-    
+  public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {    
+    final boolean debug = LOG.isLoggable(Level.FINE);
     final ITool t = ToolUtil.create(config, runRemotely);                           
-    LOG.info("Java version: "+config.getJavaVersion());
-    LOG.info("Rules file: "+config.getPmdRulesFile());
-  
+    
+    if (debug) {
+      LOG.fine("Excluded: "+config.getExcludedToolsList());
+      LOG.fine("Java version: "+config.getJavaVersion());
+      LOG.fine("Rules file: "+config.getPmdRulesFile());
+    }
     IToolInstance ti = t.create(config, mon);     
-    LOG.info("Created "+ti.getClass().getSimpleName());
+    if (debug) {
+      LOG.fine("Created "+ti.getClass().getSimpleName());
+    }
     ti.run();
   }
   

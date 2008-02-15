@@ -93,7 +93,7 @@ public class Reckoner1_0Tool extends AbstractTool {
                                 List<File> targets, Filter filter) {
         List<Metrics> metrics = r.computeMetrics(targets, mon);
         
-        mon.beginTask("Reckoner", targets.size());
+        mon.beginTask("Reckoner ...", targets.size());
         for(Metrics m : metrics) {
           if (filter.exclude(m)) {
             continue;
