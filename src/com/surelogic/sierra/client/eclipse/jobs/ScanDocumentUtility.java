@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -55,8 +56,11 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
-		log.info("Loading scan document " + scanDocument
+	  final boolean debug = log.isLoggable(Level.FINE);
+    if (debug) {
+      log.info("Loading partial scan document " + scanDocument
 				+ " with compilations " + compilations + ".");
+    }
 		Throwable exc = null;
 		try {
 			Connection conn = Data.transactionConnection();
@@ -126,7 +130,10 @@ public final class ScanDocumentUtility {
 	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName)
 			throws ScanPersistenceException {
-		log.info("Loading scan document " + scanDocument);
+	  final boolean debug = log.isLoggable(Level.FINE);
+	  if (debug) {
+	    log.info("Loading scan document " + scanDocument);
+	  }
 		monitor.beginTask("Load scan document", 100);
 		Throwable exc = null;
 		try {
@@ -148,8 +155,10 @@ public final class ScanDocumentUtility {
 						.getInstance(conn);
 				fm.generateFindings(projectName, uid, filter, monitor);
 				conn.commit();
-				log.info("Generating overview for scan " + uid + "in project "
+				if (debug) {
+				  log.info("Generating overview for scan " + uid + "in project "
 						+ projectName);
+				}
 				fm.generateOverview(projectName, uid, monitor);
 				conn.commit();
 			} catch (Exception e) {

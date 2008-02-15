@@ -33,7 +33,7 @@ public class NewScanJob extends WorkspaceJob {
   
   @Override
   public IStatus runInWorkspace(IProgressMonitor monitor) {
-    LOG.info(this.getName());
+    LOG.fine(this.getName());
     final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
     try {            
       ToolUtil.scan(config, wrapper, true);

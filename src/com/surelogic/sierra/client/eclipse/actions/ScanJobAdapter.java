@@ -43,13 +43,18 @@ class ScanJobAdapter extends JobChangeAdapter {
 	
 	@Override
 	public void running(IJobChangeEvent event) {
-	  LOG.info("Starting "+scan+" on " + f_scanName);
+	  if (LOG.isLoggable(Level.FINE)) {
+      LOG.fine("Starting to load "+scan+" on " + f_scanName);
+	  }
 	}
 
 	@Override
 	public void done(IJobChangeEvent event) {
+	  final boolean debug = LOG.isLoggable(Level.FINE);
 		if (event.getResult().equals(Status.OK_STATUS)) {
-			LOG.info("Completed "+scan+" for " + f_scanName);
+		  if (debug) {
+		    LOG.fine("Completed "+scan+" for " + f_scanName);
+		  }
 			if (PreferenceConstants.showBalloonNotifications())
 				BalloonUtility
 						.showMessage("Sierra "+scan+" completed on "
@@ -57,7 +62,9 @@ class ScanJobAdapter extends JobChangeAdapter {
 								"You may now examine the results.");
 
 		} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
-			LOG.info("Canceled "+scan+" on " + f_scanName);
+		  if (debug) {
+		    LOG.fine("Canceled "+scan+" on " + f_scanName);
+		  }
 		} else {
 			Throwable t = event.getResult().getException();
 			LOG.log(Level.SEVERE,
