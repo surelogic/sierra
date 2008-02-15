@@ -4,19 +4,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
-public class HeaderPanel extends Composite {
-	private final DockPanel rootPanel = new DockPanel();
-	private final HorizontalPanel userPanel = new HorizontalPanel();
+public final class HeaderPanel extends Composite {
+	private final VerticalPanel rootPanel = new VerticalPanel();
+	private final HorizontalPanel sessionPanel = new HorizontalPanel();
 
 	public static HeaderPanel getInstance() {
 		return (HeaderPanel) RootPanel.get("header-pane").getWidget(0);
@@ -25,41 +25,48 @@ public class HeaderPanel extends Composite {
 	public HeaderPanel() {
 		super();
 		initWidget(rootPanel);
+		rootPanel.setStylePrimaryName("header");
 
-		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
-		rootPanel.setWidth("100%");
-
-		Image sierraLogo = new Image(GWT.getModuleBaseURL()
+		final HorizontalPanel headerRow = new HorizontalPanel();
+		headerRow.setStylePrimaryName("header");
+		final Image sierraLogo = new Image(GWT.getModuleBaseURL()
 				+ "images/header-sierra-logo.gif");
-		rootPanel.add(sierraLogo, DockPanel.WEST);
+		headerRow.add(sierraLogo);
 
-		rootPanel.add(userPanel, DockPanel.EAST);
-		rootPanel.setCellHorizontalAlignment(userPanel, DockPanel.ALIGN_RIGHT);
+		sessionPanel.setStylePrimaryName("header-session");
+		headerRow.add(sessionPanel);
+		headerRow.setCellHorizontalAlignment(sessionPanel,
+				HorizontalPanel.ALIGN_RIGHT);
 
-		// Listen for users
+		rootPanel.add(headerRow);
+
+		// Listen for user session changes
 		ClientContext.addChangeListener(new UserAccountListener() {
 
 			public void onChange(UserAccount account) {
-				updateAccountPanel(account);
+				updateSession(account);
 			}
+
 		});
-		updateAccountPanel(ClientContext.getUser());
+		updateSession(ClientContext.getUser());
 	}
 
-	public final void updateAccountPanel(UserAccount user) {
+	public void updateSession(UserAccount user) {
+		sessionPanel.clear();
 		if (user != null) {
-			userPanel.add(createUserLabel("Logged in as " + user.getUserName(),
-					null));
-			userPanel.add(createUserLabel("|", null));
-			userPanel.add(createUserLabel("Preferences", new ClickListener() {
+			sessionPanel.add(createUserLabel("Logged in as "
+					+ user.getUserName(), null));
+			sessionPanel.add(createUserLabel("|", null));
+			sessionPanel.add(createUserLabel("Preferences",
+					new ClickListener() {
 
-				public void onClick(Widget sender) {
-					ContentPanel.getInstance().showPreferences();
-				}
-			}));
+						public void onClick(Widget sender) {
+							ContentPanel.getInstance().showPreferences();
+						}
+					}));
 
-			userPanel.add(createUserLabel("|", null));
-			userPanel.add(createUserLabel("Log out", new ClickListener() {
+			sessionPanel.add(createUserLabel("|", null));
+			sessionPanel.add(createUserLabel("Log out", new ClickListener() {
 
 				public void onClick(Widget sender) {
 					final SessionServiceAsync svc = ServiceHelper
@@ -80,16 +87,14 @@ public class HeaderPanel extends Composite {
 					});
 				}
 			}));
-		} else {
-			userPanel.clear();
 		}
 	}
 
 	private Label createUserLabel(String text, ClickListener clickListener) {
 		final Label lbl = new Label(text);
-		lbl.addStyleName("header-user-label");
+		lbl.setStylePrimaryName("header-session");
 		if (clickListener != null) {
-			lbl.addStyleName("header-user-clickable");
+			lbl.addStyleDependentName("clickable");
 			lbl.addClickListener(clickListener);
 		}
 		return lbl;
