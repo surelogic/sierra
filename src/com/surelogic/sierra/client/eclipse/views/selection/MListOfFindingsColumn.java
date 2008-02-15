@@ -308,12 +308,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	private final IColumn f_iColumn = new IColumn() {
 		public Composite createContents(Composite panel) {
-			f_table = new Table(panel, SWT.FULL_SELECTION | SWT.MULTI);
+			f_table = new Table(panel, SWT.FULL_SELECTION | SWT.MULTI | SWT.VIRTUAL);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 			f_table.addKeyListener(f_keyListener);
-
+			f_table.setItemCount(0);
+			
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
 
@@ -327,23 +328,41 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private void updateTableContents() {
 		if (f_table.isDisposed())
 			return;
+		
 		f_table.setRedraw(false);
-		for (TableItem i : f_table.getItems())
-			i.dispose();
+		for (TableItem i : f_table.getItems()) {
+		  if (i != null) {
+		    i.dispose();
+		  }
+		}		
+		f_table.addListener(SWT.SetData, new Listener() {
+      public void handleEvent(Event event) {
+        final TableItem item = (TableItem) event.item;
+        final int index = event.index;
+        System.out.println("Init "+index);
+        FindingData data = f_rows.get(index);
+        initTableItem(data, item);
+      }
+		});
+		f_table.setItemCount(f_rows.size());
 
 		boolean selectionFound = false;
+		int i = 0;
 		for (FindingData data : f_rows) {
+		  /*
 			final TableItem item = new TableItem(f_table, SWT.NONE);
-			item.setText(data.f_summary);
-			item.setImage(Utility.getImageFor(data.f_importance));
-			item.setData(data);
-			if (data.f_findingId == f_findingId) {
-				selectionFound = true;
-				f_table.setSelection(item);
-			}
+			selectionFound = initTableItem(data, item);
+			*/
+		  if (data.f_findingId == f_findingId) {
+		    initTableItem(data, f_table.getItem(i));
+		    selectionFound = true;
+		    break;
+		  }
+		  i++;
 		}
 		if (!selectionFound)
-			f_findingId = -1;
+			f_findingId = -1;   
+
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
 		}
@@ -356,6 +375,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 		if (SystemUtils.IS_OS_WINDOWS_XP)
 			f_table.setRedraw(true);
 	}
+
+  private boolean initTableItem(FindingData data, final TableItem item) {
+    item.setText(data.f_summary);
+    item.setImage(Utility.getImageFor(data.f_importance));
+    item.setData(data);
+    if (data.f_findingId == f_findingId) {
+      f_table.setSelection(item);
+      return true;
+    }
+    return false;
+  }
 
 	private void setupMenu(final Menu menu) {
 		final MenuItem set = new MenuItem(menu, SWT.CASCADE);
