@@ -5,18 +5,17 @@ import com.google.gwt.user.client.ui.DockPanel;
 
 public abstract class ContentComposite extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
-	
+
 	public ContentComposite() {
 		super();
 		initWidget(rootPanel);
-		rootPanel.setWidth("100%");
-		rootPanel.setHeight("100%");
+		rootPanel.addStyleName("sl-ContentComposite");
 	}
-	
+
 	public DockPanel getRootPanel() {
 		return rootPanel;
 	}
-	
+
 	public abstract void activate();
-	
+
 }

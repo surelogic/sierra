@@ -9,6 +9,7 @@ public abstract class TabComposite extends Composite {
 	public TabComposite() {
 		super();
 		initWidget(rootPanel);
+		rootPanel.addStyleName("sl-TabComposite");
 	}
 
 	public abstract String getName();

@@ -17,9 +17,14 @@ public class AdminPanel extends ContentComposite {
 		rootPanel.clear();
 
 		final TabPanel tp = new TabPanel();
-		tp.add(new AdminServerTab(), "Manage Server");
-		tp.add(new AdminUsersTab(), "Manage Users");
-		tp.selectTab(0);
+		tp.addStyleName(rootPanel.getStyleName());
+		final AdminServerTab adminServer = new AdminServerTab();
+		tp.add(adminServer, adminServer.getName());
+		final AdminUsersTab adminUsers = new AdminUsersTab();
+		tp.add(adminUsers, adminUsers.getName());
+		final AdminUsers2Tab adminUsers2 = new AdminUsers2Tab();
+		tp.add(adminUsers2, adminUsers2.getName());
+		tp.selectTab(2);
 		rootPanel.add(tp, DockPanel.CENTER);
 	}
 

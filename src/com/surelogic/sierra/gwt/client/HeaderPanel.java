@@ -15,6 +15,9 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
 public final class HeaderPanel extends Composite {
+	private static final String PRIMARY_STYLE = "header";
+	private static final String SESSION_STYLE = PRIMARY_STYLE + "-session";
+
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final HorizontalPanel sessionPanel = new HorizontalPanel();
 
@@ -25,15 +28,15 @@ public final class HeaderPanel extends Composite {
 	public HeaderPanel() {
 		super();
 		initWidget(rootPanel);
-		rootPanel.setStylePrimaryName("header");
+		rootPanel.addStyleName(PRIMARY_STYLE);
 
 		final HorizontalPanel headerRow = new HorizontalPanel();
-		headerRow.setStylePrimaryName("header");
+		headerRow.addStyleName(PRIMARY_STYLE);
 		final Image sierraLogo = new Image(GWT.getModuleBaseURL()
 				+ "images/header-sierra-logo.gif");
 		headerRow.add(sierraLogo);
 
-		sessionPanel.setStylePrimaryName("header-session");
+		sessionPanel.addStyleName(SESSION_STYLE);
 		headerRow.add(sessionPanel);
 		headerRow.setCellHorizontalAlignment(sessionPanel,
 				HorizontalPanel.ALIGN_RIGHT);
@@ -92,9 +95,9 @@ public final class HeaderPanel extends Composite {
 
 	private Label createUserLabel(String text, ClickListener clickListener) {
 		final Label lbl = new Label(text);
-		lbl.setStylePrimaryName("header-session");
+		lbl.addStyleName(SESSION_STYLE);
 		if (clickListener != null) {
-			lbl.addStyleDependentName("clickable");
+			lbl.addStyleName(SESSION_STYLE + "-clickable");
 			lbl.addClickListener(clickListener);
 		}
 		return lbl;
