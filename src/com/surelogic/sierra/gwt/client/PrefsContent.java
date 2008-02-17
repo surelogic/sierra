@@ -10,15 +10,23 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class PrefsPanel extends ContentComposite {
+public class PrefsContent extends ContentComposite {
+	private static final PrefsContent instance = new PrefsContent();
 
 	private final PasswordTextBox oldPass = new PasswordTextBox();
 	private final PasswordTextBox pass = new PasswordTextBox();
 	private final PasswordTextBox passAgain = new PasswordTextBox();
 	private final HTML message = new HTML();
 
-	public PrefsPanel() {
+	public static final PrefsContent getInstance() {
+		return instance;
+	}
+
+	private PrefsContent() {
 		super();
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel vp = new VerticalPanel();
 		vp
 				.add(new HTML(
@@ -71,13 +79,16 @@ public class PrefsPanel extends ContentComposite {
 
 		vp.add(message);
 
-		final DockPanel rootPanel = getRootPanel();
 		rootPanel.clear();
 		rootPanel.add(vp, DockPanel.CENTER);
 	}
 
-	public void activate() {
+	protected void onActivate() {
 		reset();
+	}
+
+	protected boolean onDeactivate() {
+		return true;
 	}
 
 	private void reset() {

@@ -22,16 +22,16 @@ public final class ClientContext {
 	public static void setUser(UserAccount user) {
 		userAccount = user;
 		for (Iterator i = listeners.iterator(); i.hasNext();) {
-			final UserAccountListener listener = (UserAccountListener) i.next();
+			final ClientContextListener listener = (ClientContextListener) i.next();
 			listener.onChange(userAccount);
 		}
 	}
 
-	public static void addChangeListener(UserAccountListener listener) {
+	public static void addChangeListener(ClientContextListener listener) {
 		listeners.add(listener);
 	}
 
-	public static void removeChangeListener(UserAccountListener listener) {
+	public static void removeChangeListener(ClientContextListener listener) {
 		listeners.remove(listener);
 	}
 

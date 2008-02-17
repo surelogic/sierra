@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Image;

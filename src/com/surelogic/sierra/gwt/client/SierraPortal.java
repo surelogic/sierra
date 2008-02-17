@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -28,7 +29,7 @@ public class SierraPortal implements EntryPoint, HistoryListener {
 			public void onSuccess(Object result) {
 				ClientContext.setUser((UserAccount) result);
 				if (result == null) {
-					contentPanel.showLogin(null);
+					LoginContent.getInstance().show();
 				} else {
 					contentPanel.showDefault();
 				}
@@ -37,8 +38,9 @@ public class SierraPortal implements EntryPoint, HistoryListener {
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
 				ClientContext.setUser(null);
-				contentPanel.showLogin("Unable to verify session: "
-						+ caught.getMessage());
+				LoginContent.getInstance(
+						"Unable to verify session: " + caught.getMessage())
+						.show();
 			}
 		});
 	}

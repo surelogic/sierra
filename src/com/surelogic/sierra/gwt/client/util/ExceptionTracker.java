@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.util;
 
 /**
  * TODO Look up standard GWT exception model, this is an unverified approach

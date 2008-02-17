@@ -6,10 +6,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class ContentPanel extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
-	private final LoginPanel loginPanel = new LoginPanel();
-	private final TabsPanel tabsPanel = new TabsPanel();
-	private final AdminPanel adminPanel = new AdminPanel();
-	private final PrefsPanel prefsPanel = new PrefsPanel();
+	private ContentComposite currentContent;
+
 	public static ContentPanel getInstance() {
 		return (ContentPanel) RootPanel.get("content-pane").getWidget(0);
 	}
@@ -21,36 +19,20 @@ public class ContentPanel extends Composite {
 		rootPanel.setHeight("100%");
 	}
 
-	public void showDefault() {
-		showAdmin();
-	}
-
-	public void showLogin(String errorMessage) {
-		setContent(loginPanel);
-	}
-
-	public void showTabs() {
-		setContent(tabsPanel);
-	}
-
-	public void showTab(String tabName) {
-		showTabs();
-		tabsPanel.selectTab(tabName);
-	}
-
-	public void showAdmin() {
-		setContent(adminPanel);
-	}
-
-	private void setContent(ContentComposite panel) {
-		if (rootPanel.getWidgetIndex(panel) == -1) {
+	public void show(ContentComposite content) {
+		if (currentContent == content) {
+			return;
+		}
+		if (currentContent == null || currentContent.deactivate()) {
+			currentContent = content;
+			currentContent.activate();
 			rootPanel.clear();
-			rootPanel.add(panel, DockPanel.CENTER);
-			panel.activate();
+			rootPanel.add(currentContent, DockPanel.CENTER);
 		}
 	}
 
-	public void showPreferences() {
-		setContent(prefsPanel);
+	public void showDefault() {
+		show(AdminContent.getInstance());
 	}
+
 }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public final class HeaderPanel extends Composite {
 	private static final String PRIMARY_STYLE = "header";
@@ -44,7 +45,7 @@ public final class HeaderPanel extends Composite {
 		rootPanel.add(headerRow);
 
 		// Listen for user session changes
-		ClientContext.addChangeListener(new UserAccountListener() {
+		ClientContext.addChangeListener(new ClientContextListener() {
 
 			public void onChange(UserAccount account) {
 				updateSession(account);
@@ -64,7 +65,7 @@ public final class HeaderPanel extends Composite {
 					new ClickListener() {
 
 						public void onClick(Widget sender) {
-							ContentPanel.getInstance().showPreferences();
+							PrefsContent.getInstance().show();
 						}
 					}));
 
@@ -79,13 +80,13 @@ public final class HeaderPanel extends Composite {
 						public void onFailure(Throwable caught) {
 							ExceptionTracker.logException(caught);
 							ClientContext.setUser(null);
-							ContentPanel.getInstance().showLogin(
-									"Unable to contact server");
+							LoginContent.getInstance("Unable to contact server")
+									.show();
 						}
 
 						public void onSuccess(Object result) {
 							ClientContext.setUser(null);
-							ContentPanel.getInstance().showLogin(null);
+							LoginContent.getInstance().show();
 						}
 					});
 				}

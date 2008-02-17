@@ -20,8 +20,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
+import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
-public class LoginPanel extends ContentComposite {
+public class LoginContent extends ContentComposite {
+	private static final LoginContent instance = new LoginContent();
+
 	private final VerticalPanel loginPanel = new VerticalPanel();
 	private final Label message = new Label();
 	private final Label errorMessage = new Label();
@@ -38,9 +42,59 @@ public class LoginPanel extends ContentComposite {
 	private final SimplePanel waitPanel = new SimplePanel();
 	private final Button login = new Button("Log In");
 
-	public LoginPanel() {
-		super();
+	public static final LoginContent getInstance() {
+		return instance;
+	}
 
+	public static final LoginContent getInstance(String errorText) {
+		instance.errorMessage.setText(errorText);
+		return instance;
+	}
+
+	private LoginContent() {
+		super();
+	}
+
+	public void login() {
+		login.setEnabled(false);
+		waitPanel.add(waitImage);
+
+		final String usernameText = username.getText().trim();
+		final String passwordText = password.getText().trim();
+
+		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
+		sessionService.login(usernameText, passwordText, new AsyncCallback() {
+
+			public void onFailure(Throwable caught) {
+				ExceptionTracker.logException(caught);
+
+				resetLoginAttempt();
+				String errorMsg = "Authentication service unavailable";
+				final String caughtMsg = caught.getMessage();
+				if (caughtMsg != null && !"".equals(caughtMsg)) {
+					errorMsg += ": " + caughtMsg;
+				}
+				errorMessage.setText(errorMsg);
+			}
+
+			public void onSuccess(Object result) {
+				resetLoginAttempt();
+				LoginResult lr = (LoginResult) result;
+				if (lr.getErrorMessage() != null) {
+					errorMessage.setText(lr.getErrorMessage());
+				} else if (lr.getUserAccount() == null) {
+					errorMessage.setText("No user account available");
+				} else {
+					errorMessage.setText("");
+					ClientContext.setUser(lr.getUserAccount());
+					ContentPanel.getInstance().showDefault();
+				}
+			}
+		});
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
+		// TODO redo style bindings to standard naming scheme
 		loginPanel.addStyleName("login-panel");
 		loginPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 		loginPanel.add(message);
@@ -114,64 +168,29 @@ public class LoginPanel extends ContentComposite {
 			}
 		});
 
-		final DockPanel rootPanel = getRootPanel();
 		rootPanel.addStyleName("login-root");
 		rootPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
 		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
-	public void login() {
-		login.setEnabled(false);
-		waitPanel.add(waitImage);
-
-		final String usernameText = username.getText().trim();
-		final String passwordText = password.getText().trim();
-
-		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.login(usernameText, passwordText, new AsyncCallback() {
-
-			public void onFailure(Throwable caught) {
-				ExceptionTracker.logException(caught);
-
-				reset();
-				String errorMsg = "Authentication service unavailable";
-				final String caughtMsg = caught.getMessage();
-				if (caughtMsg != null && !"".equals(caughtMsg)) {
-					errorMsg += ": " + caughtMsg;
-				}
-				errorMessage.setText(errorMsg);
-			}
-
-			public void onSuccess(Object result) {
-				reset();
-				LoginResult lr = (LoginResult) result;
-				if (lr.getErrorMessage() != null) {
-					errorMessage.setText(lr.getErrorMessage());
-				} else if (lr.getUserAccount() == null) {
-					errorMessage.setText("No user account available");
-				} else {
-					ClientContext.setUser(lr.getUserAccount());
-					ContentPanel.getInstance().showDefault();
-				}
-			}
-		});
-	}
-
-	public void reset() {
-		password.setText("");
-		errorMessage.setText("");
-		waitPanel.clear();
-		updateLoginEnabled();
-	}
-
-	public void activate() {
-		reset();
+	protected void onActivate() {
+		resetLoginAttempt();
 		if (username.getText().trim().length() > 0) {
 			password.setFocus(true);
 		} else {
 			username.setFocus(true);
 		}
+	}
+
+	protected boolean onDeactivate() {
+		return true;
+	}
+
+	private void resetLoginAttempt() {
+		password.setText("");
+		waitPanel.clear();
+		updateLoginEnabled();
 	}
 
 	private void updateLoginEnabled() {

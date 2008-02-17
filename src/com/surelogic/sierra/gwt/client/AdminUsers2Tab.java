@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class AdminUsers2Tab extends TabComposite {
 
