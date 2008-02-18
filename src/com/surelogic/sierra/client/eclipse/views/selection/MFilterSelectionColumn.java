@@ -1,29 +1,34 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.StringUtility;
+import com.surelogic.common.eclipse.*;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -31,7 +36,8 @@ import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
 public final class MFilterSelectionColumn extends MColumn implements
-		IFilterObserver, FilterSelectionReportLine.ISelectionChangedObserver {
+		IFilterObserver
+{
 
 	private final Filter f_filter;
 
@@ -40,22 +46,26 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 
 	private Composite f_panel = null;
-	private Composite f_reportContents = null;
+	private Table f_reportContents = null;
 	private Label f_totalCount = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
-	private ScrolledComposite f_reportViewport = null;
+	private TableColumn f_valueColumn = null;
+	private TableColumn f_graphColumn = null;
+  private Color f_barColorDark = null;
+  private Color f_barColorLight = null;
 
 	private Menu f_menu = null;
 	private MenuItem f_selectAllMenuItem = null;
 	private MenuItem f_deselectAllMenuItem = null;
 	private MenuItem f_sortByCountMenuItem = null;
-
-	private FilterSelectionReportLine.Factory lineFactory = null;
-	private final List<FilterSelectionReportLine> f_lines = new ArrayList<FilterSelectionReportLine>();
-
+  private List<String> valueList;
+	private String f_mouseOverLine = "";
+  
 	private boolean f_sortByCount = false;
 
+	private static final int GRAPH_WIDTH = 75;
+	
 	MFilterSelectionColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn, Filter filter) {
 		super(cascadingList, selection, previousColumn);
@@ -78,20 +88,152 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_totalCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
 
-				f_reportViewport = new ScrolledComposite(f_reportGroup,
-						SWT.V_SCROLL | SWT.BORDER);
-				f_reportViewport.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-						true, true));
-				f_reportContents = new Composite(f_reportViewport, SWT.NONE);
-				RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-				rowLayout.fill = true;
-				rowLayout.wrap = false;
-				f_reportContents.setLayout(rowLayout);
-				
-				f_reportViewport.setContent(f_reportContents);
+				f_reportContents = new Table(f_reportGroup, SWT.VIRTUAL | SWT.CHECK | SWT.FULL_SELECTION | SWT.V_SCROLL);
+				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+				f_reportContents.setLayoutData(data);
 
-				lineFactory = new FilterSelectionReportLine.Factory(f_reportContents);
+				//f_reportContents.setHeaderVisible(true);
+				f_valueColumn = new TableColumn(f_reportContents, SWT.BORDER);
+				f_valueColumn.setText("Value");
+				f_valueColumn.setToolTipText("");				
+				f_graphColumn = new TableColumn(f_reportContents, SWT.BORDER);
+				f_graphColumn.setText("#");
+				f_graphColumn.setWidth(75);
+				f_graphColumn.setToolTipText("# of applicable findings with the given value");
+				f_reportContents.setBackground(f_reportGroup.getBackground());
+				f_reportContents.addSelectionListener(new SelectionListener() {
+          public void widgetDefaultSelected(SelectionEvent e) {
+            TableItem item = (TableItem) e.item;
+            item.setChecked(!item.getChecked());
+            selectionChanged(item);
+          }
+
+          public void widgetSelected(SelectionEvent e) {
+            /*
+            TableItem item = (TableItem) e.item;
+            item.setChecked(!item.getChecked());
+            selectionChanged(item);
+            */
+          }				  
+				});		
+				f_reportContents.addListener(SWT.MouseDown, new Listener() {
+          public void handleEvent(Event e) {
+            Point p = new Point(e.x, e.y);
+            TableItem item = f_reportContents.getItem(p);            
+            // Not part of the checkbox
+            if (e.x > 16) {
+              item.setChecked(!item.getChecked());
+            }
+            selectionChanged(item);         
+          }				  
+				});
+				f_reportContents.addListener(SWT.MouseMove, new Listener() {
+		      public void handleEvent(Event e) {
+		        Point p = new Point(e.x, e.y);
+		        TableItem item = f_reportContents.getItem(p);
+		        if (item != null) {
+		          f_mouseOverLine = (String) item.getData();
+		          f_reportContents.redraw();
+		        }
+		      }
+		    });
+				f_reportContents.addListener(SWT.MouseExit, new Listener() {
+		      public void handleEvent(Event e) {
+		        f_mouseOverLine = "";
+		        f_reportContents.redraw();
+		      }
+		    });
 				
+	      f_barColorDark = new Color(f_reportContents.getDisplay(), 255, 113, 18);
+	      f_barColorLight = new Color(f_reportContents.getDisplay(), 238, 216, 198);
+	      f_reportContents.addListener(SWT.SetData, new Listener() {
+	        public void handleEvent(Event event) {
+	          final TableItem item = (TableItem) event.item;
+	          final int index = event.index;
+	          updateData(item, index);
+	        }
+	      });
+	      
+	      f_reportContents.addListener(SWT.MeasureItem, new Listener() {
+	        public void handleEvent(Event event) {
+	          if (event.index == 1) {
+	            event.width = GRAPH_WIDTH;
+	          }
+	        }
+	      });	      
+	      f_reportContents.addListener(SWT.EraseItem, new Listener() {
+	        public void handleEvent(Event event) {
+	          if (event.index == 1) {
+	            event.detail &= ~SWT.HOT;
+	            	            
+	            TableItem item = (TableItem) event.item;
+	            int width = computeBarGraphWidth(item, GRAPH_WIDTH);
+	            
+	            Display display = f_reportContents.getDisplay();
+	            boolean checked = item.getChecked();
+	            GC gc = event.gc;
+	            Color oldForeground = gc.getForeground();
+	            Color oldBackground = gc.getBackground();
+	            if (checked) {
+	              gc.setForeground(f_barColorDark);
+	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, event.height);
+	              gc.setBackground(f_barColorLight);
+	              gc.fillRectangle(event.x, event.y, width, event.height);
+	            } else {
+	              gc.setForeground(f_barColorLight);
+	              gc.setBackground(f_reportGroup.getBackground());
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, event.height);
+	              gc.setBackground(f_barColorDark);
+	              gc.fillRectangle(event.x, event.y, width, event.height);
+	            }
+	            gc.setForeground(oldForeground);
+	            gc.setBackground(oldBackground);
+	            event.detail &= ~SWT.SELECTED;
+	            event.detail &= ~SWT.BACKGROUND;
+	            event.detail &= ~SWT.FOREGROUND;
+	          }
+	        }
+	      });	      
+	      f_reportContents.addListener(SWT.PaintItem, new Listener() {
+	        public void handleEvent(Event event) {
+	          if (event.index == 1) {
+	            TableItem item = (TableItem) event.item;
+	            String value = (String) item.getData();
+	            int count = f_filter.getSummaryCountFor(value);
+	            int percent = computeBarGraphPercent(count);
+	            Display display = f_reportContents.getDisplay();
+	            GC gc = event.gc;
+	            boolean checked = item.getChecked();
+	            
+	            Rectangle rect2 = new Rectangle(event.x, event.y, GRAPH_WIDTH - 1, event.height - 1);
+	            gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
+	            gc.drawRectangle(rect2);
+	            if (percent > 25) {
+	              int p = (GRAPH_WIDTH - 1) * 25 / 100;
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	            }
+	            if (percent > 50) {
+	              int p = (GRAPH_WIDTH - 1) * 50 / 100;
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	            }
+	            if (percent > 75) {
+	              int p = (GRAPH_WIDTH - 1) * 75 / 100;
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	            }
+	            String text = StringUtility.toCommaSepString(count);
+	            Point size = gc.textExtent(text);
+	            int offset = Math.max(0, (event.height - size.y) / 2);
+	            int rightJ = GRAPH_WIDTH - 2 - size.x;	            
+	            boolean mouseOverGraph = f_mouseOverLine.equals(value);
+	            if (mouseOverGraph || checked) {
+	              gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+	            }
+	            gc.drawText(text, event.x + rightJ, event.y + offset, true);
+	          }
+	        }
+	      });	      
+	      			
 				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
 				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
@@ -111,6 +253,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_selectAllMenuItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
 						f_filter.setPorousAll();
+						for(TableItem item : f_reportContents.getItems()) {
+						  item.setChecked(true);
+						}
 					}
 				});
 				f_deselectAllMenuItem = new MenuItem(f_menu, SWT.PUSH);
@@ -119,6 +264,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 						new Listener() {
 							public void handleEvent(Event event) {
 								f_filter.setPorousNone();
+				        for(TableItem item : f_reportContents.getItems()) {
+		              item.setChecked(false);
+		            }
 							}
 						});
 				new MenuItem(f_menu, SWT.SEPARATOR);
@@ -132,7 +280,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 							}
 						});
 
-				f_reportViewport.setMenu(f_menu);
+				//f_reportViewport.setMenu(f_menu);
 				f_reportContents.setMenu(f_menu);
 				f_reportGroup.setMenu(f_menu);
 				f_totalCount.setMenu(f_menu);
@@ -148,6 +296,22 @@ public final class MFilterSelectionColumn extends MColumn implements
 		initOfNextColumnComplete();
 	}
 
+	int computeBarGraphPercent(int count) {
+	  int total = f_filter.getFindingCountTotal();
+    int percent = (int) (((double) count / (double) total) * 100);
+    return percent;
+	}
+	
+	int computeBarGraphWidth(TableItem item, int totalWidth) {
+	  String value = (String) item.getData();
+    int count = f_filter.getSummaryCountFor(value);
+    int percent = computeBarGraphPercent(count);
+    int width = (totalWidth - 1) * percent / 100;
+    if (width < 2 && count > 0)
+      width = 2;
+    return width;
+	}
+	
 	@Override
 	void dispose() {
 		super.dispose();
@@ -156,9 +320,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 		if (column != -1)
 			getCascadingList().emptyFrom(column);
 		
+		/*
 		if (lineFactory != null) {
 		  lineFactory.dispose();
 		}
+		*/
 	}
 
 	@Override
@@ -174,7 +340,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	 */
 	private void updateReport() {
 		if (f_panel.isDisposed())
-			return;
+			
+		  return;
 		/*
 		 * Fix total count at the top.
 		 */
@@ -187,7 +354,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 		 */
 		final List<String> valueList = f_sortByCount ? f_filter
 				.getValuesOrderedBySummaryCount() : f_filter.getAllValues();
-
+    this.valueList = valueList;
+				
 		/*
 		 * filterContentsChanged tracks if the rows in this filter selection
 		 * column have changed. We want to avoid a call to pack because the
@@ -195,68 +363,63 @@ public final class MFilterSelectionColumn extends MColumn implements
 		 * called.
 		 */
 		boolean filterContentsChanged = false;
-		int currentIndex = 0;
-		for (String value : valueList) {
-			final int count = f_filter.getSummaryCountFor(value);
-
-			FilterSelectionReportLine fsrLine;
-			if (f_lines.size() > currentIndex) {
-				fsrLine = f_lines.get(currentIndex);
-				boolean unchanged = fsrLine.getText().equals(value)
-						&& fsrLine.getCount() == count
-						&& fsrLine.getTotal() == total;
-				if (!unchanged) {
-					fsrLine.setText(value);
-					fsrLine.setCount(count);
-					fsrLine.setTotal(total);
-					filterContentsChanged = true;
-				}
-			} else {
-				fsrLine = lineFactory.create(value, null, count, total);
-				fsrLine.setMenu(f_menu);
-				fsrLine.addObserver(this);
-				f_lines.add(fsrLine);
-				filterContentsChanged = true;
-			}
-			fsrLine.setSelection(f_filter.isPorous(value));
-			currentIndex++;
-		}
-		/*
-		 * Remove all the extra lines.
-		 */
-		List<FilterSelectionReportLine> extras = new ArrayList<FilterSelectionReportLine>();
-		while (currentIndex < f_lines.size()) {
-			extras.add(f_lines.get(currentIndex++));
-			filterContentsChanged = true;
-		}
-		f_lines.removeAll(extras);
-		for (FilterSelectionReportLine line : extras) {
-			/*
-			 * We have to set the menu to null before we dispose of the line
-			 * because, by default, SWT will dispose the menu of a control that
-			 * is being disposed.
-			 */
-			line.setMenu(null);
-			line.dispose();
-		}
+		final int currentRows = f_reportContents.getItemCount();
+		if (currentRows != valueList.size()) {
+		  filterContentsChanged = true;
+	    f_reportContents.setItemCount(valueList.size());
+	    // Rest delegated to listener
+		}	
 
 		final int porousCount = f_filter.getFindingCountPorous();
 		if (f_porousCount != null && !f_porousCount.isDisposed())
 			f_porousCount.setText("");
-		if (!f_lines.isEmpty()) {
-			final String porousCountString = StringUtility
-					.toCommaSepString(porousCount);
+		if (f_reportContents.getItemCount() > 0) {
+			final String porousCountString = 
+			  StringUtility.toCommaSepString(porousCount);
 			f_porousCount.setText(porousCountString);
-			f_totalCount.setToolTipText(porousCountString
-					+ (porousCount > 1 ? " findings" : " finding")
-					+ " selected");
-		}
-		f_reportContents.pack();
+			String msg = (porousCount == 0 ? "No" : porousCountString) + 
+			             (porousCount != 1 ? " findings" : " finding")
+                                     + " selected";
+			f_totalCount.setToolTipText(msg);
+			f_porousCount.setToolTipText(msg);
+		}		
+		f_valueColumn.setWidth(computeValueWidth());
+		f_graphColumn.setWidth(75);
+		f_reportContents.layout();
+		f_reportGroup.layout();
 		if (filterContentsChanged)
 			f_panel.pack();
 		f_panel.layout();
 	}
+	
+	int computeValueWidth() {
+    Image temp = new Image(null, 100, 100);
+    GC gc = new GC(temp);
+	  int longest = 0;
+    for(String value : valueList) {
+      Point size = gc.textExtent(value);
+      if (size.x > longest) {
+        longest = size.x;
+      }
+    }
+    gc.dispose();
+    temp.dispose();
+    if (longest < 25) {
+      return 50;
+    }
+    return longest + 25;
+	}
+	
+	void updateData(final TableItem item, int i) {
+	  final String value = valueList.get(i);
+	  //System.out.println("Initialized "+i+": "+value);
 
+	  item.setText(value);
+	  item.setText(0, value);
+    item.setData(value);
+    item.setChecked(f_filter.isPorous(value));
+	}
+	
 	public void filterChanged(Filter filter) {
 		if (f_panel.isDisposed())
 			return;
@@ -281,10 +444,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 		dispose();
 	}
 
-	public void selectionChanged(FilterSelectionReportLine line) {
+	public void selectionChanged(TableItem item) {
 		/*
 		 * The selection changed on a line.
 		 */
-		f_filter.setPorous(line.getText(), line.getSelection());
+		f_filter.setPorous(item.getText(), item.getChecked());
+		updateReport();
 	}
 }
