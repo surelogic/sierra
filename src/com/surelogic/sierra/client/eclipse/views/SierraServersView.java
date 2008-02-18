@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
@@ -213,7 +214,8 @@ public final class SierraServersView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
-
+    menu.add(new PreferencesAction("Preferences"));
+    
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem,

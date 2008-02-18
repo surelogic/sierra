@@ -18,6 +18,7 @@ import org.eclipse.ui.part.ViewPart;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
@@ -130,6 +131,7 @@ public final class FindingsSelectionView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
+		menu.add(new PreferencesAction("Preferences"));
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,

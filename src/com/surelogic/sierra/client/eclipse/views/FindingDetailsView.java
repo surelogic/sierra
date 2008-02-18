@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -35,6 +36,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends ViewPart {
@@ -319,6 +321,13 @@ public class FindingDetailsView extends ViewPart {
 
 		artifactTab.setControl(artifactsPane);
 
+    /*
+     * Allow direct access to the preferences from the view.
+     */
+    final IMenuManager menu = getViewSite().getActionBars()
+        .getMenuManager();
+    menu.add(new PreferencesAction("Preferences"));
+		
 		f_mediator = new FindingDetailsMediator(this, pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
 				synopsisSash, synopsisAudit, findingSynopsis, locationTree,

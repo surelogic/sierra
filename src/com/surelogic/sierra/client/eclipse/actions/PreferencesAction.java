@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -9,8 +10,15 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 /**
  * TODO: this was removed from the main menu due to RfR requirements.
  */
-public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
-
+public final class PreferencesAction extends Action implements IWorkbenchWindowActionDelegate {
+  public PreferencesAction() {
+    super();
+  }
+  
+  public PreferencesAction(String name) {
+    super(name);
+  }
+  
 	public static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";
 	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
 	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
@@ -24,6 +32,11 @@ public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 		// Nothing to do
 	}
 
+	@Override
+	public void run() {
+	  run(this);
+	}
+ 	
 	public void run(IAction action) {
 		PreferencesUtil.createPreferenceDialogOn(null, PREF_ID,
 				new String[] { PREF_ID, TOOLS_ID, FILTER_ID, DATA_ID }, null)
