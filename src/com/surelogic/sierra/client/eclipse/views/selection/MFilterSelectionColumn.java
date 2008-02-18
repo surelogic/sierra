@@ -167,25 +167,26 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            event.detail &= ~SWT.HOT;
 	            	            
 	            TableItem item = (TableItem) event.item;
-	            int width = computeBarGraphWidth(item, GRAPH_WIDTH);
+	            final int width = computeBarGraphWidth(item, GRAPH_WIDTH);
 	            
 	            Display display = f_reportContents.getDisplay();
 	            String value = (String) item.getData();
 	            GC gc = event.gc;
 	            Color oldForeground = gc.getForeground();
 	            Color oldBackground = gc.getBackground();
+	            final int height = event.height-2;
 	            if (f_mouseOverLine.equals(value)) {
 	              gc.setForeground(f_barColorDark);
 	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, event.height);
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
 	              gc.setBackground(f_barColorLight);
-	              gc.fillRectangle(event.x, event.y, width, event.height);
+	              gc.fillRectangle(event.x, event.y, width, height);
 	            } else {
 	              gc.setForeground(f_barColorLight);
 	              gc.setBackground(f_reportGroup.getBackground());
-	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, event.height);
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
 	              gc.setBackground(f_barColorDark);
-	              gc.fillRectangle(event.x, event.y, width, event.height);
+	              gc.fillRectangle(event.x, event.y, width, height);
 	            }
 	            gc.setForeground(oldForeground);
 	            gc.setBackground(oldBackground);
@@ -206,24 +207,25 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            GC gc = event.gc;
 	            boolean checked = item.getChecked();
 	            
-	            Rectangle rect2 = new Rectangle(event.x, event.y, GRAPH_WIDTH - 1, event.height - 1);
+	            final int height = event.height - 3;
+	            Rectangle rect2 = new Rectangle(event.x, event.y, GRAPH_WIDTH - 1, height);
 	            gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 	            gc.drawRectangle(rect2);
 	            if (percent > 25) {
 	              int p = (GRAPH_WIDTH - 1) * 25 / 100;
-	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + height);
 	            }
 	            if (percent > 50) {
 	              int p = (GRAPH_WIDTH - 1) * 50 / 100;
-	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + height);
 	            }
 	            if (percent > 75) {
 	              int p = (GRAPH_WIDTH - 1) * 75 / 100;
-	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + event.height - 1);
+	              gc.drawLine(event.x + p, event.y, event.x + p, event.y + height);
 	            }
 	            String text = StringUtility.toCommaSepString(count);
 	            Point size = gc.textExtent(text);
-	            int offset = Math.max(0, (event.height - size.y) / 2);
+	            int offset = Math.max(0, (height - size.y) / 2);
 	            int rightJ = GRAPH_WIDTH - 2 - size.x;	            
 	            boolean mouseOverGraph = f_mouseOverLine.equals(value);
 	            if (mouseOverGraph || checked) {
