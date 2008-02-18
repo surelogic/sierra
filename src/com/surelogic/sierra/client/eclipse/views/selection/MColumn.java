@@ -13,6 +13,8 @@ public abstract class MColumn {
 
 	private final Selection f_selection;
 
+	protected final int index;
+	
 	MColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn) {
 		assert cascadingList != null;
@@ -22,6 +24,8 @@ public abstract class MColumn {
 		f_previousColumn = previousColumn;
 		if (f_previousColumn != null)
 			f_previousColumn.setNextColumn(this);
+		
+		index = cascadingList.getNumColumns();
 	}
 
 	CascadingList getCascadingList() {
@@ -130,4 +134,6 @@ public abstract class MColumn {
 	private void setNextColumn(MColumn nextColumn) {
 		f_nextColumn = nextColumn;
 	}
+
+  public abstract void forceFocus();
 }

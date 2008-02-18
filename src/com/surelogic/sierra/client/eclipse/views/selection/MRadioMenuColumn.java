@@ -91,6 +91,12 @@ public final class MRadioMenuColumn extends MColumn implements
 		f_menu.setSelection(choice);
 	}
 
+	@Override
+	public void forceFocus() {
+	  f_menu.forceFocus();
+	  getCascadingList().show(index);
+	}
+	
 	public void selected(Object choice, RadioArrowMenu menu) {
 		f_menu.setEnabled(false);
 		final int column = getColumnIndex();
@@ -128,6 +134,14 @@ public final class MRadioMenuColumn extends MColumn implements
 		}
 	}
 
+	public void goBack(RadioArrowMenu menu) {
+	  getPreviousColumn().forceFocus();
+	}
+	
+	public void goNext(RadioArrowMenu menu) {
+    getNextColumn().forceFocus();
+  }
+	
 	class DrawFilterAndMenu implements IFilterObserver {
 
 		public void filterQueryFailure(final Filter filter, final Exception e) {

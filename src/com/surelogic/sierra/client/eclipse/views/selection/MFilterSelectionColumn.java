@@ -7,6 +7,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -78,7 +80,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 		CascadingList.IColumn c = new CascadingList.IColumn() {
 			public Composite createContents(Composite panel) {
 				f_panel = new Composite(panel, SWT.NONE);
-				f_panel.setLayout(new FillLayout());
+				f_panel.setLayout(new FillLayout());			
+				
 				f_reportGroup = new Group(f_panel, SWT.NONE);
 				f_reportGroup.setText(f_filter.getFactory().getFilterLabel());
 				GridLayout gridLayout = new GridLayout();
@@ -101,6 +104,24 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_graphColumn.setWidth(75);
 				f_graphColumn.setToolTipText("# of applicable findings with the given value");
 				f_reportContents.setBackground(f_reportGroup.getBackground());
+				f_reportContents.addKeyListener(new KeyListener() {
+          public void keyPressed(KeyEvent e) {
+            MColumn column = null;
+            if (e.keyCode == SWT.ARROW_LEFT) {
+              column = getPreviousColumn();
+            }
+            else if (e.keyCode == SWT.ARROW_RIGHT) {
+              column = getNextColumn();
+            }
+            if (column != null) {
+              column.forceFocus();
+            }
+          }
+          public void keyReleased(KeyEvent e) {
+            // Nothing to do
+          }         
+        }); 
+				
 				f_reportContents.addSelectionListener(new SelectionListener() {
           public void widgetDefaultSelected(SelectionEvent e) {
             TableItem item = (TableItem) e.item;
@@ -452,5 +473,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 		 */
 		f_filter.setPorous(item.getText(), item.getChecked());
 		updateReport();
+	}
+	
+	@Override
+	public void forceFocus() {
+	  f_reportContents.forceFocus();
+	  getCascadingList().show(index);
 	}
 }
