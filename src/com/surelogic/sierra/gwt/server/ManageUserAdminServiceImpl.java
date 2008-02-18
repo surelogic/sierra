@@ -24,155 +24,141 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = 946194129762715684L;
 
 	public String createUser(final String user, final String password) {
-		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<String>() {
+		return performAdmin(false, new UserTransaction<String>() {
 
-					public String perform(Connection conn, Server server,
-							User serverUser) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						if (man.isUserInGroup(serverUser.getName(),
-								SierraGroup.ADMIN.getName())) {
-							if (man.createUser(user, password)) {
-								return user + " created.";
-							} else {
-								return "Could not create user with name "
-										+ user + ".";
-							}
-						} else {
-							// No permissions
-							return null;
-						}
-					}
-				});
-	}
-
-	public List<UserAccount> findUser(final String userQueryString) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
-
-					public List<UserAccount> perform(Connection conn,
-							Server server, User user) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
-								.getName())) {
-							final List<User> users = man
-									.findUser(userQueryString);
-							final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
-									users.size());
-							for (User u : users) {
-								userAccounts.add(convertUser(man, u));
-							}
-							return userAccounts;
-						} else {
-							return null;
-						}
-					}
-				});
-	}
-
-	public List<UserAccount> getUsers() {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
-
-					public List<UserAccount> perform(Connection conn,
-							Server server, User user) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
-								.getName())) {
-							final List<User> users = man.listUsers();
-							final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
-									users.size());
-							for (User u : users) {
-								userAccounts.add(convertUser(man, u));
-							}
-							return userAccounts;
-						} else {
-							return null;
-						}
-					}
-				});
-	}
-
-	public UserAccount getUserInfo(final String user) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<UserAccount>() {
-
-					public UserAccount perform(Connection conn, Server server,
-							User serverUser) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						if (man.isUserInGroup(serverUser.getName(),
-								SierraGroup.ADMIN.getName())) {
-							return new UserAccount(user, man.isUserInGroup(
-									user, SierraGroup.ADMIN.getName()));
-						} else {
-							return null;
-						}
-					}
-				});
-	}
-
-	public UserAccount updateUser(final String user, final String password,
-			final boolean isAdmin) {
-		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<UserAccount>() {
-
-					public UserAccount perform(Connection conn, Server server,
-							User serverUser) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						if (man.isUserInGroup(serverUser.getName(),
-								SierraGroup.ADMIN.getName())) {
-							if (password != null) {
-								man.changeUserPassword(user, password);
-							}
-							if (isAdmin) {
-								man.addUserToGroup(user, SierraGroup.ADMIN
-										.getName());
-							} else {
-								man.removeUserFromGroup(user, SierraGroup.ADMIN
-										.getName());
-							}
-							return new UserAccount(user, man.isUserInGroup(
-									user, SierraGroup.ADMIN.getName()));
-						} else {
-							return null;
-						}
-					}
-				});
-	}
-
-	public void deleteUser(final String user) {
-		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
-
-			public Void perform(Connection conn, Server server, User serverUser)
-					throws SQLException {
+			public String perform(Connection conn, Server server,
+					User serverUser) throws SQLException {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
-				if (man.isUserInGroup(serverUser.getName(), SierraGroup.ADMIN
-						.getName())) {
-					man.deleteUser(user);
+
+				if (man.createUser(user, password)) {
+					return user + " created.";
+				} else {
+					return "Could not create user with name " + user + ".";
 				}
-				return null;
 			}
 		});
 	}
 
-	public boolean isAvailable() {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<Boolean>() {
+	public List<UserAccount> findUser(final String userQueryString) {
+		return performAdmin(true, new UserTransaction<List<UserAccount>>() {
 
-					public Boolean perform(Connection conn, Server server,
-							User user) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-						return man.isUserInGroup(user.getName(),
-								SierraGroup.ADMIN.getName());
-					}
-				});
+			public List<UserAccount> perform(Connection conn, Server server,
+					User user) throws SQLException {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+
+				final List<User> users = man.findUser(userQueryString);
+				final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
+						users.size());
+				for (User u : users) {
+					userAccounts.add(convertUser(man, u));
+				}
+				return userAccounts;
+			}
+
+		});
+	}
+
+	public List<UserAccount> getUsers() {
+		return performAdmin(true, new UserTransaction<List<UserAccount>>() {
+
+			public List<UserAccount> perform(Connection conn, Server server,
+					User user) throws SQLException {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+
+				final List<User> users = man.listUsers();
+				final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
+						users.size());
+				for (User u : users) {
+					userAccounts.add(convertUser(man, u));
+				}
+				return userAccounts;
+			}
+		});
+	}
+
+	public UserAccount getUserInfo(final String targetUser) {
+		return performAdmin(true, new UserTransaction<UserAccount>() {
+
+			public UserAccount perform(Connection conn, Server server,
+					User serverUser) throws SQLException {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+				// TODO can't retrieve a User object from a username yet
+				return new UserAccount(targetUser, man.isUserInGroup(
+						targetUser, SierraGroup.ADMIN.getName()));
+			}
+		});
+	}
+
+	public UserAccount updateUser(final String targetUser,
+			final String password, final boolean isAdmin) {
+		return performAdmin(false, new UserTransaction<UserAccount>() {
+
+			public UserAccount perform(Connection conn, Server server, User user)
+					throws Exception {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+				if (password != null) {
+					man.changeUserPassword(targetUser, password);
+				}
+				if (isAdmin) {
+					man.addUserToGroup(targetUser, SierraGroup.ADMIN.getName());
+				} else {
+					man.removeUserFromGroup(targetUser, SierraGroup.ADMIN
+							.getName());
+				}
+				return convertUser(man, user);
+			}
+		});
+	}
+
+	public boolean deleteUser(final String targetUser) {
+		performAdmin(false, new UserTransaction<Boolean>() {
+
+			public Boolean perform(Connection conn, Server server, User user)
+					throws Exception {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+				man.deleteUser(targetUser);
+				return null;
+			}
+		});
+		// FIXME assume the user was deleted for now
+		return true;
+	}
+
+	public boolean isAvailable() {
+		Boolean isAdmin = performAdmin(true, new UserTransaction<Boolean>() {
+			public Boolean perform(Connection conn, Server server, User user)
+					throws Exception {
+				return Boolean.TRUE;
+			}
+		});
+		return Boolean.TRUE.equals(isAdmin);
+	}
+
+	private <T> T performAdmin(boolean readOnly, final UserTransaction<T> t) {
+		UserTransaction<T> adminTrans = new UserTransaction<T>() {
+
+			public T perform(Connection conn, Server server, User user)
+					throws Exception {
+				final ServerUserManager man = ServerUserManager
+						.getInstance(conn);
+				if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
+						.getName())) {
+					return t.perform(conn, server, user);
+				} else {
+					return null;
+				}
+			}
+		};
+		if (readOnly) {
+			return ConnectionFactory.withUserReadOnly(adminTrans);
+		}
+		return ConnectionFactory.withUserTransaction(adminTrans);
 	}
 
 	private UserAccount convertUser(ServerUserManager man, User u)
