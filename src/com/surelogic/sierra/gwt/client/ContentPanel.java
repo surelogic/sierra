@@ -25,9 +25,9 @@ public class ContentPanel extends Composite {
 		}
 		if (currentContent == null || currentContent.deactivate()) {
 			currentContent = content;
-			currentContent.activate();
 			rootPanel.clear();
 			rootPanel.add(currentContent, DockPanel.CENTER);
+			currentContent.activate();
 		}
 	}
 
