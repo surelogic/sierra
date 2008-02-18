@@ -47,24 +47,24 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public List<String> findUser(final String userQueryString) {
+	public List<UserAccount> findUser(final String userQueryString) {
 		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<String>>() {
+				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
 
-					public List<String> perform(Connection conn, Server server,
-							User user) throws SQLException {
+					public List<UserAccount> perform(Connection conn,
+							Server server, User user) throws SQLException {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
 								.getName())) {
 							final List<User> users = man
 									.findUser(userQueryString);
-							final List<String> userNames = new ArrayList<String>(
+							final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
 									users.size());
 							for (User u : users) {
-								userNames.add(u.getName());
+								userAccounts.add(convertUser(man, u));
 							}
-							return userNames;
+							return userAccounts;
 						} else {
 							return null;
 						}
@@ -72,23 +72,23 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public List<String> getUsers() {
+	public List<UserAccount> getUsers() {
 		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<String>>() {
+				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
 
-					public List<String> perform(Connection conn, Server server,
-							User user) throws SQLException {
+					public List<UserAccount> perform(Connection conn,
+							Server server, User user) throws SQLException {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
 								.getName())) {
 							final List<User> users = man.listUsers();
-							final List<String> userNames = new ArrayList<String>(
+							final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
 									users.size());
 							for (User u : users) {
-								userNames.add(u.getName());
+								userAccounts.add(convertUser(man, u));
 							}
-							return userNames;
+							return userAccounts;
 						} else {
 							return null;
 						}
@@ -175,4 +175,11 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
+	private UserAccount convertUser(ServerUserManager man, User u)
+			throws SQLException {
+		final String userName = u.getName();
+		boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
+				.getName());
+		return new UserAccount(userName, isAdmin);
+	}
 }
