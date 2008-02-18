@@ -6,6 +6,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+/**
+ * TODO: this was removed from the main menu due to RfR requirements.
+ */
 public final class PreferencesAction implements IWorkbenchWindowActionDelegate {
 
 	public static final String PREF_ID = "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage";

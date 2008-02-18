@@ -43,7 +43,6 @@
             
             <groupMarker name="client"/>
             <separator name="server"/>
-            <separator name="administration"/>
             <separator name="additions"/>
           </menu>
           
@@ -112,15 +111,7 @@
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
                label="Configure Team Servers"
                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
-          </action>    
-
-          <action
-               class="com.surelogic.sierra.client.eclipse.actions.PreferencesAction"
-               id="com.surelogic.sierra.client.eclipse.actions.PreferencesAction"
-               label="Preferences..."
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/administration">
-          </action>   
-          
+          </action>
         </actionSet>
    </extension>
      
