@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.CheckBox;
@@ -8,6 +9,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
@@ -16,6 +19,7 @@ public class SelectableGrid extends Composite {
 
 	private final FlexTable grid = new FlexTable();
 	private final List rowData = new ArrayList();
+	private final List listeners = new ArrayList();
 	private boolean rowSelection;
 	private CheckBox selectAll;
 	private boolean statusShowing;
@@ -43,6 +47,28 @@ public class SelectableGrid extends Composite {
 			grid.getCellFormatter().addStyleName(0, 0,
 					PRIMARY_STYLE + "-header");
 		}
+
+		grid.addTableListener(new TableListener() {
+
+			public void onCellClicked(SourcesTableEvents sender, int gridRow,
+					int gridColumn) {
+				final int row = fromGridRow(gridRow);
+				final int column = fromGridColumn(gridColumn);
+				if (gridRow == 0 && column >= 0) {
+					for (Iterator it = listeners.iterator(); it.hasNext();) {
+						SelectableGridListener listener = (SelectableGridListener) it
+								.next();
+						listener.onHeaderClick(grid, column);
+					}
+				} else if (row >= 0 && column >= 0) {
+					for (Iterator it = listeners.iterator(); it.hasNext();) {
+						SelectableGridListener listener = (SelectableGridListener) it
+								.next();
+						listener.onClick(grid, row, column, getRowData(row));
+					}
+				}
+			}
+		});
 	}
 
 	public int getColumnCount() {
@@ -191,6 +217,14 @@ public class SelectableGrid extends Composite {
 			grid.removeRow(1);
 			statusShowing = false;
 		}
+	}
+
+	public void addListener(SelectableGridListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(SelectableGridListener listener) {
+		listeners.remove(listener);
 	}
 
 	private int getColumnOffset() {
