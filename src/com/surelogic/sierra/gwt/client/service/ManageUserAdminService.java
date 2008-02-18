@@ -61,6 +61,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 * Delete and existing user.
 	 * 
 	 * @param user
+	 * @return true if the user was successfully deleted
 	 */
-	void deleteUser(String user);
+	boolean deleteUser(String user);
 }
