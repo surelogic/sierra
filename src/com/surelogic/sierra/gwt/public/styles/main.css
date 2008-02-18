@@ -144,6 +144,11 @@ a.hover {
   color: red;
 }
 
+.sl-Grid .sl-Grid-info {
+  font-style: italic;
+}
+
+
 /* GWT Component Styling */
 
 /* Tab Panel Styling */

@@ -3,17 +3,19 @@ package com.surelogic.sierra.gwt.client.ui;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
+// TODO add the ability to bind a data object to each row
 public class SLGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
-	private final Grid grid = new Grid(1, 1);
+	private final FlexTable grid = new FlexTable();
 	private boolean rowSelection;
 	private CheckBox selectAll;
+	private boolean statusShowing;
 
 	public SLGrid(boolean rowSelection) {
 		super();
@@ -21,7 +23,7 @@ public class SLGrid extends Composite {
 
 		initWidget(grid);
 		grid.addStyleName(PRIMARY_STYLE);
-
+		grid.insertRow(0);
 		grid.getRowFormatter().addStyleName(0, PRIMARY_STYLE + "-headerrow");
 
 		if (rowSelection) {
@@ -33,7 +35,7 @@ public class SLGrid extends Composite {
 				}
 
 			});
-			grid.resizeColumns(2);
+
 			grid.setWidget(0, 0, selectAll);
 			grid.getCellFormatter().addStyleName(0, 0,
 					PRIMARY_STYLE + "-header");
@@ -41,15 +43,12 @@ public class SLGrid extends Composite {
 	}
 
 	public int getColumnCount() {
-		return grid.getColumnCount() - getColumnOffset();
+		return grid.getCellCount(0) - getColumnOffset();
 	}
 
 	public void setColumn(int column, String text, String width) {
 		column += getColumnOffset();
 
-		if (column >= grid.getColumnCount()) {
-			grid.resizeColumns(column + 1);
-		}
 		grid.setText(0, column, text);
 		grid.getColumnFormatter().setWidth(column, width);
 		grid.getCellFormatter().addStyleName(0, column,
@@ -62,21 +61,28 @@ public class SLGrid extends Composite {
 
 	public int addRow() {
 		int rowIndex = grid.getRowCount();
-		grid.resizeRows(rowIndex + 1);
+
 		if (rowSelection) {
 			grid.setWidget(rowIndex, 0, new CheckBox());
 		}
 		grid.getRowFormatter().addStyleName(rowIndex,
 				PRIMARY_STYLE + "-itemrow");
-		for (int i = 0; i < grid.getColumnCount(); i++) {
+		for (int i = 0; i < grid.getCellCount(0); i++) {
 			grid.getCellFormatter().addStyleName(rowIndex, i,
 					PRIMARY_STYLE + "-item");
 		}
 		return rowIndex - getRowOffset();
 	}
 
+	public void removeRow(int row) {
+		grid.removeRow(getRowOffset() + row);
+	}
+
 	public void removeRows() {
-		grid.resizeRows(getRowOffset());
+		final int rowOffset = getRowOffset();
+		while (grid.getRowCount() > rowOffset) {
+			grid.removeRow(rowOffset);
+		}
 	}
 
 	public Widget getWidget(int row, int column) {
@@ -89,15 +95,17 @@ public class SLGrid extends Composite {
 						widget);
 	}
 
-	public void resizeRows(int rowCount) {
-		grid.resizeRows(rowCount + getRowOffset());
-		// TODO need to update row to create checkboxes, etc. getting a null ptr
+	public String getText(int row, int column) {
+		return grid.getText(row + getRowOffset(), column + getColumnOffset());
+	}
 
+	public void setText(int row, int column, String text) {
+		grid.setText(row + getRowOffset(), column + getColumnOffset(), text);
 	}
 
 	public void clearRow(int row) {
 		setSelected(row, false);
-		int colCount = grid.getColumnCount();
+		int colCount = grid.getCellCount(0);
 		int offsetRow = row + getRowOffset();
 		for (int i = getColumnOffset(); i < colCount; i++) {
 			grid.setText(offsetRow, i, "");
@@ -138,18 +146,33 @@ public class SLGrid extends Composite {
 		}
 	}
 
-	public void setWaitStatus() {
-		removeRows();
-		int row = addRow();
-		setWidget(row, 0, ImageHelper.getWaitImage(16));
+	public void setStatus(Widget widget) {
+		if (!statusShowing) {
+			grid.insertRow(1);
+			grid.getRowFormatter().addStyleName(1, PRIMARY_STYLE + "-itemrow");
+			grid.getFlexCellFormatter().setColSpan(1, getColumnOffset(),
+					getColumnCount());
+			statusShowing = true;
+		}
+
+		grid.setWidget(1, getColumnOffset(), widget);
 	}
 
-	public void setErrorMessage(String errorText) {
-		removeRows();
-		Label errorMessage = new Label(errorText, true);
-		errorMessage.addStyleName(PRIMARY_STYLE + "-error");
-		int row = addRow();
-		setWidget(row, 0, errorMessage);
+	public void setStatus(String type, String text) {
+		Label textLabel = new Label(text, true);
+		textLabel.addStyleName(PRIMARY_STYLE + "-" + type);
+		setStatus(textLabel);
+	}
+
+	public void setWaitStatus() {
+		setStatus(ImageHelper.getWaitImage(16));
+	}
+
+	public void clearStatus() {
+		if (statusShowing) {
+			grid.removeRow(1);
+			statusShowing = false;
+		}
 	}
 
 	private int getColumnOffset() {
@@ -157,7 +180,6 @@ public class SLGrid extends Composite {
 	}
 
 	private int getRowOffset() {
-		// will always have a header for now
-		return 1;
+		return 1 + (statusShowing ? 1 : 0);
 	}
 }

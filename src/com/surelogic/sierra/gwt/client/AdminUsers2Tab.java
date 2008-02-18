@@ -1,5 +1,8 @@
 package com.surelogic.sierra.gwt.client;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -62,24 +65,24 @@ public class AdminUsers2Tab extends TabComposite {
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
 
-				usersGrid.setErrorMessage("Unable to retrieve user list");
+				usersGrid.setStatus("error", "Unable to retrieve user list");
 			}
 
 			public void onSuccess(Object result) {
+				List users = (List) result;
 
-				// TODO load up the results
-				// List users = (List) result;
-				//
-				// usersGrid.usersList.clear();
-				//
-				// if (users.isEmpty()) {
-				// usersList.addItem("No users found");
-				// } else {
-				// for (Iterator i = users.iterator(); i.hasNext();) {
-				// final String userName = (String) i.next();
-				// usersList.addItem(userName);
-				// }
-				// }
+				usersGrid.removeRows();
+				if (users.isEmpty()) {
+					usersGrid.setStatus("info", "No users found");
+				} else {
+					usersGrid.clearStatus();
+					for (Iterator i = users.iterator(); i.hasNext();) {
+						// need to convert the service return to UserAccount
+						final String userName = (String) i.next();
+						int rowIndex = usersGrid.addRow();
+						usersGrid.setText(rowIndex, 0, userName);
+					}
+				}
 			}
 		});
 	}
