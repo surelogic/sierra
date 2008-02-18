@@ -6,8 +6,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-// TODO need public methods to access grid cells, once these are done switch internal methods to use them as well to avoid
-// all of the extra math
 public class GridPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-GridPanel";
 
