@@ -113,6 +113,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 	private final Action f_viewCut;
 	private final Action f_viewCopy;
 	private final Action f_viewPaste;
+	private final Action f_viewSelectAll;
 
 	private volatile FindingDetail f_finding;
 
@@ -213,6 +214,12 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			@Override
 			protected void takeActionOnText(Text c) {
 				c.paste();
+			}
+		};
+		f_viewSelectAll = new FocusAction(f_pages) {
+			@Override
+			protected void takeActionOnText(Text c) {
+				c.selectAll();
 			}
 		};
 
@@ -484,6 +491,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 				ActionFactory.COPY.getId(), f_viewCopy);
 		f_view.getViewSite().getActionBars().setGlobalActionHandler(
 				ActionFactory.PASTE.getId(), f_viewPaste);
+		f_view.getViewSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.SELECT_ALL.getId(), f_viewSelectAll);
 
 		DatabaseHub.getInstance().addObserver(this);
 
