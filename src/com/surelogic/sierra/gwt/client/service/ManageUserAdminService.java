@@ -15,13 +15,13 @@ public interface ManageUserAdminService extends RemoteService {
 	boolean isAvailable();
 
 	/**
-	 * @gwt.typeArgs <java.lang.String>
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.UserAccount>
 	 * @return a list of user names
 	 */
 	List getUsers();
 
 	/**
-	 * @gwt.typeArgs <java.lang.String>
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.UserAccount>
 	 * @return a list of user names
 	 */
 	List findUser(String userQueryString);

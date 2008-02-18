@@ -50,14 +50,14 @@ public class AdminUsersTab extends TabComposite {
 				userListPanel.add(new HTML("No results found"));
 			} else {
 				for (Iterator i = users.iterator(); i.hasNext();) {
-					final String user = (String) i.next();
+					final UserAccount user = (UserAccount) i.next();
 					final HTML html = new HTML("<span class=\"clickable\">"
-							+ user + "</span");
+							+ user.getUserName() + "</span");
 					html.addClickListener(new ClickListener() {
 
 						public void onClick(Widget sender) {
 							ServiceHelper.getManageUserService().getUserInfo(
-									user, userInfoCallback);
+									user.getUserName(), userInfoCallback);
 						}
 					});
 					userListPanel.add(html);

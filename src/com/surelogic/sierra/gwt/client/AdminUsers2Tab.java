@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
@@ -78,9 +79,12 @@ public class AdminUsers2Tab extends TabComposite {
 					usersGrid.clearStatus();
 					for (Iterator i = users.iterator(); i.hasNext();) {
 						// need to convert the service return to UserAccount
-						final String userName = (String) i.next();
+						final UserAccount user = (UserAccount) i.next();
 						int rowIndex = usersGrid.addRow();
-						usersGrid.setText(rowIndex, 0, userName);
+						usersGrid.setText(rowIndex, 0, user.getUserName());
+						if (user.isAdministrator()) {
+							usersGrid.setText(rowIndex, 1, "Administrator");
+						}
 					}
 				}
 			}
