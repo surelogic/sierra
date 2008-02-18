@@ -319,7 +319,7 @@ public class FindingDetailsView extends ViewPart {
 
 		artifactTab.setControl(artifactsPane);
 
-		f_mediator = new FindingDetailsMediator(pages, noFindingPage,
+		f_mediator = new FindingDetailsMediator(this, pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
 				synopsisSash, synopsisAudit, findingSynopsis, locationTree,
 				detailsText, auditTab, quickAudit, criticalButton, highButton,

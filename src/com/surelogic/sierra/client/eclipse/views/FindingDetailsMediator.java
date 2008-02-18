@@ -3,7 +3,11 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
@@ -38,11 +43,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.AuditTrail;
+import com.surelogic.common.eclipse.FocusAction;
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.PageBook;
@@ -70,10 +76,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	public static final String STAMP_COMMENT = "I examined this finding.";
 
-	private final Display f_display = PlatformUI.getWorkbench().getDisplay();
+	private final RGB f_BackgroundColorRGB;
 
-	private final RGB fBackgroundColorRGB = f_display.getSystemColor(
-			SWT.COLOR_LIST_BACKGROUND).getRGB();
+	private final FindingDetailsView f_view;
 
 	private final PageBook f_pages;
 	private final Control f_noFindingPage;
@@ -104,6 +109,10 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 
 	private final TabItem f_artifactTab;
 	private final Table f_artifacts;
+
+	private final Action f_viewCut;
+	private final Action f_viewCopy;
+	private final Action f_viewPaste;
 
 	private volatile FindingDetail f_finding;
 
@@ -149,15 +158,17 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 	}
 
-	public FindingDetailsMediator(PageBook pages, Control noFindingPage,
-			Composite findingPage, ToolItem summaryIcon, Text summaryText,
-			TabFolder folder, TabItem synopsisTab, SashForm synopsisSash,
-			Button synopsisAudit, Link findingSynopsis, Tree locationTree,
-			Browser detailsText, TabItem auditTab, Button quickAudit,
-			Button criticalButton, Button highButton, Button mediumButton,
-			Button lowButton, Button irrelevantButton, Text commentText,
-			Button commentButton, AuditTrail scrollingLabelComposite,
-			TabItem artifactTab, Table artifacts) {
+	public FindingDetailsMediator(FindingDetailsView view, PageBook pages,
+			Control noFindingPage, Composite findingPage, ToolItem summaryIcon,
+			Text summaryText, TabFolder folder, TabItem synopsisTab,
+			SashForm synopsisSash, Button synopsisAudit, Link findingSynopsis,
+			Tree locationTree, Browser detailsText, TabItem auditTab,
+			Button quickAudit, Button criticalButton, Button highButton,
+			Button mediumButton, Button lowButton, Button irrelevantButton,
+			Text commentText, Button commentButton,
+			AuditTrail scrollingLabelComposite, TabItem artifactTab,
+			Table artifacts) {
+		f_view = view;
 		f_pages = pages;
 		f_noFindingPage = noFindingPage;
 		f_findingPage = findingPage;
@@ -182,6 +193,28 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_scrollingLabelComposite = scrollingLabelComposite;
 		f_artifactTab = artifactTab;
 		f_artifacts = artifacts;
+
+		f_BackgroundColorRGB = f_pages.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND).getRGB();
+
+		f_viewCut = new FocusAction(f_pages) {
+			@Override
+			protected void takeActionOnText(Text c) {
+				c.cut();
+			}
+		};
+		f_viewCopy = new FocusAction(f_pages) {
+			@Override
+			protected void takeActionOnText(Text c) {
+				c.copy();
+			}
+		};
+		f_viewPaste = new FocusAction(f_pages) {
+			@Override
+			protected void takeActionOnText(Text c) {
+				c.paste();
+			}
+		};
 
 		f_importanceRadioPopupMenu = new Menu(f_pages.getShell(), SWT.POP_UP);
 	}
@@ -445,6 +478,13 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			}
 		});
 
+		f_view.getViewSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.CUT.getId(), f_viewCut);
+		f_view.getViewSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.COPY.getId(), f_viewCopy);
+		f_view.getViewSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.PASTE.getId(), f_viewPaste);
+
 		DatabaseHub.getInstance().addObserver(this);
 
 		updateContents();
@@ -513,7 +553,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		initLocationTree(f_locationTree, f_finding);
 
 		StringBuffer b = new StringBuffer();
-		HTMLPrinter.insertPageProlog(b, 0, fBackgroundColorRGB,
+		HTMLPrinter.insertPageProlog(b, 0, f_BackgroundColorRGB,
 				StyleSheetHelper.getInstance().getStyleSheet());
 		String details = f_finding.getFindingTypeDetail();
 		b.append(details);
