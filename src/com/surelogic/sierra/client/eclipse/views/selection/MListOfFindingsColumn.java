@@ -320,6 +320,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
 
+			f_table.addListener(SWT.SetData, new Listener() {
+			  public void handleEvent(Event event) {
+			    final TableItem item = (TableItem) event.item;
+			    final int index = event.index;
+			    FindingData data = f_rows.get(index);
+			    initTableItem(data, item);
+			  }
+			});
+		   
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
 
@@ -340,14 +349,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 				i.dispose();
 			}
 		}
-		f_table.addListener(SWT.SetData, new Listener() {
-			public void handleEvent(Event event) {
-				final TableItem item = (TableItem) event.item;
-				final int index = event.index;
-				FindingData data = f_rows.get(index);
-				initTableItem(data, item);
-			}
-		});
 		f_table.setItemCount(f_rows.size());
 
 		boolean selectionFound = false;
