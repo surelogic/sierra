@@ -38,6 +38,7 @@ import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -116,7 +117,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 								refreshData();
 								refreshDisplay();
 							} catch (Exception e) {
-								return SLStatus.createErrorStatus(e);
+								final int errNo = 60;
+								final String msg = I18N.err(errNo);
+								return SLStatus
+										.createErrorStatus(errNo, msg, e);
 							} finally {
 								initOfNextColumnComplete();
 							}
@@ -257,26 +261,26 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private final KeyListener f_keyListener = new KeyListener() {
-    public void keyPressed(KeyEvent e) {
-      if (e.character == 0x01 && f_table != null) {
-        f_table.selectAll();
-      }
-    }
-    public void keyReleased(KeyEvent e) {
-      // Nothing to do
-    }
+		public void keyPressed(KeyEvent e) {
+			if (e.character == 0x01 && f_table != null) {
+				f_table.selectAll();
+			}
+		}
+
+		public void keyReleased(KeyEvent e) {
+			// Nothing to do
+		}
 	};
-	
-	private final AtomicReference<FindingData> lastSelected = 
-	  new AtomicReference<FindingData>();
-	
+
+	private final AtomicReference<FindingData> lastSelected = new AtomicReference<FindingData>();
+
 	private final Listener f_doubleClick = new Listener() {
-		public void handleEvent(Event event) {	     
-		  final FindingData data = lastSelected.get();
-		  if (data != null) {
-		    JDTUtility.tryToOpenInEditor(data.f_projectName,
-		        data.f_packageName, data.f_typeName, data.f_lineNumber);
-		  }			
+		public void handleEvent(Event event) {
+			final FindingData data = lastSelected.get();
+			if (data != null) {
+				JDTUtility.tryToOpenInEditor(data.f_projectName,
+						data.f_packageName, data.f_typeName, data.f_lineNumber);
+			}
 		}
 	};
 
@@ -293,7 +297,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			if (item != null) {
 				final FindingData data = (FindingData) item.getData();
 				lastSelected.set(data);
-				
+
 				/*
 				 * Ensure the view is visible but don't change the focus.
 				 */
@@ -308,13 +312,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	private final IColumn f_iColumn = new IColumn() {
 		public Composite createContents(Composite panel) {
-			f_table = new Table(panel, SWT.FULL_SELECTION | SWT.MULTI | SWT.VIRTUAL);
+			f_table = new Table(panel, SWT.FULL_SELECTION | SWT.MULTI
+					| SWT.VIRTUAL);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
-			
+
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
 
@@ -328,39 +333,39 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private void updateTableContents() {
 		if (f_table.isDisposed())
 			return;
-		
+
 		f_table.setRedraw(false);
 		for (TableItem i : f_table.getItems()) {
-		  if (i != null) {
-		    i.dispose();
-		  }
-		}		
+			if (i != null) {
+				i.dispose();
+			}
+		}
 		f_table.addListener(SWT.SetData, new Listener() {
-      public void handleEvent(Event event) {
-        final TableItem item = (TableItem) event.item;
-        final int index = event.index;
-        FindingData data = f_rows.get(index);
-        initTableItem(data, item);
-      }
+			public void handleEvent(Event event) {
+				final TableItem item = (TableItem) event.item;
+				final int index = event.index;
+				FindingData data = f_rows.get(index);
+				initTableItem(data, item);
+			}
 		});
 		f_table.setItemCount(f_rows.size());
 
 		boolean selectionFound = false;
 		int i = 0;
 		for (FindingData data : f_rows) {
-		  /*
-			final TableItem item = new TableItem(f_table, SWT.NONE);
-			selectionFound = initTableItem(data, item);
-			*/
-		  if (data.f_findingId == f_findingId) {
-		    initTableItem(data, f_table.getItem(i));
-		    selectionFound = true;
-		    break;
-		  }
-		  i++;
+			/*
+			 * final TableItem item = new TableItem(f_table, SWT.NONE);
+			 * selectionFound = initTableItem(data, item);
+			 */
+			if (data.f_findingId == f_findingId) {
+				initTableItem(data, f_table.getItem(i));
+				selectionFound = true;
+				break;
+			}
+			i++;
 		}
 		if (!selectionFound)
-			f_findingId = -1;   
+			f_findingId = -1;
 
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
@@ -375,16 +380,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
-  private boolean initTableItem(FindingData data, final TableItem item) {
-    item.setText(data.f_summary);
-    item.setImage(Utility.getImageFor(data.f_importance));
-    item.setData(data);
-    if (data.f_findingId == f_findingId) {
-      f_table.setSelection(item);
-      return true;
-    }
-    return false;
-  }
+	private boolean initTableItem(FindingData data, final TableItem item) {
+		item.setText(data.f_summary);
+		item.setImage(Utility.getImageFor(data.f_importance));
+		item.setData(data);
+		if (data.f_findingId == f_findingId) {
+			f_table.setSelection(item);
+			return true;
+		}
+		return false;
+	}
 
 	private void setupMenu(final Menu menu) {
 		final MenuItem set = new MenuItem(menu, SWT.CASCADE);
@@ -434,27 +439,26 @@ public final class MListOfFindingsColumn extends MColumn implements
 				set.setEnabled(findingSelected);
 				quickAudit.setEnabled(findingSelected);
 				filterFindingTypeFromScans.setEnabled(findingSelected);
-				if (items.length > 0) {	
-					String importanceSoFar = null; 
+				if (items.length > 0) {
+					String importanceSoFar = null;
 					String findingTypeSoFar = null;
-					for(TableItem item : items) {
-					  final FindingData data = (FindingData) item.getData();
-					  String importance = data.f_importance.toStringSentenceCase();
-					  if (importanceSoFar == null) {
-					    importanceSoFar = importance;
-					  } 
-					  else if (!importanceSoFar.equals(importance)) {
-					    importanceSoFar = ""; // More than one
-					  }
-					  // Otherwise, it's all the same so far
-					  
-					  String findingType = data.f_findingTypeName;
-            if (findingTypeSoFar == null) {
-              findingTypeSoFar = findingType;
-            } 
-            else if (!findingTypeSoFar.equals(findingType)) {
-              findingTypeSoFar = ""; // More than one
-            }
+					for (TableItem item : items) {
+						final FindingData data = (FindingData) item.getData();
+						String importance = data.f_importance
+								.toStringSentenceCase();
+						if (importanceSoFar == null) {
+							importanceSoFar = importance;
+						} else if (!importanceSoFar.equals(importance)) {
+							importanceSoFar = ""; // More than one
+						}
+						// Otherwise, it's all the same so far
+
+						String findingType = data.f_findingTypeName;
+						if (findingTypeSoFar == null) {
+							findingTypeSoFar = findingType;
+						} else if (!findingTypeSoFar.equals(findingType)) {
+							findingTypeSoFar = ""; // More than one
+						}
 					}
 					final String currentImportance = importanceSoFar;
 					final String currentFindingType = findingTypeSoFar;
@@ -475,14 +479,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 							.equals(setIrrelevant.getText()));
 					quickAudit.setData(items);
 					if ("".equals(currentFindingType)) {
-					  filterFindingTypeFromScans.setEnabled(false);
-					  filterFindingTypeFromScans.setText("Filter Selected Findings From Future Scans");
+						filterFindingTypeFromScans.setEnabled(false);
+						filterFindingTypeFromScans
+								.setText("Filter Selected Findings From Future Scans");
 					} else {
-					  filterFindingTypeFromScans.setEnabled(true);
-					  filterFindingTypeFromScans.setData(items);
-					  filterFindingTypeFromScans.setText("Filter All '"
-					      + currentFindingType
-					      + "' Findings From Future Scans");
+						filterFindingTypeFromScans.setEnabled(true);
+						filterFindingTypeFromScans.setData(items);
+						filterFindingTypeFromScans.setText("Filter All '"
+								+ currentFindingType
+								+ "' Findings From Future Scans");
 					}
 				}
 			}
@@ -497,12 +502,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 						final Importance to = Importance.valueOf(item.getText()
 								.toUpperCase());
 						if (items.length == 1) {
-						  final FindingData data = (FindingData) items[0].getData();
-						  FindingMutationUtility.asyncChangeImportance(
-						      data.f_findingId, data.f_importance, to);
+							final FindingData data = (FindingData) items[0]
+									.getData();
+							FindingMutationUtility.asyncChangeImportance(
+									data.f_findingId, data.f_importance, to);
 						} else {
-						  final Collection<Long> ids = extractFindingIds(items);
-						  FindingMutationUtility.asyncChangeImportance(ids, to);
+							final Collection<Long> ids = extractFindingIds(items);
+							FindingMutationUtility.asyncChangeImportance(ids,
+									to);
 						}
 					}
 				}
@@ -519,16 +526,18 @@ public final class MListOfFindingsColumn extends MColumn implements
 				if (event.widget instanceof MenuItem) {
 					MenuItem item = (MenuItem) event.widget;
 					if (item.getData() instanceof TableItem[]) {
-            final TableItem[] items = (TableItem[]) item.getData();
-            if (items.length == 1) {
-              final FindingData data = (FindingData) items[0].getData();
-              FindingMutationUtility.asyncComment(data.f_findingId,
-                  FindingDetailsMediator.STAMP_COMMENT);
-            } else {
-              final Collection<Long> ids = extractFindingIds(items);
-              FindingMutationUtility.asyncComment(ids,
-                  FindingDetailsMediator.STAMP_COMMENT);
-            }
+						final TableItem[] items = (TableItem[]) item.getData();
+						if (items.length == 1) {
+							final FindingData data = (FindingData) items[0]
+									.getData();
+							FindingMutationUtility.asyncComment(
+									data.f_findingId,
+									FindingDetailsMediator.STAMP_COMMENT);
+						} else {
+							final Collection<Long> ids = extractFindingIds(items);
+							FindingMutationUtility.asyncComment(ids,
+									FindingDetailsMediator.STAMP_COMMENT);
+						}
 					}
 				}
 			}
@@ -538,19 +547,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 			public void handleEvent(Event event) {
 				if (event.widget instanceof MenuItem) {
 					MenuItem item = (MenuItem) event.widget;
-	         if (item.getData() instanceof TableItem[]) {
-	            final TableItem[] items = (TableItem[]) item.getData();
-              final FindingData data = (FindingData) items[0].getData();
-	            if (items.length == 1) {	              
-	              FindingMutationUtility.asyncFilterFindingTypeFromScans(
-	                  data.f_findingId, data.f_findingTypeName);
-	            } else {
-	              // FIX Assuming that all the finding types are the same?
-	              final Collection<Long> ids = extractFindingIds(items);
-	              FindingMutationUtility.asyncFilterFindingTypeFromScans(
-                    ids, data.f_findingTypeName);
-	            }
-	          }
+					if (item.getData() instanceof TableItem[]) {
+						final TableItem[] items = (TableItem[]) item.getData();
+						final FindingData data = (FindingData) items[0]
+								.getData();
+						if (items.length == 1) {
+							FindingMutationUtility
+									.asyncFilterFindingTypeFromScans(
+											data.f_findingId,
+											data.f_findingTypeName);
+						} else {
+							// FIX Assuming that all the finding types are the
+							// same?
+							final Collection<Long> ids = extractFindingIds(items);
+							FindingMutationUtility
+									.asyncFilterFindingTypeFromScans(ids,
+											data.f_findingTypeName);
+						}
+					}
 				}
 			}
 		});
@@ -587,14 +601,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 		job.schedule();
 	}
 
-  private static Collection<Long> extractFindingIds(final TableItem[] items) {
-    final Collection<Long> ids = new ArrayList<Long>(items.length);
-    for(TableItem ti : items) {
-      FindingData fd = (FindingData) ti.getData();
-      if (fd != null) {
-        ids.add(fd.f_findingId);
-      }
-    }
-    return ids;
-  }
+	private static Collection<Long> extractFindingIds(final TableItem[] items) {
+		final Collection<Long> ids = new ArrayList<Long>(items.length);
+		for (TableItem ti : items) {
+			FindingData fd = (FindingData) ti.getData();
+			if (fd != null) {
+				ids.add(fd.f_findingId);
+			}
+		}
+		return ids;
+	}
 }

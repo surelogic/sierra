@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
@@ -64,17 +65,17 @@ public final class Selection extends AbstractDatabaseObserver {
 	}
 
 	public Selection(Selection source) {
-	  synchronized(source) {
-	    f_manager = source.f_manager;
-	    f_showingFindings = source.f_showingFindings;
-		
-	    Filter prev = null;
-	    for (Filter f : source.f_filters) {
-	      Filter clone = f.copyNoQuery(this, prev);
-	      prev = clone;
-	      f_filters.add(clone);
-	    }
-	  }
+		synchronized (source) {
+			f_manager = source.f_manager;
+			f_showingFindings = source.f_showingFindings;
+
+			Filter prev = null;
+			for (Filter f : source.f_filters) {
+				Filter clone = f.copyNoQuery(this, prev);
+				prev = clone;
+				f_filters.add(clone);
+			}
+		}
 	}
 
 	/**
@@ -387,7 +388,9 @@ public final class Selection extends AbstractDatabaseObserver {
 					refreshFiltersDatabaseJob();
 					notifySelectionChanged();
 				} catch (Exception e) {
-					return SLStatus.createErrorStatus(e);
+					final int errNo = 53;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -409,7 +412,9 @@ public final class Selection extends AbstractDatabaseObserver {
 				try {
 					refreshFiltersDatabaseJob();
 				} catch (Exception e) {
-					return SLStatus.createErrorStatus(e);
+					final int errNo = 53;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -453,7 +458,9 @@ public final class Selection extends AbstractDatabaseObserver {
 					refreshFiltersAfter(changedFilter);
 					notifySelectionChanged();
 				} catch (Exception e) {
-					return SLStatus.createErrorStatus(e);
+					final int errNo = 53;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}

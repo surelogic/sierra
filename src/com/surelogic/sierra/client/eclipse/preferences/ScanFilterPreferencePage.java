@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -40,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.HTMLPrinter;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
@@ -254,12 +253,10 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		try {
 			f_detailsText = new Browser(description, SWT.NONE);
 		} catch (SWTError e) {
-			final Shell shell = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell();
-			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-					shell, "Browser Failure", null, I18N.err(26), e, Activator
-							.getDefault());
-			report.open();
+			final int errNo = 26;
+			final String msg = I18N.err(errNo);
+			final IStatus reason = SLStatus.createErrorStatus(errNo, msg, e);
+			ErrorDialogUtility.open(null, "Browser Failure", reason);
 		}
 		clearHTMLDescription();
 
@@ -290,6 +287,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				final Statement st = c.createStatement();
 				try {
 					final String query = QUERY;
+					SLLogger.getLogger().fine(query);
 					final ResultSet rs = st.executeQuery(query);
 					try {
 						while (rs.next()) {
@@ -312,8 +310,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				c.close();
 			}
 		} catch (SQLException e) {
-			return SLStatus.createErrorStatus(
-					"Query of Sierra tool artifacts failed", e);
+			final int errNo = 54;
+			final String msg = I18N.err(errNo);
+			return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 		final UIJob job = new SLUIJob() {
 			@Override
@@ -390,8 +389,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				c.close();
 			}
 		} catch (SQLException e) {
-			return SLStatus.createErrorStatus(
-					"Query of Sierra finding type description failed", e);
+			final int errNo = 55;
+			final String msg = I18N.err(errNo);
+			return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 		return Status.OK_STATUS;
 	}
@@ -514,8 +514,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				c.close();
 			}
 		} catch (SQLException e) {
-			return SLStatus.createErrorStatus(
-					"Update of Sierra global filter settings failed", e);
+			final int errNo = 56;
+			final String msg = I18N.err(errNo);
+			return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 		return Status.OK_STATUS;
 	}

@@ -12,6 +12,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
@@ -31,14 +32,14 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 	private final SierraServer f_server;
 
 	public GetGlobalResultFiltersJob(SierraServer server) {
-		super("Getting local settings from " + server.getLabel());
+		super("Getting scan filter settings from " + server.getLabel());
 		f_server = server;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
-		final String msg = "Getting local settings from Sierra server '"
+		final String msg = "Getting scan filter settings from the Sierra team server '"
 				+ f_server + "'";
 		slMonitor.beginTask(msg, 5);
 		IStatus status = null;
@@ -47,16 +48,18 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			try {
 				status = getResultFilters(conn, slMonitor);
 			} catch (Throwable e) {
-				SLLogger.getLogger().log(Level.SEVERE, msg + " failed.", e);
-				status = SLStatus.createErrorStatus(msg, e);
+				final int errNo = 48;
+				final String errMsg = I18N.err(errNo, f_server);
+				status = SLStatus.createErrorStatus(errNo, errMsg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e1) {
 			if (status == null) {
-				SLLogger.getLogger().log(Level.SEVERE, msg + " failed.", e1);
-				status = SLStatus.createErrorStatus(msg, e1);
+				final int errNo = 48;
+				final String errMsg = I18N.err(errNo, f_server);
+				status = SLStatus.createErrorStatus(errNo, errMsg, e1);
 			}
 		}
 		if (status == null) {
@@ -89,8 +92,9 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return getResultFilters(conn, slMonitor);
 			} else {
-				SLLogger.getLogger().log(Level.WARNING,
-						"Failed to get settings from " + f_server, e);
+				final int errNo = 48;
+				final String msg = I18N.err(errNo, f_server);
+				SLLogger.getLogger().log(Level.WARNING, msg, e);
 				return Status.CANCEL_STATUS;
 			}
 		}

@@ -16,11 +16,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -32,11 +32,12 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
 	private final List<String> f_projectNames;
 
+	private final int f_jobFailureCode = 25;
 	private final String f_jobFailureMsg;
 
 	public DeleteProjectDataJob(final List<String> projectNames) {
 		f_projectNames = projectNames;
-		f_jobFailureMsg = I18N.err(25, f_projectNames);
+		f_jobFailureMsg = I18N.err(f_jobFailureCode, f_projectNames);
 	}
 
 	public void runJob() {
@@ -140,12 +141,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-							PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow().getShell(),
-							"Failure", null, f_jobFailureMsg, null, Activator
-									.getDefault());
-					report.open();
+					final IStatus reason = SLStatus.createErrorStatus(
+							f_jobFailureCode, f_jobFailureMsg);
+					ErrorDialogUtility.open(null, null, reason);
 					return Status.OK_STATUS;
 				}
 			};

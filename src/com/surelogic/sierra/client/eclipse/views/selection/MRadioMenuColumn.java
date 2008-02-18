@@ -13,14 +13,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -138,16 +136,12 @@ public final class MRadioMenuColumn extends MColumn implements
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					final String msg = I18N.err(27, filter.getFactory()
+					final int errNo = 27;
+					final String msg = I18N.err(errNo, filter.getFactory()
 							.getFilterLabel());
-					final ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(
-							PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow().getShell(),
-							"Selection Error", null, msg, SLStatus
-									.createErrorStatus(msg, e), Activator
-									.getDefault());
-					dialog.open();
-					SLLogger.getLogger().log(Level.SEVERE, msg, e);
+					final IStatus reason = SLStatus.createErrorStatus(errNo,
+							msg);
+					ErrorDialogUtility.open(null, "Selection Error", reason);
 					return Status.OK_STATUS;
 				}
 			};

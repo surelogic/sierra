@@ -25,13 +25,12 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.Activator;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -103,14 +102,12 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 					final UIJob job = new SLUIJob() {
 						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
-							final String msg = I18N.err(19, file.getName());
-							final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-									PlatformUI.getWorkbench()
-											.getActiveWorkbenchWindow()
-											.getShell(), "Not in Classpath",
-									null, msg, null, Activator.getDefault());
-							report.open();
-							SLLogger.getLogger().warning(msg);
+							final int errNo = 19;
+							final String msg = I18N.err(errNo, file.getName());
+							final IStatus reason = SLStatus.createErrorStatus(
+									errNo, msg);
+							ErrorDialogUtility.open(null, "Not in Classpath",
+									reason);
 							return Status.OK_STATUS;
 						}
 					};

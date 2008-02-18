@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse;
 import java.io.File;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -11,19 +10,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -95,16 +92,11 @@ public final class Activator extends AbstractUIPlugin {
 			 */
 			f_databaseInSync.set(false);
 			PreferenceConstants.setDeleteDatabaseOnStartup(true);
-			final String msg = I18N.err(37, e.getSchemaVersion(), e
+			final int errNo = 37;
+			final String msg = I18N.err(errNo, e.getSchemaVersion(), e
 					.getCodeVersion());
-			SLLogger.getLogger().log(Level.WARNING, msg, e);
-			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getShell(), "No Such Query", PlatformUI
-							.getWorkbench().getDisplay().getSystemImage(
-									SWT.ICON_WARNING), msg, null, Activator
-							.getDefault());
-			report.open();
+			final IStatus reason = SLStatus.createWarningStatus(errNo, msg, e);
+			ErrorDialogUtility.open(null, null, reason);
 			final UIJob restartEclipseJob = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {

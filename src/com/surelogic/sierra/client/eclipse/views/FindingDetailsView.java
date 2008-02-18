@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -17,7 +18,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -26,16 +26,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends ViewPart {
@@ -157,12 +156,10 @@ public class FindingDetailsView extends ViewPart {
 		try {
 			detailsText = new Browser(description, SWT.NONE);
 		} catch (SWTError e) {
-			final Shell shell = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell();
-			final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-					shell, "Browser Failure", null, I18N.err(26), e, Activator
-							.getDefault());
-			report.open();
+			final int errNo = 26;
+			final String msg = I18N.err(errNo);
+			final IStatus reason = SLStatus.createErrorStatus(errNo, msg, e);
+			ErrorDialogUtility.open(null, "Browser Failure", reason);
 		}
 		synopsisSash.setWeights(new int[] { 50, 50 });
 		synopsisTab.setControl(synopsisPane);

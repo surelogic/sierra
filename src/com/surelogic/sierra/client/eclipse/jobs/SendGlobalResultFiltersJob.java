@@ -12,6 +12,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
@@ -30,14 +31,14 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 	private final SierraServer f_server;
 
 	public SendGlobalResultFiltersJob(SierraServer server) {
-		super("Sending local settings to " + server.getLabel());
+		super("Sending scan filter settings to " + server.getLabel());
 		f_server = server;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
-		final String msg = "Sending local settings to Sierra server '"
+		final String msg = "Sending scan filter settings to the Sierra team server '"
 				+ f_server + "'";
 		slMonitor.beginTask(msg, 5);
 		IStatus status = null;
@@ -46,16 +47,18 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			try {
 				status = sendResultFilters(conn, slMonitor);
 			} catch (Throwable e) {
-				SLLogger.getLogger().log(Level.SEVERE, msg + " failed.", e);
-				status = SLStatus.createErrorStatus(msg, e);
+				final int errNo = 49;
+				final String errMsg = I18N.err(errNo, f_server);
+				status = SLStatus.createErrorStatus(errNo, errMsg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e1) {
 			if (status == null) {
-				SLLogger.getLogger().log(Level.SEVERE, msg + " failed.", e1);
-				status = SLStatus.createErrorStatus(msg, e1);
+				final int errNo = 49;
+				final String errMsg = I18N.err(errNo, f_server);
+				status = SLStatus.createErrorStatus(errNo, errMsg, e1);
 			}
 		}
 		if (status == null) {
@@ -87,8 +90,9 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return sendResultFilters(conn, slMonitor);
 			} else {
-				SLLogger.getLogger().log(Level.WARNING,
-						"Failed to write settings to " + f_server, e);
+				final int errNo = 49;
+				final String msg = I18N.err(errNo, f_server);
+				SLLogger.getLogger().log(Level.WARNING, msg, e);
 				return Status.CANCEL_STATUS;
 			}
 		}

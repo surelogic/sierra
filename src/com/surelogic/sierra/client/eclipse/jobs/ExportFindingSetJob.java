@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.tool.message.Importance;
@@ -49,24 +50,25 @@ public abstract class ExportFindingSetJob extends DatabaseJob {
 					}
 					final ResultSet rs = st.executeQuery(query);
 					try {
-					  while (rs.next()) {
-					    String summary = rs.getString(1);
-					    Importance importance = Importance.valueOf(rs
-					        .getString(2).toUpperCase());
-					    long findingId = rs.getLong(3);
-					    String projectName = rs.getString(4);
-					    String packageName = rs.getString(5);
-					    String typeName = rs.getString(6);
-					    int lineNumber = rs.getInt(7);
-					    String findingTypeName = rs.getString(8);
-					    String categoryName = rs.getString(9);
-					    String toolName = rs.getString(10);
-					    outputFinding(summary, importance, findingId,
-					        projectName, packageName, typeName, lineNumber,
-					        findingTypeName, categoryName, toolName);
-					  }
+						while (rs.next()) {
+							String summary = rs.getString(1);
+							Importance importance = Importance.valueOf(rs
+									.getString(2).toUpperCase());
+							long findingId = rs.getLong(3);
+							String projectName = rs.getString(4);
+							String packageName = rs.getString(5);
+							String typeName = rs.getString(6);
+							int lineNumber = rs.getInt(7);
+							String findingTypeName = rs.getString(8);
+							String categoryName = rs.getString(9);
+							String toolName = rs.getString(10);
+							outputFinding(summary, importance, findingId,
+									projectName, packageName, typeName,
+									lineNumber, findingTypeName, categoryName,
+									toolName);
+						}
 					} finally {
-					  rs.close();
+						rs.close();
 					}
 				} finally {
 					st.close();
@@ -76,8 +78,9 @@ public abstract class ExportFindingSetJob extends DatabaseJob {
 			}
 			closeOutput();
 		} catch (Exception e) {
-			return SLStatus.createErrorStatus("Unable to export findings to "
-					+ f_file.getName(), e);
+			final int errNo = 47;
+			final String msg = I18N.err(errNo, f_file.getName());
+			return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 		monitor.done();
 		return Status.OK_STATUS;

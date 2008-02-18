@@ -2,16 +2,16 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
@@ -53,12 +53,10 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Are any servers defined?
 				 */
 				if (manager.isEmpty()) {
-					final String msg = I18N.err(17);
-					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-							shell, "No Sierra Servers", null, msg, null,
-							Activator.getDefault());
-					report.open();
-					SLLogger.getLogger().warning(msg);
+					final int errNo = 17;
+					final String msg = I18N.err(errNo);
+					final IStatus reason = SLStatus.createErrorStatus(17, msg);
+					ErrorDialogUtility.open(shell, "No Sierra Servers", reason);
 					ViewUtility.showView(SierraServersView.class.getName());
 					ServerLocationDialog.newServer(shell);
 					return;
@@ -79,7 +77,7 @@ public abstract class AbstractWebServiceMenuAction extends
 					}
 					server = dialog.getServer();
 					if (!dialog.confirmNonnullServer()) {
-					  return;
+						return;
 					}
 					if (dialog.useForAllUnconnectedProjects())
 						unconnectedProjectsServer = server;

@@ -12,6 +12,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
@@ -48,22 +49,18 @@ public class SynchronizeJob extends DatabaseJob {
 			try {
 				status = synchronize(conn, slMonitor);
 			} catch (Throwable e) {
-				final String msg = "Synchronization of project '"
-						+ f_projectName + "' to Sierra server '" + f_server
-						+ "' failed.";
-				SLLogger.getLogger().log(Level.SEVERE, msg, e);
-				status = SLStatus.createErrorStatus(msg, e);
+				final int errNo = 51;
+				final String msg = I18N.err(errNo, f_projectName, f_server);
+				status = SLStatus.createErrorStatus(errNo, msg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e1) {
 			if (status == null) {
-				final String msg = "Synchronization of project '"
-						+ f_projectName + "' to Sierra server '" + f_server
-						+ "' failed.";
-				SLLogger.getLogger().log(Level.SEVERE, msg, e1);
-				status = SLStatus.createErrorStatus(msg, e1);
+				final int errNo = 51;
+				final String msg = I18N.err(errNo, f_projectName, f_server);
+				status = SLStatus.createErrorStatus(errNo, msg, e1);
 			}
 		}
 		if (status == null) {

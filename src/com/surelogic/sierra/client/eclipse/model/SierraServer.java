@@ -175,10 +175,9 @@ public final class SierraServer {
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder();
-		b.append("'").append(getLabel()).append("' is ");
+		b.append(getLabel()).append(" is ");
 		b.append(toURLWithContextPath());
 		b.append(" user=\"").append(getUser()).append("\" ");
-		b.append(" password-is-saved=").append(savePassword());
 		return b.toString();
 	}
 

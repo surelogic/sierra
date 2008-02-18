@@ -10,11 +10,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.Activator;
-import com.surelogic.common.eclipse.dialogs.ExceptionDetailsDialog;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
 
 /**
@@ -51,15 +50,13 @@ public final class QualifierPromptFromJob {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (f_qualifiers.isEmpty()) {
-					final String msg = I18N.err(22, f_serverLabel,
+					int errNo = 22;
+					final String msg = I18N.err(errNo, f_serverLabel,
 							f_serverLabel);
-					final ExceptionDetailsDialog report = new ExceptionDetailsDialog(
-							PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow().getShell(),
-							"No Qualifiers on Sierra Team Server", null, msg,
-							null, Activator.getDefault());
-					report.open();
-					SLLogger.getLogger().warning(msg);
+					final IStatus reason = SLStatus.createErrorStatus(errNo,
+							msg);
+					ErrorDialogUtility.open(null,
+							"No Qualifiers on Sierra Team Server", reason);
 					f_canceled = true; // bail out
 				} else {
 					QualifierSelectionDialog dialog = new QualifierSelectionDialog(

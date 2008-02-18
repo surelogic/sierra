@@ -23,6 +23,7 @@ import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -85,10 +86,9 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 				try {
 					updateContents();
 				} catch (Exception e) {
-					return SLStatus
-							.createErrorStatus(
-									"Failed to update the set of server synchronization events",
-									e);
+					final int errNo = 58;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;
@@ -172,9 +172,9 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 				try {
 					updateEventTableContents(so);
 				} catch (Exception e) {
-					return SLStatus.createErrorStatus(
-							"Updating reading events from server synchronize",
-							e);
+					final int errNo = 59;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;

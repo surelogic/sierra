@@ -18,6 +18,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.QualifierPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
@@ -84,10 +85,9 @@ public class ShareScanJob extends DatabaseJob {
 				return publishRun(scan, slMonitor);
 			}
 		} catch (Exception e) {
-			final String msg = "Sharing scan of project '" + f_projectName
-					+ "' to Sierra server '" + f_server + "' failed.";
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			return SLStatus.createErrorStatus(msg, e);
+			final int errNo = 50;
+			final String msg = I18N.err(errNo, f_projectName, f_server);
+			return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 	}
 

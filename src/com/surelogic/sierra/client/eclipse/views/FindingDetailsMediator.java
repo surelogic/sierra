@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,6 +51,7 @@ import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
@@ -226,9 +226,9 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 					monitor.done();
 					return Status.OK_STATUS;
 				} catch (SQLException e) {
-					return SLStatus.createErrorStatus(
-							"SQL exception when trying to finding details for finding id "
-									+ findingId, e);
+					final int errNo = 57;
+					final String msg = I18N.err(errNo, findingId);
+					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 			}
 		};
@@ -700,44 +700,38 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			// clazz.addListener(SWT.Selection, f_locationListener);
 			tree.showItem(clazz);
 		} else {
-		  List<SourceDetail> srcs = new ArrayList<SourceDetail>();
-		  for (ArtifactDetail artifact : finding.getArtifacts()) {
-		    srcs.add(artifact.getPrimarySource());
-		    for (SourceDetail src : artifact.getAdditionalSources()) {
-		      srcs.add(src);
-		    }
-		  }
-		  Collections.sort(srcs);
-		  
+			List<SourceDetail> srcs = new ArrayList<SourceDetail>();
+			for (ArtifactDetail artifact : finding.getArtifacts()) {
+				srcs.add(artifact.getPrimarySource());
+				for (SourceDetail src : artifact.getAdditionalSources()) {
+					srcs.add(src);
+				}
+			}
+			Collections.sort(srcs);
+
 			// Deal with multiple artifacts, and multiple locations
-		  // TODO eliminate these if the sources are ordered?
+			// TODO eliminate these if the sources are ordered?
 			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
 			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
 			Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
 			TreeItem first = null;
 			for (SourceDetail src : srcs) {
-			  TreeItem loc = createLocation(proj, packages, classes, lines, src);
-        tree.showItem(loc);
-        if (first == null) {
-          first = loc;
-        }
+				TreeItem loc = createLocation(proj, packages, classes, lines,
+						src);
+				tree.showItem(loc);
+				if (first == null) {
+					first = loc;
+				}
 			}
 			tree.showItem(first);
 			/*
-			for (ArtifactDetail artifact : finding.getArtifacts()) {
-				TreeItem loc = createLocation(proj, packages, classes, lines,
-						artifact.getPrimarySource());
-				tree.showItem(loc);
-				boolean first = true;
-				for (SourceDetail src : artifact.getAdditionalSources()) {
-					loc = createLocation(proj, packages, classes, lines, src);
-					if (first) {
-						tree.showItem(loc);
-						first = false;
-					}
-				}
-			}
-			*/
+			 * for (ArtifactDetail artifact : finding.getArtifacts()) { TreeItem
+			 * loc = createLocation(proj, packages, classes, lines,
+			 * artifact.getPrimarySource()); tree.showItem(loc); boolean first =
+			 * true; for (SourceDetail src : artifact.getAdditionalSources()) {
+			 * loc = createLocation(proj, packages, classes, lines, src); if
+			 * (first) { tree.showItem(loc); first = false; } } }
+			 */
 		}
 	}
 
