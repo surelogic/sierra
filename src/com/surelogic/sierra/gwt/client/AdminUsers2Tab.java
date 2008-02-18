@@ -8,13 +8,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
+import com.surelogic.sierra.gwt.client.ui.SLGrid;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class AdminUsers2Tab extends TabComposite {
 
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
-	private final GridPanel usersGrid = new GridPanel(true);
+	private final GridPanel usersGridPanel = new GridPanel(true);
+	private final SLGrid usersGrid = usersGridPanel.getGrid();
 
 	public AdminUsers2Tab() {
 		super();
@@ -24,28 +26,29 @@ public class AdminUsers2Tab extends TabComposite {
 		userActionsPanel.addAction("Create a user", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				// TODO Auto-generated method stub
-
+				createUser();
 			}
+
 		});
 		usersPanel.add(userActionsPanel);
 
-		usersGrid.setHeaderColumn(0, "Name", "30%");
-		usersGrid.setHeaderColumn(1, "Status", "70%");
-
-		usersGrid.addGridAction("Delete selected", new ClickListener() {
+		usersGridPanel.addGridAction("Delete selected", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				// TODO Auto-generated method stub
-
+				deleteUsers();
 			}
 		});
-		usersPanel.add(usersGrid);
+
+		usersGrid.setColumn(0, "Name", "30%");
+		usersGrid.setColumn(1, "Status", "70%");
+
+		usersPanel.add(usersGridPanel);
 
 		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
 		// load the users into the grid
+		usersGrid.setWaitStatus();
 		refreshUsers();
 	}
 
@@ -59,14 +62,16 @@ public class AdminUsers2Tab extends TabComposite {
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
 
-				// TODO tell the user
+				usersGrid.setErrorMessage("Unable to retrieve user list");
 			}
 
 			public void onSuccess(Object result) {
-				// TODO load up the users list
-				// waitPanel.clear();
-				// usersList.clear();
+
+				// TODO load up the results
 				// List users = (List) result;
+				//
+				// usersGrid.usersList.clear();
+				//
 				// if (users.isEmpty()) {
 				// usersList.addItem("No users found");
 				// } else {
@@ -77,5 +82,14 @@ public class AdminUsers2Tab extends TabComposite {
 				// }
 			}
 		});
+	}
+
+	private void createUser() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void deleteUsers() {
+		// TODO delete all selected users
 	}
 }

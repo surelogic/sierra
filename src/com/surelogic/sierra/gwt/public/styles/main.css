@@ -109,7 +109,7 @@ a.hover {
 }
 
 .sl-GridPanel .sl-GridPanel-actions {
-
+  padding: 1px;
 }
 
 .sl-GridPanel .sl-GridPanel-table {
@@ -117,8 +117,31 @@ a.hover {
   
 }
 
-.sl-GridPanel .sl-GridPanel-table-header {
-  
+.sl-Grid {
+  border-collapse: separate;
+  border-spacing: 0px;
+  width: 100%;
+}
+
+.sl-Grid .sl-Grid-headerrow {
+
+}
+
+.sl-Grid .sl-Grid-header {
+  border: 2px groove;
+}
+
+.sl-Grid .sl-Grid-itemrow {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid;
+}
+
+.sl-Grid .sl-Grid-item {
+  padding: 3px;
+}
+
+.sl-Grid .sl-Grid-error {
+  color: red;
 }
 
 /* GWT Component Styling */
