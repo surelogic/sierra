@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
-public class Grid extends Composite {
+public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
 	private final FlexTable grid = new FlexTable();
@@ -20,7 +20,7 @@ public class Grid extends Composite {
 	private CheckBox selectAll;
 	private boolean statusShowing;
 
-	public Grid(boolean rowSelection) {
+	public SelectableGrid(boolean rowSelection) {
 		super();
 		this.rowSelection = rowSelection;
 
