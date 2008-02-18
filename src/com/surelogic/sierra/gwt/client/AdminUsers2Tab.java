@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
+import com.surelogic.sierra.gwt.client.ui.Grid;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
-import com.surelogic.sierra.gwt.client.ui.SLGrid;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class AdminUsers2Tab extends TabComposite {
@@ -20,7 +20,7 @@ public class AdminUsers2Tab extends TabComposite {
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
 	private final GridPanel usersGridPanel = new GridPanel(true);
-	private final SLGrid usersGrid = usersGridPanel.getGrid();
+	private final Grid usersGrid = usersGridPanel.getGrid();
 
 	public AdminUsers2Tab() {
 		super();
@@ -85,6 +85,7 @@ public class AdminUsers2Tab extends TabComposite {
 						if (user.isAdministrator()) {
 							usersGrid.setText(rowIndex, 1, "Administrator");
 						}
+						usersGrid.setRowData(rowIndex, user);
 					}
 				}
 			}

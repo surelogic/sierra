@@ -1,5 +1,8 @@
 package com.surelogic.sierra.gwt.client.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -8,16 +11,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
-// TODO add the ability to bind a data object to each row
-public class SLGrid extends Composite {
+public class Grid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
 	private final FlexTable grid = new FlexTable();
+	private final List rowData = new ArrayList();
 	private boolean rowSelection;
 	private CheckBox selectAll;
 	private boolean statusShowing;
 
-	public SLGrid(boolean rowSelection) {
+	public Grid(boolean rowSelection) {
 		super();
 		this.rowSelection = rowSelection;
 
@@ -31,7 +34,7 @@ public class SLGrid extends Composite {
 			selectAll.addClickListener(new ClickListener() {
 
 				public void onClick(Widget sender) {
-					setSelectAll(selectAll.isChecked());
+					setAllSelections(selectAll.isChecked());
 				}
 
 			});
@@ -43,39 +46,47 @@ public class SLGrid extends Composite {
 	}
 
 	public int getColumnCount() {
-		return grid.getCellCount(0) - getColumnOffset();
+		return fromGridColumn(grid.getCellCount(0));
 	}
 
 	public void setColumn(int column, String text, String width) {
-		column += getColumnOffset();
+		int gridColumn = toGridColumn(column);
 
-		grid.setText(0, column, text);
-		grid.getColumnFormatter().setWidth(column, width);
-		grid.getCellFormatter().addStyleName(0, column,
+		grid.setText(0, gridColumn, text);
+		grid.getColumnFormatter().setWidth(gridColumn, width);
+		grid.getCellFormatter().addStyleName(0, gridColumn,
 				PRIMARY_STYLE + "-header");
 	}
 
 	public int getRowCount() {
-		return grid.getRowCount() - getRowOffset();
+		return fromGridRow(grid.getRowCount());
 	}
 
 	public int addRow() {
-		int rowIndex = grid.getRowCount();
+		int gridRow = grid.getRowCount();
 
 		if (rowSelection) {
-			grid.setWidget(rowIndex, 0, new CheckBox());
+			grid.setWidget(gridRow, 0, new CheckBox());
 		}
-		grid.getRowFormatter().addStyleName(rowIndex,
-				PRIMARY_STYLE + "-itemrow");
+		grid.getRowFormatter()
+				.addStyleName(gridRow, PRIMARY_STYLE + "-itemrow");
 		for (int i = 0; i < grid.getCellCount(0); i++) {
-			grid.getCellFormatter().addStyleName(rowIndex, i,
+			grid.getCellFormatter().addStyleName(gridRow, i,
 					PRIMARY_STYLE + "-item");
 		}
-		return rowIndex - getRowOffset();
+
+		int row = fromGridRow(gridRow);
+		if (row < rowData.size()) {
+			rowData.set(row, null);
+		}
+		return row;
 	}
 
 	public void removeRow(int row) {
-		grid.removeRow(getRowOffset() + row);
+		grid.removeRow(toGridRow(row));
+		if (row < rowData.size()) {
+			rowData.remove(row);
+		}
 	}
 
 	public void removeRows() {
@@ -83,36 +94,52 @@ public class SLGrid extends Composite {
 		while (grid.getRowCount() > rowOffset) {
 			grid.removeRow(rowOffset);
 		}
+		rowData.clear();
 	}
 
 	public Widget getWidget(int row, int column) {
-		return grid.getWidget(row + getRowOffset(), column + getColumnOffset());
+		return grid.getWidget(toGridRow(row), toGridColumn(column));
 	}
 
 	public void setWidget(int row, int column, Widget widget) {
-		grid
-				.setWidget(row + getRowOffset(), column + getColumnOffset(),
-						widget);
+		grid.setWidget(toGridRow(row), toGridColumn(column), widget);
 	}
 
 	public String getText(int row, int column) {
-		return grid.getText(row + getRowOffset(), column + getColumnOffset());
+		return grid.getText(toGridRow(row), toGridColumn(column));
 	}
 
 	public void setText(int row, int column, String text) {
-		grid.setText(row + getRowOffset(), column + getColumnOffset(), text);
+		grid.setText(toGridRow(row), toGridColumn(column), text);
+	}
+
+	public Object getRowData(int row) {
+		if (row < rowData.size()) {
+			return rowData.get(row);
+		}
+		return null;
+	}
+
+	public void setRowData(int row, Object data) {
+		while (row >= rowData.size()) {
+			rowData.add(null);
+		}
+		rowData.set(row, data);
 	}
 
 	public void clearRow(int row) {
 		setSelected(row, false);
-		int colCount = grid.getCellCount(0);
-		int offsetRow = row + getRowOffset();
-		for (int i = getColumnOffset(); i < colCount; i++) {
-			grid.setText(offsetRow, i, "");
+		int gridColCount = grid.getCellCount(0);
+		int gridRow = toGridRow(row);
+		for (int i = getColumnOffset(); i < gridColCount; i++) {
+			grid.setText(gridRow, i, "");
+		}
+		if (row < rowData.size()) {
+			rowData.set(row, null);
 		}
 	}
 
-	public void setSelectAll(boolean selected) {
+	public void setAllSelections(boolean selected) {
 		if (rowSelection) {
 			((CheckBox) grid.getWidget(0, 0)).setChecked(selected);
 			int rowCount = getRowCount();
@@ -124,25 +151,16 @@ public class SLGrid extends Composite {
 
 	public boolean isSelected(int row) {
 		if (rowSelection) {
-			return ((CheckBox) grid.getWidget(row + getRowOffset(), 0))
-					.isChecked();
+			CheckBox rowCheckBox = (CheckBox) grid.getWidget(toGridRow(row), 0);
+			return rowCheckBox.isChecked();
 		}
 		return false;
 	}
 
 	public void setSelected(int row, boolean selected) {
 		if (rowSelection) {
-			((CheckBox) grid.getWidget(row + getRowOffset(), 0))
-					.setChecked(selected);
-		}
-	}
-
-	public void clearSelections() {
-		if (rowSelection) {
-			int rowCount = getRowCount();
-			for (int i = 0; i < rowCount; i++) {
-				setSelected(i, false);
-			}
+			CheckBox rowCheckBox = (CheckBox) grid.getWidget(toGridRow(row), 0);
+			rowCheckBox.setChecked(selected);
 		}
 	}
 
@@ -179,7 +197,23 @@ public class SLGrid extends Composite {
 		return rowSelection ? 1 : 0;
 	}
 
+	private int fromGridColumn(int column) {
+		return column - getColumnOffset();
+	}
+
+	private int toGridColumn(int column) {
+		return column + getColumnOffset();
+	}
+
 	private int getRowOffset() {
 		return 1 + (statusShowing ? 1 : 0);
+	}
+
+	private int fromGridRow(int row) {
+		return row - getRowOffset();
+	}
+
+	private int toGridRow(int row) {
+		return row + getRowOffset();
 	}
 }

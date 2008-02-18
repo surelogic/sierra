@@ -12,7 +12,7 @@ public class GridPanel extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final HorizontalPanel gridActionPanel = new HorizontalPanel();
 
-	private final SLGrid grid;
+	private final Grid grid;
 
 	public GridPanel(boolean rowSelection) {
 		super();
@@ -22,7 +22,7 @@ public class GridPanel extends Composite {
 		gridActionPanel.addStyleName(PRIMARY_STYLE + "-actions");
 		rootPanel.add(gridActionPanel);
 
-		grid = new SLGrid(rowSelection);
+		grid = new Grid(rowSelection);
 		grid.addStyleName(PRIMARY_STYLE + "-table");
 
 		rootPanel.add(grid);
@@ -34,7 +34,7 @@ public class GridPanel extends Composite {
 		gridActionPanel.add(action);
 	}
 
-	public SLGrid getGrid() {
+	public Grid getGrid() {
 		return grid;
 	}
 
