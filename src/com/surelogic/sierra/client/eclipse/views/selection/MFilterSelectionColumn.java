@@ -164,7 +164,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	      f_reportContents.addListener(SWT.EraseItem, new Listener() {
 	        public void handleEvent(Event event) {
 	          if (event.index == 1) {
-	            event.detail &= ~SWT.HOT;
+	            event.detail &= ~(1<<5); // SWT.HOT;
 	            	            
 	            TableItem item = (TableItem) event.item;
 	            final int width = computeBarGraphWidth(item, GRAPH_WIDTH);
