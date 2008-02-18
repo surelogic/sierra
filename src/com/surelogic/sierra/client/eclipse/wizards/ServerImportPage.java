@@ -325,7 +325,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 					TableItem t = new TableItem(f_transfersTable, SWT.CHECK);
 					t.setText(ssh.getLabel());
 					t.setData(ssh);
-					t.setImage(SLImages.getImage(SLImages.IMG_SERVER));
+					t.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 				} else {
 					f_existingServers.add(ssh.getLabel());
 				}
