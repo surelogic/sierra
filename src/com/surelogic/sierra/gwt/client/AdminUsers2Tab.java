@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -15,6 +16,7 @@ import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.SelectableGrid;
 import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
+import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class AdminUsers2Tab extends TabComposite {
@@ -57,8 +59,15 @@ public class AdminUsers2Tab extends TabComposite {
 			public void onClick(Widget source, int row, int column,
 					Object rowData) {
 				if (rowData != null) {
-					editUser((UserAccount) rowData);
+					UserAccount user = (UserAccount) rowData;
+					if (column == 0) {
+						editUsername(row, column, user);
+					} else if (column == 1) {
+						editStatus(row, column, user);
+					}
+
 				}
+
 			}
 
 			public void onHeaderClick(Widget source, int column) {
@@ -111,13 +120,37 @@ public class AdminUsers2Tab extends TabComposite {
 
 	}
 
-	private void editUser(UserAccount user) {
-		// TODO open UI to edit this user
-		Window.alert("Editing " + user.getUserName());
+	private void editUsername(final int row, final int column,
+			final UserAccount user) {
+		final TextBoxEditor userEditor = new TextBoxEditor() {
+
+			protected void setDefaultValue(TextBox editor) {
+				editor.setText(user.getUserName());
+			}
+
+			protected void closeEditor(TextBox editor, boolean canceled) {
+				if (!canceled) {
+					// TODO save the user name if it changed
+					// if an error occurs, revert the name and show an error
+					Window.alert("TODO: Username changed: " + editor.getText());
+				}
+				usersGrid.setText(row, column, editor.getText());
+			}
+
+		};
+
+		usersGrid.setWidget(row, column, userEditor);
+		userEditor.setFocus(true);
+	}
+
+	private void editStatus(final int row, final int column, UserAccount user) {
+		// TODO edit a user's status
+		Window.alert("TODO: Edit status for user: " + user.getUserName());
 	}
 
 	private void deleteUsers() {
 		// TODO delete all selected users
+		Window.alert("TODO: Delete all selected users");
 	}
 
 }
