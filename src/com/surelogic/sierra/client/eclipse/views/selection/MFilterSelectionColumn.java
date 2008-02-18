@@ -170,11 +170,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            int width = computeBarGraphWidth(item, GRAPH_WIDTH);
 	            
 	            Display display = f_reportContents.getDisplay();
-	            boolean checked = item.getChecked();
+	            String value = (String) item.getData();
 	            GC gc = event.gc;
 	            Color oldForeground = gc.getForeground();
 	            Color oldBackground = gc.getBackground();
-	            if (checked) {
+	            if (f_mouseOverLine.equals(value)) {
 	              gc.setForeground(f_barColorDark);
 	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, event.height);
