@@ -9,23 +9,65 @@
       <page
             class="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"
-            name="Sierra"/>
+            name="Sierra">
+            <keywordReference id="com.surelogic.sierra.client.key2"/>
+            <keywordReference id="com.surelogic.sierra.client.key6"/>
+      </page>
       <page
             class="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
             name="Tools"
-            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
+            <keywordReference id="com.surelogic.sierra.client.key1"/>
+            <keywordReference id="com.surelogic.sierra.client.key2"/>
+            <keywordReference id="com.surelogic.sierra.client.key3"/>
+            <keywordReference id="com.surelogic.sierra.client.key4"/>
+            <keywordReference id="com.surelogic.sierra.client.key6"/>
+      </page>
       <page
             class="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
             name="Scan Filter"
-            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
+            <keywordReference id="com.surelogic.sierra.client.key1"/>
+            <keywordReference id="com.surelogic.sierra.client.key2"/>
+            <keywordReference id="com.surelogic.sierra.client.key3"/>
+            <keywordReference id="com.surelogic.sierra.client.key4"/>
+            <keywordReference id="com.surelogic.sierra.client.key6"/>
+       </page>
        <page
             class="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
             id="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
             name="Scan Data"
-            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage"/>
+            category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
+            <keywordReference id="com.surelogic.sierra.client.key1"/>
+            <keywordReference id="com.surelogic.sierra.client.key2"/>
+            <keywordReference id="com.surelogic.sierra.client.key5"/>
+            <keywordReference id="com.surelogic.sierra.client.key6"/>
+       </page>
    </extension>
+   
+   <extension
+     point="org.eclipse.ui.keywords">
+     <keyword
+            label="Sierra"
+            id="com.surelogic.sierra.client.key1"/>
+     <keyword
+            label="Scan"
+            id="com.surelogic.sierra.client.key2"/>
+     <keyword
+            label="FindBugs"
+            id="com.surelogic.sierra.client.key3"/>
+     <keyword
+            label="PMD"
+            id="com.surelogic.sierra.client.key4"/>
+     <keyword
+            label="Data"
+            id="com.surelogic.sierra.client.key5"/>
+     <keyword
+            label="Analysis"
+            id="com.surelogic.sierra.client.key6"/>
+   </extension>    
    
    <extension
          point="org.eclipse.core.runtime.preferences">
