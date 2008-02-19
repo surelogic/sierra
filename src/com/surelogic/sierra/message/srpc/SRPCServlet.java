@@ -46,7 +46,6 @@ public abstract class SRPCServlet extends HttpServlet {
 					response = method.invoke(this);
 					status = ResponseStatus.OK;
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
 					response = new RaisedException(e.getCause());
 					status = ResponseStatus.RAISED;
 				}
