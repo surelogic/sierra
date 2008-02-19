@@ -135,11 +135,17 @@ public final class MRadioMenuColumn extends MColumn implements
 	}
 
 	public void goBack(RadioArrowMenu menu) {
-	  getPreviousColumn().forceFocus();
+	  MColumn c = getPreviousColumn();
+	  if (c != null) {
+	    c.forceFocus();
+	  }
 	}
 	
 	public void goNext(RadioArrowMenu menu) {
-    getNextColumn().forceFocus();
+    MColumn c = getNextColumn();
+    if (c != null) {
+      c.forceFocus();
+    }
   }
 	
 	class DrawFilterAndMenu implements IFilterObserver {
