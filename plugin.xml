@@ -93,7 +93,8 @@
                id="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_investigate.gif"
                label="Open Code Review Perspective"
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client">
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+               helpContextId="menu-open-code-review-perspective">
           </action>
           <action
            		class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
@@ -101,7 +102,8 @@
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
                 label="Re-Scan Changes in Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-                enablesFor="+">
+                enablesFor="+"
+                helpContextId="menu-re-scan-changes-in-project">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>                
           <action
@@ -110,7 +112,8 @@
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                 label="Scan Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-                enablesFor="+">
+                enablesFor="+"
+                helpContextId="menu-scan-project">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>    
          <action
@@ -119,7 +122,8 @@
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
                 label="Disconnect"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-                enablesFor="+">
+                enablesFor="+"
+                helpContextId="menu-disconnect">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
           <action
@@ -128,7 +132,8 @@
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
                 label="Publish Latest Scan"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-                enablesFor="+">
+                enablesFor="+"
+                helpContextId="menu-publish-latest-scan">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
          <action
@@ -137,7 +142,8 @@
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                 label="Synchronize Project"
                 menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-                enablesFor="+">
+                enablesFor="+"
+                helpContextId="menu-synchronize-project">
              <selection class="org.eclipse.jdt.core.IJavaProject"/>
           </action>
           <action
@@ -145,14 +151,16 @@
                 id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                 label="Synchronize All Connected Projects"
-                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
+                menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+                helpContextId="menu-synchronize-all-connected-projects">
           </action>
           <action
                class="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
                id="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
                label="Configure Team Servers"
-               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server">
+               menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+               helpContextId="menu-configure-team-servers">
           </action>
         </actionSet>
    </extension>
@@ -227,7 +235,8 @@
                id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
                label="Re-Scan Changes in Project"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"
+               helpContextId="menu-re-scan-changes-in-project"/>
          
          <action
                class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
@@ -235,7 +244,8 @@
                id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
                label="Scan Project"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"
+               helpContextId="menu-scan-project"/>
 
          <action
            		class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
@@ -243,7 +253,8 @@
                 id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
                 icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
                 label="Disconnect"
-                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
+                menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"
+                helpContextId="menu-disconnect"/>
 
          <action
                class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
@@ -251,16 +262,19 @@
                id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
                label="Publish Latest Scan"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"
+               helpContextId="menu-publish-latest-scan"/>
          <action
                class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
                enablesFor="+"
                id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
                icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
                label="Synchronize Project"
-               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"/>
+               menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/server"
+               helpContextId="menu-synchronize-project"/>
       </objectContribution>
-    	  <viewerContribution
+      
+      <viewerContribution
 			targetID="#CompilationUnitRulerContext"
 			id="com.surelogic.sierra.client.eclipse.actions.MarkerMenuShowFindingAction">
 		 <action
