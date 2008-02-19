@@ -49,7 +49,7 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
-  private static final boolean USE_VIRTUAL = false;
+  private static final boolean USE_VIRTUAL = true;
   
 	private Table f_table = null;
 
@@ -435,14 +435,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 	    Image temp = new Image(null, 100, 100);
 	    GC gc = new GC(temp);
 	    int longest = 0;
+	    FindingData longestData = null;
+	    int longestIndex = -1;
+	    int i = 0;
 	    for(FindingData data : f_rows) {
 	      Point size = gc.textExtent(data.f_summary);
 	      if (size.x > longest) {
 	        longest = size.x;
-	      }
+	        longestData = data;
+	        longestIndex = i;
+	      }	      
+	      i++;
 	    }
 	    gc.dispose();
 	    temp.dispose();
+	    if (longestData != null) {
+	      initTableItem(longestData, f_table.getItem(longestIndex));
+	    }
+	    
 	    if (longest < 25) {
 	      return 30;
 	    }
