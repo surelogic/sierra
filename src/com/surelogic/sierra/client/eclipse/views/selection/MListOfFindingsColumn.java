@@ -18,6 +18,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -407,9 +411,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 		if (!selectionFound)
 			f_findingId = -1;
 
+		/*
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
 		}
+		*/
+    f_table.layout();
+		
+		Rectangle rect = f_table.getBounds();
+		final int width = computeValueWidth();
+		f_table.setBounds(rect.x, rect.y, width, rect.height);
+		
 		f_table.setRedraw(true);
 		/*
 		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
@@ -420,6 +432,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
+	 int computeValueWidth() {
+	    Image temp = new Image(null, 100, 100);
+	    GC gc = new GC(temp);
+	    int longest = 0;
+	    for(FindingData data : f_rows) {
+	      Point size = gc.textExtent(data.f_summary);
+	      if (size.x > longest) {
+	        longest = size.x;
+	      }
+	    }
+	    gc.dispose();
+	    temp.dispose();
+	    if (longest < 25) {
+	      return 30;
+	    }
+	    return longest + 5;
+	  }
+	
 	private boolean initTableItem(FindingData data, final TableItem item) {
 		item.setText(data.f_summary);
 		item.setImage(Utility.getImageFor(data.f_importance));
