@@ -454,14 +454,22 @@ public final class MFilterSelectionColumn extends MColumn implements
     Image temp = new Image(null, 100, 100);
     GC gc = new GC(temp);
 	  int longest = 0;
+	  int longestIndex = -1;
+	  int i = 0;
     for(String value : valueList) {
       Point size = gc.textExtent(value);
       if (size.x > longest) {
         longest = size.x;
+        longestIndex = i;
       }
+      i++;
     }
     gc.dispose();
     temp.dispose();
+    
+    if (longestIndex >= 0) {
+      updateData(f_reportContents.getItem(longestIndex), longestIndex);
+    }
     if (longest < 25) {
       return 50;
     }
