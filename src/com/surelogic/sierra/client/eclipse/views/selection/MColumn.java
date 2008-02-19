@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
@@ -136,4 +139,15 @@ public abstract class MColumn {
 	}
 
   public abstract void forceFocus();
+  
+  void emptyAfter() {
+    getCascadingList().emptyAfter(index);
+    f_nextColumn.dispose();
+  }
+  
+  protected static void setCustomTabTraversal(Event e) {
+    // i.e. we'll take care of things
+    e.doit = true;
+    e.detail = SWT.TRAVERSE_NONE;
+  }
 }

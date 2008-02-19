@@ -340,7 +340,34 @@ public final class MListOfFindingsColumn extends MColumn implements
 			    initTableItem(data, item);
 			  }
 			});
-		   
+		  
+			f_table.addListener(SWT.Traverse, new Listener() {
+        public void handleEvent(Event e) {
+          switch (e.detail) {
+            case SWT.TRAVERSE_ESCAPE:
+              setCustomTabTraversal(e);
+              if (getPreviousColumn() instanceof MRadioMenuColumn) {
+                MRadioMenuColumn column = (MRadioMenuColumn) getPreviousColumn();
+                column.escape(null);
+                /*
+                column.clearSelection();
+                column.emptyAfter(); // e.g. eliminate myself
+                column.forceFocus();
+                */
+              }
+              break;
+            case SWT.TRAVERSE_TAB_NEXT:
+              // Ignore, since we should be the last column
+              setCustomTabTraversal(e);
+              break;
+            case SWT.TRAVERSE_TAB_PREVIOUS:
+              setCustomTabTraversal(e);
+              getPreviousColumn().forceFocus();
+              break;
+          }
+        }		  
+			});
+			
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
 

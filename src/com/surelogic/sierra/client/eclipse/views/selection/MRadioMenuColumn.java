@@ -90,6 +90,10 @@ public final class MRadioMenuColumn extends MColumn implements
 	void setSelection(Object choice) {
 		f_menu.setSelection(choice);
 	}
+	
+	void clearSelection() {
+	  f_menu.clearSelection();
+	}
 
 	@Override
 	public void forceFocus() {
@@ -147,6 +151,24 @@ public final class MRadioMenuColumn extends MColumn implements
       c.forceFocus();
     }
   }
+	
+	public void escape(RadioArrowMenu menu) {
+	  if (getNextColumn() == null) {
+	    MColumn prev  = getPreviousColumn();
+	    if (prev != null) {
+	      // Not the first menu
+	      MColumn prev2 = prev.getPreviousColumn();
+	      if (prev2 instanceof MRadioMenuColumn) {
+	        MRadioMenuColumn menuColumn = (MRadioMenuColumn) prev2;
+	        menuColumn.escape(menuColumn.f_menu);
+	      }
+	    }
+	  } else {
+	    clearSelection();
+	    emptyAfter();
+	    forceFocus();
+	  }
+	}
 	
 	class DrawFilterAndMenu implements IFilterObserver {
 
