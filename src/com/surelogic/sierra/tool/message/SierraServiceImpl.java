@@ -19,6 +19,7 @@ import com.surelogic.sierra.jdbc.qualifier.QualifierManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.jdbc.server.UserContext;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
@@ -119,11 +120,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
 			public Void perform(Connection conn, Server server, User user)
 					throws Exception {
-				if (!server.getUid().equals(serverUid)) {
-					throw new IllegalArgumentException(serverUid
-							+ " does not match the server's uid: "
-							+ server.getUid());
-				}
 				final long revision = server.nextRevision();
 				final List<Merge> merges = new ArrayList<Merge>(trails.size());
 				final List<AuditTrail> audits = new ArrayList<AuditTrail>(
@@ -156,7 +152,18 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 			}
 		};
+		final String localUid = ConnectionFactory
+				.withReadOnly(new ServerTransaction<String>() {
+					public String perform(Connection conn, Server server)
+							throws Exception {
+						return server.getUid();
+					}
+				});
 		// Begin transaction
+		if (!localUid.equals(serverUid)) {
+			throw new IllegalArgumentException(serverUid
+					+ " does not match the server's uid: " + localUid);
+		}
 		if (trails != null && !trails.isEmpty()) {
 			return ConnectionFactory
 					.withUserTransaction(new UserTransaction<SyncResponse>() {
