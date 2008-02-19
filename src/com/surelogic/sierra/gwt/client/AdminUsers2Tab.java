@@ -14,6 +14,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.SelectableGrid;
+import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
@@ -52,13 +53,24 @@ public class AdminUsers2Tab extends TabComposite {
 		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
-		usersGrid.setInplaceEditor(0, new TextBoxEditor(usersGrid) {
+		usersGrid.setInplaceEditor(0, TextBoxEditor.getFactory());
+		usersGrid.addListener(new SelectableGridListener() {
 
-			protected boolean updateValue(String oldValue, String newValue) {
-				Window.alert("TODO: Username changed: " + newValue);
-				return true;
+			public boolean onChange(Widget source, int row, int column,
+					Object oldValue, Object newValue) {
+				if (column == 0) {
+					return changeUserName(row, (String) oldValue,
+							(String) newValue);
+				}
+				return false;
 			}
 
+			public void onClick(Widget source, int row, int column,
+					Object rowData) {
+			}
+
+			public void onHeaderClick(Widget source, int column) {
+			}
 		});
 
 		// load the users into the grid
@@ -110,6 +122,11 @@ public class AdminUsers2Tab extends TabComposite {
 	private void deleteUsers() {
 		// TODO delete all selected users
 		Window.alert("TODO: Delete all selected users");
+	}
+
+	private boolean changeUserName(int row, String oldValue, String newValue) {
+		Window.alert("TODO: Username changed: " + newValue);
+		return true;
 	}
 
 }

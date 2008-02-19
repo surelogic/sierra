@@ -19,7 +19,7 @@ public class SelectableGrid extends Composite {
 
 	private final FlexTable grid = new FlexTable();
 	private final List rowData = new ArrayList();
-	private final List inplaceEditors = new ArrayList();
+	private final List inplaceEditorFactories = new ArrayList();
 	private final List listeners = new ArrayList();
 	private boolean rowSelection;
 	private CheckBox selectAll;
@@ -57,23 +57,16 @@ public class SelectableGrid extends Composite {
 				final int column = fromGridColumn(gridColumn);
 
 				if (gridRow == 0 && column >= 0) {
-					for (Iterator it = listeners.iterator(); it.hasNext();) {
-						SelectableGridListener listener = (SelectableGridListener) it
-								.next();
-						listener.onHeaderClick(grid, column);
-					}
+					fireHeaderClickEvent(SelectableGrid.this, column);
 				} else if (row >= 0 && column >= 0) {
-					for (Iterator it = listeners.iterator(); it.hasNext();) {
-						SelectableGridListener listener = (SelectableGridListener) it
-								.next();
-						listener.onClick(grid, row, column, getRowData(row));
-					}
+					fireClickEvent(SelectableGrid.this, row, column);
 				}
-				if (column < inplaceEditors.size()) {
-					InplaceEditor editor = (InplaceEditor) inplaceEditors
-							.get(column);
-					if (editor != null && !editor.isEditing(row, column)) {
-						editor.edit(row, column);
+				if (!InplaceEditor.isEditing(row, column)) {
+					InplaceEditorFactory editorFactory = getInplaceEditor(column);
+					if (editorFactory != null) {
+						InplaceEditor editor = editorFactory.createEditor(
+								SelectableGrid.this, row, column);
+						editor.open();
 					}
 				}
 			}
@@ -89,18 +82,18 @@ public class SelectableGrid extends Composite {
 				PRIMARY_STYLE + "-header");
 	}
 
-	public InplaceEditor getInplaceEditor(int column) {
-		if (column < inplaceEditors.size()) {
-			return (InplaceEditor) inplaceEditors.get(column);
+	public InplaceEditorFactory getInplaceEditor(int column) {
+		if (column < inplaceEditorFactories.size()) {
+			return (InplaceEditorFactory) inplaceEditorFactories.get(column);
 		}
 		return null;
 	}
 
-	public void setInplaceEditor(int column, InplaceEditor editor) {
-		while (inplaceEditors.size() <= column) {
-			inplaceEditors.add(null);
+	public void setInplaceEditor(int column, InplaceEditorFactory editor) {
+		while (inplaceEditorFactories.size() <= column) {
+			inplaceEditorFactories.add(null);
 		}
-		inplaceEditors.set(column, editor);
+		inplaceEditorFactories.set(column, editor);
 	}
 
 	public void addListener(SelectableGridListener listener) {
@@ -248,6 +241,36 @@ public class SelectableGrid extends Composite {
 			grid.removeRow(1);
 			statusShowing = false;
 		}
+	}
+
+	public void fireHeaderClickEvent(SelectableGrid grid, int column) {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			SelectableGridListener listener = (SelectableGridListener) it
+					.next();
+			listener.onHeaderClick(grid, column);
+		}
+	}
+
+	public void fireClickEvent(SelectableGrid grid, int row, int column) {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			SelectableGridListener listener = (SelectableGridListener) it
+					.next();
+			listener.onClick(grid, row, column, getRowData(row));
+		}
+	}
+
+	public boolean fireChangeEvent(SelectableGrid grid, int row, int column,
+			Object oldValue, Object newValue) {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			SelectableGridListener listener = (SelectableGridListener) it
+					.next();
+			boolean allow = listener.onChange(grid, row, column, oldValue,
+					newValue);
+			if (!allow) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private int getColumnOffset() {
