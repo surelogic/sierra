@@ -23,7 +23,7 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 				final String msg = I18N.err(errNo, sl, f_projectName, sl,
 						getServer().getLabel(), f_projectName, sl, getServer()
 								.getLabel());
-				final IStatus reason = SLStatus.createErrorStatus(errNo, msg);
+				final IStatus reason = SLStatus.createWarningStatus(errNo, msg);
 				ErrorDialogUtility.open(null,
 						"Connected to the Wrong Sierra Team Server", reason);
 			}

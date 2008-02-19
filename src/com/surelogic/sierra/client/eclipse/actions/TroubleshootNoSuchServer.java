@@ -21,7 +21,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 				final String sl = f_server.getLabel();
 				final int errNo = 23;
 				final String msg = I18N.err(errNo, sl, sl, sl, sl, sl, sl);
-				final IStatus reason = SLStatus.createErrorStatus(errNo, msg);
+				final IStatus reason = SLStatus.createWarningStatus(errNo, msg);
 				ErrorDialogUtility.open(null,
 						"Sierra Team Server Connection Failed", reason);
 			}
