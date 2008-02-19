@@ -49,7 +49,8 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
-
+  private static final boolean USE_VIRTUAL = false;
+  
 	private Table f_table = null;
 
 	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
@@ -319,24 +320,27 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	private final IColumn f_iColumn = new IColumn() {
 		public Composite createContents(Composite panel) {
-			f_table = new Table(panel, SWT.FULL_SELECTION | SWT.MULTI
-					| SWT.VIRTUAL);
+		  int mods = SWT.FULL_SELECTION | SWT.MULTI;
+		  if (USE_VIRTUAL) {
+		    mods = mods | SWT.VIRTUAL;
+		  }		  
+			f_table = new Table(panel, mods);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
 			f_table.addListener(SWT.Selection, f_singleClick);
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
 
-			/*
-			f_table.addListener(SWT.SetData, new Listener() {
-			  public void handleEvent(Event event) {
-			    final TableItem item = (TableItem) event.item;
-			    final int index = event.index;
-			    FindingData data = f_rows.get(index);
-			    initTableItem(data, item);
-			  }
-			});
-      */		  
+			if (USE_VIRTUAL) {
+			  f_table.addListener(SWT.SetData, new Listener() {
+			    public void handleEvent(Event event) {
+			      final TableItem item = (TableItem) event.item;
+			      final int index = event.index;
+			      FindingData data = f_rows.get(index);
+			      initTableItem(data, item);
+			    }
+			  });
+			}	  
 			f_table.addListener(SWT.Traverse, new Listener() {
         public void handleEvent(Event e) {
           switch (e.detail) {
@@ -384,20 +388,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 				i.dispose();
 			}
 		}
-		//f_table.setItemCount(f_rows.size());
-
+		if (USE_VIRTUAL) {
+		  f_table.setItemCount(f_rows.size());
+		}
+		  
 		boolean selectionFound = false;
 		int i = 0;
 		for (FindingData data : f_rows) {
-			 final TableItem item = new TableItem(f_table, SWT.NONE);
-			 selectionFound = initTableItem(data, item);
-      /*
-			if (data.f_findingId == f_findingId) {
+		  if (!USE_VIRTUAL) {
+		    final TableItem item = new TableItem(f_table, SWT.NONE);
+		    selectionFound = initTableItem(data, item);
+		  } 
+		  else if (data.f_findingId == f_findingId) {
 				initTableItem(data, f_table.getItem(i));
 				selectionFound = true;
 				break;
 			}
-			*/
 			i++;
 		}
 		if (!selectionFound)
@@ -409,11 +415,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		*/
     f_table.layout();
-		/*
-		Rectangle rect = f_table.getBounds();
-		final int width = computeValueWidth();
-		f_table.setBounds(rect.x, rect.y, width, rect.height);
-		*/
+    if (USE_VIRTUAL) {
+      Rectangle rect = f_table.getBounds();
+      final int width = computeValueWidth();
+      f_table.setBounds(rect.x, rect.y, width, rect.height);
+    }
+    
 		f_table.setRedraw(true);
 		/*
 		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
