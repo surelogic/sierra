@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -12,7 +11,7 @@ import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class SierraPortal implements EntryPoint, HistoryListener {
+public class SierraPortal implements EntryPoint {
 	private final HeaderPanel headerPanel = new HeaderPanel();
 	private final ContentPanel contentPanel = new ContentPanel();
 
@@ -20,18 +19,17 @@ public class SierraPortal implements EntryPoint, HistoryListener {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		ClientContext.initialize();
 		RootPanel.get("header-pane").add(headerPanel);
 		RootPanel.get("content-pane").add(contentPanel);
-
 		// see if the user has an established session, or needs to log in
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.getUserAccount(new AsyncCallback() {
 			public void onSuccess(Object result) {
-				ClientContext.setUser((UserAccount) result);
 				if (result == null) {
 					LoginContent.getInstance().show();
 				} else {
-					contentPanel.showDefault();
+					ClientContext.setUser((UserAccount) result);
 				}
 			}
 
@@ -45,8 +43,4 @@ public class SierraPortal implements EntryPoint, HistoryListener {
 		});
 	}
 
-	public void onHistoryChanged(String historyToken) {
-		// TODO Auto-generated method stub
-
-	}
 }

@@ -4,5 +4,5 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public interface ClientContextListener {
 
-	void onChange(UserAccount account);
+	void onChange(UserAccount account, String context);
 }

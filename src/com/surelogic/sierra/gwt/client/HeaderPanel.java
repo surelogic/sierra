@@ -47,7 +47,7 @@ public final class HeaderPanel extends Composite {
 		// Listen for user session changes
 		ClientContext.addChangeListener(new ClientContextListener() {
 
-			public void onChange(UserAccount account) {
+			public void onChange(UserAccount account, String context) {
 				updateSession(account);
 			}
 
