@@ -14,6 +14,9 @@ import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
+// TODO add row selection highlighting and tracking of currently selected row
+// TODO don't trigger inplace editors until after a row selection has occurred
+// -> this is similar to a double click and will prevent inplace editors from activating too easily
 public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
