@@ -50,7 +50,7 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			} catch (Throwable e) {
 				final int errNo = 48;
 				final String errMsg = I18N.err(errNo, f_server);
-				status = SLStatus.createErrorStatus(errNo, errMsg, e);
+				status = SLStatus.createWarningStatus(errNo, errMsg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
@@ -59,7 +59,7 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			if (status == null) {
 				final int errNo = 48;
 				final String errMsg = I18N.err(errNo, f_server);
-				status = SLStatus.createErrorStatus(errNo, errMsg, e1);
+				status = SLStatus.createWarningStatus(errNo, errMsg, e1);
 			}
 		}
 		if (status == null) {

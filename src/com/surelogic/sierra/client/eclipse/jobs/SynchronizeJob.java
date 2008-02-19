@@ -51,7 +51,7 @@ public class SynchronizeJob extends DatabaseJob {
 			} catch (Throwable e) {
 				final int errNo = 51;
 				final String msg = I18N.err(errNo, f_projectName, f_server);
-				status = SLStatus.createErrorStatus(errNo, msg, e);
+				status = SLStatus.createWarningStatus(errNo, msg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
@@ -60,7 +60,7 @@ public class SynchronizeJob extends DatabaseJob {
 			if (status == null) {
 				final int errNo = 51;
 				final String msg = I18N.err(errNo, f_projectName, f_server);
-				status = SLStatus.createErrorStatus(errNo, msg, e1);
+				status = SLStatus.createWarningStatus(errNo, msg, e1);
 			}
 		}
 		if (status == null) {
@@ -90,10 +90,8 @@ public class SynchronizeJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return synchronize(conn, slMonitor);
 			} else {
-				SLLogger.getLogger().log(
-						Level.WARNING,
-						"Failed to synchronize " + f_projectName + " with "
-								+ f_server + " (wrong server)", e);
+				final String msg = I18N.err(51, f_projectName, f_server);
+				SLLogger.getLogger().log(Level.WARNING, msg, e);
 				return Status.CANCEL_STATUS;
 			}
 		} catch (SierraServiceClientException e) {
@@ -109,10 +107,8 @@ public class SynchronizeJob extends DatabaseJob {
 			if (troubleshoot.retry()) {
 				return synchronize(conn, slMonitor);
 			} else {
-				SLLogger.getLogger().log(
-						Level.WARNING,
-						"Failed to synchronize " + f_projectName + " with "
-								+ f_server, e);
+				final String msg = I18N.err(51, f_projectName, f_server);
+				SLLogger.getLogger().log(Level.WARNING, msg, e);
 				return Status.CANCEL_STATUS;
 			}
 		}
