@@ -106,6 +106,13 @@ public final class SynchronizeView extends ViewPart {
 
 		sash.setWeights(new int[] { 40, 60 });
 
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
+				parent,
+				"com.surelogic.sierra.client.eclipse.view-synchronize-history");
+
 		f_mediator = new SynchronizeMediator(syncTable, eventsTable);
 		f_mediator.init();
 	}

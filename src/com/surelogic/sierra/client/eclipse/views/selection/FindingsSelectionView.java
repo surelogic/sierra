@@ -131,7 +131,17 @@ public final class FindingsSelectionView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
-		menu.add(new PreferencesAction("Preferences"));
+		menu.add(new PreferencesAction("Preferences..."));
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		getSite()
+				.getWorkbenchWindow()
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.view-findings-quick-search");
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,

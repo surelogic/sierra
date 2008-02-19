@@ -321,13 +321,20 @@ public class FindingDetailsView extends ViewPart {
 
 		artifactTab.setControl(artifactsPane);
 
-    /*
-     * Allow direct access to the preferences from the view.
-     */
-    final IMenuManager menu = getViewSite().getActionBars()
-        .getMenuManager();
-    menu.add(new PreferencesAction("Preferences"));
-		
+		/*
+		 * Allow direct access to the preferences from the view.
+		 */
+		final IMenuManager menu = getViewSite().getActionBars()
+				.getMenuManager();
+		menu.add(new PreferencesAction("Preferences..."));
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
+				parent,
+				"com.surelogic.sierra.client.eclipse.view-finding-details");
+
 		f_mediator = new FindingDetailsMediator(this, pages, noFindingPage,
 				findingPage, summaryIcon, summaryText, folder, synopsisTab,
 				synopsisSash, synopsisAudit, findingSynopsis, locationTree,
@@ -336,7 +343,6 @@ public class FindingDetailsView extends ViewPart {
 				commentButton, scrollingLabelComposite, artifactTab, artifacts);
 
 		f_mediator.init();
-
 	}
 
 	@Override

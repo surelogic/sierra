@@ -214,8 +214,18 @@ public final class SierraServersView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
-    menu.add(new PreferencesAction("Preferences"));
-    
+		menu.add(new PreferencesAction("Preferences..."));
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		getSite()
+				.getWorkbenchWindow()
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.view-team-servers");
+
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem,
