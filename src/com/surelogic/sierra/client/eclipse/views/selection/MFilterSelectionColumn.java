@@ -140,7 +140,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
           public void handleEvent(Event e) {
             Point p = new Point(e.x, e.y);
-            TableItem item = f_reportContents.getItem(p);            
+            TableItem item = f_reportContents.getItem(p);   
+            if (item == null) {
+              return;
+            }
             // Not part of the checkbox
             if (e.x > 16) {
               item.setChecked(!item.getChecked());
