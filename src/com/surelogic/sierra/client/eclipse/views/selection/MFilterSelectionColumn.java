@@ -406,7 +406,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 			f_porousCount.setToolTipText(msg);
 		}		
 		f_valueColumn.setWidth(computeValueWidth());
-		f_graphColumn.setWidth(75);
+		f_graphColumn.setWidth(GRAPH_WIDTH + 5);
 		f_reportContents.layout();
 		f_reportGroup.layout();
 		if (filterContentsChanged)
