@@ -151,8 +151,14 @@ public class ToolsPreferencePage extends PreferencePage implements
 		deselectWarning.setLayoutData(data);
 		deselectWarning.setText(DESELECT_TOOL_WARNING);
 		deselectWarning.addListener(SWT.Selection, LINK_LISTENER);
-		return panel;
 
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+
+		return panel;
 	}
 
 	public void init(IWorkbench workbench) {

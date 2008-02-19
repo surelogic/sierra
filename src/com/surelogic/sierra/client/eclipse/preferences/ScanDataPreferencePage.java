@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
@@ -84,6 +85,12 @@ public class ScanDataPreferencePage extends PreferencePage implements
 				false));
 
 		(new Mediator(t, deleteSelectedProjectData, deleteDatabase)).init();
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return panel;
 	}
@@ -182,5 +189,4 @@ public class ScanDataPreferencePage extends PreferencePage implements
 			}
 		}
 	}
-
 }

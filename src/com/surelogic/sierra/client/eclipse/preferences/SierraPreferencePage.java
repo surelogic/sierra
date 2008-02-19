@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
@@ -90,6 +91,12 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_saveResources.setPage(this);
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return panel;
 	}

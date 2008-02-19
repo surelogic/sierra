@@ -269,6 +269,13 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			}
 		};
 		job.schedule();
+
+		/*
+		 * Allow access to help via the F1 key.
+		 */
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+
 		return f_panel;
 	}
 
