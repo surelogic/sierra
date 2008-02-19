@@ -17,6 +17,7 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 // TODO add row selection highlighting and tracking of currently selected row
 // TODO don't trigger inplace editors until after a row selection has occurred
 // -> this is similar to a double click and will prevent inplace editors from activating too easily
+// TODO break non-selectable parts of grid into parent class
 public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
@@ -201,6 +202,18 @@ public class SelectableGrid extends Composite {
 				setSelected(i, selected);
 			}
 		}
+	}
+
+	public boolean hasSelected() {
+		if (rowSelection) {
+			int rowCount = getRowCount();
+			for (int i = 0; i < rowCount; i++) {
+				if (isSelected(i)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean isSelected(int row) {
