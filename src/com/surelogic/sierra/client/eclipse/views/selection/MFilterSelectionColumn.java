@@ -189,31 +189,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        public void handleEvent(Event event) {
 	          if (event.index == 1) {
 	            event.detail &= ~(1<<5); // SWT.HOT;
-	            	            
-	            TableItem item = (TableItem) event.item;
-	            final int width = computeBarGraphWidth(item, GRAPH_WIDTH);
-	            
-	            Display display = f_reportContents.getDisplay();
-	            String value = (String) item.getData();
-	            GC gc = event.gc;
-	            Color oldForeground = gc.getForeground();
-	            Color oldBackground = gc.getBackground();
-	            final int height = event.height-2;
-	            if (f_mouseOverLine.equals(value)) {
-	              gc.setForeground(f_barColorDark);
-	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
-	              gc.setBackground(f_barColorLight);
-	              gc.fillRectangle(event.x, event.y, width, height);
-	            } else {
-	              gc.setForeground(f_barColorLight);
-	              gc.setBackground(f_reportGroup.getBackground());
-	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
-	              gc.setBackground(f_barColorDark);
-	              gc.fillRectangle(event.x, event.y, width, height);
-	            }
-	            gc.setForeground(oldForeground);
-	            gc.setBackground(oldBackground);
 	            event.detail &= ~SWT.SELECTED;
 	            event.detail &= ~SWT.BACKGROUND;
 	            event.detail &= ~SWT.FOREGROUND;
@@ -230,8 +205,27 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            Display display = f_reportContents.getDisplay();
 	            GC gc = event.gc;
 	            boolean checked = item.getChecked();
+	            final int width = computeBarGraphWidth(item, GRAPH_WIDTH);
 	            
-	            final int height = event.height - 3;
+	            Color oldForeground = gc.getForeground();
+	            Color oldBackground = gc.getBackground();
+	            // Draw background
+	            final int height = event.height-2;
+	            if (f_mouseOverLine.equals(value)) {
+	              gc.setForeground(f_barColorDark);
+	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
+	              gc.setBackground(f_barColorLight);
+	              gc.fillRectangle(event.x, event.y, width, height);
+	            } else {
+	              gc.setForeground(f_barColorLight);
+	              gc.setBackground(f_reportGroup.getBackground());
+	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
+	              gc.setBackground(f_barColorDark);
+	              gc.fillRectangle(event.x, event.y, width, height);
+	            }
+	            
+	            // Draw foreground
 	            Rectangle rect2 = new Rectangle(event.x, event.y, GRAPH_WIDTH - 1, height);
 	            gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 	            gc.drawRectangle(rect2);
@@ -256,6 +250,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	              gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 	            }
 	            gc.drawText(text, event.x + rightJ, event.y + offset, true);
+	            gc.setForeground(oldForeground);
+	            gc.setBackground(oldBackground);
 	          }
 	        }
 	      });	      
