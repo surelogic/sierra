@@ -19,10 +19,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -330,6 +327,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
 
+			/*
 			f_table.addListener(SWT.SetData, new Listener() {
 			  public void handleEvent(Event event) {
 			    final TableItem item = (TableItem) event.item;
@@ -338,7 +336,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			    initTableItem(data, item);
 			  }
 			});
-		  
+      */		  
 			f_table.addListener(SWT.Traverse, new Listener() {
         public void handleEvent(Event e) {
           switch (e.detail) {
@@ -386,20 +384,20 @@ public final class MListOfFindingsColumn extends MColumn implements
 				i.dispose();
 			}
 		}
-		f_table.setItemCount(f_rows.size());
+		//f_table.setItemCount(f_rows.size());
 
 		boolean selectionFound = false;
 		int i = 0;
 		for (FindingData data : f_rows) {
-			/*
-			 * final TableItem item = new TableItem(f_table, SWT.NONE);
-			 * selectionFound = initTableItem(data, item);
-			 */
+			 final TableItem item = new TableItem(f_table, SWT.NONE);
+			 selectionFound = initTableItem(data, item);
+      /*
 			if (data.f_findingId == f_findingId) {
 				initTableItem(data, f_table.getItem(i));
 				selectionFound = true;
 				break;
 			}
+			*/
 			i++;
 		}
 		if (!selectionFound)
@@ -411,11 +409,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		*/
     f_table.layout();
-		
+		/*
 		Rectangle rect = f_table.getBounds();
 		final int width = computeValueWidth();
 		f_table.setBounds(rect.x, rect.y, width, rect.height);
-		
+		*/
 		f_table.setRedraw(true);
 		/*
 		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
