@@ -60,13 +60,14 @@ public class SelectableGrid extends Composite {
 					fireHeaderClickEvent(SelectableGrid.this, column);
 				} else if (row >= 0 && column >= 0) {
 					fireClickEvent(SelectableGrid.this, row, column);
-				}
-				if (!InplaceEditor.isEditing(row, column)) {
-					InplaceEditorFactory editorFactory = getInplaceEditor(column);
-					if (editorFactory != null) {
-						InplaceEditor editor = editorFactory.createEditor(
-								SelectableGrid.this, row, column);
-						editor.open();
+
+					if (!InplaceEditor.isEditing(row, column)) {
+						InplaceEditorFactory editorFactory = getInplaceEditor(column);
+						if (editorFactory != null) {
+							InplaceEditor editor = editorFactory.createEditor(
+									SelectableGrid.this, row, column);
+							editor.open();
+						}
 					}
 				}
 			}
