@@ -315,6 +315,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		final UIJob job = new SLUIJob() {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (f_serverList.isDisposed())
+					return Status.OK_STATUS;
 				f_serverList.setRedraw(false);
 				String[] labels = f_manager.getLabels();
 				TableItem[] items = f_serverList.getItems();
