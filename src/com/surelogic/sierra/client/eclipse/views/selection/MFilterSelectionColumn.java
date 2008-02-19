@@ -170,7 +170,12 @@ public final class MFilterSelectionColumn extends MColumn implements
 				
 	      f_barColorDark = new Color(f_reportContents.getDisplay(), 255, 113, 18);
 	      f_barColorLight = new Color(f_reportContents.getDisplay(), 238, 216, 198);
+	      /**
+	       * See http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
+	       */
 	      f_reportContents.addListener(SWT.SetData, new Listener() {
+	        // Only called the first time the TableItem is shown
+          // Intended to initialize the item
 	        public void handleEvent(Event event) {
 	          final TableItem item = (TableItem) event.item;
 	          final int index = event.index;
@@ -178,7 +183,16 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        }
 	      });
 	      
+	      /**
+	       * Note that the next three listeners implement the bar graph
+	       * See http://www.eclipse.org/articles/article.php?file=Article-CustomDrawingTableAndTreeItems/index.html
+	       */ 	     
 	      f_reportContents.addListener(SWT.MeasureItem, new Listener() {
+	        /**
+	         * The first custom draw event that is sent. This event 
+	         * gives a client the opportunity to specify the width 
+	         * and/or height of a cell's content
+	         */
 	        public void handleEvent(Event event) {
 	          if (event.index == 1) {
 	            event.width = GRAPH_WIDTH;
@@ -186,8 +200,19 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        }
 	      });	      
 	      f_reportContents.addListener(SWT.EraseItem, new Listener() {
+	        /**
+	         * Sent just before the background of a cell is about to be drawn. 
+	         * The background consists of the cell's background color or the 
+	         * selection background if the item is selected. This event allows
+	         * a client to custom draw one or both of these. Also, this event 
+	         * allows the client to indicate whether the cell's default foreground
+	         * should be drawn following the drawing of the background.
+	         */
 	        public void handleEvent(Event event) {
 	          if (event.index == 1) {
+	            /*
+	             * Specifies that we will handle all but the focus rectangle
+	             */
 	            event.detail &= ~(1<<5); // SWT.HOT;
 	            event.detail &= ~SWT.SELECTED;
 	            event.detail &= ~SWT.BACKGROUND;
@@ -196,8 +221,16 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        }
 	      });	      
 	      f_reportContents.addListener(SWT.PaintItem, new Listener() {
+	        /**
+	         * Sent for a cell just after its default foreground contents have
+	         * been drawn. This event allows a client to augment the cell, or 
+	         * to completely draw the cell's content.
+	         */
 	        public void handleEvent(Event event) {
 	          if (event.index == 1) {
+	            /*
+	             * We're drawing everything
+	             */
 	            TableItem item = (TableItem) event.item;
 	            String value = (String) item.getData();
 	            int count = f_filter.getSummaryCountFor(value);
@@ -207,25 +240,26 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            boolean checked = item.getChecked();
 	            final int width = computeBarGraphWidth(item, GRAPH_WIDTH);
 	            
+	            // Save old colors
 	            Color oldForeground = gc.getForeground();
 	            Color oldBackground = gc.getBackground();
-	            // Draw background
+	            // Draw background fill
 	            final int height = event.height-2;
 	            if (f_mouseOverLine.equals(value)) {
-	              gc.setForeground(f_barColorDark);
+	              //gc.setForeground(f_barColorDark);
 	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
 	              gc.setBackground(f_barColorLight);
 	              gc.fillRectangle(event.x, event.y, width, height);
 	            } else {
-	              gc.setForeground(f_barColorLight);
+	              //gc.setForeground(f_barColorLight);
 	              gc.setBackground(f_reportGroup.getBackground());
 	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
 	              gc.setBackground(f_barColorDark);
 	              gc.fillRectangle(event.x, event.y, width, height);
 	            }
 	            
-	            // Draw foreground
+	            // Draw bounding rectangle and quartile bars
 	            Rectangle rect2 = new Rectangle(event.x, event.y, GRAPH_WIDTH - 1, height);
 	            gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 	            gc.drawRectangle(rect2);
@@ -250,6 +284,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	              gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 	            }
 	            gc.drawText(text, event.x + rightJ, event.y + offset, true);
+	            
+	            // Restore old colors
 	            gc.setForeground(oldForeground);
 	            gc.setBackground(oldBackground);
 	          }
@@ -389,7 +425,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		if (currentRows != valueList.size()) {
 		  filterContentsChanged = true;
 	    f_reportContents.setItemCount(valueList.size());
-	    // Rest delegated to listener
+	    // Rest delegated to SetData listener
 		}	
 
 		final int porousCount = f_filter.getFindingCountPorous();

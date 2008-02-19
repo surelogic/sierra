@@ -49,6 +49,9 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
+  /**
+   * @see http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
+   */
   private static final boolean USE_VIRTUAL = true;
   
 	private Table f_table = null;
@@ -333,6 +336,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 			if (USE_VIRTUAL) {
 			  f_table.addListener(SWT.SetData, new Listener() {
+			    // Only called the first time the TableItem is shown
+			    // Intended to initialize the item
 			    public void handleEvent(Event event) {
 			      final TableItem item = (TableItem) event.item;
 			      final int index = event.index;
@@ -389,6 +394,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		}
 		if (USE_VIRTUAL) {
+		  // Creates that many table items -- not necessarily initialized
 		  f_table.setItemCount(f_rows.size());
 		}
 		  
@@ -399,6 +405,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 		    final TableItem item = new TableItem(f_table, SWT.NONE);
 		    selectionFound = initTableItem(data, item);
 		  } 
+		  // Only needed if virtual
+		  // Sets up the table to show the previous selection
 		  else if (data.f_findingId == f_findingId) {
 				initTableItem(data, f_table.getItem(i));
 				selectionFound = true;
@@ -416,6 +424,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		*/
     f_table.layout();
     if (USE_VIRTUAL) {
+      // Computes the appropriate width for the longest item
       Rectangle rect = f_table.getBounds();
       final int width = computeValueWidth();
       f_table.setBounds(rect.x, rect.y, width, rect.height);
@@ -431,33 +440,38 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
-	 int computeValueWidth() {
-	    Image temp = new Image(null, 100, 100);
-	    GC gc = new GC(temp);
-	    int longest = 0;
-	    FindingData longestData = null;
-	    int longestIndex = -1;
-	    int i = 0;
-	    for(FindingData data : f_rows) {
-	      Point size = gc.textExtent(data.f_summary);
-	      if (size.x > longest) {
-	        longest = size.x;
-	        longestData = data;
-	        longestIndex = i;
-	      }	      
-	      i++;
-	    }
-	    gc.dispose();
-	    temp.dispose();
-	    if (longestData != null) {
-	      initTableItem(longestData, f_table.getItem(longestIndex));
-	    }
-	    
-	    if (longest < 25) {
-	      return 30;
-	    }
-	    return longest + 5;
+	/*
+	 * This actually finds the longest item, and
+	 * creates a real TableItem for that item 
+	 * to ensure that the table gets sized properly
+	 */
+	int computeValueWidth() {
+	  Image temp = new Image(null, 100, 100);
+	  GC gc = new GC(temp);
+	  int longest = 0;
+	  FindingData longestData = null;
+	  int longestIndex = -1;
+	  int i = 0;
+	  for(FindingData data : f_rows) {
+	    Point size = gc.textExtent(data.f_summary);
+	    if (size.x > longest) {
+	      longest = size.x;
+	      longestData = data;
+	      longestIndex = i;
+	    }	      
+	    i++;
 	  }
+	  gc.dispose();
+	  temp.dispose();
+	  if (longestData != null) {
+	    initTableItem(longestData, f_table.getItem(longestIndex));
+	  }
+
+	  if (longest < 25) {
+	    return 30;
+	  }
+	  return longest + 5;
+	}
 	
 	private boolean initTableItem(FindingData data, final TableItem item) {
 		item.setText(data.f_summary);
