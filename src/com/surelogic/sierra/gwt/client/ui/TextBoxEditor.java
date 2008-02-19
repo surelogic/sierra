@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.TextBox;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class TextBoxEditor extends InplaceEditor {
 	private String initialValue;
@@ -35,16 +36,13 @@ public class TextBoxEditor extends InplaceEditor {
 		String cellValue = initialValue;
 		if (!canceled) {
 			String newValue = getTextEditor().getText();
-			boolean matchingValues = false;
-			if (initialValue == newValue) {
-				matchingValues = true;
-			} else if (initialValue != null && initialValue.equals(newValue)) {
-				matchingValues = true;
-			}
-			if (matchingValues
-					&& grid.fireChangeEvent(grid, row, column, initialValue,
-							newValue)) {
-				cellValue = newValue;
+			boolean valueChanged = !LangUtil.equals(initialValue, newValue);
+			if (valueChanged) {
+				boolean valueAccepted = grid.fireChangeEvent(row, column,
+						initialValue, newValue);
+				if (valueAccepted) {
+					cellValue = newValue;
+				}
 			}
 		}
 		grid.setText(row, column, cellValue);

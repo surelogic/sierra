@@ -57,9 +57,9 @@ public class SelectableGrid extends Composite {
 				final int column = fromGridColumn(gridColumn);
 
 				if (gridRow == 0 && column >= 0) {
-					fireHeaderClickEvent(SelectableGrid.this, column);
+					fireHeaderClickEvent(column);
 				} else if (row >= 0 && column >= 0) {
-					fireClickEvent(SelectableGrid.this, row, column);
+					fireClickEvent(row, column);
 
 					if (!InplaceEditor.isEditing(row, column)) {
 						InplaceEditorFactory editorFactory = getInplaceEditor(column);
@@ -244,7 +244,7 @@ public class SelectableGrid extends Composite {
 		}
 	}
 
-	public void fireHeaderClickEvent(SelectableGrid grid, int column) {
+	public void fireHeaderClickEvent(int column) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it
 					.next();
@@ -252,7 +252,7 @@ public class SelectableGrid extends Composite {
 		}
 	}
 
-	public void fireClickEvent(SelectableGrid grid, int row, int column) {
+	public void fireClickEvent(int row, int column) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it
 					.next();
@@ -260,8 +260,8 @@ public class SelectableGrid extends Composite {
 		}
 	}
 
-	public boolean fireChangeEvent(SelectableGrid grid, int row, int column,
-			Object oldValue, Object newValue) {
+	public boolean fireChangeEvent(int row, int column, Object oldValue,
+			Object newValue) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it
 					.next();
