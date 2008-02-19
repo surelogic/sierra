@@ -113,7 +113,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				});
 	}
 
-	public SyncResponse synchronizeProject(SyncRequest request) {
+	public SyncResponse synchronizeProject(SyncRequest request) throws ServerMismatchException {
 		final String serverUid = request.getServer();
 		final String project = request.getProject();
 		final List<SyncTrailRequest> trails = request.getTrails();
@@ -161,7 +161,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				});
 		// Begin transaction
 		if (!localUid.equals(serverUid)) {
-			throw new IllegalArgumentException(serverUid
+			throw new ServerMismatchException(serverUid
 					+ " does not match the server's uid: " + localUid);
 		}
 		if (trails != null && !trails.isEmpty()) {
