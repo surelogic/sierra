@@ -1,24 +1,34 @@
 package com.surelogic.sierra.gwt.client.ui;
 
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class TextBoxEditor extends InplaceEditor {
 
-	public TextBoxEditor() {
-		super(new TextBox());
+	private String initialValue;
+
+	public TextBoxEditor(SelectableGrid grid) {
+		super(grid, new TextBox());
 	}
 
-	protected final void setDefaultValue(FocusWidget editor) {
-		setDefaultValue((TextBox) editor);
+	public void initEditor(int row, int column) {
+		initialValue = getGrid().getText(row, column);
+		getTextEditor().setText(initialValue);
 	}
 
-	protected abstract void setDefaultValue(TextBox editor);
-
-	protected final void closeEditor(FocusWidget editor, boolean canceled) {
-		closeEditor((TextBox) editor, canceled);
+	public void closeEditor(boolean canceled) {
+		String cellValue = initialValue;
+		if (!canceled) {
+			String newValue = getTextEditor().getText();
+			if (updateValue(initialValue, newValue)) {
+				cellValue = newValue;
+			}
+		}
+		getGrid().setText(getEditingRow(), getEditingColumn(), cellValue);
 	}
 
-	protected abstract void closeEditor(TextBox editor, boolean canceled);
+	protected abstract boolean updateValue(String oldValue, String newValue);
 
+	private TextBox getTextEditor() {
+		return (TextBox) getEditor();
+	}
 }

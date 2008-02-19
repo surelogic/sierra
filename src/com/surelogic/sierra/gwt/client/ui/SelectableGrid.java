@@ -19,6 +19,7 @@ public class SelectableGrid extends Composite {
 
 	private final FlexTable grid = new FlexTable();
 	private final List rowData = new ArrayList();
+	private final List inplaceEditors = new ArrayList();
 	private final List listeners = new ArrayList();
 	private boolean rowSelection;
 	private CheckBox selectAll;
@@ -54,6 +55,7 @@ public class SelectableGrid extends Composite {
 					int gridColumn) {
 				final int row = fromGridRow(gridRow);
 				final int column = fromGridColumn(gridColumn);
+
 				if (gridRow == 0 && column >= 0) {
 					for (Iterator it = listeners.iterator(); it.hasNext();) {
 						SelectableGridListener listener = (SelectableGridListener) it
@@ -67,12 +69,15 @@ public class SelectableGrid extends Composite {
 						listener.onClick(grid, row, column, getRowData(row));
 					}
 				}
+				if (column < inplaceEditors.size()) {
+					InplaceEditor editor = (InplaceEditor) inplaceEditors
+							.get(column);
+					if (editor != null && !editor.isEditing(row, column)) {
+						editor.edit(row, column);
+					}
+				}
 			}
 		});
-	}
-
-	public int getColumnCount() {
-		return fromGridColumn(grid.getCellCount(0));
 	}
 
 	public void setColumn(int column, String text, String width) {
@@ -82,6 +87,32 @@ public class SelectableGrid extends Composite {
 		grid.getColumnFormatter().setWidth(gridColumn, width);
 		grid.getCellFormatter().addStyleName(0, gridColumn,
 				PRIMARY_STYLE + "-header");
+	}
+
+	public InplaceEditor getInplaceEditor(int column) {
+		if (column < inplaceEditors.size()) {
+			return (InplaceEditor) inplaceEditors.get(column);
+		}
+		return null;
+	}
+
+	public void setInplaceEditor(int column, InplaceEditor editor) {
+		while (inplaceEditors.size() <= column) {
+			inplaceEditors.add(null);
+		}
+		inplaceEditors.set(column, editor);
+	}
+
+	public void addListener(SelectableGridListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(SelectableGridListener listener) {
+		listeners.remove(listener);
+	}
+
+	public int getColumnCount() {
+		return fromGridColumn(grid.getCellCount(0));
 	}
 
 	public int getRowCount() {
@@ -217,14 +248,6 @@ public class SelectableGrid extends Composite {
 			grid.removeRow(1);
 			statusShowing = false;
 		}
-	}
-
-	public void addListener(SelectableGridListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListener(SelectableGridListener listener) {
-		listeners.remove(listener);
 	}
 
 	private int getColumnOffset() {

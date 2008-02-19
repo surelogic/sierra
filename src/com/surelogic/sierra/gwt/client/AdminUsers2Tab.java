@@ -7,7 +7,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -15,7 +14,6 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.SelectableGrid;
-import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
@@ -54,26 +52,15 @@ public class AdminUsers2Tab extends TabComposite {
 		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
-		usersGrid.addListener(new SelectableGridListener() {
+		usersGrid.setInplaceEditor(0, new TextBoxEditor(usersGrid) {
 
-			public void onClick(Widget source, int row, int column,
-					Object rowData) {
-				if (rowData != null) {
-					UserAccount user = (UserAccount) rowData;
-					if (column == 0) {
-						editUsername(row, column, user);
-					} else if (column == 1) {
-						editStatus(row, column, user);
-					}
-
-				}
-
+			protected boolean updateValue(String oldValue, String newValue) {
+				Window.alert("TODO: Username changed: " + newValue);
+				return true;
 			}
 
-			public void onHeaderClick(Widget source, int column) {
-				// nothing yet
-			}
 		});
+
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
@@ -117,35 +104,7 @@ public class AdminUsers2Tab extends TabComposite {
 
 	private void createUser() {
 		// TODO open UI to create a new user
-
-	}
-
-	private void editUsername(final int row, final int column,
-			final UserAccount user) {
-		final TextBoxEditor userEditor = new TextBoxEditor() {
-
-			protected void setDefaultValue(TextBox editor) {
-				editor.setText(user.getUserName());
-			}
-
-			protected void closeEditor(TextBox editor, boolean canceled) {
-				if (!canceled) {
-					// TODO save the user name if it changed
-					// if an error occurs, revert the name and show an error
-					Window.alert("TODO: Username changed: " + editor.getText());
-				}
-				usersGrid.setText(row, column, editor.getText());
-			}
-
-		};
-
-		usersGrid.setWidget(row, column, userEditor);
-		userEditor.setFocus(true);
-	}
-
-	private void editStatus(final int row, final int column, UserAccount user) {
-		// TODO edit a user's status
-		Window.alert("TODO: Edit status for user: " + user.getUserName());
+		Window.alert("TODO: Create a new user");
 	}
 
 	private void deleteUsers() {
