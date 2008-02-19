@@ -13,15 +13,15 @@ public final class ClientContext {
 	private static UserAccount userAccount;
 	private static List listeners = new ArrayList();
 	private static String context = History.getToken();
-	
+
 	private ClientContext() {
 		// Not instantiable
 	}
 
 	public static void initialize() {
-		 History.addHistoryListener(new ContextHistoryListener());
+		History.addHistoryListener(new ContextHistoryListener());
 	}
-	
+
 	public static UserAccount getUser() {
 		return userAccount;
 	}
@@ -54,6 +54,12 @@ public final class ClientContext {
 			notifyListeners();
 		}
 
+	}
+
+	public static void setContext(String token) {
+		context = token;
+		History.newItem(context);
+		notifyListeners();
 	}
 
 }

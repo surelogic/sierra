@@ -65,7 +65,7 @@ public final class HeaderPanel extends Composite {
 					new ClickListener() {
 
 						public void onClick(Widget sender) {
-							PrefsContent.getInstance().show();
+							ClientContext.setContext("Preferences");
 						}
 					}));
 

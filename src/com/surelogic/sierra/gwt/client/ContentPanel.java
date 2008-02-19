@@ -40,6 +40,8 @@ public class ContentPanel extends Composite implements ClientContextListener {
 	public void onChange(UserAccount account, String context) {
 		if (context == null || "".equals(context)) {
 			showDefault();
+		} else if ("Preferences".equals(context)) {
+			show(PrefsContent.getInstance());
 		}
 	}
 
