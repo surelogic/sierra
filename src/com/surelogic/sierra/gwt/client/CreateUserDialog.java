@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -11,6 +12,8 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class CreateUserDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
@@ -62,6 +65,11 @@ public class CreateUserDialog extends DialogBox {
 		setWidget(rootPanel);
 	}
 
+	public void show() {
+		super.show();
+		userName.setFocus(true);
+	}
+
 	public boolean isSuccessful() {
 		return successful;
 	}
@@ -79,9 +87,31 @@ public class CreateUserDialog extends DialogBox {
 
 	private void createUser() {
 		clearErrorMessage();
+		final String passText = password.getText();
+		final String passTextAgain = passwordAgain.getText();
+		final String userText = userName.getText();
+		if (userText == null || (userText.length() == 0)) {
+			setErrorMessage("Please enter a user name.");
+		} else if (passText == null || passText.length() == 0) {
+			setErrorMessage("Please enter a password.");
+		} else if (!passText.equals(passTextAgain)) {
+			setErrorMessage("Password mismatch. Please re-type passwords.");
+		} else {
+			// TODO add admin setting
+			ServiceHelper.getManageUserService().createUser(userText, passText,
+					new AsyncCallback() {
 
-		// TODO create the user and hide this dialog if successful
-		setErrorMessage("TODO: create the user");
-		// successful = true;
+						public void onFailure(Throwable caught) {
+							ExceptionTracker.logException(caught);
+
+							setErrorMessage("Server unreachable, unable to create user");
+						}
+
+						public void onSuccess(Object result) {
+							successful = true;
+							hide();
+						}
+					});
+		}
 	}
 }
