@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.project;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -21,6 +22,8 @@ public final class ClientProjectManager extends ProjectManager {
 	private final ClientFindingManager findingManager;
 	private final PreparedStatement insertSynchRecord;
 	private final PreparedStatement deleteSynchByProject;
+	private final PreparedStatement selectServerUid;
+	private final PreparedStatement insertServerUid;
 
 	private ClientProjectManager(Connection conn) throws SQLException {
 		super(conn);
@@ -29,6 +32,10 @@ public final class ClientProjectManager extends ProjectManager {
 				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION) VALUES (?,?,?,?)");
 		this.deleteSynchByProject = conn
 				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
+		this.selectServerUid = conn
+				.prepareStatement("SELECT SERVER_UUID FROM PROJECT_SERVER WHERE PROJECT_ID = ?");
+		this.insertServerUid = conn
+				.prepareStatement("INSERT INTO PROJECT_SERVER (PROJECT_ID, SERVER_UUID) VALUES (?,?)");
 	}
 
 	public void synchronizeProject(SierraServerLocation server,
@@ -43,16 +50,30 @@ public final class ClientProjectManager extends ProjectManager {
 		if (!p.select()) {
 			p.insert();
 		}
-
-		// TODO put server uid back into project
-		final String serverUid = service.getUid(new ServerUIDRequest())
-				.getUid();
+		
+		//Resolve the server uid
+		selectServerUid.setLong(1, p.getId());
+		final ResultSet set = selectServerUid.executeQuery();
+		String serverUid;
+		try {
+			if (set.next()) {
+				serverUid = set.getString(1);
+			} else {
+				serverUid = service.getUid(new ServerUIDRequest()).getUid();
+				insertServerUid.setLong(1, p.getId());
+				insertServerUid.setString(2, serverUid);
+				insertServerUid.execute();
+			}
+		} finally {
+			set.close();
+		}
 		if (monitor.isCanceled()) {
 			return;
 		}
 		monitor.worked(1);
-		monitor.subTask("Sending local updates to the server.");
+		
 		// Commit audits
+		monitor.subTask("Sending local updates to the server.");
 		final SyncRequest request = new SyncRequest();
 		request.setProject(projectName);
 		request.setServer(serverUid);
