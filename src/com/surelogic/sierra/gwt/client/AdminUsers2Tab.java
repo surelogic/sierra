@@ -7,6 +7,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -115,8 +117,16 @@ public class AdminUsers2Tab extends TabComposite {
 	}
 
 	private void createUser() {
-		// TODO open UI to create a new user
-		Window.alert("TODO: Create a new user");
+		final CreateUserDialog dialog = new CreateUserDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				if (dialog.isSuccessful()) {
+					refreshUsers();
+				}
+			}
+		});
+		dialog.center();
 	}
 
 	private void deleteUsers() {
