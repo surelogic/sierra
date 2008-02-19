@@ -120,8 +120,14 @@ public class AdminUsers2Tab extends TabComposite {
 	}
 
 	private void deleteUsers() {
-		// TODO delete all selected users
-		Window.alert("TODO: Delete all selected users");
+		if (usersGrid.hasSelected()) {
+			if (Window.confirm("Delete all selected users?")) {
+				// TODO delete all selected users
+				Window.alert("TODO: Delete all selected users");
+			}
+		} else {
+			Window.alert("No users selected");
+		}
 	}
 
 	private boolean changeUserName(int row, String oldValue, String newValue) {
