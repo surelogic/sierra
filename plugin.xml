@@ -415,38 +415,52 @@
 	</extension>
 	<extension
 		id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
-		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
-		<super type="org.eclipse.core.resources.textmarker" />
+		name="Sierra Finding (Critical)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"
-		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
-		<super type="org.eclipse.core.resources.textmarker" />
+		name="Sierra Finding (High)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension
 		id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
-		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
-		<super type="org.eclipse.core.resources.textmarker" />
+		name="Sierra Finding (Medium)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"
-		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
-		<super type="org.eclipse.core.resources.textmarker" />
+		name="Sierra Finding (Low)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension
 		id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
-		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
-		<super type="org.eclipse.core.resources.textmarker" />
+		name="Sierra Finding (Irrelevant)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 		<persistent value="true" />
 	</extension>
+
+  <extension point="org.eclipse.ui.ide.markerSupport">
+      <markerTypeCategory name="Sierra Findings">
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"/>
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"/>
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"/>
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"/>
+         <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"/>
+      </markerTypeCategory>
+      
+      <problemFilter 
+        id="com.surelogic.sierra.client.eclipse.sierraFilter"
+        name="Sierra Findings"
+        onDescription="!("
+        >
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarker"/>
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"/>
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"/>
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"/>
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerLow"/>
+        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"/>
+      </problemFilter>
+  </extension>
 
 	<!-- Define marker icons -->
 
