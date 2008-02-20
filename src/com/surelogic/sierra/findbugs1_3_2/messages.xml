@@ -1432,7 +1432,7 @@ It is a fast detector.</p>
    -->
 
   <BugPattern type="XSS_REQUEST_PARAMETER_TO_SERVLET_WRITER">
-    <ShortDescription>Servlet cross site scripting vunerability</ShortDescription>
+    <ShortDescription>Servlet cross site scripting vulnerability</ShortDescription>
     <LongDescription>HTTP parameter directly written to Servlet output, giving XSS vunerability in {1}</LongDescription>
 <Details>
 <![CDATA[
@@ -1444,7 +1444,7 @@ for more information.</p>
   </BugPattern>
 
   <BugPattern type="XSS_REQUEST_PARAMETER_TO_JSP_WRITER">
-    <ShortDescription>JSP cross site scripting vunerability</ShortDescription>
+    <ShortDescription>JSP cross site scripting vulnerability</ShortDescription>
     <LongDescription>HTTP parameter directly written to JSP output, giving XSS vunerability in {1.class}</LongDescription>
 <Details>
 <![CDATA[
