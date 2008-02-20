@@ -21,6 +21,9 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
+// TODO using a TabBar mucks up the context change handling code
+// Change the TabBar to our own setup so we can change the tab style without 
+// triggering a TabSelected event or similar
 public final class HeaderPanel extends Composite {
 	private static final String PRIMARY_STYLE = "header";
 	private static final String SESSION_STYLE = PRIMARY_STYLE + "-session";
