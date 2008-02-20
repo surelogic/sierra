@@ -1,5 +1,8 @@
 package com.surelogic.sierra.gwt.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -7,6 +10,7 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public class ContentPanel extends Composite implements ClientContextListener {
 	private final DockPanel rootPanel = new DockPanel();
+	private final Map contentRegistry = new HashMap();
 	private ContentComposite currentContent;
 
 	public static ContentPanel getInstance() {
@@ -18,10 +22,34 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
 		rootPanel.setHeight("100%");
+
+		// register Content instances here
+		registerContent(ServerSettingsContent.getInstance());
+		registerContent(UserManagementContent.getInstance());
+		registerContent(PreferencesContent.getInstance());
+
 		ClientContext.addChangeListener(this);
 	}
 
-	public void show(ContentComposite content) {
+	public void onChange(UserAccount account, String context) {
+		ContentComposite content = null;
+		if (account == null) {
+			content = LoginContent.getInstance();
+		} else {
+			if (context != null && !"".equals(context)) {
+				content = (ContentComposite) contentRegistry.get(context
+						.toLowerCase());
+			}
+
+			if (content == null) {
+				if (account.isAdministrator()) {
+					content = ServerSettingsContent.getInstance();
+				} else {
+					content = PreferencesContent.getInstance();
+				}
+			}
+		}
+
 		if (currentContent == content) {
 			return;
 		}
@@ -33,16 +61,7 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		}
 	}
 
-	public void showDefault() {
-		show(AdminContent.getInstance());
+	private void registerContent(ContentComposite content) {
+		contentRegistry.put(content.getContextName().toLowerCase(), content);
 	}
-
-	public void onChange(UserAccount account, String context) {
-		if (context == null || "".equals(context)) {
-			showDefault();
-		} else if ("Preferences".equals(context)) {
-			show(PrefsContent.getInstance());
-		}
-	}
-
 }

@@ -20,16 +20,27 @@ import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
-public class AdminUsers2Tab extends TabComposite {
+public class UserManagementContent extends ContentComposite {
+	private static final UserManagementContent instance = new UserManagementContent();
 
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
 	private final GridPanel usersGridPanel = new GridPanel(true);
 	private final SelectableGrid usersGrid = usersGridPanel.getGrid();
 
-	public AdminUsers2Tab() {
-		super();
+	public static UserManagementContent getInstance() {
+		return instance;
+	}
 
+	private UserManagementContent() {
+		super();
+	}
+
+	public String getContextName() {
+		return "User Management";
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
 
 		userActionsPanel.addAction("Create a user", new ClickListener() {
@@ -51,8 +62,6 @@ public class AdminUsers2Tab extends TabComposite {
 		usersGrid.setColumn(0, "Name", "30%");
 		usersGrid.setColumn(1, "Status", "70%");
 		usersPanel.add(usersGridPanel);
-
-		final DockPanel rootPanel = getRootPanel();
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
 		usersGrid.setInplaceEditor(0, TextBoxEditor.getFactory());
@@ -75,13 +84,18 @@ public class AdminUsers2Tab extends TabComposite {
 			}
 		});
 
+	}
+
+	protected void onActivate() {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
 	}
 
-	public String getName() {
-		return "Admin Users 2";
+	protected boolean onDeactivate() {
+		// clear the grid to free up some resources
+		usersGrid.removeRows();
+		return true;
 	}
 
 	private void refreshUsers() {

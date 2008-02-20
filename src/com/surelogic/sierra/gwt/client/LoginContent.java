@@ -55,6 +55,10 @@ public class LoginContent extends ContentComposite {
 		super();
 	}
 
+	public String getContextName() {
+		return "Login";
+	}
+
 	public void login() {
 		login.setEnabled(false);
 		waitPanel.add(waitImage);
@@ -87,7 +91,6 @@ public class LoginContent extends ContentComposite {
 				} else {
 					errorMessage.setText("");
 					ClientContext.setUser(lr.getUserAccount());
-					ContentPanel.getInstance().showDefault();
 				}
 			}
 		});

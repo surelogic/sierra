@@ -6,7 +6,11 @@ import java.util.List;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public final class ClientContext {
 
@@ -28,6 +32,33 @@ public final class ClientContext {
 
 	public static void setUser(UserAccount user) {
 		userAccount = user;
+		notifyListeners();
+	}
+
+	public static boolean isLoggedIn() {
+		return userAccount != null;
+	}
+
+	public static void logout() {
+		final SessionServiceAsync svc = ServiceHelper.getSessionService();
+		svc.logout(new AsyncCallback() {
+
+			public void onFailure(Throwable caught) {
+				ExceptionTracker.logException(caught);
+				setUser(null);
+				LoginContent.getInstance("Unable to contact server").show();
+			}
+
+			public void onSuccess(Object result) {
+				setUser(null);
+				LoginContent.getInstance().show();
+			}
+		});
+	}
+
+	public static void setContext(String token) {
+		context = token;
+		History.newItem(context);
 		notifyListeners();
 	}
 
@@ -54,12 +85,6 @@ public final class ClientContext {
 			notifyListeners();
 		}
 
-	}
-
-	public static void setContext(String token) {
-		context = token;
-		History.newItem(context);
-		notifyListeners();
 	}
 
 }
