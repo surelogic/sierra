@@ -6570,8 +6570,106 @@ thread.</p>]]>
 		<name>Invocation Of toString() On Array</name>
 	</findingType>
 	
+	<!-- For FB 1.3.2 -->
+	<findingType>
+		<id>HttpParameterWrittenToServlet</id>
+		<artifact tool="FindBugs"
+			mnemonic="XSS_REQUEST_PARAMETER_TO_SERVLET_WRITER">
+		</artifact>
+		<shortMessage>
+			HTTP parameter directly written to Servlet output
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This code directly writes an HTTP parameter to Servlet output, which allows for a cross site scripting
+vunerability. See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
+for more information. &lt;/p&gt;
+
+		</info>
+		<name>Servlet cross site scripting vulnerability</name>
+	</findingType>
+	<findingType>
+		<id>HttpParameterWrittenToJSP</id>
+		<artifact tool="FindBugs"
+			mnemonic="XSS_REQUEST_PARAMETER_TO_JSP_WRITER">
+		</artifact>
+		<shortMessage>
+			HTTP parameter directly written to JSP output
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This code directly writes an HTTP parameter to JSP output, which allows for a cross site scripting
+vunerability. See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
+for more information. &lt;/p&gt;
+
+		</info>
+		<name>JSP cross site scripting vulnerability</name>
+	</findingType>
+	<findingType>
+		<id>EqualsDoesntOverride</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_OTHER_USE_OBJECT">
+		</artifact>
+		<shortMessage>
+			equals() method defined that doesn't override Object.equals(Object)
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
+  method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
+  defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
+  The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
+  method. &lt;/p&gt;
+
+		</info>
+		<name>equals() doesn't override Object.equals(Object)</name>
+	</findingType>
+	<findingType>
+		<id>EqualsDoesntOverrideInherited</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_OTHER_NO_OBJECT">
+		</artifact>
+		<shortMessage>
+			equals() method defined that doesn't override inherited equals(Object)
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
+  method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
+  defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
+  Instead, it inherits an &lt;code&gt;equals(Object)&lt;/code&gt; method from a superclass.
+  The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
+  method. &lt;/p&gt;
+
+		</info>
+		<name>equals() doesn't override inherited equals(Object)</name>
+	</findingType>
+	<findingType>
+		<id>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</id>
+		<artifact tool="FindBugs"
+			mnemonic="NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE">
+		</artifact>
+		<shortMessage>
+			Possible null pointer dereference on path that might be infeasible
+		</shortMessage>
+		<info>
+
+			&lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
+  method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
+  defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
+  Instead, it inherits an &lt;code&gt;equals(Object)&lt;/code&gt; method from a superclass.
+  The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
+  method. &lt;/p&gt;
+
+		</info>
+		<name>Possible null dereference on potentially infeasible path</name>
+	</findingType>	
+
 	<category>
 		<id>Correctness</id>
+		<findingType>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</findingType>
+		<findingType>EqualsDoesntOverride</findingType>
+		<findingType>EqualsDoesntOverrideInherited</findingType>
 		<findingType>InvokingToStringOnArray</findingType>
 		<findingType>FormatStringArgsMismatch</findingType>
 		<findingType>AppendingToObjectOutputStream</findingType>
@@ -6979,6 +7077,8 @@ thread.</p>]]>
 		<findingType>MutableHashtable</findingType>
 		<findingType>MutableArray</findingType>
 		<findingType>CannotBeFinal</findingType>
+		<findingType>HttpParameterWrittenToServlet</findingType>
+		<findingType>HttpParameterWrittenToJSP</findingType>
 		<name>Malicious code vulnerability</name>
 		<description>
 			code that is vulnerable to attacks from untrusted code
