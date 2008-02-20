@@ -37,7 +37,7 @@ public class UserManagementContent extends ContentComposite {
 	}
 
 	public String getContextName() {
-		return "User Management";
+		return "UserManagement";
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {

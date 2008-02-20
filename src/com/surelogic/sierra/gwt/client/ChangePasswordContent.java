@@ -10,24 +10,24 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class PreferencesContent extends ContentComposite {
-	private static final PreferencesContent instance = new PreferencesContent();
+public class ChangePasswordContent extends ContentComposite {
+	private static final ChangePasswordContent instance = new ChangePasswordContent();
 
 	private final PasswordTextBox oldPass = new PasswordTextBox();
 	private final PasswordTextBox pass = new PasswordTextBox();
 	private final PasswordTextBox passAgain = new PasswordTextBox();
 	private final HTML message = new HTML();
 
-	public static final PreferencesContent getInstance() {
+	public static final ChangePasswordContent getInstance() {
 		return instance;
 	}
 
-	private PreferencesContent() {
+	private ChangePasswordContent() {
 		super();
 	}
 
 	public String getContextName() {
-		return "Preferences";
+		return "ChangePassword";
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {

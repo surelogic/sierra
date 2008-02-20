@@ -11,6 +11,7 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class ClientContext {
 
@@ -54,6 +55,14 @@ public final class ClientContext {
 				LoginContent.getInstance().show();
 			}
 		});
+	}
+
+	public static boolean isContext(String token) {
+		return LangUtil.equals(token, context);
+	}
+
+	public static String getContext() {
+		return context;
 	}
 
 	public static void setContext(String token) {

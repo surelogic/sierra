@@ -26,7 +26,7 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		// register Content instances here
 		registerContent(ServerSettingsContent.getInstance());
 		registerContent(UserManagementContent.getInstance());
-		registerContent(PreferencesContent.getInstance());
+		registerContent(ChangePasswordContent.getInstance());
 
 		ClientContext.addChangeListener(this);
 	}
@@ -43,9 +43,13 @@ public class ContentPanel extends Composite implements ClientContextListener {
 
 			if (content == null) {
 				if (account.isAdministrator()) {
-					content = ServerSettingsContent.getInstance();
+					ClientContext.setContext(ServerSettingsContent
+							.getInstance().getContextName());
+					return;
 				} else {
-					content = PreferencesContent.getInstance();
+					ClientContext.setContext(ChangePasswordContent
+							.getInstance().getContextName());
+					return;
 				}
 			}
 		}

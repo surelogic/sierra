@@ -50,14 +50,6 @@ public final class HeaderPanel extends Composite {
 		loggedInAs = createUserLabel("Logged In", null);
 		sessionPanel.add(loggedInAs);
 		sessionPanel.add(createUserLabel("|", null));
-		sessionPanel.add(createUserLabel("Preferences", new ClickListener() {
-
-			public void onClick(Widget sender) {
-				PreferencesContent.getInstance().show();
-			}
-		}));
-
-		sessionPanel.add(createUserLabel("|", null));
 		sessionPanel.add(createUserLabel("Log out", new ClickListener() {
 
 			public void onClick(Widget sender) {
@@ -84,6 +76,8 @@ public final class HeaderPanel extends Composite {
 
 		mainBar.setWidth("100%");
 
+		addTab("Change Password", ChangePasswordContent.getInstance());
+
 		mainBar.addTabListener(new TabListener() {
 
 			public boolean onBeforeTabSelected(SourcesTabEvents sender,
@@ -92,11 +86,12 @@ public final class HeaderPanel extends Composite {
 			}
 
 			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-				if (tabIndex < 0 || tabIndex >= tabContextNames.size()) {
-					tabIndex = 0;
+				if (tabIndex >= 0 && tabIndex < tabContextNames.size()) {
+					String contextName = (String) tabContextNames.get(tabIndex);
+					if (!ClientContext.isContext(contextName)) {
+						ClientContext.setContext(contextName);
+					}
 				}
-				String contextName = (String) tabContextNames.get(tabIndex);
-				ClientContext.setContext(contextName);
 			}
 		});
 
@@ -106,14 +101,14 @@ public final class HeaderPanel extends Composite {
 		ClientContext.addChangeListener(new ClientContextListener() {
 
 			public void onChange(UserAccount account, String context) {
-				updateSession(account);
+				updateContext(account, context);
 			}
 
 		});
-		updateSession(ClientContext.getUser());
+		updateContext(ClientContext.getUser(), null);
 	}
 
-	public void updateSession(UserAccount user) {
+	public void updateContext(UserAccount user, String context) {
 		if (user == null) {
 			if (headerRow.getWidgetIndex(sessionPanel) != -1) {
 				headerRow.remove(sessionPanel);
@@ -134,19 +129,24 @@ public final class HeaderPanel extends Composite {
 				rootPanel.add(mainBar);
 			}
 
-			// TODO add welcome tab and normal user stuff
-
 			if (user.isAdministrator()) {
-				addTab("Server Settings", ServerSettingsContent.getInstance()
-						.getContextName());
-				addTab("User Management", UserManagementContent.getInstance()
-						.getContextName());
+				addTab("Server Settings", ServerSettingsContent.getInstance());
+				addTab("User Management", UserManagementContent.getInstance());
 			} else {
 				removeTab(ServerSettingsContent.getInstance().getContextName());
 				removeTab(UserManagementContent.getInstance().getContextName());
 			}
-		}
 
+			final int tabIndex = mainBar.getSelectedTab();
+			if (context != null) {
+				int contextIndex = tabContextNames.indexOf(context);
+				if (contextIndex != tabIndex) {
+					mainBar.selectTab(contextIndex);
+				}
+			} else if (tabIndex != -1) {
+				mainBar.selectTab(-1);
+			}
+		}
 	}
 
 	private Label createUserLabel(String text, ClickListener clickListener) {
@@ -159,7 +159,8 @@ public final class HeaderPanel extends Composite {
 		return lbl;
 	}
 
-	private void addTab(String title, String contextName) {
+	private void addTab(String title, ContentComposite content) {
+		final String contextName = content.getContextName();
 		if (tabContextNames.indexOf(contextName) == -1) {
 			tabContextNames.add(contextName);
 			mainBar.addTab(title);
