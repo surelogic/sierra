@@ -409,7 +409,6 @@
 
 	<extension id="com.surelogic.sierra.client.eclipse.sierraMarker"
 		name="Sierra Finding" point="org.eclipse.core.resources.markers">
-		<super type="org.eclipse.core.resources.problemmarker" />
 		<super type="org.eclipse.core.resources.textmarker" />
 		<attribute name="findingid"></attribute>
 	</extension>
@@ -447,19 +446,6 @@
          <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"/>
          <markerTypeReference id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"/>
       </markerTypeCategory>
-      
-      <problemFilter 
-        id="com.surelogic.sierra.client.eclipse.sierraFilter"
-        name="Sierra Findings"
-        onDescription="!("
-        >
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarker"/>
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"/>
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"/>
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"/>
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerLow"/>
-        <selectedType markerId="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"/>
-      </problemFilter>
   </extension>
 
 	<!-- Define marker icons -->
