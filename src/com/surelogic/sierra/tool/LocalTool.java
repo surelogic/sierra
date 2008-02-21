@@ -10,6 +10,7 @@ import java.util.logging.*;
 
 import javax.xml.bind.*;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
@@ -138,8 +139,13 @@ public class LocalTool extends AbstractTool {
       }
       path.add(new Path(proj, message)); // as plugin
       path.add(new Path(proj, message+"/bin")); // in workspace
-      findJars(proj, path, message+"/jaxb");
-
+      
+      // JAXB is included in Java 6 and beyond
+      if (SystemUtils.IS_JAVA_1_5) {     
+        final String jaxb = config.getPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID);
+        findJars(proj, path, jaxb+"/lib/jaxb");
+      }
+      
       final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
       if (debug) {
         LOG.fine("pmd = "+pmd);
