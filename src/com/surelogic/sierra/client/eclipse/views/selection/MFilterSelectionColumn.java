@@ -113,14 +113,34 @@ public final class MFilterSelectionColumn extends MColumn implements
             else if (e.keyCode == SWT.ARROW_RIGHT) {
               column = getNextColumn();
             }
-            if (column != null) {
-              column.forceFocus();
-            }
+            focusOnColumn(column);
           }
           public void keyReleased(KeyEvent e) {
             // Nothing to do
           }         
         }); 
+				f_reportContents.addListener(SWT.Traverse, new Listener() {
+	        public void handleEvent(Event e) {
+	          switch (e.detail) {
+	            case SWT.TRAVERSE_TAB_NEXT:
+	              setCustomTabTraversal(e);
+	              focusOnColumn(getNextColumn());
+	              break;
+	            case SWT.TRAVERSE_TAB_PREVIOUS:	   
+	              setCustomTabTraversal(e);
+	              focusOnColumn(getPreviousColumn());
+	              break;
+	            case SWT.TRAVERSE_ESCAPE:
+	              setCustomTabTraversal(e);
+	              MColumn column = getPreviousColumn();
+	              if (column instanceof MRadioMenuColumn) {
+	                MRadioMenuColumn radio = (MRadioMenuColumn) column;
+	                radio.escape(null);
+	              }
+	              break;
+	          }
+	        }
+				});
 				
 				f_reportContents.addSelectionListener(new SelectionListener() {
           public void widgetDefaultSelected(SelectionEvent e) {
@@ -523,4 +543,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 	  f_reportContents.forceFocus();
 	  getCascadingList().show(index);
 	}
+
+  private void focusOnColumn(MColumn column) {
+    if (column != null) {
+      column.forceFocus();
+    }
+  }
 }
