@@ -369,6 +369,10 @@ public final class MListOfFindingsColumn extends MColumn implements
               setCustomTabTraversal(e);
               getPreviousColumn().forceFocus();
               break;
+            case SWT.TRAVERSE_RETURN:
+              setCustomTabTraversal(e);
+              f_doubleClick.handleEvent(null);
+              break;                       
           }
         }		  
 			});
