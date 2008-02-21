@@ -27,14 +27,13 @@ public interface ManageUserAdminService extends RemoteService {
 	List findUser(String userQueryString);
 
 	/**
-	 * Create a new user.
+	 * Create a new user with the given password.
 	 * 
-	 * @param user
-	 * @param password
+	 * @param account
 	 * @return A user-readable status message indicating whether or not creation
 	 *         succeeded.
 	 */
-	String createUser(String user, String password);
+	String createUser(UserAccount account, String password);
 
 	/**
 	 * Get details about a user's information

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
@@ -98,7 +99,10 @@ public class CreateUserDialog extends DialogBox {
 			setErrorMessage("Password mismatch. Please re-type passwords.");
 		} else {
 			// TODO add admin setting
-			ServiceHelper.getManageUserService().createUser(userText, passText,
+			final UserAccount account = new UserAccount();
+			account.setAdministrator(isAdmin.isChecked());
+			account.setUserName(userText);
+			ServiceHelper.getManageUserService().createUser(account, passText,
 					new AsyncCallback() {
 
 						public void onFailure(Throwable caught) {

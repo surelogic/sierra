@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.service;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public interface ManageUserAdminServiceAsync {
 
@@ -10,7 +11,7 @@ public interface ManageUserAdminServiceAsync {
 
 	void findUser(String userQueryString, AsyncCallback callback);
 	
-	void createUser(String userName, String password, AsyncCallback callback);
+	void createUser(UserAccount account, String password, AsyncCallback callback);
 	
 	void updateUser(String user, String password, boolean isAdmin, AsyncCallback callback);
 	
