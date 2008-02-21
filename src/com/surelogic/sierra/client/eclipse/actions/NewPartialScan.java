@@ -28,14 +28,6 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
   boolean checkIfBuilt(Collection<ICompilationUnit> elements) {
     return JavaUtil.compUnitsUpToDate(elements);
   }
-  
-  void scan(Collection<ICompilationUnit> selectedCompilationUnits) {
-    List<String> cuNames = new ArrayList<String>(selectedCompilationUnits.size());
-    for(ICompilationUnit cu : selectedCompilationUnits) {
-      cuNames.add(cu.getElementName());
-    }
-    scan(selectedCompilationUnits, cuNames);
-  }
 
   @Override
   boolean startScanJob(Collection<ICompilationUnit> selectedCUs) {

@@ -66,6 +66,14 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     return sb;
   }
 
+  public void scan(final Collection<T> elements) {
+    List<String> names = new ArrayList<String>(elements.size());
+    for(T elt : elements) {
+      names.add(elt.getElementName());
+    }
+    scan(elements, names);
+  }
+  
   protected void scan(final Collection<T> elements, final List<String> names) {
     if (elements.size() <= 0) {
       return;
