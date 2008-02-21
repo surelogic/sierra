@@ -29,6 +29,7 @@ public class SynchronizeGroupJob extends Job {
   public SynchronizeGroupJob(SierraServer... servers) {
     super("Waiting for synchronize jobs");
     setSystem(true);
+    this.servers = servers;
   }
 
   void add(SynchronizeJob j) {
