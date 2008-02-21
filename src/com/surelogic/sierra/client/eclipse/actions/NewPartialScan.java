@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,10 +64,15 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
     @Override
     protected IStatus run(IProgressMonitor monitor) {
       final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
-      ScanDocumentUtility.loadPartialScanDocument(config.getConfig().getScanDocument(),
-                                                  wrapper, config.getConfig().getProject(),
-                                                  config.getPackageCompilationUnitMap());
-      
+      try {
+        loadScanDocument(wrapper);
+      } catch (IllegalStateException e) {
+        if (e.getCause() instanceof SQLException && 
+            e.getMessage().contains("No current connection")) {
+          // Try again and see if we can get through
+          loadScanDocument(wrapper);
+        }
+      }
       /* Notify that scan was completed */
       DatabaseHub.getInstance().notifyScanLoaded();  
       
@@ -75,6 +81,11 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
       } else {
         return Status.OK_STATUS;
       }
+    }
+    private void loadScanDocument(final SLProgressMonitor wrapper) {
+      ScanDocumentUtility.loadPartialScanDocument(config.getConfig().getScanDocument(),
+                                                  wrapper, config.getConfig().getProject(),
+                                                  config.getPackageCompilationUnitMap());
     }   
   }
 }

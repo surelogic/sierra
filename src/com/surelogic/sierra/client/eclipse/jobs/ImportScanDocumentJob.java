@@ -1,11 +1,13 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.io.File;
+import java.sql.SQLException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 
@@ -35,10 +37,16 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 	protected IStatus run(IProgressMonitor monitor) {
 		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor);
-
-		ScanDocumentUtility.loadScanDocument(f_scanDocument,
-				slProgressMonitorWrapper, projectName);
-		
+	  try {
+      loadScanDocument(slProgressMonitorWrapper);
+    } catch (IllegalStateException e) {
+      if (e.getCause() instanceof SQLException && 
+          e.getMessage().contains("No current connection")) {
+        // Try again and see if we can get through
+        loadScanDocument(slProgressMonitorWrapper);
+      }
+    }
+    
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
@@ -49,4 +57,7 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 		}
 	}
 
+	private void loadScanDocument(final SLProgressMonitor wrapper) {
+	   ScanDocumentUtility.loadScanDocument(f_scanDocument, wrapper, projectName);
+	}
 }
