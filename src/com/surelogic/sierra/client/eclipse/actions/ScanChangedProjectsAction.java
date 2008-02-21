@@ -38,6 +38,10 @@ public class ScanChangedProjectsAction extends
 	@Override
 	protected void run(final List<IJavaProject> projects,
 			final List<String> projectNames) {
+	  run(projects);
+	}
+	
+	public void run(final List<IJavaProject> projects) {
 		if (projects.size() <= 0) {
 			return;
 		}
