@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
@@ -284,12 +285,44 @@ public final class SierraServersMediator implements ISierraServerObserver {
     });
     // 
 		f_synchAllConnectedProjects.addListener(SWT.Selection, 
-		  new ServerProjectActionListener("Synchronize all connected projects pressed with no server focus.") {
+		  new ServerProjectActionListener("Synchronize all connected projects pressed with no server focus.") {	  
+		  List<SynchronizeJob> jobs = null;
+		  Job joinJob = null;
+		  
+		  @Override
+		  protected void start() {
+        final List<SynchronizeJob> jobs = this.jobs = new ArrayList<SynchronizeJob>();
+		    joinJob = new Job("Waiting for synchronize jobs") {
+          @Override
+          protected IStatus run(IProgressMonitor monitor) {
+            try {
+              Job.getJobManager().join(this, monitor);
+            } catch (OperationCanceledException e) {
+              e.printStackTrace();
+              return Status.CANCEL_STATUS;
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+              return Status.CANCEL_STATUS;
+            }          
+            for(SynchronizeJob j : jobs) {
+              System.out.println(j.getResult());
+            }
+            return Status.OK_STATUS;
+          }		   
+		    };
+		    joinJob.setSystem(true);
+		  }
 		  @Override
 		  protected void runForServerProject(SierraServer server, String projectName) {
-        final SynchronizeJob job = new SynchronizeJob(projectName, server);
+        final SynchronizeJob job = new SynchronizeJob(this, projectName, server);
+        jobs.add(job);
         job.schedule();
       }
+		  @Override
+		  protected void finish() {
+		    joinJob.schedule();
+		    joinJob = null;
+		  }
 		});
 
 		f_sendResultFilters.addListener(SWT.Selection, 
