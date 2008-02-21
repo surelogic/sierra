@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: FindBugs integration into Sierra
+Bundle-Name: Sierra FindBugs Integration
 Bundle-SymbolicName: com.surelogic.sierra.fb
 Bundle-Version: 1.3.2
 Bundle-ClassPath: lib/annotations.jar,
