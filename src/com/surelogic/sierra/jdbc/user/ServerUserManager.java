@@ -73,10 +73,11 @@ public class ServerUserManager {
 	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
 	 * @throws SQLException
 	 */
-	public void addUserToGroup(String user, String group) throws SQLException {
+	public void addUserToGroup(String user, SierraGroup group)
+			throws SQLException {
 		final UserGroupRelationRecord record = factory.newGroupUser();
-		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
-				.getId()));
+		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(
+				group.getName()).getId()));
 		final boolean exists = record.select();
 		if (!exists) {
 			record.insert();
@@ -88,15 +89,15 @@ public class ServerUserManager {
 	 * does nothing.
 	 * 
 	 * @param user
-	 * @param group
+	 * @param sierraGroup
 	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
 	 * @throws SQLException
 	 */
-	public void removeUserFromGroup(String user, String group)
+	public void removeUserFromGroup(String user, SierraGroup sierraGroup)
 			throws SQLException {
 		final UserGroupRelationRecord record = factory.newGroupUser();
-		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(group)
-				.getId()));
+		record.setId(new PK<Long, Long>(getUser(user).getId(), getGroup(
+				sierraGroup.getName()).getId()));
 		final boolean exists = record.select();
 		if (exists) {
 			record.delete();
@@ -118,7 +119,7 @@ public class ServerUserManager {
 		if (!record.select()) {
 			record.setPassword(Password.newPassword(password));
 			record.insert();
-			addUserToGroup(userName, SierraGroup.USER.getName());
+			addUserToGroup(userName, SierraGroup.USER);
 			return true;
 		} else {
 			return false;
