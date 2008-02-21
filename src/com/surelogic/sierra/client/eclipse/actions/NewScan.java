@@ -17,7 +17,7 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
 public class NewScan extends AbstractScan<IJavaProject> {
-	NewScan() {
+	public NewScan() {
 		super(false);
 	}
 
