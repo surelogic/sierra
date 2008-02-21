@@ -42,6 +42,17 @@ public final class SierraServersView extends ViewPart {
 		super.dispose();
 	}
 
+	private MenuItem createMenuItem(Menu menu, String name, Image image) {
+	  MenuItem item = new MenuItem(menu, SWT.PUSH);
+	  item.setImage(image);
+	  item.setText(name);
+	  return item;
+	}
+	
+	private MenuItem createMenuItem(Menu menu, String name, String imgName) {
+	  return createMenuItem(menu, name, SLImages.getImage(imgName));
+	}
+	
 	@Override
 	public void createPartControl(final Composite parent) {
 		GridData data;
@@ -61,25 +72,32 @@ public final class SierraServersView extends ViewPart {
 		serverList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Menu serverListMenu = new Menu(serverList.getShell(), SWT.POP_UP);
-		final MenuItem newServerItem = new MenuItem(serverListMenu, SWT.PUSH);
-		newServerItem.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		newServerItem.setText("New...");
-		final MenuItem duplicateServerItem = new MenuItem(serverListMenu,
-				SWT.PUSH);
-		duplicateServerItem.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
-		duplicateServerItem.setText("Duplicate");
-		final MenuItem deleteServerItem = new MenuItem(serverListMenu, SWT.PUSH);
-		deleteServerItem.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
-		deleteServerItem.setText("Delete");
+		final MenuItem newServerItem = 
+		  createMenuItem(serverListMenu, "New...",
+		                 SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+
+		final MenuItem duplicateServerItem =      
+		  createMenuItem(serverListMenu, "Duplicate",
+                     SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
+		
+		final MenuItem deleteServerItem = 
+		  createMenuItem(serverListMenu, "Delete",
+                     SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
-		final MenuItem synchAllConnectedProjects = new MenuItem(serverListMenu,
-				SWT.PUSH);
-		synchAllConnectedProjects.setText("Synchronize All Connected Projects");
-		synchAllConnectedProjects.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_SYNC));
+		
+    final MenuItem scanAllConnectedProjects = 
+      createMenuItem(serverListMenu, "Scan All Connected Projects",
+                     SLImages.IMG_SIERRA_SCAN);
+    
+    final MenuItem rescanAllConnectedProjects = 
+      createMenuItem(serverListMenu, "Re-scan All Connected Projects",
+                     SLImages.IMG_SIERRA_SCAN_DELTA);
+		
+		final MenuItem synchAllConnectedProjects = 
+		  createMenuItem(serverListMenu, "Synchronize All Connected Projects",
+		                 SLImages.IMG_SIERRA_SYNC);
+				
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = new MenuItem(serverListMenu,
 				SWT.PUSH);
@@ -229,6 +247,7 @@ public final class SierraServersView extends ViewPart {
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem,
+				scanAllConnectedProjects, rescanAllConnectedProjects,
 				synchAllConnectedProjects, sendResultFilters, getResultFilters,
 				serverPropertiesItem, openInBrowser, infoGroup, serverURL,
 				projectList, connectProjectItem, disconnectProjectItem);
