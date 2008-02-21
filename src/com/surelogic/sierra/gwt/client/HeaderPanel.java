@@ -48,6 +48,8 @@ public final class HeaderPanel extends Composite {
 		final Image sierraLogo = new Image(GWT.getModuleBaseURL()
 				+ "images/surelogic.png");
 		headerRow.add(sierraLogo);
+		headerRow.setCellVerticalAlignment(sierraLogo,
+				HorizontalPanel.ALIGN_MIDDLE);
 
 		sessionPanel.addStyleName(SESSION_STYLE);
 		loggedInAs = createUserLabel("Logged In", null);
