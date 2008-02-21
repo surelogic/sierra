@@ -42,13 +42,15 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  */
 public final class ConfigGenerator {
 	private static final String[] PLUGINS = {
-			SierraToolConstants.MESSAGE_PLUGIN_ID,
-			SierraToolConstants.COMMON_PLUGIN_ID,
-			SierraToolConstants.TOOL_PLUGIN_ID,
-			SierraToolConstants.PMD_PLUGIN_ID,
-			SierraToolConstants.FB_PLUGIN_ID,
-			SierraToolConstants.JUNIT4_PLUGIN_ID,
-			SierraToolConstants.JUNIT_PLUGIN_ID, };
+	  SierraToolConstants.MESSAGE_PLUGIN_ID,
+	  SierraToolConstants.COMMON_PLUGIN_ID,
+	  SierraToolConstants.TOOL_PLUGIN_ID,
+	  SierraToolConstants.PMD_PLUGIN_ID,
+	  SierraToolConstants.FB_PLUGIN_ID,
+	  SierraToolConstants.JUNIT4_PLUGIN_ID,
+	  SierraToolConstants.JUNIT_PLUGIN_ID, 
+	  SierraToolConstants.JAVA5_PLUGIN_ID,
+	};
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
