@@ -23,21 +23,30 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = 946194129762715684L;
 
-	public String createUser(final String user, final String password) {
-		return performAdmin(false, new UserTransaction<String>() {
+	public String createUser(final UserAccount account, final String password) {
+		if ((account == null) || (password == null)
+				|| (account.getUserName() == null)
+				|| (account.getUserName().length() == 0)) {
+			return "Invalid arguments";
+		} else {
+			return performAdmin(false, new UserTransaction<String>() {
 
-			public String perform(Connection conn, Server server,
-					User serverUser) throws SQLException {
-				final ServerUserManager man = ServerUserManager
-						.getInstance(conn);
-
-				if (man.createUser(user, password)) {
-					return user + " created.";
-				} else {
-					return "Could not create user with name " + user + ".";
+				public String perform(Connection conn, Server server,
+						User serverUser) throws SQLException {
+					final ServerUserManager man = ServerUserManager
+							.getInstance(conn);
+					final String user = account.getUserName();
+					if (man.createUser(user, password)) {
+						if (account.isAdministrator()) {
+							man.addUserToGroup(user, SierraGroup.ADMIN);
+						}
+						return user + " created.";
+					} else {
+						return "Could not create user with name " + user + ".";
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	public List<UserAccount> findUser(final String userQueryString) {
@@ -105,10 +114,9 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					man.changeUserPassword(targetUser, password);
 				}
 				if (isAdmin) {
-					man.addUserToGroup(targetUser, SierraGroup.ADMIN.getName());
+					man.addUserToGroup(targetUser, SierraGroup.ADMIN);
 				} else {
-					man.removeUserFromGroup(targetUser, SierraGroup.ADMIN
-							.getName());
+					man.removeUserFromGroup(targetUser, SierraGroup.ADMIN);
 				}
 				return convertUser(man, user);
 			}
