@@ -164,6 +164,7 @@ public final class MRadioMenuColumn extends MColumn implements
 	      }
 	    }
 	  } else {
+	    getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));	    
 	    clearSelection();
 	    emptyAfter();
 	    forceFocus();
