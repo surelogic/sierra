@@ -4,21 +4,11 @@ Bundle-Name: SureLogic Sierra Message Specification Plug-in
 Bundle-SymbolicName: com.surelogic.sierra.message
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: SureLogic, Inc.
-Export-Package: com.sun.xml.bind.v2,
- com.surelogic.sierra.tool.message,
- com.surelogic.sierra.tool.targets,
- javax.xml.bind,
- javax.xml.stream
+Export-Package: com.surelogic.sierra.tool.message,
+ com.surelogic.sierra.tool.targets
 Require-Bundle: com.surelogic.common
 Bundle-ClassPath: .,
- jaxb/activation.jar,
- jaxb/jaxb1-impl.jar,
- jaxb/jaxb-api.jar,
- jaxb/jaxb-impl.jar,
- jaxb/jaxb-xjc.jar,
- jaxb/jsr173_1.0_api.jar,
  srpc/commons-codec-1.3.jar,
  srpc/commons-httpclient-3.1.jar,
  srpc/commons-logging-1.1.1.jar,
- srpc/servlet-api.jar,
- jaxb/sjsxp.jar
+ srpc/servlet-api.jar

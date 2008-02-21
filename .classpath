@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/sjsxp.jar"/>
 	<classpathentry exported="true" kind="lib" path="srpc/commons-codec-1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="srpc/commons-httpclient-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="srpc/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="srpc/servlet-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/activation.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/jaxb1-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/jaxb-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/jaxb-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/jaxb-xjc.jar"/>
-	<classpathentry exported="true" kind="lib" path="jaxb/jsr173_1.0_api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
