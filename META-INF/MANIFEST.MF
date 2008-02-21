@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sierra JDBC Plug-in
+Bundle-Name: Sierra JDBC Code
 Bundle-SymbolicName: com.surelogic.sierra.jdbc
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: SureLogic, Inc.
