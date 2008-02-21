@@ -9,7 +9,7 @@ public final class SynchronizeProjectAction extends
 		AbstractWebServiceMenuAction {
 	@Override
 	void runServerAction(String projectName, SierraServer server, Shell shell) {
-		final SynchronizeJob job = new SynchronizeJob(projectName, server);
+		final SynchronizeJob job = new SynchronizeJob(null, projectName, server);
 		job.schedule();
 	}
 }

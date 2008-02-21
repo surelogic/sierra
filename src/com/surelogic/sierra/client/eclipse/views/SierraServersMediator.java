@@ -9,7 +9,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
@@ -40,10 +39,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
-import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
-import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
+import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -106,23 +102,23 @@ public final class SierraServersMediator implements ISierraServerObserver {
       final SierraServerManager manager = server.getManager();
       final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
         public void run(String nullName, SierraServer server, Shell shell) {
-          start();
+          start(server);
           for (String projectName : manager.getProjectsConnectedTo(server)) {
             if (manager.isConnected(projectName)) {
               runForServerProject(server, projectName);
             }
           }
-          finish();
+          finish(server);
         }
       };
       final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
       ServerAuthenticationDialog.promptPasswordIfNecessary(null, server, shell, serverAction);        
     }
-    protected void start() {
+    protected void start(SierraServer server) {
       // Do nothing
     }
     protected abstract void runForServerProject(SierraServer server, String projectName);
-    protected void finish() {
+    protected void finish(SierraServer server) {
       // Do nothing
     }
 	}
@@ -135,7 +131,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
       super(msg);
     }
 	  @Override
-	  protected final void start() {
+	  protected final void start(SierraServer server) {
       final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
       final IJavaModel javaModel = JavaCore.create(root);          
       try {
@@ -271,7 +267,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
     f_scanAllConnectedProjects.addListener(SWT.Selection, 
       new IJavaProjectsActionListener("Scan all connected projects pressed with no server focus.") {
       @Override
-      protected void finish() {
+      protected void finish(SierraServer server) {
         new NewScan().scan(projects);
       }
     });
@@ -279,47 +275,26 @@ public final class SierraServersMediator implements ISierraServerObserver {
     f_rescanAllConnectedProjects.addListener(SWT.Selection, 
       new IJavaProjectsActionListener("Re-scan all connected projects pressed with no server focus.") {
       @Override
-      protected void finish() {
+      protected void finish(SierraServer server) {
         new ScanChangedProjectsAction().run(projects);
       }
     });
     // 
 		f_synchAllConnectedProjects.addListener(SWT.Selection, 
 		  new ServerProjectActionListener("Synchronize all connected projects pressed with no server focus.") {	  
-		  List<SynchronizeJob> jobs = null;
-		  Job joinJob = null;
+		  SynchronizeGroupJob joinJob = null;
 		  
 		  @Override
-		  protected void start() {
-        final List<SynchronizeJob> jobs = this.jobs = new ArrayList<SynchronizeJob>();
-		    joinJob = new Job("Waiting for synchronize jobs") {
-          @Override
-          protected IStatus run(IProgressMonitor monitor) {
-            try {
-              Job.getJobManager().join(this, monitor);
-            } catch (OperationCanceledException e) {
-              e.printStackTrace();
-              return Status.CANCEL_STATUS;
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-              return Status.CANCEL_STATUS;
-            }          
-            for(SynchronizeJob j : jobs) {
-              System.out.println(j.getResult());
-            }
-            return Status.OK_STATUS;
-          }		   
-		    };
-		    joinJob.setSystem(true);
+		  protected void start(SierraServer server) {
+		    joinJob = new SynchronizeGroupJob(server);
 		  }
 		  @Override
 		  protected void runForServerProject(SierraServer server, String projectName) {
-        final SynchronizeJob job = new SynchronizeJob(this, projectName, server);
-        jobs.add(job);
+        final SynchronizeJob job = new SynchronizeJob(joinJob, projectName, server);
         job.schedule();
       }
 		  @Override
-		  protected void finish() {
+		  protected void finish(SierraServer server) {
 		    joinJob.schedule();
 		    joinJob = null;
 		  }

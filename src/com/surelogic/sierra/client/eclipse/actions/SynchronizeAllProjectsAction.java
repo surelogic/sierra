@@ -1,13 +1,5 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -17,7 +9,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
+import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -32,31 +24,13 @@ public final class SynchronizeAllProjectsAction implements
 		// Nothing to do
 	}
 
+	private static final SierraServer[] noServers = new SierraServer[0];
+	
 	public void run(IAction action) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
-		final List<SynchronizeJob> jobs = new ArrayList<SynchronizeJob>();
-		final Job joinJob = new Job("Waiting for synchronize jobs") {
-      @Override
-      protected IStatus run(IProgressMonitor monitor) {
-        try {
-          Job.getJobManager().join(this, monitor);
-        } catch (OperationCanceledException e) {
-          e.printStackTrace();
-          return Status.CANCEL_STATUS;
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-          return Status.CANCEL_STATUS;
-        }          
-        for(SynchronizeJob j : jobs) {
-          System.out.println(j.getResult());
-        }
-        return Status.OK_STATUS;
-      }
-		};
-		joinJob.setSystem(true);
+		final SynchronizeGroupJob joinJob = new SynchronizeGroupJob(manager.getServers().toArray(noServers));
 		
-		for (String projectName : SierraServerManager.getInstance()
-				.getConnectedProjects()) {
+		for (String projectName : manager.getConnectedProjects()) {
 			final SierraServer server = manager.getServer(projectName);
 
 			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {

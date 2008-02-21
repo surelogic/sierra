@@ -30,15 +30,14 @@ public class SynchronizeJob extends DatabaseJob {
 
 	private final String f_projectName;
 	private final SierraServer f_server;
-
-	public SynchronizeJob(String proj, SierraServer server) {
-	  this(null, proj, server);
-	}
+	private final SynchronizeGroupJob joinJob;
 	
-	public SynchronizeJob(Object family, String projectName, SierraServer server) {
+	public SynchronizeJob(SynchronizeGroupJob family, String projectName, SierraServer server) {
 		super(family, "Synchronizing Sierra data from project '" + projectName + "'");
+		joinJob = family;
 		f_projectName = projectName;
 		f_server = server;
+		joinJob.add(this);
 	}
 
 	@Override
@@ -88,33 +87,39 @@ public class SynchronizeJob extends DatabaseJob {
 				return Status.OK_STATUS;
 			}
 		} catch (ServerMismatchException e) {
-			troubleshoot = new TroubleshootWrongServer(f_server, f_projectName);
-			conn.rollback();
-			troubleshoot.fix();
-			if (troubleshoot.retry()) {
-				return synchronize(conn, slMonitor);
-			} else {
-				final String msg = I18N.err(51, f_projectName, f_server);
-				SLLogger.getLogger().log(Level.WARNING, msg, e);
-				return Status.CANCEL_STATUS;
-			}
+		  if (joinJob.troubleshoot(f_server)) {
+		    troubleshoot = new TroubleshootWrongServer(f_server, f_projectName);
+		    conn.rollback();
+		    troubleshoot.fix();
+		    if (troubleshoot.retry()) {
+		      return synchronize(conn, slMonitor);
+		    }
+		  }
+      return fail(e);
 		} catch (SierraServiceClientException e) {
-			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server,
-						f_projectName);
-			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server,
-						f_projectName);
-			}
-			conn.rollback();
-			troubleshoot.fix();
-			if (troubleshoot.retry()) {
-				return synchronize(conn, slMonitor);
-			} else {
-				final String msg = I18N.err(51, f_projectName, f_server);
-				SLLogger.getLogger().log(Level.WARNING, msg, e);
-				return Status.CANCEL_STATUS;
-			}
+		  if (joinJob.troubleshoot(f_server)) {
+		    if (e instanceof InvalidLoginException) {
+		      troubleshoot = new TroubleshootWrongAuthentication(f_server,
+		          f_projectName);
+		    } else {
+		      troubleshoot = new TroubleshootNoSuchServer(f_server,
+		          f_projectName);
+		    }
+		    conn.rollback();
+		    troubleshoot.fix();
+		    if (troubleshoot.retry()) {
+		      return synchronize(conn, slMonitor);
+		    }
+		  }
+		  return fail(e);
 		}
 	}
+
+  private IStatus fail(Exception e) {
+    joinJob.fail(f_server);
+    
+    final String msg = I18N.err(51, f_projectName, f_server);
+    SLLogger.getLogger().log(Level.WARNING, msg, e);
+    return Status.CANCEL_STATUS;
+  }
 }
