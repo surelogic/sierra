@@ -38,11 +38,8 @@ public class TextBoxEditor extends InplaceEditor {
 			String newValue = getTextEditor().getText();
 			boolean valueChanged = !LangUtil.equals(initialValue, newValue);
 			if (valueChanged) {
-				boolean valueAccepted = grid.fireChangeEvent(row, column,
+				cellValue = (String) grid.fireChangeEvent(row, column,
 						initialValue, newValue);
-				if (valueAccepted) {
-					cellValue = newValue;
-				}
 			}
 		}
 		grid.setText(row, column, cellValue);

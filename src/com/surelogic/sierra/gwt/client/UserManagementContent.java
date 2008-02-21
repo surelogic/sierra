@@ -20,6 +20,7 @@ import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
+// TODO add change password functionality
 public class UserManagementContent extends ContentComposite {
 	private static final UserManagementContent instance = new UserManagementContent();
 
@@ -67,13 +68,13 @@ public class UserManagementContent extends ContentComposite {
 		usersGrid.setInplaceEditor(0, TextBoxEditor.getFactory());
 		usersGrid.addListener(new SelectableGridListener() {
 
-			public boolean onChange(Widget source, int row, int column,
+			public Object onChange(Widget source, int row, int column,
 					Object oldValue, Object newValue) {
 				if (column == 0) {
 					return changeUserName(row, (String) oldValue,
 							(String) newValue);
 				}
-				return false;
+				return newValue;
 			}
 
 			public void onClick(Widget source, int row, int column,
@@ -118,19 +119,25 @@ public class UserManagementContent extends ContentComposite {
 					for (Iterator i = users.iterator(); i.hasNext();) {
 						// need to convert the service return to UserAccount
 						final UserAccount user = (UserAccount) i.next();
-						int rowIndex = usersGrid.addRow();
-						usersGrid.setText(rowIndex, 0, user.getUserName());
-						if (user.isAdministrator()) {
-							usersGrid.setText(rowIndex, 1, "Administrator");
-						}
-						usersGrid.setRowData(rowIndex, user);
+						final int row = usersGrid.addRow();
+						updateRow(row, user);
 					}
 				}
 			}
+
 		});
 	}
 
+	private void updateRow(int row, UserAccount user) {
+		usersGrid.setText(row, 0, user.getUserName());
+		if (user.isAdministrator()) {
+			usersGrid.setText(row, 1, "Administrator");
+		}
+		usersGrid.setRowData(row, user);
+	}
+
 	private void createUser() {
+		usersGrid.clearStatus();
 		final CreateUserDialog dialog = new CreateUserDialog();
 		dialog.addPopupListener(new PopupListener() {
 
@@ -144,8 +151,10 @@ public class UserManagementContent extends ContentComposite {
 	}
 
 	private void deleteUsers() {
+		usersGrid.clearStatus();
 		if (usersGrid.hasSelected()) {
 			if (Window.confirm("Delete all selected users?")) {
+
 				// TODO delete all selected users
 				Window.alert("TODO: Delete all selected users");
 			}
@@ -154,9 +163,32 @@ public class UserManagementContent extends ContentComposite {
 		}
 	}
 
-	private boolean changeUserName(int row, String oldValue, String newValue) {
-		Window.alert("TODO: Username changed: " + newValue);
-		return true;
-	}
+	private String changeUserName(final int row, String oldValue,
+			String newValue) {
+		usersGrid.clearStatus();
+		final UserAccount account = (UserAccount) usersGrid.getRowData(row);
+		if (account != null) {
+			account.setUserName(newValue);
+			// TODO add ID field to UserAccount
+			Window
+					.alert("This will not work until UserAccount has an ID field");
+			ServiceHelper.getManageUserService().updateUser(account, null,
+					new AsyncCallback() {
 
+						public void onFailure(Throwable caught) {
+							ExceptionTracker.logException(caught);
+
+							// TODO all error handling needs a cleaning pass
+							usersGrid.setStatus("error", "Server unreachable");
+						}
+
+						public void onSuccess(Object result) {
+							updateRow(row, (UserAccount) result);
+							Window.alert("Row updated: "
+									+ ((UserAccount) result).getUserName());
+						}
+					});
+		}
+		return newValue;
+	}
 }

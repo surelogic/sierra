@@ -18,6 +18,8 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 // TODO don't trigger inplace editors until after a row selection has occurred
 // -> this is similar to a double click and will prevent inplace editors from activating too easily
 // TODO break non-selectable parts of grid into parent class
+// TODO add row lock functionality so row edits waiting for a server response can't be changed again
+// TODO also may want to provide an icon with a popup if a cell save fails
 public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
 
@@ -276,18 +278,14 @@ public class SelectableGrid extends Composite {
 		}
 	}
 
-	public boolean fireChangeEvent(int row, int column, Object oldValue,
+	public Object fireChangeEvent(int row, int column, Object oldValue,
 			Object newValue) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it
 					.next();
-			boolean allow = listener.onChange(grid, row, column, oldValue,
-					newValue);
-			if (!allow) {
-				return false;
-			}
+			newValue = listener.onChange(grid, row, column, oldValue, newValue);
 		}
-		return true;
+		return newValue;
 	}
 
 	private int getColumnOffset() {

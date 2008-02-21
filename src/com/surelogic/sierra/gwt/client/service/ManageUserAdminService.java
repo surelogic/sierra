@@ -38,23 +38,21 @@ public interface ManageUserAdminService extends RemoteService {
 	/**
 	 * Get details about a user's information
 	 * 
-	 * @param user
+	 * @param userName
 	 * @return
 	 */
-	UserAccount getUserInfo(String user);
+	UserAccount getUserInfo(String userName);
 
 	/**
 	 * 
-	 * @param user
-	 *            the user's name
+	 * @param account
+	 *            the user's updated account info
 	 * @param password
 	 *            a new user password, or null if the password should not be
 	 *            updated
-	 * @param isAdmin
-	 *            the user's admin status
 	 * @return
 	 */
-	UserAccount updateUser(String user, String password, boolean isAdmin);
+	UserAccount updateUser(UserAccount account, String password);
 
 	/**
 	 * Delete and existing user.

@@ -8,7 +8,7 @@ public interface SelectableGridListener {
 
 	void onClick(Widget source, int row, int column, Object rowData);
 
-	boolean onChange(Widget source, int row, int column, Object oldValue,
+	Object onChange(Widget source, int row, int column, Object oldValue,
 			Object newValue);
 
 }
