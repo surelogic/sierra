@@ -46,7 +46,7 @@ public final class HeaderPanel extends Composite {
 
 		headerRow.addStyleName(PRIMARY_STYLE);
 		final Image sierraLogo = new Image(GWT.getModuleBaseURL()
-				+ "images/header-sierra-logo.gif");
+				+ "images/surelogic.png");
 		headerRow.add(sierraLogo);
 
 		sessionPanel.addStyleName(SESSION_STYLE);
