@@ -102,23 +102,24 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public UserAccount updateUser(final String targetUser,
-			final String password, final boolean isAdmin) {
+	public UserAccount updateUser(final UserAccount account,
+			final String password) {
 		return performAdmin(false, new UserTransaction<UserAccount>() {
 
 			public UserAccount perform(Connection conn, Server server, User user)
 					throws Exception {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
+				final String targetUserName = account.getUserName();
 				if (password != null) {
-					man.changeUserPassword(targetUser, password);
+					man.changeUserPassword(targetUserName, password);
 				}
-				if (isAdmin) {
-					man.addUserToGroup(targetUser, SierraGroup.ADMIN);
+				if (account.isAdministrator()) {
+					man.addUserToGroup(targetUserName, SierraGroup.ADMIN);
 				} else {
-					man.removeUserFromGroup(targetUser, SierraGroup.ADMIN);
+					man.removeUserFromGroup(targetUserName, SierraGroup.ADMIN);
 				}
-				return convertUser(man, user);
+				return account;
 			}
 		});
 	}
