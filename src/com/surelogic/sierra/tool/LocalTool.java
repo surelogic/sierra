@@ -114,7 +114,7 @@ public class LocalTool extends AbstractTool {
     private String getPluginDir(final boolean debug, final String pluginId) {
       final String pluginDir = config.getPluginDir(pluginId);
       if (debug) {
-        LOG.fine(pluginId+" = "+pluginDir);
+        System.out.println(pluginId+" = "+pluginDir);
       }
       usedPlugins.add(pluginId);
       return pluginDir;
@@ -151,7 +151,7 @@ public class LocalTool extends AbstractTool {
       CommandlineJava cmdj   = new CommandlineJava();
       cmdj.setMaxmemory("1024m");
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
-      if (debug) {
+      if (false) {
         cmdj.createVmArgument().setValue("-verbose");
       }
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
