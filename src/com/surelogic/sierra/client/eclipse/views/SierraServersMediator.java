@@ -192,12 +192,26 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final Listener f_deleteServerAction = new ServerActionListener() {
 		@Override
 		protected void handleEventOnServer(SierraServer server) {
+			final List<String> projectNames = f_manager
+					.getProjectsConnectedTo(server);
+			final String serverName = server.getLabel();
+			final String msg;
+			if (projectNames.isEmpty()) {
+				msg = I18N
+						.msg("sierra.eclipse.serverDeleteWarning", serverName);
+			} else {
+				msg = I18N.msg("sierra.eclipse.serverDeleteWarningConnected",
+						serverName, serverName, serverName);
+			}
 			if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(),
-					"Confirm Sierra Server Deletion",
-					"Do you wish to delete the Sierra server '"
-							+ server.getLabel() + "'?")) {
+					"Confirm Sierra Server Deletion", msg)) {
 				f_manager.delete(server);
+				if (!projectNames.isEmpty()) {
+					final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
+							projectNames);
+					deleteProjectJob.runJob();
+				}
 			}
 		}
 	};
@@ -313,11 +327,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						SWT.Selection,
 						new ServerProjectActionListener(
 								"Synchronize all connected projects pressed with no server focus.") {
-						  ServerProjectGroupJob joinJob = null;
+							SynchronizeGroupJob joinJob = null;
 
 							@Override
 							protected void start(SierraServer server) {
-								joinJob = new ServerProjectGroupJob(server);
+								joinJob = new SynchronizeGroupJob(server);
 							}
 
 							@Override
