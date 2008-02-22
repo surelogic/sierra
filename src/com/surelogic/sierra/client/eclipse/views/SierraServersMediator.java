@@ -67,95 +67,116 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final MenuItem f_disconnectProjectItem;
 
 	private class ServerActionListener implements Listener {
-	  private final String msgIfNoServer;
-	  ServerActionListener() {
-	    this(null);
-	  }
-	  ServerActionListener(String msg) {
-	    msgIfNoServer = msg;
-	  }
-	  
-    public void handleEvent(Event event) {
-      SierraServer server = f_manager.getFocus();
-      if (server != null) {
-        handleEventOnServer(server);
-      } else {
-        handleEventWithoutServer();
-      }
-    }
-	  protected void handleEventOnServer(SierraServer server) {
-	    // Do nothing
-	  }
-	  protected void handleEventWithoutServer() {
-	    if (msgIfNoServer != null) {
-	      SLLogger.getLogger().warning(msgIfNoServer);
-	    }
-	  }
-	}
-	
-	private abstract class ServerProjectActionListener extends ServerActionListener {
-	  ServerProjectActionListener(String msg) {
-	    super(msg);
-	  }
-    @Override
-    protected final void handleEventOnServer(SierraServer server) {
-      final SierraServerManager manager = server.getManager();
-      final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-        public void run(String nullName, SierraServer server, Shell shell) {
-          start(server);
-          for (String projectName : manager.getProjectsConnectedTo(server)) {
-            if (manager.isConnected(projectName)) {
-              runForServerProject(server, projectName);
-            }
-          }
-          finish(server);
-        }
-      };
-      final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-      ServerAuthenticationDialog.promptPasswordIfNecessary(null, server, shell, serverAction);        
-    }
-    protected void start(SierraServer server) {
-      // Do nothing
-    }
-    protected abstract void runForServerProject(SierraServer server, String projectName);
-    protected void finish(SierraServer server) {
-      // Do nothing
-    }
-	}
-	
-	private abstract class IJavaProjectsActionListener extends ServerProjectActionListener {
-	  final List<IJavaProject> projects = new ArrayList<IJavaProject>();
-	  IJavaProject[] allProjects;
+		private final String msgIfNoServer;
 
-	  IJavaProjectsActionListener(String msg) {
-      super(msg);
-    }
-	  @Override
-	  protected final void start(SierraServer server) {
-      final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-      final IJavaModel javaModel = JavaCore.create(root);          
-      try {
-        allProjects = javaModel.getJavaProjects();
-      } catch (JavaModelException e) {
-        throw new IllegalStateException(e);
-      }
-	  }
-	  @Override
-	  protected final void runForServerProject(SierraServer server, String projectName) {
-	    if (projectName == null) {
-	      SLLogger.getLogger().warning("Null project for server "+server.getLabel());
-	      return;	    
-	    }
-      for(IJavaProject p : allProjects) {
-        if (p.getElementName().equals(projectName) /* && !projects.contains(p) */) {
-          projects.add(p);
-          return;
-        }
-      }
-      SLLogger.getLogger().warning("Could not find project: "+projectName);
-	  }
+		ServerActionListener() {
+			this(null);
+		}
+
+		ServerActionListener(String msg) {
+			msgIfNoServer = msg;
+		}
+
+		public void handleEvent(Event event) {
+			SierraServer server = f_manager.getFocus();
+			if (server != null) {
+				handleEventOnServer(server);
+			} else {
+				handleEventWithoutServer();
+			}
+		}
+
+		protected void handleEventOnServer(SierraServer server) {
+			// Do nothing
+		}
+
+		protected void handleEventWithoutServer() {
+			if (msgIfNoServer != null) {
+				SLLogger.getLogger().warning(msgIfNoServer);
+			}
+		}
 	}
-	
+
+	private abstract class ServerProjectActionListener extends
+			ServerActionListener {
+		ServerProjectActionListener(String msg) {
+			super(msg);
+		}
+
+		@Override
+		protected final void handleEventOnServer(SierraServer server) {
+			final SierraServerManager manager = server.getManager();
+			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+				public void run(String nullName, SierraServer server,
+						Shell shell) {
+					start(server);
+					for (String projectName : manager
+							.getProjectsConnectedTo(server)) {
+						if (manager.isConnected(projectName)) {
+							runForServerProject(server, projectName);
+						}
+					}
+					finish(server);
+				}
+			};
+			final Shell shell = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell();
+			ServerAuthenticationDialog.promptPasswordIfNecessary(null, server,
+					shell, serverAction);
+		}
+
+		protected void start(SierraServer server) {
+			// Do nothing
+		}
+
+		protected abstract void runForServerProject(SierraServer server,
+				String projectName);
+
+		protected void finish(SierraServer server) {
+			// Do nothing
+		}
+	}
+
+	private abstract class IJavaProjectsActionListener extends
+			ServerProjectActionListener {
+		final List<IJavaProject> projects = new ArrayList<IJavaProject>();
+		IJavaProject[] allProjects;
+
+		IJavaProjectsActionListener(String msg) {
+			super(msg);
+		}
+
+		@Override
+		protected final void start(SierraServer server) {
+			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+					.getRoot();
+			final IJavaModel javaModel = JavaCore.create(root);
+			try {
+				allProjects = javaModel.getJavaProjects();
+			} catch (JavaModelException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		@Override
+		protected final void runForServerProject(SierraServer server,
+				String projectName) {
+			if (projectName == null) {
+				SLLogger.getLogger().warning(
+						"Null project for server " + server.getLabel());
+				return;
+			}
+			for (IJavaProject p : allProjects) {
+				if (p.getElementName().equals(projectName)) {
+					projects.add(p);
+					return;
+				}
+			}
+			SLLogger.getLogger().warning(
+					"Could not find project: " + projectName);
+		}
+	}
+
 	final Listener f_newServerAction = new Listener() {
 		public void handleEvent(Event event) {
 			ServerLocationDialog.newServer(f_serverList.getShell());
@@ -169,22 +190,22 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	};
 
 	final Listener f_deleteServerAction = new ServerActionListener() {
-	  @Override
-	  protected void handleEventOnServer(SierraServer server) {
-	    if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
-	        .getActiveWorkbenchWindow().getShell(),
-	        "Confirm Sierra Server Deletion",
-	        "Do you wish to delete the Sierra server '"
-	        + server.getLabel() + "'?")) {
-	      f_manager.delete(server);
-	    }
+		@Override
+		protected void handleEventOnServer(SierraServer server) {
+			if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell(),
+					"Confirm Sierra Server Deletion",
+					"Do you wish to delete the Sierra server '"
+							+ server.getLabel() + "'?")) {
+				f_manager.delete(server);
+			}
 		}
 	};
 
-	final Listener f_openInBrowserAction = 
-	  new ServerActionListener("Edit server pressed with no server focus.") {
-	  @Override
-    protected void handleEventOnServer(SierraServer server) {
+	final Listener f_openInBrowserAction = new ServerActionListener(
+			"Edit server pressed with no server focus.") {
+		@Override
+		protected void handleEventOnServer(SierraServer server) {
 			openInBrowser(server);
 		}
 	};
@@ -206,11 +227,12 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem scanAllConnectedProjects,
-			MenuItem rescanAllConnectedProjects, MenuItem synchAllConnectedProjects,
-			MenuItem sendResultFilters, MenuItem getResultFilters,
-			MenuItem serverPropertiesItem, Button openInBrowser,
-			Group infoGroup, Label serverURL, Table projectList,
-			MenuItem connectProjectItem, MenuItem disconnectProjectItem) {
+			MenuItem rescanAllConnectedProjects,
+			MenuItem synchAllConnectedProjects, MenuItem sendResultFilters,
+			MenuItem getResultFilters, MenuItem serverPropertiesItem,
+			Button openInBrowser, Group infoGroup, Label serverURL,
+			Table projectList, MenuItem connectProjectItem,
+			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -218,8 +240,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_newServerItem = newServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
-    f_scanAllConnectedProjects = scanAllConnectedProjects;
-    f_rescanAllConnectedProjects = rescanAllConnectedProjects;
+		f_scanAllConnectedProjects = scanAllConnectedProjects;
+		f_rescanAllConnectedProjects = rescanAllConnectedProjects;
 		f_synchAllConnectedProjects = synchAllConnectedProjects;
 		f_sendResultFilters = sendResultFilters;
 		f_getResultFilters = getResultFilters;
@@ -264,72 +286,91 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_deleteServer.addListener(SWT.Selection, f_deleteServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-    f_scanAllConnectedProjects.addListener(SWT.Selection, 
-      new IJavaProjectsActionListener("Scan all connected projects pressed with no server focus.") {
-      @Override
-      protected void finish(SierraServer server) {
-        new NewScan().scan(projects);
-      }
-    });
-    
-    f_rescanAllConnectedProjects.addListener(SWT.Selection, 
-      new IJavaProjectsActionListener("Re-scan all connected projects pressed with no server focus.") {
-      @Override
-      protected void finish(SierraServer server) {
-        new ScanChangedProjectsAction().run(projects);
-      }
-    });
-    // 
-		f_synchAllConnectedProjects.addListener(SWT.Selection, 
-		  new ServerProjectActionListener("Synchronize all connected projects pressed with no server focus.") {	  
-		  SynchronizeGroupJob joinJob = null;
-		  
-		  @Override
-		  protected void start(SierraServer server) {
-		    joinJob = new SynchronizeGroupJob(server);
-		  }
-		  @Override
-		  protected void runForServerProject(SierraServer server, String projectName) {
-        final SynchronizeJob job = new SynchronizeJob(joinJob, projectName, server);
-        job.schedule();
-      }
-		  @Override
-		  protected void finish(SierraServer server) {
-		    joinJob.schedule();
-		    joinJob = null;
-		  }
-		});
+		f_scanAllConnectedProjects
+				.addListener(
+						SWT.Selection,
+						new IJavaProjectsActionListener(
+								"Scan all connected projects pressed with no server focus.") {
+							@Override
+							protected void finish(SierraServer server) {
+								new NewScan().scan(projects);
+							}
+						});
 
-		f_sendResultFilters.addListener(SWT.Selection, 
-	    new ServerActionListener("Send scan filters pressed with no server focus.") {
-      @Override
-      protected void handleEventOnServer(SierraServer server) {
-				final StringBuilder msg = new StringBuilder();
-				msg.append("Do you want your local scan filters to become");
-				msg.append(" the scan filters used by (and available from)");
-				msg.append(" the Sierra server '");
-				msg.append(server.getLabel());
-				msg.append("'?");
-				MessageDialog dialog = new MessageDialog(f_serverList
-						.getShell(), "Send Scan Filters", null, msg.toString(),
-						MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
-				if (dialog.open() == 0) {
-					/*
-					 * Yes was selected, so send the result filters to the
-					 * server.
-					 */
-					final Job job = new SendGlobalResultFiltersJob(server);
-					job.schedule();
-				}
-			}
-		});
+		f_rescanAllConnectedProjects
+				.addListener(
+						SWT.Selection,
+						new IJavaProjectsActionListener(
+								"Re-scan all connected projects pressed with no server focus.") {
+							@Override
+							protected void finish(SierraServer server) {
+								new ScanChangedProjectsAction().run(projects);
+							}
+						});
 
-		f_getResultFilters.addListener(SWT.Selection, 
-	    new ServerActionListener("Get scan filters pressed with no server focus.") {
-      @Override
-      protected void handleEventOnServer(SierraServer server) {
+		f_synchAllConnectedProjects
+				.addListener(
+						SWT.Selection,
+						new ServerProjectActionListener(
+								"Synchronize all connected projects pressed with no server focus.") {
+							SynchronizeGroupJob joinJob = null;
+
+							@Override
+							protected void start(SierraServer server) {
+								joinJob = new SynchronizeGroupJob(server);
+							}
+
+							@Override
+							protected void runForServerProject(
+									SierraServer server, String projectName) {
+								final SynchronizeJob job = new SynchronizeJob(
+										joinJob, projectName, server);
+								job.schedule();
+							}
+
+							@Override
+							protected void finish(SierraServer server) {
+								joinJob.schedule();
+								joinJob = null;
+							}
+						});
+
+		f_sendResultFilters.addListener(SWT.Selection,
+				new ServerActionListener(
+						"Send scan filters pressed with no server focus.") {
+					@Override
+					protected void handleEventOnServer(SierraServer server) {
+						final StringBuilder msg = new StringBuilder();
+						msg
+								.append("Do you want your local scan filters to become");
+						msg
+								.append(" the scan filters used by (and available from)");
+						msg.append(" the Sierra server '");
+						msg.append(server.getLabel());
+						msg.append("'?");
+						MessageDialog dialog = new MessageDialog(f_serverList
+								.getShell(), "Send Scan Filters", null, msg
+								.toString(), MessageDialog.QUESTION,
+								new String[] { "Yes", "No" }, 0);
+						if (dialog.open() == 0) {
+							/*
+							 * Yes was selected, so send the result filters to
+							 * the server.
+							 */
+							final Job job = new SendGlobalResultFiltersJob(
+									server);
+							job.schedule();
+						}
+					}
+				});
+
+		f_getResultFilters.addListener(SWT.Selection, new ServerActionListener(
+				"Get scan filters pressed with no server focus.") {
+			@Override
+			protected void handleEventOnServer(SierraServer server) {
 				final StringBuilder msg = new StringBuilder();
-				msg.append("Do you want overwrite your local scan filters with");
+				msg
+						.append("Do you want overwrite your local scan filters with");
 				msg.append(" the scan filters on");
 				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
@@ -348,16 +389,17 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_serverPropertiesItem.addListener(SWT.Selection, 
-	    new ServerActionListener("Edit server pressed with no server focus.") {
-      @Override
-      protected void handleEventOnServer(SierraServer server) {
-				final ServerLocationDialog dialog = new ServerLocationDialog(
-						f_serverList.getShell(), server,
-						ServerLocationDialog.EDIT_TITLE);
-				dialog.open();
-			}
-		});
+		f_serverPropertiesItem.addListener(SWT.Selection,
+				new ServerActionListener(
+						"Edit server pressed with no server focus.") {
+					@Override
+					protected void handleEventOnServer(SierraServer server) {
+						final ServerLocationDialog dialog = new ServerLocationDialog(
+								f_serverList.getShell(), server,
+								ServerLocationDialog.EDIT_TITLE);
+						dialog.open();
+					}
+				});
 
 		f_openInBrowser.addListener(SWT.Selection, f_openInBrowserAction);
 
