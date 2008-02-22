@@ -125,7 +125,6 @@ public final class ExportFindingSetDialog extends Dialog {
 				}
 			}
 		});
-
 		return panel;
 	}
 
