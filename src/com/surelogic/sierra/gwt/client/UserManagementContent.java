@@ -181,8 +181,6 @@ public class UserManagementContent extends ContentComposite {
 
 						public void onSuccess(Object result) {
 							updateRow(row, (UserAccount) result);
-							Window.alert("Row updated: "
-									+ ((UserAccount) result).getUserName());
 						}
 					});
 		}
