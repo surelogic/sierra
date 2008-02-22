@@ -200,38 +200,34 @@ public final class Activator extends AbstractUIPlugin {
     Dictionary<String,String> d = b.getHeaders();
     String deps = d.get("Require-Bundle");
     if (deps != null) {
+      String lastId = null;
       List<String> ids = new ArrayList<String>();
-      final StringTokenizer st = new StringTokenizer(deps, ";");
+      List<String> optional = null;
+      final StringTokenizer st = new StringTokenizer(deps, ";, ");
       while (st.hasMoreTokens()) {
         String id = st.nextToken();
-        if (id.indexOf('=') >= 0) {
-          // Ignore any extra stuff after the last plugin name
+        if ("resolution:=optional".equals(id) && lastId != null) {          
+          if (optional == null) {
+            optional = new ArrayList<String>();
+          }
+          optional.add(lastId);
+        }
+        if (id.indexOf('=') >= 0 || id.indexOf('"') >= 0) {
+          // Ignore any property stuff
           // (e.g. version info)
-          //System.out.println("Ignoring: "+id);
-          int propEnd = id.lastIndexOf("\",");
-          if (propEnd >= 0) {
-            id = id.substring(propEnd+2);
-            //System.out.println("Keeping: "+id);
-          } else {
-            continue;
-          }
+          System.out.println("Ignoring: "+id);
+          continue;        
         }
-        if (id.indexOf(',') >= 0) {
-          final StringTokenizer st2 = new StringTokenizer(deps, ", ");
-          while (st2.hasMoreTokens()) {
-            ids.add(st2.nextToken());
-          }
-        } else {
-          ids.add(id);
-        }
+        lastId = id;
+        ids.add(id);      
       }
       for(String id : ids) {
-        //System.out.println("Considering: "+id);
+        System.out.println("Considering: "+id);
         if (checked.contains(id)) {
           continue;
         }
         final Bundle bundle = Platform.getBundle(id);
-        if (bundle == null) {
+        if (bundle == null && !optional.contains(id)) {
           throw new IllegalArgumentException("Couldn't find bundle "+id+" required for "+b.getSymbolicName());
         }
         getDependencies(bundle, checked);
