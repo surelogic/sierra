@@ -65,9 +65,6 @@ public class ChangePasswordContent extends ContentComposite {
 										message
 												.setHTML("<span class=\"success\">Your password was changed.</span>");
 									} else {
-										// TODO This should not happen. Consider
-										// handling this
-										// differently.
 										message
 												.setHTML("<span class=\"error\">Your password could not be changed.  Please make sure that you have entered your old password correctly.</span>");
 									}
