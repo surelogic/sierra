@@ -11,7 +11,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -34,12 +37,17 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.actions.*;
+import com.surelogic.sierra.client.eclipse.actions.NewScan;
+import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
-import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
+import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -192,26 +200,12 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final Listener f_deleteServerAction = new ServerActionListener() {
 		@Override
 		protected void handleEventOnServer(SierraServer server) {
-			final List<String> projectNames = f_manager
-					.getProjectsConnectedTo(server);
-			final String serverName = server.getLabel();
-			final String msg;
-			if (projectNames.isEmpty()) {
-				msg = I18N
-						.msg("sierra.eclipse.serverDeleteWarning", serverName);
-			} else {
-				msg = I18N.msg("sierra.eclipse.serverDeleteWarningConnected",
-						serverName, serverName, serverName);
-			}
 			if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(),
-					"Confirm Sierra Server Deletion", msg)) {
+					"Confirm Sierra Server Deletion",
+					"Do you wish to delete the Sierra server '"
+							+ server.getLabel() + "'?")) {
 				f_manager.delete(server);
-				if (!projectNames.isEmpty()) {
-					final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
-							projectNames);
-					deleteProjectJob.runJob();
-				}
 			}
 		}
 	};
@@ -327,11 +321,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						SWT.Selection,
 						new ServerProjectActionListener(
 								"Synchronize all connected projects pressed with no server focus.") {
-							SynchronizeGroupJob joinJob = null;
+						  ServerProjectGroupJob joinJob = null;
 
 							@Override
 							protected void start(SierraServer server) {
-								joinJob = new SynchronizeGroupJob(server);
+								joinJob = new ServerProjectGroupJob(server);
 							}
 
 							@Override
