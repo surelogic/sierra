@@ -16,6 +16,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
@@ -31,9 +32,11 @@ public abstract class AbstractWebServiceMenuAction extends
 		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
+		final ServerProjectGroupJob family = 
+		  new ServerProjectGroupJob(manager.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 			public void run(String projectName, SierraServer server, Shell shell) {
-				runServerAction(projectName, server, shell);
+				runServerAction(family, projectName, server, shell);
 			}
 		};
 
@@ -91,8 +94,9 @@ public abstract class AbstractWebServiceMenuAction extends
 						projectName, server, shell, serverAction);
 			}
 		}
+		family.schedule();
 	}
 
-	abstract void runServerAction(final String projectName,
+	abstract void runServerAction(final ServerProjectGroupJob family, final String projectName,
 			final SierraServer server, final Shell shell);
 }

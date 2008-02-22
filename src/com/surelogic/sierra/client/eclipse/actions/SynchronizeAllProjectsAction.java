@@ -23,12 +23,11 @@ public final class SynchronizeAllProjectsAction implements
 	public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
-
-	private static final SierraServer[] noServers = new SierraServer[0];
 	
 	public void run(IAction action) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
-		final SynchronizeGroupJob joinJob = new SynchronizeGroupJob(manager.getServers().toArray(noServers));
+		final ServerProjectGroupJob joinJob = 
+		  new ServerProjectGroupJob(manager.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
 		
 		for (String projectName : manager.getConnectedProjects()) {
 			final SierraServer server = manager.getServer(projectName);

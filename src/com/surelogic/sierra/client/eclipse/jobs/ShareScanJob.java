@@ -16,32 +16,23 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.QualifierPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.QualifierRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
-public class ShareScanJob extends DatabaseJob {
-
-	private final String f_projectName;
-	private final SierraServer f_server;
+public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
 
-	public ShareScanJob(String projectName, SierraServer server, File scanFile) {
-		super("Sharing scan of project '" + projectName + "'");
-		f_projectName = projectName;
-		f_server = server;
+	public ShareScanJob(ServerProjectGroupJob family, String projectName, SierraServer server, File scanFile) {
+		super(family, "Sharing scan of project '" + projectName + "'", server, projectName);
 		f_scanFile = scanFile;
 	}
 
@@ -102,23 +93,20 @@ public class ShareScanJob extends DatabaseJob {
 			}
 			return new TreeSet<String>(qualifiers);
 		} catch (SierraServiceClientException e) {
-			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server,
-						f_projectName);
-			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server,
-						f_projectName);
+		  if (joinJob.troubleshoot(f_server)) {
+		    troubleshoot = getTroubleshootConnection(e);
+	    
+		    // We had a recoverable error. Rollback, run the appropriate
+		    // troubleshoot, and try again.
+		    troubleshoot.fix();
+		    if (troubleshoot.retry()) {
+		      return getQualifiersOnTheServer(slMonitor);
+		    }		    
+        joinJob.fail(f_server);
 			}
-			// We had a recoverable error. Rollback, run the appropriate
-			// troubleshoot, and try again.
-			troubleshoot.fix();
-			if (troubleshoot.retry()) {
-				return getQualifiersOnTheServer(slMonitor);
-			} else {
-				SLLogger.getLogger().log(Level.WARNING,
-						"Failed to get qualifiers from " + f_server, e);
-				return null;
-			}
+      SLLogger.getLogger().log(Level.WARNING,
+          "Failed to get qualifiers from " + f_server, e);
+      return null;
 		}
 
 	}
@@ -129,13 +117,8 @@ public class ShareScanJob extends DatabaseJob {
 			SierraServiceClient.create(f_server.getServer()).publishRun(scan);
 			return Status.OK_STATUS;
 		} catch (SierraServiceClientException e) {
-			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server,
-						f_projectName);
-			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server,
-						f_projectName);
-			}
+		  troubleshoot = getTroubleshootConnection(e);
+		  
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
 			troubleshoot.fix();

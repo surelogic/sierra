@@ -313,11 +313,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						SWT.Selection,
 						new ServerProjectActionListener(
 								"Synchronize all connected projects pressed with no server focus.") {
-							SynchronizeGroupJob joinJob = null;
+						  ServerProjectGroupJob joinJob = null;
 
 							@Override
 							protected void start(SierraServer server) {
-								joinJob = new SynchronizeGroupJob(server);
+								joinJob = new ServerProjectGroupJob(server);
 							}
 
 							@Override

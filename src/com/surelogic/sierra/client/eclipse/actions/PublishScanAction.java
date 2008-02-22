@@ -9,19 +9,20 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
 public final class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
-	void runServerAction(String projectName, SierraServer server, Shell shell) {
+	void runServerAction(final ServerProjectGroupJob family, String projectName, SierraServer server, Shell shell) {
 		final String sierraDataDirectory = FileUtility.getSierraDataDirectory();
 		final String scanFileName = sierraDataDirectory + File.separator
 				+ projectName + SierraToolConstants.PARSED_FILE_SUFFIX;
 		final File scanFile = new File(scanFileName);
 		if (scanFile.exists()) {
-			final ShareScanJob job = new ShareScanJob(projectName, server,
+			final ShareScanJob job = new ShareScanJob(family, projectName, server,
 					scanFile);
 			job.schedule();
 		} else {

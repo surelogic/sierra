@@ -18,21 +18,23 @@ import org.eclipse.core.runtime.jobs.Job;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 /**
- * A Job designed to coordinate SynchronizeJobs
+ * A Job designed to coordinate AbstractServerProjectJobs
  * 
  * @author Edwin
  */
-public class SynchronizeGroupJob extends Job {
-  private List<SynchronizeJob> jobs = new ArrayList<SynchronizeJob>();
+public class ServerProjectGroupJob extends Job {
+  public static final SierraServer[] NO_SERVERS = new SierraServer[0];
+  
+  private List<AbstractServerProjectJob> jobs = new ArrayList<AbstractServerProjectJob>();
   private SierraServer[] servers;
   
-  public SynchronizeGroupJob(SierraServer... servers) {
+  public ServerProjectGroupJob(SierraServer... servers) {
     super("Waiting for synchronize jobs");
     setSystem(true);
     this.servers = servers;
   }
 
-  void add(SynchronizeJob j) {
+  void add(AbstractServerProjectJob j) {
     jobs.add(j);
   }
   
@@ -47,7 +49,7 @@ public class SynchronizeGroupJob extends Job {
       e.printStackTrace();
       return Status.CANCEL_STATUS;
     }          
-    for(SynchronizeJob j : jobs) {
+    for(AbstractServerProjectJob j : jobs) {
       System.out.println(j.getResult());
     }
     return Status.OK_STATUS;
