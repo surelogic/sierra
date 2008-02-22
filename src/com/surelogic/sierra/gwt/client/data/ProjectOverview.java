@@ -20,7 +20,7 @@ public class ProjectOverview implements Serializable {
 	private int findings;
 	private int comments;
 
-	private Date lastSynchDate;
+	private String lastSynchDate;
 	private String lastSynchUser;
 
 	public String getName() {
@@ -87,11 +87,11 @@ public class ProjectOverview implements Serializable {
 		this.comments = comments;
 	}
 
-	public Date getLastSynchDate() {
+	public String getLastSynchDate() {
 		return lastSynchDate;
 	}
 
-	public void setLastSynchDate(Date lastSynchDate) {
+	public void setLastSynchDate(String lastSynchDate) {
 		this.lastSynchDate = lastSynchDate;
 	}
 
