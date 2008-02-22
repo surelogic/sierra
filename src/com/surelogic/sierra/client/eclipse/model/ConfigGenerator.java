@@ -79,28 +79,25 @@ public final class ConfigGenerator {
 		 * System.out.println(jdt);
 		 */
 		for (String id : PLUGINS) {
-			try {
-				pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
-			} catch (IllegalStateException e) {
-				System.out.println("Couldn't find plugin: " + id);
-			}
+			getDirectoryOfPlugin(id);
 		}
-    for (String id : Activator.getDefault().getDependencies(SierraToolConstants.CORE_RUNTIME_PLUGIN_ID)) {
-      try {
-        pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
-      } catch (IllegalStateException e) {
-        System.out.println("Couldn't find plugin: " + id);
-      }
-    }
-		for (String id : Activator.getDefault().getDependencies(SierraToolConstants.JDT_CORE_PLUGIN_ID)) {
-      try {
-        pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
-      } catch (IllegalStateException e) {
-        System.out.println("Couldn't find plugin: " + id);
-      }
-		}
+		getDirectoryOfAllPlugins(SierraToolConstants.CORE_RUNTIME_PLUGIN_ID);
+		getDirectoryOfAllPlugins(SierraToolConstants.JDT_CORE_PLUGIN_ID);
 	}
 
+  private void getDirectoryOfPlugin(String id) {
+    try {
+      pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+    } catch (IllegalStateException e) {
+      System.out.println("Couldn't find plugin: " + id);
+    }
+  }
+  private void getDirectoryOfAllPlugins(String rootId) {
+    for(String id : Activator.getDefault().getDependencies(rootId)) {
+      getDirectoryOfPlugin(id);
+    }
+  }
+  
 	public static ConfigGenerator getInstance() {
 		return INSTANCE;
 	}
