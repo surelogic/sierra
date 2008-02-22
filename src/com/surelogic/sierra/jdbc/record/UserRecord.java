@@ -18,6 +18,7 @@ public class UserRecord extends LongUpdatableRecord {
 	@Override
 	public int fillUpdatedFields(PreparedStatement st, int idx)
 			throws SQLException {
+		st.setString(idx++, userName);
 		st.setInt(idx++, password.getSalt());
 		st.setBytes(idx++, password.getHash());
 		return idx;

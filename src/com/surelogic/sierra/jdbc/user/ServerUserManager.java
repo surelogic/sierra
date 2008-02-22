@@ -18,11 +18,12 @@ import com.surelogic.sierra.jdbc.record.RelationRecord.PK;
  * @author nathan
  * 
  */
-public class ServerUserManager {
+public final class ServerUserManager {
 
 	private final UserRecordFactory factory;
 	private final PreparedStatement selectUsers;
 	private final PreparedStatement selectSomeUsers;
+	private final PreparedStatement updateUserName;
 
 	private ServerUserManager(Connection conn) throws SQLException {
 		this.factory = UserRecordFactory.getInstance(conn);
@@ -30,6 +31,8 @@ public class ServerUserManager {
 				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER");
 		selectSomeUsers = conn
 				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER WHERE USER_NAME LIKE ?");
+		updateUserName = conn
+				.prepareStatement("UPDATE SIERRA_USER SET USER_NAME = ? WHERE ID = ?");
 	}
 
 	/**
@@ -70,7 +73,6 @@ public class ServerUserManager {
 	 * 
 	 * @param user
 	 * @param group
-	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
 	 * @throws SQLException
 	 */
 	public void addUserToGroup(String user, SierraGroup group)
@@ -90,7 +92,6 @@ public class ServerUserManager {
 	 * 
 	 * @param user
 	 * @param sierraGroup
-	 * @return <code>true<code/> if the user is added to the group, <code>false</code> if the user  
 	 * @throws SQLException
 	 */
 	public void removeUserFromGroup(String user, SierraGroup sierraGroup)
@@ -159,6 +160,17 @@ public class ServerUserManager {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void changeUserName(long id, String newUserName) throws SQLException {
+		if (newUserName == null || newUserName.length() == 0
+				|| getUser(newUserName) != null) {
+			throw new IllegalArgumentException("Invalid  new user name.");
+		} else {
+			updateUserName.setString(1, newUserName);
+			updateUserName.setLong(2, id);
+			updateUserName.execute();
 		}
 	}
 
