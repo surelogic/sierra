@@ -62,7 +62,6 @@ public class Server_0007 implements SchemaAction {
 				rSet.close();
 			}
 		}
-		conn.commit();
 	}
 
 }

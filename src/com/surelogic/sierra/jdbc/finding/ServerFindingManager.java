@@ -44,6 +44,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement findingIntersectCount;
 	private final PreparedStatement findingCount;
 	private final PreparedStatement artifactCount;
+	private final PreparedStatement insertCommitRecord;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -115,6 +116,7 @@ public final class ServerFindingManager extends FindingManager {
 				"DELETE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ?, TOTAL_FINDINGS = ?, LINES_OF_CODE = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				false);
+		insertCommitRecord = conn.prepareStatement("INSERT INTO COMMIT_AUDITS (PROJECT_ID,USER_ID,REVISION) VALUES (?,?,?)");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -156,14 +158,14 @@ public final class ServerFindingManager extends FindingManager {
 
 	/**
 	 * Commit the given audit trails.
-	 * 
+	 * @param projectId 
 	 * @param userId
 	 * @param revision
 	 * @param trails
 	 * @return the in-order list of uids that the audits were applied to.
 	 * @throws SQLException
 	 */
-	public List<String> commitAuditTrails(Long userId, Long revision,
+	public List<String> commitAuditTrails(long projectId, Long userId, Long revision,
 			List<AuditTrail> trails) throws SQLException {
 		List<String> uids = new ArrayList<String>(trails.size());
 		for (AuditTrail trail : trails) {
@@ -193,6 +195,10 @@ public final class ServerFindingManager extends FindingManager {
 				uids.add(findingRecord.getUid());
 			}
 		}
+		insertCommitRecord.setLong(1, projectId);
+		insertCommitRecord.setLong(2, userId);
+		insertCommitRecord.setLong(3, revision);
+		insertCommitRecord.execute();
 		return uids;
 	}
 
@@ -200,20 +206,14 @@ public final class ServerFindingManager extends FindingManager {
 	 * Find or generate a finding for each merge, and return the trails.
 	 * 
 	 * 
-	 * @param project
+	 * @param projectId
 	 * @param revision
 	 * @param merges
 	 * @return an in-order list of finding uids
 	 * @throws SQLException
 	 */
-	public List<String> mergeAuditTrails(String project, final Long revision,
+	public List<String> mergeAuditTrails(long projectId, final Long revision,
 			List<Merge> merges) throws SQLException {
-		final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
-				conn).newProject();
-		projectRecord.setName(project);
-		if (!projectRecord.select()) {
-			projectRecord.insert();
-		}
 		final List<String> trails = new ArrayList<String>(merges.size());
 		for (Merge merge : merges) {
 			final Match match = merge.getMatch();
@@ -225,7 +225,7 @@ public final class ServerFindingManager extends FindingManager {
 				matchId.setFindingTypeId(findingTypeId);
 				matchId.setHash(match.getHash());
 				matchId.setPackageName(match.getPackageName());
-				matchId.setProjectId(projectRecord.getId());
+				matchId.setProjectId(projectId);
 			} else {
 				throw new IllegalArgumentException("No finding type with id "
 						+ match.getFindingType() + " is present.");
@@ -238,7 +238,7 @@ public final class ServerFindingManager extends FindingManager {
 				FindingRecord findingRecord = factory.newFinding();
 				uuid = UUID.randomUUID().toString();
 				findingRecord.setUid(uuid);
-				findingRecord.setProjectId(projectRecord.getId());
+				findingRecord.setProjectId(projectId);
 				findingRecord.setSummary(merge.getSummary());
 				findingRecord.setImportance(merge.getImportance());
 				findingRecord.insert();
