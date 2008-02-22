@@ -4,9 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
@@ -105,8 +106,12 @@ public class ProjectOverviewServiceImpl extends SierraServiceServlet implements
 								if (lastSynchSet.next()) {
 									po.setLastSynchUser(lastSynchSet
 											.getString(1));
-									po.setLastSynchDate(new Date(lastSynchSet
-											.getTimestamp(2).getTime()));
+									DateFormat format = new SimpleDateFormat();
+									po
+											.setLastSynchDate(format
+													.format(lastSynchSet
+															.getTimestamp(2)
+															.getTime()));
 								}
 							} finally {
 								lastSynchSet.close();
