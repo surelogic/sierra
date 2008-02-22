@@ -41,13 +41,19 @@ a.hover {
 
 .header-session {
 	color: #FFFFFF;
-	margin: 5px;
+	margin-right: 5px;
+	margin-top: 5px;
 }
 
 .header-session-clickable {
 	text-decoration:underline;
 	cursor: pointer;
 	cursor: hand;
+}
+
+.header-user {
+	color: 	#FF7010;
+	font-weight: bold;
 }
 
 
@@ -180,8 +186,8 @@ a.hover {
 
 .gwt-TabBar {
   background-color: #005495;
-  font-size: large;
-  font-weight: bold;
+  font-size: medium;
+  font-weight: normal;
   text-align: center;
   color: white;
 }

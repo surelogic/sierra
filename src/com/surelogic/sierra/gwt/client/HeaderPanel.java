@@ -32,6 +32,7 @@ public final class HeaderPanel extends Composite {
 	private final HorizontalPanel headerRow = new HorizontalPanel();
 	private final HorizontalPanel sessionPanel = new HorizontalPanel();
 	private final Label loggedInAs;
+	private final Label userName;
 	private final TabBar mainBar = new TabBar();
 	private final List tabContextNames = new ArrayList();
 
@@ -53,7 +54,10 @@ public final class HeaderPanel extends Composite {
 
 		sessionPanel.addStyleName(SESSION_STYLE);
 		loggedInAs = createUserLabel("Logged In", null);
+		userName = createUserLabel(null, null);
+		userName.addStyleName("header-user");
 		sessionPanel.add(loggedInAs);
+		sessionPanel.add(userName);
 		sessionPanel.add(createUserLabel("|", null));
 		sessionPanel.add(createUserLabel("Log out", new ClickListener() {
 
@@ -128,8 +132,8 @@ public final class HeaderPanel extends Composite {
 				headerRow.setCellHorizontalAlignment(sessionPanel,
 						HorizontalPanel.ALIGN_RIGHT);
 			}
-			loggedInAs.setText("Logged in as " + user.getUserName());
-
+			loggedInAs.setText("Logged in as ");
+			userName.setText(user.getUserName());
 			if (rootPanel.getWidgetIndex(mainBar) == -1) {
 				rootPanel.add(mainBar);
 			}
