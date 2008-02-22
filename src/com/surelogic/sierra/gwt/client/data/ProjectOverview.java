@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class ProjectOverview implements Serializable {
 
