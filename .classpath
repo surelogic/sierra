@@ -2,16 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/commons-cli-1.1/commons-cli-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.core.contenttype_3.2.100.v20070319.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.core.jobs_3.3.0.v20070423.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.core.resources_3.3.0.v20070604.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.core.runtime_3.3.100.v20070530.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.equinox.common_3.3.0.v20070426.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.equinox.preferences_3.2.100.v20070522.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.jdt.core_3.3.0.v_771.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.osgi_3.3.0.v20070530.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.osgi.services_3.1.200.v20070605.jar"/>
-	<classpathentry exported="true" kind="lib" path="Tools/reckoner/lib/org.eclipse.osgi.util_3.1.200.v20070605.jar"/>
 	<classpathentry exported="true" kind="lib" path="Tools/reckoner/reckoner.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

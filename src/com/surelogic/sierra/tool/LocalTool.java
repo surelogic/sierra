@@ -108,7 +108,42 @@ public class LocalTool extends AbstractTool {
       // TODO Auto-generated method stub
       
     }
+    
+    private Set<String> usedPlugins = new HashSet<String>();
+    
+    private String getPluginDir(final boolean debug, final String pluginId) {
+      final String pluginDir = config.getPluginDir(pluginId);
+      if (debug) {
+        LOG.fine(pluginId+" = "+pluginDir);
+      }
+      usedPlugins.add(pluginId);
+      return pluginDir;
+    }
+    
+    private void addPluginToPath(final boolean debug, Project proj, Path path,
+                                 final String pluginId) {
+      final String pluginDir = getPluginDir(debug, pluginId);
+      if (pluginDir.endsWith(".jar")) {
+        path.add(new Path(proj, pluginDir)); // as plugin
+      } else {
+        path.add(new Path(proj, pluginDir+"/bin")); // in workspace
+      }
+    }
 
+    private void addPluginJarsToPath(final boolean debug, Project proj, Path path,
+                                     final String pluginId, String... jars) {
+      final String pluginDir = getPluginDir(debug, pluginId);
+      for(String jar : jars) {
+        path.add(new Path(proj, pluginDir+'/'+jar));
+      }
+    }
+    
+    private void addAllPluginJarsToPath(final boolean debug, Project proj, Path path,
+        final String pluginId, String libPath) {
+      final String pluginDir = getPluginDir(debug, pluginId);
+      findJars(proj, path, pluginDir+'/'+libPath);
+    }
+    
     public void run() {
       final boolean debug = LOG.isLoggable(Level.FINE);
       Project proj = new Project();
@@ -121,51 +156,31 @@ public class LocalTool extends AbstractTool {
       }
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
-      final String common = config.getPluginDir(SierraToolConstants.COMMON_PLUGIN_ID);
-      if (debug) {
-        LOG.fine("common = "+common);
-      }
-      if (common.endsWith(".jar")) {
-        path.add(new Path(proj, common)); // as plugin
-      } else {
-        path.add(new Path(proj, common+"/bin")); // in workspace
-      }
-      path.add(new Path(proj, config.getToolsDirectory().getParent())); // as plugin
-      path.add(new Path(proj, config.getToolsDirectory().getParent()+"/bin")); // in workspace
-
-      final String message = config.getPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID);
-      if (debug) {
-        LOG.fine("message = "+message);
-      }
-      path.add(new Path(proj, message)); // as plugin
-      path.add(new Path(proj, message+"/bin")); // in workspace
+      addPluginToPath(debug, proj, path, SierraToolConstants.COMMON_PLUGIN_ID);
+      addPluginToPath(debug, proj, path, SierraToolConstants.TOOL_PLUGIN_ID);
+      addPluginToPath(debug, proj, path, SierraToolConstants.MESSAGE_PLUGIN_ID);
       
       // JAXB is included in Java 6 and beyond
       if (SystemUtils.IS_JAVA_1_5) {     
-        final String jaxb = config.getPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID);
-        findJars(proj, path, jaxb+"/lib/jaxb");
+        addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.JAVA5_PLUGIN_ID, "lib/jaxb");
       }
-      
-      final String pmd = config.getPluginDir(SierraToolConstants.PMD_PLUGIN_ID);
-      if (debug) {
-        LOG.fine("pmd = "+pmd);
-      }
-      findJars(proj, path, new File(pmd+"/lib"));
-      final String fb = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
-      if (debug) {
-        LOG.fine("fb = "+fb);
-      }
-      findJars(proj, path, new File(fb+"/lib"));
+      addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.PMD_PLUGIN_ID, "lib");
+      addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.FB_PLUGIN_ID, "lib");      
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
                                        "reckoner/reckoner.jar").getAbsolutePath()));
-
-      final String junit4 = config.getPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID);
-      path.add(new Path(proj, junit4+"/junit.jar"));
-      path.add(new Path(proj, junit4+"/junit-4.1.jar"));
+      addPluginJarsToPath(debug, proj, path, SierraToolConstants.JUNIT4_PLUGIN_ID,
+                          "junit.jar", "junit-4.1.jar");
+      addPluginJarsToPath(debug, proj, path, SierraToolConstants.JUNIT_PLUGIN_ID,
+                          "junit.jar");
+      // Add all the plugins needed by Reckoner (e.g. JDT Core and company)
+      for(String id : config.getPluginDirs().keySet()) {
+        if (usedPlugins.contains(id)) {
+          continue;
+        }
+        addPluginToPath(debug, proj, path, id);
+      }
       
-      final String junit = config.getPluginDir(SierraToolConstants.JUNIT_PLUGIN_ID);
-      path.add(new Path(proj, junit+"/junit.jar"));
       if (debug) {
         for(String p : path.list()) {
           if (!new File(p).exists()) {
