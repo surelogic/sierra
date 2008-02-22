@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="/jetty/lib/servlet-api-2.5-6.1.7.jar"/>
 	<classpathentry kind="lib" path="lib/gwt-servlet.jar" sourcepath="lib/gwt-servlet.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
