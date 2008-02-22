@@ -53,10 +53,10 @@ public class UserManagementContent extends ContentComposite {
 		});
 		usersPanel.add(userActionsPanel);
 
-		usersGridPanel.addGridAction("Delete selected", new ClickListener() {
+		usersGridPanel.addGridAction("Disable selected", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				deleteUsers();
+				disableUsers();
 			}
 		});
 
@@ -150,13 +150,13 @@ public class UserManagementContent extends ContentComposite {
 		dialog.center();
 	}
 
-	private void deleteUsers() {
+	private void disableUsers() {
 		usersGrid.clearStatus();
 		if (usersGrid.hasSelected()) {
-			if (Window.confirm("Delete all selected users?")) {
+			if (Window.confirm("Disable all selected users?")) {
 
-				// TODO delete all selected users
-				Window.alert("TODO: Delete all selected users");
+				// TODO disable all selected users
+				Window.alert("TODO: Disable all selected users");
 			}
 		} else {
 			Window.alert("No users selected");
@@ -169,9 +169,6 @@ public class UserManagementContent extends ContentComposite {
 		final UserAccount account = (UserAccount) usersGrid.getRowData(row);
 		if (account != null) {
 			account.setUserName(newValue);
-			// TODO add ID field to UserAccount
-			Window
-					.alert("This will not work until UserAccount has an ID field");
 			ServiceHelper.getManageUserService().updateUser(account, null,
 					new AsyncCallback() {
 

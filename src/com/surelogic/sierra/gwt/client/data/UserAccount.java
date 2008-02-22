@@ -5,6 +5,7 @@ import java.io.Serializable;
 public final class UserAccount implements Serializable {
 	private static final long serialVersionUID = 6808103119746833312L;
 
+	private long id;
 	private String userName;
 	private boolean isAdministrator;
 
@@ -12,10 +13,19 @@ public final class UserAccount implements Serializable {
 		super();
 	}
 
-	public UserAccount(String user, boolean isAdministrator) {
+	public UserAccount(long id, String user, boolean isAdministrator) {
 		super();
+		this.id = id;
 		this.userName = user;
 		this.isAdministrator = isAdministrator;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getUserName() {

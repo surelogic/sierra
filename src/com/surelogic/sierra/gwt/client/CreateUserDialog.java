@@ -98,7 +98,6 @@ public class CreateUserDialog extends DialogBox {
 		} else if (!passText.equals(passTextAgain)) {
 			setErrorMessage("Password mismatch. Please re-type passwords.");
 		} else {
-			// TODO add admin setting
 			final UserAccount account = new UserAccount();
 			account.setAdministrator(isAdmin.isChecked());
 			account.setUserName(userText);
