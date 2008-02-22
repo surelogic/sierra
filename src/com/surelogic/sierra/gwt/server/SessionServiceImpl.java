@@ -72,7 +72,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						final String userName = user.getName();
-						return new UserAccount(userName, man.isUserInGroup(
+						return new UserAccount(user.getId(), userName, man.isUserInGroup(
 								userName, SierraGroup.ADMIN.getName()));
 					}
 				});

@@ -95,9 +95,13 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					User serverUser) throws SQLException {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
-				// TODO can't retrieve a User object from a username yet
-				return new UserAccount(targetUser, man.isUserInGroup(
-						targetUser, SierraGroup.ADMIN.getName()));
+				List<User> users = man.findUser(targetUser);
+				for (User user : users) {
+					if (user.getName().equals(targetUser)) {
+						return convertUser(man, user);
+					}
+				}
+				return null;
 			}
 		});
 	}
@@ -111,6 +115,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
+				man.changeUserName(account.getId(), account.getUserName());
 				if (password != null) {
 					man.changeUserPassword(targetUserName, password);
 				}
@@ -175,6 +180,6 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		final String userName = u.getName();
 		boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
 				.getName());
-		return new UserAccount(userName, isAdmin);
+		return new UserAccount(u.getId(), userName, isAdmin);
 	}
 }
