@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
+import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierManager;
+import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -120,6 +122,13 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
 			public Void perform(Connection conn, Server server, User user)
 					throws Exception {
+				final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
+						conn).newProject();
+				projectRecord.setName(project);
+				if (!projectRecord.select()) {
+					projectRecord.insert();
+				}
+				final long projectId = projectRecord.getId();
 				final long revision = server.nextRevision();
 				final List<Merge> merges = new ArrayList<Merge>(trails.size());
 				final List<AuditTrail> audits = new ArrayList<AuditTrail>(
@@ -132,13 +141,13 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				}
 				final ServerFindingManager man = ServerFindingManager
 						.getInstance(conn);
-				final List<String> uids = man.mergeAuditTrails(project,
+				final List<String> uids = man.mergeAuditTrails(projectId,
 						revision, merges);
 				final Iterator<AuditTrail> auditIter = audits.iterator();
 				for (String uid : uids) {
 					auditIter.next().setFinding(uid);
 				}
-				man.commitAuditTrails(user.getId(), revision, audits);
+				man.commitAuditTrails(projectId, user.getId(), revision, audits);
 				return null;
 			}
 		};
