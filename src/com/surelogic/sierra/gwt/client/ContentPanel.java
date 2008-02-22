@@ -24,10 +24,10 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		rootPanel.setHeight("100%");
 
 		// register Content instances here
+		registerContent(ProjectOverviewContent.getInstance());
 		registerContent(ServerSettingsContent.getInstance());
 		registerContent(UserManagementContent.getInstance());
 		registerContent(ChangePasswordContent.getInstance());
-
 		ClientContext.addChangeListener(this);
 	}
 

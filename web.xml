@@ -27,47 +27,47 @@
 		<param-value>Use Sierra Directory</param-value>
 	</context-param>
 
-<!--
-	<filter>
+	<!--
+		<filter>
 		<description>Form-based login mechanism</description>
 		<filter-name>Security Filter</filter-name>
 		<filter-class>
-			com.surelogic.sierra.jdbc.server.FormSecurityFilter
+		com.surelogic.sierra.jdbc.server.FormSecurityFilter
 		</filter-class>
-	</filter>
-
-	<filter-mapping>
+		</filter>
+		
+		<filter-mapping>
 		<filter-name>Security Filter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
--->
+		</filter-mapping>
+	-->
 
-<!--
-	<servlet>
+	<!--
+		<servlet>
 		<servlet-name>Server Login</servlet-name>
 		<servlet-class>
-			com.surelogic.sierra.jdbc.server.UserLoginServlet
+		com.surelogic.sierra.jdbc.server.UserLoginServlet
+		</servlet-class>
+		</servlet>
+		
+		<servlet-mapping>
+		<servlet-name>Server Login</servlet-name>
+		<url-pattern>/login</url-pattern>
+		</servlet-mapping>
+	-->
+
+	<servlet>
+		<servlet-name>Session Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.gwt.server.SessionServiceImpl
 		</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Server Login</servlet-name>
-		<url-pattern>/login</url-pattern>
+		<servlet-name>Session Service</servlet-name>
+		<url-pattern>/SessionService</url-pattern>
 	</servlet-mapping>
--->
 
-    <servlet>
-        <servlet-name>Session Service</servlet-name>
-        <servlet-class>
-            com.surelogic.sierra.gwt.server.SessionServiceImpl
-        </servlet-class>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>Session Service</servlet-name>
-        <url-pattern>/SessionService</url-pattern>
-    </servlet-mapping>
-    
 	<servlet>
 		<servlet-name>Manage Server</servlet-name>
 		<servlet-class>
@@ -91,7 +91,7 @@
 		<servlet-name>Manage User</servlet-name>
 		<url-pattern>/ManageUserService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Manage Prefs</servlet-name>
 		<servlet-class>
@@ -102,6 +102,19 @@
 	<servlet-mapping>
 		<servlet-name>Manage Prefs</servlet-name>
 		<url-pattern>/ManagePrefsService</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>Project Overview</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.gwt.server.ProjectOverviewServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Project Overview</servlet-name>
+		<url-pattern>/ProjectOverviewService</url-pattern>
 	</servlet-mapping>
 
 </web-app>

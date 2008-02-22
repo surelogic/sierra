@@ -43,6 +43,15 @@ public final class ServiceHelper {
 				+ "ManagePrefsService");
 		return serverService;
 	}
+	
+	public static ProjectOverviewServiceAsync getProjectOverviewService() {
+		ProjectOverviewServiceAsync serverService = (ProjectOverviewServiceAsync) GWT
+				.create(ProjectOverviewService.class);
+		ServiceDefTarget endpoint = (ServiceDefTarget) serverService;
+		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL()
+				+ "ProjectOverviewService");
+		return serverService;
+	}
 
 	private ServiceHelper() {
 
