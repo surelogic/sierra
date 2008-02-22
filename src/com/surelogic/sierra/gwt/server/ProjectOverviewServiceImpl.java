@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
@@ -94,16 +95,18 @@ public class ProjectOverviewServiceImpl extends SierraServiceServlet implements
 										+ "FROM COMMIT_AUDITS CA, SIERRA_USER SU, REVISION R "
 										+ "WHERE CA.PROJECT_ID = (SELECT ID FROM PROJECT WHERE NAME = ?) AND "
 										+ "CA.REVISION = (SELECT MAX(REVISION) FROM COMMIT_AUDITS WHERE PROJECT_ID = (SELECT ID FROM PROJECT WHERE NAME = ?)) "
-										+ "AND SU.USER_ID = CA.USER_ID AND R.REVISION = CA.REVISION");
+										+ "AND SU.ID = CA.USER_ID AND R.REVISION = CA.REVISION");
 						for (ProjectOverview po : overview) {
 							lastSynchSt.setString(1, po.getName());
 							lastSynchSt.setString(2, po.getName());
-							final ResultSet lastSynchSet = lastSynchSt.executeQuery();
+							final ResultSet lastSynchSet = lastSynchSt
+									.executeQuery();
 							try {
 								if (lastSynchSet.next()) {
-									po.setLastSynchUser(lastSynchSet.getString(1));
-									po.setLastSynchDate(lastSynchSet
-											.getTimestamp(2));
+									po.setLastSynchUser(lastSynchSet
+											.getString(1));
+									po.setLastSynchDate(new Date(lastSynchSet
+											.getTimestamp(2).getTime()));
 								}
 							} finally {
 								lastSynchSet.close();
