@@ -215,14 +215,14 @@ public final class Activator extends AbstractUIPlugin {
         if (id.indexOf('=') >= 0 || id.indexOf('"') >= 0) {
           // Ignore any property stuff
           // (e.g. version info)
-          System.out.println("Ignoring: "+id);
+          //System.out.println("Ignoring: "+id);
           continue;        
         }
         lastId = id;
         ids.add(id);      
       }
       for(String id : ids) {
-        System.out.println("Considering: "+id);
+        //System.out.println("Considering: "+id);
         if (checked.contains(id)) {
           continue;
         }
