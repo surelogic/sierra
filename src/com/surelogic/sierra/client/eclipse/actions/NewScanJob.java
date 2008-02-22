@@ -37,7 +37,7 @@ public class NewScanJob extends WorkspaceJob {
 		SLLogger.getLogger().fine(this.getName());
 		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
 		try {
-			ToolUtil.scan(config, wrapper, false);
+			ToolUtil.scan(config, wrapper, true);
 
 			if (afterJob != null) {
 				afterJob.schedule();
