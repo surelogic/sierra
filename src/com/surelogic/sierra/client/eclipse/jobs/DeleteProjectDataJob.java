@@ -91,14 +91,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			b.append("data from your Eclipse workspace?");
 		}
 		if (MessageDialog.openConfirm(shell, title, b.toString())) {
-			/*
-			 * Because this job can be run from a modal dialog we need to manage
-			 * showing its progress ourselves. Therefore, this job is not a
-			 * typical workspace job.
-			 */
-			final DeleteProjectDataJob projectDelete = new DeleteProjectDataJob(
+			final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
 					projectNames);
-			projectDelete.runJob();
+			deleteProjectJob.runJob();
 		}
 	}
 
