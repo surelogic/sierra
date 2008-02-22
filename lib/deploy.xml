@@ -53,13 +53,13 @@
 
 	<!-- JAXB is not included in Java 5 JREs so we have to add it -->
 	<target name="deploy-missing-java-5-libs">
-		<copy file="../sierra-message/jaxb/activation.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/jaxb-api.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/jaxb-impl.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/jaxb-xjc.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/jaxb1-impl.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/jsr173_1.0_api.jar" todir="../jetty/lib/ext/" />
-		<copy file="../sierra-message/jaxb/sjsxp.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/activation.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/jaxb-api.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/jaxb-impl.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/jaxb-xjc.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/jaxb1-impl.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/jsr173_1.0_api.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-java5-compatibility/lib/jaxb/sjsxp.jar" todir="../jetty/lib/ext/" />
 	</target>
 
 	<target name="undeploy-site" depends="undeploy-team-server, undeploy-root" />
