@@ -119,22 +119,60 @@ public class LocalTool extends AbstractTool {
       usedPlugins.add(pluginId);
       return pluginDir;
     }
+    private void addToPath(Project proj, Path path, String name) {
+      addToPath(proj, path, name, true);
+    }
+    
+    private boolean addToPath(Project proj, Path path, String name, boolean required) {
+      final File f = new File(name);
+      final boolean exists = f.exists();
+      if (!exists) {
+        if (required) {
+          throw new IllegalArgumentException("Does not exist: "+name);
+        }
+      } else {
+        path.add(new Path(proj, name));
+      }
+      return exists;
+    }
     
     private void addPluginToPath(final boolean debug, Project proj, Path path,
-                                 final String pluginId) {
+        final String pluginId) {
+      addPluginToPath(debug, proj, path, pluginId, false);
+    }
+    
+    private void addPluginToPath(final boolean debug, Project proj, Path path,
+                                 final String pluginId, boolean unpacked) {
       final String pluginDir = getPluginDir(debug, pluginId);
-      if (pluginDir.endsWith(".jar")) {
-        path.add(new Path(proj, pluginDir)); // as plugin
+      if (unpacked) {
+        boolean workspaceExists = addToPath(proj, path, pluginDir+"/bin", false); // in workspace
+        if (!workspaceExists) {
+          addToPath(proj, path, pluginDir); // as plugin
+        }
+      }
+      else if (pluginDir.endsWith(".jar")) {
+        addToPath(proj, path, pluginDir); // as plugin
       } else {
-        path.add(new Path(proj, pluginDir+"/bin")); // in workspace
+        addToPath(proj, path, pluginDir+"/bin"); // in workspace
       }
     }
 
     private void addPluginJarsToPath(final boolean debug, Project proj, Path path,
                                      final String pluginId, String... jars) {
+      addPluginJarsToPath(debug, proj, path, pluginId, false, jars);
+    }
+    
+    /**
+     * @param exclusive If true, try each of the jars in sequence until one exists
+     */
+    private void addPluginJarsToPath(final boolean debug, Project proj, Path path,
+                                     final String pluginId, boolean exclusive, String... jars) {
       final String pluginDir = getPluginDir(debug, pluginId);
       for(String jar : jars) {
-        path.add(new Path(proj, pluginDir+'/'+jar));
+        boolean exists = addToPath(proj, path, pluginDir+'/'+jar, !exclusive);
+        if (exclusive && exists) {
+          return;
+        }
       }
     }
     
@@ -157,7 +195,8 @@ public class LocalTool extends AbstractTool {
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
       Path path = cmdj.createClasspath(proj);
       addPluginToPath(debug, proj, path, SierraToolConstants.COMMON_PLUGIN_ID);
-      addPluginToPath(debug, proj, path, SierraToolConstants.TOOL_PLUGIN_ID);
+      // sierra-tool needs special handling since it is unpacked, due to Reckoner (and other tools)
+      addPluginToPath(debug, proj, path, SierraToolConstants.TOOL_PLUGIN_ID, true);
       addPluginToPath(debug, proj, path, SierraToolConstants.MESSAGE_PLUGIN_ID);
       
       // JAXB is included in Java 6 and beyond
@@ -169,7 +208,7 @@ public class LocalTool extends AbstractTool {
       findJars(proj, path, new File(config.getToolsDirectory(), "reckoner/lib"));
       path.add(new Path(proj, new File(config.getToolsDirectory(), 
                                        "reckoner/reckoner.jar").getAbsolutePath()));
-      addPluginJarsToPath(debug, proj, path, SierraToolConstants.JUNIT4_PLUGIN_ID,
+      addPluginJarsToPath(debug, proj, path, SierraToolConstants.JUNIT4_PLUGIN_ID, true,
                           "junit.jar", "junit-4.1.jar");
       addPluginJarsToPath(debug, proj, path, SierraToolConstants.JUNIT_PLUGIN_ID,
                           "junit.jar");
@@ -181,6 +220,7 @@ public class LocalTool extends AbstractTool {
         addPluginToPath(debug, proj, path, id);
       }
       
+      // TODO convert into error if things are really missing
       if (debug) {
         for(String p : path.list()) {
           if (!new File(p).exists()) {
@@ -195,9 +235,9 @@ public class LocalTool extends AbstractTool {
         }
       }
       if (debug) {
-        LOG.fine("Starting process:");
+        System.out.println("Starting process:");
         for(String arg : cmdj.getCommandline()) {
-          LOG.fine("\t"+arg);
+          System.out.println("\t"+arg);
         }
       }
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
