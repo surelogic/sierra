@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import com.surelogic.common.base64.Base64;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
@@ -164,7 +165,8 @@ public final class SierraServer {
 			b.append("login?SierraAuthName=");
 			b.append(URLEncoder.encode(getUser(), ENCODING));
 			b.append("&SierraAuthPass=");
-			b.append(URLEncoder.encode(getPassword(), ENCODING));
+			final String base64Password = Base64.encodeObject(getPassword());
+			b.append(URLEncoder.encode(base64Password, ENCODING));
 		}
 		SLLogger.getLogger().fine("getAuthorizedURL() = " + b.toString());
 		final URI uri = new URI(b.toString());
