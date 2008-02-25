@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -61,12 +63,20 @@ public class UserManagementContent extends ContentComposite {
 		usersGridPanel.addGridAction("Disable selected", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				disableUsers();
+				changeUsersStatus(false);
+			}
+		});
+		usersGridPanel.addGridAction("Enable selected", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				changeUsersStatus(true);
 			}
 		});
 
-		usersGrid.setColumn(0, "Name", "30%");
-		usersGrid.setColumn(1, "Role", "70%");
+		usersGrid.setColumn(0, "Name", "25%");
+		usersGrid.setColumn(1, "Role", "25%");
+		usersGrid.setColumn(2, "Status", "25%");
+		usersGrid.setColumn(3, "Password", "25%");
 		usersPanel.add(usersGridPanel);
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
@@ -136,7 +146,22 @@ public class UserManagementContent extends ContentComposite {
 	private void updateRow(int row, UserAccount user) {
 		usersGrid.setText(row, 0, user.getUserName());
 		usersGrid.setWidget(row, 1, createUserListBox(row, user));
+		usersGrid.setText(row, 2, user.isActive() ? "Enabled" : "Disabled");
+		usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
 		usersGrid.setRowData(row, user);
+	}
+
+	private HTML createPasswordChanger(final int row, final UserAccount user) {
+		HTML html = new HTML("Change");
+		html.setStyleName("clickable");
+		html.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				usersGrid.clearStatus();
+				final ChangePasswordDialog dialog = new ChangePasswordDialog(user);
+				dialog.center();
+			}
+		});
+		return html;
 	}
 
 	private ListBox createUserListBox(final int row, final UserAccount user) {
@@ -183,13 +208,35 @@ public class UserManagementContent extends ContentComposite {
 		dialog.center();
 	}
 
-	private void disableUsers() {
+	private void changeUsersStatus(final boolean activate) {
 		usersGrid.clearStatus();
 		if (usersGrid.hasSelected()) {
-			if (Window.confirm("Disable all selected users?")) {
+			if (Window.confirm((activate ? "Enable" : "Disable")
+					+ " all selected users?")) {
+				final List names = new ArrayList();
+				for (int i = 0; i < usersGrid.getRowCount(); i++) {
+					if (usersGrid.isSelected(i)) {
+						UserAccount account = (UserAccount) usersGrid
+								.getRowData(i);
+						if (activate != account.isActive()) {
+							account.setActive(activate);
+							names.add(account.getUserName());
+						}
+					}
+				}
+				ServiceHelper.getManageUserService().updateUsersStatus(names,
+						activate, new AsyncCallback() {
 
-				// TODO disable all selected users
-				Window.alert("TODO: Disable all selected users");
+							public void onFailure(Throwable caught) {
+								usersGrid.setStatus("error", "Could not "
+										+ (activate ? "enable" : "disable")
+										+ " users.");
+							}
+
+							public void onSuccess(Object result) {
+								refreshUsers();
+							}
+						});
 			}
 		} else {
 			Window.alert("No users selected");

@@ -55,10 +55,15 @@ public interface ManageUserAdminService extends RemoteService {
 	UserAccount updateUser(UserAccount account, String password);
 
 	/**
-	 * Delete and existing user.
+	 * Update the status of a list of users. User passwords cannot currently be updated in a
+	 * batch.
 	 * 
-	 * @param user
-	 * @return true if the user was successfully deleted
+	 * @gwt.typeArgs users <java.lang.String>
+	 * 
+	 * @param account
+	 *            the user's updated account info
+	 * @return
 	 */
-	boolean deleteUser(String user);
+	void updateUsersStatus(List users, boolean status);
+
 }

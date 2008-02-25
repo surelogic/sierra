@@ -8,16 +8,18 @@ public final class UserAccount implements Serializable {
 	private long id;
 	private String userName;
 	private boolean isAdministrator;
+	private boolean isActive;
 
 	public UserAccount() {
 		super();
 	}
 
-	public UserAccount(long id, String user, boolean isAdministrator) {
+	public UserAccount(long id, String user, boolean isAdministrator, boolean isActive) {
 		super();
 		this.id = id;
 		this.userName = user;
 		this.isAdministrator = isAdministrator;
+		this.isActive = isActive;
 	}
 
 	public long getId() {
@@ -42,6 +44,14 @@ public final class UserAccount implements Serializable {
 
 	public void setAdministrator(boolean isAdministrator) {
 		this.isAdministrator = isAdministrator;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }
