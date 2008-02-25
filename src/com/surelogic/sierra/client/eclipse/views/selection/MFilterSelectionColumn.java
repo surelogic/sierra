@@ -7,10 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -104,6 +101,19 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_graphColumn.setWidth(75);
 				f_graphColumn.setToolTipText("# of applicable findings with the given value");
 				f_reportContents.setBackground(f_reportGroup.getBackground());
+				f_reportContents.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            if (valueList == null || valueList.isEmpty()) {
+              Color focused = 
+                f_reportContents.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+              f_totalCount.setBackground(focused); 
+            }
+          }
+          public void focusLost(FocusEvent e) {
+            f_totalCount.setBackground(null);           
+          }				  
+				});
+				
 				f_reportContents.addKeyListener(new KeyListener() {
           public void keyPressed(KeyEvent e) {
             MColumn column = null;
