@@ -163,14 +163,28 @@ public final class ServerUserManager {
 		}
 	}
 
+	/**
+	 * Change the given user's name. If the user with the given id already has
+	 * that user name, does nothing.
+	 * 
+	 * @param id
+	 * @param newUserName
+	 * @throws SQLException
+	 * @throws IllegalArgumentException
+	 *             if another user already has that name
+	 */
 	public void changeUserName(long id, String newUserName) throws SQLException {
-		if (newUserName == null || newUserName.length() == 0
-				|| getUser(newUserName) != null) {
-			throw new IllegalArgumentException("Invalid  new user name.");
+		if (newUserName != null && newUserName.length() != 0) {
+			final UserRecord user = getUser(newUserName);
+			if (user == null) {
+				updateUserName.setString(1, newUserName);
+				updateUserName.setLong(2, id);
+				updateUserName.execute();
+			} else if (!newUserName.equals(user.getUserName())) {
+				throw new IllegalArgumentException("User name already taken.");
+			}
 		} else {
-			updateUserName.setString(1, newUserName);
-			updateUserName.setLong(2, id);
-			updateUserName.execute();
+			throw new IllegalArgumentException("Invalid  new user name.");
 		}
 	}
 
