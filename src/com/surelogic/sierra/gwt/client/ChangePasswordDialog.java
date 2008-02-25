@@ -56,7 +56,6 @@ public class ChangePasswordDialog extends DialogBox {
 		rootPanel.add(buttonPanel);
 		rootPanel.setCellHorizontalAlignment(buttonPanel,
 				VerticalPanel.ALIGN_RIGHT);
-
 		setWidget(rootPanel);
 	}
 
@@ -85,7 +84,7 @@ public class ChangePasswordDialog extends DialogBox {
 		final String passText = password.getText();
 		final String passTextAgain = passwordAgain.getText();
 		if (!passText.equals(passTextAgain)) {
-			setErrorMessage("Password mismatch. Please re-type passwords.");
+			setErrorMessage("Password mismatch. Please ensure both passwords match.");
 		} else {
 			ServiceHelper.getManageUserService().updateUser(user, passText,
 

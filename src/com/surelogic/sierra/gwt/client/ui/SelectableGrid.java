@@ -120,10 +120,15 @@ public class SelectableGrid extends Composite {
 	}
 
 	public int addRow() {
-		int gridRow = grid.getRowCount();
+		final int gridRow = grid.getRowCount();
 
 		if (rowSelection) {
-			grid.setWidget(gridRow, 0, new CheckBox());
+			CheckBox c = new CheckBox();
+			c.addClickListener(new ClickListener() {
+				public void onClick(Widget sender) {
+					fireSelectionEvent(gridRow);
+				}});
+			grid.setWidget(gridRow, 0, c);
 		}
 		grid.getRowFormatter()
 				.addStyleName(gridRow, PRIMARY_STYLE + "-itemrow");
@@ -231,6 +236,7 @@ public class SelectableGrid extends Composite {
 			CheckBox rowCheckBox = (CheckBox) grid.getWidget(toGridRow(row), 0);
 			rowCheckBox.setChecked(selected);
 		}
+		fireSelectionEvent(row);
 	}
 
 	public void setStatus(Widget widget) {
@@ -262,6 +268,14 @@ public class SelectableGrid extends Composite {
 		}
 	}
 
+	public void fireSelectionEvent(int row) {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			SelectableGridListener listener = (SelectableGridListener) it
+					.next();
+			listener.onSelect(row, getRowData(row));
+		}
+	}
+	
 	public void fireHeaderClickEvent(int column) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it

@@ -11,4 +11,5 @@ public interface SelectableGridListener {
 	Object onChange(Widget source, int row, int column, Object oldValue,
 			Object newValue);
 
+	void onSelect(int row, Object rowData);
 }

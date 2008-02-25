@@ -59,7 +59,7 @@ public class UserManagementContent extends ContentComposite {
 
 		});
 		usersPanel.add(userActionsPanel);
-
+		usersGridPanel.setEnabled(false);
 		usersGridPanel.addGridAction("Disable selected", new ClickListener() {
 
 			public void onClick(Widget sender) {
@@ -72,7 +72,6 @@ public class UserManagementContent extends ContentComposite {
 				changeUsersStatus(true);
 			}
 		});
-
 		usersGrid.setColumn(0, "Name", "25%");
 		usersGrid.setColumn(1, "Role", "25%");
 		usersGrid.setColumn(2, "Status", "25%");
@@ -98,6 +97,16 @@ public class UserManagementContent extends ContentComposite {
 
 			public void onHeaderClick(Widget source, int column) {
 			}
+
+			public void onSelect(int row, Object rowData) {
+				usersGridPanel.setEnabled(false);
+				for (int i = 0; i < usersGrid.getRowCount(); i++) {
+					if (usersGrid.isSelected(i)) {
+						usersGridPanel.setEnabled(true);
+					}
+				}
+			}
+
 		});
 
 	}
@@ -157,7 +166,8 @@ public class UserManagementContent extends ContentComposite {
 		html.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				usersGrid.clearStatus();
-				final ChangePasswordDialog dialog = new ChangePasswordDialog(user);
+				final ChangePasswordDialog dialog = new ChangePasswordDialog(
+						user);
 				dialog.center();
 			}
 		});
