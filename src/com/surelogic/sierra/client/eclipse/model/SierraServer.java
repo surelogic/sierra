@@ -165,7 +165,8 @@ public final class SierraServer {
 			b.append("login?SierraAuthName=");
 			b.append(URLEncoder.encode(getUser(), ENCODING));
 			b.append("&SierraAuthPass=");
-			final String base64Password = Base64.encodeObject(getPassword());
+			final String base64Password = Base64.encodeBytes(getPassword()
+					.getBytes("UTF-8"));
 			b.append(URLEncoder.encode(base64Password, ENCODING));
 		}
 		SLLogger.getLogger().fine("getAuthorizedURL() = " + b.toString());
