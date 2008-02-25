@@ -91,7 +91,7 @@ public final class SierraServersView extends ViewPart {
                      SLImages.IMG_SIERRA_SCAN);
     
     final MenuItem rescanAllConnectedProjects = 
-      createMenuItem(serverListMenu, "Re-scan All Connected Projects",
+      createMenuItem(serverListMenu, "Re-Scan All Connected Projects",
                      SLImages.IMG_SIERRA_SCAN_DELTA);
 		
 		final MenuItem synchAllConnectedProjects = 
@@ -196,7 +196,7 @@ public final class SierraServersView extends ViewPart {
     final MenuItem scanProjectItem = 
       createMenuItem(projectListMenu, "Scan", SLImages.IMG_SIERRA_SCAN);
     final MenuItem rescanProjectItem = 
-      createMenuItem(projectListMenu, "Re-scan", SLImages.IMG_SIERRA_SCAN_DELTA);
+      createMenuItem(projectListMenu, "Re-Scan", SLImages.IMG_SIERRA_SCAN_DELTA);
 		final MenuItem disconnectProjectItem = 
 		  createMenuItem(projectListMenu, "Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 		projectList.setMenu(projectListMenu);
