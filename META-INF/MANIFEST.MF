@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sierra PMD Integration
 Bundle-SymbolicName: com.surelogic.sierra.pmd
-Bundle-Version: 4.1.0.qualifier
+Bundle-Version: 4.1.0
 Bundle-ClassPath: lib/pmd-4.1-sl.jar,
  .,
  lib/asm-3.1.jar,
