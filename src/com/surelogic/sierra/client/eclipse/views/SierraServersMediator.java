@@ -72,6 +72,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 	final Label f_serverURL;
 	final Table f_projectList;
 	final MenuItem f_connectProjectItem;
+	final MenuItem f_scanProjectItem;
+	final MenuItem f_rescanProjectItem;
 	final MenuItem f_disconnectProjectItem;
 
 	private class ServerActionListener implements Listener {
@@ -145,45 +147,51 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	}
 
-	private abstract class IJavaProjectsActionListener extends
-			ServerProjectActionListener {
-		final List<IJavaProject> projects = new ArrayList<IJavaProject>();
-		IJavaProject[] allProjects;
-
+	private abstract class IJavaProjectsActionListener extends ServerActionListener {
 		IJavaProjectsActionListener(String msg) {
 			super(msg);
 		}
 
 		@Override
-		protected final void start(SierraServer server) {
-			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-					.getRoot();
-			final IJavaModel javaModel = JavaCore.create(root);
-			try {
-				allProjects = javaModel.getJavaProjects();
-			} catch (JavaModelException e) {
-				throw new IllegalStateException(e);
-			}
+    protected void handleEventOnServer(SierraServer server) {
+      final SierraServerManager manager = server.getManager();
+      run(server, manager.getProjectsConnectedTo(server));
 		}
-
-		@Override
-		protected final void runForServerProject(SierraServer server,
-				String projectName) {
-			if (projectName == null) {
-				SLLogger.getLogger().warning(
-						"Null project for server " + server.getLabel());
-				return;
-			}
-			for (IJavaProject p : allProjects) {
-				if (p.getElementName().equals(projectName)) {
-					projects.add(p);
-					return;
-				}
-			}
-			SLLogger.getLogger().warning(
-					"Could not find project: " + projectName);
-		}
+		protected abstract void run(SierraServer server, List<String> projectNames);
 	}
+	
+	private void scan(String label, List<String> projectNames, boolean rescan) {
+	  if (projectNames.isEmpty()) {
+	    return;
+	  }
+	  final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	  final IJavaModel javaModel = JavaCore.create(root);
+	  try {
+	    final IJavaProject[] allProjects = javaModel.getJavaProjects();
+	    final List<IJavaProject> projects = new ArrayList<IJavaProject>();
+	   loop:
+	    for(String projectName : projectNames) {
+	      if (projectName == null) {
+	        SLLogger.getLogger().warning("Null project for "+label);
+	        continue;
+	      }
+	      for (IJavaProject p : allProjects) {
+	        if (p.getElementName().equals(projectName)) {
+	          projects.add(p);
+	          break loop;
+	        }
+	      }
+	      SLLogger.getLogger().warning("Could not find project: " + projectName);
+	    }
+	    if (rescan) {
+        new ScanChangedProjectsAction().run(projects);
+	    } else {
+        new NewScan().scan(projects);
+	    }
+	  } catch (JavaModelException e) {
+	    throw new IllegalStateException(e);
+	  }
+	}		
 
 	final Listener f_newServerAction = new Listener() {
 		public void handleEvent(Event event) {
@@ -240,6 +248,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			Button openInBrowser, Group infoGroup, Label serverURL,
 			Table projectList, MenuItem connectProjectItem,
+			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
 		f_newServer = newServer;
@@ -259,6 +268,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_serverURL = serverURL;
 		f_projectList = projectList;
 		f_connectProjectItem = connectProjectItem;
+    f_scanProjectItem = scanProjectItem;
+    f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
 	}
 
@@ -300,8 +311,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						new IJavaProjectsActionListener(
 								"Scan all connected projects pressed with no server focus.") {
 							@Override
-							protected void finish(SierraServer server) {
-								new NewScan().scan(projects);
+							protected void run(SierraServer server, List<String> projectNames) {
+								scan("scan of "+server.getLabel()+"'s projects", projectNames, false);
 							}
 						});
 
@@ -311,8 +322,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 						new IJavaProjectsActionListener(
 								"Re-scan all connected projects pressed with no server focus.") {
 							@Override
-							protected void finish(SierraServer server) {
-								new ScanChangedProjectsAction().run(projects);
+							protected void run(SierraServer server, List<String> projectNames) {
+                scan("scan of "+server.getLabel()+"'s projects", projectNames, true);
 							}
 						});
 
@@ -421,20 +432,37 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_disconnectProjectItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				List<String> projectNames = new ArrayList<String>();
-				final TableItem[] si = f_projectList.getSelection();
-				for (TableItem item : si) {
-					projectNames.add(item.getText());
-				}
-				if (!projectNames.isEmpty()) {
-					DeleteProjectDataJob.utility(projectNames, null, true);
-				}
+    f_scanProjectItem.addListener(SWT.Selection, new ProjectsActionListener() {
+      @Override protected void run(List<String> projectNames) {
+        scan("scan", projectNames, false);    
+      }
+    });
+    f_rescanProjectItem.addListener(SWT.Selection, new ProjectsActionListener() {
+      @Override protected void run(List<String> projectNames) {
+        scan("re-scan", projectNames, false);     
+      }
+    });
+		f_disconnectProjectItem.addListener(SWT.Selection, new ProjectsActionListener() {
+	    @Override protected void run(List<String> projectNames) {
+	      DeleteProjectDataJob.utility(projectNames, null, true);				
 			}
 		});
 	}
 
+	private abstract class ProjectsActionListener implements Listener {
+    public final void handleEvent(Event event) {
+      List<String> projectNames = new ArrayList<String>();
+      final TableItem[] si = f_projectList.getSelection();
+      for (TableItem item : si) {
+        projectNames.add(item.getText());
+      }
+      if (!projectNames.isEmpty()) {
+        run(projectNames);
+      }
+    }
+	  protected abstract void run(List<String> projectNames);
+	}
+	
 	public void dispose() {
 		// TODO
 	}

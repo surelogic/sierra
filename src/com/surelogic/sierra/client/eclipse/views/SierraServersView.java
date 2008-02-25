@@ -191,16 +191,14 @@ public final class SierraServersView extends ViewPart {
 
 		final Menu projectListMenu = new Menu(projectList.getShell(),
 				SWT.POP_UP);
-		final MenuItem connectProjectItem = new MenuItem(projectListMenu,
-				SWT.PUSH);
-		connectProjectItem.setText("Connect...");
-		connectProjectItem.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_SERVER));
-		final MenuItem disconnectProjectItem = new MenuItem(projectListMenu,
-				SWT.PUSH);
-		disconnectProjectItem.setText("Disconnect");
-		disconnectProjectItem.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_DISCONNECT));
+		final MenuItem connectProjectItem = 
+		  createMenuItem(projectListMenu, "Connect...", SLImages.IMG_SIERRA_SERVER);
+    final MenuItem scanProjectItem = 
+      createMenuItem(projectListMenu, "Scan", SLImages.IMG_SIERRA_SCAN);
+    final MenuItem rescanProjectItem = 
+      createMenuItem(projectListMenu, "Re-scan", SLImages.IMG_SIERRA_SCAN_DELTA);
+		final MenuItem disconnectProjectItem = 
+		  createMenuItem(projectListMenu, "Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 		projectList.setMenu(projectListMenu);
 
 		/*
@@ -250,7 +248,8 @@ public final class SierraServersView extends ViewPart {
 				scanAllConnectedProjects, rescanAllConnectedProjects,
 				synchAllConnectedProjects, sendResultFilters, getResultFilters,
 				serverPropertiesItem, openInBrowser, infoGroup, serverURL,
-				projectList, connectProjectItem, disconnectProjectItem);
+				projectList, connectProjectItem, scanProjectItem,
+				rescanProjectItem, disconnectProjectItem);
 		f_mediator.init();
 	}
 
