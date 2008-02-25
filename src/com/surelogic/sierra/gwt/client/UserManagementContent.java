@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,6 +25,9 @@ import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 // TODO add change password functionality
 public class UserManagementContent extends ContentComposite {
 	private static final UserManagementContent instance = new UserManagementContent();
+
+	private static final String ADMIN = "Administrator";
+	private static final String USER = "User";
 
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
@@ -61,7 +66,7 @@ public class UserManagementContent extends ContentComposite {
 		});
 
 		usersGrid.setColumn(0, "Name", "30%");
-		usersGrid.setColumn(1, "Status", "70%");
+		usersGrid.setColumn(1, "Role", "70%");
 		usersPanel.add(usersGridPanel);
 		rootPanel.add(usersPanel, DockPanel.CENTER);
 
@@ -130,10 +135,36 @@ public class UserManagementContent extends ContentComposite {
 
 	private void updateRow(int row, UserAccount user) {
 		usersGrid.setText(row, 0, user.getUserName());
-		if (user.isAdministrator()) {
-			usersGrid.setText(row, 1, "Administrator");
-		}
+		usersGrid.setWidget(row, 1, createUserListBox(row, user));
 		usersGrid.setRowData(row, user);
+	}
+
+	private ListBox createUserListBox(final int row, final UserAccount user) {
+		ListBox box = new ListBox();
+		box.addItem(USER);
+		box.addItem(ADMIN);
+		box.setSelectedIndex(user.isAdministrator() ? 1 : 0);
+		box.addChangeListener(new ChangeListener() {
+
+			public void onChange(Widget sender) {
+				final ListBox box = (ListBox) sender;
+				user.setAdministrator(ADMIN.equals(box.getItemText(box
+						.getSelectedIndex())));
+				ServiceHelper.getManageUserService().updateUser(user, null,
+						new AsyncCallback() {
+
+							public void onFailure(Throwable caught) {
+								// TODO Handle failure status
+							}
+
+							public void onSuccess(Object result) {
+								usersGrid.setRowData(row, result);
+							}
+						});
+
+			}
+		});
+		return box;
 	}
 
 	private void createUser() {

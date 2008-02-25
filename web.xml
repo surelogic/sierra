@@ -8,6 +8,10 @@
 		<welcome-file>SierraPortal.html</welcome-file>
 	</welcome-file-list>
 
+	<icon>
+		<small-icon>images/sierra_logo.gif</small-icon>
+	</icon>
+
 	<listener>
 		<description>
 			Configures logging based upon the context-param SLLogger
