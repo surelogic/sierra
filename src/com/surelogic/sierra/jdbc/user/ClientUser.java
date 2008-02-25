@@ -89,4 +89,8 @@ public final class ClientUser implements User {
 			set.close();
 		}
 	}
+
+	public boolean isActive() {
+		return true;
+	}
 }

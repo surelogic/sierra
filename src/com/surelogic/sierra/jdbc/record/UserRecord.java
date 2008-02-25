@@ -10,6 +10,7 @@ public class UserRecord extends LongUpdatableRecord {
 
 	private String userName;
 	private Password password;
+	private boolean active;
 
 	public UserRecord(UpdateRecordMapper mapper) {
 		super(mapper);
@@ -21,6 +22,7 @@ public class UserRecord extends LongUpdatableRecord {
 		st.setString(idx++, userName);
 		st.setInt(idx++, password.getSalt());
 		st.setBytes(idx++, password.getHash());
+		st.setString(idx++, active ? "Y" : "N");
 		return idx;
 	}
 
@@ -29,6 +31,7 @@ public class UserRecord extends LongUpdatableRecord {
 		idx = fillWithNk(st, idx);
 		st.setInt(idx++, password.getSalt());
 		st.setBytes(idx++, password.getHash());
+		st.setString(idx++, active ? "Y" : "N");
 		return idx;
 	}
 
@@ -42,6 +45,7 @@ public class UserRecord extends LongUpdatableRecord {
 	public int readAttributes(ResultSet set, int idx) throws SQLException {
 		password = Password.restorePassword(set.getInt(idx++), set
 				.getBytes(idx++));
+		active = "Y".equals(set.getString(idx++));
 		return idx;
 	}
 
@@ -59,6 +63,14 @@ public class UserRecord extends LongUpdatableRecord {
 
 	public void setPassword(Password password) {
 		this.password = password;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean enabled) {
+		this.active = enabled;
 	}
 
 }

@@ -28,9 +28,9 @@ public final class ServerUserManager {
 	private ServerUserManager(Connection conn) throws SQLException {
 		this.factory = UserRecordFactory.getInstance(conn);
 		selectUsers = conn
-				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER");
+				.prepareStatement("SELECT ID, USER_NAME, IS_ACTIVE FROM SIERRA_USER");
 		selectSomeUsers = conn
-				.prepareStatement("SELECT ID, USER_NAME FROM SIERRA_USER WHERE USER_NAME LIKE ?");
+				.prepareStatement("SELECT ID, USER_NAME, IS_ACTIVE FROM SIERRA_USER WHERE USER_NAME LIKE ?");
 		updateUserName = conn
 				.prepareStatement("UPDATE SIERRA_USER SET USER_NAME = ? WHERE ID = ?");
 	}
@@ -45,8 +45,10 @@ public final class ServerUserManager {
 	 */
 	public User login(String userName, String password) throws SQLException {
 		final UserRecord record = getUser(userName);
-		if ((record != null) && record.getPassword().check(password)) {
-			return new ServerUser(record.getId(), record.getUserName());
+		if ((record != null) && record.isActive()
+				&& record.getPassword().check(password)) {
+			return new ServerUser(record.getId(), record.getUserName(), record
+					.isActive());
 		} else {
 			return null;
 		}
@@ -119,6 +121,7 @@ public final class ServerUserManager {
 		record.setUserName(userName);
 		if (!record.select()) {
 			record.setPassword(Password.newPassword(password));
+			record.setActive(true);
 			record.insert();
 			addUserToGroup(userName, SierraGroup.USER);
 			return true;
@@ -128,16 +131,20 @@ public final class ServerUserManager {
 	}
 
 	/**
-	 * Delete an existing user.
+	 * Disable an existing user.
 	 * 
 	 * @param user
 	 * @throws SQLException
 	 */
-	public void deleteUser(String user) throws SQLException {
+	public void changeUserStatus(String user, boolean isActive)
+			throws SQLException {
 		final UserRecord record = factory.newUser();
 		record.setUserName(user);
 		if (record.select()) {
-			record.delete();
+			if (!(isActive == record.isActive())) {
+				record.setActive(isActive);
+				record.update();
+			}
 		}
 	}
 
@@ -240,7 +247,8 @@ public final class ServerUserManager {
 		try {
 			final List<User> list = new ArrayList<User>();
 			while (set.next()) {
-				list.add(new ServerUser(set.getLong(1), set.getString(2)));
+				list.add(new ServerUser(set.getLong(1), set.getString(2), "Y"
+						.equals(set.getString(3))));
 			}
 			return list;
 		} finally {
@@ -263,7 +271,8 @@ public final class ServerUserManager {
 		try {
 			final List<User> list = new ArrayList<User>();
 			while (set.next()) {
-				list.add(new ServerUser(set.getLong(1), set.getString(2)));
+				list.add(new ServerUser(set.getLong(1), set.getString(2), "Y"
+						.equals(set.getString(3))));
 			}
 			return list;
 		} finally {
@@ -305,10 +314,12 @@ public final class ServerUserManager {
 
 		private final long id;
 		private final String userName;
+		private final boolean isActive;
 
-		ServerUser(long id, String userName) {
+		ServerUser(long id, String userName, boolean isActive) {
 			this.id = id;
 			this.userName = userName;
+			this.isActive = isActive;
 		}
 
 		public long getId() {
@@ -319,13 +330,15 @@ public final class ServerUserManager {
 			return userName;
 		}
 
+		public boolean isActive() {
+			return isActive;
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + (int) (id ^ (id >>> 32));
-			result = prime * result
-					+ ((userName == null) ? 0 : userName.hashCode());
 			return result;
 		}
 
@@ -339,11 +352,6 @@ public final class ServerUserManager {
 				return false;
 			final ServerUser other = (ServerUser) obj;
 			if (id != other.id)
-				return false;
-			if (userName == null) {
-				if (other.userName != null)
-					return false;
-			} else if (!userName.equals(other.userName))
 				return false;
 			return true;
 		}

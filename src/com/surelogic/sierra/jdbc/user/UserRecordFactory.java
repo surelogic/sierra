@@ -19,10 +19,10 @@ public final class UserRecordFactory {
 
 	private UserRecordFactory(Connection conn) throws SQLException {
 		userMapper = new UpdateBaseMapper(conn,
-				"INSERT INTO SIERRA_USER (USER_NAME,SALT,HASH) VALUES (?,?,?)",
-				"SELECT ID, SALT, HASH FROM SIERRA_USER WHERE USER_NAME = ?",
+				"INSERT INTO SIERRA_USER (USER_NAME,SALT,HASH,IS_ACTIVE) VALUES (?,?,?,?)",
+				"SELECT ID, SALT, HASH, IS_ACTIVE FROM SIERRA_USER WHERE USER_NAME = ?",
 				"DELETE FROM SIERRA_USER WHERE ID = ?",
-				"UPDATE SIERRA_USER SET USER_NAME = ?, SALT = ?, HASH = ? WHERE ID = ?");
+				"UPDATE SIERRA_USER SET USER_NAME = ?, SALT = ?, HASH = ?, IS_ACTIVE = ? WHERE ID = ?");
 		groupMapper = new UpdateBaseMapper(conn,
 				"INSERT INTO SIERRA_GROUP (NAME,INFO) VALUES (?,?)",
 				"SELECT ID, INFO FROM SIERRA_GROUP WHERE NAME = ?",

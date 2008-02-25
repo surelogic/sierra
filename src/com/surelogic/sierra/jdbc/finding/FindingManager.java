@@ -431,6 +431,7 @@ public class FindingManager {
 		throw new FindingGenerationException(e);
 	}
 
+	//FIXME Evil code!
 	protected Long getUserId(String user) throws SQLException {
 		return ClientUser.getUser(user, conn).getId();
 	}

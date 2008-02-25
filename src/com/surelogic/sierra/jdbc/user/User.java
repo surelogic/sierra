@@ -13,4 +13,5 @@ public interface User extends Serializable, Principal {
 
 	long getId();
 
+	boolean isActive();
 }
