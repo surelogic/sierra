@@ -154,7 +154,9 @@ public class UserManagementContent extends ContentComposite {
 						new AsyncCallback() {
 
 							public void onFailure(Throwable caught) {
-								// TODO Handle failure status
+								usersGrid.setStatus("error",
+										"Error updating the role of "
+												+ user.getUserName() + ".");
 							}
 
 							public void onSuccess(Object result) {
