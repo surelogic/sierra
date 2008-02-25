@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.surelogic.common.base64.Base64;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.User;
 
@@ -39,7 +40,9 @@ public class UserLoginServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		final HttpSession session = request.getSession();
 		final String userName = request.getParameter(SecurityHelper.AUTH_NAME);
-		final String password = request.getParameter(SecurityHelper.AUTH_PASS);
+		final String password64 = request
+				.getParameter(SecurityHelper.AUTH_PASS);
+		final String password = new String(Base64.decode(password64), "UTF-8");
 		String context = request.getParameter(SecurityHelper.AUTH_REDIRECT);
 		if (context == null) {
 			context = "/";
@@ -56,12 +59,8 @@ public class UserLoginServlet extends HttpServlet {
 					});
 			if (u != null) {
 				session.setAttribute(SecurityHelper.USER, u);
-				SecurityHelper.writeRedirect(response.getOutputStream(),
-						context);
-			} else {
-				SecurityHelper.writeLoginForm(response.getOutputStream(),
-						context, true);
 			}
+			SecurityHelper.writeRedirect(response.getOutputStream(), context);
 		}
 	}
 

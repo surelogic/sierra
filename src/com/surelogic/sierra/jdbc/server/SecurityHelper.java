@@ -70,7 +70,7 @@ public class SecurityHelper {
 						+ "	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"
 						+ " <meta http-equiv=\"Refresh\" content=\"0; url="
 						+ context + "\" />" + "	<title>Login to Sierra</title>"
-						+ "</head>" + "<body>Your login was successful.</body>"
+						+ "</head>" + "<body>Redirecting you to Sierra.</body>"
 						+ "</html>");
 		writer.flush();
 	}
