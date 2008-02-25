@@ -340,4 +340,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		 * Nothing to do.
 		 */
 	}
+	
+	public void selectAll() {
+	  f_first.selectAll();
+	}
 }

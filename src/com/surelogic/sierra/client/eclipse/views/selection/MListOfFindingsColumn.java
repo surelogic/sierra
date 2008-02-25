@@ -696,4 +696,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		return ids;
 	}
+	
+  @Override 
+  void selectAll() {
+    if (f_table.isFocusControl()) {
+      f_table.selectAll();
+    } else {
+      super.selectAll();
+    }
+  }
 }

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -30,7 +31,6 @@ public final class FindingsSelectionView extends ViewPart {
 
 	@Override
 	public void createPartControl(final Composite parent) {
-
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
 		final Label noFindingsPage = new Label(pages, SWT.WRAP);
@@ -71,7 +71,13 @@ public final class FindingsSelectionView extends ViewPart {
 				SWT.NONE);
 		cascadingList
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+    getViewSite().getActionBars()
+    .setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), new Action() {      
+      @Override public void run() {
+        f_mediator.selectAll();
+      }
+    });
+		
 		final Composite selectionPersistencePanel = new Composite(findingsPage,
 				SWT.NONE);
 		selectionPersistencePanel.setLayoutData(new GridData(SWT.FILL,

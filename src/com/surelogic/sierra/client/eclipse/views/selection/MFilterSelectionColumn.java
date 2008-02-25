@@ -344,10 +344,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_selectAllMenuItem.setText("Select All");
 				f_selectAllMenuItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
-						f_filter.setPorousAll();
-						for(TableItem item : f_reportContents.getItems()) {
-						  item.setChecked(true);
-						}
+						selectAllItems();
 					}
 				});
 				f_deselectAllMenuItem = new MenuItem(f_menu, SWT.PUSH);
@@ -561,6 +558,22 @@ public final class MFilterSelectionColumn extends MColumn implements
   private void focusOnColumn(MColumn column) {
     if (column != null) {
       column.forceFocus();
+    }
+  }
+  
+  @Override 
+  void selectAll() {
+    if (f_reportContents.isFocusControl()) {
+      selectAllItems();
+    } else {
+      super.selectAll();
+    }
+  }
+
+  private void selectAllItems() {
+    f_filter.setPorousAll();
+    for(TableItem item : f_reportContents.getItems()) {
+      item.setChecked(true);
     }
   }
 }

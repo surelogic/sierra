@@ -243,4 +243,13 @@ public final class MRadioMenuColumn extends MColumn implements
 		Collections.sort(result);
 		return result;
 	}
+	
+  @Override 
+  void selectAll() {
+    if (f_menu.isFocusControl()) {
+      // Do nothing
+    } else {
+      super.selectAll();
+    }
+  }
 }

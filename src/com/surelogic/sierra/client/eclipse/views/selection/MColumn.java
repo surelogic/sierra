@@ -145,6 +145,12 @@ public abstract class MColumn {
     f_nextColumn.dispose();
   }
   
+  void selectAll() {
+    if (f_nextColumn != null) {
+      f_nextColumn.selectAll();
+    }
+  }
+  
   protected static void setCustomTabTraversal(Event e) {
     // i.e. we'll take care of things
     e.doit = true;
