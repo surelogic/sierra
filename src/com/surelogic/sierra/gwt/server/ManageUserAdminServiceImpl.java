@@ -116,6 +116,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
 				man.changeUserName(account.getId(), account.getUserName());
+				man.changeUserStatus(targetUserName, account.isActive());
 				if (password != null) {
 					man.changeUserPassword(targetUserName, password);
 				}
@@ -127,21 +128,6 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				return account;
 			}
 		});
-	}
-
-	public boolean deleteUser(final String targetUser) {
-		performAdmin(false, new UserTransaction<Boolean>() {
-
-			public Boolean perform(Connection conn, Server server, User user)
-					throws Exception {
-				final ServerUserManager man = ServerUserManager
-						.getInstance(conn);
-				man.deleteUser(targetUser);
-				return null;
-			}
-		});
-		// FIXME assume the user was deleted for now
-		return true;
 	}
 
 	public boolean isAvailable() {
@@ -180,6 +166,24 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		final String userName = u.getName();
 		boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
 				.getName());
-		return new UserAccount(u.getId(), userName, isAdmin);
+		return new UserAccount(u.getId(), userName, isAdmin, u.isActive());
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateUsersStatus(final List users, final boolean isActive) {
+		if (users != null && !users.isEmpty()) {
+			performAdmin(false, new UserTransaction<Void>() {
+
+				public Void perform(Connection conn, Server server, User user)
+						throws Exception {
+					final ServerUserManager man = ServerUserManager
+							.getInstance(conn);
+					for (Object userName : users) {
+						man.changeUserStatus((String) userName, isActive);
+					}
+					return null;
+				}
+			});
+		}
 	}
 }
