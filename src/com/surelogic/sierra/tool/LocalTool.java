@@ -202,6 +202,9 @@ public class LocalTool extends AbstractTool {
       // JAXB is included in Java 6 and beyond
       if (SystemUtils.IS_JAVA_1_5) {     
         addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.JAVA5_PLUGIN_ID, "lib/jaxb");
+      } else {
+        // Called just to mark it as "used";
+        getPluginDir(debug, SierraToolConstants.JAVA5_PLUGIN_ID);
       }
       addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.PMD_PLUGIN_ID, "lib");
       addAllPluginJarsToPath(debug, proj, path, SierraToolConstants.FB_PLUGIN_ID, "lib");      
