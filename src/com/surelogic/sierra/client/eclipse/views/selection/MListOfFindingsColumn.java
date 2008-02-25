@@ -531,16 +531,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		menu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
-				TableItem[] items = f_table.getSelection();
-				final boolean findingSelected = items.length > 0;
+				int[] itemIndices = f_table.getSelectionIndices();
+				final boolean findingSelected = itemIndices.length > 0;
 				set.setEnabled(findingSelected);
 				quickAudit.setEnabled(findingSelected);
 				filterFindingTypeFromScans.setEnabled(findingSelected);
-				if (items.length > 0) {
+				if (findingSelected) {
 					String importanceSoFar = null;
 					String findingTypeSoFar = null;
-					for (TableItem item : items) {
-						final FindingData data = (FindingData) item.getData();
+					for (int index : itemIndices) {
+						final FindingData data = f_rows.get(index);
 						String importance = data.f_importance
 								.toStringSentenceCase();
 						if (importanceSoFar == null) {
@@ -559,11 +559,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 					final String currentImportance = importanceSoFar;
 					final String currentFindingType = findingTypeSoFar;
-					setCritical.setData(items);
-					setHigh.setData(items);
-					setMedium.setData(items);
-					setLow.setData(items);
-					setIrrelevant.setData(items);
+					setCritical.setData(itemIndices);
+					setHigh.setData(itemIndices);
+					setMedium.setData(itemIndices);
+					setLow.setData(itemIndices);
+					setIrrelevant.setData(itemIndices);
 					setCritical.setEnabled(!currentImportance
 							.equals(setCritical.getText()));
 					setHigh.setEnabled(!currentImportance.equals(setHigh
@@ -574,14 +574,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 							.getText()));
 					setIrrelevant.setEnabled(!currentImportance
 							.equals(setIrrelevant.getText()));
-					quickAudit.setData(items);
+					quickAudit.setData(itemIndices);
 					if ("".equals(currentFindingType)) {
 						filterFindingTypeFromScans.setEnabled(false);
 						filterFindingTypeFromScans
 								.setText("Filter Selected Findings From Future Scans");
 					} else {
 						filterFindingTypeFromScans.setEnabled(true);
-						filterFindingTypeFromScans.setData(items);
+						filterFindingTypeFromScans.setData(itemIndices);
 						filterFindingTypeFromScans.setText("Filter All '"
 								+ currentFindingType
 								+ "' Findings From Future Scans");
@@ -590,27 +590,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		});
 
-		final Listener changeImportance = new Listener() {
-			public void handleEvent(Event event) {
-				if (event.widget instanceof MenuItem) {
-					MenuItem item = (MenuItem) event.widget;
-					if (item.getData() instanceof TableItem[]) {
-						final TableItem[] items = (TableItem[]) item.getData();
-						final Importance to = Importance.valueOf(item.getText()
-								.toUpperCase());
-						if (items.length == 1) {
-							final FindingData data = (FindingData) items[0]
-									.getData();
-							FindingMutationUtility.asyncChangeImportance(
-									data.f_findingId, data.f_importance, to);
-						} else {
-							final Collection<Long> ids = extractFindingIds(items);
-							FindingMutationUtility.asyncChangeImportance(ids,
-									to);
-						}
-					}
-				}
-			}
+		final Listener changeImportance = new SelectionListener() {
+      private Importance getImportance(MenuItem item) {
+        return Importance.valueOf(item.getText().toUpperCase());
+      }
+      @Override
+      protected void handleFinding(MenuItem item, FindingData data) {
+        FindingMutationUtility.asyncChangeImportance(data.f_findingId, data.f_importance, 
+                                                     getImportance(item));
+      }
+      @Override
+      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
+        FindingMutationUtility.asyncChangeImportance(ids, getImportance(item));
+      }
 		};
 		setCritical.addListener(SWT.Selection, changeImportance);
 		setHigh.addListener(SWT.Selection, changeImportance);
@@ -618,52 +610,28 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setLow.addListener(SWT.Selection, changeImportance);
 		setIrrelevant.addListener(SWT.Selection, changeImportance);
 
-		quickAudit.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (event.widget instanceof MenuItem) {
-					MenuItem item = (MenuItem) event.widget;
-					if (item.getData() instanceof TableItem[]) {
-						final TableItem[] items = (TableItem[]) item.getData();
-						if (items.length == 1) {
-							final FindingData data = (FindingData) items[0]
-									.getData();
-							FindingMutationUtility.asyncComment(
-									data.f_findingId,
-									FindingDetailsMediator.STAMP_COMMENT);
-						} else {
-							final Collection<Long> ids = extractFindingIds(items);
-							FindingMutationUtility.asyncComment(ids,
-									FindingDetailsMediator.STAMP_COMMENT);
-						}
-					}
-				}
-			}
+		quickAudit.addListener(SWT.Selection, new SelectionListener() {
+      @Override
+      protected void handleFinding(MenuItem item, FindingData data) {
+        FindingMutationUtility.asyncComment(data.f_findingId, FindingDetailsMediator.STAMP_COMMENT);
+      }
+      @Override
+      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
+        FindingMutationUtility.asyncComment(ids, FindingDetailsMediator.STAMP_COMMENT);
+      }
 		});
 
-		filterFindingTypeFromScans.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (event.widget instanceof MenuItem) {
-					MenuItem item = (MenuItem) event.widget;
-					if (item.getData() instanceof TableItem[]) {
-						final TableItem[] items = (TableItem[]) item.getData();
-						final FindingData data = (FindingData) items[0]
-								.getData();
-						if (items.length == 1) {
-							FindingMutationUtility
-									.asyncFilterFindingTypeFromScans(
-											data.f_findingId,
-											data.f_findingTypeName);
-						} else {
-							// FIX Assuming that all the finding types are the
-							// same?
-							final Collection<Long> ids = extractFindingIds(items);
-							FindingMutationUtility
-									.asyncFilterFindingTypeFromScans(ids,
-											data.f_findingTypeName);
-						}
-					}
-				}
-			}
+		filterFindingTypeFromScans.addListener(SWT.Selection, new SelectionListener() {
+      @Override
+      protected void handleFinding(MenuItem item, FindingData data) {
+        FindingMutationUtility
+        .asyncFilterFindingTypeFromScans(data.f_findingId, data.f_findingTypeName);
+      }
+      @Override
+      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
+        FindingMutationUtility
+        .asyncFilterFindingTypeFromScans(ids, data.f_findingTypeName);
+      }
 		});
 
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
@@ -679,6 +647,26 @@ public final class MListOfFindingsColumn extends MColumn implements
 		});
 	}
 
+	private abstract class SelectionListener implements Listener {
+    public final void handleEvent(Event event) {
+      if (event.widget instanceof MenuItem) {
+        MenuItem item = (MenuItem) event.widget;
+        if (item.getData() instanceof int[]) {
+          final int[] itemIndices = (int[]) item.getData();
+          final FindingData data = f_rows.get(itemIndices[0]);
+          if (itemIndices.length == 1) {
+            handleFinding(item, data);
+          } else {
+            final Collection<Long> ids = extractFindingIds(itemIndices);
+            handleFindings(item, data, ids);
+          }
+        }
+      }
+    }
+    protected abstract void handleFinding(MenuItem item, FindingData data);
+    protected abstract void handleFindings(MenuItem item, FindingData data, Collection<Long> ids);
+	}
+	
 	private void refreshDisplay() {
 		final UIJob job = new SLUIJob() {
 			@Override
@@ -698,10 +686,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		job.schedule();
 	}
 
-	private static Collection<Long> extractFindingIds(final TableItem[] items) {
-		final Collection<Long> ids = new ArrayList<Long>(items.length);
-		for (TableItem ti : items) {
-			FindingData fd = (FindingData) ti.getData();
+	private Collection<Long> extractFindingIds(final int[] itemIndices) {
+		final Collection<Long> ids = new ArrayList<Long>(itemIndices.length);
+		for (int ti : itemIndices) {
+			FindingData fd = f_rows.get(ti);
 			if (fd != null) {
 				ids.add(fd.f_findingId);
 			}
