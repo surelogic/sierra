@@ -193,9 +193,9 @@ public final class SierraServersView extends ViewPart {
 		final MenuItem connectProjectItem = createMenuItem(projectListMenu,
 				"Connect...", SLImages.IMG_SIERRA_SERVER);
 		final MenuItem scanProjectItem = createMenuItem(projectListMenu,
-				"Scan", SLImages.IMG_SIERRA_SCAN);
+				"Scan Project", SLImages.IMG_SIERRA_SCAN);
 		final MenuItem rescanProjectItem = createMenuItem(projectListMenu,
-				"Re-Scan Changes", SLImages.IMG_SIERRA_SCAN_DELTA);
+				"Re-Scan Changes in Project", SLImages.IMG_SIERRA_SCAN_DELTA);
 		final MenuItem disconnectProjectItem = createMenuItem(projectListMenu,
 				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 		projectList.setMenu(projectListMenu);
