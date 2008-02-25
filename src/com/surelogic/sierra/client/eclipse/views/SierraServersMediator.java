@@ -333,7 +333,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				.addListener(
 						SWT.Selection,
 						new IJavaProjectsActionListener(
-								"Re-scan all connected projects pressed with no server focus.") {
+								"Re-Scan all connected projects pressed with no server focus.") {
 							@Override
 							protected void run(SierraServer server, List<String> projectNames) {
                 scan("scan of "+server.getLabel()+"'s projects", projectNames, true);
