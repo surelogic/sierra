@@ -56,8 +56,8 @@ public class UserLoginServlet extends HttpServlet {
 					});
 			if (u != null) {
 				session.setAttribute(SecurityHelper.USER, u);
-				getServletContext().getRequestDispatcher(context).forward(
-						request, response);
+				SecurityHelper.writeRedirect(response.getOutputStream(),
+						context);
 			} else {
 				SecurityHelper.writeLoginForm(response.getOutputStream(),
 						context, true);

@@ -7,8 +7,8 @@ import java.io.OutputStreamWriter;
 /**
  * Internal utility class. Not for use outside of the server package.
  * 
- * Aaron note: need to make this external or provide a framework for standard session attrib access.
- * I made this public for now.
+ * Aaron note: need to make this external or provide a framework for standard
+ * session attrib access. I made this public for now.
  * 
  * @author nathan
  * 
@@ -19,7 +19,7 @@ public class SecurityHelper {
 	static final String AUTH_PASS = "SierraAuthPass";
 	static final String AUTH_REDIRECT = "SierraAuthRedirect";
 	public static final String USER = "SierraUser";
-	
+
 	static void writeLoginForm(OutputStream out, String redirect, boolean retry)
 			throws IOException {
 		final OutputStreamWriter writer = new OutputStreamWriter(out);
@@ -56,6 +56,22 @@ public class SecurityHelper {
 						+ "			<br />"
 						+ "			<input type=\"submit\" value=\"Login\" />"
 						+ "		</p>" + "	</form>" + "</body>" + "</html>");
+		writer.flush();
+	}
+
+	public static void writeRedirect(OutputStream out, String context)
+			throws IOException {
+		final OutputStreamWriter writer = new OutputStreamWriter(out);
+		writer
+				.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+						+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+						+ "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
+						+ "<head>"
+						+ "	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"
+						+ " <meta http-equiv=\"Refresh\" content=\"0; url="
+						+ context + "\" />" + "	<title>Login to Sierra</title>"
+						+ "</head>" + "<body>Your login was successful.</body>"
+						+ "</html>");
 		writer.flush();
 	}
 }
