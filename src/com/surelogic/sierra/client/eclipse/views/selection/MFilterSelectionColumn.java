@@ -106,11 +106,15 @@ public final class MFilterSelectionColumn extends MColumn implements
             if (valueList == null || valueList.isEmpty()) {
               Color focused = 
                 f_reportContents.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+              Color focusedText = 
+                f_reportContents.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
               f_totalCount.setBackground(focused); 
+              f_totalCount.setForeground(focusedText);
             }
           }
           public void focusLost(FocusEvent e) {
             f_totalCount.setBackground(null);           
+            f_totalCount.setForeground(null);  
           }				  
 				});
 				
