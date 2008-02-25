@@ -153,7 +153,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 
 		@Override
-    protected void handleEventOnServer(SierraServer server) {
+    protected final void handleEventOnServer(SierraServer server) {
       final SierraServerManager manager = server.getManager();
       run(server, manager.getProjectsConnectedTo(server));
 		}
@@ -205,17 +205,30 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	};
 
-	final Listener f_deleteServerAction = new ServerActionListener() {
-		@Override
-		protected void handleEventOnServer(SierraServer server) {
-			if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(),
-					"Confirm Sierra Server Deletion",
-					"Do you wish to delete the Sierra server '"
-							+ server.getLabel() + "'?")) {
-				f_manager.delete(server);
-			}
-		}
+	final Listener f_deleteServerAction = 
+	  new IJavaProjectsActionListener("Delete server pressed with no server focus.") {
+    @Override
+    protected void run(SierraServer server, List<String> projectNames) {
+      final String serverName = server.getLabel();
+      final String msg;
+      if (projectNames.isEmpty()) {
+        msg = I18N
+            .msg("sierra.eclipse.serverDeleteWarning", serverName);
+      } else {
+        msg = I18N.msg("sierra.eclipse.serverDeleteWarningConnected",
+            serverName, serverName, serverName);
+      }
+      if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
+          .getActiveWorkbenchWindow().getShell(),
+          "Confirm Sierra Server Deletion", msg)) {
+        f_manager.delete(server);
+        if (!projectNames.isEmpty()) {
+          final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
+              projectNames);
+          deleteProjectJob.runJob();
+        }
+      }
+    }
 	};
 
 	final Listener f_openInBrowserAction = new ServerActionListener(
