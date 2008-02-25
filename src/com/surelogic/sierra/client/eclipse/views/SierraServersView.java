@@ -43,16 +43,16 @@ public final class SierraServersView extends ViewPart {
 	}
 
 	private MenuItem createMenuItem(Menu menu, String name, Image image) {
-	  MenuItem item = new MenuItem(menu, SWT.PUSH);
-	  item.setImage(image);
-	  item.setText(name);
-	  return item;
+		MenuItem item = new MenuItem(menu, SWT.PUSH);
+		item.setImage(image);
+		item.setText(name);
+		return item;
 	}
-	
+
 	private MenuItem createMenuItem(Menu menu, String name, String imgName) {
-	  return createMenuItem(menu, name, SLImages.getImage(imgName));
+		return createMenuItem(menu, name, SLImages.getImage(imgName));
 	}
-	
+
 	@Override
 	public void createPartControl(final Composite parent) {
 		GridData data;
@@ -72,32 +72,31 @@ public final class SierraServersView extends ViewPart {
 		serverList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Menu serverListMenu = new Menu(serverList.getShell(), SWT.POP_UP);
-		final MenuItem newServerItem = 
-		  createMenuItem(serverListMenu, "New...",
-		                 SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		final MenuItem newServerItem = createMenuItem(serverListMenu, "New...",
+				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		final MenuItem duplicateServerItem =      
-		  createMenuItem(serverListMenu, "Duplicate",
-                     SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
-		
-		final MenuItem deleteServerItem = 
-		  createMenuItem(serverListMenu, "Delete",
-                     SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+		final MenuItem duplicateServerItem = createMenuItem(serverListMenu,
+				"Duplicate", SLImages
+						.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
+
+		final MenuItem deleteServerItem = createMenuItem(serverListMenu,
+				"Delete", SLImages
+						.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
-		
-    final MenuItem scanAllConnectedProjects = 
-      createMenuItem(serverListMenu, "Scan All Connected Projects",
-                     SLImages.IMG_SIERRA_SCAN);
-    
-    final MenuItem rescanAllConnectedProjects = 
-      createMenuItem(serverListMenu, "Re-Scan Changes in All Connected Projects",
-                     SLImages.IMG_SIERRA_SCAN_DELTA);
-		
-		final MenuItem synchAllConnectedProjects = 
-		  createMenuItem(serverListMenu, "Synchronize All Connected Projects",
-		                 SLImages.IMG_SIERRA_SYNC);
-				
+
+		final MenuItem scanAllConnectedProjects = createMenuItem(
+				serverListMenu, "Scan All Connected Projects",
+				SLImages.IMG_SIERRA_SCAN);
+
+		final MenuItem rescanAllConnectedProjects = createMenuItem(
+				serverListMenu, "Re-Scan Changes in All Connected Projects",
+				SLImages.IMG_SIERRA_SCAN_DELTA);
+
+		final MenuItem synchAllConnectedProjects = createMenuItem(
+				serverListMenu, "Synchronize All Connected Projects",
+				SLImages.IMG_SIERRA_SYNC);
+
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = new MenuItem(serverListMenu,
 				SWT.PUSH);
@@ -191,14 +190,14 @@ public final class SierraServersView extends ViewPart {
 
 		final Menu projectListMenu = new Menu(projectList.getShell(),
 				SWT.POP_UP);
-		final MenuItem connectProjectItem = 
-		  createMenuItem(projectListMenu, "Connect...", SLImages.IMG_SIERRA_SERVER);
-    final MenuItem scanProjectItem = 
-      createMenuItem(projectListMenu, "Scan", SLImages.IMG_SIERRA_SCAN);
-    final MenuItem rescanProjectItem = 
-      createMenuItem(projectListMenu, "Re-Scan Changes", SLImages.IMG_SIERRA_SCAN_DELTA);
-		final MenuItem disconnectProjectItem = 
-		  createMenuItem(projectListMenu, "Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
+		final MenuItem connectProjectItem = createMenuItem(projectListMenu,
+				"Connect...", SLImages.IMG_SIERRA_SERVER);
+		final MenuItem scanProjectItem = createMenuItem(projectListMenu,
+				"Scan", SLImages.IMG_SIERRA_SCAN);
+		final MenuItem rescanProjectItem = createMenuItem(projectListMenu,
+				"Re-Scan Changes", SLImages.IMG_SIERRA_SCAN_DELTA);
+		final MenuItem disconnectProjectItem = createMenuItem(projectListMenu,
+				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 		projectList.setMenu(projectListMenu);
 
 		/*
