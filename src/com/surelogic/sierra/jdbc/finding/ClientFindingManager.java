@@ -632,12 +632,13 @@ public final class ClientFindingManager extends FindingManager {
 	public void updateLocalFindings(String projectName,
 			List<SyncTrailResponse> trails, SLProgressMonitor monitor)
 			throws SQLException {
-		ProjectRecord project = ProjectRecordFactory.getInstance(conn)
+		final ProjectRecord project = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		project.setName(projectName);
 		if (!project.select()) {
 			project.insert();
 		}
+		final Set<Long> findingIds = new HashSet<Long>();
 		final MatchRecord match = factory.newMatch();
 		final MatchRecord.PK id = new MatchRecord.PK();
 		match.setId(id);
@@ -676,6 +677,7 @@ public final class ClientFindingManager extends FindingManager {
 				match.setRevision(m.getRevision());
 				match.insert();
 			}
+			findingIds.add(findingId);
 			for (Audit a : trail.getAudits()) {
 				Long userId = getUserId(a.getUser());
 				switch (a.getEvent()) {
@@ -699,7 +701,7 @@ public final class ClientFindingManager extends FindingManager {
 				}
 			}
 		}
-
+		regenerateFindingsOverview(projectName, findingIds, monitor);
 	}
 
 	public void filterFindingTypeFromScans(long findingId,
