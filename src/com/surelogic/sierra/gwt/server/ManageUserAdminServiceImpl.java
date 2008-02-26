@@ -8,7 +8,6 @@ import java.util.List;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
-import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
@@ -140,26 +139,6 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		return Boolean.TRUE.equals(isAdmin);
 	}
 
-	private <T> T performAdmin(boolean readOnly, final UserTransaction<T> t) {
-		UserTransaction<T> adminTrans = new UserTransaction<T>() {
-
-			public T perform(Connection conn, Server server, User user)
-					throws Exception {
-				final ServerUserManager man = ServerUserManager
-						.getInstance(conn);
-				if (man.isUserInGroup(user.getName(), SierraGroup.ADMIN
-						.getName())) {
-					return t.perform(conn, server, user);
-				} else {
-					return null;
-				}
-			}
-		};
-		if (readOnly) {
-			return ConnectionFactory.withUserReadOnly(adminTrans);
-		}
-		return ConnectionFactory.withUserTransaction(adminTrans);
-	}
 
 	private UserAccount convertUser(ServerUserManager man, User u)
 			throws SQLException {

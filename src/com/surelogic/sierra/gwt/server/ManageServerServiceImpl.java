@@ -7,7 +7,6 @@ import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.service.ManageServerService;
-import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.User;
@@ -21,24 +20,22 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = 4174730158310056800L;
 
 	public ServerInfo deploySchema() {
-		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<ServerInfo>() {
+		return performAdmin(false, new UserTransaction<ServerInfo>() {
 
-					public ServerInfo perform(Connection conn, Server server, User user)
-							throws SQLException {
-						try {
-							server.updateSchema();
-						} catch (FutureDatabaseException e) {
-							//Do Nothing
-						}
-						return readServerInfo(server);
-					}
-				});
-
+			public ServerInfo perform(Connection conn, Server server, User user)
+					throws SQLException {
+				try {
+					server.updateSchema();
+				} catch (FutureDatabaseException e) {
+					// Do Nothing
+				}
+				return readServerInfo(server);
+			}
+		});
 	}
 
 	public ServerInfo getServerInfo() {
-		return ConnectionFactory.withUserReadOnly(new UserTransaction<ServerInfo>() {
+		return performAdmin(true, new UserTransaction<ServerInfo>() {
 
 			public ServerInfo perform(Connection conn, Server server, User user)
 					throws SQLException {
@@ -48,15 +45,28 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ServerInfo setEmail(final String address) {
-		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<ServerInfo>() {
+		return performAdmin(false, new UserTransaction<ServerInfo>() {
 
-					public ServerInfo perform(Connection conn, Server server, User user)
-							throws SQLException {
-						server.setEmail(address);
-						return readServerInfo(server);
-					}
-				});
+			public ServerInfo perform(Connection conn, Server server, User user)
+					throws SQLException {
+				server.setEmail(address);
+				return readServerInfo(server);
+			}
+		});
+	}
+
+	public void testAdminEmail() {
+		performAdmin(true, new UserTransaction<Void>() {
+
+			public Void perform(Connection conn, Server server, User user)
+					throws Exception {
+				server
+						.notifyAdmin(
+								"This is a test.",
+								"If you received this email, server exception notification is configured properly.");
+				return null;
+			}
+		});
 	}
 
 	private ServerInfo readServerInfo(Server server) {
