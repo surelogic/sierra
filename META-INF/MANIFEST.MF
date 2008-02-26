@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sierra Team Server Client
+Bundle-SymbolicName: com.surelogic.sierra.eclipse.teamserver; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: com.surelogic.sierra.eclipse.teamserver.Activator
+Bundle-Vendor: SureLogic, Inc.
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.surelogic.common,
+ com.surelogic.common.eclipse
+Eclipse-LazyStart: true
