@@ -171,25 +171,25 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		final IJavaModel javaModel = JavaCore.create(root);
 		try {
 			final IJavaProject[] allProjects = javaModel.getJavaProjects();
-			final List<IJavaProject> projects = new ArrayList<IJavaProject>();
-			loop: for (String projectName : projectNames) {
+			final List<IJavaProject> projectsToScan = new ArrayList<IJavaProject>();
+			for (String projectName : projectNames) {
 				if (projectName == null) {
 					SLLogger.getLogger().warning("Null project for " + label);
 					continue;
 				}
 				for (IJavaProject p : allProjects) {
 					if (p.getElementName().equals(projectName)) {
-						projects.add(p);
-						break loop;
+						projectsToScan.add(p);
+						break;
 					}
 				}
 				SLLogger.getLogger().warning(
 						"Could not find project: " + projectName);
 			}
 			if (rescan) {
-				new ScanChangedProjectsAction().run(projects);
+				new ScanChangedProjectsAction().run(projectsToScan);
 			} else {
-				new NewScan().scan(projects);
+				new NewScan().scan(projectsToScan);
 			}
 		} catch (JavaModelException e) {
 			throw new IllegalStateException(e);
