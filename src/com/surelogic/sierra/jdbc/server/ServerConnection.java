@@ -4,16 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
@@ -99,27 +91,11 @@ public class ServerConnection {
 	protected void exceptionNotify(String userName, String message, Throwable t) {
 		log.log(Level.SEVERE, message, t);
 		try {
-			String email = server.getEmail();
-			if (email != null) {
-				Properties props = new Properties();
-				props.put("mail.smtp.host", "zimbra.surelogic.com");
-				props.put("mail.from", email);
-				Session session = Session.getInstance(props, null);
-				try {
-					MimeMessage msg = new MimeMessage(session);
-					msg.setFrom();
-					msg.setRecipients(Message.RecipientType.TO, email);
-					StringWriter s = new StringWriter();
-					t.printStackTrace(new PrintWriter(s));
-					msg.setSubject(userName + " reports: " + message);
-					msg.setSentDate(new Date());
-					msg.setText(s.toString());
-					Transport.send(msg);
-				} catch (MessagingException mex) {
-					log.log(Level.SEVERE,
-							"Mail notification of exception failed.", mex);
-				}
-			}
+			final StringWriter s = new StringWriter();
+			final PrintWriter p = new PrintWriter(s);
+			t.printStackTrace(p);
+			p.flush();
+			server.notifyAdmin(userName + " reports: " + message, s.toString());
 		} catch (SQLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
