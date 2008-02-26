@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,16 +33,21 @@ public class ChangePasswordContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel vp = new VerticalPanel();
-		vp
-				.add(new HTML(
-						"<h2>Change Password</h2><h3>Enter your current password</h3>"));
+		vp.add(new HTML("Enter your current password<br />"));
 		vp.add(oldPass);
-		vp.add(new HTML("<h3>Enter your new password</h3>"));
+		vp.add(new HTML("Enter your new password<br />"));
 		vp.add(pass);
-		vp.add(new HTML("<h3>Enter your new password again</h3>"));
+		vp.add(new HTML("Enter your new password again<br />"));
 		vp.add(passAgain);
-		vp.add(new Button("Change Password", new ClickListener() {
-
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(new Button("Clear", new ClickListener() {
+			public void onClick(Widget sender) {
+				oldPass.setText("");
+				pass.setText("");
+				passAgain.setText("");
+			}
+		}));
+		hp.add(new Button("Change Password", new ClickListener() {
 			public void onClick(Widget sender) {
 				final String oldPassText = oldPass.getText();
 				final String passText = pass.getText();
@@ -77,7 +83,7 @@ public class ChangePasswordContent extends ContentComposite {
 				}
 			}
 		}));
-
+		vp.add(hp);
 		vp.add(message);
 
 		rootPanel.clear();

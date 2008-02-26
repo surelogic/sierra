@@ -10,4 +10,5 @@ public interface ManageServerServiceAsync {
 
 	void setEmail(String address, AsyncCallback callback);
 
+	void testAdminEmail(AsyncCallback callback);
 }

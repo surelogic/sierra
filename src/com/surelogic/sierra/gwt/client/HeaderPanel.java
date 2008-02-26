@@ -139,10 +139,10 @@ public final class HeaderPanel extends Composite {
 			}
 
 			if (user.isAdministrator()) {
-				addTab("Server Settings", ServerSettingsContent.getInstance());
+				addTab("Server Settings", ServerInformationContent.getInstance());
 				addTab("User Management", UserManagementContent.getInstance());
 			} else {
-				removeTab(ServerSettingsContent.getInstance().getContextName());
+				removeTab(ServerInformationContent.getInstance().getContextName());
 				removeTab(UserManagementContent.getInstance().getContextName());
 			}
 

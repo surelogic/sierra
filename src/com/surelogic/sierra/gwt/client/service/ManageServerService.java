@@ -11,4 +11,6 @@ public interface ManageServerService extends RemoteService {
 	
 	ServerInfo setEmail(String address);
 	
+	void testAdminEmail();
+	
 }
