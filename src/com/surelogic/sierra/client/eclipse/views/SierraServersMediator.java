@@ -249,7 +249,10 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			 * model that it is the focus.
 			 */
 			final TableItem[] sa = f_projectList.getSelection();
-			f_disconnectProjectItem.setEnabled(sa.length > 0);
+			final boolean enabled = sa.length > 0;
+			f_scanProjectItem.setEnabled(enabled);
+			f_rescanProjectItem.setEnabled(enabled);
+			f_disconnectProjectItem.setEnabled(enabled);
 		}
 	};
 
