@@ -119,7 +119,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				});
 				
 				f_reportContents.addKeyListener(new KeyListener() {
-          public void keyPressed(KeyEvent e) {
+          public void keyPressed(KeyEvent e) {                   
             MColumn column = null;
             if (e.keyCode == SWT.ARROW_LEFT) {
               column = getPreviousColumn();
@@ -130,7 +130,16 @@ public final class MFilterSelectionColumn extends MColumn implements
             focusOnColumn(column);
           }
           public void keyReleased(KeyEvent e) {
-            // Nothing to do
+            if (e.character == ' ') {              
+              // Called after the table toggles the item
+              int selected = f_reportContents.getSelectionIndex();
+              if (selected >= 0) {
+                TableItem item = f_reportContents.getItem(selected);
+                //item.setChecked(!item.getChecked());
+                selectionChanged(item);
+              }
+              return;              
+            }     
           }         
         }); 
 				f_reportContents.addListener(SWT.Traverse, new Listener() {
@@ -158,17 +167,14 @@ public final class MFilterSelectionColumn extends MColumn implements
 				
 				f_reportContents.addSelectionListener(new SelectionListener() {
           public void widgetDefaultSelected(SelectionEvent e) {
+            // e.g. return
             TableItem item = (TableItem) e.item;
             item.setChecked(!item.getChecked());
             selectionChanged(item);
           }
 
           public void widgetSelected(SelectionEvent e) {
-            /*
-            TableItem item = (TableItem) e.item;
-            item.setChecked(!item.getChecked());
-            selectionChanged(item);
-            */
+            // Actually handled below by MouseDown            
           }				  
 				});		
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
