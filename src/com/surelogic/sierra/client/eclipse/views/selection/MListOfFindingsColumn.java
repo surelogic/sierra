@@ -468,7 +468,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  gc.dispose();
 	  temp.dispose();
 	  if (longestData != null) {
-	    initTableItem(longestData, f_table.getItem(longestIndex));
+	    if (longestIndex >= f_table.getItemCount()) {
+	      LOG.warning("Got index outside of table: "+longestIndex+", "+f_table.getItemCount());
+	    } else {
+	      initTableItem(longestData, f_table.getItem(longestIndex));
+	    }
 	  }
 
 	  if (longest < 25) {
