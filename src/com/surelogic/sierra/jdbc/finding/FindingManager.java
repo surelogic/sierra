@@ -138,7 +138,7 @@ public class FindingManager {
 			int counter = 0;
 			try {
 				while (result.next()) {
-					ArtifactResult art = createArtifactResult(result);     
+					ArtifactResult art = createArtifactResult(result);
 					Long findingId = getFindingId(filter, projectId, art);
 					LongRelationRecord afr = factory.newArtifactFinding();
 					afr.setId(new RelationRecord.PK<Long, Long>(art.id,
@@ -163,56 +163,59 @@ public class FindingManager {
 				result.close();
 			}
 			if (log.isLoggable(Level.FINE)) {
-			  log.fine("All new findings (" + counter + ") persisted for scan "
-					+ uid + " in project " + projectName + ".");
+				log.fine("All new findings (" + counter
+						+ ") persisted for scan " + uid + " in project "
+						+ projectName + ".");
 			}
 		} catch (SQLException e) {
 			sqlError(e);
 		}
 	}
 
-  protected Long getFindingId(FindingFilter filter, Long projectId, ArtifactResult art) throws SQLException {
-    Long findingId;
-    if (!art.m.select()) {
-    	// We don't have a match, so we need to produce an
-    	// entirely
-    	// new finding
-    	MatchRecord m = art.m;
-    	Importance importance = filter.calculateImportance(
-    			art.m.getId().getFindingTypeId(), art.p, art.s);
-    	FindingRecord f = factory.newFinding();
-    	f.setProjectId(projectId);
-    	f.setImportance(importance);
-    	f.setSummary(art.message);
-    	f.insert();
-    	m.setFindingId(f.getId());
-    	m.insert();
-    	findingId = f.getId();
-    } else {
-    	findingId = art.m.getFindingId();
-    }
-    return findingId;
-  }
+	protected Long getFindingId(FindingFilter filter, Long projectId,
+			ArtifactResult art) throws SQLException {
+		Long findingId;
+		if (!art.m.select()) {
+			// We don't have a match, so we need to produce an
+			// entirely
+			// new finding
+			MatchRecord m = art.m;
+			Importance importance = filter.calculateImportance(art.m.getId()
+					.getFindingTypeId(), art.p, art.s);
+			FindingRecord f = factory.newFinding();
+			f.setProjectId(projectId);
+			f.setImportance(importance);
+			f.setSummary(art.message);
+			f.insert();
+			m.setFindingId(f.getId());
+			m.insert();
+			findingId = f.getId();
+		} else {
+			findingId = art.m.getFindingId();
+		}
+		return findingId;
+	}
 
-  protected ArtifactResult createArtifactResult(ResultSet result) throws SQLException {
-    ArtifactResult art = new ArtifactResult();
-    int idx = 1;
-    art.id = result.getLong(idx++);
-    art.p = Priority.values()[result.getInt(idx++)];
-    art.s = Severity.values()[result.getInt(idx++)];
-    art.message = result.getString(idx++);
-    art.m = factory.newMatch();
-    // R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
-    MatchRecord.PK pk = new MatchRecord.PK();
-    pk.setProjectId(result.getLong(idx++));
-    pk.setHash(result.getLong(idx++));
-    pk.setClassName(result.getString(idx++));
-    pk.setPackageName(result.getString(idx++));
-    pk.setFindingTypeId(result.getLong(idx++));
-    art.m.setId(pk);   
-    return art;
-  }
-  
+	protected ArtifactResult createArtifactResult(ResultSet result)
+			throws SQLException {
+		ArtifactResult art = new ArtifactResult();
+		int idx = 1;
+		art.id = result.getLong(idx++);
+		art.p = Priority.values()[result.getInt(idx++)];
+		art.s = Severity.values()[result.getInt(idx++)];
+		art.message = result.getString(idx++);
+		art.m = factory.newMatch();
+		// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
+		MatchRecord.PK pk = new MatchRecord.PK();
+		pk.setProjectId(result.getLong(idx++));
+		pk.setHash(result.getLong(idx++));
+		pk.setClassName(result.getString(idx++));
+		pk.setPackageName(result.getString(idx++));
+		pk.setFindingTypeId(result.getLong(idx++));
+		art.m.setId(pk);
+		return art;
+	}
+
 	/**
 	 * Delete all findings for the given project.
 	 * 
@@ -261,8 +264,7 @@ public class FindingManager {
 
 	protected void comment(Long userId, Long findingId, String comment,
 			Date time, Long revision) throws SQLException {
-		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision)
-				.insert();
+		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision);
 		touchFinding(findingId, time);
 	}
 
@@ -270,7 +272,7 @@ public class FindingManager {
 			Importance importance, Date time, Long revision)
 			throws SQLException {
 		newAudit(userId, findingId, importance.toString(),
-				AuditEvent.IMPORTANCE, time, revision).insert();
+				AuditEvent.IMPORTANCE, time, revision);
 		updateFindingImportance.setInt(1, importance.ordinal());
 		updateFindingImportance.setTimestamp(2, new Timestamp(time.getTime()));
 		updateFindingImportance.setLong(3, findingId);
@@ -280,15 +282,13 @@ public class FindingManager {
 
 	protected void markAsRead(Long userId, Long findingId, Date time,
 			Long revision) throws SQLException {
-		newAudit(userId, findingId, null, AuditEvent.READ, time, revision)
-				.insert();
+		newAudit(userId, findingId, null, AuditEvent.READ, time, revision);
 		touchFinding(findingId, time);
 	}
 
 	protected void changeSummary(Long userId, Long findingId, String summary,
 			Date time, Long revision) throws SQLException {
-		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision)
-				.insert();
+		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision);
 		updateFindingSummary.setString(1, summary);
 		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
 		updateFindingSummary.setLong(3, findingId);
@@ -312,7 +312,7 @@ public class FindingManager {
 		touchFinding.execute();
 	}
 
-	private AuditRecord newAudit(Long userId, Long findingId, String value,
+	private void newAudit(Long userId, Long findingId, String value,
 			AuditEvent event, Date time, Long revision) throws SQLException {
 		AuditRecord record = factory.newAudit();
 		record.setUserId(userId);
@@ -321,7 +321,9 @@ public class FindingManager {
 		record.setValue(value);
 		record.setFindingId(findingId);
 		record.setRevision(revision);
-		return record;
+		if (!record.select()) {
+			record.insert();
+		}
 	}
 
 	/**
@@ -414,8 +416,7 @@ public class FindingManager {
 			set.next();
 			int mergeIdx = 1;
 			merge.setSummary(set.getString(mergeIdx++));
-			merge.setImportance(Importance.values()[set
-					.getInt(mergeIdx++)]);
+			merge.setImportance(Importance.values()[set.getInt(mergeIdx++)]);
 			match.setPackageName(set.getString(mergeIdx++));
 			match.setClassName(set.getString(mergeIdx++));
 			match.setHash(set.getLong(mergeIdx++));
@@ -431,7 +432,7 @@ public class FindingManager {
 		throw new FindingGenerationException(e);
 	}
 
-	//FIXME Evil code!
+	// FIXME Evil code!
 	protected Long getUserId(String user) throws SQLException {
 		return ClientUser.getUser(user, conn).getId();
 	}

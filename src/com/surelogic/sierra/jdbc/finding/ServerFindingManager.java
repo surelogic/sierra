@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -13,7 +14,6 @@ import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
-import com.surelogic.sierra.jdbc.record.AuditRecord;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -26,6 +26,7 @@ import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
+import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
 import com.surelogic.sierra.tool.message.SyncResponse;
@@ -116,7 +117,8 @@ public final class ServerFindingManager extends FindingManager {
 				"DELETE FROM SCAN_SUMMARY WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				"UPDATE SCAN_SUMMARY SET NEW_FINDINGS = ?, FIXED_FINDINGS = ?, UNCHANGED_FINDINGS = ?, ARTIFACT_COUNT = ?, TOTAL_FINDINGS = ?, LINES_OF_CODE = ? WHERE SCAN_ID = ? AND QUALIFIER_ID = ?",
 				false);
-		insertCommitRecord = conn.prepareStatement("INSERT INTO COMMIT_AUDITS (PROJECT_ID,USER_ID,REVISION) VALUES (?,?,?)");
+		insertCommitRecord = conn
+				.prepareStatement("INSERT INTO COMMIT_AUDITS (PROJECT_ID,USER_ID,REVISION) VALUES (?,?,?)");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -158,15 +160,16 @@ public final class ServerFindingManager extends FindingManager {
 
 	/**
 	 * Commit the given audit trails.
-	 * @param projectId 
+	 * 
+	 * @param projectId
 	 * @param userId
 	 * @param revision
 	 * @param trails
 	 * @return the in-order list of uids that the audits were applied to.
 	 * @throws SQLException
 	 */
-	public List<String> commitAuditTrails(long projectId, Long userId, Long revision,
-			List<AuditTrail> trails) throws SQLException {
+	public List<String> commitAuditTrails(long projectId, Long userId,
+			Long revision, List<AuditTrail> trails) throws SQLException {
 		List<String> uids = new ArrayList<String>(trails.size());
 		for (AuditTrail trail : trails) {
 			FindingRecord findingRecord = factory.newFinding();
@@ -181,15 +184,21 @@ public final class ServerFindingManager extends FindingManager {
 					findingId = findingRecord.getId();
 				}
 				for (Audit audit : trail.getAudits()) {
-					AuditRecord auditRecord = factory.newAudit();
-					auditRecord.setEvent(audit.getEvent());
-					auditRecord.setFindingId(findingId);
-					auditRecord.setRevision(revision);
-					auditRecord.setTimestamp(audit.getTimestamp());
-					auditRecord.setUserId(userId);
-					auditRecord.setValue(audit.getValue());
-					if (!auditRecord.select()) {
-						auditRecord.insert();
+					final String value = audit.getValue();
+					final Date time = audit.getTimestamp();
+					switch (audit.getEvent()) {
+					case COMMENT:
+						comment(userId, findingId, value, time, revision);
+						break;
+					case IMPORTANCE:
+						setImportance(userId, findingId, Importance
+								.fromValue(value), time, revision);
+						break;
+					case READ:
+						markAsRead(userId, findingId, time, revision);
+						break;
+					case SUMMARY:
+						changeSummary(userId, findingId, value, time, revision);
 					}
 				}
 				uids.add(findingRecord.getUid());
