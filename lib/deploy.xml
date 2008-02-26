@@ -12,6 +12,7 @@
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
+		<copy file="./lib/mail.jar" todir="../jetty/lib/ext/" />
 		<jar destfile="../sierra-services/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
@@ -69,6 +70,7 @@
 		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />
 		<delete quiet="true" file="../jetty/lib/ext/derby.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/mail.jar" />
 		<!-- ../jetty/lib/ext/common.jar is obsolete after Jan 08 -->
 		<delete quiet="true" file="../jetty/lib/ext/common.jar" />
 
