@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.views.selection;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -130,12 +131,15 @@ public final class MFilterSelectionColumn extends MColumn implements
             focusOnColumn(column);
           }
           public void keyReleased(KeyEvent e) {
-            if (e.character == ' ') {              
+            if (e.character == ' ' ||
+                SystemUtils.IS_OS_MAC_OSX && e.character == SWT.CR) {              
               // Called after the table toggles the item
               int selected = f_reportContents.getSelectionIndex();
               if (selected >= 0) {
                 TableItem item = f_reportContents.getItem(selected);
-                //item.setChecked(!item.getChecked());
+                if (SystemUtils.IS_OS_MAC_OSX) {
+                  item.setChecked(!item.getChecked());
+                }
                 selectionChanged(item);
               }
               return;              
