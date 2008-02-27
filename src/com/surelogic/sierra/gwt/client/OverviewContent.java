@@ -106,7 +106,7 @@ public class OverviewContent extends ContentComposite {
 					for (Iterator i = list.iterator(); i.hasNext();) {
 						UserOverview uo = (UserOverview) i.next();
 						users.add(new HTML(uo.getUserName() + " has "
-								+ uo.getAudits() + " audits on "
+								+ uo.getAudits() + " comments on "
 								+ uo.getFindings() + " findings."));
 					}
 				}
