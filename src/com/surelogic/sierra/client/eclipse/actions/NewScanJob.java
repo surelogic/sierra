@@ -48,7 +48,15 @@ public class NewScanJob extends WorkspaceJob {
 			}
 		}
 		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
-			final Throwable e = wrapper.getFailureTrace();
+      // Try to unwrap exception
+			Throwable e = wrapper.getFailureTrace();
+			while (e instanceof RuntimeException) {
+			  Throwable cause = e.getCause();
+			  if (cause == null) {
+			    break;
+			  }
+			  e = cause;
+			}
 			final int errNo = 46;
 			final String msg = I18N.err(errNo, getName());
 			return SLStatus.createErrorStatus(errNo, msg, e);
