@@ -26,7 +26,7 @@ public class ChangePasswordDialog extends DialogBox {
 	public ChangePasswordDialog(UserAccount user) {
 		super();
 		this.user = user;
-		setText("Create a user");
+		setText("Change Password");
 
 		errorMessage.addStyleName("error");
 
