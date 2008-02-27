@@ -287,15 +287,7 @@ public class LocalTool extends AbstractTool {
         }
       }
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
-      pb.redirectErrorStream(true);      
-      /*
-      Map<String, String> env = pb.environment();
-      env.put("VAR1", "myValue");
-      env.remove("OTHERVAR");
-      env.put("VAR2", env.get("VAR1") + "suffix");
-      pb.directory(new File("myDir"));
-      */
-      
+      pb.redirectErrorStream(true);            
       try {
         Process p         = pb.start();
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
