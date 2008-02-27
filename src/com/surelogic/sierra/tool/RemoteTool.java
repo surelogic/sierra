@@ -119,16 +119,24 @@ public class RemoteTool extends AbstractTool {
       long end = System.currentTimeMillis();
       checkInput(br, mon, "Done scanning: "+(end-start)+" ms");      
     } catch (Throwable e) {
-      StackTraceElement[] trace = e.getStackTrace();
-      System.out.println("Caught exception");
-      for (StackTraceElement ste : trace) {
-        System.out.println("\t at "+ste);
-      }
-      System.out.println("##"+Remote.FAILED+", "+e.getClass().getName()+" : "+e.getMessage());
-      for (StackTraceElement ste : trace) {
-        System.out.println("\tat "+ste);
-      }
+      outputFailure(System.out, null, e);
       System.exit(-1);
+    }
+  }
+
+  private static void outputFailure(PrintStream out, String msg, Throwable e) {
+    StackTraceElement[] trace = e.getStackTrace();
+    out.println("Caught exception");
+    for (StackTraceElement ste : trace) {
+      out.println("\t at "+ste);
+    }
+    if (msg == null) {
+      out.println("##"+Remote.FAILED+", "+e.getClass().getName()+" : "+e.getMessage());
+    } else {
+      out.println("##"+Remote.FAILED+", "+msg+" - "+e.getClass().getName()+" : "+e.getMessage());
+    }
+    for (StackTraceElement ste : trace) {
+      out.println("\tat "+ste);
     }
   }
 
@@ -173,16 +181,12 @@ public class RemoteTool extends AbstractTool {
     public void failed(String msg) {
       setCanceled(true);
       Throwable t = new Throwable();
-      t.printStackTrace(out);
-      out.println("##"+Remote.FAILED+", "+msg);
-      t.printStackTrace(out);
+      outputFailure(out, msg, t);
     }
 
     public void failed(String msg, Throwable t) {
       setCanceled(true);
-      new Throwable().printStackTrace(out);
-      out.println("##"+Remote.FAILED+", "+msg+" : "+t.getClass().getName()+" ...");
-      t.printStackTrace(out);
+      outputFailure(out, msg, t);
     }
 
     public Throwable getFailureTrace() {
