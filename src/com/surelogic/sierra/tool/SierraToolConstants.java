@@ -85,4 +85,5 @@ public final class SierraToolConstants {
   public static final int ERROR_SCAN_CANCELLED = 69;
   public static final int ERROR_SCAN_FAILED = 70;
   public static final int ERROR_PROCESS_FAILED = 71;
+  public static final int ERROR_MEMORY_SIZE_TOO_SMALL = 75;
 }
