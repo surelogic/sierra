@@ -362,14 +362,20 @@ public class LocalTool extends AbstractTool {
           System.out.println(line);
         } 
         // See if the process already died?
+        int value;
         try {
-          p.exitValue();
+          value = p.exitValue();
+          System.out.println("Process result after waiting = "+value);
         } catch (IllegalThreadStateException e) {
           // Not done yet
+          value = p.waitFor();
+          System.out.println("Process result after waiting = "+value);
         }
-        System.out.println("Process result = "+p.waitFor());
         br.close();
         pout.close();
+        if (value != 0) {
+          throw new RuntimeException("Process failed: "+value);
+        }
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
