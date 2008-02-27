@@ -362,15 +362,7 @@ public class LocalTool extends AbstractTool {
           System.out.println(line);
         } 
         // See if the process already died?
-        int value;
-        try {
-          value = p.exitValue();
-          System.out.println("Process result after waiting = "+value);
-        } catch (IllegalThreadStateException e) {
-          // Not done yet
-          value = p.waitFor();
-          System.out.println("Process result after waiting = "+value);
-        }
+        int value = handleExitValue(p);
         br.close();
         pout.close();
         if (value != 0) {
@@ -381,6 +373,40 @@ public class LocalTool extends AbstractTool {
       }
     }
 
+    private int handleExitValue(Process p) {
+      int value;
+      try {
+        value = p.exitValue();
+        System.out.println("Process result after waiting = "+value);
+      } catch (IllegalThreadStateException e) {
+        // Not done yet
+        final Thread currentThread = Thread.currentThread(); 
+        Thread t = new Thread() {            
+          public void run() {
+            // Set to timeout in 1 minute
+            try {
+              Thread.sleep(60000);
+              currentThread.interrupt();
+            } catch (InterruptedException e) {
+              // Just end
+            }
+          }
+        };
+        
+        final long start = System.currentTimeMillis();
+        t.start();
+        try {
+          value = p.waitFor();
+          t.interrupt();
+        } catch(InterruptedException ie) {
+          long time = System.currentTimeMillis() - start;
+          throw new RuntimeException("Timeout waiting for process to exit: "+time+" ms");
+        }
+        System.out.println("Process result after waiting = "+value);
+      }
+      return value;
+    }
+    
     private String copyException(String type, String msg, BufferedReader br) throws IOException {
       StringBuilder sb = new StringBuilder(type);      
       System.out.println(msg);
