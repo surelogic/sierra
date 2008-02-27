@@ -224,11 +224,8 @@ public class LocalTool extends AbstractTool {
       }
     }
     
-    public void run() {
-      final boolean debug = LOG.isLoggable(Level.FINE);
-      Project proj = new Project();
-      
-      CommandlineJava cmdj   = new CommandlineJava();
+    private void setupJVM(final boolean debug, final CommandlineJava cmdj) {
+      final Project proj = new Project();      
       setupConfigFile(cmdj);      
       cmdj.setMaxmemory("1024m");
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
@@ -279,6 +276,12 @@ public class LocalTool extends AbstractTool {
           }
         }
       }
+    }
+    
+    public void run() {
+      final boolean debug = LOG.isLoggable(Level.FINE);
+      CommandlineJava cmdj   = new CommandlineJava();
+      setupJVM(debug, cmdj);
 
       if (debug) {
         System.out.println("Starting process:");
@@ -294,6 +297,7 @@ public class LocalTool extends AbstractTool {
         String firstLine  = br.readLine();
         if (debug) {
           while (firstLine != null) {
+            // Copy verbose output until we get to the first line from RemoteTool
             if (firstLine.startsWith("[")) {
               //if (!firstLine.endsWith("rt.jar]")) {
               System.out.println(firstLine);
@@ -337,12 +341,13 @@ public class LocalTool extends AbstractTool {
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
                 case ERROR:
-                  line = copyException(first, st.nextToken(), br);
+                  copyException(first, st.nextToken(), br);
                   break;
                 case FAILED:
-                  line = copyException(first, st.nextToken(), br);
+                  String msg = copyException(first, st.nextToken(), br);
                   System.out.println("Terminating run");
-                  break loop;
+                  p.destroy();
+                  throw new RuntimeException(msg);
                 case DONE:
                   monitor.done();
                   break loop;
@@ -355,6 +360,12 @@ public class LocalTool extends AbstractTool {
         line = br.readLine();
         if (line != null) {
           System.out.println(line);
+        } 
+        // See if the process already died?
+        try {
+          p.exitValue();
+        } catch (IllegalThreadStateException e) {
+          // Not done yet
         }
         System.out.println("Process result = "+p.waitFor());
         br.close();
@@ -375,11 +386,12 @@ public class LocalTool extends AbstractTool {
         sb.append(msg).append('\n');
         line = br.readLine();
       }
-      monitor.error(sb.toString());
       if (line != null) {
         System.out.println(line);
       }
-      return line;
+      final String errMsg = sb.toString();
+      monitor.error(errMsg);
+      return errMsg;
     }
     
     private void findJars(Project proj, Path path, String folder) {
