@@ -73,10 +73,10 @@ public class OverviewContent extends ContentComposite {
 												+ po.getIrrelevant()
 												+ " Irrelevant</p>"
 												+ ((po.getLastSynchUser() == null) ? ""
-														: ("<p>Last updated by "
+														: ("<p>Last updated by <span class=\"user\">"
 																+ po
 																		.getLastSynchUser()
-																+ " on "
+																+ "</span> on "
 																+ po
 																		.getLastSynchDate() + "</p>"))));
 					}
@@ -104,7 +104,8 @@ public class OverviewContent extends ContentComposite {
 				} else {
 					for (Iterator i = list.iterator(); i.hasNext();) {
 						UserOverview uo = (UserOverview) i.next();
-						users.add(new HTML(uo.getUserName() + " has "
+						users.add(new HTML("<span class=\"user\">"
+								+ uo.getUserName() + "</span> has "
 								+ uo.getAudits() + " comments on "
 								+ uo.getFindings() + " findings."));
 					}
@@ -119,9 +120,9 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		panel.add(new HTML("<h3>Projects</h3>"));
+		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);
-		panel.add(new HTML("<h3>Users</h3>"));
+		panel.add(new HTML("<h2>Users</h2>"));
 		panel.add(users);
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));

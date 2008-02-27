@@ -55,7 +55,7 @@ public final class HeaderPanel extends Composite {
 		sessionPanel.addStyleName(SESSION_STYLE);
 		loggedInAs = createUserLabel("Logged In", null);
 		userName = createUserLabel(null, null);
-		userName.addStyleName("header-user");
+		userName.addStyleName("user");
 		sessionPanel.add(loggedInAs);
 		sessionPanel.add(userName);
 		sessionPanel.add(createUserLabel("|", null));
