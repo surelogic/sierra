@@ -278,7 +278,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
-        logError("Couldn't find source file for "+line.getClassName());
+        if (!missingClasses.contains(line.getClassName())) {
+          logError("Couldn't find source file for "+line.getClassName());
+          missingClasses.add(line.getClassName());
+        }
         return null;
       }  
       HashGenerator hashGenerator = HashGenerator.getInstance();
@@ -317,11 +320,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
     public void reportMissingClass(ClassNotFoundException ex) {      
       if (missingClasses.contains(ex.getMessage())) {
-        LOG.warning("Missing class: "+ex.getMessage());
         return;
       }
       missingClasses.add(ex.getMessage());
-      LOG.log(Level.WARNING, "Missing class", ex);
+      //LOG.log(Level.WARNING, "Missing class", ex);
       tool.reportError("Missing class", ex);
     }
 
