@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface ProjectOverviewService extends RemoteService {
+public interface OverviewService extends RemoteService {
 
 	/**
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ProjectOverview>
@@ -12,4 +12,9 @@ public interface ProjectOverviewService extends RemoteService {
 	 */
 	List getProjectOverviews();
 
+	/**
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.UserOverview>
+	 * @return a list of the users currently active on the server.
+	 */
+	List getUserOverviews();
 }

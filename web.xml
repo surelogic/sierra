@@ -110,15 +110,15 @@
 
 
 	<servlet>
-		<servlet-name>Project Overview</servlet-name>
+		<servlet-name>Overview</servlet-name>
 		<servlet-class>
-			com.surelogic.sierra.gwt.server.ProjectOverviewServiceImpl
+			com.surelogic.sierra.gwt.server.OverviewServiceImpl
 		</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Project Overview</servlet-name>
-		<url-pattern>/ProjectOverviewService</url-pattern>
+		<servlet-name>Overview</servlet-name>
+		<url-pattern>/OverviewService</url-pattern>
 	</servlet-mapping>
 
 </web-app>

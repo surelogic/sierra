@@ -30,6 +30,8 @@ public class UserManagementContent extends ContentComposite {
 
 	private static final String ADMIN = "Administrator";
 	private static final String USER = "User";
+	private static final String ENABLED = "Enabled";
+	private static final String DISABLED = "Disabled";
 
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
@@ -154,8 +156,8 @@ public class UserManagementContent extends ContentComposite {
 
 	private void updateRow(int row, UserAccount user) {
 		usersGrid.setText(row, 0, user.getUserName());
-		usersGrid.setWidget(row, 1, createUserListBox(row, user));
-		usersGrid.setText(row, 2, user.isActive() ? "Enabled" : "Disabled");
+		usersGrid.setWidget(row, 1, createUserRoleChoice(row, user));
+		usersGrid.setWidget(row, 2, createUserStatusChoice(row, user));
 		usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
 		usersGrid.setRowData(row, user);
 	}
@@ -174,15 +176,42 @@ public class UserManagementContent extends ContentComposite {
 		return html;
 	}
 
-	private ListBox createUserListBox(final int row, final UserAccount user) {
-		ListBox box = new ListBox();
+	private ListBox createUserStatusChoice(final int row, final UserAccount user) {
+		final ListBox box = new ListBox();
+		box.addItem(DISABLED);
+		box.addItem(ENABLED);
+		box.setSelectedIndex(user.isActive() ? 1 : 0);
+		box.addChangeListener(new ChangeListener() {
+
+			public void onChange(Widget sender) {
+				user.setActive(ENABLED.equals(box.getItemText(box
+						.getSelectedIndex())));
+				ServiceHelper.getManageUserService().updateUser(user, null,
+						new AsyncCallback() {
+
+							public void onFailure(Throwable caught) {
+								usersGrid.setStatus("error",
+										"Error updating the role of "
+												+ user.getUserName() + ".");
+							}
+
+							public void onSuccess(Object result) {
+								usersGrid.setRowData(row, result);
+							}
+						});
+			}
+		});
+		return box;
+	}
+
+	private ListBox createUserRoleChoice(final int row, final UserAccount user) {
+		final ListBox box = new ListBox();
 		box.addItem(USER);
 		box.addItem(ADMIN);
 		box.setSelectedIndex(user.isAdministrator() ? 1 : 0);
 		box.addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
-				final ListBox box = (ListBox) sender;
 				user.setAdministrator(ADMIN.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user, null,

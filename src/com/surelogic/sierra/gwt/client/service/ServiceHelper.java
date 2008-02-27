@@ -44,12 +44,12 @@ public final class ServiceHelper {
 		return serverService;
 	}
 	
-	public static ProjectOverviewServiceAsync getProjectOverviewService() {
-		ProjectOverviewServiceAsync serverService = (ProjectOverviewServiceAsync) GWT
-				.create(ProjectOverviewService.class);
+	public static OverviewServiceAsync getOverviewService() {
+		OverviewServiceAsync serverService = (OverviewServiceAsync) GWT
+				.create(OverviewService.class);
 		ServiceDefTarget endpoint = (ServiceDefTarget) serverService;
 		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL()
-				+ "ProjectOverviewService");
+				+ "OverviewService");
 		return serverService;
 	}
 
