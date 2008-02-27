@@ -52,7 +52,6 @@ public final class ClientContext {
 
 			public void onSuccess(Object result) {
 				setUser(null);
-				LoginContent.getInstance().show();
 			}
 		});
 	}

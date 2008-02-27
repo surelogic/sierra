@@ -36,18 +36,14 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		if (account == null) {
 			content = LoginContent.getInstance();
 		} else {
-			if (context != null && !"".equals(context)) {
-				content = (ContentComposite) contentRegistry.get(context
-						.toLowerCase());
-			}
-
-			if (content == null) {
+			if (context == null || "".equals(context)) {
 				ClientContext.setContext(OverviewContent.getInstance()
 						.getContextName());
 				return;
 			}
+			content = (ContentComposite) contentRegistry.get(context
+					.toLowerCase());
 		}
-
 		if (currentContent == content) {
 			return;
 		}

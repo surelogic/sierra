@@ -26,11 +26,7 @@ public class SierraPortal implements EntryPoint {
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.getUserAccount(new AsyncCallback() {
 			public void onSuccess(Object result) {
-				if (result == null) {
-					LoginContent.getInstance().show();
-				} else {
-					ClientContext.setUser((UserAccount) result);
-				}
+				ClientContext.setUser((UserAccount) result);
 			}
 
 			public void onFailure(Throwable caught) {
