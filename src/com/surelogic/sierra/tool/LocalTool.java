@@ -360,6 +360,10 @@ public class LocalTool extends AbstractTool {
                   String msg = copyException(first, st.nextToken(), br);
                   System.out.println("Terminating run");
                   p.destroy();
+                  if (msg.startsWith("FAILED:  java.lang.OutOfMemoryError")) {
+                    throw new ToolException(SierraToolConstants.ERROR_MEMORY_SIZE_TOO_SMALL, 
+                                            config.getMemorySize());
+                  }
                   throw new RuntimeException(msg);
                 case DONE:
                   monitor.done();
