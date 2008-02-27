@@ -415,7 +415,7 @@ public class LocalTool extends AbstractTool {
       String line = br.readLine();
       while (line != null && line.startsWith("\t")) {
         System.out.println(line);
-        sb.append(msg).append('\n');
+        sb.append(' ').append(line).append('\n');
         line = br.readLine();
       }
       if (line != null) {
