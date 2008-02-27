@@ -351,6 +351,7 @@ public final class ConfigGenerator {
 	private void setupTools(Config config) {
 	  config.setJavaVendor(System.getProperty("java.vendor"));
 	  config.setJavaVersion(System.getProperty("java.version"));
+	  config.setMemorySize(PreferenceConstants.getToolMemoryMB());
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
 	}
