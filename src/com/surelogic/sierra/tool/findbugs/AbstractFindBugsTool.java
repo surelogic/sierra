@@ -336,6 +336,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       if (missingClasses.contains(msg)) {        
         return;
       }
+      missingClasses.add(msg);
       tool.reportError(msg);
     }
 
