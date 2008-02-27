@@ -227,7 +227,11 @@ public class LocalTool extends AbstractTool {
     private void setupJVM(final boolean debug, final CommandlineJava cmdj) {
       final Project proj = new Project();      
       setupConfigFile(cmdj);      
-      cmdj.setMaxmemory("1024m");
+      if (config.getMemorySize() > 0) {
+        cmdj.setMaxmemory(config.getMemorySize()+"m");
+      } else {
+        cmdj.setMaxmemory("1024m");
+      }      
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
       setupCustomClassLoader(debug, cmdj);
       if (false) {
