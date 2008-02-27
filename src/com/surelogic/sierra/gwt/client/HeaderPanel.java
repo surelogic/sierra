@@ -75,7 +75,6 @@ public final class HeaderPanel extends Composite {
 
 					public void onSuccess(Object result) {
 						ClientContext.setUser(null);
-						LoginContent.getInstance().show();
 					}
 				});
 			}
