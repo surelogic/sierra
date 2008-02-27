@@ -12,20 +12,69 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.service.ProjectOverviewService;
+import com.surelogic.sierra.gwt.client.data.UserOverview;
+import com.surelogic.sierra.gwt.client.service.OverviewService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class ProjectOverviewServiceImpl extends SierraServiceServlet implements
-		ProjectOverviewService {
+public class OverviewServiceImpl extends SierraServiceServlet implements
+		OverviewService {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1399491183980140077L;
+
+	public List<UserOverview> getUserOverviews() {
+		return ConnectionFactory
+				.withUserReadOnly(new UserTransaction<List<UserOverview>>() {
+
+					public List<UserOverview> perform(Connection conn,
+							Server server, User user) throws Exception {
+						PreparedStatement auditSt = conn
+								.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT A.ID), MAX(R.DATE_TIME)  "
+										+ "FROM SIERRA_USER U, SIERRA_AUDIT A, REVISION R "
+										+ "WHERE A.USER_ID = U.ID AND R.REVISION = A.REVISION AND "
+										+ "A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
+										+ "GROUP BY U.USER_NAME "
+										+ "ORDER BY U.USER_NAME ");
+						PreparedStatement findingSt = conn
+								.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT F.ID) "
+										+ "FROM SIERRA_USER U, SIERRA_AUDIT A, FINDING F "
+										+ "WHERE A.USER_ID = U.ID AND F.ID = A.FINDING_ID AND "
+										+ "A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
+										+ "GROUP BY U.USER_NAME "
+										+ "ORDER BY U.USER_NAME ");
+						final List<UserOverview> overviews = new ArrayList<UserOverview>();
+						Timestamp time = thirtyDaysAgo();
+						auditSt.setTimestamp(1, time);
+						findingSt.setTimestamp(1, time);
+						final ResultSet auditSet = auditSt.executeQuery();
+						try {
+							final ResultSet findingSet = findingSt
+									.executeQuery();
+							try {
+								while(auditSet.next()) {
+									findingSet.next();
+									final UserOverview o = new UserOverview();
+									o.setUserName(auditSet.getString(1));
+									o.setAudits(auditSet.getInt(2));
+									o.setFindings(findingSet.getInt(2));
+									overviews.add(o);
+								}
+							} finally {
+								findingSet.close();
+							}
+						} finally {
+							auditSet.close();
+						}
+						return overviews;
+					}
+				});
+	}
 
 	public List<ProjectOverview> getProjectOverviews() {
 		return ConnectionFactory
@@ -42,9 +91,8 @@ public class ProjectOverviewServiceImpl extends SierraServiceServlet implements
 										+ " A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
 										+ "GROUP BY P.NAME,F.IMPORTANCE "
 										+ "ORDER BY P.NAME");
-						final Calendar c = Calendar.getInstance();
-						c.add(Calendar.DAY_OF_YEAR, -30);
-						st.setTimestamp(1, new Timestamp(c.getTimeInMillis()));
+
+						st.setTimestamp(1, thirtyDaysAgo());
 						final ResultSet set = st.executeQuery();
 						try {
 							ProjectOverview po = new ProjectOverview();
@@ -120,5 +168,11 @@ public class ProjectOverviewServiceImpl extends SierraServiceServlet implements
 						return overview;
 					}
 				});
+	}
+
+	private static Timestamp thirtyDaysAgo() {
+		final Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_YEAR, -30);
+		return new Timestamp(c.getTimeInMillis());
 	}
 }
