@@ -13,6 +13,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -47,7 +48,7 @@ public class NewScanJob extends WorkspaceJob {
 				wrapper.failed("Caught exception while " + getName(), ex);
 			}
 		}
-		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
+		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {		  
       // Try to unwrap exception
 			Throwable e = wrapper.getFailureTrace();
 			while (e instanceof RuntimeException) {
@@ -57,9 +58,20 @@ public class NewScanJob extends WorkspaceJob {
 			  }
 			  e = cause;
 			}
-			final int errNo = 46;
-			final String msg = I18N.err(errNo, getName());
-			return SLStatus.createErrorStatus(errNo, msg, e);
+			final int errNo;
+			final String msg;			
+      if (e instanceof ToolException) {
+        ToolException te = (ToolException) e;
+        errNo = te.getErrorNum();
+        msg = te.getMessage();
+        if (te.getCause() != null) {
+          e = te.getCause();
+        }
+      } else {      
+        errNo = 46;
+			  msg = I18N.err(errNo, getName());
+      }
+      return SLStatus.createErrorStatus(errNo, msg, e);
 		}
 		return Status.OK_STATUS;
 	}
