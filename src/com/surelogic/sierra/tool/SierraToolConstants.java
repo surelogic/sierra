@@ -20,6 +20,11 @@ public final class SierraToolConstants {
 	public static final String JDT_CORE_PLUGIN_ID = "org.eclipse.jdt.core";
 	public static final String CORE_RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime";
 
+	/**
+	 * Java variable for the location of the config file
+	 */
+	public static final String CONFIG_VARIABLE = "surelogic.config";
+	
 	/** The location of tools folder */
 	public static final String TOOLS_FOLDER = "Tools";
 

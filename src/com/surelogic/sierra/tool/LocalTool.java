@@ -200,7 +200,26 @@ public class LocalTool extends AbstractTool {
             pw.println(t.getLocation().toURL());
           }
         }
+        auxPathFile.deleteOnExit();
       } catch(IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+ 
+    private File setupConfigFile(CommandlineJava cmdj) {
+      try {
+        File file = File.createTempFile("config", ".xml");
+        file.deleteOnExit();
+
+        OutputStream out = new FileOutputStream(file);
+        marshaller.marshal(config, out);
+        out.close();
+        
+        cmdj.createVmArgument().setValue("-D"+SierraToolConstants.CONFIG_VARIABLE+"="+file.getAbsolutePath());
+        return file;
+      } catch(IOException e) {
+        throw new RuntimeException(e);
+      } catch(JAXBException e) {
         throw new RuntimeException(e);
       }
     }
@@ -210,6 +229,7 @@ public class LocalTool extends AbstractTool {
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
+      setupConfigFile(cmdj);      
       cmdj.setMaxmemory("1024m");
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
       setupCustomClassLoader(debug, cmdj);
@@ -298,20 +318,8 @@ public class LocalTool extends AbstractTool {
           throw new NullPointerException("No input from the remote JVM (possibly a classpath issue)");
         }
 
-        File file = File.createTempFile("config", ".xml");
-        file.deleteOnExit();
-
-        OutputStream out = new FileOutputStream(file);
-        marshaller.marshal(config, out);
-        out.close();
-        
-        // Send the location of the config file
-        final PrintStream pout = new PrintStream(p.getOutputStream());
-        pout.println(file.getAbsolutePath());
-        pout.println();
-        pout.flush();
-        
         // Copy any output 
+        final PrintStream pout = new PrintStream(p.getOutputStream());
         String line = br.readLine();
       loop:
         while (line != null) {

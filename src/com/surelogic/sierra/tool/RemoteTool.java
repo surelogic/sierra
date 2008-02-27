@@ -61,7 +61,10 @@ public class RemoteTool extends AbstractTool {
       Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
       System.out.println("Lowered thread priority");
       
-      String configName = br.readLine();
+      String configName = System.getProperty(SierraToolConstants.CONFIG_VARIABLE);
+      if (configName == null) {
+        throw new IllegalArgumentException("No config provided");
+      }
       FileInputStream file = new FileInputStream(configName);
       System.out.println("Got file: "+configName);
       
