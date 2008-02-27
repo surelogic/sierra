@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -145,5 +146,16 @@ public final class TeamServer {
 		for (ITeamServerObserver o : f_observers) {
 			o.notify(this);
 		}
+	}
+
+	public void start(final int port) {
+		String plugInDir = Activator.getDefault().getDirectoryOf(
+				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
+		System.out.println(plugInDir);
+
+	}
+
+	public void stop() {
+
 	}
 }

@@ -1,21 +1,28 @@
 package com.surelogic.sierra.eclipse.teamserver.views;
 
+import java.util.logging.Level;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
 import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
 
@@ -62,6 +69,12 @@ public final class TeamServerMediator implements ITeamServerObserver {
 					e.gc.drawImage(trafficLightImage, 0, 0, lightWidth,
 							lightHeight, drawX, drawY, drawWidth, drawHeight);
 				}
+			}
+		});
+		f_command.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				doCommand();
 			}
 		});
 
@@ -128,6 +141,14 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_command.getParent().layout();
 	}
 
+	private void doCommand() {
+		if (f_teamServer.isRunning()) {
+		} else if (f_teamServer.isNotRunning()) {
+		} else {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(64));
+		}
+	}
+
 	void dispose() {
 		f_teamServer.removeObserver(this);
 		f_teamServer.dispose();
@@ -139,6 +160,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	@Override
 	public void notify(TeamServer server) {
+		/*
+		 * We are not being called from the SWT thread.
+		 */
 		refresh();
 	}
 }
