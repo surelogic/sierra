@@ -95,7 +95,6 @@ public class OverviewContent extends ContentComposite {
 			}
 
 			public void onSuccess(Object result) {
-				// TODO Auto-generated method stub
 				users.clear();
 				List list = (List) result;
 				if (list.isEmpty()) {
