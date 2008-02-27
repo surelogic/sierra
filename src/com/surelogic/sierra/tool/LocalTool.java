@@ -229,6 +229,9 @@ public class LocalTool extends AbstractTool {
           if (!new File(p).exists()) {
             System.out.println("Does not exist: "+p);
           }
+          else if (debug) {
+            System.out.println("Path: "+p);
+          }
         }
       }
       // FIX to support PMD's type resolution
