@@ -36,7 +36,6 @@ public final class TeamServerMediator {
 				final Image trafficLightImage = getTrafficLightImage();
 				if (e.widget instanceof Scrollable) {
 					final Rectangle r = ((Scrollable) e.widget).getClientArea();
-					System.out.println(r);
 					final int lightWidth = trafficLightImage.getBounds().width;
 					final int lightHeight = trafficLightImage.getBounds().height;
 					int drawWidth = r.width;
@@ -49,8 +48,6 @@ public final class TeamServerMediator {
 						drawX = (r.width - drawWidth) / 2;
 						drawY = 0;
 					}
-					System.out.println("dw=" + drawWidth + " dh=" + drawHeight
-							+ " dY=" + drawY);
 					e.gc.drawImage(trafficLightImage, 0, 0, lightWidth,
 							lightHeight, drawX, drawY, drawWidth, drawHeight);
 				}
