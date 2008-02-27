@@ -44,20 +44,13 @@ public class NewScanJob extends WorkspaceJob {
 				afterJob.schedule();
 			}
 		} catch (Throwable ex) {
-			if (!monitor.isCanceled()) {
-				wrapper.failed("Caught exception while " + getName(), ex);
+			if (!monitor.isCanceled()) {			  
+			  Throwable t = unwrapException(ex, true);
+				wrapper.failed("Caught exception while " + getName(), t);
 			}
 		}
 		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {		  
-      // Try to unwrap exception
-			Throwable e = wrapper.getFailureTrace();
-			while (e instanceof RuntimeException) {
-			  Throwable cause = e.getCause();
-			  if (cause == null) {
-			    break;
-			  }
-			  e = cause;
-			}
+      Throwable e = unwrapException(wrapper.getFailureTrace(), false);
 			final int errNo;
 			final String msg;			
       if (e instanceof ToolException) {
@@ -75,4 +68,19 @@ public class NewScanJob extends WorkspaceJob {
 		}
 		return Status.OK_STATUS;
 	}
+
+  private Throwable unwrapException(Throwable e, boolean unwrapToolException) {
+    // Try to unwrap exception
+    while (e instanceof RuntimeException) {
+      Throwable cause = e.getCause();
+      if (cause == null) {
+        break;
+      }
+      if (!unwrapToolException && e instanceof ToolException) {
+        break;
+      }
+      e = cause;
+    }
+    return e;
+  }
 }
