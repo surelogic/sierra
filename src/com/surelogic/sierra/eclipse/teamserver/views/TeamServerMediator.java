@@ -1,5 +1,8 @@
 package com.surelogic.sierra.eclipse.teamserver.views;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
@@ -9,16 +12,22 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
+import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
 
-public final class TeamServerMediator {
+public final class TeamServerMediator implements ITeamServerObserver {
 
 	final Button f_command;
 	final Label f_status;
 	final Text f_port;
 	final Canvas f_trafficLight;
 	final Text f_log;
+
+	final TeamServer f_teamServer;
 
 	TeamServerMediator(Button command, Label status, Text port,
 			Canvas trafficLight, Text log) {
@@ -27,6 +36,8 @@ public final class TeamServerMediator {
 		f_port = port;
 		f_trafficLight = trafficLight;
 		f_log = log;
+
+		f_teamServer = new TeamServer(getPort());
 	}
 
 	void init() {
@@ -54,17 +65,80 @@ public final class TeamServerMediator {
 			}
 		});
 
+		f_teamServer.init();
+		f_teamServer.addObserver(this);
+
+		adjustControlState();
 	}
 
 	private Image getTrafficLightImage() {
-		return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_YELLOW);
+		if (f_teamServer.isRunning()) {
+			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_GREEN);
+		} else if (f_teamServer.isNotRunning()) {
+			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_RED);
+		} else {
+			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_YELLOW);
+		}
+	}
+
+	private int getPort() {
+		return Integer.parseInt(f_port.getText());
+	}
+
+	/**
+	 * Refreshes the contents of this view. This method does not need to be
+	 * called from the SWT thread.
+	 */
+	public void refresh() {
+		UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				adjustControlState();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void adjustControlState() {
+		f_trafficLight.redraw();
+		if (f_teamServer.isRunning()) {
+			f_command.setText("Stop Server");
+			f_command.setEnabled(true);
+
+			f_port.setEnabled(false);
+
+			f_status.setText("A local server is running...");
+		} else if (f_teamServer.isNotRunning()) {
+			f_command.setText("Start Server");
+			f_command.setEnabled(true);
+
+			f_port.setEnabled(true);
+
+			f_status.setText("A local server is not running...");
+		} else {
+			f_command.setText("Please Wait...");
+			f_command.setEnabled(false);
+
+			f_port.setEnabled(false);
+
+			f_status.setText("Checking...");
+			f_command.getParent().layout();
+		}
+		f_command.getParent().layout();
 	}
 
 	void dispose() {
-		// nothing to do
+		f_teamServer.removeObserver(this);
+		f_teamServer.dispose();
 	}
 
 	void setFocus() {
 		f_port.setFocus();
+	}
+
+	@Override
+	public void notify(TeamServer server) {
+		refresh();
 	}
 }

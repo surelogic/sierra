@@ -27,12 +27,10 @@ public class TeamServerView extends ViewPart {
 		parent.setLayout(gridLayout);
 
 		final Button command = new Button(parent, SWT.NONE);
-		command.setText("Start Server");
 		data = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 2);
 		command.setLayoutData(data);
 
 		final Label status = new Label(parent, SWT.NONE);
-		status.setText("Running...");
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		status.setLayoutData(data);
 
