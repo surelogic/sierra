@@ -206,7 +206,7 @@ public class LocalTool extends AbstractTool {
     }
     
     public void run() {
-      final boolean debug = true; //LOG.isLoggable(Level.FINE);
+      final boolean debug = LOG.isLoggable(Level.FINE);
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
