@@ -24,7 +24,6 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 @XmlRootElement
 public class Config {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
-	
 	private String project = null;
 	private List<String> qualifiers = null;
 	private String javaVersion = null;
@@ -32,6 +31,11 @@ public class Config {
 	private Date runDateTime = null;
 	private File baseDirectory = null;
 	private File toolsDirectory = null;
+	
+	/**
+	 * In MB
+	 */
+	private int memorySize = 1024;
 	
 	// Map from plugin id to their locations
 	private final Map<String,String> pluginDirs = new HashMap<String,String>();
@@ -86,6 +90,14 @@ public class Config {
 		return runDateTime;
 	}
 
+	public int getMemorySize() {
+	  return memorySize;
+	}
+	
+	public void setMemorySize(int size) {
+	  memorySize = (size > 0) ? size : 1024;
+	}
+	
 	public void setProject(String project) {
 		this.project = project;
 	}
