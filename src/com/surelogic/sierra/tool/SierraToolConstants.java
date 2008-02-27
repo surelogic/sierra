@@ -73,4 +73,16 @@ public final class SierraToolConstants {
 
 	/** The default name of package for files in root folder */
 	public static final String DEFAULT_PACKAGE_PARENTHESIS = "(default package)";
+	
+	/**
+	 * Possible tool messages
+	 */
+	public static final int ERROR_MEMORY_SIZE_TOO_BIG = 72;
+	public static final int ERROR_CODE_MISSING_FOR_TOOL = 73;
+  public static final int ERROR_CREATING_AUX_PATH = 66;
+  public static final int ERROR_CREATING_CONFIG = 67;
+  public static final int ERROR_NO_OUTPUT_FROM_TOOLS = 68;
+  public static final int ERROR_SCAN_CANCELLED = 69;
+  public static final int ERROR_SCAN_FAILED = 70;
+  public static final int ERROR_PROCESS_FAILED = 71;
 }

@@ -128,7 +128,7 @@ public class LocalTool extends AbstractTool {
       final boolean exists = f.exists();
       if (!exists) {
         if (required) {
-          throw new IllegalArgumentException("Does not exist: "+name);
+          throw new RuntimeException(SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL+name);
         }
       } else {
         path.add(new Path(proj, name));
@@ -202,7 +202,7 @@ public class LocalTool extends AbstractTool {
         }
         auxPathFile.deleteOnExit();
       } catch(IOException e) {
-        throw new RuntimeException(e);
+        throw new ToolException(SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
       }
     }
  
@@ -218,9 +218,9 @@ public class LocalTool extends AbstractTool {
         cmdj.createVmArgument().setValue("-D"+SierraToolConstants.CONFIG_VARIABLE+"="+file.getAbsolutePath());
         return file;
       } catch(IOException e) {
-        throw new RuntimeException(e);
+        throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG, e);
       } catch(JAXBException e) {
-        throw new RuntimeException(e);
+        throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG, e);
       }
     }
     
@@ -282,6 +282,8 @@ public class LocalTool extends AbstractTool {
       }
     }
     
+    private static final int FIRST_LINES = 3;
+    
     public void run() {
       final boolean debug = LOG.isLoggable(Level.FINE);
       CommandlineJava cmdj   = new CommandlineJava();
@@ -312,21 +314,28 @@ public class LocalTool extends AbstractTool {
             }
           }
         }
-        System.out.println("First line = "+firstLine);
+        System.out.println("First line = "+firstLine);        
         
         if (firstLine == null) {
-          throw new NullPointerException("No input from the remote JVM (possibly a classpath issue)");
+          throw new ToolException(SierraToolConstants.ERROR_NO_OUTPUT_FROM_TOOLS);
         }
-
+        final String[] firstLines = new String[FIRST_LINES];
+        int numLines = 1;
+        firstLines[0] = firstLine;
+        
         // Copy any output 
         final PrintStream pout = new PrintStream(p.getOutputStream());
         String line = br.readLine();
       loop:
         while (line != null) {
+          if (numLines < FIRST_LINES) {
+            firstLines[numLines] = line;
+            numLines++;
+          }          
           if (monitor.isCanceled()) {
             pout.println("##"+Local.CANCEL);
             p.destroy();
-            throw new InterruptedException("Scan was cancelled");
+            throw new ToolException(SierraToolConstants.ERROR_SCAN_CANCELLED);
           }
           
           System.out.println(line);
@@ -370,11 +379,21 @@ public class LocalTool extends AbstractTool {
         br.close();
         pout.close();
         if (value != 0) {
-          throw new RuntimeException("Process failed: "+value);
+          examineFirstLines(firstLines);
+          throw new ToolException(SierraToolConstants.ERROR_PROCESS_FAILED, value);
         }
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
+    }
+
+    private void examineFirstLines(String[] firstLines) {
+      for(String line : firstLines) {
+        if (line.startsWith("Could not reserve enough space") ||
+            line.startsWith("Invalid maximum heap size")) {
+          throw new ToolException(SierraToolConstants.ERROR_MEMORY_SIZE_TOO_BIG, config.getMemorySize());
+        }
+      }      
     }
 
     private int handleExitValue(Process p) {
