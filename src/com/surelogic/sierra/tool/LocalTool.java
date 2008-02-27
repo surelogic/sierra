@@ -182,17 +182,42 @@ public class LocalTool extends AbstractTool {
       findJars(proj, path, pluginDir+'/'+libPath);
     }
     
+    private void setupCustomClassLoader(final boolean debug,
+        CommandlineJava cmdj) {
+      //String tools = getPluginDir(debug, SierraToolConstants.TOOL_PLUGIN_ID);
+      File commonLoading = new File(config.getToolsDirectory(), "common-loading.jar");
+      cmdj.createVmArgument().setValue("-Xbootclasspath/a:"+commonLoading.getAbsolutePath());
+      cmdj.createVmArgument().setValue("-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
+      try {
+        File auxPathFile = File.createTempFile("auxPath", ".txt");
+        PrintWriter pw = new PrintWriter(auxPathFile);
+        cmdj.createVmArgument().setValue("-Dsurelogic.aux.path.file="+auxPathFile.getAbsolutePath());
+      
+        // FIX to support PMD's type resolution
+        for(IToolTarget t : config.getTargets()) {
+          if (t.getType() == IToolTarget.Type.AUX) {
+            // path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
+            pw.println(t.getLocation().toURL());
+          }
+        }
+      } catch(IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    
     public void run() {
-      final boolean debug = LOG.isLoggable(Level.FINE);
+      final boolean debug = true; //LOG.isLoggable(Level.FINE);
       Project proj = new Project();
       
       CommandlineJava cmdj   = new CommandlineJava();
       cmdj.setMaxmemory("1024m");
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
+      setupCustomClassLoader(debug, cmdj);
       if (false) {
         cmdj.createVmArgument().setValue("-verbose");
       }
       cmdj.setClassname(RemoteTool.class.getCanonicalName());     
+      //cmdj.createBootclasspath(proj);
       Path path = cmdj.createClasspath(proj);
       addPluginToPath(debug, proj, path, SierraToolConstants.COMMON_PLUGIN_ID);
       // sierra-tool needs special handling since it is unpacked, due to Reckoner (and other tools)
@@ -221,13 +246,6 @@ public class LocalTool extends AbstractTool {
           continue;
         }
         addPluginToPath(debug, proj, path, id);
-      }
-      
-      // FIX to support PMD's type resolution
-      for(IToolTarget t : config.getTargets()) {
-        if (t.getType() == IToolTarget.Type.AUX) {
-          path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
-        }
       }
       
       // TODO convert into error if things are really missing
