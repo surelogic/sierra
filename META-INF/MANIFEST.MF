@@ -8,5 +8,6 @@ Bundle-Vendor: SureLogic, Inc.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.surelogic.common,
- com.surelogic.common.eclipse
+ com.surelogic.common.eclipse,
+ org.apache.ant
 Eclipse-LazyStart: true

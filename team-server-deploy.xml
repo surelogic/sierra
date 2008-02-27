@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy">
+	<import file="./definitions.xml" />
+
+	<target name="deploy">
+		<mkdir dir="${jetty.dir}" />
+		<copy todir="${jetty.dir}">
+			<fileset dir="${jetty.plugin}">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+</project>

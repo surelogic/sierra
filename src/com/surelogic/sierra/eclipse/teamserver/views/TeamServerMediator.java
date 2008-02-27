@@ -119,21 +119,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Stop Server");
 			f_command.setEnabled(true);
 
-			f_port.setEnabled(false);
-
 			f_status.setText("A local server is running...");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setEnabled(true);
 
-			f_port.setEnabled(true);
-
 			f_status.setText("A local server is not running...");
 		} else {
 			f_command.setText("Please Wait...");
 			f_command.setEnabled(false);
-
-			f_port.setEnabled(false);
 
 			f_status.setText("Checking...");
 			f_command.getParent().layout();
@@ -143,10 +137,13 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	private void doCommand() {
 		if (f_teamServer.isRunning()) {
+			f_teamServer.stop();
 		} else if (f_teamServer.isNotRunning()) {
+			f_teamServer.start();
 		} else {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(64));
 		}
+		adjustControlState();
 	}
 
 	void dispose() {

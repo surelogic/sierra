@@ -1,5 +1,6 @@
 package com.surelogic.sierra.eclipse.teamserver.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -11,6 +12,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Environment;
+import org.apache.tools.ant.types.Commandline.Argument;
+
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -21,8 +26,12 @@ public final class TeamServer {
 
 	private final AtomicInteger f_port;
 
+	private final String f_pluginDir;
+
 	public TeamServer(final int port) {
 		f_port = new AtomicInteger(port);
+		f_pluginDir = Activator.getDefault().getDirectoryOf(
+				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
 	}
 
 	/**
@@ -148,14 +157,61 @@ public final class TeamServer {
 		}
 	}
 
-	public void start(final int port) {
-		String plugInDir = Activator.getDefault().getDirectoryOf(
-				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
-		System.out.println(plugInDir);
+	private static final String START_JAR = "jetty" + File.separator
+			+ "start.jar";
 
+	private static final String JETTY_CONFIG = "jetty" + File.separator + "etc"
+			+ File.separator + "sierra-embedded-derby.xml";
+
+	private static final String JETTY_STOP_PORT = "STOP.PORT";
+
+	private static final String JETTY_STOP_ARG = "--stop";
+
+	public void start() {
+		CommandlineJava command = getJettyTemplate();
+
+		command.setMaxmemory("512m"); // TODO configure this better
+
+		final String jettyConfig = f_pluginDir + JETTY_CONFIG;
+		Argument jettyConfigFile = command.createArgument();
+		jettyConfigFile.setValue(jettyConfig);
+
+		runJava(command);
 	}
 
 	public void stop() {
+		CommandlineJava command = getJettyTemplate();
 
+		Argument jettyStop = command.createArgument();
+		jettyStop.setValue(JETTY_STOP_ARG);
+
+		runJava(command);
+	}
+
+	private CommandlineJava getJettyTemplate() {
+		final CommandlineJava command = new CommandlineJava();
+
+		final String startJar = f_pluginDir + START_JAR;
+		command.setJar(startJar);
+
+		final Environment.Variable stopPort = new Environment.Variable();
+		stopPort.setKey(JETTY_STOP_PORT);
+		stopPort.setValue(Integer.toString(f_port.get() + 1));
+		command.addSysproperty(stopPort);
+
+		return command;
+	}
+
+	private void runJava(final CommandlineJava command) {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().fine(command.toString());
+		}
+		ProcessBuilder b = new ProcessBuilder(command.getCommandline());
+		try {
+			b.start();
+		} catch (IOException e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					I18N.err(65, command.toString()), e);
+		}
 	}
 }
