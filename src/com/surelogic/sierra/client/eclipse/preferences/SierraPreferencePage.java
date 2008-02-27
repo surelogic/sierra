@@ -4,27 +4,34 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.preference.ScaleFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
+	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPerferenceLabel";
+
 	BooleanFieldEditor f_balloonFlag;
 	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	RadioGroupFieldEditor f_showAbove;
 	BooleanFieldEditor f_saveResources;
 	IntegerFieldEditor f_findingsListLimit;
+	ScaleFieldEditor f_toolMemoryMB;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -92,6 +99,27 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
 
+		Composite c = new Composite(panel, SWT.NONE);
+		final int mb = PreferenceConstants.getToolMemoryMB();
+		final String label = I18N.msg(TOOL_MB_LABEL, mb);
+		f_toolMemoryMB = new ScaleFieldEditor(
+				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ", c);
+		f_toolMemoryMB.setMinimum(256);
+		f_toolMemoryMB.setMaximum(2048);
+		f_toolMemoryMB.setPageIncrement(256);
+		f_toolMemoryMB.setPage(this);
+		f_toolMemoryMB.setPreferenceStore(getPreferenceStore());
+		f_toolMemoryMB.load();
+		final ScaleFieldEditor toolMemoryMB = f_toolMemoryMB;
+		toolMemoryMB.getScaleControl().addListener(SWT.Selection,
+				new Listener() {
+					public void handleEvent(Event event) {
+						final int mb = toolMemoryMB.getScaleControl()
+								.getSelection();
+						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
+					}
+				});
+
 		/*
 		 * Allow access to help via the F1 key.
 		 */
@@ -108,6 +136,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_showAbove.loadDefault();
 		f_saveResources.loadDefault();
 		f_findingsListLimit.loadDefault();
+		f_toolMemoryMB.loadDefault();
 		super.performDefaults();
 	}
 
@@ -118,6 +147,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_showAbove.store();
 		f_saveResources.store();
 		f_findingsListLimit.store();
+		f_toolMemoryMB.store();
 		return super.performOk();
 	}
 }

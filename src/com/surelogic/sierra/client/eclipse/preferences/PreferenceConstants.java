@@ -97,6 +97,13 @@ public class PreferenceConstants {
 				P_FINDINGS_LIST_LIMIT);
 	}
 
+	public static final String P_TOOL_MEMORY_MB = "com.surelogic.sierra.tool-memory-mb";
+
+	public static int getToolMemoryMB() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_TOOL_MEMORY_MB);
+	}
+
 	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = "com.surelogic.common.eclipse.warn-maximum-findings-shown";
 
 	public static boolean warnAboutMaximumFindingsShown() {
