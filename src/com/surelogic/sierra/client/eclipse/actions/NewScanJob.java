@@ -45,38 +45,37 @@ public class NewScanJob extends WorkspaceJob {
 			}
 		} catch (Throwable ex) {
 			if (!monitor.isCanceled()) {			  
-			  Throwable t = unwrapException(ex, true);
-				wrapper.failed("Caught exception while " + getName(), t);
+			  return dealWithException(ex);
 			}
 		}
 		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {		  
-      Throwable e = unwrapException(wrapper.getFailureTrace(), false);
-			final int errNo;
-			final String msg;			
-      if (e instanceof ToolException) {
-        ToolException te = (ToolException) e;
-        errNo = te.getErrorNum();
-        msg = te.getToolMessage(getName());
-        if (te.getCause() != null) {
-          e = te.getCause();
-        }
-      } else {      
-        errNo = 46;
-			  msg = I18N.err(errNo, getName());
-      }
-      return SLStatus.createErrorStatus(errNo, msg, e);
+      return dealWithException(wrapper.getFailureTrace());
 		}
 		return Status.OK_STATUS;
 	}
 
-  private Throwable unwrapException(Throwable e, boolean unwrapToolException) {
-    // Try to unwrap exception
+  private IStatus dealWithException(final Throwable t) {
+    Throwable e = unwrapException(t);
+    final int errNo;
+    final String msg;			
+    if (e instanceof ToolException) {
+      ToolException te = (ToolException) e;
+      errNo = te.getErrorNum();
+      msg = te.getToolMessage(getName());
+      if (te.getCause() != null) {
+        e = te.getCause();
+      }
+    } else {      
+      errNo = 46;
+      msg = I18N.err(errNo, getName());
+    }
+    return SLStatus.createErrorStatus(errNo, msg, e);
+  }
+
+  private Throwable unwrapException(Throwable e) {
     while (e instanceof RuntimeException) {
       Throwable cause = e.getCause();
       if (cause == null) {
-        break;
-      }
-      if (!unwrapToolException && e instanceof ToolException) {
         break;
       }
       e = cause;
