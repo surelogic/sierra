@@ -223,6 +223,13 @@ public class LocalTool extends AbstractTool {
         addPluginToPath(debug, proj, path, id);
       }
       
+      // FIX to support PMD's type resolution
+      for(IToolTarget t : config.getTargets()) {
+        if (t.getType() == IToolTarget.Type.AUX) {
+          path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
+        }
+      }
+      
       // TODO convert into error if things are really missing
       if (debug) {
         for(String p : path.list()) {
@@ -234,12 +241,7 @@ public class LocalTool extends AbstractTool {
           }
         }
       }
-      // FIX to support PMD's type resolution
-      for(IToolTarget t : config.getTargets()) {
-        if (t.getType() == IToolTarget.Type.AUX) {
-          path.add(new Path(proj, new File(t.getLocation()).getAbsolutePath()));
-        }
-      }
+
       if (debug) {
         System.out.println("Starting process:");
         for(String arg : cmdj.getCommandline()) {
