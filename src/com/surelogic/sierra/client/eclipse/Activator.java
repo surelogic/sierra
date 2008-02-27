@@ -1,20 +1,15 @@
 package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
-import java.net.URL;
-import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
@@ -153,86 +148,4 @@ public final class Activator extends AbstractUIPlugin {
 		IPath pluginState = Activator.getDefault().getStateLocation();
 		return pluginState.toOSString() + File.separator + "derby.log";
 	}
-
-	public String getDirectoryOf(final String plugInId) {
-		final Bundle bundle = Platform.getBundle(plugInId);
-		if (bundle == null) {
-			throw new IllegalStateException("null bundle returned for "
-					+ plugInId);
-		}
-
-		final URL relativeURL = bundle.getEntry("");
-		try {
-			URL commonPathURL = FileLocator.resolve(relativeURL);
-			final String commonDirectory = commonPathURL.getPath();
-			if (commonDirectory.startsWith("file:")
-					&& commonDirectory.endsWith(".jar!/")) {
-				// Jar file
-				return commonDirectory.substring(5,
-						commonDirectory.length() - 2);
-			}
-			return commonDirectory;
-		} catch (Exception e) {
-			throw new IllegalStateException(
-					"failed to resolve a path for the URL " + relativeURL);
-		}
-	}
-	
-  /**
-   * @return A comma-separated list of plugin ids needed to run the given one, including itself
-   */
-  public Set<String> getDependencies(final String plugInId) {
-	   final Bundle bundle = Platform.getBundle(plugInId);
-	   if (bundle == null) {
-	     return Collections.emptySet();
-	   }
-	   return getDependencies(bundle, new HashSet<String>());
-  }
-    
-  /**
-   * @param b Not a checked plugin
-   * @param checked The set of plugins that we're already checked
-   */
-  private Set<String> getDependencies(Bundle b, Set<String> checked) {
-    checked.add(b.getSymbolicName());
-    
-    @SuppressWarnings("unchecked")
-    Dictionary<String,String> d = b.getHeaders();
-    String deps = d.get("Require-Bundle");
-    if (deps != null) {
-      String lastId = null;
-      List<String> ids = new ArrayList<String>();
-      List<String> optional = null;
-      final StringTokenizer st = new StringTokenizer(deps, ";, ");
-      while (st.hasMoreTokens()) {
-        String id = st.nextToken();
-        if ("resolution:=optional".equals(id) && lastId != null) {          
-          if (optional == null) {
-            optional = new ArrayList<String>();
-          }
-          optional.add(lastId);
-        }
-        if (id.indexOf('=') >= 0 || id.indexOf('"') >= 0) {
-          // Ignore any property stuff
-          // (e.g. version info)
-          //System.out.println("Ignoring: "+id);
-          continue;        
-        }
-        lastId = id;
-        ids.add(id);      
-      }
-      for(String id : ids) {
-        //System.out.println("Considering: "+id);
-        if (checked.contains(id)) {
-          continue;
-        }
-        final Bundle bundle = Platform.getBundle(id);
-        if (bundle == null && !optional.contains(id)) {
-          throw new IllegalArgumentException("Couldn't find bundle "+id+" required for "+b.getSymbolicName());
-        }
-        getDependencies(bundle, checked);
-      }
-    }
-    return checked;
-  }
 }

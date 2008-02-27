@@ -2,7 +2,13 @@ package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
@@ -23,8 +29,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -42,15 +48,14 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  */
 public final class ConfigGenerator {
 	private static final String[] PLUGINS = {
-	  SierraToolConstants.MESSAGE_PLUGIN_ID,
-	  SierraToolConstants.COMMON_PLUGIN_ID,
-	  SierraToolConstants.TOOL_PLUGIN_ID,
-	  SierraToolConstants.PMD_PLUGIN_ID,
-	  SierraToolConstants.FB_PLUGIN_ID,
-	  SierraToolConstants.JUNIT4_PLUGIN_ID,
-	  SierraToolConstants.JUNIT_PLUGIN_ID, 
-	  SierraToolConstants.JAVA5_PLUGIN_ID,
-	};
+			SierraToolConstants.MESSAGE_PLUGIN_ID,
+			SierraToolConstants.COMMON_PLUGIN_ID,
+			SierraToolConstants.TOOL_PLUGIN_ID,
+			SierraToolConstants.PMD_PLUGIN_ID,
+			SierraToolConstants.FB_PLUGIN_ID,
+			SierraToolConstants.JUNIT4_PLUGIN_ID,
+			SierraToolConstants.JUNIT_PLUGIN_ID,
+			SierraToolConstants.JAVA5_PLUGIN_ID, };
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
@@ -85,19 +90,20 @@ public final class ConfigGenerator {
 		getDirectoryOfAllPlugins(SierraToolConstants.JDT_CORE_PLUGIN_ID);
 	}
 
-  private void getDirectoryOfPlugin(String id) {
-    try {
-      pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
-    } catch (IllegalStateException e) {
-      System.out.println("Couldn't find plugin: " + id);
-    }
-  }
-  private void getDirectoryOfAllPlugins(String rootId) {
-    for(String id : Activator.getDefault().getDependencies(rootId)) {
-      getDirectoryOfPlugin(id);
-    }
-  }
-  
+	private void getDirectoryOfPlugin(String id) {
+		try {
+			pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+		} catch (IllegalStateException e) {
+			System.out.println("Couldn't find plugin: " + id);
+		}
+	}
+
+	private void getDirectoryOfAllPlugins(String rootId) {
+		for (String id : Activator.getDefault().getDependencies(rootId)) {
+			getDirectoryOfPlugin(id);
+		}
+	}
+
 	public static ConfigGenerator getInstance() {
 		return INSTANCE;
 	}
@@ -202,18 +208,18 @@ public final class ConfigGenerator {
 			List<ICompilationUnit> compilationUnits) {
 		Config config = null;
 		if (!compilationUnits.isEmpty()) {
-		  final ICompilationUnit firstCU = compilationUnits.get(0);
-			String projectPath = firstCU.getJavaProject()
-					.getResource().getLocation().toString();
+			final ICompilationUnit firstCU = compilationUnits.get(0);
+			String projectPath = firstCU.getJavaProject().getResource()
+					.getLocation().toString();
 			File baseDir = new File(projectPath);
 			IJavaProject javaProject = firstCU.getJavaProject();
-			File scanDocument = new File(computeScanDocumentName(javaProject, true));
+			File scanDocument = new File(computeScanDocumentName(javaProject,
+					true));
 
 			config = new Config();
 
 			config.setBaseDirectory(baseDir);
-			config.setProject(firstCU.getResource()
-					.getProject().getName());
+			config.setProject(firstCU.getResource().getProject().getName());
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
 			setupTools(config);
@@ -224,7 +230,8 @@ public final class ConfigGenerator {
 						.makeRelative().toOSString();
 
 				for (ICompilationUnit c : compilationUnits) {
-				  String outputLocation = computeOutputLocation(javaProject, c, defaultOutputLocation);
+					String outputLocation = computeOutputLocation(javaProject,
+							c, defaultOutputLocation);
 					IType[] types = c.getAllTypes();
 					Set<IFile> classFiles = new HashSet<IFile>();
 					for (IType t : types) {
@@ -299,22 +306,21 @@ public final class ConfigGenerator {
 		return config;
 	}
 
-	private String computeOutputLocation(IJavaProject p, ICompilationUnit c, String defaultOut) 
-	throws JavaModelException 
-	{	  
-	  final IPath cuPath = c.getResource().getFullPath();
-	  for(IClasspathEntry e : p.getRawClasspath()) {
-	    final IPath out = e.getOutputLocation();
-	    if (out != null && e.getEntryKind() == IClasspathEntry.CPE_SOURCE &&
-	        e.getPath().isPrefixOf(cuPath)) {	      	          
-	      // FIX Need to check include/excludes
-	      return out.makeRelative().toOSString();	      
-	    }
-	  }
-    return defaultOut;
-  }
+	private String computeOutputLocation(IJavaProject p, ICompilationUnit c,
+			String defaultOut) throws JavaModelException {
+		final IPath cuPath = c.getResource().getFullPath();
+		for (IClasspathEntry e : p.getRawClasspath()) {
+			final IPath out = e.getOutputLocation();
+			if (out != null && e.getEntryKind() == IClasspathEntry.CPE_SOURCE
+					&& e.getPath().isPrefixOf(cuPath)) {
+				// FIX Need to check include/excludes
+				return out.makeRelative().toOSString();
+			}
+		}
+		return defaultOut;
+	}
 
-  public Config getProjectConfig(IJavaProject project) {
+	public Config getProjectConfig(IJavaProject project) {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
 		File scanDocument = new File(computeScanDocumentName(project, false));
@@ -340,17 +346,16 @@ public final class ConfigGenerator {
 		// Get excluded dirs - project specific
 		return config;
 	}
-  
-  private String computeScanDocumentName(IJavaProject project, boolean partial) {
-    return f_sierraPath + File.separator
-				+ project.getProject().getName() + (partial ? ".partial." : ".")
-				+ ToolUtil.getTimeStamp()
+
+	private String computeScanDocumentName(IJavaProject project, boolean partial) {
+		return f_sierraPath + File.separator + project.getProject().getName()
+				+ (partial ? ".partial." : ".") + ToolUtil.getTimeStamp()
 				+ SierraToolConstants.PARSED_FILE_SUFFIX;
-  }
-	
+	}
+
 	private void setupTools(Config config) {
-	  config.setJavaVendor(System.getProperty("java.vendor"));
-	  config.setJavaVersion(System.getProperty("java.version"));
+		config.setJavaVendor(System.getProperty("java.vendor"));
+		config.setJavaVersion(System.getProperty("java.version"));
 	  config.setMemorySize(PreferenceConstants.getToolMemoryMB());
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
@@ -420,8 +425,8 @@ public final class ConfigGenerator {
 			IFolder folder = (IFolder) resource;
 			resources = folder.members();
 		} else {
-		  return files;  
-    }
+			return files;
+		}
 
 		for (IResource r : resources) {
 			if (r.getType() == IResource.FILE) {
@@ -514,7 +519,7 @@ public final class ConfigGenerator {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource res = root.findMember(outLoc);
 		if (res == null) {
-		  return;
+			return;
 		}
 		URI out = res.getLocationURI();
 		cfg.addTarget(new FullDirectoryTarget(
