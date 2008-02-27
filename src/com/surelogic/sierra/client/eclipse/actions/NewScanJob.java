@@ -56,7 +56,7 @@ public class NewScanJob extends WorkspaceJob {
       if (e instanceof ToolException) {
         ToolException te = (ToolException) e;
         errNo = te.getErrorNum();
-        msg = te.getMessage();
+        msg = te.getToolMessage(getName());
         if (te.getCause() != null) {
           e = te.getCause();
         }
