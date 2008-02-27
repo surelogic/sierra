@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -40,8 +39,10 @@ public final class TeamServer {
 	 * <p>
 	 * It is not useful to use this flag to detect that a team server is <i>not</i>
 	 * running.
+	 * <p>
+	 * All accesses must be protected by a lock on <code>this</code>.
 	 */
-	private final AtomicBoolean f_isRunning = new AtomicBoolean(false);
+	private boolean f_isRunning = false;
 
 	/**
 	 * Indicates positive detection of a running team server. It is only updated
@@ -53,8 +54,8 @@ public final class TeamServer {
 	 * @return <code>true</code> if this has positively detected a running
 	 *         team server, <code>false</code> otherwise.
 	 */
-	public boolean isRunning() {
-		return f_isRunning.get();
+	public synchronized boolean isRunning() {
+		return f_isRunning;
 	}
 
 	/**
@@ -63,8 +64,10 @@ public final class TeamServer {
 	 * <p>
 	 * It is not useful to use this flag to detect that a team server is
 	 * running.
+	 * <p>
+	 * All accesses must be protected by a lock on <code>this</code>.
 	 */
-	private final AtomicBoolean f_isNotRunning = new AtomicBoolean(false);
+	private boolean f_isNotRunning = false;
 
 	/**
 	 * Indicates positive detection that a team server is not running. It is
@@ -76,9 +79,25 @@ public final class TeamServer {
 	 * @return <code>true</code> if this has positively detected that a team
 	 *         server is not running, <code>false</code> otherwise.
 	 */
-	public boolean isNotRunning() {
-		return f_isNotRunning.get();
+	public synchronized boolean isNotRunning() {
+		return f_isNotRunning;
 	}
+
+	/**
+	 * Indicates that a team server start has been run and we are waiting to
+	 * detect the server is running.
+	 * <p>
+	 * All accesses must be protected by a lock on <code>this</code>.
+	 */
+	private boolean f_inStart = false;
+
+	/**
+	 * Indicates that a team server stop has been run and we are waiting to
+	 * detect the server is not running.
+	 * <p>
+	 * All accesses must be protected by a lock on <code>this</code>.
+	 */
+	private boolean f_inStop = false;
 
 	private final ScheduledExecutorService f_executor = Executors
 			.newScheduledThreadPool(1);
@@ -87,11 +106,8 @@ public final class TeamServer {
 		final Runnable checkIfServerIsRunning = new Runnable() {
 			@Override
 			public void run() {
-				final boolean oldIsRunning = f_isRunning.get();
-				final boolean oldIsNotRunning = f_isNotRunning.get();
 				boolean isRunning;
 				boolean isNotRunning;
-
 				try {
 					Socket s = new Socket(LOCALHOST, f_port.get());
 					if (SLLogger.getLogger().isLoggable(Level.FINEST)) {
@@ -119,16 +135,36 @@ public final class TeamServer {
 					isNotRunning = true;
 				}
 
-				boolean somethingChanged = false;
-				if (oldIsRunning != isRunning) {
-					f_isRunning.set(isRunning);
-					somethingChanged = true;
+				boolean notifyObservers = false;
+				synchronized (TeamServer.this) {
+					final boolean oldIsRunning = f_isRunning;
+					final boolean oldIsNotRunning = f_isNotRunning;
+
+					if (f_inStart) {
+						if (isRunning) {
+							f_inStart = false;
+							f_isRunning = true;
+							notifyObservers = true;
+						}
+					} else if (f_inStop) {
+						if (isNotRunning) {
+							f_inStop = false;
+							f_isNotRunning = true;
+							notifyObservers = true;
+						}
+					} else {
+						if (oldIsRunning != isRunning) {
+							f_isRunning = isRunning;
+							notifyObservers = true;
+						}
+						if (oldIsNotRunning != isNotRunning) {
+							f_isNotRunning = isNotRunning;
+							notifyObservers = true;
+						}
+					}
+
 				}
-				if (oldIsNotRunning != isNotRunning) {
-					f_isNotRunning.set(isNotRunning);
-					somethingChanged = true;
-				}
-				if (somethingChanged) {
+				if (notifyObservers) {
 					notifyObservers();
 				}
 			}
@@ -151,20 +187,21 @@ public final class TeamServer {
 		f_observers.remove(observer);
 	}
 
+	/**
+	 * Callers should never be holding a lock due to the potential for deadlock.
+	 */
 	private void notifyObservers() {
 		for (ITeamServerObserver o : f_observers) {
 			o.notify(this);
 		}
 	}
 
-	private static final String START_JAR = "jetty" + File.separator
-			+ "start.jar";
-
-	private static final String JETTY_CONFIG = "jetty" + File.separator + "etc"
+	private static final String JETTY_DIR = "jetty" + File.separator;
+	private static final String START_JAR = JETTY_DIR + "start.jar";
+	private static final String JETTY_CONFIG = JETTY_DIR + "etc"
 			+ File.separator + "sierra-embedded-derby.xml";
-
 	private static final String JETTY_STOP_PORT = "STOP.PORT";
-
+	private static final String JETTY_STOP_KEY = "STOP.KEY";
 	private static final String JETTY_STOP_ARG = "--stop";
 
 	public void start() {
@@ -172,11 +209,18 @@ public final class TeamServer {
 
 		command.setMaxmemory("512m"); // TODO configure this better
 
-		final String jettyConfig = f_pluginDir + JETTY_CONFIG;
+		final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
 		Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);
 
 		runJava(command);
+
+		synchronized (this) {
+			f_inStart = true;
+			f_isRunning = false;
+			f_isNotRunning = false;
+		}
+		notifyObservers();
 	}
 
 	public void stop() {
@@ -186,18 +230,30 @@ public final class TeamServer {
 		jettyStop.setValue(JETTY_STOP_ARG);
 
 		runJava(command);
+
+		synchronized (this) {
+			f_inStop = true;
+			f_isRunning = false;
+			f_isNotRunning = false;
+		}
+		notifyObservers();
 	}
 
 	private CommandlineJava getJettyTemplate() {
 		final CommandlineJava command = new CommandlineJava();
 
-		final String startJar = f_pluginDir + START_JAR;
+		final String startJar = launder(f_pluginDir + START_JAR);
 		command.setJar(startJar);
 
 		final Environment.Variable stopPort = new Environment.Variable();
 		stopPort.setKey(JETTY_STOP_PORT);
 		stopPort.setValue(Integer.toString(f_port.get() + 1));
 		command.addSysproperty(stopPort);
+
+		final Environment.Variable stopKey = new Environment.Variable();
+		stopKey.setKey(JETTY_STOP_KEY);
+		stopKey.setValue("local");
+		command.addSysproperty(stopKey);
 
 		return command;
 	}
@@ -207,11 +263,24 @@ public final class TeamServer {
 			SLLogger.getLogger().fine(command.toString());
 		}
 		ProcessBuilder b = new ProcessBuilder(command.getCommandline());
+		b.directory(launderToFile(f_pluginDir + JETTY_DIR));
 		try {
 			b.start();
 		} catch (IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					I18N.err(65, command.toString()), e);
 		}
+	}
+
+	private String launder(final String pathfile) {
+		return launderToFile(pathfile).getAbsolutePath();
+	}
+
+	private File launderToFile(final String pathfile) {
+		final File file = new File(pathfile);
+		if (!file.exists()) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(74, pathfile));
+		}
+		return file;
 	}
 }

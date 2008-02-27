@@ -143,7 +143,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		} else {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(64));
 		}
-		adjustControlState();
 	}
 
 	void dispose() {
