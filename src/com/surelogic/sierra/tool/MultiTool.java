@@ -57,12 +57,8 @@ public class MultiTool extends AbstractTool {
 
     public void run() {                 
       for(IToolInstance i : instances) {
-        System.out.println("run() on "+i.getName());
-        try {
-          i.run();
-        } catch(Throwable t) {
-          t.printStackTrace();
-        }
+        System.out.println("run() on "+i.getName());        
+        i.run();
       }
       if (closeWhenDone) {
         generator.finished(monitor);
