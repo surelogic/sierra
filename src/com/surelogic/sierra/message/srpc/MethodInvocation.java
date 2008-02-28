@@ -41,4 +41,8 @@ class MethodInvocation {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return m.getDeclaringClass().getSimpleName() + "." + m.getName(); 
+	}
 }
