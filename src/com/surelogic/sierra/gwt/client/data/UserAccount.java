@@ -14,7 +14,8 @@ public final class UserAccount implements Serializable {
 		super();
 	}
 
-	public UserAccount(long id, String user, boolean isAdministrator, boolean isActive) {
+	public UserAccount(long id, String user, boolean isAdministrator,
+			boolean isActive) {
 		super();
 		this.id = id;
 		this.userName = user;

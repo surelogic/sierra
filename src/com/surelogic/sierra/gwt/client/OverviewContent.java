@@ -53,9 +53,8 @@ public class OverviewContent extends ContentComposite {
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final String[] projectHeader = new String[] { "Project",
-							"# Comments", "# Findings", "Critical", "High",
-							"Medium", "Low", "Irrelevant", "Last Synch",
-							"Last Synched By" };
+							"Comments", "Critical", "High", "Medium", "Low",
+							"Irrelevant", "Last Synch", "Last Synched By" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -66,12 +65,9 @@ public class OverviewContent extends ContentComposite {
 						f.setStyleName(i, "overview-data");
 						ProjectOverview po = (ProjectOverview) rows.next();
 						grid.setText(i, j++, po.getName());
-						grid
-								.setText(i, j++, Integer.toString(po
-										.getComments()));
-						grid
-								.setText(i, j++, Integer.toString(po
-										.getFindings()));
+						grid.setText(i, j++, Integer.toString(po.getComments())
+								+ " on " + Integer.toString(po.getFindings())
+								+ " findings");
 						grid
 								.setText(i, j++, Integer.toString(po
 										.getCritical()));
