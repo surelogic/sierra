@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
@@ -57,11 +58,13 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 							final ResultSet findingSet = findingSt
 									.executeQuery();
 							try {
-								while(auditSet.next()) {
+								while (auditSet.next()) {
 									findingSet.next();
 									final UserOverview o = new UserOverview();
 									o.setUserName(auditSet.getString(1));
 									o.setAudits(auditSet.getInt(2));
+									o.setLastSynch(formattedDate(auditSet
+											.getTimestamp(3)));
 									o.setFindings(findingSet.getInt(2));
 									overviews.add(o);
 								}
@@ -154,12 +157,9 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 								if (lastSynchSet.next()) {
 									po.setLastSynchUser(lastSynchSet
 											.getString(1));
-									DateFormat format = new SimpleDateFormat();
 									po
-											.setLastSynchDate(format
-													.format(lastSynchSet
-															.getTimestamp(2)
-															.getTime()));
+											.setLastSynchDate(formattedDate(lastSynchSet
+													.getTimestamp(2)));
 								}
 							} finally {
 								lastSynchSet.close();
@@ -168,6 +168,11 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 						return overview;
 					}
 				});
+	}
+
+	private static String formattedDate(Date date) {
+		DateFormat format = new SimpleDateFormat();
+		return format.format(date);
 	}
 
 	private static Timestamp thirtyDaysAgo() {
