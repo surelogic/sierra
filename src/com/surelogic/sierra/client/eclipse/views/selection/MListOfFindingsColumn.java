@@ -152,7 +152,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_findingTypeName;
 		String f_categoryName;
 		String f_toolName;
-
+    int index;
+		
 		@Override
 		public String toString() {
 			return "finding_id=" + f_findingId + " [" + f_importance
@@ -160,6 +161,18 @@ public final class MListOfFindingsColumn extends MColumn implements
 					+ f_categoryName + " \"" + f_summary + "\" in "
 					+ f_projectName + " " + f_packageName + "." + f_typeName
 					+ " at line " + f_lineNumber + " from " + f_toolName;
+		}
+		@Override
+		public boolean equals(Object o) {
+		  if (o instanceof FindingData) {
+		    FindingData other = (FindingData) o;
+		    return f_findingId == other.f_findingId;
+		  }
+		  return false;
+		}
+		@Override
+		public int hashCode() {
+		  return (int) f_findingId; 
 		}
 	}
 
@@ -181,7 +194,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 					final int findingsListLimit = PreferenceConstants
 							.getFindingsListLimit();
 					while (rs.next()) {
-						if (f_rows.size() < findingsListLimit) {
+					  int i = f_rows.size();
+						if (i < findingsListLimit) {
 							FindingData data = new FindingData();
 							data.f_summary = rs.getString(1);
 							data.f_importance = Importance.valueOf(rs
@@ -194,6 +208,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 							data.f_findingTypeName = rs.getString(8);
 							data.f_categoryName = rs.getString(9);
 							data.f_toolName = rs.getString(10);
+							data.index = i;
 							f_rows.add(data);
 						} else {
 							/*
@@ -284,7 +299,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	};
 
 	private final AtomicReference<FindingData> lastSelected = new AtomicReference<FindingData>();
-
+  private final Stack<FindingData> nearSelected = new Stack<FindingData>();
+	
 	private final Listener f_doubleClick = new Listener() {
 		public void handleEvent(Event event) {
 			final FindingData data = lastSelected.get();
@@ -308,7 +324,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 			if (item != null) {
 				final FindingData data = (FindingData) item.getData();
 				lastSelected.set(data);
-
+				addNearSelected(data.index - 1);
+        addNearSelected(data.index + 1);
+				
 				/*
 				 * Ensure the view is visible but don't change the focus.
 				 */
@@ -320,7 +338,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		}
 	};
-
+	
+  protected void addNearSelected(int i) {
+    if (i >= 0 && i < f_rows.size()) {
+      nearSelected.add(f_rows.get(i));
+    }
+  }
+	
 	private final IColumn f_iColumn = new IColumn() {
 		public Composite createContents(Composite panel) {
 		  int mods = SWT.FULL_SELECTION | SWT.MULTI;
@@ -342,7 +366,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			      final TableItem item = (TableItem) event.item;
 			      final int index = event.index;
 			      FindingData data = f_rows.get(index);
-			      initTableItem(data, item);
+			      initTableItem(event.index, data, item);
 			    }
 			  });
 			}	  
@@ -407,20 +431,33 @@ public final class MListOfFindingsColumn extends MColumn implements
 		for (FindingData data : f_rows) {
 		  if (!USE_VIRTUAL) {
 		    final TableItem item = new TableItem(f_table, SWT.NONE);
-		    selectionFound = initTableItem(data, item);
+		    selectionFound = initTableItem(i, data, item);
 		  } 
 		  // Only needed if virtual
 		  // Sets up the table to show the previous selection
 		  else if (data.f_findingId == f_findingId) {
-				initTableItem(data, f_table.getItem(i));
+				initTableItem(i, data, f_table.getItem(i));
 				selectionFound = true;
 				break;
 			}
 			i++;
 		}
-		if (!selectionFound)
-			f_findingId = -1;
-
+		if (!selectionFound) {
+		  // Look for a near-selection
+		  FindingData data = null;		
+		  if (!nearSelected.isEmpty()) {
+		    Set<FindingData> rows = new HashSet<FindingData>(f_rows);
+		    while (!nearSelected.isEmpty()) {
+		      data = nearSelected.pop();
+		      if (rows.contains(data)) {
+		        initTableItem(data.index, data, f_table.getItem(data.index));
+		        break;
+		      }
+		    }
+		    nearSelected.clear();
+		  }
+		  f_findingId = (data == null) ? -1 : data.f_findingId;
+		}
 		/*
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
@@ -444,7 +481,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
-	/*
+  /*
 	 * This actually finds the longest item, and
 	 * creates a real TableItem for that item 
 	 * to ensure that the table gets sized properly
@@ -471,7 +508,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	    if (longestIndex >= f_table.getItemCount()) {
 	      LOG.warning("Got index outside of table: "+longestIndex+", "+f_table.getItemCount());
 	    } else {
-	      initTableItem(longestData, f_table.getItem(longestIndex));
+	      initTableItem(longestIndex, longestData, f_table.getItem(longestIndex));
 	    }
 	  }
 
@@ -481,7 +518,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  return longest + 5;
 	}
 	
-	private boolean initTableItem(FindingData data, final TableItem item) {
+	private boolean initTableItem(int i, FindingData data, final TableItem item) {
+	  if (i != data.index) {
+	    throw new IllegalArgumentException(i+" != data.index: "+data.index);
+	  }
 		item.setText(data.f_summary);
 		item.setImage(Utility.getImageFor(data.f_importance));
 		item.setData(data);
