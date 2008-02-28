@@ -30,8 +30,10 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
 import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
 import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
+import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServerMediator implements ITeamServerObserver {
 
@@ -174,6 +176,10 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		if (f_teamServer.isRunning()) {
 			f_teamServer.stop();
 		} else if (f_teamServer.isNotRunning()) {
+			if (PreferenceConstants.warnAboutServerStaysRunning()) {
+				final ServerStaysRunningWarning dialog = new ServerStaysRunningWarning();
+				dialog.open();
+			}
 			f_teamServer.start();
 		} else {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(64));

@@ -2,19 +2,21 @@
 <?eclipse version="3.2"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="Sierra"
-            id="com.surelogic.sierra.eclipse.teamserver">
-      </category>
-      <view
-            name="Local Team Server"
-            icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_logo.gif"
-            category="com.surelogic.sierra.eclipse.teamserver"
-            class="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView"
-            id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
-      </view>
-   </extension>
+	<extension point="org.eclipse.ui.views">
+		<category name="Sierra"
+			id="com.surelogic.sierra.eclipse.teamserver">
+		</category>
+		<view name="Local Team Server"
+			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
+			category="com.surelogic.sierra.eclipse.teamserver"
+			class="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView"
+			id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+		</view>
+	</extension>
+
+	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer
+			class="com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceInitializer" />
+	</extension>
 
 </plugin>
