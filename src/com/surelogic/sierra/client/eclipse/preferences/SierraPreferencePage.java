@@ -12,11 +12,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
@@ -24,13 +26,15 @@ import com.surelogic.sierra.tool.message.Importance;
 public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPerferenceLabel";
+  static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
+	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPreferenceLabel";
 
 	BooleanFieldEditor f_balloonFlag;
 	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	RadioGroupFieldEditor f_showAbove;
 	BooleanFieldEditor f_saveResources;
 	IntegerFieldEditor f_findingsListLimit;
+	Label f_estimate;
 	ScaleFieldEditor f_toolMemoryMB;
 
 	public void init(IWorkbench workbench) {
@@ -99,19 +103,23 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
 
-		Composite c = new Composite(panel, SWT.NONE);
+		final Group memoryGroup = new Group(panel, SWT.NONE);
+		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		memoryGroup.setText("Memory usage");
+
+    final int estimatedMax = MemoryUtility.computeMaxMemorySize();
 		final int mb = PreferenceConstants.getToolMemoryMB();
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
-				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ", c);
+				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ", memoryGroup);
 		f_toolMemoryMB.setMinimum(256);
-		f_toolMemoryMB.setMaximum(2048);
+		f_toolMemoryMB.setMaximum(estimatedMax);
 		f_toolMemoryMB.setPageIncrement(256);
 		f_toolMemoryMB.setPage(this);
 		f_toolMemoryMB.setPreferenceStore(getPreferenceStore());
 		f_toolMemoryMB.load();
 		final ScaleFieldEditor toolMemoryMB = f_toolMemoryMB;
-		toolMemoryMB.getScaleControl().addListener(SWT.Selection,
+		f_toolMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
 					public void handleEvent(Event event) {
 						final int mb = toolMemoryMB.getScaleControl()
@@ -119,7 +127,10 @@ public class SierraPreferencePage extends PreferencePage implements
 						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 					}
 				});
-
+		
+    f_estimate = new Label(memoryGroup, SWT.FILL);
+    f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+		
 		/*
 		 * Allow access to help via the F1 key.
 		 */
