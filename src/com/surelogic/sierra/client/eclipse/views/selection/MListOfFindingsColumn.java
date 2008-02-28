@@ -74,6 +74,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				MListOfFindingsColumn.super.initOfNextColumnComplete();
+				notifyObserversOfLimitedFindings(f_isLimited);
 				return Status.OK_STATUS;
 			}
 		};
@@ -88,9 +89,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		final int column = getColumnIndex();
 		if (column != -1)
 			getCascadingList().emptyFrom(column);
+		
+		notifyObserversOfDispose();
 	}
 
-	@Override
+  @Override
 	int getColumnIndex() {
 		if (f_table.isDisposed())
 			return -1;
@@ -753,6 +756,24 @@ public final class MListOfFindingsColumn extends MColumn implements
       f_table.selectAll();
     } else {
       super.selectAll();
+    }
+  }
+
+  private IFindingsObserver observer;
+  
+  public void addObserver(IFindingsObserver o) {
+    observer = o;
+  }
+  
+  private void notifyObserversOfLimitedFindings(boolean isLimited) {
+    if (observer != null) {
+      observer.findingsLimited(isLimited);
+    }
+  }
+  
+  private void notifyObserversOfDispose() {
+    if (observer != null) {
+      observer.findingsDisposed();
     }
   }
 }

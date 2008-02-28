@@ -7,9 +7,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
@@ -17,6 +19,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
@@ -28,9 +31,10 @@ import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
-		CascadingList.ICascadingListObserver, ISelectionManagerObserver {
+		CascadingList.ICascadingListObserver, ISelectionManagerObserver, IFindingsObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -42,6 +46,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final ToolItem f_deleteSearchItem;
 	private final ToolItem f_saveSearchesAsItem;
 	private final Link f_savedSelections;
+  private final Label f_findingsIcon;
+  private final Label f_findingsStatus;
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
@@ -52,6 +58,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Composite findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
+			Label findingsIcon, Label findingsStatus, 
 			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
 		f_pages = pages;
@@ -64,6 +71,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_saveSearchesAsItem = saveSearchesAsItem;
 		f_deleteSearchItem = deleteSearchItem;
 		f_savedSelections = savedSelections;
+		f_findingsIcon = findingsIcon;
+    f_findingsStatus = findingsStatus;
 	}
 
 	public void init() {
@@ -264,6 +273,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			prevMenu.setSelection("Show");
 			MListOfFindingsColumn list = new MListOfFindingsColumn(
 					f_cascadingList, f_workingSelection, prevMenu);
+			list.addObserver(this);
 			list.init();
 		}
 	}
@@ -298,6 +308,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				column += 2; // selector and menu
 			} else if (clColumn instanceof MListOfFindingsColumn) {
 				b.append(" | <a href=\"").append(column).append("\">Show</a>");
+				((MListOfFindingsColumn) clColumn).addObserver(this);
 			}
 			clColumn = clColumn.getNextColumn();
 		} while (clColumn != null);
@@ -344,4 +355,22 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	public void selectAll() {
 	  f_first.selectAll();
 	}
+
+  public void findingsLimited(boolean isLimited) {
+    if (isLimited) {
+      final int findingsListLimit = PreferenceConstants.getFindingsListLimit();
+      final Image warning = SLImages.getWorkbenchImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+      f_findingsIcon.setImage(warning);
+      f_findingsStatus.setText("Limited to "+findingsListLimit+" findings");
+    } else {
+      f_findingsIcon.setImage(null);
+      f_findingsStatus.setText("");
+    }
+    f_findingsIcon.getParent().layout();
+    f_findingsPage.layout();
+  }
+
+  public void findingsDisposed() {
+    findingsLimited(false);
+  }
 }

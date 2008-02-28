@@ -49,7 +49,7 @@ public final class FindingsSelectionView extends ViewPart {
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.numColumns = 2;
+		layout.numColumns = 4;
 		layout.verticalSpacing = 0;
 		breadcrumbsPanel.setLayout(layout);
 
@@ -57,6 +57,14 @@ public final class FindingsSelectionView extends ViewPart {
 		breadcrumbs.setText("");
 		breadcrumbs
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		
+		final Label findingsIcon = new Label(breadcrumbsPanel, SWT.NONE);
+		findingsIcon.setText("");
+		findingsIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		final Label findingsStatus = new Label(breadcrumbsPanel, SWT.NONE);
+		findingsStatus.setText("");
+		findingsStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		
 		final ToolBar clearSelectionBar = new ToolBar(breadcrumbsPanel,
 				SWT.HORIZONTAL | SWT.FLAT);
 		clearSelectionBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
@@ -151,6 +159,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
+				findingsIcon, findingsStatus,
 				openSearchItem, saveSearchAsItem, deleteSearchItem,
 				savedSelections);
 		f_mediator.init();
