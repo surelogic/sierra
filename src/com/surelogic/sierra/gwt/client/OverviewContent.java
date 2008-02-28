@@ -102,7 +102,7 @@ public class OverviewContent extends ContentComposite {
 				users.clear();
 				final List list = (List) result;
 				if (list.isEmpty()) {
-					projects
+					users
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
@@ -126,6 +126,7 @@ public class OverviewContent extends ContentComposite {
 								.setText(i, j++, Integer.toString(uo
 										.getFindings()));
 					}
+					users.add(grid);
 				}
 			}
 		});
