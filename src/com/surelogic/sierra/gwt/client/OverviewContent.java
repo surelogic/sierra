@@ -110,7 +110,7 @@ public class OverviewContent extends ContentComposite {
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final String[] userHeader = new String[] { "User",
-							"# Audits", "# Findings" };
+							"Comments", "Last Synched" };
 					for (int j = 0; j < userHeader.length; j++) {
 						grid.setText(0, j, userHeader[j]);
 					}
@@ -121,10 +121,10 @@ public class OverviewContent extends ContentComposite {
 						f.setStyleName(i, "overview-data");
 						UserOverview uo = (UserOverview) rows.next();
 						grid.setText(i, j++, uo.getUserName());
-						grid.setText(i, j++, Integer.toString(uo.getAudits()));
-						grid
-								.setText(i, j++, Integer.toString(uo
-										.getFindings()));
+						grid.setText(i, j++, Integer.toString(uo.getAudits())
+								+ " on " + Integer.toString(uo.getFindings())
+								+ " findings");
+						grid.setText(i, j++, uo.getLastSynch());
 					}
 					users.add(grid);
 				}

@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class UserOverview implements Serializable {
 
@@ -12,7 +11,7 @@ public class UserOverview implements Serializable {
 	
 	
 	public String userName;
-	public Date lastSynch;
+	public String lastSynch;
 	public int audits;
 	public int findings;
 
@@ -24,11 +23,11 @@ public class UserOverview implements Serializable {
 		this.userName = userName;
 	}
 
-	public Date getLastSynch() {
+	public String getLastSynch() {
 		return lastSynch;
 	}
 
-	public void setLastSynch(Date lastSynch) {
+	public void setLastSynch(String lastSynch) {
 		this.lastSynch = lastSynch;
 	}
 
