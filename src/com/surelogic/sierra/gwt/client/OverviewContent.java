@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.gwt.client.service.OverviewServiceAsync;
@@ -47,39 +49,41 @@ public class OverviewContent extends ContentComposite {
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					for (Iterator i = list.iterator(); i.hasNext();) {
-						ProjectOverview po = (ProjectOverview) i.next();
-						projects
-								.add(new HTML(
-										"<h3>"
-												+ po.getName()
-												+ "</h3><p>"
-												+ po.getComments()
-												+ (po.getComments() == 1 ? " comment"
-														: " comments")
-												+ " on "
-												+ po.getFindings()
-												+ (po.getFindings() == 1 ? " finding"
-														: " findings")
-												+ " in the last 30 days.<br />"
-												+ po.getCritical()
-												+ " Critical</br />"
-												+ po.getHigh()
-												+ " High<br />"
-												+ po.getMedium()
-												+ " Medium<br />"
-												+ po.getLow()
-												+ " Low<br />"
-												+ po.getIrrelevant()
-												+ " Irrelevant</p>"
-												+ ((po.getLastSynchUser() == null) ? ""
-														: ("<p>Last updated by <span class=\"user\">"
-																+ po
-																		.getLastSynchUser()
-																+ "</span> on "
-																+ po
-																		.getLastSynchDate() + "</p>"))));
+					final Grid grid = new Grid(list.size() + 1, 10);
+					grid.setStyleName("overview-table");
+					final RowFormatter f = grid.getRowFormatter();
+					final String[] projectHeader = new String[] { "Project",
+							"# Comments", "# Findings", "Critical", "High",
+							"Medium", "Low", "Irrelevant", "Last Synch",
+							"Last Synched By" };
+					for (int j = 0; j < projectHeader.length; j++) {
+						grid.setText(0, j, projectHeader[j]);
 					}
+					f.setStyleName(0, "overview-header");
+					int i = 1;
+					for (Iterator rows = list.iterator(); rows.hasNext(); i++) {
+						int j = 0;
+						f.setStyleName(i, "overview-data");
+						ProjectOverview po = (ProjectOverview) rows.next();
+						grid.setText(i, j++, po.getName());
+						grid
+								.setText(i, j++, Integer.toString(po
+										.getComments()));
+						grid
+								.setText(i, j++, Integer.toString(po
+										.getFindings()));
+						grid
+								.setText(i, j++, Integer.toString(po
+										.getCritical()));
+						grid.setText(i, j++, Integer.toString(po.getHigh()));
+						grid.setText(i, j++, Integer.toString(po.getMedium()));
+						grid.setText(i, j++, Integer.toString(po.getLow()));
+						grid.setText(i, j++, Integer.toString(po
+								.getIrrelevant()));
+						grid.setText(i, j++, po.getLastSynchDate());
+						grid.setText(i, j++, po.getLastSynchUser());
+					}
+					projects.add(grid);
 				}
 			}
 
@@ -96,18 +100,31 @@ public class OverviewContent extends ContentComposite {
 
 			public void onSuccess(Object result) {
 				users.clear();
-				List list = (List) result;
+				final List list = (List) result;
 				if (list.isEmpty()) {
 					projects
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					for (Iterator i = list.iterator(); i.hasNext();) {
-						UserOverview uo = (UserOverview) i.next();
-						users.add(new HTML("<span class=\"user\">"
-								+ uo.getUserName() + "</span> has "
-								+ uo.getAudits() + " comments on "
-								+ uo.getFindings() + " findings."));
+					final Grid grid = new Grid(list.size() + 1, 10);
+					grid.setStyleName("overview-table");
+					final RowFormatter f = grid.getRowFormatter();
+					final String[] userHeader = new String[] { "User",
+							"# Audits", "# Findings" };
+					for (int j = 0; j < userHeader.length; j++) {
+						grid.setText(0, j, userHeader[j]);
+					}
+					f.setStyleName(0, "overview-header");
+					int i = 1;
+					for (Iterator rows = list.iterator(); rows.hasNext(); i++) {
+						int j = 0;
+						f.setStyleName(i, "overview-data");
+						UserOverview uo = (UserOverview) rows.next();
+						grid.setText(i, j++, uo.getUserName());
+						grid.setText(i, j++, Integer.toString(uo.getAudits()));
+						grid
+								.setText(i, j++, Integer.toString(uo
+										.getFindings()));
 					}
 				}
 			}

@@ -107,6 +107,21 @@ a.hover {
   padding-right: 1ex;
 }
 
+/* Overview tables */
+
+.overview-table {
+	border: 1px solid;
+}
+
+.overview-header {
+	text-align: center;	
+	color: #005596; 
+}
+
+.overview-data {
+	text-align: center;
+}
+
 /* Grid panel */
 .sl-GridPanel {
   width: 100%;
