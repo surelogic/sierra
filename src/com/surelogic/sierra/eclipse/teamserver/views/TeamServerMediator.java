@@ -1,5 +1,9 @@
 package com.surelogic.sierra.eclipse.teamserver.views;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,10 +17,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
@@ -29,17 +36,19 @@ import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
 public final class TeamServerMediator implements ITeamServerObserver {
 
 	final Button f_command;
-	final Label f_status;
+	final Link f_status;
+	final Text f_host;
 	final Text f_port;
 	final Canvas f_trafficLight;
 	final Text f_log;
 
 	final TeamServer f_teamServer;
 
-	TeamServerMediator(Button command, Label status, Text port,
+	TeamServerMediator(Button command, Link status, Text host, Text port,
 			Canvas trafficLight, Text log) {
 		f_command = command;
 		f_status = status;
+		f_host = host;
 		f_port = port;
 		f_trafficLight = trafficLight;
 		f_log = log;
@@ -48,6 +57,19 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	void init() {
+		f_host.setText(getHostAddress());
+		f_status.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				final String urlString = getURLString();
+				try {
+					final URL url = new URL(urlString);
+					openInBrowser(url);
+				} catch (MalformedURLException e) {
+					SLLogger.getLogger().log(Level.SEVERE,
+							I18N.err(41, urlString), e);
+				}
+			}
+		});
 		f_trafficLight.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				final Image trafficLightImage = getTrafficLightImage();
@@ -96,6 +118,20 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		return Integer.parseInt(f_port.getText());
 	}
 
+	private String getURLString() {
+		return "http://localhost:" + getPort();
+	}
+
+	private String getHostAddress() {
+		try {
+			InetAddress addr = InetAddress.getLocalHost();
+			return addr.getHostAddress();
+		} catch (UnknownHostException e) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(76), e);
+			return "<unknown IP address>";
+		}
+	}
+
 	/**
 	 * Refreshes the contents of this view. This method does not need to be
 	 * called from the SWT thread.
@@ -117,14 +153,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Stop Server");
 			f_command.setEnabled(true);
 
-			f_status.setText("A local server is running...");
+			f_status
+					.setText("A <a href=\"open\">Sierra team server</a> is running.");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setEnabled(true);
 
-			f_status.setText("A local server is not running...");
+			f_status.setText("A Sierra team server is not running.");
 		} else {
-			f_command.setText("Please Wait...");
+			f_command.setText("...");
 			f_command.setEnabled(false);
 
 			f_status.setText("Checking...");
@@ -157,5 +194,21 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		 * We are not being called from the SWT thread.
 		 */
 		refresh();
+	}
+
+	private void openInBrowser(final URL url) {
+		final String name = "Sierra Server";
+
+		try {
+			final IWebBrowser browser = PlatformUI.getWorkbench()
+					.getBrowserSupport().createBrowser(
+							IWorkbenchBrowserSupport.LOCATION_BAR
+									| IWorkbenchBrowserSupport.NAVIGATION_BAR
+									| IWorkbenchBrowserSupport.STATUS, name,
+							name, name);
+			browser.openURL(url);
+		} catch (Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
+		}
 	}
 }

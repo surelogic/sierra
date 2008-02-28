@@ -9,8 +9,13 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.ViewPart;
+
+import com.surelogic.common.eclipse.SLImages;
 
 public class TeamServerView extends ViewPart {
 
@@ -27,12 +32,22 @@ public class TeamServerView extends ViewPart {
 		parent.setLayout(gridLayout);
 
 		final Button command = new Button(parent, SWT.NONE);
-		data = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 2);
+		data = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 3);
 		command.setLayoutData(data);
 
-		final Label status = new Label(parent, SWT.NONE);
+		final Link status = new Link(parent, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		status.setLayoutData(data);
+
+		final Label hostLabel = new Label(parent, SWT.RIGHT);
+		hostLabel.setText("Host:");
+		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		hostLabel.setLayoutData(data);
+
+		final Text host = new Text(parent, SWT.SINGLE);
+		host.setEditable(false); // can't change the text
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		host.setLayoutData(data);
 
 		final Label portLabel = new Label(parent, SWT.RIGHT);
 		portLabel.setText("Port:");
@@ -41,14 +56,14 @@ public class TeamServerView extends ViewPart {
 
 		final Text port = new Text(parent, SWT.SINGLE);
 		port.setText("13376");
-		port.setEnabled(false); // can't change the port :-(
+		port.setEditable(false); // can't change the port :-(
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		port.setLayoutData(data);
 
 		final Group statusGroup = new Group(parent, SWT.NONE);
 		statusGroup.setText("Status");
 		data = new GridData(SWT.FILL, SWT.FILL, false, true);
-		data.widthHint = 100;
+		data.widthHint = 120;
 		statusGroup.setLayoutData(data);
 		statusGroup.setLayout(new FillLayout());
 
@@ -58,11 +73,28 @@ public class TeamServerView extends ViewPart {
 		logGroup.setText("Log");
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		logGroup.setLayoutData(data);
-		logGroup.setLayout(new FillLayout());
+		final GridLayout logLayout = new GridLayout();
+		logLayout.numColumns = 2;
+		logGroup.setLayout(logLayout);
+
+		final ToolBar logBar = new ToolBar(logGroup, SWT.VERTICAL);
+		data = new GridData(SWT.CENTER, SWT.CENTER, false, true);
+		logBar.setLayoutData(data);
+		final ToolItem jettyLog = new ToolItem(logBar, SWT.RADIO);
+		jettyLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		jettyLog.setToolTipText("Show Jetty Log");
+		final ToolItem portalLog = new ToolItem(logBar, SWT.RADIO);
+		portalLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		portalLog.setToolTipText("Show Sierra Portal Log");
+		final ToolItem servicesLog = new ToolItem(logBar, SWT.RADIO);
+		servicesLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		servicesLog.setToolTipText("Show Sierra Client Services Log");
 
 		final Text log = new Text(logGroup, SWT.MULTI);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		log.setLayoutData(data);
 
-		f_mediator = new TeamServerMediator(command, status, port,
+		f_mediator = new TeamServerMediator(command, status, host, port,
 				trafficLight, log);
 		f_mediator.init();
 	}
