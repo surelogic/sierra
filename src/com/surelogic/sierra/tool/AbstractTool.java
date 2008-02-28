@@ -69,4 +69,11 @@ public abstract class AbstractTool implements ITool {
   
   protected abstract IToolInstance create(final ArtifactGenerator generator, 
                                  final SLProgressMonitor monitor, boolean close);
+  
+  protected static TestCode getTestCode(String code) {
+    if (code == null) {
+      return TestCode.NONE;
+    }
+    return TestCode.valueOf(code);
+  }
 }

@@ -73,12 +73,14 @@ public class LocalTool extends AbstractTool {
   }
   
   private static class LocalInstance extends LocalTool implements IToolInstance {
-    final Config config;
+    final Config config;    
     final SLProgressMonitor monitor;
+    final TestCode testCode;
     
     LocalInstance(Config c, SLProgressMonitor mon) {
       config = c;
       monitor = mon;
+      testCode = getTestCode(c.getTestCode());
     }
 
     public void addTarget(IToolTarget target) {
@@ -128,8 +130,10 @@ public class LocalTool extends AbstractTool {
       final boolean exists = f.exists();
       if (!exists) {
         if (required) {
-          throw new RuntimeException(SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL+name);
+          throw new ToolException(SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL, name);
         }
+      } else if (TestCode.MISSING_CODE.equals(testCode)) {
+        throw new ToolException(SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL, name);
       } else {
         path.add(new Path(proj, name));
       }
@@ -189,6 +193,9 @@ public class LocalTool extends AbstractTool {
       cmdj.createVmArgument().setValue("-Xbootclasspath/a:"+commonLoading.getAbsolutePath());
       cmdj.createVmArgument().setValue("-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
       try {
+        if (TestCode.BAD_AUX_PATH.equals(testCode)) {
+          throw new IOException("Testing error with aux path");
+        }
         File auxPathFile = File.createTempFile("auxPath", ".txt");
         PrintWriter pw = new PrintWriter(auxPathFile);
         cmdj.createVmArgument().setValue("-Dsurelogic.aux.path.file="+auxPathFile.getAbsolutePath());
@@ -207,7 +214,13 @@ public class LocalTool extends AbstractTool {
     }
  
     private File setupConfigFile(CommandlineJava cmdj) {
+      if (config.getTestCode() != null) {
+        cmdj.createVmArgument().setValue("-D"+SierraToolConstants.TEST_CODE_PROPERTY+"="+config.getTestCode());
+      }
       try {
+        if (TestCode.BAD_CONFIG.equals(testCode)) {
+          throw new JAXBException("Testing error with config file");
+        }
         File file = File.createTempFile("config", ".xml");
         file.deleteOnExit();
 
@@ -215,7 +228,7 @@ public class LocalTool extends AbstractTool {
         marshaller.marshal(config, out);
         out.close();
         
-        cmdj.createVmArgument().setValue("-D"+SierraToolConstants.CONFIG_VARIABLE+"="+file.getAbsolutePath());
+        cmdj.createVmArgument().setValue("-D"+SierraToolConstants.CONFIG_PROPERTY+"="+file.getAbsolutePath());
         return file;
       } catch(IOException e) {
         throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG, e);
@@ -227,9 +240,19 @@ public class LocalTool extends AbstractTool {
     private void setupJVM(final boolean debug, final CommandlineJava cmdj) {
       final Project proj = new Project();      
       setupConfigFile(cmdj);      
-      if (config.getMemorySize() > 0) {
+      if (TestCode.LOW_MEMORY.equals(testCode)) {
+        cmdj.setMaxmemory("2m");
+      }
+      else if (TestCode.HIGH_MEMORY.equals(testCode)) {
+        cmdj.setMaxmemory("2048m");
+      }
+      else if (TestCode.MAD_MEMORY.equals(testCode)) {
+        cmdj.setMaxmemory("9999m");
+      }
+      else if (config.getMemorySize() > 0) {
         cmdj.setMaxmemory(config.getMemorySize()+"m");
-      } else {
+      } 
+      else {
         cmdj.setMaxmemory("1024m");
       }      
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
@@ -294,7 +317,7 @@ public class LocalTool extends AbstractTool {
         for(String arg : cmdj.getCommandline()) {
           System.out.println("\t"+arg);
         }
-      }
+      }      
       ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());      
       pb.redirectErrorStream(true);            
       try {
@@ -325,6 +348,10 @@ public class LocalTool extends AbstractTool {
         
         // Copy any output 
         final PrintStream pout = new PrintStream(p.getOutputStream());
+        if (TestCode.SCAN_CANCELLED.equals(testCode)) {
+          cancel(p, pout);
+        }
+        
         String line = br.readLine();
       loop:
         while (line != null) {
@@ -333,9 +360,7 @@ public class LocalTool extends AbstractTool {
             numLines++;
           }          
           if (monitor.isCanceled()) {
-            pout.println("##"+Local.CANCEL);
-            p.destroy();
-            throw new ToolException(SierraToolConstants.ERROR_SCAN_CANCELLED);
+            cancel(p, pout);
           }
           
           System.out.println(line);
@@ -389,6 +414,12 @@ public class LocalTool extends AbstractTool {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
+    }
+
+    private void cancel(Process p, final PrintStream pout) {
+      pout.println("##"+Local.CANCEL);
+      p.destroy();
+      throw new ToolException(SierraToolConstants.ERROR_SCAN_CANCELLED);
     }
 
     private void examineFirstLines(String[] firstLines) {

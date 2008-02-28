@@ -44,6 +44,10 @@ public class RemoteTool extends AbstractTool {
   private static final String CANCEL = "##"+Local.CANCEL;
 
   public static void main(String[] args) {
+    final TestCode testCode = getTestCode(System.getProperty(SierraToolConstants.TEST_CODE_PROPERTY));
+    if (TestCode.NO_TOOL_OUTPUT.equals(testCode)) {
+      System.exit(- SierraToolConstants.ERROR_NO_OUTPUT_FROM_TOOLS);
+    }
     System.out.println("JVM started");
     System.out.println("Log level: "+SLLogger.LEVEL.get());
     long start = System.currentTimeMillis();
@@ -61,7 +65,7 @@ public class RemoteTool extends AbstractTool {
       Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
       System.out.println("Lowered thread priority");
       
-      String configName = System.getProperty(SierraToolConstants.CONFIG_VARIABLE);
+      String configName = System.getProperty(SierraToolConstants.CONFIG_PROPERTY);
       if (configName == null) {
         throw new IllegalArgumentException("No config provided");
       }
@@ -83,7 +87,7 @@ public class RemoteTool extends AbstractTool {
       xmlr.require(START_ELEMENT, null, "config");
       System.out.println("Checking for config");
 
-      Config config = unmarshaller.unmarshal(xmlr, Config.class).getValue();
+      final Config config = unmarshaller.unmarshal(xmlr, Config.class).getValue();
       //Config config = (Config) unmarshaller.unmarshal(file);
       System.out.println("Read config");
 
@@ -115,12 +119,20 @@ public class RemoteTool extends AbstractTool {
       IToolInstance ti = t.create(config, mon); 
       checkInput(br, mon, "Created tool instance");
 
+      switch (testCode) {
+        case SCAN_FAILED:
+          outputFailure(System.out, "Testing scan failure", new Throwable());
+        case ABNORMAL_EXIT:
+          System.exit(- SierraToolConstants.ERROR_PROCESS_FAILED);
+        case EXCEPTION:        
+          throw new Exception("Testing scan exception");
+      }
       ti.run();
       long end = System.currentTimeMillis();
       checkInput(br, mon, "Done scanning: "+(end-start)+" ms");      
     } catch (Throwable e) {
       outputFailure(System.out, null, e);
-      System.exit(-1);
+      System.exit(- SierraToolConstants.ERROR_SCAN_FAILED);
     }
   }
 
