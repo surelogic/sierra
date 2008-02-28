@@ -31,6 +31,7 @@ public class Config {
 	private Date runDateTime = null;
 	private File baseDirectory = null;
 	private File toolsDirectory = null;
+	private String testCode = null;
 	
 	/**
 	 * In MB
@@ -98,6 +99,14 @@ public class Config {
 	  memorySize = (size > 0) ? size : 1024;
 	}
 	
+	public String getTestCode() {
+	  return testCode;
+	}
+
+	public void setTestCode(String code) {
+	  testCode = code;
+	}
+
 	public void setProject(String project) {
 		this.project = project;
 	}
