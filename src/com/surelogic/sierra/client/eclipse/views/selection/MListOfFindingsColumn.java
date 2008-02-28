@@ -177,7 +177,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private final List<FindingData> f_rows = new CopyOnWriteArrayList<FindingData>();
-
+  private boolean f_isLimited = false;
+	
 	public void refreshData() {
 		final String query = getQuery();
 		try {
@@ -191,6 +192,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
+					f_isLimited = false;
+					
 					final int findingsListLimit = PreferenceConstants
 							.getFindingsListLimit();
 					while (rs.next()) {
@@ -211,6 +214,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 							data.index = i;
 							f_rows.add(data);
 						} else {
+						  f_isLimited = true;
+						  
 							/*
 							 * We skipped a row so inform the user
 							 */
