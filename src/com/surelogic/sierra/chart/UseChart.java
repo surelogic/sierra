@@ -16,7 +16,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.surelogic.common.logging.SLLogger;
 
-public final class ImportanceChart implements IDatabasePlot {
+public final class UseChart implements IDatabasePlot {
 
 	public JFreeChart plot(Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {
