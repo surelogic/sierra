@@ -35,8 +35,10 @@ public class UserManagementContent extends ContentComposite {
 
 	private final VerticalPanel usersPanel = new VerticalPanel();
 	private final ActionPanel userActionsPanel = new ActionPanel();
-	private final GridPanel usersGridPanel = new GridPanel(true);
+	private final GridPanel usersGridPanel = new GridPanel(false);
 	private final SelectableGrid usersGrid = usersGridPanel.getGrid();
+
+	private boolean showDisabled;
 
 	public static UserManagementContent getInstance() {
 		return instance;
@@ -61,19 +63,14 @@ public class UserManagementContent extends ContentComposite {
 
 		});
 		usersPanel.add(userActionsPanel);
-		usersGridPanel.setEnabled(false);
-		usersGridPanel.addGridAction("Disable selected", new ClickListener() {
+		usersGridPanel.addGridAction("Show/Hide Disabled Users",
+				new ClickListener() {
 
-			public void onClick(Widget sender) {
-				changeUsersStatus(false);
-			}
-		});
-		usersGridPanel.addGridAction("Enable selected", new ClickListener() {
-
-			public void onClick(Widget sender) {
-				changeUsersStatus(true);
-			}
-		});
+					public void onClick(Widget sender) {
+						showDisabled = !showDisabled;
+						refreshUsers();
+					}
+				});
 		usersGrid.setColumn(0, "Name", "25%");
 		usersGrid.setColumn(1, "Role", "25%");
 		usersGrid.setColumn(2, "Status", "25%");
@@ -101,12 +98,6 @@ public class UserManagementContent extends ContentComposite {
 			}
 
 			public void onSelect(int row, Object rowData) {
-				usersGridPanel.setEnabled(false);
-				for (int i = 0; i < usersGrid.getRowCount(); i++) {
-					if (usersGrid.isSelected(i)) {
-						usersGridPanel.setEnabled(true);
-					}
-				}
 			}
 
 		});
@@ -145,8 +136,10 @@ public class UserManagementContent extends ContentComposite {
 					for (Iterator i = users.iterator(); i.hasNext();) {
 						// need to convert the service return to UserAccount
 						final UserAccount user = (UserAccount) i.next();
-						final int row = usersGrid.addRow();
-						updateRow(row, user);
+						if (user.isActive() || showDisabled) {
+							final int row = usersGrid.addRow();
+							updateRow(row, user);
+						}
 					}
 				}
 			}
