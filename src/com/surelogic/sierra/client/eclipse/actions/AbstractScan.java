@@ -10,13 +10,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.*;
+import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.tool.message.Config;
 
 public abstract class AbstractScan<T extends IJavaElement>  {
   /** The logger */
@@ -134,6 +140,48 @@ public abstract class AbstractScan<T extends IJavaElement>  {
       }
     }
   }
+  
+  protected final void setupConfigs(final List<Config> configs) {
+    if (configs.isEmpty()) {
+      return;
+    }
+    if (!XUtil.useExperimental()) {
+      return;
+    }
+    UIJob job = new UIJob("Put up test dialog") {
+      @Override
+      public IStatus runInUIThread(IProgressMonitor monitor) {
+        final Shell shell = 
+          PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        final ScanTestCodeSelectionDialog dialog = 
+          new ScanTestCodeSelectionDialog(shell, configs);
+        
+        if (dialog.open() == Window.CANCEL) {
+          return Status.CANCEL_STATUS;
+        }
+        return Status.OK_STATUS;
+      }
+    };
+    job.setSystem(true);
+    job.schedule();
+    try {
+      job.join();
+    } catch (InterruptedException e) {
+      // Nothing to do
+    }    
+  }
+  
+  protected final void setupCUConfigs(List<ConfigCompilationUnit> cuConfigs) {
+    if (!XUtil.useExperimental()) {
+      return;
+    }
+    List<Config> configs = new ArrayList<Config>();  
+    for(final ConfigCompilationUnit config : cuConfigs) {
+      configs.add(config.getConfig());
+    }
+    setupConfigs(configs);
+  }
+  
   abstract boolean checkIfBuilt(Collection<T> elements);
   
   /**

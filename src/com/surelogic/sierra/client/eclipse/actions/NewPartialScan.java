@@ -34,7 +34,8 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
     // One per project that had a CU selected
     final List<ConfigCompilationUnit> configs = 
       ConfigGenerator.getInstance().getCompilationUnitConfigs(selectedCUs);
-        
+    setupCUConfigs(configs);    
+    
     for(final ConfigCompilationUnit ccu : configs) {
       final Config config = ccu.getConfig();
       DatabaseJob importJob = new ImportPartialScanDocumentJob(ccu);      

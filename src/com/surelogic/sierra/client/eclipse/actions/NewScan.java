@@ -1,7 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.*;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
@@ -34,11 +34,17 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	  boolean started = false;
 		LOG.fine("Starting new scan jobs");		
 		
+		List<Config> configs = new ArrayList<Config>();
 		for (final IJavaProject p : selectedProjects) {
 			final Config config = ConfigGenerator.getInstance()
 					.getProjectConfig(p);
+			configs.add(config);
+		}
+		setupConfigs(configs);
+		
+		for(final Config config : configs) {
 			if (config.hasNothingToScan()) {
-			  BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in "+p.getElementName());
+			  BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in "+config.getProject());
 			} else {
 			  started = true;
 			}
@@ -70,7 +76,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject()));
 
-			Job job = new NewScanJob("Running Sierra on " + p.getElementName(),
+			Job job = new NewScanJob("Running Sierra on " + config.getProject(),
 					config, importJob);
 			job.schedule();
 		}
