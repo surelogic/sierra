@@ -49,7 +49,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	void init() {
 		f_trafficLight.addPaintListener(new PaintListener() {
-			@Override
 			public void paintControl(PaintEvent e) {
 				final Image trafficLightImage = getTrafficLightImage();
 				if (e.widget instanceof Scrollable) {
@@ -72,7 +71,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			}
 		});
 		f_command.addListener(SWT.Selection, new Listener() {
-			@Override
 			public void handleEvent(Event event) {
 				doCommand();
 			}
@@ -154,7 +152,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_port.setFocus();
 	}
 
-	@Override
 	public void notify(TeamServer server) {
 		/*
 		 * We are not being called from the SWT thread.

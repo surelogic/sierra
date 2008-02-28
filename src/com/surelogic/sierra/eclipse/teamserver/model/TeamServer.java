@@ -104,7 +104,6 @@ public final class TeamServer {
 
 	public void init() {
 		final Runnable checkIfServerIsRunning = new Runnable() {
-			@Override
 			public void run() {
 				boolean isRunning;
 				boolean isNotRunning;
