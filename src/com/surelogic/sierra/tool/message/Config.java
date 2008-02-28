@@ -157,8 +157,12 @@ public class Config {
 	}
 	
 	public String getPluginDir(String id) {
+	  return getPluginDir(id, true);
+	}
+	
+	public String getPluginDir(String id, boolean required) {
 	  String loc = pluginDirs.get(id);
-	  if (loc == null) {
+	  if (required && loc == null) {
 	    LOG.warning("No location for "+id);		
 	    return null;
 	  }
