@@ -1,15 +1,12 @@
 package com.surelogic.sierra.servlets.chart;
 
 import com.surelogic.sierra.chart.IDatabasePlot;
-import com.surelogic.sierra.chart.ImportanceChart;
+import com.surelogic.sierra.chart.UseChart;
 
-public class ImportanceChartServlet extends SierraChartServlet {
+public class UseChartServlet extends SierraChartServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6343049799320025945L;
-	private final ImportanceChart f_chart = new ImportanceChart();
+	private final UseChart f_chart = new UseChart();
 
 	@Override
 	protected IDatabasePlot getChart() {
