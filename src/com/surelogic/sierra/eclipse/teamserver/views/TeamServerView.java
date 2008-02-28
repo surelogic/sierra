@@ -78,7 +78,7 @@ public class TeamServerView extends ViewPart {
 		logGroup.setLayout(logLayout);
 
 		final ToolBar logBar = new ToolBar(logGroup, SWT.VERTICAL);
-		data = new GridData(SWT.CENTER, SWT.CENTER, false, true);
+		data = new GridData(SWT.CENTER, SWT.TOP, false, true);
 		logBar.setLayoutData(data);
 		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
 		jettyRequestLogItem.setImage(SLImages.getImage(SLImages.IMG_JETTY_LOG));
