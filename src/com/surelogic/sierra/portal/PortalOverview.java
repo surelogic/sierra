@@ -20,7 +20,7 @@ public class PortalOverview {
 
 	private final Connection conn;
 
-	public PortalOverview(Connection conn) {
+	private PortalOverview(Connection conn) {
 		this.conn = conn;
 	}
 
