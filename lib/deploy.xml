@@ -21,6 +21,8 @@
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-services/lib/web-dependencies" />
 		</war>
+		<copy file="../sierra-portal-servlets/lib/jcommon-1.0.12.jar" todir="../sierra-portal/lib/web-dependencies/" />
+		<copy file="../sierra-portal-servlets/lib/jfreechart-1.0.9.jar" todir="../sierra-portal/lib/web-dependencies/" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
@@ -31,7 +33,7 @@
 			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-dev-linux.jar" />
 		</path>
-		<delete dir="../sierra-portal/www"/>
+		<delete dir="../sierra-portal/www" />
 		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.GWTCompiler" fork="true">
 			<arg value="-out" />
 			<arg value="../sierra-portal/www" />
@@ -83,6 +85,8 @@
 		<delete quiet="true" file="../jetty/lib/ext/jsr173_1.0_api.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/sjsxp.jar" />
 
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/jcommon-1.0.12.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/jfreechart-1.0.9.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />
