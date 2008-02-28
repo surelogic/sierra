@@ -80,22 +80,25 @@ public class TeamServerView extends ViewPart {
 		final ToolBar logBar = new ToolBar(logGroup, SWT.VERTICAL);
 		data = new GridData(SWT.CENTER, SWT.CENTER, false, true);
 		logBar.setLayoutData(data);
-		final ToolItem jettyLog = new ToolItem(logBar, SWT.RADIO);
-		jettyLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-		jettyLog.setToolTipText("Show Jetty Log");
-		final ToolItem portalLog = new ToolItem(logBar, SWT.RADIO);
-		portalLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-		portalLog.setToolTipText("Show Sierra Portal Log");
-		final ToolItem servicesLog = new ToolItem(logBar, SWT.RADIO);
-		servicesLog.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-		servicesLog.setToolTipText("Show Sierra Client Services Log");
+		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
+		jettyRequestLogItem.setImage(SLImages.getImage(SLImages.IMG_JETTY_LOG));
+		jettyRequestLogItem.setToolTipText("Show Jetty Request Log");
+		final ToolItem portalLogItem = new ToolItem(logBar, SWT.RADIO);
+		portalLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		portalLogItem.setToolTipText("Show Sierra Portal Log");
+		final ToolItem servicesLogItem = new ToolItem(logBar, SWT.RADIO);
+		servicesLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SYNC));
+		servicesLogItem.setToolTipText("Show Sierra Client Services Log");
 
-		final Text log = new Text(logGroup, SWT.MULTI);
+		final Text log = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		log.setEditable(false);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		log.setLayoutData(data);
 
 		f_mediator = new TeamServerMediator(command, status, host, port,
-				trafficLight, log);
+				trafficLight, jettyRequestLogItem, portalLogItem,
+				servicesLogItem, log);
 		f_mediator.init();
 	}
 

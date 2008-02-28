@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,8 +26,9 @@ public final class TeamServer {
 
 	private final String f_pluginDir;
 
-	public TeamServer(final int port) {
+	public TeamServer(final int port, final ScheduledExecutorService executor) {
 		f_port = new AtomicInteger(port);
+		f_executor = executor;
 		f_pluginDir = Activator.getDefault().getDirectoryOf(
 				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
 	}
@@ -99,8 +99,7 @@ public final class TeamServer {
 	 */
 	private boolean f_inStop = false;
 
-	private final ScheduledExecutorService f_executor = Executors
-			.newScheduledThreadPool(1);
+	private final ScheduledExecutorService f_executor;
 
 	public void init() {
 		final Runnable checkIfServerIsRunning = new Runnable() {
@@ -173,7 +172,7 @@ public final class TeamServer {
 	}
 
 	public void dispose() {
-		f_executor.shutdown();
+		// nothing to do
 	}
 
 	private final CopyOnWriteArraySet<ITeamServerObserver> f_observers = new CopyOnWriteArraySet<ITeamServerObserver>();
