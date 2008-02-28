@@ -49,17 +49,21 @@ public abstract class SRPCServlet extends HttpServlet {
 					response = new RaisedException(e.getCause());
 					status = ResponseStatus.RAISED;
 				}
+				log.info("Request: " + method + "Response Status: " + status);
 			} catch (SRPCException e) {
 				// If we had some type of general messaging/processing
 				// exception, send a failure.
 				e.printStackTrace();
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
+				log.log(Level.INFO, "Exception processing request: " + e, e);
 			} catch (Exception e) {
 				log.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
+				log.log(Level.INFO, "General request processing exception: "
+						+ e, e);
 			}
 			resp.setContentType(codec.getContentType());
 			codec.encodeResponse(resp.getOutputStream(), status, response);
