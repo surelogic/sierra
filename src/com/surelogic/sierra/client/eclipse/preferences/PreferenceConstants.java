@@ -103,6 +103,10 @@ public class PreferenceConstants {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_TOOL_MEMORY_MB);
 	}
+	
+	public static void setToolMemoryMB(int mb) {
+	  Activator.getDefault().getPluginPreferences().setValue(P_TOOL_MEMORY_MB, mb);
+	}
 
 	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = "com.surelogic.common.eclipse.warn-maximum-findings-shown";
 

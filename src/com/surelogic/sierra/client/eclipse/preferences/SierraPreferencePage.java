@@ -108,7 +108,11 @@ public class SierraPreferencePage extends PreferencePage implements
 		memoryGroup.setText("Memory usage");
 
     final int estimatedMax = MemoryUtility.computeMaxMemorySize();
-		final int mb = PreferenceConstants.getToolMemoryMB();
+		int mb = PreferenceConstants.getToolMemoryMB();
+		if (mb > estimatedMax) {
+		  mb = estimatedMax;
+		  PreferenceConstants.setToolMemoryMB(mb);
+		}
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
 				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ", memoryGroup);
