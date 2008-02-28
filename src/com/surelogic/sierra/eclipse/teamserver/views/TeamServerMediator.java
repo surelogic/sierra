@@ -233,13 +233,12 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Stop Server");
 			f_command.setEnabled(true);
 
-			f_status
-					.setText("A <a href=\"open\">Sierra team server</a> is running.");
+			f_status.setText("A <a href=\"open\">team server</a> is running.");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setEnabled(true);
 
-			f_status.setText("A Sierra team server is not running.");
+			f_status.setText("A team server is not running.");
 		} else {
 			f_command.setText("...");
 			f_command.setEnabled(false);
