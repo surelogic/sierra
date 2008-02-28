@@ -454,10 +454,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		        break;
 		      }
 		    }
-		    nearSelected.clear();
 		  }
 		  f_findingId = (data == null) ? -1 : data.f_findingId;
 		}
+    nearSelected.clear();
+		
 		/*
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
