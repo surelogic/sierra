@@ -311,7 +311,7 @@
 		</view>
 	</extension>
 
-	<!-- Sierra Explorer perspective and links to the Java perspective -->
+	<!-- Code Review perspective links and Java perspective links -->
 
 	<extension point="org.eclipse.ui.perspectives">
 		<perspective name="Code Review"
