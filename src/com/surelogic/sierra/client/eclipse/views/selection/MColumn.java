@@ -146,7 +146,9 @@ public abstract class MColumn {
   
   void emptyAfter() {
     getCascadingList().emptyAfter(index);
-    f_nextColumn.dispose();
+    if (f_nextColumn != null) {
+      f_nextColumn.dispose();
+    }
   }
   
   void selectAll() {
