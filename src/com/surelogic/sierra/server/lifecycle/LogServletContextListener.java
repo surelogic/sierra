@@ -36,8 +36,7 @@ public class LogServletContextListener implements ServletContextListener {
 				"SLLogger");
 		if ("No File Output".equals(loggerOption))
 			return;
-		final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"-yyyy.MM.dd-'at'-HH.mm.ss.SSS");
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy.MM.dd");
 		String servletContextName = sce.getServletContext()
 				.getServletContextName();
 		if (servletContextName.length() < 2) {
@@ -59,7 +58,7 @@ public class LogServletContextListener implements ServletContextListener {
 			logFileName = System.getProperty("java.io.tmpdir") + tail;
 		}
 		try {
-			final FileHandler fh = new FileHandler(logFileName);
+			final FileHandler fh = new FileHandler(logFileName, true);
 			SLLogger.addHandler(fh);
 		} catch (Exception e) {
 			SLLogger.getLogger()
