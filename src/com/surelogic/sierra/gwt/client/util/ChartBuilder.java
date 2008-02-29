@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.Image;
 
 public class ChartBuilder {
 
-	private Map map;
+	private final Map map;
 
-	public ChartBuilder() {
+	private ChartBuilder() {
 		map = new HashMap();
 	}
 
@@ -34,6 +34,10 @@ public class ChartBuilder {
 
 	public Image build() {
 		return new Image(GWT.getModuleBaseURL() + "chart/use" + getArgs());
+	}
+
+	public static ChartBuilder name(String name) {
+		return new ChartBuilder().prop("name", name);
 	}
 
 	private String getArgs() {

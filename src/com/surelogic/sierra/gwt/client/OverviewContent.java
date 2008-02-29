@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
@@ -137,6 +138,10 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
+		final HorizontalPanel charts = new HorizontalPanel();
+		panel.add(charts);
+		charts.add(ChartBuilder.name("users").build());
+		charts.add(ChartBuilder.name("projects").build());
 		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));
@@ -144,7 +149,6 @@ public class OverviewContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
 		users.add(new HTML("Fetching latest information."));
-		panel.add(new ChartBuilder().build());
 	}
 
 	public static OverviewContent getInstance() {
