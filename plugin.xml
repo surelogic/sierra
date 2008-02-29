@@ -2,17 +2,38 @@
 <?eclipse version="3.2"?>
 <plugin>
 
+	<!-- Sierra views -->
+
 	<extension point="org.eclipse.ui.views">
-		<category name="Sierra"
-			id="com.surelogic.sierra.eclipse.teamserver">
-		</category>
 		<view name="Local Team Server"
 			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
-			category="com.surelogic.sierra.eclipse.teamserver"
+			category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView"
 			id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
 		</view>
 	</extension>
+
+	<!-- Code Review perspective links and Java perspective links -->
+
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension
+			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
+			<viewShortcut
+				id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+			</viewShortcut>
+		</perspectiveExtension>
+	</extension>
+
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension
+			targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<viewShortcut
+				id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+			</viewShortcut>
+		</perspectiveExtension>
+	</extension>
+
+	<!-- Sierra preferences -->
 
 	<extension point="org.eclipse.core.runtime.preferences">
 		<initializer
