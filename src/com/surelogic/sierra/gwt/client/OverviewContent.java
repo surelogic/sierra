@@ -13,6 +13,7 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.gwt.client.service.OverviewServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class OverviewContent extends ContentComposite {
 
@@ -143,6 +144,7 @@ public class OverviewContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
 		users.add(new HTML("Fetching latest information."));
+		panel.add(new ChartBuilder().build());
 	}
 
 	public static OverviewContent getInstance() {
