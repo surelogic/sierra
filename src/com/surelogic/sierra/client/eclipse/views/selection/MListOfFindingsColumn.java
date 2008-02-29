@@ -179,6 +179,60 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	}
 
+	private static abstract class ColumnData {
+	  final String name;
+	  int width = 0;
+	  boolean visible = false;
+	  
+	  ColumnData(String name) {
+	    this.name = name;
+	  }	
+	  ColumnData(String name, boolean visible) {
+	    this(name);
+	    this.visible = visible;
+	    this.width = -1;
+	  }
+	  String getText(FindingData data)  { return ""; }
+	  Image getImage(FindingData data) { return null; }
+	}	
+	private static final List<ColumnData> f_columns = new ArrayList<ColumnData>();
+	static {
+	  f_columns.add(new ColumnData("Summary", true) {
+	    @Override String getText(FindingData data)  { 
+	      return data.f_summary; 
+	    }
+	  });
+	  f_columns.add(new ColumnData("Importance") {
+	    @Override String getText(FindingData data)  { 
+	      return data.f_importance.toStringSentenceCase(); 
+	    }
+      @Override Image getImage(FindingData data)  { 
+        return Utility.getImageFor(data.f_importance);
+      }
+    });
+	  f_columns.add(new ColumnData("Project") {
+      @Override String getText(FindingData data)  { return data.f_projectName; }
+    });
+	  f_columns.add(new ColumnData("Package") {
+      @Override String getText(FindingData data)  { return data.f_packageName; }
+    });
+	  f_columns.add(new ColumnData("Line#") {
+      @Override String getText(FindingData data)  { return Integer.toString(data.f_lineNumber); }
+    });
+	  f_columns.add(new ColumnData("Type") {
+      @Override String getText(FindingData data)  { return data.f_typeName; }
+    });
+	  f_columns.add(new ColumnData("Finding Type") {
+      @Override String getText(FindingData data)  { return data.f_findingTypeName; }
+    });
+	  f_columns.add(new ColumnData("Finding Category") {
+      @Override String getText(FindingData data)  { return data.f_categoryName; }
+    });
+	  f_columns.add(new ColumnData("Tool") {
+	    @Override String getText(FindingData data)  { return data.f_toolName; }
+	  });
+	}
+	
 	private final List<FindingData> f_rows = new CopyOnWriteArrayList<FindingData>();
   private boolean f_isLimited = false;
 	
@@ -365,7 +419,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.addListener(SWT.Selection, f_singleClick);
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
-
+			createTableColumns();
+			
 			if (USE_VIRTUAL) {
 			  f_table.addListener(SWT.SetData, new Listener() {
 			    // Only called the first time the TableItem is shown
@@ -428,7 +483,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			if (i != null) {
 				i.dispose();
 			}
-		}
+		}		
 		if (USE_VIRTUAL) {
 		  // Creates that many table items -- not necessarily initialized
 		  f_table.setItemCount(f_rows.size());
@@ -467,17 +522,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
     nearSelected.clear();
 		
-		/*
+    /*
 		for (TableColumn c : f_table.getColumns()) {
 			c.pack();
 		}
 		*/
+    updateTableColumns();
+    
     f_table.layout();
     if (USE_VIRTUAL) {
       // Computes the appropriate width for the longest item
-      Rectangle rect = f_table.getBounds();
+      Point p = f_table.getSize();
       final int width = computeValueWidth();
-      f_table.setBounds(rect.x, rect.y, width, rect.height);
+      f_table.setSize(width, p.y);
     }
     
 		f_table.setRedraw(true);
@@ -490,12 +547,86 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
+	private void createTableColumns() {
+	  for(ColumnData data : f_columns) {
+	    TableColumn tc = new TableColumn(f_table, SWT.NONE);
+	    tc.setText(data.name);
+	    tc.setData(data);
+	    tc.setMoveable(true);
+	  }
+	}
+
+	/**
+	 * To be called after f_rows has been initialized
+	 */
+	private boolean loadColumnAppearance(TableColumn tc) {
+	  ColumnData data = (ColumnData) tc.getData();
+	  tc.setResizable(data.visible);
+	  if (data.visible) {
+	    if (data.width < 0) {
+	      data.width = computeValueWidth(data);
+	    } 
+	    tc.setWidth(data.width);	    
+	  } else {
+	    tc.setWidth(0);
+	  }
+	  return data.visible;
+	}
+	
+	/*
+	private static void saveColumnAppearance(TableColumn tc) {
+	  ColumnData data = (ColumnData) tc.getData();
+	  data.visible = tc.getResizable();
+	  data.width   = data.visible ? 
+	    tc.setWidth(data.width);
+	    tc.setResizable(true);
+	  } else {
+	    tc.setWidth(0);
+	    tc.setResizable(false);
+	  }
+	}
+
+  private static void setColumnVisible(TableColumn tc, boolean visible) {
+    ColumnData data = (ColumnData) tc.getData();
+    if (visible) {
+      tc.setWidth(data.width);
+      tc.setResizable(true);
+    } else {
+      data.width = tc.getWidth();
+      tc.setWidth(0);
+      tc.setResizable(false);
+    }
+  }
+  */
+	
+  private void updateTableColumns() {
+    int numVisible = 0;
+    TableColumn lastVisible = null;
+    for(TableColumn tc : f_table.getColumns()) {
+      if (loadColumnAppearance(tc)) {
+        numVisible++;
+        lastVisible = tc;
+      }
+    }
+    if (numVisible == 1) {
+      ColumnData cd = (ColumnData) lastVisible.getData();
+      lastVisible.setWidth(computeValueWidth(cd));
+    } 
+    f_table.setHeaderVisible(numVisible > 1);
+  }
+
   /*
 	 * This actually finds the longest item, and
 	 * creates a real TableItem for that item 
 	 * to ensure that the table gets sized properly
 	 */
 	int computeValueWidth() {
+	  return computeValueWidth(f_columns.get(0));
+	}
+	
+	private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
+	
+	int computeValueWidth(final ColumnData cd) {
 	  Image temp = new Image(null, 100, 100);
 	  GC gc = new GC(temp);
 	  int longest = 0;
@@ -503,9 +634,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  int longestIndex = -1;
 	  int i = 0;
 	  for(FindingData data : f_rows) {
-	    Point size = gc.textExtent(data.f_summary);
-	    if (size.x > longest) {
-	      longest = size.x;
+	    Point size = gc.textExtent(cd.getText(data));
+	    Image img = cd.getImage(data);
+	    Rectangle rect = (img == null) ? ZERO : img.getBounds();
+	    int width = size.x + rect.width;
+	    if (width > longest) {
+	      longest = width;
 	      longestData = data;
 	      longestIndex = i;
 	    }	      
@@ -527,7 +661,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  return longest + 5;
 	}
 	
-	private boolean initTableItem(int i, FindingData data, final TableItem item) {
+	private boolean initTableItem(final int i, FindingData data, final TableItem item) {
 	  if (i != data.index) {
 	    throw new IllegalArgumentException(i+" != data.index: "+data.index);
 	  }
@@ -538,6 +672,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setSelection(item);
 			return true;
 		}
+		// Init columns
+		int numVisible = 0;
+		int j = 0;
+    for(TableColumn tc : f_table.getColumns()) {
+      ColumnData cd = (ColumnData) tc.getData();      
+      item.setText(j, cd.getText(data));
+      item.setImage(j, cd.getImage(data));
+      if (tc.getResizable()) {
+        numVisible++;
+      }
+      j++;
+    }
+    // Special handling
+    if (numVisible == 1) {
+      item.setImage(0, Utility.getImageFor(data.f_importance));
+    }
 		return false;
 	}
 
