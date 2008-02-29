@@ -49,7 +49,7 @@ public class OverviewContent extends ContentComposite {
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					final Grid grid = new Grid(list.size() + 1, 10);
+					final Grid grid = new Grid(list.size() + 1, 9);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final String[] projectHeader = new String[] { "Project",
@@ -102,7 +102,7 @@ public class OverviewContent extends ContentComposite {
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					final Grid grid = new Grid(list.size() + 1, 10);
+					final Grid grid = new Grid(list.size() + 1, 3);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final String[] userHeader = new String[] { "User",
@@ -120,7 +120,9 @@ public class OverviewContent extends ContentComposite {
 						grid.setText(i, j++, Integer.toString(uo.getAudits())
 								+ " on " + Integer.toString(uo.getFindings())
 								+ " findings");
-						grid.setText(i, j++, uo.getLastSynch());
+						grid.setText(i, j++,
+								uo.getLastSynch() == null ? "Never" : uo
+										.getLastSynch());
 					}
 					users.add(grid);
 				}

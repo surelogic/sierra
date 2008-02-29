@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class UserOverview implements Serializable {
 
 	private static final long serialVersionUID = -2178621492690389786L;
-	
-	
-	public String userName;
-	public String lastSynch;
-	public int audits;
-	public int findings;
+
+	private String userName;
+	private String lastSynch;
+	private int audits;
+	private int findings;
+	private boolean active;
 
 	public String getUserName() {
 		return userName;
@@ -18,6 +18,14 @@ public class UserOverview implements Serializable {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public String getLastSynch() {
