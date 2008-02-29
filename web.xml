@@ -12,6 +12,8 @@
 		<small-icon>images/sierra_logo.gif</small-icon>
 	</icon>
 
+	<!-- Set up logging -->
+
 	<listener>
 		<description>
 			Configures logging based upon the context-param SLLogger
@@ -30,21 +32,7 @@
 		<param-value>Use Sierra Directory</param-value>
 	</context-param>
 
-	<!--
-		<filter>
-		<description>Form-based login mechanism</description>
-		<filter-name>Security Filter</filter-name>
-		<filter-class>
-		com.surelogic.sierra.jdbc.server.FormSecurityFilter
-		</filter-class>
-		</filter>
-		
-		<filter-mapping>
-		<filter-name>Security Filter</filter-name>
-		<url-pattern>/*</url-pattern>
-		</filter-mapping>
-	-->
-
+	<!--  GWT browser to server communication -->
 
 	<servlet>
 		<servlet-name>Server Login</servlet-name>
