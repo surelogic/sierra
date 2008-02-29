@@ -276,7 +276,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 			f_status.setText("A team server is not running.");
 		} else {
-			f_command.setText("...");
+			f_command.setText("Server");
 			f_command.setEnabled(false);
 
 			f_port.setEditable(false);
