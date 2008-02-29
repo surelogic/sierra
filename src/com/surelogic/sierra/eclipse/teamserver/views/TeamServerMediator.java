@@ -261,6 +261,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_trafficLight.redraw();
 		if (f_teamServer.isRunning()) {
 			f_command.setText("Stop Server");
+			f_command.setVisible(true);
 			f_command.setEnabled(true);
 
 			f_port.setEditable(false);
@@ -269,6 +270,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_status.setText("A <a href=\"open\">team server</a> is running.");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
+			f_command.setVisible(true);
 			f_command.setEnabled(true);
 
 			f_port.setEditable(true);
@@ -276,8 +278,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 			f_status.setText("A team server is not running.");
 		} else {
-			f_command.setText("Server");
 			f_command.setEnabled(false);
+			f_command.setVisible(false);
 
 			f_port.setEditable(false);
 			f_port.setText(Integer.toString(f_teamServer.getPort()));
