@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+//import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.StringComparators;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -179,26 +180,37 @@ public final class MListOfFindingsColumn extends MColumn implements
 		  return (int) f_findingId; 
 		}
 	}
-
-	static abstract class ColumnData {
+  static enum ColumnSort {
+    UNSORTED, SORT_UP, SORT_DOWN
+  }
+	static abstract class ColumnData implements Comparator<FindingData> {
 	  final String name;
 	  int width = -1;
 	  boolean visible = false;
+	  ColumnSort sort = ColumnSort.UNSORTED;
 	  
 	  ColumnData(String name) {
 	    this.name = name;
 	  }	
-	  ColumnData(String name, boolean visible) {
+	  ColumnData(String name, boolean visible, ColumnSort sort) {
 	    this(name);
 	    this.visible = visible;
 	    this.width = -1;
+	    this.sort = sort;
 	  }
 	  String getText(FindingData data)  { return ""; }
 	  Image getImage(FindingData data) { return null; }
+
+	  public int compare(FindingData o1, FindingData o2) {
+      return sort == ColumnSort.SORT_DOWN ? -compareInternal(o1,o2) : compareInternal(o1,o2);
+    }
+	  protected int compareInternal(FindingData o1, FindingData o2) {
+	    return StringComparators.SORT_ALPHABETICALLY.compare(getText(o1),getText(o2));
+	  }
 	}	
 	private static final List<ColumnData> f_columns = new ArrayList<ColumnData>();
 	static {
-	  f_columns.add(new ColumnData("Summary", true) {
+	  f_columns.add(new ColumnData("Summary", true, ColumnSort.SORT_UP) {
 	    @Override String getText(FindingData data)  { 
 	      return data.f_summary; 
 	    }
@@ -206,7 +218,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	      return Utility.getImageFor(data.f_importance);
 	    }
 	  });
-	  f_columns.add(new ColumnData("Importance", true) {
+	  f_columns.add(new ColumnData("Importance") {
 	    @Override String getText(FindingData data)  { 
 	      return data.f_importance.toStringSentenceCase(); 
 	    }
@@ -215,6 +227,10 @@ public final class MListOfFindingsColumn extends MColumn implements
         return Utility.getImageFor(data.f_importance);
       }
       */
+      @Override
+      protected int compareInternal(FindingData o1, FindingData o2) {
+        return o1.f_importance.ordinal() - o2.f_importance.ordinal();
+      }
     });
 	  f_columns.add(new ColumnData("Project") {
       @Override String getText(FindingData data)  { return data.f_projectName; }
@@ -224,6 +240,10 @@ public final class MListOfFindingsColumn extends MColumn implements
     });
 	  f_columns.add(new ColumnData("Line#") {
       @Override String getText(FindingData data)  { return Integer.toString(data.f_lineNumber); }
+      @Override
+      protected int compareInternal(FindingData o1, FindingData o2) {
+        return o1.f_lineNumber - o2.f_lineNumber;
+      }
     });
 	  f_columns.add(new ColumnData("Type") {
       @Override String getText(FindingData data)  { return data.f_typeName; }
@@ -242,7 +262,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  return f_columns;
 	}
 	
-	private final List<FindingData> f_rows = new CopyOnWriteArrayList<FindingData>();
+	private final List<FindingData> f_rows = new /*CopyOnWrite*/ArrayList<FindingData>();
   private boolean f_isLimited = false;
 	
 	public void refreshData() {
@@ -492,7 +512,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 			if (i != null) {
 				i.dispose();
 			}
-		}		
+		}
+		sortBasedOnColumns();
+		
 		if (USE_VIRTUAL) {
 		  // Creates that many table items -- not necessarily initialized
 		  f_table.setItemCount(f_rows.size());
@@ -556,12 +578,61 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.setRedraw(true);
 	}
 
-	private void createTableColumns() {
-	  for(ColumnData data : f_columns) {
-	    TableColumn tc = new TableColumn(f_table, SWT.NONE);
+	private void sortBasedOnColumns() {
+	  Comparator<FindingData> c = null;
+	  // Traverse order backwards to construct proper comparator
+	  int[] order = f_table.getColumnOrder();	  
+	  for(int i=order.length-1; i>=0; i--) {
+	    final TableColumn tc = f_table.getColumn(i);
+	    final ColumnData cd = (ColumnData) tc.getData();
+	    if (!cd.visible || cd.sort == ColumnSort.UNSORTED) {
+	      continue; // Nothing to sort
+	    }
+	    if (c == null) {
+	      c = cd;
+	    } else {
+	      final Comparator<FindingData> oldCompare = c;
+	      c = new Comparator<FindingData>() {
+          public int compare(FindingData o1, FindingData o2) {
+            int result = cd.compare(o1, o2);
+            if (result == 0) {
+              return oldCompare.compare(o1, o2);
+            }
+            return result;
+          }	        
+	      };
+	    }
+	  }
+	  if (c == null) {
+	    c = f_columns.get(0); // The default sort
+	  }
+	  Collections.sort(f_rows, c);
+  }
+
+  private void createTableColumns() {
+	  for(final ColumnData data : f_columns) {
+	    final TableColumn tc = new TableColumn(f_table, SWT.NONE);
 	    tc.setText(data.name);
 	    tc.setData(data);
 	    tc.setMoveable(true);
+	    tc.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event event) {
+          // Toggle sort
+          switch (data.sort) {
+            case SORT_DOWN: 
+            default:
+              data.sort = ColumnSort.UNSORTED;
+              break;
+            case SORT_UP:
+              data.sort = ColumnSort.SORT_DOWN;
+              break;
+            case UNSORTED:
+              data.sort = ColumnSort.SORT_UP;
+              break;
+          }
+          updateTableContents(); 
+        }	      
+	    });
 	  }
 	}
 
@@ -579,6 +650,20 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  } else {
 	    tc.setWidth(0);
 	  }
+	  Image img;
+	  switch (data.sort) {
+	    case SORT_DOWN: 
+	      img = SLImages.getImage(SLImages.IMG_DOWN);
+	      break;
+	    case SORT_UP:
+	      img = SLImages.getImage(SLImages.IMG_UP);
+	      break;
+	    case UNSORTED:
+	    default:
+	      img = null;
+	      break;
+	  }
+    tc.setImage(img);	  
 	  return data.visible;
 	}
 
@@ -663,7 +748,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 	
 	private boolean initTableItem(final int i, FindingData data, final TableItem item) {
 	  if (i != data.index) {
-	    throw new IllegalArgumentException(i+" != data.index: "+data.index);
+	    // Now set, because we're sorting
+	    data.index = i;
+	    //throw new IllegalArgumentException(i+" != data.index: "+data.index);
 	  }
 		item.setText(data.f_summary);
 		item.setImage(Utility.getImageFor(data.f_importance));
