@@ -36,7 +36,7 @@ public class LogServletContextListener implements ServletContextListener {
 				"SLLogger");
 		if ("No File Output".equals(loggerOption))
 			return;
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy.MM.dd");
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy_MM_dd");
 		String servletContextName = sce.getServletContext()
 				.getServletContextName();
 		if (servletContextName.length() < 2) {
