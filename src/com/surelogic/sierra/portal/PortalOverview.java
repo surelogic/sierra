@@ -27,19 +27,19 @@ public class PortalOverview {
 	public List<UserOverview> getUserOverviews() throws SQLException {
 
 		PreparedStatement auditSt = conn
-				.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT A.ID), MAX(R.DATE_TIME)  "
-						+ "FROM SIERRA_USER U, SIERRA_AUDIT A, REVISION R "
-						+ "OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
-						+ "INNER JOIN REVISION R ON R.REVISION = A.REVISION "
-						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
-						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME ");
+				.prepareStatement("SELECT U.USER_NAME, MAX(U.IS_ACTIVE), COUNT(DISTINCT A.ID), MAX(R.DATE_TIME) "
+						+ "FROM SIERRA_USER U "
+						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
+						+ "LEFT OUTER JOIN REVISION R ON R.REVISION = A.REVISION "
+						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
+						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME");
 		PreparedStatement findingSt = conn
 				.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT F.ID) "
 						+ "FROM SIERRA_USER U "
-						+ "OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
-						+ "INNER JOIN FINDING F ON F.ID = A.FINDING_ID "
-						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
-						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME ");
+						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
+						+ "LEFT OUTER JOIN FINDING F ON F.ID = A.FINDING_ID "
+						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
+						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME");
 		final List<UserOverview> overviews = new ArrayList<UserOverview>();
 		Timestamp time = thirtyDaysAgo();
 		auditSt.setTimestamp(1, time);
@@ -52,8 +52,9 @@ public class PortalOverview {
 					findingSet.next();
 					final UserOverview o = new UserOverview();
 					o.setUserName(auditSet.getString(1));
-					o.setAudits(auditSet.getInt(2));
-					o.setLastSynch(formattedDate(auditSet.getTimestamp(3)));
+					o.setActive("Y".equals(auditSet.getString(2)));
+					o.setAudits(auditSet.getInt(3));
+					o.setLastSynch(formattedDate(auditSet.getTimestamp(4)));
 					o.setFindings(findingSet.getInt(2));
 					overviews.add(o);
 				}
@@ -159,8 +160,12 @@ public class PortalOverview {
 	}
 
 	private static String formattedDate(Date date) {
-		DateFormat format = new SimpleDateFormat();
-		return format.format(date);
+		if (date == null) {
+			return null;
+		} else {
+			DateFormat format = new SimpleDateFormat();
+			return format.format(date);
+		}
 	}
 
 }
