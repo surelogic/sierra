@@ -13,6 +13,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
@@ -20,17 +21,48 @@ public final class UseChart implements IDatabasePlot {
 
 	public JFreeChart plot(Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {
+		final String name = parameterMap.get("name")[0];
+		if ("users".equals(name)) {
+			return userOverview(parameterMap, c);
+		} else if ("projects".equals(name)) {
+			return projectsOverview(parameterMap, c);
+		}
+		return null;
+	}
+
+	public JFreeChart projectsOverview(Map<String, String[]> parameterMap,
+			Connection c) throws SQLException, IOException {
+		final DefaultCategoryDataset data = new DefaultCategoryDataset();
+
+		for (ProjectOverview po : PortalOverview.getInstance(c)
+				.getProjectOverviews()) {
+			data.setValue((double) po.getIrrelevant(), "Irrelevant", po
+					.getName());
+			data.setValue((double) po.getLow(), "Low", po.getName());
+			data.setValue((double) po.getMedium(), "Medium", po.getName());
+			data.setValue((double) po.getHigh(), "High", po.getName());
+			data.setValue((double) po.getCritical(), "Critical", po.getName());
+		}
+		final JFreeChart chart = ChartFactory.createStackedBarChart(
+				"Importance by Project", "Project", "Importance", data,
+				PlotOrientation.VERTICAL, true, true, false);
+		// set the range axis to display integers only...
+		chart.getCategoryPlot().getRangeAxis().setStandardTickUnits(
+				NumberAxis.createIntegerTickUnits());
+		return chart;
+	}
+
+	public JFreeChart userOverview(Map<String, String[]> parameterMap,
+			Connection c) throws SQLException, IOException {
 
 		final PortalOverview po = PortalOverview.getInstance(c);
 		List<UserOverview> userOverviewList = po.getUserOverviews();
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
-			dataset.setValue((double) (uo.getAudits() + 10), "Audits", uo
+			dataset.setValue((double) (uo.getAudits()), "Audits", uo
 					.getUserName());
 		}
-		dataset.setValue(20.0, "Audits", "Hard Worker");
-		dataset.setValue(1.0, "Audits", "Slacker");
 		final JFreeChart chart = ChartFactory.createBarChart("Audits by User",
 				"User", "Audits", dataset, PlotOrientation.VERTICAL, false,
 				true, false);

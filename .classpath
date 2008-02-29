@@ -9,6 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar" sourcepath="/home/nathan/jfreechart-1.0.9/source"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
