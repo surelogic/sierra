@@ -18,4 +18,19 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_STAYS_RUNNING, value);
 	}
+
+	/*
+	 * Values: 0 = Jetty log; 1 = Portal log; 2 = Services log.
+	 */
+	public static final String P_LOG_SHOWING = "com.surelogic.sierra.eclipse.teamserver.logShowning";
+
+	public static int getLogShowing() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_LOG_SHOWING);
+	}
+
+	public static void setLogShowing(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(P_LOG_SHOWING,
+				value);
+	}
 }

@@ -28,15 +28,15 @@ public class TeamServerView extends ViewPart {
 		GridData data;
 
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+		gridLayout.numColumns = 5;
 		parent.setLayout(gridLayout);
 
 		final Button command = new Button(parent, SWT.NONE);
-		data = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 3);
+		data = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 2);
 		command.setLayoutData(data);
 
 		final Link status = new Link(parent, SWT.NONE);
-		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
 		status.setLayoutData(data);
 
 		final Label hostLabel = new Label(parent, SWT.RIGHT);
@@ -71,7 +71,7 @@ public class TeamServerView extends ViewPart {
 
 		final Group logGroup = new Group(parent, SWT.NONE);
 		logGroup.setText("Log");
-		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
 		logGroup.setLayoutData(data);
 		final GridLayout logLayout = new GridLayout();
 		logLayout.numColumns = 2;

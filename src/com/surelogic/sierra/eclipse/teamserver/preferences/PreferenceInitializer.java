@@ -15,5 +15,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		final IPreferenceStore store = Activator.getDefault()
 				.getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_SERVER_STAYS_RUNNING, true);
+		store.setDefault(PreferenceConstants.P_LOG_SHOWING, 1);
 	}
 }

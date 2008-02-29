@@ -87,13 +87,16 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private class LogSelectionListener implements Listener {
 
 		private final ServerLog f_log;
+		private final int f_logShowingPersistenceNumber;
 
-		LogSelectionListener(ServerLog log) {
+		LogSelectionListener(ServerLog log, int logShowingPersistenceNumber) {
 			f_log = log;
+			f_logShowingPersistenceNumber = logShowingPersistenceNumber;
 		}
 
 		public void handleEvent(Event event) {
 			updateLogText(f_log.getText());
+			PreferenceConstants.setLogShowing(f_logShowingPersistenceNumber);
 		}
 	}
 
@@ -165,13 +168,23 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		});
 
 		f_jettyRequestLogItem.addListener(SWT.Selection,
-				new LogSelectionListener(f_jettyRequestLog));
+				new LogSelectionListener(f_jettyRequestLog, 1));
 		f_portalLogItem.addListener(SWT.Selection, new LogSelectionListener(
-				f_portalLog));
+				f_portalLog, 2));
 		f_servicesLogItem.addListener(SWT.Selection, new LogSelectionListener(
-				f_servicesLog));
-		
-		f_jettyRequestLogItem.setSelection(true);
+				f_servicesLog, 3));
+
+		/*
+		 * Which log is showing is persisted.
+		 */
+		final int logShowing = PreferenceConstants.getLogShowing();
+		if (logShowing == 1) {
+			f_jettyRequestLogItem.setSelection(true);
+		} else if (logShowing == 2) {
+			f_portalLogItem.setSelection(true);
+		} else {
+			f_servicesLogItem.setSelection(true);
+		}
 
 		f_teamServer.init();
 		f_teamServer.addObserver(this);
