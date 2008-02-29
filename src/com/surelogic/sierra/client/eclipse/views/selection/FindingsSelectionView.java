@@ -36,7 +36,7 @@ public final class FindingsSelectionView extends ViewPart {
 		final Label noFindingsPage = new Label(pages, SWT.WRAP);
 		noFindingsPage.setText(NO_FINDINGS);
 
-		final Composite findingsPage = new Composite(pages, SWT.NONE);
+		final Composite findingsPage = new Composite(pages, SWT.NO_FOCUS);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
