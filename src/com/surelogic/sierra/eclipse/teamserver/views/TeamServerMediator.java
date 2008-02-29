@@ -170,6 +170,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				f_portalLog));
 		f_servicesLogItem.addListener(SWT.Selection, new LogSelectionListener(
 				f_servicesLog));
+		
+		f_jettyRequestLogItem.setSelection(true);
 
 		f_teamServer.init();
 		f_teamServer.addObserver(this);
