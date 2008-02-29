@@ -24,6 +24,43 @@ public final class TeamServer {
 
 	private final AtomicInteger f_port;
 
+	/**
+	 * Gets the port for this local team server.
+	 * 
+	 * @return the port.
+	 */
+	public int getPort() {
+		return f_port.get();
+	}
+
+	/**
+	 * Sets the port for this local team server.
+	 * <p>
+	 * The port can only be changed if a team server is not running.
+	 * 
+	 * @param port
+	 *            the new port.
+	 * @throws IllegalArgumentException
+	 *             if the port is less than or equal to zero.
+	 * @throws IllegalStateException
+	 *             if this team server is running.
+	 */
+	public void setPort(final int port) {
+		if (port <= 0) {
+			final String msg = I18N.err(77, port);
+			final IllegalArgumentException e = new IllegalArgumentException(msg);
+			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			throw e;
+		}
+		if (f_isRunning) {
+			final String msg = I18N.err(78);
+			final IllegalStateException e = new IllegalStateException(msg);
+			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			throw e;
+		}
+		f_port.set(port);
+	}
+
 	private final String f_pluginDir;
 
 	public TeamServer(final int port, final ScheduledExecutorService executor) {
@@ -198,6 +235,7 @@ public final class TeamServer {
 	private static final String START_JAR = JETTY_DIR + "start.jar";
 	private static final String JETTY_CONFIG = JETTY_DIR + "etc"
 			+ File.separator + "sierra-embedded-derby.xml";
+	private static final String JETTY_PORT = "jetty.port";
 	private static final String JETTY_STOP_PORT = "STOP.PORT";
 	private static final String JETTY_STOP_KEY = "STOP.KEY";
 	private static final String JETTY_STOP_ARG = "--stop";
@@ -242,6 +280,11 @@ public final class TeamServer {
 
 		final String startJar = launder(f_pluginDir + START_JAR);
 		command.setJar(startJar);
+
+		final Environment.Variable port = new Environment.Variable();
+		port.setKey(JETTY_PORT);
+		port.setValue(Integer.toString(f_port.get()));
+		command.addSysproperty(port);
 
 		final Environment.Variable stopPort = new Environment.Variable();
 		stopPort.setKey(JETTY_STOP_PORT);

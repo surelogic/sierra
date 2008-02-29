@@ -116,7 +116,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_servicesLogItem = servicesLogItem;
 		f_logText = log;
 
-		f_teamServer = new TeamServer(getPort(), f_executor);
+		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
 		f_jettyRequestLogObserver = new LogObserver(f_jettyRequestLogItem);
 		f_portalLog = new SierraPortalLog(f_executor);
@@ -136,6 +136,21 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				} catch (MalformedURLException e) {
 					SLLogger.getLogger().log(Level.SEVERE,
 							I18N.err(41, urlString), e);
+				}
+			}
+		});
+		f_port.setText(Integer.toString(f_teamServer.getPort()));
+		f_port.addListener(SWT.Verify, new Listener() {
+			public void handleEvent(Event event) {
+				String text = event.text;
+				char[] chars = new char[text.length()];
+				text.getChars(0, chars.length, chars, 0);
+				for (char c : chars) {
+					boolean number = '0' <= c && c <= '9';
+					if (!number) {
+						event.doit = false;
+						return;
+					}
 				}
 			}
 		});
@@ -248,15 +263,24 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Stop Server");
 			f_command.setEnabled(true);
 
+			f_port.setEditable(false);
+			f_port.setText(Integer.toString(f_teamServer.getPort()));
+
 			f_status.setText("A <a href=\"open\">team server</a> is running.");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setEnabled(true);
 
+			f_port.setEditable(true);
+			f_port.setText(Integer.toString(f_teamServer.getPort()));
+
 			f_status.setText("A team server is not running.");
 		} else {
 			f_command.setText("...");
 			f_command.setEnabled(false);
+
+			f_port.setEditable(false);
+			f_port.setText(Integer.toString(f_teamServer.getPort()));
 
 			f_status.setText("Checking...");
 			f_command.getParent().layout();
@@ -271,6 +295,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			if (PreferenceConstants.warnAboutServerStaysRunning()) {
 				final ServerStaysRunningWarning dialog = new ServerStaysRunningWarning();
 				dialog.open();
+			}
+			final int portFromForm = Integer.parseInt(f_port.getText());
+			if (portFromForm != f_teamServer.getPort() && portFromForm > 0) {
+				f_teamServer.setPort(portFromForm);
+				PreferenceConstants.setPort(portFromForm);
 			}
 			f_teamServer.start();
 		} else {

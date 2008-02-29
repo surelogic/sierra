@@ -33,4 +33,14 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(P_LOG_SHOWING,
 				value);
 	}
+
+	public static final String P_PORT = "com.surelogic.sierra.eclipse.teamserver.port";
+
+	public static int getPort() {
+		return Activator.getDefault().getPluginPreferences().getInt(P_PORT);
+	}
+
+	public static void setPort(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(P_PORT, value);
+	}
 }

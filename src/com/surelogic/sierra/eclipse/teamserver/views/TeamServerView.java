@@ -55,8 +55,7 @@ public class TeamServerView extends ViewPart {
 		portLabel.setLayoutData(data);
 
 		final Text port = new Text(parent, SWT.SINGLE);
-		port.setText("13376");
-		port.setEditable(false); // can't change the port :-(
+		port.setEditable(false);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		port.setLayoutData(data);
 
