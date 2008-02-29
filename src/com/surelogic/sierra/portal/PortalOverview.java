@@ -29,15 +29,17 @@ public class PortalOverview {
 		PreparedStatement auditSt = conn
 				.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT A.ID), MAX(R.DATE_TIME)  "
 						+ "FROM SIERRA_USER U, SIERRA_AUDIT A, REVISION R "
-						+ "WHERE A.USER_ID = U.ID AND R.REVISION = A.REVISION AND "
-						+ "A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
-						+ "GROUP BY U.USER_NAME " + "ORDER BY U.USER_NAME ");
+						+ "OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
+						+ "INNER JOIN REVISION R ON R.REVISION = A.REVISION "
+						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
+						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME ");
 		PreparedStatement findingSt = conn
 				.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT F.ID) "
-						+ "FROM SIERRA_USER U, SIERRA_AUDIT A, FINDING F "
-						+ "WHERE A.USER_ID = U.ID AND F.ID = A.FINDING_ID AND "
-						+ "A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
-						+ "GROUP BY U.USER_NAME " + "ORDER BY U.USER_NAME ");
+						+ "FROM SIERRA_USER U "
+						+ "OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
+						+ "INNER JOIN FINDING F ON F.ID = A.FINDING_ID "
+						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
+						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME ");
 		final List<UserOverview> overviews = new ArrayList<UserOverview>();
 		Timestamp time = thirtyDaysAgo();
 		auditSt.setTimestamp(1, time);
