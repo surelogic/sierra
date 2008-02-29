@@ -8,12 +8,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.progress.UIJob;
 
@@ -48,6 +53,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final Link f_savedSelections;
   private final Label f_findingsIcon;
   private final Label f_findingsStatus;
+  private final ToolItem f_columnSelectionItem;
 
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
@@ -58,7 +64,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Composite findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs,
-			Label findingsIcon, Label findingsStatus, 
+			Label findingsIcon, Label findingsStatus, ToolItem columnSelectionItem,
 			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
 		f_pages = pages;
@@ -73,6 +79,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_savedSelections = savedSelections;
 		f_findingsIcon = findingsIcon;
     f_findingsStatus = findingsStatus;
+    f_columnSelectionItem = columnSelectionItem;
 	}
 
 	public void init() {
@@ -158,6 +165,30 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		});
 
+		final Display display = f_columnSelectionItem.getParent().getDisplay();
+		final Shell shell = f_columnSelectionItem.getParent().getShell();
+		final Menu menu = new Menu(shell, SWT.POP_UP); 
+		for(final MListOfFindingsColumn.ColumnData data : MListOfFindingsColumn.getColumns()) {
+		  final MenuItem item = new MenuItem(menu, SWT.CHECK);
+		  item.setText(data.name);
+		  item.setSelection(data.visible);
+		  item.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event event) {
+          MListOfFindingsColumn.columnsUpdated(data, item.getSelection());
+        }   
+		  });
+		}
+		f_columnSelectionItem.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        if (event.detail == SWT.ARROW) {
+          Point p = new Point(event.x, event.y);
+          p = display.map(f_columnSelectionItem.getParent(), null, p);
+          menu.setLocation(p);
+          menu.setVisible(true);
+        }
+      }
+		});
+		
 		f_cascadingList.addObserver(this);
 		f_manager.addObserver(this);
 		Projects.getInstance().addObserver(this);

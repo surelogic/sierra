@@ -59,6 +59,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
+    f_tables.add(this);
 	}
 
 	@Override
@@ -179,9 +180,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	}
 
-	private static abstract class ColumnData {
+	static abstract class ColumnData {
 	  final String name;
-	  int width = 0;
+	  int width = -1;
 	  boolean visible = false;
 	  
 	  ColumnData(String name) {
@@ -201,14 +202,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 	    @Override String getText(FindingData data)  { 
 	      return data.f_summary; 
 	    }
+	    @Override Image getImage(FindingData data)  { 
+	      return Utility.getImageFor(data.f_importance);
+	    }
 	  });
-	  f_columns.add(new ColumnData("Importance") {
+	  f_columns.add(new ColumnData("Importance", true) {
 	    @Override String getText(FindingData data)  { 
 	      return data.f_importance.toStringSentenceCase(); 
 	    }
-      @Override Image getImage(FindingData data)  { 
+      /*
+	    @Override Image getImage(FindingData data)  { 
         return Utility.getImageFor(data.f_importance);
       }
+      */
     });
 	  f_columns.add(new ColumnData("Project") {
       @Override String getText(FindingData data)  { return data.f_projectName; }
@@ -231,6 +237,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  f_columns.add(new ColumnData("Tool") {
 	    @Override String getText(FindingData data)  { return data.f_toolName; }
 	  });
+	}
+	static Iterable<ColumnData> getColumns() {
+	  return f_columns;
 	}
 	
 	private final List<FindingData> f_rows = new CopyOnWriteArrayList<FindingData>();
@@ -572,20 +581,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  }
 	  return data.visible;
 	}
-	
-	/*
-	private static void saveColumnAppearance(TableColumn tc) {
-	  ColumnData data = (ColumnData) tc.getData();
-	  data.visible = tc.getResizable();
-	  data.width   = data.visible ? 
-	    tc.setWidth(data.width);
-	    tc.setResizable(true);
-	  } else {
-	    tc.setWidth(0);
-	    tc.setResizable(false);
-	  }
-	}
 
+	static void saveColumnAppearance(ColumnData data, TableColumn tc) {
+	  data.width = tc.getWidth();
+	}
+  /*
   private static void setColumnVisible(TableColumn tc, boolean visible) {
     ColumnData data = (ColumnData) tc.getData();
     if (visible) {
@@ -673,21 +673,25 @@ public final class MListOfFindingsColumn extends MColumn implements
 			return true;
 		}
 		// Init columns
-		int numVisible = 0;
+		//int numVisible = 0;
 		int j = 0;
     for(TableColumn tc : f_table.getColumns()) {
       ColumnData cd = (ColumnData) tc.getData();      
       item.setText(j, cd.getText(data));
       item.setImage(j, cd.getImage(data));
+      /*
       if (tc.getResizable()) {
         numVisible++;
       }
+      */
       j++;
     }
+    /*
     // Special handling
     if (numVisible == 1) {
       item.setImage(0, Utility.getImageFor(data.f_importance));
     }
+    */
 		return false;
 	}
 
@@ -924,6 +928,35 @@ public final class MListOfFindingsColumn extends MColumn implements
   private void notifyObserversOfDispose() {
     if (observer != null) {
       observer.findingsDisposed();
+    }
+  }
+
+  private static final Set<MListOfFindingsColumn> f_tables = new HashSet<MListOfFindingsColumn>();
+  
+  public static void columnsUpdated(final ColumnData data, final boolean nowVisible) {
+    if (data.visible == nowVisible) {
+      return;
+    }
+    data.visible = nowVisible;
+    
+    Iterator<MListOfFindingsColumn> it = f_tables.iterator();
+    while (it.hasNext()) {
+      MListOfFindingsColumn c = it.next();
+      Table t = c.f_table;
+      if (t != null) {
+        if (t.isDisposed()) {
+          it.remove();
+        } 
+        if (!nowVisible) {
+          // Save column width        
+          for(TableColumn tc : t.getColumns()) {
+            if (data == tc.getData()) {
+              saveColumnAppearance(data, tc);
+            }
+          }
+        }                
+        c.updateTableColumns();
+      }
     }
   }
 }

@@ -66,9 +66,14 @@ public final class FindingsSelectionView extends ViewPart {
 		findingsStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		
 		final ToolBar clearSelectionBar = new ToolBar(breadcrumbsPanel,
-				SWT.HORIZONTAL | SWT.FLAT);
+				SWT.HORIZONTAL | SWT.FLAT);	
 		clearSelectionBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
 				false, false));
+		final ToolItem columnSelectionItem = new ToolItem(clearSelectionBar,
+        SWT.DROP_DOWN);
+		columnSelectionItem.setImage(SLImages.getImage(SLImages.IMG_FILTER));
+		columnSelectionItem.setToolTipText("Set Columns to Show");
+		
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
 		clearSelectionItem.setImage(PlatformUI.getWorkbench().getSharedImages()
@@ -159,7 +164,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				findingsIcon, findingsStatus,
+				findingsIcon, findingsStatus, columnSelectionItem,
 				openSearchItem, saveSearchAsItem, deleteSearchItem,
 				savedSelections);
 		f_mediator.init();
