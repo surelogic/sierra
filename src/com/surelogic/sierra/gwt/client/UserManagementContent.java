@@ -21,6 +21,7 @@ import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.SelectableGrid;
 import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
+import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
@@ -37,7 +38,7 @@ public class UserManagementContent extends ContentComposite {
 	private final ActionPanel userActionsPanel = new ActionPanel();
 	private final GridPanel usersGridPanel = new GridPanel(false);
 	private final SelectableGrid usersGrid = usersGridPanel.getGrid();
-	private final HTML message = new HTML();
+	private final StatusBox status = new StatusBox();
 
 	private boolean showDisabled;
 
@@ -102,7 +103,7 @@ public class UserManagementContent extends ContentComposite {
 			}
 
 		});
-		usersPanel.add(message);
+		usersPanel.add(status);
 	}
 
 	protected void onActivate() {
@@ -233,8 +234,7 @@ public class UserManagementContent extends ContentComposite {
 		dialog.addPopupListener(new PopupListener() {
 
 			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-				message.setHTML("<span class=\"success\">" + dialog.getStatus()
-						+ "</span>");
+				status.setStatus(dialog.getStatus());
 				refreshUsers();
 			}
 		});

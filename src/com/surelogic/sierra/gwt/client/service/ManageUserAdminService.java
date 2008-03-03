@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.service;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public interface ManageUserAdminService extends RemoteService {
@@ -33,7 +34,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 * @return A user-readable status message indicating whether or not creation
 	 *         succeeded.
 	 */
-	String createUser(UserAccount account, String password);
+	Status createUser(UserAccount account, String password);
 
 	/**
 	 * Get details about a user's information

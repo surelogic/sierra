@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
@@ -24,7 +25,7 @@ public class CreateUserDialog extends DialogBox {
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
 	private final CheckBox isAdmin = new CheckBox();
-	private String successful;
+	private Status status;
 
 	public CreateUserDialog() {
 		super();
@@ -71,8 +72,8 @@ public class CreateUserDialog extends DialogBox {
 		userName.setFocus(true);
 	}
 
-	public String getStatus() {
-		return successful;
+	public Status getStatus() {
+		return status;
 	}
 
 	private void setErrorMessage(String text) {
@@ -111,7 +112,7 @@ public class CreateUserDialog extends DialogBox {
 						}
 
 						public void onSuccess(Object result) {
-							successful = (String) result;
+							status = (Status) result;
 							hide();
 						}
 					});
