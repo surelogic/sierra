@@ -54,6 +54,20 @@ public abstract class AbstractToolTarget extends ToolTarget {
     return location.toASCIIString();
   }
   
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof IToolTarget) {
+      IToolTarget t = (IToolTarget) o;
+      return location.equals(t.getLocation());
+    }
+    return false; 
+  }
+  
+  @Override
+  public int hashCode() {
+    return location.hashCode();
+  }
+  
   /**
    * For JAXB
    */

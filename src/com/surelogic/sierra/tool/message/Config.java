@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
@@ -66,6 +67,7 @@ public class Config {
 	private List<URI> paths = new ArrayList<URI>();
 
 	private List<ToolTarget> targets = new ArrayList<ToolTarget>();
+	private Set<ToolTarget> targetsAdded = null;
 	
 	public Config() {
 		// Nothing to do
@@ -398,6 +400,15 @@ public class Config {
 	}
 	
 	public void addTarget(ToolTarget t) {
+	  if (t.getType() == IToolTarget.Type.AUX) {
+	    if (targetsAdded == null) {
+	      targetsAdded = new HashSet<ToolTarget>();
+	    }
+	    else if (targetsAdded.contains(t)) {
+	      return;
+	    }
+	    targetsAdded.add(t);
+	  }
 	  targets.add(t);
 	}
 	

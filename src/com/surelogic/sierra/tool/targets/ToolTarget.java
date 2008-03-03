@@ -9,4 +9,8 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class ToolTarget implements IToolTarget {
   protected ToolTarget() {    
   }
+  @Override
+  public abstract boolean equals(Object o);
+  @Override
+  public abstract int hashCode();
 }
