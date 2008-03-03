@@ -49,6 +49,11 @@ public abstract class AbstractToolTarget extends ToolTarget {
     return auxSources;
   }
   
+  @Override
+  public String toString() {
+    return location.toASCIIString();
+  }
+  
   /**
    * For JAXB
    */
