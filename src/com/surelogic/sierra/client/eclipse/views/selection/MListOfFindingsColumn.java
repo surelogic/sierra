@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.*;
@@ -633,6 +635,16 @@ public final class MListOfFindingsColumn extends MColumn implements
           updateTableContents(); 
         }	      
 	    });
+	    tc.addControlListener(new ControlListener() {
+        public void controlMoved(ControlEvent e) {
+          // Nothing to do
+        }
+        public void controlResized(ControlEvent e) {
+          if (!updateTableColumns) {
+            saveColumnAppearance(data, tc);
+          }
+        }	      
+	    });
 	  }
 	}
 
@@ -668,6 +680,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	static void saveColumnAppearance(ColumnData data, TableColumn tc) {
+	  // System.out.println("width = "+tc.getWidth());
 	  data.width = tc.getWidth();
 	}
   /*
@@ -683,10 +696,13 @@ public final class MListOfFindingsColumn extends MColumn implements
     }
   }
   */
+	private boolean updateTableColumns = false;
 	
   private void updateTableColumns() {
     int numVisible = 0;
     TableColumn lastVisible = null;
+    updateTableColumns = true;
+    
     for(TableColumn tc : f_table.getColumns()) {
       if (loadColumnAppearance(tc)) {
         numVisible++;
@@ -697,6 +713,7 @@ public final class MListOfFindingsColumn extends MColumn implements
       ColumnData cd = (ColumnData) lastVisible.getData();
       lastVisible.setWidth(computeValueWidth(cd));
     } 
+    updateTableColumns = false;
     f_table.setHeaderVisible(numVisible > 1);
   }
 
