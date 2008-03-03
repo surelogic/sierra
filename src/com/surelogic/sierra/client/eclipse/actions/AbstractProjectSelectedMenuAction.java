@@ -1,9 +1,11 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,20 +28,43 @@ public abstract class AbstractProjectSelectedMenuAction implements
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// Nothing to do
+	  System.out.println("Foo");
 	}
 
 	public final void run(IAction action) {
 		if (f_currentSelection != null) {
+	    final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	    final IJavaModel javaModel = JavaCore.create(root);
 			final List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
 			final List<String> selectedProjectNames = new ArrayList<String>();
 			for (Object selection : f_currentSelection.toArray()) {
+			  final IJavaProject javaProject;
+			 outer:
 				if (selection instanceof IJavaProject) {
-					final IJavaProject javaProject = (IJavaProject) selection;
-					selectedProjects.add(javaProject);
-					selectedProjectNames.add(javaProject.getElementName());
+				  javaProject = (IJavaProject) selection;
 				}
+				else if (selection instanceof IProject) {
+				  IProject p = (IProject) selection;
+				  try {
+            for(IJavaProject jp : javaModel.getJavaProjects()) {
+              if (p.equals(jp.getProject())) {
+                javaProject = jp;
+                break outer;
+              }
+            }
+          } catch (JavaModelException e) {
+            // Do nothing
+          }
+          continue;
+				} 
+				else continue;
+				
+        selectedProjects.add(javaProject);
+        selectedProjectNames.add(javaProject.getElementName());
 			}
 			run(selectedProjects, selectedProjectNames);
+		} else {
+		  run(Collections.<IJavaProject>emptyList(), Collections.<String>emptyList());
 		}
 	}
 

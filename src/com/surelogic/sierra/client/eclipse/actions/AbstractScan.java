@@ -141,12 +141,12 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     }
   }
   
-  protected final void setupConfigs(final List<Config> configs) {
+  protected final boolean setupConfigs(final List<Config> configs) {
     if (configs.isEmpty()) {
-      return;
+      return false;
     }
     if (!XUtil.useExperimental()) {
-      return;
+      return true;
     }
     UIJob job = new UIJob("Put up test dialog") {
       @Override
@@ -169,17 +169,18 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     } catch (InterruptedException e) {
       // Nothing to do
     }    
+    return job.getResult() != Status.CANCEL_STATUS;
   }
   
-  protected final void setupCUConfigs(List<ConfigCompilationUnit> cuConfigs) {
+  protected final boolean setupCUConfigs(List<ConfigCompilationUnit> cuConfigs) {
     if (!XUtil.useExperimental()) {
-      return;
+      return true;
     }
     List<Config> configs = new ArrayList<Config>();  
     for(final ConfigCompilationUnit config : cuConfigs) {
       configs.add(config.getConfig());
     }
-    setupConfigs(configs);
+    return setupConfigs(configs);
   }
   
   abstract boolean checkIfBuilt(Collection<T> elements);

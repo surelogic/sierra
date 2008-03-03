@@ -40,8 +40,11 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					.getProjectConfig(p);
 			configs.add(config);
 		}
-		setupConfigs(configs);
-		
+		boolean continueScan = setupConfigs(configs);
+		if (!continueScan) {
+		  return false;
+		}
+
 		for(final Config config : configs) {
 			if (config.hasNothingToScan()) {
 			  BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in "+config.getProject());

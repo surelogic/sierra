@@ -82,22 +82,20 @@
 				helpContextId="menu-open-code-review-perspective">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
 				label="Re-Scan Changes in Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				enablesFor="+" helpContextId="menu-re-scan-changes-in-project">
-				<selection class="org.eclipse.jdt.core.IJavaProject" />
+				enablesFor="*" helpContextId="menu-re-scan-changes-in-project">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
+				class="com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
 				label="Scan Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				enablesFor="+" helpContextId="menu-scan-project">
-				<selection class="org.eclipse.jdt.core.IJavaProject" />
+				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
