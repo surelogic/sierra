@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -22,15 +23,15 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = 946194129762715684L;
 
-	public String createUser(final UserAccount account, final String password) {
+	public Status createUser(final UserAccount account, final String password) {
 		if ((account == null) || (password == null)
 				|| (account.getUserName() == null)
 				|| (account.getUserName().length() == 0)) {
-			return "Invalid arguments";
+			return Status.failure("Invalid arguments");
 		} else {
-			return performAdmin(false, new UserTransaction<String>() {
+			return performAdmin(false, new UserTransaction<Status>() {
 
-				public String perform(Connection conn, Server server,
+				public Status perform(Connection conn, Server server,
 						User serverUser) throws SQLException {
 					final ServerUserManager man = ServerUserManager
 							.getInstance(conn);
@@ -39,9 +40,11 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						if (account.isAdministrator()) {
 							man.addUserToGroup(user, SierraGroup.ADMIN);
 						}
-						return user + " created.";
+						return Status.success(user + " created.");
 					} else {
-						return "Could not create user with name " + user + ".";
+						return Status
+								.failure("Could not create user with name "
+										+ user + ".");
 					}
 				}
 			});
@@ -138,7 +141,6 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		});
 		return Boolean.TRUE.equals(isAdmin);
 	}
-
 
 	private UserAccount convertUser(ServerUserManager man, User u)
 			throws SQLException {
