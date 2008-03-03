@@ -47,6 +47,7 @@ public final class UseChart implements IDatabasePlot {
 				"Importance by Project", "Project", "Importance", data,
 				PlotOrientation.VERTICAL, true, true, false);
 		// set the range axis to display integers only...
+		chart.setBackgroundPaint(null);
 		chart.getCategoryPlot().getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
 		return chart;
