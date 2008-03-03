@@ -218,6 +218,7 @@ public class LocalTool extends AbstractTool {
             pw.println(t.getLocation().toURL());
           }
         }
+        pw.close();
         auxPathFile.deleteOnExit();
       } catch(IOException e) {
         throw new ToolException(SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
