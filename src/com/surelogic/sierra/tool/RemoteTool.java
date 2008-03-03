@@ -50,6 +50,8 @@ public class RemoteTool extends AbstractTool {
     }
     System.out.println("JVM started");
     System.out.println("Log level: "+SLLogger.LEVEL.get());
+    System.out.println("java.system.class.loader = "+System.getProperty("java.system.class.loader"));
+    System.out.println("System classloader = "+ClassLoader.getSystemClassLoader());
     long start = System.currentTimeMillis();
     /*
     try {
@@ -58,6 +60,7 @@ public class RemoteTool extends AbstractTool {
       t.printStackTrace();
     }
     */
+    
     try {
       final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       System.out.println("Created reader");
