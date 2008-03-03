@@ -37,6 +37,7 @@ public class UserManagementContent extends ContentComposite {
 	private final ActionPanel userActionsPanel = new ActionPanel();
 	private final GridPanel usersGridPanel = new GridPanel(false);
 	private final SelectableGrid usersGrid = usersGridPanel.getGrid();
+	private final HTML message = new HTML();
 
 	private boolean showDisabled;
 
@@ -101,7 +102,7 @@ public class UserManagementContent extends ContentComposite {
 			}
 
 		});
-
+		usersPanel.add(message);
 	}
 
 	protected void onActivate() {
@@ -232,9 +233,9 @@ public class UserManagementContent extends ContentComposite {
 		dialog.addPopupListener(new PopupListener() {
 
 			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-				if (dialog.isSuccessful()) {
-					refreshUsers();
-				}
+				message.setHTML("<span class=\"success\">" + dialog.getStatus()
+						+ "</span>");
+				refreshUsers();
 			}
 		});
 		dialog.center();

@@ -24,7 +24,7 @@ public class CreateUserDialog extends DialogBox {
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
 	private final CheckBox isAdmin = new CheckBox();
-	private boolean successful;
+	private String successful;
 
 	public CreateUserDialog() {
 		super();
@@ -71,7 +71,7 @@ public class CreateUserDialog extends DialogBox {
 		userName.setFocus(true);
 	}
 
-	public boolean isSuccessful() {
+	public String getStatus() {
 		return successful;
 	}
 
@@ -111,7 +111,7 @@ public class CreateUserDialog extends DialogBox {
 						}
 
 						public void onSuccess(Object result) {
-							successful = true;
+							successful = (String) result;
 							hide();
 						}
 					});
