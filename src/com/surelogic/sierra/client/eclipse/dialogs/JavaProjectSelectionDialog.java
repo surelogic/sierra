@@ -37,7 +37,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public class JavaProjectSelectionDialog extends Dialog {
+public final class JavaProjectSelectionDialog extends Dialog {
 
 	private final String f_label;
 	private final String f_shellTitle;
@@ -107,15 +107,11 @@ public class JavaProjectSelectionDialog extends Dialog {
 		GridLayout gridLayout = new GridLayout();
 		panel.setLayout(gridLayout);
 
-		final Composite entryPanel = new Composite(panel, SWT.NONE);
-		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
-		gridLayout = new GridLayout();
-		entryPanel.setLayout(gridLayout);
+		final Label label = new Label(panel, SWT.WRAP);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		label.setText(f_label);
 
-		final Label l = new Label(entryPanel, SWT.WRAP);
-		l.setText(f_label);
-
-		f_projectTable = new Table(entryPanel, SWT.FULL_SELECTION | SWT.CHECK);
+		f_projectTable = new Table(panel, SWT.FULL_SELECTION | SWT.CHECK);
 		f_projectTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		try {
@@ -137,8 +133,6 @@ public class JavaProjectSelectionDialog extends Dialog {
 			throw new RuntimeException(e);
 		}
 
-		addToEntryPanel(entryPanel);
-
 		f_projectTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				f_projects.clear();
@@ -151,11 +145,43 @@ public class JavaProjectSelectionDialog extends Dialog {
 			}
 		});
 
-		// add controls to composite as necessary
+		final Composite allNonePanel = new Composite(panel, SWT.NONE);
+		allNonePanel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false));
+		final GridLayout allNoneLayout = new GridLayout();
+		allNoneLayout.numColumns = 2;
+		allNoneLayout.makeColumnsEqualWidth = true;
+		allNonePanel.setLayout(allNoneLayout);
+		final Button allButton = new Button(allNonePanel, SWT.PUSH);
+		allButton.setText("Select All");
+		allButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		allButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (f_projectTable != null && !f_projectTable.isDisposed()) {
+					for (TableItem item : f_projectTable.getItems()) {
+						item.setChecked(true);
+					}
+				}
+			}
+		});
+		final Button noneButton = new Button(allNonePanel, SWT.PUSH);
+		noneButton.setText("Deselect All");
+		noneButton
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		noneButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (f_projectTable != null && !f_projectTable.isDisposed()) {
+					for (TableItem item : f_projectTable.getItems()) {
+						item.setChecked(false);
+					}
+				}
+			}
+		});
+
 		final Button check = new Button(panel, SWT.CHECK);
-		check.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1,
-				1));
-		check.setText("Always show this dialog in the future");
+		check.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		check
+				.setText("Show this dialog even when projects are selected in the Package Explorer");
 		check.setSelection(PreferenceConstants
 				.alwaysAllowUserToSelectProjectsToScan());
 		check.addListener(SWT.Selection, new Listener() {
@@ -167,11 +193,8 @@ public class JavaProjectSelectionDialog extends Dialog {
 				check.setSelection(show);
 			}
 		});
-		return panel;
-	}
 
-	protected void addToEntryPanel(Composite entryPanel) {
-		// Do nothing
+		return panel;
 	}
 
 	@Override

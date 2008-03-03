@@ -71,7 +71,7 @@ public class SierraPreferencePage extends PreferencePage implements
 
 		f_selectProjectsToScan = new BooleanFieldEditor(
 				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
-				"Always allow the user to select the set of projects to scan from the main menu.",
+				"Allow the user to select the set of projects to scan even when projects are selected in the Package Explorer.",
 				diGroup);
 		f_selectProjectsToScan.setPage(this);
 		f_selectProjectsToScan.setPreferenceStore(getPreferenceStore());
@@ -122,6 +122,12 @@ public class SierraPreferencePage extends PreferencePage implements
 			mb = estimatedMax;
 			PreferenceConstants.setToolMemoryMB(mb);
 		}
+
+		f_estimate = new Label(memoryGroup, SWT.NONE);
+		f_estimate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 2, 1));
+		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
 				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ",
@@ -141,9 +147,6 @@ public class SierraPreferencePage extends PreferencePage implements
 						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 					}
 				});
-
-		f_estimate = new Label(memoryGroup, SWT.FILL);
-		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
 
 		/*
 		 * Allow access to help via the F1 key.
