@@ -103,9 +103,10 @@ public class PreferenceConstants {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_TOOL_MEMORY_MB);
 	}
-	
+
 	public static void setToolMemoryMB(int mb) {
-	  Activator.getDefault().getPluginPreferences().setValue(P_TOOL_MEMORY_MB, mb);
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_TOOL_MEMORY_MB, mb);
 	}
 
 	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = "com.surelogic.common.eclipse.warn-maximum-findings-shown";
@@ -118,5 +119,17 @@ public class PreferenceConstants {
 	public static void setWarnAboutMaximumFindingsShown(boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_WARN_MAXIMUM_FINDINGS_SHOWN, value);
+	}
+
+	public static final String P_SELECT_PROJECTS_TO_SCAN = "com.surelogic.common.eclipse.always-allow-user-to-select-projects-to-scan";
+
+	public static boolean alwaysAllowUserToSelectProjectsToScan() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SELECT_PROJECTS_TO_SCAN);
+	}
+
+	public static void setAlwaysAllowUserToSelectProjectsToScan(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
 }

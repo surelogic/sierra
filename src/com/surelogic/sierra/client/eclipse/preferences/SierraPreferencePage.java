@@ -26,10 +26,11 @@ import com.surelogic.sierra.tool.message.Importance;
 public class SierraPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-  static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
+	static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
 	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPreferenceLabel";
 
 	BooleanFieldEditor f_balloonFlag;
+	BooleanFieldEditor f_selectProjectsToScan;
 	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	RadioGroupFieldEditor f_showAbove;
 	BooleanFieldEditor f_saveResources;
@@ -67,6 +68,14 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_balloonFlag.setPage(this);
 		f_balloonFlag.setPreferenceStore(getPreferenceStore());
 		f_balloonFlag.load();
+
+		f_selectProjectsToScan = new BooleanFieldEditor(
+				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
+				"Always allow the user to select the set of projects to scan from the main menu.",
+				diGroup);
+		f_selectProjectsToScan.setPage(this);
+		f_selectProjectsToScan.setPreferenceStore(getPreferenceStore());
+		f_selectProjectsToScan.load();
 
 		f_showMarkersInJavaEditorFlag = new BooleanFieldEditor(
 				PreferenceConstants.P_SIERRA_SHOW_MARKERS,
@@ -107,15 +116,16 @@ public class SierraPreferencePage extends PreferencePage implements
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		memoryGroup.setText("Memory usage");
 
-    final int estimatedMax = MemoryUtility.computeMaxMemorySize();
+		final int estimatedMax = MemoryUtility.computeMaxMemorySize();
 		int mb = PreferenceConstants.getToolMemoryMB();
 		if (mb > estimatedMax) {
-		  mb = estimatedMax;
-		  PreferenceConstants.setToolMemoryMB(mb);
+			mb = estimatedMax;
+			PreferenceConstants.setToolMemoryMB(mb);
 		}
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
-				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ", memoryGroup);
+				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ",
+				memoryGroup);
 		f_toolMemoryMB.setMinimum(256);
 		f_toolMemoryMB.setMaximum(estimatedMax);
 		f_toolMemoryMB.setPageIncrement(256);
@@ -131,10 +141,10 @@ public class SierraPreferencePage extends PreferencePage implements
 						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 					}
 				});
-		
-    f_estimate = new Label(memoryGroup, SWT.FILL);
-    f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
-		
+
+		f_estimate = new Label(memoryGroup, SWT.FILL);
+		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+
 		/*
 		 * Allow access to help via the F1 key.
 		 */
@@ -147,6 +157,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
+		f_selectProjectsToScan.loadDefault();
 		f_showMarkersInJavaEditorFlag.loadDefault();
 		f_showAbove.loadDefault();
 		f_saveResources.loadDefault();
@@ -158,6 +169,7 @@ public class SierraPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		f_balloonFlag.store();
+		f_selectProjectsToScan.store();
 		f_showMarkersInJavaEditorFlag.store();
 		f_showAbove.store();
 		f_saveResources.store();

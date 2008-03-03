@@ -33,5 +33,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_TOOL_MEMORY_MB, 1024);
 		store.setDefault(PreferenceConstants.P_WARN_MAXIMUM_FINDINGS_SHOWN,
 				true);
+		store.setDefault(PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN, true);
 	}
 }
