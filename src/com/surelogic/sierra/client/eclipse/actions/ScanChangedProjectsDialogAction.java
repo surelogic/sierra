@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
 
 public class ScanChangedProjectsDialogAction extends ScanChangedProjectsAction {
-  @Override
-  public void run(List<IJavaProject> projects) {
-    projects = 
-      JavaProjectSelectionDialog.getProjects("Select Projects to Re-Scan", projects);
-    super.run(projects);
-  }
+	@Override
+	public void run(List<IJavaProject> projects) {
+		projects = JavaProjectSelectionDialog.getProjects(
+				"Select project(s) to re-scan changes within:",
+				"Re-Scan Changes in Project", SLImages
+						.getImage(SLImages.IMG_SIERRA_SCAN_DELTA), projects);
+		super.run(projects);
+	}
 }
