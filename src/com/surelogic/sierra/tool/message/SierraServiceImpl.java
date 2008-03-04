@@ -93,14 +93,14 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		});
 	}
 
-	public Timeseries getQualifiers(TimeseriesRequest request) {
+	public Timeseries getTimeseries(TimeseriesRequest request) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserTransaction<Timeseries>() {
 
 					public Timeseries perform(Connection conn, Server server,
 							User user) throws SQLException {
 						Timeseries q = new Timeseries();
-						q.setQualifier(QualifierManager.getInstance(conn)
+						q.setTimeseries(QualifierManager.getInstance(conn)
 								.getAllQualifierNames());
 						return q;
 					}
