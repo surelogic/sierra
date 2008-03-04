@@ -22,22 +22,23 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.i18n.I18N;
 
 public final class TimeseriesSelectionDialog extends Dialog {
 
-	private final Set<String> f_qualifiers;
+	private final Set<String> f_timeseries;
 
-	private final Set<String> f_selectedQualifiers = new HashSet<String>();
+	private final Set<String> f_selectedTimeseries = new HashSet<String>();
 
-	public Set<String> getSelectedQualifiers() {
-		return new HashSet<String>(f_selectedQualifiers);
+	public Set<String> getSelectedTimeseries() {
+		return new HashSet<String>(f_selectedTimeseries);
 	}
 
 	private final String f_projectName;
 
 	private final String f_serverLabel;
 
-	private Table f_qualifierTable;
+	private Table f_timeseriesTable;
 
 	private boolean f_useForRemainingOnSameServer = true;
 
@@ -45,19 +46,19 @@ public final class TimeseriesSelectionDialog extends Dialog {
 		return f_useForRemainingOnSameServer;
 	}
 
-	public TimeseriesSelectionDialog(Shell parentShell, Set<String> qualifiers,
+	public TimeseriesSelectionDialog(Shell parentShell, Set<String> timeseries,
 			String projectName, String serverLabel) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
-		if (qualifiers == null || qualifiers.size() < 1)
+		if (timeseries == null || timeseries.size() < 1)
 			throw new IllegalArgumentException(
-					"Qualifier set must be non-null and contain at least one qualifier");
-		f_qualifiers = new HashSet<String>(qualifiers);
+					"timeseries set must be non-null and contain at least one element");
+		f_timeseries = new HashSet<String>(timeseries);
 		if (projectName == null)
-			throw new IllegalArgumentException("Project name must be non-null");
+			throw new IllegalArgumentException(I18N.err(44, "projectName"));
 		f_projectName = projectName;
 		if (serverLabel == null)
-			throw new IllegalArgumentException("Server label must be non-null");
+			throw new IllegalArgumentException(I18N.err(44, "serverLabel"));
 		f_serverLabel = serverLabel;
 	}
 
@@ -65,7 +66,7 @@ public final class TimeseriesSelectionDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
-		newShell.setText("Select Qualifiers");
+		newShell.setText("Select Timeseries");
 	}
 
 	@Override
@@ -87,18 +88,18 @@ public final class TimeseriesSelectionDialog extends Dialog {
 		entryPanel.setLayout(gridLayout);
 
 		final Label l = new Label(entryPanel, SWT.WRAP);
-		l.setText("Select '" + f_serverLabel + "' qualifiers to share '"
+		l.setText("Select '" + f_serverLabel + "' timeseries to share '"
 				+ f_projectName + "' to:");
 
-		f_qualifierTable = new Table(entryPanel, SWT.MULTI);
-		f_qualifierTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+		f_timeseriesTable = new Table(entryPanel, SWT.MULTI);
+		f_timeseriesTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		final List<String> qualifiers = new ArrayList<String>(f_qualifiers);
-		Collections.sort(qualifiers);
+		final List<String> timeseries = new ArrayList<String>(f_timeseries);
+		Collections.sort(timeseries);
 
-		for (String qualifier : qualifiers) {
-			TableItem item = new TableItem(f_qualifierTable, SWT.NONE);
-			item.setText(qualifier);
+		for (String ts : timeseries) {
+			TableItem item = new TableItem(f_timeseriesTable, SWT.NONE);
+			item.setText(ts);
 		}
 
 		final Button useForAll = new Button(entryPanel, SWT.CHECK);
@@ -111,12 +112,12 @@ public final class TimeseriesSelectionDialog extends Dialog {
 			}
 		});
 
-		f_qualifierTable.addListener(SWT.Selection, new Listener() {
+		f_timeseriesTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				f_selectedQualifiers.clear();
-				final TableItem[] sa = f_qualifierTable.getSelection();
+				f_selectedTimeseries.clear();
+				final TableItem[] sa = f_timeseriesTable.getSelection();
 				for (TableItem item : sa) {
-					f_selectedQualifiers.add(item.getText());
+					f_selectedTimeseries.add(item.getText());
 				}
 				setOKState();
 			}
@@ -135,6 +136,6 @@ public final class TimeseriesSelectionDialog extends Dialog {
 
 	private void setOKState() {
 		getButton(IDialogConstants.OK_ID).setEnabled(
-				!f_selectedQualifiers.isEmpty());
+				!f_selectedTimeseries.isEmpty());
 	}
 }

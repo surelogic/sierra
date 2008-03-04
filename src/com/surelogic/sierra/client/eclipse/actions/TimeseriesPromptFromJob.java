@@ -54,7 +54,7 @@ public final class TimeseriesPromptFromJob {
 							f_timeseries, f_projectName, f_serverLabel);
 					if (dialog.open() != Window.CANCEL) {
 						f_selectedTimeseries.addAll(dialog
-								.getSelectedQualifiers());
+								.getSelectedTimeseries());
 						f_useForAllOnSameServer = dialog
 								.useForAllOnSameServer();
 					} else {

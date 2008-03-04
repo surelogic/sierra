@@ -53,28 +53,28 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				return Status.CANCEL_STATUS;
 			} else {
 
-				Set<String> qualifiers = getQualifiersOnTheServer(slMonitor);
-				if (qualifiers == null) {
+				Set<String> timeseries = getTimeseriesOnTheServer(slMonitor);
+				if (timeseries == null) {
 					return Status.CANCEL_STATUS;
 				}
 				if (slMonitor.isCanceled()) {
 					return null;
 				} else {
 					TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
-							qualifiers, f_projectName, f_server.getLabel());
+							timeseries, f_projectName, f_server.getLabel());
 					prompt.open();
 					if (prompt.isCanceled()) {
 						slMonitor.setCanceled(true);
 						return Status.CANCEL_STATUS;
 					} else {
-						qualifiers = prompt.getSelectedTimeseries();
+						timeseries = prompt.getSelectedTimeseries();
 					}
 				}
 				if (slMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				scan.getConfig().setQualifiers(
-						new ArrayList<String>(qualifiers));
+						new ArrayList<String>(timeseries));
 				return publishRun(scan, slMonitor);
 			}
 		} catch (Exception e) {
@@ -84,16 +84,16 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private Set<String> getQualifiersOnTheServer(SLProgressMonitor slMonitor) {
+	private Set<String> getTimeseriesOnTheServer(SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
-			List<String> qualifiers = SierraServiceClient.create(
+			List<String> timeseries = SierraServiceClient.create(
 					f_server.getServer()).getQualifiers(new QualifierRequest())
 					.getQualifier();
-			if (qualifiers == null) {
-				qualifiers = Collections.emptyList();
+			if (timeseries == null) {
+				timeseries = Collections.emptyList();
 			}
-			return new TreeSet<String>(qualifiers);
+			return new TreeSet<String>(timeseries);
 		} catch (SierraServiceClientException e) {
 			if (joinJob.troubleshoot(f_server)) {
 				troubleshoot = getTroubleshootConnection(e);
@@ -102,12 +102,12 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				// troubleshoot, and try again.
 				troubleshoot.fix();
 				if (troubleshoot.retry()) {
-					return getQualifiersOnTheServer(slMonitor);
+					return getTimeseriesOnTheServer(slMonitor);
 				}
 				joinJob.fail(f_server);
 			}
 			SLLogger.getLogger().log(Level.WARNING,
-					"Failed to get qualifiers from " + f_server, e);
+					"Failed to get timeseries from " + f_server, e);
 			return null;
 		}
 
