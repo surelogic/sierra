@@ -73,8 +73,11 @@ public final class JavaProjectSelectionDialog extends Dialog {
 								.getActiveWorkbenchWindow().getShell();
 						final String msg = I18N
 								.msg("sierra.eclipse.noJavaProjectsOpen");
-						MessageDialog.openInformation(shell,
-								"No Projects Open", msg);
+						final MessageDialog dialog = new MessageDialog(shell,
+								"No Projects Open", shellImage, msg,
+								MessageDialog.INFORMATION,
+								new String[] { "OK" }, 0);
+						dialog.open();
 						return Status.OK_STATUS;
 					}
 				};
