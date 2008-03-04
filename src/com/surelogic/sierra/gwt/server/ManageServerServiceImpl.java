@@ -86,8 +86,10 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		}
 		Notification n = server.getNotification();
 		if (n != null) {
-			info.setEmail(new EmailInfo(n.getHost(), n.getPort().toString(), n
-					.getUser(), n.getPass(), n.getFromEmail(), n.getToEmail()));
+			final Integer port = n.getPort();
+			info.setEmail(new EmailInfo(n.getHost(), port == null ? null : port
+					.toString(), n.getUser(), n.getPass(), n.getFromEmail(), n
+					.getToEmail()));
 		} else {
 			final String error = "Error";
 			info.setEmail(new EmailInfo(error, error, error, error, error,
