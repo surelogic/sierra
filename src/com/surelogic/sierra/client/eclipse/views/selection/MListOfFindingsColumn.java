@@ -612,7 +612,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		 */
 		updateTableColumns();
 
-		f_table.layout();
+		//f_table.layout();
 		if (USE_VIRTUAL) {
 			// Computes the appropriate width for the longest item
 			Point p = f_table.getSize();
@@ -781,6 +781,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		updateTableColumns = false;
 		f_table.setHeaderVisible(numVisible > 1);
+		f_table.pack();
 	}
 
 	/*
