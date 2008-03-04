@@ -238,7 +238,7 @@ public class Server {
 	private static String escapedTuple(Object[] values) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
-		getLiteral(values[0]);
+		sb.append(getLiteral(values[0]));
 		for (int i = 1; i < values.length; i++) {
 			sb.append(',');
 			sb.append(getLiteral(values[i]));
