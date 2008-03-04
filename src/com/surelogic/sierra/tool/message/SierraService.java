@@ -30,15 +30,16 @@ public interface SierraService extends Service {
 	 * 
 	 * @param request
 	 * @return
-	 * @throws ServerMismatchException 
+	 * @throws ServerMismatchException
 	 */
-	SyncResponse synchronizeProject(SyncRequest request) throws ServerMismatchException;
+	SyncResponse synchronizeProject(SyncRequest request)
+			throws ServerMismatchException;
 
 	/**
-	 * Return the settings associated with a given qualifier.
+	 * Return the settings associated with a given timeseries.
 	 * 
 	 * @param request
-	 * @return the settings associated with a given qualifier.
+	 * @return the settings associated with a given timeseries.
 	 */
 	SettingsReply getSettings(SettingsRequest request)
 			throws ServerMismatchException;

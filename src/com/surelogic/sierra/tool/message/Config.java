@@ -77,7 +77,7 @@ public class Config {
 		return project;
 	}
 
-	public List<String> getQualifiers() {
+	public List<String> getTimeseries() {
 		return timeseries;
 	}
 

@@ -23,13 +23,13 @@ public interface ScanGenerator {
     ScanGenerator project(String projectName);
 
     /**
-     * The generated run will belong to the specified set of qualifiers. This
+     * The generated run will belong to the specified set of timeseries. This
      * method should never be called to build a run in the client database.
      *
-     * @param qualifiers
+     * @param timeseries
      * @return
      */
-    ScanGenerator timeseries(Collection<String> qualifiers);
+    ScanGenerator timeseries(Collection<String> timeseries);
 
     ScanGenerator user(String userName);
 

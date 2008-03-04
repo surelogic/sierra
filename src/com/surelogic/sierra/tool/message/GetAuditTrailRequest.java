@@ -18,7 +18,7 @@ public class GetAuditTrailRequest {
         // Do Nothing
     }
 
-    public GetAuditTrailRequest(String project, String qualifier, Long revision) {
+    public GetAuditTrailRequest(String project, String timeseries, Long revision) {
         this.project = project;
         this.revision = revision;
     }
