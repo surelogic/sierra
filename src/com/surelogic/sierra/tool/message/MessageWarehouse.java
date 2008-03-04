@@ -658,16 +658,16 @@ public final class MessageWarehouse {
 		}
 	}
 
-	private static void readMetrics(Collection<ClassMetric> metrics,
-			ArtifactGenerator generator) {
-		if (metrics != null) {
-			MetricBuilder mBuilder = generator.metric();
-
-			for (ClassMetric m : metrics) {
-				readClassMetric(m, mBuilder);
-			}
-		}
-	}
+//	private static void readMetrics(Collection<ClassMetric> metrics,
+//			ArtifactGenerator generator) {
+//		if (metrics != null) {
+//			MetricBuilder mBuilder = generator.metric();
+//
+//			for (ClassMetric m : metrics) {
+//				readClassMetric(m, mBuilder);
+//			}
+//		}
+//	}
 
 	private static void readConfig(Config config, ScanGenerator builder) {
 		builder.javaVendor(config.getJavaVendor());
