@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.server;
 
 import java.io.IOException;
+import java.security.Security;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.surelogic.common.jdbc.FutureDatabaseException;
@@ -149,18 +151,15 @@ public class Server {
 			if ((to != null) && (to.length() > 0) && (host != null)
 					&& (host.length() > 0)) {
 				Properties props = new Properties();
-				props.put("mail.smtp.host", host);
-				props.put("mail.debug", "true");
+				props.setProperty("mail.transport.protocol", "smtp");
+				props.setProperty("mail.smtp.host", host);
+				props.setProperty("mail.smtp.starttls.enable", "true");
+				props.put("mail.smtp.auth", "true");
 				if (port != null) {
 					props.put("mail.smtp.port", port);
 				}
-				props.put("mail.from",
-						((from == null) || (from.length() == 0)) ? to : from);
 				Authenticator auth;
 				if ((user != null) && (user.length() > 0)) {
-					props.put("mail.smtp.auth", "true");
-					props.put("mail.smtp.starttls.enable", "true");
-					props.put("mail.smtp.localhost", "yoursite.com");
 					auth = new Authenticator() {
 
 						@Override
@@ -172,19 +171,17 @@ public class Server {
 				} else {
 					auth = null;
 				}
-				Session session = Session.getInstance(props, null);
+				Session session = Session.getInstance(props, auth);
 				try {
 					MimeMessage msg = new MimeMessage(session);
-					msg.setFrom();
-					msg.setRecipients(Message.RecipientType.TO, to);
+					msg.setSender(new InternetAddress(((from == null) || (from
+							.length() == 0)) ? to : from));
+					msg.setRecipient(Message.RecipientType.TO,
+							new InternetAddress(to));
 					msg.setSubject(subject);
 					msg.setSentDate(new Date());
-					msg.setText(message);
-					Transport tr = session.getTransport("smtp");
-					tr.connect(host, port, user, pass);
-					msg.saveChanges();
-					tr.sendMessage(msg, msg.getAllRecipients());
-					tr.close();
+					msg.setContent(message, "text/plain");
+					Transport.send(msg);
 				} catch (MessagingException mex) {
 					log.log(Level.SEVERE,
 							"Mail notification of exception failed.", mex);
