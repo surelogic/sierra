@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlRootElement
 @XmlType
-public class Qualifiers {
+public class Timeseries {
     private List<String> qualifier;
 
     public List<String> getQualifier() {
@@ -46,7 +46,7 @@ public class Qualifiers {
             return false;
         }
 
-        final Qualifiers other = (Qualifiers) obj;
+        final Timeseries other = (Timeseries) obj;
 
         if (qualifier == null) {
             if (other.qualifier != null) {

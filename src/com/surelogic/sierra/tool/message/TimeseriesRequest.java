@@ -6,5 +6,5 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlRootElement
-public class QualifierRequest {
+public class TimeseriesRequest {
 }

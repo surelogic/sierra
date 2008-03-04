@@ -26,7 +26,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 public class Config {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 	private String project = null;
-	private List<String> qualifiers = null;
+	private List<String> timeseries = null;
 	private String javaVersion = null;
 	private String javaVendor = null;
 	private Date runDateTime = null;
@@ -78,7 +78,7 @@ public class Config {
 	}
 
 	public List<String> getQualifiers() {
-		return qualifiers;
+		return timeseries;
 	}
 
 	public String getJavaVersion() {
@@ -113,8 +113,8 @@ public class Config {
 		this.project = project;
 	}
 
-	public void setQualifiers(List<String> qualifiers) {
-		this.qualifiers = qualifiers;
+	public void setTimeseries(List<String> timeseries) {
+		this.timeseries = timeseries;
 	}
 
 	public void setJavaVersion(String javaVersion) {
@@ -195,7 +195,7 @@ public class Config {
 				+ ((pmdRulesFile == null) ? 0 : pmdRulesFile.hashCode());
 		result = prime * result + ((project == null) ? 0 : project.hashCode());
 		result = prime * result
-				+ ((qualifiers == null) ? 0 : qualifiers.hashCode());
+				+ ((timeseries == null) ? 0 : timeseries.hashCode());
 		result = prime * result
 				+ ((runDateTime == null) ? 0 : runDateTime.hashCode());
 		result = prime * result
@@ -258,10 +258,10 @@ public class Config {
 				return false;
 		} else if (!project.equals(other.project))
 			return false;
-		if (qualifiers == null) {
-			if (other.qualifiers != null)
+		if (timeseries == null) {
+			if (other.timeseries != null)
 				return false;
-		} else if (!qualifiers.equals(other.qualifiers))
+		} else if (!timeseries.equals(other.timeseries))
 			return false;
 		if (runDateTime == null) {
 			if (other.runDateTime != null)

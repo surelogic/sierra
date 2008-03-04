@@ -16,7 +16,7 @@ public interface SierraService extends Service {
 	 * 
 	 * @return
 	 */
-	Qualifiers getQualifiers(QualifierRequest request);
+	Timeseries getQualifiers(TimeseriesRequest request);
 
 	/**
 	 * Return the server's unique identifier
