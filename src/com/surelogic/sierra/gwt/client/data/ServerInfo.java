@@ -10,7 +10,7 @@ public class ServerInfo implements Serializable {
 	private static final long serialVersionUID = -934601985763096364L;
 	private String currentVersion;
 	private String availableVersion;
-	private String email;
+	private EmailInfo email;
 
 	public String getCurrentVersion() {
 		return currentVersion;
@@ -28,11 +28,11 @@ public class ServerInfo implements Serializable {
 		this.availableVersion = availableVersion;
 	}
 
-	public String getEmail() {
+	public EmailInfo getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(EmailInfo email) {
 		this.email = email;
 	}
 
@@ -47,7 +47,9 @@ public class ServerInfo implements Serializable {
 		final String waiting = "Waiting...";
 		info.setAvailableVersion(waiting);
 		info.setCurrentVersion(waiting);
-		info.setEmail(waiting);
+		info
+				.setEmail(new EmailInfo(waiting, waiting, waiting, waiting,
+						waiting));
 		return info;
 	}
 

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
@@ -54,9 +55,13 @@ public class OverviewContent extends ContentComposite {
 					final Grid grid = new Grid(list.size() + 1, 9);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
+					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
 							"Comments", "Critical", "High", "Medium", "Low",
 							"Irrelevant", "Last Synch", "Last Synched By" };
+					final String[] dataStyle = new String[] { "text", "text",
+							"number", "number", "number", "number", "number",
+							"number", "date", "date" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -80,6 +85,9 @@ public class OverviewContent extends ContentComposite {
 								.getIrrelevant()));
 						grid.setText(i, j++, po.getLastSynchDate());
 						grid.setText(i, j++, po.getLastSynchUser());
+						for (j = 0; j < dataStyle.length; j++) {
+							cf.addStyleName(i, j, dataStyle[j]);
+						}
 					}
 					projects.add(grid);
 				}

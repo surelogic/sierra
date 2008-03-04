@@ -119,7 +119,15 @@ a.hover {
 }
 
 .overview-data {
-	text-align: center;
+
+}
+
+.overview-data.text {
+	text-align:left; 	
+}
+
+.overview-data.number {
+	text-align: right;	
 }
 
 /* Grid panel */
