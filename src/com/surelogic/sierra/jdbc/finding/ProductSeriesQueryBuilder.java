@@ -60,7 +60,7 @@ public final class ProductSeriesQueryBuilder {
 			p.setName(product);
 			if (p.select()) {
 				TimeseriesRecord q = TimeseriesRecordFactory.getInstance(conn)
-						.newQualifier();
+						.newTimeseries();
 				q.setName(timeSeries);
 				if (q.select()) {
 					Statement st = conn.createStatement();

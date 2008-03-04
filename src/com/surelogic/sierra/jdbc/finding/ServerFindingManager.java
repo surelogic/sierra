@@ -16,9 +16,9 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.ScanSummaryRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
@@ -122,7 +122,7 @@ public final class ServerFindingManager extends FindingManager {
 	}
 
 	public void generateOverview(String projectName, String scanUid,
-			Set<String> qualifiers) throws SQLException {
+			Set<String> timeseries) throws SQLException {
 		ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		projectRec.setName(projectName);
@@ -130,18 +130,18 @@ public final class ServerFindingManager extends FindingManager {
 			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
 			scan.setUid(scanUid);
 			if (scan.select()) {
-				List<TimeseriesRecord> qualifierRecs = new ArrayList<TimeseriesRecord>(
-						qualifiers.size());
+				List<TimeseriesRecord> timeseriesRecs = new ArrayList<TimeseriesRecord>(
+						timeseries.size());
 				TimeseriesRecordFactory qFac = TimeseriesRecordFactory
 						.getInstance(conn);
-				for (String q : qualifiers) {
-					TimeseriesRecord qRec = qFac.newQualifier();
+				for (String q : timeseries) {
+					TimeseriesRecord qRec = qFac.newTimeseries();
 					qRec.setName(q);
 					if (qRec.select()) {
-						qualifierRecs.add(qRec);
+						timeseriesRecs.add(qRec);
 					} else {
 						throw new IllegalArgumentException(
-								"No qualifier exists with name " + q);
+								"No timeseries exists with name " + q);
 					}
 					populateScanSummary(scan, qRec, projectRec);
 				}
@@ -351,47 +351,47 @@ public final class ServerFindingManager extends FindingManager {
 	}
 
 	/**
-	 * Update the scan summary row for this scan/qualifier pair, and also the
-	 * adjacent scan summaries in this qualifier, since they may have changed
+	 * Update the scan summary row for this scan/timeseries pair, and also the
+	 * adjacent scan summaries in this timeseries, since they may have changed
 	 * with the addition of this scan. This row contains some useful metrics for
-	 * reporting, and one of these should be created for each qualifier a scan
+	 * reporting, and one of these should be created for each timeseries a scan
 	 * is published to.
 	 * 
 	 * @param scan
-	 * @param qualifier
+	 * @param timeseries
 	 * @param project
 	 * @throws SQLException
 	 */
 	private void populateScanSummary(ScanRecord scan,
-			TimeseriesRecord qualifier, ProjectRecord project)
+			TimeseriesRecord timeseries, ProjectRecord project)
 			throws SQLException {
 		int idx = 1;
 		// Add scan summary information
-		selectNextScan.setLong(idx++, qualifier.getId());
+		selectNextScan.setLong(idx++, timeseries.getId());
 		selectNextScan.setLong(idx++, project.getId());
-		selectNextScan.setLong(idx++, qualifier.getId());
+		selectNextScan.setLong(idx++, timeseries.getId());
 		selectNextScan.setLong(idx++, project.getId());
 		selectNextScan.setLong(idx++, scan.getId());
 		ResultSet set = selectNextScan.executeQuery();
 		try {
 			if (set.next()) {
-				refreshScanSummary(set.getLong(1), qualifier.getId(), project
+				refreshScanSummary(set.getLong(1), timeseries.getId(), project
 						.getId());
 			}
 		} finally {
 			set.close();
 		}
-		refreshScanSummary(scan.getId(), qualifier.getId(), project.getId());
+		refreshScanSummary(scan.getId(), timeseries.getId(), project.getId());
 		idx = 1;
-		selectPreviousScan.setLong(idx++, qualifier.getId());
+		selectPreviousScan.setLong(idx++, timeseries.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
-		selectPreviousScan.setLong(idx++, qualifier.getId());
+		selectPreviousScan.setLong(idx++, timeseries.getId());
 		selectPreviousScan.setLong(idx++, project.getId());
 		selectPreviousScan.setLong(idx++, scan.getId());
 		set = selectPreviousScan.executeQuery();
 		try {
 			if (set.next()) {
-				refreshScanSummary(set.getLong(1), qualifier.getId(), project
+				refreshScanSummary(set.getLong(1), timeseries.getId(), project
 						.getId());
 			}
 		} finally {
@@ -401,22 +401,22 @@ public final class ServerFindingManager extends FindingManager {
 
 	/**
 	 * Insert or update a scan summary for the given scan with respect to the
-	 * given qualifier.
+	 * given timeseries.
 	 * 
 	 * @param scanId
-	 * @param qualifierId
+	 * @param timeseriesId
 	 * @param projectId
 	 * @throws SQLException
 	 */
-	public void refreshScanSummary(Long scanId, Long qualifierId, Long projectId)
-			throws SQLException {
+	public void refreshScanSummary(Long scanId, Long timeseriesId,
+			Long projectId) throws SQLException {
 		ScanSummaryRecord summary = new ScanSummaryRecord(scanSummaryMapper);
-		summary.setId(new ScanSummaryRecord.PK(scanId, qualifierId));
+		summary.setId(new ScanSummaryRecord.PK(scanId, timeseriesId));
 		boolean summaryExists = summary.select();
 		int idx = 1;
-		selectPreviousScan.setLong(idx++, qualifierId);
+		selectPreviousScan.setLong(idx++, timeseriesId);
 		selectPreviousScan.setLong(idx++, projectId);
-		selectPreviousScan.setLong(idx++, qualifierId);
+		selectPreviousScan.setLong(idx++, timeseriesId);
 		selectPreviousScan.setLong(idx++, projectId);
 		selectPreviousScan.setLong(idx++, scanId);
 		ResultSet set = selectPreviousScan.executeQuery();

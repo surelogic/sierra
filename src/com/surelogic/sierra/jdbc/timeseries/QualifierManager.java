@@ -46,7 +46,7 @@ public final class QualifierManager {
 	}
 
 	public void deleteQualifier(String name) throws SQLException {
-		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newTimeseries();
 		qualifier.setName(name);
 		if (ALL_SCANS.equals(name) || !qualifier.select()) {
 			throw new IllegalArgumentException("Qualifier with the name "
@@ -56,7 +56,7 @@ public final class QualifierManager {
 	}
 
 	public long newQualifier(String name) throws SQLException {
-		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newTimeseries();
 		qualifier.setName(name);
 		/** If this qualifier already exists, throw an error */
 		if (ALL_SCANS.equals(name) || qualifier.select()) {
@@ -69,7 +69,7 @@ public final class QualifierManager {
 
 	public void renameQualifier(String currName, String newName)
 			throws SQLException {
-		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newTimeseries();
 		qualifier.setName(currName);
 
 		/** If this qualifier does not exist, throw an error */

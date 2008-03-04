@@ -8,21 +8,21 @@ import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
 public final class TimeseriesRecordFactory {
 
-	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
-	private static final String QUALIFIER_INSERT = "INSERT INTO QUALIFIER (NAME) VALUES (?)";
-	private static final String QUALIFIER_DELETE = "DELETE FROM QUALIFIER WHERE ID = ?";
-	private static final String QUALIFIER_UPDATE = "UPDATE QUALIFIER SET NAME = ? WHERE ID = ?";
+	private static final String TIMESERIES_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
+	private static final String TIMESERIES_INSERT = "INSERT INTO QUALIFIER (NAME) VALUES (?)";
+	private static final String TIMESERIES_DELETE = "DELETE FROM QUALIFIER WHERE ID = ?";
+	private static final String TIMESERIES_UPDATE = "UPDATE QUALIFIER SET NAME = ? WHERE ID = ?";
 
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
-	private final UpdateBaseMapper qualifierMapper;
+	private final UpdateBaseMapper timeseriesMapper;
 
 	private TimeseriesRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 		
-		qualifierMapper = new UpdateBaseMapper(conn, QUALIFIER_INSERT,
-				QUALIFIER_SELECT, QUALIFIER_DELETE, QUALIFIER_UPDATE);
+		timeseriesMapper = new UpdateBaseMapper(conn, TIMESERIES_INSERT,
+				TIMESERIES_SELECT, TIMESERIES_DELETE, TIMESERIES_UPDATE);
 	}
 
 	public static TimeseriesRecordFactory getInstance(Connection conn)
@@ -30,8 +30,8 @@ public final class TimeseriesRecordFactory {
 		return new TimeseriesRecordFactory(conn);
 	}
 	
-	public TimeseriesRecord newQualifier() throws SQLException {
-		return new TimeseriesRecord(qualifierMapper);
+	public TimeseriesRecord newTimeseries() throws SQLException {
+		return new TimeseriesRecord(timeseriesMapper);
 	}
 
 }
