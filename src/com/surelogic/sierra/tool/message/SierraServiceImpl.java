@@ -8,13 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -42,13 +40,7 @@ import com.surelogic.sierra.message.srpc.SRPCServlet;
  */
 public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8265889420077755990L;
-
-	private static final Logger log = SLLogger
-			.getLoggerFor(SierraServiceImpl.class);
 
 	public SettingsReply getSettings(SettingsRequest request)
 			throws ServerMismatchException {
@@ -58,8 +50,8 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	public void publishRun(final Scan scan) {
-		// We can't publish a run without a qualifier on the server
-		final List<String> qList = scan.getConfig().getQualifiers();
+		// We can't publish a run without a timeseries on the server
+		final List<String> qList = scan.getConfig().getTimeseries();
 		final Set<String> qualifiers = new TreeSet<String>();
 		qualifiers.add(TimeseriesManager.ALL_SCANS);
 		if (qList != null) {
