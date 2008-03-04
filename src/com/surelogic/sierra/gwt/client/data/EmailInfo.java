@@ -8,19 +8,21 @@ public class EmailInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1837341576790740396L;
-	
+
 	private String adminEmail;
 	private String fromEmail;
 	private String host;
 	private String pass;
 	private String user;
+	private String port;
 
 	public EmailInfo() {
 	}
 
-	public EmailInfo(String host, String user, String pass, String fromEmail,
-			String adminEmail) {
+	public EmailInfo(String host, String port, String user, String pass,
+			String fromEmail, String adminEmail) {
 		this.host = host;
+		this.port = port;
 		this.user = user;
 		this.pass = pass;
 		this.fromEmail = fromEmail;
@@ -49,6 +51,14 @@ public class EmailInfo implements Serializable {
 
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 
 	public String getPass() {

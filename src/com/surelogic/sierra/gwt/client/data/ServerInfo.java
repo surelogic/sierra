@@ -48,7 +48,7 @@ public class ServerInfo implements Serializable {
 		info.setAvailableVersion(waiting);
 		info.setCurrentVersion(waiting);
 		info
-				.setEmail(new EmailInfo(waiting, waiting, waiting, waiting,
+				.setEmail(new EmailInfo(waiting, waiting, waiting, waiting, waiting,
 						waiting));
 		return info;
 	}

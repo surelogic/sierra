@@ -22,6 +22,7 @@ public class ServerInformationContent extends ContentComposite {
 	private final TextBox adminEmailTextBox = new TextBox();
 	private final TextBox serverEmailTextBox = new TextBox();
 	private final TextBox smtpHostTextBox = new TextBox();
+	private final TextBox smtpPortTextBox = new TextBox();
 	private final TextBox smtpUserTextBox = new TextBox();
 	private final TextBox smtpPassTextBox = new TextBox();
 	private final Button updateEmailButton = new Button("Update Email Address");
@@ -48,14 +49,19 @@ public class ServerInformationContent extends ContentComposite {
 		adminEmailTextBox.setWidth("40ex");
 		serverEmailTextBox.setWidth("40ex");
 		smtpHostTextBox.setWidth("40ex");
+		smtpPortTextBox.setWidth("10ex");
 		smtpUserTextBox.setWidth("40ex");
 		smtpPassTextBox.setWidth("40ex");
 		panel.add(new HTML("<h3>Admin Email</h3>"));
 		panel.add(adminEmailTextBox);
 		panel.add(new HTML("<h3>Server Email</h3>"));
 		panel.add(serverEmailTextBox);
-		panel.add(new HTML("<h3>SMTP Email</h3>"));
-		panel.add(smtpHostTextBox);
+		panel.add(new HTML("<h3>SMTP Host</h3>"));
+		HorizontalPanel hostPanel = new HorizontalPanel();
+		hostPanel.add(smtpHostTextBox);
+		hostPanel.add(new HTML("<span>  Port:</span"));
+		hostPanel.add(smtpPortTextBox);
+		panel.add(hostPanel);
 		panel.add(new HTML("<h3>STMP User (Optional)</h3>"));
 		panel.add(smtpUserTextBox);
 		panel.add(new HTML("<h3>SMTP Password (Optional)</h3>"));
@@ -87,8 +93,8 @@ public class ServerInformationContent extends ContentComposite {
 
 			public void onClick(Widget sender) {
 				final EmailInfo email = new EmailInfo(
-						getString(smtpHostTextBox), getString(smtpUserTextBox),
-						getString(smtpPassTextBox),
+						getString(smtpHostTextBox), getString(smtpPortTextBox),
+						getString(smtpUserTextBox), getString(smtpPassTextBox),
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
 				msService.setEmail(email, updateServerInfo);
@@ -130,6 +136,7 @@ public class ServerInformationContent extends ContentComposite {
 		smtpHostTextBox.setText(email.getHost());
 		smtpUserTextBox.setText(email.getUser());
 		smtpPassTextBox.setText(email.getPass());
+		smtpPortTextBox.setText(email.getPort());
 	}
 
 	private static String getString(TextBox box) {
