@@ -23,7 +23,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.QualifierRequest;
+import com.surelogic.sierra.tool.message.TimeseriesRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
@@ -283,7 +283,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         SierraService ts = SierraServiceClient.create(location);
 
         // Verify the qualifiers
-        List<String> list = ts.getQualifiers(new QualifierRequest())
+        List<String> list = ts.getQualifiers(new TimeseriesRequest())
             .getQualifier();
         if (list == null || list.isEmpty()) {
           throw new BuildException(
