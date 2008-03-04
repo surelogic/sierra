@@ -12,11 +12,11 @@ public interface SierraService extends Service {
 	void publishRun(Scan scan);
 
 	/**
-	 * Get the set of available qualifier names.
+	 * Get the set of available timeseries names.
 	 * 
 	 * @return
 	 */
-	Timeseries getQualifiers(TimeseriesRequest request);
+	Timeseries getTimeseries(TimeseriesRequest request);
 
 	/**
 	 * Return the server's unique identifier

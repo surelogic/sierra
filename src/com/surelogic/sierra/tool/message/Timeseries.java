@@ -12,14 +12,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType
 public class Timeseries {
-    private List<String> qualifier;
+    private List<String> timeseries;
 
-    public List<String> getQualifier() {
-        return qualifier;
+    public List<String> getTimeseries() {
+        return timeseries;
     }
 
-    public void setQualifier(List<String> qualifier) {
-        this.qualifier = qualifier;
+    public void setTimeseries(List<String> timeseries) {
+        this.timeseries = timeseries;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class Timeseries {
         final int prime = 31;
         int result = 1;
         result = (prime * result) +
-            ((qualifier == null) ? 0 : qualifier.hashCode());
+            ((timeseries == null) ? 0 : timeseries.hashCode());
 
         return result;
     }
@@ -48,11 +48,11 @@ public class Timeseries {
 
         final Timeseries other = (Timeseries) obj;
 
-        if (qualifier == null) {
-            if (other.qualifier != null) {
+        if (timeseries == null) {
+            if (other.timeseries != null) {
                 return false;
             }
-        } else if (!qualifier.equals(other.qualifier)) {
+        } else if (!timeseries.equals(other.timeseries)) {
             return false;
         }
 
