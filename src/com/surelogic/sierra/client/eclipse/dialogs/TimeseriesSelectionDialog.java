@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.SLImages;
 
-public final class QualifierSelectionDialog extends Dialog {
+public final class TimeseriesSelectionDialog extends Dialog {
 
 	private final Set<String> f_qualifiers;
 
@@ -45,7 +45,7 @@ public final class QualifierSelectionDialog extends Dialog {
 		return f_useForRemainingOnSameServer;
 	}
 
-	public QualifierSelectionDialog(Shell parentShell, Set<String> qualifiers,
+	public TimeseriesSelectionDialog(Shell parentShell, Set<String> qualifiers,
 			String projectName, String serverLabel) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);

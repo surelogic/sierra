@@ -67,7 +67,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 						slMonitor.setCanceled(true);
 						return Status.CANCEL_STATUS;
 					} else {
-						qualifiers = prompt.getSelectedQualifiers();
+						qualifiers = prompt.getSelectedTimeseries();
 					}
 				}
 				if (slMonitor.isCanceled()) {
