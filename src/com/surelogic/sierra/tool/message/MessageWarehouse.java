@@ -504,7 +504,7 @@ public final class MessageWarehouse {
 						MetricBuilder mBuilder = generator.metric();
 
 						while ((xmlr.getEventType() == START_ELEMENT)
-								&& xmlr.getLocalName().equals("class")) {
+								&& xmlr.getLocalName().equals("classMetric")) {
 							readClassMetric(unmarshaller.unmarshal(xmlr,
 									ClassMetric.class).getValue(), mBuilder);
 
@@ -627,9 +627,7 @@ public final class MessageWarehouse {
 		readConfig(scan.getConfig(), generator);
 
 		ArtifactGenerator aGen = generator.build();
-		// TODO
-		// readMetrics(scan.getToolOutput().getMetrics().getClassMetric(),
-		// aGen);
+		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
 		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
 		readErrors(scan.getToolOutput().getErrors().getError(), aGen);
 
@@ -658,16 +656,16 @@ public final class MessageWarehouse {
 		}
 	}
 
-//	private static void readMetrics(Collection<ClassMetric> metrics,
-//			ArtifactGenerator generator) {
-//		if (metrics != null) {
-//			MetricBuilder mBuilder = generator.metric();
-//
-//			for (ClassMetric m : metrics) {
-//				readClassMetric(m, mBuilder);
-//			}
-//		}
-//	}
+	private static void readMetrics(Collection<ClassMetric> metrics,
+			ArtifactGenerator generator) {
+		if (metrics != null) {
+			MetricBuilder mBuilder = generator.metric();
+
+			for (ClassMetric m : metrics) {
+				readClassMetric(m, mBuilder);
+			}
+		}
+	}
 
 	private static void readConfig(Config config, ScanGenerator builder) {
 		builder.javaVendor(config.getJavaVendor());
