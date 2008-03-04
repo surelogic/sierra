@@ -50,12 +50,9 @@ public final class MessageWarehouse {
 	private MessageWarehouse() {
 		try {
 			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class,
-					FindingTypes.class, 
-					Config.class, ToolTarget.class, 
-					FileTarget.class,
-					JarTarget.class, 
-          FullDirectoryTarget.class, 
-          FilteredDirectoryTarget.class);
+					FindingTypes.class, Config.class, ToolTarget.class,
+					FileTarget.class, JarTarget.class,
+					FullDirectoryTarget.class, FilteredDirectoryTarget.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -435,14 +432,12 @@ public final class MessageWarehouse {
 						work(monitor);
 					}
 				} catch (JAXBException e) {
-          /*
-				  Throwable linked = e.getLinkedException();
-	        while (linked instanceof JAXBException) {
-	          JAXBException e2 = (JAXBException) linked; 
-	          linked = e2.getLinkedException();
-	        }
-	        linked.printStackTrace();
-	        */
+					/*
+					 * Throwable linked = e.getLinkedException(); while (linked
+					 * instanceof JAXBException) { JAXBException e2 =
+					 * (JAXBException) linked; linked = e2.getLinkedException(); }
+					 * linked.printStackTrace();
+					 */
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
 							+ " is not a valid document", e);
@@ -632,7 +627,9 @@ public final class MessageWarehouse {
 		readConfig(scan.getConfig(), generator);
 
 		ArtifactGenerator aGen = generator.build();
-		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
+		// TODO
+		// readMetrics(scan.getToolOutput().getMetrics().getClassMetric(),
+		// aGen);
 		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
 		readErrors(scan.getToolOutput().getErrors().getError(), aGen);
 
