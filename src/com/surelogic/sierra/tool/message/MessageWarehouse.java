@@ -529,73 +529,67 @@ public final class MessageWarehouse {
 						xmlr.nextTag();
 					}
 
-					if ((xmlr.getEventType() == START_ELEMENT)
-							&& xmlr.getLocalName().equals("artifacts")) {
-						xmlr.require(START_ELEMENT, null, "artifacts");
-						xmlr.nextTag();
+					xmlr.require(START_ELEMENT, null, "artifacts");
+					xmlr.nextTag();
 
-						// Unmarshal artifacts
-						ArtifactBuilder aBuilder = generator.artifact();
+					// Unmarshal artifacts
+					ArtifactBuilder aBuilder = generator.artifact();
 
-						while ((xmlr.getEventType() == START_ELEMENT)
-								&& xmlr.getLocalName().equals("artifact")) {
-							readArtifact(unmarshaller.unmarshal(xmlr,
-									Artifact.class).getValue(), aBuilder);
+					while ((xmlr.getEventType() == START_ELEMENT)
+							&& xmlr.getLocalName().equals("artifact")) {
+						readArtifact(unmarshaller.unmarshal(xmlr,
+								Artifact.class).getValue(), aBuilder);
 
-							if (xmlr.getEventType() == CHARACTERS) {
-								xmlr.next(); // skip the whitespace between
-								// <artifacts>s.
-							}
-
-							if (++counter == COUNT) {
-								if (cancelled(monitor)) {
-									generator.rollback();
-
-									return;
-								} else {
-									work(monitor);
-								}
-
-								counter = 0;
-							}
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <artifacts>s.
 						}
 
-						xmlr.nextTag();
+						if (++counter == COUNT) {
+							if (cancelled(monitor)) {
+								generator.rollback();
+
+								return;
+							} else {
+								work(monitor);
+							}
+
+							counter = 0;
+						}
 					}
 
-					if ((xmlr.getEventType() == START_ELEMENT)
+					xmlr.nextTag();
+
+					xmlr.require(START_ELEMENT, null, "errors");
+					xmlr.nextTag();
+
+					// Unmarshal errors
+					ErrorBuilder eBuilder = generator.error();
+
+					while ((xmlr.getEventType() == START_ELEMENT)
 							&& xmlr.getLocalName().equals("errors")) {
-						xmlr.require(START_ELEMENT, null, "errors");
-						xmlr.nextTag();
+						readError(unmarshaller.unmarshal(xmlr, Error.class)
+								.getValue(), eBuilder);
 
-						// Unmarshal errors
-						ErrorBuilder eBuilder = generator.error();
+						if (monitor != null) {
+							monitor.worked(1);
+						}
 
-						while ((xmlr.getEventType() == START_ELEMENT)
-								&& xmlr.getLocalName().equals("errors")) {
-							readError(unmarshaller.unmarshal(xmlr, Error.class)
-									.getValue(), eBuilder);
+						if (xmlr.getEventType() == CHARACTERS) {
+							xmlr.next(); // skip the whitespace between
+							// <event>s.
+						}
 
-							if (monitor != null) {
-								monitor.worked(1);
+						if (++counter == COUNT) {
+							if (cancelled(monitor)) {
+								generator.rollback();
+
+								return;
+							} else {
+								work(monitor);
 							}
 
-							if (xmlr.getEventType() == CHARACTERS) {
-								xmlr.next(); // skip the whitespace between
-								// <event>s.
-							}
-
-							if (++counter == COUNT) {
-								if (cancelled(monitor)) {
-									generator.rollback();
-
-									return;
-								} else {
-									work(monitor);
-								}
-
-								counter = 0;
-							}
+							counter = 0;
 						}
 					}
 
