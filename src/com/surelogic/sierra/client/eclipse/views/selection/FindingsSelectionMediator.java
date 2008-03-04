@@ -32,6 +32,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.OpenSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.SaveSearchAsDialog;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
@@ -54,7 +55,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
   private final Label f_findingsIcon;
   private final Label f_findingsStatus;
   private final ToolItem f_columnSelectionItem;
-
+  private Menu f_columnSelectionMenu;
+  
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
 	private Selection f_workingSelection = null;
@@ -168,13 +170,13 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		final Display display = f_columnSelectionItem.getParent().getDisplay();
 		final Shell shell = f_columnSelectionItem.getParent().getShell();
 		final Menu menu = new Menu(shell, SWT.POP_UP); 
-		for(final MListOfFindingsColumn.ColumnData data : MListOfFindingsColumn.getColumns()) {
+		for(final String name : MListOfFindingsColumn.getColumns()) {
 		  final MenuItem item = new MenuItem(menu, SWT.CHECK);
-		  item.setText(data.name);
-		  item.setSelection(data.visible);
+		  item.setText(name);
+		  // item.setSelection(data.visible);
 		  item.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event event) {
-          MListOfFindingsColumn.columnsUpdated(data, item.getSelection());
+          MListOfFindingsColumn.columnsUpdated(name, item.getSelection());
         }   
 		  });
 		}
@@ -188,6 +190,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
         }
       }
 		});
+		f_columnSelectionMenu = menu;
 		
 		f_cascadingList.addObserver(this);
 		f_manager.addObserver(this);
@@ -270,6 +273,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
+    updateColumnSelectionMenu(f_workingSelection);
 	}
 
 	private void openSelection(final Selection newSelection) {
@@ -307,8 +311,23 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			list.addObserver(this);
 			list.init();
 		}
+		updateColumnSelectionMenu(newSelection);
 	}
 
+	private void updateColumnSelectionMenu(final Selection selection) {
+	  if (f_columnSelectionMenu != null && !f_columnSelectionMenu.isDisposed()) {
+	    for(MenuItem item : f_columnSelectionMenu.getItems()) {
+	      Column c = selection.getColumn(item.getText());
+	      if (c == null) {
+	        item.setEnabled(false);
+	      } else {
+	        item.setEnabled(true);
+	        item.setSelection(c.isVisible());
+	      }
+	    }
+	  }
+	}
+	
 	public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
 		updateSavedSelections();

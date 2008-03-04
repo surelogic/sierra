@@ -79,7 +79,7 @@ public final class Selection extends AbstractDatabaseObserver {
 			for (Map.Entry<String,Column> e : source.f_columns.entrySet()) {
 			  Column c  = getColumn(e.getKey());
 			  Column sc = e.getValue();
-			  c.configure(sc.isVisible(), sc.getWidth(), sc.getSort(), sc.getIndex());
+			  c.configure(sc);
 			}
 		}
 	}

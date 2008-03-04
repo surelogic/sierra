@@ -1,37 +1,37 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-public class Column {
+public abstract class Column {
   private final String name;
-  private boolean isVisible = false;
-  private int width = -1;
-  private ColumnSort sort = ColumnSort.UNSORTED;
-  private int index = -1;
+  protected boolean visible = false;
+  protected int width = -1;
+  protected ColumnSort sort = ColumnSort.UNSORTED;
+  protected int index = -1;
   
-  public Column(String name) {
+  protected Column(String name) {
     this.name = name;
   }
   
-  public String getName() {
+  public final String getName() {
     return name;
   }
 
-  public boolean isVisible() {
-    return isVisible;
+  public final boolean isVisible() {
+    return visible;
   }
   
-  public int getWidth() {
+  public final int getWidth() {
     return width;
   }
 
-  public ColumnSort getSort() {
+  public final ColumnSort getSort() {
     return sort;
   }
   
-  public int getIndex() {
+  public final int getIndex() {
     return index;
   }
 
-  public void configure(boolean viz, int width, ColumnSort sort, int i) {
+  public final void configure(boolean viz, int width, ColumnSort sort, int i) {
     if (width < -1) {
       throw new IllegalArgumentException("illegal width: "+width);
     }
@@ -41,9 +41,16 @@ public class Column {
     if (i < 0) {
       throw new IllegalArgumentException("illegal index: "+i);
     }
-    isVisible = viz;
+    visible = viz;
     this.width = width;
     this.sort = sort;
     this.index = i;
+  }
+  
+  public final void configure(Column other) {
+    visible = other.visible;
+    width = other.width;
+    sort = other.sort;
+    index = other.index;
   }
 }
