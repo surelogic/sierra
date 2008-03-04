@@ -17,7 +17,6 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
-import com.surelogic.sierra.jdbc.timeseries.TimeseriesManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
@@ -39,7 +38,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String javaVersion;
 	private String uid;
 	private String user;
-	private Set<String> qualifiers;
+	private Set<String> timeseries;
 	private ScanRecord scan;
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
@@ -47,7 +46,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.qualifiers = new TreeSet<String>();
+		this.timeseries = new TreeSet<String>();
 		this.partial = false;
 		this.filter = filter;
 	}
@@ -57,7 +56,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.qualifiers = new TreeSet<String>();
+		this.timeseries = new TreeSet<String>();
 		this.partial = partial;
 		this.filter = filter;
 	}
@@ -90,12 +89,12 @@ class JDBCScanGenerator implements ScanGenerator {
 				conn.commit();
 			}
 			scan.insert();
-			for (String name : qualifiers) {
-				TimeseriesRecord q = factory.newQualifier();
+			for (String name : timeseries) {
+				TimeseriesRecord q = factory.newTimeseries();
 				q.setName(name);
 				if (q.select()) {
 					TimeseriesScanRecord rq = factory
-							.newScanQualifierRelation();
+							.newScanTimeseriesRelation();
 					rq
 							.setId(new RecordRelationRecord.PK<TimeseriesRecord, ScanRecord>(
 									q, scan));
@@ -103,7 +102,7 @@ class JDBCScanGenerator implements ScanGenerator {
 				} else {
 					scan.delete();
 					throw new IllegalArgumentException(
-							"Invalid qualifier name: " + name);
+							"Invalid timeseries name: " + name);
 				}
 			}
 			conn.commit();
@@ -142,9 +141,9 @@ class JDBCScanGenerator implements ScanGenerator {
 		return this;
 	}
 
-	public ScanGenerator timeseries(Collection<String> qualifiers) {
-		if (qualifiers != null && !qualifiers.isEmpty()) {
-			qualifiers.addAll(qualifiers);
+	public ScanGenerator timeseries(Collection<String> timeseries) {
+		if (timeseries != null && !timeseries.isEmpty()) {
+			this.timeseries.addAll(timeseries);
 		}
 		return this;
 	}
