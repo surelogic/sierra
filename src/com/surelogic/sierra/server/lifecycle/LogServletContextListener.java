@@ -69,8 +69,9 @@ public class LogServletContextListener implements ServletContextListener {
 		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
 		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
 		SLLogger.getLogger().info(
-				"SureLogic : Java runtime: maxMemory=" + maxMemoryMB
-						+ " MB; totalMemory=" + totalMemoryMB
+				sce.getServletContext().getServletContextName()
+						+ " logging initialized : Java runtime: maxMemory="
+						+ maxMemoryMB + " MB; totalMemory=" + totalMemoryMB
 						+ " MB; freeMemory=" + freeMemoryMB
 						+ " MB; availableProcessors="
 						+ rt.availableProcessors());
