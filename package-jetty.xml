@@ -7,13 +7,13 @@
 		</tstamp>
 
 		<property name="jetty.dir" value="../jetty" />
-		<property name="zip.name" value="sierra-server.zip" />
+		<property name="zip.name" value="jetty.zip" />
 		<property name="zip.file" value="${jetty.dir}/${zip.name}" />
 
 		<delete quiet="true" file="${zip.file}" />
 
 		<zip destfile="${zip.file}">
-			<zipfileset dir="${jetty.dir}" prefix="sierra-${releasedate}" excludes="${zip.name}, .svn, eclipsebin, .classpath, .project, derby.log" />
+			<zipfileset dir="${jetty.dir}" prefix="jetty-${releasedate}" excludes="${zip.name}, .svn, eclipsebin, .classpath, .project, derby.log" />
 		</zip>
 
 	</target>
