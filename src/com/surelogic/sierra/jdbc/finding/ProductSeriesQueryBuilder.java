@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.product.ProductRecordFactory;
-import com.surelogic.sierra.jdbc.qualifier.QualifierRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.timeseries.QualifierRecordFactory;
 
 public final class ProductSeriesQueryBuilder {
 

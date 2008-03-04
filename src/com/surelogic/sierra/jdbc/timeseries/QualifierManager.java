@@ -1,4 +1,4 @@
-package com.surelogic.sierra.jdbc.qualifier;
+package com.surelogic.sierra.jdbc.timeseries;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
