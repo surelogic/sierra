@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -33,8 +29,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class JavaProjectSelectionDialog extends Dialog {
@@ -43,7 +41,8 @@ public final class JavaProjectSelectionDialog extends Dialog {
 	private final String f_shellTitle;
 	private final Image f_shellImage;
 
-	private final List<IJavaProject> f_javaProjects;
+	private final List<IJavaProject> f_openJavaProjects;
+	private final List<IJavaProject> f_initiallySelectedJavaProjects;
 	private Table f_projectTable;
 	/**
 	 * Aliased and visible to the static call
@@ -53,45 +52,75 @@ public final class JavaProjectSelectionDialog extends Dialog {
 
 	public static List<IJavaProject> getProjects(final String label,
 			final String shellTitle, final Image shellImage,
-			final List<IJavaProject> javaProjects) {
-		if (javaProjects.isEmpty()
+			final List<IJavaProject> initiallySelectedJavaProjects) {
+		/*
+		 * If the set of initially selected Java projects is empty (meaning that
+		 * there is no selection in the Package Explorer) or the user always
+		 * wants to choose from a dialog then we show the project selection
+		 * dialog.
+		 */
+		if (initiallySelectedJavaProjects.isEmpty()
 				|| PreferenceConstants.alwaysAllowUserToSelectProjectsToScan()) {
-			final List<IJavaProject> mutableProjectList = new ArrayList<IJavaProject>();
-			// Copied from AbstractScan
-			UIJob job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					final Shell shell = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell();
-					final JavaProjectSelectionDialog dialog = new JavaProjectSelectionDialog(
-							shell, label, shellTitle, shellImage, javaProjects,
-							mutableProjectList);
 
-					if (dialog.open() == Window.CANCEL) {
-						return Status.CANCEL_STATUS;
+			final List<IJavaProject> openJavaProjects = JDTUtility
+					.getJavaProjects();
+
+			if (openJavaProjects.isEmpty()) {
+				final UIJob job = new SLUIJob() {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						final Shell shell = PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getShell();
+						final String msg = I18N
+								.msg("sierra.eclipse.noJavaProjectsOpen");
+						MessageDialog.openInformation(shell,
+								"No Projects Open", msg);
+						return Status.OK_STATUS;
 					}
-					return Status.OK_STATUS;
+				};
+				job.schedule();
+			} else {
+				final List<IJavaProject> mutableProjectList = new ArrayList<IJavaProject>();
+				final UIJob job = new SLUIJob() {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						final Shell shell = PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getShell();
+						final JavaProjectSelectionDialog dialog = new JavaProjectSelectionDialog(
+								shell, label, shellTitle, shellImage,
+								openJavaProjects,
+								initiallySelectedJavaProjects,
+								mutableProjectList);
+
+						if (dialog.open() == Window.CANCEL) {
+							return Status.CANCEL_STATUS;
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				IStatus status = job.runInUIThread(null);
+				if (status == Status.CANCEL_STATUS) {
+					return Collections.emptyList();
+				} else {
+					return mutableProjectList;
 				}
-			};
-			IStatus status = job.runInUIThread(null);
-			if (status == Status.CANCEL_STATUS) {
-				return Collections.emptyList();
 			}
-			return mutableProjectList;
 		}
-		return javaProjects;
+		return initiallySelectedJavaProjects;
 	}
 
 	private JavaProjectSelectionDialog(Shell parentShell, String label,
 			String shellTitle, Image shellImage,
-			List<IJavaProject> javaProjects,
+			List<IJavaProject> openJavaProjects,
+			List<IJavaProject> initiallySelectedJavaProjects,
 			List<IJavaProject> mutableProjectList) {
 		super(parentShell);
 		this.f_label = label;
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		f_shellTitle = shellTitle;
 		f_shellImage = shellImage;
-		f_javaProjects = javaProjects;
+		f_openJavaProjects = openJavaProjects;
+		f_initiallySelectedJavaProjects = initiallySelectedJavaProjects;
 		f_selectedProjects = mutableProjectList;
 	}
 
@@ -115,23 +144,16 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		f_projectTable = new Table(panel, SWT.FULL_SELECTION | SWT.CHECK);
 		f_projectTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		try {
-			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-					.getRoot();
-			final IJavaModel javaModel = JavaCore.create(root);
-			for (IJavaProject jp : javaModel.getJavaProjects()) {
-				TableItem item = new TableItem(f_projectTable, SWT.NONE);
-				item.setText(jp.getElementName());
-				item.setImage(SLImages
-						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-				item.setData(jp);
-				if (f_javaProjects.contains(jp)) {
-					item.setChecked(true);
-					f_selectedProjects.add(jp);
-				}
+		for (IJavaProject jp : f_openJavaProjects) {
+			TableItem item = new TableItem(f_projectTable, SWT.NONE);
+			item.setText(jp.getElementName());
+			item.setImage(SLImages
+					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			item.setData(jp);
+			if (f_initiallySelectedJavaProjects.contains(jp)) {
+				item.setChecked(true);
+				f_selectedProjects.add(jp);
 			}
-		} catch (JavaModelException e) {
-			throw new RuntimeException(e);
 		}
 
 		f_projectTable.addListener(SWT.Selection, new Listener() {
