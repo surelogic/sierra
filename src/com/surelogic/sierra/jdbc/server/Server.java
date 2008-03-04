@@ -143,11 +143,16 @@ public class Server {
 			final String to = n.getToEmail();
 			final String from = n.getFromEmail();
 			final String host = n.getHost();
+			final Integer port = n.getPort();
 			final String pass = n.getPass();
 			final String user = n.getUser();
 			if ((to != null) && (to.length() > 0) && (host != null)
 					&& (host.length() > 0)) {
 				Properties props = new Properties();
+
+				if (port != null) {
+					props.put("mail.smtp.port", port);
+				}
 				props.put("mail.smtp.host", host);
 				props.put("mail.from",
 						((from == null) || (from.length() == 0)) ? to : from);
@@ -207,11 +212,12 @@ public class Server {
 			final Statement st = conn.createStatement();
 			try {
 				final ResultSet set = st
-						.executeQuery("SELECT SMTP_HOST,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
+						.executeQuery("SELECT SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
 				try {
 					if (set.next()) {
 						int idx = 1;
-						return new Notification(set.getString(idx++), set
+						return new Notification(set.getString(idx++), JDBCUtils
+								.getNullableInteger(idx++, set), set
 								.getString(idx++), set.getString(idx++), set
 								.getString(idx++), set.getString(idx++));
 					} else {
@@ -229,19 +235,26 @@ public class Server {
 		return null;
 	}
 
-	private static String escapedTuple(String[] values) {
+	private static String escapedTuple(Object[] values) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
-		sb.append("'");
-		sb.append(JDBCUtils.escapeString(values[0]));
-		sb.append("'");
+		getLiteral(values[0]);
 		for (int i = 1; i < values.length; i++) {
-			sb.append(",'");
-			sb.append(JDBCUtils.escapeString(values[i]));
-			sb.append("'");
+			sb.append(',');
+			sb.append(getLiteral(values[i]));
 		}
 		sb.append(')');
 		return sb.toString();
+	}
+
+	private static String getLiteral(Object value) {
+		if (value == null) {
+			return "NULL";
+		} else if (value instanceof String) {
+			return "'" + JDBCUtils.escapeString(value.toString()) + "'";
+		} else {
+			return value.toString();
+		}
 	}
 
 	public void setNotification(Notification notification) throws SQLException {
@@ -249,9 +262,10 @@ public class Server {
 		try {
 			st.execute("DELETE FROM NOTIFICATION");
 			st
-					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
-							+ escapedTuple(new String[] {
+					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
+							+ escapedTuple(new Object[] {
 									notification.getHost(),
+									notification.getPort(),
 									notification.getUser(),
 									notification.getPass(),
 									notification.getFromEmail(),

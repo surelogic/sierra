@@ -7,14 +7,16 @@ public class Notification {
 	private final String host;
 	private final String user;
 	private final String pass;
+	private final Integer port;
 
-	public Notification(String host, String user, String pass, String toEmail,
-			String fromEmail) {
+	public Notification(String host, Integer port, String user, String pass,
+			String toEmail, String fromEmail) {
 		this.host = host;
 		this.user = user;
 		this.pass = pass;
 		this.toEmail = toEmail;
 		this.fromEmail = fromEmail;
+		this.port = port;
 	}
 
 	public String getToEmail() {
@@ -27,6 +29,10 @@ public class Notification {
 
 	public String getHost() {
 		return host;
+	}
+
+	public Integer getPort() {
+		return port;
 	}
 
 	public String getUser() {
