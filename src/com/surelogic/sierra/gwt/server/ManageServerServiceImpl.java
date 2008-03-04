@@ -5,8 +5,10 @@ import java.sql.SQLException;
 
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
+import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.service.ManageServerService;
+import com.surelogic.sierra.jdbc.server.Notification;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.User;
@@ -44,12 +46,14 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public ServerInfo setEmail(final String address) {
+	public ServerInfo setEmail(final EmailInfo info) {
 		return performAdmin(false, new UserTransaction<ServerInfo>() {
 
 			public ServerInfo perform(Connection conn, Server server, User user)
 					throws SQLException {
-				server.setEmail(address);
+				server.setNotification(new Notification(info.getHost(), info
+						.getUser(), info.getPass(), info.getAdminEmail(), info
+						.getServerEmail()));
 				return readServerInfo(server);
 			}
 		});
@@ -77,10 +81,13 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		} catch (SQLException e) {
 			info.setCurrentVersion("Error");
 		}
-		try {
-			info.setEmail(server.getEmail());
-		} catch (SQLException e) {
-			info.setEmail("Error");
+		Notification n = server.getNotification();
+		if (n != null) {
+			info.setEmail(new EmailInfo(n.getHost(), n.getUser(), n.getPass(),
+					n.getFromEmail(), n.getToEmail()));
+		} else {
+			info.setEmail(new EmailInfo("Error", "Error", "Error", "Error",
+					"Error"));
 		}
 		return info;
 	}
