@@ -676,7 +676,7 @@ public final class MessageWarehouse {
 		builder.javaVendor(config.getJavaVendor());
 		builder.javaVersion(config.getJavaVersion());
 		builder.project(config.getProject());
-		builder.qualifiers(config.getQualifiers());
+		builder.timeseries(config.getQualifiers());
 
 		// TODO read all config attributes
 	}

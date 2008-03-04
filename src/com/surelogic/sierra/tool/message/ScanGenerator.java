@@ -29,7 +29,7 @@ public interface ScanGenerator {
      * @param qualifiers
      * @return
      */
-    ScanGenerator qualifiers(Collection<String> qualifiers);
+    ScanGenerator timeseries(Collection<String> qualifiers);
 
     ScanGenerator user(String userName);
 
