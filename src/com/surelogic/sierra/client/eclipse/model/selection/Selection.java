@@ -1,12 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -380,6 +374,15 @@ public final class Selection extends AbstractDatabaseObserver {
 		for (ISelectionObserver o : f_observers)
 			o.selectionChanged(this);
 	}
+	
+	 /**
+   * Do not call this method holding a lock on <code>this</code>. Deadlock
+   * could occur as we are invoking an alien method.
+   */
+  private void notifyColumnsChanged(Column c) {
+    for (ISelectionObserver o : f_observers)
+      o.columnsChanged(this, c);
+  }
 
 	@Override
 	public void changed() {
@@ -515,6 +518,19 @@ public final class Selection extends AbstractDatabaseObserver {
 	
   public Iterable<Column> getColumns() {
     return f_columns.values();
+  }
+  
+  public int getNumColumns() {
+    return f_columns.size();
+  }
+  
+  public void setColumnVisible(String name, boolean newVisible) {
+    Column c = getColumn(name);
+    if (c.isVisible() == newVisible) {
+      return; // Nothing changed
+    }
+    c.setVisible(newVisible);
+    notifyColumnsChanged(c);
   }
   
 	@Override

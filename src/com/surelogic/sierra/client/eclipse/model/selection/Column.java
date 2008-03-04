@@ -31,6 +31,10 @@ public abstract class Column {
     return index;
   }
 
+  public void setVisible(boolean viz) {
+    visible = viz;
+  }
+  
   public final void configure(boolean viz, int width, ColumnSort sort, int i) {
     if (width < -1) {
       throw new IllegalArgumentException("illegal width: "+width);

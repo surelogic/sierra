@@ -170,13 +170,15 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		final Display display = f_columnSelectionItem.getParent().getDisplay();
 		final Shell shell = f_columnSelectionItem.getParent().getShell();
 		final Menu menu = new Menu(shell, SWT.POP_UP); 
-		for(final String name : MListOfFindingsColumn.getColumns()) {
+		for(final String name : MListOfFindingsColumn.getColumnNames()) {
 		  final MenuItem item = new MenuItem(menu, SWT.CHECK);
 		  item.setText(name);
 		  // item.setSelection(data.visible);
 		  item.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event event) {
-          MListOfFindingsColumn.columnsUpdated(name, item.getSelection());
+          if (f_workingSelection != null) {
+            f_workingSelection.setColumnVisible(name, item.getSelection());
+          }
         }   
 		  });
 		}

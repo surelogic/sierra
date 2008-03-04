@@ -9,5 +9,7 @@ public interface ISelectionObserver {
 	 * @param selection
 	 *            a findings selection.
 	 */
-	void selectionChanged(Selection selecton);
+	void selectionChanged(Selection selection);
+	
+	void columnsChanged(Selection selection, Column c);
 }
