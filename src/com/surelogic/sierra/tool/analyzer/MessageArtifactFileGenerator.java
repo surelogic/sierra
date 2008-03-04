@@ -44,6 +44,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	private static final String ARTIFACTS_END = "</artifacts>";
 	private static final String ERROR_START = "<errors>";
 	private static final String ERROR_END = "</errors>";
+	private static final String METRICS_START = "<metrics>";
+	private static final String METRICS_END = "</metrics>";
 	private static final String ENCODING = "UTF-8";
 
 	private ArtifactBuilderAdapter artifactAdapter;
@@ -53,17 +55,14 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	private final File parsedFile;
 	private final Config config;
 	private File artifactsHolder;
-	private File metricsFile;
+	private File metricsHolder;
 	private File errorsHolder;
 	private FileOutputStream errOut;
-
-	// private final Set<String> files;
-
+    private FileOutputStream metricsOut;
+	
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		this.parsedFile = parsedFile;
 		this.config = config;
-
-		// files = new HashSet<String>();
 
 		try {
 
@@ -73,21 +72,14 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			errorsHolder = File.createTempFile("errors", "tmp");
 			errOut = new FileOutputStream(errorsHolder, true);
-
+			
+			metricsHolder = File.createTempFile("metrics", "tmp");
+			metricsOut = new FileOutputStream(metricsHolder, true);
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
 		}
-
-	}
-
-	// public void addFile(String fileName) {
-	// files.add(fileName);
-	// }
-
-	public void writeMetrics(File file) {
-		this.metricsFile = file;
 
 	}
 
@@ -110,6 +102,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	public void finished(SLProgressMonitor monitor) {
 	  monitor.beginTask("Scan Document", 20);
 		try {
+			artOut.close();
+			errOut.close();
+			metricsOut.close();			
+			
 		  monitor.subTask("Writing header");
 			OutputStream stream = new FileOutputStream(parsedFile);
 			stream = new GZIPOutputStream(stream, 4096);
@@ -126,28 +122,30 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			finalFile.write(TOOL_OUTPUT_START);
 			monitor.worked(1);
 			
-			String line;
-			
-			if (metricsFile != null && metricsFile.exists()) {
+			if (metricsHolder.exists()) {
 			  monitor.subTask("Writing metrics");
 			  
-			  copyContents(metricsFile, finalFile);
+				finalFile.write(METRICS_START);
+				copyContents(metricsHolder, finalFile);
 				finalFile.flush();
+				finalFile.write(METRICS_END);
 				monitor.worked(1);
 			}
 
 			if (artifactsHolder.exists()) {
 			  monitor.subTask("Writing artifacts");
-			  artOut.flush();
 			  
 				finalFile.write(ARTIFACTS_START);
+				copyContents(artifactsHolder, finalFile);
+				/*
 				BufferedReader in = new BufferedReader(new FileReader(artifactsHolder));
-				line = null;
+			    String line = null;
 				while ((line = in.readLine()) != null) {
 					finalFile.write(line);
 					finalFile.write("\n");
 				}
 				in.close();
+				*/
 				finalFile.flush();
 				finalFile.write(ARTIFACTS_END);
 				monitor.worked(1);
@@ -155,7 +153,6 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			if (errorsHolder.exists()) {
 			  monitor.subTask("Writing errors");
-			  errOut.flush();
 			  
 				finalFile.write(ERROR_START);
 				copyContents(errorsHolder, finalFile);
@@ -309,7 +306,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			metric.setName(clazz);
 			metric.setPackage(pakkage);
 			metric.setLoc(linesOfCode);
-			mw.writeClassMetric(metric, artOut);
+			mw.writeClassMetric(metric, metricsOut);
 		}
 
 		public MetricBuilder compilation(String name) {
