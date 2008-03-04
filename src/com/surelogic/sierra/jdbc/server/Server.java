@@ -8,8 +8,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.MimeMessage;
 
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
@@ -129,72 +138,46 @@ public class Server {
 	 * 
 	 */
 	public void notifyAdmin(String subject, String message) throws SQLException {
-//TODO
-//		String email = getEmail();
-//		if (email != null) {
-//			Properties props = new Properties();
-//			props.put("mail.smtp.host", "mail.surelogic.com");
-//			props.put("mail.from", email);
-//			Session session = Session.getInstance(props, null);
-//			try {
-//				MimeMessage msg = new MimeMessage(session);
-//				msg.setFrom();
-//				msg.setRecipients(Message.RecipientType.TO, email);
-//				msg.setSubject(subject);
-//				msg.setSentDate(new Date());
-//				msg.setText(message);
-//				Transport.send(msg);
-//			} catch (MessagingException mex) {
-//				log.log(Level.SEVERE, "Mail notification of exception failed.",
-//						mex);
-//			}
-//		}
-	}
+		final Notification n = getNotification();
+		if (n != null) {
+			final String to = n.getToEmail();
+			final String from = n.getFromEmail();
+			final String host = n.getHost();
+			final String pass = n.getPass();
+			final String user = n.getUser();
+			if ((to != null) && (to.length() > 0) && (host != null)
+					&& (host.length() > 0)) {
+				Properties props = new Properties();
+				props.put("mail.smtp.host", host);
+				props.put("mail.from",
+						((from == null) || (from.length() == 0)) ? to : from);
+				Authenticator auth;
+				if ((user != null) && (user.length() > 0)) {
+					auth = new Authenticator() {
 
-	/**
-	 * Returns the administrative email of this server.
-	 * 
-	 * @return
-	 * @throws SQLException
-	 */
-	public String getEmail() throws SQLException {
-		try {
-			final Statement st = conn.createStatement();
-			try {
-				final ResultSet set = st
-						.executeQuery("SELECT EMAIL FROM NOTIFICATION");
-				try {
-					if (set.next()) {
-						return set.getString(1);
-					} else {
-						return null;
-					}
-				} finally {
-					set.close();
+						@Override
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(user, pass);
+						}
+
+					};
+				} else {
+					auth = null;
 				}
-			} finally {
-				st.close();
+				Session session = Session.getInstance(props, auth);
+				try {
+					MimeMessage msg = new MimeMessage(session);
+					msg.setFrom();
+					msg.setRecipients(Message.RecipientType.TO, to);
+					msg.setSubject(subject);
+					msg.setSentDate(new Date());
+					msg.setText(message);
+					Transport.send(msg);
+				} catch (MessagingException mex) {
+					log.log(Level.SEVERE,
+							"Mail notification of exception failed.", mex);
+				}
 			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	/**
-	 * Change the notification email address.
-	 * 
-	 * @param address
-	 * @throws SQLException
-	 */
-	public void setEmail(String address) throws SQLException {
-		final Statement st = conn.createStatement();
-		try {
-			st.execute("DELETE FROM NOTIFICATION");
-			st.execute("INSERT INTO NOTIFICATION (EMAIL) VALUES ('"
-					+ JDBCUtils.escapeString(address) + "')");
-		} finally {
-			st.close();
 		}
 	}
 
@@ -216,6 +199,65 @@ public class Server {
 			}
 		} finally {
 			s.close();
+		}
+	}
+
+	public Notification getNotification() {
+		try {
+			final Statement st = conn.createStatement();
+			try {
+				final ResultSet set = st
+						.executeQuery("SELECT SMTP_HOST,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
+				try {
+					if (set.next()) {
+						int idx = 1;
+						return new Notification(set.getString(idx++), set
+								.getString(idx++), set.getString(idx++), set
+								.getString(idx++), set.getString(idx++));
+					} else {
+						return null;
+					}
+				} finally {
+					set.close();
+				}
+			} finally {
+				st.close();
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private static String escapedTuple(String[] values) {
+		StringBuilder sb = new StringBuilder();
+		sb.append('(');
+		sb.append("'");
+		sb.append(JDBCUtils.escapeString(values[0]));
+		sb.append("'");
+		for (int i = 1; i < values.length; i++) {
+			sb.append(",'");
+			sb.append(JDBCUtils.escapeString(values[i]));
+			sb.append("'");
+		}
+		sb.append(')');
+		return sb.toString();
+	}
+
+	public void setNotification(Notification notification) throws SQLException {
+		final Statement st = conn.createStatement();
+		try {
+			st.execute("DELETE FROM NOTIFICATION");
+			st
+					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
+							+ escapedTuple(new String[] {
+									notification.getHost(),
+									notification.getUser(),
+									notification.getPass(),
+									notification.getFromEmail(),
+									notification.getToEmail() }));
+		} finally {
+			st.close();
 		}
 	}
 
