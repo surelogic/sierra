@@ -23,7 +23,7 @@ import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.QualifierRequest;
+import com.surelogic.sierra.tool.message.TimeseriesRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -73,7 +73,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				if (slMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				scan.getConfig().setQualifiers(
+				scan.getConfig().setTimeseries(
 						new ArrayList<String>(timeseries));
 				return publishRun(scan, slMonitor);
 			}
@@ -88,7 +88,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
-					f_server.getServer()).getQualifiers(new QualifierRequest())
+					f_server.getServer()).getQualifiers(new TimeseriesRequest())
 					.getQualifier();
 			if (timeseries == null) {
 				timeseries = Collections.emptyList();
