@@ -634,7 +634,7 @@ public final class MessageWarehouse {
 		ArtifactGenerator aGen = generator.build();
 		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
 		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
-		readErrors(scan.getToolOutput().getErrors().getErrors(), aGen);
+		readErrors(scan.getToolOutput().getErrors().getError(), aGen);
 
 		return generator.finished();
 	}

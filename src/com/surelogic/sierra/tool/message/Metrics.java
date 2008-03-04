@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Metrics {
     private Collection<ClassMetric> clazz;
 
-    @XmlElement(name = "class")
+    @XmlElement(name = "classMetric")
     public Collection<ClassMetric> getClassMetric() {
         return clazz;
     }

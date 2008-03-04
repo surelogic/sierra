@@ -7,13 +7,13 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 public class Errors {
-    private Collection<Error> errors;
+    private Collection<Error> error;
 
-    public Collection<Error> getErrors() {
-        return errors;
+    public Collection<Error> getError() {
+        return error;
     }
 
-    public void setErrors(Collection<Error> errors) {
-        this.errors = errors;
+    public void setErrors(Collection<Error> error) {
+        this.error = error;
     }
 }
