@@ -16,6 +16,9 @@ public class NewScanDialogAction extends NewScanAction {
 						SLImages.getImage(SLImages.IMG_SIERRA_SCAN),
 						selectedProjects);
 		if (selectedProjects == projects) {
+			/*
+			 * We can use the passed set of project names.
+			 */
 			super.run(selectedProjects, projectNames);
 		} else {
 			super.run(projects, null);
