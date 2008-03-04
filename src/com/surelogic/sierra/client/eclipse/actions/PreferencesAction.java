@@ -25,6 +25,9 @@ public final class PreferencesAction extends Action implements
 	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
 	public static final String DATA_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage";
 
+	public static final String[] FILTER = new String[] { PREF_ID, TOOLS_ID,
+			FILTER_ID, DATA_ID };
+
 	public void dispose() {
 		// Nothing to do
 	}
@@ -40,8 +43,7 @@ public final class PreferencesAction extends Action implements
 
 	public void run(IAction action) {
 		PreferencesUtil.createPreferenceDialogOn(null, PREF_ID,
-				new String[] { PREF_ID, TOOLS_ID, FILTER_ID, DATA_ID }, null)
-				.open();
+				PreferencesAction.FILTER, null).open();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

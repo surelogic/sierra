@@ -64,12 +64,9 @@ public class ToolsPreferencePage extends PreferencePage implements
 								"Exception occurred when opening " + name);
 					}
 				} else {
-					PreferencesUtil.createPreferenceDialogOn(
-							null,
-							PreferencesAction.FILTER_ID,
-							new String[] { PreferencesAction.PREF_ID,
-									PreferencesAction.TOOLS_ID,
-									PreferencesAction.FILTER_ID }, null).open();
+					PreferencesUtil.createPreferenceDialogOn(null,
+							PreferencesAction.PREF_ID,
+							PreferencesAction.FILTER, null).open();
 				}
 			}
 		}

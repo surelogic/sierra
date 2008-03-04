@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
@@ -27,6 +28,7 @@ import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.OpenSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.SaveSearchAsDialog;
@@ -96,6 +98,14 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			public void handleEvent(Event event) {
 				final int column = Integer.parseInt(event.text);
 				f_cascadingList.show(column);
+			}
+		});
+
+		f_findingsStatus.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(null,
+						PreferencesAction.PREF_ID, PreferencesAction.FILTER,
+						null).open();
 			}
 		});
 
@@ -422,7 +432,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			f_findingsIcon.setImage(warning);
 			f_findingsStatus.setText("<a href=\"preferences\">"
 					+ findingsListLimit + " of " + shouldBeShowing
-					+ "  findings shown</a>");
+					+ " shown</a>");
 		} else {
 			f_findingsIcon.setImage(null);
 			f_findingsStatus.setText("");

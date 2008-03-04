@@ -64,6 +64,8 @@ public final class FindingsSelectionView extends ViewPart {
 				false));
 		final Link findingsStatus = new Link(breadcrumbsPanel, SWT.NONE);
 		findingsStatus.setText("");
+		findingsStatus
+				.setToolTipText("Click to change the maximum number of findings shown");
 		findingsStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
 
