@@ -43,16 +43,20 @@ public final class JavaProjectSelectionDialog extends Dialog {
 	private final String f_shellTitle;
 	private final Image f_shellImage;
 
-	private final List<IJavaProject> f_initialProjects;
+	private final List<IJavaProject> f_javaProjects;
 	private Table f_projectTable;
-	private final List<IJavaProject> f_projects;
+	/**
+	 * Aliased and visible to the static call
+	 * {@link #getProjects(String, String, Image, List)}.
+	 */
+	private final List<IJavaProject> f_selectedProjects;
 
 	public static List<IJavaProject> getProjects(final String label,
 			final String shellTitle, final Image shellImage,
-			final List<IJavaProject> projects) {
-		if (projects.isEmpty()
+			final List<IJavaProject> javaProjects) {
+		if (javaProjects.isEmpty()
 				|| PreferenceConstants.alwaysAllowUserToSelectProjectsToScan()) {
-			final List<IJavaProject> returns = new ArrayList<IJavaProject>();
+			final List<IJavaProject> mutableProjectList = new ArrayList<IJavaProject>();
 			// Copied from AbstractScan
 			UIJob job = new SLUIJob() {
 				@Override
@@ -60,8 +64,8 @@ public final class JavaProjectSelectionDialog extends Dialog {
 					final Shell shell = PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getShell();
 					final JavaProjectSelectionDialog dialog = new JavaProjectSelectionDialog(
-							shell, label, shellTitle, shellImage, projects,
-							returns);
+							shell, label, shellTitle, shellImage, javaProjects,
+							mutableProjectList);
 
 					if (dialog.open() == Window.CANCEL) {
 						return Status.CANCEL_STATUS;
@@ -69,29 +73,26 @@ public final class JavaProjectSelectionDialog extends Dialog {
 					return Status.OK_STATUS;
 				}
 			};
-			/*
-			 * job.setSystem(true); job.schedule(); try { job.join(); } catch
-			 * (InterruptedException e) { // Nothing to do }
-			 */
 			IStatus status = job.runInUIThread(null);
 			if (status == Status.CANCEL_STATUS) {
 				return Collections.emptyList();
 			}
-			return returns;
+			return mutableProjectList;
 		}
-		return projects;
+		return javaProjects;
 	}
 
 	private JavaProjectSelectionDialog(Shell parentShell, String label,
-			String shellTitle, Image shellImage, List<IJavaProject> initial,
-			List<IJavaProject> returns) {
+			String shellTitle, Image shellImage,
+			List<IJavaProject> javaProjects,
+			List<IJavaProject> mutableProjectList) {
 		super(parentShell);
 		this.f_label = label;
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		f_shellTitle = shellTitle;
 		f_shellImage = shellImage;
-		f_initialProjects = initial;
-		f_projects = returns;
+		f_javaProjects = javaProjects;
+		f_selectedProjects = mutableProjectList;
 	}
 
 	@Override
@@ -124,9 +125,9 @@ public final class JavaProjectSelectionDialog extends Dialog {
 				item.setImage(SLImages
 						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 				item.setData(jp);
-				if (f_initialProjects.contains(jp)) {
+				if (f_javaProjects.contains(jp)) {
 					item.setChecked(true);
-					f_projects.add(jp);
+					f_selectedProjects.add(jp);
 				}
 			}
 		} catch (JavaModelException e) {
@@ -135,12 +136,6 @@ public final class JavaProjectSelectionDialog extends Dialog {
 
 		f_projectTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				f_projects.clear();
-				for (TableItem item : f_projectTable.getItems()) {
-					if (item.getChecked()) {
-						f_projects.add((IJavaProject) item.getData());
-					}
-				}
 				setOKState();
 			}
 		});
@@ -161,6 +156,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 					for (TableItem item : f_projectTable.getItems()) {
 						item.setChecked(true);
 					}
+					setOKState();
 				}
 			}
 		});
@@ -174,6 +170,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 					for (TableItem item : f_projectTable.getItems()) {
 						item.setChecked(false);
 					}
+					setOKState();
 				}
 			}
 		});
@@ -205,6 +202,21 @@ public final class JavaProjectSelectionDialog extends Dialog {
 	}
 
 	private final void setOKState() {
-		getButton(IDialogConstants.OK_ID).setEnabled(!f_projects.isEmpty());
+		/*
+		 * Remember what is checked.
+		 */
+		f_selectedProjects.clear();
+		if (f_projectTable != null && !f_projectTable.isDisposed()) {
+			for (TableItem item : f_projectTable.getItems()) {
+				if (item.getChecked()) {
+					f_selectedProjects.add((IJavaProject) item.getData());
+				}
+			}
+			/*
+			 * Set the state of the OK button.
+			 */
+			getButton(IDialogConstants.OK_ID).setEnabled(
+					!f_selectedProjects.isEmpty());
+		}
 	}
 }
