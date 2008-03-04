@@ -90,7 +90,6 @@ class JDBCScanGenerator implements ScanGenerator {
 				conn.commit();
 			}
 			scan.insert();
-			qualifiers.add(TimeseriesManager.ALL_SCANS);
 			for (String name : qualifiers) {
 				TimeseriesRecord q = factory.newQualifier();
 				q.setName(name);
