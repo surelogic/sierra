@@ -87,4 +87,12 @@ public abstract class AbstractProjectSelectedMenuAction implements
 	public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
+	
+  protected static List<String> getNames(final List<IJavaProject> projects) {
+    List<String> names = new ArrayList<String>();
+    for(IJavaProject jp : projects) {
+      names.add(jp.getElementName());
+    }
+    return names;
+  }
 }

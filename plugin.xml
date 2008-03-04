@@ -83,7 +83,7 @@
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_delta.gif"
 				label="Re-Scan Changes in Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
@@ -91,15 +91,15 @@
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ScanDialogAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan.gif"
 				label="Scan Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
-				id="com.surelogic.sierra.client.eclipse.actions.DisconnectAction"
+				class="com.surelogic.sierra.client.eclipse.actions.DisconnectDialogAction"
+				id="com.surelogic.sierra.client.eclipse.actions.DisconnectDialogAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
 				label="Disconnect"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
@@ -107,8 +107,8 @@
 				<selection class="org.eclipse.jdt.core.IJavaProject" />
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
-				id="com.surelogic.sierra.client.eclipse.actions.PublishScanAction"
+				class="com.surelogic.sierra.client.eclipse.actions.PublishScanDialogAction"
+				id="com.surelogic.sierra.client.eclipse.actions.PublishScanDialogAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
 				label="Publish Latest Scan"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
@@ -116,8 +116,8 @@
 				<selection class="org.eclipse.jdt.core.IJavaProject" />
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
-				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction"
+				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction"
+				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction"
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
 				label="Synchronize Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"

@@ -6,7 +6,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
-public final class SynchronizeProjectAction extends
+public class SynchronizeProjectAction extends
 		AbstractWebServiceMenuAction {
 	@Override
 	void runServerAction(ServerProjectGroupJob family, String projectName,

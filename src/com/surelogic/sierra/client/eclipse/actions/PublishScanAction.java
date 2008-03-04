@@ -14,7 +14,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
-public final class PublishScanAction extends AbstractWebServiceMenuAction {
+public class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
 	void runServerAction(final ServerProjectGroupJob family,
 			String projectName, SierraServer server, Shell shell) {

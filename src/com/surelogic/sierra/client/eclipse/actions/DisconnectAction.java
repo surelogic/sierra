@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 
-public final class DisconnectAction extends AbstractProjectSelectedMenuAction {
+public class DisconnectAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
 	protected void run(List<IJavaProject> selectedProjects,
