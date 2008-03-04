@@ -9,6 +9,7 @@ import java.sql.Statement;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaUtility;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 
@@ -42,16 +43,16 @@ public final class SierraSchemaUtility {
 			final String num = getZeroPadded(i);
 			final Schema common = new Schema(db, num, false);
 			scripts[i] = common.script;
-			
+
 			schemaActions[i] = common.action;
 			if (serverDB) {
-			  final Schema server = new Schema(db, num, true);
+				final Schema server = new Schema(db, num, true);
 				final boolean serverScriptOrAction = server.script != null
 						|| server.action != null;
 				if (serverScriptOrAction) {
-				  final SchemaAction commonAction = common.action;
-	        final URL serverScript = server.script;
-	        final SchemaAction serverAction = server.action;
+					final SchemaAction commonAction = common.action;
+					final URL serverScript = server.script;
+					final SchemaAction serverAction = server.action;
 					schemaActions[i] = new SchemaAction() {
 						public void run(Connection c) throws SQLException {
 							/*
@@ -84,51 +85,55 @@ public final class SierraSchemaUtility {
 						}
 					};
 				}
-			} else if (common.script == null && common.action == null) { 
-			  // not server, and there's no common script/action
-			  // Make sure that there's a server script/action
-			  final Schema server = new Schema(db, num, true);
-			  final boolean serverScriptOrAction = server.script != null ||
-                                             server.action != null;
-			  if (serverScriptOrAction) {
-			    // Dummy action to satisfy constraint in SchemaUtility.checkAndUpdate()
-			    // that there be an action or script for each version
-			    schemaActions[i] = new SchemaAction() {
-			      public void run(Connection c) throws SQLException {
-			        System.out.println("Nothing to do in client; only server-side changes for version "+num);  
-			      }
-			    };
-			  } else {
-			    throw new IllegalArgumentException("No scripts/actions for version "+num);
-			  }
+			} else if (common.script == null && common.action == null) {
+				// not server, and there's no common script/action
+				// Make sure that there's a server script/action
+				final Schema server = new Schema(db, num, true);
+				final boolean serverScriptOrAction = server.script != null
+						|| server.action != null;
+				if (serverScriptOrAction) {
+					// Dummy action to satisfy constraint in
+					// SchemaUtility.checkAndUpdate()
+					// that there be an action or script for each version
+					schemaActions[i] = new SchemaAction() {
+						public void run(Connection c) throws SQLException {
+							SLLogger.getLogger().fine(
+									"Nothing to do in client; only server-side changes for version "
+											+ num + ".");
+						}
+					};
+				} else {
+					throw new IllegalArgumentException(
+							"No scripts/actions for version " + num);
+				}
 			}
 		}
 		SchemaUtility.checkAndUpdate(c, scripts, schemaActions);
 	}
 
 	private static class Schema {
-	  //final boolean forServer;
-	  //final String num;
-	  final URL script;
-	  final SchemaAction action;
-	  
-	  Schema(DBType db, String num, boolean server) {
-	    //this.num = num;
-	    //forServer = server;
-	    
-	    final StringBuilder name = new StringBuilder(SQL_SCRIPT_PREFIX);
-	    name.append(db.getPrefix());
-	    if (server) {
-	      name.append(SEPARATOR).append(SERVER_PREFIX);
-	    }
-      name.append(SEPARATOR).append(num).append(".sql");
-	    script = SierraSchemaUtility.class.getResource(name.toString());
-	    
-	    final String prefix = server ? ACTION_SERVER : ACTION_COMMON;
-	    action = getSchemaAction(prefix + num);
-	  }
+		// final boolean forServer;
+		// final String num;
+		final URL script;
+		final SchemaAction action;
+
+		Schema(DBType db, String num, boolean server) {
+			// this.num = num;
+			// forServer = server;
+
+			final StringBuilder name = new StringBuilder(SQL_SCRIPT_PREFIX);
+			name.append(db.getPrefix());
+			if (server) {
+				name.append(SEPARATOR).append(SERVER_PREFIX);
+			}
+			name.append(SEPARATOR).append(num).append(".sql");
+			script = SierraSchemaUtility.class.getResource(name.toString());
+
+			final String prefix = server ? ACTION_SERVER : ACTION_COMMON;
+			action = getSchemaAction(prefix + num);
+		}
 	}
-	
+
 	private static SchemaAction getSchemaAction(
 			final String fullyQualifiedClassName) {
 		SchemaAction result = null;
