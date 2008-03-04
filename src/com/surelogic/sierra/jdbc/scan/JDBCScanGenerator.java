@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.scan;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -14,11 +13,11 @@ import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
-import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
-import com.surelogic.sierra.jdbc.timeseries.QualifierManager;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
+import com.surelogic.sierra.jdbc.timeseries.TimeseriesManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
@@ -91,12 +90,13 @@ class JDBCScanGenerator implements ScanGenerator {
 				conn.commit();
 			}
 			scan.insert();
-			qualifiers.add(QualifierManager.ALL_SCANS);
+			qualifiers.add(TimeseriesManager.ALL_SCANS);
 			for (String name : qualifiers) {
 				TimeseriesRecord q = factory.newQualifier();
 				q.setName(name);
 				if (q.select()) {
-					TimeseriesScanRecord rq = factory.newScanQualifierRelation();
+					TimeseriesScanRecord rq = factory
+							.newScanQualifierRelation();
 					rq
 							.setId(new RecordRelationRecord.PK<TimeseriesRecord, ScanRecord>(
 									q, scan));
@@ -143,7 +143,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		return this;
 	}
 
-	public ScanGenerator qualifiers(Collection<String> qualifiers) {
+	public ScanGenerator timeseries(Collection<String> qualifiers) {
 		if (qualifiers != null && !qualifiers.isEmpty()) {
 			qualifiers.addAll(qualifiers);
 		}

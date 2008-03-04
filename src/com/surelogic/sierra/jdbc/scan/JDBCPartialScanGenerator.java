@@ -15,7 +15,7 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
 /**
- * Implements the artifact generation and makes the approprate call to the
+ * Implements the artifact generation and makes the appropriate call to the
  * FindingManager api's when we create a partial scan on the client. The uid of
  * the scan document being written to the database will be ignored, and all
  * artifacts and metrics will instead be written to an existing scan, which will
@@ -23,7 +23,6 @@ import com.surelogic.sierra.tool.message.ScanGenerator;
  * fails for some reason, we delete the entire scan.
  * 
  * @author nathan
- * 
  */
 class JDBCPartialScanGenerator implements ScanGenerator {
 
@@ -86,7 +85,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		return this;
 	}
 
-	public ScanGenerator qualifiers(Collection<String> qualifiers) {
+	public ScanGenerator timeseries(Collection<String> timeseries) {
 		return this;
 	}
 
@@ -100,8 +99,12 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		try {
 			scan.update();
 			if (log.isLoggable(Level.FINE)) {
-			  log.fine("Scan " + scan.getUid() + " for project " + projectName
-			      + " persisted to database, starting finding generation.");
+				log
+						.fine("Scan "
+								+ scan.getUid()
+								+ " for project "
+								+ projectName
+								+ " persisted to database, starting finding generation.");
 			}
 			conn.commit();
 			return scan.getUid();

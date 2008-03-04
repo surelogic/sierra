@@ -34,7 +34,7 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 	@Override
 	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, id.scanId);
-		st.setLong(idx++, id.qualifierId);
+		st.setLong(idx++, id.timeseriesId);
 		return idx;
 	}
 
@@ -111,15 +111,15 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 
 	public static class PK {
 		private long scanId;
-		private long qualifierId;
+		private long timeseriesId;
 
 		public PK() {
 			// Do nothing
 		}
 
-		public PK(long scanId, long qualifierId) {
+		public PK(long scanId, long timeseriesId) {
 			this.scanId = scanId;
-			this.qualifierId = qualifierId;
+			this.timeseriesId = timeseriesId;
 		}
 
 		public long getScanId() {
@@ -130,14 +130,13 @@ public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
 			this.scanId = scanId;
 		}
 
-		public long getQualifierId() {
-			return qualifierId;
+		public long getTimeseriesId() {
+			return timeseriesId;
 		}
 
-		public void setQualifierId(long qualifierId) {
-			this.qualifierId = qualifierId;
+		public void setTimeseriesId(long timeseriesId) {
+			this.timeseriesId = timeseriesId;
 		}
-
 	}
 
 	@Override
