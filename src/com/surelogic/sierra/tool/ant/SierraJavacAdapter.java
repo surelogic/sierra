@@ -283,8 +283,8 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         SierraService ts = SierraServiceClient.create(location);
 
         // Verify the qualifiers
-        List<String> list = ts.getQualifiers(new TimeseriesRequest())
-            .getQualifier();
+        List<String> list = ts.getTimeseries(new TimeseriesRequest())
+            .getTimeseries();
         if (list == null || list.isEmpty()) {
           throw new BuildException(
               "The target build server does not have any valid qualifiers to publish to.");
