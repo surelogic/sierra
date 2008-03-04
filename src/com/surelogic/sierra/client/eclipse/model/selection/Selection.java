@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +19,7 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.views.selection.MListOfFindingsColumn;
 
 /**
  * Defines a selection of findings using a series of filters.
@@ -74,6 +75,11 @@ public final class Selection extends AbstractDatabaseObserver {
 				Filter clone = f.copyNoQuery(this, prev);
 				prev = clone;
 				f_filters.add(clone);
+			}
+			for (Map.Entry<String,Column> e : source.f_columns.entrySet()) {
+			  Column c  = getColumn(e.getKey());
+			  Column sc = e.getValue();
+			  c.configure(sc.isVisible(), sc.getWidth(), sc.getSort(), sc.getIndex());
 			}
 		}
 	}
@@ -462,6 +468,7 @@ public final class Selection extends AbstractDatabaseObserver {
 					final String msg = I18N.err(errNo);
 					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
+	
 				return Status.OK_STATUS;
 			}
 		};
@@ -500,6 +507,16 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
+	private final Map<String,Column> f_columns = MListOfFindingsColumn.createColumns();
+	
+	public Column getColumn(String name) {
+	  return f_columns.get(name);
+	}
+	
+  public Iterable<Column> getColumns() {
+    return f_columns.values();
+  }
+  
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder();

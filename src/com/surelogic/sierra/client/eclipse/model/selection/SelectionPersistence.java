@@ -31,7 +31,13 @@ public final class SelectionPersistence {
 	public static final String TYPE = "type";
 	public static final String POROUS = "porous";
 	public static final String VALUE = "value";
-
+	
+  public static final String COLUMN = "column";
+  public static final String VISIBLE = "visible";
+  public static final String WIDTH = "width";
+  public static final String SORT = "sort";
+  public static final String INDEX = "index";
+	
 	public static void save(final SelectionManager manager, final File saveFile) {
 		save(manager, manager.getSavedSelectionNames(), saveFile);
 	}
@@ -39,16 +45,17 @@ public final class SelectionPersistence {
 	public static void save(final SelectionManager manager,
 			final List<String> selections, final File saveFile) {
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(saveFile));
-			outputXMLHeader(pw);
+			final PrintWriter pw = new PrintWriter(new FileWriter(saveFile));
+			final StringBuilder b = new StringBuilder();
+			outputXMLHeader(pw, b);
 			for (String name : selections) {
 				Selection s = manager.getSavedSelection(name);
 				if (s == null)
 					throw new IllegalStateException(
 							"null selection returned for \"" + name + "\"");
-				outputSelection(pw, name, s);
+				outputSelection(pw, b, name, s);
 			}
-			outputXMLFooter(pw);
+			outputXMLFooter(pw, b);
 			pw.close();
 
 		} catch (IOException e) {
@@ -57,55 +64,82 @@ public final class SelectionPersistence {
 		}
 	}
 
-	private static void outputXMLHeader(PrintWriter pw) {
+	/**
+	 * Maintains the invariant that the buffer is cleared
+	 * after each use
+	 */
+	private static void outputBuffer(PrintWriter pw, StringBuilder b) {
+	  pw.println(b.toString());
+	  b.setLength(0);
+	}
+	
+	private static void outputXMLHeader(PrintWriter pw, StringBuilder b) {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
-		StringBuilder b = new StringBuilder();
+		// No need to clear, since just created
+		// b.setLength(0);
 		b.append("<").append(TOP);
 		Entities.addAttribute(VERSION, "1.0", b);
 		b.append(">"); // don't end this element
-		pw.println(b.toString());
+		outputBuffer(pw, b);
 	}
 
-	private static void outputSelection(PrintWriter pw, String name, Selection s) {
-		StringBuilder b = new StringBuilder();
+	// private static final String[] INDENTS = { "", "  ", "    ", "      " };
+	
+	private static void outputSelection(PrintWriter pw, StringBuilder b,
+	                                    String name, Selection s) {
 		b.append("  <").append(SELECTION);
 		Entities.addAttribute(NAME, name, b);
 		if (s.isShowingFindings())
 			Entities.addAttribute(SHOWING, "Y", b);
 		b.append(">");
-		pw.println(b.toString());
-		// UNUSED: b = new StringBuilder();
+    outputBuffer(pw, b);
+    
 		for (Filter f : s.getFilters()) {
-			outputFilter(pw, f);
+			outputFilter(pw, b, f);
 		}
-		b = new StringBuilder();
-		b.append("  </").append(SELECTION).append(">");
-		pw.println(b.toString());
+	  for (Column c : s.getColumns()) {
+		  outputColumn(pw, b, c);
+		}
+    end(pw, b, SELECTION);
 	}
 
-	private static void outputFilter(PrintWriter pw, Filter f) {
-		final StringBuilder b = new StringBuilder();
+	private static void outputFilter(PrintWriter pw, StringBuilder b, Filter f) {
 		b.append("    <").append(FILTER);
 		Entities.addAttribute(TYPE, f.getFactory().getFilterLabel(), b);
 		b.append(">");
-		pw.println(b.toString());
-		b.setLength(0);
+		outputBuffer(pw, b);
 		for (String p : f.getPorousValues()) {
 			b.append("      <");
 			b.append(POROUS);
 			Entities.addAttribute(VALUE, p, b);
 			b.append("/>");
-			pw.println(b.toString());
-			b.setLength(0);
+	    outputBuffer(pw, b);
 		}
-		b.setLength(0);
-		b.append("    </").append(FILTER).append(">");
-		pw.println(b.toString());
+		end(pw, b, FILTER);
 	}
+	
+  private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
+    b.append("    <").append(COLUMN);
+    Entities.addAttribute(NAME, c.getName(), b);
+    if (c.isVisible()) {
+      Entities.addAttribute(VISIBLE, "true", b);
+    }
+    Entities.addAttribute(WIDTH, c.getWidth(), b);
+    Entities.addAttribute(SORT, c.getSort().toString(), b);
+    Entities.addAttribute(INDEX, c.getIndex(), b);
+    b.append(">");
+    outputBuffer(pw, b);
+    end(pw, b, COLUMN);
+  }	
 
-	private static void outputXMLFooter(PrintWriter pw) {
-		pw.println("</" + TOP + ">");
+  private static void end(PrintWriter pw, final StringBuilder b, String tag) {
+		b.append("    </").append(tag).append(">");
+    outputBuffer(pw, b);
+  }	
+	
+	private static void outputXMLFooter(PrintWriter pw, StringBuilder b) {
+	  end(pw, b, TOP);
 	}
 
 	public static void load(final SelectionManager manager, final File saveFile)
@@ -187,6 +221,18 @@ public final class SelectionPersistence {
 					SLLogger.getLogger().log(Level.SEVERE,
 							POROUS + " found in XML but filter is null");
 				}
+      } else if (name.equals(COLUMN)) {
+        final String id = attributes.getValue(NAME);      
+        for (Column c : f_workingSelection.getColumns()) {
+          if (c.getName().equals(id)) {
+            final String viz   = attributes.getValue(VISIBLE);
+            final String width = attributes.getValue(WIDTH);
+            final String sort  = attributes.getValue(SORT);
+            final String index = attributes.getValue(INDEX);
+            c.configure(viz != null, Integer.parseInt(width), 
+                        ColumnSort.valueOf(sort), Integer.parseInt(index));
+          }
+        }
 			}
 		}
 

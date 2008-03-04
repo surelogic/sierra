@@ -43,6 +43,8 @@ import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.MaximumFindingsShownDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
+import com.surelogic.sierra.client.eclipse.model.selection.Column;
+import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -63,6 +65,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
     f_tables.add(this);
+    
+    for(ColumnData data : f_columns) {
+      Column c = selection.getColumn(data.name);
+      data.visible = c.isVisible();
+      data.width = c.getWidth();
+      data.sort = c.getSort();
+      data.index = c.getIndex();
+    }
 	}
 
 	@Override
@@ -90,6 +100,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 		super.dispose();
 		getSelection().setShowingFindings(false);
 		getSelection().removeObserver(this);
+
+		for(ColumnData data : f_columns) {
+		  Column c = getSelection().getColumn(data.name);
+		  c.configure(data.visible, data.width, data.sort, data.index);
+		}
+		
 		final int column = getColumnIndex();
 		if (column != -1)
 			getCascadingList().emptyFrom(column);
@@ -111,7 +127,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  getCascadingList().show(index);
 	}
 	
-	public void selectionChanged(Selection selecton) {
+	public void selectionChanged(Selection selecton) {	  
 		changed();
 	}
 
@@ -182,17 +198,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 		  return (int) f_findingId; 
 		}
 	}
-  static enum ColumnSort {
-    UNSORTED, SORT_UP, SORT_DOWN
-  }
+
 	static abstract class ColumnData implements Comparator<FindingData> {
 	  final String name;
 	  int width = -1;
 	  boolean visible = false;
 	  ColumnSort sort = ColumnSort.UNSORTED;
+	  int index = -1;
 	  
 	  ColumnData(String name) {
 	    this.name = name;
+	    index = f_columns.size();
 	  }	
 	  ColumnData(String name, boolean visible, ColumnSort sort) {
 	    this(name);
@@ -260,7 +276,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	    @Override String getText(FindingData data)  { return data.f_toolName; }
 	  });
 	}
-	static Iterable<ColumnData> getColumns() {
+	public static Iterable<ColumnData> getColumns() {
 	  return f_columns;
 	}
 	
@@ -611,7 +627,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 	  Collections.sort(f_rows, c);
   }
 
+	private boolean createTableColumns = false;
+	
   private void createTableColumns() {
+    createTableColumns = true;
+    int[] order = new int[f_columns.size()];
+    int i = 0;
 	  for(final ColumnData data : f_columns) {
 	    final TableColumn tc = new TableColumn(f_table, SWT.NONE);
 	    tc.setText(data.name);
@@ -637,15 +658,29 @@ public final class MListOfFindingsColumn extends MColumn implements
 	    });
 	    tc.addControlListener(new ControlListener() {
         public void controlMoved(ControlEvent e) {
-          // Nothing to do
+          if (!createTableColumns && !updateTableColumns) {
+            int[] currentOrder = f_table.getColumnOrder();
+            TableColumn[] columns = f_table.getColumns();
+            for(int i=0; i<currentOrder.length; i++) {
+              if (tc == columns[currentOrder[i]]) {
+                System.out.println(data.index+" -> "+i);
+                data.index = i;
+                break;
+              }
+            }           
+          }
         }
         public void controlResized(ControlEvent e) {
           if (!updateTableColumns) {
             saveColumnAppearance(data, tc);
           }
         }	      
-	    });
+	    });	    
+	    order[data.index] = i;
+	    i++;
 	  }
+	  f_table.setColumnOrder(order);
+	  createTableColumns = false;
 	}
 
 	/**
@@ -1054,7 +1089,7 @@ public final class MListOfFindingsColumn extends MColumn implements
         if (!nowVisible) {
           // Save column width        
           for(TableColumn tc : t.getColumns()) {
-            if (data == tc.getData()) {
+            if (data == tc.getData()) {             
               saveColumnAppearance(data, tc);
             }
           }
@@ -1062,5 +1097,16 @@ public final class MListOfFindingsColumn extends MColumn implements
         c.updateTableColumns();
       }
     }
+  }
+
+  public static Map<String,Column> createColumns() {
+    Map<String,Column> result = new HashMap<String,Column>();
+    for(ColumnData data : f_columns) {
+      Column c = new Column(data.name);
+      // FIX to remember column ordering
+      c.configure(data.visible, data.width, data.sort, data.index);
+      result.put(data.name, c);
+    }
+    return result;
   }
 }
