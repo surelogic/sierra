@@ -59,9 +59,10 @@ public class OverviewContent extends ContentComposite {
 					final String[] projectHeader = new String[] { "Project",
 							"Comments", "Critical", "High", "Medium", "Low",
 							"Irrelevant", "Last Synch", "Last Synched By" };
-					final String[] dataStyle = new String[] { "text", "text",
-							"number", "number", "number", "number", "number",
-							"number", "date", "date" };
+					final String[] dataStyle = new String[] { "cell-text",
+							"cell-text", "cell-number", "cell-number",
+							"cell-number", "cell-number", "cell-number",
+							"cell-date", "cell-text" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -115,8 +116,11 @@ public class OverviewContent extends ContentComposite {
 					final Grid grid = new Grid(list.size() + 1, 3);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
+					final CellFormatter cf = grid.getCellFormatter();
 					final String[] userHeader = new String[] { "User",
 							"Comments", "Last Synched" };
+					final String[] dataStyle = new String[] { "cell-text",
+							"cell-text", "cell-date" };
 					for (int j = 0; j < userHeader.length; j++) {
 						grid.setText(0, j, userHeader[j]);
 					}
@@ -133,6 +137,9 @@ public class OverviewContent extends ContentComposite {
 						grid.setText(i, j++,
 								uo.getLastSynch() == null ? "Never" : uo
 										.getLastSynch());
+						for (j = 0; j < dataStyle.length; j++) {
+							cf.addStyleName(i, j, dataStyle[j]);
+						}
 					}
 					users.add(grid);
 				}
@@ -148,8 +155,8 @@ public class OverviewContent extends ContentComposite {
 		final VerticalPanel panel = new VerticalPanel();
 		final HorizontalPanel charts = new HorizontalPanel();
 		panel.add(charts);
-		charts.add(ChartBuilder.name("users").build());
-		charts.add(ChartBuilder.name("projects").build());
+		charts.add(ChartBuilder.name("users").height(200).width(500).build());
+		charts.add(ChartBuilder.name("projects").height(200).width(500).build());
 		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));

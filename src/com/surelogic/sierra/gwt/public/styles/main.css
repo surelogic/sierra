@@ -122,12 +122,16 @@ a.hover {
 
 }
 
-.overview-data.text {
+.cell-text {
 	text-align:left; 	
 }
 
-.overview-data.number {
+.cell-number {
 	text-align: right;	
+}
+
+.cell-date {
+	text-align: center;	
 }
 
 /* Grid panel */
