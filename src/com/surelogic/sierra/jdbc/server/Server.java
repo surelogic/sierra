@@ -1,7 +1,6 @@
 package com.surelogic.sierra.jdbc.server;
 
 import java.io.IOException;
-import java.security.Security;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
