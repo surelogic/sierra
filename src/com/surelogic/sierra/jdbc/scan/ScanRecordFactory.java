@@ -8,11 +8,11 @@ import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
-import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
-import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.SourceRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 
@@ -28,8 +28,8 @@ public final class ScanRecordFactory {
 	private static final String SCAN_SELECT = "SELECT ID, USER_ID, PROJECT_ID, JAVA_VERSION, JAVA_VENDOR, SCAN_DATE_TIME, STATUS, IS_PARTIAL FROM SCAN WHERE UUID = ?";
 	private static final String SCAN_DELETE = "DELETE FROM SCAN WHERE ID = ?";
 	private static final String SCAN_UPDATE = "UPDATE SCAN SET SCAN_DATE_TIME = ?, STATUS = ?, IS_PARTIAL = ? WHERE ID = ?";
-	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
-	private static final String SCAN_QUALIFIER_INSERT = "INSERT INTO QUALIFIER_SCAN_RELTN (QUALIFIER_ID,SCAN_ID) VALUES(?,?)";
+	private static final String TIMESERIES_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
+	private static final String SCAN_TIMESERIES_INSERT = "INSERT INTO QUALIFIER_SCAN_RELTN (QUALIFIER_ID,SCAN_ID) VALUES(?,?)";
 	private static final String CLASS_METRIC_INSERT = "INSERT INTO METRIC_CU (SCAN_ID, COMPILATION_UNIT_ID, LINES_OF_CODE) VALUES (?,?,?)";
 	private final Connection conn;
 
@@ -38,7 +38,7 @@ public final class ScanRecordFactory {
 	private final RecordMapper artMapper;
 	private final RecordMapper artSourceMapper;
 	private final UpdateRecordMapper scanMapper;
-	private UpdateRecordMapper qualifierMapper;
+	private UpdateRecordMapper timeseriesMapper;
 	private RecordMapper scanQualMapper;
 	private final RecordMapper classMetricMapper;
 
@@ -86,17 +86,17 @@ public final class ScanRecordFactory {
 		return new ClassMetricRecord(classMetricMapper);
 	}
 
-	public TimeseriesRecord newQualifier() throws SQLException {
-		if (qualifierMapper == null) {
-			qualifierMapper = new UpdateBaseMapper(conn, null,
-					QUALIFIER_SELECT, null, null);
+	public TimeseriesRecord newTimeseries() throws SQLException {
+		if (timeseriesMapper == null) {
+			timeseriesMapper = new UpdateBaseMapper(conn, null,
+					TIMESERIES_SELECT, null, null);
 		}
-		return new TimeseriesRecord(qualifierMapper);
+		return new TimeseriesRecord(timeseriesMapper);
 	}
 
-	public TimeseriesScanRecord newScanQualifierRelation() throws SQLException {
+	public TimeseriesScanRecord newScanTimeseriesRelation() throws SQLException {
 		if (scanQualMapper == null) {
-			scanQualMapper = new BaseMapper(conn, SCAN_QUALIFIER_INSERT, null,
+			scanQualMapper = new BaseMapper(conn, SCAN_TIMESERIES_INSERT, null,
 					null, false);
 		}
 		return new TimeseriesScanRecord(scanQualMapper);
