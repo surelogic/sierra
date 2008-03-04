@@ -11,8 +11,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ServerInformationContent extends ContentComposite {
 	private static final ServerInformationContent instance = new ServerInformationContent();
@@ -27,7 +29,7 @@ public class ServerInformationContent extends ContentComposite {
 	private final TextBox smtpPassTextBox = new TextBox();
 	private final Button updateEmailButton = new Button("Update Email Address");
 	private final Button testEmailButton = new Button("Test Email Notification");
-	private final HTML message = new HTML();
+	private final StatusBox status = new StatusBox();
 
 	public static ServerInformationContent getInstance() {
 		return instance;
@@ -70,19 +72,21 @@ public class ServerInformationContent extends ContentComposite {
 		hp.add(updateEmailButton);
 		hp.add(testEmailButton);
 		panel.add(hp);
-		panel.add(message);
+		panel.add(status);
 		updateInfo(ServerInfo.getDefault());
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
 	protected void onActivate() {
-		message.setStyleName("success");
 		final AsyncCallback updateServerInfo = new AsyncCallback() {
 			public void onSuccess(Object result) {
 				updateInfo((ServerInfo) result);
+				status.setStatus(new Status(true, "Information updated."));
 			}
 
 			public void onFailure(Throwable caught) {
+				status.setStatus(new Status(false,
+						"Error communicating with server"));
 				// TODO do some UI stuff to show failure
 			}
 		};
@@ -98,7 +102,6 @@ public class ServerInformationContent extends ContentComposite {
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
 				msService.setEmail(email, updateServerInfo);
-				message.setHTML("Email updated.");
 			}
 		});
 		testEmailButton.addClickListener(new ClickListener() {
@@ -114,8 +117,10 @@ public class ServerInformationContent extends ContentComposite {
 						// TODO Auto-generated method stub
 					}
 				});
-				message
-						.setHTML("If notification is set up correctly, you should receive an email at the given address.");
+				status
+						.setStatus(new Status(
+								true,
+								"If notification is set up correctly, you should receive an email at the given address."));
 			}
 		});
 		msService.getServerInfo(updateServerInfo);

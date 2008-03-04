@@ -30,7 +30,7 @@ public class StatusBox extends Composite {
 			html.setHTML("<span class=\"success\">" + status.getMessage()
 					+ "</span>");
 		} else {
-			html.setHTML("<span class=\"failure\">" + status.getMessage()
+			html.setHTML("<span class=\"error\">" + status.getMessage()
 					+ "</span>");
 		}
 		this.status = status;
