@@ -242,6 +242,7 @@
   <!--   If you get an error reporting that jikes can't use UTF-8 encoding, -->
   <!--   try setting the init parameter "javaEncoding" to "ISO-8859-1".     -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!-- Disabled, using GWT
   <servlet id="jsp">
     <servlet-name>jsp</servlet-name>
     <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
@@ -257,12 +258,14 @@
         <param-name>xpoweredBy</param-name>
         <param-value>false</param-value>
     </init-param>
+-->
     <!--  
     <init-param>
         <param-name>classpath</param-name>
         <param-value>?</param-value>
     </init-param>
     -->
+<!--
     <load-on-startup>0</load-on-startup>
   </servlet>
 
@@ -277,7 +280,7 @@
     <url-pattern>*.JSPX</url-pattern>
     <url-pattern>*.XSP</url-pattern>
   </servlet-mapping>
-  
+-->
   <!-- ==================================================================== -->
   <!-- Dynamic Servlet Invoker.                                             -->
   <!-- This servlet invokes anonymous servlets that have not been defined   -->
@@ -343,7 +346,7 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
+    <!-- <welcome-file>index.jsp</welcome-file> -->
   </welcome-file-list>
 
   <!-- ==================================================================== -->
