@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -58,7 +59,12 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	public void publishRun(final Scan scan) {
 		// We can't publish a run without a qualifier on the server
-		final List<String> q = scan.getConfig().getQualifiers();
+		final List<String> qList = scan.getConfig().getQualifiers();
+		final Set<String> qualifiers = new TreeSet<String>();
+		qualifiers.add(TimeseriesManager.ALL_SCANS);
+		if (qList != null) {
+			qualifiers.addAll(qList);
+		}
 		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
 
 			public Void perform(Connection conn, Server server, User user)
@@ -72,7 +78,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								project));
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
-				generator.timeseries(q).user(user.getName());
+				generator.timeseries(qualifiers).user(user.getName());
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
 				ConnectionFactory
@@ -83,8 +89,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								ServerFindingManager fm = ServerFindingManager
 										.getInstance(conn);
 								fm.generateFindings(project, uid, filter, null);
-								fm.generateOverview(project, uid,
-										new HashSet<String>(q));
+								fm.generateOverview(project, uid, qualifiers);
 								return null;
 							}
 						});
