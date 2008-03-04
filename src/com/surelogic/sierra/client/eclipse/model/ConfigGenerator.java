@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.JavaConstants;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -169,7 +170,7 @@ public final class ConfigGenerator {
 
 					int lastPeriod = qualifiedName.lastIndexOf('.');
 
-					String packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
+					String packageName = JavaConstants.DEFAULT_PACKAGE;
 					if (lastPeriod != -1) {
 						packageName = qualifiedName.substring(0, lastPeriod);
 					}
@@ -356,7 +357,7 @@ public final class ConfigGenerator {
 	private void setupTools(Config config) {
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setJavaVersion(System.getProperty("java.version"));
-	  config.setMemorySize(PreferenceConstants.getToolMemoryMB());
+		config.setMemorySize(PreferenceConstants.getToolMemoryMB());
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
 	}

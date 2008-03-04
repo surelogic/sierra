@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.JavaConstants;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
@@ -44,7 +45,6 @@ import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
-import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -210,7 +210,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();
 
-							String packageName = SierraToolConstants.DEFAULT_PACKAGE_PARENTHESIS;
+							String packageName = JavaConstants.DEFAULT_PACKAGE;
 							if (packageDeclarations.length > 0) {
 								packageName = packageDeclarations[0]
 										.getElementName();
