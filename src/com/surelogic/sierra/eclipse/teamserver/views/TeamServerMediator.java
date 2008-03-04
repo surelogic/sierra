@@ -126,7 +126,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	void init() {
-		f_host.setText(getHostAddress());
+		obtainHostAddress();
 		f_status.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final String urlString = getURLString();
@@ -232,13 +232,14 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		return "http://localhost:" + getPort();
 	}
 
-	private String getHostAddress() {
+	private void obtainHostAddress() {
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
-			return addr.getHostAddress();
+			f_host.setText(addr.getHostAddress());
+			f_host.setToolTipText(addr.getHostName());
 		} catch (UnknownHostException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(76), e);
-			return "<unknown IP address>";
+			f_host.setText("<unknown IP address>");
 		}
 	}
 
