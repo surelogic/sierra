@@ -51,9 +51,12 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 
 			public ServerInfo perform(Connection conn, Server server, User user)
 					throws SQLException {
-				server.setNotification(new Notification(info.getHost(), info
-						.getUser(), info.getPass(), info.getAdminEmail(), info
-						.getServerEmail()));
+				String portStr = info.getPort();
+				Integer port = portStr == null ? null : Integer
+						.valueOf(portStr);
+				server.setNotification(new Notification(info.getHost(), port,
+						info.getUser(), info.getPass(), info.getAdminEmail(),
+						info.getServerEmail()));
 				return readServerInfo(server);
 			}
 		});
@@ -83,11 +86,12 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		}
 		Notification n = server.getNotification();
 		if (n != null) {
-			info.setEmail(new EmailInfo(n.getHost(), n.getUser(), n.getPass(),
-					n.getFromEmail(), n.getToEmail()));
+			info.setEmail(new EmailInfo(n.getHost(), n.getPort().toString(), n
+					.getUser(), n.getPass(), n.getFromEmail(), n.getToEmail()));
 		} else {
-			info.setEmail(new EmailInfo("Error", "Error", "Error", "Error",
-					"Error"));
+			final String error = "Error";
+			info.setEmail(new EmailInfo(error, error, error, error, error,
+					error));
 		}
 		return info;
 	}
