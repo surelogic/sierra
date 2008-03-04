@@ -88,8 +88,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
-					f_server.getServer()).getQualifiers(new TimeseriesRequest())
-					.getQualifier();
+					f_server.getServer()).getTimeseries(new TimeseriesRequest())
+					.getTimeseries();
 			if (timeseries == null) {
 				timeseries = Collections.emptyList();
 			}
