@@ -13,6 +13,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
+import com.surelogic.sierra.jdbc.qualifier.QualifierManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.QualifierRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
@@ -47,7 +48,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.qualifiers = Collections.emptySet();
+		this.qualifiers = new TreeSet<String>();
 		this.partial = false;
 		this.filter = filter;
 	}
@@ -57,7 +58,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.qualifiers = Collections.emptySet();
+		this.qualifiers = new TreeSet<String>();
 		this.partial = partial;
 		this.filter = filter;
 	}
@@ -90,6 +91,7 @@ class JDBCScanGenerator implements ScanGenerator {
 				conn.commit();
 			}
 			scan.insert();
+			qualifiers.add(QualifierManager.ALL_SCANS);
 			for (String name : qualifiers) {
 				QualifierRecord q = factory.newQualifier();
 				q.setName(name);
@@ -143,7 +145,7 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	public ScanGenerator qualifiers(Collection<String> qualifiers) {
 		if (qualifiers != null && !qualifiers.isEmpty()) {
-			this.qualifiers = new TreeSet<String>(qualifiers);
+			qualifiers.addAll(qualifiers);
 		}
 		return this;
 	}
@@ -159,8 +161,12 @@ class JDBCScanGenerator implements ScanGenerator {
 		try {
 			scan.update();
 			if (log.isLoggable(Level.FINE)) {
-        log.fine("Scan " + scan.getUid() + " for project " + projectName
-					+ " persisted to database, starting finding generation.");
+				log
+						.fine("Scan "
+								+ scan.getUid()
+								+ " for project "
+								+ projectName
+								+ " persisted to database, starting finding generation.");
 			}
 			conn.commit();
 			return scan.getUid();

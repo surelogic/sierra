@@ -11,6 +11,8 @@ import com.surelogic.sierra.jdbc.record.QualifierRecord;
 
 public final class QualifierManager {
 
+	public static final String ALL_SCANS = "__ALL_SCANS__";
+
 	@SuppressWarnings("unused")
 	private final Connection conn;
 
@@ -27,14 +29,15 @@ public final class QualifierManager {
 		findAllQualifierNames = conn.prepareStatement(FIND_ALL);
 	}
 
-	
-	
 	public List<String> getAllQualifierNames() throws SQLException {
 		ResultSet rs = findAllQualifierNames.executeQuery();
 		List<String> qualifierNames = new ArrayList<String>();
 		try {
 			while (rs.next()) {
-				qualifierNames.add(rs.getString(1));
+				final String name = rs.getString(1);
+				if (!ALL_SCANS.equals(name)) {
+					qualifierNames.add(name);
+				}
 			}
 		} finally {
 			rs.close();
@@ -43,45 +46,39 @@ public final class QualifierManager {
 	}
 
 	public void deleteQualifier(String name) throws SQLException {
-		QualifierRecord qualifier = qualifierFactory.newQualifier();
+		final QualifierRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(name);
-
-		/** If this qualifier does not exist, throw an error */
-		if (!qualifier.select()) {
-			// XXX Throw error
-			throw new SQLException();
+		if (ALL_SCANS.equals(name) || !qualifier.select()) {
+			throw new IllegalArgumentException("Qualifier with the name "
+					+ name + " does not exist or could not be deleted.");
 		}
-
 		qualifier.delete();
 	}
 
-	public Long newQualifier(String name) throws SQLException {
-		QualifierRecord qualifier = qualifierFactory.newQualifier();
+	public long newQualifier(String name) throws SQLException {
+		final QualifierRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(name);
-
 		/** If this qualifier already exists, throw an error */
-		if (qualifier.select()) {
-			// XXX Throw error
-			throw new SQLException();
+		if (ALL_SCANS.equals(name) || qualifier.select()) {
+			throw new IllegalArgumentException(
+					"Qualifier with this name already exists");
 		}
-
 		qualifier.insert();
-
 		return qualifier.getId();
 	}
 
 	public void renameQualifier(String currName, String newName)
 			throws SQLException {
-		QualifierRecord qualifier = qualifierFactory.newQualifier();
-
+		final QualifierRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(currName);
 
 		/** If this qualifier does not exist, throw an error */
-		if (!qualifier.select()) {
-			// XXX Throw error
-			throw new SQLException();
+		if (ALL_SCANS.equals(currName) || ALL_SCANS.equals(newName)
+				|| !qualifier.select()) {
+			throw new IllegalArgumentException("Qualifier with the name "
+					+ currName + " does not exist or could not be renamed to "
+					+ newName + ".");
 		}
-
 		qualifier.setName(newName);
 		qualifier.update();
 	}
