@@ -64,5 +64,15 @@ public class LogServletContextListener implements ServletContextListener {
 			SLLogger.getLogger()
 					.log(Level.SEVERE, I18N.err(29, logFileName), e);
 		}
+		final Runtime rt = Runtime.getRuntime();
+		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
+		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
+		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
+		SLLogger.getLogger().info(
+				"SureLogic : Java runtime: maxMemory=" + maxMemoryMB
+						+ " MB; totalMemory=" + totalMemoryMB
+						+ " MB; freeMemory=" + freeMemoryMB
+						+ " MB; availableProcessors="
+						+ rt.availableProcessors());
 	}
 }

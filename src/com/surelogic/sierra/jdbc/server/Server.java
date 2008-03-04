@@ -153,6 +153,7 @@ public class Server {
 				if (port != null) {
 					props.put("mail.smtp.port", port);
 				}
+				props.put("mail.smtp.starttls.enable","true");
 				props.put("mail.smtp.host", host);
 				props.put("mail.from",
 						((from == null) || (from.length() == 0)) ? to : from);
