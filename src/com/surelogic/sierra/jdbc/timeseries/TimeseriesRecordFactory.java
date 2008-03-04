@@ -3,10 +3,10 @@ package com.surelogic.sierra.jdbc.timeseries;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 
-public final class QualifierRecordFactory {
+public final class TimeseriesRecordFactory {
 
 	private static final String QUALIFIER_SELECT = "SELECT ID FROM QUALIFIER WHERE NAME = ?";
 	private static final String QUALIFIER_INSERT = "INSERT INTO QUALIFIER (NAME) VALUES (?)";
@@ -18,20 +18,20 @@ public final class QualifierRecordFactory {
 
 	private final UpdateBaseMapper qualifierMapper;
 
-	private QualifierRecordFactory(Connection conn) throws SQLException {
+	private TimeseriesRecordFactory(Connection conn) throws SQLException {
 		this.conn = conn;
 		
 		qualifierMapper = new UpdateBaseMapper(conn, QUALIFIER_INSERT,
 				QUALIFIER_SELECT, QUALIFIER_DELETE, QUALIFIER_UPDATE);
 	}
 
-	public static QualifierRecordFactory getInstance(Connection conn)
+	public static TimeseriesRecordFactory getInstance(Connection conn)
 			throws SQLException {
-		return new QualifierRecordFactory(conn);
+		return new TimeseriesRecordFactory(conn);
 	}
 	
-	public QualifierRecord newQualifier() throws SQLException {
-		return new QualifierRecord(qualifierMapper);
+	public TimeseriesRecord newQualifier() throws SQLException {
+		return new TimeseriesRecord(qualifierMapper);
 	}
 
 }

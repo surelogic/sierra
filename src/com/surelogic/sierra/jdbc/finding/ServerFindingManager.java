@@ -16,13 +16,13 @@ import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.ScanSummaryRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
-import com.surelogic.sierra.jdbc.timeseries.QualifierRecordFactory;
+import com.surelogic.sierra.jdbc.timeseries.TimeseriesRecordFactory;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
@@ -130,12 +130,12 @@ public final class ServerFindingManager extends FindingManager {
 			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
 			scan.setUid(scanUid);
 			if (scan.select()) {
-				List<QualifierRecord> qualifierRecs = new ArrayList<QualifierRecord>(
+				List<TimeseriesRecord> qualifierRecs = new ArrayList<TimeseriesRecord>(
 						qualifiers.size());
-				QualifierRecordFactory qFac = QualifierRecordFactory
+				TimeseriesRecordFactory qFac = TimeseriesRecordFactory
 						.getInstance(conn);
 				for (String q : qualifiers) {
-					QualifierRecord qRec = qFac.newQualifier();
+					TimeseriesRecord qRec = qFac.newQualifier();
 					qRec.setName(q);
 					if (qRec.select()) {
 						qualifierRecs.add(qRec);
@@ -363,7 +363,7 @@ public final class ServerFindingManager extends FindingManager {
 	 * @throws SQLException
 	 */
 	private void populateScanSummary(ScanRecord scan,
-			QualifierRecord qualifier, ProjectRecord project)
+			TimeseriesRecord qualifier, ProjectRecord project)
 			throws SQLException {
 		int idx = 1;
 		// Add scan summary information

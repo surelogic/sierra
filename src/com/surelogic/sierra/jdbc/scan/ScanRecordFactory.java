@@ -8,7 +8,7 @@ import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.BaseMapper;
 import com.surelogic.sierra.jdbc.record.ClassMetricRecord;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordMapper;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
@@ -86,12 +86,12 @@ public final class ScanRecordFactory {
 		return new ClassMetricRecord(classMetricMapper);
 	}
 
-	public QualifierRecord newQualifier() throws SQLException {
+	public TimeseriesRecord newQualifier() throws SQLException {
 		if (qualifierMapper == null) {
 			qualifierMapper = new UpdateBaseMapper(conn, null,
 					QUALIFIER_SELECT, null, null);
 		}
-		return new QualifierRecord(qualifierMapper);
+		return new TimeseriesRecord(qualifierMapper);
 	}
 
 	public QualifierScanRecord newScanQualifierRelation() throws SQLException {

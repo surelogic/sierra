@@ -4,11 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class QualifierRecord extends LongUpdatableRecord {
+public class TimeseriesRecord extends LongUpdatableRecord {
 
 	private String name;
 
-	public QualifierRecord(UpdateRecordMapper mapper) {
+	public TimeseriesRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -52,7 +52,7 @@ public class QualifierRecord extends LongUpdatableRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final QualifierRecord other = (QualifierRecord) obj;
+		final TimeseriesRecord other = (TimeseriesRecord) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

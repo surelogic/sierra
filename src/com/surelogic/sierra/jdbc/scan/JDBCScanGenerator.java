@@ -14,7 +14,7 @@ import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.QualifierScanRecord;
 import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
@@ -93,12 +93,12 @@ class JDBCScanGenerator implements ScanGenerator {
 			scan.insert();
 			qualifiers.add(QualifierManager.ALL_SCANS);
 			for (String name : qualifiers) {
-				QualifierRecord q = factory.newQualifier();
+				TimeseriesRecord q = factory.newQualifier();
 				q.setName(name);
 				if (q.select()) {
 					QualifierScanRecord rq = factory.newScanQualifierRelation();
 					rq
-							.setId(new RecordRelationRecord.PK<QualifierRecord, ScanRecord>(
+							.setId(new RecordRelationRecord.PK<TimeseriesRecord, ScanRecord>(
 									q, scan));
 					rq.insert();
 				} else {

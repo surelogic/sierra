@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.product.ProductRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProductRecord;
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
-import com.surelogic.sierra.jdbc.timeseries.QualifierRecordFactory;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
+import com.surelogic.sierra.jdbc.timeseries.TimeseriesRecordFactory;
 
 public final class ProductSeriesQueryBuilder {
 
@@ -59,7 +59,7 @@ public final class ProductSeriesQueryBuilder {
 					.newProduct();
 			p.setName(product);
 			if (p.select()) {
-				QualifierRecord q = QualifierRecordFactory.getInstance(conn)
+				TimeseriesRecord q = TimeseriesRecordFactory.getInstance(conn)
 						.newQualifier();
 				q.setName(timeSeries);
 				if (q.select()) {

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.surelogic.sierra.jdbc.record.QualifierRecord;
+import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 
 public final class QualifierManager {
 
@@ -19,12 +19,12 @@ public final class QualifierManager {
 	private static final String FIND_ALL = "SELECT NAME FROM QUALIFIER";
 	private final PreparedStatement findAllQualifierNames;
 
-	private final QualifierRecordFactory qualifierFactory;
+	private final TimeseriesRecordFactory qualifierFactory;
 
 	private QualifierManager(Connection conn) throws SQLException {
 		this.conn = conn;
 
-		qualifierFactory = QualifierRecordFactory.getInstance(conn);
+		qualifierFactory = TimeseriesRecordFactory.getInstance(conn);
 
 		findAllQualifierNames = conn.prepareStatement(FIND_ALL);
 	}
@@ -46,7 +46,7 @@ public final class QualifierManager {
 	}
 
 	public void deleteQualifier(String name) throws SQLException {
-		final QualifierRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(name);
 		if (ALL_SCANS.equals(name) || !qualifier.select()) {
 			throw new IllegalArgumentException("Qualifier with the name "
@@ -56,7 +56,7 @@ public final class QualifierManager {
 	}
 
 	public long newQualifier(String name) throws SQLException {
-		final QualifierRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(name);
 		/** If this qualifier already exists, throw an error */
 		if (ALL_SCANS.equals(name) || qualifier.select()) {
@@ -69,7 +69,7 @@ public final class QualifierManager {
 
 	public void renameQualifier(String currName, String newName)
 			throws SQLException {
-		final QualifierRecord qualifier = qualifierFactory.newQualifier();
+		final TimeseriesRecord qualifier = qualifierFactory.newQualifier();
 		qualifier.setName(currName);
 
 		/** If this qualifier does not exist, throw an error */
