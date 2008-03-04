@@ -6,7 +6,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
@@ -26,7 +28,7 @@ public class ServerInformationContent extends ContentComposite {
 	private final TextBox smtpHostTextBox = new TextBox();
 	private final TextBox smtpPortTextBox = new TextBox();
 	private final TextBox smtpUserTextBox = new TextBox();
-	private final TextBox smtpPassTextBox = new TextBox();
+	private final PasswordTextBox smtpPassTextBox = new PasswordTextBox();
 	private final Button updateEmailButton = new Button("Update Email Address");
 	private final Button testEmailButton = new Button("Test Email Notification");
 	private final StatusBox status = new StatusBox();
@@ -108,13 +110,14 @@ public class ServerInformationContent extends ContentComposite {
 
 			public void onClick(Widget sender) {
 				msService.testAdminEmail(new AsyncCallback() {
-
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+					public void onSuccess(Object result) {
+						updateInfo((ServerInfo) result);
 					}
 
-					public void onSuccess(Object result) {
-						// TODO Auto-generated method stub
+					public void onFailure(Throwable caught) {
+						status.setStatus(new Status(false,
+								"Error communicating with server"));
+						// TODO do some UI stuff to show failure
 					}
 				});
 				status
@@ -123,7 +126,18 @@ public class ServerInformationContent extends ContentComposite {
 								"If notification is set up correctly, you should receive an email at the given address."));
 			}
 		});
-		msService.getServerInfo(updateServerInfo);
+		msService.getServerInfo(new AsyncCallback() {
+
+			public void onSuccess(Object result) {
+				updateInfo((ServerInfo) result);
+			}
+
+			public void onFailure(Throwable caught) {
+				status.setStatus(new Status(false,
+						"Error communicating with server"));
+				// TODO do some UI stuff to show failure
+			}
+		});
 	}
 
 	protected boolean onDeactivate() {
@@ -144,7 +158,7 @@ public class ServerInformationContent extends ContentComposite {
 		smtpPortTextBox.setText(email.getPort());
 	}
 
-	private static String getString(TextBox box) {
+	private static String getString(TextBoxBase box) {
 		final String text = box.getText();
 		return ((text == null) || text.length() == 0) ? null : text;
 	}
