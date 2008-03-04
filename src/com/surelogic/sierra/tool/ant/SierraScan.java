@@ -11,135 +11,135 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
-//import org.apache.tools.ant.util.GlobPatternMapper;
-//import org.apache.tools.ant.util.SourceFileScanner;
 
-public class SierraScan extends Javac { 
-  /***************************************************************************
-   * Ant Task Attributes
-   **************************************************************************/
+// import org.apache.tools.ant.util.GlobPatternMapper;
+// import org.apache.tools.ant.util.SourceFileScanner;
 
-  // Optional attribute, if present, we send the scan document will be sent to
-  // this server
-  private String server = null;
+public class SierraScan extends Javac {
+	/***************************************************************************
+	 * Ant Task Attributes
+	 **************************************************************************/
 
-  // Optional attribute, required when we send the scan document will be sent
-  // to this server.
-  private String user;
-  // Optional attribute, required when we send the scan document will be sent
-  // to this server.
-  private String password;
-  
-  // Optional, but req'd if URL is set. Comma-separated list of qualifiers
-  private final List<String> qualifiers = new ArrayList<String>();
-  
-  @Override
-  protected void scanDir(File srcDir, File destDir, String[] files) {
-    /*
-    GlobPatternMapper m = new GlobPatternMapper();
-    m.setFrom("*.java");
-    m.setTo("*.class");
-    SourceFileScanner sfs = new SourceFileScanner(this);
-    File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
-    */
-    File[] newFiles = new File[files.length];
-    int i = 0;
-    for(String name : files) {
-      newFiles[i] = new File(srcDir, name); 
-      i++;
-    }
+	// Optional attribute, if present, we send the scan document will be sent to
+	// this server
+	private String server = null;
 
-    if (newFiles.length > 0) {
-        File[] newCompileList
-            = new File[compileList.length + newFiles.length];
-        System.arraycopy(compileList, 0, newCompileList, 0,
-                compileList.length);
-        System.arraycopy(newFiles, 0, newCompileList,
-                compileList.length, newFiles.length);
-        compileList = newCompileList;
-    }
-  }
-  
-  /**
-   * Modified from Javac.compile()
-   */
-  @Override
-  protected void compile() {
-    File destDir = this.getDestdir();
-    System.out.println(destDir.getAbsolutePath());
-    
-    if (compileList.length > 0) {
-        log("Scanning " + compileList.length + " source file"
-            + (compileList.length == 1 ? "" : "s")
-            //+ (destDir != null ? " to " + destDir : "")
-            );
+	// Optional attribute, required when we send the scan document will be sent
+	// to this server.
+	private String user;
+	// Optional attribute, required when we send the scan document will be sent
+	// to this server.
+	private String password;
 
-        if (listFiles) {
-            for (int i = 0; i < compileList.length; i++) {
-              String filename = compileList[i].getAbsolutePath();
-              log(filename);
-            }
-        }
+	// Optional, but req'd if URL is set. Comma-separated list of timeseries.
+	private final List<String> timeseries = new ArrayList<String>();
 
-        CompilerAdapter adapter = new SierraJavacAdapter(this);
+	@Override
+	protected void scanDir(File srcDir, File destDir, String[] files) {
+		/*
+		 * GlobPatternMapper m = new GlobPatternMapper(); m.setFrom("*.java");
+		 * m.setTo("*.class"); SourceFileScanner sfs = new
+		 * SourceFileScanner(this); File[] newFiles = sfs.restrictAsFiles(files,
+		 * srcDir, destDir, m);
+		 */
+		File[] newFiles = new File[files.length];
+		int i = 0;
+		for (String name : files) {
+			newFiles[i] = new File(srcDir, name);
+			i++;
+		}
 
-        // now we need to populate the compiler adapter
-        adapter.setJavac(this);
+		if (newFiles.length > 0) {
+			File[] newCompileList = new File[compileList.length
+					+ newFiles.length];
+			System.arraycopy(compileList, 0, newCompileList, 0,
+					compileList.length);
+			System.arraycopy(newFiles, 0, newCompileList, compileList.length,
+					newFiles.length);
+			compileList = newCompileList;
+		}
+	}
 
-        // finally, lets execute the compiler!!
-        if (!adapter.execute()) {
-            if (failOnError) {
-                throw new BuildException("Failed", getLocation());
-            } else {
-                log("Failed", Project.MSG_ERR);
-            }
-        }
-    }
-  }
-  
-  /***************************************************************************
-   * Getters and Setters for attributes
-   **************************************************************************/
+	/**
+	 * Modified from Javac.compile()
+	 */
+	@Override
+	protected void compile() {
+		File destDir = this.getDestdir();
+		System.out.println(destDir.getAbsolutePath());
 
-  public void setServer(String server) {
-    this.server = server;
-  }
+		if (compileList.length > 0) {
+			log("Scanning " + compileList.length + " source file"
+					+ (compileList.length == 1 ? "" : "s")
+			// + (destDir != null ? " to " + destDir : "")
+			);
 
-  public String getServer() {
-    return server;
-  }
+			if (listFiles) {
+				for (int i = 0; i < compileList.length; i++) {
+					String filename = compileList[i].getAbsolutePath();
+					log(filename);
+				}
+			}
 
-  public String getUser() {
-    return user;
-  }
+			CompilerAdapter adapter = new SierraJavacAdapter(this);
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+			// now we need to populate the compiler adapter
+			adapter.setJavac(this);
 
-  public String getPassword() {
-    return password;
-  }
+			// finally, lets execute the compiler!!
+			if (!adapter.execute()) {
+				if (failOnError) {
+					throw new BuildException("Failed", getLocation());
+				} else {
+					log("Failed", Project.MSG_ERR);
+				}
+			}
+		}
+	}
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
-  
-  /**
-   * @return the serverQualifier
-   */
-  public final List<String> getQualifiers() {
-    return qualifiers;
-  }
+	/***************************************************************************
+	 * Getters and Setters for attributes
+	 **************************************************************************/
 
-  /**
-   * @param serverQualifier
-   *            the serverQualifier to set
-   */
-  public final void setQualifiers(String qualifiers) {
-    String[] q = qualifiers.split(",");
-    for (String qualifier : q) {
-      this.qualifiers.add(qualifier.trim());
-    }
-  }
+	public void setServer(String server) {
+		this.server = server;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @return the server timeseries.
+	 */
+	public final List<String> getTimeseries() {
+		return timeseries;
+	}
+
+	/**
+	 * @param timeseries
+	 *            the server timeseries to set.
+	 */
+	public final void setTimeseries(String timeseries) {
+		String[] strings = timeseries.split(",");
+		for (String timeseriesName : strings) {
+			this.timeseries.add(timeseriesName.trim());
+		}
+	}
 }
