@@ -4,9 +4,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-//import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -15,14 +22,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -41,7 +57,6 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.MaximumFindingsShownDialog;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
@@ -54,17 +69,17 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
-  /**
-   * @see http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
-   */
-  private static final boolean USE_VIRTUAL = true;
-  
+	/**
+	 * @see http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
+	 */
+	private static final boolean USE_VIRTUAL = true;
+
 	private Table f_table = null;
 
 	MListOfFindingsColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
-    f_tables.add(this);
+		f_tables.add(this);
 	}
 
 	@Override
@@ -92,15 +107,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 		super.dispose();
 		getSelection().setShowingFindings(false);
 		getSelection().removeObserver(this);
-		
+
 		final int column = getColumnIndex();
 		if (column != -1)
 			getCascadingList().emptyFrom(column);
-		
+
 		notifyObserversOfDispose();
 	}
 
-  @Override
+	@Override
 	int getColumnIndex() {
 		if (f_table.isDisposed())
 			return -1;
@@ -110,11 +125,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	@Override
 	public void forceFocus() {
-	  f_table.forceFocus();
-	  getCascadingList().show(index);
+		f_table.forceFocus();
+		getCascadingList().show(index);
 	}
-	
-	public void selectionChanged(Selection selecton) {	  
+
+	public void selectionChanged(Selection selecton) {
 		changed();
 	}
 
@@ -162,8 +177,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_findingTypeName;
 		String f_categoryName;
 		String f_toolName;
-    int index;
-		
+		int index;
+
 		@Override
 		public String toString() {
 			return "finding_id=" + f_findingId + " [" + f_importance
@@ -172,129 +187,172 @@ public final class MListOfFindingsColumn extends MColumn implements
 					+ f_projectName + " " + f_packageName + "." + f_typeName
 					+ " at line " + f_lineNumber + " from " + f_toolName;
 		}
+
 		@Override
 		public boolean equals(Object o) {
-		  if (o instanceof FindingData) {
-		    FindingData other = (FindingData) o;
-		    return f_findingId == other.f_findingId;
-		  }
-		  return false;
+			if (o instanceof FindingData) {
+				FindingData other = (FindingData) o;
+				return f_findingId == other.f_findingId;
+			}
+			return false;
 		}
+
 		@Override
 		public int hashCode() {
-		  return (int) f_findingId; 
+			return (int) f_findingId;
 		}
 	}
 
-	private static abstract class ColumnData extends Column implements Cloneable, Comparator<FindingData> {	  
-	  ColumnData(String name) {
-	    super(name);
-	  }	
-	  ColumnData(String name, boolean visible, ColumnSort sort) {
-	    this(name);
-	    this.visible = visible;
-	    this.width = -1;
-	    this.sort = sort;
-	  }
-	  void setSort(ColumnSort s) {
-	    sort = s;
-	  }
-    void setWidth(int w) {
-      width = w;
-    }
-    void setIndex(int i) {
-      index = i;
-    }
-	  String getText(FindingData data)  { return ""; }
-	  Image getImage(FindingData data) { return null; }
+	private static abstract class ColumnData extends Column implements
+			Cloneable, Comparator<FindingData> {
+		ColumnData(String name) {
+			super(name);
+		}
 
-	  public int compare(FindingData o1, FindingData o2) {
-      return sort == ColumnSort.SORT_DOWN ? -compareInternal(o1,o2) : compareInternal(o1,o2);
-    }
-	  protected int compareInternal(FindingData o1, FindingData o2) {
-	    return StringComparators.SORT_ALPHABETICALLY.compare(getText(o1),getText(o2));
-	  }
-	  
-	  @Override
-    protected ColumnData clone() {
-	    try {
-        return (ColumnData) super.clone();
-      } catch (CloneNotSupportedException e) {
-        throw new RuntimeException("Couldn't clone "+this);
-      }
-	  }
-	}	
+		ColumnData(String name, boolean visible, ColumnSort sort) {
+			this(name);
+			this.visible = visible;
+			this.width = -1;
+			this.sort = sort;
+		}
+
+		void setSort(ColumnSort s) {
+			sort = s;
+		}
+
+		void setWidth(int w) {
+			width = w;
+		}
+
+		void setIndex(int i) {
+			index = i;
+		}
+
+		String getText(FindingData data) {
+			return "";
+		}
+
+		Image getImage(FindingData data) {
+			return null;
+		}
+
+		public int compare(FindingData o1, FindingData o2) {
+			return sort == ColumnSort.SORT_DOWN ? -compareInternal(o1, o2)
+					: compareInternal(o1, o2);
+		}
+
+		protected int compareInternal(FindingData o1, FindingData o2) {
+			return StringComparators.SORT_ALPHABETICALLY.compare(getText(o1),
+					getText(o2));
+		}
+
+		@Override
+		protected ColumnData clone() {
+			try {
+				return (ColumnData) super.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Couldn't clone " + this);
+			}
+		}
+	}
+
 	private static final List<ColumnData> f_columnPrototypes = createColumnPrototypes();
-	
-	private static List<ColumnData> createColumnPrototypes() {
-	  List<ColumnData> prototypes = new ArrayList<ColumnData>();
-	  prototypes.add(new ColumnData("Summary", true, ColumnSort.SORT_UP) {
-	    @Override String getText(FindingData data)  { 
-	      return data.f_summary; 
-	    }
-	    @Override Image getImage(FindingData data)  { 
-	      return Utility.getImageFor(data.f_importance);
-	    }
-	  });
-	  prototypes.add(new ColumnData("Importance") {
-	    @Override String getText(FindingData data)  { 
-	      return data.f_importance.toStringSentenceCase(); 
-	    }
-      /*
-	    @Override Image getImage(FindingData data)  { 
-        return Utility.getImageFor(data.f_importance);
-      }
-      */
-      @Override
-      protected int compareInternal(FindingData o1, FindingData o2) {
-        return o1.f_importance.ordinal() - o2.f_importance.ordinal();
-      }
-    });
-	  prototypes.add(new ColumnData("Project") {
-      @Override String getText(FindingData data)  { return data.f_projectName; }
-    });
-	  prototypes.add(new ColumnData("Package") {
-      @Override String getText(FindingData data)  { return data.f_packageName; }
-    });
-	  prototypes.add(new ColumnData("Line#") {
-      @Override String getText(FindingData data)  { return Integer.toString(data.f_lineNumber); }
-      @Override
-      protected int compareInternal(FindingData o1, FindingData o2) {
-        return o1.f_lineNumber - o2.f_lineNumber;
-      }
-    });
-	  prototypes.add(new ColumnData("Type") {
-      @Override String getText(FindingData data)  { return data.f_typeName; }
-    });
-	  prototypes.add(new ColumnData("Finding Type") {
-      @Override String getText(FindingData data)  { return data.f_findingTypeName; }
-    });
-	  prototypes.add(new ColumnData("Finding Category") {
-      @Override String getText(FindingData data)  { return data.f_categoryName; }
-    });
-	  prototypes.add(new ColumnData("Tool") {
-	    @Override String getText(FindingData data)  { return data.f_toolName; }
-	  });
 
-	  int i = 0; 
-	  for(ColumnData data : prototypes) {
-	    data.setIndex(i);
-	    i++;
-	  }
-	  return Collections.unmodifiableList(prototypes);
+	private static List<ColumnData> createColumnPrototypes() {
+		List<ColumnData> prototypes = new ArrayList<ColumnData>();
+		prototypes.add(new ColumnData("Summary", true, ColumnSort.SORT_UP) {
+			@Override
+			String getText(FindingData data) {
+				return data.f_summary;
+			}
+
+			@Override
+			Image getImage(FindingData data) {
+				return Utility.getImageFor(data.f_importance);
+			}
+		});
+		prototypes.add(new ColumnData("Importance") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_importance.toStringSentenceCase();
+			}
+
+			/*
+			 * @Override Image getImage(FindingData data) { return
+			 * Utility.getImageFor(data.f_importance); }
+			 */
+			@Override
+			protected int compareInternal(FindingData o1, FindingData o2) {
+				return o1.f_importance.ordinal() - o2.f_importance.ordinal();
+			}
+		});
+		prototypes.add(new ColumnData("Project") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_projectName;
+			}
+		});
+		prototypes.add(new ColumnData("Package") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_packageName;
+			}
+		});
+		prototypes.add(new ColumnData("Line#") {
+			@Override
+			String getText(FindingData data) {
+				return Integer.toString(data.f_lineNumber);
+			}
+
+			@Override
+			protected int compareInternal(FindingData o1, FindingData o2) {
+				return o1.f_lineNumber - o2.f_lineNumber;
+			}
+		});
+		prototypes.add(new ColumnData("Type") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_typeName;
+			}
+		});
+		prototypes.add(new ColumnData("Finding Type") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_findingTypeName;
+			}
+		});
+		prototypes.add(new ColumnData("Finding Category") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_categoryName;
+			}
+		});
+		prototypes.add(new ColumnData("Tool") {
+			@Override
+			String getText(FindingData data) {
+				return data.f_toolName;
+			}
+		});
+
+		int i = 0;
+		for (ColumnData data : prototypes) {
+			data.setIndex(i);
+			i++;
+		}
+		return Collections.unmodifiableList(prototypes);
 	}
-	
+
 	public static Iterable<String> getColumnNames() {
-	  List<String> names = new ArrayList<String>();
-	  for(ColumnData data : f_columnPrototypes) {
-	    names.add(data.getName());
-	  }
-	  return names;
+		List<String> names = new ArrayList<String>();
+		for (ColumnData data : f_columnPrototypes) {
+			names.add(data.getName());
+		}
+		return names;
 	}
-	
-	private final List<FindingData> f_rows = new /*CopyOnWrite*/ArrayList<FindingData>();
-  private boolean f_isLimited = false;
-	
+
+	private final List<FindingData> f_rows = new /* CopyOnWrite */ArrayList<FindingData>();
+	private boolean f_isLimited = false;
+
 	public void refreshData() {
 		final String query = getQuery();
 		try {
@@ -309,11 +367,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 					final ResultSet rs = st.executeQuery(query);
 					f_rows.clear();
 					f_isLimited = false;
-					
+
 					final int findingsListLimit = PreferenceConstants
 							.getFindingsListLimit();
 					while (rs.next()) {
-					  int i = f_rows.size();
+						int i = f_rows.size();
 						if (i < findingsListLimit) {
 							FindingData data = new FindingData();
 							data.f_summary = rs.getString(1);
@@ -330,39 +388,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 							data.index = i;
 							f_rows.add(data);
 						} else {
-						  f_isLimited = true;
-						  
-							/*
-							 * We skipped a row so inform the user
-							 */
-							class WarningDialog extends SLUIJob {
-
-								final private int f_findingsLimit;
-								final private int f_findingsCount;
-
-								public WarningDialog(int findingsLimit,
-										int findingsCount) {
-									f_findingsLimit = findingsListLimit;
-									f_findingsCount = findingsCount;
-								}
-
-								@Override
-								public IStatus runInUIThread(
-										IProgressMonitor monitor) {
-									if (PreferenceConstants
-											.warnAboutMaximumFindingsShown()) {
-										Dialog dialog = new MaximumFindingsShownDialog(
-												f_findingsLimit,
-												f_findingsCount);
-										dialog.open();
-									}
-									return Status.OK_STATUS;
-								}
-							}
-							final UIJob job = new WarningDialog(
-									findingsListLimit, getSelection()
-											.getFindingCountPorous());
-							job.schedule();
+							f_isLimited = true;
 							break;
 						}
 					}
@@ -405,12 +431,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public void keyPressed(KeyEvent e) {
 			if (e.character == 0x01 && f_table != null) {
 				f_table.selectAll();
-			}
-			else if (e.keyCode == SWT.ARROW_LEFT) {
-			  getPreviousColumn().forceFocus();
-			}
-			else if (e.keyCode == SWT.ARROW_RIGHT /* || == ENTER */) {
-			  f_doubleClick.handleEvent(null);
+			} else if (e.keyCode == SWT.ARROW_LEFT) {
+				getPreviousColumn().forceFocus();
+			} else if (e.keyCode == SWT.ARROW_RIGHT /* || == ENTER */) {
+				f_doubleClick.handleEvent(null);
 			}
 		}
 
@@ -420,8 +444,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	};
 
 	private final AtomicReference<FindingData> lastSelected = new AtomicReference<FindingData>();
-  private final Stack<FindingData> nearSelected = new Stack<FindingData>();
-	
+	private final Stack<FindingData> nearSelected = new Stack<FindingData>();
+
 	private final Listener f_doubleClick = new Listener() {
 		public void handleEvent(Event event) {
 			final FindingData data = lastSelected.get();
@@ -446,8 +470,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 				final FindingData data = (FindingData) item.getData();
 				lastSelected.set(data);
 				addNearSelected(data.index - 1);
-        addNearSelected(data.index + 1);
-				
+				addNearSelected(data.index + 1);
+
 				/*
 				 * Ensure the view is visible but don't change the focus.
 				 */
@@ -459,19 +483,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		}
 	};
-	
-  protected void addNearSelected(int i) {
-    if (i >= 0 && i < f_rows.size()) {
-      nearSelected.add(f_rows.get(i));
-    }
-  }
-	
+
+	protected void addNearSelected(int i) {
+		if (i >= 0 && i < f_rows.size()) {
+			nearSelected.add(f_rows.get(i));
+		}
+	}
+
 	private final IColumn f_iColumn = new IColumn() {
 		public Composite createContents(Composite panel) {
-		  int mods = SWT.FULL_SELECTION | SWT.MULTI;
-		  if (USE_VIRTUAL) {
-		    mods = mods | SWT.VIRTUAL;
-		  }		  
+			int mods = SWT.FULL_SELECTION | SWT.MULTI;
+			if (USE_VIRTUAL) {
+				mods = mods | SWT.VIRTUAL;
+			}
 			f_table = new Table(panel, mods);
 			f_table.setLinesVisible(true);
 			f_table.addListener(SWT.MouseDoubleClick, f_doubleClick);
@@ -479,50 +503,49 @@ public final class MListOfFindingsColumn extends MColumn implements
 			f_table.addKeyListener(f_keyListener);
 			f_table.setItemCount(0);
 			createTableColumns();
-			
+
 			if (USE_VIRTUAL) {
-			  f_table.addListener(SWT.SetData, new Listener() {
-			    // Only called the first time the TableItem is shown
-			    // Intended to initialize the item
-			    public void handleEvent(Event event) {
-			      final TableItem item = (TableItem) event.item;
-			      final int index = event.index;
-			      FindingData data = f_rows.get(index);
-			      initTableItem(event.index, data, item);
-			    }
-			  });
-			}	  
+				f_table.addListener(SWT.SetData, new Listener() {
+					// Only called the first time the TableItem is shown
+					// Intended to initialize the item
+					public void handleEvent(Event event) {
+						final TableItem item = (TableItem) event.item;
+						final int index = event.index;
+						FindingData data = f_rows.get(index);
+						initTableItem(event.index, data, item);
+					}
+				});
+			}
 			f_table.addListener(SWT.Traverse, new Listener() {
-        public void handleEvent(Event e) {
-          switch (e.detail) {
-            case SWT.TRAVERSE_ESCAPE:
-              setCustomTabTraversal(e);
-              if (getPreviousColumn() instanceof MRadioMenuColumn) {
-                MRadioMenuColumn column = (MRadioMenuColumn) getPreviousColumn();
-                column.escape(null);
-                /*
-                column.clearSelection();
-                column.emptyAfter(); // e.g. eliminate myself
-                column.forceFocus();
-                */
-              }
-              break;
-            case SWT.TRAVERSE_TAB_NEXT:
-              // Ignore, since we should be the last column
-              setCustomTabTraversal(e);
-              break;
-            case SWT.TRAVERSE_TAB_PREVIOUS:
-              setCustomTabTraversal(e);
-              getPreviousColumn().forceFocus();
-              break;
-            case SWT.TRAVERSE_RETURN:
-              setCustomTabTraversal(e);
-              f_doubleClick.handleEvent(null);
-              break;                       
-          }
-        }		  
+				public void handleEvent(Event e) {
+					switch (e.detail) {
+					case SWT.TRAVERSE_ESCAPE:
+						setCustomTabTraversal(e);
+						if (getPreviousColumn() instanceof MRadioMenuColumn) {
+							MRadioMenuColumn column = (MRadioMenuColumn) getPreviousColumn();
+							column.escape(null);
+							/*
+							 * column.clearSelection(); column.emptyAfter(); //
+							 * e.g. eliminate myself column.forceFocus();
+							 */
+						}
+						break;
+					case SWT.TRAVERSE_TAB_NEXT:
+						// Ignore, since we should be the last column
+						setCustomTabTraversal(e);
+						break;
+					case SWT.TRAVERSE_TAB_PREVIOUS:
+						setCustomTabTraversal(e);
+						getPreviousColumn().forceFocus();
+						break;
+					case SWT.TRAVERSE_RETURN:
+						setCustomTabTraversal(e);
+						f_doubleClick.handleEvent(null);
+						break;
+					}
+				}
 			});
-			
+
 			final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
 			f_table.setMenu(menu);
 
@@ -544,22 +567,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		}
 		sortBasedOnColumns();
-		
+
 		if (USE_VIRTUAL) {
-		  // Creates that many table items -- not necessarily initialized
-		  f_table.setItemCount(f_rows.size());
+			// Creates that many table items -- not necessarily initialized
+			f_table.setItemCount(f_rows.size());
 		}
-		  
+
 		boolean selectionFound = false;
 		int i = 0;
 		for (FindingData data : f_rows) {
-		  if (!USE_VIRTUAL) {
-		    final TableItem item = new TableItem(f_table, SWT.NONE);
-		    selectionFound = initTableItem(i, data, item);
-		  } 
-		  // Only needed if virtual
-		  // Sets up the table to show the previous selection
-		  else if (data.f_findingId == f_findingId) {
+			if (!USE_VIRTUAL) {
+				final TableItem item = new TableItem(f_table, SWT.NONE);
+				selectionFound = initTableItem(i, data, item);
+			}
+			// Only needed if virtual
+			// Sets up the table to show the previous selection
+			else if (data.f_findingId == f_findingId) {
 				initTableItem(i, data, f_table.getItem(i));
 				selectionFound = true;
 				break;
@@ -567,37 +590,36 @@ public final class MListOfFindingsColumn extends MColumn implements
 			i++;
 		}
 		if (!selectionFound) {
-		  // Look for a near-selection
-		  FindingData data = null;		
-		  if (!nearSelected.isEmpty()) {
-		    Set<FindingData> rows = new HashSet<FindingData>(f_rows);
-		    while (!nearSelected.isEmpty()) {
-		      data = nearSelected.pop();
-		      if (rows.contains(data)) {
-		        initTableItem(data.index, data, f_table.getItem(data.index));
-		        break;
-		      }
-		    }
-		  }
-		  f_findingId = (data == null) ? -1 : data.f_findingId;
+			// Look for a near-selection
+			FindingData data = null;
+			if (!nearSelected.isEmpty()) {
+				Set<FindingData> rows = new HashSet<FindingData>(f_rows);
+				while (!nearSelected.isEmpty()) {
+					data = nearSelected.pop();
+					if (rows.contains(data)) {
+						initTableItem(data.index, data, f_table
+								.getItem(data.index));
+						break;
+					}
+				}
+			}
+			f_findingId = (data == null) ? -1 : data.f_findingId;
 		}
-    nearSelected.clear();
-		
-    /*
-		for (TableColumn c : f_table.getColumns()) {
-			c.pack();
+		nearSelected.clear();
+
+		/*
+		 * for (TableColumn c : f_table.getColumns()) { c.pack(); }
+		 */
+		updateTableColumns();
+
+		f_table.layout();
+		if (USE_VIRTUAL) {
+			// Computes the appropriate width for the longest item
+			Point p = f_table.getSize();
+			final int width = computeValueWidth();
+			f_table.setSize(width, p.y);
 		}
-		*/
-    updateTableColumns();
-    
-    f_table.layout();
-    if (USE_VIRTUAL) {
-      // Computes the appropriate width for the longest item
-      Point p = f_table.getSize();
-      final int width = computeValueWidth();
-      f_table.setSize(width, p.y);
-    }
-    
+
 		f_table.setRedraw(true);
 		/*
 		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
@@ -609,219 +631,218 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private void sortBasedOnColumns() {
-	  Comparator<FindingData> c = null;
-	  // Traverse order backwards to construct proper comparator
-	  int[] order = f_table.getColumnOrder();	  
-	  for(int i=order.length-1; i>=0; i--) {
-	    final TableColumn tc = f_table.getColumn(i);
-	    final ColumnData cd = (ColumnData) tc.getData();
-	    if (!cd.isVisible() || cd.getSort() == ColumnSort.UNSORTED) {
-	      continue; // Nothing to sort
-	    }
-	    if (c == null) {
-	      c = cd;
-	    } else {
-	      final Comparator<FindingData> oldCompare = c;
-	      c = new Comparator<FindingData>() {
-          public int compare(FindingData o1, FindingData o2) {
-            int result = cd.compare(o1, o2);
-            if (result == 0) {
-              return oldCompare.compare(o1, o2);
-            }
-            return result;
-          }	        
-	      };
-	    }
-	  }
-	  if (c == null) {
-	    c = getDefaultColumn(); // The default sort
-	  }
-	  Collections.sort(f_rows, c);
-  }
+		Comparator<FindingData> c = null;
+		// Traverse order backwards to construct proper comparator
+		int[] order = f_table.getColumnOrder();
+		for (int i = order.length - 1; i >= 0; i--) {
+			final TableColumn tc = f_table.getColumn(i);
+			final ColumnData cd = (ColumnData) tc.getData();
+			if (!cd.isVisible() || cd.getSort() == ColumnSort.UNSORTED) {
+				continue; // Nothing to sort
+			}
+			if (c == null) {
+				c = cd;
+			} else {
+				final Comparator<FindingData> oldCompare = c;
+				c = new Comparator<FindingData>() {
+					public int compare(FindingData o1, FindingData o2) {
+						int result = cd.compare(o1, o2);
+						if (result == 0) {
+							return oldCompare.compare(o1, o2);
+						}
+						return result;
+					}
+				};
+			}
+		}
+		if (c == null) {
+			c = getDefaultColumn(); // The default sort
+		}
+		Collections.sort(f_rows, c);
+	}
 
 	private boolean createTableColumns = false;
-	
-  private void createTableColumns() {
-    createTableColumns = true;    
-    int[] order = new int[getSelection().getNumColumns()];
-    int i = 0;
-	  for(final Column c : getSelection().getColumns()) {
-	    final ColumnData data = (ColumnData) c;
-	    final TableColumn tc = new TableColumn(f_table, SWT.NONE);
-	    tc.setText(data.getName());
-	    tc.setData(data);
-	    tc.setMoveable(true);
-	    tc.addListener(SWT.Selection, new Listener() {
-        public void handleEvent(Event event) {
-          // Toggle sort
-          switch (data.getSort()) {
-            case SORT_DOWN: 
-            default:
-              data.setSort(ColumnSort.UNSORTED);
-              break;
-            case SORT_UP:
-              data.setSort(ColumnSort.SORT_DOWN);
-              break;
-            case UNSORTED:
-              data.setSort(ColumnSort.SORT_UP);
-              break;
-          }
-          updateTableContents(); 
-        }	      
-	    });
-	    tc.addControlListener(new ControlListener() {
-        public void controlMoved(ControlEvent e) {
-          if (!createTableColumns && !updateTableColumns) {
-            int[] currentOrder = f_table.getColumnOrder();
-            TableColumn[] columns = f_table.getColumns();
-            for(int i=0; i<currentOrder.length; i++) {
-              if (tc == columns[currentOrder[i]]) {
-                System.out.println(data.getIndex()+" -> "+i);
-                data.setIndex(i);
-                break;
-              }
-            }           
-          }
-        }
-        public void controlResized(ControlEvent e) {
-          if (!updateTableColumns) {
-            saveColumnAppearance(data, tc);
-          }
-        }	      
-	    });	    
-	    order[data.getIndex()] = i;
-	    i++;
-	  }
-	  f_table.setColumnOrder(order);
-	  createTableColumns = false;
+
+	private void createTableColumns() {
+		createTableColumns = true;
+		int[] order = new int[getSelection().getNumColumns()];
+		int i = 0;
+		for (final Column c : getSelection().getColumns()) {
+			final ColumnData data = (ColumnData) c;
+			final TableColumn tc = new TableColumn(f_table, SWT.NONE);
+			tc.setText(data.getName());
+			tc.setData(data);
+			tc.setMoveable(true);
+			tc.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					// Toggle sort
+					switch (data.getSort()) {
+					case SORT_DOWN:
+					default:
+						data.setSort(ColumnSort.UNSORTED);
+						break;
+					case SORT_UP:
+						data.setSort(ColumnSort.SORT_DOWN);
+						break;
+					case UNSORTED:
+						data.setSort(ColumnSort.SORT_UP);
+						break;
+					}
+					updateTableContents();
+				}
+			});
+			tc.addControlListener(new ControlListener() {
+				public void controlMoved(ControlEvent e) {
+					if (!createTableColumns && !updateTableColumns) {
+						int[] currentOrder = f_table.getColumnOrder();
+						TableColumn[] columns = f_table.getColumns();
+						for (int i = 0; i < currentOrder.length; i++) {
+							if (tc == columns[currentOrder[i]]) {
+								System.out
+										.println(data.getIndex() + " -> " + i);
+								data.setIndex(i);
+								break;
+							}
+						}
+					}
+				}
+
+				public void controlResized(ControlEvent e) {
+					if (!updateTableColumns) {
+						saveColumnAppearance(data, tc);
+					}
+				}
+			});
+			order[data.getIndex()] = i;
+			i++;
+		}
+		f_table.setColumnOrder(order);
+		createTableColumns = false;
 	}
 
 	/**
 	 * To be called after f_rows has been initialized
 	 */
 	private boolean loadColumnAppearance(TableColumn tc) {
-	  ColumnData data = (ColumnData) tc.getData();
-	  tc.setResizable(data.isVisible());
-	  if (data.isVisible()) {
-	    if (data.getWidth() < 0) {
-	      data.setWidth(computeValueWidth(data));
-	    } 
-	    tc.setWidth(data.getWidth());	    
-	  } else {
-	    tc.setWidth(0);
-	  }
-	  Image img;
-	  switch (data.getSort()) {
-	    case SORT_DOWN: 
-	      img = SLImages.getImage(SLImages.IMG_DOWN);
-	      break;
-	    case SORT_UP:
-	      img = SLImages.getImage(SLImages.IMG_UP);
-	      break;
-	    case UNSORTED:
-	    default:
-	      img = null;
-	      break;
-	  }
-    tc.setImage(img);	  
-	  return data.isVisible();
+		ColumnData data = (ColumnData) tc.getData();
+		tc.setResizable(data.isVisible());
+		if (data.isVisible()) {
+			if (data.getWidth() < 0) {
+				data.setWidth(computeValueWidth(data));
+			}
+			tc.setWidth(data.getWidth());
+		} else {
+			tc.setWidth(0);
+		}
+		Image img;
+		switch (data.getSort()) {
+		case SORT_DOWN:
+			img = SLImages.getImage(SLImages.IMG_DOWN);
+			break;
+		case SORT_UP:
+			img = SLImages.getImage(SLImages.IMG_UP);
+			break;
+		case UNSORTED:
+		default:
+			img = null;
+			break;
+		}
+		tc.setImage(img);
+		return data.isVisible();
 	}
 
 	static void saveColumnAppearance(ColumnData data, TableColumn tc) {
-	  // System.out.println("width = "+tc.getWidth());
-	  data.setWidth(tc.getWidth());
+		// System.out.println("width = "+tc.getWidth());
+		data.setWidth(tc.getWidth());
 	}
-  /*
-  private static void setColumnVisible(TableColumn tc, boolean visible) {
-    ColumnData data = (ColumnData) tc.getData();
-    if (visible) {
-      tc.setWidth(data.width);
-      tc.setResizable(true);
-    } else {
-      data.width = tc.getWidth();
-      tc.setWidth(0);
-      tc.setResizable(false);
-    }
-  }
-  */
-	private boolean updateTableColumns = false;
-	
-  private void updateTableColumns() {
-    int numVisible = 0;
-    TableColumn lastVisible = null;
-    updateTableColumns = true;
-    
-    for(TableColumn tc : f_table.getColumns()) {
-      if (loadColumnAppearance(tc)) {
-        numVisible++;
-        lastVisible = tc;
-      }
-    }
-    if (numVisible == 1) {
-      ColumnData cd = (ColumnData) lastVisible.getData();
-      lastVisible.setWidth(computeValueWidth(cd));
-    } 
-    updateTableColumns = false;
-    f_table.setHeaderVisible(numVisible > 1);
-  }
 
-  /*
-	 * This actually finds the longest item, and
-	 * creates a real TableItem for that item 
-	 * to ensure that the table gets sized properly
+	/*
+	 * private static void setColumnVisible(TableColumn tc, boolean visible) {
+	 * ColumnData data = (ColumnData) tc.getData(); if (visible) {
+	 * tc.setWidth(data.width); tc.setResizable(true); } else { data.width =
+	 * tc.getWidth(); tc.setWidth(0); tc.setResizable(false); } }
+	 */
+	private boolean updateTableColumns = false;
+
+	private void updateTableColumns() {
+		int numVisible = 0;
+		TableColumn lastVisible = null;
+		updateTableColumns = true;
+
+		for (TableColumn tc : f_table.getColumns()) {
+			if (loadColumnAppearance(tc)) {
+				numVisible++;
+				lastVisible = tc;
+			}
+		}
+		if (numVisible == 1) {
+			ColumnData cd = (ColumnData) lastVisible.getData();
+			lastVisible.setWidth(computeValueWidth(cd));
+		}
+		updateTableColumns = false;
+		f_table.setHeaderVisible(numVisible > 1);
+	}
+
+	/*
+	 * This actually finds the longest item, and creates a real TableItem for
+	 * that item to ensure that the table gets sized properly
 	 */
 	int computeValueWidth() {
-	  return computeValueWidth(getDefaultColumn());
+		return computeValueWidth(getDefaultColumn());
 	}
-	
-	ColumnData getDefaultColumn() {
-	  String name = f_columnPrototypes.get(0).getName();
-	  return (ColumnData) getSelection().getColumn(name);
-	}
-	
-	private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
-	
-	int computeValueWidth(final ColumnData cd) {
-	  Image temp = new Image(null, 100, 100);
-	  GC gc = new GC(temp);
-	  int longest = 0;
-	  FindingData longestData = null;
-	  int longestIndex = -1;
-	  int i = 0;
-	  for(FindingData data : f_rows) {
-	    Point size = gc.textExtent(cd.getText(data));
-	    Image img = cd.getImage(data);
-	    Rectangle rect = (img == null) ? ZERO : img.getBounds();
-	    int width = size.x + rect.width;
-	    if (width > longest) {
-	      longest = width;
-	      longestData = data;
-	      longestIndex = i;
-	    }	      
-	    i++;
-	  }
-	  gc.dispose();
-	  temp.dispose();
-	  if (longestData != null) {
-	    if (longestIndex >= f_table.getItemCount()) {
-	      LOG.warning("Got index outside of table: "+longestIndex+", "+f_table.getItemCount());
-	    } else {
-	      initTableItem(longestIndex, longestData, f_table.getItem(longestIndex));
-	    }
-	  }
 
-	  if (longest < 25) {
-	    return 30;
-	  }
-	  return longest + 5;
+	ColumnData getDefaultColumn() {
+		String name = f_columnPrototypes.get(0).getName();
+		return (ColumnData) getSelection().getColumn(name);
 	}
-	
-	private boolean initTableItem(final int i, FindingData data, final TableItem item) {
-	  if (i != data.index) {
-	    // Now set, because we're sorting
-	    data.index = i;
-	    //throw new IllegalArgumentException(i+" != data.index: "+data.index);
-	  }
+
+	private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
+
+	int computeValueWidth(final ColumnData cd) {
+		Image temp = new Image(null, 100, 100);
+		GC gc = new GC(temp);
+		int longest = 0;
+		FindingData longestData = null;
+		int longestIndex = -1;
+		int i = 0;
+		for (FindingData data : f_rows) {
+			Point size = gc.textExtent(cd.getText(data));
+			Image img = cd.getImage(data);
+			Rectangle rect = (img == null) ? ZERO : img.getBounds();
+			int width = size.x + rect.width;
+			if (width > longest) {
+				longest = width;
+				longestData = data;
+				longestIndex = i;
+			}
+			i++;
+		}
+		gc.dispose();
+		temp.dispose();
+		if (longestData != null) {
+			if (longestIndex >= f_table.getItemCount()) {
+				LOG.warning("Got index outside of table: " + longestIndex
+						+ ", " + f_table.getItemCount());
+			} else {
+				initTableItem(longestIndex, longestData, f_table
+						.getItem(longestIndex));
+			}
+		}
+
+		if (longest < 25) {
+			return 30;
+		}
+		return longest + 5;
+	}
+
+	private boolean initTableItem(final int i, FindingData data,
+			final TableItem item) {
+		if (i != data.index) {
+			// Now set, because we're sorting
+			data.index = i;
+			// throw new IllegalArgumentException(i+" != data.index:
+			// "+data.index);
+		}
 		item.setText(data.f_summary);
 		item.setImage(Utility.getImageFor(data.f_importance));
 		item.setData(data);
@@ -830,25 +851,21 @@ public final class MListOfFindingsColumn extends MColumn implements
 			return true;
 		}
 		// Init columns
-		//int numVisible = 0;
+		// int numVisible = 0;
 		int j = 0;
-    for(TableColumn tc : f_table.getColumns()) {
-      ColumnData cd = (ColumnData) tc.getData();      
-      item.setText(j, cd.getText(data));
-      item.setImage(j, cd.getImage(data));
-      /*
-      if (tc.getResizable()) {
-        numVisible++;
-      }
-      */
-      j++;
-    }
-    /*
-    // Special handling
-    if (numVisible == 1) {
-      item.setImage(0, Utility.getImageFor(data.f_importance));
-    }
-    */
+		for (TableColumn tc : f_table.getColumns()) {
+			ColumnData cd = (ColumnData) tc.getData();
+			item.setText(j, cd.getText(data));
+			item.setImage(j, cd.getImage(data));
+			/*
+			 * if (tc.getResizable()) { numVisible++; }
+			 */
+			j++;
+		}
+		/*
+		 * // Special handling if (numVisible == 1) { item.setImage(0,
+		 * Utility.getImageFor(data.f_importance)); }
+		 */
 		return false;
 	}
 
@@ -955,18 +972,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 		});
 
 		final Listener changeImportance = new SelectionListener() {
-      private Importance getImportance(MenuItem item) {
-        return Importance.valueOf(item.getText().toUpperCase());
-      }
-      @Override
-      protected void handleFinding(MenuItem item, FindingData data) {
-        FindingMutationUtility.asyncChangeImportance(data.f_findingId, data.f_importance, 
-                                                     getImportance(item));
-      }
-      @Override
-      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
-        FindingMutationUtility.asyncChangeImportance(ids, getImportance(item));
-      }
+			private Importance getImportance(MenuItem item) {
+				return Importance.valueOf(item.getText().toUpperCase());
+			}
+
+			@Override
+			protected void handleFinding(MenuItem item, FindingData data) {
+				FindingMutationUtility.asyncChangeImportance(data.f_findingId,
+						data.f_importance, getImportance(item));
+			}
+
+			@Override
+			protected void handleFindings(MenuItem item, FindingData data,
+					Collection<Long> ids) {
+				FindingMutationUtility.asyncChangeImportance(ids,
+						getImportance(item));
+			}
 		};
 		setCritical.addListener(SWT.Selection, changeImportance);
 		setHigh.addListener(SWT.Selection, changeImportance);
@@ -975,28 +996,35 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setIrrelevant.addListener(SWT.Selection, changeImportance);
 
 		quickAudit.addListener(SWT.Selection, new SelectionListener() {
-      @Override
-      protected void handleFinding(MenuItem item, FindingData data) {
-        FindingMutationUtility.asyncComment(data.f_findingId, FindingDetailsMediator.STAMP_COMMENT);
-      }
-      @Override
-      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
-        FindingMutationUtility.asyncComment(ids, FindingDetailsMediator.STAMP_COMMENT);
-      }
+			@Override
+			protected void handleFinding(MenuItem item, FindingData data) {
+				FindingMutationUtility.asyncComment(data.f_findingId,
+						FindingDetailsMediator.STAMP_COMMENT);
+			}
+
+			@Override
+			protected void handleFindings(MenuItem item, FindingData data,
+					Collection<Long> ids) {
+				FindingMutationUtility.asyncComment(ids,
+						FindingDetailsMediator.STAMP_COMMENT);
+			}
 		});
 
-		filterFindingTypeFromScans.addListener(SWT.Selection, new SelectionListener() {
-      @Override
-      protected void handleFinding(MenuItem item, FindingData data) {
-        FindingMutationUtility
-        .asyncFilterFindingTypeFromScans(data.f_findingId, data.f_findingTypeName);
-      }
-      @Override
-      protected void handleFindings(MenuItem item, FindingData data, Collection<Long> ids) {
-        FindingMutationUtility
-        .asyncFilterFindingTypeFromScans(ids, data.f_findingTypeName);
-      }
-		});
+		filterFindingTypeFromScans.addListener(SWT.Selection,
+				new SelectionListener() {
+					@Override
+					protected void handleFinding(MenuItem item, FindingData data) {
+						FindingMutationUtility.asyncFilterFindingTypeFromScans(
+								data.f_findingId, data.f_findingTypeName);
+					}
+
+					@Override
+					protected void handleFindings(MenuItem item,
+							FindingData data, Collection<Long> ids) {
+						FindingMutationUtility.asyncFilterFindingTypeFromScans(
+								ids, data.f_findingTypeName);
+					}
+				});
 
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
 		export.setText("Export...");
@@ -1012,25 +1040,28 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private abstract class SelectionListener implements Listener {
-    public final void handleEvent(Event event) {
-      if (event.widget instanceof MenuItem) {
-        MenuItem item = (MenuItem) event.widget;
-        if (item.getData() instanceof int[]) {
-          final int[] itemIndices = (int[]) item.getData();
-          final FindingData data = f_rows.get(itemIndices[0]);
-          if (itemIndices.length == 1) {
-            handleFinding(item, data);
-          } else {
-            final Collection<Long> ids = extractFindingIds(itemIndices);
-            handleFindings(item, data, ids);
-          }
-        }
-      }
-    }
-    protected abstract void handleFinding(MenuItem item, FindingData data);
-    protected abstract void handleFindings(MenuItem item, FindingData data, Collection<Long> ids);
+		public final void handleEvent(Event event) {
+			if (event.widget instanceof MenuItem) {
+				MenuItem item = (MenuItem) event.widget;
+				if (item.getData() instanceof int[]) {
+					final int[] itemIndices = (int[]) item.getData();
+					final FindingData data = f_rows.get(itemIndices[0]);
+					if (itemIndices.length == 1) {
+						handleFinding(item, data);
+					} else {
+						final Collection<Long> ids = extractFindingIds(itemIndices);
+						handleFindings(item, data, ids);
+					}
+				}
+			}
+		}
+
+		protected abstract void handleFinding(MenuItem item, FindingData data);
+
+		protected abstract void handleFindings(MenuItem item, FindingData data,
+				Collection<Long> ids);
 	}
-	
+
 	private void refreshDisplay() {
 		final UIJob job = new SLUIJob() {
 			@Override
@@ -1060,64 +1091,64 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		return ids;
 	}
-	
-  @Override 
-  void selectAll() {
-    if (f_table.isFocusControl()) {
-      f_table.selectAll();
-    } else {
-      super.selectAll();
-    }
-  }
 
-  private IFindingsObserver observer;
-  
-  public void addObserver(IFindingsObserver o) {
-    observer = o;
-  }
-  
-  private void notifyObserversOfLimitedFindings(boolean isLimited) {
-    if (observer != null) {
-      observer.findingsLimited(isLimited);
-    }
-  }
-  
-  private void notifyObserversOfDispose() {
-    if (observer != null) {
-      observer.findingsDisposed();
-    }
-  }
+	@Override
+	void selectAll() {
+		if (f_table.isFocusControl()) {
+			f_table.selectAll();
+		} else {
+			super.selectAll();
+		}
+	}
 
-  private static final Set<MListOfFindingsColumn> f_tables = new HashSet<MListOfFindingsColumn>();
-  
-  public void columnsChanged(Selection selection, Column c) {
-    // Right now, handle the fact that the visible columns changed
-    final Table t = f_table;
-    if (t != null) {
-      if (t.isDisposed()) {
-        return;
-      } 
-      if (!c.isVisible()) {
-        // No longer visible, so save column width        
-        for(TableColumn tc : t.getColumns()) {
-          if (c == tc.getData()) {             
-            saveColumnAppearance((ColumnData) c, tc);
-          }
-        }
-      }                
-      updateTableColumns();      
-    }
-  }
-  
-  public static Map<String,Column> createColumns() {
-    Map<String,Column> result = new HashMap<String,Column>();
-    for(ColumnData data : f_columnPrototypes) {
-      ColumnData c = data.clone();
-      // FIX to remember column ordering
-      // FIX is this needed w/ clone?
-      // c.configure(data.visible, data.width, data.sort, data.index);
-      result.put(data.getName(), c);
-    }
-    return result;
-  }
+	private volatile IFindingsObserver observer;
+
+	public void addObserver(IFindingsObserver o) {
+		observer = o;
+	}
+
+	private void notifyObserversOfLimitedFindings(boolean isLimited) {
+		if (observer != null) {
+			observer.findingsLimited(isLimited);
+		}
+	}
+
+	private void notifyObserversOfDispose() {
+		if (observer != null) {
+			observer.findingsDisposed();
+		}
+	}
+
+	private static final Set<MListOfFindingsColumn> f_tables = new HashSet<MListOfFindingsColumn>();
+
+	public void columnsChanged(Selection selection, Column c) {
+		// Right now, handle the fact that the visible columns changed
+		final Table t = f_table;
+		if (t != null) {
+			if (t.isDisposed()) {
+				return;
+			}
+			if (!c.isVisible()) {
+				// No longer visible, so save column width
+				for (TableColumn tc : t.getColumns()) {
+					if (c == tc.getData()) {
+						saveColumnAppearance((ColumnData) c, tc);
+					}
+				}
+			}
+			updateTableColumns();
+		}
+	}
+
+	public static Map<String, Column> createColumns() {
+		Map<String, Column> result = new HashMap<String, Column>();
+		for (ColumnData data : f_columnPrototypes) {
+			ColumnData c = data.clone();
+			// FIX to remember column ordering
+			// FIX is this needed w/ clone?
+			// c.configure(data.visible, data.width, data.sort, data.index);
+			result.put(data.getName(), c);
+		}
+		return result;
+	}
 }

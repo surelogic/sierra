@@ -40,7 +40,8 @@ import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
-		CascadingList.ICascadingListObserver, ISelectionManagerObserver, IFindingsObserver {
+		CascadingList.ICascadingListObserver, ISelectionManagerObserver,
+		IFindingsObserver {
 
 	private final PageBook f_pages;
 	private final Control f_noFindingsPage;
@@ -52,11 +53,11 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	private final ToolItem f_deleteSearchItem;
 	private final ToolItem f_saveSearchesAsItem;
 	private final Link f_savedSelections;
-  private final Label f_findingsIcon;
-  private final Label f_findingsStatus;
-  private final ToolItem f_columnSelectionItem;
-  private Menu f_columnSelectionMenu;
-  
+	private final Label f_findingsIcon;
+	private final Link f_findingsStatus;
+	private final ToolItem f_columnSelectionItem;
+	private Menu f_columnSelectionMenu;
+
 	private final SelectionManager f_manager = SelectionManager.getInstance();
 
 	private Selection f_workingSelection = null;
@@ -65,8 +66,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
 			Composite findingsPage, CascadingList cascadingList,
-			ToolItem clearSelectionItem, Link breadcrumbs,
-			Label findingsIcon, Label findingsStatus, ToolItem columnSelectionItem,
+			ToolItem clearSelectionItem, Link breadcrumbs, Label findingsIcon,
+			Link findingsStatus, ToolItem columnSelectionItem,
 			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
 		f_pages = pages;
@@ -80,8 +81,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_deleteSearchItem = deleteSearchItem;
 		f_savedSelections = savedSelections;
 		f_findingsIcon = findingsIcon;
-    f_findingsStatus = findingsStatus;
-    f_columnSelectionItem = columnSelectionItem;
+		f_findingsStatus = findingsStatus;
+		f_columnSelectionItem = columnSelectionItem;
 	}
 
 	public void init() {
@@ -169,31 +170,32 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 		final Display display = f_columnSelectionItem.getParent().getDisplay();
 		final Shell shell = f_columnSelectionItem.getParent().getShell();
-		final Menu menu = new Menu(shell, SWT.POP_UP); 
-		for(final String name : MListOfFindingsColumn.getColumnNames()) {
-		  final MenuItem item = new MenuItem(menu, SWT.CHECK);
-		  item.setText(name);
-		  // item.setSelection(data.visible);
-		  item.addListener(SWT.Selection, new Listener() {
-        public void handleEvent(Event event) {
-          if (f_workingSelection != null) {
-            f_workingSelection.setColumnVisible(name, item.getSelection());
-          }
-        }   
-		  });
+		final Menu menu = new Menu(shell, SWT.POP_UP);
+		for (final String name : MListOfFindingsColumn.getColumnNames()) {
+			final MenuItem item = new MenuItem(menu, SWT.CHECK);
+			item.setText(name);
+			// item.setSelection(data.visible);
+			item.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					if (f_workingSelection != null) {
+						f_workingSelection.setColumnVisible(name, item
+								.getSelection());
+					}
+				}
+			});
 		}
 		f_columnSelectionItem.addListener(SWT.Selection, new Listener() {
-      public void handleEvent(Event event) {
-        if (event.detail == SWT.ARROW) {
-          Point p = new Point(event.x, event.y);
-          p = display.map(f_columnSelectionItem.getParent(), null, p);
-          menu.setLocation(p);
-          menu.setVisible(true);
-        }
-      }
+			public void handleEvent(Event event) {
+				if (event.detail == SWT.ARROW) {
+					Point p = new Point(event.x, event.y);
+					p = display.map(f_columnSelectionItem.getParent(), null, p);
+					menu.setLocation(p);
+					menu.setVisible(true);
+				}
+			}
 		});
 		f_columnSelectionMenu = menu;
-		
+
 		f_cascadingList.addObserver(this);
 		f_manager.addObserver(this);
 		Projects.getInstance().addObserver(this);
@@ -275,7 +277,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
-    updateColumnSelectionMenu(f_workingSelection);
+		updateColumnSelectionMenu(f_workingSelection);
 	}
 
 	private void openSelection(final Selection newSelection) {
@@ -317,19 +319,20 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	}
 
 	private void updateColumnSelectionMenu(final Selection selection) {
-	  if (f_columnSelectionMenu != null && !f_columnSelectionMenu.isDisposed()) {
-	    for(MenuItem item : f_columnSelectionMenu.getItems()) {
-	      Column c = selection.getColumn(item.getText());
-	      if (c == null) {
-	        item.setEnabled(false);
-	      } else {
-	        item.setEnabled(true);
-	        item.setSelection(c.isVisible());
-	      }
-	    }
-	  }
+		if (f_columnSelectionMenu != null
+				&& !f_columnSelectionMenu.isDisposed()) {
+			for (MenuItem item : f_columnSelectionMenu.getItems()) {
+				Column c = selection.getColumn(item.getText());
+				if (c == null) {
+					item.setEnabled(false);
+				} else {
+					item.setEnabled(true);
+					item.setSelection(c.isVisible());
+				}
+			}
+		}
 	}
-	
+
 	public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
 		updateSavedSelections();
@@ -403,26 +406,32 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		 * Nothing to do.
 		 */
 	}
-	
+
 	public void selectAll() {
-	  f_first.selectAll();
+		f_first.selectAll();
 	}
 
-  public void findingsLimited(boolean isLimited) {
-    if (isLimited) {
-      final int findingsListLimit = PreferenceConstants.getFindingsListLimit();
-      final Image warning = SLImages.getWorkbenchImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
-      f_findingsIcon.setImage(warning);
-      f_findingsStatus.setText("Limited to "+findingsListLimit+" findings");
-    } else {
-      f_findingsIcon.setImage(null);
-      f_findingsStatus.setText("");
-    }
-    f_findingsIcon.getParent().layout();
-    f_findingsPage.layout();
-  }
+	public void findingsLimited(boolean isLimited) {
+		if (isLimited) {
+			final int findingsListLimit = PreferenceConstants
+					.getFindingsListLimit();
+			final int shouldBeShowing = f_workingSelection
+					.getFindingCountPorous();
+			final Image warning = SLImages
+					.getWorkbenchImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+			f_findingsIcon.setImage(warning);
+			f_findingsStatus.setText("<a href=\"preferences\">"
+					+ findingsListLimit + " of " + shouldBeShowing
+					+ "  findings shown</a>");
+		} else {
+			f_findingsIcon.setImage(null);
+			f_findingsStatus.setText("");
+		}
+		f_findingsIcon.getParent().layout();
+		f_findingsPage.layout();
+	}
 
-  public void findingsDisposed() {
-    findingsLimited(false);
-  }
+	public void findingsDisposed() {
+		findingsLimited(false);
+	}
 }

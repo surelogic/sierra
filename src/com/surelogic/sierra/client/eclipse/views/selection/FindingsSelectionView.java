@@ -57,23 +57,25 @@ public final class FindingsSelectionView extends ViewPart {
 		breadcrumbs.setText("");
 		breadcrumbs
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
-		
+
 		final Label findingsIcon = new Label(breadcrumbsPanel, SWT.NONE);
 		findingsIcon.setText("");
-		findingsIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-		final Label findingsStatus = new Label(breadcrumbsPanel, SWT.NONE);
+		findingsIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false));
+		final Link findingsStatus = new Link(breadcrumbsPanel, SWT.NONE);
 		findingsStatus.setText("");
-		findingsStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-		
+		findingsStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false));
+
 		final ToolBar clearSelectionBar = new ToolBar(breadcrumbsPanel,
-				SWT.HORIZONTAL | SWT.FLAT);	
+				SWT.HORIZONTAL | SWT.FLAT);
 		clearSelectionBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER,
 				false, false));
 		final ToolItem columnSelectionItem = new ToolItem(clearSelectionBar,
-        SWT.DROP_DOWN);
+				SWT.DROP_DOWN);
 		columnSelectionItem.setImage(SLImages.getImage(SLImages.IMG_FILTER));
 		columnSelectionItem.setToolTipText("Set Columns to Show");
-		
+
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
 		clearSelectionItem.setImage(PlatformUI.getWorkbench().getSharedImages()
@@ -84,13 +86,14 @@ public final class FindingsSelectionView extends ViewPart {
 				SWT.NONE);
 		cascadingList
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-    getViewSite().getActionBars()
-    .setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), new Action() {      
-      @Override public void run() {
-        f_mediator.selectAll();
-      }
-    });
-		
+		getViewSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.SELECT_ALL.getId(), new Action() {
+					@Override
+					public void run() {
+						f_mediator.selectAll();
+					}
+				});
+
 		final Composite selectionPersistencePanel = new Composite(findingsPage,
 				SWT.NONE);
 		selectionPersistencePanel.setLayoutData(new GridData(SWT.FILL,
