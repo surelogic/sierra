@@ -8,8 +8,8 @@ public final class SierraToolConstants {
 	 * If running in the client, these reference some plug-in identifiers that
 	 * have no activator
 	 */
-  public static final String JUNIT_PLUGIN_ID = "org.junit";
-  public static final String JUNIT4_PLUGIN_ID = "org.junit4";
+	public static final String JUNIT_PLUGIN_ID = "org.junit";
+	public static final String JUNIT4_PLUGIN_ID = "org.junit4";
 	public static final String COMMON_PLUGIN_ID = "com.surelogic.common";
 	public static final String MESSAGE_PLUGIN_ID = "com.surelogic.sierra.message";
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
@@ -24,12 +24,12 @@ public final class SierraToolConstants {
 	 * Java property for the location of the config file
 	 */
 	public static final String CONFIG_PROPERTY = "surelogic.config";
-	
-	 /**
-   * Java property for the test code (if any)
-   */
-  public static final String TEST_CODE_PROPERTY = "surelogic.test.code";
-	
+
+	/**
+	 * Java property for the test code (if any)
+	 */
+	public static final String TEST_CODE_PROPERTY = "surelogic.test.code";
+
 	/** The location of tools folder */
 	public static final String TOOLS_FOLDER = "Tools";
 
@@ -73,22 +73,16 @@ public final class SierraToolConstants {
 	/** Default priority value for database */
 	public static final String PRIORITY = "priority";
 
-	/** The default name of package for files in root folder */
-	public static final String DEFAULT_PACKAGE = "Default Package";
-
-	/** The default name of package for files in root folder */
-	public static final String DEFAULT_PACKAGE_PARENTHESIS = "(default package)";
-	
 	/**
 	 * Possible tool messages
 	 */
 	public static final int ERROR_MEMORY_SIZE_TOO_BIG = 72;
 	public static final int ERROR_CODE_MISSING_FOR_TOOL = 73;
-  public static final int ERROR_CREATING_AUX_PATH = 66;
-  public static final int ERROR_CREATING_CONFIG = 67;
-  public static final int ERROR_NO_OUTPUT_FROM_TOOLS = 68;
-  public static final int ERROR_SCAN_CANCELLED = 69;
-  public static final int ERROR_SCAN_FAILED = 70;
-  public static final int ERROR_PROCESS_FAILED = 71;
-  public static final int ERROR_MEMORY_SIZE_TOO_SMALL = 75;
+	public static final int ERROR_CREATING_AUX_PATH = 66;
+	public static final int ERROR_CREATING_CONFIG = 67;
+	public static final int ERROR_NO_OUTPUT_FROM_TOOLS = 68;
+	public static final int ERROR_SCAN_CANCELLED = 69;
+	public static final int ERROR_SCAN_FAILED = 70;
+	public static final int ERROR_PROCESS_FAILED = 71;
+	public static final int ERROR_MEMORY_SIZE_TOO_SMALL = 75;
 }
