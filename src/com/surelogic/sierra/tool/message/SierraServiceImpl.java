@@ -59,16 +59,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	public void publishRun(final Scan scan) {
 		// We can't publish a run without a qualifier on the server
 		final List<String> q = scan.getConfig().getQualifiers();
-		if (q == null || q.isEmpty()) {
-			log
-					.fine("No qualifiers were specified in this scan, could not persist scan "
-							+ scan.getUid());
-			return;
-		}
+		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
 
-		ConnectionFactory.withUserTransaction(new UserTransaction<Object>() {
-
-			public Object perform(Connection conn, Server server, User user)
+			public Void perform(Connection conn, Server server, User user)
 					throws SQLException {
 				final String uid = scan.getUid();
 				final String project = scan.getConfig().getProject();
@@ -83,11 +76,10 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
 				ConnectionFactory
-						.delayUserTransaction(new UserTransaction<Object>() {
+						.delayUserTransaction(new UserTransaction<Void>() {
 
-							public Object perform(Connection conn,
-									Server server, User user)
-									throws SQLException {
+							public Void perform(Connection conn, Server server,
+									User user) throws SQLException {
 								ServerFindingManager fm = ServerFindingManager
 										.getInstance(conn);
 								fm.generateFindings(project, uid, filter, null);
@@ -115,15 +107,16 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				});
 	}
 
-	public SyncResponse synchronizeProject(SyncRequest request) throws ServerMismatchException {
+	public SyncResponse synchronizeProject(SyncRequest request)
+			throws ServerMismatchException {
 		final String serverUid = request.getServer();
 		final String project = request.getProject();
 		final List<SyncTrailRequest> trails = request.getTrails();
 		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
 			public Void perform(Connection conn, Server server, User user)
 					throws Exception {
-				final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
-						conn).newProject();
+				final ProjectRecord projectRecord = ProjectRecordFactory
+						.getInstance(conn).newProject();
 				projectRecord.setName(project);
 				if (!projectRecord.select()) {
 					projectRecord.insert();
@@ -147,7 +140,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				for (String uid : uids) {
 					auditIter.next().setFinding(uid);
 				}
-				man.commitAuditTrails(projectId, user.getId(), revision, audits);
+				man
+						.commitAuditTrails(projectId, user.getId(), revision,
+								audits);
 				return null;
 			}
 		};
