@@ -35,7 +35,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
 /**
- * Action for running scans on compilation units and packages
+ * Action for running scans on compilation units and packages.
  * 
  * @author Tanmay.Sinha
  * @author Edwin.Chan

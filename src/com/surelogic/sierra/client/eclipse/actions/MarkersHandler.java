@@ -48,8 +48,8 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
- * Class to handle sierra markers Currently keeps markers only for the current
- * active editor
+ * Class to handle Sierra markers. It keeps markers only for the current active
+ * editor.
  * 
  * @author Tanmay.Sinha
  * @author Edwin.Chan

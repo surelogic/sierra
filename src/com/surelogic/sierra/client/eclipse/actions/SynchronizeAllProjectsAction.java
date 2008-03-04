@@ -9,7 +9,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
-import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -23,25 +24,25 @@ public final class SynchronizeAllProjectsAction implements
 	public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
-	
+
 	public void run(IAction action) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
-		final ServerProjectGroupJob joinJob = 
-		  new ServerProjectGroupJob(manager.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
-		
+		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(manager
+				.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
+
 		for (String projectName : manager.getConnectedProjects()) {
 			final SierraServer server = manager.getServer(projectName);
 
 			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 				public void run(String projectName, SierraServer server,
 						Shell shell) {
-					final SynchronizeJob job = new SynchronizeJob(joinJob, projectName,
-							server);
+					final SynchronizeJob job = new SynchronizeJob(joinJob,
+							projectName, server);
 					job.schedule();
 				}
 			};
 			final Shell shell = PlatformUI.getWorkbench()
-			                    .getActiveWorkbenchWindow().getShell();
+					.getActiveWorkbenchWindow().getShell();
 			ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
 					server, shell, serverAction);
 			joinJob.schedule();

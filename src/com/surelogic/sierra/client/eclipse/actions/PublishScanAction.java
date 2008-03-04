@@ -16,14 +16,15 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 
 public final class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
-	void runServerAction(final ServerProjectGroupJob family, String projectName, SierraServer server, Shell shell) {
+	void runServerAction(final ServerProjectGroupJob family,
+			String projectName, SierraServer server, Shell shell) {
 		final String sierraDataDirectory = FileUtility.getSierraDataDirectory();
 		final String scanFileName = sierraDataDirectory + File.separator
 				+ projectName + SierraToolConstants.PARSED_FILE_SUFFIX;
 		final File scanFile = new File(scanFileName);
 		if (scanFile.exists()) {
-			final ShareScanJob job = new ShareScanJob(family, projectName, server,
-					scanFile);
+			final ShareScanJob job = new ShareScanJob(family, projectName,
+					server, scanFile);
 			job.schedule();
 		} else {
 			final int errNo = 21;

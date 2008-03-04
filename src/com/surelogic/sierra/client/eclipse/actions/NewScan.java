@@ -31,9 +31,9 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	 */
 	@Override
 	boolean startScanJob(Collection<IJavaProject> selectedProjects) {
-	  boolean started = false;
-		LOG.fine("Starting new scan jobs");		
-		
+		boolean started = false;
+		LOG.fine("Starting new scan jobs");
+
 		List<Config> configs = new ArrayList<Config>();
 		for (final IJavaProject p : selectedProjects) {
 			final Config config = ConfigGenerator.getInstance()
@@ -42,14 +42,16 @@ public class NewScan extends AbstractScan<IJavaProject> {
 		}
 		boolean continueScan = setupConfigs(configs);
 		if (!continueScan) {
-		  return false;
+			return false;
 		}
 
-		for(final Config config : configs) {
+		for (final Config config : configs) {
 			if (config.hasNothingToScan()) {
-			  BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in "+config.getProject());
+				BalloonUtility.showMessage("Nothing to scan",
+						"There are no source files to scan in "
+								+ config.getProject());
 			} else {
-			  started = true;
+				started = true;
 			}
 			final Runnable runAfterImport = new Runnable() {
 				public void run() {
@@ -79,8 +81,9 @@ public class NewScan extends AbstractScan<IJavaProject> {
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject()));
 
-			Job job = new NewScanJob("Running Sierra on " + config.getProject(),
-					config, importJob);
+			Job job = new NewScanJob(
+					"Running Sierra on " + config.getProject(), config,
+					importJob);
 			job.schedule();
 		}
 		return started;

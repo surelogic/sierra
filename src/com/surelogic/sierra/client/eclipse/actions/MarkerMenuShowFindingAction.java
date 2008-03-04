@@ -38,8 +38,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.FindingListDialog;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 
 /**
- * Refer to MarkerRulerAction from FindBugs eclipse plugin
- * 
+ * Refer to MarkerRulerAction from FindBugs eclipse plug-in.
  */
 public class MarkerMenuShowFindingAction implements IUpdate,
 		IEditorActionDelegate, MouseListener, IMenuListener {
@@ -54,7 +53,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 	}
 
 	public void update() {
-	  final int numMarkers = f_markers.size();
+		final int numMarkers = f_markers.size();
 		if (numMarkers > 0) {
 			try {
 				if (numMarkers == 1) {

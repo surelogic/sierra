@@ -44,42 +44,42 @@ public class NewScanJob extends WorkspaceJob {
 				afterJob.schedule();
 			}
 		} catch (Throwable ex) {
-			if (!monitor.isCanceled()) {			  
-			  return dealWithException(ex);
+			if (!monitor.isCanceled()) {
+				return dealWithException(ex);
 			}
 		}
-		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {		  
-      return dealWithException(wrapper.getFailureTrace());
+		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
+			return dealWithException(wrapper.getFailureTrace());
 		}
 		return Status.OK_STATUS;
 	}
 
-  private IStatus dealWithException(final Throwable t) {
-    Throwable e = unwrapException(t);
-    final int errNo;
-    final String msg;			
-    if (e instanceof ToolException) {
-      ToolException te = (ToolException) e;
-      errNo = te.getErrorNum();
-      msg = te.getToolMessage(getName());
-      if (te.getCause() != null) {
-        e = te.getCause();
-      }
-    } else {      
-      errNo = 46;
-      msg = I18N.err(errNo, getName());
-    }
-    return SLStatus.createErrorStatus(errNo, msg, e);
-  }
+	private IStatus dealWithException(final Throwable t) {
+		Throwable e = unwrapException(t);
+		final int errNo;
+		final String msg;
+		if (e instanceof ToolException) {
+			ToolException te = (ToolException) e;
+			errNo = te.getErrorNum();
+			msg = te.getToolMessage(getName());
+			if (te.getCause() != null) {
+				e = te.getCause();
+			}
+		} else {
+			errNo = 46;
+			msg = I18N.err(errNo, getName());
+		}
+		return SLStatus.createErrorStatus(errNo, msg, e);
+	}
 
-  private Throwable unwrapException(Throwable e) {
-    while (e instanceof RuntimeException) {
-      Throwable cause = e.getCause();
-      if (cause == null) {
-        break;
-      }
-      e = cause;
-    }
-    return e;
-  }
+	private Throwable unwrapException(Throwable e) {
+		while (e instanceof RuntimeException) {
+			Throwable cause = e.getCause();
+			if (cause == null) {
+				break;
+			}
+			e = cause;
+		}
+		return e;
+	}
 }
