@@ -28,43 +28,42 @@ public abstract class AbstractProjectSelectedMenuAction implements
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// Nothing to do
-	  System.out.println("Foo");
 	}
 
 	public final void run(IAction action) {
 		if (f_currentSelection != null) {
-	    final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	    final IJavaModel javaModel = JavaCore.create(root);
+			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+					.getRoot();
+			final IJavaModel javaModel = JavaCore.create(root);
 			final List<IJavaProject> selectedProjects = new ArrayList<IJavaProject>();
 			final List<String> selectedProjectNames = new ArrayList<String>();
 			for (Object selection : f_currentSelection.toArray()) {
-			  final IJavaProject javaProject;
-			 outer:
-				if (selection instanceof IJavaProject) {
-				  javaProject = (IJavaProject) selection;
-				}
-				else if (selection instanceof IProject) {
-				  IProject p = (IProject) selection;
-				  try {
-            for(IJavaProject jp : javaModel.getJavaProjects()) {
-              if (p.equals(jp.getProject())) {
-                javaProject = jp;
-                break outer;
-              }
-            }
-          } catch (JavaModelException e) {
-            // Do nothing
-          }
-          continue;
-				} 
-				else continue;
-				
-        selectedProjects.add(javaProject);
-        selectedProjectNames.add(javaProject.getElementName());
+				final IJavaProject javaProject;
+				outer: if (selection instanceof IJavaProject) {
+					javaProject = (IJavaProject) selection;
+				} else if (selection instanceof IProject) {
+					IProject p = (IProject) selection;
+					try {
+						for (IJavaProject jp : javaModel.getJavaProjects()) {
+							if (p.equals(jp.getProject())) {
+								javaProject = jp;
+								break outer;
+							}
+						}
+					} catch (JavaModelException e) {
+						// Do nothing
+					}
+					continue;
+				} else
+					continue;
+
+				selectedProjects.add(javaProject);
+				selectedProjectNames.add(javaProject.getElementName());
 			}
 			run(selectedProjects, selectedProjectNames);
 		} else {
-		  run(Collections.<IJavaProject>emptyList(), Collections.<String>emptyList());
+			run(Collections.<IJavaProject> emptyList(), Collections
+					.<String> emptyList());
 		}
 	}
 
