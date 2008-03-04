@@ -19,7 +19,7 @@ import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.actions.QualifierPromptFromJob;
+import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -60,7 +60,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				if (slMonitor.isCanceled()) {
 					return null;
 				} else {
-					QualifierPromptFromJob prompt = new QualifierPromptFromJob(
+					TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
 							qualifiers, f_projectName, f_server.getLabel());
 					prompt.open();
 					if (prompt.isCanceled()) {

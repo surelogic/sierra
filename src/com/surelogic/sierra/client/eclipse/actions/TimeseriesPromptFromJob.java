@@ -16,7 +16,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.QualifierSelectionDialog;
 /**
  * Used to prompt the user from a running job for a set of qualifiers.
  */
-public final class QualifierPromptFromJob {
+public final class TimeseriesPromptFromJob {
 
 	private final Set<String> f_qualifiers;
 	private final Set<String> f_selectedQualifiers = new HashSet<String>();
@@ -29,7 +29,7 @@ public final class QualifierPromptFromJob {
 	 * @param server
 	 *            the mutable server configuration to be fixed.
 	 */
-	public QualifierPromptFromJob(Set<String> qualifiers, String projectName,
+	public TimeseriesPromptFromJob(Set<String> qualifiers, String projectName,
 			String serverLabel) {
 		if (qualifiers == null)
 			throw new IllegalArgumentException("Qualifier set must be non-null");
