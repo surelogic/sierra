@@ -103,8 +103,7 @@
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_disconnect.gif"
 				label="Disconnect"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-				enablesFor="+" helpContextId="menu-disconnect">
-				<selection class="org.eclipse.jdt.core.IJavaProject" />
+				enablesFor="*" helpContextId="menu-disconnect">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.PublishScanDialogAction"
@@ -112,8 +111,7 @@
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_publish.gif"
 				label="Publish Latest Scan"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-				enablesFor="+" helpContextId="menu-publish-latest-scan">
-				<selection class="org.eclipse.jdt.core.IJavaProject" />
+				enablesFor="*" helpContextId="menu-publish-latest-scan">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction"
@@ -121,8 +119,7 @@
 				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
 				label="Synchronize Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-				enablesFor="+" helpContextId="menu-synchronize-project">
-				<selection class="org.eclipse.jdt.core.IJavaProject" />
+				enablesFor="*" helpContextId="menu-synchronize-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
