@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="package-jetty" default="package">
+
+	<target name="package">
+		<tstamp>
+			<format property="releasedate" pattern="yyyyMMdd-HHmm" offset="-5" unit="hour" />
+		</tstamp>
+
+		<property name="jetty.dir" value="../jetty" />
+		<property name="zip.name" value="sierra-server.zip" />
+		<property name="zip.file" value="${jetty.dir}/${zip.name}" />
+
+		<delete quiet="true" file="${zip.file}" />
+
+		<zip destfile="${zip.file}">
+			<zipfileset dir="${jetty.dir}" prefix="sierra-${releasedate}" excludes="${zip.name}, .svn, eclipsebin, .classpath, .project, derby.log" />
+		</zip>
+
+	</target>
+
+</project>
