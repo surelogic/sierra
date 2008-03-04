@@ -163,7 +163,7 @@ public class PortalOverview {
 		if (date == null) {
 			return null;
 		} else {
-			DateFormat format = new SimpleDateFormat();
+			DateFormat format = new SimpleDateFormat("MM/dd/yy HH:mm a");
 			return format.format(date);
 		}
 	}
