@@ -52,10 +52,10 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	public void publishRun(final Scan scan) {
 		// We can't publish a run without a timeseries on the server
 		final List<String> qList = scan.getConfig().getTimeseries();
-		final Set<String> qualifiers = new TreeSet<String>();
-		qualifiers.add(TimeseriesManager.ALL_SCANS);
+		final Set<String> timeseries = new TreeSet<String>();
+		timeseries.add(TimeseriesManager.ALL_SCANS);
 		if (qList != null) {
-			qualifiers.addAll(qList);
+			timeseries.addAll(qList);
 		}
 		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
 
@@ -70,7 +70,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								project));
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
-				generator.timeseries(qualifiers).user(user.getName());
+				generator.timeseries(timeseries).user(user.getName());
 				MessageWarehouse.readScan(scan, generator);
 				conn.commit();
 				ConnectionFactory
@@ -81,7 +81,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 								ServerFindingManager fm = ServerFindingManager
 										.getInstance(conn);
 								fm.generateFindings(project, uid, filter, null);
-								fm.generateOverview(project, uid, qualifiers);
+								fm.generateOverview(project, uid, timeseries);
 								return null;
 							}
 						});
