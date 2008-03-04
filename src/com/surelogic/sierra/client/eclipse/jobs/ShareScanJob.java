@@ -31,8 +31,10 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
 public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
 
-	public ShareScanJob(ServerProjectGroupJob family, String projectName, SierraServer server, File scanFile) {
-		super(family, "Sharing scan of project '" + projectName + "'", server, projectName);
+	public ShareScanJob(ServerProjectGroupJob family, String projectName,
+			SierraServer server, File scanFile) {
+		super(family, "Sharing scan of project '" + projectName + "'", server,
+				projectName);
 		f_scanFile = scanFile;
 	}
 
@@ -93,20 +95,20 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			}
 			return new TreeSet<String>(qualifiers);
 		} catch (SierraServiceClientException e) {
-		  if (joinJob.troubleshoot(f_server)) {
-		    troubleshoot = getTroubleshootConnection(e);
-	    
-		    // We had a recoverable error. Rollback, run the appropriate
-		    // troubleshoot, and try again.
-		    troubleshoot.fix();
-		    if (troubleshoot.retry()) {
-		      return getQualifiersOnTheServer(slMonitor);
-		    }		    
-        joinJob.fail(f_server);
+			if (joinJob.troubleshoot(f_server)) {
+				troubleshoot = getTroubleshootConnection(e);
+
+				// We had a recoverable error. Rollback, run the appropriate
+				// troubleshoot, and try again.
+				troubleshoot.fix();
+				if (troubleshoot.retry()) {
+					return getQualifiersOnTheServer(slMonitor);
+				}
+				joinJob.fail(f_server);
 			}
-      SLLogger.getLogger().log(Level.WARNING,
-          "Failed to get qualifiers from " + f_server, e);
-      return null;
+			SLLogger.getLogger().log(Level.WARNING,
+					"Failed to get qualifiers from " + f_server, e);
+			return null;
 		}
 
 	}
@@ -117,8 +119,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			SierraServiceClient.create(f_server.getServer()).publishRun(scan);
 			return Status.OK_STATUS;
 		} catch (SierraServiceClientException e) {
-		  troubleshoot = getTroubleshootConnection(e);
-		  
+			troubleshoot = getTroubleshootConnection(e);
+
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
 			troubleshoot.fix();
