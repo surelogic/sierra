@@ -108,8 +108,8 @@ public class Reckoner1_0Tool extends AbstractTool {
           if (m.getLoc() > Integer.MAX_VALUE) {
             reportError("#LOC too big to report: "+m.getClassName()+" - "+m.getLoc());
           }
-          metric.linesOfCode((int) m.getLoc());
-          metric.packageName(m.getPackageName());
+          metric.linesOfCode((int) m.getLoc());          
+          metric.packageName(m.getPackageName() == null ? "" : m.getPackageName());
           metric.build();
           mon.worked(1);
         }
