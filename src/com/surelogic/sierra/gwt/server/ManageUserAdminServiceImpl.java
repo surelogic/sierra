@@ -74,22 +74,23 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<UserAccount> getUsers() {
-		return performAdmin(true, new UserTransaction<List<UserAccount>>() {
+		return ConnectionFactory
+				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
 
-			public List<UserAccount> perform(Connection conn, Server server,
-					User user) throws SQLException {
-				final ServerUserManager man = ServerUserManager
-						.getInstance(conn);
+					public List<UserAccount> perform(Connection conn,
+							Server server, User user) throws SQLException {
+						final ServerUserManager man = ServerUserManager
+								.getInstance(conn);
 
-				final List<User> users = man.listUsers();
-				final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
-						users.size());
-				for (User u : users) {
-					userAccounts.add(convertUser(man, u));
-				}
-				return userAccounts;
-			}
-		});
+						final List<User> users = man.listUsers();
+						final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
+								users.size());
+						for (User u : users) {
+							userAccounts.add(convertUser(man, u));
+						}
+						return userAccounts;
+					}
+				});
 	}
 
 	public UserAccount getUserInfo(final String targetUser) {
