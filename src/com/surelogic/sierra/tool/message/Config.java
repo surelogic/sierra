@@ -33,6 +33,9 @@ public class Config {
 	private File baseDirectory = null;
 	private File toolsDirectory = null;
 	private String testCode = null;
+	private String complianceLevel = null;
+	private String sourceLevel = null;
+	private String targetLevel = null;
 	
 	/**
 	 * In MB
@@ -431,5 +434,29 @@ public class Config {
       }
     }
     return true;
+  }
+
+  public void setComplianceLevel(String option) {
+	  complianceLevel = option;
+  }
+
+  public void setSourceLevel(String option) {
+	  sourceLevel = option;
+  }
+
+  public void setTargetLevel(String option) {
+	  targetLevel = option;
+  }
+  
+  public String getComplianceLevel() {
+	  return complianceLevel;
+  }
+
+  public String getSourceLevel() {
+	  return sourceLevel;
+  }
+
+  public String getTargetLevel() {
+	  return targetLevel;
   }
 }
