@@ -104,17 +104,9 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_showAbove.setPreferenceStore(getPreferenceStore());
 		f_showAbove.load();
 
-		f_saveResources = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
-				"Save all modified resources automatically prior to a scan.",
-				panel);
-		f_saveResources.setPage(this);
-		f_saveResources.setPreferenceStore(getPreferenceStore());
-		f_saveResources.load();
-
 		final Group memoryGroup = new Group(panel, SWT.NONE);
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		memoryGroup.setText("Memory usage");
+		memoryGroup.setText("Code Scanning");
 
 		final int estimatedMax = MemoryUtility.computeMaxMemorySize();
 		int mb = PreferenceConstants.getToolMemoryMB();
@@ -122,11 +114,6 @@ public class SierraPreferencePage extends PreferencePage implements
 			mb = estimatedMax;
 			PreferenceConstants.setToolMemoryMB(mb);
 		}
-
-		f_estimate = new Label(memoryGroup, SWT.NONE);
-		f_estimate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false, 2, 1));
-		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
 
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
@@ -147,6 +134,19 @@ public class SierraPreferencePage extends PreferencePage implements
 						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 					}
 				});
+
+		f_estimate = new Label(memoryGroup, SWT.NONE);
+		f_estimate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 2, 1));
+		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+
+		f_saveResources = new BooleanFieldEditor(
+				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
+				"Save all modified resources automatically prior to starting a scan.",
+				memoryGroup);
+		f_saveResources.setPage(this);
+		f_saveResources.setPreferenceStore(getPreferenceStore());
+		f_saveResources.load();
 
 		/*
 		 * Allow access to help via the F1 key.
