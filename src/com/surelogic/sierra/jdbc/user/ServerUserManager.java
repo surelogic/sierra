@@ -112,7 +112,8 @@ public final class ServerUserManager {
 	 * 
 	 * @param userName
 	 * @param password
-	 * @return
+	 * @return -{@code true} if the user is created {@code false} if the user
+	 *         already exists
 	 * @throws SQLException
 	 */
 	public boolean createUser(String userName, String password)
