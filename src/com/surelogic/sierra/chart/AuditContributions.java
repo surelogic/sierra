@@ -23,7 +23,7 @@ public final class AuditContributions implements IDatabasePlot {
 			throws SQLException, IOException {
 		final PortalOverview po = PortalOverview.getInstance(c);
 		List<UserOverview> userOverviewList = po.getUserOverviews();
-
+		mutableSize.setHeight(50 * userOverviewList.size());
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
 			dataset.setValue((double) (uo.getAudits()), "Audits", uo

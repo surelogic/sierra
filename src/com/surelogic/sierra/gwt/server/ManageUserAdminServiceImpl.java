@@ -9,7 +9,9 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
+import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerConnection;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.SierraGroup;
@@ -108,8 +110,35 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public UserAccount updateUser(final UserAccount account,
-			final String password) {
+	public Status changeUserPassword(final String targetUser,
+			final String currentUserPassword, final String newPassword) {
+		return ConnectionFactory
+				.withUserTransaction(new UserTransaction<Status>() {
+
+					public Status perform(Connection conn, Server server,
+							User user) throws Exception {
+						final ServerUserManager man = ServerUserManager
+								.getInstance(conn);
+						if (user.getName().equals(targetUser)
+								|| man.isUserInGroup(user.getName(),
+										SierraGroup.ADMIN.getName())) {
+							if (man.login(user.getName(), currentUserPassword) != null) {
+								man.changeUserPassword(targetUser, newPassword);
+								return Status
+										.success("Password changed successfully.");
+							} else {
+								return Status
+										.failure("Invalid password. Please enter your current password correctly.");
+							}
+						} else {
+							return Status
+									.failure("You do not have permissions to change this user's password.");
+						}
+					}
+				});
+	}
+
+	public UserAccount updateUser(final UserAccount account) {
 		return performAdmin(false, new UserTransaction<UserAccount>() {
 
 			public UserAccount perform(Connection conn, Server server, User user)
@@ -119,9 +148,6 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				final String targetUserName = account.getUserName();
 				man.changeUserName(account.getId(), account.getUserName());
 				man.changeUserStatus(targetUserName, account.isActive());
-				if (password != null) {
-					man.changeUserPassword(targetUserName, password);
-				}
 				if (account.isAdministrator()) {
 					man.addUserToGroup(targetUserName, SierraGroup.ADMIN);
 				} else {

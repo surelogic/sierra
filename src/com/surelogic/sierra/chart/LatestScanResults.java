@@ -26,6 +26,7 @@ public final class LatestScanResults implements IDatabasePlot {
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
 				.getProjectOverviews();
+		mutableSize.setHeight(50 * overview.size());
 		for (ProjectOverview po : overview) {
 			importanceData.setValue((double) po.getCritical(), "Critical", po
 					.getName());
@@ -48,6 +49,7 @@ public final class LatestScanResults implements IDatabasePlot {
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);
 		LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+		renderer.setBaseLinesVisible(false);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		// set the range axis to display integers only...
