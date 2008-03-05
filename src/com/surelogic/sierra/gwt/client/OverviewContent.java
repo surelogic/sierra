@@ -163,10 +163,10 @@ public class OverviewContent extends ContentComposite {
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel.add(new HTML("<h2>Projects</h2>"));
-		panel.add(ChartBuilder.name("projects").height(400).width(800).build());
+		panel.add(ChartBuilder.name("projects").height(500).width(1000).build());
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));
-		panel.add(ChartBuilder.name("users").height(400).width(800).build());
+		panel.add(ChartBuilder.name("users").height(500).width(1000).build());
 		panel.add(users);
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
