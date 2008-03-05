@@ -66,7 +66,7 @@ public class SierraChartServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		final String plotClassName = config.getInitParameter("plot-class");
 		if (plotClassName == null) {
-			throw new ServletException(I18N.err(81, getServletName()));
+			throw new ServletException(I18N.err(81, config.getServletName()));
 		}
 		try {
 			final IDatabasePlot plot = (IDatabasePlot) Class.forName(
@@ -74,16 +74,16 @@ public class SierraChartServlet extends HttpServlet {
 			f_plot.set(plot);
 		} catch (ClassCastException e) {
 			throw new ServletException(I18N.err(82, plotClassName,
-					getServletName()), e);
+					config.getServletName()), e);
 		} catch (InstantiationException e) {
 			throw new ServletException(I18N.err(82, plotClassName,
-					getServletName()), e);
+					config.getServletName()), e);
 		} catch (IllegalAccessException e) {
 			throw new ServletException(I18N.err(82, plotClassName,
-					getServletName()), e);
+					config.getServletName()), e);
 		} catch (ClassNotFoundException e) {
 			throw new ServletException(I18N.err(82, plotClassName,
-					getServletName()), e);
+					config.getServletName()), e);
 		}
 	}
 
