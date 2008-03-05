@@ -96,6 +96,7 @@ public final class PortalOverview {
 					final Date time = scanSet.getTimestamp(idx++);
 					if (!name.equals(po.getName())) {
 						po.setTotalFindings(findingCount);
+						findingCount = 0;
 						po = new ProjectOverview();
 						po.setName(name);
 						po.setLastScanDate(formattedDate(time));
