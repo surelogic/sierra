@@ -19,10 +19,10 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
-public final class UseChart extends AbstractDatabasePlot {
+public final class UseChart implements IDatabasePlot {
 
-	
-	public JFreeChart plot(Map<String, String[]> parameterMap, Connection c)
+	public JFreeChart plot(PlotSize mutableSize,
+			Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {
 		final String name = parameterMap.get("name")[0];
 		if ("users".equals(name)) {
@@ -54,8 +54,8 @@ public final class UseChart extends AbstractDatabasePlot {
 		for (ProjectOverview po : overview) {
 			totalData.setValue((double) po.getTotalFindings(), "Total", po
 					.getName());
-			totalData.setValue((double) po.getCommentedFindings(),
-					"Audited", po.getName());
+			totalData.setValue((double) po.getCommentedFindings(), "Audited",
+					po.getName());
 		}
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);
@@ -94,5 +94,4 @@ public final class UseChart extends AbstractDatabasePlot {
 		return chart;
 	}
 
-	
 }

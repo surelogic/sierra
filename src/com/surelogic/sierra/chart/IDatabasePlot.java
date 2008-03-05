@@ -16,6 +16,11 @@ public interface IDatabasePlot {
 	 * Constructs a chart based upon the passed parameters and the current data
 	 * in the database.
 	 * 
+	 * @param mutableSize
+	 *            of the plot. Typically this parameter may be ignored, however,
+	 *            if a plot changes its size based upon the data it is
+	 *            displaying then the width and height values passed into this
+	 *            call should be examined and changed as desired.
 	 * @param parameterMap
 	 *            the non-null, but possibly empty, map of the parameters to be
 	 *            considered when creating the chart.
@@ -24,28 +29,6 @@ public interface IDatabasePlot {
 	 *            will be closed by the caller of this method.
 	 * @return the resulting chart.
 	 */
-	JFreeChart plot(final Map<String, String[]> parameterMap, final Connection c)
-			throws SQLException, IOException;
-
-	/**
-	 * Gets the desired width of this plot in pixels. Only plots that change
-	 * their size based upon the data that they display need to do anything but
-	 * return the hint parameter.
-	 * 
-	 * @param hint
-	 *            a hint as to what the desired width in pixels.
-	 * @return the desired width of this plot in pixels.
-	 */
-	int getWidth(final int hint);
-
-	/**
-	 * Gets the desired height of this plot in pixels. Only plots that change
-	 * their size based upon the data that they display need to do anything but
-	 * return the hint parameter.
-	 * 
-	 * @param hint
-	 *            a hint as to what the desired height in pixels.
-	 * @return the desired height of this plot in pixels.
-	 */
-	int getHeight(final int hint);
+	JFreeChart plot(PlotSize mutableSize, Map<String, String[]> parameterMap,
+			Connection c) throws SQLException, IOException;
 }
