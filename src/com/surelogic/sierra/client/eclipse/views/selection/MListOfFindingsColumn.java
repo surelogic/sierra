@@ -215,7 +215,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 			this.width = -1;
 			this.sort = sort;
 		}
-
+    int getAlignment() {
+      return SWT.LEFT;
+    }
 		void setSort(ColumnSort s) {
 			sort = s;
 		}
@@ -305,7 +307,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 			String getText(FindingData data) {
 				return Integer.toString(data.f_lineNumber);
 			}
-
+	    @Override int getAlignment() {
+	      return SWT.RIGHT;
+	    }
 			@Override
 			protected int compareInternal(FindingData o1, FindingData o2) {
 				return o1.f_lineNumber - o2.f_lineNumber;
@@ -739,6 +743,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 */
 	private boolean loadColumnAppearance(TableColumn tc) {
 		ColumnData data = (ColumnData) tc.getData();
+		
+    tc.setAlignment(data.getAlignment());
+    //System.out.println("align = "+tc.getAlignment());
 		tc.setResizable(data.isVisible());
 		if (data.isVisible()) {
 			if (data.getWidth() < 0) {
@@ -783,11 +790,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 		TableColumn lastVisible = null;
 		updateTableColumns = true;
 
+		//int i = 0;
 		for (TableColumn tc : f_table.getColumns()) {
+		  //System.out.println(i);
 			if (loadColumnAppearance(tc)) {
 				numVisible++;
 				lastVisible = tc;
 			}
+			//i++;
 		}
 		if (numVisible == 1) {
 			ColumnData cd = (ColumnData) lastVisible.getData();
@@ -1151,7 +1161,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 				}
 			}
-			updateTableColumns();
+			updateTableContents();
 		}
 	}
 
