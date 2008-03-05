@@ -254,6 +254,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 				throw new RuntimeException("Couldn't clone " + this);
 			}
 		}
+		@Override
+		public String toString() { return getName(); }
 	}
 
 	private static final List<ColumnData> f_columnPrototypes = createColumnPrototypes();
@@ -635,7 +637,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		// Traverse order backwards to construct proper comparator
 		int[] order = f_table.getColumnOrder();
 		for (int i = order.length - 1; i >= 0; i--) {
-			final TableColumn tc = f_table.getColumn(i);
+			final TableColumn tc = f_table.getColumn(order[i]);
 			final ColumnData cd = (ColumnData) tc.getData();
 			if (!cd.isVisible() || cd.getSort() == ColumnSort.UNSORTED) {
 				continue; // Nothing to sort
@@ -652,12 +654,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						return result;
 					}
+					@Override 
+					public String toString() {
+					  return cd.toString()+", "+oldCompare.toString();
+					}
 				};
 			}
 		}
 		if (c == null) {
 			c = getDefaultColumn(); // The default sort
 		}
+		//System.out.println("Sort order = "+c);
 		Collections.sort(f_rows, c);
 	}
 
@@ -693,16 +700,23 @@ public final class MListOfFindingsColumn extends MColumn implements
 			});
 			tc.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					if (!createTableColumns && !updateTableColumns) {
+					if (!createTableColumns && !updateTableColumns) {					  
 						int[] currentOrder = f_table.getColumnOrder();
-						TableColumn[] columns = f_table.getColumns();
+						boolean changed = false;
+						
+						// Update all the columns						
+						final TableColumn[] columns = f_table.getColumns();
 						for (int i = 0; i < currentOrder.length; i++) {
-							if (tc == columns[currentOrder[i]]) {
-								System.out
-										.println(data.getIndex() + " -> " + i);
-								data.setIndex(i);
-								break;
-							}
+						  TableColumn tc = columns[currentOrder[i]];
+						  ColumnData data = (ColumnData) tc.getData();
+						  if (i != data.getIndex()) {
+						    changed = true;
+                //System.out.println(data.getIndex() + " -> " + i);
+						    data.setIndex(i);
+						  }
+						}
+						if (changed) {
+						  updateTableContents();
 						}
 					}
 				}
