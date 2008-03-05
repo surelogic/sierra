@@ -34,4 +34,10 @@ public interface IToolInstance extends ITool, Runnable {
   void reportError(String msg, Throwable t);
   
   void reportError(String msg);
+  
+  void setOption(String key, String value);
+  
+  String COMPLIANCE_LEVEL = "compliance.level";
+  String SOURCE_LEVEL = "source.level";
+  String TARGET_LEVEL = "target.level";
 }

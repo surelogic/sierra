@@ -18,6 +18,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
   private final List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
   private final boolean closeWhenDone;
+  private final Map<String,String> options = new HashMap<String,String>();
   
   protected AbstractToolInstance(ITool t, ArtifactGenerator gen, SLProgressMonitor m,
                                  boolean close) {
@@ -157,5 +158,15 @@ public abstract class AbstractToolInstance implements IToolInstance {
   
   public final IToolInstance create(final ArtifactGenerator generator, SLProgressMonitor m) {
     throw new UnsupportedOperationException("Instances can't create other instances");
+  }
+  
+  public void setOption(String key, String value) {
+	if (key == null) {
+	  throw new IllegalArgumentException("null key");
+	}
+	options.put(key, value);
+  }
+  protected String getOption(String key) {
+	return options.get(key);
   }
 }

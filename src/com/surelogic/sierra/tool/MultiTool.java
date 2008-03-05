@@ -96,6 +96,12 @@ public class MultiTool extends AbstractTool {
       if (first != null) {
         first.reportError(msg);
       }
-    }    
+    }
+
+	public void setOption(String key, String value) {
+	  for(IToolInstance i : instances) {
+		i.setOption(key, value);
+	  }
+	}    
   }
 }

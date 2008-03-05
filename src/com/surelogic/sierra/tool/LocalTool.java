@@ -111,6 +111,10 @@ public class LocalTool extends AbstractTool {
       
     }
     
+    public void setOption(String key, String option) {
+      System.out.println("Currently ignoring, since already in config: "+key);
+    }
+    
     private Set<String> usedPlugins = new HashSet<String>();
     
     private String getPluginDir(final boolean debug, final String pluginId) {

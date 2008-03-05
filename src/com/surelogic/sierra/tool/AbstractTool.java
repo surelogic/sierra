@@ -21,6 +21,9 @@ public abstract class AbstractTool implements ITool {
     for(URI path : config.getPaths()) {
       ti.addToClassPath(path);
     }
+    ti.setOption(IToolInstance.COMPLIANCE_LEVEL, config.getComplianceLevel());
+    ti.setOption(IToolInstance.SOURCE_LEVEL, config.getSourceLevel());
+    ti.setOption(IToolInstance.TARGET_LEVEL, config.getTargetLevel());
   }
 
   private final String description;

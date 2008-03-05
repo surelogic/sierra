@@ -36,7 +36,24 @@ public abstract class AbstractPMDTool extends AbstractTool {
         if (!encoding.equals(altEncoding)) {
           System.out.println("Encoding '"+encoding+"' != "+altEncoding);
         }
-        SourceType sourceType = SourceType.JAVA_15;
+        final String sourceLevel = getOption(SOURCE_LEVEL);
+        final SourceType sourceType;
+        if ("1.4".equals(sourceLevel)) {
+        	sourceType = SourceType.JAVA_14;
+        }
+        else if ("1.5".equals(sourceLevel)) {
+        	sourceType = SourceType.JAVA_15;
+        }
+        else if ("1.3".equals(sourceLevel)) {
+        	sourceType = SourceType.JAVA_13;
+        }
+        else if ("1.6".equals(sourceLevel) ||
+        		 "1.7".equals(sourceLevel)) {
+        	sourceType = SourceType.JAVA_16;
+        } 
+        else {
+        	sourceType = SourceType.JAVA_14;
+        }
         String rulesets = "all.xml"; // location of the XML rule file 
         RuleContext ctx = new RuleContext(); // info about what's getting scanned
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
