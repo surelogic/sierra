@@ -206,6 +206,11 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 						ICompilationUnit cu = JavaCore
 								.createCompilationUnitFrom(f_selectedFile);
+						if (!cu.getJavaProject().isOnClasspath(cu)) {
+							f_selectedFile = null;
+							return;
+						}
+						
 						try {
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();
