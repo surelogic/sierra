@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
@@ -31,7 +32,7 @@ public class ChangePasswordDialog extends DialogBox {
 
 		errorMessage.addStyleName("error");
 		userGrid.setText(1, 0, "Your Password");
-		userGrid.setWidget(2, 1, userPassword);
+		userGrid.setWidget(1, 1, userPassword);
 		userGrid.setText(2, 0, "New Password:");
 		userGrid.setWidget(2, 1, password);
 		userGrid.setText(3, 0, "Confirm Password:");
@@ -63,7 +64,7 @@ public class ChangePasswordDialog extends DialogBox {
 
 	public void show() {
 		super.show();
-		password.setFocus(true);
+		userPassword.setFocus(true);
 	}
 
 	public boolean isSuccessful() {
@@ -83,14 +84,17 @@ public class ChangePasswordDialog extends DialogBox {
 
 	private void changePassword() {
 		clearErrorMessage();
+		final String currentPassText = userPassword.getText();
 		final String passText = password.getText();
 		final String passTextAgain = passwordAgain.getText();
-		if (!passText.equals(passTextAgain)) {
+		if (currentPassText.length() == 0 || passText.length() == 0
+				|| passTextAgain.length() == 0) {
+			setErrorMessage("Please fill out all required fields");
+		} else if (!passText.equals(passTextAgain)) {
 			setErrorMessage("Password mismatch. Please ensure both passwords match.");
 		} else {
-			// TODO FIX PASSWORD
 			ServiceHelper.getManageUserService().changeUserPassword(
-					user.getUserName(), null, passText,
+					user.getUserName(), currentPassText, passText,
 
 					new AsyncCallback() {
 
@@ -101,8 +105,13 @@ public class ChangePasswordDialog extends DialogBox {
 						}
 
 						public void onSuccess(Object result) {
-							successful = true;
-							hide();
+							Status status = (Status) result;
+							successful = status.isSuccess();
+							if (!successful) {
+								setErrorMessage(status.getMessage());
+							} else {
+								hide();
+							}
 						}
 					});
 		}
