@@ -85,6 +85,8 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 			ScanDocumentUtility.loadPartialScanDocument(config.getConfig()
 					.getScanDocument(), wrapper, config.getConfig()
 					.getProject(), config.getPackageCompilationUnitMap());
+			// Delete partial scan when done
+			config.getConfig().getScanDocument().delete();
 		}
 	}
 }
