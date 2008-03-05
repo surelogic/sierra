@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
@@ -162,11 +163,15 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
+		HorizontalPanel charts = new HorizontalPanel();
+		charts
+				.add(ChartBuilder.name("projects").height(800).width(500)
+						.build());
+		charts.add(ChartBuilder.name("users").height(800).width(500).build());
+		panel.add(charts);
 		panel.add(new HTML("<h2>Projects</h2>"));
-		panel.add(ChartBuilder.name("projects").height(500).width(1000).build());
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));
-		panel.add(ChartBuilder.name("users").height(500).width(1000).build());
 		panel.add(users);
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
