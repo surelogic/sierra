@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,7 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class PortalOverview {
+public final class PortalOverview {
 
 	private final Connection conn;
 
@@ -69,62 +70,72 @@ public class PortalOverview {
 	}
 
 	public List<ProjectOverview> getProjectOverviews() throws SQLException {
-
 		final List<ProjectOverview> overview = new ArrayList<ProjectOverview>();
-		PreparedStatement st = conn
-				.prepareStatement("SELECT P.NAME, COUNT(DISTINCT F.ID), COUNT(A.ID), F.IMPORTANCE "
-						+ "FROM PROJECT P, FINDING F, SIERRA_AUDIT A "
-						+ "WHERE F.PROJECT_ID = P.ID AND "
-						+ " A.FINDING_ID = F.ID AND "
-						+ " A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) "
-						+ "GROUP BY P.NAME,F.IMPORTANCE " + "ORDER BY P.NAME");
-
-		st.setTimestamp(1, thirtyDaysAgo());
-		final ResultSet set = st.executeQuery();
+		PreparedStatement auditSt = conn
+				.prepareStatement("SELECT P.NAME, COUNT(DISTINCT A.FINDING_ID), COUNT(A.ID)  "
+						+ "FROM PROJECT P LEFT OUTER JOIN FINDING F ON F.PROJECT_ID = P.ID  "
+						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.FINDING_ID = F.ID  "
+						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
+						+ "GROUP BY P.NAME ORDER BY P.NAME");
+		auditSt.setTimestamp(1, thirtyDaysAgo());
+		final ResultSet auditSet = auditSt.executeQuery();
 		try {
-			ProjectOverview po = new ProjectOverview();
-			int findingCount = 0;
-			int auditCount = 0;
-			while (set.next()) {
-				int idx = 1;
-				final String name = set.getString(idx++);
-				if (!name.equals(po.getName())) {
-					po.setComments(auditCount);
-					po.setFindings(findingCount);
-					po = new ProjectOverview();
-					overview.add(po);
-					findingCount = 0;
-					auditCount = 0;
-					po.setName(name);
+			Statement scanSt = conn.createStatement();
+			try {
+				final ResultSet scanSet = scanSt
+						.executeQuery("SELECT P.PROJECT, P.TIME, COUNT (F.ID), F.IMPORTANCE  "
+								+ "FROM LATEST_SCANS P LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.SCAN_ID = P.SCAN_ID  "
+								+ "LEFT OUTER JOIN FINDING F ON F.ID = SO.FINDING_ID "
+								+ "WHERE P.QUALIFIER = '__ALL_SCANS__'   "
+								+ "GROUP BY P.PROJECT,P.TIME,F.IMPORTANCE ORDER BY P.PROJECT");
+				ProjectOverview po = new ProjectOverview();
+				int findingCount = 0;
+				while (scanSet.next()) {
+					int idx = 1;
+					final String name = scanSet.getString(idx++);
+					final Date time = scanSet.getTimestamp(idx++);
+					if (!name.equals(po.getName())) {
+						po.setTotalFindings(findingCount);
+						po = new ProjectOverview();
+						po.setName(name);
+						po.setLastScanDate(formattedDate(time));
+						auditSet.next();
+						auditSet.getString(1);
+						po.setCommentedFindings(auditSet.getInt(2));
+						po.setComments(auditSet.getInt(3));
+						overview.add(po);
+					}
+					final int importanceCount = scanSet.getInt(idx++);
+					final int importance = scanSet.getInt(idx++);
+					if (!scanSet.wasNull()) {
+						findingCount += importanceCount;
+						switch (Importance.values()[importance]) {
+						case CRITICAL:
+							po.setCritical(importanceCount);
+							break;
+						case HIGH:
+							po.setHigh(importanceCount);
+							break;
+						case IRRELEVANT:
+							po.setIrrelevant(importanceCount);
+							break;
+						case LOW:
+							po.setLow(importanceCount);
+							break;
+						case MEDIUM:
+							po.setMedium(importanceCount);
+							break;
+						default:
+							// Value not understood. Do nothing
+						}
+					}
 				}
-				int importanceCount = set.getInt(idx++);
-				findingCount += importanceCount;
-				int auditImpCount = set.getInt(idx++);
-				auditCount += auditImpCount;
-				switch (Importance.values()[set.getInt(idx++)]) {
-				case CRITICAL:
-					po.setCritical(importanceCount);
-					break;
-				case HIGH:
-					po.setHigh(importanceCount);
-					break;
-				case IRRELEVANT:
-					po.setIrrelevant(importanceCount);
-					break;
-				case LOW:
-					po.setLow(importanceCount);
-					break;
-				case MEDIUM:
-					po.setMedium(importanceCount);
-					break;
-				default:
-					// Value not understood. Do nothing
-				}
+
+			} finally {
+				scanSt.close();
 			}
-			po.setFindings(findingCount);
-			po.setComments(auditCount);
 		} finally {
-			set.close();
+			auditSet.close();
 		}
 		final PreparedStatement lastSynchSt = conn
 				.prepareStatement("SELECT SU.USER_NAME, R.DATE_TIME "
@@ -141,6 +152,9 @@ public class PortalOverview {
 					po.setLastSynchUser(lastSynchSet.getString(1));
 					po.setLastSynchDate(formattedDate(lastSynchSet
 							.getTimestamp(2)));
+				} else {
+					po.setLastSynchUser("-");
+					po.setLastSynchDate("-");
 				}
 			} finally {
 				lastSynchSet.close();
@@ -161,7 +175,7 @@ public class PortalOverview {
 
 	private static String formattedDate(Date date) {
 		if (date == null) {
-			return null;
+			return "-";
 		} else {
 			DateFormat format = new SimpleDateFormat("MM/dd/yy HH:mm a");
 			return format.format(date);
