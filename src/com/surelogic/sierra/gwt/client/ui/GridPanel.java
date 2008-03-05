@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -35,6 +37,14 @@ public class GridPanel extends Composite {
 		enabled = true;
 	}
 
+	public void addGridOption(String text, ClickListener actionListener) {
+		final CheckBox box = new CheckBox(text);
+		box.addClickListener(actionListener);
+		box.setEnabled(enabled);
+		gridActionPanel.add(box);
+		actions.add(box);
+	}
+	
 	public void addGridAction(String text, ClickListener actionListener) {
 		final Button action = new Button(text);
 		action.addClickListener(actionListener);
@@ -54,7 +64,7 @@ public class GridPanel extends Composite {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		for (Iterator i = actions.iterator(); i.hasNext();) {
-			Button b = (Button) i.next();
+			ButtonBase b = (ButtonBase) i.next();
 			b.setEnabled(enabled);
 		}
 	}

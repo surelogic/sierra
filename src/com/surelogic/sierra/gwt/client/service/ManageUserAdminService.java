@@ -45,19 +45,30 @@ public interface ManageUserAdminService extends RemoteService {
 	UserAccount getUserInfo(String userName);
 
 	/**
+	 * Change the target user's password. If the target user is someone other
+	 * than the user in context, then the user in context must be an
+	 * administrator.
+	 * 
+	 * @param targetUser
+	 * @param currentUserPassword
+	 *            the password of the user in context
+	 * @param newPassword
+	 * @return
+	 */
+	Status changeUserPassword(String targetUser, String currentUserPassword,
+			String newPassword);
+
+	/**
 	 * 
 	 * @param account
 	 *            the user's updated account info
-	 * @param password
-	 *            a new user password, or null if the password should not be
-	 *            updated
 	 * @return
 	 */
-	UserAccount updateUser(UserAccount account, String password);
+	UserAccount updateUser(UserAccount account);
 
 	/**
-	 * Update the status of a list of users. User passwords cannot currently be updated in a
-	 * batch.
+	 * Update the status of a list of users. User passwords cannot currently be
+	 * updated in a batch.
 	 * 
 	 * @gwt.typeArgs users <java.lang.String>
 	 * 

@@ -25,8 +25,8 @@ import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
-// TODO add change password functionality
 public class UserManagementContent extends ContentComposite {
+
 	private static final UserManagementContent instance = new UserManagementContent();
 
 	private static final String ADMIN = "Administrator";
@@ -56,18 +56,19 @@ public class UserManagementContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
+		final boolean isAdmin = ClientContext.getUser().isAdministrator();
+		if (isAdmin) {
+			userActionsPanel.addAction("Create a user", new ClickListener() {
 
-		userActionsPanel.addAction("Create a user", new ClickListener() {
+				public void onClick(Widget sender) {
+					createUser();
+				}
 
-			public void onClick(Widget sender) {
-				createUser();
-			}
-
-		});
+			});
+		}
 		usersPanel.add(userActionsPanel);
-		usersGridPanel.addGridAction("Show/Hide Disabled Users",
+		usersGridPanel.addGridOption("Show Disabled Users",
 				new ClickListener() {
-
 					public void onClick(Widget sender) {
 						showDisabled = !showDisabled;
 						refreshUsers();
@@ -79,8 +80,9 @@ public class UserManagementContent extends ContentComposite {
 		usersGrid.setColumn(3, "Password", "25%");
 		usersPanel.add(usersGridPanel);
 		rootPanel.add(usersPanel, DockPanel.CENTER);
-
-		usersGrid.setInplaceEditor(0, TextBoxEditor.getFactory());
+		if (isAdmin) {
+			usersGrid.setInplaceEditor(0, TextBoxEditor.getFactory());
+		}
 		usersGrid.addListener(new SelectableGridListener() {
 
 			public Object onChange(Widget source, int row, int column,
@@ -128,7 +130,8 @@ public class UserManagementContent extends ContentComposite {
 			}
 
 			public void onSuccess(Object result) {
-				List users = (List) result;
+				final UserAccount currentUser = ClientContext.getUser();
+				final List users = (List) result;
 
 				usersGrid.removeRows();
 				if (users.isEmpty()) {
@@ -140,7 +143,7 @@ public class UserManagementContent extends ContentComposite {
 						final UserAccount user = (UserAccount) i.next();
 						if (user.isActive() || showDisabled) {
 							final int row = usersGrid.addRow();
-							updateRow(row, user);
+							updateRow(row, user, currentUser);
 						}
 					}
 				}
@@ -149,11 +152,21 @@ public class UserManagementContent extends ContentComposite {
 		});
 	}
 
-	private void updateRow(int row, UserAccount user) {
+	private void updateRow(int row, UserAccount user, UserAccount currentUser) {
 		usersGrid.setText(row, 0, user.getUserName());
-		usersGrid.setWidget(row, 1, createUserRoleChoice(row, user));
-		usersGrid.setWidget(row, 2, createUserStatusChoice(row, user));
-		usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
+		if (currentUser.isAdministrator()) {
+			usersGrid.setWidget(row, 1, createUserRoleChoice(row, user));
+			usersGrid.setWidget(row, 2, createUserStatusChoice(row, user));
+			usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
+		} else {
+			usersGrid.setText(row, 1, user.isAdministrator() ? ADMIN : USER);
+			usersGrid.setText(row, 2, user.isActive() ? ENABLED : DISABLED);
+			if (currentUser.getUserName().equals(user.getUserName())) {
+				usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
+			} else {
+				usersGrid.setText(row, 3, "-");
+			}
+		}
 		usersGrid.setRowData(row, user);
 	}
 
@@ -181,7 +194,7 @@ public class UserManagementContent extends ContentComposite {
 			public void onChange(Widget sender) {
 				user.setActive(ENABLED.equals(box.getItemText(box
 						.getSelectedIndex())));
-				ServiceHelper.getManageUserService().updateUser(user, null,
+				ServiceHelper.getManageUserService().updateUser(user,
 						new AsyncCallback() {
 
 							public void onFailure(Throwable caught) {
@@ -209,7 +222,7 @@ public class UserManagementContent extends ContentComposite {
 			public void onChange(Widget sender) {
 				user.setAdministrator(ADMIN.equals(box.getItemText(box
 						.getSelectedIndex())));
-				ServiceHelper.getManageUserService().updateUser(user, null,
+				ServiceHelper.getManageUserService().updateUser(user,
 						new AsyncCallback() {
 
 							public void onFailure(Throwable caught) {
@@ -282,7 +295,7 @@ public class UserManagementContent extends ContentComposite {
 		final UserAccount account = (UserAccount) usersGrid.getRowData(row);
 		if (account != null) {
 			account.setUserName(newValue);
-			ServiceHelper.getManageUserService().updateUser(account, null,
+			ServiceHelper.getManageUserService().updateUser(account,
 					new AsyncCallback() {
 
 						public void onFailure(Throwable caught) {
@@ -293,7 +306,8 @@ public class UserManagementContent extends ContentComposite {
 						}
 
 						public void onSuccess(Object result) {
-							updateRow(row, (UserAccount) result);
+							updateRow(row, (UserAccount) result, ClientContext
+									.getUser());
 						}
 					});
 		}

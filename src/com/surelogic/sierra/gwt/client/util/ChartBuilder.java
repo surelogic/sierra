@@ -12,11 +12,13 @@ import com.google.gwt.user.client.ui.Image;
 public class ChartBuilder {
 
 	private final Map map;
+	private final String name;
 	private int height;
 	private int width;
 
-	private ChartBuilder() {
+	private ChartBuilder(String name) {
 		map = new HashMap();
+		this.name = name;
 	}
 
 	public ChartBuilder width(int width) {
@@ -37,7 +39,7 @@ public class ChartBuilder {
 	}
 
 	public Image build() {
-		final Image image = new Image(GWT.getModuleBaseURL() + "chart/use"
+		final Image image = new Image(GWT.getModuleBaseURL() + "chart/" + name
 				+ getArgs());
 		if (height > 0) {
 			image.setHeight(height + "px");
@@ -49,7 +51,7 @@ public class ChartBuilder {
 	}
 
 	public static ChartBuilder name(String name) {
-		return new ChartBuilder().prop("name", name);
+		return new ChartBuilder(name);
 	}
 
 	private String getArgs() {

@@ -15,7 +15,10 @@ public interface ManageUserAdminServiceAsync {
 
 	void createUser(UserAccount account, String password, AsyncCallback callback);
 
-	void updateUser(UserAccount account, String password, AsyncCallback callback);
+	void changeUserPassword(String targetUser, String currentUserPassword,
+			String newPassword, AsyncCallback callback);
+
+	void updateUser(UserAccount account, AsyncCallback callback);
 
 	void getUserInfo(String user, AsyncCallback callback);
 

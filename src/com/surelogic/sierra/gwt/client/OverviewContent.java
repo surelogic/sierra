@@ -164,8 +164,8 @@ public class OverviewContent extends ContentComposite {
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		HorizontalPanel charts = new HorizontalPanel();
-		charts.add(ChartBuilder.name("projects").width(500).build());
-		charts.add(ChartBuilder.name("users").width(400).build());
+		charts.add(ChartBuilder.name("LatestScanResults").width(500).build());
+		charts.add(ChartBuilder.name("AuditContributions").width(400).build());
 		panel.add(charts);
 		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);

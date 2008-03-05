@@ -18,6 +18,7 @@ public class ChangePasswordDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final FlexTable userGrid = new FlexTable();
 	private final Label errorMessage = new Label("", false);
+	private final PasswordTextBox userPassword = new PasswordTextBox();
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
 	private final UserAccount user;
@@ -29,11 +30,12 @@ public class ChangePasswordDialog extends DialogBox {
 		setText("Change Password");
 
 		errorMessage.addStyleName("error");
-
-		userGrid.setText(1, 0, "Password:");
-		userGrid.setWidget(1, 1, password);
-		userGrid.setText(2, 0, "Confirm Password:");
-		userGrid.setWidget(2, 1, passwordAgain);
+		userGrid.setText(1, 0, "Your Password");
+		userGrid.setWidget(2, 1, userPassword);
+		userGrid.setText(2, 0, "New Password:");
+		userGrid.setWidget(2, 1, password);
+		userGrid.setText(3, 0, "Confirm Password:");
+		userGrid.setWidget(3, 1, passwordAgain);
 		rootPanel.add(userGrid);
 
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
@@ -86,21 +88,23 @@ public class ChangePasswordDialog extends DialogBox {
 		if (!passText.equals(passTextAgain)) {
 			setErrorMessage("Password mismatch. Please ensure both passwords match.");
 		} else {
-			ServiceHelper.getManageUserService().updateUser(user, passText,
+			// TODO FIX PASSWORD
+			ServiceHelper.getManageUserService().changeUserPassword(
+					user.getUserName(), null, passText,
 
-			new AsyncCallback() {
+					new AsyncCallback() {
 
-				public void onFailure(Throwable caught) {
-					ExceptionTracker.logException(caught);
+						public void onFailure(Throwable caught) {
+							ExceptionTracker.logException(caught);
 
-					setErrorMessage("Server unreachable, unable to create user");
-				}
+							setErrorMessage("Server unreachable, unable to create user");
+						}
 
-				public void onSuccess(Object result) {
-					successful = true;
-					hide();
-				}
-			});
+						public void onSuccess(Object result) {
+							successful = true;
+							hide();
+						}
+					});
 		}
 	}
 

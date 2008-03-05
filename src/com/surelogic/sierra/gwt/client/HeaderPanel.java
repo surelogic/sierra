@@ -53,8 +53,9 @@ public final class HeaderPanel extends Composite {
 				HorizontalPanel.ALIGN_MIDDLE);
 
 		sessionPanel.addStyleName(SESSION_STYLE);
-		loggedInAs = createUserLabel("Logged in to " + GWT.getHostPageBaseURL().replaceFirst(".*//", "").replaceFirst("/portal.*", "")
-				+ " as", null);
+		loggedInAs = createUserLabel("Logged in to "
+				+ GWT.getHostPageBaseURL().replaceFirst(".*//", "")
+						.replaceFirst("/portal.*", "") + " as", null);
 		userName = createUserLabel(null, null);
 		userName.addStyleName("user");
 		sessionPanel.add(loggedInAs);
@@ -85,8 +86,7 @@ public final class HeaderPanel extends Composite {
 
 		mainBar.setWidth("100%");
 		addTab("Overview", OverviewContent.getInstance());
-		addTab("Change Password", ChangePasswordContent.getInstance());
-
+		addTab("User Management", UserManagementContent.getInstance());
 		mainBar.addTabListener(new TabListener() {
 
 			public boolean onBeforeTabSelected(SourcesTabEvents sender,
@@ -132,8 +132,9 @@ public final class HeaderPanel extends Composite {
 				headerRow.setCellHorizontalAlignment(sessionPanel,
 						HorizontalPanel.ALIGN_RIGHT);
 			}
-			loggedInAs.setText("Logged in to " + GWT.getHostPageBaseURL().replaceFirst(".*//", "").replaceFirst("/portal.*", "")
-					+ " as");
+			loggedInAs.setText("Logged in to "
+					+ GWT.getHostPageBaseURL().replaceFirst(".*//", "")
+							.replaceFirst("/portal.*", "") + " as");
 			userName.setText(user.getUserName());
 			if (rootPanel.getWidgetIndex(mainBar) == -1) {
 				rootPanel.add(mainBar);
@@ -142,11 +143,9 @@ public final class HeaderPanel extends Composite {
 			if (user.isAdministrator()) {
 				addTab("Server Settings", ServerInformationContent
 						.getInstance());
-				addTab("User Management", UserManagementContent.getInstance());
 			} else {
 				removeTab(ServerInformationContent.getInstance()
 						.getContextName());
-				removeTab(UserManagementContent.getInstance().getContextName());
 			}
 
 			final int tabIndex = mainBar.getSelectedTab();

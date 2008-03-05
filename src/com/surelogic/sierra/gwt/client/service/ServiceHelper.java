@@ -35,14 +35,6 @@ public final class ServiceHelper {
 		return serverService;
 	}
 
-	public static ManagePrefsServiceAsync getManagePrefsService() {
-		ManagePrefsServiceAsync serverService = (ManagePrefsServiceAsync) GWT
-				.create(ManagePrefsService.class);
-		ServiceDefTarget endpoint = (ServiceDefTarget) serverService;
-		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL()
-				+ "ManagePrefsService");
-		return serverService;
-	}
 	
 	public static OverviewServiceAsync getOverviewService() {
 		OverviewServiceAsync serverService = (OverviewServiceAsync) GWT
