@@ -44,6 +44,7 @@ public final class UseChart implements IDatabasePlot {
 		final JFreeChart chart = ChartFactory.createBarChart(
 				"Latest Scan Results", null, "Importance", data,
 				PlotOrientation.HORIZONTAL, true, false, false);
+
 		/*
 		 * final JFreeChart chart = ChartFactory.createStackedBarChart(
 		 * "Importance by Project", "Project", "Importance", data,
