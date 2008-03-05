@@ -11,7 +11,6 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.ServerConnection;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.SierraGroup;
@@ -46,7 +45,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					} else {
 						return Status
 								.failure("Could not create user with name "
-										+ user + ".");
+										+ user
+										+ ".  A user with that name already exists.");
 					}
 				}
 			});
