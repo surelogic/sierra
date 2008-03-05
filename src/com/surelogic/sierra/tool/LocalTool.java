@@ -213,7 +213,8 @@ public class LocalTool extends AbstractTool {
         }
         File auxPathFile = File.createTempFile("auxPath", ".txt");
         PrintWriter pw = new PrintWriter(auxPathFile);
-        cmdj.createVmArgument().setValue("-Dsurelogic.aux.path.file="+auxPathFile.getAbsolutePath());
+        cmdj.createVmArgument().setValue("-D"+SierraToolConstants.AUX_PATH_PROPERTY+"="+
+        		                         auxPathFile.getAbsolutePath());
       
         // FIX to support PMD's type resolution
         for(IToolTarget t : config.getTargets()) {

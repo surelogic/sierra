@@ -52,6 +52,16 @@ public class RemoteTool extends AbstractTool {
     System.out.println("Log level: "+SLLogger.LEVEL.get());
     System.out.println("java.system.class.loader = "+System.getProperty("java.system.class.loader"));
     System.out.println("System classloader = "+ClassLoader.getSystemClassLoader());
+    final String auxPathFile = System.getProperty(SierraToolConstants.AUX_PATH_PROPERTY);
+    if (auxPathFile != null) {
+    	System.out.println(SierraToolConstants.AUX_PATH_PROPERTY+"="+auxPathFile);
+    	File auxFile = new File(auxPathFile);
+    	if (auxFile.exists()) {
+    		// No longer needed after creating the system ClassLoader
+    		auxFile.delete();
+    	}
+    }
+    
     long start = System.currentTimeMillis();
     /*
     try {
@@ -93,6 +103,8 @@ public class RemoteTool extends AbstractTool {
       final Config config = unmarshaller.unmarshal(xmlr, Config.class).getValue();
       //Config config = (Config) unmarshaller.unmarshal(file);
       System.out.println("Read config");
+      file.close();
+      new File(configName).delete();
 
 //      String line = br.readLine();
 //      while (line != null) {

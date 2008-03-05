@@ -21,6 +21,11 @@ public final class SierraToolConstants {
 	public static final String CORE_RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime";
 
 	/**
+	 * Java property for the aux path file
+	 */
+	public static final String AUX_PATH_PROPERTY = "surelogic.aux.path.file";
+	
+	/**
 	 * Java property for the location of the config file
 	 */
 	public static final String CONFIG_PROPERTY = "surelogic.config";

@@ -131,6 +131,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 				finalFile.flush();
 				finalFile.write(METRICS_END);
 				monitor.worked(1);
+				metricsHolder.delete();
 			}
 
 			if (artifactsHolder.exists()) {
@@ -150,6 +151,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 				finalFile.flush();
 				finalFile.write(ARTIFACTS_END);
 				monitor.worked(1);
+				artifactsHolder.delete();
 			}
 
 			if (errorsHolder.exists()) {
@@ -159,6 +161,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 				copyContents(errorsHolder, finalFile);
 				finalFile.write(ERROR_END);
 				monitor.worked(1);
+				errorsHolder.delete();
 			}
 			finalFile.write(TOOL_OUTPUT_END);
 
@@ -169,55 +172,12 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
       fos.close();
 			
       copyContents(configOutput, finalFile);
+      configOutput.delete();
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
 			osw.close();
 			stream.close();
-			monitor.worked(1);
-
-			// // Create a buffer for reading the files
-			// byte[] buf = new byte[1024];
-			// try {
-			// // Create the ZIP file
-			// String outFilename = "C:/outfile.zip";
-			// ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-			// outFilename));
-
-			// for (String s : files) {
-
-			// FileInputStream zipIn = new FileInputStream(s);
-			//
-			// // Add ZIP entry to output stream.
-			// out.putNextEntry(new ZipEntry(s));
-			//
-			// // Transfer bytes from the file to the ZIP file
-			// int len;
-			// while ((len = zipIn.read(buf)) > 0) {
-			// out.write(buf, 0, len);
-			// }
-			//
-			// // Complete the entry
-			// out.closeEntry();
-			// zipIn.close();
-			// System.out.println(s);
-			// }
-			//
-			// // Complete the ZIP file
-			// out.close();
-			// } catch (IOException e) {
-			// // Testing
-			// }
-
-			monitor.subTask("Cleaning up");
-			// Delete temp files
-			errOut.close();
-			artOut.close();
-			fos.close();
-
-			errorsHolder.delete();
-			artifactsHolder.delete();
-			configOutput.delete();
 			monitor.worked(1);
 		} catch (FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
