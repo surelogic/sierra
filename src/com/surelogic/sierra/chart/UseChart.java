@@ -10,7 +10,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
@@ -19,6 +21,7 @@ import com.surelogic.sierra.portal.PortalOverview;
 
 public final class UseChart extends AbstractDatabasePlot {
 
+	
 	public JFreeChart plot(Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {
 		final String name = parameterMap.get("name")[0];
@@ -32,27 +35,36 @@ public final class UseChart extends AbstractDatabasePlot {
 
 	public JFreeChart projectsOverview(Map<String, String[]> parameterMap,
 			Connection c) throws SQLException, IOException {
-		final DefaultCategoryDataset data = new DefaultCategoryDataset();
-
-		for (ProjectOverview po : PortalOverview.getInstance(c)
-				.getProjectOverviews()) {
-			data.setValue((double) po.getCritical(), "Critical", po.getName());
-			data.setValue((double) po.getHigh(), "High", po.getName());
-			data.setValue((double) po.getMedium(), "Medium", po.getName());
-			data.setValue((double) po.getLow(), "Low", po.getName());
+		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
+		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
+				.getProjectOverviews();
+		for (ProjectOverview po : overview) {
+			importanceData.setValue((double) po.getCritical(), "Critical", po
+					.getName());
+			importanceData
+					.setValue((double) po.getHigh(), "High", po.getName());
+			importanceData.setValue((double) po.getMedium(), "Medium", po
+					.getName());
+			importanceData.setValue((double) po.getLow(), "Low", po.getName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Latest Scan Results", null, "Importance", data,
+				"Latest Scan Results", null, "# of Findings", importanceData,
 				PlotOrientation.HORIZONTAL, true, false, false);
-
-		/*
-		 * final JFreeChart chart = ChartFactory.createStackedBarChart(
-		 * "Importance by Project", "Project", "Importance", data,
-		 * PlotOrientation.VERTICAL, true, true, false);
-		 */
+		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
+		for (ProjectOverview po : overview) {
+			totalData.setValue((double) po.getTotalFindings(), "Total", po
+					.getName());
+			totalData.setValue((double) po.getCommentedFindings(),
+					"Audited", po.getName());
+		}
+		CategoryPlot plot = chart.getCategoryPlot();
+		plot.setDataset(1, totalData);
+		LineAndShapeRenderer renderer2 = new LineAndShapeRenderer();
+		plot.setRenderer(1, renderer2);
+		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		// set the range axis to display integers only...
 		chart.setBackgroundPaint(null);
-		chart.getCategoryPlot().getRangeAxis().setStandardTickUnits(
+		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
 		return chart;
 	}
@@ -68,6 +80,7 @@ public final class UseChart extends AbstractDatabasePlot {
 			dataset.setValue((double) (uo.getAudits()), "Audits", uo
 					.getUserName());
 		}
+
 		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
 				"User", "Audits", dataset, PlotOrientation.HORIZONTAL, false,
 				false, false);
@@ -80,4 +93,6 @@ public final class UseChart extends AbstractDatabasePlot {
 
 		return chart;
 	}
+
+	
 }
