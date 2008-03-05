@@ -167,7 +167,7 @@ public class OverviewContent extends ContentComposite {
 		charts
 				.add(ChartBuilder.name("projects").height(800).width(500)
 						.build());
-		charts.add(ChartBuilder.name("users").height(800).width(500).build());
+		charts.add(ChartBuilder.name("users").height(800).width(400).build());
 		panel.add(charts);
 		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);
