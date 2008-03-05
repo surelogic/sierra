@@ -52,17 +52,19 @@ public class OverviewContent extends ContentComposite {
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					final Grid grid = new Grid(list.size() + 1, 9);
+					final Grid grid = new Grid(list.size() + 1, 11);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
 							"Comments", "Critical", "High", "Medium", "Low",
-							"Irrelevant", "Last Synch", "Last Synched By" };
+							"Irrelevant", "Total", "Last Synch",
+							"Last Synched By", "Last Scan Time" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-text", "cell-number", "cell-number",
 							"cell-number", "cell-number", "cell-number",
-							"cell-date", "cell-text" };
+							"cell-number", "cell-date", "cell-text",
+							"cell-date" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -74,18 +76,31 @@ public class OverviewContent extends ContentComposite {
 						ProjectOverview po = (ProjectOverview) rows.next();
 						grid.setText(i, j++, po.getName());
 						grid.setText(i, j++, Integer.toString(po.getComments())
-								+ " on " + Integer.toString(po.getFindings())
+								+ " on "
+								+ Integer.toString(po.getCommentedFindings())
 								+ " findings");
-						grid
-								.setText(i, j++, Integer.toString(po
-										.getCritical()));
-						grid.setText(i, j++, Integer.toString(po.getHigh()));
-						grid.setText(i, j++, Integer.toString(po.getMedium()));
-						grid.setText(i, j++, Integer.toString(po.getLow()));
-						grid.setText(i, j++, Integer.toString(po
-								.getIrrelevant()));
+						final String scanTime = po.getLastScanDate();
+						if (!"-".equals(scanTime)) {
+							grid.setText(i, j++, Integer.toString(po
+									.getCritical()));
+							grid
+									.setText(i, j++, Integer.toString(po
+											.getHigh()));
+							grid.setText(i, j++, Integer.toString(po
+									.getMedium()));
+							grid.setText(i, j++, Integer.toString(po.getLow()));
+							grid.setText(i, j++, Integer.toString(po
+									.getIrrelevant()));
+							grid.setText(i, j++, Integer.toString(po
+									.getTotalFindings()));
+						} else {
+							for (int k = 0; k < 6; k++) {
+								grid.setText(i, j++, "-");
+							}
+						}
 						grid.setText(i, j++, po.getLastSynchDate());
 						grid.setText(i, j++, po.getLastSynchUser());
+						grid.setText(i, j++, scanTime);
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);
 						}
@@ -129,14 +144,12 @@ public class OverviewContent extends ContentComposite {
 					for (Iterator rows = list.iterator(); rows.hasNext(); i++) {
 						int j = 0;
 						f.setStyleName(i, "overview-data");
-						UserOverview uo = (UserOverview) rows.next();
+						final UserOverview uo = (UserOverview) rows.next();
 						grid.setText(i, j++, uo.getUserName());
 						grid.setText(i, j++, Integer.toString(uo.getAudits())
 								+ " on " + Integer.toString(uo.getFindings())
 								+ " findings");
-						grid.setText(i, j++,
-								uo.getLastSynch() == null ? "Never" : uo
-										.getLastSynch());
+						grid.setText(i, j++, uo.getLastSynch());
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);
 						}
@@ -156,7 +169,9 @@ public class OverviewContent extends ContentComposite {
 		final HorizontalPanel charts = new HorizontalPanel();
 		panel.add(charts);
 		charts.add(ChartBuilder.name("users").height(200).width(500).build());
-		charts.add(ChartBuilder.name("projects").height(200).width(500).build());
+		charts
+				.add(ChartBuilder.name("projects").height(200).width(500)
+						.build());
 		panel.add(new HTML("<h2>Projects</h2>"));
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));

@@ -15,12 +15,15 @@ public class ProjectOverview implements Serializable {
 	private int medium;
 	private int low;
 	private int irrelevant;
-
 	private int findings;
+
+	private int commentedFindings;
 	private int comments;
 
 	private String lastSynchDate;
 	private String lastSynchUser;
+
+	private String lastScanDate;
 
 	public String getName() {
 		return name;
@@ -70,12 +73,20 @@ public class ProjectOverview implements Serializable {
 		this.irrelevant = irrelevant;
 	}
 
-	public int getFindings() {
+	public int getTotalFindings() {
 		return findings;
 	}
 
-	public void setFindings(int findings) {
+	public void setTotalFindings(int findings) {
 		this.findings = findings;
+	}
+
+	public int getCommentedFindings() {
+		return commentedFindings;
+	}
+
+	public void setCommentedFindings(int findings) {
+		this.commentedFindings = findings;
 	}
 
 	public int getComments() {
@@ -100,6 +111,14 @@ public class ProjectOverview implements Serializable {
 
 	public void setLastSynchUser(String lastSynchUser) {
 		this.lastSynchUser = lastSynchUser;
+	}
+
+	public String getLastScanDate() {
+		return lastScanDate;
+	}
+
+	public void setLastScanDate(String lastScanDate) {
+		this.lastScanDate = lastScanDate;
 	}
 
 }
