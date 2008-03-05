@@ -75,7 +75,7 @@ public final class FindingsSelectionView extends ViewPart {
 				false, false));
 		final ToolItem columnSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.DROP_DOWN);
-		columnSelectionItem.setImage(SLImages.getImage(SLImages.IMG_FILTER));
+		columnSelectionItem.setImage(SLImages.getImage(SLImages.IMG_COLUMNS));
 		columnSelectionItem.setToolTipText("Set Columns to Show");
 
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
