@@ -758,10 +758,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		Image img;
 		switch (data.getSort()) {
 		case SORT_DOWN:
-			img = SLImages.getImage(SLImages.IMG_DOWN);
+			img = SLImages.getImage(SLImages.IMG_SORT_DOWN);
 			break;
 		case SORT_UP:
-			img = SLImages.getImage(SLImages.IMG_UP);
+			img = SLImages.getImage(SLImages.IMG_SORT_UP);
 			break;
 		case UNSORTED:
 		default:
