@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
@@ -58,13 +57,12 @@ public class OverviewContent extends ContentComposite {
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
 							"Comments", "Critical", "High", "Medium", "Low",
-							"Irrelevant", "Total", "Last Synch",
-							"Last Synched By", "Last Scan Time" };
+							"Total", "Last Synch", "Last Synched By",
+							"Last Scan Time" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-text", "cell-number", "cell-number",
 							"cell-number", "cell-number", "cell-number",
-							"cell-number", "cell-date", "cell-text",
-							"cell-date" };
+							"cell-date", "cell-text", "cell-date" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -89,8 +87,6 @@ public class OverviewContent extends ContentComposite {
 							grid.setText(i, j++, Integer.toString(po
 									.getMedium()));
 							grid.setText(i, j++, Integer.toString(po.getLow()));
-							grid.setText(i, j++, Integer.toString(po
-									.getIrrelevant()));
 							grid.setText(i, j++, Integer.toString(po
 									.getTotalFindings()));
 						} else {
@@ -166,15 +162,11 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		final HorizontalPanel charts = new HorizontalPanel();
-		panel.add(charts);
-		charts.add(ChartBuilder.name("users").height(200).width(500).build());
-		charts
-				.add(ChartBuilder.name("projects").height(200).width(500)
-						.build());
 		panel.add(new HTML("<h2>Projects</h2>"));
+		panel.add(ChartBuilder.name("projects").height(400).width(800).build());
 		panel.add(projects);
 		panel.add(new HTML("<h2>Users</h2>"));
+		panel.add(ChartBuilder.name("users").height(400).width(800).build());
 		panel.add(users);
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
