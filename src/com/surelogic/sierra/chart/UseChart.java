@@ -36,14 +36,14 @@ public final class UseChart implements IDatabasePlot {
 
 		for (ProjectOverview po : PortalOverview.getInstance(c)
 				.getProjectOverviews()) {
-			data.setValue((double) po.getLow(), "Low", po.getName());
-			data.setValue((double) po.getMedium(), "Medium", po.getName());
-			data.setValue((double) po.getHigh(), "High", po.getName());
 			data.setValue((double) po.getCritical(), "Critical", po.getName());
+			data.setValue((double) po.getHigh(), "High", po.getName());
+			data.setValue((double) po.getMedium(), "Medium", po.getName());
+			data.setValue((double) po.getLow(), "Low", po.getName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Importance by Project", "Project", "Importance", data,
-				PlotOrientation.VERTICAL, true, true, false);
+				"Latest Scan Results", null, "Importance", data,
+				PlotOrientation.HORIZONTAL, true, false, false);
 		/*
 		 * final JFreeChart chart = ChartFactory.createStackedBarChart(
 		 * "Importance by Project", "Project", "Importance", data,
@@ -67,9 +67,9 @@ public final class UseChart implements IDatabasePlot {
 			dataset.setValue((double) (uo.getAudits()), "Audits", uo
 					.getUserName());
 		}
-		final JFreeChart chart = ChartFactory.createBarChart("Audits by User",
-				"User", "Audits", dataset, PlotOrientation.VERTICAL, false,
-				true, false);
+		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
+				"User", "Audits", dataset, PlotOrientation.HORIZONTAL, false,
+				false, false);
 		chart.setBackgroundPaint(null);
 		final CategoryPlot plot = chart.getCategoryPlot();
 
