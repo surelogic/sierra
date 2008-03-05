@@ -65,31 +65,31 @@ public abstract class SierraChartServlet extends HttpServlet {
 	}
 
 	public int getWidth(Map<String, String[]> parameterMap) {
-		String[] values;
-		values = parameterMap.get("width");
+		int widthHint = 400;
+		final String[] values = parameterMap.get("width");
 		if (values != null && values.length == 1) {
 			try {
 				final int width = Integer.parseInt(values[0]);
-				return width;
+				widthHint = width;
 			} catch (NumberFormatException ignore) {
 				// ignore, just use the default width
 			}
 		}
-		return 400; // default width
+		return getChart().getWidth(widthHint);
 	}
 
 	public int getHeight(Map<String, String[]> parameterMap) {
-		String[] values;
-		values = parameterMap.get("height");
+		int heightHint = 400;
+		final String[] values = parameterMap.get("height");
 		if (values != null && values.length == 1) {
 			try {
 				final int height = Integer.parseInt(values[0]);
-				return height;
+				heightHint = height;
 			} catch (NumberFormatException ignore) {
 				// ignore, just use the default height
 			}
 		}
-		return 400; // default height
+		return getChart().getHeight(heightHint);
 	}
 
 	@SuppressWarnings("unchecked")

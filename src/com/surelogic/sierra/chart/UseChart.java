@@ -17,7 +17,7 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
-public final class UseChart implements IDatabasePlot {
+public final class UseChart extends AbstractDatabasePlot {
 
 	public JFreeChart plot(Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {

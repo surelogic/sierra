@@ -26,4 +26,26 @@ public interface IDatabasePlot {
 	 */
 	JFreeChart plot(final Map<String, String[]> parameterMap, final Connection c)
 			throws SQLException, IOException;
+
+	/**
+	 * Gets the desired width of this plot in pixels. Only plots that change
+	 * their size based upon the data that they display need to do anything but
+	 * return the hint parameter.
+	 * 
+	 * @param hint
+	 *            a hint as to what the desired width in pixels.
+	 * @return the desired width of this plot in pixels.
+	 */
+	int getWidth(final int hint);
+
+	/**
+	 * Gets the desired height of this plot in pixels. Only plots that change
+	 * their size based upon the data that they display need to do anything but
+	 * return the hint parameter.
+	 * 
+	 * @param hint
+	 *            a hint as to what the desired height in pixels.
+	 * @return the desired height of this plot in pixels.
+	 */
+	int getHeight(final int hint);
 }
