@@ -141,7 +141,7 @@ public final class HeaderPanel extends Composite {
 			}
 
 			if (user.isAdministrator()) {
-				addTab("Server Settings", ServerInformationContent
+				addTab("Settings", ServerInformationContent
 						.getInstance());
 			} else {
 				removeTab(ServerInformationContent.getInstance()

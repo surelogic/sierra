@@ -164,7 +164,7 @@ public class UserManagementContent extends ContentComposite {
 			if (currentUser.getUserName().equals(user.getUserName())) {
 				usersGrid.setWidget(row, 3, createPasswordChanger(row, user));
 			} else {
-				usersGrid.setText(row, 3, "-");
+				usersGrid.setText(row, 3, "");
 			}
 		}
 		usersGrid.setRowData(row, user);
