@@ -111,15 +111,39 @@
 	<!-- chart servlets -->
 
 	<servlet>
-		<servlet-name>UseChart</servlet-name>
+		<servlet-name>LatestScanResults</servlet-name>
 		<servlet-class>
-			com.surelogic.sierra.servlets.chart.UseChartServlet
+			com.surelogic.sierra.servlets.chart.SierraChartServlet
 		</servlet-class>
+		<init-param>
+			<param-name>plot-class</param-name>
+			<param-value>
+				com.surelogic.sierra.chart.LatestScanResults
+			</param-value>
+		</init-param>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>UseChart</servlet-name>
-		<url-pattern>/chart/use</url-pattern>
+		<servlet-name>LatestScanResults</servlet-name>
+		<url-pattern>/chart/LatestScanResults</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AuditContributions</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.servlets.chart.SierraChartServlet
+		</servlet-class>
+		<init-param>
+			<param-name>plot-class</param-name>
+			<param-value>
+				com.surelogic.sierra.chart.AuditContributions
+			</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AuditContributions</servlet-name>
+		<url-pattern>/chart/AuditContributions</url-pattern>
 	</servlet-mapping>
 
 </web-app>
