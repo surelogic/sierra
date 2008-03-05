@@ -36,16 +36,19 @@ public final class UseChart implements IDatabasePlot {
 
 		for (ProjectOverview po : PortalOverview.getInstance(c)
 				.getProjectOverviews()) {
-			data.setValue((double) po.getIrrelevant(), "Irrelevant", po
-					.getName());
 			data.setValue((double) po.getLow(), "Low", po.getName());
 			data.setValue((double) po.getMedium(), "Medium", po.getName());
 			data.setValue((double) po.getHigh(), "High", po.getName());
 			data.setValue((double) po.getCritical(), "Critical", po.getName());
 		}
-		final JFreeChart chart = ChartFactory.createStackedBarChart(
+		final JFreeChart chart = ChartFactory.createBarChart(
 				"Importance by Project", "Project", "Importance", data,
 				PlotOrientation.VERTICAL, true, true, false);
+		/*
+		 * final JFreeChart chart = ChartFactory.createStackedBarChart(
+		 * "Importance by Project", "Project", "Importance", data,
+		 * PlotOrientation.VERTICAL, true, true, false);
+		 */
 		// set the range axis to display integers only...
 		chart.setBackgroundPaint(null);
 		chart.getCategoryPlot().getRangeAxis().setStandardTickUnits(
