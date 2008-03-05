@@ -680,7 +680,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		int i = 0;
 		for (final Column c : getSelection().getColumns()) {
 			final ColumnData data = (ColumnData) c;
-			final TableColumn tc = new TableColumn(f_table, SWT.NONE);
+			final TableColumn tc = new TableColumn(f_table, data.getAlignment());
 			tc.setText(data.getName());
 			tc.setData(data);
 			tc.setMoveable(true);
