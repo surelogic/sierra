@@ -223,7 +223,7 @@ public final class ConfigGenerator {
 			config.setProject(firstCU.getResource().getProject().getName());
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
-			setupTools(config);
+			setupTools(config, javaProject);
 			config.setExcludedToolsList(getExcludedTools());
 
 			try {
@@ -339,7 +339,7 @@ public final class ConfigGenerator {
 		config.setProject(project.getProject().getName());
 		config.setDestDirectory(f_resultRoot);
 		config.setScanDocument(scanDocument);
-		setupTools(config);
+		setupTools(config, project);
 		config.setExcludedToolsList(getExcludedTools());
 
 		// Get clean option
@@ -354,12 +354,15 @@ public final class ConfigGenerator {
 				+ SierraToolConstants.PARSED_FILE_SUFFIX;
 	}
 
-	private void setupTools(Config config) {
+	private void setupTools(Config config, IJavaProject javaProject) {
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setJavaVersion(System.getProperty("java.version"));
 		config.setMemorySize(PreferenceConstants.getToolMemoryMB());
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
+		config.setComplianceLevel(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE, true));
+		config.setTargetLevel(javaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true));
 	}
 
 	/**
