@@ -11,7 +11,9 @@
 ### END INIT INFO
 
 # Author: support@surelogic.com
+# After copying this script to /etc/init.d/sierra, execute the following command:
 #
+#  update-rc.d sierra defaults
 
 # Sierra Environment
 export SIERRA_HOME=/home/sierra
