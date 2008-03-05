@@ -8,9 +8,12 @@ import java.util.Map;
 import org.jfree.chart.JFreeChart;
 
 /**
- * The interface for plotting all Sierra charts and graphs. Implementing objects
- * should be safe to shared by several servlet instances. Thus, these objects
- * should not contain any state.
+ * The interface for plotting all Sierra charts and graphs.
+ * <p>
+ * Implementing objects should be safe to shared by several servlet instances.
+ * Thus, these objects should not contain any state.
+ * <p>
+ * Implementing objects must have a no-argument constructor.
  */
 public interface IDatabasePlot {
 

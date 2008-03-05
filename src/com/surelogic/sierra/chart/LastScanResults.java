@@ -16,25 +16,13 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
-public final class UseChart implements IDatabasePlot {
+public final class LastScanResults implements IDatabasePlot {
 
 	public JFreeChart plot(PlotSize mutableSize,
 			Map<String, String[]> parameterMap, Connection c)
 			throws SQLException, IOException {
-		final String name = parameterMap.get("name")[0];
-		if ("users".equals(name)) {
-			return userOverview(parameterMap, c);
-		} else if ("projects".equals(name)) {
-			return projectsOverview(parameterMap, c);
-		}
-		return null;
-	}
-
-	public JFreeChart projectsOverview(Map<String, String[]> parameterMap,
-			Connection c) throws SQLException, IOException {
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
 				.getProjectOverviews();
@@ -68,30 +56,4 @@ public final class UseChart implements IDatabasePlot {
 				NumberAxis.createIntegerTickUnits());
 		return chart;
 	}
-
-	public JFreeChart userOverview(Map<String, String[]> parameterMap,
-			Connection c) throws SQLException, IOException {
-
-		final PortalOverview po = PortalOverview.getInstance(c);
-		List<UserOverview> userOverviewList = po.getUserOverviews();
-
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for (UserOverview uo : userOverviewList) {
-			dataset.setValue((double) (uo.getAudits()), "Audits", uo
-					.getUserName());
-		}
-
-		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
-				"User", "Audits", dataset, PlotOrientation.HORIZONTAL, false,
-				false, false);
-		chart.setBackgroundPaint(null);
-		final CategoryPlot plot = chart.getCategoryPlot();
-
-		// set the range axis to display integers only...
-		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-		return chart;
-	}
-
 }
