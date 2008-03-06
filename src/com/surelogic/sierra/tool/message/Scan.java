@@ -1,87 +1,105 @@
 package com.surelogic.sierra.tool.message;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-@XmlType(propOrder =  {
-    "uid", "toolOutput", "config"}
-)
+@XmlType(propOrder = { "uid", "toolOutput", "config" })
 public class Scan {
-    private String uid;
-    private Config config;
-    private ToolOutput toolOutput;
 
-    public Scan() {
-        // Nothing to do
-    }
+	@XmlAttribute
+	protected String version;
 
-    public Config getConfig() {
-        return config;
-    }
+	@XmlElement(required = true)
+	protected String uid;
+	@XmlElement(required = true)
+	protected Config config;
+	@XmlElement(required = true)
+	protected ToolOutput toolOutput;
 
-    public void setConfig(Config config) {
-        this.config = config;
-    }
+	public Scan() {
+		// Nothing to do
+	}
 
-    public ToolOutput getToolOutput() {
-        return toolOutput;
-    }
+	public Config getConfig() {
+		return config;
+	}
 
-    public void setToolOutput(ToolOutput toolOutput) {
-        this.toolOutput = toolOutput;
-    }
+	public void setConfig(Config config) {
+		this.config = config;
+	}
 
-    public String getUid() {
-        return uid;
-    }
+	public ToolOutput getToolOutput() {
+		return toolOutput;
+	}
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
+	public void setToolOutput(ToolOutput toolOutput) {
+		this.toolOutput = toolOutput;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) +
-            ((toolOutput == null) ? 0 : toolOutput.hashCode());
-        result = (prime * result) + ((config == null) ? 0 : config.hashCode());
+	public String getUid() {
+		return uid;
+	}
 
-        return result;
-    }
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
+	public String getVersion() {
+		return version;
+	}
 
-        if (obj == null) {
-            return false;
-        }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((config == null) ? 0 : config.hashCode());
+		result = prime * result
+				+ ((toolOutput == null) ? 0 : toolOutput.hashCode());
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
 
-        final Scan other = (Scan) obj;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Scan other = (Scan) obj;
+		if (config == null) {
+			if (other.config != null)
+				return false;
+		} else if (!config.equals(other.config))
+			return false;
+		if (toolOutput == null) {
+			if (other.toolOutput != null)
+				return false;
+		} else if (!toolOutput.equals(other.toolOutput))
+			return false;
+		if (uid == null) {
+			if (other.uid != null)
+				return false;
+		} else if (!uid.equals(other.uid))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
 
-        if (toolOutput == null) {
-            if (other.toolOutput != null) {
-                return false;
-            }
-        } else if (!toolOutput.equals(other.toolOutput)) {
-            return false;
-        }
-
-        if (config == null) {
-            if (other.config != null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
