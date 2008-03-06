@@ -133,8 +133,11 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			}
 		} catch (ScanVersionException e) {
 			final int errNo = 88;
-			final String msg = I18N.err(errNo, scan.getVersion(),
-					f_projectName, f_server);
+			String scanVersion = scan.getVersion();
+			if (scanVersion == null)
+				scanVersion = "(none)";
+			final String msg = I18N.err(errNo, scanVersion, f_projectName,
+					f_server);
 			SLLogger.getLogger().log(Level.SEVERE, msg, e);
 			return SLStatus.createErrorStatus(errNo, msg);
 		}
