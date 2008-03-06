@@ -145,7 +145,9 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		label.setText(f_label);
 
 		f_projectTable = new Table(panel, SWT.FULL_SELECTION | SWT.CHECK);
-		f_projectTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.heightHint = 200;
+		f_projectTable.setLayoutData(data);
 
 		for (IJavaProject jp : f_openJavaProjects) {
 			TableItem item = new TableItem(f_projectTable, SWT.NONE);
