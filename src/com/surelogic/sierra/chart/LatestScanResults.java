@@ -3,6 +3,8 @@ package com.surelogic.sierra.chart;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +28,12 @@ public final class LatestScanResults implements IDatabasePlot {
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
 				.getProjectOverviews();
-		mutableSize.setHeight(50 * overview.size());
+		Collections.sort(overview, new Comparator<ProjectOverview>() {
+			public int compare(ProjectOverview o1, ProjectOverview o2) {
+				return o2.getTotalFindings() - o1.getTotalFindings();
+			}
+		});
+		mutableSize.setHeight(50 * overview.size() + 50);
 		for (ProjectOverview po : overview) {
 			importanceData.setValue((double) po.getCritical(), "Critical", po
 					.getName());

@@ -3,6 +3,8 @@ package com.surelogic.sierra.chart;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,12 @@ public final class AuditContributions implements IDatabasePlot {
 			throws SQLException, IOException {
 		final PortalOverview po = PortalOverview.getInstance(c);
 		List<UserOverview> userOverviewList = po.getUserOverviews();
-		mutableSize.setHeight(50 * userOverviewList.size());
+		Collections.sort(userOverviewList, new Comparator<UserOverview>() {
+			public int compare(UserOverview o1, UserOverview o2) {
+				return o2.getAudits() - o1.getAudits();
+			}
+		});
+		mutableSize.setHeight(20 * userOverviewList.size() + 50);
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
 			dataset.setValue((double) (uo.getAudits()), "Audits", uo

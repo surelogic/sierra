@@ -154,8 +154,8 @@ public final class PortalOverview {
 					po.setLastSynchDate(formattedDate(lastSynchSet
 							.getTimestamp(2)));
 				} else {
-					po.setLastSynchUser("-");
-					po.setLastSynchDate("-");
+					po.setLastSynchUser("");
+					po.setLastSynchDate("");
 				}
 			} finally {
 				lastSynchSet.close();
@@ -176,7 +176,7 @@ public final class PortalOverview {
 
 	private static String formattedDate(Date date) {
 		if (date == null) {
-			return "-";
+			return "";
 		} else {
 			DateFormat format = new SimpleDateFormat("MM/dd/yy HH:mm a");
 			return format.format(date);
