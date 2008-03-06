@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -74,41 +75,35 @@ public class SettingsContent extends ContentComposite {
 		adminEmailTextBox.setWidth("40ex");
 		serverEmailTextBox.setWidth("40ex");
 		smtpHostTextBox.setWidth("40ex");
-		smtpPortTextBox.setWidth("10ex");
+		smtpPortTextBox.setWidth("40ex");
 		smtpUserTextBox.setWidth("40ex");
 		smtpPassTextBox.setWidth("40ex");
+		final FlexTable at = new FlexTable();
+		at.setWidget(5, 1, smtpPassTextBox);
+		at.setWidget(4, 1, smtpUserTextBox);
+		at.setWidget(3, 1, smtpPortTextBox);
+		at.setWidget(2, 1, smtpHostTextBox);
+		at.setWidget(1, 1, serverEmailTextBox);
+		at.setWidget(0, 1, adminEmailTextBox);
+		at.setWidget(5, 0, label("SMTP Password (Optional):"));
+		at.setWidget(4, 0, label("STMP User (Optional):"));
+		at.setWidget(3, 0, label("Port:"));
+		at.setWidget(2, 0, label("SMTP Host:"));
+		at.setWidget(1, 0, label("From:"));
+		at.setWidget(0, 0, label("To:"));
 		panel
 				.add(new HTML(
 						"<h3>Administration Email</h3><span class=\"settings-info-text\">The below settings configure this team server to send email about any problems it encounters to a designated administrator.</span>"));
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.add(new HTML("To:"));
-		hp.add(adminEmailTextBox);
-		panel.add(hp);
-		hp = new HorizontalPanel();
-		hp.add(new HTML("From:"));
-		hp.add(serverEmailTextBox);
-		panel.add(hp);
-		hp = new HorizontalPanel();
-		hp.add(new HTML("SMTP Host:"));
-		hp.add(smtpHostTextBox);
-		hp.add(new HTML("Port:"));
-		hp.add(smtpPortTextBox);
-		panel.add(hp);
-		hp = new HorizontalPanel();
-		hp.add(new HTML("STMP User (Optional):"));
-		hp.add(smtpUserTextBox);
-		panel.add(hp);
-		hp = new HorizontalPanel();
-		hp.add(new HTML("SMTP Password (Optional):"));
-		hp.add(smtpPassTextBox);
-		panel.add(hp);
-		hp = new HorizontalPanel();
-		hp.add(updateEmailButton);
-		hp.add(testEmailButton);
-		panel.add(hp);
+		panel.add(at);
 		panel.add(status);
 		updateInfo(ServerInfo.getDefault());
 		getRootPanel().add(panel, DockPanel.CENTER);
+	}
+
+	private static Label label(String text) {
+		Label label = new Label(text);
+		label.addStyleName(".settings-label-text");
+		return label;
 	}
 
 	protected void onActivate() {

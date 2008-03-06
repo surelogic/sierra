@@ -145,8 +145,8 @@ a.hover {
 	font-size: smaller;	
 }
 
-.settings-admin-text {
-	
+.settings-label-text {
+	text-align: right;
 }
 
 
