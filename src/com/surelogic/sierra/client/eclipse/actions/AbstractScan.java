@@ -1,8 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,7 +49,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
     return saved;
   }
 
-  protected StringBuilder computeLabel(final List<String> names) {
+  protected StringBuilder computeLabel(final Collection<String> names) {
     final StringBuilder sb = new StringBuilder(isRescan ? "Re-scanning " : "Scanning ");
     /*
      * Fix for bug 1157. At JPL we encountered 87 projects and
@@ -95,7 +93,8 @@ public abstract class AbstractScan<T extends IJavaElement>  {
           public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
             try {
               boolean built    = checkIfBuilt(elements);
-              boolean compiled = JavaUtil.noCompilationErrors(elements);
+              Collection<String> erroneous = JavaUtil.findCompilationErrors(elements);
+              boolean compiled = erroneous.isEmpty();
 
               if (saved & built & compiled) {
                 final StringBuilder sb = computeLabel(names); // FIX merge w/ showStartBalloon?
@@ -106,7 +105,7 @@ public abstract class AbstractScan<T extends IJavaElement>  {
                 BalloonUtility.showMessage("Something isn't built", 
                 "Sierra cannot run properly if your code isn't fully compiled");
               } else if (!compiled) {
-                BalloonUtility.showMessage("Something doesn't compile", 
+                BalloonUtility.showMessage("Something doesn't compile in "+computeLabel(erroneous), 
                 "Sierra cannot run properly if your code does not compile");
               } else {
                 // Scan not run, because of modified editors   
