@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -55,16 +54,16 @@ public class SettingsContent extends ContentComposite {
 				.add(new HTML(
 						"<h3>Version Information</h3><span class=\"settings-info-text\">The below table reports version information about this team server.</span>"));
 		final FlexTable t = new FlexTable();
+		final FlexCellFormatter tf = t.getFlexCellFormatter();
 		t.addStyleName("settings-version-table");
-		t.setText(0, 0, "");
 		t.setWidget(2, 2, availableVersion);
+		t.setText(0, 0, "Software");
+		tf.setRowSpan(0, 0, 2);
 		t.setWidget(2, 1, currentVersion);
 		t.setWidget(2, 0, productVersion);
-		t.setText(1, 2, "Available");
-		t.setText(1, 1, "Current");
-		t.setText(1, 0, "Software");
+		t.setText(1, 0, "Current");
+		t.setText(1, 1, "Available");
 		t.setText(0, 1, "Database Schema");
-		final FlexCellFormatter tf = t.getFlexCellFormatter();
 		tf.setColSpan(0, 1, 2);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
