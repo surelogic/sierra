@@ -465,9 +465,26 @@ public final class MFilterSelectionColumn extends MColumn implements
 		final int currentRows = f_reportContents.getItemCount();
 		if (currentRows != valueList.size()) {
 		  filterContentsChanged = true;
-	    f_reportContents.setItemCount(valueList.size());
-	    // Rest delegated to SetData listener
-		}	
+		  f_reportContents.setItemCount(valueList.size());
+		  // Update all the items
+		  TableItem[] items = f_reportContents.getItems();
+		  int i=0;
+		  for(String row : valueList) {
+			updateData(items[i], row);			  
+	        i++;
+		  }	    
+		} else {
+		  TableItem[] items = f_reportContents.getItems();
+		  int i=0;
+		  for(String row : valueList) {
+			TableItem item = items[i];
+			if (!row.equals(item.getData())) {
+			  filterContentsChanged = true;
+			  updateData(item, row);			  
+			}
+	        i++;
+		  }
+		}
 
 		final int porousCount = f_filter.getFindingCountPorous();
 		if (f_porousCount != null && !f_porousCount.isDisposed())
@@ -520,7 +537,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 	void updateData(final TableItem item, int i) {
 	  final String value = valueList.get(i);
 	  //System.out.println("Initialized "+i+": "+value);
-
+	  updateData(item, value);
+	}
+	  
+	void updateData(final TableItem item, String value) {
 	  item.setText(value);
 	  item.setText(0, value);
     item.setData(value);
