@@ -107,6 +107,7 @@ a.hover {
 /* Overview tables */
 .overview-table {
 	border: 1px solid;
+	border-spacing: 0px;
 }
 
 .overview-header {
@@ -114,8 +115,18 @@ a.hover {
 	color: #005596;
 }
 
-.overview-data {
-	
+.overview-header td {
+	border-bottom: 1px solid;
+	border-collapse: collapse;
+}
+
+.overview-data td {
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+	border-collapse: collapse;
+	padding-right: 5px;
+	padding-left: 5px;
+	empty-cells: show;
 }
 
 .cell-text {

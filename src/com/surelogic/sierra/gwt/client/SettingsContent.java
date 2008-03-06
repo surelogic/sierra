@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -94,6 +95,10 @@ public class SettingsContent extends ContentComposite {
 				.add(new HTML(
 						"<h3>Administration Email</h3><span class=\"settings-info-text\">The below settings configure this team server to send email about any problems it encounters to a designated administrator.</span>"));
 		panel.add(at);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(updateEmailButton);
+		hp.add(testEmailButton);
+		panel.add(hp);
 		panel.add(status);
 		updateInfo(ServerInfo.getDefault());
 		getRootPanel().add(panel, DockPanel.CENTER);

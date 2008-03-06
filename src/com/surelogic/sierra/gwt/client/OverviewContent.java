@@ -52,7 +52,7 @@ public class OverviewContent extends ContentComposite {
 							.add(new HTML(
 									"<span class=\"success\">No recent findings.</span>"));
 				} else {
-					final Grid grid = new Grid(list.size() + 1, 11);
+					final Grid grid = new Grid(list.size() + 1, 10);
 					grid.setStyleName("overview-table");
 					final RowFormatter f = grid.getRowFormatter();
 					final CellFormatter cf = grid.getCellFormatter();
@@ -169,9 +169,9 @@ public class OverviewContent extends ContentComposite {
 		charts.add(ChartBuilder.name("LatestScanResults").width(500).build());
 		charts.add(ChartBuilder.name("AuditContributions").width(400).build());
 		panel.add(charts);
-		panel.add(new HTML("<h2>Projects</h2>"));
+		panel.add(new HTML("<h3>Projects</h3>"));
 		panel.add(projects);
-		panel.add(new HTML("<h2>Users</h2>"));
+		panel.add(new HTML("<h3>Users</h3>"));
 		panel.add(users);
 		rootPanel.add(panel, DockPanel.CENTER);
 		projects.add(new HTML("Fetching latest information."));
