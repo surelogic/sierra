@@ -467,7 +467,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 * is refreshed than an attempt is made to select that finding id again. A
 	 * value of <code>-1</code> indicates that no finding is selected.
 	 */
-	private long f_findingId = -1;
+	private long f_selectedFindingId = -1;
 
 	private final Listener f_singleClick = new Listener() {
 		public void handleEvent(Event event) {
@@ -484,7 +484,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				final FindingDetailsView view = (FindingDetailsView) ViewUtility
 						.showView(FindingDetailsView.class.getName(), null,
 								IWorkbenchPage.VIEW_VISIBLE);
-				f_findingId = data.f_findingId;
+				f_selectedFindingId = data.f_findingId;
 				view.findingSelected(data.f_findingId);
 			}
 		}
@@ -588,7 +588,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 			// Only needed if virtual
 			// Sets up the table to show the previous selection
-			else if (data.f_findingId == f_findingId) {
+			else if (data.f_findingId == f_selectedFindingId) {
 				initTableItem(i, data, f_table.getItem(i));
 				selectionFound = true;
 				break;
@@ -609,7 +609,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 				}
 			}
-			f_findingId = (data == null) ? -1 : data.f_findingId;
+			f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
 		}
 		nearSelected.clear();
 
@@ -868,13 +868,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 			// throw new IllegalArgumentException(i+" != data.index:
 			// "+data.index);
 		}
-		item.setText(data.f_summary);
-		item.setImage(Utility.getImageFor(data.f_importance));
 		item.setData(data);
-		if (data.f_findingId == f_findingId) {
-			f_table.setSelection(item);
-			return true;
-		}
+
 		// Init columns
 		// int numVisible = 0;
 		int j = 0;
@@ -887,10 +882,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 			 */
 			j++;
 		}
-		/*
-		 * // Special handling if (numVisible == 1) { item.setImage(0,
-		 * Utility.getImageFor(data.f_importance)); }
-		 */
+		if (data.f_findingId == f_selectedFindingId) {
+			f_table.setSelection(item);
+			return true;
+		}
 		return false;
 	}
 
