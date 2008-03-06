@@ -149,13 +149,14 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		data.heightHint = 200;
 		f_projectTable.setLayoutData(data);
 
+		boolean onlyOne = f_openJavaProjects.size() == 1;
 		for (IJavaProject jp : f_openJavaProjects) {
 			TableItem item = new TableItem(f_projectTable, SWT.NONE);
 			item.setText(jp.getElementName());
 			item.setImage(SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			item.setData(jp);
-			if (f_initiallySelectedJavaProjects.contains(jp)) {
+			if (f_initiallySelectedJavaProjects.contains(jp) || onlyOne) {
 				item.setChecked(true);
 				f_selectedProjects.add(jp);
 			}
@@ -179,12 +180,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		allButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		allButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (f_projectTable != null && !f_projectTable.isDisposed()) {
-					for (TableItem item : f_projectTable.getItems()) {
-						item.setChecked(true);
-					}
-					setOKState();
-				}
+				selectAll();
 			}
 		});
 		final Button noneButton = new Button(allNonePanel, SWT.PUSH);
@@ -193,12 +189,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		noneButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (f_projectTable != null && !f_projectTable.isDisposed()) {
-					for (TableItem item : f_projectTable.getItems()) {
-						item.setChecked(false);
-					}
-					setOKState();
-				}
+				deselectAll();
 			}
 		});
 
@@ -244,6 +235,24 @@ public final class JavaProjectSelectionDialog extends Dialog {
 			 */
 			getButton(IDialogConstants.OK_ID).setEnabled(
 					!f_selectedProjects.isEmpty());
+		}
+	}
+
+	private void selectAll() {
+		if (f_projectTable != null && !f_projectTable.isDisposed()) {
+			for (TableItem item : f_projectTable.getItems()) {
+				item.setChecked(true);
+			}
+			setOKState();
+		}
+	}
+
+	private void deselectAll() {
+		if (f_projectTable != null && !f_projectTable.isDisposed()) {
+			for (TableItem item : f_projectTable.getItems()) {
+				item.setChecked(false);
+			}
+			setOKState();
 		}
 	}
 }
