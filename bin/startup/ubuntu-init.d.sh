@@ -31,8 +31,16 @@ DAEMON_ARGS="$JETTY_HOME/etc/sierra-embedded-derby.xml"
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+if [ ! -e "$DAEMON" ]; then
+	echo "File does not exist: $DAEMON"
+	exit 0
+fi
 
+# If the execute bit isn't set, set it
+if [ ! -x "$DAEMON" ]; then
+	chmod +x $DAEMON
+fi
+  
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
 
