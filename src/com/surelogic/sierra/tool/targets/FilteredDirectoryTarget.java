@@ -52,4 +52,11 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
   public String[] getExclusions() {
     return exclusions;
   }
+  public void setInclusions(String[] ex) {
+	inclusions = ex;
+  }
+
+  public String[] getInclusions() {
+	return inclusions;
+  }
 }
