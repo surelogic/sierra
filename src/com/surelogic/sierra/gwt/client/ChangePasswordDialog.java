@@ -35,7 +35,7 @@ public class ChangePasswordDialog extends DialogBox {
 		userGrid.setWidget(1, 1, userPassword);
 		userGrid.setText(2, 0, "New Password"
 				+ (ClientContext.getUser().getUserName().equals(
-						user.getUserName()) ? "" : "for " + user.getUserName())
+						user.getUserName()) ? "" : " for " + user.getUserName())
 				+ ":");
 		userGrid.setWidget(2, 1, password);
 		userGrid.setText(3, 0, "Confirm Password:");

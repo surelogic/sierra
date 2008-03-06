@@ -91,7 +91,7 @@ public class OverviewContent extends ContentComposite {
 						grid.setText(i, j++, iToS(po.getLow()));
 						grid.setText(i, j++, iToS(po.getIrrelevant()));
 						grid.setText(i, j++,
-								po.getLastSynchDate().length() == 0 ? "never"
+								po.getLastSynchDate().length() == 0 ? ""
 										: po.getLastSynchDate());
 						grid.setText(i, j++, po.getLastSynchUser());
 						for (j = 0; j < dataStyle.length; j++) {
@@ -147,7 +147,7 @@ public class OverviewContent extends ContentComposite {
 							grid.setText(i, j++, "");
 						}
 						grid.setText(i, j++,
-								uo.getLastSynch().length() == 0 ? "never" : uo
+								uo.getLastSynch().length() == 0 ? "" : uo
 										.getLastSynch());
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);

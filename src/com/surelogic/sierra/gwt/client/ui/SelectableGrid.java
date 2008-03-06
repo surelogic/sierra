@@ -22,7 +22,7 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 // TODO also may want to provide an icon with a popup if a cell save fails
 public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
-	private static final String EDITABLE_STYLE = "sl-Grid-Editable";
+	private static final String EDITABLE_STYLE = "clickable";
 
 	private final FlexTable grid = new FlexTable();
 	private final List rowData = new ArrayList();
@@ -176,10 +176,11 @@ public class SelectableGrid extends Composite {
 	public void setText(int row, int column, String text) {
 		grid.setText(toGridRow(row), toGridColumn(column), text);
 		if (getInplaceEditor(column) != null) {
-			grid.getCellFormatter().addStyleName(row, column, EDITABLE_STYLE);
+			grid.getCellFormatter().addStyleName(toGridRow(row),
+					toGridColumn(column), EDITABLE_STYLE);
 		} else {
-			grid.getCellFormatter()
-					.removeStyleName(row, column, EDITABLE_STYLE);
+			grid.getCellFormatter().removeStyleName(toGridColumn(row),
+					toGridColumn(column), EDITABLE_STYLE);
 		}
 	}
 
