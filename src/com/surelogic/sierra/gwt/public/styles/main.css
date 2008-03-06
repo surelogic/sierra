@@ -1,42 +1,41 @@
 @CHARSET "ISO-8859-1";
+
 body {
 	font-family: Helvetica, Verdana, Arial, sans-serif;
 	font-size: medium;
 }
 
-
 h2 {
-	color:  #005395;
+	color: #005395;
 	font-size: large;
 	margin-bottom: 1ex;
 	margin-top: 1ex;
 }
 
 h3 {
-	color:  #FF7010;
+	color: #FF7010;
 	font-size: medium;
 	margin-bottom: 1ex;
 	margin-top: 1ex;
 }
 
-
 a {
-	color:#005596; 
-	text-decoration:underline;
+	color: #005596;
+	text-decoration: underline;
 }
 
 a.hover {
-	color:#005596; 
-	text-decoration:underline;
+	color: #005596;
+	text-decoration: underline;
 }
 
 /* Header */
 .header {
-	background-image:url('../images/header-bg.png'); 
-	background-repeat:repeat-x; 
-	width:100%;
-	padding:0px 0px 0px 0px; 
-	margin:0px 0px 0px 0px;
+	background-image: url('../images/header-bg.png');
+	background-repeat: repeat-x;
+	width: 100%;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
 }
 
 .header-session {
@@ -46,16 +45,15 @@ a.hover {
 }
 
 .header-session-clickable {
-	text-decoration:underline;
+	text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
 }
 
 .user {
-	color: 	#FF7010;
+	color: #FF7010;
 	font-weight: bold;
 }
-
 
 /* Login Panel */
 .login-panel {
@@ -64,13 +62,13 @@ a.hover {
 }
 
 .login-errormessage {
-    color: #FF3333;
+	color: #FF3333;
 }
 
 /* Class for items that can be clicked */
 .clickable {
-	color:#005596; 
-	text-decoration:underline;
+	color: #005596;
+	text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
 }
@@ -84,141 +82,136 @@ a.hover {
 }
 
 /* SureLogic Component Styling */
-
 .sl-ContentComposite {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 .sl-TabComposite {
-  width: 100%;
+	width: 100%;
 }
 
 /* Action panel - holds a horizontal set of action links */
 .sl-ActionPanel {
-  margin: 1ex;
+	margin: 1ex;
 }
 
 .sl-ActionPanel .sl-ActionPanel-item {
-  color:#005596; 
-  text-decoration:underline;
-  cursor: pointer;
-  cursor: hand;
-  padding-right: 1ex;
+	color: #005596;
+	text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+	padding-right: 1ex;
 }
 
 /* Overview tables */
-
 .overview-table {
 	border: 1px solid;
 }
 
 .overview-header {
-	text-align: left;	
-	color: #005596; 
+	text-align: left;
+	color: #005596;
 }
 
 .overview-data {
-
+	
 }
 
 .cell-text {
-	text-align:left; 	
+	text-align: left;
 }
 
 .cell-number {
-	text-align: right;	
+	text-align: right;
 }
 
 .cell-date {
-	text-align: center;	
+	text-align: center;
 }
 
 /* Settings Page */
 .settings-version-table {
 	
 }
+
 .settings-version-td {
-	border: thin inset;	
+	border: thin inset;
 }
+
 .settings-info-text {
-	font-size: smaller;	
+	font-size: smaller;
 }
 
 .settings-label-text {
 	text-align: right;
 }
 
-
 /* Grid panel */
 .sl-GridPanel {
-  width: 100%;
-  border: 1px solid;
-  background-color: #bfd4e4;
+	width: 100%;
+	border: 1px solid;
+	background-color: #bfd4e4;
 }
 
 .sl-GridPanel .sl-GridPanel-actions {
-  padding: 1px;
+	padding: 1px;
 }
 
 .sl-GridPanel .sl-GridPanel-table {
-  
-  
+	
 }
 
 .sl-Grid {
-  border-collapse: separate;
-  border-spacing: 0px;
-  width: 100%;
+	border-collapse: separate;
+	border-spacing: 0px;
+	width: 100%;
 }
 
 .sl-Grid-Editable {
-  	text-decoration: underline;
+	text-decoration: underline;
 }
 
 .sl-Grid .sl-Grid-headerrow {
-
+	
 }
 
 .sl-Grid .sl-Grid-header {
-  border: 2px groove;
+	border: 2px groove;
 }
 
 .sl-Grid .sl-Grid-itemrow {
-  background-color: #FFFFFF;
-  border-bottom: 1px solid;
+	background-color: #FFFFFF;
+	border-bottom: 1px solid;
 }
 
 .sl-Grid .sl-Grid-item {
-  padding: 3px;
+	padding: 3px;
 }
 
 .sl-Grid .sl-Grid-error {
-  color: red;
+	color: red;
 }
 
 .sl-Grid .sl-Grid-info {
-  font-style: italic;
+	font-style: italic;
 }
 
-
-/* GWT Component Styling */
-
-/* DialogBox Styling */
+/* GWT Component Styling */ /* DialogBox Styling */
 .gwt-DialogBox {
-  border: 2px outset;
-  background-color: white;
+	border: 2px outset;
+	background-color: white;
 }
 
 .gwt-DialogBox .Caption {
-  border: 2px inset;
-  background-color: #005495;
-  padding: 3px;
-  margin: 2px;
-  font-size: large;
-  font-weight: bold;
-  color: white;
-  cursor: default;
+	border: 2px inset;
+	background-color: #005495;
+	padding: 3px;
+	margin: 2px;
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	cursor: default;
 }
 
 /* Tab Panel Styling */
@@ -228,32 +221,34 @@ a.hover {
 }
 
 .gwt-TabPanelBottom {
-  background-color: #E8EEF7;
+	background-color: #E8EEF7;
 }
 
 .gwt-TabBar {
-  background-color: #005495;
-  font-size: medium;
-  font-weight: normal;
-  text-align: center;
-  color: white;
+	background-color: #005495;
+	font-size: medium;
+	font-weight: normal;
+	text-align: center;
+	color: white;
 }
+
 .gwt-TabBar .gwt-TabBarFirst {
 	display: none;
 }
 
 .gwt-TabBar .gwt-TabBarRest {
+	
 }
 
-.gwt-TabBar .gwt-TabBarItem-selected { 
-  cursor: pointer;
-  cursor: hand;
-  background-color: #ff7011;
+.gwt-TabBar .gwt-TabBarItem-selected {
+	cursor: pointer;
+	cursor: hand;
+	background-color: #ff7011;
 }
+
 .gwt-TabBar .gwt-TabBarItem {
-  cursor: pointer;
-  cursor: hand;
-  padding-left: 1ex;
-  padding-right: 1ex;
+	cursor: pointer;
+	cursor: hand;
+	padding-left: 1ex;
+	padding-right: 1ex;
 }
-
