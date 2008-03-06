@@ -21,6 +21,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
@@ -238,6 +239,24 @@ public class Server {
 		return null;
 	}
 
+	public void setNotification(Notification notification) throws SQLException {
+		final Statement st = conn.createStatement();
+		try {
+			st.execute("DELETE FROM NOTIFICATION");
+			st
+					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
+							+ escapedTuple(new Object[] {
+									notification.getHost(),
+									notification.getPort(),
+									notification.getUser(),
+									notification.getPass(),
+									notification.getFromEmail(),
+									notification.getToEmail() }));
+		} finally {
+			st.close();
+		}
+	}
+
 	private static String escapedTuple(Object[] values) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
@@ -260,22 +279,12 @@ public class Server {
 		}
 	}
 
-	public void setNotification(Notification notification) throws SQLException {
-		final Statement st = conn.createStatement();
-		try {
-			st.execute("DELETE FROM NOTIFICATION");
-			st
-					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
-							+ escapedTuple(new Object[] {
-									notification.getHost(),
-									notification.getPort(),
-									notification.getUser(),
-									notification.getPass(),
-									notification.getFromEmail(),
-									notification.getToEmail() }));
-		} finally {
-			st.close();
-		}
+	/**
+	 * Returns the current team server version.
+	 * 
+	 * @return
+	 */
+	public static String getSoftwareVersion() {
+		return I18N.msg("sierra.teamserver.version");
 	}
-
 }
