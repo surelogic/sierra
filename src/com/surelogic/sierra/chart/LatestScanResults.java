@@ -17,8 +17,10 @@ import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleEdge;
+import org.jfree.ui.VerticalAlignment;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.portal.PortalOverview;
@@ -52,9 +54,9 @@ public final class LatestScanResults implements IDatabasePlot {
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
 		bar.setSeriesPaint(0, Color.RED);
-		bar.setSeriesPaint(1, Color.BLUE);
+		bar.setSeriesPaint(1, Color.BLACK);
 		bar.setSeriesPaint(2, new Color(99, 66, 0));
-		bar.setSeriesPaint(3, Color.ORANGE);
+		bar.setSeriesPaint(3, Color.BLUE);
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		for (ProjectOverview po : overview) {
 			totalData.setValue((double) po.getTotalFindings(), "Total", po
@@ -71,7 +73,10 @@ public final class LatestScanResults implements IDatabasePlot {
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		// set the range axis to display integers only...
-		chart.getTitle().setPosition(RectangleEdge.LEFT);
+		final TextTitle t = chart.getTitle();
+		t.setPosition(RectangleEdge.LEFT);
+		t.setVerticalAlignment(VerticalAlignment.TOP);
+		t.setPaint(new Color(255, 70, 10));
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
