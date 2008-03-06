@@ -51,7 +51,10 @@ public class Scan {
 	}
 
 	public String getVersion() {
-		return version;
+		if (version == null)
+			return "";
+		else
+			return version;
 	}
 
 	public void setVersion(String version) {
