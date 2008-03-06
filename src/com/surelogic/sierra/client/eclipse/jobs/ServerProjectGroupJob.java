@@ -48,10 +48,12 @@ public class ServerProjectGroupJob extends Job {
     } catch (InterruptedException e) {
       e.printStackTrace();
       return Status.CANCEL_STATUS;
-    }          
+    }       
+    /*
     for(AbstractServerProjectJob j : jobs) {
       System.out.println(j.getResult());
     }
+    */
     return Status.OK_STATUS;
   }
 
