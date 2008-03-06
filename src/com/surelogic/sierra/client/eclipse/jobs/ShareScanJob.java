@@ -23,6 +23,7 @@ import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.ScanVersionException;
 import com.surelogic.sierra.tool.message.TimeseriesRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
@@ -133,6 +134,9 @@ public class ShareScanJob extends AbstractServerProjectJob {
 								+ " to " + f_server, e);
 				return Status.CANCEL_STATUS;
 			}
+		} catch (ScanVersionException e) {
+			//TODO
+			throw new IllegalStateException(e);
 		}
 	}
 }
