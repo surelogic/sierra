@@ -22,6 +22,7 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 // TODO also may want to provide an icon with a popup if a cell save fails
 public class SelectableGrid extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Grid";
+	private static final String EDITABLE_STYLE = "sl-Grid-Editable";
 
 	private final FlexTable grid = new FlexTable();
 	private final List rowData = new ArrayList();
@@ -127,7 +128,8 @@ public class SelectableGrid extends Composite {
 			c.addClickListener(new ClickListener() {
 				public void onClick(Widget sender) {
 					fireSelectionEvent(gridRow);
-				}});
+				}
+			});
 			grid.setWidget(gridRow, 0, c);
 		}
 		grid.getRowFormatter()
@@ -173,6 +175,12 @@ public class SelectableGrid extends Composite {
 
 	public void setText(int row, int column, String text) {
 		grid.setText(toGridRow(row), toGridColumn(column), text);
+		if (getInplaceEditor(column) != null) {
+			grid.getCellFormatter().addStyleName(row, column, EDITABLE_STYLE);
+		} else {
+			grid.getCellFormatter()
+					.removeStyleName(row, column, EDITABLE_STYLE);
+		}
 	}
 
 	public Object getRowData(int row) {
@@ -275,7 +283,7 @@ public class SelectableGrid extends Composite {
 			listener.onSelect(row, getRowData(row));
 		}
 	}
-	
+
 	public void fireHeaderClickEvent(int column) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			SelectableGridListener listener = (SelectableGridListener) it

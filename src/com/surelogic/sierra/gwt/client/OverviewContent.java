@@ -57,13 +57,12 @@ public class OverviewContent extends ContentComposite {
 					final RowFormatter f = grid.getRowFormatter();
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
-							"Comments", "Critical", "High", "Medium", "Low",
-							"Total", "Last Synch", "Last Synched By",
-							"Last Scan Time" };
+							"Last Scan", "Audits", "Critical", "High",
+							"Medium", "Low", "Irrelevant", "Last Synch", "By" };
 					final String[] dataStyle = new String[] { "cell-text",
-							"cell-text", "cell-number", "cell-number",
+							"cell-date", "cell-text", "cell-number",
 							"cell-number", "cell-number", "cell-number",
-							"cell-date", "cell-text", "cell-date" };
+							"cell-number", "cell-date", "cell-text" };
 					for (int j = 0; j < projectHeader.length; j++) {
 						grid.setText(0, j, projectHeader[j]);
 					}
@@ -74,30 +73,27 @@ public class OverviewContent extends ContentComposite {
 						f.setStyleName(i, "overview-data");
 						ProjectOverview po = (ProjectOverview) rows.next();
 						grid.setText(i, j++, po.getName());
-						grid.setText(i, j++, Integer.toString(po.getComments())
-								+ " on "
-								+ Integer.toString(po.getCommentedFindings())
-								+ " findings");
-						final String scanTime = po.getLastScanDate();
-						if (!"-".equals(scanTime)) {
+						grid.setText(i, j++, po.getLastScanDate());
+						if (po.getComments() > 0) {
 							grid.setText(i, j++, Integer.toString(po
-									.getCritical()));
-							grid
-									.setText(i, j++, Integer.toString(po
-											.getHigh()));
-							grid.setText(i, j++, Integer.toString(po
-									.getMedium()));
-							grid.setText(i, j++, Integer.toString(po.getLow()));
-							grid.setText(i, j++, Integer.toString(po
-									.getTotalFindings()));
+									.getComments())
+									+ " on "
+									+ Integer.toString(po
+											.getCommentedFindings())
+									+ " findings");
 						} else {
-							for (int k = 0; k < 6; k++) {
-								grid.setText(i, j++, "-");
-							}
+							grid.setText(i, j++, "");
 						}
-						grid.setText(i, j++, po.getLastSynchDate());
+
+						grid.setText(i, j++, iToS(po.getCritical()));
+						grid.setText(i, j++, iToS(po.getHigh()));
+						grid.setText(i, j++, iToS(po.getMedium()));
+						grid.setText(i, j++, iToS(po.getLow()));
+						grid.setText(i, j++, iToS(po.getIrrelevant()));
+						grid.setText(i, j++,
+								po.getLastSynchDate().length() == 0 ? "never"
+										: po.getLastSynchDate());
 						grid.setText(i, j++, po.getLastSynchUser());
-						grid.setText(i, j++, scanTime);
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);
 						}
@@ -130,7 +126,7 @@ public class OverviewContent extends ContentComposite {
 					final RowFormatter f = grid.getRowFormatter();
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] userHeader = new String[] { "User",
-							"Comments", "Last Synched" };
+							"Audits", "Last Synch" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-text", "cell-date" };
 					for (int j = 0; j < userHeader.length; j++) {
@@ -143,10 +139,16 @@ public class OverviewContent extends ContentComposite {
 						f.setStyleName(i, "overview-data");
 						final UserOverview uo = (UserOverview) rows.next();
 						grid.setText(i, j++, uo.getUserName());
+						if(uo.getAudits() > 0) {
 						grid.setText(i, j++, Integer.toString(uo.getAudits())
 								+ " on " + Integer.toString(uo.getFindings())
 								+ " findings");
-						grid.setText(i, j++, uo.getLastSynch());
+						} else {
+							grid.setText(i, j++, "");
+						}
+						grid.setText(i, j++,
+								uo.getLastSynch().length() == 0 ? "never" : uo
+										.getLastSynch());
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);
 						}
@@ -178,6 +180,10 @@ public class OverviewContent extends ContentComposite {
 
 	public static OverviewContent getInstance() {
 		return instance;
+	}
+
+	private static String iToS(int i) {
+		return i == 0 ? "" : Integer.toString(i);
 	}
 
 }

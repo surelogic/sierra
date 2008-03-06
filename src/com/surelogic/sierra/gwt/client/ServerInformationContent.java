@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -23,6 +25,7 @@ public class ServerInformationContent extends ContentComposite {
 
 	private final HTML currentVersion = new HTML();
 	private final HTML availableVersion = new HTML();
+	private final HTML productVersion = new HTML();
 	private final TextBox adminEmailTextBox = new TextBox();
 	private final TextBox serverEmailTextBox = new TextBox();
 	private final TextBox smtpHostTextBox = new TextBox();
@@ -49,27 +52,25 @@ public class ServerInformationContent extends ContentComposite {
 		final VerticalPanel panel = new VerticalPanel();
 		panel
 				.add(new HTML(
-						"<h3>Version Information</h3>The below table reports version information about this team server."));
-		HorizontalPanel hp1 = new HorizontalPanel();
-		VerticalPanel vp1 = new VerticalPanel();
-		vp1.add(new HTML(""));
-		vp1.add(new HTML("Software"));
-		vp1.add(new HTML(""));
-		hp1.add(vp1);
-		VerticalPanel vp2 = new VerticalPanel();
-		vp2.add(new HTML("Database Schema"));
-		HorizontalPanel hp2 = new HorizontalPanel();
-		VerticalPanel vp3 = new VerticalPanel();
-		vp3.add(new HTML("Current"));
-		vp3.add(currentVersion);
-		VerticalPanel vp4 = new VerticalPanel();
-		vp4.add(new HTML("Available"));
-		vp4.add(availableVersion);
-		hp2.add(vp3);
-		hp2.add(vp4);
-		vp2.add(hp2);
-		hp1.add(vp2);
-		panel.add(hp1);
+						"<h3>Version Information</h3><span class=\"settings-info-text\">The below table reports version information about this team server.</span>"));
+		final FlexTable t = new FlexTable();
+		t.addStyleName("settings-version-table");
+		t.setText(0, 0, "");
+		t.setWidget(2, 2, availableVersion);
+		t.setWidget(2, 1, currentVersion);
+		t.setWidget(2, 0, productVersion);
+		t.setText(1, 2, "Available");
+		t.setText(1, 1, "Current");
+		t.setText(1, 0, "Software");
+		t.setText(0, 1, "Database Schema");
+		final FlexCellFormatter tf = t.getFlexCellFormatter();
+		tf.setColSpan(0, 1, 2);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				tf.addStyleName(i, j, "settings-version-td");
+			}
+		}
+		panel.add(t);
 		adminEmailTextBox.setWidth("40ex");
 		serverEmailTextBox.setWidth("40ex");
 		smtpHostTextBox.setWidth("40ex");
@@ -78,7 +79,7 @@ public class ServerInformationContent extends ContentComposite {
 		smtpPassTextBox.setWidth("40ex");
 		panel
 				.add(new HTML(
-						"<h3>Administration Email</h3>The below settings configure this team server to send email about any problems it encounters to a designated administrator."));
+						"<h3>Administration Email</h3><span class=\"settings-info-text\">The below settings configure this team server to send email about any problems it encounters to a designated administrator.</span>"));
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new HTML("To:"));
 		hp.add(adminEmailTextBox);
@@ -192,10 +193,9 @@ public class ServerInformationContent extends ContentComposite {
 	}
 
 	private void updateInfo(ServerInfo info) {
-		currentVersion.setHTML("<div>Current Version: "
-				+ info.getCurrentVersion() + "</div>");
-		availableVersion.setHTML("<div>Available Version: "
-				+ info.getAvailableVersion() + "</div>");
+		currentVersion.setHTML(info.getCurrentVersion());
+		availableVersion.setHTML(info.getAvailableVersion());
+		productVersion.setHTML(info.getProductVersion());
 		EmailInfo email = info.getEmail();
 		adminEmailTextBox.setText(email.getAdminEmail());
 		serverEmailTextBox.setText(email.getServerEmail());

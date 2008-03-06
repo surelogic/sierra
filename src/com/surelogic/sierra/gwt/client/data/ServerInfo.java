@@ -56,6 +56,7 @@ public class ServerInfo implements Serializable {
 		final String waiting = "Waiting...";
 		info.setAvailableVersion(waiting);
 		info.setCurrentVersion(waiting);
+		info.setCurrentVersion(waiting);
 		info.setEmail(new EmailInfo(waiting, waiting, waiting, waiting,
 				waiting, waiting));
 		return info;

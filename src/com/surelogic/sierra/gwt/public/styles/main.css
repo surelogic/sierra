@@ -134,6 +134,18 @@ a.hover {
 	text-align: center;	
 }
 
+/* Settings Page */
+.settings-version-table {
+	border: solid thin;
+}
+.settings-version-td {
+	border: solid thin;	
+}
+.settings-info-text {
+	font-size: smaller;	
+}
+
+
 /* Grid panel */
 .sl-GridPanel {
   width: 100%;
@@ -154,6 +166,10 @@ a.hover {
   border-collapse: separate;
   border-spacing: 0px;
   width: 100%;
+}
+
+.sl-Grid-Editable {
+  	text-decoration: underline;
 }
 
 .sl-Grid .sl-Grid-headerrow {
