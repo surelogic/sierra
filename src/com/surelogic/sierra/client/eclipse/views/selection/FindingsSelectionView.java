@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
@@ -80,8 +79,7 @@ public final class FindingsSelectionView extends ViewPart {
 
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
-		clearSelectionItem.setImage(PlatformUI.getWorkbench().getSharedImages()
-				.getImage(ISharedImages.IMG_TOOL_DELETE));
+		clearSelectionItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
 		clearSelectionItem.setToolTipText("Clear Current Search");
 
 		final CascadingList cascadingList = new CascadingList(findingsPage,
