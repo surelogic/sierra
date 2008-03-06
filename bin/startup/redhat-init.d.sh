@@ -25,6 +25,17 @@ export JAVA_HOME=$SIERRA_HOME/jre/
 DAEMON=$JETTY_HOME/bin/jetty.sh
 DAEMON_ARGS="$JETTY_HOME/etc/sierra-embedded-derby.xml"
 
+# Exit if the package is not installed
+if [ ! -e "$DAEMON" ]; then
+	echo "File does not exist: $DAEMON"
+	exit 0
+fi
+
+# If the execute bit isn't set, set it
+if [ ! -x "$DAEMON" ]; then
+	chmod +x $DAEMON
+fi
+
 case "$1" in
     start)
 	echo -n $"Starting Sierra Service: "
