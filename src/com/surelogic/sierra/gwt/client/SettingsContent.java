@@ -20,8 +20,8 @@ import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
-public class ServerInformationContent extends ContentComposite {
-	private static final ServerInformationContent instance = new ServerInformationContent();
+public class SettingsContent extends ContentComposite {
+	private static final SettingsContent instance = new SettingsContent();
 
 	private final HTML currentVersion = new HTML();
 	private final HTML availableVersion = new HTML();
@@ -36,11 +36,11 @@ public class ServerInformationContent extends ContentComposite {
 	private final Button testEmailButton = new Button("Test Email Notification");
 	private final StatusBox status = new StatusBox();
 
-	public static ServerInformationContent getInstance() {
+	public static SettingsContent getInstance() {
 		return instance;
 	}
 
-	private ServerInformationContent() {
+	private SettingsContent() {
 		super();
 	}
 

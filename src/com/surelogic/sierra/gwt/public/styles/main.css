@@ -136,13 +136,17 @@ a.hover {
 
 /* Settings Page */
 .settings-version-table {
-	border: solid thin;
+	
 }
 .settings-version-td {
-	border: solid thin;	
+	border: thin inset;	
 }
 .settings-info-text {
 	font-size: smaller;	
+}
+
+.settings-admin-text {
+	
 }
 
 

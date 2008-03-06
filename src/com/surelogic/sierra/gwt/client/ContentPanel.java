@@ -25,7 +25,7 @@ public class ContentPanel extends Composite implements ClientContextListener {
 
 		// register Content instances here
 		registerContent(OverviewContent.getInstance());
-		registerContent(ServerInformationContent.getInstance());
+		registerContent(SettingsContent.getInstance());
 		registerContent(UserManagementContent.getInstance());
 		ClientContext.addChangeListener(this);
 	}
