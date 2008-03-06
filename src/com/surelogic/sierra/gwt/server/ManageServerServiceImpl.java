@@ -3,7 +3,6 @@ package com.surelogic.sierra.gwt.server;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
@@ -79,7 +78,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 
 	private ServerInfo readServerInfo(Server server) {
 		ServerInfo info = new ServerInfo();
-		info.setProductVersion(I18N.msg("sierra.teamserver.version"));
+		info.setProductVersion(Server.getSoftwareVersion());
 		info.setAvailableVersion(server.getAvailableSchemaVersion());
 		try {
 			info.setCurrentVersion(server.getSchemaVersion());

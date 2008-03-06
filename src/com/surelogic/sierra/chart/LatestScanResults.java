@@ -53,7 +53,7 @@ public final class LatestScanResults implements IDatabasePlot {
 				.getRenderer();
 		bar.setSeriesPaint(0, Color.RED);
 		bar.setSeriesPaint(1, Color.BLUE);
-		bar.setSeriesPaint(2, Color.MAGENTA);
+		bar.setSeriesPaint(2, new Color(99, 66, 0));
 		bar.setSeriesPaint(3, Color.ORANGE);
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		for (ProjectOverview po : overview) {
