@@ -278,7 +278,11 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
-        if (!missingClasses.contains(line.getClassName())) {
+    	if ("java.lang.Class".equals(line.getClassName())) {
+    	  // Don't report anything about this
+    	  return null;
+    	}
+    	else if (!missingClasses.contains(line.getClassName())) {
           logError("Couldn't find source file for "+line.getClassName());
           missingClasses.add(line.getClassName());
         }
