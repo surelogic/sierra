@@ -131,7 +131,8 @@ public final class PortalOverview {
 						}
 					}
 				}
-
+				//Final finding count
+				po.setTotalFindings(findingCount);
 			} finally {
 				scanSt.close();
 			}

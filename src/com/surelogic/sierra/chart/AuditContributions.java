@@ -47,7 +47,7 @@ public final class AuditContributions implements IDatabasePlot {
 		chart.setBackgroundPaint(null);
 		final CategoryPlot plot = chart.getCategoryPlot();
 		final BarRenderer bar = (BarRenderer) plot.getRenderer();
-		bar.setSeriesPaint(0, Color.GREEN);
+		bar.setSeriesPaint(0, new Color(33, 66, 33));
 		// set the range axis to display integers only...
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
