@@ -23,11 +23,11 @@ import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.ScanVersionException;
-import com.surelogic.sierra.tool.message.TimeseriesRequest;
 import com.surelogic.sierra.tool.message.Scan;
+import com.surelogic.sierra.tool.message.ScanVersionException;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
+import com.surelogic.sierra.tool.message.TimeseriesRequest;
 
 public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
@@ -89,8 +89,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
-					f_server.getServer()).getTimeseries(new TimeseriesRequest())
-					.getTimeseries();
+					f_server.getServer())
+					.getTimeseries(new TimeseriesRequest()).getTimeseries();
 			if (timeseries == null) {
 				timeseries = Collections.emptyList();
 			}
@@ -107,8 +107,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				}
 				joinJob.fail(f_server);
 			}
-			SLLogger.getLogger().log(Level.WARNING,
-					"Failed to get timeseries from " + f_server, e);
+			SLLogger.getLogger().log(Level.WARNING, I18N.err(89, f_server), e);
 			return null;
 		}
 
@@ -128,15 +127,16 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			if (troubleshoot.retry()) {
 				return publishRun(scan, slMonitor);
 			} else {
-				SLLogger.getLogger().log(
-						Level.WARNING,
-						"Failed to get publish run about " + f_projectName
-								+ " to " + f_server, e);
+				SLLogger.getLogger().log(Level.WARNING,
+						I18N.err(87, f_projectName, f_server), e);
 				return Status.CANCEL_STATUS;
 			}
 		} catch (ScanVersionException e) {
-			//TODO
-			throw new IllegalStateException(e);
+			final int errNo = 88;
+			final String msg = I18N.err(errNo, scan.getVersion(),
+					f_projectName, f_server);
+			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			return SLStatus.createErrorStatus(errNo, msg);
 		}
 	}
 }
