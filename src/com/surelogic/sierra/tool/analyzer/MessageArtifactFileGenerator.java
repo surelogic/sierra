@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.analyzer;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,6 +9,7 @@ import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.JavaConstants;
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Artifact;
 import com.surelogic.sierra.tool.message.ClassMetric;
@@ -37,7 +39,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	private static final String TOOL_OUTPUT_END = "</toolOutput>";
 
 	private static final Logger log = SLLogger.getLogger("sierra");
-	private static final String RUN_START = "<scan>";
+	private static final String RUN_START = "<scan version=\"{0}\" >";
 	private static final String RUN_END = "</scan>";
 	private static final String UID_START = "<uid>";
 	private static final String UID_END = "</uid>";
@@ -59,8 +61,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	private File metricsHolder;
 	private File errorsHolder;
 	private FileOutputStream errOut;
-    private FileOutputStream metricsOut;
-	
+	private FileOutputStream metricsOut;
+
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		this.parsedFile = parsedFile;
 		this.config = config;
@@ -73,7 +75,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			errorsHolder = File.createTempFile("errors", "tmp");
 			errOut = new FileOutputStream(errorsHolder, true);
-			
+
 			metricsHolder = File.createTempFile("metrics", "tmp");
 			metricsOut = new FileOutputStream(metricsHolder, true);
 		} catch (FileNotFoundException e) {
@@ -101,20 +103,21 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	@Override
 	public void finished(SLProgressMonitor monitor) {
-	  monitor.beginTask("Scan Document", 20);
+		monitor.beginTask("Scan Document", 20);
 		try {
 			artOut.close();
 			errOut.close();
-			metricsOut.close();			
-			
-		  monitor.subTask("Writing header");
+			metricsOut.close();
+
+			monitor.subTask("Writing header");
 			OutputStream stream = new FileOutputStream(parsedFile);
 			stream = new GZIPOutputStream(stream, 4096);
 			OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
 			PrintWriter finalFile = new PrintWriter(osw);
 			finalFile.write(XML_START);
 			finalFile.write('\n');
-			finalFile.write(RUN_START);
+			finalFile.write(MessageFormat.format(RUN_START, I18N
+					.msg("sierra.teamserver.version")));
 			finalFile.write('\n');
 			finalFile.write(UID_START);
 			finalFile.write(UUID.randomUUID().toString());
@@ -122,10 +125,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			finalFile.write('\n');
 			finalFile.write(TOOL_OUTPUT_START);
 			monitor.worked(1);
-			
+
 			if (metricsHolder.exists()) {
-			  monitor.subTask("Writing metrics");
-			  
+				monitor.subTask("Writing metrics");
+
 				finalFile.write(METRICS_START);
 				copyContents(metricsHolder, finalFile);
 				finalFile.flush();
@@ -135,19 +138,16 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			}
 
 			if (artifactsHolder.exists()) {
-			  monitor.subTask("Writing artifacts");
-			  
+				monitor.subTask("Writing artifacts");
+
 				finalFile.write(ARTIFACTS_START);
 				copyContents(artifactsHolder, finalFile);
 				/*
-				BufferedReader in = new BufferedReader(new FileReader(artifactsHolder));
-			    String line = null;
-				while ((line = in.readLine()) != null) {
-					finalFile.write(line);
-					finalFile.write("\n");
-				}
-				in.close();
-				*/
+				 * BufferedReader in = new BufferedReader(new
+				 * FileReader(artifactsHolder)); String line = null; while
+				 * ((line = in.readLine()) != null) { finalFile.write(line);
+				 * finalFile.write("\n"); } in.close();
+				 */
 				finalFile.flush();
 				finalFile.write(ARTIFACTS_END);
 				monitor.worked(1);
@@ -155,8 +155,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			}
 
 			if (errorsHolder.exists()) {
-			  monitor.subTask("Writing errors");
-			  
+				monitor.subTask("Writing errors");
+
 				finalFile.write(ERROR_START);
 				copyContents(errorsHolder, finalFile);
 				finalFile.write(ERROR_END);
@@ -169,10 +169,10 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			File configOutput = File.createTempFile("config", "tmp");
 			FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
-      fos.close();
-			
-      copyContents(configOutput, finalFile);
-      configOutput.delete();
+			fos.close();
+
+			copyContents(configOutput, finalFile);
+			configOutput.delete();
 			finalFile.write(RUN_END);
 			finalFile.flush();
 			finalFile.close();
@@ -193,42 +193,33 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	}
 
-  private static void copyContents(File file, PrintWriter out)
-      throws FileNotFoundException, IOException {
-    BufferedReader in = new BufferedReader(new FileReader(file));
-    /*
-    String line;
+	private static void copyContents(File file, PrintWriter out)
+			throws FileNotFoundException, IOException {
+		BufferedReader in = new BufferedReader(new FileReader(file));
+		/*
+		 * String line;
+		 * 
+		 * while ((line = in.readLine()) != null) { out.write(line);
+		 * out.write("\n"); } in.close(); out.flush();
+		 */
+		// Transfer bytes from in to out
+		char[] buf = new char[4096];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+	}
 
-    while ((line = in.readLine()) != null) {
-    	out.write(line);
-    	out.write("\n");
-    }
-    in.close();
-    out.flush();
-    */
- // Transfer bytes from in to out
-    char[] buf = new char[4096];
-    int len;
-    while ((len = in.read(buf)) > 0) {
-      out.write(buf, 0, len);
-    }
-    in.close();
-  }
-  
-  /*
-  private static void copyContents(File file, FileChannel dstChannel)
-  throws FileNotFoundException, IOException {
-    // Create channel on the source
-    FileChannel srcChannel = new FileInputStream(file).getChannel();
+	/*
+	 * private static void copyContents(File file, FileChannel dstChannel)
+	 * throws FileNotFoundException, IOException { // Create channel on the
+	 * source FileChannel srcChannel = new FileInputStream(file).getChannel(); //
+	 * Copy file contents from source to destination
+	 * dstChannel.transferFrom(srcChannel, 0, srcChannel.size()); // Close the
+	 * channel srcChannel.close(); }
+	 */
 
-    // Copy file contents from source to destination
-    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-
-    // Close the channel
-    srcChannel.close();
-  }
-  */
-  
 	private class MessageErrorBuilder implements ErrorBuilder {
 
 		private String message;

@@ -23,6 +23,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.ScanVersionException;
 import com.surelogic.sierra.tool.message.TimeseriesRequest;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -304,6 +305,9 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			} catch (IOException e) {
 				throw new IllegalStateException(config.getScanDocument()
 						+ " is not a valid document", e);
+			} catch (ScanVersionException e) {
+				throw new IllegalStateException(config.getScanDocument()
+						+ " is not the same version as the server.", e);
 			}
 		}
 	}
