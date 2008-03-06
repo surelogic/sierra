@@ -32,9 +32,6 @@ import com.surelogic.sierra.message.srpc.SRPCServlet;
 /**
  * Implementation of {@link SierraService}.
  * 
- * TODO this implementation does not currently validate server uid. We need to
- * fix this.
- * 
  * @author nathan
  * 
  */
@@ -49,7 +46,10 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		return reply;
 	}
 
-	public void publishRun(final Scan scan) {
+	public void publishRun(final Scan scan) throws ScanVersionException {
+		if (!Server.getSoftwareVersion().equals(scan.getVersion())) {
+			throw new ScanVersionException();
+		}
 		// We can't publish a run without a timeseries on the server
 		final List<String> qList = scan.getConfig().getTimeseries();
 		final Set<String> timeseries = new TreeSet<String>();
@@ -72,7 +72,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 						.getScanGenerator(filter);
 				generator.timeseries(timeseries).user(user.getName());
 				MessageWarehouse.readScan(scan, generator);
-				conn.commit();
 				ConnectionFactory
 						.delayUserTransaction(new UserTransaction<Void>() {
 
