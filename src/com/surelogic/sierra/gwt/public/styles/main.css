@@ -164,11 +164,12 @@ a.hover {
 .sl-GridPanel {
 	width: 100%;
 	border: 1px solid;
-	background-color: #bfd4e4;
+	background-color: #005395;
 }
 
 .sl-GridPanel .sl-GridPanel-actions {
 	padding: 1px;
+	color: white;
 }
 
 .sl-GridPanel .sl-GridPanel-table {
@@ -191,6 +192,7 @@ a.hover {
 
 .sl-Grid .sl-Grid-header {
 	border: 2px groove;
+	color: white;
 }
 
 .sl-Grid .sl-Grid-itemrow {
