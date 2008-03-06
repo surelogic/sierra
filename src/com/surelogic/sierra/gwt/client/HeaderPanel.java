@@ -85,7 +85,7 @@ public final class HeaderPanel extends Composite {
 		rootPanel.add(headerRow);
 
 		mainBar.setWidth("100%");
-		addTab("Overview", OverviewContent.getInstance());
+		addTab("Welcome", OverviewContent.getInstance());
 		addTab("User Management", UserManagementContent.getInstance());
 		mainBar.addTabListener(new TabListener() {
 
