@@ -1,5 +1,6 @@
 package com.surelogic.sierra.chart;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
@@ -40,9 +43,11 @@ public final class AuditContributions implements IDatabasePlot {
 		final JFreeChart chart = ChartFactory.createBarChart(
 				"Audit Contributions", "User", "Audits", dataset,
 				PlotOrientation.HORIZONTAL, false, false, false);
+		chart.getTitle().setPosition(RectangleEdge.LEFT);
 		chart.setBackgroundPaint(null);
 		final CategoryPlot plot = chart.getCategoryPlot();
-
+		final BarRenderer bar = (BarRenderer) plot.getRenderer();
+		bar.setSeriesPaint(0, Color.GREEN);
 		// set the range axis to display integers only...
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());

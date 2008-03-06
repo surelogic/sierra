@@ -1,5 +1,6 @@
 package com.surelogic.sierra.chart;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,8 +15,10 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.portal.PortalOverview;
@@ -46,6 +49,12 @@ public final class LatestScanResults implements IDatabasePlot {
 		final JFreeChart chart = ChartFactory.createBarChart(
 				"Latest Scan Results", null, "# of Findings", importanceData,
 				PlotOrientation.HORIZONTAL, true, false, false);
+		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
+				.getRenderer();
+		bar.setSeriesPaint(0, Color.RED);
+		bar.setSeriesPaint(1, Color.BLUE);
+		bar.setSeriesPaint(2, Color.MAGENTA);
+		bar.setSeriesPaint(3, Color.ORANGE);
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		for (ProjectOverview po : overview) {
 			totalData.setValue((double) po.getTotalFindings(), "Total", po
@@ -53,13 +62,16 @@ public final class LatestScanResults implements IDatabasePlot {
 			totalData.setValue((double) po.getCommentedFindings(), "Audited",
 					po.getName());
 		}
-		CategoryPlot plot = chart.getCategoryPlot();
+		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);
 		LineAndShapeRenderer renderer = new LineAndShapeRenderer();
-		renderer.setBaseLinesVisible(false);
+		renderer.setBaseShapesVisible(false);
+		renderer.setSeriesPaint(0, Color.BLACK);
+		renderer.setSeriesPaint(1, Color.GRAY);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		// set the range axis to display integers only...
+		chart.getTitle().setPosition(RectangleEdge.LEFT);
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
