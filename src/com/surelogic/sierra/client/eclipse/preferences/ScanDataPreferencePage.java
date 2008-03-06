@@ -29,6 +29,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -43,27 +44,23 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		panel.setLayout(grid);
 
 		final Group pGroup = new Group(panel, SWT.NONE);
-		pGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+		pGroup.setLayoutData(data);
 		pGroup.setText("Scanned Projects");
 		grid = new GridLayout();
 		grid.numColumns = 2;
 		pGroup.setLayout(grid);
 
 		final Label l = new Label(pGroup, SWT.WRAP);
-		StringBuilder b = new StringBuilder();
-		b.append("The following projects have stored Sierra data.");
-		b.append(" You may want to delete Sierra data about any projects you");
-		b.append(" no longer work on to conserve resources on your machine.");
-		b.append(" Deleting all stored Sierra data requires Eclipse to");
-		b.append(" be restarted. ");
-		l.setText(b.toString());
-		GridData data = new GridData();
-		data.widthHint = 400;
+		l.setText(I18N.msg("sierra.eclipse.scanDataPreferenceMsg"));
+		data = new GridData();
 		data.horizontalSpan = 2;
+		data.widthHint = 500;
 		l.setLayoutData(data);
 
 		final Table t = new Table(pGroup, SWT.FULL_SELECTION | SWT.MULTI);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.widthHint = 400;
 		data.heightHint = 150;
 		t.setLayoutData(data);
 
