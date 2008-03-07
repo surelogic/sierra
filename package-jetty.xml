@@ -15,7 +15,6 @@
 		<zip destfile="${zip.file}">
 			<zipfileset dir="${jetty.dir}" prefix="jetty-${releasedate}" excludes=".svn, eclipsebin, .classpath, .project, derby.log" />
 		</zip>
-
 	</target>
 
 </project>

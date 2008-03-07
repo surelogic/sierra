@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="undeploy" name="undeploy-from-jetty">
+<project default="undeploy-site" name="undeploy-from-jetty">
 	<import file="lib/deploy.xml" />
-
-	<target name="undeploy" depends="undeploy-site" />
 </project>
