@@ -40,7 +40,7 @@ public final class AuditContributions implements IDatabasePlot {
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
-			dataset.setValue((double) (uo.getAudits()), "Audits Made", uo
+			dataset.setValue((double) (uo.getAudits()), "Audits", uo
 					.getUserName());
 			dataset.setValue((double) (uo.getFindings()), "Findings Examined",
 					uo.getUserName());
