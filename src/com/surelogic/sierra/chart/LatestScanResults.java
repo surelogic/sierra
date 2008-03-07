@@ -79,7 +79,7 @@ public final class LatestScanResults implements IDatabasePlot {
 		renderer.setBaseShapesVisible(true);
 		renderer.setSeriesPaint(0, Color.BLACK);
 		renderer.setSeriesShapesFilled(0, false);
-		renderer.setSeriesPaint(1, Color.LIGHT_GRAY);
+		renderer.setSeriesPaint(1, Color.GRAY);
 		renderer.setSeriesShapesFilled(1, false);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
