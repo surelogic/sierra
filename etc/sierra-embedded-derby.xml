@@ -160,6 +160,15 @@
 	<!-- =========================================================== -->
 	<!-- BEGIN SIERRA APP CONFIGURATION                              -->
 	<!-- =========================================================== -->
+	
+	<Call name="setProperty" class="java.lang.System">
+		<Arg>derby.storage.pageCacheSize</Arg>
+		<Arg>10000</Arg>
+	</Call>
+	<Call name="setProperty" class="java.lang.System">
+		<Arg>derby.storage.pageSize</Arg>
+		<Arg>8192</Arg>
+	</Call>
 	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
 		<Arg>jdbc/Sierra</Arg>
 		<Arg>
