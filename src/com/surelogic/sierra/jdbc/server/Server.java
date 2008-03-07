@@ -211,32 +211,27 @@ public class Server {
 		}
 	}
 
-	public Notification getNotification() {
+	public Notification getNotification() throws SQLException {
+		final Statement st = conn.createStatement();
 		try {
-			final Statement st = conn.createStatement();
+			final ResultSet set = st
+					.executeQuery("SELECT SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
 			try {
-				final ResultSet set = st
-						.executeQuery("SELECT SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
-				try {
-					if (set.next()) {
-						int idx = 1;
-						return new Notification(set.getString(idx++), JDBCUtils
-								.getNullableInteger(idx++, set), set
-								.getString(idx++), set.getString(idx++), set
-								.getString(idx++), set.getString(idx++));
-					} else {
-						return null;
-					}
-				} finally {
-					set.close();
+				if (set.next()) {
+					int idx = 1;
+					return new Notification(set.getString(idx++), JDBCUtils
+							.getNullableInteger(idx++, set), set
+							.getString(idx++), set.getString(idx++), set
+							.getString(idx++), set.getString(idx++));
+				} else {
+					return null;
 				}
 			} finally {
-				st.close();
+				set.close();
 			}
-		} catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			st.close();
 		}
-		return null;
 	}
 
 	public void setNotification(Notification notification) throws SQLException {
