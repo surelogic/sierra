@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
@@ -27,6 +29,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.tool.SierraToolConstants;
 
 public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
@@ -105,6 +108,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
 		boolean jobFailed = false;
 		try {
+			/*
+			 * Delete the data in the database about these projects.
+			 */
 			final Connection conn = Data.transactionConnection();
 			final ClientProjectManager manager = ClientProjectManager
 					.getInstance(conn);
@@ -129,6 +135,26 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		} catch (SQLException e1) {
 			SLLogger.getLogger().log(Level.SEVERE, f_jobFailureMsg, e1);
 			jobFailed = true;
+		}
+		/*
+		 * Now we need to delete the scan document in the .sierra-data directory
+		 * if there is one.
+		 */
+		for (final String projectName : f_projectNames) {
+			if (projectName != null) {
+				final File scanDocument = new File(FileUtility
+						.getSierraDataDirectory()
+						+ File.separator
+						+ projectName
+						+ SierraToolConstants.PARSED_FILE_SUFFIX);
+				if (scanDocument.exists() && scanDocument.isFile()) {
+					final boolean success = scanDocument.delete();
+					if (!success) {
+						SLLogger.getLogger().warning(
+								I18N.err(11, scanDocument.getAbsolutePath()));
+					}
+				}
+			}
 		}
 		monitor.done();
 		DatabaseHub.getInstance().notifyProjectDeleted();
