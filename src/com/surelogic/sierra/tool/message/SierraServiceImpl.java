@@ -8,11 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -66,8 +68,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				final ScanManager manager = ScanManager.getInstance(conn);
 				final FindingFilter filter = FindingTypeManager.getInstance(
 						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getSettingsByProject(
-								project));
+						SettingsManager.getInstance(conn).getGlobalSettings());
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
 				generator.timeseries(timeseries).user(user.getName());
@@ -79,14 +80,38 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 									User user) throws SQLException {
 								ServerFindingManager fm = ServerFindingManager
 										.getInstance(conn);
-								fm.generateFindings(project, uid, filter, null);
-								fm.generateOverview(project, uid, timeseries);
+								try {
+									fm.generateFindings(project, uid, filter,
+											null);
+									fm.generateOverview(project, uid,
+											timeseries);
+								} catch (RuntimeException e) {
+									handleScanException(conn, uid);
+									throw e;
+								} catch (SQLException e) {
+									handleScanException(conn, uid);
+									throw e;
+								}
 								return null;
 							}
 						});
 				return null;
 			}
 		});
+	}
+
+	private void handleScanException(Connection conn, String uid) {
+		try {
+			conn.rollback();
+			ScanManager.getInstance(conn).deleteScan(uid,
+					EmptyProgressMonitor.instance());
+		} catch (Exception e1) {
+			log
+					.log(
+							Level.SEVERE,
+							"An error occurred while attempting to delete a failed scan from the database.",
+							e1);
+		}
 	}
 
 	public Timeseries getTimeseries(TimeseriesRequest request) {
