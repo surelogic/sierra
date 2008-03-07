@@ -50,7 +50,7 @@ public class OverviewContent extends ContentComposite {
 				if (list.isEmpty()) {
 					projects
 							.add(new HTML(
-									"<span class=\"success\">No recent findings.</span>"));
+									"<span class=\"success\">No project scans have been published to this server.</span>"));
 				} else {
 					final Grid grid = new Grid(list.size() + 1, 10);
 					grid.setStyleName("overview-table");
@@ -91,8 +91,8 @@ public class OverviewContent extends ContentComposite {
 						grid.setText(i, j++, iToS(po.getLow()));
 						grid.setText(i, j++, iToS(po.getIrrelevant()));
 						grid.setText(i, j++,
-								po.getLastSynchDate().length() == 0 ? ""
-										: po.getLastSynchDate());
+								po.getLastSynchDate().length() == 0 ? "" : po
+										.getLastSynchDate());
 						grid.setText(i, j++, po.getLastSynchUser());
 						for (j = 0; j < dataStyle.length; j++) {
 							cf.addStyleName(i, j, dataStyle[j]);
@@ -119,7 +119,7 @@ public class OverviewContent extends ContentComposite {
 				if (list.isEmpty()) {
 					users
 							.add(new HTML(
-									"<span class=\"success\">No recent findings.</span>"));
+									"<span class=\"success\">No users defined for this server.</span>"));
 				} else {
 					final Grid grid = new Grid(list.size() + 1, 3);
 					grid.setStyleName("overview-table");
@@ -139,10 +139,12 @@ public class OverviewContent extends ContentComposite {
 						f.setStyleName(i, "overview-data");
 						final UserOverview uo = (UserOverview) rows.next();
 						grid.setText(i, j++, uo.getUserName());
-						if(uo.getAudits() > 0) {
-						grid.setText(i, j++, Integer.toString(uo.getAudits())
-								+ " on " + Integer.toString(uo.getFindings())
-								+ " findings");
+						if (uo.getAudits() > 0) {
+							grid.setText(i, j++, Integer.toString(uo
+									.getAudits())
+									+ " on "
+									+ Integer.toString(uo.getFindings())
+									+ " findings");
 						} else {
 							grid.setText(i, j++, "");
 						}
@@ -167,7 +169,7 @@ public class OverviewContent extends ContentComposite {
 		final VerticalPanel panel = new VerticalPanel();
 		HorizontalPanel charts = new HorizontalPanel();
 		charts.add(ChartBuilder.name("LatestScanResults").width(500).build());
-		charts.add(ChartBuilder.name("AuditContributions").width(400).build());
+		charts.add(ChartBuilder.name("AuditContributions").width(320).build());
 		panel.add(charts);
 		panel.add(new HTML("<h3>Projects</h3>"));
 		panel.add(projects);
