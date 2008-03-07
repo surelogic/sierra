@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -60,10 +61,22 @@ public class CreateUserDialog extends DialogBox {
 			}
 		});
 		buttonPanel.add(cancel);
+		final KeyboardListenerAdapter keyboardListener = new KeyboardListenerAdapter() {
+			public void onKeyUp(final Widget sender, final char keyCode,
+					final int modifiers) {
+				if (keyCode == KEY_ENTER) {
+					if (ok.isEnabled()) {
+						ok.click();
+					}
+				}
+			}
+		};
+		userName.addKeyboardListener(keyboardListener);
+		password.addKeyboardListener(keyboardListener);
+		passwordAgain.addKeyboardListener(keyboardListener);
 		rootPanel.add(buttonPanel);
 		rootPanel.setCellHorizontalAlignment(buttonPanel,
 				VerticalPanel.ALIGN_RIGHT);
-
 		setWidget(rootPanel);
 	}
 

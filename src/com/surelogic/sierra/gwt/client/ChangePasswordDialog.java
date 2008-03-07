@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,10 +34,11 @@ public class ChangePasswordDialog extends DialogBox {
 		errorMessage.addStyleName("error");
 		userGrid.setText(1, 0, "Your Password");
 		userGrid.setWidget(1, 1, userPassword);
-		userGrid.setText(2, 0, "New Password"
-				+ (ClientContext.getUser().getUserName().equals(
-						user.getUserName()) ? "" : " for " + user.getUserName())
-				+ ":");
+		userGrid.setText(2, 0,
+				"New Password"
+						+ (ClientContext.getUser().getUserName().equals(
+								user.getUserName()) ? "" : " for "
+								+ user.getUserName()) + ":");
 		userGrid.setWidget(2, 1, password);
 		userGrid.setText(3, 0, "Confirm Password:");
 		userGrid.setWidget(3, 1, passwordAgain);
@@ -59,6 +61,19 @@ public class ChangePasswordDialog extends DialogBox {
 			}
 		});
 		buttonPanel.add(cancel);
+		final KeyboardListenerAdapter keyboardListener = new KeyboardListenerAdapter() {
+			public void onKeyUp(final Widget sender, final char keyCode,
+					final int modifiers) {
+				if (keyCode == KEY_ENTER) {
+					if (ok.isEnabled()) {
+						ok.click();
+					}
+				}
+			}
+		};
+		userPassword.addKeyboardListener(keyboardListener);
+		password.addKeyboardListener(keyboardListener);
+		passwordAgain.addKeyboardListener(keyboardListener);
 		rootPanel.add(buttonPanel);
 		rootPanel.setCellHorizontalAlignment(buttonPanel,
 				VerticalPanel.ALIGN_RIGHT);

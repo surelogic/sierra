@@ -61,6 +61,7 @@ public class UserManagementContent extends ContentComposite {
 			userActionsPanel.addAction("Create a user", new ClickListener() {
 
 				public void onClick(Widget sender) {
+					usersGrid.clearStatus();
 					createUser();
 				}
 
