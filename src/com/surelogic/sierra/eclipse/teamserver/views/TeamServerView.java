@@ -40,7 +40,6 @@ public class TeamServerView extends ViewPart {
 		status.setLayoutData(data);
 
 		final Label hostLabel = new Label(parent, SWT.RIGHT);
-		hostLabel.setText("Host:");
 		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
 		hostLabel.setLayoutData(data);
 
@@ -95,9 +94,9 @@ public class TeamServerView extends ViewPart {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		log.setLayoutData(data);
 
-		f_mediator = new TeamServerMediator(command, status, host, port,
-				trafficLight, jettyRequestLogItem, portalLogItem,
-				servicesLogItem, log);
+		f_mediator = new TeamServerMediator(command, status, hostLabel, host,
+				portLabel, port, trafficLight, jettyRequestLogItem,
+				portalLogItem, servicesLogItem, log);
 		f_mediator.init();
 	}
 

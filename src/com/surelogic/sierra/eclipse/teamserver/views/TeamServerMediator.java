@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
@@ -47,13 +48,17 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	final Button f_command;
 	final Link f_status;
+	final Label f_hostLabel;
 	final Text f_host;
+	final Label f_portLabel;
 	final Text f_port;
 	final Canvas f_trafficLight;
 	final ToolItem f_jettyRequestLogItem;
 	final ToolItem f_portalLogItem;
 	final ToolItem f_servicesLogItem;
 	final Text f_logText;
+
+	final String f_ipAddress;
 
 	final TeamServer f_teamServer;
 	final ServerLog f_jettyRequestLog;
@@ -103,12 +108,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final ScheduledExecutorService f_executor = Executors
 			.newScheduledThreadPool(2);
 
-	TeamServerMediator(Button command, Link status, Text host, Text port,
-			Canvas trafficLight, ToolItem jettyRequestLogItem,
-			ToolItem portalLogItem, ToolItem servicesLogItem, Text log) {
+	TeamServerMediator(Button command, Link status, Label hostLabel, Text host,
+			Label portLabel, Text port, Canvas trafficLight,
+			ToolItem jettyRequestLogItem, ToolItem portalLogItem,
+			ToolItem servicesLogItem, Text log) {
 		f_command = command;
 		f_status = status;
+		f_hostLabel = hostLabel;
 		f_host = host;
+		f_portLabel = portLabel;
 		f_port = port;
 		f_trafficLight = trafficLight;
 		f_jettyRequestLogItem = jettyRequestLogItem;
@@ -123,10 +131,21 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_portalLogObserver = new LogObserver(f_portalLogItem);
 		f_servicesLog = new SierraServicesLog(f_executor);
 		f_servicesLogObserver = new LogObserver(f_servicesLogItem);
+
+		InetAddress addr = null;
+		try {
+			addr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(76), e);
+		}
+		if (addr != null) {
+			f_ipAddress = addr.getHostAddress();
+		} else {
+			f_ipAddress = "(unknown)";
+		}
 	}
 
 	void init() {
-		obtainHostAddress();
 		f_status.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final String urlString = getURLString();
@@ -232,15 +251,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		return "http://localhost:" + getPort();
 	}
 
-	private void obtainHostAddress() {
-		try {
-			InetAddress addr = InetAddress.getLocalHost();
-			f_host.setText(addr.getHostAddress());
-			f_host.setToolTipText(addr.getHostName());
-		} catch (UnknownHostException e) {
-			SLLogger.getLogger().log(Level.SEVERE, I18N.err(76), e);
-			f_host.setText("<unknown IP address>");
-		}
+	private String getBuddyURLString() {
+		return "http://" + f_ipAddress + ":" + getPort();
 	}
 
 	/**
@@ -265,30 +277,43 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setVisible(true);
 			f_command.setEnabled(true);
 
-			f_port.setEditable(false);
-			f_port.setText(Integer.toString(f_teamServer.getPort()));
+			hostPortHelper(false);
 
-			f_status.setText("A <a href=\"open\">team server</a> is running.");
+			f_status.setText("A server is running on <a href=\"open\">"
+					+ getURLString() + "</a>.");
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setVisible(true);
 			f_command.setEnabled(true);
 
-			f_port.setEditable(true);
-			f_port.setText(Integer.toString(f_teamServer.getPort()));
+			hostPortHelper(true);
 
-			f_status.setText("A team server is not running.");
+			f_status.setText("A server is not running.");
 		} else {
 			f_command.setEnabled(false);
 			f_command.setVisible(false);
 
-			f_port.setEditable(false);
-			f_port.setText(Integer.toString(f_teamServer.getPort()));
+			hostPortHelper(false);
 
 			f_status.setText("Checking...");
 			f_command.getParent().layout();
 		}
 		f_command.getParent().layout();
+	}
+
+	private void hostPortHelper(boolean editable) {
+		f_portLabel.setVisible(editable);
+		f_port.setVisible(editable);
+		f_port.setEditable(editable);
+		f_port.setText(Integer.toString(f_teamServer.getPort()));
+
+		if (editable) {
+			f_hostLabel.setText("Host:");
+			f_host.setText(f_ipAddress);
+		} else {
+			f_hostLabel.setText("URL:");
+			f_host.setText(getBuddyURLString());
+		}
 	}
 
 	private void doCommand() {
