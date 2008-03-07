@@ -17,8 +17,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.VerticalAlignment;
 
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
@@ -35,7 +35,9 @@ public final class AuditContributions implements IDatabasePlot {
 				return o2.getAudits() - o1.getAudits();
 			}
 		});
-		mutableSize.setHeight(20 * userOverviewList.size() + 50);
+
+		mutableSize.setHeight(20 * userOverviewList.size() + 100);
+
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
 			dataset.setValue((double) (uo.getAudits()), "Audits", uo
@@ -44,17 +46,20 @@ public final class AuditContributions implements IDatabasePlot {
 		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
 				null, "Audits", dataset, PlotOrientation.HORIZONTAL, false,
 				false, false);
-		final TextTitle t = chart.getTitle();
-		t.setPosition(RectangleEdge.LEFT);
-		t.setVerticalAlignment(VerticalAlignment.TOP);
-		chart.setBackgroundPaint(null);
+
 		final CategoryPlot plot = chart.getCategoryPlot();
 		final BarRenderer bar = (BarRenderer) plot.getRenderer();
 		bar.setSeriesPaint(0, Color.BLUE);
-		t.setPaint(new Color(255, 70, 10));
-		// set the range axis to display integers only...
-		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		bar.setSeriesOutlinePaint(0, Color.BLUE);
+
+		final TextTitle t = chart.getTitle();
+		t.setPosition(RectangleEdge.TOP);
+		t.setHorizontalAlignment(HorizontalAlignment.LEFT);
+		t.setPaint(Color.GRAY);
+
+		chart.setBackgroundPaint(null);
+		plot.getRangeAxis().setStandardTickUnits(
+				NumberAxis.createIntegerTickUnits());
 
 		return chart;
 	}
