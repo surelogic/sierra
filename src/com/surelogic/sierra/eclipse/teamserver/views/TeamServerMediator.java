@@ -48,8 +48,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	final Button f_command;
 	final Link f_status;
-	final Label f_hostLabel;
-	final Text f_host;
 	final Label f_portLabel;
 	final Text f_port;
 	final Canvas f_trafficLight;
@@ -108,14 +106,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final ScheduledExecutorService f_executor = Executors
 			.newScheduledThreadPool(2);
 
-	TeamServerMediator(Button command, Link status, Label hostLabel, Text host,
-			Label portLabel, Text port, Canvas trafficLight,
-			ToolItem jettyRequestLogItem, ToolItem portalLogItem,
-			ToolItem servicesLogItem, Text log) {
+	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
+			Canvas trafficLight, ToolItem jettyRequestLogItem,
+			ToolItem portalLogItem, ToolItem servicesLogItem, Text log) {
 		f_command = command;
 		f_status = status;
-		f_hostLabel = hostLabel;
-		f_host = host;
 		f_portLabel = portLabel;
 		f_port = port;
 		f_trafficLight = trafficLight;
@@ -158,7 +153,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				}
 			}
 		});
-		f_port.setText(Integer.toString(f_teamServer.getPort()));
 		f_port.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(Event event) {
 				String text = event.text;
@@ -243,16 +237,12 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		}
 	}
 
-	private int getPort() {
-		return Integer.parseInt(f_port.getText());
-	}
-
 	private String getURLString() {
-		return "http://localhost:" + getPort();
+		return "http://localhost:" + f_teamServer.getPort();
 	}
 
 	private String getBuddyURLString() {
-		return "http://" + f_ipAddress + ":" + getPort();
+		return "http://" + f_ipAddress + ":" + f_teamServer.getPort();
 	}
 
 	/**
@@ -302,18 +292,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	private void hostPortHelper(boolean editable) {
-		f_portLabel.setVisible(editable);
-		f_port.setVisible(editable);
-		f_port.setEditable(editable);
-		f_port.setText(Integer.toString(f_teamServer.getPort()));
-
 		if (editable) {
-			f_hostLabel.setText("Host:");
-			f_host.setText(f_ipAddress);
+			f_portLabel.setText("Port:");
+			f_port.setText(Integer.toString(f_teamServer.getPort()));
 		} else {
-			f_hostLabel.setText("URL:");
-			f_host.setText(getBuddyURLString());
+			f_portLabel.setText("Network URL:");
+			f_port.setText(getBuddyURLString());
 		}
+		f_port.setEditable(editable);
+		f_port.getParent().layout();
 	}
 
 	private void doCommand() {

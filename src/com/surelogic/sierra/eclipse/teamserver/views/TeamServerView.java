@@ -28,7 +28,7 @@ public class TeamServerView extends ViewPart {
 		GridData data;
 
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 5;
+		gridLayout.numColumns = 3;
 		parent.setLayout(gridLayout);
 
 		final Button command = new Button(parent, SWT.NONE);
@@ -36,25 +36,14 @@ public class TeamServerView extends ViewPart {
 		command.setLayoutData(data);
 
 		final Link status = new Link(parent, SWT.NONE);
-		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		status.setLayoutData(data);
 
-		final Label hostLabel = new Label(parent, SWT.RIGHT);
-		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-		hostLabel.setLayoutData(data);
-
-		final Text host = new Text(parent, SWT.SINGLE);
-		host.setEditable(false); // can't change the text
-		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		host.setLayoutData(data);
-
 		final Label portLabel = new Label(parent, SWT.RIGHT);
-		portLabel.setText("Port:");
 		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
 		portLabel.setLayoutData(data);
 
 		final Text port = new Text(parent, SWT.SINGLE);
-		port.setEditable(false);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		port.setLayoutData(data);
 
@@ -69,7 +58,7 @@ public class TeamServerView extends ViewPart {
 
 		final Group logGroup = new Group(parent, SWT.NONE);
 		logGroup.setText("Log");
-		data = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		logGroup.setLayoutData(data);
 		final GridLayout logLayout = new GridLayout();
 		logLayout.numColumns = 2;
@@ -94,9 +83,9 @@ public class TeamServerView extends ViewPart {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		log.setLayoutData(data);
 
-		f_mediator = new TeamServerMediator(command, status, hostLabel, host,
-				portLabel, port, trafficLight, jettyRequestLogItem,
-				portalLogItem, servicesLogItem, log);
+		f_mediator = new TeamServerMediator(command, status, portLabel, port,
+				trafficLight, jettyRequestLogItem, portalLogItem,
+				servicesLogItem, log);
 		f_mediator.init();
 	}
 
