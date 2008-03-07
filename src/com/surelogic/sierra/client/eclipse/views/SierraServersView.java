@@ -85,6 +85,11 @@ public final class SierraServersView extends ViewPart {
 
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
 
+		final MenuItem serverConnectItem = createMenuItem(serverListMenu,
+				"Connect...", SLImages.IMG_SIERRA_SERVER);
+
+		new MenuItem(serverListMenu, SWT.SEPARATOR);
+
 		final MenuItem scanAllConnectedProjects = createMenuItem(
 				serverListMenu, "Scan All Connected Projects",
 				SLImages.IMG_SIERRA_SCAN);
@@ -190,7 +195,7 @@ public final class SierraServersView extends ViewPart {
 
 		final Menu projectListMenu = new Menu(projectList.getShell(),
 				SWT.POP_UP);
-		final MenuItem connectProjectItem = createMenuItem(projectListMenu,
+		final MenuItem projectConnectItem = createMenuItem(projectListMenu,
 				"Connect...", SLImages.IMG_SIERRA_SERVER);
 		final MenuItem scanProjectItem = createMenuItem(projectListMenu,
 				"Scan Project", SLImages.IMG_SIERRA_SCAN);
@@ -243,11 +248,11 @@ public final class SierraServersView extends ViewPart {
 
 		f_mediator = new SierraServersMediator(serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
-				duplicateServerItem, deleteServerItem,
+				duplicateServerItem, deleteServerItem, serverConnectItem,
 				scanAllConnectedProjects, rescanAllConnectedProjects,
 				synchAllConnectedProjects, sendResultFilters, getResultFilters,
 				serverPropertiesItem, openInBrowser, infoGroup, serverURL,
-				projectList, connectProjectItem, scanProjectItem,
+				projectList, projectConnectItem, scanProjectItem,
 				rescanProjectItem, disconnectProjectItem);
 		f_mediator.init();
 	}

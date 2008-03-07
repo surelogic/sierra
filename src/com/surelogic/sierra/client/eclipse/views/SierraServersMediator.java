@@ -54,27 +54,28 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 public final class SierraServersMediator implements ISierraServerObserver {
 
-	final Table f_serverList;
-	final ToolItem f_newServer;
-	final ToolItem f_duplicateServer;
-	final ToolItem f_deleteServer;
-	final MenuItem f_newServerItem;
-	final MenuItem f_duplicateServerItem;
-	final MenuItem f_deleteServerItem;
-	final MenuItem f_scanAllConnectedProjects;
-	final MenuItem f_rescanAllConnectedProjects;
-	final MenuItem f_synchAllConnectedProjects;
-	final MenuItem f_sendResultFilters;
-	final MenuItem f_getResultFilters;
-	final MenuItem f_serverPropertiesItem;
-	final Button f_openInBrowser;
-	final Group f_infoGroup;
-	final Label f_serverURL;
-	final Table f_projectList;
-	final MenuItem f_connectProjectItem;
-	final MenuItem f_scanProjectItem;
-	final MenuItem f_rescanProjectItem;
-	final MenuItem f_disconnectProjectItem;
+	private final Table f_serverList;
+	private final ToolItem f_newServer;
+	private final ToolItem f_duplicateServer;
+	private final ToolItem f_deleteServer;
+	private final MenuItem f_newServerItem;
+	private final MenuItem f_duplicateServerItem;
+	private final MenuItem f_deleteServerItem;
+	private final MenuItem f_serverConnectItem;
+	private final MenuItem f_scanAllConnectedProjects;
+	private final MenuItem f_rescanAllConnectedProjects;
+	private final MenuItem f_synchAllConnectedProjects;
+	private final MenuItem f_sendResultFilters;
+	private final MenuItem f_getResultFilters;
+	private final MenuItem f_serverPropertiesItem;
+	private final Button f_openInBrowser;
+	private final Group f_infoGroup;
+	private final Label f_serverURL;
+	private final Table f_projectList;
+	private final MenuItem f_projectConnectItem;
+	private final MenuItem f_scanProjectItem;
+	private final MenuItem f_rescanProjectItem;
+	private final MenuItem f_disconnectProjectItem;
 
 	private class ServerActionListener implements Listener {
 		private final String msgIfNoServer;
@@ -196,53 +197,10 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	}
 
-	final Listener f_newServerAction = new Listener() {
-		public void handleEvent(Event event) {
-			ServerLocationDialog.newServer(f_serverList.getShell());
-		}
-	};
+	private final SierraServerManager f_manager = SierraServerManager
+			.getInstance();
 
-	final Listener f_duplicateServerAction = new Listener() {
-		public void handleEvent(Event event) {
-			f_manager.duplicate();
-		}
-	};
-
-	final Listener f_deleteServerAction = new IJavaProjectsActionListener(
-			"Delete server pressed with no server focus.") {
-		@Override
-		protected void run(SierraServer server, List<String> projectNames) {
-			final String serverName = server.getLabel();
-			final String msg;
-			if (projectNames.isEmpty()) {
-				msg = I18N
-						.msg("sierra.eclipse.serverDeleteWarning", serverName);
-			} else {
-				msg = I18N.msg("sierra.eclipse.serverDeleteWarningConnected",
-						serverName, serverName, serverName);
-			}
-			if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(),
-					"Confirm Sierra Server Deletion", msg)) {
-				f_manager.delete(server);
-				if (!projectNames.isEmpty()) {
-					final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
-							projectNames);
-					deleteProjectJob.runJob();
-				}
-			}
-		}
-	};
-
-	final Listener f_openInBrowserAction = new ServerActionListener(
-			"Edit server pressed with no server focus.") {
-		@Override
-		protected void handleEventOnServer(SierraServer server) {
-			openInBrowser(server);
-		}
-	};
-
-	final Listener f_projectListAction = new Listener() {
+	private final Listener f_projectListAction = new Listener() {
 		public void handleEvent(Event event) {
 			/*
 			 * Determine the server label that has been selected and tell the
@@ -256,17 +214,16 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	};
 
-	final SierraServerManager f_manager = SierraServerManager.getInstance();
-
 	public SierraServersMediator(Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
-			MenuItem deleteServerItem, MenuItem scanAllConnectedProjects,
+			MenuItem deleteServerItem, MenuItem serverConnectItem,
+			MenuItem scanAllConnectedProjects,
 			MenuItem rescanAllConnectedProjects,
 			MenuItem synchAllConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			Button openInBrowser, Group infoGroup, Label serverURL,
-			Table projectList, MenuItem connectProjectItem,
+			Table projectList, MenuItem projectConnectItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem) {
 		f_serverList = serverList;
@@ -276,6 +233,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_newServerItem = newServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
+		f_serverConnectItem = serverConnectItem;
 		f_scanAllConnectedProjects = scanAllConnectedProjects;
 		f_rescanAllConnectedProjects = rescanAllConnectedProjects;
 		f_synchAllConnectedProjects = synchAllConnectedProjects;
@@ -286,7 +244,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_infoGroup = infoGroup;
 		f_serverURL = serverURL;
 		f_projectList = projectList;
-		f_connectProjectItem = connectProjectItem;
+		f_projectConnectItem = projectConnectItem;
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
@@ -312,17 +270,73 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		f_serverList.addListener(SWT.MouseDoubleClick, f_openInBrowserAction);
+		final Listener newServerAction = new Listener() {
+			public void handleEvent(Event event) {
+				ServerLocationDialog.newServer(f_serverList.getShell());
+			}
+		};
 
-		f_newServer.addListener(SWT.Selection, f_newServerAction);
-		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
+		final Listener duplicateServerAction = new Listener() {
+			public void handleEvent(Event event) {
+				f_manager.duplicate();
+			}
+		};
 
-		f_duplicateServer.addListener(SWT.Selection, f_duplicateServerAction);
-		f_duplicateServerItem.addListener(SWT.Selection,
-				f_duplicateServerAction);
+		final Listener deleteServerAction = new IJavaProjectsActionListener(
+				"Delete server pressed with no server focus.") {
+			@Override
+			protected void run(SierraServer server, List<String> projectNames) {
+				final String serverName = server.getLabel();
+				final String msg;
+				if (projectNames.isEmpty()) {
+					msg = I18N.msg("sierra.eclipse.serverDeleteWarning",
+							serverName);
+				} else {
+					msg = I18N.msg(
+							"sierra.eclipse.serverDeleteWarningConnected",
+							serverName, serverName, serverName);
+				}
+				if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						"Confirm Sierra Server Deletion", msg)) {
+					f_manager.delete(server);
+					if (!projectNames.isEmpty()) {
+						final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
+								projectNames);
+						deleteProjectJob.runJob();
+					}
+				}
+			}
+		};
 
-		f_deleteServer.addListener(SWT.Selection, f_deleteServerAction);
-		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
+		final Listener openInBrowserAction = new ServerActionListener(
+				"Edit server pressed with no server focus.") {
+			@Override
+			protected void handleEventOnServer(SierraServer server) {
+				openInBrowser(server);
+			}
+		};
+
+		f_serverList.addListener(SWT.MouseDoubleClick, openInBrowserAction);
+
+		f_newServer.addListener(SWT.Selection, newServerAction);
+		f_newServerItem.addListener(SWT.Selection, newServerAction);
+
+		f_duplicateServer.addListener(SWT.Selection, duplicateServerAction);
+		f_duplicateServerItem.addListener(SWT.Selection, duplicateServerAction);
+
+		f_deleteServer.addListener(SWT.Selection, deleteServerAction);
+		f_deleteServerItem.addListener(SWT.Selection, deleteServerAction);
+
+		final Listener connectAction = new Listener() {
+			public void handleEvent(Event event) {
+				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
+						f_serverList.getShell());
+				dialog.open();
+			}
+		};
+
+		f_serverConnectItem.addListener(SWT.Selection, connectAction);
 
 		f_scanAllConnectedProjects
 				.addListener(
@@ -443,17 +457,11 @@ public final class SierraServersMediator implements ISierraServerObserver {
 					}
 				});
 
-		f_openInBrowser.addListener(SWT.Selection, f_openInBrowserAction);
+		f_openInBrowser.addListener(SWT.Selection, openInBrowserAction);
 
 		f_projectList.addListener(SWT.Selection, f_projectListAction);
 
-		f_connectProjectItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
-						f_serverList.getShell());
-				dialog.open();
-			}
-		});
+		f_projectConnectItem.addListener(SWT.Selection, connectAction);
 
 		f_scanProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
@@ -526,6 +534,9 @@ public final class SierraServersMediator implements ISierraServerObserver {
 				f_deleteServer.setEnabled(focusServer);
 				f_duplicateServerItem.setEnabled(focusServer);
 				f_deleteServerItem.setEnabled(focusServer);
+				f_serverConnectItem.setEnabled(focusServer);
+				f_scanAllConnectedProjects.setEnabled(focusServer);
+				f_rescanAllConnectedProjects.setEnabled(focusServer);
 				f_synchAllConnectedProjects.setEnabled(focusServer);
 				f_sendResultFilters.setEnabled(focusServer);
 				f_getResultFilters.setEnabled(focusServer);
