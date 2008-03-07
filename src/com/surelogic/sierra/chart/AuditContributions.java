@@ -46,8 +46,8 @@ public final class AuditContributions implements IDatabasePlot {
 					uo.getUserName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
-				null, "#", dataset, PlotOrientation.HORIZONTAL, true, false,
-				false);
+				null, "# in the last 30 days", dataset,
+				PlotOrientation.HORIZONTAL, true, false, false);
 
 		final CategoryPlot plot = chart.getCategoryPlot();
 		final BarRenderer bar = (BarRenderer) plot.getRenderer();
