@@ -167,6 +167,7 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
+		panel.add(new HTML("<p>Welcome to Sierra Team Server!</p><br>"));
 		HorizontalPanel charts = new HorizontalPanel();
 		charts.add(ChartBuilder.name("LatestScanResults").width(500).build());
 		charts.add(ChartBuilder.name("AuditContributions").width(320).build());
