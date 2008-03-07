@@ -60,11 +60,11 @@ public final class LatestScanResults implements IDatabasePlot {
 		bar.setSeriesOutlinePaint(0, Color.RED);
 		bar.setSeriesPaint(1, Color.BLACK);
 		bar.setSeriesOutlinePaint(2, Color.BLACK);
-		final Color color2 = new Color(99, 66, 0);
-		bar.setSeriesPaint(2, color2);
-		bar.setSeriesOutlinePaint(2, color2);
-		bar.setSeriesPaint(3, Color.BLUE);
-		bar.setSeriesOutlinePaint(3, Color.BLUE);
+		final Color brown = new Color(99, 66, 0);
+		bar.setSeriesPaint(2, brown);
+		bar.setSeriesOutlinePaint(2, brown);
+		bar.setSeriesPaint(3, Color.GRAY);
+		bar.setSeriesOutlinePaint(3, Color.GRAY);
 
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		for (ProjectOverview po : overview) {

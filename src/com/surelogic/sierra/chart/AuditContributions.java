@@ -36,21 +36,25 @@ public final class AuditContributions implements IDatabasePlot {
 			}
 		});
 
-		mutableSize.setHeight(20 * userOverviewList.size() + 100);
+		mutableSize.setHeight(35 * userOverviewList.size() + 100);
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
-			dataset.setValue((double) (uo.getAudits()), "Audits", uo
+			dataset.setValue((double) (uo.getAudits()), "Audits Made", uo
 					.getUserName());
+			dataset.setValue((double) (uo.getFindings()), "Findings Examined",
+					uo.getUserName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
-				null, "Audits", dataset, PlotOrientation.HORIZONTAL, false,
-				false, false);
+				null, "#", dataset, PlotOrientation.HORIZONTAL, true, false,
+				false);
 
 		final CategoryPlot plot = chart.getCategoryPlot();
 		final BarRenderer bar = (BarRenderer) plot.getRenderer();
-		bar.setSeriesPaint(0, Color.BLUE);
-		bar.setSeriesOutlinePaint(0, Color.BLUE);
+		bar.setSeriesPaint(0, Color.BLACK);
+		bar.setSeriesOutlinePaint(0, Color.BLACK);
+		bar.setSeriesPaint(1, Color.GRAY);
+		bar.setSeriesOutlinePaint(1, Color.GRAY);
 
 		final TextTitle t = chart.getTitle();
 		t.setPosition(RectangleEdge.TOP);
