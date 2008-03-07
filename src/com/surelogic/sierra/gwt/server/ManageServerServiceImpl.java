@@ -85,13 +85,15 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		} catch (SQLException e) {
 			info.setCurrentVersion("Error");
 		}
-		Notification n = server.getNotification();
-		if (n != null) {
-			final Integer port = n.getPort();
-			info.setEmail(new EmailInfo(n.getHost(), port == null ? null : port
-					.toString(), n.getUser(), n.getPass(), n.getFromEmail(), n
-					.getToEmail()));
-		} else {
+		try {
+			final Notification n = server.getNotification();
+			if (n != null) {
+				final Integer port = n.getPort();
+				info.setEmail(new EmailInfo(n.getHost(), port == null ? null
+						: port.toString(), n.getUser(), n.getPass(), n
+						.getFromEmail(), n.getToEmail()));
+			}
+		} catch (SQLException e) {
 			final String error = "Error";
 			info.setEmail(new EmailInfo(error, error, error, error, error,
 					error));
