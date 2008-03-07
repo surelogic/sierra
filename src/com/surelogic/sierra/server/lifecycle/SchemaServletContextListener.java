@@ -1,9 +1,11 @@
 package com.surelogic.sierra.server.lifecycle;
 
 import java.sql.Connection;
+import java.util.logging.Level;
 
 import javax.servlet.ServletContextEvent;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -32,5 +34,12 @@ public class SchemaServletContextListener extends LogServletContextListener {
 				return null;
 			}
 		});
+		SLLogger.getLogger().log(
+				Level.INFO,
+				"Derby initialized with derby.storage.pageSize="
+						+ System.getProperty("derby.storage.pageSize")
+						+ " and derby.storage.pageCacheSize="
+						+ System.getProperty("derby.storage.pageCacheSize")
+						+ ".");
 	}
 }
