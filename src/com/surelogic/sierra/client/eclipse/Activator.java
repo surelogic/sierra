@@ -64,7 +64,8 @@ public final class Activator extends AbstractUIPlugin {
 
 		try {
 			// startup the database and ensure its schema is up to date
-			System.setProperty("derby.storage.pageCacheSize", "2500");
+			System.setProperty("derby.storage.pageSize", "8192");
+			System.setProperty("derby.storage.pageCacheSize", "5000");
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			Data.bootAndCheckSchema();
 			// load up persisted sierra servers
