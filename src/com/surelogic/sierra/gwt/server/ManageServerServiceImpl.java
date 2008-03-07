@@ -92,6 +92,8 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 				info.setEmail(new EmailInfo(n.getHost(), port == null ? null
 						: port.toString(), n.getUser(), n.getPass(), n
 						.getFromEmail(), n.getToEmail()));
+			} else {
+				info.setEmail(new EmailInfo());
 			}
 		} catch (SQLException e) {
 			final String error = "Error";
