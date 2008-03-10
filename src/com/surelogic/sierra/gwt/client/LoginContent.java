@@ -73,12 +73,8 @@ public class LoginContent extends ContentComposite {
 				ExceptionTracker.logException(caught);
 
 				resetLoginAttempt();
-				String errorMsg = "Authentication service unavailable";
-				final String caughtMsg = caught.getMessage();
-				if (caughtMsg != null && !"".equals(caughtMsg)) {
-					errorMsg += ": " + caughtMsg;
-				}
-				errorMessage.setText(errorMsg);
+				errorMessage
+						.setText("Authentication service unavailable. (Server may be down)");
 			}
 
 			public void onSuccess(Object result) {

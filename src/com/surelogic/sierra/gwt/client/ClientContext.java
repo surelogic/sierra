@@ -47,7 +47,8 @@ public final class ClientContext {
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
 				setUser(null);
-				LoginContent.getInstance("Unable to contact server").show();
+				LoginContent.getInstance(
+						"Unable to log out. (Server may be down)").show();
 			}
 
 			public void onSuccess(Object result) {

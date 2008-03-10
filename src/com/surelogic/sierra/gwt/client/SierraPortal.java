@@ -33,7 +33,7 @@ public class SierraPortal implements EntryPoint {
 				ExceptionTracker.logException(caught);
 				ClientContext.setUser(null);
 				LoginContent.getInstance(
-						"Unable to verify session: " + caught.getMessage())
+						"Unable to verify session. (Server may be down)")
 						.show();
 			}
 		});

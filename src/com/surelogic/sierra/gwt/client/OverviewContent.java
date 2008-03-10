@@ -41,7 +41,7 @@ public class OverviewContent extends ContentComposite {
 				projects.clear();
 				projects
 						.add(new HTML(
-								"<span class=\"error\">Error communicating with server.</span>"));
+								"<span class=\"error\">Unable to retrieve project overviews. (Server may be down)</span>"));
 			}
 
 			public void onSuccess(Object result) {
@@ -110,7 +110,7 @@ public class OverviewContent extends ContentComposite {
 				users.clear();
 				users
 						.add(new HTML(
-								"<span class=\"error\">Error communicating with server.</span>"));
+								"<span class=\"error\">Unable to retrieve user overviews. (Server may be down)</span>"));
 			}
 
 			public void onSuccess(Object result) {

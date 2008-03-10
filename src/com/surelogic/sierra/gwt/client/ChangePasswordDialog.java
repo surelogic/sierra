@@ -119,7 +119,7 @@ public class ChangePasswordDialog extends DialogBox {
 						public void onFailure(Throwable caught) {
 							ExceptionTracker.logException(caught);
 
-							setErrorMessage("Server unreachable, unable to create user");
+							setErrorMessage("Unable to create user. (Server may be down)");
 						}
 
 						public void onSuccess(Object result) {

@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -71,7 +71,7 @@ public class SettingsContent extends ContentComposite {
 		rf.addStyleName(0, "overview-header");
 		rf.addStyleName(1, "overview-header");
 		rf.addStyleName(2, "overview-data");
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			tf.addStyleName(2, i, "cell-number");
 		}
 		panel.add(t);
@@ -122,7 +122,7 @@ public class SettingsContent extends ContentComposite {
 
 			public void onFailure(Throwable caught) {
 				status.setStatus(new Status(false,
-						"Error communicating with server"));
+						"Unable to save settings. (Server may be down)"));
 				// TODO do some UI stuff to show failure
 			}
 		};
@@ -157,8 +157,9 @@ public class SettingsContent extends ContentComposite {
 							}
 
 							public void onFailure(Throwable caught) {
-								status.setStatus(new Status(false,
-										"Error communicating with server"));
+								status
+										.setStatus(new Status(false,
+												"Unable to test admin email. (Server may be down)"));
 								// TODO do some UI stuff to show failure
 							}
 						});
@@ -169,8 +170,9 @@ public class SettingsContent extends ContentComposite {
 					}
 
 					public void onFailure(Throwable caught) {
-						status.setStatus(new Status(false,
-								"Error communicating with server"));
+						status
+								.setStatus(new Status(false,
+										"Unable to save email settings. (Server may be down)"));
 						// TODO do some UI stuff to show failure
 					}
 				});
@@ -183,8 +185,9 @@ public class SettingsContent extends ContentComposite {
 			}
 
 			public void onFailure(Throwable caught) {
-				status.setStatus(new Status(false,
-						"Error communicating with server"));
+				status
+						.setStatus(new Status(false,
+								"Unable to retrieve server information. (Server may be down)"));
 				// TODO do some UI stuff to show failure
 			}
 		});
