@@ -173,7 +173,7 @@ public final class ScanManager {
 		final ScanRecord record = factory.newScan();
 		record.setUid(scanUid);
 		if (record.select()) {
-			record.setStatus(ScanStatus.GENERATED);
+			record.setStatus(ScanStatus.FINISHED);
 			record.update();
 		} else {
 			throw new IllegalArgumentException("No scan with id " + scanUid + " exists.");
