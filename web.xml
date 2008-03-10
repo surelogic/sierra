@@ -20,8 +20,7 @@
 
 	<context-param>
 		<description>
-			Tells the server to put its log files under the
-			~Sierra/Server directory.
+			Tells the server where to put its log files.
 		</description>
 		<param-name>SLLogger</param-name>
 		<param-value>Use Sierra Directory</param-value>
