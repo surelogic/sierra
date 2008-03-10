@@ -126,7 +126,7 @@ public class OverviewContent extends ContentComposite {
 					final RowFormatter f = grid.getRowFormatter();
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] userHeader = new String[] { "User",
-							"Audits", "Last Synch" };
+							"Audits", "Last Contribution" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-text", "cell-date" };
 					for (int j = 0; j < userHeader.length; j++) {
