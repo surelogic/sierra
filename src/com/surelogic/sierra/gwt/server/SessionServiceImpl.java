@@ -49,10 +49,10 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 				getThreadLocalRequest().getSession().setAttribute(
 						SecurityHelper.USER, u);
 				UserContext.set(u);
-				log.info("User " + userName + "logged in successfully");
+				log.info("User " + userName + " logged in successfully.");
 				return new LoginResult(getUserAccount(u));
 			} else {
-				log.info("Failed logging attempt for user " + userName);
+				log.info("Failed logging attempt for user " + userName + ".");
 				return new LoginResult("Invalid username or password");
 			}
 		} else {
