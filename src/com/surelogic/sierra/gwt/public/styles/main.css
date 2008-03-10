@@ -31,7 +31,7 @@ a.hover {
 
 /* Header */
 .header {
-	background-image: url('../images/header-bg.png');
+	background-color: #005395;
 	background-repeat: repeat-x;
 	width: 100%;
 	padding: 0px 0px 0px 0px;
