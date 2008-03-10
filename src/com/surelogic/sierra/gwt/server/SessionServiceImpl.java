@@ -2,7 +2,9 @@ package com.surelogic.sierra.gwt.server;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -20,6 +22,8 @@ import com.surelogic.sierra.jdbc.user.User;
 public class SessionServiceImpl extends SierraServiceServlet implements
 		SessionService {
 	private static final long serialVersionUID = -6665683550116264375L;
+	private static final Logger log = SLLogger
+			.getLoggerFor(SessionServiceImpl.class);
 
 	public UserAccount getUserAccount() {
 		final User u = UserContext.peek();
@@ -45,8 +49,10 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 				getThreadLocalRequest().getSession().setAttribute(
 						SecurityHelper.USER, u);
 				UserContext.set(u);
+				log.info("User " + userName + "logged in successfully");
 				return new LoginResult(getUserAccount(u));
 			} else {
+				log.info("Failed logging attempt for user " + userName);
 				return new LoginResult("Invalid username or password");
 			}
 		} else {
