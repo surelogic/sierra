@@ -1,5 +1,7 @@
 package com.surelogic.sierra.eclipse.teamserver.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -85,18 +87,34 @@ public class TeamServerView extends ViewPart {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		logText.setLayoutData(data);
 
+		final String menuText = "Show Server Logs";
+
 		final Menu logContextMenu = new Menu(logBar.getShell(), SWT.POP_UP);
 		final MenuItem toggleLogVisibilityMenuItem = new MenuItem(
-				logContextMenu, SWT.PUSH);
+				logContextMenu, SWT.CHECK);
+		toggleLogVisibilityMenuItem.setText(menuText);
 		parent.setMenu(logContextMenu);
 		logGroup.setMenu(logContextMenu);
 		statusGroup.setMenu(logContextMenu);
 		trafficLight.setMenu(logContextMenu);
 		portLabel.setMenu(logContextMenu);
 
+		final IMenuManager menu = getViewSite().getActionBars()
+				.getMenuManager();
+		final Action showLogAction = new Action(menuText, Action.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				if (f_mediator != null) {
+					f_mediator.toggleLogVisibility();
+				}
+			}
+		};
+		menu.add(showLogAction);
+
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
 				trafficLight, jettyRequestLogItem, portalLogItem,
-				servicesLogItem, logGroup, logText, toggleLogVisibilityMenuItem);
+				servicesLogItem, logGroup, logText,
+				toggleLogVisibilityMenuItem, showLogAction);
 		f_mediator.init();
 	}
 

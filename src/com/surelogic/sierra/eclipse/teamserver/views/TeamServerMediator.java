@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -59,6 +60,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final Group f_logGroup;
 	private final Text f_logText;
 	private final MenuItem f_toggleLogVisibilityMenuItem;
+	private final Action f_showLogAction;
 
 	private final String f_ipAddress;
 
@@ -128,7 +130,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
 			Canvas trafficLight, ToolItem jettyRequestLogItem,
 			ToolItem portalLogItem, ToolItem servicesLogItem, Group logGroup,
-			Text logText, MenuItem toggleLogVisibilityMenuItem) {
+			Text logText, MenuItem toggleLogVisibilityMenuItem,
+			Action showLogAction) {
 		f_command = command;
 		f_status = status;
 		f_portLabel = portLabel;
@@ -140,6 +143,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_logGroup = logGroup;
 		f_logText = logText;
 		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
+		f_showLogAction = showLogAction;
 
 		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
@@ -323,7 +327,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_port.setEditable(editable);
 	}
 
-	private void toggleLogVisibility() {
+	void toggleLogVisibility() {
 		PreferenceConstants.setLogVisible(!PreferenceConstants.isLogVisible());
 		adjustLogVisibility();
 	}
@@ -331,11 +335,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private void adjustLogVisibility() {
 		final boolean visible = PreferenceConstants.isLogVisible();
 		f_logGroup.setVisible(visible);
-		if (visible) {
-			f_toggleLogVisibilityMenuItem.setText("Hide Logs");
-		} else {
-			f_toggleLogVisibilityMenuItem.setText("Show Logs");
-		}
+		f_showLogAction.setChecked(visible);
+		f_toggleLogVisibilityMenuItem.setSelection(visible);
 	}
 
 	private void doCommand() {
