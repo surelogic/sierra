@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -77,15 +79,24 @@ public class TeamServerView extends ViewPart {
 		servicesLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SYNC));
 		servicesLogItem.setToolTipText("Show Sierra Client Services Log");
 
-		final Text log = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
+		final Text logText = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		log.setEditable(false);
+		logText.setEditable(false);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		log.setLayoutData(data);
+		logText.setLayoutData(data);
+
+		final Menu logContextMenu = new Menu(logBar.getShell(), SWT.POP_UP);
+		final MenuItem toggleLogVisibilityMenuItem = new MenuItem(
+				logContextMenu, SWT.PUSH);
+		parent.setMenu(logContextMenu);
+		logGroup.setMenu(logContextMenu);
+		statusGroup.setMenu(logContextMenu);
+		trafficLight.setMenu(logContextMenu);
+		portLabel.setMenu(logContextMenu);
 
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
 				trafficLight, jettyRequestLogItem, portalLogItem,
-				servicesLogItem, log);
+				servicesLogItem, logGroup, logText, toggleLogVisibilityMenuItem);
 		f_mediator.init();
 	}
 

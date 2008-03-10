@@ -19,9 +19,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
@@ -54,7 +56,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final ToolItem f_jettyRequestLogItem;
 	private final ToolItem f_portalLogItem;
 	private final ToolItem f_servicesLogItem;
+	private final Group f_logGroup;
 	private final Text f_logText;
+	private final MenuItem f_toggleLogVisibilityMenuItem;
 
 	private final String f_ipAddress;
 
@@ -123,7 +127,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
 			Canvas trafficLight, ToolItem jettyRequestLogItem,
-			ToolItem portalLogItem, ToolItem servicesLogItem, Text log) {
+			ToolItem portalLogItem, ToolItem servicesLogItem, Group logGroup,
+			Text logText, MenuItem toggleLogVisibilityMenuItem) {
 		f_command = command;
 		f_status = status;
 		f_portLabel = portLabel;
@@ -132,7 +137,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_jettyRequestLogItem = jettyRequestLogItem;
 		f_portalLogItem = portalLogItem;
 		f_servicesLogItem = servicesLogItem;
-		f_logText = log;
+		f_logGroup = logGroup;
+		f_logText = logText;
+		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
 
 		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
@@ -214,6 +221,14 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		} else {
 			f_servicesLogItem.setSelection(true);
 		}
+
+		f_toggleLogVisibilityMenuItem.addListener(SWT.Selection,
+				new Listener() {
+					public void handleEvent(Event event) {
+						toggleLogVisibility();
+					}
+				});
+		adjustLogVisibility();
 
 		f_teamServer.init();
 		f_teamServer.addObserver(this);
@@ -306,6 +321,21 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_port.setText(getBuddyURLString());
 		}
 		f_port.setEditable(editable);
+	}
+
+	private void toggleLogVisibility() {
+		PreferenceConstants.setLogVisible(!PreferenceConstants.isLogVisible());
+		adjustLogVisibility();
+	}
+
+	private void adjustLogVisibility() {
+		final boolean visible = PreferenceConstants.isLogVisible();
+		f_logGroup.setVisible(visible);
+		if (visible) {
+			f_toggleLogVisibilityMenuItem.setText("Hide Log");
+		} else {
+			f_toggleLogVisibilityMenuItem.setText("Show Log");
+		}
 	}
 
 	private void doCommand() {
