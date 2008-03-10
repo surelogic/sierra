@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
@@ -128,10 +129,10 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public UserAccount updateUser(final UserAccount account) {
-		return performAdmin(false, new UserTransaction<UserAccount>() {
+	public Result updateUser(final UserAccount account) {
+		return performAdmin(false, new UserTransaction<Result>() {
 
-			public UserAccount perform(Connection conn, Server server, User user)
+			public Result perform(Connection conn, Server server, User user)
 					throws Exception {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
@@ -141,8 +142,17 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getUserByName(targetUserName));
 				if (targetUser.isActive() && targetUser.isAdministrator()
 						&& (!account.isActive() || !account.isAdministrator())) {
+					int count = 0;
 					for (UserAccount u : listUsers(conn)) {
-
+						if (u.isActive() && u.isAdministrator()) {
+							count++;
+						}
+					}
+					if (count < 2) {
+						return Result
+								.fail(
+										"The server must always have at least one active administrator.",
+										targetUser);
 					}
 				}
 				man.changeUserStatus(targetUserName, account.isActive());
@@ -151,7 +161,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				} else {
 					man.removeUserFromGroup(targetUserName, SierraGroup.ADMIN);
 				}
-				return account;
+				return Result.success(account.getUserName() + " updated.",
+						account);
 			}
 		});
 	}
