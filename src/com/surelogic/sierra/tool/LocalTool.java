@@ -384,13 +384,13 @@ public class LocalTool extends AbstractTool {
             cancel(p, pout);
           }
           
-          System.out.println(line);
           if (line.startsWith("##")) {
             StringTokenizer st = new StringTokenizer(line, "#,");
             if (st.hasMoreTokens()) {            
               String first = st.nextToken();
               switch (Remote.valueOf(first)) {
                 case TASK:
+                  System.out.println(line);
                   monitor.beginTask(st.nextToken(), Integer.valueOf(st.nextToken().trim()));
                   break;
                 case SUBTASK:
@@ -400,9 +400,11 @@ public class LocalTool extends AbstractTool {
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
                 case ERROR:
+                  System.out.println(line);
                   copyException(first, st.nextToken(), br);
                   break;
                 case FAILED:
+                  System.out.println(line);
                   String msg = copyException(first, st.nextToken(), br);
                   System.out.println("Terminating run");
                   p.destroy();
@@ -412,11 +414,17 @@ public class LocalTool extends AbstractTool {
                   }
                   throw new RuntimeException(msg);
                 case DONE:
+                  System.out.println(line);
                   monitor.done();
                   break loop;
                 default:                
+                  System.out.println(line);
               }
+            } else {
+              System.out.println(line);
             }
+          } else {
+            System.out.println(line);
           }
           line = br.readLine();
         }
