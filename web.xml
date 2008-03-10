@@ -9,19 +9,12 @@
 	</welcome-file-list>
 
 	<listener>
-		<description>
-			Configures logging based upon the context-param SLLogger
-			below.
-		</description>
 		<listener-class>
 			com.surelogic.sierra.server.lifecycle.LogServletContextListener
 		</listener-class>
 	</listener>
 
 	<context-param>
-		<description>
-			Tells the server where to put its log files.
-		</description>
 		<param-name>SLLogger</param-name>
 		<param-value>Use Sierra Directory</param-value>
 	</context-param>
