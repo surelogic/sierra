@@ -17,7 +17,6 @@
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-services/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
 		<war destfile="../jetty/webapps/services.war" webxml="../sierra-services/web.xml">
-			<fileset dir="../sierra-services/www" />
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-services/lib/web-dependencies" />
 		</war>
