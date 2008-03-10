@@ -332,9 +332,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		final boolean visible = PreferenceConstants.isLogVisible();
 		f_logGroup.setVisible(visible);
 		if (visible) {
-			f_toggleLogVisibilityMenuItem.setText("Hide Log");
+			f_toggleLogVisibilityMenuItem.setText("Hide Logs");
 		} else {
-			f_toggleLogVisibilityMenuItem.setText("Show Log");
+			f_toggleLogVisibilityMenuItem.setText("Show Logs");
 		}
 	}
 

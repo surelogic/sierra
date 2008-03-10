@@ -59,7 +59,7 @@ public class TeamServerView extends ViewPart {
 		final Canvas trafficLight = new Canvas(statusGroup, SWT.NONE);
 
 		final Group logGroup = new Group(parent, SWT.NONE);
-		logGroup.setText("Log");
+		logGroup.setText("Logs");
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		logGroup.setLayoutData(data);
 		final GridLayout logLayout = new GridLayout();
