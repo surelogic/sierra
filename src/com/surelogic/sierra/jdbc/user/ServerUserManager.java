@@ -257,6 +257,16 @@ public final class ServerUserManager {
 		}
 	}
 
+	public User getUserByName(String name) throws SQLException {
+		final UserRecord record = getUser(name);
+		if (record != null) {
+			return new ServerUser(record.getId(), record.getUserName(), record
+					.isActive());
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Find users that contain the given query string. <code>*</code> may be
 	 * used to represent a wildcard.

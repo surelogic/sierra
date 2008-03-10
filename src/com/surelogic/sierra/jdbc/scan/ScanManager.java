@@ -169,6 +169,17 @@ public final class ScanManager {
 		}
 	}
 
+	public void finalizeScan(String scanUid) throws SQLException {
+		final ScanRecord record = factory.newScan();
+		record.setUid(scanUid);
+		if (record.select()) {
+			record.setStatus(ScanStatus.GENERATED);
+			record.update();
+		} else {
+			throw new IllegalArgumentException("No scan with id " + scanUid + " exists.");
+		}
+	}
+
 	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)
 			throws SQLException {
 		for (String uid : uids) {

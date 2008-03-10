@@ -155,7 +155,7 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	public String finished() {
 		generator.finished(EmptyProgressMonitor.instance());
-		scan.setStatus(ScanStatus.FINISHED);
+		scan.setStatus(ScanStatus.GENERATED);
 		try {
 			scan.update();
 			if (log.isLoggable(Level.FINE)) {
