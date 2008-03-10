@@ -85,6 +85,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 											null);
 									fm.generateOverview(project, uid,
 											timeseries);
+									conn.commit();
+									ScanManager.getInstance(conn).finalizeScan(
+											uid);
 								} catch (RuntimeException e) {
 									handleScanException(conn, uid);
 									throw e;
