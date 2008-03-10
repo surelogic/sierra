@@ -86,7 +86,7 @@ public final class HeaderPanel extends Composite {
 
 		mainBar.setWidth("100%");
 		addTab("Welcome", OverviewContent.getInstance());
-		addTab("User Management", UserManagementContent.getInstance());
+		addTab("Users", UserManagementContent.getInstance());
 		mainBar.addTabListener(new TabListener() {
 
 			public boolean onBeforeTabSelected(SourcesTabEvents sender,
@@ -141,11 +141,9 @@ public final class HeaderPanel extends Composite {
 			}
 
 			if (user.isAdministrator()) {
-				addTab("Settings", SettingsContent
-						.getInstance());
+				addTab("Settings", SettingsContent.getInstance());
 			} else {
-				removeTab(SettingsContent.getInstance()
-						.getContextName());
+				removeTab(SettingsContent.getInstance().getContextName());
 			}
 
 			final int tabIndex = mainBar.getSelectedTab();
