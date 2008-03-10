@@ -8,6 +8,8 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
+	<!-- Set up logging -->
+
 	<listener>
 		<listener-class>
 			com.surelogic.sierra.server.lifecycle.LogServletContextListener
