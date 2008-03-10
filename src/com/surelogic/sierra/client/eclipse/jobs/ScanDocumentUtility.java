@@ -56,11 +56,11 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
-	  final boolean debug = log.isLoggable(Level.FINE);
-    if (debug) {
-      log.info("Loading partial scan document " + scanDocument
-				+ " with compilations " + compilations + ".");
-    }
+		final boolean debug = log.isLoggable(Level.FINE);
+		if (debug) {
+			log.info("Loading partial scan document " + scanDocument
+					+ " with compilations " + compilations + ".");
+		}
 		Throwable exc = null;
 		try {
 			Connection conn = Data.transactionConnection();
@@ -130,10 +130,10 @@ public final class ScanDocumentUtility {
 	public static void loadScanDocument(final File scanDocument,
 			final SLProgressMonitor monitor, final String projectName)
 			throws ScanPersistenceException {
-	  final boolean debug = log.isLoggable(Level.FINE);
-	  if (debug) {
-	    log.info("Loading scan document " + scanDocument);
-	  }
+		final boolean debug = log.isLoggable(Level.FINE);
+		if (debug) {
+			log.info("Loading scan document " + scanDocument);
+		}
 		monitor.beginTask("Load scan document", 100);
 		Throwable exc = null;
 		try {
@@ -156,10 +156,11 @@ public final class ScanDocumentUtility {
 				fm.generateFindings(projectName, uid, filter, monitor);
 				conn.commit();
 				if (debug) {
-				  log.info("Generating overview for scan " + uid + "in project "
-						+ projectName);
+					log.info("Generating overview for scan " + uid
+							+ "in project " + projectName);
 				}
 				fm.generateOverview(projectName, uid, monitor);
+				sMan.finalizeScan(uid);
 				conn.commit();
 			} catch (Exception e) {
 				exc = e;
