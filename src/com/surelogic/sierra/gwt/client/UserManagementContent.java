@@ -57,17 +57,17 @@ public class UserManagementContent extends ContentComposite {
 		usersPanel.setWidth("100%");
 		final boolean isAdmin = ClientContext.getUser().isAdministrator();
 		if (isAdmin) {
-			userActionsPanel.addAction("Create a user", new ClickListener() {
+			userActionsPanel.addAction("Create a new user",
+					new ClickListener() {
+						public void onClick(Widget sender) {
+							usersGrid.clearStatus();
+							createUser();
+						}
 
-				public void onClick(Widget sender) {
-					usersGrid.clearStatus();
-					createUser();
-				}
-
-			});
+					});
 		}
 		usersPanel.add(userActionsPanel);
-		usersGridPanel.addGridOption("Show Disabled Users",
+		usersGridPanel.addGridOption("Show disabled users",
 				new ClickListener() {
 					public void onClick(Widget sender) {
 						showDisabled = !showDisabled;
