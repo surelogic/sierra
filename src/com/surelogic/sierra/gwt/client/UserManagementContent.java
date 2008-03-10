@@ -282,9 +282,16 @@ public class UserManagementContent extends ContentComposite {
 						}
 
 						public void onSuccess(Object result) {
-							Result r = (Result) result;
-							updateRow(row, (UserAccount) r.getResult(),
-									ClientContext.getUser());
+							final Result r = (Result) result;
+							final UserAccount user = (UserAccount) r
+									.getResult();
+							final UserAccount current = ClientContext.getUser();
+							if (r.isSuccess()
+									&& (user.getId() == current.getId())) {
+								ClientContext.setUser(user);
+							}
+							updateRow(row, (UserAccount) user, ClientContext
+									.getUser());
 							status.setStatus(r);
 
 						}
