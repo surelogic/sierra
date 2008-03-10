@@ -15,19 +15,12 @@
 	<!-- Set up logging -->
 
 	<listener>
-		<description>
-			Configures logging based upon the context-param SLLogger
-			below and bootstraps or updates the database schema.
-		</description>
 		<listener-class>
 			com.surelogic.sierra.server.lifecycle.SchemaServletContextListener
 		</listener-class>
 	</listener>
 
 	<context-param>
-		<description>
-			Tells the server where to put its log files.
-		</description>
 		<param-name>SLLogger</param-name>
 		<param-value>Use Sierra Directory</param-value>
 	</context-param>
