@@ -46,25 +46,40 @@ import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServerMediator implements ITeamServerObserver {
 
-	final Button f_command;
-	final Link f_status;
-	final Label f_portLabel;
-	final Text f_port;
-	final Canvas f_trafficLight;
-	final ToolItem f_jettyRequestLogItem;
-	final ToolItem f_portalLogItem;
-	final ToolItem f_servicesLogItem;
-	final Text f_logText;
+	private final Button f_command;
+	private final Link f_status;
+	private final Label f_portLabel;
+	private final Text f_port;
+	private final Canvas f_trafficLight;
+	private final ToolItem f_jettyRequestLogItem;
+	private final ToolItem f_portalLogItem;
+	private final ToolItem f_servicesLogItem;
+	private final Text f_logText;
 
-	final String f_ipAddress;
+	private final String f_ipAddress;
 
-	final TeamServer f_teamServer;
-	final ServerLog f_jettyRequestLog;
-	final IServerLogObserver f_jettyRequestLogObserver;
-	final ServerLog f_portalLog;
-	final IServerLogObserver f_portalLogObserver;
-	final ServerLog f_servicesLog;
-	final IServerLogObserver f_servicesLogObserver;
+	private final TeamServer f_teamServer;
+	private final ServerLog f_jettyRequestLog;
+	private final IServerLogObserver f_jettyRequestLogObserver;
+	private final ServerLog f_portalLog;
+	private final IServerLogObserver f_portalLogObserver;
+	private final ServerLog f_servicesLog;
+	private final IServerLogObserver f_servicesLogObserver;
+
+	private final Listener f_portNumberVerify = new Listener() {
+		public void handleEvent(Event event) {
+			String text = event.text;
+			char[] chars = new char[text.length()];
+			text.getChars(0, chars.length, chars, 0);
+			for (char c : chars) {
+				boolean number = '0' <= c && c <= '9';
+				if (!number) {
+					event.doit = false;
+					return;
+				}
+			}
+		}
+	};
 
 	private class LogObserver implements IServerLogObserver {
 		private final ToolItem f_item;
@@ -150,20 +165,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				} catch (MalformedURLException e) {
 					SLLogger.getLogger().log(Level.SEVERE,
 							I18N.err(41, urlString), e);
-				}
-			}
-		});
-		f_port.addListener(SWT.Verify, new Listener() {
-			public void handleEvent(Event event) {
-				String text = event.text;
-				char[] chars = new char[text.length()];
-				text.getChars(0, chars.length, chars, 0);
-				for (char c : chars) {
-					boolean number = '0' <= c && c <= '9';
-					if (!number) {
-						event.doit = false;
-						return;
-					}
 				}
 			}
 		});
@@ -269,8 +270,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 			hostPortHelper(false);
 
-			f_status.setText("A server is running on <a href=\"open\">"
-					+ getURLString() + "</a>.");
+			final String msg = I18N.msg("sierra.eclipse.teamserver.running");
+			f_status.setText(msg);
 		} else if (f_teamServer.isNotRunning()) {
 			f_command.setText("Start Server");
 			f_command.setVisible(true);
@@ -278,14 +279,17 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 			hostPortHelper(true);
 
-			f_status.setText("A server is not running.");
+			final String msg = I18N.msg("sierra.eclipse.teamserver.notRunning");
+			f_status.setText(msg);
 		} else {
 			f_command.setEnabled(false);
 			f_command.setVisible(false);
 
 			hostPortHelper(false);
 
-			f_status.setText("Checking...");
+			final String msg = I18N.msg("sierra.eclipse.teamserver.checking",
+					f_teamServer.getPort());
+			f_status.setText(msg);
 			f_command.getParent().layout();
 		}
 		f_command.getParent().layout();
@@ -295,12 +299,13 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		if (editable) {
 			f_portLabel.setText("Port:");
 			f_port.setText(Integer.toString(f_teamServer.getPort()));
+			f_port.addListener(SWT.Verify, f_portNumberVerify);
 		} else {
 			f_portLabel.setText("Network URL:");
+			f_port.removeListener(SWT.Verify, f_portNumberVerify);
 			f_port.setText(getBuddyURLString());
 		}
 		f_port.setEditable(editable);
-		f_port.getParent().layout();
 	}
 
 	private void doCommand() {
