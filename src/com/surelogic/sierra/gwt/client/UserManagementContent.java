@@ -126,7 +126,8 @@ public class UserManagementContent extends ContentComposite {
 			public void onFailure(Throwable caught) {
 				ExceptionTracker.logException(caught);
 
-				usersGrid.setStatus("error", "Unable to retrieve user list");
+				usersGrid.setStatus("error",
+						"Unable to retrieve user list. (Server may be down)");
 			}
 
 			public void onSuccess(Object result) {
@@ -200,7 +201,8 @@ public class UserManagementContent extends ContentComposite {
 							public void onFailure(Throwable caught) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
-												+ user.getUserName() + ".");
+												+ user.getUserName()
+												+ ". (Server may be down)");
 							}
 
 							public void onSuccess(Object result) {
@@ -231,7 +233,8 @@ public class UserManagementContent extends ContentComposite {
 							public void onFailure(Throwable caught) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
-												+ user.getUserName() + ".");
+												+ user.getUserName()
+												+ ". (Server may be down)");
 							}
 
 							public void onSuccess(Object result) {
@@ -273,7 +276,9 @@ public class UserManagementContent extends ContentComposite {
 							ExceptionTracker.logException(caught);
 
 							// TODO all error handling needs a cleaning pass
-							usersGrid.setStatus("error", "Server unreachable");
+							usersGrid
+									.setStatus("error",
+											"Unable to change user name. (Server may be down)");
 						}
 
 						public void onSuccess(Object result) {

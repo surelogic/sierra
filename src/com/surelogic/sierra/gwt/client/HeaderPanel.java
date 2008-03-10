@@ -71,7 +71,8 @@ public final class HeaderPanel extends Composite {
 					public void onFailure(Throwable caught) {
 						ExceptionTracker.logException(caught);
 						ClientContext.setUser(null);
-						LoginContent.getInstance("Unable to contact server")
+						LoginContent.getInstance(
+								"Unable to log out. (Server may be down)")
 								.show();
 					}
 
