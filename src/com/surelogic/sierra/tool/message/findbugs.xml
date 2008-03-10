@@ -549,6 +549,7 @@ thread.</p>]]>
 	<findingType>
 		<id>AvoidExplicitGarbageCollection</id>
 		<artifact tool="FindBugs" mnemonic="DM_GC"></artifact>
+		<artifact tool="PMD" mnemonic="DoNotCallGarbageCollectionExplicitly"/>
 		<shortMessage>
 			Explicit garbage collection; extremely dubious except in
 			benchmarking code
@@ -3554,6 +3555,8 @@ thread.</p>]]>
 		<artifact tool="FindBugs"
 			mnemonic="PZLA_PREFER_ZERO_LENGTH_ARRAYS">
 		</artifact>
+		<artifact tool="PMD" mnemonic="ReturnEmptyArrayRatherThanNull">
+		</artifact>		
 		<shortMessage>
 			Consider returning a zero length array rather than null
 		</shortMessage>

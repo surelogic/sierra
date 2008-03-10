@@ -3495,8 +3495,90 @@
 		<name>Do Not Use Threads</name>
 	</findingType>	
 
+	<!-- For PMD 4.2 -->
+	<findingType>
+		<id>AvoidMultipleUnaryOperators</id>
+		<artifact tool="PMD" mnemonic="AvoidMultipleUnaryOperators">
+		</artifact>
+		<shortMessage>Avoid using multiple unary operators</shortMessage>
+		<info>
+			&lt;p&gt; Using multiple unary operators may be a bug, and/or is confusing.  
+			Check that the usage is not a bug, or consider simplifying the expression.
+			For more info, see http://pmd.sourceforge.net/rules/basic.html#AvoidMultipleUnaryOperators
+			&lt;/p&gt;
+		</info>
+		<name>Avoid Using Multiple Unary Operators</name>
+	</findingType>	
+	<findingType>
+		<id>TooManyMethods</id>
+		<artifact tool="PMD" mnemonic="TooManyMethods">
+		</artifact>
+		<shortMessage>Class has too many methods</shortMessage>
+		<info>
+			&lt;p&gt; A class with too many methods is probably a good suspect for refactoring,
+			in order to reduce its complexity and find a way to have more fine grained objects.
+			 &lt;/p&gt;
+		</info>
+		<name>Avoid Classes with Too Many Methods</name>
+	</findingType>		
+	<findingType>
+		<id>AbstractClassWithoutAnyMethod</id>
+		<artifact tool="PMD" mnemonic="AbstractClassWithoutAnyMethod">
+		</artifact>
+		<shortMessage>No abstract methods in abstract class</shortMessage>
+		<info>
+			&lt;p&gt; If the abstract class does not provides any methods, 
+			it may be just a data container
+			that is not to be instantiated. In this case, it's probably
+			better to use a private or a protected constructor in order to 
+			prevent instantiation than make the class misleadingly abstract.
+			. &lt;/p&gt;
+		</info>
+		<name>No Abstract Methods in Abstract Class</name>
+	</findingType>				
+	<findingType>
+		<id>TooFewBranchesForASwitchStatement</id>
+		<artifact tool="PMD" mnemonic="TooFewBranchesForASwitchStatement">
+		</artifact>
+		<shortMessage>Avoid using hard-coded IP address</shortMessage>
+		<info>
+			&lt;p&gt; Switch statements are designed complex branches, and allow branches
+			to share treatment. Using a switch for only 2	branches is ill advised, as 
+			switches are not as easy to understand as if statements. In this case, it's most likely
+		  is a good idea to use a if statement instead, at least to increase code readability. 
+		  &lt;/p&gt;
+		</info>
+		<name>Avoid Switch Statements with Only A Few Branches</name>
+	</findingType>					  	
+	<findingType>
+		<id>DoNotThrowExceptionInFinally</id>
+		<artifact tool="PMD" mnemonic="DoNotThrowExceptionInFinally">
+		</artifact>
+		<shortMessage>Avoid throwing Exceptions in 'finally' clauses</shortMessage>
+		<info>
+			&lt;p&gt; Throwing exceptions in a finally block is confusing. 
+			It may mask exceptions or a defect of the code, as well as make
+			      it also render code cleanup unstable.
+			Note: This is a PMD implementation of the Lint4j rule "A throw in a finally block" 
+			&lt;/p&gt;
+		</info>
+		<name>Avoid Throwing Exceptions In Finally Clauses</name>
+	</findingType>				  	
+	<findingType>
+		<id>AvoidStringBufferField</id>
+		<artifact tool="PMD" mnemonic="AvoidStringBufferField">
+		</artifact>
+		<shortMessage>Avoid keeping StringBuffers as a field</shortMessage>
+		<info>
+			&lt;p&gt; StringBuffers can grow quite a lot, and so may become a source of memory leaks 
+			(if the owning class has a long life time). &lt;/p&gt;
+		</info>
+		<name>Avoid StringBuffer-typed Fields</name>
+	</findingType>					
+	
 	<category>
 		<id>Basic Rules</id>
+		<findingType>AvoidMultipleUnaryOperators</findingType>
 		<findingType>EmptyCatchBlock</findingType>
 		<findingType>EmptyIfStmt</findingType>
 		<findingType>EmptyWhileStmt</findingType>
@@ -3572,6 +3654,7 @@
 		<findingType>NcssMethodCount</findingType>
 		<findingType>NcssTypeCount</findingType>
 		<findingType>NcssConstructorCount</findingType>
+		<findingType>TooManyMethods</findingType>
 		<name>Code Size Rules</name>
 		<description>
 			The Code Size Ruleset contains a collection of rules that
@@ -3668,6 +3751,8 @@
 		<findingType>UseCollectionIsEmpty</findingType>
 		<findingType>ClassWithOnlyPrivateConstructorsShouldBeFinal</findingType>
 		<findingType>EmptyMethodInAbstractClassShouldBeAbstract</findingType>
+		<findingType>AbstractClassWithoutAnyMethod</findingType>
+		<findingType>TooFewBranchesForASwitchStatement</findingType>
 		<name>Design Rules</name>
 		<description>
 			The Design Ruleset contains a collection of rules that find
@@ -3847,6 +3932,7 @@
 		<findingType>AvoidThrowingNullPointerException</findingType>
 		<findingType>AvoidRethrowingException</findingType>
 		<findingType>DoNotExtendJavaLangError</findingType>
+		<findingType>DoNotThrowExceptionInFinally</findingType>
 		<name>Strict Exception Rules</name>
 		<description>
 			These rules provide some strict guidelines about throwing
@@ -3868,6 +3954,7 @@
 		<findingType>InsufficientStringBufferDeclaration</findingType>
 		<findingType>UselessStringValueOf</findingType>
 		<findingType>StringBufferInstantiationWithChar</findingType>
+		<findingType>AvoidStringBufferField</findingType>
 		<name>String and StringBuffer Rules</name>
 		<description>
 			These rules deal with different problems that can occur with
