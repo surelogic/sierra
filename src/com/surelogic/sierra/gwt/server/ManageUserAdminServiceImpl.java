@@ -79,16 +79,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 
 					public List<UserAccount> perform(Connection conn,
 							Server server, User user) throws SQLException {
-						final ServerUserManager man = ServerUserManager
-								.getInstance(conn);
-
-						final List<User> users = man.listUsers();
-						final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
-								users.size());
-						for (User u : users) {
-							userAccounts.add(convertUser(man, u));
-						}
-						return userAccounts;
+						return listUsers(conn);
 					}
 				});
 	}
@@ -100,11 +91,9 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					User serverUser) throws SQLException {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
-				List<User> users = man.findUser(targetUser);
-				for (User user : users) {
-					if (user.getName().equals(targetUser)) {
-						return convertUser(man, user);
-					}
+				final User user = man.getUserByName(targetUser);
+				if (user != null) {
+					return convertUser(man, user);
 				}
 				return null;
 			}
@@ -148,6 +137,14 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
 				man.changeUserName(account.getId(), account.getUserName());
+				final UserAccount targetUser = convertUser(man, man
+						.getUserByName(targetUserName));
+				if (targetUser.isActive() && targetUser.isAdministrator()
+						&& (!account.isActive() || !account.isAdministrator())) {
+					for (UserAccount u : listUsers(conn)) {
+
+					}
+				}
 				man.changeUserStatus(targetUserName, account.isActive());
 				if (account.isAdministrator()) {
 					man.addUserToGroup(targetUserName, SierraGroup.ADMIN);
@@ -167,6 +164,18 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 			}
 		});
 		return Boolean.TRUE.equals(isAdmin);
+	}
+
+	private List<UserAccount> listUsers(Connection conn) throws SQLException {
+		final ServerUserManager man = ServerUserManager.getInstance(conn);
+
+		final List<User> users = man.listUsers();
+		final List<UserAccount> userAccounts = new ArrayList<UserAccount>(users
+				.size());
+		for (User u : users) {
+			userAccounts.add(convertUser(man, u));
+		}
+		return userAccounts;
 	}
 
 	private UserAccount convertUser(ServerUserManager man, User u)

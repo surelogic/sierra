@@ -27,7 +27,10 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 
 					public List<UserOverview> perform(Connection conn,
 							Server server, User user) throws Exception {
-						return PortalOverview.getInstance(conn).getUserOverviews();
+						conn
+								.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+						return PortalOverview.getInstance(conn)
+								.getUserOverviews();
 					}
 				});
 	}
@@ -38,6 +41,8 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 
 					public List<ProjectOverview> perform(Connection conn,
 							Server server, User user) throws Exception {
+						conn
+								.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 						return PortalOverview.getInstance(conn)
 								.getProjectOverviews();
 					}
