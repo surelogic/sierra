@@ -37,10 +37,11 @@ public class GridPanel extends Composite {
 		enabled = true;
 	}
 
-	public void addGridOption(String text, ClickListener actionListener) {
+	public void addGridOption(String text, ClickListener actionListener, boolean checked) {
 		final CheckBox box = new CheckBox(text);
 		box.addClickListener(actionListener);
 		box.setEnabled(enabled);
+		box.setChecked(checked);
 		gridActionPanel.add(box);
 		actions.add(box);
 	}

@@ -39,7 +39,7 @@ public class UserManagementContent extends ContentComposite {
 	private final SelectableGrid usersGrid = usersGridPanel.getGrid();
 	private final StatusBox status = new StatusBox();
 
-	private boolean showDisabled;
+	private boolean showDisabled = true;
 
 	public static UserManagementContent getInstance() {
 		return instance;
@@ -73,7 +73,7 @@ public class UserManagementContent extends ContentComposite {
 						showDisabled = !showDisabled;
 						refreshUsers();
 					}
-				});
+				}, true);
 		usersGrid.setColumn(0, "Name", "25%");
 		usersGrid.setColumn(1, "Role", "25%");
 		usersGrid.setColumn(2, "Status", "25%");
