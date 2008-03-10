@@ -11,6 +11,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
+import com.surelogic.sierra.jdbc.server.SecurityHelper;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
@@ -138,9 +139,15 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
 				man.changeUserName(account.getId(), account.getUserName());
-				final UserAccount targetUser = convertUser(man, man
+				final User targetUser = man.getUserByName(targetUserName); 
+				final UserAccount targetUserAccount = convertUser(man, man
 						.getUserByName(targetUserName));
-				if (targetUser.isActive() && targetUser.isAdministrator()
+				//Make sure that the user name of the session stays valid
+				if(targetUser.getId() == user.getId()) {
+					getThreadLocalRequest().getSession().setAttribute(
+							SecurityHelper.USER, targetUser);					
+				}
+				if (targetUser.isActive() && targetUserAccount.isAdministrator()
 						&& (!account.isActive() || !account.isAdministrator())) {
 					int count = 0;
 					for (UserAccount u : listUsers(conn)) {
@@ -152,7 +159,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						return Result
 								.fail(
 										"The server must always have at least one active administrator.",
-										targetUser);
+										targetUserAccount);
 					}
 				}
 				man.changeUserStatus(targetUserName, account.isActive());
