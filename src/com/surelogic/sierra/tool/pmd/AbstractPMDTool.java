@@ -124,7 +124,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
         monitor.worked(1);
       }
       // System.out.println(msg);
-      LOG.info(msg);
+      LOG.fine(msg);
     }
     
     private String getCompUnitName(String file) {
