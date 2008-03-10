@@ -59,6 +59,10 @@ a.hover {
 .login-panel {
 	border: 2px groove;
 	padding: 10px;
+	position: absolute;
+	top: 40%;
+	left: 35%;
+	width: 30%;
 }
 
 .login-errormessage {

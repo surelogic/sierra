@@ -167,9 +167,6 @@ public class LoginContent extends ContentComposite {
 			}
 		});
 
-		rootPanel.addStyleName("login-root");
-		rootPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 

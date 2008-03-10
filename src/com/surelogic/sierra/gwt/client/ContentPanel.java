@@ -21,7 +21,6 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		super();
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
-		rootPanel.setHeight("100%");
 
 		// register Content instances here
 		registerContent(OverviewContent.getInstance());
