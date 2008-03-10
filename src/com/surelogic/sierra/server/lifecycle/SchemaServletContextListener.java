@@ -27,7 +27,6 @@ public class SchemaServletContextListener extends LogServletContextListener {
 		 * Bootstrap or update up the database as necessary.
 		 */
 		ConnectionFactory.withTransaction(new ServerTransaction<Void>() {
-
 			public Void perform(Connection conn, Server server)
 					throws Exception {
 				SierraSchemaUtility.checkAndUpdate(conn, true);
