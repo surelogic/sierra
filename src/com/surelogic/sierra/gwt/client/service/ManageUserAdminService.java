@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.service;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
@@ -64,7 +65,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 *            the user's updated account info
 	 * @return
 	 */
-	UserAccount updateUser(UserAccount account);
+	Result updateUser(UserAccount account);
 
 	/**
 	 * Update the status of a list of users. User passwords cannot currently be

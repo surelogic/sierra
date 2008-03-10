@@ -1,10 +1,8 @@
 package com.surelogic.sierra.gwt.client;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,6 +13,7 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
@@ -205,7 +204,10 @@ public class UserManagementContent extends ContentComposite {
 							}
 
 							public void onSuccess(Object result) {
-								usersGrid.setRowData(row, result);
+								Result r = (Result) result;
+								updateRow(row, (UserAccount) r.getResult(),
+										ClientContext.getUser());
+								status.setStatus(r);
 							}
 						});
 			}
@@ -233,7 +235,10 @@ public class UserManagementContent extends ContentComposite {
 							}
 
 							public void onSuccess(Object result) {
-								usersGrid.setRowData(row, result);
+								Result r = (Result) result;
+								updateRow(row, (UserAccount) r.getResult(),
+										ClientContext.getUser());
+								status.setStatus(r);
 							}
 						});
 
@@ -255,41 +260,6 @@ public class UserManagementContent extends ContentComposite {
 		dialog.center();
 	}
 
-	private void changeUsersStatus(final boolean activate) {
-		usersGrid.clearStatus();
-		if (usersGrid.hasSelected()) {
-			if (Window.confirm((activate ? "Enable" : "Disable")
-					+ " all selected users?")) {
-				final List names = new ArrayList();
-				for (int i = 0; i < usersGrid.getRowCount(); i++) {
-					if (usersGrid.isSelected(i)) {
-						UserAccount account = (UserAccount) usersGrid
-								.getRowData(i);
-						if (activate != account.isActive()) {
-							account.setActive(activate);
-							names.add(account.getUserName());
-						}
-					}
-				}
-				ServiceHelper.getManageUserService().updateUsersStatus(names,
-						activate, new AsyncCallback() {
-
-							public void onFailure(Throwable caught) {
-								usersGrid.setStatus("error", "Could not "
-										+ (activate ? "enable" : "disable")
-										+ " users.");
-							}
-
-							public void onSuccess(Object result) {
-								refreshUsers();
-							}
-						});
-			}
-		} else {
-			Window.alert("No users selected");
-		}
-	}
-
 	private String changeUserName(final int row, String oldValue,
 			String newValue) {
 		usersGrid.clearStatus();
@@ -307,8 +277,11 @@ public class UserManagementContent extends ContentComposite {
 						}
 
 						public void onSuccess(Object result) {
-							updateRow(row, (UserAccount) result, ClientContext
-									.getUser());
+							Result r = (Result) result;
+							updateRow(row, (UserAccount) r.getResult(),
+									ClientContext.getUser());
+							status.setStatus(r);
+
 						}
 					});
 		}
