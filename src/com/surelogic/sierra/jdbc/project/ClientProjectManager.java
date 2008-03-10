@@ -50,8 +50,8 @@ public final class ClientProjectManager extends ProjectManager {
 		if (!p.select()) {
 			p.insert();
 		}
-		
-		//Resolve the server uid
+
+		// Resolve the server uid
 		selectServerUid.setLong(1, p.getId());
 		final ResultSet set = selectServerUid.executeQuery();
 		String serverUid;
@@ -71,7 +71,7 @@ public final class ClientProjectManager extends ProjectManager {
 			return;
 		}
 		monitor.worked(1);
-		
+
 		// Commit audits
 		monitor.subTask("Sending local updates to the server.");
 		final SyncRequest request = new SyncRequest();
