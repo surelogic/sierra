@@ -2,6 +2,7 @@ package com.surelogic.sierra.eclipse.teamserver.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.eclipse.teamserver.actions.PreferenceAction;
 
 public class TeamServerView extends ViewPart {
 
@@ -110,6 +112,8 @@ public class TeamServerView extends ViewPart {
 			}
 		};
 		menu.add(showLogAction);
+		menu.add(new Separator());
+		menu.add(new PreferenceAction("Preferences..."));
 
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
 				trafficLight, jettyRequestLogItem, portalLogItem,
