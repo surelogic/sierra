@@ -55,4 +55,16 @@ public class PreferenceConstants {
 	public static void setPort(int value) {
 		Activator.getDefault().getPluginPreferences().setValue(P_PORT, value);
 	}
+
+	public static final String P_SERVER_MEMORY_MB = "com.surelogic.sierra.teamserver.server-memory-mb";
+
+	public static int getServerMemoryMB() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_SERVER_MEMORY_MB);
+	}
+
+	public static void setServerMemoryMB(int mb) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_MEMORY_MB, mb);
+	}
 }

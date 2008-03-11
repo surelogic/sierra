@@ -17,6 +17,7 @@ import org.apache.tools.ant.types.Commandline.Argument;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServer {
 
@@ -243,7 +244,7 @@ public final class TeamServer {
 	public void start() {
 		CommandlineJava command = getJettyTemplate();
 
-		command.setMaxmemory("512m"); // TODO configure this better
+		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
 
 		final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
 		Argument jettyConfigFile = command.createArgument();
