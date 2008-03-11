@@ -533,6 +533,10 @@ public final class MFilterSelectionColumn extends MColumn implements
     if (longest < 25) {
       return 50;
     }
+    // Check if on Vista
+    if (SystemUtils.IS_OS_WINDOWS && "6.0".equals(SystemUtils.OS_VERSION)) {
+        return longest + 35;
+    }
     return longest + 25;
 	}
 	
