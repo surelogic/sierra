@@ -92,90 +92,89 @@ public final class PortalOverview {
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.FINDING_ID = F.ID  "
 						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
 						+ "GROUP BY P.NAME ORDER BY P.NAME");
-		auditSt.setTimestamp(1, thirtyDaysAgo());
-		final ResultSet auditSet = auditSt.executeQuery();
-		try {
-			Statement scanSt = conn.createStatement();
-			try {
-				final ResultSet scanSet = scanSt
-						.executeQuery("SELECT P.PROJECT, P.TIME, COUNT (F.ID), F.IMPORTANCE  "
-								+ "FROM LATEST_SCANS P LEFT OUTER JOIN SCAN_OVERVIEW SO ON SO.SCAN_ID = P.SCAN_ID  "
-								+ "LEFT OUTER JOIN FINDING F ON F.ID = SO.FINDING_ID "
-								+ "WHERE P.QUALIFIER = '__ALL_SCANS__'   "
-								+ "GROUP BY P.PROJECT,P.TIME,F.IMPORTANCE ORDER BY P.PROJECT");
-				ProjectOverview po = new ProjectOverview();
-				int findingCount = 0;
-				while (scanSet.next()) {
-					int idx = 1;
-					final String name = scanSet.getString(idx++);
-					final Date time = scanSet.getTimestamp(idx++);
-					if (!name.equals(po.getName())) {
-						po.setTotalFindings(findingCount);
-						findingCount = 0;
-						po = new ProjectOverview();
-						po.setName(name);
-						po.setLastScanDate(formattedDate(time));
-						auditSet.next();
-						auditSet.getString(1);
-						po.setCommentedFindings(auditSet.getInt(2));
-						po.setComments(auditSet.getInt(3));
-						overview.add(po);
-					}
-					final int importanceCount = scanSet.getInt(idx++);
-					final int importance = scanSet.getInt(idx++);
-					if (!scanSet.wasNull()) {
-						findingCount += importanceCount;
-						switch (Importance.values()[importance]) {
-						case CRITICAL:
-							po.setCritical(importanceCount);
-							break;
-						case HIGH:
-							po.setHigh(importanceCount);
-							break;
-						case IRRELEVANT:
-							po.setIrrelevant(importanceCount);
-							break;
-						case LOW:
-							po.setLow(importanceCount);
-							break;
-						case MEDIUM:
-							po.setMedium(importanceCount);
-							break;
-						default:
-							// Value not understood. Do nothing
-						}
-					}
-				}
-				// Final finding count
-				po.setTotalFindings(findingCount);
-			} finally {
-				scanSt.close();
-			}
-		} finally {
-			auditSet.close();
-		}
+		PreparedStatement scanSt = conn
+				.prepareStatement("SELECT COUNT(F.ID), F.IMPORTANCE "
+						+ "FROM SCAN_OVERVIEW SO, FINDING F "
+						+ "WHERE F.ID = SO.FINDING_ID AND SO.SCAN_ID = ? "
+						+ "GROUP BY F.IMPORTANCE");
 		final PreparedStatement lastSynchSt = conn
 				.prepareStatement("SELECT SU.USER_NAME, R.DATE_TIME "
 						+ "FROM COMMIT_AUDITS CA, SIERRA_USER SU, REVISION R "
 						+ "WHERE CA.PROJECT_ID = (SELECT ID FROM PROJECT WHERE NAME = ?) AND "
 						+ "CA.REVISION = (SELECT MAX(REVISION) FROM COMMIT_AUDITS WHERE PROJECT_ID = (SELECT ID FROM PROJECT WHERE NAME = ?)) "
 						+ "AND SU.ID = CA.USER_ID AND R.REVISION = CA.REVISION");
-		for (ProjectOverview po : overview) {
-			lastSynchSt.setString(1, po.getName());
-			lastSynchSt.setString(2, po.getName());
-			final ResultSet lastSynchSet = lastSynchSt.executeQuery();
+		auditSt.setTimestamp(1, thirtyDaysAgo());
+		final ResultSet auditSet = auditSt.executeQuery();
+		try {
+			final Statement projectSt = conn.createStatement();
 			try {
-				if (lastSynchSet.next()) {
-					po.setLastSynchUser(lastSynchSet.getString(1));
-					po.setLastSynchDate(formattedDate(lastSynchSet
-							.getTimestamp(2)));
-				} else {
-					po.setLastSynchUser("");
-					po.setLastSynchDate("");
+				final ResultSet projectSet = projectSt
+						.executeQuery("SELECT P.PROJECT, P.TIME, P.SCAN_ID FROM LATEST_SCANS P WHERE P.QUALIFIER = '__ALL_SCANS__'");
+				while (projectSet.next()) {
+					int projectIdx = 1;
+					final ProjectOverview po = new ProjectOverview();
+					final String name = projectSet.getString(projectIdx++);
+					final Date time = projectSet.getTimestamp(projectIdx++);
+					po.setName(name);
+					po.setLastScanDate(formattedDate(time));
+					auditSet.next();
+					auditSet.getString(1);
+					po.setCommentedFindings(auditSet.getInt(2));
+					po.setComments(auditSet.getInt(3));
+					scanSt.setLong(1, projectSet.getLong(projectIdx++));
+					final ResultSet scanSet = scanSt.executeQuery();
+					try {
+						int findingCount = 0;
+						while (scanSet.next()) {
+							final int importanceCount = scanSet.getInt(1);
+							final int importance = scanSet.getInt(2);
+							findingCount += importanceCount;
+							switch (Importance.values()[importance]) {
+							case CRITICAL:
+								po.setCritical(importanceCount);
+								break;
+							case HIGH:
+								po.setHigh(importanceCount);
+								break;
+							case IRRELEVANT:
+								po.setIrrelevant(importanceCount);
+								break;
+							case LOW:
+								po.setLow(importanceCount);
+								break;
+							case MEDIUM:
+								po.setMedium(importanceCount);
+								break;
+							default:
+								// Value not understood. Do nothing
+							}
+						}
+						po.setTotalFindings(findingCount);
+					} finally {
+						scanSet.close();
+					}
+					lastSynchSt.setString(1, name);
+					lastSynchSt.setString(2, name);
+					final ResultSet lastSynchSet = lastSynchSt.executeQuery();
+					try {
+						if (lastSynchSet.next()) {
+							po.setLastSynchUser(lastSynchSet.getString(1));
+							po.setLastSynchDate(formattedDate(lastSynchSet
+									.getTimestamp(2)));
+						} else {
+							po.setLastSynchUser("");
+							po.setLastSynchDate("");
+						}
+					} finally {
+						lastSynchSet.close();
+					}
+					overview.add(po);
 				}
 			} finally {
-				lastSynchSet.close();
+				projectSt.close();
 			}
+		} finally {
+			auditSet.close();
 		}
 		return overview;
 	}
