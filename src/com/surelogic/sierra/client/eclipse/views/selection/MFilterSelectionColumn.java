@@ -515,6 +515,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	  int longest = 0;
 	  int longestIndex = -1;
 	  int i = 0;
+	  gc.setFont(f_reportContents.getFont());
     for(String value : valueList) {
       Point size = gc.textExtent(value);
       if (size.x > longest) {

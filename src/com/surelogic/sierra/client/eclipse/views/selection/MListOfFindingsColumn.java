@@ -881,6 +881,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		FindingData longestData = null;
 		int longestIndex = -1;
 		int i = 0;
+		gc.setFont(f_table.getFont());
 		for (FindingData data : f_rows) {
 			Point size = gc.textExtent(cd.getText(data));
 			Image img = cd.getImage(data);
