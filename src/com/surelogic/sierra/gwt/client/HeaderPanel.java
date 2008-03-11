@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,9 +16,6 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 // TODO using a TabBar mucks up the context change handling code
 // Change the TabBar to our own setup so we can change the tab style without 
@@ -64,22 +60,7 @@ public final class HeaderPanel extends Composite {
 		sessionPanel.add(createUserLabel("Log out", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				final SessionServiceAsync svc = ServiceHelper
-						.getSessionService();
-				svc.logout(new AsyncCallback() {
-
-					public void onFailure(Throwable caught) {
-						ExceptionTracker.logException(caught);
-						ClientContext.setUser(null);
-						LoginContent.getInstance(
-								"Unable to log out. (Server may be down)")
-								.show();
-					}
-
-					public void onSuccess(Object result) {
-						ClientContext.setUser(null);
-					}
-				});
+				ClientContext.logout();
 			}
 		}));
 
