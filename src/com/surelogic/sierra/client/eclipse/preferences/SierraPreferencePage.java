@@ -125,13 +125,10 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_toolMemoryMB.setPage(this);
 		f_toolMemoryMB.setPreferenceStore(getPreferenceStore());
 		f_toolMemoryMB.load();
-		final ScaleFieldEditor toolMemoryMB = f_toolMemoryMB;
 		f_toolMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
 					public void handleEvent(Event event) {
-						final int mb = toolMemoryMB.getScaleControl()
-								.getSelection();
-						toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
+						updateMBInLabel();
 					}
 				});
 
@@ -157,6 +154,11 @@ public class SierraPreferencePage extends PreferencePage implements
 		return panel;
 	}
 
+	private void updateMBInLabel() {
+		final int mb = f_toolMemoryMB.getScaleControl().getSelection();
+		f_toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
+	}
+
 	@Override
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
@@ -167,6 +169,8 @@ public class SierraPreferencePage extends PreferencePage implements
 		f_findingsListLimit.loadDefault();
 		f_toolMemoryMB.loadDefault();
 		super.performDefaults();
+
+		updateMBInLabel();
 	}
 
 	@Override
