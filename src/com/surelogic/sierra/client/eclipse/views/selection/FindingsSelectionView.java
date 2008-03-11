@@ -8,8 +8,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
@@ -19,13 +21,13 @@ import org.eclipse.ui.part.ViewPart;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
 public final class FindingsSelectionView extends ViewPart {
-
-	public static final String NO_FINDINGS = "No findings ... please run Sierra analysis on a project to generate a set of findings";
 
 	private FindingsSelectionMediator f_mediator = null;
 
@@ -33,8 +35,14 @@ public final class FindingsSelectionView extends ViewPart {
 	public void createPartControl(final Composite parent) {
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
-		final Label noFindingsPage = new Label(pages, SWT.WRAP);
-		noFindingsPage.setText(NO_FINDINGS);
+		final Link noFindingsPage = new Link(pages, SWT.WRAP);
+		noFindingsPage.setText(I18N
+				.msg("sierra.eclipse.noDataFindingsQuickSearch"));
+		noFindingsPage.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				new NewScanDialogAction().run(null);
+			}
+		});
 
 		final Composite findingsPage = new Composite(pages, SWT.NO_FOCUS);
 		GridLayout layout = new GridLayout();

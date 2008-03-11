@@ -44,7 +44,6 @@ public class FindingDetailsView extends ViewPart {
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.FindingDetailsView";
 
 	private static final String STAMP_TOOLTIP_MESSAGE = "Mark this finding as being examined by me.";
-	private static final String SELECT_FINDINGS = "No finding is selected or no findings exist in the local database for the selection...select a finding to view its details";
 
 	private FindingDetailsMediator f_mediator = null;
 
@@ -54,7 +53,7 @@ public class FindingDetailsView extends ViewPart {
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
 		final Label noFindingPage = new Label(pages, SWT.WRAP);
-		noFindingPage.setText(SELECT_FINDINGS);
+		noFindingPage.setText(I18N.msg("sierra.eclipse.noDataFindingDetails"));
 
 		final Composite findingPage = new Composite(pages, SWT.NONE);
 		GridLayout layout = new GridLayout();

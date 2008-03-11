@@ -36,6 +36,9 @@ public abstract class AbstractProjectSelectedMenuAction implements
 	}
 
 	public final void run(IAction action) {
+		/*
+		 * Beware the action parameter may be null.
+		 */
 		if (f_currentSelection != null) {
 			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
 					.getRoot();
@@ -87,12 +90,12 @@ public abstract class AbstractProjectSelectedMenuAction implements
 	public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
-	
-  protected static List<String> getNames(final List<IJavaProject> projects) {
-    List<String> names = new ArrayList<String>();
-    for(IJavaProject jp : projects) {
-      names.add(jp.getElementName());
-    }
-    return names;
-  }
+
+	protected static List<String> getNames(final List<IJavaProject> projects) {
+		List<String> names = new ArrayList<String>();
+		for (IJavaProject jp : projects) {
+			names.add(jp.getElementName());
+		}
+		return names;
+	}
 }
