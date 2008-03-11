@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.SystemUtils;
@@ -95,7 +96,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				MListOfFindingsColumn.super.initOfNextColumnComplete();
-				notifyObserversOfLimitedFindings(f_isLimited);
+				boolean limited;
+				synchronized (MListOfFindingsColumn.this) {
+					limited = f_isLimited;
+				}
+				notifyObserversOfLimitedFindings(limited);
 				return Status.OK_STATUS;
 			}
 		};
@@ -356,6 +361,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		return names;
 	}
 
+	private final ReadWriteLock rowsLock = new ReentrantReadWriteLock();
 	private final List<FindingData> f_rows = new /* CopyOnWrite */ArrayList<FindingData>();
 	private boolean f_isLimited = false;
 
@@ -371,32 +377,45 @@ public final class MListOfFindingsColumn extends MColumn implements
 								"List of findings query: " + query);
 					}
 					final ResultSet rs = st.executeQuery(query);
-					f_rows.clear();
-					f_isLimited = false;
-
-					final int findingsListLimit = PreferenceConstants
-							.getFindingsListLimit();
-					while (rs.next()) {
-						int i = f_rows.size();
-						if (i < findingsListLimit) {
-							FindingData data = new FindingData();
-							data.f_summary = rs.getString(1);
-							data.f_importance = Importance.valueOf(rs
-									.getString(2).toUpperCase());
-							data.f_findingId = rs.getLong(3);
-							data.f_projectName = rs.getString(4);
-							data.f_packageName = rs.getString(5);
-							data.f_typeName = rs.getString(6);
-							data.f_lineNumber = rs.getInt(7);
-							data.f_findingTypeName = rs.getString(8);
-							data.f_categoryName = rs.getString(9);
-							data.f_toolName = rs.getString(10);
-							data.index = i;
-							f_rows.add(data);
-						} else {
-							f_isLimited = true;
-							break;
+					try {
+						rowsLock.writeLock().lock();					
+						boolean hasData = !f_rows.isEmpty();
+						f_rows.clear();
+						f_isLimited = false;
+						if (hasData) {
+							try {
+								Thread.sleep(6000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
+						final int findingsListLimit = PreferenceConstants
+						.getFindingsListLimit();
+						while (rs.next()) {
+							int i = f_rows.size();
+							if (i < findingsListLimit) {
+								FindingData data = new FindingData();
+								data.f_summary = rs.getString(1);
+								data.f_importance = Importance.valueOf(rs
+										.getString(2).toUpperCase());
+								data.f_findingId = rs.getLong(3);
+								data.f_projectName = rs.getString(4);
+								data.f_packageName = rs.getString(5);
+								data.f_typeName = rs.getString(6);
+								data.f_lineNumber = rs.getInt(7);
+								data.f_findingTypeName = rs.getString(8);
+								data.f_categoryName = rs.getString(9);
+								data.f_toolName = rs.getString(10);
+								data.index = i;
+								f_rows.add(data);
+							} else {
+								f_isLimited = true;
+								break;
+							}
+						}						
+					} finally {
+						rowsLock.writeLock().unlock();
 					}
 				} finally {
 					st.close();
@@ -474,18 +493,27 @@ public final class MListOfFindingsColumn extends MColumn implements
 			TableItem item = (TableItem) event.item;
 			if (item != null) {
 				final FindingData data = (FindingData) item.getData();
-				lastSelected.set(data);
-				addNearSelected(data.index - 1);
-				addNearSelected(data.index + 1);
-
-				/*
-				 * Ensure the view is visible but don't change the focus.
-				 */
-				final FindingDetailsView view = (FindingDetailsView) ViewUtility
-						.showView(FindingDetailsView.class.getName(), null,
-								IWorkbenchPage.VIEW_VISIBLE);
-				f_selectedFindingId = data.f_findingId;
-				view.findingSelected(data.f_findingId);
+				if (data != null) {
+					lastSelected.set(data);
+					if (rowsLock.readLock().tryLock()) {
+						try {
+							addNearSelected(data.index - 1);
+							addNearSelected(data.index + 1);
+						} finally {
+							rowsLock.readLock().unlock();
+						}
+					}
+					/*
+					 * Ensure the view is visible but don't change the focus.
+					 */
+					final FindingDetailsView view = (FindingDetailsView) 
+					   ViewUtility.showView(FindingDetailsView.class.getName(), 
+							                null, IWorkbenchPage.VIEW_VISIBLE);
+					f_selectedFindingId = data.f_findingId;
+					view.findingSelected(data.f_findingId);
+				} else {
+					LOG.severe("No data for "+item.getText(0));
+				}
 			}
 		}
 	};
@@ -562,80 +590,89 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	};
 
-	private void updateTableContents() {
+	private void updateTableContents() {		
 		if (f_table.isDisposed())
 			return;
 
-		f_table.setRedraw(false);
-		for (TableItem i : f_table.getItems()) {
-			if (i != null) {
-				i.dispose();
-			}
-		}
-		sortBasedOnColumns();
-
-		if (USE_VIRTUAL) {
-			// Creates that many table items -- not necessarily initialized
-			f_table.setItemCount(f_rows.size());
-		}
-
-		boolean selectionFound = false;
-		int i = 0;
-		for (FindingData data : f_rows) {
-			if (!USE_VIRTUAL) {
-				final TableItem item = new TableItem(f_table, SWT.NONE);
-				selectionFound = initTableItem(i, data, item);
-			}
-			// Only needed if virtual
-			// Sets up the table to show the previous selection
-			else if (data.f_findingId == f_selectedFindingId) {
-				initTableItem(i, data, f_table.getItem(i));
-				selectionFound = true;
-				break;
-			}
-			i++;
-		}
-		if (!selectionFound) {
-			// Look for a near-selection
-			FindingData data = null;
-			if (!nearSelected.isEmpty()) {
-				Set<FindingData> rows = new HashSet<FindingData>(f_rows);
-				while (!nearSelected.isEmpty()) {
-					data = nearSelected.pop();
-					if (rows.contains(data)) {
-						initTableItem(data.index, data, f_table
-								.getItem(data.index));
-						break;
+		if (rowsLock.readLock().tryLock()) {
+			try {
+				f_table.setRedraw(false);
+				for (TableItem i : f_table.getItems()) {
+					if (i != null) {
+						i.dispose();
 					}
 				}
+				sortBasedOnColumns();
+
+				if (USE_VIRTUAL) {
+					// Creates that many table items -- not necessarily initialized
+					f_table.setItemCount(f_rows.size());
+				}
+
+				boolean selectionFound = false;
+				int i = 0;
+				for (FindingData data : f_rows) {
+					if (!USE_VIRTUAL) {
+						final TableItem item = new TableItem(f_table, SWT.NONE);
+						selectionFound = initTableItem(i, data, item);
+					}
+					// Only needed if virtual
+					// Sets up the table to show the previous selection
+					else if (data.f_findingId == f_selectedFindingId) {
+						initTableItem(i, data, f_table.getItem(i));
+						selectionFound = true;
+						break;
+					}
+					i++;
+				}
+				if (!selectionFound) {
+					// Look for a near-selection
+					FindingData data = null;
+					if (!nearSelected.isEmpty()) {
+						Set<FindingData> rows = new HashSet<FindingData>(f_rows);
+						while (!nearSelected.isEmpty()) {
+							data = nearSelected.pop();
+							if (rows.contains(data)) {
+								initTableItem(data.index, data, f_table
+										.getItem(data.index));
+								break;
+							}
+						}
+					}
+					f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
+				}
+				nearSelected.clear();
+
+				/*
+				 * for (TableColumn c : f_table.getColumns()) { c.pack(); }
+				 */
+				updateTableColumns();
+
+				//f_table.layout();
+				if (USE_VIRTUAL) {
+					// Computes the appropriate width for the longest item
+					Point p = f_table.getSize();
+					final int width = computeValueWidth();
+					f_table.setSize(width, p.y);
+				}
+
+				f_table.setRedraw(true);
+				/*
+				 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
+				 * with lines through the row text. Aaron Silinskas found that a second
+				 * call seemed to fix the problem (with a bit of flicker).
+				 */
+				if (SystemUtils.IS_OS_WINDOWS_XP)
+					f_table.setRedraw(true);
+			} finally {
+				rowsLock.readLock().unlock();				
 			}
-			f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
 		}
-		nearSelected.clear();
-
-		/*
-		 * for (TableColumn c : f_table.getColumns()) { c.pack(); }
-		 */
-		updateTableColumns();
-
-		//f_table.layout();
-		if (USE_VIRTUAL) {
-			// Computes the appropriate width for the longest item
-			Point p = f_table.getSize();
-			final int width = computeValueWidth();
-			f_table.setSize(width, p.y);
-		}
-
-		f_table.setRedraw(true);
-		/*
-		 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
-		 * with lines through the row text. Aaron Silinskas found that a second
-		 * call seemed to fix the problem (with a bit of flicker).
-		 */
-		if (SystemUtils.IS_OS_WINDOWS_XP)
-			f_table.setRedraw(true);
 	}
 
+	/**
+	 * Sync'd by updateTableContents()
+	 */
 	private void sortBasedOnColumns() {
 		Comparator<FindingData> c = null;
 		// Traverse order backwards to construct proper comparator
@@ -740,6 +777,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	/**
 	 * To be called after f_rows has been initialized
+	 * Sync'd by updateTableContents()
 	 */
 	private boolean loadColumnAppearance(TableColumn tc) {
 		ColumnData data = (ColumnData) tc.getData();
@@ -785,6 +823,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 */
 	private boolean updateTableColumns = false;
 
+	/**
+	 * Sync'd by updateTableContents()
+	 */
 	private void updateTableColumns() {
 		int numVisible = 0;
 		TableColumn lastVisible = null;
@@ -808,9 +849,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		f_table.pack();
 	}
 
-	/*
+	/**
 	 * This actually finds the longest item, and creates a real TableItem for
 	 * that item to ensure that the table gets sized properly
+	 * 
+	 * Sync'd by updateTableContents()
 	 */
 	int computeValueWidth() {
 		return computeValueWidth(getDefaultColumn());
@@ -930,20 +973,41 @@ public final class MListOfFindingsColumn extends MColumn implements
 		setIrrelevant.setImage(SLImages
 				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
 
+		final MenuItem export = new MenuItem(menu, SWT.PUSH);
+		export.setText("Export...");
+		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		
+		final AtomicBoolean menuLocked = new AtomicBoolean();
+		menu.addListener(SWT.Hide, new Listener() {
+			public void handleEvent(Event event) {
+				if (menuLocked.get()) {
+					rowsLock.readLock().unlock();
+					menuLocked.set(false);
+				}				
+			}			
+		});
 		menu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
 				int[] itemIndices = f_table.getSelectionIndices();
 				final boolean findingSelected = itemIndices.length > 0;
-				set.setEnabled(findingSelected);
-				quickAudit.setEnabled(findingSelected);
-				filterFindingTypeFromScans.setEnabled(findingSelected);
-				if (findingSelected) {
+				final boolean locked = findingSelected ? 
+						rowsLock.readLock().tryLock() : false;
+				final boolean activated = findingSelected && locked;
+				if (locked) {
+					menuLocked.set(true);
+				}
+				set.setEnabled(activated);
+				quickAudit.setEnabled(activated);
+				filterFindingTypeFromScans.setEnabled(activated);
+				export.setEnabled(activated);
+				
+				if (activated) {
 					String importanceSoFar = null;
 					String findingTypeSoFar = null;
 					for (int index : itemIndices) {
 						final FindingData data = f_rows.get(index);
 						String importance = data.f_importance
-								.toStringSentenceCase();
+						.toStringSentenceCase();
 						if (importanceSoFar == null) {
 							importanceSoFar = importance;
 						} else if (!importanceSoFar.equals(importance)) {
@@ -1046,9 +1110,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 				});
 
-		final MenuItem export = new MenuItem(menu, SWT.PUSH);
-		export.setText("Export...");
-		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
 		export.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
@@ -1058,7 +1119,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		});
 	}
-
+	
+	/**
+	 * Assumes that the menu show/hide code will acquire/release the rows lock
+	 */
 	private abstract class SelectionListener implements Listener {
 		public final void handleEvent(Event event) {
 			if (event.widget instanceof MenuItem) {
@@ -1101,6 +1165,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		job.schedule();
 	}
 
+	/**
+	 * Sync'd by the SelectionListener
+	 * @param itemIndices
+	 * @return
+	 */
 	private Collection<Long> extractFindingIds(final int[] itemIndices) {
 		final Collection<Long> ids = new ArrayList<Long>(itemIndices.length);
 		for (int ti : itemIndices) {
