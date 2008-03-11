@@ -447,8 +447,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 	 */
 	private void updateReport() {
 		if (f_panel.isDisposed())
-			
 		  return;
+    
+    f_panel.setRedraw(false);
+    
 		/*
 		 * Fix total count at the top.
 		 */
@@ -504,6 +506,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		f_reportGroup.layout();
 		f_panel.pack();
 		f_panel.layout();
+    f_panel.setRedraw(true);
 	}
 	
 	int computeValueWidth() {
