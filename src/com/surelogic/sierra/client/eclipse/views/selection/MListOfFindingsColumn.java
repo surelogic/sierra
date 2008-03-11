@@ -589,11 +589,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		if (rowsLock.readLock().tryLock()) {
 			try {
 				f_table.setRedraw(false);
-				for (TableItem i : f_table.getItems()) {
-					if (i != null) {
-						i.dispose();
-					}
-				}
+				f_table.removeAll();
 				sortBasedOnColumns();
 
 				if (USE_VIRTUAL) {
@@ -621,12 +617,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 					// Look for a near-selection
 					FindingData data = null;
 					if (!nearSelected.isEmpty()) {
-						Set<FindingData> rows = new HashSet<FindingData>(f_rows);
+						Map<FindingData,FindingData> rows = 
+							new HashMap<FindingData,FindingData>(f_rows.size());
+						for(FindingData row : f_rows) {
+							rows.put(row, row);
+						}
+						
 						while (!nearSelected.isEmpty()) {
 							data = nearSelected.pop();
-							if (rows.contains(data)) {
-								initTableItem(data.index, data, f_table
-										.getItem(data.index));
+														
+							FindingData newData = rows.get(data);
+							if (newData != null) {
+								initTableItem(newData.index, newData, 
+										      f_table.getItem(newData.index));
 								break;
 							}
 						}
