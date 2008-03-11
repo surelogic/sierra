@@ -463,16 +463,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				.getValuesOrderedBySummaryCount() : f_filter.getAllValues();
     this.valueList = valueList;
 				
-		/*
-		 * filterContentsChanged tracks if the rows in this filter selection
-		 * column have changed. We want to avoid a call to pack because the
-		 * scroll bar gets moved back up to the top each time this method is
-		 * called.
-		 */
-		boolean filterContentsChanged = false;
 		final int currentRows = f_reportContents.getItemCount();
 		if (currentRows != valueList.size()) {
-		  filterContentsChanged = true;
 		  f_reportContents.setItemCount(valueList.size());
 		  // Update all the items
 		  TableItem[] items = f_reportContents.getItems();
@@ -487,7 +479,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 		  for(String row : valueList) {
 			TableItem item = items[i];
 			if (!row.equals(item.getData())) {
-			  filterContentsChanged = true;
 			  updateData(item, row);			  
 			}
 	        i++;
@@ -511,8 +502,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		f_graphColumn.setWidth(GRAPH_WIDTH + 5);
 		f_reportContents.layout();
 		f_reportGroup.layout();
-		if (filterContentsChanged)
-			f_panel.pack();
+		f_panel.pack();
 		f_panel.layout();
 	}
 	
