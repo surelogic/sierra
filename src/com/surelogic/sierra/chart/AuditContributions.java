@@ -30,7 +30,7 @@ public final class AuditContributions implements IDatabasePlot {
 			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final PortalOverview po = PortalOverview.getInstance(c);
-		List<UserOverview> userOverviewList = po.getUserOverviews();
+		List<UserOverview> userOverviewList = po.getEnabledUserOverviews();
 		Collections.sort(userOverviewList, new Comparator<UserOverview>() {
 			public int compare(UserOverview o1, UserOverview o2) {
 				return o2.getAudits() - o1.getAudits();

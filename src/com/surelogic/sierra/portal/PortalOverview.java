@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
@@ -67,6 +68,20 @@ public final class PortalOverview {
 		}
 		return overviews;
 
+	}
+
+	public List<UserOverview> getEnabledUserOverviews() throws SQLException {
+		final List<UserOverview> result = getUserOverviews();
+		/*
+		 * Remove disabled users.
+		 */
+		for (Iterator<UserOverview> i = result.iterator(); i.hasNext();) {
+			UserOverview userOverview = i.next();
+			if (!userOverview.isActive()) {
+				i.remove();
+			}
+		}
+		return result;
 	}
 
 	public List<ProjectOverview> getProjectOverviews() throws SQLException {
@@ -131,7 +146,7 @@ public final class PortalOverview {
 						}
 					}
 				}
-				//Final finding count
+				// Final finding count
 				po.setTotalFindings(findingCount);
 			} finally {
 				scanSt.close();

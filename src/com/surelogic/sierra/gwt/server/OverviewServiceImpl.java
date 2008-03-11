@@ -30,7 +30,7 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 						conn
 								.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 						return PortalOverview.getInstance(conn)
-								.getUserOverviews();
+								.getEnabledUserOverviews();
 					}
 				});
 	}
