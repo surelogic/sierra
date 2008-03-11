@@ -1,20 +1,13 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
- * TODO: this was removed from the main menu due to RfR requirements.
+ * Provides quick access to the sierra preferences. This was removed from the
+ * Sierra item on the Eclipse main menu due to RfR requirements.
  */
-public final class PreferencesAction extends Action implements
-		IWorkbenchWindowActionDelegate {
-	public PreferencesAction() {
-		super();
-	}
+public final class PreferencesAction extends Action {
 
 	public PreferencesAction(String name) {
 		super(name);
@@ -24,29 +17,14 @@ public final class PreferencesAction extends Action implements
 	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
 	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
 	public static final String DATA_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage";
+	public static final String SERVER_ID = "com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage";
 
 	public static final String[] FILTER = new String[] { PREF_ID, TOOLS_ID,
-			FILTER_ID, DATA_ID };
-
-	public void dispose() {
-		// Nothing to do
-	}
-
-	public void init(IWorkbenchWindow window) {
-		// Nothing to do
-	}
+			FILTER_ID, DATA_ID, SERVER_ID };
 
 	@Override
 	public void run() {
-		run(this);
-	}
-
-	public void run(IAction action) {
 		PreferencesUtil.createPreferenceDialogOn(null, PREF_ID,
 				PreferencesAction.FILTER, null).open();
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		// Nothing to do
 	}
 }

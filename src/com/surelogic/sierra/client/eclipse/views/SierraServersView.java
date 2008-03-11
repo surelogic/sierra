@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -234,6 +235,7 @@ public final class SierraServersView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
+		menu.add(new Separator());
 		menu.add(new PreferencesAction("Preferences..."));
 
 		/*

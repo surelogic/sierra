@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views.selection;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -153,6 +154,7 @@ public final class FindingsSelectionView extends ViewPart {
 			}
 		};
 		menu.add(exportAction);
+		menu.add(new Separator());
 		menu.add(new PreferencesAction("Preferences..."));
 
 		/*
