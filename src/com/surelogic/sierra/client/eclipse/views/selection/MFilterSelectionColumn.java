@@ -1,12 +1,14 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
@@ -119,6 +121,8 @@ public final class MFilterSelectionColumn extends MColumn implements
           }				  
 				});
 				
+				
+				final AtomicBoolean ignoreNextSelection = new AtomicBoolean();
 				f_reportContents.addKeyListener(new KeyListener() {
           public void keyPressed(KeyEvent e) {                   
             MColumn column = null;
@@ -127,6 +131,11 @@ public final class MFilterSelectionColumn extends MColumn implements
             }
             else if (e.keyCode == SWT.ARROW_RIGHT) {
               column = getNextColumn();
+            }
+            else if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
+            	// Works because it's always called before the selection handler            	
+            	ignoreNextSelection.set(true);
+            	return;
             }
             focusOnColumn(column);
           }
@@ -169,32 +178,32 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        }
 				});
 				
-				f_reportContents.addSelectionListener(new SelectionListener() {
-          public void widgetDefaultSelected(SelectionEvent e) {
-            // e.g. return
-            TableItem item = (TableItem) e.item;
-            item.setChecked(!item.getChecked());
-            selectionChanged(item);
-          }
-
-          public void widgetSelected(SelectionEvent e) {
-            // Actually handled below by MouseDown            
-          }				  
-				});		
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
-          public void handleEvent(Event e) {
-            Point p = new Point(e.x, e.y);
-            TableItem item = f_reportContents.getItem(p);   
-            if (item == null) {
-              return;
-            }
-            // Not part of the checkbox
-            if (e.x > 16) {
-              item.setChecked(!item.getChecked());
-            }
-            selectionChanged(item);         
-          }				  
+					public void handleEvent(Event e) {
+						int mods = e.stateMask & SWT.MODIFIER_MASK;
+						if (e.button != 1 || mods != 0) {
+							ignoreNextSelection.set(true);						
+						}
+					}				
 				});
+				f_reportContents.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// e.g. return
+						TableItem item = (TableItem) e.item;
+						if ((e.detail & SWT.CHECK) == 0) {
+							item.setChecked(!item.getChecked());
+						}
+						selectionChanged(item);
+					}
+
+					public void widgetSelected(SelectionEvent e) {       
+						if (ignoreNextSelection.getAndSet(false)) {
+							return;
+						}
+						widgetDefaultSelected(e);
+					}				  
+				});		
+				
 				f_reportContents.addListener(SWT.MouseMove, new Listener() {
 		      public void handleEvent(Event e) {
 		        Point p = new Point(e.x, e.y);
