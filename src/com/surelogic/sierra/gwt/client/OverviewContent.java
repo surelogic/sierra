@@ -58,7 +58,7 @@ public class OverviewContent extends ContentComposite {
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
 							"Last Scan", "Audits", "Critical", "High",
-							"Medium", "Low", "Irrelevant", "Last Contribution",
+							"Medium", "Low", "Irrelevant", "Last Audit",
 							"By" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-date", "cell-text", "cell-number",
