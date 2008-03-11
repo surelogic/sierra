@@ -9,9 +9,9 @@ public final class ImageHelper {
 
 	public static Image getWaitImage(int size) {
 		int adjustedSize;
-		if (size <= 14) {
-			adjustedSize = 14;
-		} else if (size > 14 && size <= 24) {
+		if (size <= 16) {
+			adjustedSize = 16;
+		} else if (size > 16 && size <= 24) {
 			adjustedSize = 24;
 		} else {
 			adjustedSize = 32;
@@ -20,7 +20,7 @@ public final class ImageHelper {
 		filename.append("wait-");
 		filename.append(adjustedSize).append('x').append(adjustedSize);
 		filename.append(".gif");
-		return new Image(IMAGE_BASE_URL + filename.toString());
+		return new Image(IMAGE_BASE_URL + filename.toString(), 0, 0, size, size);
 	}
 
 	private ImageHelper() {

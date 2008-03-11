@@ -37,7 +37,7 @@ public class LoginContent extends ContentComposite {
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final Label passwordLabel = new Label("Password");
 
-	private final Image waitImage = ImageHelper.getWaitImage(24);
+	private final Image waitImage = ImageHelper.getWaitImage(16);
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final SimplePanel waitPanel = new SimplePanel();
 	private final Button login = new Button("Log In");
@@ -116,6 +116,8 @@ public class LoginContent extends ContentComposite {
 		actionPanel.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
 		final HorizontalPanel grouper = new HorizontalPanel();
 		grouper.add(waitPanel);
+		grouper.setCellVerticalAlignment(waitPanel,
+				HorizontalPanel.ALIGN_MIDDLE);
 		grouper.add(login);
 		actionPanel.add(grouper);
 		login.setEnabled(false);
