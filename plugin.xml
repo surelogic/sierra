@@ -6,7 +6,7 @@
 
 	<extension point="org.eclipse.ui.views">
 		<view name="Local Team Server"
-			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
+			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server_local.gif"
 			category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView"
 			id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
