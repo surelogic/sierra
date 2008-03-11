@@ -31,15 +31,15 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
-	public static final String NEW_TITLE = "New Sierra Server Location";
-	public static final String EDIT_TITLE = "Edit Sierra Server Location";
+	public static final String NEW_TITLE = "New Sierra Team Server Location";
+	public static final String EDIT_TITLE = "Edit Sierra Team Server Location";
 
 	private static final int CONTENTS_WIDTH_HINT = 350;
 
 	static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
 
-	private static final String TITLE = "Enter Sierra Server Location Information";
-	private static final String INFO_MSG = "Define the information for the Sierra server you want to interact with.";
+	private static final String TITLE = "Enter Sierra Team Server Location Information";
+	private static final String INFO_MSG = "Define the information for the Sierra team server you want to interact with.";
 	private static final int INFO_WIDTH_HINT = 70;
 
 	private final SierraServer f_server;
