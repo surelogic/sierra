@@ -379,17 +379,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 					final ResultSet rs = st.executeQuery(query);
 					try {
 						rowsLock.writeLock().lock();					
-						boolean hasData = !f_rows.isEmpty();
 						f_rows.clear();
 						f_isLimited = false;
-						if (hasData) {
-							try {
-								Thread.sleep(6000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
+
 						final int findingsListLimit = PreferenceConstants
 						.getFindingsListLimit();
 						while (rs.next()) {
