@@ -19,20 +19,20 @@ public final class CodeReview implements IPerspectiveFactory {
 		final String localTeamServer = "com.surelogic.sierra.eclipse.teamserver.views.TeamServerView";
 		final String packageExplorer = "org.eclipse.jdt.ui.PackageExplorer";
 		final String editorArea = layout.getEditorArea();
-		final String finderArea = FindingsSelectionView.class.getName();
+		final String quickSearchArea = FindingsSelectionView.ID;
 
 		final IFolderLayout leftEditor = layout.createFolder("leftEditor",
 				IPageLayout.LEFT, 0.55f, editorArea);
-		leftEditor.addView(finderArea);
-		leftEditor.addView(SynchronizeView.class.getName());
+		leftEditor.addView(quickSearchArea);
+		leftEditor.addView(SynchronizeView.ID);
 
 		final IFolderLayout belowFinder = layout.createFolder("belowFinder",
-				IPageLayout.BOTTOM, 0.45f, finderArea);
-		belowFinder.addView(FindingDetailsView.class.getName());
+				IPageLayout.BOTTOM, 0.45f, quickSearchArea);
+		belowFinder.addView(FindingDetailsView.ID);
 
 		final IFolderLayout belowEditor = layout.createFolder("belowEditor",
 				IPageLayout.BOTTOM, 0.70f, editorArea);
-		belowEditor.addView(SierraServersView.class.getName());
+		belowEditor.addView(SierraServersView.ID);
 		/*
 		 * The local team server view only will exist if that optional feature
 		 * is loaded. So we need to check before we add this to the perspective.

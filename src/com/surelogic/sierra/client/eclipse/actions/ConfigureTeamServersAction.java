@@ -20,7 +20,7 @@ public final class ConfigureTeamServersAction implements
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showView(SierraServersView.class.getName());
+		ViewUtility.showView(SierraServersView.ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

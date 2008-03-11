@@ -32,8 +32,8 @@ public abstract class AbstractWebServiceMenuAction extends
 		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
-		final ServerProjectGroupJob family = 
-		  new ServerProjectGroupJob(manager.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
+		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
+				.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 			public void run(String projectName, SierraServer server, Shell shell) {
 				runServerAction(family, projectName, server, shell);
@@ -60,7 +60,7 @@ public abstract class AbstractWebServiceMenuAction extends
 					final String msg = I18N.err(errNo);
 					final IStatus reason = SLStatus.createErrorStatus(17, msg);
 					ErrorDialogUtility.open(shell, "No Sierra Servers", reason);
-					ViewUtility.showView(SierraServersView.class.getName());
+					ViewUtility.showView(SierraServersView.ID);
 					ServerLocationDialog.newServer(shell);
 					return;
 				}
@@ -97,6 +97,7 @@ public abstract class AbstractWebServiceMenuAction extends
 		family.schedule();
 	}
 
-	abstract void runServerAction(final ServerProjectGroupJob family, final String projectName,
-			final SierraServer server, final Shell shell);
+	abstract void runServerAction(final ServerProjectGroupJob family,
+			final String projectName, final SierraServer server,
+			final Shell shell);
 }

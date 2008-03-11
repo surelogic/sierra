@@ -33,10 +33,12 @@ import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
+import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends ViewPart {
@@ -52,8 +54,13 @@ public class FindingDetailsView extends ViewPart {
 
 		final PageBook pages = new PageBook(parent, SWT.NONE);
 
-		final Label noFindingPage = new Label(pages, SWT.WRAP);
+		final Link noFindingPage = new Link(pages, SWT.WRAP);
 		noFindingPage.setText(I18N.msg("sierra.eclipse.noDataFindingDetails"));
+		noFindingPage.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				ViewUtility.showView(FindingsSelectionView.ID);
+			}
+		});
 
 		final Composite findingPage = new Composite(pages, SWT.NONE);
 		GridLayout layout = new GridLayout();

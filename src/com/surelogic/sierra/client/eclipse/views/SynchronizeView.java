@@ -13,6 +13,8 @@ import com.surelogic.adhoc.views.TableUtility;
 
 public final class SynchronizeView extends ViewPart {
 
+	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SynchronizeView";
+
 	private SynchronizeMediator f_mediator = null;
 
 	@Override

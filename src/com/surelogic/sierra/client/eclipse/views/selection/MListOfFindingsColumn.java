@@ -220,9 +220,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 			this.width = -1;
 			this.sort = sort;
 		}
-    int getAlignment() {
-      return SWT.LEFT;
-    }
+
+		int getAlignment() {
+			return SWT.LEFT;
+		}
+
 		void setSort(ColumnSort s) {
 			sort = s;
 		}
@@ -261,8 +263,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 				throw new RuntimeException("Couldn't clone " + this);
 			}
 		}
+
 		@Override
-		public String toString() { return getName(); }
+		public String toString() {
+			return getName();
+		}
 	}
 
 	private static final List<ColumnData> f_columnPrototypes = createColumnPrototypes();
@@ -312,9 +317,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 			String getText(FindingData data) {
 				return Integer.toString(data.f_lineNumber);
 			}
-	    @Override int getAlignment() {
-	      return SWT.RIGHT;
-	    }
+
+			@Override
+			int getAlignment() {
+				return SWT.RIGHT;
+			}
+
 			@Override
 			protected int compareInternal(FindingData o1, FindingData o2) {
 				return o1.f_lineNumber - o2.f_lineNumber;
@@ -378,12 +386,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 					}
 					final ResultSet rs = st.executeQuery(query);
 					try {
-						rowsLock.writeLock().lock();					
+						rowsLock.writeLock().lock();
 						f_rows.clear();
 						f_isLimited = false;
 
 						final int findingsListLimit = PreferenceConstants
-						.getFindingsListLimit();
+								.getFindingsListLimit();
 						while (rs.next()) {
 							int i = f_rows.size();
 							if (i < findingsListLimit) {
@@ -405,7 +413,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 								f_isLimited = true;
 								break;
 							}
-						}						
+						}
 					} finally {
 						rowsLock.writeLock().unlock();
 					}
@@ -498,13 +506,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 					/*
 					 * Ensure the view is visible but don't change the focus.
 					 */
-					final FindingDetailsView view = (FindingDetailsView) 
-					   ViewUtility.showView(FindingDetailsView.class.getName(), 
-							                null, IWorkbenchPage.VIEW_VISIBLE);
+					final FindingDetailsView view = (FindingDetailsView) ViewUtility
+							.showView(FindingDetailsView.ID, null,
+									IWorkbenchPage.VIEW_VISIBLE);
 					f_selectedFindingId = data.f_findingId;
 					view.findingSelected(data.f_findingId);
 				} else {
-					LOG.severe("No data for "+item.getText(0));
+					LOG.severe("No data for " + item.getText(0));
 				}
 			}
 		}
@@ -582,7 +590,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 	};
 
-	private void updateTableContents() {		
+	private void updateTableContents() {
 		if (f_table.isDisposed())
 			return;
 
@@ -593,7 +601,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 				sortBasedOnColumns();
 
 				if (USE_VIRTUAL) {
-					// Creates that many table items -- not necessarily initialized
+					// Creates that many table items -- not necessarily
+					// initialized
 					f_table.setItemCount(f_rows.size());
 				}
 
@@ -617,24 +626,25 @@ public final class MListOfFindingsColumn extends MColumn implements
 					// Look for a near-selection
 					FindingData data = null;
 					if (!nearSelected.isEmpty()) {
-						Map<FindingData,FindingData> rows = 
-							new HashMap<FindingData,FindingData>(f_rows.size());
-						for(FindingData row : f_rows) {
+						Map<FindingData, FindingData> rows = new HashMap<FindingData, FindingData>(
+								f_rows.size());
+						for (FindingData row : f_rows) {
 							rows.put(row, row);
 						}
-						
+
 						while (!nearSelected.isEmpty()) {
 							data = nearSelected.pop();
-														
+
 							FindingData newData = rows.get(data);
 							if (newData != null) {
-								initTableItem(newData.index, newData, 
-										      f_table.getItem(newData.index));
+								initTableItem(newData.index, newData, f_table
+										.getItem(newData.index));
 								break;
 							}
 						}
 					}
-					f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
+					f_selectedFindingId = (data == null) ? -1
+							: data.f_findingId;
 				}
 				nearSelected.clear();
 
@@ -643,7 +653,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				 */
 				updateTableColumns();
 
-				//f_table.layout();
+				// f_table.layout();
 				if (USE_VIRTUAL) {
 					// Computes the appropriate width for the longest item
 					Point p = f_table.getSize();
@@ -653,14 +663,15 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 				f_table.setRedraw(true);
 				/*
-				 * Fix to bug 1115 (an XP specific problem) where the table was redrawn
-				 * with lines through the row text. Aaron Silinskas found that a second
-				 * call seemed to fix the problem (with a bit of flicker).
+				 * Fix to bug 1115 (an XP specific problem) where the table was
+				 * redrawn with lines through the row text. Aaron Silinskas
+				 * found that a second call seemed to fix the problem (with a
+				 * bit of flicker).
 				 */
 				if (SystemUtils.IS_OS_WINDOWS_XP)
 					f_table.setRedraw(true);
 			} finally {
-				rowsLock.readLock().unlock();				
+				rowsLock.readLock().unlock();
 			}
 		}
 	}
@@ -690,9 +701,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						return result;
 					}
-					@Override 
+
+					@Override
 					public String toString() {
-					  return cd.toString()+", "+oldCompare.toString();
+						return cd.toString() + ", " + oldCompare.toString();
 					}
 				};
 			}
@@ -700,7 +712,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		if (c == null) {
 			c = getDefaultColumn(); // The default sort
 		}
-		//System.out.println("Sort order = "+c);
+		// System.out.println("Sort order = "+c);
 		Collections.sort(f_rows, c);
 	}
 
@@ -736,23 +748,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 			});
 			tc.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					if (!createTableColumns && !updateTableColumns) {					  
+					if (!createTableColumns && !updateTableColumns) {
 						int[] currentOrder = f_table.getColumnOrder();
 						boolean changed = false;
-						
-						// Update all the columns						
+
+						// Update all the columns
 						final TableColumn[] columns = f_table.getColumns();
 						for (int i = 0; i < currentOrder.length; i++) {
-						  TableColumn tc = columns[currentOrder[i]];
-						  ColumnData data = (ColumnData) tc.getData();
-						  if (i != data.getIndex()) {
-						    changed = true;
-                //System.out.println(data.getIndex() + " -> " + i);
-						    data.setIndex(i);
-						  }
+							TableColumn tc = columns[currentOrder[i]];
+							ColumnData data = (ColumnData) tc.getData();
+							if (i != data.getIndex()) {
+								changed = true;
+								// System.out.println(data.getIndex() + " -> " +
+								// i);
+								data.setIndex(i);
+							}
 						}
 						if (changed) {
-						  updateTableContents();
+							updateTableContents();
 						}
 					}
 				}
@@ -771,14 +784,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	/**
-	 * To be called after f_rows has been initialized
-	 * Sync'd by updateTableContents()
+	 * To be called after f_rows has been initialized Sync'd by
+	 * updateTableContents()
 	 */
 	private boolean loadColumnAppearance(TableColumn tc) {
 		ColumnData data = (ColumnData) tc.getData();
-		
-    tc.setAlignment(data.getAlignment());
-    //System.out.println("align = "+tc.getAlignment());
+
+		tc.setAlignment(data.getAlignment());
+		// System.out.println("align = "+tc.getAlignment());
 		tc.setResizable(data.isVisible());
 		if (data.isVisible()) {
 			if (data.getWidth() < 0) {
@@ -826,14 +839,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 		TableColumn lastVisible = null;
 		updateTableColumns = true;
 
-		//int i = 0;
+		// int i = 0;
 		for (TableColumn tc : f_table.getColumns()) {
-		  //System.out.println(i);
+			// System.out.println(i);
 			if (loadColumnAppearance(tc)) {
 				numVisible++;
 				lastVisible = tc;
 			}
-			//i++;
+			// i++;
 		}
 		if (numVisible == 1) {
 			ColumnData cd = (ColumnData) lastVisible.getData();
@@ -971,22 +984,22 @@ public final class MListOfFindingsColumn extends MColumn implements
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
 		export.setText("Export...");
 		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
-		
+
 		final AtomicBoolean menuLocked = new AtomicBoolean();
 		menu.addListener(SWT.Hide, new Listener() {
 			public void handleEvent(Event event) {
 				if (menuLocked.get()) {
 					rowsLock.readLock().unlock();
 					menuLocked.set(false);
-				}				
-			}			
+				}
+			}
 		});
 		menu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
 				int[] itemIndices = f_table.getSelectionIndices();
 				final boolean findingSelected = itemIndices.length > 0;
-				final boolean locked = findingSelected ? 
-						rowsLock.readLock().tryLock() : false;
+				final boolean locked = findingSelected ? rowsLock.readLock()
+						.tryLock() : false;
 				final boolean activated = findingSelected && locked;
 				if (locked) {
 					menuLocked.set(true);
@@ -995,14 +1008,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 				quickAudit.setEnabled(activated);
 				filterFindingTypeFromScans.setEnabled(activated);
 				export.setEnabled(activated);
-				
+
 				if (activated) {
 					String importanceSoFar = null;
 					String findingTypeSoFar = null;
 					for (int index : itemIndices) {
 						final FindingData data = f_rows.get(index);
 						String importance = data.f_importance
-						.toStringSentenceCase();
+								.toStringSentenceCase();
 						if (importanceSoFar == null) {
 							importanceSoFar = importance;
 						} else if (!importanceSoFar.equals(importance)) {
@@ -1114,7 +1127,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		});
 	}
-	
+
 	/**
 	 * Assumes that the menu show/hide code will acquire/release the rows lock
 	 */
@@ -1162,6 +1175,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 	/**
 	 * Sync'd by the SelectionListener
+	 * 
 	 * @param itemIndices
 	 * @return
 	 */

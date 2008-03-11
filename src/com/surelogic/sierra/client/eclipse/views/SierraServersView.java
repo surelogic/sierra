@@ -32,6 +32,8 @@ import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
 public final class SierraServersView extends ViewPart {
 
+	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SierraServersView";
+
 	public static final int INFO_WIDTH_HINT = 70;
 
 	private SierraServersMediator f_mediator = null;

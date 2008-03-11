@@ -29,6 +29,8 @@ import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
 public final class FindingsSelectionView extends ViewPart {
 
+	public static final String ID = "com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView";
+
 	private FindingsSelectionMediator f_mediator = null;
 
 	@Override
