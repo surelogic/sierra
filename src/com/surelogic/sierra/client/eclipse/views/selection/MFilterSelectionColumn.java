@@ -145,7 +145,7 @@ public final class MFilterSelectionColumn extends MColumn implements
               int selected = f_reportContents.getSelectionIndex();
               if (selected >= 0) {
                 TableItem item = f_reportContents.getItem(selected);
-                if (SystemUtils.IS_OS_MAC_OSX) {
+                if (SystemUtils.IS_OS_MAC_OSX || SystemUtils.IS_OS_LINUX) {
                   item.setChecked(!item.getChecked());
                 }
                 selectionChanged(item);
@@ -189,7 +189,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// e.g. return
 						TableItem item = (TableItem) e.item;
-						if ((e.detail & SWT.CHECK) == 0 || SystemUtils.IS_OS_LINUX) {
+						if ((e.detail & SWT.CHECK) == 0) {
 							item.setChecked(!item.getChecked());
 						}
 						selectionChanged(item);
