@@ -143,8 +143,7 @@ public final class MFilterSelectionColumn extends MColumn implements
           }
           public void keyReleased(KeyEvent e) {
         	  System.out.println("key released: "+e.keyCode);
-            if (e.character == ' ' ||
-                SystemUtils.IS_OS_MAC_OSX && e.character == SWT.CR) {              
+            if (e.character == ' ' || e.character == SWT.CR) {              
               // Called after the table toggles the item
               int selected = f_reportContents.getSelectionIndex();
               if (selected >= 0) {
