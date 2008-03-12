@@ -55,9 +55,9 @@ public final class Data {
 
 		final String connectionURL = getConnectionURL() + ";create=true";
 		final Connection c = DriverManager.getConnection(connectionURL);
-		c.setAutoCommit(false);
 		Exception e = null;
 		try {
+			c.setAutoCommit(false);
 			SierraSchemaUtility.checkAndUpdate(c, false);
 			c.commit();
 		} catch (Exception exc) {
