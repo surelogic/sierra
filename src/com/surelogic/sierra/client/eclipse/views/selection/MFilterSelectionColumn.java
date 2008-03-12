@@ -120,7 +120,7 @@ public final class MFilterSelectionColumn extends MColumn implements
           }				  
 				});
 				
-				final AtomicBoolean ignoreNextSelection = new AtomicBoolean();
+				final AtomicBoolean handleNextSelection = new AtomicBoolean();
 				f_reportContents.addKeyListener(new KeyListener() {
           public void keyPressed(KeyEvent e) {   
         	  System.out.println("key pressed: "+e.keyCode);
@@ -131,11 +131,13 @@ public final class MFilterSelectionColumn extends MColumn implements
             else if (e.keyCode == SWT.ARROW_RIGHT) {
               column = getNextColumn();
             }
+            /*
             else if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
             	// Works because it's always called before the selection handler            	
             	ignoreNextSelection.set(true);
             	return;
             }
+            */
             else {
             	handleChar(e);
             	return;
@@ -193,8 +195,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 					public void handleEvent(Event e) {
 						int mods = e.stateMask & SWT.MODIFIER_MASK;
 						// Only consider left-clicks as selection events
-						if (e.button != 1 || mods != 0) {							 
-							ignoreNextSelection.set(true);						
+						if (e.button == 1 && mods == 0) {							 
+							handleNextSelection.set(true);						
 						}
 					}				
 				});
@@ -221,7 +223,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 						}
 						lastSelectTime = e.time;
 						
-						if (ignoreNextSelection.getAndSet(false)) {
+						if (!handleNextSelection.getAndSet(false)) {
 							return;
 						}
 						System.out.println("Selection "+e.time);
