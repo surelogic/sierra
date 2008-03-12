@@ -185,7 +185,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
 					public void handleEvent(Event e) {
 						int mods = e.stateMask & SWT.MODIFIER_MASK;
-						if (e.button != 1 || mods != 0) {
+						// Only consider left-clicks as selection events
+						if (e.button != 1 || mods != 0) {							 
 							ignoreNextSelection.set(true);						
 						}
 					}				
@@ -199,20 +200,19 @@ public final class MFilterSelectionColumn extends MColumn implements
 						selectionChanged(item);
 						e.doit = false;
 					}
+					// e.g. return, double-click
 					public void widgetDefaultSelected(SelectionEvent e) {
 						System.out.println("Default selection "+e.time);
-						// e.g. return
+
 						select(e);
 					}
 					private int lastSelectTime = -1;
-					
+					// e.g., space, click on row, click on box
 					public void widgetSelected(SelectionEvent e) {   
-						/*
 						if (lastSelectTime == e.time) {
 							return;
 						}
 						lastSelectTime = e.time;
-						 */
 						
 						if (ignoreNextSelection.getAndSet(false)) {
 							return;
