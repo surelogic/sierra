@@ -189,7 +189,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// e.g. return
 						TableItem item = (TableItem) e.item;
-						if ((e.detail & SWT.CHECK) == 0) {
+						if ((e.detail & SWT.CHECK) == 0 || SystemUtils.IS_OS_LINUX) {
 							item.setChecked(!item.getChecked());
 						}
 						selectionChanged(item);
