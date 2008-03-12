@@ -136,27 +136,35 @@ public final class MFilterSelectionColumn extends MColumn implements
             	ignoreNextSelection.set(true);
             	return;
             }
+            else {
+            	handleChar(e);
+            	return;
+            }
             if (column != null) {
             	focusOnColumn(column);
             	e.doit = false; // Handled
             }
           }
-          public void keyReleased(KeyEvent e) {
-        	  System.out.println("key released: "+e.keyCode);
-            if (e.character == ' ' || e.character == SWT.CR) {              
-              // Called after the table toggles the item
-              int selected = f_reportContents.getSelectionIndex();
-              if (selected >= 0) {
-                TableItem item = f_reportContents.getItem(selected);
-                if (SystemUtils.IS_OS_MAC_OSX || SystemUtils.IS_OS_LINUX) {
-                  item.setChecked(!item.getChecked());
-                }
-                selectionChanged(item);
-                e.doit = false;
-              }
-              return;              
-            }     
+          private void handleChar(KeyEvent e) {
+        	  // Handle space and return by ourselves
+        	  // (e.g. override default OS behavior)
+        	  //
+        	  if (e.character == ' ' || e.character == SWT.CR) {              
+        		  // Called after the table toggles the item
+        		  int selected = f_reportContents.getSelectionIndex();
+        		  if (selected >= 0) {
+        			  TableItem item = f_reportContents.getItem(selected);
+        			  item.setChecked(!item.getChecked());        			  
+        			  selectionChanged(item);
+        			  e.doit = false;
+        		  }
+        		  return;              
+        	  }     
           }         
+          public void keyReleased(KeyEvent e) {
+        	  // Do nothing
+        	  System.out.println("key released: "+e.keyCode);
+          }
         }); 
 				f_reportContents.addListener(SWT.Traverse, new Listener() {
 	        public void handleEvent(Event e) {
