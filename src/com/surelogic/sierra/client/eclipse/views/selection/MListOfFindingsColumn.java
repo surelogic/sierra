@@ -456,10 +456,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public void keyPressed(KeyEvent e) {
 			if (e.character == 0x01 && f_table != null) {
 				f_table.selectAll();
+				e.doit = false; // Handled
 			} else if (e.keyCode == SWT.ARROW_LEFT) {
 				getPreviousColumn().forceFocus();
+				e.doit = false; // Handled
 			} else if (e.keyCode == SWT.ARROW_RIGHT /* || == ENTER */) {
 				f_doubleClick.handleEvent(null);
+				e.doit = false; // Handled
 			}
 		}
 
