@@ -50,6 +50,7 @@ public class RemoteTool extends AbstractTool {
     }
     System.out.println("JVM started");
     System.out.println("Log level: "+SLLogger.LEVEL.get());
+    /*
     System.out.println("java.system.class.loader = "+System.getProperty("java.system.class.loader"));
     System.out.println("System classloader = "+ClassLoader.getSystemClassLoader());
     final String auxPathFile = System.getProperty(SierraToolConstants.AUX_PATH_PROPERTY);
@@ -61,6 +62,7 @@ public class RemoteTool extends AbstractTool {
     		auxFile.delete();
     	}
     }
+    */
     
     long start = System.currentTimeMillis();
     /*

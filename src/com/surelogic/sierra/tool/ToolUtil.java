@@ -31,7 +31,7 @@ public class ToolUtil {
       t.addTool(new FindBugs1_3_2Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID)));
     }
     if (!config.getExcludedToolsList().contains("pmd")) {
-      t.addTool(new PMD4_1Tool());
+      t.addTool(new PMD4_2Tool());
       t.addTool(new CPD4_1Tool());
     }
     if (!config.getExcludedToolsList().contains("reckoner")) {

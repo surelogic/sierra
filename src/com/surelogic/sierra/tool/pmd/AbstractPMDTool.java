@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -59,6 +60,18 @@ public abstract class AbstractPMDTool extends AbstractTool {
         RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only the default rules
         
         String excludeMarker = PMD.EXCLUDE_MARKER;
+        
+        // Added for PMD 4.2
+        final File auxPathFile = File.createTempFile("auxPath", ".txt");
+        if (auxPathFile.exists()) {
+        	PrintWriter pw = new PrintWriter(auxPathFile);
+        	for(IToolTarget t : getAuxTargets()) {
+        		pw.println(new File(t.getLocation()).getAbsolutePath());
+        	}
+        	pw.close();        
+        }
+        final ClassLoader cl = PMD.createClasspathClassLoader(auxPathFile.toURI().toURL().toString());
+        
         for(IToolTarget t : getSrcTargets()) {
           // root dir of where the files are
           final String inputPath = new File(t.getLocation()).getAbsolutePath();           
@@ -68,13 +81,15 @@ public abstract class AbstractPMDTool extends AbstractTool {
             if (f.exists()) {              
               files.add(new FileDataSource(f));
             }
-          }
+          }          
           List<Renderer> renderers = new ArrayList<Renderer>(); // output
           renderers.add(new Output(generator, monitor, inputPath));
           
           monitor.beginTask("PMD", files.size() + 500);
-          PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, false, inputPath, encoding, excludeMarker);
+          PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, 
+        		           false, inputPath, encoding, excludeMarker, cl);
         }
+        auxPathFile.delete();
       }      
     };
   }
@@ -150,7 +165,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
         String cuName = getCompUnitName(file);
         sourceLocation.compilation(cuName);
         
-        if ("".equals(v.getClassName())) {
+        if (v.getClassName() == null || "".equals(v.getClassName())) {
           // No class name, so use the main class for the compilation unit
           sourceLocation.className(cuName);
         } else {

@@ -273,7 +273,7 @@ public class LocalTool extends AbstractTool {
         cmdj.setMaxmemory("1024m");
       }      
       cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");    
-      setupCustomClassLoader(debug, cmdj);
+      // setupCustomClassLoader(debug, cmdj);
       if (false) {
         cmdj.createVmArgument().setValue("-verbose");
       }
