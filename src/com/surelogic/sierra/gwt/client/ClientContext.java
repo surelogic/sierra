@@ -6,11 +6,10 @@ import java.util.List;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class ClientContext {
@@ -42,18 +41,16 @@ public final class ClientContext {
 
 	public static void logout() {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
-		svc.logout(new AsyncCallback() {
+		svc.logout(new Callback() {
 
-			public void onFailure(Throwable caught) {
-				ExceptionTracker.logException(caught);
-				setUser(null);
-				LoginContent.getInstance(
-						"Unable to log out. (Server may be down)").show();
+			protected void onFailure(String message, Object result) {
+				invalidate(message);
 			}
 
-			public void onSuccess(Object result) {
+			protected void onSuccess(String message, Object result) {
 				setUser(null);
 			}
+
 		});
 	}
 

@@ -10,6 +10,6 @@ public interface SessionService extends RemoteService {
 
 	LoginResult login(String username, String password);
 
-	void logout();
+	Result logout();
 
 }
