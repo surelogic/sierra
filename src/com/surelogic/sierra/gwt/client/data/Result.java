@@ -14,6 +14,16 @@ public class Result extends Status {
 		super();
 	}
 
+	public Result(Serializable result) {
+		super(true, "");
+		this.result = result;
+	}
+
+	public Result(boolean isSuccess, String message) {
+		super(isSuccess, message);
+		this.result = null;
+	}
+
 	public Result(boolean isSuccess, String message, Serializable result) {
 		super(isSuccess, message);
 		this.result = result;

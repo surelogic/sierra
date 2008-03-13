@@ -1,23 +1,26 @@
 package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 /**
- * Entry point classes define <code>onModuleLoad()</code>.
+ * The Sierra Portal GWT Entry point
  */
 public class SierraPortal implements EntryPoint {
+
 	/**
-	 * This is the entry point method.
+	 * This method is called the first time a user enters the site. The header
+	 * and content panels are created, and a check is done to see if the user
+	 * has a valid session already established.
 	 */
 	public void onModuleLoad() {
 		ClientContext.initialize();
 
+		// create and display the main panels
 		final HeaderPanel header = new HeaderPanel();
 		final ContentPanel content = new ContentPanel();
 		RootPanel.get("header-pane").add(header);
@@ -25,19 +28,17 @@ public class SierraPortal implements EntryPoint {
 
 		// see if the user has an established session, or needs to log in
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.getUserAccount(new AsyncCallback() {
-			public void onSuccess(Object result) {
-				ClientContext.setUser((UserAccount) result);
+		sessionService.getUserAccount(new Callback() {
+
+			protected void doFailure(String message, Object result) {
+				ClientContext.invalidate(message);
 			}
 
-			public void onFailure(Throwable caught) {
-				ExceptionTracker.logException(caught);
-				ClientContext.setUser(null);
-				LoginContent.getInstance(
-						"Unable to verify session. (Server may be down)")
-						.show();
+			protected void doSuccess(String message, Object result) {
+				ClientContext.setUser((UserAccount) result);
 			}
 		});
+
 	}
 
 }

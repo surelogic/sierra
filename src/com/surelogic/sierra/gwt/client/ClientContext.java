@@ -57,6 +57,18 @@ public final class ClientContext {
 		});
 	}
 
+	/**
+	 * Called when the session is no longer valid and the login page should be
+	 * displayed with an error message.
+	 * 
+	 * @param errorMessage
+	 *            the error message to display
+	 */
+	public static void invalidate(String errorMessage) {
+		ClientContext.setUser(null);
+		LoginContent.getInstance(errorMessage).show();
+	}
+
 	public static boolean isContext(String token) {
 		return LangUtil.equals(token, context);
 	}
