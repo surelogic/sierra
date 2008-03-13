@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
-import com.surelogic.sierra.gwt.client.data.LoginResult;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.SessionService;
@@ -35,7 +34,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 		return Result.success(getUserAccount(u));
 	}
 
-	public LoginResult login(final String userName, final String password) {
+	public Result login(final String userName, final String password) {
 		if (userName != null && password != null) {
 			final User u = ConnectionFactory
 					.withReadOnly(new ServerTransaction<User>() {
@@ -51,13 +50,13 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 						SecurityHelper.USER, u);
 				UserContext.set(u);
 				log.info("User " + userName + " logged in successfully.");
-				return new LoginResult(getUserAccount(u));
+				return Result.success(getUserAccount(u));
 			} else {
 				log.info("Failed logging attempt for user " + userName + ".");
-				return new LoginResult("Invalid username or password");
+				return Result.failure("Invalid username or password");
 			}
 		} else {
-			return new LoginResult("Missing username or password");
+			return Result.failure("Missing username or password");
 		}
 	}
 
