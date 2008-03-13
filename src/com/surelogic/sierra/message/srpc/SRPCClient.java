@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -20,6 +21,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -32,6 +34,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  */
 public final class SRPCClient implements InvocationHandler {
 
+	private static final Logger log = SLLogger.getLoggerFor(SRPCClient.class);
 	private final HttpClient client;
 	private final Encoding codec;
 	private final URL url;
@@ -59,6 +62,7 @@ public final class SRPCClient implements InvocationHandler {
 			// This is a normal method for this object. Pass it along.
 			return method.invoke(proxy, args);
 		} else {
+			log.info("Calling " + method.getName() + " at " + url);
 			final PostMethod post = new PostMethod(url.toString());
 			final File temp = File.createTempFile("sierra", ".message.gz");
 			try {
