@@ -10,6 +10,7 @@
 	<target name="deploy-team-server">
 		<!-- Update undeploy-app with any changes made to the deployment -->
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
+		<copy file="./etc/keystore" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/mail.jar" todir="../jetty/lib/ext/" />
@@ -68,6 +69,7 @@
 
 	<target name="undeploy-team-server">
 		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
+		<delete quiet="true" file="../jetty/etc/keystore" />
 		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />
 		<delete quiet="true" file="../jetty/lib/ext/derby.jar" />
 		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
