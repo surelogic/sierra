@@ -1,14 +1,21 @@
 package com.surelogic.sierra.message.srpc;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -17,6 +24,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.surelogic.common.FileUtility;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
 import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
@@ -30,14 +39,18 @@ import com.surelogic.sierra.tool.targets.JarTarget;
  * 
  */
 final class Encoding {
-    private static final Class<?>[] NO_CLASSES = new Class[0];
+	private static final String RECORD_MESSAGES_PROP = "com.surelogic.recordMessages";
+	private static final Logger log = SLLogger.getLoggerFor(Encoding.class);
+	private static final Class<?>[] NO_CLASSES = new Class[0];
 	private static final String NULL = "null";
 	private static final String GZIP = "application/x-gzip";
 	private static final String PLAINTEXT = "text/plain; charset=UTF-8";
-
+	private static final AtomicInteger methodCount = new AtomicInteger();
+	private static final Date start = new Date();
 	private final JAXBContext context;
 	private final Class<?> service;
 	private final boolean compressed;
+	private final boolean recordMessages;
 
 	private Encoding(Class<?> service, String contentType) throws SRPCException {
 		this.service = service;
@@ -65,15 +78,44 @@ final class Encoding {
 			}
 		}
 		try {
-			this.context = JAXBContext.newInstance(classes
-					.toArray(NO_CLASSES));
+			this.context = JAXBContext.newInstance(classes.toArray(NO_CLASSES));
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
+		this.recordMessages = "true".equalsIgnoreCase(System
+				.getProperty(RECORD_MESSAGES_PROP));
 	}
 
 	void encodeMethodInvocation(OutputStream out, MethodInvocation invocation)
 			throws SRPCException {
+		encodeMethodInvocationHelper(out, invocation);
+		if (recordMessages) {
+			try {
+				final int count = methodCount.incrementAndGet();
+				OutputStream file = new FileOutputStream(FileUtility
+						.getSierraDataDirectory()
+						+ File.separator
+						+ invocation.getMethod().getName()
+						+ "."
+						+ timestamp()
+						+ "."
+						+ count
+						+ (compressed ? ".gz" : ".txt"));
+				try {
+					encodeMethodInvocationHelper(file, invocation);
+				} finally {
+					file.close();
+				}
+			} catch (FileNotFoundException e) {
+				log.warning("Could not record request: " + e.getMessage());
+			} catch (IOException e) {
+				log.warning("Could not record request: " + e.getMessage());
+			}
+		}
+	}
+
+	private void encodeMethodInvocationHelper(OutputStream out,
+			MethodInvocation invocation) {
 		final PrintWriter writer = wrap(out);
 		final Method method = invocation.getMethod();
 		final Object[] args = invocation.getArgs();
@@ -159,6 +201,25 @@ final class Encoding {
 					} else {
 						value = newUnmarshaller().unmarshal(reader);
 					}
+					if (recordMessages) {
+						PrintWriter out = wrap(new FileOutputStream(FileUtility
+								.getSierraDataDirectory()
+								+ File.separator
+								+ "response."
+								+ timestamp()
+								+ "."
+								+ methodCount
+								+ (compressed ? ".gz" : ".txt")));
+						try {
+							if (value == null) {
+								out.write("null\n");
+							} else {
+								newMarshaller().marshal(value, out);
+							}
+						} finally {
+							out.close();
+						}
+					}
 					switch (status) {
 					case OK:
 						return value;
@@ -242,6 +303,10 @@ final class Encoding {
 		} catch (JAXBException e) {
 			throw new SRPCException(e);
 		}
+	}
+
+	private static String timestamp() {
+		return Long.toString(start.getTime() / 1000);
 	}
 
 }
