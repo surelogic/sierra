@@ -186,6 +186,12 @@ public final class MFilterSelectionColumn extends MColumn implements
 	          }
 	        }
 				});
+				/* Scheme for handling mouse selections as follows:
+				 * 1. MouseDown listener marks that there's a selection to handle
+				 * 2. Selection listener only handles events on the checkbox
+				 * 3. DefaultSelection listener ignores events, since they're already handled by the others
+				 * 4. MouseUp listener handles the rest of the selections 
+				 */
 				// True if there's a selection that needs to be handled				
 				final AtomicBoolean handleNextSelection = new AtomicBoolean();
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
