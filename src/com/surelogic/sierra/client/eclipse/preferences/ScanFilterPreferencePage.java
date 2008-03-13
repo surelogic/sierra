@@ -44,6 +44,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -52,12 +53,6 @@ import com.surelogic.sierra.jdbc.settings.SettingsManager;
 
 public class ScanFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
-
-	/**
-	 * Returns the category name, the finding type name, a short message about
-	 * the finding type, and the finding type identifier.
-	 */
-	private static final String QUERY = "select C.NAME, T.NAME, T.SHORT_MESSAGE, T.UUID from FINDING_TYPE T, FINDING_CATEGORY C where T.CATEGORY_ID = C.ID and T.ID in (select FINDING_TYPE_ID from ARTIFACT_TYPE, TOOL where TOOL_ID = TOOL.ID and TOOL.NAME != 'Checkstyle') order by 1,2,3";
 
 	private static class FindingTypeRow {
 		private String findingTypeUUID;
@@ -293,9 +288,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			try {
 				final Statement st = c.createStatement();
 				try {
-					final String query = QUERY;
-					SLLogger.getLogger().fine(query);
-					final ResultSet rs = st.executeQuery(query);
+					final ResultSet rs = st.executeQuery(QB.get(2));
 					try {
 						while (rs.next()) {
 							FindingTypeRow row = new FindingTypeRow();
@@ -343,15 +336,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				final Statement st = c.createStatement();
 				try {
 					final List<ArtifactTypeRow> artifactList = new ArrayList<ArtifactTypeRow>();
-					final String artifactQuery = "select distinct T.NAME, A.MNEMONIC, A.LINK, A.CATEGORY from FINDING_TYPE F, ARTIFACT_TYPE A, TOOL T where T.ID=A.TOOL_ID and F.ID=A.FINDING_TYPE_ID and F.UUID='"
-							+ findingTypeUUID + "'";
-					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-						SLLogger.getLogger().fine(
-								"Query of artifacts for findingType="
-										+ findingTypeUUID + ": "
-										+ artifactQuery);
-					}
-					final ResultSet ars = st.executeQuery(artifactQuery);
+					final ResultSet ars = st.executeQuery(QB.get(3,
+							findingTypeUUID));
 					try {
 						while (ars.next()) {
 							ArtifactTypeRow row = new ArtifactTypeRow();
@@ -364,14 +350,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 					} finally {
 						ars.close();
 					}
-					final String query = "select INFO from FINDING_TYPE where UUID='"
-							+ findingTypeUUID + "'";
-					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-						SLLogger.getLogger().fine(
-								"Query of HTML info for findingType="
-										+ findingTypeUUID + ": " + query);
-					}
-					final ResultSet rs = st.executeQuery(query);
+					final ResultSet rs = st.executeQuery(QB.get(4,
+							findingTypeUUID));
 					try {
 						while (rs.next()) {
 							final String description = rs.getString(1);

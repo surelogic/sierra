@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 
@@ -193,14 +194,14 @@ public abstract class Filter {
 				}
 				final ResultSet rs = st.executeQuery(query);
 				try {
-				  while (rs.next()) {
-				    final String value = rs.getString(1);
-				    int count = rs.getInt(2);
-				    f_counts.put(value, count);
-				    countTotal += count;
-				  }
+					while (rs.next()) {
+						final String value = rs.getString(1);
+						int count = rs.getInt(2);
+						f_counts.put(value, count);
+						countTotal += count;
+					}
 				} finally {
-				  rs.close();
+					rs.close();
 				}
 			} finally {
 				st.close();
@@ -537,12 +538,8 @@ public abstract class Filter {
 	 */
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
-		b.append("select ");
-		b.append(getColumnName());
-		// addColumnsTo(b);
-		b.append(",count(*) from FINDINGS_OVERVIEW ");
-		addWhereClauseTo(b, false);
-		b.append("group by ").append(getColumnName());
+		b.append(QB.get(6, getColumnName(), getWhereClause(false),
+				getColumnName()));
 		return b;
 	}
 
@@ -561,7 +558,8 @@ public abstract class Filter {
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
-	void addWhereClauseTo(StringBuilder b, boolean includeThis) {
+	String getWhereClause(boolean includeThis) {
+		final StringBuilder b = new StringBuilder();
 		boolean stateFilterNotUsed = true;
 		boolean first = true;
 		/*
@@ -578,9 +576,9 @@ public abstract class Filter {
 					b.append("where ");
 					first = false;
 				} else {
-					b.append("and ");
+					b.append(" and ");
 				}
-				filter.addWhereClausePartTo(b);
+				b.append(filter.getWhereClausePart());
 			}
 			filter = filter.f_previous;
 		}
@@ -593,16 +591,18 @@ public abstract class Filter {
 				b.append("where ");
 				first = false;
 			} else {
-				b.append("and ");
+				b.append(" and ");
 			}
 			FilterSelection.addWhereClauseToFilterOutFixed(b);
 		}
+		return b.toString();
 	}
 
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
-	private void addWhereClausePartTo(StringBuilder b) {
+	private String getWhereClausePart() {
+		final StringBuilder b = new StringBuilder();
 		if (!hasWhereClausePart())
 			throw new IllegalStateException(this + " has no where clause");
 		b.append(getColumnName()).append(" in (");
@@ -624,7 +624,8 @@ public abstract class Filter {
 			else
 				b.append("-456");
 		}
-		b.append(") ");
+		b.append(")");
+		return b.toString();
 	}
 
 	/**

@@ -54,6 +54,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -439,16 +440,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 */
 	public String getQuery() {
 		StringBuilder b = new StringBuilder();
-		b.append("select SUMMARY, IMPORTANCE, FINDING_ID,");
-		b.append(" PROJECT, PACKAGE, CLASS, LINE_OF_CODE,");
-		b.append(" FINDING_TYPE, CATEGORY, TOOL ");
-		getSelection().addWhereClauseTo(b);
-		b.append(" order by case");
-		b.append(" when IMPORTANCE='Irrelevant' then 5");
-		b.append(" when IMPORTANCE=       'Low' then 4");
-		b.append(" when IMPORTANCE=    'Medium' then 3");
-		b.append(" when IMPORTANCE=      'High' then 2");
-		b.append(" when IMPORTANCE=  'Critical' then 1 end, SUMMARY");
+		b.append(QB.get(5, getSelection().getWhereClause()));
 		return b.toString();
 	}
 

@@ -70,10 +70,10 @@ public final class Selection extends AbstractDatabaseObserver {
 				prev = clone;
 				f_filters.add(clone);
 			}
-			for (Map.Entry<String,Column> e : source.f_columns.entrySet()) {
-			  Column c  = getColumn(e.getKey());
-			  Column sc = e.getValue();
-			  c.configure(sc);
+			for (Map.Entry<String, Column> e : source.f_columns.entrySet()) {
+				Column c = getColumn(e.getKey());
+				Column sc = e.getValue();
+				c.configure(sc);
 			}
 		}
 	}
@@ -326,16 +326,17 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * @param b
 	 *            the string to mutate.
 	 */
-	public void addWhereClauseTo(final StringBuilder b) {
-		b.append("from FINDINGS_OVERVIEW ");
+	public String getWhereClause() {
+		final StringBuilder b = new StringBuilder();
 		synchronized (this) {
 			if (!f_filters.isEmpty()) {
 				final Filter last = f_filters.getLast();
 				synchronized (last) {
-					last.addWhereClauseTo(b, true);
+					b.append(last.getWhereClause(true));
 				}
 			}
 		}
+		return b.toString();
 	}
 
 	/**
@@ -374,15 +375,15 @@ public final class Selection extends AbstractDatabaseObserver {
 		for (ISelectionObserver o : f_observers)
 			o.selectionChanged(this);
 	}
-	
-	 /**
-   * Do not call this method holding a lock on <code>this</code>. Deadlock
-   * could occur as we are invoking an alien method.
-   */
-  private void notifyColumnsChanged(Column c) {
-    for (ISelectionObserver o : f_observers)
-      o.columnsChanged(this, c);
-  }
+
+	/**
+	 * Do not call this method holding a lock on <code>this</code>. Deadlock
+	 * could occur as we are invoking an alien method.
+	 */
+	private void notifyColumnsChanged(Column c) {
+		for (ISelectionObserver o : f_observers)
+			o.columnsChanged(this, c);
+	}
 
 	@Override
 	public void changed() {
@@ -471,7 +472,7 @@ public final class Selection extends AbstractDatabaseObserver {
 					final String msg = I18N.err(errNo);
 					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
-	
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -510,29 +511,30 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
-	private final Map<String,Column> f_columns = MListOfFindingsColumn.createColumns();
-	
+	private final Map<String, Column> f_columns = MListOfFindingsColumn
+			.createColumns();
+
 	public Column getColumn(String name) {
-	  return f_columns.get(name);
+		return f_columns.get(name);
 	}
-	
-  public Iterable<Column> getColumns() {
-    return f_columns.values();
-  }
-  
-  public int getNumColumns() {
-    return f_columns.size();
-  }
-  
-  public void setColumnVisible(String name, boolean newVisible) {
-    Column c = getColumn(name);
-    if (c.isVisible() == newVisible) {
-      return; // Nothing changed
-    }
-    c.setVisible(newVisible);
-    notifyColumnsChanged(c);
-  }
-  
+
+	public Iterable<Column> getColumns() {
+		return f_columns.values();
+	}
+
+	public int getNumColumns() {
+		return f_columns.size();
+	}
+
+	public void setColumnVisible(String name, boolean newVisible) {
+		Column c = getColumn(name);
+		if (c.isVisible() == newVisible) {
+			return; // Nothing changed
+		}
+		c.setVisible(newVisible);
+		notifyColumnsChanged(c);
+	}
+
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder();

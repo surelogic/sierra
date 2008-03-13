@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 
@@ -24,8 +25,6 @@ import com.surelogic.sierra.client.eclipse.Data;
  * The class allows observers to changes to this list of projects
  */
 public final class Projects extends AbstractDatabaseObserver {
-
-	private static final String QUERY = "select PROJECT from PROJECT_OVERVIEW order by PROJECT";
 
 	private static final Projects INSTANCE = new Projects();
 
@@ -118,7 +117,7 @@ public final class Projects extends AbstractDatabaseObserver {
 			try {
 				final Statement st = c.createStatement();
 				try {
-					final ResultSet rs = st.executeQuery(QUERY);
+					final ResultSet rs = st.executeQuery(QB.get(1));
 					try {
 						while (rs.next()) {
 							projectNames.add(rs.getString(1));

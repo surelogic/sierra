@@ -44,6 +44,6 @@ public final class FilterSelection extends Filter {
 	}
 
 	static void addWhereClauseToFilterOutFixed(StringBuilder b) {
-		b.append(COLUMN_NAME + " != '" + FIXED + "' ");
+		b.append(COLUMN_NAME + " != '" + FIXED + "'");
 	}
 }
