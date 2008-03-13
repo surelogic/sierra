@@ -12,16 +12,15 @@ import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class SierraPortal implements EntryPoint {
-	private final HeaderPanel headerPanel = new HeaderPanel();
-	private final ContentPanel contentPanel = new ContentPanel();
-
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 		ClientContext.initialize();
-		RootPanel.get("header-pane").add(headerPanel);
-		RootPanel.get("content-pane").add(contentPanel);
+
+		RootPanel.get("header-pane").add(new HeaderPanel());
+		RootPanel.get("content-pane").add(new ContentPanel());
+
 		// see if the user has an established session, or needs to log in
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.getUserAccount(new AsyncCallback() {
