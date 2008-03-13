@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Result;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ManageUserAdminService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -26,15 +25,15 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = 946194129762715684L;
 
-	public Status createUser(final UserAccount account, final String password) {
+	public Result createUser(final UserAccount account, final String password) {
 		if ((account == null) || (password == null)
 				|| (account.getUserName() == null)
 				|| (account.getUserName().length() == 0)) {
-			return Status.failure("Invalid arguments");
+			return Result.failure("Missing required field.");
 		} else {
-			return performAdmin(false, new UserTransaction<Status>() {
+			return performAdmin(false, new UserTransaction<Result>() {
 
-				public Status perform(Connection conn, Server server,
+				public Result perform(Connection conn, Server server,
 						User serverUser) throws SQLException {
 					final ServerUserManager man = ServerUserManager
 							.getInstance(conn);
@@ -43,9 +42,9 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						if (account.isAdministrator()) {
 							man.addUserToGroup(user, SierraGroup.ADMIN);
 						}
-						return Status.success(user + " created.");
+						return Result.success(user + " created.");
 					} else {
-						return Status
+						return Result
 								.failure("Could not create user with name "
 										+ user
 										+ ".  A user with that name already exists.");
