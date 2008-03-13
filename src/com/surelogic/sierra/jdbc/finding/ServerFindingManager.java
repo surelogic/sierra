@@ -46,6 +46,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement findingCount;
 	private final PreparedStatement artifactCount;
 	private final PreparedStatement insertCommitRecord;
+	private final PreparedStatement selectMergeInfo;
 
 	private ServerFindingManager(Connection conn) throws SQLException {
 		super(conn);
@@ -69,7 +70,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   F.ID = OBS.OBSOLETED_BY_ID");
 
 		selectNewAudits = conn
-				.prepareStatement("SELECT F.UUID,A.EVENT,A.VALUE,A.DATE_TIME,A.REVISION,U.USER_NAME"
+				.prepareStatement("SELECT F.ID,A.EVENT,A.VALUE,A.DATE_TIME,A.REVISION,U.USER_NAME"
 						+ "   FROM FINDING F, SIERRA_AUDIT A, SIERRA_USER U"
 						+ "   WHERE"
 						+ "   F.PROJECT_ID = ? AND"
@@ -119,6 +120,10 @@ public final class ServerFindingManager extends FindingManager {
 				false);
 		insertCommitRecord = conn
 				.prepareStatement("INSERT INTO COMMIT_AUDITS (PROJECT_ID,USER_ID,REVISION) VALUES (?,?,?)");
+		selectMergeInfo = conn
+				.prepareStatement("SELECT F.UUID,F.SUMMARY,F.IMPORTANCE,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
+						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
+						+ "   WHERE F.ID = ? AND LM.FINDING_ID = F.ID AND FT.ID = LM.FINDING_TYPE_ID");
 	}
 
 	public void generateOverview(String projectName, String scanUid,
@@ -321,17 +326,40 @@ public final class ServerFindingManager extends FindingManager {
 			selectNewAudits.setLong(idx++, projectRecord.getId());
 			selectNewAudits.setLong(idx++, revision);
 			ResultSet set = selectNewAudits.executeQuery();
-			String findingId = null;
+			long findingId = -1;
 			List<Audit> audits = null;
 			try {
 				while (set.next()) {
 					idx = 1;
-					final String nextId = set.getString(idx++);
-					if (!(nextId.equals(findingId))) {
+					final long nextId = set.getLong(idx++);
+					if (!(nextId == findingId)) {
 						findingId = nextId;
 						final SyncTrailResponse trail = new SyncTrailResponse();
-						trail.setFinding(findingId);
-						trail.setMerge(getMergeInfo(findingId));
+						selectMergeInfo.setLong(1, findingId);
+						ResultSet mergeSet = selectMergeInfo.executeQuery();
+						final Merge merge = new Merge();
+						final Match match = new Match();
+						merge.setMatch(match);
+						try {
+							mergeSet.next();
+							int mergeIdx = 1;
+							trail.setFinding(mergeSet.getString(mergeIdx++));
+							merge.setSummary(mergeSet.getString(mergeIdx++));
+							merge.setImportance(Importance.values()[mergeSet
+									.getInt(mergeIdx++)]);
+							match
+									.setPackageName(mergeSet
+											.getString(mergeIdx++));
+							match.setClassName(mergeSet.getString(mergeIdx++));
+							match.setHash(mergeSet.getLong(mergeIdx++));
+							match
+									.setFindingType(mergeSet
+											.getString(mergeIdx++));
+							match.setRevision(mergeSet.getLong(mergeIdx++));
+						} finally {
+							mergeSet.close();
+						}
+						trail.setMerge(merge);
 						trails.add(trail);
 						audits = trail.getAudits();
 					}
