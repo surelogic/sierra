@@ -9,25 +9,25 @@ public abstract class Callback implements AsyncCallback {
 
 	public final void onFailure(Throwable caught) {
 		ExceptionTracker.logException(caught);
-		doException(caught);
+		onException(caught);
 	}
 
 	public final void onSuccess(Object result) {
 		Result slResult = (Result) result;
 		if (slResult.isSuccess()) {
-			doSuccess(slResult.getMessage(), slResult.getResult());
+			onSuccess(slResult.getMessage(), slResult.getResult());
 		} else {
-			doFailure(slResult.getMessage(), slResult.getResult());
+			onFailure(slResult.getMessage(), slResult.getResult());
 		}
 	}
 
-	protected void doException(Throwable caught) {
+	protected void onException(Throwable caught) {
 		ClientContext
 				.invalidate("Unable to communicate with server. (Server may be down)");
 	}
 
-	protected abstract void doSuccess(String message, Object result);
+	protected abstract void onSuccess(String message, Object result);
 
-	protected abstract void doFailure(String message, Object result);
+	protected abstract void onFailure(String message, Object result);
 
 }

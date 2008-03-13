@@ -114,11 +114,11 @@ public class ChangePasswordDialog extends DialogBox {
 
 					new Callback() {
 
-						protected void doFailure(String message, Object result) {
+						protected void onFailure(String message, Object result) {
 							setErrorMessage("Unable to create user: " + message);
 						}
 
-						protected void doSuccess(String message, Object result) {
+						protected void onSuccess(String message, Object result) {
 							hide();
 						}
 					});

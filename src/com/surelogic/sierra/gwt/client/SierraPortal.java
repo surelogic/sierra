@@ -30,11 +30,11 @@ public class SierraPortal implements EntryPoint {
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.getUserAccount(new Callback() {
 
-			protected void doFailure(String message, Object result) {
+			protected void onFailure(String message, Object result) {
 				ClientContext.invalidate(message);
 			}
 
-			protected void doSuccess(String message, Object result) {
+			protected void onSuccess(String message, Object result) {
 				ClientContext.setUser((UserAccount) result);
 			}
 		});
