@@ -54,9 +54,10 @@ public interface ManageUserAdminService extends RemoteService {
 	 * @param currentUserPassword
 	 *            the password of the user in context
 	 * @param newPassword
-	 * @return
+	 * @return a {@link Result} indicating whether the password change was
+	 *         successful or not
 	 */
-	Status changeUserPassword(String targetUser, String currentUserPassword,
+	Result changeUserPassword(String targetUser, String currentUserPassword,
 			String newPassword);
 
 	/**

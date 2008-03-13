@@ -2,31 +2,49 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-public class Result extends Status {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7892934566840797306L;
+public class Result implements Serializable {
+	private static final long serialVersionUID = -3937812036639461449L;
+	private boolean success;
+	private String message;
 	private Serializable result;
 
 	public Result() {
 		super();
 	}
 
-	public Result(Serializable result) {
-		super(true, "");
+	public Result(boolean success, String message, Serializable result) {
+		super();
+		this.success = success;
+		this.message = message;
 		this.result = result;
 	}
 
-	public Result(boolean isSuccess, String message) {
-		super(isSuccess, message);
-		this.result = null;
+	public static Result success(String message) {
+		return new Result(true, message, null);
 	}
 
-	public Result(boolean isSuccess, String message, Serializable result) {
-		super(isSuccess, message);
-		this.result = result;
+	public static Result success(Serializable result) {
+		return new Result(true, "", result);
+	}
+
+	public static Result failure(String message) {
+		return new Result(false, message, null);
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public Object getResult() {

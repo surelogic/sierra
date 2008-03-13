@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
@@ -209,7 +210,7 @@ public class UserManagementContent extends ContentComposite {
 								Result r = (Result) result;
 								updateRow(row, (UserAccount) r.getResult(),
 										ClientContext.getUser());
-								status.setStatus(r);
+								status.setStatus(Status.fromResult(r));
 							}
 						});
 			}
@@ -241,7 +242,7 @@ public class UserManagementContent extends ContentComposite {
 								Result r = (Result) result;
 								updateRow(row, (UserAccount) r.getResult(),
 										ClientContext.getUser());
-								status.setStatus(r);
+								status.setStatus(Status.fromResult(r));
 							}
 						});
 
@@ -290,9 +291,8 @@ public class UserManagementContent extends ContentComposite {
 									&& (user.getId() == current.getId())) {
 								ClientContext.setUser(user);
 							}
-							updateRow(row, (UserAccount) user, ClientContext
-									.getUser());
-							status.setStatus(r);
+							updateRow(row, user, ClientContext.getUser());
+							status.setStatus(Status.fromResult(r));
 
 						}
 					});

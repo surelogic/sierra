@@ -42,4 +42,8 @@ public class Status implements Serializable {
 	public static Status failure(String message) {
 		return new Status(false, message);
 	}
+
+	public static Status fromResult(Result result) {
+		return new Status(result.isSuccess(), result.getMessage());
+	}
 }

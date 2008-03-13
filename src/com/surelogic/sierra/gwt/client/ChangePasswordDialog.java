@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -11,10 +10,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class ChangePasswordDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
@@ -114,22 +112,14 @@ public class ChangePasswordDialog extends DialogBox {
 			ServiceHelper.getManageUserService().changeUserPassword(
 					user.getUserName(), currentPassText, passText,
 
-					new AsyncCallback() {
+					new Callback() {
 
-						public void onFailure(Throwable caught) {
-							ExceptionTracker.logException(caught);
-
-							setErrorMessage("Unable to create user. (Server may be down)");
+						protected void doFailure(String message, Object result) {
+							setErrorMessage("Unable to create user: " + message);
 						}
 
-						public void onSuccess(Object result) {
-							Status status = (Status) result;
-							successful = status.isSuccess();
-							if (!successful) {
-								setErrorMessage(status.getMessage());
-							} else {
-								hide();
-							}
+						protected void doSuccess(String message, Object result) {
+							hide();
 						}
 					});
 		}
