@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,8 +14,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 
 public class CreateUserDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
@@ -116,16 +115,19 @@ public class CreateUserDialog extends DialogBox {
 			account.setAdministrator(isAdmin.isChecked());
 			account.setUserName(userText);
 			ServiceHelper.getManageUserService().createUser(account, passText,
-					new AsyncCallback() {
+					new Callback() {
 
-						public void onFailure(Throwable caught) {
-							ExceptionTracker.logException(caught);
-
+						protected void onException(Throwable caught) {
 							setErrorMessage("Unable to create user. (Server may be down)");
 						}
 
-						public void onSuccess(Object result) {
-							status = (Status) result;
+						protected void onFailure(String message, Object result) {
+							status = Status.failure(message);
+							hide();
+						}
+
+						protected void onSuccess(String message, Object result) {
+							status = Status.success(message);
 							hide();
 						}
 					});
