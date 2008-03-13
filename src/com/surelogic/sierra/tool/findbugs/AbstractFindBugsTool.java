@@ -143,6 +143,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
     final Set<String> missingClasses = new HashSet<String>();
+    {
+    	missingClasses.add("java.lang.Class");
+    }
     
     public Monitor(AbstractToolInstance ti) {
       tool = ti;
@@ -278,11 +281,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
-    	if ("java.lang.Class".equals(line.getClassName())) {
-    	  // Don't report anything about this
-    	  return null;
-    	}
-    	else if (!missingClasses.contains(line.getClassName())) {
+    	if (!missingClasses.contains(line.getClassName())) {
           logError("Couldn't find source file for "+line.getClassName());
           missingClasses.add(line.getClassName());
         }
@@ -313,12 +312,12 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     /* ******************** For IErrorLogger ********************* */
     
     public void logError(String message) {
-      LOG.severe(message);
+      LOG.warning(message);
       tool.reportError(message);
     }
 
     public void logError(String message, Throwable e) {
-      LOG.log(Level.SEVERE, message, e);
+      LOG.log(Level.WARNING, message, e);
       tool.reportError(message, e);
     }
 
