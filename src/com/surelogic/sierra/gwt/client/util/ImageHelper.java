@@ -7,6 +7,10 @@ public final class ImageHelper {
 	public static final String IMAGE_BASE_URL = GWT.getModuleBaseURL()
 			+ "images/";
 
+	public static Image getImage(String filename) {
+		return new Image(IMAGE_BASE_URL + filename);
+	}
+
 	public static Image getWaitImage(int size) {
 		int adjustedSize;
 		if (size <= 16) {

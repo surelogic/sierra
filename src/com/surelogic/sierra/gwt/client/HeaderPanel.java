@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 // TODO using a TabBar mucks up the context change handling code
 // Change the TabBar to our own setup so we can change the tab style without 
@@ -42,8 +43,7 @@ public final class HeaderPanel extends Composite {
 		rootPanel.addStyleName(PRIMARY_STYLE);
 
 		headerRow.addStyleName(PRIMARY_STYLE);
-		final Image sierraLogo = new Image(GWT.getModuleBaseURL()
-				+ "images/surelogic.png");
+		final Image sierraLogo = ImageHelper.getImage("surelogic.png");
 		headerRow.add(sierraLogo);
 		headerRow.setCellVerticalAlignment(sierraLogo,
 				HorizontalPanel.ALIGN_MIDDLE);
