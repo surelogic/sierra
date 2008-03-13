@@ -12,5 +12,6 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.mortbay.start.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="./etc/sierra-embedded-derby.xml"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jetty"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx512m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1500m"/>
+<stringAttribute key="yk-options" value="&#10;additional-options=&#10;snapshots-dir=&#10;startup=0&#10;"/>
 </launchConfiguration>
