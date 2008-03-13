@@ -102,12 +102,12 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public Status changeUserPassword(final String targetUser,
+	public Result changeUserPassword(final String targetUser,
 			final String currentUserPassword, final String newPassword) {
 		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<Status>() {
+				.withUserTransaction(new UserTransaction<Result>() {
 
-					public Status perform(Connection conn, Server server,
+					public Result perform(Connection conn, Server server,
 							User user) throws Exception {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
@@ -116,14 +116,14 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 										SierraGroup.ADMIN.getName())) {
 							if (man.login(user.getName(), currentUserPassword) != null) {
 								man.changeUserPassword(targetUser, newPassword);
-								return Status
+								return Result
 										.success("Password changed successfully.");
 							} else {
-								return Status
+								return Result
 										.failure("Invalid password. Please enter your current password correctly.");
 							}
 						} else {
-							return Status
+							return Result
 									.failure("You do not have permissions to change this user's password.");
 						}
 					}
@@ -139,15 +139,16 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
 				man.changeUserName(account.getId(), account.getUserName());
-				final User targetUser = man.getUserByName(targetUserName); 
+				final User targetUser = man.getUserByName(targetUserName);
 				final UserAccount targetUserAccount = convertUser(man, man
 						.getUserByName(targetUserName));
-				//Make sure that the user name of the session stays valid
-				if(targetUser.getId() == user.getId()) {
+				// Make sure that the user name of the session stays valid
+				if (targetUser.getId() == user.getId()) {
 					getThreadLocalRequest().getSession().setAttribute(
-							SecurityHelper.USER, targetUser);					
+							SecurityHelper.USER, targetUser);
 				}
-				if (targetUser.isActive() && targetUserAccount.isAdministrator()
+				if (targetUser.isActive()
+						&& targetUserAccount.isAdministrator()
 						&& (!account.isActive() || !account.isAdministrator())) {
 					int count = 0;
 					for (UserAccount u : listUsers(conn)) {

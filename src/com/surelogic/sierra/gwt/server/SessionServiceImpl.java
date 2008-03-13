@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.LoginResult;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.SessionService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -25,13 +26,13 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 	private static final Logger log = SLLogger
 			.getLoggerFor(SessionServiceImpl.class);
 
-	public UserAccount getUserAccount() {
+	public Result getUserAccount() {
 		final User u = UserContext.peek();
 		if (u == null) {
-			return null;
+			return Result.failure("");
 		}
 
-		return getUserAccount(u);
+		return Result.success(getUserAccount(u));
 	}
 
 	public LoginResult login(final String userName, final String password) {
