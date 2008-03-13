@@ -120,10 +120,8 @@ public final class MFilterSelectionColumn extends MColumn implements
           }				  
 				});
 				
-				final AtomicBoolean handleNextSelection = new AtomicBoolean();
 				f_reportContents.addKeyListener(new KeyListener() {
           public void keyPressed(KeyEvent e) {   
-        	  System.out.println("key pressed: "+e.keyCode);
             MColumn column = null;
             if (e.keyCode == SWT.ARROW_LEFT) {
               column = getPreviousColumn();
@@ -131,11 +129,10 @@ public final class MFilterSelectionColumn extends MColumn implements
             else if (e.keyCode == SWT.ARROW_RIGHT) {
               column = getNextColumn();
             }
-            /*
+            /* No longer needs to check for these, since selections
+             * ignore non-mouse-causes
+             * 
             else if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
-            	// Works because it's always called before the selection handler            	
-            	ignoreNextSelection.set(true);
-            	return;
             }
             */
             else {
@@ -164,8 +161,7 @@ public final class MFilterSelectionColumn extends MColumn implements
         	  }     
           }         
           public void keyReleased(KeyEvent e) {
-        	  // Do nothing
-        	  System.out.println("key released: "+e.keyCode);
+        	  // Nothing to do
           }
         }); 
 				f_reportContents.addListener(SWT.Traverse, new Listener() {
@@ -190,22 +186,43 @@ public final class MFilterSelectionColumn extends MColumn implements
 	          }
 	        }
 				});
-					
+				// True if there's a selection that needs to be handled				
+				final AtomicBoolean handleNextSelection = new AtomicBoolean();
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
 					public void handleEvent(Event e) {
 						int mods = e.stateMask & SWT.MODIFIER_MASK;
 						// Only consider left-clicks as selection events
-						if (e.button == 1 && mods == 0) {					
+						if (e.button == 1 && mods == 0) {												
 							handleNextSelection.set(true);									
 						}
 					}				
 				});
+				f_reportContents.addSelectionListener(new SelectionListener() {
+					// e.g. double-click
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// Already handled by normal selection handling
+					}					
+					// e.g., click on row, click on checkbox
+					public void widgetSelected(SelectionEvent e) {   
+						TableItem item = (TableItem) e.item;
+						// Only handle if clicking on the checkbox, not the rest
+						if ((e.detail & SWT.CHECK) != 0) {
+							// Checkbox already toggled, so 
+							// just mark selection as handled, and inform table
+							handleNextSelection.set(false);
+							selectionChanged(item);
+						}						
+					}				  
+				});		
 				f_reportContents.addListener(SWT.MouseUp, new Listener() {
 					public void handleEvent(Event e) {
+						// Check if the selection still needs to be handled
 						if (handleNextSelection.getAndSet(false)) {
 							Point p = new Point(e.x, e.y);
 							TableItem item = f_reportContents.getItem(p);
 							if (item != null) {
+								// Checkbox selections should be handled above,
+								// so we need to toggle the checkbox ourselves								
 								item.setChecked(!item.getChecked());
 								selectionChanged(item);
 							}
@@ -213,65 +230,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 					}
 					
 				});
-				f_reportContents.addSelectionListener(new SelectionListener() {
-					private void select(SelectionEvent e, boolean check) {
-						TableItem item = (TableItem) e.item;
-						item.setChecked(check);
-						selectionChanged(item);
-						e.doit = false;
-					}
-					// e.g. return, double-click
-					public void widgetDefaultSelected(SelectionEvent e) {
-						System.out.println("Default selection "+e.time);
-						/*
-						TableItem item = (TableItem) e.item;
-						boolean checked = item.getChecked();
-						if ((e.detail & SWT.CHECK) == 0 || SystemUtils.IS_OS_LINUX) {
-							checked = !checked;
-						}
-						select(e, checked);
-						*/
-					}
-					
-					// e.g., space, click on row, click on box
-					public void widgetSelected(SelectionEvent e) {   
-						/*
-						 * Default behavior:
-						 * Unselected:
-						 *   Click on checkbox: still unselected, toggles check 
-						 *   Click on rest:     selects, maybe checks
-						 * Selected:
-				         *   Click on checkbox: re-selects, toggles check
-						 *   Click on rest:     selects
-						 */
-						/*
-						if (!handleNextSelection.getAndSet(false)) {
-							System.out.println("Ignoring Checkbox: "+((e.detail & SWT.CHECK) != 0));
-							return;
-						}
-						System.out.println("Selection "+e.time);
-						TableItem item = (TableItem) e.item;
-						System.out.println("Selected: "+f_reportContents.isSelected(f_reportContents.indexOf(item)));
-						boolean checked = item.getChecked();
-						System.out.println("Checked: "+checked);
-						System.out.println("Checkbox: "+((e.detail & SWT.CHECK) != 0));
-						if ((e.detail & SWT.CHECK) == 0 || 
-							//f_reportContents.isSelected(f_reportContents.indexOf(item)) || 
-							SystemUtils.IS_OS_LINUX) {
-							checked = !checked;
-							System.out.println("Toggled: "+checked);
-						}
-						select(e, checked);
-						*/
-						TableItem item = (TableItem) e.item;
-						// Only handle if clicking on the checkbox, not the rest
-						if ((e.detail & SWT.CHECK) != 0) {
-							handleNextSelection.set(false);
-							select(e, item.getChecked());
-						}						
-					}				  
-				});		
-				
 				f_reportContents.addListener(SWT.MouseMove, new Listener() {
 		      public void handleEvent(Event e) {
 		        Point p = new Point(e.x, e.y);
