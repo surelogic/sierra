@@ -18,8 +18,10 @@ public class SierraPortal implements EntryPoint {
 	public void onModuleLoad() {
 		ClientContext.initialize();
 
-		RootPanel.get("header-pane").add(new HeaderPanel());
-		RootPanel.get("content-pane").add(new ContentPanel());
+		final HeaderPanel header = new HeaderPanel();
+		final ContentPanel content = new ContentPanel();
+		RootPanel.get("header-pane").add(header);
+		RootPanel.get("content-pane").add(content);
 
 		// see if the user has an established session, or needs to log in
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
