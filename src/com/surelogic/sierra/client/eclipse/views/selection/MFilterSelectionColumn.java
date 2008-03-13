@@ -196,13 +196,22 @@ public final class MFilterSelectionColumn extends MColumn implements
 						int mods = e.stateMask & SWT.MODIFIER_MASK;
 						// Only consider left-clicks as selection events
 						if (e.button == 1 && mods == 0) {					
+							handleNextSelection.set(true);									
+						}
+					}				
+				});
+				f_reportContents.addListener(SWT.MouseUp, new Listener() {
+					public void handleEvent(Event e) {
+						if (handleNextSelection.getAndSet(false)) {
 							Point p = new Point(e.x, e.y);
 							TableItem item = f_reportContents.getItem(p);
 							if (item != null) {
-								handleNextSelection.set(true);		
+								item.setChecked(!item.getChecked());
+								selectionChanged(item);
 							}
 						}
-					}				
+					}
+					
 				});
 				f_reportContents.addSelectionListener(new SelectionListener() {
 					private void select(SelectionEvent e, boolean check) {
@@ -257,6 +266,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 						TableItem item = (TableItem) e.item;
 						// Only handle if clicking on the checkbox, not the rest
 						if ((e.detail & SWT.CHECK) != 0) {
+							handleNextSelection.set(false);
 							select(e, item.getChecked());
 						}						
 					}				  
