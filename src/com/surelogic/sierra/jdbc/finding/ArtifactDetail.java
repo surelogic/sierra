@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.sierra.tool.message.IdentifierType;
 
 public class ArtifactDetail {
@@ -35,9 +36,9 @@ public class ArtifactDetail {
 	}
 
 	public SourceDetail getPrimarySource() {
-	  return primary;
+		return primary;
 	}
-	
+
 	public String getClassName() {
 		return primary.getClassName();
 	}
@@ -72,26 +73,16 @@ public class ArtifactDetail {
 		try {
 			Statement sourceSt = conn.createStatement();
 			try {
-				ResultSet artSet = artSt
-						.executeQuery("SELECT T.NAME, A.MESSAGE, CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-								+ "   FROM ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-								+ "   WHERE A.ID = "
-								+ artifactId
-								+ " AND ART.ID = A.ARTIFACT_TYPE_ID AND T.ID = ART.TOOL_ID"
-								+ " AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
+				ResultSet artSet = artSt.executeQuery(QB.get(14, artifactId));
 				artSet.next();
-				ResultSet sourceSet = sourceSt
-						.executeQuery("SELECT CU.PACKAGE_NAME,SL.CLASS_NAME,SL.LINE_OF_CODE,SL.END_LINE_OF_CODE,SL.LOCATION_TYPE,SL.IDENTIFIER"
-								+ "   FROM ARTIFACT_SOURCE_LOCATION_RELTN ASLR, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
-								+ "   WHERE ASLR.ARTIFACT_ID = "
-								+ artifactId
-								+ " AND SL.ID = ASLR.SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID");
-        try {
-          return new ArtifactDetail(artSet, sourceSet);
-        } finally {
-          artSet.close();
-          sourceSet.close();
-        }
+				ResultSet sourceSet = sourceSt.executeQuery(QB.get(15,
+						artifactId));
+				try {
+					return new ArtifactDetail(artSet, sourceSet);
+				} finally {
+					artSet.close();
+					sourceSet.close();
+				}
 			} finally {
 				sourceSt.close();
 			}
@@ -99,5 +90,4 @@ public class ArtifactDetail {
 			artSt.close();
 		}
 	}
-
 }
