@@ -328,6 +328,8 @@ public class LocalTool extends AbstractTool {
     
     private static final int FIRST_LINES = 3;
     
+    private String currentTask = "(unknown)";
+    
     public void run() {
       final boolean debug = LOG.isLoggable(Level.FINE);
       CommandlineJava cmdj   = new CommandlineJava();
@@ -391,7 +393,10 @@ public class LocalTool extends AbstractTool {
               switch (Remote.valueOf(first)) {
                 case TASK:
                   System.out.println(line);
-                  monitor.beginTask(st.nextToken(), Integer.valueOf(st.nextToken().trim()));
+                  final String task = currentTask = st.nextToken();
+                  final String work = st.nextToken();
+                  // LOG.info(task+": "+work);
+                  monitor.beginTask(task, Integer.valueOf(work.trim()));
                   break;
                 case SUBTASK:
                   monitor.subTask(st.nextToken());
@@ -408,7 +413,7 @@ public class LocalTool extends AbstractTool {
                   String msg = copyException(first, st.nextToken(), br);
                   System.out.println("Terminating run");
                   p.destroy();
-                  if (msg.startsWith("FAILED:  java.lang.OutOfMemoryError")) {
+                  if (msg.contains("FAILED:  java.lang.OutOfMemoryError")) {
                     throw new ToolException(SierraToolConstants.ERROR_MEMORY_SIZE_TOO_SMALL, 
                                             config.getMemorySize());
                   }
@@ -495,7 +500,7 @@ public class LocalTool extends AbstractTool {
     }
     
     private String copyException(String type, String msg, BufferedReader br) throws IOException {
-      StringBuilder sb = new StringBuilder(type);      
+      StringBuilder sb = new StringBuilder(currentTask+' '+type);      
       System.out.println(msg);
       sb.append(": ").append(msg).append('\n');
       
