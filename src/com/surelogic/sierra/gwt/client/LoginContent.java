@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -17,10 +16,10 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.data.LoginResult;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class LoginContent extends ContentComposite {
@@ -67,27 +66,22 @@ public class LoginContent extends ContentComposite {
 		final String passwordText = password.getText().trim();
 
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.login(usernameText, passwordText, new AsyncCallback() {
+		sessionService.login(usernameText, passwordText, new Callback() {
 
-			public void onFailure(Throwable caught) {
-				ExceptionTracker.logException(caught);
-
+			protected void onException(Throwable caught) {
 				resetLoginAttempt();
-				errorMessage
-						.setText("Authentication service unavailable. (Server may be down)");
+				super.onException(caught);
 			}
 
-			public void onSuccess(Object result) {
+			public void onFailure(String message, Object result) {
 				resetLoginAttempt();
-				LoginResult lr = (LoginResult) result;
-				if (lr.getErrorMessage() != null) {
-					errorMessage.setText(lr.getErrorMessage());
-				} else if (lr.getUserAccount() == null) {
-					errorMessage.setText("No user account available");
-				} else {
-					errorMessage.setText("");
-					ClientContext.setUser(lr.getUserAccount());
-				}
+				errorMessage.setText(message);
+			}
+
+			public void onSuccess(String message, Object result) {
+				resetLoginAttempt();
+				errorMessage.setText("");
+				ClientContext.setUser((UserAccount) result);
 			}
 		});
 	}
