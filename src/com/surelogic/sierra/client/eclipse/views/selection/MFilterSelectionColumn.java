@@ -190,44 +190,75 @@ public final class MFilterSelectionColumn extends MColumn implements
 	          }
 	        }
 				});
-				
+					
 				f_reportContents.addListener(SWT.MouseDown, new Listener() {
 					public void handleEvent(Event e) {
 						int mods = e.stateMask & SWT.MODIFIER_MASK;
 						// Only consider left-clicks as selection events
-						if (e.button == 1 && mods == 0) {							 
-							handleNextSelection.set(true);						
+						if (e.button == 1 && mods == 0) {					
+							Point p = new Point(e.x, e.y);
+							TableItem item = f_reportContents.getItem(p);
+							if (item != null) {
+								handleNextSelection.set(true);		
+							}
 						}
 					}				
 				});
 				f_reportContents.addSelectionListener(new SelectionListener() {
-					private void select(SelectionEvent e) {
+					private void select(SelectionEvent e, boolean check) {
 						TableItem item = (TableItem) e.item;
-						if ((e.detail & SWT.CHECK) == 0 || SystemUtils.IS_OS_LINUX) {
-							item.setChecked(!item.getChecked());
-						}
+						item.setChecked(check);
 						selectionChanged(item);
 						e.doit = false;
 					}
 					// e.g. return, double-click
 					public void widgetDefaultSelected(SelectionEvent e) {
 						System.out.println("Default selection "+e.time);
-
-						select(e);
+						/*
+						TableItem item = (TableItem) e.item;
+						boolean checked = item.getChecked();
+						if ((e.detail & SWT.CHECK) == 0 || SystemUtils.IS_OS_LINUX) {
+							checked = !checked;
+						}
+						select(e, checked);
+						*/
 					}
-					private int lastSelectTime = -1;
+					
 					// e.g., space, click on row, click on box
 					public void widgetSelected(SelectionEvent e) {   
-						if (lastSelectTime == e.time) {
-							return;
-						}
-						lastSelectTime = e.time;
-						
+						/*
+						 * Default behavior:
+						 * Unselected:
+						 *   Click on checkbox: still unselected, toggles check 
+						 *   Click on rest:     selects, maybe checks
+						 * Selected:
+				         *   Click on checkbox: re-selects, toggles check
+						 *   Click on rest:     selects
+						 */
+						/*
 						if (!handleNextSelection.getAndSet(false)) {
+							System.out.println("Ignoring Checkbox: "+((e.detail & SWT.CHECK) != 0));
 							return;
 						}
 						System.out.println("Selection "+e.time);
-						select(e);
+						TableItem item = (TableItem) e.item;
+						System.out.println("Selected: "+f_reportContents.isSelected(f_reportContents.indexOf(item)));
+						boolean checked = item.getChecked();
+						System.out.println("Checked: "+checked);
+						System.out.println("Checkbox: "+((e.detail & SWT.CHECK) != 0));
+						if ((e.detail & SWT.CHECK) == 0 || 
+							//f_reportContents.isSelected(f_reportContents.indexOf(item)) || 
+							SystemUtils.IS_OS_LINUX) {
+							checked = !checked;
+							System.out.println("Toggled: "+checked);
+						}
+						select(e, checked);
+						*/
+						TableItem item = (TableItem) e.item;
+						// Only handle if clicking on the checkbox, not the rest
+						if ((e.detail & SWT.CHECK) != 0) {
+							select(e, item.getChecked());
+						}						
 					}				  
 				});		
 				
