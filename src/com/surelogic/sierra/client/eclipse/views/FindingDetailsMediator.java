@@ -360,16 +360,29 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			}
 		});
 
-		f_commentButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
+		final Listener commentListener = new Listener() {
+			public void handleEvent(Event event) {
 				final String commentText = f_commentText.getText();
 				if (commentText == null || commentText.trim().equals(""))
 					return;
 				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
 						commentText);
+			}			
+		};
+		f_commentText.addListener(SWT.KeyDown, new Listener() {
+			public void handleEvent(Event e) {
+				if (e.character != SWT.CR) {
+					return;
+				}
+				// Some kind of return
+				final int ctrl = e.stateMask & SWT.CONTROL;
+				if (ctrl != 0) {
+					// Got Ctrl-Return
+					commentListener.handleEvent(e);
+				}
 			}
-		});
+		});		
+		f_commentButton.addListener(SWT.Selection, commentListener);
 
 		final SelectionAdapter stampAction = new SelectionAdapter() {
 			@Override
