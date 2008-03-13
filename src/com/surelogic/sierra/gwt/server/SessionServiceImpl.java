@@ -61,13 +61,14 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 		}
 	}
 
-	public void logout() {
+	public Result logout() {
 		try {
 			getThreadLocalRequest().getSession().invalidate();
 		} catch (IllegalStateException ise) {
 			// ignore exception if already logged out
 		}
 		UserContext.set(null);
+		return Result.success("Logged out.");
 	}
 
 	private UserAccount getUserAccount(final User user) {
