@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.concurrent.ScheduledExecutorService;
 
-public final class SierraPortalLog extends ServerLog {
+public final class SierraPortalLog extends FileBasedServerLog {
 
 	final FilenameFilter f_filenameFilter;
 

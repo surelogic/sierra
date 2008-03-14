@@ -1,6 +1,9 @@
 package com.surelogic.sierra.eclipse.teamserver.model;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -13,10 +16,6 @@ import java.util.logging.Logger;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Commandline.Argument;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
@@ -68,11 +67,15 @@ public final class TeamServer {
 
 	private final String f_pluginDir;
 
-	public TeamServer(final int port, final ScheduledExecutorService executor) {
+	private final JettyConsoleLog f_consoleLog;
+
+	public TeamServer(final int port, final ScheduledExecutorService executor,
+			final JettyConsoleLog consoleLog) {
 		f_port = new AtomicInteger(port);
 		f_executor = executor;
 		f_pluginDir = Activator.getDefault().getDirectoryOf(
 				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
+		f_consoleLog = consoleLog;
 	}
 
 	/**
@@ -250,7 +253,7 @@ public final class TeamServer {
 		Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);
 
-		runJava("Jetty Start", command);
+		runJava(command, true);
 
 		synchronized (this) {
 			f_inStart = true;
@@ -266,7 +269,7 @@ public final class TeamServer {
 		Argument jettyStop = command.createArgument();
 		jettyStop.setValue(JETTY_STOP_ARG);
 
-		runJava("Jetty Stop ", command);
+		runJava(command, false);
 
 		synchronized (this) {
 			f_inStop = true;
@@ -300,14 +303,14 @@ public final class TeamServer {
 		return command;
 	}
 
-	private void runJava(final String label, final CommandlineJava command) {
+	private void runJava(final CommandlineJava command, boolean logConsole) {
 		final Logger log = SLLogger.getLogger();
 		if (log.isLoggable(Level.FINE)) {
 			log.fine(command.toString());
 		}
 		ProcessBuilder b = new ProcessBuilder(command.getCommandline());
 		b.redirectErrorStream(true);
-		
+
 		final File workingDirectory = launderToFile(f_pluginDir + JETTY_DIR);
 		b.directory(workingDirectory);
 		final String commandLine = command.toString();
@@ -316,26 +319,17 @@ public final class TeamServer {
 				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
 			final Process p = b.start();
-			final Job job = new Job("Copying output for "+label) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						redirectOutput(label, p);
-					} catch (IOException e) {
-						log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
-					}
-					return Status.OK_STATUS;
-				}				
-			};
-			job.setSystem(true);
-			job.schedule();
+			if (logConsole) {
+				f_consoleLog.changeToProcess(p);
+			}
 		} catch (IOException e) {
 			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
 		}
 	}
 
 	private void redirectOutput(String prefix, Process p) throws IOException {
-		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		BufferedReader r = new BufferedReader(new InputStreamReader(p
+				.getInputStream()));
 		String line = r.readLine();
 		while (line != null) {
 			System.out.print(prefix);
@@ -344,7 +338,7 @@ public final class TeamServer {
 			line = r.readLine();
 		}
 	}
-	
+
 	private String launder(final String pathfile) {
 		return launderToFile(pathfile).getAbsolutePath();
 	}

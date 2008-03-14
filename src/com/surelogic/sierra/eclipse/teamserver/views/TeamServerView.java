@@ -73,6 +73,9 @@ public class TeamServerView extends ViewPart {
 		final ToolBar logBar = new ToolBar(logGroup, SWT.VERTICAL);
 		data = new GridData(SWT.CENTER, SWT.TOP, false, true);
 		logBar.setLayoutData(data);
+		final ToolItem jettyConsoleLogItem = new ToolItem(logBar, SWT.RADIO);
+		jettyConsoleLogItem.setImage(SLImages.getImage(SLImages.IMG_CONSOLE));
+		jettyConsoleLogItem.setToolTipText("Show Jetty Console Output");
 		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
 		jettyRequestLogItem.setImage(SLImages.getImage(SLImages.IMG_JETTY_LOG));
 		jettyRequestLogItem.setToolTipText("Show Jetty Request Log");
@@ -116,8 +119,8 @@ public class TeamServerView extends ViewPart {
 		menu.add(new PreferenceAction("Preferences..."));
 
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
-				trafficLight, jettyRequestLogItem, portalLogItem,
-				servicesLogItem, logGroup, logText,
+				trafficLight, jettyConsoleLogItem, jettyRequestLogItem,
+				portalLogItem, servicesLogItem, logGroup, logText,
 				toggleLogVisibilityMenuItem, showLogAction);
 		f_mediator.init();
 	}

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.concurrent.ScheduledExecutorService;
 
-public final class JettyRequestLog extends ServerLog {
+public final class JettyRequestLog extends FileBasedServerLog {
 
 	final FilenameFilter f_filenameFilter;
 

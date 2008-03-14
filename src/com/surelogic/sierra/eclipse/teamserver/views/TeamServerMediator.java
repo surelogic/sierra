@@ -40,6 +40,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
 import com.surelogic.sierra.eclipse.teamserver.model.IServerLogObserver;
 import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
+import com.surelogic.sierra.eclipse.teamserver.model.JettyConsoleLog;
 import com.surelogic.sierra.eclipse.teamserver.model.JettyRequestLog;
 import com.surelogic.sierra.eclipse.teamserver.model.ServerLog;
 import com.surelogic.sierra.eclipse.teamserver.model.SierraPortalLog;
@@ -54,6 +55,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final Label f_portLabel;
 	private final Text f_port;
 	private final Canvas f_trafficLight;
+	private final ToolItem f_jettyConsoleLogItem;
 	private final ToolItem f_jettyRequestLogItem;
 	private final ToolItem f_portalLogItem;
 	private final ToolItem f_servicesLogItem;
@@ -65,6 +67,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final String f_ipAddress;
 
 	private final TeamServer f_teamServer;
+	private final JettyConsoleLog f_jettyConsoleLog;
+	private final IServerLogObserver f_jettyConsoleLogObserver;
 	private final ServerLog f_jettyRequestLog;
 	private final IServerLogObserver f_jettyRequestLogObserver;
 	private final ServerLog f_portalLog;
@@ -128,15 +132,16 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			.newScheduledThreadPool(2);
 
 	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
-			Canvas trafficLight, ToolItem jettyRequestLogItem,
-			ToolItem portalLogItem, ToolItem servicesLogItem, Group logGroup,
-			Text logText, MenuItem toggleLogVisibilityMenuItem,
-			Action showLogAction) {
+			Canvas trafficLight, ToolItem jettyConsoleLogItem,
+			ToolItem jettyRequestLogItem, ToolItem portalLogItem,
+			ToolItem servicesLogItem, Group logGroup, Text logText,
+			MenuItem toggleLogVisibilityMenuItem, Action showLogAction) {
 		f_command = command;
 		f_status = status;
 		f_portLabel = portLabel;
 		f_port = port;
 		f_trafficLight = trafficLight;
+		f_jettyConsoleLogItem = jettyConsoleLogItem;
 		f_jettyRequestLogItem = jettyRequestLogItem;
 		f_portalLogItem = portalLogItem;
 		f_servicesLogItem = servicesLogItem;
@@ -145,7 +150,10 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
 		f_showLogAction = showLogAction;
 
-		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
+		f_jettyConsoleLog = new JettyConsoleLog(f_executor);
+		f_jettyConsoleLogObserver = new LogObserver(f_jettyConsoleLogItem);
+		f_teamServer = new TeamServer(PreferenceConstants.getPort(),
+				f_executor, f_jettyConsoleLog);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
 		f_jettyRequestLogObserver = new LogObserver(f_jettyRequestLogItem);
 		f_portalLog = new SierraPortalLog(f_executor);
@@ -207,6 +215,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			}
 		});
 
+		f_jettyConsoleLogItem.addListener(SWT.Selection,
+				new LogSelectionListener(f_jettyConsoleLog, 0));
 		f_jettyRequestLogItem.addListener(SWT.Selection,
 				new LogSelectionListener(f_jettyRequestLog, 1));
 		f_portalLogItem.addListener(SWT.Selection, new LogSelectionListener(
@@ -218,7 +228,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		 * Which log is showing is persisted.
 		 */
 		final int logShowing = PreferenceConstants.getLogShowing();
-		if (logShowing == 1) {
+		if (logShowing == 0) {
+			f_jettyConsoleLogItem.setSelection(true);
+		} else if (logShowing == 1) {
 			f_jettyRequestLogItem.setSelection(true);
 		} else if (logShowing == 2) {
 			f_portalLogItem.setSelection(true);
@@ -233,6 +245,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 					}
 				});
 		adjustLogVisibility();
+
+		f_jettyConsoleLog.init();
+		f_jettyConsoleLog.addObserver(f_jettyConsoleLogObserver);
 
 		f_teamServer.init();
 		f_teamServer.addObserver(this);
@@ -359,6 +374,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	void dispose() {
+		f_jettyConsoleLog.removeObserver(f_jettyConsoleLogObserver);
 		f_teamServer.removeObserver(this);
 		f_jettyRequestLog.removeObserver(f_jettyRequestLogObserver);
 		f_portalLog.removeObserver(f_portalLogObserver);
@@ -366,6 +382,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 		f_executor.shutdown();
 
+		f_jettyConsoleLog.dispose();
 		f_teamServer.dispose();
 		f_jettyRequestLog.dispose();
 		f_portalLog.dispose();
