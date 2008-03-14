@@ -49,20 +49,17 @@ public final class SynchronizeView extends ViewPart {
 		 */
 		TableColumn column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("Project");
-		// column.addListener(SWT.Selection,
-		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		column.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("To Server");
-		// column.addListener(SWT.Selection,
-		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		column.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		column = new TableColumn(syncTable, SWT.RIGHT);
 		column.setText("Occurred");
-		// column.addListener(SWT.Selection,
-		// TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		column.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);
 
 		for (TableColumn c : syncTable.getColumns()) {
