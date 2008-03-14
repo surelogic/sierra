@@ -132,4 +132,16 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
+	
+	public static final String P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES = "com.surelogic.common.eclipse.omit-empty-synchronize-entries";
+
+	public static boolean hideEmptySynchronizeEntries() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES);
+	}
+
+	public static void setHideEmptySynchronizeEntries(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, value);
+	}
 }
