@@ -79,9 +79,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				return publishRun(scan, slMonitor);
 			}
 		} catch (Exception e) {
-			final int errNo = 50;
-			final String msg = I18N.err(errNo, f_projectName, f_server);
-			return SLStatus.createErrorStatus(errNo, msg, e);
+			return createErrorStatus(50, e);
 		}
 	}
 
@@ -138,8 +136,10 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				scanVersion = "(none)";
 			final String msg = I18N.err(errNo, scanVersion, f_projectName,
 					f_server);
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			return SLStatus.createErrorStatus(errNo, msg);
+			//SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			IStatus s = SLStatus.createErrorStatus(errNo, msg);
+			showErrorDialog(msg, e, "Error while publishing run", s);
+			return s;
 		}
 	}
 }

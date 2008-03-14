@@ -47,18 +47,31 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
     final String msg = I18N.err(errNo, f_projectName, f_server);
     final IStatus s = SLStatus.createWarningStatus(errNo, msg, t);
     final String title = "Problem while "+getName();
-    SLLogger.log(Level.INFO, msg, t);
-    Job job = new SLUIJob() {
-		@Override
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			// Note this will be automatically logged by Eclipse
-			// when the original job returns 
-		    ErrorDialogUtility.open(null, title, s, false);
-			return Status.OK_STATUS;
-		} 
-    	
-    };
-    job.schedule();
+    showErrorDialog(msg, t, title, s);
     return s;
+  }
+  
+  protected final IStatus createErrorStatus(final int errNo, Throwable t) {
+	  final String msg = I18N.err(errNo, f_projectName, f_server);
+	  final IStatus s = SLStatus.createErrorStatus(errNo, msg, t);
+	  final String title = "Error while "+getName();
+	  showErrorDialog(msg, t, title, s);
+	  return s;
+  }
+
+  public void showErrorDialog(final String msg, Throwable t, 
+		                       final String title, final IStatus s) {
+	  SLLogger.log(Level.INFO, msg, t);
+	  Job job = new SLUIJob() {
+		  @Override
+		  public IStatus runInUIThread(IProgressMonitor monitor) {
+			  // Note this will be automatically logged by Eclipse
+			  // when the original job returns 
+			  ErrorDialogUtility.open(null, title, s, false);
+			  return Status.OK_STATUS;
+		  } 
+
+	  };
+	  job.schedule();
   }
 }
