@@ -9,6 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
@@ -50,13 +51,13 @@ public final class TeamServer {
 		if (port <= 0) {
 			final String msg = I18N.err(77, port);
 			final IllegalArgumentException e = new IllegalArgumentException(msg);
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			SLLogger.log(Level.SEVERE, msg, e);
 			throw e;
 		}
 		if (f_isRunning) {
 			final String msg = I18N.err(78);
 			final IllegalStateException e = new IllegalStateException(msg);
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			SLLogger.log(Level.SEVERE, msg, e);
 			throw e;
 		}
 		f_port.set(port);
@@ -144,28 +145,24 @@ public final class TeamServer {
 			public void run() {
 				boolean isRunning;
 				boolean isNotRunning;
+				final Logger log = SLLogger.getLogger();
 				try {
 					Socket s = new Socket(LOCALHOST, f_port.get());
-					if (SLLogger.getLogger().isLoggable(Level.FINEST)) {
-						SLLogger
-								.getLogger()
-								.finest(
-										"(periodic check) A local team server is running.");
+					if (log.isLoggable(Level.FINEST)) {
+						log
+								.finest("(periodic check) A local team server is running.");
 					}
 					isRunning = true;
 					isNotRunning = false;
 					s.close();
 				} catch (UnknownHostException e) {
-					SLLogger.getLogger().log(Level.SEVERE,
-							I18N.err(63, LOCALHOST), e);
+					log.log(Level.SEVERE, I18N.err(63, LOCALHOST), e);
 					isRunning = false;
 					isNotRunning = false;
 				} catch (IOException e) {
-					if (SLLogger.getLogger().isLoggable(Level.FINEST)) {
-						SLLogger
-								.getLogger()
-								.finest(
-										"(periodic check) A local team server is not running.");
+					if (log.isLoggable(Level.FINEST)) {
+						log
+								.finest("(periodic check) A local team server is not running.");
 					}
 					isRunning = false;
 					isNotRunning = true;
@@ -301,16 +298,21 @@ public final class TeamServer {
 	}
 
 	private void runJava(final CommandlineJava command) {
-		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-			SLLogger.getLogger().fine(command.toString());
+		final Logger log = SLLogger.getLogger();
+		if (log.isLoggable(Level.FINE)) {
+			log.fine(command.toString());
 		}
 		ProcessBuilder b = new ProcessBuilder(command.getCommandline());
-		b.directory(launderToFile(f_pluginDir + JETTY_DIR));
+		final File workingDirectory = launderToFile(f_pluginDir + JETTY_DIR);
+		b.directory(workingDirectory);
+		final String commandLine = command.toString();
+		log.log(Level.INFO, "Local team server command '" + commandLine
+				+ "' with a working directory of '"
+				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
 			b.start();
 		} catch (IOException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					I18N.err(65, command.toString()), e);
+			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
 		}
 	}
 
@@ -321,7 +323,7 @@ public final class TeamServer {
 	private File launderToFile(final String pathfile) {
 		final File file = new File(pathfile);
 		if (!file.exists()) {
-			SLLogger.getLogger().log(Level.SEVERE, I18N.err(74, pathfile));
+			SLLogger.log(Level.SEVERE, I18N.err(74, pathfile));
 		}
 		return file;
 	}
