@@ -304,6 +304,13 @@
 			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_sync.gif"
 			name="Synchronize History">
 		</view>
+		
+		<view category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.ProjectStatusView"
+			id="com.surelogic.sierra.client.eclipse.views.ProjectStatusView"
+			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_status.gif"
+			name="Project Synchronize Status">
+		</view>		
 	</extension>
 
 	<!-- Code Review perspective links and Java perspective links -->

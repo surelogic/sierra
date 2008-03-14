@@ -1,0 +1,161 @@
+package com.surelogic.sierra.client.eclipse.views;
+
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
+
+import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.jdbc.finding.AuditDetail;
+import com.surelogic.sierra.jdbc.finding.SynchDetail;
+import com.surelogic.sierra.jdbc.finding.SynchOverview;
+
+public final class ProjectStatusMediator extends AbstractDatabaseObserver {
+	private final Tree f_statusTree;
+
+	public ProjectStatusMediator(Tree statusTree) {
+		f_statusTree = statusTree;
+	}
+
+	public void init() {
+		DatabaseHub.getInstance().addObserver(this);
+		/*
+		f_statusTree.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				updateEventTable();
+			}
+		});
+		*/
+		asyncUpdateContents();
+	}
+
+	public void dispose() {
+		DatabaseHub.getInstance().removeObserver(this);
+	}
+
+	public void setFocus() {
+		f_statusTree.setFocus();
+	}
+
+	@Override
+	public void projectDeleted() {
+		asyncUpdateContents();
+	}
+
+	@Override
+	public void serverSynchronized() {
+		asyncUpdateContents();
+	}
+
+	private void asyncUpdateContents() {
+		final Job job = new DatabaseJob(
+				"Updating set of server synchronization events") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
+				try {
+					updateContents();
+				} catch (Exception e) {
+					final int errNo = 58;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void updateContents() throws Exception {
+		Connection c = Data.transactionConnection();
+		Exception exc = null;
+		try {
+			final List<SynchOverview> synchList = SynchOverview
+					.listOverviews(c);
+			final UIJob job = new SLUIJob() {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					updateSyncTableContents(synchList);
+					if (Projects.getInstance().isEmpty()) {
+						f_statusTree.setVisible(false);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+			c.commit();
+			DatabaseHub.getInstance().notifyFindingMutated();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
+		} finally {
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Must be called from the SWT thread.
+	 */
+	private void updateSyncTableContents(List<SynchOverview> synchList) {
+		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+		f_statusTree.removeAll();
+		for (SynchOverview so : synchList) {
+			if (hideEmpty && so.isEmpty()) {
+				continue;
+			}
+			/*
+			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
+			final String projectName = so.getProject();
+			final SierraServer server = SierraServerManager.getInstance()
+					.getServer(projectName);
+			final String serverName;
+			if (server != null) {
+				serverName = server.getLabel();
+			} else {
+				serverName = "(unknown)";
+			}
+			item.setText(0, projectName);
+			item.setImage(0, SLImages
+					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			item.setText(1, serverName);
+			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+			item.setText(2, dateFormat.format(so.getTime()));
+			item.setData(so);
+			*/
+		}
+
+		if ((synchList.isEmpty()) || (Projects.getInstance().isEmpty())) {
+			f_statusTree.setVisible(false);
+		}
+		f_statusTree.pack();
+	}
+}
