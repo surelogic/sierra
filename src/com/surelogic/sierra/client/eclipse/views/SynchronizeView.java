@@ -1,37 +1,18 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.swt.widgets.*;
 
 import com.surelogic.adhoc.views.TableUtility;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 
-public final class SynchronizeView extends ViewPart {
-
+public final class SynchronizeView extends AbstractSierraView<SynchronizeMediator> {
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SynchronizeView";
 
-	private SynchronizeMediator f_mediator = null;
-
 	@Override
-	public void dispose() {
-		if (f_mediator != null)
-			f_mediator.dispose();
-		super.dispose();
-	}
-
-	@Override
-	public void createPartControl(final Composite parent) {
-
+	protected SynchronizeMediator createMorePartControls(final Composite parent) {
 		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
 		sash.setLayout(new FillLayout());
 
@@ -41,12 +22,8 @@ public final class SynchronizeView extends ViewPart {
 		final Table syncTable = new Table(sash, SWT.FULL_SELECTION);
 		syncTable.setHeaderVisible(true);
 		syncTable.setLinesVisible(true);
+		syncTable.setVisible(true);
 
-		/*
-		 * TODO: The sorts don't work because the data used to query the details
-		 * about the sync with server are lost during the sort. This needs to be
-		 * fixed.
-		 */
 		TableColumn column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("Project");
 		column.addListener(SWT.Selection, TableUtility.SORT_COLUMN_ALPHABETICALLY);
@@ -110,11 +87,6 @@ public final class SynchronizeView extends ViewPart {
 
 		sash.setWeights(new int[] { 40, 60 });
 
-		/*
-		 * Allow direct access to the preferences from the view.
-		 */
-		final IMenuManager menu = getViewSite().getActionBars()
-				.getMenuManager();
 		final Action omitEmptyEntriesAction = 
 			new Action("Omit Empty Entries", IAction.AS_CHECK_BOX) {
 			@Override
@@ -122,24 +94,8 @@ public final class SynchronizeView extends ViewPart {
 				f_mediator.setHideEmptyEntries(isChecked());				
 			}
 		};
-		menu.add(omitEmptyEntriesAction);
-		menu.add(new Separator());
-		menu.add(new PreferencesAction("Preferences..."));
-		
-		/*
-		 * Allow access to help via the F1 key.
-		 */
-		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
-				parent,
-				"com.surelogic.sierra.client.eclipse.view-synchronize-history");
+		addToViewMenu(omitEmptyEntriesAction);
 
-		f_mediator = new SynchronizeMediator(syncTable, eventsTable);
-		f_mediator.init();
-	}
-
-	@Override
-	public void setFocus() {
-		if (f_mediator != null)
-			f_mediator.setFocus();
+		return new SynchronizeMediator(this, syncTable, eventsTable);
 	}
 }

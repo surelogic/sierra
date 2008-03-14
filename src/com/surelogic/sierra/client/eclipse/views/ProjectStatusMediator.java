@@ -1,45 +1,53 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.jdbc.finding.AuditDetail;
-import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
-public final class ProjectStatusMediator extends AbstractDatabaseObserver {
+public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 	private final Tree f_statusTree;
 
-	public ProjectStatusMediator(Tree statusTree) {
+	public ProjectStatusMediator(IViewCallback cb, Tree statusTree) {
+		super(cb);
 		f_statusTree = statusTree;
 	}
 
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-project-status";
+	}
+
+	public String getNoDataId() {
+		return "sierra.eclipse.noDataProjectStatus";
+	}
+	
+	@Override
+	public Listener getNoDataListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				new NewScanDialogAction().run(null);
+			}
+		};
+	}
+	
+	@Override 
 	public void init() {
-		DatabaseHub.getInstance().addObserver(this);
+		super.init();
 		/*
 		f_statusTree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -48,10 +56,6 @@ public final class ProjectStatusMediator extends AbstractDatabaseObserver {
 		});
 		*/
 		asyncUpdateContents();
-	}
-
-	public void dispose() {
-		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	public void setFocus() {
@@ -126,7 +130,7 @@ public final class ProjectStatusMediator extends AbstractDatabaseObserver {
 	 */
 	private void updateSyncTableContents(List<SynchOverview> synchList) {
 		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+		//final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		f_statusTree.removeAll();
 		for (SynchOverview so : synchList) {
 			if (hideEmpty && so.isEmpty()) {

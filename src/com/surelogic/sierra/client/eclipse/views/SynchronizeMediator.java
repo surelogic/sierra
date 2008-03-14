@@ -25,27 +25,42 @@ import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
-public final class SynchronizeMediator extends AbstractDatabaseObserver {
+public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	private final Table f_syncTable;
 	private final Table f_eventsTable;
 
-	public SynchronizeMediator(Table syncTable, Table eventsTable) {
+	public SynchronizeMediator(IViewCallback cb, Table syncTable, Table eventsTable) {
+		super(cb);
 		f_syncTable = syncTable;
 		f_eventsTable = eventsTable;
 	}
 
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-synchronize-history";
+	}
+
+	public String getNoDataId() {
+		return "sierra.eclipse.noDataSynchronizeHistory";
+	}
+
+	@Override
+	public Listener getNoDataListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				ViewUtility.showView(SierraServersView.ID);
+			}
+		};
+	}
+	
+	@Override
 	public void init() {
-		DatabaseHub.getInstance().addObserver(this);
+		super.init();
 		f_syncTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				updateEventTable();
@@ -57,10 +72,6 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			}
 		});
 		asyncUpdateContents();
-	}
-
-	public void dispose() {
-		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	public void setFocus() {
@@ -106,10 +117,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateSyncTableContents(synchList);
-					if (Projects.getInstance().isEmpty()) {
-						f_eventsTable.setVisible(false);
-					}
+					updateSyncTableContents(synchList);		
 					return Status.OK_STATUS;
 				}
 			};
@@ -138,6 +146,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();
+		
 		for (SynchOverview so : synchList) {
 			if (hideEmpty && so.isEmpty()) {
 				continue;
@@ -161,9 +170,7 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 			item.setData(so);
 		}
 
-		if ((synchList.isEmpty()) || (Projects.getInstance().isEmpty())) {
-			f_eventsTable.setVisible(false);
-		}
+		f_view.hasData(!synchList.isEmpty() && !Projects.getInstance().isEmpty());
 		packTable(f_syncTable);
 	}
 

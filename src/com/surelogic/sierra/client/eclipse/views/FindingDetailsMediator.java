@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -226,7 +227,15 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_importanceRadioPopupMenu = new Menu(f_pages.getShell(), SWT.POP_UP);
 	}
 
+	//private AtomicLong findingQueryInProgress = new AtomicLong();
+	
 	void asyncQueryAndShow(final long findingId) {
+		/*
+		long lastId = findingQueryInProgress.getAndSet(findingId);
+		if (lastId == findingId) {
+			return;
+		}
+		*/
 		final Job job = new DatabaseJob("Querying details of finding "
 				+ findingId) {
 			@Override
