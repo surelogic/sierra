@@ -1,5 +1,9 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -10,6 +14,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.adhoc.views.TableUtility;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 
 public final class SynchronizeView extends ViewPart {
 
@@ -108,6 +113,22 @@ public final class SynchronizeView extends ViewPart {
 
 		sash.setWeights(new int[] { 40, 60 });
 
+		/*
+		 * Allow direct access to the preferences from the view.
+		 */
+		final IMenuManager menu = getViewSite().getActionBars()
+				.getMenuManager();
+		final Action omitEmptyEntriesAction = 
+			new Action("Omit Empty Entries", IAction.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				f_mediator.setHideEmptyEntries(isChecked());				
+			}
+		};
+		menu.add(omitEmptyEntriesAction);
+		menu.add(new Separator());
+		menu.add(new PreferencesAction("Preferences..."));
+		
 		/*
 		 * Allow access to help via the F1 key.
 		 */

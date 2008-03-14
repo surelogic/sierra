@@ -30,12 +30,12 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeMediator extends AbstractDatabaseObserver {
-
 	private final Table f_syncTable;
 	private final Table f_eventsTable;
 
@@ -134,10 +134,14 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 	 * Must be called from the SWT thread.
 	 */
 	private void updateSyncTableContents(List<SynchOverview> synchList) {
+		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();
 		for (SynchOverview so : synchList) {
+			if (hideEmpty && so.isEmpty()) {
+				continue;
+			}
 			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
 			final String projectName = so.getProject();
 			final SierraServer server = SierraServerManager.getInstance()
@@ -261,6 +265,14 @@ public final class SynchronizeMediator extends AbstractDatabaseObserver {
 	private void packTable(final Table table) {
 		for (TableColumn col : table.getColumns()) {
 			col.pack();
+		}
+	}
+
+	public void setHideEmptyEntries(boolean hide) {
+		boolean old = PreferenceConstants.hideEmptySynchronizeEntries();
+		if (old != hide) {
+			PreferenceConstants.setHideEmptySynchronizeEntries(hide);
+			asyncUpdateContents();
 		}
 	}
 }
