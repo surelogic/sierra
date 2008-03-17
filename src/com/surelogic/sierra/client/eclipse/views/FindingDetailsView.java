@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -30,14 +29,10 @@ import org.eclipse.swt.widgets.Tree;
 
 import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
-import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
-import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediator> {
