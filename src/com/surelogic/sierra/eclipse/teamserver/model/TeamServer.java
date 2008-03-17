@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -179,6 +180,11 @@ public final class TeamServer {
 							f_inStart = false;
 							f_isRunning = true;
 							notifyObservers = true;
+							doneWithProcess();
+						} else if (processDied()) {
+							f_inStart = false;
+							f_isNotRunning = true;
+							notifyObservers = true;
 						}
 					} else if (f_inStop) {
 						if (isNotRunning) {
@@ -251,7 +257,7 @@ public final class TeamServer {
 		Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);
 
-		runJava(command);
+		runJava(command, true);
 
 		synchronized (this) {
 			f_inStart = true;
@@ -267,7 +273,7 @@ public final class TeamServer {
 		Argument jettyStop = command.createArgument();
 		jettyStop.setValue(JETTY_STOP_ARG);
 
-		runJava(command);
+		runJava(command, false);
 
 		synchronized (this) {
 			f_inStop = true;
@@ -301,7 +307,39 @@ public final class TeamServer {
 		return command;
 	}
 
-	private void runJava(final CommandlineJava command) {
+	private final AtomicReference<Process> f_process = new AtomicReference<Process>(
+			null);
+
+	private void doneWithProcess() {
+		f_process.set(null);
+	}
+
+	private boolean processDied() {
+		boolean result = true; // assume the worst
+		final Process p = f_process.get();
+		if (p != null) {
+			try {
+				p.exitValue();
+				/*
+				 * If we get to this point the startup of a Jetty process has
+				 * died.
+				 */
+			} catch (IllegalThreadStateException e) {
+				/*
+				 * This indicates that the Jetty process is still running.
+				 */
+				result = false;
+			}
+		} else {
+			/*
+			 * It is unexpected that the process is null.
+			 */
+			SLLogger.log(Level.SEVERE, I18N.err(93));
+		}
+		return result;
+	}
+
+	private void runJava(final CommandlineJava command, boolean storeProcess) {
 		final Logger log = SLLogger.getLogger();
 		if (log.isLoggable(Level.FINE)) {
 			log.fine(command.toString());
@@ -316,11 +354,9 @@ public final class TeamServer {
 				+ "' with a working directory of '"
 				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
-			b.start();
-			/*
-			 * TODO: do something with p to reset the yellow light when the job
-			 * dies.
-			 */
+			final Process p = b.start();
+			if (storeProcess)
+				f_process.set(p);
 		} catch (IOException e) {
 			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
 		}
