@@ -9,7 +9,7 @@ public final class ProjectStatusView extends AbstractSierraView<ProjectStatusMed
 	@Override
 	protected ProjectStatusMediator createMorePartControls(Composite parent) {
 		final Tree statusTree = new Tree(parent, SWT.NONE);
-
+		
 		/*
 		final Action omitEmptyEntriesAction = 
 			new Action("Omit Empty Entries", IAction.AS_CHECK_BOX) {

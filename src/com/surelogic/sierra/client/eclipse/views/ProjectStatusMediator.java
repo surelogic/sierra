@@ -1,29 +1,35 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.io.File;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.ide.IDE;
 
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.model.*;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.jdbc.finding.SynchOverview;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
+import com.surelogic.sierra.jdbc.finding.FindingAudits;
+import com.surelogic.sierra.tool.message.Audit;
 
-public final class ProjectStatusMediator extends AbstractSierraViewMediator 
-implements IViewUpdater {
+public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 	private final Tree f_statusTree;
-
+    private List<ProjectStatus> projects = Collections.emptyList();
+	
 	public ProjectStatusMediator(IViewCallback cb, Tree statusTree) {
 		super(cb);
 		f_statusTree = statusTree;
@@ -64,12 +70,7 @@ implements IViewUpdater {
 	}
 
 	@Override
-	public void projectDeleted() {
-		asyncUpdateContents();
-	}
-
-	@Override
-	public void serverSynchronized() {
+	public void changed() {
 		asyncUpdateContents();
 	}
 
@@ -91,17 +92,67 @@ implements IViewUpdater {
 			}
 		};
 		job.schedule();
+		
 	}
 
+	private static class ProjectStatus {
+		final String name;
+		final File scanDoc;
+		final List<FindingAudits> findings;
+		final int numAudits;
+		final Date earliestAudit, latestAudit;
+		
+		public ProjectStatus(String name, File scan, List<FindingAudits> findings) {
+			this.name = name;
+			scanDoc = scan;
+			this.findings = findings;
+
+			int newAudits = 0;
+			Date earliest = null;
+			Date latest = null;
+			for(FindingAudits fa : findings) {
+				newAudits += fa.getAudits().size();
+				for(Audit a : fa.getAudits()) {
+					if (earliest == null) {
+						earliest = latest = a.getTimestamp();
+					} 
+					else if (earliest.after(a.getTimestamp())){
+						earliest = a.getTimestamp();
+					}
+					else if (latest.before(a.getTimestamp())){
+						latest = a.getTimestamp();
+					}
+				}
+			}
+			numAudits = newAudits;
+			earliestAudit = earliest;
+			latestAudit = latest;
+		}
+		
+	}
+	
 	private void updateContents() throws Exception {
 		Connection c = Data.transactionConnection();
 		Exception exc = null;
-		try {
-			final List<SynchOverview> synchList = SynchOverview
-					.listOverviews(c);
-			asyncUpdateContentsForUI(this);
+		try {			
+			ClientFindingManager cfm = ClientFindingManager.getInstance(c);
+			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+			for(String name : Projects.getInstance().getProjectNames()) {				
+				// Check for new local audits
+				List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
+				// FIX Check for new remote audits
+				
+				// FIX Check for a full scan (later than what's on the server?)
+				final File scan = NewScan.getScanDocumentFile(name);
+				ProjectStatus s = new ProjectStatus(name, scan, findings);
+				projects.add(s);
+			}
+			asyncUpdateContentsForUI(new IViewUpdater() {
+				public void updateContentsForUI() {
+					updateContentsInUI(projects);
+				}
+			});
 			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {
 			c.rollback();
 			exc = e;
@@ -116,38 +167,58 @@ implements IViewUpdater {
 		}
 	}
 
-	public void updateContentsForUI() {
-		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
-		//final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+	public void updateContentsInUI(List<ProjectStatus> projects) {
+		// No need to synchronize since only updated/viewed in UI thread?
+		this.projects = projects;
+		
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		f_statusTree.removeAll();
-		/*
-		for (SynchOverview so : synchList) {
-			if (hideEmpty && so.isEmpty()) {
-				continue;
-			}
-			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
-			final String projectName = so.getProject();
-			final SierraServer server = SierraServerManager.getInstance()
-					.getServer(projectName);
-			final String serverName;
-			if (server != null) {
-				serverName = server.getLabel();
-			} else {
-				serverName = "(unknown)";
-			}
-			item.setText(0, projectName);
-			item.setImage(0, SLImages
-					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-			item.setText(1, serverName);
-			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
-			item.setText(2, dateFormat.format(so.getTime()));
-			item.setData(so);
-		}
 
-		if ((synchList.isEmpty()) || (Projects.getInstance().isEmpty())) {
-			f_statusTree.setVisible(false);
+		
+		boolean noProjects = projects.isEmpty();
+		f_statusTree.setVisible(!noProjects);
+		f_view.hasData(!noProjects);
+		
+		for (ProjectStatus ps : projects) {
+			final TreeItem root = new TreeItem(f_statusTree, SWT.NONE);
+			final SierraServer server = 
+				SierraServerManager.getInstance().getServer(ps.name);
+			if (server != null) {
+				root.setText(ps.name+" ["+server.getLabel()+']');
+			} else {
+				root.setText(ps.name);
+			}			
+			root.setImage(SLImages
+					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			root.setData(ps);
+			root.setExpanded(true);
+			
+			if (ps.scanDoc.exists()) {
+				TreeItem scan = new TreeItem(root, SWT.NONE);
+				Date modified = new Date(ps.scanDoc.lastModified());
+				scan.setText("Last full scan on "+dateFormat.format(modified));
+				scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+				scan.setData(ps.scanDoc);
+			}
+			if (!ps.findings.isEmpty()) {
+				TreeItem audits = new TreeItem(root, SWT.NONE);
+				audits.setText(ps.numAudits+" audit(s) on "+ps.findings.size()+" finding(s)");
+				audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
+				audits.setData(ps.findings);
+				
+				if (ps.earliestAudit != null) {
+					TreeItem earliest = new TreeItem(audits, SWT.NONE);
+					earliest.setText("Earliest on "+dateFormat.format(ps.latestAudit));
+				}
+				if (ps.latestAudit != null && ps.earliestAudit != ps.latestAudit) {
+					TreeItem latest = new TreeItem(audits, SWT.NONE);
+					latest.setText("Latest on "+dateFormat.format(ps.latestAudit));
+				}
+			}
 		}
-		*/
-		f_statusTree.pack();
+		f_statusTree.getParent().layout();
+		for(TreeItem item : f_statusTree.getItems()) {
+			item.setExpanded(true);
+		}
 	}
 }
