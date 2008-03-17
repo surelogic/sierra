@@ -23,10 +23,10 @@ import com.surelogic.sierra.schema.SierraSchemaUtility;
  * It sets up SLLogger based upon the web.xml context parameters on server
  * startup. It also checks that the database schema is up to date with the code.
  * <p>
- * The parameter <tt>SLLogger</tt> may be set to <tt>Use Sierra Directory</tt>
- * to cause the logger to log under the ~/Sierra/Server directory. If
- * <tt>SLLogger</tt> is set to <tt>No File Output</tt> only console logging
- * will be done. The default (no value) is to log into the temporary directory.
+ * The parameter <tt>SLLogger</tt> may be set to <tt>serverdir</tt> to cause
+ * the logger to log under the ~/Sierra/Server directory. If <tt>SLLogger</tt>
+ * is set to <tt>tempdir</tt> the logging will go into the temporary
+ * directory. The default (no value) is to log only to the console.
  * <p>
  * The parameter <tt>SLLoggerTag</tt> is set to a string to include in the
  * middle of the log file name. If this parameter is not set a default value of
@@ -60,35 +60,37 @@ public class BootUpServletContextListener implements ServletContextListener {
 			 */
 			loggerTag = "team-server";
 		}
-		if ("No File Output".equals(loggerOption))
-			return;
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy_MM_dd");
-
-		final String logFileName;
-		final String tail = File.separator + "log-" + loggerTag
-				+ dateFormat.format(new Date()) + ".txt";
-		if ("Use Sierra Directory".equals(loggerOption)) {
-			final String serverDirectory = FileUtility
-					.getSierraLocalTeamServerDirectory();
-			FileUtility.createDirectory(serverDirectory);
-			logFileName = serverDirectory + tail;
-		} else {
-			logFileName = System.getProperty("java.io.tmpdir") + tail;
-		}
-		try {
-			final FileHandler fh = new FileHandler(logFileName, true);
-			SLLogger.addHandler(fh);
-		} catch (Exception e) {
-			SLLogger.getLogger()
-					.log(Level.SEVERE, I18N.err(29, logFileName), e);
+		String toString = "";
+		if (loggerOption != null) {
+			final SimpleDateFormat dateFormat = new SimpleDateFormat(
+					"-yyyy_MM_dd");
+			final String logFileName;
+			final String tail = File.separator + "log-" + loggerTag
+					+ dateFormat.format(new Date()) + ".txt";
+			if ("serverdir".equals(loggerOption)) {
+				final String serverDirectory = FileUtility
+						.getSierraLocalTeamServerDirectory();
+				FileUtility.createDirectory(serverDirectory);
+				logFileName = serverDirectory + tail;
+			} else {
+				logFileName = System.getProperty("java.io.tmpdir") + tail;
+			}
+			try {
+				final FileHandler fh = new FileHandler(logFileName, true);
+				SLLogger.addHandler(fh);
+			} catch (Exception e) {
+				SLLogger.getLogger().log(Level.SEVERE,
+						I18N.err(29, logFileName), e);
+			}
+			toString = "to '" + logFileName + "' ";
 		}
 		final Runtime rt = Runtime.getRuntime();
 		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
 		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
 		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
 		SLLogger.getLogger().info(
-				contextName + " logging to '" + logFileName
-						+ "' initialized : Java runtime: maxMemory="
+				contextName + " logging " + toString
+						+ "initialized : Java runtime: maxMemory="
 						+ maxMemoryMB + " MB; totalMemory=" + totalMemoryMB
 						+ " MB; freeMemory=" + freeMemoryMB
 						+ " MB; availableProcessors="
