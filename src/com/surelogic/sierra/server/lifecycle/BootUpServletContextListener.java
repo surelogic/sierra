@@ -68,8 +68,8 @@ public class BootUpServletContextListener implements ServletContextListener {
 		final String tail = File.separator + "log-" + loggerTag
 				+ dateFormat.format(new Date()) + ".txt";
 		if ("Use Sierra Directory".equals(loggerOption)) {
-			final String serverDirectory = FileUtility.getSierraDataDirectory()
-					+ File.separator + "server";
+			final String serverDirectory = FileUtility
+					.getSierraLocalTeamServerDirectory();
 			FileUtility.createDirectory(serverDirectory);
 			logFileName = serverDirectory + tail;
 		} else {
