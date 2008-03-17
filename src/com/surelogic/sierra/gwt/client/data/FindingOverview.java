@@ -16,6 +16,7 @@ public class FindingOverview implements Serializable {
 	 */
 	private static final long serialVersionUID = -6080219515417976528L;
 
+	private String findingType;
 	private String category;
 	private String description;
 	private String importance;
@@ -34,6 +35,14 @@ public class FindingOverview implements Serializable {
 
 	public FindingOverview() {
 		// Do nothing
+	}
+
+	public String getFindingType() {
+		return findingType;
+	}
+
+	public void setFindingType(String findingType) {
+		this.findingType = findingType;
 	}
 
 	public String getCategory() {
