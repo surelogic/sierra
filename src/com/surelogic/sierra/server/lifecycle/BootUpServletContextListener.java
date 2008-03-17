@@ -27,6 +27,10 @@ import com.surelogic.sierra.schema.SierraSchemaUtility;
  * to cause the logger to log under the ~/Sierra/Server directory. If
  * <tt>SLLogger</tt> is set to <tt>No File Output</tt> only console logging
  * will be done. The default (no value) is to log into the temporary directory.
+ * <p>
+ * The parameter <tt>SLLoggerTag</tt> is set to a string to include in the
+ * middle of the log file name. If this parameter is not set a default value of
+ * <tt>team-server</tt> is used.
  */
 public class BootUpServletContextListener implements ServletContextListener {
 
