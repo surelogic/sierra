@@ -79,7 +79,6 @@ public class LoginContent extends ContentComposite {
 			}
 
 			public void onSuccess(String message, Object result) {
-				resetLoginAttempt();
 				errorMessage.setText("");
 				ClientContext.setUser((UserAccount) result);
 			}
