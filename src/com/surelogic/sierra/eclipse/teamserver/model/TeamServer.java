@@ -1,9 +1,7 @@
 package com.surelogic.sierra.eclipse.teamserver.model;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -324,18 +322,6 @@ public final class TeamServer {
 			}
 		} catch (IOException e) {
 			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
-		}
-	}
-
-	private void redirectOutput(String prefix, Process p) throws IOException {
-		BufferedReader r = new BufferedReader(new InputStreamReader(p
-				.getInputStream()));
-		String line = r.readLine();
-		while (line != null) {
-			System.out.print(prefix);
-			System.out.print(": ");
-			System.out.println(line);
-			line = r.readLine();
 		}
 	}
 
