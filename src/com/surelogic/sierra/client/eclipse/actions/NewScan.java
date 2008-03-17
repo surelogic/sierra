@@ -60,11 +60,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = new File(FileUtility
-							.getSierraDataDirectory()
-							+ File.separator
-							+ config.getProject()
-							+ SierraToolConstants.PARSED_FILE_SUFFIX);
+					File newScanDocument = getScanDocumentFile(config.getProject());
 					/*
 					 * This approach assures that the scan document generation
 					 * will not crash. The tool will simply override the
@@ -87,5 +83,10 @@ public class NewScan extends AbstractScan<IJavaProject> {
 			job.schedule();
 		}
 		return started;
+	}
+	
+	public static File getScanDocumentFile(String project) {
+		return new File(FileUtility.getSierraDataDirectory() + File.separator + 
+				        project	+ SierraToolConstants.PARSED_FILE_SUFFIX);
 	}
 }
