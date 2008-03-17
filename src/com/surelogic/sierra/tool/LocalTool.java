@@ -201,7 +201,8 @@ public class LocalTool extends AbstractTool {
       findJars(proj, path, pluginDir+'/'+libPath);
     }
     
-    private void setupCustomClassLoader(final boolean debug,
+    @SuppressWarnings("unused")
+	private void setupCustomClassLoader(final boolean debug,
         CommandlineJava cmdj) {
       //String tools = getPluginDir(debug, SierraToolConstants.TOOL_PLUGIN_ID);
       File commonLoading = new File(config.getToolsDirectory(), "common-loading.jar");
