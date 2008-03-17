@@ -79,7 +79,7 @@ public final class ClientProjectManager extends ProjectManager {
 		request.setServer(serverUid);
 		request.setRevision(findingManager.getLatestAuditRevision(projectName));
 		request.setTrails(findingManager
-				.getNewLocalAudits(projectName, monitor));
+				.getNewLocalAuditTrails(projectName, monitor));
 		final SyncResponse reply = service.synchronizeProject(request);
 		monitor.worked(1);
 		monitor.subTask("Writing remote updates into local database.");

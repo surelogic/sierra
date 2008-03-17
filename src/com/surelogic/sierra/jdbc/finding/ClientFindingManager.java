@@ -572,53 +572,28 @@ public final class ClientFindingManager extends FindingManager {
     }
 	}
 
-	public List<SyncTrailRequest> getNewLocalAudits(String projectName,
-			SLProgressMonitor monitor) throws SQLException {
-		List<SyncTrailRequest> trails = new ArrayList<SyncTrailRequest>();
+	/*
+	public List<> countNewLocalAudits(String projectName) {
+		
+	}
+	*/
+	
+	private abstract class AuditHandler<T> {
+	    @SuppressWarnings("unchecked")
+    	List<T> results = new ArrayList();
+	    	    
+    	abstract void handle(ResultSet audits) throws SQLException;
+    }
+	
+	private <T> void processNewLocalAudits(String projectName, AuditHandler<T> handler) 
+	throws SQLException {
 		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
 			findLocalAudits.setLong(1, rec.getId());
 			ResultSet set = findLocalAudits.executeQuery();
 			try {
-				long oldId = -1;
-				List<Audit> audits = null;
-				while (set.next()) {
-					int idx = 1;
-					long newId = set.getLong(idx++);
-					if (!(newId == oldId)) {
-						oldId = newId;
-						audits = new LinkedList<Audit>();
-						SyncTrailRequest trail = new SyncTrailRequest();
-						selectLocalMerge.setLong(1, oldId);
-						ResultSet mergeSet = selectLocalMerge.executeQuery();
-						final Merge merge = new Merge();
-						final Match match = new Match();
-						merge.setMatch(match);
-						try {
-							mergeSet.next();
-							int mergeIdx = 1;
-							merge.setSummary(mergeSet.getString(mergeIdx++));
-							merge.setImportance(Importance.values()[mergeSet
-									.getInt(mergeIdx++)]);
-							match.setPackageName(mergeSet.getString(mergeIdx++));
-							match.setClassName(mergeSet.getString(mergeIdx++));
-							match.setHash(mergeSet.getLong(mergeIdx++));
-							match
-									.setFindingType(mergeSet
-											.getString(mergeIdx++));
-							match.setRevision(mergeSet.getLong(mergeIdx++));
-						} finally {
-							mergeSet.close();
-						}
-						trail.setMerge(merge);
-						trail.setAudits(audits);
-						trails.add(trail);
-					}
-					audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
-							.valueOf(set.getString(idx++)), set
-							.getString(idx++)));
-				}
+				handler.handle(set);
 			} finally {
 				set.close();
 			}
@@ -626,9 +601,90 @@ public final class ClientFindingManager extends FindingManager {
 			throw new IllegalArgumentException("No project with name "
 					+ projectName + " exists.");
 		}
-		return trails;
 	}
-
+	
+	public List<FindingAudits> getNewLocalAudits(String projectName) 
+	throws SQLException {
+		AuditHandler<FindingAudits> handler = new AuditHandler<FindingAudits>() {
+			void handle(ResultSet set) throws SQLException {
+				long oldId = -1;
+				List<Audit> audits = null;
+				while (set.next()) {
+					int idx = 1;
+					long newId = set.getLong(idx++);
+					if (newId != oldId) {
+						oldId = newId;
+						audits = new ArrayList<Audit>();
+						results.add(new FindingAudits(newId, audits));
+					}					
+					Audit a = new Audit(set.getTimestamp(idx++), 
+							            AuditEvent.valueOf(set.getString(idx++)), 
+							            set.getString(idx++));
+					audits.add(a);
+				}
+			}
+		};
+		processNewLocalAudits(projectName, handler);
+		return handler.results;
+	}
+	
+	public List<SyncTrailRequest> getNewLocalAuditTrails(String projectName,
+			SLProgressMonitor monitor) 
+    throws SQLException {
+		AuditHandler<SyncTrailRequest> handler = new AuditHandler<SyncTrailRequest>() {
+			void handle(ResultSet audits) throws SQLException {
+				getSyncTrailRequests(results, audits);
+			}
+		};
+		processNewLocalAudits(projectName, handler);
+		return handler.results;
+	}
+	
+	/**	 
+	 * @param set The set of local audits
+	 */
+	private void getSyncTrailRequests(List<SyncTrailRequest> trails, ResultSet set) 
+	throws SQLException {
+		long oldId = -1;
+		List<Audit> audits = null;
+		while (set.next()) {
+			int idx = 1;
+			long newId = set.getLong(idx++);
+			if (!(newId == oldId)) {
+				oldId = newId;
+				audits = new LinkedList<Audit>();
+				SyncTrailRequest trail = new SyncTrailRequest();
+				selectLocalMerge.setLong(1, oldId);
+				ResultSet mergeSet = selectLocalMerge.executeQuery();
+				final Merge merge = new Merge();
+				final Match match = new Match();
+				merge.setMatch(match);
+				try {
+					mergeSet.next();
+					int mergeIdx = 1;
+					merge.setSummary(mergeSet.getString(mergeIdx++));
+					merge.setImportance(Importance.values()[mergeSet
+							.getInt(mergeIdx++)]);
+					match.setPackageName(mergeSet.getString(mergeIdx++));
+					match.setClassName(mergeSet.getString(mergeIdx++));
+					match.setHash(mergeSet.getLong(mergeIdx++));
+					match
+							.setFindingType(mergeSet
+									.getString(mergeIdx++));
+					match.setRevision(mergeSet.getLong(mergeIdx++));
+				} finally {
+					mergeSet.close();
+				}
+				trail.setMerge(merge);
+				trail.setAudits(audits);
+				trails.add(trail);
+			}
+			audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
+					.valueOf(set.getString(idx++)), set
+					.getString(idx++)));
+		}
+	}
+	
 	public void updateLocalFindings(String projectName,
 			List<SyncTrailResponse> trails, SLProgressMonitor monitor)
 			throws SQLException {
