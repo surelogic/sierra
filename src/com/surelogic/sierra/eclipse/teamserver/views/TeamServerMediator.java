@@ -98,6 +98,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (f_item.isDisposed())
+						return Status.OK_STATUS;
+
 					if (f_item.getSelection()) {
 						updateLogText(log.getText());
 					}
@@ -400,6 +403,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	private void updateLogText(final String text) {
+		if (f_logText.isDisposed())
+			return;
+
 		f_logText.setText(text);
 		f_logText.setTopIndex(f_logText.getLineCount());
 	}

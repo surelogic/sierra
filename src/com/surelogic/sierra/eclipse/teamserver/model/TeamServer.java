@@ -316,7 +316,7 @@ public final class TeamServer {
 				+ "' with a working directory of '"
 				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
-			final Process p = b.start();
+			b.start();
 			/*
 			 * TODO: do something with p to reset the yellow light when the job
 			 * dies.
