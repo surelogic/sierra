@@ -145,10 +145,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
 		f_showLogAction = showLogAction;
 
+		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
 		f_jettyConsoleLog = new JettyConsoleLog(f_executor);
 		f_jettyConsoleLogObserver = new LogObserver(f_jettyConsoleLogItem);
-		f_teamServer = new TeamServer(PreferenceConstants.getPort(),
-				f_executor, f_jettyConsoleLog);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
 		f_jettyRequestLogObserver = new LogObserver(f_jettyRequestLogItem);
 		f_teamServerLog = new TeamServerLog(f_executor);
@@ -235,12 +234,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				});
 		adjustLogVisibility();
 
-		f_jettyConsoleLog.init();
-		f_jettyConsoleLog.addObserver(f_jettyConsoleLogObserver);
-
 		f_teamServer.init();
 		f_teamServer.addObserver(this);
 
+		f_jettyConsoleLog.init();
+		f_jettyConsoleLog.addObserver(f_jettyConsoleLogObserver);
 		f_jettyRequestLog.init();
 		f_jettyRequestLog.addObserver(f_jettyRequestLogObserver);
 		f_teamServerLog.init();
@@ -361,15 +359,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	void dispose() {
-		f_jettyConsoleLog.removeObserver(f_jettyConsoleLogObserver);
 		f_teamServer.removeObserver(this);
+		f_jettyConsoleLog.removeObserver(f_jettyConsoleLogObserver);
 		f_jettyRequestLog.removeObserver(f_jettyRequestLogObserver);
 		f_teamServerLog.removeObserver(f_teamServerLogObserver);
 
 		f_executor.shutdown();
 
-		f_jettyConsoleLog.dispose();
 		f_teamServer.dispose();
+		f_jettyConsoleLog.dispose();
 		f_jettyRequestLog.dispose();
 		f_teamServerLog.dispose();
 	}

@@ -66,15 +66,11 @@ public final class TeamServer {
 
 	private final String f_pluginDir;
 
-	private final JettyConsoleLog f_consoleLog;
-
-	public TeamServer(final int port, final ScheduledExecutorService executor,
-			final JettyConsoleLog consoleLog) {
+	public TeamServer(final int port, final ScheduledExecutorService executor) {
 		f_port = new AtomicInteger(port);
 		f_executor = executor;
 		f_pluginDir = Activator.getDefault().getDirectoryOf(
 				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
-		f_consoleLog = consoleLog;
 	}
 
 	/**
@@ -255,7 +251,7 @@ public final class TeamServer {
 		Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);
 
-		runJava(command, true);
+		runJava(command);
 
 		synchronized (this) {
 			f_inStart = true;
@@ -271,7 +267,7 @@ public final class TeamServer {
 		Argument jettyStop = command.createArgument();
 		jettyStop.setValue(JETTY_STOP_ARG);
 
-		runJava(command, false);
+		runJava(command);
 
 		synchronized (this) {
 			f_inStop = true;
@@ -305,7 +301,7 @@ public final class TeamServer {
 		return command;
 	}
 
-	private void runJava(final CommandlineJava command, boolean logConsole) {
+	private void runJava(final CommandlineJava command) {
 		final Logger log = SLLogger.getLogger();
 		if (log.isLoggable(Level.FINE)) {
 			log.fine(command.toString());
@@ -321,9 +317,10 @@ public final class TeamServer {
 				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
 			final Process p = b.start();
-			if (logConsole) {
-				f_consoleLog.changeToProcess(p);
-			}
+			/*
+			 * TODO: do something with p to reset the yellow light when the job
+			 * dies.
+			 */
 		} catch (IOException e) {
 			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
 		}
