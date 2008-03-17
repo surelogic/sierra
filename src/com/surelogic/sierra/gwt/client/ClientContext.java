@@ -62,7 +62,7 @@ public final class ClientContext {
 	 *            the error message to display
 	 */
 	public static void invalidate(String errorMessage) {
-		ClientContext.setUser(null);
+		setUser(null);
 		LoginContent.getInstance(errorMessage).show();
 	}
 
@@ -75,9 +75,7 @@ public final class ClientContext {
 	}
 
 	public static void setContext(String token) {
-		context = token;
-		History.newItem(context);
-		notifyListeners();
+		History.newItem(token);
 	}
 
 	public static void addChangeListener(ClientContextListener listener) {
