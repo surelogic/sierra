@@ -140,6 +140,10 @@
       <Arg>
         <New class="org.mortbay.util.RolloverFileOutputStream">
           <Arg><SystemProperty name="user.home" /><SystemProperty name="file.separator" />.sierra-data<SystemProperty name="file.separator" />server/log-jetty-console-yyyy_mm_dd.txt</Arg>
+          <Arg type="boolean">false</Arg>
+          <Arg type="int">90</Arg>
+          <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
+          <Get id="ServerLogName" name="datedFilename"/>
         </New>
       </Arg>
     </New>
