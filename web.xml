@@ -20,13 +20,6 @@
 		</listener-class>
 	</listener>
 
-	<context-param>
-		<param-name>SLLogger</param-name>
-		<param-value>Use Sierra Directory</param-value>
-		<param-name>SLLoggerTag</param-name>
-		<param-value>team-server</param-value>
-	</context-param>
-
 	<!--  GWT browser to server communication -->
 
 	<servlet>
