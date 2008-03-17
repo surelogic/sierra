@@ -49,11 +49,12 @@ implements IViewCallback {
 		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
 				parent,
 				mediator.getHelpId());
+		//parent.layout(true, true);
 	}
 	
 	protected abstract M createMorePartControls(Composite parent);
 	
-	public void hasData(boolean data) {
+	public final void hasData(boolean data) {
 		if (data) {
 			f_pages.showPage(f_dataPage);
 		} else {
@@ -61,14 +62,25 @@ implements IViewCallback {
 		}
 	}
 	
+	public final boolean showingData() {
+		return f_pages.getPage() == f_dataPage;
+	}
+	
+	public final void setGlobalActionHandler(String id, IAction action) {
+		getViewSite().getActionBars().setGlobalActionHandler(id, action);
+	}
+	
 	protected final void addToViewMenu(IAction action) {
 		final IMenuManager menu = 
 			getViewSite().getActionBars().getMenuManager();
-		menu.appendToGroup(VIEW_GROUP, action);
+		menu.prependToGroup(VIEW_GROUP, action);
 	}
 	
 	@Override
 	public final void setFocus() {
+		if (!showingData()) {
+			f_noDataPage.setFocus();
+		}
 		if (f_mediator != null)
 			f_mediator.setFocus();
 	}

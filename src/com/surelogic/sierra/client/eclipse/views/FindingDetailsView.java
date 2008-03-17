@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
@@ -41,28 +40,14 @@ import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsView extends ViewPart {
+public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediator> {
 
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.FindingDetailsView";
 
 	private static final String STAMP_TOOLTIP_MESSAGE = "Mark this finding as being examined by me.";
 
-	private FindingDetailsMediator f_mediator = null;
-
 	@Override
-	public void createPartControl(Composite parent) {
-
-		final PageBook pages = new PageBook(parent, SWT.NONE);
-
-		final Link noFindingPage = new Link(pages, SWT.WRAP);
-		noFindingPage.setText(I18N.msg("sierra.eclipse.noDataFindingDetails"));
-		noFindingPage.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				ViewUtility.showView(FindingsSelectionView.ID);
-			}
-		});
-
-		final Composite findingPage = new Composite(pages, SWT.NONE);
+	protected FindingDetailsMediator createMorePartControls(Composite findingPage) {
 		GridLayout layout = new GridLayout();
 		findingPage.setLayout(layout);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -327,40 +312,12 @@ public class FindingDetailsView extends ViewPart {
 
 		artifactTab.setControl(artifactsPane);
 
-		/*
-		 * Allow direct access to the preferences from the view.
-		 */
-		final IMenuManager menu = getViewSite().getActionBars()
-				.getMenuManager();
-		menu.add(new PreferencesAction("Preferences..."));
-
-		/*
-		 * Allow access to help via the F1 key.
-		 */
-		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
-				parent,
-				"com.surelogic.sierra.client.eclipse.view-finding-details");
-
-		f_mediator = new FindingDetailsMediator(this, pages, noFindingPage,
-				findingPage, summaryIcon, summaryText, folder, synopsisTab,
+		return new FindingDetailsMediator(this, findingPage, 
+				summaryIcon, summaryText, folder, synopsisTab,
 				synopsisSash, synopsisAudit, findingSynopsis, locationTree,
 				detailsText, auditTab, quickAudit, criticalButton, highButton,
 				mediumButton, lowButton, irrelevantButton, commentText,
 				commentButton, scrollingLabelComposite, artifactTab, artifacts);
-
-		f_mediator.init();
-	}
-
-	@Override
-	public void setFocus() {
-		f_mediator.setFocus();
-	}
-
-	@Override
-	public void dispose() {
-		if (f_mediator != null)
-			f_mediator.dispose();
-		super.dispose();
 	}
 
 	public void findingSelected(long findingID) {

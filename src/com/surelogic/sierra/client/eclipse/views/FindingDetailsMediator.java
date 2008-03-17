@@ -25,35 +25,12 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.AuditTrail;
-import com.surelogic.common.eclipse.FocusAction;
-import com.surelogic.common.eclipse.HTMLPrinter;
-import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.TextEditedListener;
+import com.surelogic.common.eclipse.*;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
@@ -62,9 +39,8 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
-import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
+import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
@@ -72,17 +48,13 @@ import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.jdbc.finding.SourceDetail;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsMediator extends AbstractDatabaseObserver {
+public class FindingDetailsMediator extends AbstractSierraViewMediator {
 
 	public static final String STAMP_COMMENT = "I examined this finding.";
 
 	private final RGB f_BackgroundColorRGB;
 
-	private final FindingDetailsView f_view;
-
-	private final PageBook f_pages;
-	private final Control f_noFindingPage;
-	private final Composite f_findingPage;
+	private final Composite f_parent;
 	private final Menu f_importanceRadioPopupMenu;
 	private final ToolItem f_summaryIcon;
 	private final Text f_summaryText;
@@ -159,8 +131,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 	}
 
-	public FindingDetailsMediator(FindingDetailsView view, PageBook pages,
-			Control noFindingPage, Composite findingPage, ToolItem summaryIcon,
+	public FindingDetailsMediator(FindingDetailsView view, Composite parent,
+			ToolItem summaryIcon,
 			Text summaryText, TabFolder folder, TabItem synopsisTab,
 			SashForm synopsisSash, Button synopsisAudit, Link findingSynopsis,
 			Tree locationTree, Browser detailsText, TabItem auditTab,
@@ -169,10 +141,8 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			Text commentText, Button commentButton,
 			AuditTrail scrollingLabelComposite, TabItem artifactTab,
 			Table artifacts) {
-		f_view = view;
-		f_pages = pages;
-		f_noFindingPage = noFindingPage;
-		f_findingPage = findingPage;
+		super(view);
+		f_parent = parent;
 		f_summaryIcon = summaryIcon;
 		f_summaryText = summaryText;
 		f_folder = folder;
@@ -195,37 +165,53 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_artifactTab = artifactTab;
 		f_artifacts = artifacts;
 
-		f_BackgroundColorRGB = f_pages.getDisplay().getSystemColor(
+		f_BackgroundColorRGB = parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();
 
-		f_viewCut = new FocusAction(f_pages) {
+		f_viewCut = new FocusAction(parent) {
 			@Override
 			protected void takeActionOnText(Text c) {
 				c.cut();
 			}
 		};
-		f_viewCopy = new FocusAction(f_pages) {
+		f_viewCopy = new FocusAction(parent) {
 			@Override
 			protected void takeActionOnText(Text c) {
 				c.copy();
 			}
 		};
-		f_viewPaste = new FocusAction(f_pages) {
+		f_viewPaste = new FocusAction(parent) {
 			@Override
 			protected void takeActionOnText(Text c) {
 				c.paste();
 			}
 		};
-		f_viewSelectAll = new FocusAction(f_pages) {
+		f_viewSelectAll = new FocusAction(parent) {
 			@Override
 			protected void takeActionOnText(Text c) {
 				c.selectAll();
 			}
 		};
 
-		f_importanceRadioPopupMenu = new Menu(f_pages.getShell(), SWT.POP_UP);
+		f_importanceRadioPopupMenu = new Menu(parent.getShell(), SWT.POP_UP);
 	}
 
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-finding-details";
+	}
+
+	public String getNoDataId() {
+		return "sierra.eclipse.noDataFindingDetails";
+	}
+	@Override
+	public Listener getNoDataListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				ViewUtility.showView(FindingsSelectionView.ID);
+			}
+		};
+	}
+	
 	//private AtomicLong findingQueryInProgress = new AtomicLong();
 	
 	void asyncQueryAndShow(final long findingId) {
@@ -348,6 +334,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 	};
 
+	@Override
 	public void init() {
 		f_criticalButton.addListener(SWT.Selection, f_radioListener);
 		f_highButton.addListener(SWT.Selection, f_radioListener);
@@ -444,7 +431,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		f_summaryIcon.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				Point point = new Point(event.x, event.y);
-				point = f_pages.getDisplay().map(f_summaryIcon.getParent(),
+				point = f_parent.getDisplay().map(f_summaryIcon.getParent(),
 						null, point);
 				f_importanceRadioPopupMenu.setLocation(point);
 				f_importanceRadioPopupMenu.setVisible(true);
@@ -506,21 +493,17 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			}
 		});
 
-		f_view.getViewSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.CUT.getId(), f_viewCut);
-		f_view.getViewSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.COPY.getId(), f_viewCopy);
-		f_view.getViewSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.PASTE.getId(), f_viewPaste);
-		f_view.getViewSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.SELECT_ALL.getId(), f_viewSelectAll);
+		f_view.setGlobalActionHandler(ActionFactory.CUT.getId(), f_viewCut);
+		f_view.setGlobalActionHandler(ActionFactory.COPY.getId(), f_viewCopy);
+		f_view.setGlobalActionHandler(ActionFactory.PASTE.getId(), f_viewPaste);
+		f_view.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), f_viewSelectAll);
 
-		DatabaseHub.getInstance().addObserver(this);
+		super.init();
 
 		updateContents();
 		FindingDetailsPersistence.load(this);
 	}
-
+	@Override
 	public void dispose() {
 		if (f_finding == null)
 			FindingDetailsPersistence.saveNoFindingShown(f_sashLocationWeight,
@@ -529,22 +512,18 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 			FindingDetailsPersistence.save(f_finding.getFindingId(),
 					f_sashLocationWeight, f_sashDescriptionWeight,
 					f_tabNameShown);
-		DatabaseHub.getInstance().removeObserver(this);
+		super.dispose();
 	}
 
 	public void setFocus() {
-		if (f_pages.getPage() == f_findingPage) {
-			TabItem[] items = f_folder.getSelection();
-			if (items.length > 0) {
-				TabItem item = items[0];
-				if (item == f_auditTab) {
-					f_commentText.setFocus();
-				} else {
-					f_summaryText.setFocus();
-				}
+		TabItem[] items = f_folder.getSelection();
+		if (items.length > 0) {
+			TabItem item = items[0];
+			if (item == f_auditTab) {
+				f_commentText.setFocus();
+			} else {
+				f_summaryText.setFocus();
 			}
-		} else {
-			f_noFindingPage.setFocus();
 		}
 	}
 
@@ -553,15 +532,16 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 	 */
 	private void updateContents() {
 		final boolean noFinding = f_finding == null;
-		final Control page = noFinding ? f_noFindingPage : f_findingPage;
+		final boolean showingData = f_view.showingData();
 
-		if (page != f_pages.getPage()) {
-			f_pages.showPage(page);
+		// Page doesn't match our state
+		if (noFinding == showingData) {
+			f_view.hasData(!noFinding);
 			/*
 			 * For some reason on the Mac the browser shows up as a little
 			 * square window covering the view's icon. This seems to fix that.
 			 */
-			f_detailsText.setVisible(page == f_findingPage);
+			f_detailsText.setVisible(!noFinding);
 		}
 		if (noFinding)
 			return;
@@ -677,7 +657,7 @@ public class FindingDetailsMediator extends AbstractDatabaseObserver {
 		}
 
 		updateTabTitles();
-		f_findingPage.layout(true, true);
+		f_parent.layout(true, true);
 	}
 
 	private String getFindingSynopsis() {
