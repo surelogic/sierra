@@ -157,7 +157,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					}
 					if (count < 2) {
 						return Result
-								.fail(
+								.failure(
 										"The server must always have at least one active administrator.",
 										targetUserAccount);
 					}
