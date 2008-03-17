@@ -79,12 +79,9 @@ public class TeamServerView extends ViewPart {
 		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
 		jettyRequestLogItem.setImage(SLImages.getImage(SLImages.IMG_JETTY_LOG));
 		jettyRequestLogItem.setToolTipText("Show Jetty Request Log");
-		final ToolItem portalLogItem = new ToolItem(logBar, SWT.RADIO);
-		portalLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
-		portalLogItem.setToolTipText("Show Sierra Portal Log");
-		final ToolItem servicesLogItem = new ToolItem(logBar, SWT.RADIO);
-		servicesLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SYNC));
-		servicesLogItem.setToolTipText("Show Sierra Client Services Log");
+		final ToolItem teamServerLogItem = new ToolItem(logBar, SWT.RADIO);
+		teamServerLogItem.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		teamServerLogItem.setToolTipText("Show Sierra Team Server Log");
 
 		final Text logText = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -120,7 +117,7 @@ public class TeamServerView extends ViewPart {
 
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
 				trafficLight, jettyConsoleLogItem, jettyRequestLogItem,
-				portalLogItem, servicesLogItem, logGroup, logText,
+				teamServerLogItem, logGroup, logText,
 				toggleLogVisibilityMenuItem, showLogAction);
 		f_mediator.init();
 	}

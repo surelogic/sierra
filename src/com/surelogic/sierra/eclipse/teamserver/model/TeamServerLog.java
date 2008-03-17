@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.concurrent.ScheduledExecutorService;
 
-public final class SierraServicesLog extends FileBasedServerLog {
+public final class TeamServerLog extends FileBasedServerLog {
 
 	final FilenameFilter f_filenameFilter;
 
@@ -13,11 +13,12 @@ public final class SierraServicesLog extends FileBasedServerLog {
 		return f_filenameFilter;
 	}
 
-	public SierraServicesLog(ScheduledExecutorService executor) {
+	public TeamServerLog(ScheduledExecutorService executor) {
 		super(executor);
 		f_filenameFilter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return (name.startsWith("log-services") && name.endsWith("txt"));
+				return (name.startsWith("log-team-server") && name
+						.endsWith("txt"));
 			}
 		};
 	}

@@ -43,9 +43,8 @@ import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
 import com.surelogic.sierra.eclipse.teamserver.model.JettyConsoleLog;
 import com.surelogic.sierra.eclipse.teamserver.model.JettyRequestLog;
 import com.surelogic.sierra.eclipse.teamserver.model.ServerLog;
-import com.surelogic.sierra.eclipse.teamserver.model.SierraPortalLog;
-import com.surelogic.sierra.eclipse.teamserver.model.SierraServicesLog;
 import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
+import com.surelogic.sierra.eclipse.teamserver.model.TeamServerLog;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServerMediator implements ITeamServerObserver {
@@ -57,8 +56,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final Canvas f_trafficLight;
 	private final ToolItem f_jettyConsoleLogItem;
 	private final ToolItem f_jettyRequestLogItem;
-	private final ToolItem f_portalLogItem;
-	private final ToolItem f_servicesLogItem;
+	private final ToolItem f_teamServerLogItem;
 	private final Group f_logGroup;
 	private final Text f_logText;
 	private final MenuItem f_toggleLogVisibilityMenuItem;
@@ -71,10 +69,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final IServerLogObserver f_jettyConsoleLogObserver;
 	private final ServerLog f_jettyRequestLog;
 	private final IServerLogObserver f_jettyRequestLogObserver;
-	private final ServerLog f_portalLog;
-	private final IServerLogObserver f_portalLogObserver;
-	private final ServerLog f_servicesLog;
-	private final IServerLogObserver f_servicesLogObserver;
+	private final ServerLog f_teamServerLog;
+	private final IServerLogObserver f_teamServerLogObserver;
 
 	private final Listener f_portNumberVerify = new Listener() {
 		public void handleEvent(Event event) {
@@ -134,8 +130,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
 			Canvas trafficLight, ToolItem jettyConsoleLogItem,
 			ToolItem jettyRequestLogItem, ToolItem portalLogItem,
-			ToolItem servicesLogItem, Group logGroup, Text logText,
-			MenuItem toggleLogVisibilityMenuItem, Action showLogAction) {
+			Group logGroup, Text logText, MenuItem toggleLogVisibilityMenuItem,
+			Action showLogAction) {
 		f_command = command;
 		f_status = status;
 		f_portLabel = portLabel;
@@ -143,8 +139,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_trafficLight = trafficLight;
 		f_jettyConsoleLogItem = jettyConsoleLogItem;
 		f_jettyRequestLogItem = jettyRequestLogItem;
-		f_portalLogItem = portalLogItem;
-		f_servicesLogItem = servicesLogItem;
+		f_teamServerLogItem = portalLogItem;
 		f_logGroup = logGroup;
 		f_logText = logText;
 		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
@@ -156,10 +151,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				f_executor, f_jettyConsoleLog);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
 		f_jettyRequestLogObserver = new LogObserver(f_jettyRequestLogItem);
-		f_portalLog = new SierraPortalLog(f_executor);
-		f_portalLogObserver = new LogObserver(f_portalLogItem);
-		f_servicesLog = new SierraServicesLog(f_executor);
-		f_servicesLogObserver = new LogObserver(f_servicesLogItem);
+		f_teamServerLog = new TeamServerLog(f_executor);
+		f_teamServerLogObserver = new LogObserver(f_teamServerLogItem);
 
 		InetAddress addr = null;
 		try {
@@ -219,10 +212,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 				new LogSelectionListener(f_jettyConsoleLog, 0));
 		f_jettyRequestLogItem.addListener(SWT.Selection,
 				new LogSelectionListener(f_jettyRequestLog, 1));
-		f_portalLogItem.addListener(SWT.Selection, new LogSelectionListener(
-				f_portalLog, 2));
-		f_servicesLogItem.addListener(SWT.Selection, new LogSelectionListener(
-				f_servicesLog, 3));
+		f_teamServerLogItem.addListener(SWT.Selection,
+				new LogSelectionListener(f_teamServerLog, 2));
 
 		/*
 		 * Which log is showing is persisted.
@@ -232,10 +223,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_jettyConsoleLogItem.setSelection(true);
 		} else if (logShowing == 1) {
 			f_jettyRequestLogItem.setSelection(true);
-		} else if (logShowing == 2) {
-			f_portalLogItem.setSelection(true);
 		} else {
-			f_servicesLogItem.setSelection(true);
+			f_teamServerLogItem.setSelection(true);
 		}
 
 		f_toggleLogVisibilityMenuItem.addListener(SWT.Selection,
@@ -254,10 +243,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 		f_jettyRequestLog.init();
 		f_jettyRequestLog.addObserver(f_jettyRequestLogObserver);
-		f_portalLog.init();
-		f_portalLog.addObserver(f_portalLogObserver);
-		f_servicesLog.init();
-		f_servicesLog.addObserver(f_servicesLogObserver);
+		f_teamServerLog.init();
+		f_teamServerLog.addObserver(f_teamServerLogObserver);
 
 		adjustControlState();
 	}
@@ -377,16 +364,14 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_jettyConsoleLog.removeObserver(f_jettyConsoleLogObserver);
 		f_teamServer.removeObserver(this);
 		f_jettyRequestLog.removeObserver(f_jettyRequestLogObserver);
-		f_portalLog.removeObserver(f_portalLogObserver);
-		f_servicesLog.removeObserver(f_servicesLogObserver);
+		f_teamServerLog.removeObserver(f_teamServerLogObserver);
 
 		f_executor.shutdown();
 
 		f_jettyConsoleLog.dispose();
 		f_teamServer.dispose();
 		f_jettyRequestLog.dispose();
-		f_portalLog.dispose();
-		f_servicesLog.dispose();
+		f_teamServerLog.dispose();
 	}
 
 	void setFocus() {

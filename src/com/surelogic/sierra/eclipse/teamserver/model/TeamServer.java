@@ -15,6 +15,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Commandline.Argument;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -154,7 +155,7 @@ public final class TeamServer {
 					Socket s = new Socket(LOCALHOST, f_port.get());
 					if (log.isLoggable(Level.FINEST)) {
 						log
-								.finest("(periodic check) A local team server is running.");
+								.finest("(periodic) A local team server is running.");
 					}
 					isRunning = true;
 					isNotRunning = false;
@@ -166,7 +167,7 @@ public final class TeamServer {
 				} catch (IOException e) {
 					if (log.isLoggable(Level.FINEST)) {
 						log
-								.finest("(periodic check) A local team server is not running.");
+								.finest("(periodic) A local team server is not running.");
 					}
 					isRunning = false;
 					isNotRunning = true;
@@ -243,6 +244,9 @@ public final class TeamServer {
 	private static final String JETTY_STOP_ARG = "--stop";
 
 	public void start() {
+		// Ensure the local team server directory exists for logging
+		FileUtility.getSierraLocalTeamServerDirectory();
+
 		CommandlineJava command = getJettyTemplate();
 
 		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
