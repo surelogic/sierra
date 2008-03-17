@@ -60,7 +60,7 @@ public final class HeaderPanel extends Composite {
 		sessionPanel.add(createUserLabel("Log out", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				ClientContext.logout();
+				ClientContext.logout(null);
 			}
 		}));
 
@@ -86,20 +86,37 @@ public final class HeaderPanel extends Composite {
 			}
 		});
 
-		// TODO set up mainBar tabs here
-
 		// Listen for user session changes
-		ClientContext.addChangeListener(new ClientContextListener() {
+		ClientContext.addUserListener(new UserListener() {
 
-			public void onChange(UserAccount account, String context) {
-				updateContext(account, context);
+			public void onLogin(UserAccount user) {
+				updateUser(user);
+			}
+
+			public void onLoginFailure(String message) {
+				updateUser(null);
+			}
+
+			public void onLogout(UserAccount user, String errorMessage) {
+				updateUser(null);
+			}
+
+			public void onUpdate(UserAccount user) {
+				updateUser(user);
+			}
+		});
+		ClientContext.addContextListener(new ContextListener() {
+
+			public void onChange(String context) {
+				updateContext(context);
 			}
 
 		});
-		updateContext(ClientContext.getUser(), null);
+		updateUser(ClientContext.getUser());
+		updateContext(ClientContext.getContext());
 	}
 
-	public void updateContext(UserAccount user, String context) {
+	public void updateUser(UserAccount user) {
 		if (user == null) {
 			if (headerRow.getWidgetIndex(sessionPanel) != -1) {
 				headerRow.remove(sessionPanel);
@@ -120,6 +137,7 @@ public final class HeaderPanel extends Composite {
 			userName.setText(user.getUserName());
 			if (rootPanel.getWidgetIndex(mainBar) == -1) {
 				rootPanel.add(mainBar);
+				updateContext(ClientContext.getContext());
 			}
 
 			if (user.isAdministrator()) {
@@ -127,15 +145,19 @@ public final class HeaderPanel extends Composite {
 			} else {
 				removeTab(SettingsContent.getInstance().getContextName());
 			}
+		}
+	}
 
-			final int tabIndex = mainBar.getSelectedTab();
+	public void updateContext(String context) {
+		if (rootPanel.getWidgetIndex(mainBar) != -1) {
+			int newIndex;
 			if (context != null) {
-				int contextIndex = tabContextNames.indexOf(context);
-				if (contextIndex != tabIndex) {
-					mainBar.selectTab(contextIndex);
-				}
-			} else if (tabIndex != -1) {
-				mainBar.selectTab(-1);
+				newIndex = tabContextNames.indexOf(context);
+			} else {
+				newIndex = -1;
+			}
+			if (newIndex != mainBar.getSelectedTab()) {
+				mainBar.selectTab(newIndex);
 			}
 		}
 	}

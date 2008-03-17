@@ -15,8 +15,8 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 public final class ClientContext {
 
 	private static UserAccount userAccount;
-	private static List listeners = new ArrayList();
-	private static String context = History.getToken();
+	private static List userListeners = new ArrayList();
+	private static List contextListeners = new ArrayList();
 
 	private ClientContext() {
 		// Not instantiable
@@ -30,75 +30,128 @@ public final class ClientContext {
 		return userAccount;
 	}
 
-	public static void setUser(UserAccount user) {
-		userAccount = user;
-		notifyListeners();
-	}
-
 	public static boolean isLoggedIn() {
 		return userAccount != null;
 	}
 
-	public static void logout() {
+	public static void login(String username, String password,
+			final UserListener callback) {
+		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
+		sessionService.login(username, password, new Callback() {
+
+			public void onFailure(String message, Object result) {
+				userAccount = null;
+				for (Iterator i = userListeners.iterator(); i.hasNext();) {
+					((UserListener) i.next()).onLoginFailure(message);
+				}
+				if (callback != null) {
+					callback.onLoginFailure(message);
+				}
+				refreshContext();
+			}
+
+			public void onSuccess(String message, Object result) {
+				userAccount = (UserAccount) result;
+				for (Iterator i = userListeners.iterator(); i.hasNext();) {
+					((UserListener) i.next()).onLogin(userAccount);
+				}
+				if (callback != null) {
+					callback.onLogin(userAccount);
+				}
+				refreshContext();
+			}
+		});
+	}
+
+	public static void updateUser(UserAccount user) {
+		userAccount = user;
+		for (Iterator i = userListeners.iterator(); i.hasNext();) {
+			((UserListener) i.next()).onUpdate(userAccount);
+		}
+		refreshContext();
+	}
+
+	public static void logout(final String errorMessage) {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
 		svc.logout(new Callback() {
 
 			protected void onFailure(String message, Object result) {
-				invalidate(message);
+				if (errorMessage != null && !errorMessage.equals("")) {
+					message += " (" + errorMessage + ")";
+				}
+				for (Iterator i = userListeners.iterator(); i.hasNext();) {
+					((UserListener) i.next()).onLogout(userAccount, message);
+				}
+				refreshContext();
 			}
 
 			protected void onSuccess(String message, Object result) {
-				setUser(null);
+				final UserAccount oldUser = userAccount;
+				userAccount = null;
+				for (Iterator i = userListeners.iterator(); i.hasNext();) {
+					((UserListener) i.next()).onLogout(oldUser, errorMessage);
+				}
+				refreshContext();
 			}
 
 		});
 	}
 
-	/**
-	 * Called when the session is no longer valid and the login page should be
-	 * displayed with an error message.
-	 * 
-	 * @param errorMessage
-	 *            the error message to display
-	 */
-	public static void invalidate(String errorMessage) {
-		setUser(null);
-		LoginContent.getInstance(errorMessage).show();
+	public static void addUserListener(UserListener listener) {
+		userListeners.add(listener);
+	}
+
+	public static void removeUserListener(UserListener listener) {
+		userListeners.remove(listener);
 	}
 
 	public static boolean isContext(String token) {
-		return LangUtil.equals(token, context);
+		return LangUtil.equals(token, getContext());
+	}
+
+	public static boolean isContext(ContentComposite content) {
+		// TODO need to add support for subcontext
+		return LangUtil.equals(content.getContextName(), getContext());
 	}
 
 	public static String getContext() {
-		return context;
+		return History.getToken();
 	}
 
 	public static void setContext(String token) {
-		History.newItem(token);
+		// Note: newItem calls onHistoryChanged, which calls
+		// notifyContextListeners only if the token changes
+		if (!isContext(token)) {
+			History.newItem(token);
+		} else {
+			notifyContextListeners();
+		}
 	}
 
-	public static void addChangeListener(ClientContextListener listener) {
-		listeners.add(listener);
+	public static void refreshContext() {
+		notifyContextListeners();
 	}
 
-	public static void removeChangeListener(ClientContextListener listener) {
-		listeners.remove(listener);
+	public static void addContextListener(ContextListener listener) {
+		contextListeners.add(listener);
 	}
 
-	private static void notifyListeners() {
-		for (Iterator i = listeners.iterator(); i.hasNext();) {
-			final ClientContextListener listener = (ClientContextListener) i
-					.next();
-			listener.onChange(userAccount, context);
+	public static void removeContextListener(ContextListener listener) {
+		contextListeners.remove(listener);
+	}
+
+	private static void notifyContextListeners() {
+		final String context = getContext();
+		for (Iterator i = contextListeners.iterator(); i.hasNext();) {
+			final ContextListener listener = (ContextListener) i.next();
+			listener.onChange(context);
 		}
 	}
 
 	private static class ContextHistoryListener implements HistoryListener {
 
 		public void onHistoryChanged(String historyToken) {
-			context = historyToken;
-			notifyListeners();
+			notifyContextListeners();
 		}
 
 	}

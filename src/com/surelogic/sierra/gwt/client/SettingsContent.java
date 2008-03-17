@@ -113,7 +113,7 @@ public class SettingsContent extends ContentComposite {
 		return label;
 	}
 
-	protected void onActivate() {
+	protected void onActivate(String context) {
 		final AsyncCallback updateServerInfo = new AsyncCallback() {
 			public void onSuccess(Object result) {
 				updateInfo((ServerInfo) result);

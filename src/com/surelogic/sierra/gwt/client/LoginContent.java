@@ -17,9 +17,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.Callback;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class LoginContent extends ContentComposite {
@@ -65,22 +62,27 @@ public class LoginContent extends ContentComposite {
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
 
-		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.login(usernameText, passwordText, new Callback() {
+		ClientContext.login(usernameText, passwordText, new UserListener() {
 
-			protected void onException(Throwable caught) {
-				resetLoginAttempt();
-				super.onException(caught);
+			public void onLogin(UserAccount user) {
+				errorMessage.setText("");
+				if (ClientContext.isContext(LoginContent.getInstance())) {
+					OverviewContent.getInstance().show();
+				}
 			}
 
-			public void onFailure(String message, Object result) {
+			public void onLoginFailure(String message) {
 				resetLoginAttempt();
 				errorMessage.setText(message);
 			}
 
-			public void onSuccess(String message, Object result) {
-				errorMessage.setText("");
-				ClientContext.setUser((UserAccount) result);
+			public void onUpdate(UserAccount user) {
+				// do nothing
+			}
+
+			public void onLogout(UserAccount user, String errorMessageText) {
+				resetLoginAttempt();
+				errorMessage.setText("Logged out." + errorMessageText);
 			}
 		});
 	}
@@ -165,7 +167,8 @@ public class LoginContent extends ContentComposite {
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
-	protected void onActivate() {
+	protected void onActivate(String context) {
+		// TODO accept an error message param in the context?
 		resetLoginAttempt();
 		if (username.getText().trim().length() > 0) {
 			password.setFocus(true);

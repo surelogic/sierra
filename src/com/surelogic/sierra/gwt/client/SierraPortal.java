@@ -31,11 +31,11 @@ public class SierraPortal implements EntryPoint {
 		sessionService.getUserAccount(new Callback() {
 
 			protected void onFailure(String message, Object result) {
-				ClientContext.invalidate(message);
+				LoginContent.getInstance(message).show();
 			}
 
 			protected void onSuccess(String message, Object result) {
-				ClientContext.setUser((UserAccount) result);
+				ClientContext.updateUser((UserAccount) result);
 			}
 		});
 

@@ -10,7 +10,7 @@ public class FindingContent extends ContentComposite {
 	private static final FindingContent instance = new FindingContent();
 
 	private HTML synopsis;
-	
+
 	private FindingContent() {
 		// Do nothing
 	}
@@ -19,7 +19,7 @@ public class FindingContent extends ContentComposite {
 		return "Finding";
 	}
 
-	protected void onActivate() {
+	protected void onActivate(String context) {
 	}
 
 	protected boolean onDeactivate() {

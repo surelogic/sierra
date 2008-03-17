@@ -6,9 +6,8 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.surelogic.sierra.gwt.client.data.UserAccount;
 
-public class ContentPanel extends Composite implements ClientContextListener {
+public class ContentPanel extends Composite implements ContextListener {
 	private final DockPanel rootPanel = new DockPanel();
 	private final Map contentRegistry = new HashMap();
 	private ContentComposite currentContent;
@@ -23,26 +22,31 @@ public class ContentPanel extends Composite implements ClientContextListener {
 		rootPanel.setWidth("100%");
 
 		// register Content instances here
+		registerContent(LoginContent.getInstance());
 		registerContent(OverviewContent.getInstance());
 		registerContent(SettingsContent.getInstance());
 		registerContent(UserManagementContent.getInstance());
 		registerContent(FindingContent.getInstance());
-		ClientContext.addChangeListener(this);
+		ClientContext.addContextListener(this);
 	}
 
-	public void onChange(UserAccount account, String context) {
-		ContentComposite content = null;
-		if (account == null) {
-			content = LoginContent.getInstance();
-		} else {
-			if (context == null || "".equals(context)) {
-				ClientContext.setContext(OverviewContent.getInstance()
-						.getContextName());
-				return;
-			}
-			content = (ContentComposite) contentRegistry.get(context
-					.toLowerCase());
+	public void onChange(String context) {
+		if (!ClientContext.isLoggedIn()) {
+			context = LoginContent.getInstance().getContextName();
+		} else if (context == null || "".equals(context)) {
+			context = OverviewContent.getInstance().getContextName();
 		}
+
+		ContentComposite content = (ContentComposite) contentRegistry
+				.get(context.toLowerCase());
+		if (content == null) {
+			if (ClientContext.isLoggedIn()) {
+				content = OverviewContent.getInstance();
+			} else {
+				content = LoginContent.getInstance();
+			}
+		}
+
 		if (currentContent == content) {
 			return;
 		}
@@ -50,7 +54,7 @@ public class ContentPanel extends Composite implements ClientContextListener {
 			currentContent = content;
 			rootPanel.clear();
 			rootPanel.add(currentContent, DockPanel.CENTER);
-			currentContent.activate();
+			currentContent.activate(context);
 		}
 	}
 

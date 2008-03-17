@@ -109,7 +109,7 @@ public class UserManagementContent extends ContentComposite {
 		usersPanel.add(status);
 	}
 
-	protected void onActivate() {
+	protected void onActivate(String context) {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
@@ -289,7 +289,7 @@ public class UserManagementContent extends ContentComposite {
 							final UserAccount current = ClientContext.getUser();
 							if (r.isSuccess()
 									&& (user.getId() == current.getId())) {
-								ClientContext.setUser(user);
+								ClientContext.updateUser(user);
 							}
 							updateRow(row, user, ClientContext.getUser());
 							status.setStatus(Status.fromResult(r));

@@ -32,7 +32,7 @@ public class OverviewContent extends ContentComposite {
 		return "Projects";
 	}
 
-	protected void onActivate() {
+	protected void onActivate(String context) {
 		OverviewServiceAsync service = ServiceHelper.getOverviewService();
 		service.getProjectOverviews(new AsyncCallback() {
 
@@ -58,8 +58,7 @@ public class OverviewContent extends ContentComposite {
 					final CellFormatter cf = grid.getCellFormatter();
 					final String[] projectHeader = new String[] { "Project",
 							"Last Scan", "Audits", "Critical", "High",
-							"Medium", "Low", "Irrelevant", "Last Audit",
-							"By" };
+							"Medium", "Low", "Irrelevant", "Last Audit", "By" };
 					final String[] dataStyle = new String[] { "cell-text",
 							"cell-date", "cell-text", "cell-number",
 							"cell-number", "cell-number", "cell-number",
