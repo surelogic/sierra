@@ -150,10 +150,10 @@ public final class TeamServer {
 				final Logger log = SLLogger.getLogger();
 				try {
 					Socket s = new Socket(LOCALHOST, f_port.get());
-					if (log.isLoggable(Level.FINEST)) {
-						log
-								.finest("(periodic) A local team server is running.");
-					}
+					// if (log.isLoggable(Level.FINEST)) {
+					// log
+					// .finest("(periodic) A local team server is running.");
+					// }
 					isRunning = true;
 					isNotRunning = false;
 					s.close();
@@ -162,10 +162,11 @@ public final class TeamServer {
 					isRunning = false;
 					isNotRunning = false;
 				} catch (IOException e) {
-					if (log.isLoggable(Level.FINEST)) {
-						log
-								.finest("(periodic) A local team server is not running.");
-					}
+					// if (log.isLoggable(Level.FINEST)) {
+					// log
+					// .finest("(periodic) A local team server is not
+					// running.");
+					// }
 					isRunning = false;
 					isNotRunning = true;
 				}
