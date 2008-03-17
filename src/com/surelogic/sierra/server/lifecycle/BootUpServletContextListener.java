@@ -28,7 +28,7 @@ import com.surelogic.sierra.schema.SierraSchemaUtility;
  * <tt>SLLogger</tt> is set to <tt>No File Output</tt> only console logging
  * will be done. The default (no value) is to log into the temporary directory.
  */
-public class LogServletContextListener implements ServletContextListener {
+public class BootUpServletContextListener implements ServletContextListener {
 
 	public void contextDestroyed(ServletContextEvent sce) {
 		// nothing to do
