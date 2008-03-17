@@ -40,19 +40,28 @@ public class BootUpServletContextListener implements ServletContextListener {
 		 */
 		final String loggerOption = sce.getServletContext().getInitParameter(
 				"SLLogger");
+		final String loggerTag = sce.getServletContext().getInitParameter(
+				"SLLoggerTag");
 		final String contextName = sce.getServletContext()
 				.getServletContextName();
-		bootLogging(loggerOption, contextName);
+		bootLogging(loggerOption, loggerTag, contextName);
 		bootDatabase();
 	}
 
-	private void bootLogging(String loggerOption, String contextName) {
+	private void bootLogging(String loggerOption, String loggerTag,
+			String contextName) {
+		if (loggerTag == null) {
+			/*
+			 * Set a default
+			 */
+			loggerTag = "team-server";
+		}
 		if ("No File Output".equals(loggerOption))
 			return;
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy_MM_dd");
 
 		final String logFileName;
-		final String tail = File.separator + "log-team-server-"
+		final String tail = File.separator + "log-" + loggerTag
 				+ dateFormat.format(new Date()) + ".txt";
 		if ("Use Sierra Directory".equals(loggerOption)) {
 			final String serverDirectory = FileUtility.getSierraDataDirectory()
