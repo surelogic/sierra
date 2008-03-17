@@ -16,7 +16,7 @@
 
 	<listener>
 		<listener-class>
-			com.surelogic.sierra.server.lifecycle.SchemaServletContextListener
+			com.surelogic.sierra.server.lifecycle.BootUpServletContextListener
 		</listener-class>
 	</listener>
 
