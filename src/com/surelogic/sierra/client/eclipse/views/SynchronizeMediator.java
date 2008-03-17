@@ -16,12 +16,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -114,14 +112,11 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		try {
 			final List<SynchOverview> synchList = SynchOverview
 					.listOverviews(c);
-			final UIJob job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateSyncTableContents(synchList);		
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
+			asyncUpdateContentsForUI(new IViewUpdater() {
+				public void updateContentsForUI() {
+					updateSyncTableContents(synchList);	
+				}				
+			});
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {
@@ -201,14 +196,11 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		try {
 			SynchDetail sd = SynchDetail.getSyncDetail(c, so);
 			final List<AuditDetail> auditList = sd.getAudits();
-			final UIJob job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
+			asyncUpdateContentsForUI(new IViewUpdater() {
+				public void updateContentsForUI() {
 					updateEventTableContents(auditList);
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
+				}				
+			});
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {

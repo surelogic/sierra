@@ -48,7 +48,8 @@ import com.surelogic.sierra.jdbc.finding.FindingStatus;
 import com.surelogic.sierra.jdbc.finding.SourceDetail;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsMediator extends AbstractSierraViewMediator {
+public class FindingDetailsMediator extends AbstractSierraViewMediator
+implements IViewUpdater {
 
 	public static final String STAMP_COMMENT = "I examined this finding.";
 
@@ -233,27 +234,10 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator {
 						f_finding = FindingDetail.getDetailOrNull(c, findingId);
 
 						// got details, update the view in the UI thread
-						final UIJob job = new SLUIJob() {
-							@Override
-							public IStatus runInUIThread(
-									IProgressMonitor monitor) {
-								updateContents();
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
-
+						asyncUpdateContentsForUI(FindingDetailsMediator.this);
 					} catch (IllegalArgumentException iae) {
-						final UIJob job = new SLUIJob() {
-							@Override
-							public IStatus runInUIThread(
-									IProgressMonitor monitor) {
-								f_finding = null;
-								updateContents();
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
+						f_finding = null;
+						asyncUpdateContentsForUI(FindingDetailsMediator.this);
 					} finally {
 						c.close();
 					}
@@ -500,7 +484,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator {
 
 		super.init();
 
-		updateContents();
+		updateContentsForUI();
 		FindingDetailsPersistence.load(this);
 	}
 	@Override
@@ -530,7 +514,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator {
 	/**
 	 * Must be invoked from the SWT thread.
 	 */
-	private void updateContents() {
+	public void updateContentsForUI() {
 		final boolean noFinding = f_finding == null;
 		final boolean showingData = f_view.showingData();
 

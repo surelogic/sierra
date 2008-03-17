@@ -20,7 +20,8 @@ import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
-public final class ProjectStatusMediator extends AbstractSierraViewMediator {
+public final class ProjectStatusMediator extends AbstractSierraViewMediator 
+implements IViewUpdater {
 	private final Tree f_statusTree;
 
 	public ProjectStatusMediator(IViewCallback cb, Tree statusTree) {
@@ -74,14 +75,14 @@ public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 
 	private void asyncUpdateContents() {
 		final Job job = new DatabaseJob(
-				"Updating set of server synchronization events") {
+				"Updating project status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
 				try {
 					updateContents();
 				} catch (Exception e) {
-					final int errNo = 58;
+					final int errNo = 58; // FIX
 					final String msg = I18N.err(errNo);
 					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
@@ -98,17 +99,7 @@ public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 		try {
 			final List<SynchOverview> synchList = SynchOverview
 					.listOverviews(c);
-			final UIJob job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateSyncTableContents(synchList);
-					if (Projects.getInstance().isEmpty()) {
-						f_statusTree.setVisible(false);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
+			asyncUpdateContentsForUI(this);
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
 		} catch (Exception e) {
@@ -125,18 +116,15 @@ public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 		}
 	}
 
-	/**
-	 * Must be called from the SWT thread.
-	 */
-	private void updateSyncTableContents(List<SynchOverview> synchList) {
+	public void updateContentsForUI() {
 		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
 		//final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		f_statusTree.removeAll();
+		/*
 		for (SynchOverview so : synchList) {
 			if (hideEmpty && so.isEmpty()) {
 				continue;
 			}
-			/*
 			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
 			final String projectName = so.getProject();
 			final SierraServer server = SierraServerManager.getInstance()
@@ -154,12 +142,12 @@ public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 			item.setText(2, dateFormat.format(so.getTime()));
 			item.setData(so);
-			*/
 		}
 
 		if ((synchList.isEmpty()) || (Projects.getInstance().isEmpty())) {
 			f_statusTree.setVisible(false);
 		}
+		*/
 		f_statusTree.pack();
 	}
 }
