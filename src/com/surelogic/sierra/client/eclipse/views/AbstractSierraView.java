@@ -23,7 +23,7 @@ implements IViewCallback {
 	public final void createPartControl(Composite parent) {
 		final PageBook pages = f_pages = new PageBook(parent, SWT.NONE);
 		final Link noDataPage = new Link(pages, SWT.WRAP);
-		final Composite actualPage = new Composite(pages, SWT.NONE);
+		final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
 		actualPage.setLayout(new FillLayout());
 		f_noDataPage = noDataPage;
 		f_dataPage = actualPage;
@@ -37,6 +37,7 @@ implements IViewCallback {
 		menu.add(new Separator());
 		menu.add(new PreferencesAction("Preferences..."));
 		
+		hasData(false);
 		final M mediator = f_mediator = createMorePartControls(actualPage);
 		mediator.init();		
 		

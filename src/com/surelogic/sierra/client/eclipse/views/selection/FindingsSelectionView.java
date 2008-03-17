@@ -1,52 +1,29 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.ViewPart;
-
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
+import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
-public final class FindingsSelectionView extends ViewPart {
+public final class FindingsSelectionView extends AbstractSierraView<FindingsSelectionMediator> {
 
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView";
 
-	private FindingsSelectionMediator f_mediator = null;
-
 	@Override
-	public void createPartControl(final Composite parent) {
-		final PageBook pages = new PageBook(parent, SWT.NONE);
-
-		final Link noFindingsPage = new Link(pages, SWT.WRAP);
-		noFindingsPage.setText(I18N
-				.msg("sierra.eclipse.noDataFindingsQuickSearch"));
-		noFindingsPage.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				new NewScanDialogAction().run(null);
-			}
-		});
-
-		final Composite findingsPage = new Composite(pages, SWT.NO_FOCUS);
+	protected FindingsSelectionMediator createMorePartControls(final Composite findingsPage) {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -138,8 +115,6 @@ public final class FindingsSelectionView extends ViewPart {
 		/*
 		 * Allow direct access to the import and export wizards from the view.
 		 */
-		final IMenuManager menu = getViewSite().getActionBars()
-				.getMenuManager();
 		final Action importAction = new Action("Import Searches...") {
 			@Override
 			public void run() {
@@ -151,7 +126,7 @@ public final class FindingsSelectionView extends ViewPart {
 				dialog.open();
 			}
 		};
-		menu.add(importAction);
+		addToViewMenu(importAction);
 		final Action exportAction = new Action("Export Searches...") {
 			@Override
 			public void run() {
@@ -163,38 +138,12 @@ public final class FindingsSelectionView extends ViewPart {
 				dialog.open();
 			}
 		};
-		menu.add(exportAction);
-		menu.add(new Separator());
-		menu.add(new PreferencesAction("Preferences..."));
+		addToViewMenu(exportAction);
 
-		/*
-		 * Allow access to help via the F1 key.
-		 */
-		getSite()
-				.getWorkbenchWindow()
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(parent,
-						"com.surelogic.sierra.client.eclipse.view-findings-quick-search");
-
-		f_mediator = new FindingsSelectionMediator(pages, noFindingsPage,
+		return new FindingsSelectionMediator(this, 
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
 				findingsIcon, findingsStatus, columnSelectionItem,
 				openSearchItem, saveSearchAsItem, deleteSearchItem,
 				savedSelections);
-		f_mediator.init();
-	}
-
-	@Override
-	public void dispose() {
-		if (f_mediator != null)
-			f_mediator.dispose();
-		super.dispose();
-	}
-
-	@Override
-	public void setFocus() {
-		if (f_mediator != null)
-			f_mediator.setFocus();
 	}
 }

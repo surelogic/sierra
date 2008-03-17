@@ -10,7 +10,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -24,10 +23,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.PageBook;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.OpenSearchDialog;
@@ -40,13 +39,14 @@ import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObse
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.views.IViewCallback;
+import com.surelogic.sierra.client.eclipse.views.IViewMediator;
 
 public final class FindingsSelectionMediator implements IProjectsObserver,
 		CascadingList.ICascadingListObserver, ISelectionManagerObserver,
-		IFindingsObserver {
-
-	private final PageBook f_pages;
-	private final Control f_noFindingsPage;
+		IFindingsObserver, IViewMediator {
+	
+	private final IViewCallback f_view;
 	private final Composite f_findingsPage;
 	private final CascadingList f_cascadingList;
 	private final ToolItem f_clearSelectionItem;
@@ -66,14 +66,13 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	private MColumn f_first = null;
 
-	FindingsSelectionMediator(PageBook pages, Control noFindingsPage,
+	FindingsSelectionMediator(FindingsSelectionView view, 
 			Composite findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs, Label findingsIcon,
 			Link findingsStatus, ToolItem columnSelectionItem,
 			ToolItem openSearchItem, ToolItem saveSearchesAsItem,
 			ToolItem deleteSearchItem, Link savedSelections) {
-		f_pages = pages;
-		f_noFindingsPage = noFindingsPage;
+		f_view = view;
 		f_findingsPage = findingsPage;
 		f_cascadingList = cascadingList;
 		f_clearSelectionItem = clearSelectionItem;
@@ -87,6 +86,22 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_columnSelectionItem = columnSelectionItem;
 	}
 
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-findings-quick-search";
+	}
+
+	public String getNoDataId() {
+		return "sierra.eclipse.noDataFindingsQuickSearch";
+	}
+
+	public Listener getNoDataListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				new NewScanDialogAction().run(null);
+			}
+		};
+	}
+	
 	public void init() {
 		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -231,22 +246,19 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		 * we show a helpful message, if so we display the findings selection
 		 * page.
 		 */
-		final Control page;
-		if (p.isEmpty()) {
-			page = f_noFindingsPage;
-		} else {
-			page = f_findingsPage;
-		}
+		final boolean dataShouldShow = !p.isEmpty();
+
 		// beware the thread context this method call might be made in.
 		final UIJob job = new SLUIJob() {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (page != f_pages.getPage()) {
+				if (dataShouldShow != f_view.showingData()) {
 					/*
 					 * Only gets run when the page actually has changed.
 					 */
-					f_pages.showPage(page);
-					if (page == f_findingsPage) {
+					f_view.hasData(dataShouldShow);
+
+					if (dataShouldShow) {
 						clearToPersistedViewState();
 					}
 				}
