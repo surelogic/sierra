@@ -91,7 +91,7 @@ public final class SierraServer {
 		f_port = port;
 	}
 
-	private String f_contextPath = "/";
+	private String f_contextPath = "/sl/";
 
 	public String getContextPath() {
 		return f_contextPath;
