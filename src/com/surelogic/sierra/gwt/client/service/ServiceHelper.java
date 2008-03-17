@@ -31,7 +31,8 @@ public final class ServiceHelper {
 
 	private static Object bindService(Object service, String servletName) {
 		ServiceDefTarget endpoint = (ServiceDefTarget) service;
-		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL() + servletName);
+		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/"
+				+ servletName);
 		return service;
 	}
 
