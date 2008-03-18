@@ -297,6 +297,13 @@
 			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
 			name="Sierra Team Servers">
 		</view>
+		
+		<view category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig"
+			id="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig"
+			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
+			name="Sierra Team Servers (Original)">
+		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
@@ -337,6 +344,12 @@
 			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
+			</viewShortcut>
+			<viewShortcut
+				id="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig">
+			</viewShortcut>			
+			<viewShortcut
+				id="com.surelogic.sierra.client.eclipse.views.ProjectStatusView">
 			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.AdHocQueryView">
