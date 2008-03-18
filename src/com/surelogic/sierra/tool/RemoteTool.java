@@ -121,7 +121,7 @@ public class RemoteTool extends AbstractTool {
         System.out.println("URI = "+location);
       }
       for(ToolTarget t : config.getTargets()) {
-        System.out.println("Target = "+t.getLocation());
+        System.out.println(t.getType()+" = "+t.getLocation());
       }
       System.out.println("Excluded tools = "+config.getExcludedToolsList());
       System.out.flush();
