@@ -1,10 +1,18 @@
 package com.surelogic.sierra.chart.cache;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -131,14 +139,23 @@ public final class Attendant {
 	public void sendPNG(final Ticket ticket, final HttpServletRequest request,
 			final HttpServletResponse response) throws ServletException,
 			IOException {
+		final File png = getPNGFileFor(ticket);
+		boolean createCacheFiles = true;
 		/*
 		 * Does a cached file exist?
 		 */
-
-		/*
-		 * Is it OK to use cached file?
-		 */
-
+		if (png.exists()) {
+			/*
+			 * Is it OK to use cached file?
+			 */
+			final Date modified = new Date(png.lastModified());
+			// TODO add check with database.
+			createCacheFiles = false;
+		}
+		if (createCacheFiles) {
+			// TODO create the cache files and make sure png exists.
+		}
+		sendCacheFile(png, response, "image/png");
 	}
 
 	public void sendMAP(final Ticket ticket, final HttpServletRequest request,
@@ -191,7 +208,7 @@ public final class Attendant {
 	 * @throws IOException
 	 *             if there is a problem saving the file.
 	 */
-	public String saveChart(JFreeChart chart, int width, int height,
+	public String cacheChart(JFreeChart chart, int width, int height,
 			ChartRenderingInfo info, HttpSession session) throws IOException {
 
 		// if (chart == null) {
@@ -226,8 +243,57 @@ public final class Attendant {
 				+ ticket.getUUID().toString() + ".map");
 	}
 
-	private final String CACHE_DIR = System.getProperty("java.io.tmpdir")
-			+ File.separator + "sierra-cache";
+	/**
+	 * Binary streams the specified file to the HTTP response in 1KB chunks.
+	 * 
+	 * @param file
+	 *            the file to be streamed.
+	 * @param response
+	 *            the HTTP response object.
+	 * @param mimeType
+	 *            the mime type of the file, {@code null} is allowed.
+	 * 
+	 * @throws IOException
+	 *             if there is an I/O problem.
+	 */
+	private void sendCacheFile(File file, HttpServletResponse response,
+			String mimeType) throws IOException {
+
+		if (file.exists()) {
+			BufferedInputStream bis = new BufferedInputStream(
+					new FileInputStream(file));
+
+			// Set HTTP headers
+			if (mimeType != null) {
+				response.setHeader("Content-Type", mimeType);
+			}
+			response.setHeader("Content-Length", String.valueOf(file.length()));
+			SimpleDateFormat sdf = new SimpleDateFormat(
+					"EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			response.setHeader("Last-Modified", sdf.format(new Date(file
+					.lastModified())));
+
+			BufferedOutputStream bos = new BufferedOutputStream(response
+					.getOutputStream());
+			byte[] input = new byte[1024];
+			boolean eof = false;
+			while (!eof) {
+				int length = bis.read(input);
+				if (length == -1) {
+					eof = true;
+				} else {
+					bos.write(input, 0, length);
+				}
+			}
+			bos.flush();
+			bis.close();
+			bos.close();
+		} else {
+			throw new FileNotFoundException(I18N
+					.err(40, file.getAbsolutePath()));
+		}
+	}
 
 	/**
 	 * The singleton instance.
