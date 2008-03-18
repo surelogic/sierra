@@ -23,27 +23,17 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
-public final class SierraServersView extends ViewPart {
+public final class SierraServersView extends AbstractSierraView<SierraServersMediator> {
 
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SierraServersView";
 
 	public static final int INFO_WIDTH_HINT = 70;
-
-	private SierraServersMediator f_mediator = null;
-
-	@Override
-	public void dispose() {
-		if (f_mediator != null)
-			f_mediator.dispose();
-		super.dispose();
-	}
 
 	private MenuItem createMenuItem(Menu menu, String name, Image image) {
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
@@ -57,7 +47,7 @@ public final class SierraServersView extends ViewPart {
 	}
 
 	@Override
-	public void createPartControl(final Composite parent) {
+	protected SierraServersMediator createMorePartControls(final Composite parent) {
 		GridData data;
 
 		GridLayout gridLayout = new GridLayout();
@@ -240,17 +230,7 @@ public final class SierraServersView extends ViewPart {
 		menu.add(new Separator());
 		menu.add(new PreferencesAction("Preferences..."));
 
-		/*
-		 * Allow access to help via the F1 key.
-		 */
-		getSite()
-				.getWorkbenchWindow()
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(parent,
-						"com.surelogic.sierra.client.eclipse.view-team-servers");
-
-		f_mediator = new SierraServersMediator(serverList, newServer,
+		return new SierraServersMediator(this, serverList, newServer,
 				duplicateServer, deleteServer, newServerItem,
 				duplicateServerItem, deleteServerItem, serverConnectItem,
 				scanAllConnectedProjects, rescanAllConnectedProjects,
@@ -258,12 +238,5 @@ public final class SierraServersView extends ViewPart {
 				serverPropertiesItem, openInBrowser, infoGroup, serverURL,
 				projectList, projectConnectItem, scanProjectItem,
 				rescanProjectItem, disconnectProjectItem);
-		f_mediator.init();
-	}
-
-	@Override
-	public void setFocus() {
-		if (f_mediator != null)
-			f_mediator.setFocus();
 	}
 }

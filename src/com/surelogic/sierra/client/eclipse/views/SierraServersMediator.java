@@ -52,8 +52,10 @@ import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
-public final class SierraServersMediator implements ISierraServerObserver {
+public final class SierraServersMediator 
+implements ISierraServerObserver, IViewMediator {
 
+	private final IViewCallback f_view;
 	private final Table f_serverList;
 	private final ToolItem f_newServer;
 	private final ToolItem f_duplicateServer;
@@ -214,7 +216,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		}
 	};
 
-	public SierraServersMediator(Table serverList, ToolItem newServer,
+	public SierraServersMediator(SierraServersView view,
+			Table serverList, ToolItem newServer,
 			ToolItem duplicateServer, ToolItem deleteServer,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
@@ -226,6 +229,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			Table projectList, MenuItem projectConnectItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem) {
+		f_view = view;
 		f_serverList = serverList;
 		f_newServer = newServer;
 		f_duplicateServer = duplicateServer;
@@ -250,6 +254,22 @@ public final class SierraServersMediator implements ISierraServerObserver {
 		f_disconnectProjectItem = disconnectProjectItem;
 	}
 
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-team-servers";
+	}
+
+	public String getNoDataId() {
+		return "sierra.eclipse.noDataSierraServers";
+	}
+
+	public Listener getNoDataListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				ServerLocationDialog.newServer(f_serverList.getShell());
+			}
+		};
+	}
+	
 	public void init() {
 		f_manager.addObserver(this);
 		notify(f_manager);
@@ -270,11 +290,7 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			}
 		});
 
-		final Listener newServerAction = new Listener() {
-			public void handleEvent(Event event) {
-				ServerLocationDialog.newServer(f_serverList.getShell());
-			}
-		};
+		final Listener newServerAction = getNoDataListener();
 
 		final Listener duplicateServerAction = new Listener() {
 			public void handleEvent(Event event) {
@@ -515,6 +531,8 @@ public final class SierraServersMediator implements ISierraServerObserver {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (f_serverList.isDisposed())
 					return Status.OK_STATUS;
+				
+				f_view.hasData(!f_manager.isEmpty());
 				f_serverList.setRedraw(false);
 				String[] labels = f_manager.getLabels();
 				TableItem[] items = f_serverList.getItems();
