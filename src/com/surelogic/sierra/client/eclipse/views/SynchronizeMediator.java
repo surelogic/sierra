@@ -23,6 +23,8 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
@@ -50,8 +52,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {
-				ViewUtility.showView(SierraServersView.ID);
+			public void handleEvent(Event event) {				
+				new SynchronizeProjectDialogAction().run(null);
 			}
 		};
 	}
