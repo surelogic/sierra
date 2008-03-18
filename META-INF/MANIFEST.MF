@@ -14,7 +14,6 @@ Require-Bundle: org.apache.ant,
 Eclipse-LazyStart: false
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
- com.surelogic.sierra.tool.ant,
  com.surelogic.sierra.tool.findbugs,
  com.surelogic.sierra.tool.pmd,
  com.surelogic.sierra.tool.reckoner
