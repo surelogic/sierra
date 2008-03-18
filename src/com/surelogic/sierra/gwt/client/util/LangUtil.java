@@ -9,4 +9,11 @@ public final class LangUtil {
 		return o1 != null && o1.equals(o2);
 	}
 
+	public static boolean equalsIgnoreCase(String s1, String s2) {
+		if (s1 == s2) {
+			return true;
+		}
+		return s1 != null && s1.equalsIgnoreCase(s2);
+	}
+
 }

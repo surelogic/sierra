@@ -106,12 +106,12 @@ public final class ClientContext {
 	}
 
 	public static boolean isContent(String contentName) {
-		return LangUtil.equals(contentName, getContext().getContent());
+		return LangUtil
+				.equalsIgnoreCase(contentName, getContext().getContent());
 	}
 
 	public static boolean isContent(ContentComposite content) {
-		// TODO need to add support for subcontext
-		return LangUtil.equals(content.getContextName(), getContext()
+		return LangUtil.equalsIgnoreCase(content.getContextName(), getContext()
 				.getContent());
 	}
 
