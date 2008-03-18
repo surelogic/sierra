@@ -18,7 +18,7 @@ public class FindingOverview implements Serializable {
 
 	private String findingType;
 	private String category;
-	private String description;
+	private String summary;
 	private String importance;
 
 	private String project;
@@ -53,12 +53,12 @@ public class FindingOverview implements Serializable {
 		this.category = category;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getSummary() {
+		return summary;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 
 	public String getImportance() {

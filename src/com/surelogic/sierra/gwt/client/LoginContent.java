@@ -167,7 +167,7 @@ public class LoginContent extends ContentComposite {
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
-	protected void onActivate(String context) {
+	protected void onActivate(Context context) {
 		// TODO accept an error message param in the context?
 		resetLoginAttempt();
 		if (username.getText().trim().length() > 0) {

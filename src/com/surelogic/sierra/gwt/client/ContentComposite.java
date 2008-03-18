@@ -19,7 +19,7 @@ public abstract class ContentComposite extends Composite {
 		ClientContext.setContext(getContextName());
 	}
 
-	public final void activate(String context) {
+	public final void activate(Context context) {
 		if (!uiCreated) {
 			uiCreated = true;
 			onInitialize(rootPanel);
@@ -38,7 +38,7 @@ public abstract class ContentComposite extends Composite {
 
 	protected abstract void onInitialize(DockPanel rootPanel);
 
-	protected abstract void onActivate(String context);
+	protected abstract void onActivate(Context context);
 
 	protected abstract boolean onDeactivate();
 

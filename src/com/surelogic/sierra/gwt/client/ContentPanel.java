@@ -30,23 +30,17 @@ public class ContentPanel extends Composite implements ContextListener {
 		ClientContext.addContextListener(this);
 	}
 
-	public void onChange(String context) {
-		if (!ClientContext.isLoggedIn()) {
-			context = LoginContent.getInstance().getContextName();
-		} else if (context == null || "".equals(context)) {
-			context = OverviewContent.getInstance().getContextName();
-		}
+	public void onChange(Context context) {
 
-		ContentComposite content = (ContentComposite) contentRegistry
-				.get(context.toLowerCase());
-		if (content == null) {
-			if (ClientContext.isLoggedIn()) {
+		ContentComposite content;
+		if (!ClientContext.isLoggedIn()) {
+			content = LoginContent.getInstance();
+		} else {
+			content = (ContentComposite) contentRegistry.get(context.getContent());
+			if(content == null) {
 				content = OverviewContent.getInstance();
-			} else {
-				content = LoginContent.getInstance();
 			}
 		}
-
 		if (currentContent == content) {
 			return;
 		}

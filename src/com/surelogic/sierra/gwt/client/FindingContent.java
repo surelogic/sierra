@@ -27,7 +27,8 @@ public class FindingContent extends ContentComposite {
 		return "Finding";
 	}
 
-	protected void onActivate(String context) {
+	protected void onActivate(Context context) {
+		synopsis.setText(context.getContent());
 	}
 
 	protected boolean onDeactivate() {

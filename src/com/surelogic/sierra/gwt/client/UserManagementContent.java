@@ -109,7 +109,7 @@ public class UserManagementContent extends ContentComposite {
 		usersPanel.add(status);
 	}
 
-	protected void onActivate(String context) {
+	protected void onActivate(Context context) {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();

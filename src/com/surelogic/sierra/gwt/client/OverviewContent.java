@@ -32,7 +32,7 @@ public class OverviewContent extends ContentComposite {
 		return "Projects";
 	}
 
-	protected void onActivate(String context) {
+	protected void onActivate(Context context) {
 		OverviewServiceAsync service = ServiceHelper.getOverviewService();
 		service.getProjectOverviews(new AsyncCallback() {
 

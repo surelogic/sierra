@@ -111,11 +111,11 @@ public final class ClientContext {
 
 	public static boolean isContext(ContentComposite content) {
 		// TODO need to add support for subcontext
-		return LangUtil.equals(content.getContextName(), getContext());
+		return LangUtil.equals(content.getContextName(), getContext().getContent());
 	}
 
-	public static String getContext() {
-		return History.getToken();
+	public static Context getContext() {
+		return Context.create(History.getToken());
 	}
 
 	public static void setContext(String token) {
@@ -141,7 +141,7 @@ public final class ClientContext {
 	}
 
 	private static void notifyContextListeners() {
-		final String context = getContext();
+		final Context context = getContext();
 		for (Iterator i = contextListeners.iterator(); i.hasNext();) {
 			final ContextListener listener = (ContextListener) i.next();
 			listener.onChange(context);

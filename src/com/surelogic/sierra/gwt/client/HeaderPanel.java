@@ -107,7 +107,7 @@ public final class HeaderPanel extends Composite {
 		});
 		ClientContext.addContextListener(new ContextListener() {
 
-			public void onChange(String context) {
+			public void onChange(Context context) {
 				updateContext(context);
 			}
 
@@ -148,7 +148,7 @@ public final class HeaderPanel extends Composite {
 		}
 	}
 
-	public void updateContext(String context) {
+	public void updateContext(Context context) {
 		if (rootPanel.getWidgetIndex(mainBar) != -1) {
 			int newIndex;
 			if (context != null) {
