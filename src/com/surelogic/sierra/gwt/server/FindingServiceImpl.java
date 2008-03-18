@@ -27,7 +27,7 @@ public class FindingServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = -5522046767503450943L;
 
 	public Result getFinding(final String key) {
-		if (key == null || key.isEmpty()) {
+		if (key == null || "".equals(key)) {
 			return Result.failure("No key specified");
 		}
 		return ConnectionFactory.withReadOnly(new ServerTransaction<Result>() {
