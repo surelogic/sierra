@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.reckoner;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,91 +29,55 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  private static final boolean batch = false;
-  
-  private interface Filter {
-    boolean exclude(Metrics m);
-  }
-  
   protected IToolInstance create(final ArtifactGenerator generator, 
       final SLProgressMonitor monitor, boolean close) {
     return new AbstractToolInstance(this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {     
+    	final boolean debug = LOG.isLoggable(Level.FINE);
         final Reckoner r = new Reckoner();
-        final IProgressMonitor mon = new IProgressMonitorWrapper(monitor);
-        if (batch) {
-          List<File> targets = new ArrayList<File>();
-          for(IToolTarget t : getSrcTargets()) {
-            targets.add(new File(t.getLocation()));
-          }
-          buildMetrics(r, mon, targets, new Filter() {
-            public boolean exclude(Metrics m) {
-              final String path = m.getPath();
-              for(IToolTarget t : getSrcTargets()) {
-                if (targetExcludes(t, path)) {
-                  return true;
+
+        final List<File> targets = new ArrayList<File>();
+        monitor.beginTask("Reckoner setup", IProgressMonitor.UNKNOWN);
+        for(IToolTarget t : getSrcTargets()) {
+            for(URI loc : t.getFiles()) {
+                File f = new File(loc);
+                if (f.exists()) {      
+                	targets.add(f);
                 }
-              }
-              return false;
             }
-            
-          });
-        } else {
-          // Do one target at a time
-          List<File> targets = new ArrayList<File>(1);
-          for(final IToolTarget t : getSrcTargets()) {
-            targets.add(new File(t.getLocation()));
-            
-            buildMetrics(r, mon, targets, new Filter() {
-              public boolean exclude(Metrics m) {
-                return targetExcludes(t, m.getPath());
-              }             
-            });
-            targets.clear();
-          }
+        }
+        
+        monitor.beginTask("Reckoner", targets.size());
+        for(File f : targets) {
+        	final String path = f.getPath();
+        	monitor.subTask("Building metrics for "+path);
+            try {
+            	Metrics m = r.countLOC(f);
+            	if (m == null) {
+            		monitor.error("Problem reading "+path);
+            		continue;
+            	}
+            	if (debug) {
+            		System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
+            	}
+            	buildMetrics(m);
+            	monitor.worked(1);
+            } catch (Exception e) {
+            	monitor.error("Unexpected problem with "+path, e);
+            }
         }
       }
 
-      private boolean targetExcludes(IToolTarget t, String path) {
-        File root = new File(t.getLocation());
-        String rootPath = root.getAbsolutePath();
-        if (!path.startsWith(rootPath)) {
-          throw new IllegalArgumentException(path+" isn't under "+rootPath);
-        }
-        String partialPath = path.equals(rootPath) ? "" : path.substring(rootPath.length()+1);
-        
-        if (t.exclude(partialPath.replace(File.separatorChar, '/'))) {
-          return true;
-        }
-        return false;
-      } 
-      
-      private void buildMetrics(final Reckoner r, 
-                                final IProgressMonitor mon, 
-                                List<File> targets, Filter filter) {
-        List<Metrics> metrics = r.computeMetrics(targets, mon);
-        
-        mon.beginTask("Reckoner ...", targets.size());
-        for(Metrics m : metrics) {
-          if (filter.exclude(m)) {
-            continue;
-          }
-          mon.subTask("Building metrics for "+m.getPath());
-          
-          if (LOG.isLoggable(Level.FINE)) {
-            System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
-          }
-          MetricBuilder metric = generator.metric();
-          metric.compilation(m.getClassName());
-          if (m.getLoc() > Integer.MAX_VALUE) {
-            reportError("#LOC too big to report: "+m.getClassName()+" - "+m.getLoc());
-          }
-          metric.linesOfCode((int) m.getLoc());          
-          metric.packageName(m.getPackageName());
-          metric.build();
-          mon.worked(1);
-        }
+      private void buildMetrics(Metrics m) {
+    	  MetricBuilder metric = generator.metric();
+    	  metric.compilation(m.getClassName());
+    	  if (m.getLoc() > Integer.MAX_VALUE) {
+    		  reportError("#LOC too big to report: "+m.getClassName()+" - "+m.getLoc());
+    	  }
+    	  metric.linesOfCode((int) m.getLoc());          
+    	  metric.packageName(m.getPackageName());
+    	  metric.build();
       }
     };
   }
