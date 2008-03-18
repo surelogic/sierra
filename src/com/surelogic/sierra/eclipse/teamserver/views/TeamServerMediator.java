@@ -34,7 +34,9 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
@@ -368,6 +370,33 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		 * We are not being called from the SWT thread.
 		 */
 		refresh();
+	}
+
+	public void notifyStartupFailure(TeamServer server) {
+		/*
+		 * We are not being called from the SWT thread.
+		 */
+		startupFailureHelper(server.getProcessExitValue(), server
+				.getProcessConsoleOutput());
+	}
+
+	/**
+	 * Puts up a dialog notifying the user that local team server startup
+	 * failed. This method does not need to be called from the SWT thread.
+	 */
+	public void startupFailureHelper(final int exitValue,
+			final String consoleMsg) {
+		UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final int errNo = 94;
+				final String msg = I18N.err(errNo, exitValue, consoleMsg);
+				final IStatus reason = SLStatus.createWarningStatus(errNo, msg);
+				ErrorDialogUtility.open(null, "Startup Failure", reason);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	private void openInBrowser(final URL url) {

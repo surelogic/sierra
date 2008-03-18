@@ -2,6 +2,8 @@ package com.surelogic.sierra.eclipse.teamserver.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -171,6 +173,7 @@ public final class TeamServer {
 				}
 
 				boolean notifyObservers = false;
+				boolean notifyStartupFailure = false;
 				synchronized (TeamServer.this) {
 					final boolean oldIsRunning = f_isRunning;
 					final boolean oldIsNotRunning = f_isNotRunning;
@@ -185,6 +188,7 @@ public final class TeamServer {
 							f_inStart = false;
 							f_isNotRunning = true;
 							notifyObservers = true;
+							notifyStartupFailure = true;
 						}
 					} else if (f_inStop) {
 						if (isNotRunning) {
@@ -206,6 +210,9 @@ public final class TeamServer {
 				}
 				if (notifyObservers) {
 					notifyObservers();
+				}
+				if (notifyStartupFailure) {
+					notifyStartupFailureObservers();
 				}
 			}
 		};
@@ -233,6 +240,15 @@ public final class TeamServer {
 	private void notifyObservers() {
 		for (ITeamServerObserver o : f_observers) {
 			o.notify(this);
+		}
+	}
+
+	/**
+	 * Callers should never be holding a lock due to the potential for deadlock.
+	 */
+	private void notifyStartupFailureObservers() {
+		for (ITeamServerObserver o : f_observers) {
+			o.notifyStartupFailure(this);
 		}
 	}
 
@@ -312,6 +328,35 @@ public final class TeamServer {
 
 	private void doneWithProcess() {
 		f_process.set(null);
+		f_processConsoleOutput.setLength(0);
+		f_processExitValue.set(0);
+	}
+
+	private final StringBuffer f_processConsoleOutput = new StringBuffer();
+
+	/**
+	 * The output to stderr and stdout when the local team server startup fails.
+	 * The output of this call is the empty string except for after local team
+	 * server startup failure.
+	 * 
+	 * @return output from the process that failed to start the local team
+	 *         server.
+	 */
+	public String getProcessConsoleOutput() {
+		return f_processConsoleOutput.toString();
+	}
+
+	private final AtomicInteger f_processExitValue = new AtomicInteger(0);
+
+	/**
+	 * The exit value when the local team server startup fails. The output of
+	 * this call is 0 except for after local team server startup failure.
+	 * 
+	 * @return exit value from the process that failed to start the local team
+	 *         server.
+	 */
+	public int getProcessExitValue() {
+		return f_processExitValue.get();
 	}
 
 	private boolean processDied() {
@@ -319,11 +364,14 @@ public final class TeamServer {
 		final Process p = f_process.get();
 		if (p != null) {
 			try {
-				p.exitValue();
+				final int exitValue = p.exitValue();
 				/*
 				 * If we get to this point the startup of a Jetty process has
 				 * died.
 				 */
+				f_processExitValue.set(exitValue);
+				readAllFrom(p.getErrorStream(), f_processConsoleOutput);
+				readAllFrom(p.getInputStream(), f_processConsoleOutput);
 			} catch (IllegalThreadStateException e) {
 				/*
 				 * This indicates that the Jetty process is still running.
@@ -337,6 +385,21 @@ public final class TeamServer {
 			SLLogger.log(Level.SEVERE, I18N.err(93));
 		}
 		return result;
+	}
+
+	private void readAllFrom(final InputStream in, final StringBuffer into) {
+		InputStreamReader inr = new InputStreamReader(in);
+		try {
+			while (inr.ready()) {
+				int byteRead = inr.read();
+				if (byteRead != -1) {
+					into.append((char) byteRead);
+				}
+			}
+		} catch (IOException e) {
+			SLLogger.log(Level.SEVERE, I18N.err(40,
+					"process stream after local team server startup failure"));
+		}
 	}
 
 	private void runJava(final CommandlineJava command, boolean storeProcess) {
