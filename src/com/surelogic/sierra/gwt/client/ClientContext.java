@@ -105,8 +105,8 @@ public final class ClientContext {
 		userListeners.remove(listener);
 	}
 
-	public static boolean isContent(String token) {
-		return LangUtil.equals(token, getContext().getContent());
+	public static boolean isContent(String contentName) {
+		return LangUtil.equals(contentName, getContext().getContent());
 	}
 
 	public static boolean isContent(ContentComposite content) {
