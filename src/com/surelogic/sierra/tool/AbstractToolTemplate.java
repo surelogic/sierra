@@ -9,14 +9,14 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
  * @author Edwin.Chan
  */
 public abstract class AbstractToolTemplate extends AbstractTool {
-  public AbstractToolTemplate(String version) {
-    super("", version, "", "");
+  public AbstractToolTemplate(String version, boolean debug) {
+    super("", version, "", "", debug);
   }
 
   @Override
   protected IToolInstance create(ArtifactGenerator generator,
                                  SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(this, generator, monitor, close) {
+    return new AbstractToolInstance(debug, this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {      
         // Nothing to do yet

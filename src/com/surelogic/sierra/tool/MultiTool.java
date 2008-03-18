@@ -10,8 +10,8 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 public class MultiTool extends AbstractTool {
   protected List<ITool> tools = new ArrayList<ITool>();
   
-  public MultiTool() {
-    super("MultiTool", "1.0", "MultiTool", "A container for other tools");
+  public MultiTool(boolean debug) {
+    super("MultiTool", "1.0", "MultiTool", "A container for other tools", debug);
   }
 
   public Set<String> getArtifactTypes() {
@@ -20,7 +20,7 @@ public class MultiTool extends AbstractTool {
   
   protected IToolInstance create(final ArtifactGenerator generator, 
       final SLProgressMonitor monitor, boolean close) {
-    return new Instance(this, generator, monitor, close);
+    return new Instance(debug, this, generator, monitor, close);
   }
   
   public void addTool(ITool t) {
@@ -37,7 +37,8 @@ public class MultiTool extends AbstractTool {
     private final SLProgressMonitor monitor;
     private final boolean closeWhenDone;
     
-    Instance(MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon, boolean close) {
+    Instance(boolean debug, MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon, boolean close) {
+    	super(debug);
       for(ITool tool : mt.tools) {
         this.tools.add(tool);
         

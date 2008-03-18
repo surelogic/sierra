@@ -51,8 +51,8 @@ public class LocalTool extends AbstractTool {
     }    
   }
   
-  public LocalTool() {
-    super("Local", "1.0", "Local", "Local tool for running other tools in another JVM");
+  public LocalTool(boolean debug) {
+    super("Local", "1.0", "Local", "Local tool for running other tools in another JVM", debug);
   }
   
   public Set<String> getArtifactTypes() {
@@ -60,7 +60,7 @@ public class LocalTool extends AbstractTool {
   }
   
   public IToolInstance create(final Config config, final SLProgressMonitor monitor) {
-    return new LocalInstance(config, monitor);
+    return new LocalInstance(debug, config, monitor);
   }
   
   public IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor) {
@@ -77,7 +77,8 @@ public class LocalTool extends AbstractTool {
     final SLProgressMonitor monitor;
     final TestCode testCode;
     
-    LocalInstance(Config c, SLProgressMonitor mon) {
+    LocalInstance(boolean debug, Config c, SLProgressMonitor mon) {
+    	super(debug);
       config = c;
       monitor = mon;
       testCode = getTestCode(c.getTestCode());

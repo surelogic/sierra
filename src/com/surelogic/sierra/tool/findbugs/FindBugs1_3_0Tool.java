@@ -7,8 +7,8 @@ import edu.umd.cs.findbugs.FindBugs2;
 import edu.umd.cs.findbugs.IFindBugsEngine;
 
 public class FindBugs1_3_0Tool extends AbstractFindBugsTool {
-  public FindBugs1_3_0Tool(String fbDir) {
-    super("1.3.0", fbDir);
+  public FindBugs1_3_0Tool(String fbDir, boolean debug) {
+    super("1.3.0", fbDir, debug);
   }
 
   public Set<String> getArtifactTypes() {

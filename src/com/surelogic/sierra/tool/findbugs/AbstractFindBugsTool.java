@@ -19,8 +19,8 @@ import edu.umd.cs.findbugs.config.UserPreferences;
 
 public abstract class AbstractFindBugsTool extends AbstractTool {
   final String fbDir;
-  protected AbstractFindBugsTool(String version, String fbDir) {
-    super("FindBugs", version, "FindBugs (TM)", "");
+  protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
+    super("FindBugs", version, "FindBugs (TM)", "", debug);
     this.fbDir = fbDir;
   }
   
@@ -29,7 +29,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     System.setProperty("findbugs.home", fbDir);
     monitor.subTask("Set FB home to "+fbDir);
     
-    return new AbstractToolInstance(this, generator, monitor, close) {     
+    return new AbstractToolInstance(debug, this, generator, monitor, close) {     
       final IFindBugsEngine engine = createEngine();
       
       @Override

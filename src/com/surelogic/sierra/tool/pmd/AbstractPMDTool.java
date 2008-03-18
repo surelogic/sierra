@@ -22,13 +22,13 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractPMDTool extends AbstractTool {
-  public AbstractPMDTool(String version) {
-    super("PMD", version, "PMD", "");
+  public AbstractPMDTool(String version, boolean debug) {
+    super("PMD", version, "PMD", "", debug);
   }
 
   protected final IToolInstance create(final ArtifactGenerator generator, 
       final SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(this, generator, monitor, close) {
+    return new AbstractToolInstance(debug, this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {      
         int cpus = Runtime.getRuntime().availableProcessors();

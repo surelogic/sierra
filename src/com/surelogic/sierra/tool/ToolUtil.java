@@ -17,25 +17,21 @@ public class ToolUtil {
   /** The logger */
   protected static final Logger LOG = SLLogger.getLogger("sierra");
   
-  public static ITool create(Config config) {
-    // FIX look at config
-    return create(config, true);
-  }
-  
   public static ITool create(Config config, boolean runRemotely) {
+	final boolean debug = LOG.isLoggable(Level.FINE);
     if (runRemotely) {
-      return new LocalTool();
+      return new LocalTool(debug);
     }
-    final MultiTool t = new MultiTool();
+    final MultiTool t = new MultiTool(true);
     if (!config.getExcludedToolsList().contains("findbugs")) {
-      t.addTool(new FindBugs1_3_2Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID)));
+      t.addTool(new FindBugs1_3_2Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
     }
     if (!config.getExcludedToolsList().contains("pmd")) {
-      t.addTool(new PMD4_2Tool());
-      t.addTool(new CPD4_1Tool());
+      t.addTool(new PMD4_2Tool(debug));
+      t.addTool(new CPD4_1Tool(debug));
     }
     if (!config.getExcludedToolsList().contains("reckoner")) {
-      t.addTool(new Reckoner1_0Tool());
+      t.addTool(new Reckoner1_0Tool(debug));
     }
     return t;
   }

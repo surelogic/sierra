@@ -19,13 +19,15 @@ public abstract class AbstractToolInstance implements IToolInstance {
   private boolean done = false;
   private final boolean closeWhenDone;
   private final Map<String,String> options = new HashMap<String,String>();
+  protected final boolean debug;
   
-  protected AbstractToolInstance(ITool t, ArtifactGenerator gen, SLProgressMonitor m,
-                                 boolean close) {
+  protected AbstractToolInstance(boolean debug, ITool t, ArtifactGenerator gen, SLProgressMonitor m,
+          boolean close) {
     tool = t;
     generator = gen;
     monitor = m;
     closeWhenDone = close;
+    this.debug = debug;
   }
   
   public final ArtifactGenerator getGenerator() {
@@ -88,15 +90,16 @@ public abstract class AbstractToolInstance implements IToolInstance {
       throw new IllegalArgumentException("Tool instance cannot be reused");
     }
     // monitor.setTaskName("Scanning with "+getName()+" v"+getVersion());
-    
-    for(IToolTarget t : getSrcTargets()) {
-      System.out.println("Source: "+t.getLocation());
-    }
-    for(IToolTarget t : getBinTargets()) {
-      System.out.println("Binary: "+t.getLocation());
-    }
-    for(IToolTarget t : getAuxTargets()) {
-      System.out.println("Auxiliary: "+t.getLocation());
+    if (debug) {
+    	for(IToolTarget t : getSrcTargets()) {
+    		System.out.println("Source: "+t.getLocation());
+    	}
+    	for(IToolTarget t : getBinTargets()) {
+    		System.out.println("Binary: "+t.getLocation());
+    	}
+    	for(IToolTarget t : getAuxTargets()) {
+    		System.out.println("Auxiliary: "+t.getLocation());
+    	}
     }
     try {
       execute();

@@ -21,8 +21,8 @@ import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Reckoner1_0Tool extends AbstractTool {
-  public Reckoner1_0Tool() {
-    super("Reckoner", "1.0", "Reckoner", "");
+  public Reckoner1_0Tool(boolean debug) {
+    super("Reckoner", "1.0", "Reckoner", "", debug);
   }
 
   public Set<String> getArtifactTypes() {
@@ -31,7 +31,7 @@ public class Reckoner1_0Tool extends AbstractTool {
   
   protected IToolInstance create(final ArtifactGenerator generator, 
       final SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(this, generator, monitor, close) {
+    return new AbstractToolInstance(debug, this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {     
     	final boolean debug = LOG.isLoggable(Level.FINE);

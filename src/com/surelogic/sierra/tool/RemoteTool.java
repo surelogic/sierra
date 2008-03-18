@@ -20,8 +20,8 @@ import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
 public class RemoteTool extends AbstractTool {
-  public RemoteTool() {
-    super("Remote", "1.0", "Remote", "Remote tool for running other tools in another JVM");
+  public RemoteTool(boolean debug) {
+    super("Remote", "1.0", "Remote", "Remote tool for running other tools in another JVM", debug);
   }
 
   public Set<String> getArtifactTypes() {

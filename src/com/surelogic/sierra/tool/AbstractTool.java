@@ -30,15 +30,17 @@ public abstract class AbstractTool implements ITool {
   private final String name;
   private final String title;
   private final String version;
+  protected final boolean debug;
 
   /**
    * Perhaps this should read from a file
    */
-  protected AbstractTool(String name, String version, String title, String desc) {
+  protected AbstractTool(String name, String version, String title, String desc, boolean debug) {
     this.name = name;
     this.version = version;
     this.title = title;
     this.description = desc;
+    this.debug = debug;
   }
 
   public final String getHtmlDescription() {

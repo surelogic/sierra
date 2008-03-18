@@ -20,14 +20,14 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder
 import com.surelogic.sierra.tool.targets.*;
 
 public abstract class AbstractCPDTool extends AbstractTool {
-  public AbstractCPDTool(String version) {
-    super("CPD", version, "CPD", "");
+  public AbstractCPDTool(String version, boolean debug) {
+    super("CPD", version, "CPD", "", debug);
   }
 
   @Override
   protected IToolInstance create(ArtifactGenerator generator,
                                  SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(this, generator, monitor, close) {
+    return new AbstractToolInstance(debug, this, generator, monitor, close) {
       @Override
       protected void execute() throws Exception {      
         monitor.beginTask("CPD", 10);
