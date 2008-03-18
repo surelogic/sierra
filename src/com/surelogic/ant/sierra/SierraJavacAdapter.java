@@ -62,18 +62,19 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
+		String libHome = "C:/work/workspace/sierra-ant/lib/";
 		config.setExcludedToolsList("checkstyle");
-		config
-				.setToolsDirectory(new File(
-						"C:/work/workspace/sierra-tool/Tools"));
+		config.setToolsDirectory(new File(libHome+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
-				"C:/work/workspace/common");
+				libHome+"common.jar");
 		config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID,
-				"C:/work/workspace/sierra-message");
+				libHome+"sierra-message.jar");
 		config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID,
-				"C:/work/workspace/sierra-pmd");
+				libHome+"pmd");
 		config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID,
-				"C:/work/workspace/sierra-fb");
+				libHome+"findbugs");
+		config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
+				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
 				"C:/eclipse/plugins/org.junit4_4.3.1");
 
@@ -88,13 +89,15 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
 	private void addPath(Config config, Type type, Path path) {
 		for (String elt : path.list()) {
-			System.out.println(elt);
 			File f = new File(elt);
 			if (f.exists()) {
 				if (f.isDirectory()) {
+					System.out.println(type+": "+elt);
 					config.addTarget(new FullDirectoryTarget(type, f.toURI()));
+				} else {
+					//System.out.println("Ignored: "+elt);
 				}
-			}
+			} 
 		}
 	}
 
