@@ -72,23 +72,21 @@ public abstract class AbstractPMDTool extends AbstractTool {
         }
         final ClassLoader cl = PMD.createClasspathClassLoader(auxPathFile.toURI().toURL().toString());
         
-        for(IToolTarget t : getSrcTargets()) {
-          // root dir of where the files are
-          final String inputPath = new File(t.getLocation()).getAbsolutePath();           
-          List<DataSource> files = new ArrayList<DataSource>();
+        final List<DataSource> files = new ArrayList<DataSource>();
+        for(IToolTarget t : getSrcTargets()) {       
           for(URI loc : t.getFiles()) {
             File f = new File(loc);
             if (f.exists()) {              
               files.add(new FileDataSource(f));
             }
           }          
-          List<Renderer> renderers = new ArrayList<Renderer>(); // output
-          renderers.add(new Output(generator, monitor, inputPath));
-          
-          monitor.beginTask("PMD", files.size() + 500);
-          PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, 
-        		           false, inputPath, encoding, excludeMarker, cl);
         }
+        final List<Renderer> renderers = new ArrayList<Renderer>(); // output
+        renderers.add(new Output(generator, monitor));
+          
+        monitor.beginTask("PMD", files.size() + 25);
+        PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx, renderers, rulesets, 
+        		         false, "", encoding, excludeMarker, cl);
         auxPathFile.delete();
       }      
     };
@@ -97,13 +95,11 @@ public abstract class AbstractPMDTool extends AbstractTool {
   class Output implements Renderer {
     private final ArtifactGenerator generator;
     private final SLProgressMonitor monitor;
-    private final String inputPath;
     private boolean first = true;
     
-    public Output(ArtifactGenerator gen, SLProgressMonitor m, String in) {
+    public Output(ArtifactGenerator gen, SLProgressMonitor m) {
       generator = gen;
       monitor = m;
-      inputPath = in;
     }
 
     public Writer getWriter() {
@@ -131,7 +127,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
     }
 
     public synchronized void startFileAnalysis(DataSource dataSource) {
-      String msg = "Scanning "+dataSource.getNiceFileName(false, inputPath);
+      String msg = "Scanning "+dataSource.getNiceFileName(false, "");
       monitor.subTask(msg); 
       if (first) {
         first = false;
