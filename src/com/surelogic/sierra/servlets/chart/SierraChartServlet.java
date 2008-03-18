@@ -97,7 +97,7 @@ public class SierraChartServlet extends HttpServlet {
 		final IDatabasePlot result = f_plot.get();
 		if (result == null) {
 			/*
-			 * This is probably due to init not being called.
+			 * This is probably due to init (above) not being called.
 			 */
 			throw new IllegalStateException(I18N.err(44, "f_plot"));
 		} else {
