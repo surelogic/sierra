@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-ant-task" default="all">
+	<description>Build for SL Ant tasks</description>
+
+  <target name="all" depends="clean,build"/>
+  
+  <target name="clean">
+    <delete dir="./lib"/>
+  </target>
+  
+	<target name="build">
+	  <mkdir dir="./lib"/>
+	  
+	  <mkdir dir="./lib/pmd"/>
+	  <copy todir="./lib/pmd">
+	    <fileset dir="../sierra-pmd/lib"/>
+	  </copy>
+	  
+	  <mkdir dir="./lib/findbugs"/>
+	  <copy todir="./lib/findbugs">
+	    <fileset dir="../sierra-fb" excludes="bin/"/>	      
+	  </copy>
+	  
+	  <mkdir dir="./lib/reckoner"/>
+	  <copy todir="./lib/reckoner">
+	    <fileset dir="../sierra-metrics/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	  </copy>
+		<copy file="../sierra-tool/Tools/reckoner/reckoner.jar" todir="./lib/reckoner" />
+	  <copy file="../sierra-tool/Tools/reckoner/lib/commons-cli-1.1/commons-cli-1.1.jar" todir="./lib/reckoner" />
+	  
+		<jar destfile="./lib/common.jar" basedir="../common/bin" />
+	  <mkdir dir="./lib/common"/>
+	  <copy todir="./lib/common">
+	    <fileset dir="../common/lib"/>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+	  <mkdir dir="./lib/jdbc"/>
+		<copy file="../sierra-jdbc/lib/mail.jar" todir="./lib/jdbc" />
+	  
+		<jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
+	  <mkdir dir="./lib/message"/>
+	  <copy todir="./lib/message">
+	    <fileset dir="../sierra-message/srpc"/>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
+	</target>
+</project>
+	  
