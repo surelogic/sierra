@@ -1,6 +1,8 @@
 package com.surelogic.sierra.servlets.chart;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -12,8 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.StandardEntityCollection;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
 
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.chart.IDatabasePlot;
@@ -73,17 +80,17 @@ public class SierraChartServlet extends HttpServlet {
 					plotClassName).newInstance();
 			f_plot.set(plot);
 		} catch (ClassCastException e) {
-			throw new ServletException(I18N.err(82, plotClassName,
-					config.getServletName()), e);
+			throw new ServletException(I18N.err(82, plotClassName, config
+					.getServletName()), e);
 		} catch (InstantiationException e) {
-			throw new ServletException(I18N.err(82, plotClassName,
-					config.getServletName()), e);
+			throw new ServletException(I18N.err(82, plotClassName, config
+					.getServletName()), e);
 		} catch (IllegalAccessException e) {
-			throw new ServletException(I18N.err(82, plotClassName,
-					config.getServletName()), e);
+			throw new ServletException(I18N.err(82, plotClassName, config
+					.getServletName()), e);
 		} catch (ClassNotFoundException e) {
-			throw new ServletException(I18N.err(82, plotClassName,
-					config.getServletName()), e);
+			throw new ServletException(I18N.err(82, plotClassName, config
+					.getServletName()), e);
 		}
 	}
 
@@ -121,9 +128,16 @@ public class SierraChartServlet extends HttpServlet {
 							getHeightHint(parameterMap));
 					final JFreeChart chart = getChart().plot(mutableSize,
 							parameterMap, conn);
+					toolTip(chart);
+					final ChartRenderingInfo info = new ChartRenderingInfo(
+							new StandardEntityCollection());
 					ChartUtilities.writeChartAsPNG(resp.getOutputStream(),
 							chart, mutableSize.getWidth(), mutableSize
-									.getHeight(), true, 9);
+									.getHeight(), info, true, 9);
+					PrintWriter pw = new PrintWriter(new File(System
+							.getProperty("java.io.tmpdir")
+							+ File.separator + "imagemap"));
+					ChartUtilities.writeImageMap(pw, "Foobar", info, false);
 					return null;
 				} catch (IOException e) {
 					SQLException sqle = new SQLException();
@@ -132,6 +146,17 @@ public class SierraChartServlet extends HttpServlet {
 				}
 			}
 		});
+	}
+
+	private void toolTip(final JFreeChart chart) {
+		final Plot plot = chart.getPlot();
+		if (plot instanceof CategoryPlot) {
+			System.out.println("plot is a CATEGORY PLOT adding tooltips");
+			CategoryPlot cplot = (CategoryPlot) plot;
+			cplot.getRenderer().setBaseToolTipGenerator(
+					new StandardCategoryToolTipGenerator());
+		}
+
 	}
 
 	/**
