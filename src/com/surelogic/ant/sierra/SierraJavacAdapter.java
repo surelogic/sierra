@@ -247,8 +247,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		}
 
 		public void subTask(String name) {
-			// TODO Auto-generated method stub
-
+			//System.out.println("Subtask: "+name);
 		}
 
 		public void worked(int work) {
