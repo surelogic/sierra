@@ -172,7 +172,7 @@ public class Reckoner {
     return metricsList;
   }
 
-	private Metrics countLOC(File target) {
+	public Metrics countLOC(File target) {
 		try {			
 			StringBuffer buffer = readSourcefile(target);
 
