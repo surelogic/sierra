@@ -125,18 +125,18 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		 */
 
 		if (destDir != null) {
-			cmd
-					.addTarget(new FullDirectoryTarget(Type.BINARY, destDir
+			cmd.addTarget(new FullDirectoryTarget(Type.BINARY, destDir
 							.toURI()));
 		}
-
-		addPath(cmd, Type.AUX, classpath);
+		
+		//addPath(cmd, Type.AUX, classpath);
+		
 		// If the buildfile specifies sourcepath="", then don't
 		// output any sourcepath.
 		if (sourcepath.size() > 0) {
-			addPath(cmd, Type.SOURCE, sourcepath);
+			//addPath(cmd, Type.SOURCE, sourcepath);
 			this.sourcepath = sourcepath;
-		}
+		}		
 
 		/*
 		 * Path bp = getBootClassPath(); if (bp.size() > 0) { addPath(cmd,
