@@ -13,7 +13,7 @@
 	  
 	  <mkdir dir="./lib/pmd"/>
 	  <copy todir="./lib/pmd">
-	    <fileset dir="../sierra-pmd/lib"/>
+	    <fileset dir="../sierra-pmd" excludes="bin/,src/"/>	      
 	  </copy>
 	  
 	  <mkdir dir="./lib/findbugs"/>
@@ -23,13 +23,15 @@
 	  
 	  <mkdir dir="./lib/reckoner"/>
 	  <copy todir="./lib/reckoner">
+	    <fileset dir="../sierra-tool/Tools">
+	    </fileset>
+	  </copy>
+	  <copy todir="./lib/reckoner/reckoner/lib">
 	    <fileset dir="../sierra-metrics/lib">
 	      <include name="*.jar"/>
 	    </fileset>
 	  </copy>
-		<copy file="../sierra-tool/Tools/reckoner/reckoner.jar" todir="./lib/reckoner" />
-	  <copy file="../sierra-tool/Tools/reckoner/lib/commons-cli-1.1/commons-cli-1.1.jar" todir="./lib/reckoner" />
-	  
+ 
 		<jar destfile="./lib/common.jar" basedir="../common/bin" />
 	  <mkdir dir="./lib/common"/>
 	  <copy todir="./lib/common">
