@@ -66,7 +66,7 @@ public class LoginContent extends ContentComposite {
 
 			public void onLogin(UserAccount user) {
 				errorMessage.setText("");
-				if (ClientContext.isContext(LoginContent.getInstance())) {
+				if (ClientContext.isContent(LoginContent.getInstance())) {
 					OverviewContent.getInstance().show();
 				}
 			}

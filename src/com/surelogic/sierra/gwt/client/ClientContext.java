@@ -105,11 +105,11 @@ public final class ClientContext {
 		userListeners.remove(listener);
 	}
 
-	public static boolean isContext(String token) {
+	public static boolean isContent(String token) {
 		return LangUtil.equals(token, getContext().getContent());
 	}
 
-	public static boolean isContext(ContentComposite content) {
+	public static boolean isContent(ContentComposite content) {
 		// TODO need to add support for subcontext
 		return LangUtil.equals(content.getContextName(), getContext()
 				.getContent());
@@ -122,7 +122,7 @@ public final class ClientContext {
 	public static void setContext(String token) {
 		// Note: newItem calls onHistoryChanged, which calls
 		// notifyContextListeners only if the token changes
-		if (!isContext(token)) {
+		if (!isContent(token)) {
 			History.newItem(token);
 		} else {
 			notifyContextListeners();

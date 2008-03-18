@@ -79,7 +79,7 @@ public final class HeaderPanel extends Composite {
 			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
 				if (tabIndex >= 0 && tabIndex < tabContextNames.size()) {
 					String contextName = (String) tabContextNames.get(tabIndex);
-					if (!ClientContext.isContext(contextName)) {
+					if (!ClientContext.isContent(contextName)) {
 						ClientContext.setContext(contextName);
 					}
 				}
