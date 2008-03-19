@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import org.jfree.chart.plot.Plot;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.IDatabasePlot;
 import com.surelogic.sierra.chart.PlotSize;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -82,6 +84,7 @@ public final class ChartCache {
 	}
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
+		SLLogger.log(Level.FINE, "Creating chart files for ticket " + ticket);
 		final String type = ticket.getParameters().get("type");
 		if (type == null) {
 			throw new ServletException(I18N.err(96, ticket.toString()));
@@ -109,13 +112,15 @@ public final class ChartCache {
 					ChartUtilities.writeChartAsPNG(pngWriter, chart,
 							mutableSize.getWidth(), mutableSize.getHeight(),
 							info, true, 9);
+					pngWriter.close();
 
 					/*
 					 * Output image map file.
 					 */
 					final File mapFile = getMAPFileFor(ticket);
 					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					ChartUtilities.writeImageMap(mapWriter, "map", info, false);
+					ChartUtilities.writeImageMap(mapWriter, "chart", info, false);
+					mapWriter.close();
 					return null;
 				} catch (IOException e) {
 					SQLException sqle = new SQLException();

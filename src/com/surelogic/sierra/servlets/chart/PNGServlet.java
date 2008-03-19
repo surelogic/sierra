@@ -3,6 +3,7 @@ package com.surelogic.sierra.servlets.chart;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
@@ -30,6 +32,7 @@ public class PNGServlet extends HttpServlet {
 		final UUID uuid = UUID.fromString(uuidString);
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
+		SLLogger.log(Level.FINE, "PNGServlet called for " + ticket);
 		ChartCache.getInstance().sendPNG(ticket, response);
 	}
 

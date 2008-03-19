@@ -12,11 +12,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 
 public final class ServletUtility {
 
@@ -81,6 +83,8 @@ public final class ServletUtility {
 			throw new FileNotFoundException(I18N
 					.err(40, file.getAbsolutePath()));
 		}
+		SLLogger.log(Level.FINE, "Serving the cache file "
+				+ file.getAbsolutePath());
 
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
 				file));

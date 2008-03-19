@@ -4,10 +4,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import javax.servlet.http.HttpSession;
 
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 
 /**
  * This singleton class manages tickets used for chart caching within and across
@@ -60,6 +62,8 @@ public final class Attendant {
 			 */
 			for (Ticket ticket : tickets) {
 				if (ticket.getParameters().equals(parameters)) {
+					SLLogger.log(Level.FINE,
+							"getTicket found the ticket in the session.");
 					/*
 					 * Yes, return the ticket.
 					 */
@@ -71,6 +75,8 @@ public final class Attendant {
 			 */
 			for (Ticket ticket : f_nodeTickets) {
 				if (ticket.getParameters().equals(parameters)) {
+					SLLogger.log(Level.FINE,
+							"getTicket found the ticket in this node.");
 					/*
 					 * Yes, add the ticket to the session and return the ticket.
 					 */
@@ -81,6 +87,7 @@ public final class Attendant {
 			/*
 			 * Double No, create the ticket.
 			 */
+			SLLogger.log(Level.FINE, "getTicket created the ticket.");
 			final Ticket ticket = new Ticket(parameters);
 			tickets.add(ticket);
 			f_nodeTickets.add(ticket);
