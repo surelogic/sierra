@@ -48,7 +48,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
-		String libHome = "C:/work/workspace/sierra-ant/lib/";
+		if (System.getProperty("SIERRA_HOME") == null) {
+			throw new BuildException("SIERRA_HOME variable is not set");
+		}
+		// C:/work/workspace/sierra-ant
+		String libHome = System.getProperty("SIERRA_HOME")+"/lib/";
 		config.setExcludedToolsList("checkstyle");
 		config.setToolsDirectory(new File(libHome+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
@@ -62,7 +66,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
 				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
-				"C:/eclipse/plugins/org.junit4_4.3.1");
+				libHome+"junit");
 
 		File scanDocument = new File(scan.getDocument() + 
 				                     SierraToolConstants.PARSED_FILE_SUFFIX);

@@ -49,6 +49,10 @@
 	  </copy>
 	  
 		<jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
+	  
+	  <copy todir="./lib/junit">
+	    <fileset dir="./org.junit4_4.3.1"/>
+	  </copy>
 	</target>
 </project>
 	  
