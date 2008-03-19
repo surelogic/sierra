@@ -36,8 +36,7 @@ public class SierraPublish extends Task {
 	@Override
     public void execute() throws BuildException
     {
-		if (notEmpty(getServer()) && notEmpty(getUser()) && getPassword() != null &&
-			!getTimeseries().isEmpty()) {
+		if (notEmpty(getServer()) && notEmpty(getUser()) && getPassword() != null) {
 			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
 				uploadRunDocument(doc);
@@ -82,21 +81,27 @@ public class SierraPublish extends Task {
 
 			SierraService ts = SierraServiceClient.create(location);
 
-			// Verify the timeseries
-			List<String> list = ts.getTimeseries(new TimeseriesRequest())
-			.getTimeseries();
-			if (list == null || list.isEmpty()) {
-				throw new BuildException(
-						"The target build server does not have any valid timeseries to publish to.");
-			}
-			if (!list.containsAll(getTimeseries())) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("Invalid timeseries. Valid timeseries are:\n");
-				for (String string : list) {
-					sb.append(string);
-					sb.append("\n");
+			if (getTimeseries().isEmpty()) {
+				// Use server default
+				run.getConfig().setTimeseries(null); 
+			} else {
+				// Verify the timeseries
+				List<String> list = ts.getTimeseries(new TimeseriesRequest())
+				.getTimeseries();
+				if (list == null || list.isEmpty()) {
+					throw new BuildException(
+					"The target build server does not have any valid timeseries to publish to.");
 				}
-				throw new BuildException(sb.toString());
+				if (!list.containsAll(getTimeseries())) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Invalid timeseries. Valid timeseries are:\n");
+					for (String string : list) {
+						sb.append(string);
+						sb.append("\n");
+					}
+					throw new BuildException(sb.toString());
+				}
+				run.getConfig().setTimeseries(getTimeseries());
 			}
 			// FIXME utilize the return value once Bug 867 is resolved
 			ts.publishRun(run);
