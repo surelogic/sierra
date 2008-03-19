@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -42,12 +43,13 @@ public class Reckoner1_0Tool extends AbstractTool {
         for(IToolTarget t : getSrcTargets()) {
             for(URI loc : t.getFiles()) {
                 File f = new File(loc);
-                if (f.exists()) {      
+                if (f.exists() && f.getName().endsWith(".java")) { 
                 	targets.add(f);
                 }
             }
         }
         
+        final Set<String> processed = new HashSet<String>();
         monitor.beginTask("Reckoner", targets.size());
         for(File f : targets) {
         	final String path = f.getPath();
@@ -61,6 +63,11 @@ public class Reckoner1_0Tool extends AbstractTool {
             	if (debug) {
             		System.out.println(m.getPath()+": "+m.getLoc()+" LOC");
             	}
+        		final String key = m.getPackageName()+','+m.getClassName();
+        		if (processed.contains(key)) {
+        		  monitor.error("Duplicate metric found for "+key);
+        		}
+            	
             	buildMetrics(m);
             	monitor.worked(1);
             } catch (Exception e) {
