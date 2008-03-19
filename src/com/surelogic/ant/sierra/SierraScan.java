@@ -13,6 +13,15 @@ import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
 public class SierraScan extends Javac {
 	private String document;
+	private String project;
+	
+	public String getProjectName() {
+		return project;
+	}
+
+	public void setProjectName(String p) {
+		this.project = p;
+	}
 	
 	public String getDocument() {
 		return document;

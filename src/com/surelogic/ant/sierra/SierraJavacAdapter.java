@@ -44,6 +44,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
 	private Config createConfig() throws IOException {
 		Config config = new Config();
+		config.setProject(scan.getProjectName());
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
