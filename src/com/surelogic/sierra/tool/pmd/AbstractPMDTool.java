@@ -74,9 +74,9 @@ public abstract class AbstractPMDTool extends AbstractTool {
         
         final List<DataSource> files = new ArrayList<DataSource>();
         for(IToolTarget t : getSrcTargets()) {       
-          for(URI loc : t.getFiles()) {
-            File f = new File(loc);
-            if (f.exists()) {              
+          for(URI loc : t.getFiles()) {        	
+            File f = new File(loc);            
+            if (f.exists() && f.getName().endsWith(".java")) {                    
               files.add(new FileDataSource(f));
             }
           }          
