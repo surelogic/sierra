@@ -16,7 +16,42 @@ import java.util.Date;
  * 
  */
 public class JDBCUtils {
-	
+
+	public static void fill(PreparedStatement st, Object[] args)
+			throws SQLException {
+		int idx = 1;
+		for (Object o : args) {
+			if (o instanceof Nulls) {
+				switch ((Nulls) o) {
+				case INT:
+					setNullableInt(idx, st, null);
+					break;
+				case LONG:
+					setNullableLong(idx, st, null);
+					break;
+				case STRING:
+					setNullableString(idx, st, null);
+					break;
+				case TIMESTAMP:
+					setNullableTimestamp(idx, st, null);
+					break;
+				default:
+					break;
+				}
+			} else if (o instanceof Integer) {
+				st.setInt(idx, (Integer) o);
+			} else if (o instanceof Long) {
+				st.setLong(idx, (Long) o);
+			} else if (o instanceof String) {
+				st.setString(idx, (String) o);
+			} else if (o instanceof Timestamp) {
+				st.setTimestamp(idx, (Timestamp) o);
+			} else if (o instanceof Date) {
+				st.setTimestamp(idx, new Timestamp(((Date) o).getTime()));
+			}
+		}
+	}
+
 	/**
 	 * Set a paramter to the specified String, or to null if none is supplied.
 	 * 
