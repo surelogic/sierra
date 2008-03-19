@@ -7,12 +7,9 @@
 package com.surelogic.ant.sierra;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.compilers.*;
@@ -48,7 +45,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			ToolUtil.scan(config, new Monitor(), true);
 
 			if (scan.getServer() != null && !"".equals(scan.getServer())) {
-				uploadRunDocument(config);
+				uploadRunDocument(config.getScanDocument());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -265,16 +262,14 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 	 * 
 	 * @param config
 	 */
-	private void uploadRunDocument(final Config config) {
+	private void uploadRunDocument(final File scanDoc) {
 		if (keepRunning) {
 			scan.log("Uploading the Run document to " + scan.getServer()
 					+ "...", org.apache.tools.ant.Project.MSG_INFO);
 			MessageWarehouse warehouse = MessageWarehouse.getInstance();
 			Scan run;
 			try {
-				run = warehouse.fetchScan(new GZIPInputStream(
-						new FileInputStream(config.getScanDocument()
-								.getAbsolutePath())));
+				run = warehouse.fetchScan(scanDoc, true);
 
 				SierraServerLocation location = new SierraServerLocation(scan
 						.getServer(), scan.getUser(), scan.getPassword());
@@ -299,14 +294,8 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 				}
 				// FIXME utilize the return value once Bug 867 is resolved
 				ts.publishRun(run);
-			} catch (FileNotFoundException e) {
-				throw new IllegalStateException(config.getScanDocument()
-						+ " is not a valid document", e);
-			} catch (IOException e) {
-				throw new IllegalStateException(config.getScanDocument()
-						+ " is not a valid document", e);
 			} catch (ScanVersionException e) {
-				throw new IllegalStateException(config.getScanDocument()
+				throw new IllegalStateException(scanDoc
 						+ " is not the same version as the server.", e);
 			}
 		}
