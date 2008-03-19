@@ -48,15 +48,15 @@ public final class ChartCache {
 		sendCacheFile(ticket, getMAPFileFor(ticket), "text/plain", response);
 	}
 
-	public static final String CHART_CACHE_FILE_PREFIX = "chart-";
+	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
 
-	public File getPNGFileFor(final Ticket ticket) {
+	private File getPNGFileFor(final Ticket ticket) {
 		return new File(FileUtility.getSierraTeamServerCacheDirectory()
 				+ File.separator + CHART_CACHE_FILE_PREFIX
 				+ ticket.getUUID().toString() + ".png");
 	}
 
-	public File getMAPFileFor(final Ticket ticket) {
+	private File getMAPFileFor(final Ticket ticket) {
 		return new File(FileUtility.getSierraTeamServerCacheDirectory()
 				+ File.separator + CHART_CACHE_FILE_PREFIX
 				+ ticket.getUUID().toString() + ".map");
