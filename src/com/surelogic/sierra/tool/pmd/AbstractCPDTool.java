@@ -60,6 +60,9 @@ public abstract class AbstractCPDTool extends AbstractTool {
           String locName = location.getAbsolutePath();
           if (t instanceof FileTarget) {
             FileTarget ft = (FileTarget) t;
+            if (!location.exists() || !location.getName().endsWith(".java")) {
+            	continue;
+            }
             if (ft.getRoot() != null) {
               String root = new File(ft.getRoot()).getAbsolutePath();
               roots.put(locName, root);
@@ -70,7 +73,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
           }
           else for(URI loc : t.getFiles()) {
             File file = new File(loc);
-            if (file.exists()) {   
+            if (file.exists() && file.getName().endsWith(".java")) { 
               roots.put(file.getAbsolutePath(), locName);
               cpd.add(file);
             }
