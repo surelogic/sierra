@@ -82,6 +82,18 @@
 		<servlet-name>Overview</servlet-name>
 		<url-pattern>/rpc/OverviewService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Finding Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.gwt.server.FindingServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Finding Service</servlet-name>
+		<url-pattern>/rpc/FindingService</url-pattern>
+	</servlet-mapping>
 
 	<!-- chart servlets -->
 

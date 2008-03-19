@@ -25,10 +25,14 @@ public class FindingOverview implements Serializable {
 	private String packageName;
 	private String className;
 	/**
+	 * Ordered by time.
+	 * 
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.AuditOverview>
 	 */
 	private List audits;
 	/**
+	 * Ordered by time.
+	 * 
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ArtifactOverview>
 	 */
 	private List artifacts;

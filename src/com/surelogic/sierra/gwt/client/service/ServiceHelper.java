@@ -29,6 +29,11 @@ public final class ServiceHelper {
 				.create(OverviewService.class), "OverviewService");
 	}
 
+	public static FindingServiceAsync getFindingService() {
+		return (FindingServiceAsync) bindService(GWT
+				.create(FindingService.class), "FindingService");
+	}
+
 	private static Object bindService(Object service, String servletName) {
 		ServiceDefTarget endpoint = (ServiceDefTarget) service;
 		endpoint.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/"

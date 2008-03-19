@@ -157,6 +157,13 @@ a.hover {
 	text-align: right;
 }
 
+/* Finding content */
+.audit {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	text-indent: 3em;
+}
+
 /* Grid panel */
 .sl-GridPanel {
 	width: 100%;
