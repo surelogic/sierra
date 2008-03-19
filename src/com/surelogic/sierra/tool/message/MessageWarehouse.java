@@ -313,6 +313,19 @@ public final class MessageWarehouse {
 		}
 	}
 
+	public Scan fetchScan(File src, boolean compressed) {
+		try {
+			InputStream is = new FileInputStream(src);
+			Scan s = fetchScan(compressed ? new GZIPInputStream(is) : is);
+			is.close();
+			return s;
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException(src+" is not a valid document", e);
+		} catch (IOException e) {
+			throw new IllegalStateException(src+" is not a valid document", e);
+		}
+	}
+	
 	public Scan fetchScan(InputStream in) {
 		try {
 			return (Scan) unmarshaller.unmarshal(in);
