@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,6 +15,7 @@ import java.util.List;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.util.Dates;
 
 public final class PortalOverview {
 
@@ -56,7 +55,7 @@ public final class PortalOverview {
 					o.setUserName(auditSet.getString(1));
 					o.setActive("Y".equals(auditSet.getString(2)));
 					o.setAudits(auditSet.getInt(3));
-					o.setLastSynch(formattedDate(auditSet.getTimestamp(4)));
+					o.setLastSynch(Dates.format(auditSet.getTimestamp(4)));
 					o.setFindings(findingSet.getInt(2));
 					overviews.add(o);
 				}
@@ -116,7 +115,7 @@ public final class PortalOverview {
 					final String name = projectSet.getString(projectIdx++);
 					final Date time = projectSet.getTimestamp(projectIdx++);
 					po.setName(name);
-					po.setLastScanDate(formattedDate(time));
+					po.setLastScanDate(Dates.format(time));
 					auditSet.next();
 					auditSet.getString(1);
 					po.setCommentedFindings(auditSet.getInt(2));
@@ -159,7 +158,7 @@ public final class PortalOverview {
 					try {
 						if (lastSynchSet.next()) {
 							po.setLastSynchUser(lastSynchSet.getString(1));
-							po.setLastSynchDate(formattedDate(lastSynchSet
+							po.setLastSynchDate(Dates.format(lastSynchSet
 									.getTimestamp(2)));
 						} else {
 							po.setLastSynchUser("");
@@ -187,15 +186,6 @@ public final class PortalOverview {
 		final Calendar c = Calendar.getInstance();
 		c.add(Calendar.DAY_OF_YEAR, -30);
 		return new Timestamp(c.getTimeInMillis());
-	}
-
-	private static String formattedDate(Date date) {
-		if (date == null) {
-			return "";
-		} else {
-			DateFormat format = new SimpleDateFormat("MM/dd/yy HH:mm a");
-			return format.format(date);
-		}
 	}
 
 }

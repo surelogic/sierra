@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.surelogic.common.jdbc.QB;
+import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.Result;
@@ -16,7 +17,9 @@ import com.surelogic.sierra.gwt.client.service.FindingService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
+import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.util.Dates;
 
 public class FindingServiceImpl extends RemoteServiceServlet implements
 		FindingService {
@@ -69,22 +72,47 @@ public class FindingServiceImpl extends RemoteServiceServlet implements
 						auditSt.setLong(1, id);
 						final ResultSet auditSet = auditSt.executeQuery();
 						final List<AuditOverview> audits = new ArrayList<AuditOverview>();
+						f.setAudits(audits);
 						try {
-							// EVENT, DATE_TIME, VALUE, USER_NAME
+							// EVENT, VALUE, DATE_TIME, USER_NAME
 							while (auditSet.next()) {
 								AuditOverview audit = new AuditOverview();
 								int auditIdx = 1;
-								audit.setText(auditSet.getString(auditIdx++));
-								audit.setTime(auditSet.getTimestamp(auditIdx++)
-										.toString());
+								final String event = auditSet
+										.getString(auditIdx++);
+								final String value = auditSet
+										.getString(auditIdx++);
+								switch (AuditEvent.valueOf(event)) {
+								case COMMENT:
+									audit.setText(value);
+									break;
+								case IMPORTANCE:
+									audit.setText("Importance changed to "
+											+ Importance.fromValue(value)
+													.toStringSentenceCase()
+											+ ".");
+									break;
+								case READ:
+									audit.setText("Finding examined.");
+									break;
+								case SUMMARY:
+									audit.setText("Changed summary to \""
+											+ value + "\"");
+									break;
+								default:
+									break;
+								}
+								audit.setTime(Dates.format(auditSet
+										.getTimestamp(auditIdx++)));
 								audit.setUser(auditSet.getString(auditIdx++));
 								audits.add(audit);
 							}
 						} finally {
 							auditSet.close();
 						}
+						final List<ArtifactOverview> artifacts = new ArrayList<ArtifactOverview>();
+						f.setArtifacts(artifacts);
 						return Result.success(f);
-
 					} else {
 						return Result.failure("No finding with id " + key
 								+ " exists.");
