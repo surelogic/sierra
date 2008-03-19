@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.tools.ant.*;
 
+import com.surelogic.sierra.jdbc.server.TransactionException;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.*;
 
@@ -40,6 +41,7 @@ public class SierraPublish extends Task {
 			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
 				uploadRunDocument(doc);
+				return;
 			} 
 		}
 		StringBuilder sb = new StringBuilder("Bad argument to SierraPublish\n");
@@ -105,6 +107,8 @@ public class SierraPublish extends Task {
 			}
 			// FIXME utilize the return value once Bug 867 is resolved
 			ts.publishRun(run);
+		} catch (TransactionException e) {
+			throw new BuildException(e);
 		} catch (ScanVersionException e) {
 			throw new IllegalStateException(scanDoc
 					+ " is not the same version as the server.", e);
