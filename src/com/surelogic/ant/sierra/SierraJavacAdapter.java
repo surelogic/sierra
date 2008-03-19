@@ -9,7 +9,6 @@ package com.surelogic.ant.sierra;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.compilers.*;
@@ -19,13 +18,6 @@ import org.apache.tools.ant.util.StringUtils;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.ScanVersionException;
-import com.surelogic.sierra.tool.message.TimeseriesRequest;
-import com.surelogic.sierra.tool.message.Scan;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
-import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.targets.*;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 
@@ -43,10 +35,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		try {
 			Config config = createConfig();
 			ToolUtil.scan(config, new Monitor(), true);
-
-			if (scan.getServer() != null && !"".equals(scan.getServer())) {
-				uploadRunDocument(config.getScanDocument());
-			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new BuildException("Exception while scanning", t);
@@ -84,6 +72,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		return config;
 	}
 
+	/*
 	private void addPath(Config config, Type type, Path path) {
 		for (String elt : path.list()) {
 			File f = new File(elt);
@@ -97,13 +86,15 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			} 
 		}
 	}
+    */
 
 	/**
 	 * Originally based on
 	 * DefaultCompilerAdapter.setupJavacCommandlineSwitches()
 	 */
 	protected Config setupConfig(Config cmd, boolean useDebugLevel) {
-		Path classpath = getCompileClasspath();
+		// Path classpath = getCompileClasspath();
+		
 		// For -sourcepath, use the "sourcepath" value if present.
 		// Otherwise default to the "srcdir" value.
 		Path sourcepath;
@@ -254,50 +245,4 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
 	}
 
-	/**
-	 * Modified from SierraAnalysis.uploadRunDocument()
-	 * 
-	 * Optional action. Uploads the generated scan document to the desired
-	 * server.
-	 * 
-	 * @param config
-	 */
-	private void uploadRunDocument(final File scanDoc) {
-		if (keepRunning) {
-			scan.log("Uploading the Run document to " + scan.getServer()
-					+ "...", org.apache.tools.ant.Project.MSG_INFO);
-			MessageWarehouse warehouse = MessageWarehouse.getInstance();
-			Scan run;
-			try {
-				run = warehouse.fetchScan(scanDoc, true);
-
-				SierraServerLocation location = new SierraServerLocation(scan
-						.getServer(), scan.getUser(), scan.getPassword());
-
-				SierraService ts = SierraServiceClient.create(location);
-
-				// Verify the timeseries
-				List<String> list = ts.getTimeseries(new TimeseriesRequest())
-						.getTimeseries();
-				if (list == null || list.isEmpty()) {
-					throw new BuildException(
-							"The target build server does not have any valid timeseries to publish to.");
-				}
-				if (!list.containsAll(scan.getTimeseries())) {
-					StringBuilder sb = new StringBuilder();
-					sb.append("Invalid timeseries. Valid timeseries are:\n");
-					for (String string : list) {
-						sb.append(string);
-						sb.append("\n");
-					}
-					throw new BuildException(sb.toString());
-				}
-				// FIXME utilize the return value once Bug 867 is resolved
-				ts.publishRun(run);
-			} catch (ScanVersionException e) {
-				throw new IllegalStateException(scanDoc
-						+ " is not the same version as the server.", e);
-			}
-		}
-	}
 }

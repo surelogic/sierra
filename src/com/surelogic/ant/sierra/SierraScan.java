@@ -4,36 +4,14 @@
 package com.surelogic.ant.sierra;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
-// import org.apache.tools.ant.util.GlobPatternMapper;
-// import org.apache.tools.ant.util.SourceFileScanner;
 
 public class SierraScan extends Javac {
-	/***************************************************************************
-	 * Ant Task Attributes
-	 **************************************************************************/
-
-	// Optional attribute, if present, we send the scan document will be sent to
-	// this server
-	private String server = null;
-
-	// Optional attribute, required when we send the scan document will be sent
-	// to this server.
-	private String user;
-	// Optional attribute, required when we send the scan document will be sent
-	// to this server.
-	private String password;
-
-	// Optional, but req'd if URL is set. Comma-separated list of timeseries.
-	private final List<String> timeseries = new ArrayList<String>();
-
 	@Override
 	protected void scanDir(File srcDir, File destDir, String[] files) {
 		/*
@@ -94,52 +72,6 @@ public class SierraScan extends Javac {
 					log("Failed", Project.MSG_ERR);
 				}
 			}
-		}
-	}
-
-	/***************************************************************************
-	 * Getters and Setters for attributes
-	 **************************************************************************/
-
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
-	 * @return the server timeseries.
-	 */
-	public final List<String> getTimeseries() {
-		return timeseries;
-	}
-
-	/**
-	 * @param timeseries
-	 *            the server timeseries to set.
-	 */
-	public final void setTimeseries(String timeseries) {
-		String[] strings = timeseries.split(",");
-		for (String timeseriesName : strings) {
-			this.timeseries.add(timeseriesName.trim());
 		}
 	}
 }
