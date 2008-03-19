@@ -1,14 +1,12 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,10 +44,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		slMonitor.beginTask("Sharing scan of project " + f_projectName + " to "
 				+ f_server.getLabel() + ".", 5);
 		try {
-			FileInputStream in = new FileInputStream(f_scanFile);
-			Scan scan = MessageWarehouse.getInstance().fetchScan(
-					new GZIPInputStream(in));
-			in.close();
+			Scan scan = MessageWarehouse.getInstance().fetchScan(f_scanFile, true);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			} else {
