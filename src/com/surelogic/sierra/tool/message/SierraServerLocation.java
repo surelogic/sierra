@@ -38,19 +38,36 @@ public class SierraServerLocation {
 	}
 
 	public SierraServerLocation(String server, String user, String pass) {
-		/*
-		 * TODO: fix this to set the protocol properly
-		 */
-		String[] strArr = server.split(":");
-		if (strArr.length > 1) {
-			String strPort = strArr[1];
-			f_port = Integer.parseInt(strPort);
-		} else {
-			f_port = DEFAULT_PORT;
+		URL url;
+		try {
+			url = new URL(server);
+		} catch (MalformedURLException e) {
+			url = null;
 		}
-		f_contextPath = "/";
-		f_host = strArr[0];
-		f_secure = false;
+		if (url != null) {
+			f_port = url.getPort();
+			if (url.getPath() == null || "".equals(url.getPath())) {
+				f_contextPath = "/";
+			} else {
+				f_contextPath = url.getPath();
+			}
+			f_host = url.getHost();
+			f_secure = "https".equals(url.getProtocol());
+		} else {
+		    /*
+			 * TODO: fix this to set the protocol properly
+			 */
+			String[] strArr = server.split(":");
+			if (strArr.length > 1) {
+				String strPort = strArr[1];
+				f_port = Integer.parseInt(strPort);
+			} else {
+				f_port = DEFAULT_PORT;
+			}
+			f_contextPath = "/";
+			f_host = strArr[0];
+			f_secure = false;
+		}
 		f_user = user;
 		f_password = pass;
 		f_label = UNLABELED_SERVER;
