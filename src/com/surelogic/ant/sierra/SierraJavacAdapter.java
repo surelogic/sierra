@@ -66,8 +66,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
 				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
-				libHome+"junit");
-
+				libHome+"junit");		
+		System.out.println("Using source level "+scan.getSource());
+		config.setSourceLevel(scan.getSource());
+		
 		File scanDocument = new File(scan.getDocument() + 
 				                     SierraToolConstants.PARSED_FILE_SUFFIX);
 		config.setScanDocument(scanDocument);
