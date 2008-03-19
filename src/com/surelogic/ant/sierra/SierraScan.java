@@ -12,6 +12,16 @@ import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
 
 public class SierraScan extends Javac {
+	private String document;
+	
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String doc) {
+		this.document = doc;
+	}
+	
 	@Override
 	protected void scanDir(File srcDir, File destDir, String[] files) {
 		/*

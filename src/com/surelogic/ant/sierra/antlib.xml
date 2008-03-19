@@ -6,4 +6,9 @@
 		name="sierra-scan"
 		classname="com.surelogic.ant.sierra.SierraScan"
 		onerror="ignore" />		
+
+	<taskdef
+		name="sierra-publish"
+		classname="com.surelogic.ant.sierra.SierraPublish"
+		onerror="ignore" />		
 </antlib>

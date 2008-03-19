@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.tools.ant.*;
 
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.*;
 
 
@@ -37,7 +38,7 @@ public class SierraPublish extends Task {
     {
 		if (notEmpty(getServer()) && notEmpty(getUser()) && getPassword() != null &&
 			!getTimeseries().isEmpty()) {
-			File doc = new File(getDocument());
+			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
 				uploadRunDocument(doc);
 			} 

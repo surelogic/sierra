@@ -63,11 +63,8 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
 				"C:/eclipse/plugins/org.junit4_4.3.1");
 
-		String project = "sierra-tool";
-		File tmp = File.createTempFile("sierra", ".xml");
-		File scanDocument = new File(tmp.getParent() + File.separator + project
-				+ " - " + ToolUtil.getTimeStamp()
-				+ SierraToolConstants.PARSED_FILE_SUFFIX);
+		File scanDocument = new File(scan.getDocument() + 
+				                     SierraToolConstants.PARSED_FILE_SUFFIX);
 		config.setScanDocument(scanDocument);
 		return config;
 	}
