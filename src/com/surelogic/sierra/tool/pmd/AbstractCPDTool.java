@@ -48,7 +48,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
         }
         cpd.setCpdListener(new CPDListener() {
           public void addedFile(int fileCount, File file) {
-            System.out.println(fileCount+": "+file.getName());
+            //System.out.println(fileCount+": "+file.getName());
           }
           public void phaseUpdate(int phase) {
             System.out.println("CPD Phase "+phase);
@@ -157,7 +157,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
         sourceLocation = sourceLocation.hash(hashValue).lineOfCode(info.startLine);            
         sourceLocation = sourceLocation.endLine(info.endLine);        
         
-        System.out.println("Building location for "+info.fileName+" : "+info.startLine);
+        //System.out.println("Building location for "+info.fileName+" : "+info.startLine);
         sourceLocation.build();
       }   
     };
