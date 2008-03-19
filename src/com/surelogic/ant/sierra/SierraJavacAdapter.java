@@ -70,28 +70,26 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		return config;
 	}
 
-	/*
 	private void addPath(Config config, Type type, Path path) {
 		for (String elt : path.list()) {
 			File f = new File(elt);
 			if (f.exists()) {
+				// System.out.println(type+": "+elt);
 				if (f.isDirectory()) {
-					System.out.println(type+": "+elt);
 					config.addTarget(new FullDirectoryTarget(type, f.toURI()));
 				} else {
-					//System.out.println("Ignored: "+elt);
+					config.addTarget(new JarTarget(type, f.toURI()));
 				}
 			} 
 		}
 	}
-    */
 
 	/**
 	 * Originally based on
 	 * DefaultCompilerAdapter.setupJavacCommandlineSwitches()
 	 */
 	protected Config setupConfig(Config cmd, boolean useDebugLevel) {
-		// Path classpath = getCompileClasspath();
+		Path classpath = getCompileClasspath();
 		
 		// For -sourcepath, use the "sourcepath" value if present.
 		// Otherwise default to the "srcdir" value.
@@ -115,7 +113,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 							.toURI()));
 		}
 		
-		//addPath(cmd, Type.AUX, classpath);
+		addPath(cmd, Type.AUX, classpath);
 		
 		// If the buildfile specifies sourcepath="", then don't
 		// output any sourcepath.
