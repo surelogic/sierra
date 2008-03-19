@@ -15,7 +15,7 @@ import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
 import com.surelogic.sierra.servlets.ServletUtility;
 
-public class SierraChartServlet extends HttpServlet {
+public class MapServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request,
@@ -30,7 +30,7 @@ public class SierraChartServlet extends HttpServlet {
 		final UUID uuid = UUID.fromString(uuidString);
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
-		ChartCache.getInstance().sendPNG(ticket, response);
+		ChartCache.getInstance().sendMAP(ticket, response);
 	}
 
 	private static final long serialVersionUID = 5040888860303280445L;

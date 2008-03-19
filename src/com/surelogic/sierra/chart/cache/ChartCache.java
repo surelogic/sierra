@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jfree.chart.ChartRenderingInfo;
@@ -42,9 +41,8 @@ public final class ChartCache {
 		sendCacheFile(ticket, getPNGFileFor(ticket), "image/png", response);
 	}
 
-	public void sendMAP(final Ticket ticket, final HttpServletRequest request,
-			final HttpServletResponse response) throws ServletException,
-			IOException {
+	public void sendMAP(final Ticket ticket, final HttpServletResponse response)
+			throws ServletException, IOException {
 		sendCacheFile(ticket, getMAPFileFor(ticket), "text/plain", response);
 	}
 
