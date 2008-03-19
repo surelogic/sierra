@@ -130,7 +130,7 @@
 
 	<servlet-mapping>
 		<servlet-name>MapServlet</servlet-name>
-		<url-pattern>/chart/map</url-pattern>
+		<url-pattern>/chart/map.map</url-pattern>
 	</servlet-mapping>
 
 	<!-- client service servlets -->
