@@ -52,6 +52,7 @@ public final class MessageWarehouse {
 			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class,
 					FindingTypes.class, Config.class, ToolTarget.class,
 					FileTarget.class, JarTarget.class,
+					Error.class,
 					FullDirectoryTarget.class, FilteredDirectoryTarget.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
