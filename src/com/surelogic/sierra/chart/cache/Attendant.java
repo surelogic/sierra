@@ -1,32 +1,12 @@
 package com.surelogic.sierra.chart.cache;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jfree.chart.ChartRenderingInfo;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.servlet.DisplayChart;
-import org.jfree.chart.servlet.ServletUtilities;
-
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
 
 /**
@@ -136,34 +116,6 @@ public final class Attendant {
 		return null;
 	}
 
-	public void sendPNG(final Ticket ticket, final HttpServletRequest request,
-			final HttpServletResponse response) throws ServletException,
-			IOException {
-		final File png = getPNGFileFor(ticket);
-		boolean createCacheFiles = true;
-		/*
-		 * Does a cached file exist?
-		 */
-		if (png.exists()) {
-			/*
-			 * Is it OK to use cached file?
-			 */
-			final Date modified = new Date(png.lastModified());
-			// TODO add check with database.
-			createCacheFiles = false;
-		}
-		if (createCacheFiles) {
-			// TODO create the cache files and make sure png exists.
-		}
-		sendCacheFile(png, response, "image/png");
-	}
-
-	public void sendMAP(final Ticket ticket, final HttpServletRequest request,
-			final HttpServletResponse response) throws ServletException,
-			IOException {
-
-	}
-
 	/**
 	 * Gets or creates the set of tickets associated with the passed session.
 	 * <p>
@@ -184,115 +136,6 @@ public final class Attendant {
 			session.setAttribute(TICKET_ID, result);
 		}
 		return result;
-	}
-
-	/**
-	 * Saves the chart as a PNG format file in the temporary directory and
-	 * populates the {@link ChartRenderingInfo} object which can be used to
-	 * generate an HTML image map.
-	 * 
-	 * @param chart
-	 *            the chart to be saved (<code>null</code> not permitted).
-	 * @param width
-	 *            the width of the chart.
-	 * @param height
-	 *            the height of the chart.
-	 * @param info
-	 *            the ChartRenderingInfo object to be populated (<code>null</code>
-	 *            permitted).
-	 * @param session
-	 *            the non-null HttpSession of the client.
-	 * 
-	 * @return The filename of the chart saved in the temporary directory.
-	 * 
-	 * @throws IOException
-	 *             if there is a problem saving the file.
-	 */
-	public String cacheChart(JFreeChart chart, int width, int height,
-			ChartRenderingInfo info, HttpSession session) throws IOException {
-
-		// if (chart == null) {
-		// throw new IllegalArgumentException("Null 'chart' argument.");
-		// }
-		// ServletUtilities.createTempDir();
-		// String prefix = ServletUtilities.tempFilePrefix;
-		// if (session == null) {
-		// prefix = ServletUtilities.tempOneTimeFilePrefix;
-		// }
-		// File tempFile = File.createTempFile(prefix, ".png", new File(System
-		// .getProperty("java.io.tmpdir")));
-		// ChartUtilities.saveChartAsPNG(tempFile, chart, width, height, info);
-		// if (session != null) {
-		// ServletUtilities.registerChartForDeletion(tempFile, session);
-		// }
-		// return tempFile.getName();
-		return null;
-	}
-
-	public static final String CHART_CACHE_FILE_PREFIX = "chart-";
-
-	public File getPNGFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + CHART_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".png");
-	}
-
-	public File getMAPFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + CHART_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".map");
-	}
-
-	/**
-	 * Binary streams the specified file to the HTTP response in 1KB chunks.
-	 * 
-	 * @param file
-	 *            the file to be streamed.
-	 * @param response
-	 *            the HTTP response object.
-	 * @param mimeType
-	 *            the mime type of the file, {@code null} is allowed.
-	 * 
-	 * @throws IOException
-	 *             if there is an I/O problem.
-	 */
-	private void sendCacheFile(File file, HttpServletResponse response,
-			String mimeType) throws IOException {
-
-		if (file.exists()) {
-			BufferedInputStream bis = new BufferedInputStream(
-					new FileInputStream(file));
-
-			// Set HTTP headers
-			if (mimeType != null) {
-				response.setHeader("Content-Type", mimeType);
-			}
-			response.setHeader("Content-Length", String.valueOf(file.length()));
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-			response.setHeader("Last-Modified", sdf.format(new Date(file
-					.lastModified())));
-
-			BufferedOutputStream bos = new BufferedOutputStream(response
-					.getOutputStream());
-			byte[] input = new byte[1024];
-			boolean eof = false;
-			while (!eof) {
-				int length = bis.read(input);
-				if (length == -1) {
-					eof = true;
-				} else {
-					bos.write(input, 0, length);
-				}
-			}
-			bos.flush();
-			bis.close();
-			bos.close();
-		} else {
-			throw new FileNotFoundException(I18N
-					.err(40, file.getAbsolutePath()));
-		}
 	}
 
 	/**

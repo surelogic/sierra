@@ -26,7 +26,7 @@ import com.surelogic.sierra.portal.PortalOverview;
 public final class AuditContributions implements IDatabasePlot {
 
 	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String[]> parameterMap, Connection c)
+			Map<String, String> parameters, Connection c)
 			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final PortalOverview po = PortalOverview.getInstance(c);

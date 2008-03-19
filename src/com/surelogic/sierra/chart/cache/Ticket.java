@@ -65,4 +65,10 @@ public final class Ticket implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "(Ticket UUID=" + f_id.toString() + " parameters="
+				+ f_parameters.toString() + ")";
+	}
 }
