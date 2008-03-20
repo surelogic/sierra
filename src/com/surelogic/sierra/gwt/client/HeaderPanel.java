@@ -151,8 +151,9 @@ public final class HeaderPanel extends Composite {
 	public void updateContext(Context context) {
 		if (rootPanel.getWidgetIndex(mainBar) != -1) {
 			int newIndex;
-			if (context != null) {
-				newIndex = tabContentNames.indexOf(context.getContent());
+			if (context != null && context.getContent() != null) {
+				newIndex = tabContentNames.indexOf(context.getContent()
+						.toLowerCase());
 			} else {
 				newIndex = -1;
 			}
@@ -173,7 +174,7 @@ public final class HeaderPanel extends Composite {
 	}
 
 	private void addTab(String title, ContentComposite content) {
-		final String contentName = content.getContentName();
+		final String contentName = content.getContentName().toLowerCase();
 		if (tabContentNames.indexOf(contentName) == -1) {
 			tabContentNames.add(contentName);
 			mainBar.addTab(title);
@@ -181,7 +182,7 @@ public final class HeaderPanel extends Composite {
 	}
 
 	private void removeTab(ContentComposite content) {
-		final String contentName = content.getContentName();
+		final String contentName = content.getContentName().toLowerCase();
 		int tabIndex = tabContentNames.indexOf(contentName);
 		if (tabIndex != -1) {
 			tabContentNames.remove(tabIndex);
