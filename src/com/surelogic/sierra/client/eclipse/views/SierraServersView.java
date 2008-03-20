@@ -35,17 +35,6 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 
 	public static final int INFO_WIDTH_HINT = 70;
 
-	private MenuItem createMenuItem(Menu menu, String name, Image image) {
-		MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setImage(image);
-		item.setText(name);
-		return item;
-	}
-
-	private MenuItem createMenuItem(Menu menu, String name, String imgName) {
-		return createMenuItem(menu, name, SLImages.getImage(imgName));
-	}
-
 	@Override
 	protected SierraServersMediator createMorePartControls(final Composite parent) {
 		GridData data;
