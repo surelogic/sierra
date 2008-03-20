@@ -28,7 +28,7 @@ public class OverviewContent extends ContentComposite {
 		super();
 	}
 
-	public String getContextName() {
+	public String getContentName() {
 		return "Projects";
 	}
 

@@ -53,6 +53,6 @@ public class ContentPanel extends Composite implements ContextListener {
 	}
 
 	private void registerContent(ContentComposite content) {
-		contentRegistry.put(content.getContextName().toLowerCase(), content);
+		contentRegistry.put(content.getContentName().toLowerCase(), content);
 	}
 }

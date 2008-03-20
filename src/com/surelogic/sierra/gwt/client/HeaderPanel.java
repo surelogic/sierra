@@ -31,7 +31,7 @@ public final class HeaderPanel extends Composite {
 	private final Label loggedInAs;
 	private final Label userName;
 	private final TabBar mainBar = new TabBar();
-	private final List tabContextNames = new ArrayList();
+	private final List tabContentNames = new ArrayList();
 
 	public static HeaderPanel getInstance() {
 		return (HeaderPanel) RootPanel.get("header-pane").getWidget(0);
@@ -77,10 +77,10 @@ public final class HeaderPanel extends Composite {
 			}
 
 			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-				if (tabIndex >= 0 && tabIndex < tabContextNames.size()) {
-					String contextName = (String) tabContextNames.get(tabIndex);
-					if (!ClientContext.isContent(contextName)) {
-						ClientContext.setContext(contextName);
+				if (tabIndex >= 0 && tabIndex < tabContentNames.size()) {
+					String contentName = (String) tabContentNames.get(tabIndex);
+					if (!ClientContext.isContent(contentName)) {
+						ClientContext.setContext(contentName);
 					}
 				}
 			}
@@ -143,7 +143,7 @@ public final class HeaderPanel extends Composite {
 			if (user.isAdministrator()) {
 				addTab("Settings", SettingsContent.getInstance());
 			} else {
-				removeTab(SettingsContent.getInstance().getContextName());
+				removeTab(SettingsContent.getInstance());
 			}
 		}
 	}
@@ -152,7 +152,7 @@ public final class HeaderPanel extends Composite {
 		if (rootPanel.getWidgetIndex(mainBar) != -1) {
 			int newIndex;
 			if (context != null) {
-				newIndex = tabContextNames.indexOf(context);
+				newIndex = tabContentNames.indexOf(context.getContent());
 			} else {
 				newIndex = -1;
 			}
@@ -173,17 +173,18 @@ public final class HeaderPanel extends Composite {
 	}
 
 	private void addTab(String title, ContentComposite content) {
-		final String contextName = content.getContextName();
-		if (tabContextNames.indexOf(contextName) == -1) {
-			tabContextNames.add(contextName);
+		final String contentName = content.getContentName();
+		if (tabContentNames.indexOf(contentName) == -1) {
+			tabContentNames.add(contentName);
 			mainBar.addTab(title);
 		}
 	}
 
-	private void removeTab(String contextName) {
-		int tabIndex = tabContextNames.indexOf(contextName);
+	private void removeTab(ContentComposite content) {
+		final String contentName = content.getContentName();
+		int tabIndex = tabContentNames.indexOf(contentName);
 		if (tabIndex != -1) {
-			tabContextNames.remove(tabIndex);
+			tabContentNames.remove(tabIndex);
 			mainBar.removeTab(tabIndex);
 		}
 	}

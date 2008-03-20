@@ -29,7 +29,7 @@ public class FindingContent extends ContentComposite {
 		// Do nothing
 	}
 
-	public String getContextName() {
+	public String getContentName() {
 		return "Finding";
 	}
 

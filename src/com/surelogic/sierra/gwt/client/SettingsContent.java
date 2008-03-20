@@ -46,7 +46,7 @@ public class SettingsContent extends ContentComposite {
 		super();
 	}
 
-	public String getContextName() {
+	public String getContentName() {
 		return "ServerSettings";
 	}
 

@@ -51,7 +51,7 @@ public class LoginContent extends ContentComposite {
 		super();
 	}
 
-	public String getContextName() {
+	public String getContentName() {
 		return "Login";
 	}
 

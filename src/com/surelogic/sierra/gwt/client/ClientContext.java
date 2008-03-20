@@ -111,7 +111,7 @@ public final class ClientContext {
 	}
 
 	public static boolean isContent(ContentComposite content) {
-		return LangUtil.equalsIgnoreCase(content.getContextName(), getContext()
+		return LangUtil.equalsIgnoreCase(content.getContentName(), getContext()
 				.getContent());
 	}
 

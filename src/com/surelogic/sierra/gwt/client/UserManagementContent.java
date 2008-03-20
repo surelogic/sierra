@@ -50,7 +50,7 @@ public class UserManagementContent extends ContentComposite {
 		super();
 	}
 
-	public String getContextName() {
+	public String getContentName() {
 		return "UserManagement";
 	}
 
