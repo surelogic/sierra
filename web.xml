@@ -82,7 +82,7 @@
 		<servlet-name>Overview</servlet-name>
 		<url-pattern>/rpc/OverviewService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Finding Service</servlet-name>
 		<servlet-class>
@@ -130,7 +130,7 @@
 
 	<servlet-mapping>
 		<servlet-name>MapServlet</servlet-name>
-		<url-pattern>/chart/map.map</url-pattern>
+		<url-pattern>/chart/map</url-pattern>
 	</servlet-mapping>
 
 	<!-- client service servlets -->
