@@ -45,7 +45,7 @@ public final class ChartCache {
 
 	public void sendMAP(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
-		sendCacheFile(ticket, getMAPFileFor(ticket), "text/plain", response);
+		sendCacheFile(ticket, getMAPFileFor(ticket), "text/html", response);
 	}
 
 	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
@@ -119,7 +119,14 @@ public final class ChartCache {
 					 */
 					final File mapFile = getMAPFileFor(ticket);
 					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					ChartUtilities.writeImageMap(mapWriter, "chart", info, false);
+					mapWriter
+							.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-strict.dtd\">");
+					mapWriter
+							.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
+					mapWriter
+							.println("<head><title>Maps</title></head><body><p>");
+					ChartUtilities.writeImageMap(mapWriter, "map", info, false);
+					mapWriter.println("</p></body></html>");
 					mapWriter.close();
 					return null;
 				} catch (IOException e) {

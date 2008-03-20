@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +14,7 @@ import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.Ticket;
 import com.surelogic.sierra.servlets.ServletUtility;
 
-public final class TicketAttendantServlet extends HttpServlet {
+public final class TicketAttendantServlet extends AbstractChartServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request,
@@ -42,13 +41,8 @@ public final class TicketAttendantServlet extends HttpServlet {
 		out
 				.println("<img src=\"png?ticket="
 						+ uuid
-						+ "\" style=\"border: none;\" alt=\"A Chart\" usemap=\"map.map?ticket="
-						+ uuid + "#chart\" />");
-		// out
-		// .println("<img src=\"png?ticket="
-		// + uuid
-		// + "\" style=\"border: none;\" alt=\"A Chart\"
-		// usemap=\"map.map#chart\" />");
+						+ "\" style=\"border: none;\" alt=\"A Chart\" usemap=\"map?ticket="
+						+ uuid + "#map\" />");
 		out.println("</p>");
 		out.println("</body></html>");
 		out.println("");

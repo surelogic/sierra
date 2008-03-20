@@ -17,7 +17,7 @@ import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
 import com.surelogic.sierra.servlets.ServletUtility;
 
-public class MapServlet extends HttpServlet {
+public class MapServlet extends AbstractChartServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request,

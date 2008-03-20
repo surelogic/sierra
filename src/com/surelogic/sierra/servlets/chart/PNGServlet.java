@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +16,7 @@ import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
 import com.surelogic.sierra.servlets.ServletUtility;
 
-public class PNGServlet extends HttpServlet {
+public class PNGServlet extends AbstractChartServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request,
