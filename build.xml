@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="build-ant-task" default="all">
+<project name="build-ant-task" default="clean-build">
 	<description>Build for SL Ant tasks</description>
 
-  <target name="all" depends="clean,build"/>
+  <target name="all" depends="clean,build,zip"/>
+  
+  <target name="clean-build" depends="clean,build"/>
   
   <target name="clean">
     <delete dir="./lib"/>
@@ -56,7 +58,16 @@
 	  
 	  <copy todir="./lib/jaxb">
 	  	    <fileset dir="./jaxb"/>
-	  	  </copy>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-ant.jar" basedir="../sierra-ant/bin" />
+	  
+	</target>
+	  
+	<target name="zip">
+	  <zip destfile="./sierra-ant.zip" basedir=".."
+	       includes="sierra-ant/lib/**/*.jar"
+	  />
 	</target>
 </project>
 	  
