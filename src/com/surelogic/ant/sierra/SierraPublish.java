@@ -40,7 +40,10 @@ public class SierraPublish extends Task {
 		if (notEmpty(getServer()) && notEmpty(getUser()) && getPassword() != null) {
 			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
+				long start = System.currentTimeMillis();
 				uploadRunDocument(doc);
+				long end = System.currentTimeMillis();
+				System.out.println("Upload took "+(end-start)+" ms");
 				return;
 			} 
 		}
