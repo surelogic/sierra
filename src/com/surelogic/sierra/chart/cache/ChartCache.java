@@ -19,10 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
@@ -239,8 +241,18 @@ public final class ChartCache {
 		final Plot plot = chart.getPlot();
 		if (plot instanceof CategoryPlot) {
 			CategoryPlot cplot = (CategoryPlot) plot;
-			cplot.getRenderer().setBaseToolTipGenerator(
-					new StandardCategoryToolTipGenerator());
+			int index = 0;
+			final StandardCategoryToolTipGenerator ttg = new StandardCategoryToolTipGenerator();
+			while (true) {
+				/*
+				 * This is a bad API, there should be a way to get all the
+				 * renders without this mess. TODO: File a bug with JFreeChart.
+				 */
+				final CategoryItemRenderer r = cplot.getRenderer(index++);
+				if (r == null)
+					break;
+				r.setBaseToolTipGenerator(ttg);
+			}
 		}
 		// TODO more needs to be added for all the different kinds of plots.
 	}
