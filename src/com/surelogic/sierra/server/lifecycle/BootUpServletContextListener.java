@@ -50,6 +50,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 				.getServletContextName();
 		bootLogging(loggerOption, loggerTag, contextName);
 		bootDatabase();
+		clearCache();
 	}
 
 	private void bootLogging(String loggerOption, String loggerTag,
@@ -88,13 +89,11 @@ public class BootUpServletContextListener implements ServletContextListener {
 		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
 		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
 		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
-		SLLogger.getLogger().info(
-				contextName + " logging " + toString
-						+ "initialized : Java runtime: maxMemory="
-						+ maxMemoryMB + " MB; totalMemory=" + totalMemoryMB
-						+ " MB; freeMemory=" + freeMemoryMB
-						+ " MB; availableProcessors="
-						+ rt.availableProcessors());
+		SLLogger.log(Level.INFO, contextName + " logging " + toString
+				+ "initialized : Java runtime: maxMemory=" + maxMemoryMB
+				+ " MB; totalMemory=" + totalMemoryMB + " MB; freeMemory="
+				+ freeMemoryMB + " MB; availableProcessors="
+				+ rt.availableProcessors());
 	}
 
 	private void bootDatabase() {
@@ -112,5 +111,11 @@ public class BootUpServletContextListener implements ServletContextListener {
 				+ System.getProperty("derby.storage.pageSize")
 				+ " and derby.storage.pageCacheSize="
 				+ System.getProperty("derby.storage.pageCacheSize") + ".");
+	}
+
+	private void clearCache() {
+		final String cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
+		FileUtility.deleteDirectoryAndContents(new File(cacheDir));
+		SLLogger.log(Level.INFO, "Cache cleared from " + cacheDir);
 	}
 }
