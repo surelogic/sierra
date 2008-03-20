@@ -269,6 +269,12 @@ public final class TeamServer {
 
 		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
 
+		final Environment.Variable loggingLevel = new Environment.Variable();
+		loggingLevel.setKey(SLLogger.SL_LOGGING_PROPERTY);
+		loggingLevel.setValue(PreferenceConstants.getServerLoggingLevel()
+				.toString());
+		command.addSysproperty(loggingLevel);
+
 		final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
 		Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);

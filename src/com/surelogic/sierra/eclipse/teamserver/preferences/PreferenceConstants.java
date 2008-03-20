@@ -1,5 +1,7 @@
 package com.surelogic.sierra.eclipse.teamserver.preferences;
 
+import java.util.logging.Level;
+
 import com.surelogic.sierra.eclipse.teamserver.Activator;
 
 /**
@@ -66,5 +68,13 @@ public class PreferenceConstants {
 	public static void setServerMemoryMB(int mb) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_MEMORY_MB, mb);
+	}
+
+	public static final String P_SERVER_LOGGING_LEVEL = "com.surelogic.sierra.teamserver.server-logging-level";
+
+	public static Level getServerLoggingLevel() {
+		final String level = Activator.getDefault().getPluginPreferences()
+				.getString(P_SERVER_LOGGING_LEVEL);
+		return Level.parse(level);
 	}
 }

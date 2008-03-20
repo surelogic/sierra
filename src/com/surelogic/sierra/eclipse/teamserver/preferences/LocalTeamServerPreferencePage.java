@@ -1,6 +1,9 @@
 package com.surelogic.sierra.eclipse.teamserver.preferences;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.ScaleFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,6 +30,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 
 	Label f_estimate;
 	ScaleFieldEditor f_serverMemoryMB;
+	RadioGroupFieldEditor f_showAbove;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
@@ -78,6 +82,26 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 			memoryGroup.setLayout(gl);
 		}
 
+		final Group loggingGroup = new Group(panel, SWT.NONE);
+		loggingGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		loggingGroup.setText("Logging");
+
+		f_showAbove = new RadioGroupFieldEditor(
+				PreferenceConstants.P_SERVER_LOGGING_LEVEL,
+				"Log messages at or above (requires server restart to take effect):",
+				1, new String[][] {
+						{ Level.SEVERE.toString(), Level.SEVERE.toString() },
+						{ Level.WARNING.toString(), Level.WARNING.toString() },
+						{ Level.INFO.toString(), Level.INFO.toString() },
+						{ Level.FINE.toString(), Level.FINE.toString() },
+						{ Level.FINER.toString(), Level.FINER.toString() },
+						{ Level.FINEST.toString(), Level.FINEST.toString() } },
+				loggingGroup);
+		f_showAbove.setPage(this);
+		f_showAbove.setPreferenceStore(getPreferenceStore());
+		f_showAbove.load();
+
 		/*
 		 * Allow access to help via the F1 key.
 		 */
@@ -95,6 +119,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		f_serverMemoryMB.loadDefault();
+		f_showAbove.loadDefault();
 		super.performDefaults();
 
 		updateMBInLabel();
@@ -103,6 +128,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		f_serverMemoryMB.store();
+		f_showAbove.store();
 		return super.performOk();
 	}
 }
