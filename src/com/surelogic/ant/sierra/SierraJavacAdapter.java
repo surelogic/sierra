@@ -9,7 +9,9 @@ package com.surelogic.ant.sierra;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+//import java.util.StringTokenizer;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.compilers.*;
 import org.apache.tools.ant.types.*;
@@ -32,6 +34,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 	}
 
 	public boolean execute() throws BuildException {
+		/*
+		checkClassPath("sun.boot.class.path");
+		checkClassPath("java.class.path");
+		*/
 		try {
 			Config config = createConfig();
 			ToolUtil.scan(config, new Monitor(), true);
@@ -42,17 +48,29 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		return true;
 	}
 
+	/*
+	private void checkClassPath(String key) {
+		StringTokenizer st = new StringTokenizer(System.getProperty(key), 
+				                                 File.pathSeparator);
+		while (st.hasMoreTokens()) {
+			System.out.println(st.nextToken());
+		}
+	}
+    */
 	private Config createConfig() throws IOException {
 		Config config = new Config();
 		config.setProject(scan.getProjectName());
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
-		if (System.getProperty("SIERRA_HOME") == null) {
-			throw new BuildException("SIERRA_HOME variable is not set");
+		if (scan.getHome() == null) {
+			throw new BuildException("No value for home");
 		}
 		// C:/work/workspace/sierra-ant
-		String libHome = System.getProperty("SIERRA_HOME")+"/lib/";
+		String libHome = scan.getHome()+"/lib/";
+		if (!new File(libHome).exists()) {
+			throw new BuildException("No lib subdirectory under "+libHome);
+		}		
 		config.setExcludedToolsList("checkstyle");
 		config.setToolsDirectory(new File(libHome+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
@@ -67,6 +85,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
 				libHome+"junit");		
+		if (SystemUtils.IS_JAVA_1_5) {
+			config.putPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID,
+					            scan.getHome());		
+		}
 		System.out.println("Using source level "+scan.getSource());
 		config.setSourceLevel(scan.getSource());
 		
