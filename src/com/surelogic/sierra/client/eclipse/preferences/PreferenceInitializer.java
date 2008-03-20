@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -35,5 +36,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				true);
 		store.setDefault(PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN, true);
 		store.setDefault(PreferenceConstants.P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, false);
+		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT, 
+				         ServerStatusSort.BY_PROJECT.toString());
 	}
 }

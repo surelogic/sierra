@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.preferences;
 
 import com.surelogic.common.XUtil;
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -143,5 +144,17 @@ public class PreferenceConstants {
 	public static void setHideEmptySynchronizeEntries(boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, value);
+	}
+	
+	public static final String P_SERVER_STATUS_SORT = "com.surelogic.common.eclipse.server-status-sort";
+
+	public static ServerStatusSort getServerStatusSort() {
+		String sort = Activator.getDefault().getPluginPreferences().getString(P_SERVER_STATUS_SORT);
+		return ServerStatusSort.valueOf(sort);
+	}
+
+	public static void setServerStatusSort(ServerStatusSort value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_STATUS_SORT, value.toString());
 	}
 }
