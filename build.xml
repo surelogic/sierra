@@ -53,6 +53,10 @@
 	  <copy todir="./lib/junit">
 	    <fileset dir="./org.junit4_4.3.1"/>
 	  </copy>
+	  
+	  <copy todir="./lib/jaxb">
+	  	    <fileset dir="./jaxb"/>
+	  	  </copy>
 	</target>
 </project>
 	  
