@@ -12,8 +12,28 @@ import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
 
 public class SierraScan extends Javac {
+	/**
+	 * The location of sierra-ant
+	 */
+	private String home;
+	
+	/**
+	 * The intended location of the resulting scan document
+	 */
 	private String document;
+	
+	/**
+	 * The name of the project being scanned
+	 */
 	private String project;
+	
+	public String getHome() {
+		return home;
+	}
+
+	public void setHome(String home) {
+		this.home = home;
+	}
 	
 	public String getProjectName() {
 		return project;
