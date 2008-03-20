@@ -31,8 +31,9 @@ public class PNGServlet extends AbstractChartServlet {
 		final UUID uuid = UUID.fromString(uuidString);
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
+		// TODO ticket could be null!
 		SLLogger.log(Level.FINE, "PNGServlet called for " + ticket);
-		ChartCache.getInstance().sendPNG(ticket, response);
+		ChartCache.getInstance().sendPng(ticket, response);
 	}
 
 	private static final long serialVersionUID = 5040888860303280445L;

@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,8 +31,9 @@ public class MapServlet extends AbstractChartServlet {
 		final UUID uuid = UUID.fromString(uuidString);
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
+		// TODO ticket could be null!
 		SLLogger.log(Level.FINE, "MAPServlet called for " + ticket);
-		ChartCache.getInstance().sendMAP(ticket, response);
+		ChartCache.getInstance().sendMap(ticket, response);
 	}
 
 	private static final long serialVersionUID = 5040888860303280445L;

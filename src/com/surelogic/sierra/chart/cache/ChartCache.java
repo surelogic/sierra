@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -38,33 +39,45 @@ import com.surelogic.sierra.servlets.ServletUtility;
  */
 public final class ChartCache {
 
-	public void sendPNG(final Ticket ticket, final HttpServletResponse response)
+	public void sendPng(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
-		sendCacheFile(ticket, getPNGFileFor(ticket), "image/png", response);
+		final File png = getPngFileFor(ticket);
+		checkAndUpdateCache(ticket, png);
+		ServletUtility
+				.sendFileToHttpServletResponse(png, response, "image/png");
 	}
 
-	public void sendMAP(final Ticket ticket, final HttpServletResponse response)
+	public void sendMap(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
-		sendCacheFile(ticket, getMAPFileFor(ticket), "text/html", response);
+		final File map = getMapFileFor(ticket);
+		checkAndUpdateCache(ticket, map);
+		ServletUtility.sendFileToHttpServletResponse(map, response,
+				"text/plain");
+	}
+
+	public void sendMapTo(final Ticket ticket, final Writer out)
+			throws ServletException, IOException {
+		final File map = getMapFileFor(ticket);
+		checkAndUpdateCache(ticket, map);
+		ServletUtility.sendFileTo(map, out);
 	}
 
 	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
 
-	private File getPNGFileFor(final Ticket ticket) {
+	private File getPngFileFor(final Ticket ticket) {
 		return new File(FileUtility.getSierraTeamServerCacheDirectory()
 				+ File.separator + CHART_CACHE_FILE_PREFIX
 				+ ticket.getUUID().toString() + ".png");
 	}
 
-	private File getMAPFileFor(final Ticket ticket) {
+	private File getMapFileFor(final Ticket ticket) {
 		return new File(FileUtility.getSierraTeamServerCacheDirectory()
 				+ File.separator + CHART_CACHE_FILE_PREFIX
 				+ ticket.getUUID().toString() + ".map");
 	}
 
-	private void sendCacheFile(final Ticket ticket, final File file,
-			final String mimeType, final HttpServletResponse response)
-			throws ServletException, IOException {
+	private void checkAndUpdateCache(final Ticket ticket, final File file)
+			throws ServletException {
 		boolean createOrUpdateCacheFiles = true;
 		/*
 		 * Does a cached file exist?
@@ -80,7 +93,6 @@ public final class ChartCache {
 		if (createOrUpdateCacheFiles) {
 			createCacheFiles(ticket);
 		}
-		ServletUtility.sendCacheFile(file, response, mimeType);
 	}
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
@@ -107,7 +119,7 @@ public final class ChartCache {
 					/*
 					 * Output PNG image file.
 					 */
-					final File pngFile = getPNGFileFor(ticket);
+					final File pngFile = getPngFileFor(ticket);
 					final OutputStream pngWriter = new FileOutputStream(pngFile);
 					ChartUtilities.writeChartAsPNG(pngWriter, chart,
 							mutableSize.getWidth(), mutableSize.getHeight(),
@@ -117,16 +129,9 @@ public final class ChartCache {
 					/*
 					 * Output image map file.
 					 */
-					final File mapFile = getMAPFileFor(ticket);
+					final File mapFile = getMapFileFor(ticket);
 					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					mapWriter
-							.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-strict.dtd\">");
-					mapWriter
-							.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
-					mapWriter
-							.println("<head><title>Maps</title></head><body><p>");
 					ChartUtilities.writeImageMap(mapWriter, "map", info, false);
-					mapWriter.println("</p></body></html>");
 					mapWriter.close();
 					return null;
 				} catch (IOException e) {
@@ -233,11 +238,11 @@ public final class ChartCache {
 	private void setupTooltips(final JFreeChart chart) {
 		final Plot plot = chart.getPlot();
 		if (plot instanceof CategoryPlot) {
-			System.out.println("plot is a CATEGORY PLOT adding tooltips");
 			CategoryPlot cplot = (CategoryPlot) plot;
 			cplot.getRenderer().setBaseToolTipGenerator(
 					new StandardCategoryToolTipGenerator());
 		}
+		// TODO more needs to be added for all the different kinds of plots.
 	}
 
 	/**

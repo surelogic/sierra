@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,8 +76,8 @@ public final class ServletUtility {
 	 * @throws IOException
 	 *             if there is any sort of I/O problem.
 	 */
-	public static void sendCacheFile(File file, HttpServletResponse response,
-			String mimeType) throws IOException {
+	public static void sendFileToHttpServletResponse(File file,
+			HttpServletResponse response, String mimeType) throws IOException {
 		if (file == null)
 			throw new IllegalArgumentException(I18N.err(44, "file"));
 		if (response == null)
@@ -83,11 +86,9 @@ public final class ServletUtility {
 			throw new FileNotFoundException(I18N
 					.err(40, file.getAbsolutePath()));
 		}
-		SLLogger.log(Level.FINE, "Serving the cache file "
-				+ file.getAbsolutePath());
-
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-				file));
+		if (SLLogger.isLoggable(Level.FINE))
+			SLLogger.log(Level.FINE, "Serving the file "
+					+ file.getAbsolutePath());
 
 		/*
 		 * Set HTTP headers.
@@ -107,6 +108,28 @@ public final class ServletUtility {
 		 */
 		BufferedOutputStream out = new BufferedOutputStream(response
 				.getOutputStream());
+		sendFileTo(file, out);
+		out.close();
+	}
+
+	/**
+	 * Writes the specified file to the prepared byte output stream. The byte
+	 * output stream is <i>not</i> closed.
+	 * 
+	 * @param file
+	 *            the file to write.
+	 * @param out
+	 *            the byte output stream to write the contents of the file to.
+	 * @throws IOException
+	 *             if there is any sort of I/O problem.
+	 */
+	public static void sendFileTo(final File file, final OutputStream out)
+			throws IOException {
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+				file));
+		/*
+		 * Stream the file.
+		 */
 		final byte[] buffer = new byte[1024];
 		boolean eof = false;
 		while (!eof) {
@@ -117,7 +140,37 @@ public final class ServletUtility {
 				out.write(buffer, 0, length);
 			}
 		}
-		out.close();
+		in.close();
+	}
+
+	/**
+	 * Writes the specified character file to the prepared character output
+	 * stream. The character output stream is <i>not</i> closed.
+	 * 
+	 * @param file
+	 *            the file to write.
+	 * @param out
+	 *            the character output stream to write the contents of the file
+	 *            to.
+	 * @throws IOException
+	 *             if there is any sort of I/O problem.
+	 */
+	public static void sendFileTo(final File file, final Writer out)
+			throws IOException {
+		InputStreamReader in = new InputStreamReader(new FileInputStream(file));
+		/*
+		 * Stream the file.
+		 */
+		final char[] buffer = new char[1024];
+		boolean eof = false;
+		while (!eof) {
+			final int length = in.read(buffer);
+			if (length == -1) {
+				eof = true;
+			} else {
+				out.write(buffer, 0, length);
+			}
+		}
 		in.close();
 	}
 

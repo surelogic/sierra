@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
+import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
 import com.surelogic.sierra.servlets.ServletUtility;
 
@@ -38,15 +39,13 @@ public final class TicketAttendantServlet extends AbstractChartServlet {
 		out.println("<p>The ticket for the requested chart is: " + uuid
 				+ "</p>");
 		out.println("<p>");
-		out
-				.println("<img src=\"png?ticket="
-						+ uuid
-						+ "\" style=\"border: none;\" alt=\"A Chart\" usemap=\"map?ticket="
-						+ uuid + "#map\" />");
+		ChartCache.getInstance().sendMapTo(ticket, out);
+		out.print("<img src=\"png?ticket=" + uuid);
+		out.print("\" style=\"border: none;\" ");
+		out.println("alt=\"A Chart\" usemap=\"#map\" />");
 		out.println("</p>");
 		out.println("</body></html>");
 		out.println("");
-
 	}
 
 	private static final long serialVersionUID = 775592918230573067L;
