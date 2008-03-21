@@ -24,7 +24,6 @@ import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
-import com.surelogic.sierra.tool.message.Audit;
 
 public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 	private final Tree f_statusTree;
@@ -95,42 +94,6 @@ public final class ProjectStatusMediator extends AbstractSierraViewMediator {
 		
 	}
 
-	private static class ProjectStatus {
-		final String name;
-		final File scanDoc;
-		final List<FindingAudits> findings;
-		final int numAudits;
-		final Date earliestAudit, latestAudit;
-		
-		public ProjectStatus(String name, File scan, List<FindingAudits> findings) {
-			this.name = name;
-			scanDoc = scan;
-			this.findings = findings;
-
-			int newAudits = 0;
-			Date earliest = null;
-			Date latest = null;
-			for(FindingAudits fa : findings) {
-				newAudits += fa.getAudits().size();
-				for(Audit a : fa.getAudits()) {
-					if (earliest == null) {
-						earliest = latest = a.getTimestamp();
-					} 
-					else if (earliest.after(a.getTimestamp())){
-						earliest = a.getTimestamp();
-					}
-					else if (latest.before(a.getTimestamp())){
-						latest = a.getTimestamp();
-					}
-				}
-			}
-			numAudits = newAudits;
-			earliestAudit = earliest;
-			latestAudit = latest;
-		}
-		
-	}
-	
 	private void updateContents() throws Exception {
 		Connection c = Data.transactionConnection();
 		Exception exc = null;
