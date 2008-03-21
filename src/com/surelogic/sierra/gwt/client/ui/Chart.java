@@ -24,7 +24,7 @@ public class Chart extends Composite {
 
 			protected void onSuccess(String message, Object result) {
 				html.setHTML(((ImageMapData) result).getData()
-						+ "<img src=\"png?ticket=" + ticket.getUUID()
+						+ "<img src=\"chart/png?ticket=" + ticket.getUUID()
 						+ "\" usemap=\"#map" + ticket.getUUID() + "\" />");
 			}
 		});
