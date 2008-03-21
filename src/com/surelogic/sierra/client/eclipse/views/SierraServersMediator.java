@@ -707,8 +707,9 @@ implements ISierraServerObserver {
 		final boolean noServers = f_manager.isEmpty();
 		final boolean noProjects = projects.isEmpty();
 		final boolean nothingToSee = !noProjects && !noServers;
-		f_statusTree.setVisible(nothingToSee);
-		f_view.hasData(nothingToSee);
+		f_statusTree.setVisible(!nothingToSee);
+		f_view.hasData(!nothingToSee);
+		
 		if (nothingToSee) {
 			return;
 		}
