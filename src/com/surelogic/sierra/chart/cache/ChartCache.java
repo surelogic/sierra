@@ -132,7 +132,7 @@ public final class ChartCache {
 					 */
 					final File mapFile = getMapFileFor(ticket);
 					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					ChartUtilities.writeImageMap(mapWriter, "map", info, false);
+					ChartUtilities.writeImageMap(mapWriter, "map" + ticket.getUUID(), info, false);
 					mapWriter.close();
 					return null;
 				} catch (IOException e) {
