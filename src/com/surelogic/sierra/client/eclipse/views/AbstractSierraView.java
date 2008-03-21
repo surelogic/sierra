@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.PageBook;
@@ -44,11 +45,13 @@ implements IViewCallback {
 		/*
 		 * Allow direct access to the preferences from the view.
 		 */
-		final IMenuManager menu = getViewSite().getActionBars()
-				.getMenuManager();
+		final IActionBars bars = getViewSite().getActionBars();
+		final IMenuManager menu = bars.getMenuManager();
 		menu.add(new GroupMarker(VIEW_GROUP));
 		menu.add(new Separator());
 		menu.add(new PreferencesAction("Preferences..."));
+		
+		bars.getToolBarManager().add(new GroupMarker(VIEW_GROUP));
 		
 		hasData(false);
 		final M mediator = f_mediator = createMorePartControls(actualPage);
@@ -84,10 +87,16 @@ implements IViewCallback {
 		getViewSite().getActionBars().setGlobalActionHandler(id, action);
 	}
 	
-	protected final void addToViewMenu(IAction action) {
+	public final void addToViewMenu(IAction action) {
 		final IMenuManager menu = 
 			getViewSite().getActionBars().getMenuManager();
 		menu.prependToGroup(VIEW_GROUP, action);
+	}
+	
+	public final void addToActionBar(IAction action) {
+		final IToolBarManager bar = 
+			getViewSite().getActionBars().getToolBarManager();
+		bar.prependToGroup(VIEW_GROUP, action);
 	}
 	
 	@Override
