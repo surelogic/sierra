@@ -1,0 +1,59 @@
+package com.surelogic.sierra.gwt.server;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.chart.cache.Attendant;
+import com.surelogic.sierra.chart.cache.ChartCache;
+import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.Ticket;
+import com.surelogic.sierra.gwt.client.service.TicketService;
+
+public class TicketServiceImpl extends RemoteServiceServlet implements
+		TicketService {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7681941332780937563L;
+
+	private static final Logger log = SLLogger
+			.getLoggerFor(TicketServiceImpl.class);
+
+	@SuppressWarnings("unchecked")
+	public Result getTicket(Map args) {
+		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
+				args, getThreadLocalRequest().getSession()).getUUID()
+				.toString());
+		log.log(Level.FINE, "Ticket " + ticket.getUUID() + " created.");
+		return Result.success(ticket);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Result getImageMap(Ticket ticket) {
+		final StringWriter out = new StringWriter();
+		try {
+			ChartCache.getInstance().sendMapTo(
+					Attendant.getInstance().getTicket(
+							UUID.fromString(ticket.getUUID()),
+							getThreadLocalRequest().getSession()), out);
+			return Result.success("", out.toString());
+			// TODO we need to handle when the result is a string better.
+		} catch (ServletException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (IOException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return Result
+				.failure("Error retrieving image map for ticket " + ticket);
+	}
+
+}

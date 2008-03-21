@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
