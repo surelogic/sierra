@@ -1,7 +1,12 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -29,10 +34,14 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.ImageImageDescriptor;
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
@@ -45,13 +54,17 @@ import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
+import com.surelogic.sierra.jdbc.finding.FindingAudits;
 
-public final class SierraServersMediator 
-implements ISierraServerObserver, IViewMediator {
+public final class SierraServersMediator extends AbstractSierraViewMediator 
+implements ISierraServerObserver {
 
-	private final IViewCallback f_view;
+    private List<ProjectStatus> projects = Collections.emptyList();
 	private final Tree f_statusTree;
 	private final Menu f_serverListMenu;
 	private final IAction f_newServerAction;
@@ -225,7 +238,7 @@ implements ISierraServerObserver, IViewMediator {
 			Menu projectListMenu, MenuItem projectConnectItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem) {
-		f_view = view;
+		super(view);
 		f_statusTree = statusTree;
 		f_serverListMenu = serverListMenu;
 		f_newServerAction = new Action("New team server location", 
@@ -556,90 +569,9 @@ implements ISierraServerObserver, IViewMediator {
 	}
 
 	public void notify(SierraServerManager manager) {
-		final UIJob job = new SLUIJob() {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (f_statusTree.isDisposed())
-					return Status.OK_STATUS;
-				
-				f_view.hasData(!f_manager.isEmpty());
-				f_statusTree.setRedraw(false);
-				/*
-				String[] labels = f_manager.getLabels();
-				TableItem[] items = f_serverList.getItems();
-				if (!same(items, labels)) {
-					for (TableItem item : items)
-						item.dispose();
-					for (String label : labels) {
-						TableItem item = new TableItem(f_serverList, SWT.NONE);
-						item.setText(label);
-						item.setImage(SLImages
-								.getImage(SLImages.IMG_SIERRA_SERVER));
-					}
-				}
-				*/
-
-				final SierraServer server = f_manager.getFocus();
-				createTreeItems(server);
-				
-				final boolean focusServer = server != null;
-				f_duplicateServerAction.setEnabled(focusServer);
-				f_deleteServerAction.setEnabled(focusServer);
-				f_openInBrowserAction.setEnabled(focusServer);
-				f_duplicateServerItem.setEnabled(focusServer);
-				f_deleteServerItem.setEnabled(focusServer);
-				f_serverConnectItem.setEnabled(focusServer);
-				f_scanAllConnectedProjects.setEnabled(focusServer);
-				f_rescanAllConnectedProjects.setEnabled(focusServer);
-				f_synchAllConnectedProjects.setEnabled(focusServer);
-				f_sendResultFilters.setEnabled(focusServer);
-				f_getResultFilters.setEnabled(focusServer);
-				f_serverPropertiesItem.setEnabled(focusServer);
-				
-				/*
-				if (focusServer) {
-					items = f_serverList.getItems();
-					for (int i = 0; i < items.length; i++) {
-						if (items[i].getText().equals(server.getLabel())) {
-							f_serverList.select(i);
-							break;
-						}
-					}
-					f_infoGroup.setText(server.getLabel());
-					f_serverURL.setText(server.toURLWithContextPath());
-					items = f_projectList.getItems();
-					for (TableItem item : items) {
-						item.dispose();
-					}
-					for (String projectName : f_manager
-							.getProjectsConnectedTo(server)) {
-						TableItem item = new TableItem(f_projectList, SWT.NONE);
-						item.setText(projectName);
-						item
-								.setImage(SLImages
-										.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-					}
-				} else {
-					f_infoGroup.setText("");
-					f_serverURL.setText("");
-					items = f_projectList.getItems();
-					for (TableItem item : items) {
-						item.dispose();
-					}
-				}
-				f_projectListAction.handleEvent(null);
-				 */
-				f_statusTree.setRedraw(true);
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
+		asyncUpdateContents();
 	}
-
-	protected void createTreeItems(SierraServer focus) {
-		// TODO Auto-generated method stub		
-	}
-
+	
 	/*
 	private static boolean same(TableItem[] items, String[] labels) {
 		if (items.length != labels.length)
@@ -673,5 +605,212 @@ implements ISierraServerObserver, IViewMediator {
 	public void setSortByServer(boolean checked) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void changed() {
+		asyncUpdateContents();
+	}
+
+	private void asyncUpdateContents() {
+		final Job job = new DatabaseJob(
+				"Updating project status") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
+				try {
+					updateContents();
+				} catch (Exception e) {
+					final int errNo = 58; // FIX
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void updateContents() throws Exception {
+		Connection c = Data.transactionConnection();
+		Exception exc = null;
+		try {			
+			ClientFindingManager cfm = ClientFindingManager.getInstance(c);
+			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+			for(String name : Projects.getInstance().getProjectNames()) {				
+				// Check for new local audits
+				List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
+				// FIX Check for new remote audits
+				
+				// FIX Check for a full scan (later than what's on the server?)
+				final File scan = NewScan.getScanDocumentFile(name);
+				ProjectStatus s = new ProjectStatus(name, scan, findings);
+				projects.add(s);
+			}
+			asyncUpdateContentsForUI(new IViewUpdater() {
+				public void updateContentsForUI() {
+					updateContentsInUI(projects);
+				}
+			});
+			c.commit();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
+		} finally {
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
+		}
+	}
+
+	public void updateContentsInUI(final List<ProjectStatus> projects) {
+		// No need to synchronize since only updated/viewed in UI thread?
+		this.projects = projects;
+		
+		if (f_statusTree.isDisposed())
+			return;
+		
+		f_view.hasData(!f_manager.isEmpty());
+		f_statusTree.setRedraw(false);
+
+		final SierraServer server = f_manager.getFocus();
+		createTreeItems();
+		
+		final boolean focusServer = server != null;
+		f_duplicateServerAction.setEnabled(focusServer);
+		f_deleteServerAction.setEnabled(focusServer);
+		f_openInBrowserAction.setEnabled(focusServer);
+		f_duplicateServerItem.setEnabled(focusServer);
+		f_deleteServerItem.setEnabled(focusServer);
+		f_serverConnectItem.setEnabled(focusServer);
+		f_scanAllConnectedProjects.setEnabled(focusServer);
+		f_rescanAllConnectedProjects.setEnabled(focusServer);
+		f_synchAllConnectedProjects.setEnabled(focusServer);
+		f_sendResultFilters.setEnabled(focusServer);
+		f_getResultFilters.setEnabled(focusServer);
+		f_serverPropertiesItem.setEnabled(focusServer);
+		
+		/*
+		f_projectListAction.handleEvent(null);
+		 */
+		f_statusTree.setRedraw(true);
+	}
+	
+	protected void createTreeItems() {
+		f_statusTree.removeAll();
+				
+		final boolean noServers = f_manager.isEmpty();
+		final boolean noProjects = projects.isEmpty();
+		final boolean nothingToSee = !noProjects && !noServers;
+		f_statusTree.setVisible(nothingToSee);
+		f_view.hasData(nothingToSee);
+		if (nothingToSee) {
+			return;
+		}
+		else if (noServers) {
+			createProjectItems();
+		}
+		else if (noProjects) {
+			createServerItems();
+		}
+		else switch (PreferenceConstants.getServerStatusSort()) {
+		case BY_PROJECT:
+			createProjectItems();
+			break;
+		case BY_SERVER:
+		default: 
+			createServerItems();
+		}
+		f_statusTree.getParent().layout();
+		for(TreeItem item : f_statusTree.getItems()) {
+			item.setExpanded(true);
+		}
+	}
+	
+	private void createServerItems() {
+		final SierraServer focus = f_manager.getFocus();
+		TreeItem focused = null;
+		for(String label : f_manager.getLabels()) {
+			SierraServer server = f_manager.getServerByLabel(label);
+			TreeItem item = new TreeItem(f_statusTree, SWT.NONE);
+	
+			item.setText(label+" ["+server.toURLWithContextPath()+']');
+			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+			item.setData(server);
+			
+			if (focus != null && label.equals(focus.getLabel())) {
+				focused = item;
+			}
+			createProjectItems(item, server);
+		}
+		if (focused != null) {
+			f_statusTree.setSelection(focused);
+		}
+	}
+	
+	private void createProjectItems(TreeItem parent, SierraServer server) {
+		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
+			ProjectStatus s = null;
+			for(ProjectStatus p : projects) {
+				if (projectName.equals(p.name)) {
+					s = p;
+					break;
+				}
+			}
+			if (s == null) {
+				throw new IllegalStateException("No project: "+projectName);
+			}
+			initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
+		}
+	}
+	
+	private void initProjectItem(final TreeItem root, final SierraServer server, 
+			                     final ProjectStatus ps) { 
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+		if (server != null) {
+			root.setText(ps.name+" ["+server.getLabel()+']');
+		} else {
+			root.setText(ps.name);
+		}	
+		root.setImage(SLImages
+				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		root.setData(ps);
+		root.setExpanded(true);
+		
+		if (ps.scanDoc.exists()) {
+			TreeItem scan = new TreeItem(root, SWT.NONE);
+			Date modified = new Date(ps.scanDoc.lastModified());
+			scan.setText("Last full scan on "+dateFormat.format(modified));
+			scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+			scan.setData(ps.scanDoc);
+		}
+		if (!ps.findings.isEmpty()) {
+			TreeItem audits = new TreeItem(root, SWT.NONE);
+			audits.setText(ps.numAudits+" audit(s) on "+ps.findings.size()+" finding(s)");
+			audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
+			audits.setData(ps.findings);
+			
+			if (ps.earliestAudit != null) {
+				TreeItem earliest = new TreeItem(audits, SWT.NONE);
+				earliest.setText("Earliest on "+dateFormat.format(ps.latestAudit));
+			}
+			if (ps.latestAudit != null && ps.earliestAudit != ps.latestAudit) {
+				TreeItem latest = new TreeItem(audits, SWT.NONE);
+				latest.setText("Latest on "+dateFormat.format(ps.latestAudit));
+			}
+		}
+	}
+
+	private void createProjectItems() {
+		for (ProjectStatus ps : projects) {
+			final TreeItem root = new TreeItem(f_statusTree, SWT.NONE);
+			final SierraServer server = f_manager.getServer(ps.name);
+			initProjectItem(root, server, ps);
+		}
 	}
 }
