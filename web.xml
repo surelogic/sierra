@@ -94,7 +94,31 @@
 		<servlet-name>Finding Service</servlet-name>
 		<url-pattern>/rpc/FindingService</url-pattern>
 	</servlet-mapping>
+	
+	
+	<servlet>
+		<servlet-name>Ticket Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.gwt.server.TicketServiceImpl
+		</servlet-class>
+	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>Ticket Service</servlet-name>
+		<url-pattern>/rpc/TicketService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Settings Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.gwt.server.SettingsServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Settings Service</servlet-name>
+		<url-pattern>/rpc/SettingsService</url-pattern>
+	</servlet-mapping>
 	<!-- chart servlets -->
 
 	<servlet>

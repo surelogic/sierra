@@ -3,29 +3,26 @@ package com.surelogic.sierra.gwt.client.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Image;
+import com.surelogic.sierra.gwt.client.data.Ticket;
+import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.Chart;
 
 public class ChartBuilder {
 
 	private final Map parameters;
-	private final String name;
-	private int height;
-	private int width;
 
 	private ChartBuilder(String name) {
 		parameters = new HashMap();
-		this.name = name;
+		parameters.put("type", name);
 	}
 
 	public ChartBuilder width(int width) {
-		this.width = width;
 		parameters.put("width", Integer.toString(width));
 		return this;
 	}
 
 	public ChartBuilder height(int height) {
-		this.height = height;
 		parameters.put("height", Integer.toString(height));
 		return this;
 	}
@@ -35,18 +32,19 @@ public class ChartBuilder {
 		return this;
 	}
 
-	public Image build() {
-		UrlHelper.setUniqueRequestId(parameters);
-		final String url = UrlHelper.appendParameters(GWT.getModuleBaseURL()
-				+ "chart/" + name, parameters);
-		final Image image = new Image(url);
-		if (height > 0) {
-			image.setHeight(height + "px");
-		}
-		if (width > 0) {
-			image.setWidth(width + "px");
-		}
-		return image;
+	public Chart build() {
+		final Chart chart = new Chart();
+		ServiceHelper.getTicketService().getTicket(parameters, new Callback() {
+
+			protected void onFailure(String message, Object result) {
+				// TODO
+			}
+
+			protected void onSuccess(String message, Object result) {
+				chart.setChartTicket((Ticket) result);
+			}
+		});
+		return chart;
 	}
 
 	public static ChartBuilder name(String name) {
