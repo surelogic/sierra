@@ -13,6 +13,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.ChartCache;
+import com.surelogic.sierra.gwt.client.data.ImageMapData;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.TicketService;
@@ -45,7 +46,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 					Attendant.getInstance().getTicket(
 							UUID.fromString(ticket.getUUID()),
 							getThreadLocalRequest().getSession()), out);
-			return Result.success("", out.toString());
+			return Result.success(new ImageMapData(out.toString()));
 			// TODO we need to handle when the result is a string better.
 		} catch (ServletException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
