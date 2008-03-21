@@ -15,7 +15,7 @@ public class Chart extends Composite {
 		initWidget(html);
 	}
 
-	public void setChartTicket(Ticket ticket) {
+	public void setChartTicket(final Ticket ticket) {
 		ServiceHelper.getTicketService().getImageMap(ticket, new Callback() {
 
 			protected void onFailure(String message, Object result) {
@@ -23,7 +23,9 @@ public class Chart extends Composite {
 			}
 
 			protected void onSuccess(String message, Object result) {
-				html.setHTML(((ImageMapData) result).getData());
+				html.setHTML(((ImageMapData) result).getData()
+						+ "<img src=\"png?ticket=" + ticket.getUUID()
+						+ "\" usemap=\"#map" + ticket.getUUID() + "\" />");
 			}
 		});
 	}
