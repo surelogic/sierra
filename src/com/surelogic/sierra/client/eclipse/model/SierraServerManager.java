@@ -290,4 +290,11 @@ public final class SierraServerManager {
 	public void load(File file) throws Exception {
 		SierraServerPersistence.load(this, file);
 	}
+
+	public SierraServer getServerByLabel(String label) {
+		if (label == null) {
+			return null;
+		}
+		return f_labelToServer.get(label);
+	}
 }
