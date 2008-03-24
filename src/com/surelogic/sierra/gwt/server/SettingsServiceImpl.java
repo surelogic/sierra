@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.FilterSet;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
@@ -20,7 +20,7 @@ import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.FindingType;
 
-public class SettingsServiceImpl extends RemoteServiceServlet implements
+public class SettingsServiceImpl extends SierraServiceServlet implements
 		SettingsService {
 
 	/**
@@ -56,6 +56,7 @@ public class SettingsServiceImpl extends RemoteServiceServlet implements
 								filter.setName(type.getName());
 								filter.setId(type.getId());
 								filter.setShortMessage(type.getShortMessage());
+								filters.add(filter);
 							}
 							set.setEntries(filters);
 						}
