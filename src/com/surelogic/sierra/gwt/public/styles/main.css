@@ -148,7 +148,6 @@ a.hover {
 }
 
 /* Settings Page */
-
 .settings-info-text {
 	font-size: smaller;
 }
@@ -270,4 +269,44 @@ a.hover {
 	cursor: hand;
 	padding-left: 1ex;
 	padding-right: 1ex;
+}
+
+/* Filter Set page styling
+ * 
+ */
+ 
+.filter-set-name {
+	font-size: smaller;	
+}
+.filter-entry-name {
+ 	font-size: smaller;	
+}
+.filter-entry-widget {
+	width: 100%;
+}
+/*
+ * Disclosure panel styling
+ */
+.gwt-DisclosurePanel {
+	width: 100%;
+}
+
+.gwt-DisclosurePanel-open {
+	
+}
+
+.gwt-DisclosurePanel-open .header {
+	background-color: #b0c4de;
+}
+
+.gwt-DisclosurePanel-closed .header {
+	background-color: #e0ffff;
+}
+
+.gwt-DisclosurePanel .header td {
+	font-size: smaller;
+}
+
+.gwt-DisclosurePanel .content {
+	width: 100%;
 }

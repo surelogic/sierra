@@ -6,8 +6,18 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosureEvent;
+import com.google.gwt.user.client.ui.DisclosureHandler;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
@@ -18,7 +28,10 @@ public class FilterSetContent extends ContentComposite {
 
 	private static final FilterSetContent instance = new FilterSetContent();
 
-	private final Tree tree = new Tree();
+	private final TextBox filterBox = new TextBox();
+	private final Button createFilter = new Button("Create");
+
+	private final VerticalPanel sets = new VerticalPanel();
 
 	public String getContentName() {
 		return "FilterSets";
@@ -43,15 +56,56 @@ public class FilterSetContent extends ContentComposite {
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
-		VerticalPanel panel = new VerticalPanel();
-		panel.add(tree);
+		final VerticalPanel panel = new VerticalPanel();
+		final HorizontalPanel head = new HorizontalPanel();
+		head.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		head.add(new HTML("<h2>New Category: </h2>"));
+		head.add(filterBox);
+		head.add(createFilter);
+		panel.add(head);
+		panel.add(sets);
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
-	private void generateTree(List sets) {
-		tree.clear();
-		for (Iterator i = sets.iterator(); i.hasNext();) {
-			final FilterSet set = (FilterSet) i.next();
+	private void generateTree(List filterSets) {
+		sets.clear();
+		sets.add(new HTML("<h3>Categories</h3>"));
+		for (Iterator i = filterSets.iterator(); i.hasNext();) {
+			sets.add(new FilterSetComposite((FilterSet) i.next()));
+		}
+	}
+
+	public static FilterSetContent getInstance() {
+		return instance;
+	}
+
+	private static class FilterSetComposite extends Composite {
+		private final FilterSet set;
+		private final DisclosurePanel panel;
+		private final VerticalPanel entries;
+
+		FilterSetComposite(FilterSet set) {
+			this.set = set;
+			this.panel = new DisclosurePanel();
+			this.entries = new VerticalPanel();
+			final HTML name = new HTML(set.getName());
+			name.addStyleName("filter-set-name");
+			panel.setHeader(name);
+			panel.setContent(entries);
+			panel.addEventHandler(new DisclosureHandler() {
+
+				public void onClose(DisclosureEvent event) {
+					entries.clear();
+				}
+
+				public void onOpen(DisclosureEvent event) {
+					updatePanel();
+				}
+			});
+			initWidget(panel);
+		}
+
+		private void updatePanel() {
 			final Set filters = new HashSet();
 			for (Iterator pI = set.getParents().iterator(); pI.hasNext();) {
 				final FilterSet parent = (FilterSet) pI.next();
@@ -75,17 +129,39 @@ public class FilterSetContent extends ContentComposite {
 			final TreeItem treeSet = new TreeItem(set.getName());
 			treeSet.setUserObject(set);
 			for (Iterator fI = filters.iterator(); fI.hasNext();) {
-				final FilterEntry entry = (FilterEntry) fI.next();
-				final TreeItem treeFilter = new TreeItem(entry.getName());
-				treeFilter.setUserObject(entry);
-				treeSet.addItem(treeFilter);
+				entries.add(new FilterEntryComposite((FilterEntry) fI.next()));
 			}
-			tree.addItem(treeSet);
 		}
 	}
 
-	public static FilterSetContent getInstance() {
-		return instance;
-	}
+	private static class FilterEntryComposite extends Composite {
+		private final FilterEntry entry;
+		private final HorizontalPanel panel;
+		private final CheckBox box;
 
+		FilterEntryComposite(FilterEntry entry) {
+			this.panel = new HorizontalPanel();
+			this.box = new CheckBox();
+			this.entry = entry;
+			box.setChecked(!entry.isFiltered());
+			final HTML name = new HTML(entry.getName() + ".....");
+			name.addStyleName("filter-entry-name");
+			panel.add(name);
+			panel.add(box);
+			panel.setCellHorizontalAlignment(name,
+					HasHorizontalAlignment.ALIGN_LEFT);
+			panel.setCellHorizontalAlignment(box,
+					HasHorizontalAlignment.ALIGN_RIGHT);
+			panel.addStyleName("filter-entry-widget");
+			initWidget(panel);
+		}
+
+		public FilterEntry getEntry() {
+			return entry;
+		}
+
+		public boolean isFiltered() {
+			return !box.isChecked();
+		}
+	}
 }

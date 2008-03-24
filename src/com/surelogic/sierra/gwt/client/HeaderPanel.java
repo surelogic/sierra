@@ -69,6 +69,8 @@ public final class HeaderPanel extends Composite {
 		mainBar.setWidth("100%");
 		addTab("Welcome", OverviewContent.getInstance());
 		addTab("Users", UserManagementContent.getInstance());
+		addTab("Filter Set", FilterSetContent.getInstance());
+		addTab("Finding", FindingContent.getInstance());
 		mainBar.addTabListener(new TabListener() {
 
 			public boolean onBeforeTabSelected(SourcesTabEvents sender,
