@@ -759,11 +759,27 @@ implements ISierraServerObserver {
 			}
 			createProjectItems(item, server);
 		}
+		createUnassociatedProjectItems();
+		
 		if (focused != null) {
 			f_statusTree.setSelection(focused);
 		}
 	}
 	
+	private void createUnassociatedProjectItems() {
+		final TreeItem parent = new TreeItem(f_statusTree, SWT.NONE);
+		parent.setText("Unconnected");
+		parent.setImage(SLImages.getImage(SLImages.IMG_QUERY));
+		
+		for(ProjectStatus ps : projects) {
+			final SierraServer server = f_manager.getServer(ps.name);
+			if (server == null) {
+				initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
+			}
+		}
+		
+	}
+
 	private void createProjectItems(TreeItem parent, SierraServer server) {
 		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
 			ProjectStatus s = null;
