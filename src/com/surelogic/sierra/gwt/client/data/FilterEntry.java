@@ -2,8 +2,6 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-import com.google.gwt.core.client.GWT;
-
 public class FilterEntry implements Serializable {
 
 	/**
@@ -57,16 +55,20 @@ public class FilterEntry implements Serializable {
 	}
 
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		final FilterEntry other = (FilterEntry) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 
