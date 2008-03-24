@@ -98,4 +98,15 @@ public abstract class AbstractProjectSelectedMenuAction implements
 		}
 		return names;
 	}
+	
+	public void run() {
+		run((IAction) null);
+	}
+	
+	public void run(List<IJavaProject> projects) {
+		if (projects.isEmpty()) {
+			return;
+		}
+		run(projects, getNames(projects));
+	}
 }
