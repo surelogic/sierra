@@ -130,6 +130,12 @@ public final class ConnectProjectsDialog extends Dialog {
 			f_exportAllToggle.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					f_connectAll = f_exportAllToggle.getSelection();
+					if (f_connectAll) {
+						// FIX what about unselect all?
+						for (TableItem item : f_queryTable.getItems()) {
+							item.setChecked(true);
+						}
+					}
 					setDialogState();
 				}
 			});
