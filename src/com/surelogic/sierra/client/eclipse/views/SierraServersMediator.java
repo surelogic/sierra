@@ -8,16 +8,11 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,29 +24,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.actions.NewScan;
-import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
-import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
-import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
+import com.surelogic.sierra.client.eclipse.actions.*;
+import com.surelogic.sierra.client.eclipse.dialogs.*;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -67,10 +53,10 @@ implements ISierraServerObserver {
     private Map<String,ProjectStatus> projectMap = Collections.emptyMap();
 	private final Tree f_statusTree;
 	private final Menu f_contextMenu;
-	private final IAction f_newServerAction;
-	private final IAction f_duplicateServerAction;
-	private final IAction f_deleteServerAction;
-	private final IAction f_openInBrowserAction;	
+	private final ActionListener f_newServerAction;
+	private final ActionListener f_duplicateServerAction;
+	private final ActionListener f_deleteServerAction;
+	private final ActionListener f_openInBrowserAction;	
 	private final MenuItem f_newServerItem;
 	private final MenuItem f_duplicateServerItem;
 	private final MenuItem f_deleteServerItem;
@@ -83,18 +69,45 @@ implements ISierraServerObserver {
 	private final MenuItem f_rescanProjectItem;
 	private final MenuItem f_disconnectProjectItem;
 
-	private class ServerActionListener implements Listener {
+	private abstract class ActionListener extends Action implements Listener {
+		ActionListener(String text, String tooltip) {
+			super(text, IAction.AS_PUSH_BUTTON);
+			this.setToolTipText(tooltip);
+			
+		}
+		ActionListener(Image image, String tooltip) {
+			this(tooltip, tooltip);
+			this.setImageDescriptor(new ImageImageDescriptor(image));			
+		}
+		
+		public final void handleEvent(Event event) {
+			run();
+		}
+		
+		@Override
+		public abstract void run();		
+	}
+	
+	private class ServerActionListener extends ActionListener {
 		private final String msgIfNoServer;
 
-		ServerActionListener() {
-			this(null);
+		ServerActionListener(String text, String tooltip, String msg) {
+			super(text, tooltip);
+			msgIfNoServer = msg;
 		}
-
+		
+		ServerActionListener(Image image, String tooltip, String msg) {
+			super(image, tooltip);
+			msgIfNoServer = msg;
+		}
+		
 		ServerActionListener(String msg) {
+			super("", "");
 			msgIfNoServer = msg;
 		}
 
-		public void handleEvent(Event event) {
+		@Override
+		public final void run() {
 			SierraServer server = f_manager.getFocus();
 			if (server != null) {
 				handleEventOnServer(server);
@@ -114,52 +127,15 @@ implements ISierraServerObserver {
 		}
 	}
 
-	private abstract class ServerProjectActionListener extends
-			ServerActionListener {
-		ServerProjectActionListener(String msg) {
-			super(msg);
-		}
-
-		@Override
-		protected final void handleEventOnServer(SierraServer server) {
-			final SierraServerManager manager = server.getManager();
-			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-				public void run(String nullName, SierraServer server,
-						Shell shell) {
-					start(server);
-					for (String projectName : manager
-							.getProjectsConnectedTo(server)) {
-						if (manager.isConnected(projectName)) {
-							runForServerProject(server, projectName);
-						}
-					}
-					finish(server);
-				}
-			};
-			final Shell shell = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell();
-			ServerAuthenticationDialog.promptPasswordIfNecessary(null, server,
-					shell, serverAction);
-		}
-
-		protected void start(SierraServer server) {
-			// Do nothing
-		}
-
-		protected abstract void runForServerProject(SierraServer server,
-				String projectName);
-
-		protected void finish(SierraServer server) {
-			// Do nothing
-		}
-	}
-
 	private abstract class IJavaProjectsActionListener extends
 			ServerActionListener {
 		IJavaProjectsActionListener(String msg) {
 			super(msg);
+		} 
+		IJavaProjectsActionListener(Image image, String tooltip, String msg) {
+			super(image, tooltip, msg);
 		}
-
+		
 		@Override
 		protected final void handleEventOnServer(SierraServer server) {
 			final SierraServerManager manager = server.getManager();
@@ -172,11 +148,6 @@ implements ISierraServerObserver {
 
 	private final SierraServerManager f_manager = SierraServerManager
 			.getInstance();
-
-	private static void setImageDescriptor(IAction a, String key) {
-		Image img = SLImages.getWorkbenchImage(key);
-		a.setImageDescriptor(new ImageImageDescriptor(img));
-	}
 	
 	public SierraServersMediator(SierraServersView view,
 			Tree statusTree, Menu contextMenu,
@@ -189,46 +160,69 @@ implements ISierraServerObserver {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
-		f_newServerAction = new Action("New team server location", 
-				                 IAction.AS_PUSH_BUTTON) {
+		f_newServerAction = 
+			new ActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
+					           "New team server location") {
 			@Override
 			public void run() {
 				ServerLocationDialog.newServer(f_statusTree.getShell());			
 			}
 		};		
-		setImageDescriptor(f_newServerAction, ISharedImages.IMG_TOOL_NEW_WIZARD);
 		view.addToActionBar(f_newServerAction);
 
-		f_duplicateServerAction = new Action("Duplicates the selected team server location", 
-				                       IAction.AS_PUSH_BUTTON) {
+		f_duplicateServerAction = 
+			new ServerActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
+					                 "Duplicates the selected team server location",
+					                 "No server to duplicate") {
 			@Override
-			public void run() {
-				//f_mediator.setSortByServer(isChecked());				
+			protected void handleEventOnServer(SierraServer server) {
+				f_manager.duplicate();		
 			}
 		}; 
-		setImageDescriptor(f_duplicateServerAction, ISharedImages.IMG_TOOL_COPY);
 		f_duplicateServerAction.setEnabled(false);
 		view.addToActionBar(f_duplicateServerAction);
 		
-		f_deleteServerAction = new Action("Deletes the selected team server location", 
-				                    IAction.AS_PUSH_BUTTON) {
+		f_deleteServerAction = new IJavaProjectsActionListener(
+					SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
+					"Deletes the selected team server location",
+					"No server to delete") {
 			@Override
-			public void run() {
-				//f_mediator.setSortByServer(isChecked());				
+			protected void run(SierraServer server, List<String> projectNames) {
+				final String serverName = server.getLabel();
+				final String msg;
+				if (projectNames.isEmpty()) {
+					msg = I18N.msg("sierra.eclipse.serverDeleteWarning",
+							serverName);
+				} else {
+					msg = I18N.msg(
+							"sierra.eclipse.serverDeleteWarningConnected",
+							serverName, serverName, serverName);
+				}
+				if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						"Confirm Sierra Server Deletion", msg)) {
+					f_manager.delete(server);
+					if (!projectNames.isEmpty()) {
+						final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
+								projectNames);
+						deleteProjectJob.runJob();
+					}
+				}
 			}
 		};
-		setImageDescriptor(f_deleteServerAction, ISharedImages.IMG_TOOL_DELETE);
+		
 		f_deleteServerAction.setEnabled(false);
 		view.addToActionBar(f_deleteServerAction);
 		
-		f_openInBrowserAction = new Action("Open the selected team server in a Web browser", 
-				                     IAction.AS_PUSH_BUTTON) {
+		f_openInBrowserAction = 
+			new ServerActionListener("Browse", 
+				                     "Open the selected team server in a Web browser",
+				                     "No server to browse") {
 			@Override
-			public void run() {
-				//f_mediator.setSortByServer(isChecked());				
+			protected void handleEventOnServer(SierraServer server) {
+				openInBrowser(server);		
 			}
 		};
-		f_openInBrowserAction.setText("Browse");
 		f_openInBrowserAction.setEnabled(false);
 		view.addToActionBar(f_openInBrowserAction);
 		
@@ -255,91 +249,23 @@ implements ISierraServerObserver {
 
 	@Override
 	public Listener getNoDataListener() {
-		return new Listener() {
-			public void handleEvent(Event event) {
-				ServerLocationDialog.newServer(f_statusTree.getShell());
-			}
-		};
+		return f_newServerAction;
 	}
 	
 	@Override
 	public void init() {
 		f_manager.addObserver(this);
 		notify(f_manager);
-		
-//		f_serverList.addListener(SWT.Selection, new Listener() {
-//			public void handleEvent(Event event) {
-//				/*
-//				 * Determine the server label that has been selected and tell
-//				 * the model that it is the focus.
-//				 */
-//				final TableItem[] sa = f_serverList.getSelection();
-//				if (sa.length > 0) {
-//					final TableItem selection = sa[0];
-//					final String label = selection.getText();
-//					final SierraServer server = f_manager.getOrCreate(label);
-//					f_manager.setFocus(server);
-//				}
-//			}
-//		});
 
-		final Listener newServerAction = getNoDataListener();
+		// f_serverList.addListener(SWT.MouseDoubleClick, openInBrowserAction);
 
-		final Listener duplicateServerAction = new Listener() {
-			public void handleEvent(Event event) {
-				f_manager.duplicate();
-			}
-		};
+		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
+		f_duplicateServerItem.addListener(SWT.Selection, f_duplicateServerAction);
+		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-		final Listener deleteServerAction = new IJavaProjectsActionListener(
-				"Delete server pressed with no server focus.") {
-			@Override
-			protected void run(SierraServer server, List<String> projectNames) {
-				final String serverName = server.getLabel();
-				final String msg;
-				if (projectNames.isEmpty()) {
-					msg = I18N.msg("sierra.eclipse.serverDeleteWarning",
-							serverName);
-				} else {
-					msg = I18N.msg(
-							"sierra.eclipse.serverDeleteWarningConnected",
-							serverName, serverName, serverName);
-				}
-				if (MessageDialog.openConfirm(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						"Confirm Sierra Server Deletion", msg)) {
-					f_manager.delete(server);
-					if (!projectNames.isEmpty()) {
-						final DeleteProjectDataJob deleteProjectJob = new DeleteProjectDataJob(
-								projectNames);
-						deleteProjectJob.runJob();
-					}
-				}
-			}
-		};
-
-		final Listener openInBrowserAction = new ServerActionListener(
-				"Edit server pressed with no server focus.") {
+		final Listener connectAction = new ServerActionListener("No server to connect to") {
 			@Override
 			protected void handleEventOnServer(SierraServer server) {
-				openInBrowser(server);
-			}
-		};
-
-		//f_serverList.addListener(SWT.MouseDoubleClick, openInBrowserAction);
-
-		//f_newServerAction.
-		//f_newServer.addListener(SWT.Selection, newServerAction);
-		f_newServerItem.addListener(SWT.Selection, newServerAction);
-
-		//f_duplicateServer.addListener(SWT.Selection, duplicateServerAction);
-		f_duplicateServerItem.addListener(SWT.Selection, duplicateServerAction);
-
-		//f_deleteServer.addListener(SWT.Selection, deleteServerAction);
-		f_deleteServerItem.addListener(SWT.Selection, deleteServerAction);
-
-		final Listener connectAction = new Listener() {
-			public void handleEvent(Event event) {
 				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
 						f_statusTree.getShell());
 				dialog.open();
@@ -423,8 +349,6 @@ implements ISierraServerObserver {
 					}
 				});
 
-		//f_openInBrowser.addListener(SWT.Selection, openInBrowserAction);
-
 		f_scanProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
@@ -455,6 +379,9 @@ implements ISierraServerObserver {
 			public void handleEvent(Event event) {
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
+				if (onlyServer) {
+					f_manager.setFocus(servers.get(0));
+				}
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
@@ -606,6 +533,9 @@ implements ISierraServerObserver {
     */
 
 	private static void openInBrowser(SierraServer server) {
+		if (server == null) {
+			return;
+		}		
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
