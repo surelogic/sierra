@@ -4,18 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.ServerUIDRequest;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
-import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
-import com.surelogic.sierra.tool.message.SyncRequest;
-import com.surelogic.sierra.tool.message.SyncResponse;
+import com.surelogic.sierra.tool.message.*;
 
 public final class ClientProjectManager extends ProjectManager {
 
@@ -38,8 +34,24 @@ public final class ClientProjectManager extends ProjectManager {
 				.prepareStatement("INSERT INTO PROJECT_SERVER (PROJECT_ID, SERVER_UUID) VALUES (?,?)");
 	}
 
+	public ClientFindingManager getFindingManager() {
+		return findingManager;
+	}
+	
 	public void synchronizeProject(SierraServerLocation server,
 			String projectName, SLProgressMonitor monitor)
+			throws ServerMismatchException, SQLException {
+		synchronizeProjectWithServer(server, projectName, monitor, false);
+	}
+	
+	public List<SyncTrailResponse> getProjectUpdates(SierraServerLocation server,
+			String projectName, SLProgressMonitor monitor) 
+	throws ServerMismatchException, SQLException {
+		return synchronizeProjectWithServer(server, projectName, monitor, true);
+	}	
+	
+	private List<SyncTrailResponse> synchronizeProjectWithServer(SierraServerLocation server,
+			String projectName, SLProgressMonitor monitor, boolean serverGet)
 			throws ServerMismatchException, SQLException {
 		final SierraService service = SierraServiceClient.create(server);
 
@@ -68,7 +80,7 @@ public final class ClientProjectManager extends ProjectManager {
 			set.close();
 		}
 		if (monitor.isCanceled()) {
-			return;
+			return Collections.emptyList();
 		}
 		monitor.worked(1);
 
@@ -78,27 +90,35 @@ public final class ClientProjectManager extends ProjectManager {
 		request.setProject(projectName);
 		request.setServer(serverUid);
 		request.setRevision(findingManager.getLatestAuditRevision(projectName));
-		request.setTrails(findingManager
-				.getNewLocalAuditTrails(projectName, monitor));
+		if (serverGet) {
+			request.setTrails(Collections.<SyncTrailRequest>emptyList());
+		} else {
+			request.setTrails(findingManager
+					.getNewLocalAuditTrails(projectName, monitor));
+		}
 		final SyncResponse reply = service.synchronizeProject(request);
 		monitor.worked(1);
-		monitor.subTask("Writing remote updates into local database.");
-		findingManager.deleteLocalAudits(projectName, monitor);
-		findingManager.updateLocalFindings(projectName, reply.getTrails(),
-				monitor);
-		monitor.worked(1);
-		// Update settings
-		// TODO
-		monitor.subTask("Checking for updated settings for project "
-				+ projectName);
-		monitor.worked(1);
-		int idx = 1;
-		insertSynchRecord.setLong(idx++, p.getId());
-		insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
-		insertSynchRecord.setLong(idx++, findingManager
-				.getLatestAuditRevision(projectName));
-		insertSynchRecord.setLong(idx++, request.getRevision());
-		insertSynchRecord.execute();
+		
+		if (!serverGet) {
+			monitor.subTask("Writing remote updates into local database.");
+			findingManager.deleteLocalAudits(projectName, monitor);
+			findingManager.updateLocalFindings(projectName, reply.getTrails(),
+					monitor);
+			monitor.worked(1);
+			// Update settings
+			// TODO
+			monitor.subTask("Checking for updated settings for project "
+					+ projectName);
+			monitor.worked(1);
+			int idx = 1;
+			insertSynchRecord.setLong(idx++, p.getId());
+			insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
+			insertSynchRecord.setLong(idx++, findingManager
+					.getLatestAuditRevision(projectName));
+			insertSynchRecord.setLong(idx++, request.getRevision());
+			insertSynchRecord.execute();
+		}
+		return reply.getTrails();
 	}
 
 	@Override
