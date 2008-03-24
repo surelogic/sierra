@@ -96,7 +96,7 @@ implements IViewCallback {
 	public final void addToActionBar(IAction action) {
 		final IToolBarManager bar = 
 			getViewSite().getActionBars().getToolBarManager();
-		bar.prependToGroup(VIEW_GROUP, action);
+		bar.appendToGroup(VIEW_GROUP, action);
 	}
 	
 	@Override
