@@ -41,6 +41,7 @@ public class ScanChangedProjectsAction extends
 		run(projects);
 	}
 
+	@Override
 	public void run(final List<IJavaProject> projects) {
 		if (projects.size() <= 0) {
 			return;
