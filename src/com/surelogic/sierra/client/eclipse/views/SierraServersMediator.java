@@ -249,6 +249,7 @@ implements ISierraServerObserver {
 			}
 		};		
 		setImageDescriptor(f_newServerAction, ISharedImages.IMG_TOOL_NEW_WIZARD);
+		view.addToActionBar(f_newServerAction);
 
 		f_duplicateServerAction = new Action("Duplicates the selected team server location", 
 				                       IAction.AS_PUSH_BUTTON) {
@@ -302,6 +303,7 @@ implements ISierraServerObserver {
 		return "sierra.eclipse.noDataSierraServers";
 	}
 
+	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {
@@ -310,6 +312,7 @@ implements ISierraServerObserver {
 		};
 	}
 	
+	@Override
 	public void init() {
 		f_manager.addObserver(this);
 		notify(f_manager);
@@ -560,8 +563,9 @@ implements ISierraServerObserver {
 		protected abstract void run(List<String> projectNames);
 	}
 
+	@Override
 	public void dispose() {
-		// TODO
+		f_statusTree.dispose();
 	}
 
 	public void setFocus() {
@@ -611,7 +615,7 @@ implements ISierraServerObserver {
 		}
 		if (sort != PreferenceConstants.getServerStatusSort()) {
 			PreferenceConstants.setServerStatusSort(sort);
-			changed(); // FIX do I need to reload from the database?
+			updateContentsInUI(projects); 
 		}
 	}
 	
