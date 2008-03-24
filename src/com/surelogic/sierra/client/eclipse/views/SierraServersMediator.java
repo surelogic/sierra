@@ -258,6 +258,7 @@ implements ISierraServerObserver {
 	
 	@Override
 	public void init() {
+		super.init();
 		f_manager.addObserver(this);
 		notify(f_manager);
 
@@ -513,6 +514,7 @@ implements ISierraServerObserver {
 	@Override
 	public void dispose() {
 		f_statusTree.dispose();
+		super.dispose();
 	}
 
 	public void setFocus() {
@@ -682,6 +684,7 @@ implements ISierraServerObserver {
 		f_statusTree.setVisible(somethingToSee);
 		f_view.hasData(somethingToSee);
 		
+		boolean byServer = false;
 		if (!somethingToSee) {
 			return;
 		}
@@ -689,6 +692,7 @@ implements ISierraServerObserver {
 			createProjectItems();
 		}
 		else if (!someProjects) {
+			byServer = true;
 			createServerItems();
 		}
 		else switch (PreferenceConstants.getServerStatusSort()) {
@@ -697,11 +701,17 @@ implements ISierraServerObserver {
 			break;
 		case BY_SERVER:
 		default: 
+			byServer = true;
 			createServerItems();
 		}
 		f_statusTree.getParent().layout();
 		for(TreeItem item : f_statusTree.getItems()) {
 			item.setExpanded(true);
+			if (byServer) {
+				for(TreeItem item2 : item.getItems()) {
+					item2.setExpanded(true);
+				}
+			}
 		}
 	}
 	
@@ -801,13 +811,13 @@ implements ISierraServerObserver {
 		if (!ps.serverData.isEmpty()) {
 			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
 			if (ps.comments > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comments");
+				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment(s)");
 			}
 			if (ps.importance > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.importance+" changes to the importance");
+				new TreeItem(audits, SWT.NONE).setText(ps.importance+" change(s) to the importance");
 			}
 			if (ps.summary > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.summary+" changes to the summary");
+				new TreeItem(audits, SWT.NONE).setText(ps.summary+" change(s) to the summary");
 			}
 			if (ps.read > 0) {
 				new TreeItem(audits, SWT.NONE).setText(ps.read+" read");
