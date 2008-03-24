@@ -27,9 +27,7 @@ class ProjectStatus {
 	final Map<String,Integer> userCount = new HashMap<String,Integer>();
 	
 	public ProjectStatus(IJavaProject jp) {
-		this(jp, null, 
-		     Collections.<FindingAudits>emptyList(), 
-		     Collections.<SyncTrailResponse>emptyList());
+		this(jp, null, Collections.<FindingAudits>emptyList(), null);
 	}
 	
 	public ProjectStatus(IJavaProject jp, File scan, List<FindingAudits> findings,
@@ -67,42 +65,44 @@ class ProjectStatus {
 		earliest = null;
 		latest = null;
 		int comments = 0, importance = 0, read = 0, summary = 0;
-		for(SyncTrailResponse r : responses) {
-			newAudits += r.getAudits().size();
-			for(Audit a : r.getAudits()) {
-				if (earliest == null) {
-					earliest = latest = a.getTimestamp();
-				} 
-				else if (earliest.after(a.getTimestamp())){
-					earliest = a.getTimestamp();
-				}
-				else if (latest.before(a.getTimestamp())){
-					latest = a.getTimestamp();
-				}
-				Integer i = userCount.get(a.getUser());
-				if (i == null) {
-					userCount.put(a.getUser(), 1);
-				} else {
-					userCount.put(a.getUser(), i+1);
-				}
-				
-				switch (a.getEvent()) {
-				case COMMENT:
-					comments++;
-					break;
-				case IMPORTANCE:
-					importance++;
-					break;
-				case READ:
-					read++;
-					break;
-				case SUMMARY:
-					summary++;
-					break;
-				default:
-					throw new IllegalStateException("Unknown audit event: "+a.getEvent());
-				}
-			}			
+		if (responses != null) {
+			for(SyncTrailResponse r : responses) {
+				newAudits += r.getAudits().size();
+				for(Audit a : r.getAudits()) {
+					if (earliest == null) {
+						earliest = latest = a.getTimestamp();
+					} 
+					else if (earliest.after(a.getTimestamp())){
+						earliest = a.getTimestamp();
+					}
+					else if (latest.before(a.getTimestamp())){
+						latest = a.getTimestamp();
+					}
+					Integer i = userCount.get(a.getUser());
+					if (i == null) {
+						userCount.put(a.getUser(), 1);
+					} else {
+						userCount.put(a.getUser(), i+1);
+					}
+
+					switch (a.getEvent()) {
+					case COMMENT:
+						comments++;
+						break;
+					case IMPORTANCE:
+						importance++;
+						break;
+					case READ:
+						read++;
+						break;
+					case SUMMARY:
+						summary++;
+						break;
+					default:
+						throw new IllegalStateException("Unknown audit event: "+a.getEvent());
+					}
+				}			
+			}
 		}
 		numServerAudits = newAudits;
 		earliestServerAudit = earliest;

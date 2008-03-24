@@ -617,7 +617,7 @@ implements ISierraServerObserver {
 								
 				// Check for new remote audits
 				SierraServer server = f_manager.getServer(name);
-				List<SyncTrailResponse> responses = Collections.emptyList();
+				List<SyncTrailResponse> responses = null;
 				if (server != null) {
 					SLProgressMonitor monitor = EmptyProgressMonitor.instance();
 					try {
@@ -808,7 +808,10 @@ implements ISierraServerObserver {
 		if (!ps.localFindings.isEmpty()) {
 			createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), ps.earliestLocalAudit, ps.latestLocalAudit);
 		}
-		if (!ps.serverData.isEmpty()) {
+		if (ps.serverData == null) {
+			new TreeItem(root, SWT.NONE).setText("No server info available");
+		} 
+		else if (!ps.serverData.isEmpty()) {
 			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
 			if (ps.comments > 0) {
 				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment(s)");
