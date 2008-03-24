@@ -18,6 +18,7 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SierraServersView";
 
 	public static final int INFO_WIDTH_HINT = 70;
+	
 
 	@Override
 	protected SierraServersMediator createMorePartControls(final Composite parent) {
@@ -34,53 +35,48 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 		.setChecked(ServerStatusSort.BY_SERVER == PreferenceConstants.getServerStatusSort());
 		addToViewMenu(sortByServerAction);		
 
-		final Menu serverListMenu = new Menu(parent.getShell(), SWT.POP_UP);		
+		final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);		
 		
-		final MenuItem newServerItem = createMenuItem(serverListMenu, "New...",
+		final MenuItem newServerItem = createMenuItem(contextMenu, "New...",
 				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		final MenuItem duplicateServerItem = createMenuItem(serverListMenu,
+		final MenuItem duplicateServerItem = createMenuItem(contextMenu,
 				"Duplicate", SLImages
 						.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
 
-		final MenuItem deleteServerItem = createMenuItem(serverListMenu,
+		final MenuItem deleteServerItem = createMenuItem(contextMenu,
 				"Delete", SLImages
 						.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 
-		new MenuItem(serverListMenu, SWT.SEPARATOR);
+		new MenuItem(contextMenu, SWT.SEPARATOR);
 
-		final MenuItem serverConnectItem = createMenuItem(serverListMenu,
+		final MenuItem serverConnectItem = createMenuItem(contextMenu,
 				"Connect...", SLImages.IMG_SIERRA_SERVER);
+		new MenuItem(contextMenu, SWT.SEPARATOR);
+		
+		final MenuItem scanProjectItem = createMenuItem(contextMenu,
+				"Scan Project", SLImages.IMG_SIERRA_SCAN);
+		final MenuItem rescanProjectItem = createMenuItem(contextMenu,
+				"Re-Scan Changes in Project", SLImages.IMG_SIERRA_SCAN_DELTA);
+		final MenuItem synchProjects = createMenuItem(
+				contextMenu, "Synchronize Projects",
+				SLImages.IMG_SIERRA_SYNC);		
+		
+		new MenuItem(contextMenu, SWT.SEPARATOR);
+		final MenuItem disconnectProjectItem = createMenuItem(contextMenu,
+				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 
-		new MenuItem(serverListMenu, SWT.SEPARATOR);
-
-		final MenuItem synchAllConnectedProjects = createMenuItem(
-				serverListMenu, "Synchronize All Connected Projects",
-				SLImages.IMG_SIERRA_SYNC);
-
-		new MenuItem(serverListMenu, SWT.SEPARATOR);
-		final MenuItem sendResultFilters = new MenuItem(serverListMenu,
+		new MenuItem(contextMenu, SWT.SEPARATOR);
+		final MenuItem sendResultFilters = new MenuItem(contextMenu,
 				SWT.PUSH);
 		sendResultFilters.setText("Send Scan Filter...");
-		final MenuItem getResultFilters = new MenuItem(serverListMenu, SWT.PUSH);
+		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
 		getResultFilters.setText("Get Scan Filter...");
-		new MenuItem(serverListMenu, SWT.SEPARATOR);
-		final MenuItem serverPropertiesItem = new MenuItem(serverListMenu,
+		new MenuItem(contextMenu, SWT.SEPARATOR);
+		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
 		serverPropertiesItem.setText("Properties...");
-		//serverList.setMenu(serverListMenu);
-
-		final Menu projectListMenu = new Menu(parent.getShell(),
-				SWT.POP_UP);
-		final MenuItem projectConnectItem = createMenuItem(projectListMenu,
-				"Connect...", SLImages.IMG_SIERRA_SERVER);
-		final MenuItem scanProjectItem = createMenuItem(projectListMenu,
-				"Scan Project", SLImages.IMG_SIERRA_SCAN);
-		final MenuItem rescanProjectItem = createMenuItem(projectListMenu,
-				"Re-Scan Changes in Project", SLImages.IMG_SIERRA_SCAN_DELTA);
-		final MenuItem disconnectProjectItem = createMenuItem(projectListMenu,
-				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
-		//projectList.setMenu(projectListMenu);
+		statusTree.setMenu(contextMenu);
 
 		final Action importAction = new Action("Import Locations...") {
 			@Override
@@ -108,11 +104,11 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 		addToViewMenu(exportAction);
 
 		return new SierraServersMediator(this, statusTree, 
-				serverListMenu, newServerItem,
+				contextMenu, newServerItem,
 				duplicateServerItem, deleteServerItem, serverConnectItem,
-				synchAllConnectedProjects, sendResultFilters, getResultFilters,
+				synchProjects, sendResultFilters, getResultFilters,
 				serverPropertiesItem, 
-				projectListMenu, projectConnectItem, scanProjectItem,
+				scanProjectItem,
 				rescanProjectItem, disconnectProjectItem);
 	}
 }

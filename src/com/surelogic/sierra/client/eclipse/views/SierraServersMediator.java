@@ -42,6 +42,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -65,7 +66,7 @@ implements ISierraServerObserver {
     private List<ProjectStatus> projects = Collections.emptyList();
     private Map<String,ProjectStatus> projectMap = Collections.emptyMap();
 	private final Tree f_statusTree;
-	private final Menu f_serverListMenu;
+	private final Menu f_contextMenu;
 	private final IAction f_newServerAction;
 	private final IAction f_duplicateServerAction;
 	private final IAction f_deleteServerAction;
@@ -74,12 +75,10 @@ implements ISierraServerObserver {
 	private final MenuItem f_duplicateServerItem;
 	private final MenuItem f_deleteServerItem;
 	private final MenuItem f_serverConnectItem;
-	private final MenuItem f_synchAllConnectedProjects;
+	private final MenuItem f_synchConnectedProjects;
 	private final MenuItem f_sendResultFilters;
 	private final MenuItem f_getResultFilters;
 	private final MenuItem f_serverPropertiesItem;
-	private final Menu f_projectListMenu;
-	private final MenuItem f_projectConnectItem;
 	private final MenuItem f_scanProjectItem;
 	private final MenuItem f_rescanProjectItem;
 	private final MenuItem f_disconnectProjectItem;
@@ -174,40 +173,22 @@ implements ISierraServerObserver {
 	private final SierraServerManager f_manager = SierraServerManager
 			.getInstance();
 
-	/*
-	private final Listener f_projectListAction = new Listener() {
-		public void handleEvent(Event event) {
-			final TableItem[] sa = f_projectList.getSelection();
-			final boolean enabled = sa.length > 0;
-			f_scanProjectItem.setEnabled(enabled);
-			f_rescanProjectItem.setEnabled(enabled);
-			f_disconnectProjectItem.setEnabled(enabled);
-		}
-	};
-    */
-
 	private static void setImageDescriptor(IAction a, String key) {
 		Image img = SLImages.getWorkbenchImage(key);
 		a.setImageDescriptor(new ImageImageDescriptor(img));
 	}
 	
-	private static void setSLImageDescriptor(IAction a, String key) {
-		Image img = SLImages.getImage(key);
-		a.setImageDescriptor(new ImageImageDescriptor(img));
-	}
-	
 	public SierraServersMediator(SierraServersView view,
-			Tree statusTree, Menu serverListMenu,
+			Tree statusTree, Menu contextMenu,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
-			MenuItem synchAllConnectedProjects, MenuItem sendResultFilters,
+			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
-			Menu projectListMenu, MenuItem projectConnectItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem) {
 		super(view);
 		f_statusTree = statusTree;
-		f_serverListMenu = serverListMenu;
+		f_contextMenu = contextMenu;
 		f_newServerAction = new Action("New team server location", 
 				                 IAction.AS_PUSH_BUTTON) {
 			@Override
@@ -226,6 +207,8 @@ implements ISierraServerObserver {
 			}
 		}; 
 		setImageDescriptor(f_duplicateServerAction, ISharedImages.IMG_TOOL_COPY);
+		f_duplicateServerAction.setEnabled(false);
+		view.addToActionBar(f_duplicateServerAction);
 		
 		f_deleteServerAction = new Action("Deletes the selected team server location", 
 				                    IAction.AS_PUSH_BUTTON) {
@@ -235,6 +218,8 @@ implements ISierraServerObserver {
 			}
 		};
 		setImageDescriptor(f_deleteServerAction, ISharedImages.IMG_TOOL_DELETE);
+		f_deleteServerAction.setEnabled(false);
+		view.addToActionBar(f_deleteServerAction);
 		
 		f_openInBrowserAction = new Action("Open the selected team server in a Web browser", 
 				                     IAction.AS_PUSH_BUTTON) {
@@ -244,17 +229,17 @@ implements ISierraServerObserver {
 			}
 		};
 		f_openInBrowserAction.setText("Browse");
+		f_openInBrowserAction.setEnabled(false);
+		view.addToActionBar(f_openInBrowserAction);
 		
 		f_newServerItem = newServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
 		f_serverConnectItem = serverConnectItem;
-		f_synchAllConnectedProjects = synchAllConnectedProjects;
+		f_synchConnectedProjects = synchConnectedProjects;
 		f_sendResultFilters = sendResultFilters;
 		f_getResultFilters = getResultFilters;
 		f_serverPropertiesItem = serverPropertiesItem;
-		f_projectListMenu = projectListMenu;
-		f_projectConnectItem = projectConnectItem;
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
@@ -281,8 +266,6 @@ implements ISierraServerObserver {
 	public void init() {
 		f_manager.addObserver(this);
 		notify(f_manager);
-
-		f_statusTree.setMenu(f_projectListMenu);
 		
 //		f_serverList.addListener(SWT.Selection, new Listener() {
 //			public void handleEvent(Event event) {
@@ -365,32 +348,14 @@ implements ISierraServerObserver {
 
 		f_serverConnectItem.addListener(SWT.Selection, connectAction);
 
-		f_synchAllConnectedProjects
-				.addListener(
-						SWT.Selection,
-						new ServerProjectActionListener(
-								"Synchronize all connected projects pressed with no server focus.") {
-							ServerProjectGroupJob joinJob = null;
-
-							@Override
-							protected void start(SierraServer server) {
-								joinJob = new ServerProjectGroupJob(server);
-							}
-
-							@Override
-							protected void runForServerProject(
-									SierraServer server, String projectName) {
-								final SynchronizeJob job = new SynchronizeJob(
-										joinJob, projectName, server);
-								job.schedule();
-							}
-
-							@Override
-							protected void finish(SierraServer server) {
-								joinJob.schedule();
-								joinJob = null;
-							}
-						});
+		f_synchConnectedProjects.addListener(SWT.Selection,
+			new ProjectsActionListener() {
+				@Override
+				protected void run(List<IJavaProject> projects) {
+					new SynchronizeProjectAction().run(projects);
+				}
+			
+		    });
 
 		f_sendResultFilters.addListener(SWT.Selection,
 				new ServerActionListener(
@@ -460,8 +425,6 @@ implements ISierraServerObserver {
 
 		//f_openInBrowser.addListener(SWT.Selection, openInBrowserAction);
 
-		f_projectConnectItem.addListener(SWT.Selection, connectAction);
-
 		f_scanProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
@@ -487,8 +450,32 @@ implements ISierraServerObserver {
 						DeleteProjectDataJob.utility(projectNames, null, true);
 					}
 				});
-		f_projectListMenu.addListener(SWT.Show, new Listener() {
+		
+		f_statusTree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
+				List<SierraServer> servers = collectServers();
+				final boolean onlyServer = servers.size() == 1;
+				f_duplicateServerAction.setEnabled(onlyServer);
+				f_deleteServerAction.setEnabled(onlyServer);
+				f_openInBrowserAction.setEnabled(onlyServer);
+			}			
+		});
+		f_contextMenu.addListener(SWT.Show, new Listener() {
+			public void handleEvent(Event event) {
+				f_newServerItem.setEnabled(true);
+				
+				List<SierraServer> servers = collectServers();
+				final boolean onlyServer = servers.size() == 1;
+				f_duplicateServerAction.setEnabled(onlyServer);
+				f_deleteServerAction.setEnabled(onlyServer);
+				f_openInBrowserAction.setEnabled(onlyServer);
+				f_duplicateServerItem.setEnabled(onlyServer);
+				f_deleteServerItem.setEnabled(onlyServer);
+				f_serverConnectItem.setEnabled(onlyServer);
+				f_sendResultFilters.setEnabled(onlyServer);
+				f_getResultFilters.setEnabled(onlyServer);
+				f_serverPropertiesItem.setEnabled(onlyServer);
+				
 				List<ProjectStatus> status = collectSelectedProjectStatus();
 				final boolean someProjects = !status.isEmpty();
 				boolean allConnected = someProjects;
@@ -500,18 +487,41 @@ implements ISierraServerObserver {
 						}
 					}				
 				}
-				f_projectConnectItem.setEnabled(!allConnected);				
+			
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
+				f_synchConnectedProjects.setEnabled(someProjects);
+				
 				f_disconnectProjectItem.setEnabled(allConnected);				
 			}
 			
 		});
 	}
 	
-	private List<ProjectStatus> collectSelectedProjectStatus() {
-		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+	private List<SierraServer> collectServers() {
 		final TreeItem[] si = f_statusTree.getSelection();
+		if (si.length == 0) {
+			return Collections.emptyList();
+		}
+		List<SierraServer> servers = new ArrayList<SierraServer>();
+		for (TreeItem item : si) {
+			if (item.getData() instanceof SierraServer) {
+				servers.add((SierraServer) item.getData());
+			}
+			else {
+				System.out.println("Got a non-server selection: "+item.getText());
+				return Collections.emptyList();
+			}
+		}
+		return servers;
+	}
+	
+	private List<ProjectStatus> collectSelectedProjectStatus() {
+		final TreeItem[] si = f_statusTree.getSelection();
+		if (si.length == 0) {
+			return Collections.emptyList();
+		}
+		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 		for (TreeItem item : si) {
 			if (item.getData() instanceof ProjectStatus) {
 				projects.add((ProjectStatus) item.getData());
@@ -707,25 +717,14 @@ implements ISierraServerObserver {
 			return;
 		
 		f_statusTree.setRedraw(false);
-
-		final SierraServer server = f_manager.getFocus();
+		
+		List<SierraServer> servers = collectServers();
+		final boolean onlyServer = servers.size() == 1;
+		f_duplicateServerAction.setEnabled(onlyServer);
+		f_deleteServerAction.setEnabled(onlyServer);
+		f_openInBrowserAction.setEnabled(onlyServer);
+		
 		createTreeItems();
-		
-		final boolean focusServer = server != null;
-		f_duplicateServerAction.setEnabled(focusServer);
-		f_deleteServerAction.setEnabled(focusServer);
-		f_openInBrowserAction.setEnabled(focusServer);
-		f_duplicateServerItem.setEnabled(focusServer);
-		f_deleteServerItem.setEnabled(focusServer);
-		f_serverConnectItem.setEnabled(focusServer);
-		f_synchAllConnectedProjects.setEnabled(focusServer);
-		f_sendResultFilters.setEnabled(focusServer);
-		f_getResultFilters.setEnabled(focusServer);
-		f_serverPropertiesItem.setEnabled(focusServer);
-		
-		/*
-		f_projectListAction.handleEvent(null);
-		 */
 		f_statusTree.setRedraw(true);
 	}
 	
