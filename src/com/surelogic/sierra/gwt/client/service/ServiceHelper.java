@@ -38,6 +38,11 @@ public final class ServiceHelper {
 		return (TicketServiceAsync) bindService(GWT
 				.create(TicketService.class), "TicketService");
 	}
+
+	public static SettingsServiceAsync getSettingsService() {
+		return (SettingsServiceAsync) bindService(GWT
+				.create(SettingsService.class), "SettingsService");
+	}
 	
 	private static Object bindService(Object service, String servletName) {
 		ServiceDefTarget endpoint = (ServiceDefTarget) service;
