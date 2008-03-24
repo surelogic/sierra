@@ -9,6 +9,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
@@ -29,6 +30,8 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 				f_mediator.setSortByServer(isChecked());				
 			}
 		};
+		sortByServerAction
+		.setChecked(ServerStatusSort.BY_SERVER == PreferenceConstants.getServerStatusSort());
 		addToViewMenu(sortByServerAction);		
 
 		final Menu serverListMenu = new Menu(parent.getShell(), SWT.POP_UP);
