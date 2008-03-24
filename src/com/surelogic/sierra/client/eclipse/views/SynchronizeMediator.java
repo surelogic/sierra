@@ -52,7 +52,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {				
-				new SynchronizeProjectDialogAction().run(null);
+				new SynchronizeProjectDialogAction().run();
 			}
 		};
 	}
