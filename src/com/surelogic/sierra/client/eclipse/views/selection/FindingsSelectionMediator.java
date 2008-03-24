@@ -97,7 +97,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {
-				new NewScanDialogAction().run(null);
+				new NewScanDialogAction().run();
 			}
 		};
 	}
