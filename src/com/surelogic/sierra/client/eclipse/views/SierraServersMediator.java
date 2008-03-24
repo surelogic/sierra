@@ -4,10 +4,8 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -65,6 +63,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 implements ISierraServerObserver {
 
     private List<ProjectStatus> projects = Collections.emptyList();
+    private Map<String,ProjectStatus> projectMap = Collections.emptyMap();
 	private final Tree f_statusTree;
 	private final Menu f_serverListMenu;
 	private final IAction f_newServerAction;
@@ -75,8 +74,6 @@ implements ISierraServerObserver {
 	private final MenuItem f_duplicateServerItem;
 	private final MenuItem f_deleteServerItem;
 	private final MenuItem f_serverConnectItem;
-	private final MenuItem f_scanAllConnectedProjects;
-	private final MenuItem f_rescanAllConnectedProjects;
 	private final MenuItem f_synchAllConnectedProjects;
 	private final MenuItem f_sendResultFilters;
 	private final MenuItem f_getResultFilters;
@@ -174,39 +171,6 @@ implements ISierraServerObserver {
 				List<String> projectNames);
 	}
 
-	private void scan(String label, List<String> projectNames, boolean rescan) {
-		if (projectNames.isEmpty()) {
-			return;
-		}
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IJavaModel javaModel = JavaCore.create(root);
-		try {
-			final IJavaProject[] allProjects = javaModel.getJavaProjects();
-			final List<IJavaProject> projectsToScan = new ArrayList<IJavaProject>();
-			for (String projectName : projectNames) {
-				if (projectName == null) {
-					SLLogger.getLogger().warning("Null project for " + label);
-					continue;
-				}
-				for (IJavaProject p : allProjects) {
-					if (p.getElementName().equals(projectName)) {
-						projectsToScan.add(p);
-						break;
-					}
-				}
-				SLLogger.getLogger().warning(
-						"Could not find project: " + projectName);
-			}
-			if (rescan) {
-				new ScanChangedProjectsAction().run(projectsToScan);
-			} else {
-				new NewScan().scan(projectsToScan);
-			}
-		} catch (JavaModelException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
 	private final SierraServerManager f_manager = SierraServerManager
 			.getInstance();
 
@@ -227,12 +191,15 @@ implements ISierraServerObserver {
 		a.setImageDescriptor(new ImageImageDescriptor(img));
 	}
 	
+	private static void setSLImageDescriptor(IAction a, String key) {
+		Image img = SLImages.getImage(key);
+		a.setImageDescriptor(new ImageImageDescriptor(img));
+	}
+	
 	public SierraServersMediator(SierraServersView view,
 			Tree statusTree, Menu serverListMenu,
 			MenuItem newServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
-			MenuItem scanAllConnectedProjects,
-			MenuItem rescanAllConnectedProjects,
 			MenuItem synchAllConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			Menu projectListMenu, MenuItem projectConnectItem,
@@ -282,8 +249,6 @@ implements ISierraServerObserver {
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
 		f_serverConnectItem = serverConnectItem;
-		f_scanAllConnectedProjects = scanAllConnectedProjects;
-		f_rescanAllConnectedProjects = rescanAllConnectedProjects;
 		f_synchAllConnectedProjects = synchAllConnectedProjects;
 		f_sendResultFilters = sendResultFilters;
 		f_getResultFilters = getResultFilters;
@@ -317,6 +282,8 @@ implements ISierraServerObserver {
 		f_manager.addObserver(this);
 		notify(f_manager);
 
+		f_statusTree.setMenu(f_projectListMenu);
+		
 //		f_serverList.addListener(SWT.Selection, new Listener() {
 //			public void handleEvent(Event event) {
 //				/*
@@ -397,32 +364,6 @@ implements ISierraServerObserver {
 		};
 
 		f_serverConnectItem.addListener(SWT.Selection, connectAction);
-
-		f_scanAllConnectedProjects
-				.addListener(
-						SWT.Selection,
-						new IJavaProjectsActionListener(
-								"Scan all connected projects pressed with no server focus.") {
-							@Override
-							protected void run(SierraServer server,
-									List<String> projectNames) {
-								scan("scan of " + server.getLabel()
-										+ "'s projects", projectNames, false);
-							}
-						});
-
-		f_rescanAllConnectedProjects
-				.addListener(
-						SWT.Selection,
-						new IJavaProjectsActionListener(
-								"Re-Scan all connected projects pressed with no server focus.") {
-							@Override
-							protected void run(SierraServer server,
-									List<String> projectNames) {
-								scan("scan of " + server.getLabel()
-										+ "'s projects", projectNames, true);
-							}
-						});
 
 		f_synchAllConnectedProjects
 				.addListener(
@@ -519,48 +460,113 @@ implements ISierraServerObserver {
 
 		//f_openInBrowser.addListener(SWT.Selection, openInBrowserAction);
 
-		//f_projectList.addListener(SWT.Selection, f_projectListAction);
-
 		f_projectConnectItem.addListener(SWT.Selection, connectAction);
 
 		f_scanProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
-					protected void run(List<String> projectNames) {
-						scan("scan", projectNames, false);
+					protected void run(List<IJavaProject> projects) {
+						new NewScan().scan(projects);
 					}
 				});
 		f_rescanProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
-					protected void run(List<String> projectNames) {
-						scan("re-scan", projectNames, false);
+					protected void run(List<IJavaProject> projects) {
+						new ScanChangedProjectsAction().run(projects);
 					}
 				});
 		f_disconnectProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
-					protected void run(List<String> projectNames) {
+					protected void run(List<IJavaProject> projects) {
+						List<String> projectNames = new ArrayList<String>();
+						for(IJavaProject p : projects) {
+							projectNames.add(p.getElementName());
+						}
 						DeleteProjectDataJob.utility(projectNames, null, true);
 					}
 				});
+		f_projectListMenu.addListener(SWT.Show, new Listener() {
+			public void handleEvent(Event event) {
+				List<ProjectStatus> status = collectSelectedProjectStatus();
+				final boolean someProjects = !status.isEmpty();
+				boolean allConnected = someProjects;
+				if (someProjects) {
+					for(ProjectStatus ps : status) {
+						if (!f_manager.isConnected(ps.name)) {
+							allConnected = false;
+							break;
+						}
+					}				
+				}
+				f_projectConnectItem.setEnabled(!allConnected);				
+				f_scanProjectItem.setEnabled(someProjects);
+				f_rescanProjectItem.setEnabled(someProjects);
+				f_disconnectProjectItem.setEnabled(allConnected);				
+			}
+			
+		});
+	}
+	
+	private List<ProjectStatus> collectSelectedProjectStatus() {
+		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+		final TreeItem[] si = f_statusTree.getSelection();
+		for (TreeItem item : si) {
+			if (item.getData() instanceof ProjectStatus) {
+				projects.add((ProjectStatus) item.getData());
+			}
+			else if (item.getData() instanceof SierraServer) {
+				collectProjects(projects, item);
+			}
+			else if ("Unconnected".equals(item.getText())) {
+				collectProjects(projects, item);
+			}
+			else {
+				System.out.println("Ignoring selection: "+item.getText());
+			}
+		}
+		return projects;
+	}
+
+	private void collectProjects(List<ProjectStatus> projects, TreeItem parent) {
+		for (TreeItem item : parent.getItems()) {
+			projects.add((ProjectStatus) item.getData());
+		}
 	}
 
 	private abstract class ProjectsActionListener implements Listener {
 		public final void handleEvent(Event event) {
-			/*
-			List<String> projectNames = new ArrayList<String>();
-			final TableItem[] si = f_projectList.getSelection();
-			for (TableItem item : si) {
-				projectNames.add(item.getText());
+			List<IJavaProject> projects = new ArrayList<IJavaProject>();
+			final TreeItem[] si = f_statusTree.getSelection();
+			for (TreeItem item : si) {
+				if (item.getData() instanceof ProjectStatus) {
+					ProjectStatus ps = (ProjectStatus) item.getData();
+					projects.add(ps.project);
+				}
+				else if (item.getData() instanceof SierraServer) {
+					handleProjects(projects, item);
+				}
+				else if ("Unconnected".equals(item.getText())) {
+					handleProjects(projects, item);
+				}
+				else {
+					System.out.println("Ignoring selection: "+item.getText());
+				}
 			}
-			if (!projectNames.isEmpty()) {
-				run(projectNames);
+			if (!projects.isEmpty()) {
+				run(projects);
 			}
-			*/
 		}
 
-		protected abstract void run(List<String> projectNames);
+		private void handleProjects(List<IJavaProject> projects, TreeItem parent) {
+			for (TreeItem item : parent.getItems()) {
+				ProjectStatus ps = (ProjectStatus) item.getData();
+				projects.add(ps.project);
+			}
+		}
+
+		protected abstract void run(List<IJavaProject> projects);
 	}
 
 	@Override
@@ -653,14 +659,19 @@ implements ISierraServerObserver {
 		try {			
 			ClientFindingManager cfm = ClientFindingManager.getInstance(c);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			for(String name : Projects.getInstance().getProjectNames()) {				
+			for(IJavaProject jp : JDTUtility.getJavaProjects()) {
+				final String name = jp.getElementName();
+				if (!Projects.getInstance().contains(name)) {
+					continue; // Not scanned
+				}		
+				
 				// Check for new local audits
 				List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
 				// FIX Check for new remote audits
 				
 				// FIX Check for a full scan (later than what's on the server?)
 				final File scan = NewScan.getScanDocumentFile(name);
-				ProjectStatus s = new ProjectStatus(name, scan, findings);
+				ProjectStatus s = new ProjectStatus(jp, scan, findings);
 				projects.add(s);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
@@ -686,6 +697,11 @@ implements ISierraServerObserver {
 	public void updateContentsInUI(final List<ProjectStatus> projects) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
+		this.projectMap = new HashMap<String,ProjectStatus>();
+		for(ProjectStatus ps : projects) {
+			projectMap.put(ps.name, ps);
+		}
+		
 		
 		if (f_statusTree.isDisposed())
 			return;
@@ -702,8 +718,6 @@ implements ISierraServerObserver {
 		f_duplicateServerItem.setEnabled(focusServer);
 		f_deleteServerItem.setEnabled(focusServer);
 		f_serverConnectItem.setEnabled(focusServer);
-		f_scanAllConnectedProjects.setEnabled(focusServer);
-		f_rescanAllConnectedProjects.setEnabled(focusServer);
 		f_synchAllConnectedProjects.setEnabled(focusServer);
 		f_sendResultFilters.setEnabled(focusServer);
 		f_getResultFilters.setEnabled(focusServer);
