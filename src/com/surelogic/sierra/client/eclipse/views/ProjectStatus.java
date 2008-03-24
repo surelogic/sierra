@@ -26,6 +26,12 @@ class ProjectStatus {
 	final int comments, importance, read, summary;
 	final Map<String,Integer> userCount = new HashMap<String,Integer>();
 	
+	public ProjectStatus(IJavaProject jp) {
+		this(jp, null, 
+		     Collections.<FindingAudits>emptyList(), 
+		     Collections.<SyncTrailResponse>emptyList());
+	}
+	
 	public ProjectStatus(IJavaProject jp, File scan, List<FindingAudits> findings,
 			             List<SyncTrailResponse> responses) {
 		project = jp;

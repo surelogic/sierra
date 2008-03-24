@@ -440,7 +440,7 @@ implements ISierraServerObserver {
 				servers.add((SierraServer) item.getData());
 			}
 			else {
-				System.out.println("Got a non-server selection: "+item.getText());
+				// System.out.println("Got a non-server selection: "+item.getText());
 				return Collections.emptyList();
 			}
 		}
@@ -729,13 +729,16 @@ implements ISierraServerObserver {
 	}
 	
 	private void createUnassociatedProjectItems() {
-		final TreeItem parent = new TreeItem(f_statusTree, SWT.NONE);
-		parent.setText("Unconnected");
-		parent.setImage(SLImages.getImage(SLImages.IMG_QUERY));
+		TreeItem parent = null;
 		
 		for(ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			if (server == null) {
+				if (parent == null) {
+					parent = new TreeItem(f_statusTree, SWT.NONE);
+					parent.setText("Unconnected");
+					parent.setImage(SLImages.getImage(SLImages.IMG_QUERY));
+				}
 				initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
 			}
 		}
@@ -752,7 +755,21 @@ implements ISierraServerObserver {
 				}
 			}
 			if (s == null) {
-				throw new IllegalStateException("No project: "+projectName);
+				IJavaProject p = JDTUtility.getJavaProject(projectName);				
+				if (p != null) {
+					// No scan data?
+					TreeItem root = new TreeItem(parent, SWT.NONE);
+					root.setText(projectName+" ["+server.getLabel()+']');
+				
+					root.setData(new ProjectStatus(p));
+					root.setImage(SLImages
+							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					
+					new TreeItem(root, SWT.NONE).setText("Needs a local scan");
+					continue;
+				} else {
+					throw new IllegalStateException("No such Java project: "+projectName);
+				}
 			}
 			initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
 		}
@@ -771,7 +788,7 @@ implements ISierraServerObserver {
 		root.setData(ps);
 		root.setExpanded(true);
 		
-		if (ps.scanDoc.exists()) {
+		if (ps.scanDoc != null && ps.scanDoc.exists()) {
 			TreeItem scan = new TreeItem(root, SWT.NONE);
 			Date modified = new Date(ps.scanDoc.lastModified());
 			scan.setText("Last full scan on "+dateFormat.format(modified));
