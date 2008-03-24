@@ -7,18 +7,22 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.tool.message.Audit;
 
 class ProjectStatus {
+	final IJavaProject project;
 	final String name;
 	final File scanDoc;
 	final List<FindingAudits> findings;
 	final int numAudits;
 	final Date earliestAudit, latestAudit;
 	
-	public ProjectStatus(String name, File scan, List<FindingAudits> findings) {
-		this.name = name;
+	public ProjectStatus(IJavaProject jp, File scan, List<FindingAudits> findings) {
+		project = jp;
+		name = jp.getElementName();
 		scanDoc = scan;
 		this.findings = findings;
 
