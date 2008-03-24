@@ -21,7 +21,7 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 
 	@Override
 	protected SierraServersMediator createMorePartControls(final Composite parent) {
-		final Tree statusTree = new Tree(parent, SWT.NONE);
+		final Tree statusTree = new Tree(parent, SWT.MULTI);
 		
 		final Action sortByServerAction = 
 			new Action("Sort by Server", IAction.AS_CHECK_BOX) {
