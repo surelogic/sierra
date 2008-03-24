@@ -25,6 +25,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
 
+import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -43,8 +44,11 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
+import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver {
@@ -597,7 +601,8 @@ implements ISierraServerObserver {
 		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {			
-			ClientFindingManager cfm = ClientFindingManager.getInstance(c);
+			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
+			ClientFindingManager cfm = cpm.getFindingManager();
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 			for(IJavaProject jp : JDTUtility.getJavaProjects()) {
 				final String name = jp.getElementName();
@@ -607,11 +612,21 @@ implements ISierraServerObserver {
 				
 				// Check for new local audits
 				List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
-				// FIX Check for new remote audits
-				
+								
+				// Check for new remote audits
+				SierraServer server = f_manager.getServer(name);
+				List<SyncTrailResponse> responses = Collections.emptyList();
+				if (server != null) {
+					SLProgressMonitor monitor = EmptyProgressMonitor.instance();
+					try {
+						responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
+					} catch (Exception e) {
+						e.printStackTrace(); // FIX to log
+					}
+				}
 				// FIX Check for a full scan (later than what's on the server?)
 				final File scan = NewScan.getScanDocumentFile(name);
-				ProjectStatus s = new ProjectStatus(jp, scan, findings);
+				ProjectStatus s = new ProjectStatus(jp, scan, findings, responses);
 				projects.add(s);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
@@ -763,21 +778,54 @@ implements ISierraServerObserver {
 			scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
 			scan.setData(ps.scanDoc);
 		}
-		if (!ps.findings.isEmpty()) {
-			TreeItem audits = new TreeItem(root, SWT.NONE);
-			audits.setText(ps.numAudits+" audit(s) on "+ps.findings.size()+" finding(s)");
-			audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
-			audits.setData(ps.findings);
-			
-			if (ps.earliestAudit != null) {
-				TreeItem earliest = new TreeItem(audits, SWT.NONE);
-				earliest.setText("Earliest on "+dateFormat.format(ps.latestAudit));
+		if (!ps.localFindings.isEmpty()) {
+			createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), ps.earliestLocalAudit, ps.latestLocalAudit);
+		}
+		if (!ps.serverData.isEmpty()) {
+			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
+			if (ps.comments > 0) {
+				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comments");
 			}
-			if (ps.latestAudit != null && ps.earliestAudit != ps.latestAudit) {
-				TreeItem latest = new TreeItem(audits, SWT.NONE);
-				latest.setText("Latest on "+dateFormat.format(ps.latestAudit));
+			if (ps.importance > 0) {
+				new TreeItem(audits, SWT.NONE).setText(ps.importance+" changes to the importance");
+			}
+			if (ps.summary > 0) {
+				new TreeItem(audits, SWT.NONE).setText(ps.summary+" changes to the summary");
+			}
+			if (ps.read > 0) {
+				new TreeItem(audits, SWT.NONE).setText(ps.read+" read");
+			}
+			for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
+				if (e.getValue() != null) {
+					int count = e.getValue().intValue();
+					if (count > 0) {
+						new TreeItem(audits, SWT.NONE).setText(count+" audits by "+e.getKey());
+					}
+				}
 			}
 		}
+	}
+
+	private TreeItem createAuditItems(final TreeItem root, boolean server, 
+			                          int numAudits, int findings, Date earliestA, Date latestA) {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+		TreeItem audits = new TreeItem(root, SWT.NONE);
+		if (server) {
+			audits.setText(numAudits+" audit(s) on "+findings+" finding(s) on the server");
+		} else {
+			audits.setText(numAudits+" audit(s) on "+findings+" finding(s)");
+		}
+		audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
+		
+		if (earliestA != null) {
+			TreeItem earliest = new TreeItem(audits, SWT.NONE);
+			earliest.setText("Earliest on "+dateFormat.format(earliestA));
+		}
+		if (latestA != null && earliestA != latestA) {
+			TreeItem latest = new TreeItem(audits, SWT.NONE);
+			latest.setText("Latest on "+dateFormat.format(latestA));
+		}
+		return audits;
 	}
 
 	private void createProjectItems() {
