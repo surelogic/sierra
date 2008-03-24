@@ -34,7 +34,8 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 		.setChecked(ServerStatusSort.BY_SERVER == PreferenceConstants.getServerStatusSort());
 		addToViewMenu(sortByServerAction);		
 
-		final Menu serverListMenu = new Menu(parent.getShell(), SWT.POP_UP);
+		final Menu serverListMenu = new Menu(parent.getShell(), SWT.POP_UP);		
+		
 		final MenuItem newServerItem = createMenuItem(serverListMenu, "New...",
 				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
@@ -52,14 +53,6 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 				"Connect...", SLImages.IMG_SIERRA_SERVER);
 
 		new MenuItem(serverListMenu, SWT.SEPARATOR);
-
-		final MenuItem scanAllConnectedProjects = createMenuItem(
-				serverListMenu, "Scan All Connected Projects",
-				SLImages.IMG_SIERRA_SCAN);
-
-		final MenuItem rescanAllConnectedProjects = createMenuItem(
-				serverListMenu, "Re-Scan Changes in All Connected Projects",
-				SLImages.IMG_SIERRA_SCAN_DELTA);
 
 		final MenuItem synchAllConnectedProjects = createMenuItem(
 				serverListMenu, "Synchronize All Connected Projects",
@@ -117,7 +110,6 @@ public final class SierraServersView extends AbstractSierraView<SierraServersMed
 		return new SierraServersMediator(this, statusTree, 
 				serverListMenu, newServerItem,
 				duplicateServerItem, deleteServerItem, serverConnectItem,
-				scanAllConnectedProjects, rescanAllConnectedProjects,
 				synchAllConnectedProjects, sendResultFilters, getResultFilters,
 				serverPropertiesItem, 
 				projectListMenu, projectConnectItem, scanProjectItem,
