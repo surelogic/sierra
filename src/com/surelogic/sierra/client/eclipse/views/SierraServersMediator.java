@@ -603,9 +603,20 @@ implements ISierraServerObserver {
 	}
 
 	public void setSortByServer(boolean checked) {
-		// TODO Auto-generated method stub
-		
+		ServerStatusSort sort;
+		if (checked) {
+			sort = ServerStatusSort.BY_SERVER;
+		} else {
+			sort = ServerStatusSort.BY_PROJECT;
+		}
+		if (sort != PreferenceConstants.getServerStatusSort()) {
+			PreferenceConstants.setServerStatusSort(sort);
+			changed(); // FIX do I need to reload from the database?
+		}
 	}
+	
+	/* Below this is the code to update the view from the database
+	 */
 	
 	@Override
 	public void changed() {
@@ -675,7 +686,6 @@ implements ISierraServerObserver {
 		if (f_statusTree.isDisposed())
 			return;
 		
-		f_view.hasData(!f_manager.isEmpty());
 		f_statusTree.setRedraw(false);
 
 		final SierraServer server = f_manager.getFocus();
@@ -704,19 +714,19 @@ implements ISierraServerObserver {
 	protected void createTreeItems() {
 		f_statusTree.removeAll();
 				
-		final boolean noServers = f_manager.isEmpty();
-		final boolean noProjects = projects.isEmpty();
-		final boolean nothingToSee = !noProjects && !noServers;
-		f_statusTree.setVisible(!nothingToSee);
-		f_view.hasData(!nothingToSee);
+		final boolean someServers = !f_manager.isEmpty();
+		final boolean someProjects = !projects.isEmpty();
+		final boolean somethingToSee = someServers || someProjects;
+		f_statusTree.setVisible(somethingToSee);
+		f_view.hasData(somethingToSee);
 		
-		if (nothingToSee) {
+		if (!somethingToSee) {
 			return;
 		}
-		else if (noServers) {
+		else if (!someServers) {
 			createProjectItems();
 		}
-		else if (noProjects) {
+		else if (!someProjects) {
 			createServerItems();
 		}
 		else switch (PreferenceConstants.getServerStatusSort()) {
