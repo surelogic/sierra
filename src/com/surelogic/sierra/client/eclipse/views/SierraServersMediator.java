@@ -791,6 +791,50 @@ implements ISierraServerObserver {
 		}
 	}
 	
+	enum ChangeStatus { 
+		NONE() {
+			@Override String getLabel() {
+				return "";
+			}
+		}, LOCAL() {
+			@Override String getLabel() {
+				return "> ";
+			}
+		}, REMOTE() {
+			@Override String getLabel() {
+				return "< ";
+			}
+		}, BOTH() {
+			@Override String getLabel() {
+				return "< ";
+			}
+		};
+		abstract String getLabel();
+		
+		ChangeStatus merge(ChangeStatus s) {
+			if (s == null) {
+				return this;
+			}
+			switch (this) {
+			case NONE:
+				return s;
+			case LOCAL:
+				if (s == NONE) {
+					return LOCAL;
+				}
+				return s == REMOTE ? BOTH : s;
+			case REMOTE:
+				if (s == NONE) {
+					return REMOTE;
+				}
+				return s == LOCAL ? BOTH : s;
+			case BOTH:			
+			default:
+				return BOTH;
+			}
+		}
+ 	}
+	
 	private void createServerItems() {
 		final SierraServer focus = f_manager.getFocus();
 		TreeItem focused = null;
@@ -798,14 +842,14 @@ implements ISierraServerObserver {
 			SierraServer server = f_manager.getServerByLabel(label);
 			TreeItem item = new TreeItem(f_statusTree, SWT.NONE);
 	
-			item.setText(label+" ["+server.toURLWithContextPath()+']');
 			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 			item.setData(server);
 			
 			if (focus != null && label.equals(focus.getLabel())) {
 				focused = item;
 			}
-			createProjectItems(item, server);
+			ChangeStatus status = createProjectItems(item, server);
+			item.setText(status.getLabel()+label+" ["+server.toURLWithContextPath()+']');
 		}
 		createUnassociatedProjectItems();
 		
@@ -816,22 +860,27 @@ implements ISierraServerObserver {
 	
 	private void createUnassociatedProjectItems() {
 		TreeItem parent = null;
+		ChangeStatus status = ChangeStatus.NONE;
 		
 		for(ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
 					parent = new TreeItem(f_statusTree, SWT.NONE);
-					parent.setText("Unconnected");
 					parent.setImage(SLImages.getImage(SLImages.IMG_QUERY));
 				}
-				initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
+				ChangeStatus pStatus = initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
+				status = status.merge(pStatus);
 			}
+		}
+		if (parent != null) {
+			parent.setText(status.getLabel()+"Unconnected");
 		}
 		
 	}
 
-	private void createProjectItems(TreeItem parent, SierraServer server) {
+	private ChangeStatus createProjectItems(TreeItem parent, SierraServer server) {
+		ChangeStatus status = ChangeStatus.NONE;
 		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
 			ProjectStatus s = null;
 			for(ProjectStatus p : projects) {
@@ -865,8 +914,10 @@ implements ISierraServerObserver {
 					throw new IllegalStateException("No such Java project: "+projectName);
 				}
 			}
-			initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
+			ChangeStatus pStatus = initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
+			status = status.merge(pStatus);
 		}
+		return status;
 	}
 
 	private TreeItem createProjectItem(TreeItem parent, SierraServer server,
@@ -878,14 +929,11 @@ implements ISierraServerObserver {
 		return root;
 	}
 	
-	private void initProjectItem(final TreeItem root, final SierraServer server, 
-			                     final ProjectStatus ps) { 
+	private ChangeStatus initProjectItem(final TreeItem root, final SierraServer server, 
+			                             final ProjectStatus ps) { 
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
-		if (server != null) {
-			root.setText(ps.name+" ["+server.getLabel()+']');
-		} else {
-			root.setText(ps.name);
-		}	
+		ChangeStatus status = ChangeStatus.NONE;
+			
 		root.setImage(SLImages
 				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 		root.setData(ps);
@@ -894,17 +942,20 @@ implements ISierraServerObserver {
 		if (ps.scanDoc != null && ps.scanDoc.exists()) {
 			TreeItem scan = new TreeItem(root, SWT.NONE);
 			Date modified = new Date(ps.scanDoc.lastModified());
-			scan.setText("Last full scan on "+dateFormat.format(modified));
+			scan.setText("> Last local/full scan on "+dateFormat.format(modified));
 			scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
 			scan.setData(ps.scanDoc);
+			status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {
 			createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), ps.earliestLocalAudit, ps.latestLocalAudit);
+			status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (ps.serverData == null) {
 			new TreeItem(root, SWT.NONE).setText("No server info available");
 		} 
 		else if (!ps.serverData.isEmpty()) {
+			status = status.merge(ChangeStatus.REMOTE);
 			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
 			if (ps.comments > 0) {
 				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment(s)");
@@ -927,6 +978,12 @@ implements ISierraServerObserver {
 				}
 			}
 		}
+		if (server != null) {
+			root.setText(status.getLabel()+ps.name+" ["+server.getLabel()+']');
+		} else {
+			root.setText(status.getLabel()+ps.name);
+		}	
+		return status;
 	}
 
 	private TreeItem createAuditItems(final TreeItem root, boolean server, 
