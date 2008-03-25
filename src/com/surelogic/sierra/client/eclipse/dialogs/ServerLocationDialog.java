@@ -432,6 +432,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 	}
 	
+	// FIX change back to using SierraServer directly,
+	// since we manually notify observers
 	public static void newServer(final Shell shell) {		 
 		final SierraServerManager manager = SierraServerManager.getInstance();
 		ServerLocationDialog dialog = editServer(shell, manager.createLocation(),
