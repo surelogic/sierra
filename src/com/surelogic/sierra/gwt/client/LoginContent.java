@@ -6,7 +6,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -90,7 +91,7 @@ public class LoginContent extends ContentComposite {
 	protected void onInitialize(DockPanel rootPanel) {
 		// TODO redo style bindings to standard naming scheme
 		loginPanel.addStyleName("login-panel");
-		loginPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		loginPanel.add(message);
 		message.addStyleName("login-message");
 		loginPanel.add(errorMessage);
@@ -108,11 +109,11 @@ public class LoginContent extends ContentComposite {
 		password.addStyleName("login-textbox");
 
 		actionPanel.setWidth("100%");
-		actionPanel.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
+		actionPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		final HorizontalPanel grouper = new HorizontalPanel();
 		grouper.add(waitPanel);
 		grouper.setCellVerticalAlignment(waitPanel,
-				HorizontalPanel.ALIGN_MIDDLE);
+				HasVerticalAlignment.ALIGN_MIDDLE);
 		grouper.add(login);
 		actionPanel.add(grouper);
 		login.setEnabled(false);
@@ -122,7 +123,8 @@ public class LoginContent extends ContentComposite {
 		final HTMLTable.CellFormatter cellFormatter = userPassGrid
 				.getCellFormatter();
 		cellFormatter.setWidth(2, 1, "1px");
-		cellFormatter.setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
+		cellFormatter.setHorizontalAlignment(2, 1,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 
 		usernameLabel.addClickListener(new ClickListener() {
 			public void onClick(final Widget sender) {
