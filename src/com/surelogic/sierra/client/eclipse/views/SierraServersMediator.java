@@ -53,10 +53,21 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver {
 
+	/**
+	 * This should only be changed in the UI thread
+	 */
     private List<ProjectStatus> projects = Collections.emptyList();
-    private Map<String,ProjectStatus> projectMap = Collections.emptyMap();
+    
+	/**
+	 * This should only be accessed in a database job 
+	 * (possibly from multiple threads)
+	 */
+    private final Map<String,List<SyncTrailResponse>> responseMap = 
+    	new HashMap<String,List<SyncTrailResponse>>();   
+    
 	private final Tree f_statusTree;
 	private final Menu f_contextMenu;
+	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_newServerAction;
 	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
@@ -164,6 +175,17 @@ implements ISierraServerObserver {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
+		
+		f_serverSyncAction = 
+			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
+	                           "Get latest server information") {
+			@Override
+			public void run() {
+				asyncUpdateServerInfo();		
+			}
+		};		
+		view.addToActionBar(f_serverSyncAction);
+		
 		f_newServerAction = 
 			new ActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
 					           "New team server location") {
@@ -576,6 +598,25 @@ implements ISierraServerObserver {
 		asyncUpdateContents();
 	}
 
+	private void asyncUpdateServerInfo() {
+		final Job job = new DatabaseJob("Updating server status") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN);
+				try {
+					updateServerInfo();
+				} catch (Exception e) {
+					final int errNo = 58; // FIX
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+	
 	private void asyncUpdateContents() {
 		final Job job = new DatabaseJob(
 				"Updating project status") {
@@ -596,6 +637,53 @@ implements ISierraServerObserver {
 		job.schedule();
 	}
 
+	private void updateServerInfo() throws Exception {
+		Connection c = Data.transactionConnection();
+		Exception exc = null;
+		try {			
+			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
+			synchronized (responseMap) {
+				responseMap.clear();
+				
+				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
+					final String name = jp.getElementName();
+					if (!Projects.getInstance().contains(name)) {
+						continue; // Not scanned
+					}		
+
+					// Check for new remote audits
+					SierraServer server = f_manager.getServer(name);
+					List<SyncTrailResponse> responses = null;
+					if (server != null) {
+						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
+						try {
+							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
+						} catch (Exception e) {
+							e.printStackTrace(); // FIX to log
+						}
+					}
+					if (responses != null) {
+						responseMap.put(name, responses);
+					}
+				}
+			}
+			c.commit();
+			
+			asyncUpdateContents();
+		} catch (Exception e) {
+			c.rollback();
+			exc = e;
+		} finally {
+			try {
+				c.close();
+			} finally {
+				if (exc != null) {
+					throw exc;
+				}
+			}
+		}
+	}
+	
 	private void updateContents() throws Exception {
 		Connection c = Data.transactionConnection();
 		Exception exc = null;
@@ -603,30 +691,24 @@ implements ISierraServerObserver {
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
 			ClientFindingManager cfm = cpm.getFindingManager();
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			for(IJavaProject jp : JDTUtility.getJavaProjects()) {
-				final String name = jp.getElementName();
-				if (!Projects.getInstance().contains(name)) {
-					continue; // Not scanned
-				}		
-				
-				// Check for new local audits
-				List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
-								
-				// Check for new remote audits
-				SierraServer server = f_manager.getServer(name);
-				List<SyncTrailResponse> responses = null;
-				if (server != null) {
-					SLProgressMonitor monitor = EmptyProgressMonitor.instance();
-					try {
-						responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
-					} catch (Exception e) {
-						e.printStackTrace(); // FIX to log
-					}
+			synchronized (responseMap) {
+				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
+					final String name = jp.getElementName();
+					if (!Projects.getInstance().contains(name)) {
+						continue; // Not scanned
+					}		
+
+					// Check for new local audits
+					List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
+
+					// Check for new remote audits
+					List<SyncTrailResponse> responses = responseMap.get(name);
+
+					// FIX Check for a full scan (later than what's on the server?)
+					final File scan = NewScan.getScanDocumentFile(name);
+					ProjectStatus s = new ProjectStatus(jp, scan, findings, responses);
+					projects.add(s);
 				}
-				// FIX Check for a full scan (later than what's on the server?)
-				final File scan = NewScan.getScanDocumentFile(name);
-				ProjectStatus s = new ProjectStatus(jp, scan, findings, responses);
-				projects.add(s);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
@@ -647,16 +729,11 @@ implements ISierraServerObserver {
 			}
 		}
 	}
-
+	
 	public void updateContentsInUI(final List<ProjectStatus> projects) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
-		this.projectMap = new HashMap<String,ProjectStatus>();
-		for(ProjectStatus ps : projects) {
-			projectMap.put(ps.name, ps);
-		}
-		
-		
+				
 		if (f_statusTree.isDisposed())
 			return;
 		
