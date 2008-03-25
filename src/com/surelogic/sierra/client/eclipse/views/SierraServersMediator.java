@@ -859,6 +859,7 @@ implements ISierraServerObserver {
 							TreeItem root = 
 								createProjectItem(parent, server, projectName);	
 							new TreeItem(root, SWT.NONE).setText("Closed ... no info available");
+							continue;
 						}
 					}
 					throw new IllegalStateException("No such Java project: "+projectName);
