@@ -10,7 +10,6 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class ClientContext {
 
@@ -105,24 +104,27 @@ public final class ClientContext {
 		userListeners.remove(listener);
 	}
 
-	public static boolean isContent(String contentName) {
-		return LangUtil
-				.equalsIgnoreCase(contentName, getContext().getContent());
+	public static boolean isContext(String context) {
+		Context ctx = Context.create(context);
+		return ctx.equals(getContext());
 	}
 
 	public static boolean isContent(ContentComposite content) {
-		return LangUtil.equalsIgnoreCase(content.getContentName(), getContext()
-				.getContent());
+		return content == getContext().getContent();
 	}
 
 	public static Context getContext() {
 		return Context.create(History.getToken());
 	}
 
+	public static void setContent(ContentComposite content) {
+		setContext(ContentRegistry.getContentName(content));
+	}
+
 	public static void setContext(String token) {
 		// Note: newItem calls onHistoryChanged, which calls
 		// notifyContextListeners only if the token changes
-		if (!isContent(token)) {
+		if (!isContext(token)) {
 			History.newItem(token);
 		} else {
 			notifyContextListeners();

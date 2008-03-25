@@ -50,10 +50,6 @@ public class UserManagementContent extends ContentComposite {
 		super();
 	}
 
-	public String getContentName() {
-		return "UserManagement";
-	}
-
 	protected void onInitialize(DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
 		final boolean isAdmin = ClientContext.getUser().isAdministrator();

@@ -28,10 +28,6 @@ public class OverviewContent extends ContentComposite {
 		super();
 	}
 
-	public String getContentName() {
-		return "Projects";
-	}
-
 	protected void onActivate(Context context) {
 		OverviewServiceAsync service = ServiceHelper.getOverviewService();
 		service.getProjectOverviews(new AsyncCallback() {

@@ -38,14 +38,13 @@ public class UserHeader extends HeaderComposite {
 		manageSite = addUtilityItem("Manage Site", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				StringBuffer url = new StringBuffer(GWT.getHostPageBaseURL());
-				url.append('#').append(
-						SettingsContent.getInstance().getContentName());
+				String url = ContentRegistry.getContentUrl(SettingsContent
+						.getInstance());
 				Window.open(url.toString(), null, null);
 			}
 		});
 		manageSiteSeparator = addUtilitySeparator();
-		
+
 		addUtilityItem("Log out", new ClickListener() {
 
 			public void onClick(Widget sender) {

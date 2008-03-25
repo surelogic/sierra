@@ -26,7 +26,7 @@ public abstract class HeaderComposite extends Composite {
 	private final HorizontalPanel headerRow = new HorizontalPanel();
 	private final HorizontalPanel utilityRow = new HorizontalPanel();
 	private final TabBar mainBar = new TabBar();
-	private final List tabContentNames = new ArrayList();
+	private final List tabContent = new ArrayList();
 	private boolean uiCreated;
 
 	public HeaderComposite() {
@@ -54,10 +54,11 @@ public abstract class HeaderComposite extends Composite {
 			}
 
 			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-				if (tabIndex >= 0 && tabIndex < tabContentNames.size()) {
-					String contentName = (String) tabContentNames.get(tabIndex);
-					if (!ClientContext.isContent(contentName)) {
-						ClientContext.setContext(contentName);
+				if (tabIndex >= 0 && tabIndex < tabContent.size()) {
+					ContentComposite content = (ContentComposite) tabContent
+							.get(tabIndex);
+					if (!ClientContext.isContent(content)) {
+						ClientContext.setContent(content);
 					}
 				}
 			}
@@ -83,8 +84,7 @@ public abstract class HeaderComposite extends Composite {
 		if (rootPanel.getWidgetIndex(mainBar) != -1) {
 			int newIndex;
 			if (context != null && context.getContent() != null) {
-				newIndex = tabContentNames.indexOf(context.getContent()
-						.toLowerCase());
+				newIndex = tabContent.indexOf(context.getContent());
 			} else {
 				newIndex = -1;
 			}
@@ -132,18 +132,16 @@ public abstract class HeaderComposite extends Composite {
 
 	protected final void addTab(String title, ContentComposite content) {
 		showTabs();
-		final String contentName = content.getContentName().toLowerCase();
-		if (tabContentNames.indexOf(contentName) == -1) {
-			tabContentNames.add(contentName);
+		if (tabContent.indexOf(content) == -1) {
+			tabContent.add(content);
 			mainBar.addTab(title);
 		}
 	}
 
 	protected final void removeTab(ContentComposite content) {
-		final String contentName = content.getContentName().toLowerCase();
-		int tabIndex = tabContentNames.indexOf(contentName);
+		int tabIndex = tabContent.indexOf(content);
 		if (tabIndex != -1) {
-			tabContentNames.remove(tabIndex);
+			tabContent.remove(tabIndex);
 			mainBar.removeTab(tabIndex);
 		}
 	}

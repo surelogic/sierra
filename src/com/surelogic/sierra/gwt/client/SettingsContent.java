@@ -46,10 +46,6 @@ public class SettingsContent extends ContentComposite {
 		super();
 	}
 
-	public String getContentName() {
-		return "ServerSettings";
-	}
-
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel

@@ -29,10 +29,6 @@ public class FindingContent extends ContentComposite {
 		// Do nothing
 	}
 
-	public String getContentName() {
-		return "Finding";
-	}
-
 	protected void onActivate(Context context) {
 		final String arg = context.getArgs();
 		if (arg == null || arg.length() == 0) {

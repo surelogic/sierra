@@ -13,10 +13,8 @@ public abstract class ContentComposite extends Composite {
 		rootPanel.addStyleName("sl-ContentComposite");
 	}
 
-	public abstract String getContentName();
-
 	public final void show() {
-		ClientContext.setContext(getContentName());
+		ClientContext.setContent(this);
 	}
 
 	public final void activate(Context context) {

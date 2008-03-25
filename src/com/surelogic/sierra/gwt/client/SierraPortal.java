@@ -19,6 +19,7 @@ public class SierraPortal implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		ClientContext.initialize();
+		ContentRegistry.initialize();
 
 		// create and display the main panels
 		final HeaderPanel header = new HeaderPanel();
