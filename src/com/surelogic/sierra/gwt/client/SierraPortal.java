@@ -31,7 +31,7 @@ public class SierraPortal implements EntryPoint {
 		sessionService.getUserAccount(new Callback() {
 
 			protected void onFailure(String message, Object result) {
-				LoginContent.getInstance(message).show();
+				ClientContext.refreshContext();
 			}
 
 			protected void onSuccess(String message, Object result) {
