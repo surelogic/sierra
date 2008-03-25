@@ -4,10 +4,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SierraServerLocation {
-	private static final int DEFAULT_PORT = 8080;
+	public static final String DEFAULT_PATH = "/sl/";
+	public static final int DEFAULT_PORT = 13376;
 	private static final String UNLABELED_SERVER = "unlabeled server";
 	public static final SierraServerLocation DEFAULT = new SierraServerLocation(
-			"localhost:8080", null, null);
+			"localhost:13376", null, null);
 
 	/**
 	 * A client label for this server location, or <tt>unknown</tt> if not a
@@ -91,6 +92,10 @@ public class SierraServerLocation {
 
 	public int getPort() {
 		return f_port;
+	}
+	
+	public String getContextPath() {
+		return f_contextPath;
 	}
 
 	public String getUser() {
