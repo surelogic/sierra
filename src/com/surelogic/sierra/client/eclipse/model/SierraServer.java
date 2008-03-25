@@ -81,7 +81,7 @@ public final class SierraServer {
 		f_host = host;
 	}
 
-	private int f_port = 13376;
+	private int f_port = SierraServerLocation.DEFAULT_PORT;
 
 	public int getPort() {
 		return f_port;
@@ -91,7 +91,7 @@ public final class SierraServer {
 		f_port = port;
 	}
 
-	private String f_contextPath = "/sl/";
+	private String f_contextPath = SierraServerLocation.DEFAULT_PATH;
 
 	public String getContextPath() {
 		return f_contextPath;
@@ -187,5 +187,38 @@ public final class SierraServer {
 	public SierraServerLocation getServer() {
 		return new SierraServerLocation(f_label, f_host, f_secure, f_port,
 				f_contextPath, f_user, f_password);
+	}
+
+	/**
+	 * @return true if changed
+	 */
+	public boolean setServer(SierraServerLocation loc) {
+		boolean changed = 
+			differs(f_label, loc.getLabel()) ||
+			differs(f_host, loc.getHost()) ||
+			f_secure != loc.isSecure() ||
+			f_port != loc.getPort() || 
+			differs(f_contextPath, loc.getContextPath()) ||
+			differs(f_user, loc.getUser()) ||
+			differs(f_password, loc.getPass());
+		f_label = loc.getLabel();
+		f_host = loc.getHost();
+		f_secure = loc.isSecure();
+		f_port = loc.getPort();		
+		f_contextPath = loc.getContextPath();
+		f_user = loc.getUser();
+		f_password = loc.getPass();
+		return changed;
+	}
+	
+	private static boolean differs(String s1, String s2) {
+		if (s1 == s2) {
+			return false;
+		}
+		if (s1 == null || s2 == null) {
+			// The other must be non-null
+			return true;
+		}
+		return s1.equals(s2);
 	}
 }
