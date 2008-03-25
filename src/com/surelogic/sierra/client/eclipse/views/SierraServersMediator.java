@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,6 +30,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.WorkspaceUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -839,24 +841,40 @@ implements ISierraServerObserver {
 				}
 			}
 			if (s == null) {
-				IJavaProject p = JDTUtility.getJavaProject(projectName);				
-				if (p != null) {
+				IJavaProject jp = JDTUtility.getJavaProject(projectName);				
+				if (jp != null) {
 					// No scan data?
-					TreeItem root = new TreeItem(parent, SWT.NONE);
-					root.setText(projectName+" ["+server.getLabel()+']');
-				
-					root.setData(new ProjectStatus(p));
-					root.setImage(SLImages
-							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					TreeItem root = 
+						createProjectItem(parent, server, projectName);					
+					root.setData(new ProjectStatus(jp));
 					
 					new TreeItem(root, SWT.NONE).setText("Needs a local scan");
 					continue;
-				} else {
+				} else { // closed project?
+					IProject p = WorkspaceUtility.getProject(projectName);
+					if (p != null && p.exists()) {
+						if (p.isOpen()) {
+							throw new IllegalStateException("Not a Java project: "+projectName);
+						} else { // closed
+							TreeItem root = 
+								createProjectItem(parent, server, projectName);	
+							new TreeItem(root, SWT.NONE).setText("Closed ... no info available");
+						}
+					}
 					throw new IllegalStateException("No such Java project: "+projectName);
 				}
 			}
 			initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
 		}
+	}
+
+	private TreeItem createProjectItem(TreeItem parent, SierraServer server,
+			String projectName) {
+		TreeItem root = new TreeItem(parent, SWT.NONE);
+		root.setText(projectName+" ["+server.getLabel()+']');
+		root.setImage(SLImages
+				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		return root;
 	}
 	
 	private void initProjectItem(final TreeItem root, final SierraServer server, 
