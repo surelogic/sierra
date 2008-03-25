@@ -32,7 +32,7 @@ public abstract class ContentComposite extends Composite {
 		return onDeactivate();
 	}
 
-	protected DockPanel getRootPanel() {
+	protected final DockPanel getRootPanel() {
 		return rootPanel;
 	}
 

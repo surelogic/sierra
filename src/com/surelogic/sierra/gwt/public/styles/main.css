@@ -38,13 +38,13 @@ a.hover {
 	margin: 0px 0px 0px 0px;
 }
 
-.header-session {
+.sl-HeaderComposite-utility {
 	color: #FFFFFF;
 	margin-right: 5px;
 	margin-top: 5px;
 }
 
-.header-session-clickable {
+.sl-HeaderComposite-utility-clickable {
 	text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
