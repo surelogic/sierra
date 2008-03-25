@@ -52,10 +52,6 @@ public class LoginContent extends ContentComposite {
 		super();
 	}
 
-	public String getContentName() {
-		return "Login";
-	}
-
 	public void login() {
 		login.setEnabled(false);
 		waitPanel.add(waitImage);

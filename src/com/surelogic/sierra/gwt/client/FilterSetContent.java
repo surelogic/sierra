@@ -32,10 +32,6 @@ public class FilterSetContent extends ContentComposite {
 
 	private final VerticalPanel sets = new VerticalPanel();
 
-	public String getContentName() {
-		return "FilterSets";
-	}
-
 	protected void onActivate(Context context) {
 		ServiceHelper.getSettingsService().getFilterSets(new AsyncCallback() {
 
