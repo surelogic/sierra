@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 
 public abstract class ContentComposite extends Composite {
-	private DockPanel rootPanel = new DockPanel();
+	private final DockPanel rootPanel = new DockPanel();
 	private boolean uiCreated;
 
 	public ContentComposite() {
