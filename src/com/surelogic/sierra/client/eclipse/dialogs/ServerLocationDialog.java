@@ -24,13 +24,19 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.tool.message.ServerUIDReply;
+import com.surelogic.sierra.tool.message.ServerUIDRequest;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 /**
  * Dialog to allow the user to enter or edit the location and authentication
  * information for a Sierra server.
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
-
+	private static final int RETRY = 2;
+	
 	public static final String NEW_TITLE = "New Sierra Team Server Location";
 	public static final String EDIT_TITLE = "Edit Sierra Team Server Location";
 
@@ -40,9 +46,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private static final String TITLE = "Enter Sierra Team Server Location Information";
 	private static final String INFO_MSG = "Define the information for the Sierra team server you want to interact with.";
+	private static final String VALIDATE_MSG = "Please check the information below.  We could not contact the Sierra team server.";
 	private static final int INFO_WIDTH_HINT = 70;
 
-	private final SierraServer f_server;
+	private SierraServerLocation f_server;
 
 	private final String f_title;
 
@@ -51,6 +58,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private Mediator f_mediator;
 
+	private boolean f_validateServer = true;
+	private boolean f_serverValidated = true;
+	
 	/**
 	 * Constructs a new dialog to allow the user to enter or edit the location
 	 * and authentication information for a Sierra server.
@@ -62,15 +72,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 * @param title
 	 *            the title to use for this dialog.
 	 */
-	public ServerLocationDialog(Shell parentShell, SierraServer server,
-			String title) {
+	private ServerLocationDialog(Shell parentShell, SierraServerLocation server,
+			String title, boolean savePassword) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		assert server != null;
 		f_server = server;
 		f_title = title;
 		f_isSecure = f_server.isSecure();
-		f_savePassword = f_server.savePassword();
+		f_savePassword = savePassword;
 	}
 
 	@Override
@@ -219,7 +229,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		passwordLabel.setLayoutData(data);
 		Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		passwordText.setText(f_server.getPassword());
+		passwordText.setText(f_server.getPass());
 		passwordText.setEchoChar('\u25CF');
 
 		final Button savePasswordButton = new Button(authGroup, SWT.CHECK);
@@ -252,9 +262,13 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		saveWarning.setText(SAVE_PW_WARNING);
 
 		setTitle(TITLE);
+		
+		final Button validateButton = new Button(panel, SWT.CHECK);
+		validateButton.setText("Validate settings");
+		validateButton.setSelection(f_validateServer);
 
 		f_mediator = new Mediator(labelText, hostText, portText,
-				contextPathText, userText, passwordText);
+				contextPathText, userText, passwordText, validateButton);
 		f_mediator.init();
 
 		Dialog.applyDialogFont(panel);
@@ -275,21 +289,17 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		f_mediator.okPressed();
-		/*
-		 * Because we probably changed something about the server, notify all
-		 * observers of server information.
-		 */
-		f_server.getManager().notifyObservers();
 		super.okPressed();
 	}
 
+	/*
 	public SierraServer getServer() {
 		return f_server;
 	}
+	*/
 
 	private final class Mediator {
-
-		private final SierraServerManager f_manager = f_server.getManager();
+		private final SierraServerManager f_manager = SierraServerManager.getInstance();
 
 		private final Text f_labelText;
 		private final Text f_hostText;
@@ -297,15 +307,18 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		private final Text f_contextPathText;
 		private final Text f_userText;
 		private final Text f_passwordText;
+		private final Button f_validateButton;
 
 		Mediator(Text labelText, Text hostText, Text portText,
-				Text contextPathText, Text userText, Text passwordText) {
+				Text contextPathText, Text userText, Text passwordText, 
+				Button validateButton) {
 			f_labelText = labelText;
 			f_hostText = hostText;
 			f_portText = portText;
 			f_contextPathText = contextPathText;
 			f_userText = userText;
 			f_passwordText = passwordText;
+			f_validateButton = validateButton;
 		}
 
 		void init() {
@@ -320,6 +333,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_contextPathText.addListener(SWT.Modify, checkContentsListener);
 			f_userText.addListener(SWT.Modify, checkContentsListener);
 			f_labelText.addListener(SWT.Modify, checkContentsListener);
+			f_validateButton.addListener(SWT.Selection, checkContentsListener);
 		}
 
 		void checkDialogContents() {
@@ -360,35 +374,109 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				setMessage(I18N.msg("sierra.eclipse.badServerLocationLabel",
 						labelText), IMessageProvider.ERROR);
 			}
-
-			if (showInfo)
+			
+			if (showInfo) {
 				setMessage(INFO_MSG, IMessageProvider.INFORMATION);
+			}
+			if (!f_serverValidated) {
+				setMessage(VALIDATE_MSG, IMessageProvider.WARNING);
+			}			
+			
 			getButton(IDialogConstants.OK_ID).setEnabled(valid);
 		}
 
 		public void okPressed() {
-			f_server.setLabel(f_labelText.getText().trim());
-			f_server.setHost(f_hostText.getText().trim());
-			f_server.setPort(Integer.parseInt(f_portText.getText().trim()));
-			f_server.setContextPath(f_contextPathText.getText().trim());
-			f_server.setSecure(f_isSecure);
-			f_server.setUser(f_userText.getText().trim());
-			f_server.setPassword(f_passwordText.getText());
-			f_server.setSavePassword(f_savePassword);
+			f_server = new SierraServerLocation(f_labelText.getText().trim(),
+					                            f_hostText.getText().trim(),
+					                            f_isSecure,
+					                            Integer.parseInt(f_portText.getText().trim()),
+					                            f_contextPathText.getText().trim(),
+					                            f_userText.getText().trim(),
+					                            f_passwordText.getText());
+			//f_server.setSavePassword(f_savePassword);
+			f_validateServer = f_validateButton.getSelection();
 		}
 	}
 
-	public static void newServer(final Shell shell) {
-		final SierraServerManager manager = SierraServerManager.getInstance();
-		final SierraServer newServer = manager.create();
-		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
-				newServer, ServerLocationDialog.NEW_TITLE);
-		if (dialog.open() == Window.CANCEL) {
-			/*
-			 * If the user cancels input of information about the new server,
-			 * we'll assume that they don't want it.
-			 */
-			manager.delete(newServer);
+	@Override
+	public int open() {
+		int rv = super.open();
+		if (rv == Window.OK) {			
+			return validateServer();
+		}
+		return rv;
+	}
+	
+	private int validateServer() {
+		if (!f_validateServer) {
+			f_serverValidated = true;
+			return Window.OK;
+		}
+		
+		ServerUIDRequest request = new ServerUIDRequest();
+		SierraService ss = SierraServiceClient.create(f_server);
+		String uid = null;
+		try {
+			ServerUIDReply reply = ss.getUid(request);
+			uid = reply.getUid();
+			if (uid == null) {
+				f_serverValidated = false;
+				return RETRY;
+			} else {
+				f_serverValidated = true;
+				return Window.OK;
+			}
+		} catch (Exception e) {
+			f_serverValidated = false;
+			return RETRY;
 		}
 	}
+	
+	public static void newServer(final Shell shell) {		 
+		final SierraServerManager manager = SierraServerManager.getInstance();
+		ServerLocationDialog dialog = editServer(shell, manager.createLocation(),
+				                                 ServerLocationDialog.NEW_TITLE, true);
+		if (dialog != null) {
+			final SierraServer newServer = manager.create();
+			updateServer(dialog, newServer);
+		}
+	}
+	
+	public static void editServer(final Shell shell, SierraServer server) {	
+		ServerLocationDialog dialog = editServer(shell, server.getServer(), 
+				                                 ServerLocationDialog.EDIT_TITLE,
+				                                 server.savePassword());
+		updateServer(dialog, server);
+	}
+	
+	private static ServerLocationDialog editServer(final Shell shell, 
+			                                       SierraServerLocation loc, 
+			                                       String title, boolean savePassword) {
+		final ServerLocationDialog dialog = 
+			new ServerLocationDialog(shell, loc, title, savePassword);
+		int rv = RETRY;
+		while (rv == RETRY) {
+			rv = dialog.open();
+		}
+		return rv == Window.OK ? dialog : null;
+	}
+	
+
+	private static void updateServer(ServerLocationDialog dialog,
+			                         final SierraServer server) {
+		if (dialog != null) {
+			boolean changed = server.setServer(dialog.f_server);
+			changed = changed || server.savePassword() != dialog.f_savePassword;
+			
+			server.setSavePassword(dialog.f_savePassword);
+			
+			if (changed) {
+				/*
+				 * Because we probably changed something about the server, notify all
+				 * observers of server information.
+				 */
+				server.getManager().notifyObservers();
+			}
+		}
+	} 
 }

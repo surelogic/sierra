@@ -347,10 +347,7 @@ implements ISierraServerObserver {
 						"Edit server pressed with no server focus.") {
 					@Override
 					protected void handleEventOnServer(SierraServer server) {
-						final ServerLocationDialog dialog = new ServerLocationDialog(
-								f_statusTree.getShell(), server,
-								ServerLocationDialog.EDIT_TITLE);
-						dialog.open();
+						ServerLocationDialog.editServer(f_statusTree.getShell(), server);
 					}
 				});
 
