@@ -24,6 +24,8 @@ public class FilterSet implements Serializable {
 
 	private String uuid;
 
+	private long revision;
+
 	public String getName() {
 		return name;
 	}
@@ -54,6 +56,14 @@ public class FilterSet implements Serializable {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public long getRevision() {
+		return revision;
+	}
+
+	public void setRevision(long revision) {
+		this.revision = revision;
 	}
 
 }

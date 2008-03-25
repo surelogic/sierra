@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -58,10 +57,9 @@ public class FilterSetContent extends ContentComposite {
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		final HorizontalPanel head = new HorizontalPanel();
-		head.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-		head.add(new HTML("<h2>New Category: </h2>"));
 		head.add(filterBox);
 		head.add(createFilter);
+		panel.add(new HTML("<h2>New Category: </h2>"));
 		panel.add(head);
 		panel.add(sets);
 		getRootPanel().add(panel, DockPanel.CENTER);
@@ -70,7 +68,7 @@ public class FilterSetContent extends ContentComposite {
 	private void generateTree(List filterSets) {
 		sets.clear();
 		sets.add(new HTML("<h3>Categories</h3>"));
-		for (Iterator i = filterSets.iterator(); i.hasNext();) {
+		for (final Iterator i = filterSets.iterator(); i.hasNext();) {
 			sets.add(new FilterSetComposite((FilterSet) i.next()));
 		}
 	}
@@ -86,8 +84,8 @@ public class FilterSetContent extends ContentComposite {
 
 		FilterSetComposite(FilterSet set) {
 			this.set = set;
-			this.panel = new DisclosurePanel();
-			this.entries = new VerticalPanel();
+			panel = new DisclosurePanel();
+			entries = new VerticalPanel();
 			final HTML name = new HTML(set.getName());
 			name.addStyleName("filter-set-name");
 			panel.setHeader(name);
@@ -107,9 +105,10 @@ public class FilterSetContent extends ContentComposite {
 
 		private void updatePanel() {
 			final Set filters = new HashSet();
-			for (Iterator pI = set.getParents().iterator(); pI.hasNext();) {
+			for (final Iterator pI = set.getParents().iterator(); pI.hasNext();) {
 				final FilterSet parent = (FilterSet) pI.next();
-				for (Iterator fI = parent.getEntries().iterator(); fI.hasNext();) {
+				for (final Iterator fI = parent.getEntries().iterator(); fI
+						.hasNext();) {
 					final FilterEntry entry = (FilterEntry) fI.next();
 					if (entry.isFiltered()) {
 						filters.remove(entry);
@@ -118,7 +117,7 @@ public class FilterSetContent extends ContentComposite {
 					}
 				}
 			}
-			for (Iterator fI = set.getEntries().iterator(); fI.hasNext();) {
+			for (final Iterator fI = set.getEntries().iterator(); fI.hasNext();) {
 				final FilterEntry entry = (FilterEntry) fI.next();
 				if (entry.isFiltered()) {
 					filters.remove(entry);
@@ -128,7 +127,7 @@ public class FilterSetContent extends ContentComposite {
 			}
 			final TreeItem treeSet = new TreeItem(set.getName());
 			treeSet.setUserObject(set);
-			for (Iterator fI = filters.iterator(); fI.hasNext();) {
+			for (final Iterator fI = filters.iterator(); fI.hasNext();) {
 				entries.add(new FilterEntryComposite((FilterEntry) fI.next()));
 			}
 		}
@@ -140,8 +139,8 @@ public class FilterSetContent extends ContentComposite {
 		private final CheckBox box;
 
 		FilterEntryComposite(FilterEntry entry) {
-			this.panel = new HorizontalPanel();
-			this.box = new CheckBox();
+			panel = new HorizontalPanel();
+			box = new CheckBox();
 			this.entry = entry;
 			box.setChecked(!entry.isFiltered());
 			final HTML name = new HTML(entry.getName() + ".....");
