@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class SierraServerManager {
 
@@ -84,6 +85,14 @@ public final class SierraServerManager {
 		return query;
 	}
 
+	public SierraServerLocation createLocation() {
+		final String label = newUniqueLabel("server");
+		return new SierraServerLocation(label, "", false, 
+				SierraServerLocation.DEFAULT_PORT,
+				SierraServerLocation.DEFAULT_PATH,
+				"", "");
+	}
+	
 	public void delete(SierraServer server) {
 		if (server.getManager() != this) {
 			SLLogger.getLogger().log(
