@@ -63,6 +63,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
+		setMemorySize(config);
+		config.setJavaVendor(System.getProperty("java.vendor"));
+		config.setJavaVersion(System.getProperty("java.version"));
+		
 		if (scan.getHome() == null) {
 			throw new BuildException("No value for home");
 		}
@@ -96,6 +100,42 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 				                     SierraToolConstants.PARSED_FILE_SUFFIX);
 		config.setScanDocument(scanDocument);
 		return config;
+	}
+
+	private void setMemorySize(Config config) {
+		int max  = parseMemorySize(scan.getMemoryMaximumSize());	
+		int init = parseMemorySize(scan.getMemoryInitialSize());
+		config.setMemorySize(max > init ? max : init);
+	}
+	
+    private int parseMemorySize(String memSize) {
+		if (memSize != null && !"".equals(memSize)) {
+			int last = memSize.length() - 1;
+			char lastChar = memSize.charAt(last);
+			int size, mb = 1024;			
+			switch (lastChar) {
+			case 'm':
+			case 'M':
+				mb = Integer.parseInt(memSize.substring(0, last));
+				break;
+			case 'g':
+			case 'G':
+				size = Integer.parseInt(memSize.substring(0, last));
+				mb = size * 1024;
+				break;
+			case 'k':
+			case 'K':
+				size = Integer.parseInt(memSize.substring(0, last));		
+				mb = (int) Math.ceil(size / 1024.0);
+				break;
+			default:
+				// in bytes
+				size = Integer.parseInt(memSize);
+			    mb = (int) Math.ceil(size / (1024 * 1024.0));
+			}
+			return mb;
+		}
+		return 1024;
 	}
 
 	private void addPath(Config config, Type type, Path path) {
