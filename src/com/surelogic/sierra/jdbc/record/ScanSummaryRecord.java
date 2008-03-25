@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ScanSummaryRecord extends UpdatableRecord<ScanSummaryRecord.PK> {
+public class ScanSummaryRecord extends AbstractUpdatableRecord<ScanSummaryRecord.PK> {
 
 	public ScanSummaryRecord(UpdateRecordMapper mapper) {
 		super(mapper);

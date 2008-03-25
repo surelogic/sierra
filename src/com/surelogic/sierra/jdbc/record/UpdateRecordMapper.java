@@ -4,6 +4,6 @@ import java.sql.SQLException;
 
 public interface UpdateRecordMapper extends RecordMapper {
 
-	public void update(UpdatableRecord<?> record) throws SQLException;
+	public void update(AbstractUpdatableRecord<?> record) throws SQLException;
 
 }

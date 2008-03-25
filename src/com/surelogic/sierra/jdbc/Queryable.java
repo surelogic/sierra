@@ -5,6 +5,6 @@ public interface Queryable<T> {
 	T call(Object... args);
 
 	T call();
-	
+
 	void finished();
 }

@@ -48,7 +48,7 @@ public final class SettingsManager {
 	public static Set<String> getSureLogicDefaultFilterSet() {
 		final Set<String> result = new HashSet<String>();
 
-		URL defaultURL = Thread.currentThread().getContextClassLoader()
+		final URL defaultURL = Thread.currentThread().getContextClassLoader()
 				.getResource(DEFAULT_FILTER_SET_FILE);
 		if (defaultURL == null) {
 			SLLogger.getLogger().log(
@@ -72,7 +72,7 @@ public final class SettingsManager {
 			} finally {
 				in.close();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			SLLogger.getLogger().log(
 					Level.WARNING,
 					"IO failure reading the SureLogic default filter set file "
@@ -199,8 +199,8 @@ public final class SettingsManager {
 			throws SQLException {
 		final List<FindingTypeFilter> filters = new ArrayList<FindingTypeFilter>(
 				filterUUIDList.size());
-		for (String findingType : filterUUIDList) {
-			FindingTypeFilter filter = new FindingTypeFilter();
+		for (final String findingType : filterUUIDList) {
+			final FindingTypeFilter filter = new FindingTypeFilter();
 			filter.setName(findingType);
 			filter.setFiltered(true);
 			filters.add(filter);
@@ -225,7 +225,7 @@ public final class SettingsManager {
 
 	public Set<String> getGlobalSettingsUUID() throws SQLException {
 		final Set<String> result = new HashSet<String>();
-		for (FindingTypeFilter filter : getGlobalSettings()) {
+		for (final FindingTypeFilter filter : getGlobalSettings()) {
 			/*
 			 * The name is actually the UUID.
 			 */
@@ -268,7 +268,7 @@ public final class SettingsManager {
 				record.setUid(UUID.randomUUID().toString());
 				record.insert();
 				if (from != null) {
-					SettingsRecord old = factory.newSettingsRecord();
+					final SettingsRecord old = factory.newSettingsRecord();
 					old.setName(from);
 					if (old.select()) {
 						copySettings.setLong(1, record.getId());
@@ -298,7 +298,7 @@ public final class SettingsManager {
 	 */
 	public void renameSettings(String uid, String name, long revision)
 			throws SQLException {
-		SettingsRecord record = factory.newSettingsRecord();
+		final SettingsRecord record = factory.newSettingsRecord();
 		record.setUid(uid);
 		/** Can't rename a setting which does not exist */
 		if (record.select()) {
@@ -318,7 +318,7 @@ public final class SettingsManager {
 	 * @throws SQLException
 	 */
 	public void deleteSettings(String uid) throws SQLException {
-		SettingsRecord record = factory.newSettingsRecord();
+		final SettingsRecord record = factory.newSettingsRecord();
 		record.setUid(uid);
 		/** If this product does not exist, throw an error */
 		if (!record.select()) {
@@ -355,7 +355,7 @@ public final class SettingsManager {
 	 * @throws SQLException
 	 */
 	public Settings getSettings(String uid) throws SQLException {
-		SettingsRecord rec = factory.newSettingsRecord();
+		final SettingsRecord rec = factory.newSettingsRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
 			final Settings settings = new Settings();
@@ -388,7 +388,7 @@ public final class SettingsManager {
 	public Settings getSettingsByProject(String projectName)
 			throws SQLException {
 		getSettingsByProject.setString(1, projectName);
-		ResultSet set = getSettingsByProject.executeQuery();
+		final ResultSet set = getSettingsByProject.executeQuery();
 		try {
 			if (set.next()) {
 				return getSettings(set.getString(1));
@@ -479,7 +479,7 @@ public final class SettingsManager {
 	 */
 	public void addSettingProjects(String uid, Collection<String> projects)
 			throws SQLException {
-		SettingsRecord rec = factory.newSettingsRecord();
+		final SettingsRecord rec = factory.newSettingsRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
 			addProjects(rec, projects);
@@ -498,10 +498,10 @@ public final class SettingsManager {
 	 */
 	public void deleteSettingProjects(String uid, Collection<String> projects)
 			throws SQLException {
-		SettingsRecord rec = factory.newSettingsRecord();
+		final SettingsRecord rec = factory.newSettingsRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
-			for (String projectName : projects) {
+			for (final String projectName : projects) {
 				spManager.deleteProjectRelation(rec, projectName);
 			}
 		} else {
@@ -626,7 +626,7 @@ public final class SettingsManager {
 	 * @throws SQLException
 	 */
 	public FilterSet getFilterSet(final String uid) throws SQLException {
-		FilterSetRecord rec = factory.newFilterSetRecord();
+		final FilterSetRecord rec = factory.newFilterSetRecord();
 		rec.setUid(uid);
 		if (rec.select()) {
 			return getFilterSetById(rec.getId());
@@ -661,9 +661,9 @@ public final class SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<FilterSetDetail> listSettingFilterSets(String uid)
+	public List<FilterSetDO> listSettingFilterSets(String uid)
 			throws SQLException {
-		Settings settings = getSettings(uid);
+		final Settings settings = getSettings(uid);
 		if (settings != null) {
 			return getFilterSetDetails(settings.getFilterSets());
 		} else {
@@ -678,7 +678,7 @@ public final class SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<FilterSetDetail> listFilterSets() throws SQLException {
+	public List<FilterSetDO> listFilterSets() throws SQLException {
 		final List<String> uids = new ArrayList<String>();
 		final ResultSet set = listFilterSetUids.executeQuery();
 		try {
@@ -762,30 +762,29 @@ public final class SettingsManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	private List<FilterSetDetail> getFilterSetDetails(Collection<String> uids)
+	private List<FilterSetDO> getFilterSetDetails(Collection<String> uids)
 			throws SQLException {
-		final List<FilterSetDetail> filterSetDetails = new ArrayList<FilterSetDetail>();
+		final List<FilterSetDO> filterSetDetails = new ArrayList<FilterSetDO>();
 		final Map<String, FilterSet> filterSetMap = new HashMap<String, FilterSet>();
-		for (String uid : uids) {
+		for (final String uid : uids) {
 			final FilterSet filterSet = getFilterSet(uid);
 			filterSetMap.put(filterSet.getUid(), filterSet);
 		}
 		for (final FilterSet filterSet : filterSetMap.values()) {
-			FilterSetDetail detail = new FilterSetDetail();
+			final FilterSetDO detail = new FilterSetDO();
 			detail.setName(filterSet.getName());
 			detail.setUid(filterSet.getUid());
-			final List<FilterEntryDetail> filterEntryDetails = detail
-					.getFilters();
+			final List<FilterEntryDO> filterEntryDetails = detail.getFilters();
 			for (final FilterEntry entry : filterSet.getFilter()) {
-				FilterEntryDetail entryDetail = new FilterEntryDetail();
+				final FilterEntryDO entryDetail = new FilterEntryDO();
 				entryDetail.setFiltered(entry.isFiltered());
 				entryDetail.setFindingType(ftMan
 						.getFindingType(entry.getType()));
 				filterEntryDetails.add(entryDetail);
 			}
-			final List<ParentDetail> parentDetails = detail.getParents();
+			final List<ParentDO> parentDetails = detail.getParents();
 			for (final String parent : filterSet.getParent()) {
-				ParentDetail parentDetail = new ParentDetail();
+				final ParentDO parentDetail = new ParentDO();
 				parentDetail.setUid(parent);
 				FilterSet parentSet = filterSetMap.get(parent);
 				if (parentSet == null) {
@@ -849,7 +848,7 @@ public final class SettingsManager {
 		final List<String> filterSetUids = new ArrayList<String>(filterSetIds
 				.size());
 		final Set<Long> parentIds = new HashSet<Long>();
-		for (long id : filterSetIds) {
+		for (final long id : filterSetIds) {
 			deleteFilterSetFilters.setLong(1, id);
 			deleteFilterSetFilters.execute();
 			final FilterSet filterSet = getFilterSetById(id);
@@ -858,16 +857,16 @@ public final class SettingsManager {
 			parentIds.addAll(getFilterSetParents(id));
 		}
 		parentIds.addAll(filterSetIds);
-		for (long id : parentIds) {
+		for (final long id : parentIds) {
 			final FilterSet filterSet = getFilterSetById(id);
 			filterSetMap.put(filterSet.getUid(), filterSet);
 		}
 		final Iterator<Long> filterSetIter = filterSetIds.iterator();
-		for (String uid : filterSetUids) {
+		for (final String uid : filterSetUids) {
 			final Set<String> findingTypes = new HashSet<String>();
 			processFilterSet(findingTypes, filterSetMap.get(uid), filterSetMap);
 			final List<FindingTypeFilter> findingTypeFilters = new ArrayList<FindingTypeFilter>();
-			for (String type : findingTypes) {
+			for (final String type : findingTypes) {
 				final FindingTypeFilter ftf = new FindingTypeFilter();
 				ftf.setFiltered(false);
 				ftf.setName(type);
@@ -892,7 +891,7 @@ public final class SettingsManager {
 		deleteSettingFilters.execute();
 		final Map<String, FilterSet> filterSetMap = new HashMap<String, FilterSet>();
 		final List<FilterSet> filterSets = new ArrayList<FilterSet>();
-		for (String uid : settings.getFilterSets()) {
+		for (final String uid : settings.getFilterSets()) {
 			FilterSet filterSet = filterSetMap.get(uid);
 			if (filterSet == null) {
 				filterSet = getFilterSet(uid);
@@ -906,11 +905,11 @@ public final class SettingsManager {
 			}
 		}
 		final Set<String> findingTypes = new HashSet<String>();
-		for (FilterSet filterSet : filterSets) {
+		for (final FilterSet filterSet : filterSets) {
 			processFilterSet(findingTypes, filterSet, filterSetMap);
 		}
 		final List<FindingTypeFilter> findingTypeFilters = new ArrayList<FindingTypeFilter>();
-		for (String uid : findingTypes) {
+		for (final String uid : findingTypes) {
 			final FindingTypeFilter ftf = new FindingTypeFilter();
 			ftf.setFiltered(false);
 			ftf.setName(uid);
@@ -953,7 +952,7 @@ public final class SettingsManager {
 	private void addProjects(SettingsRecord settings,
 			Collection<String> projects) throws SQLException {
 		if (projects != null) {
-			for (String projectName : projects) {
+			for (final String projectName : projects) {
 				spManager.addRelation(settings, projectName);
 			}
 		}
@@ -969,7 +968,7 @@ public final class SettingsManager {
 	 */
 	private void applyFilters(FindingTypeFilterRecord rec, Long entityId,
 			List<FindingTypeFilter> filters) throws SQLException {
-		for (FindingTypeFilter filter : filters) {
+		for (final FindingTypeFilter filter : filters) {
 			final Long findingTypeId = ftMan.getFindingTypeId(filter.getName());
 			if (findingTypeId != null) {
 				rec.setId(new FindingTypeFilterRecord.PK(entityId,

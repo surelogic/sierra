@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.settings;
 
-public class ParentDetail {
+public class ParentDO {
 
 	private String uid;
 	private String name;

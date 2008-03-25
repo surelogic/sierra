@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class LongUpdatableRecord extends UpdatableRecord<Long> {
+public abstract class LongUpdatableRecord extends AbstractUpdatableRecord<Long> {
 
 	protected Long id;
 

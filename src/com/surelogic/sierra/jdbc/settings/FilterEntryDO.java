@@ -2,7 +2,7 @@ package com.surelogic.sierra.jdbc.settings;
 
 import com.surelogic.sierra.tool.message.FindingType;
 
-public class FilterEntryDetail {
+public class FilterEntryDO {
 
 	private FindingType findingType;
 
