@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 
 /**
@@ -209,9 +208,7 @@ public class FindingListDialog extends PopupDialog {
 						long id = getValue(summary);
 
 						if (id != -1) {
-							FindingDetailsView view = (FindingDetailsView) ViewUtility
-									.showView(FindingDetailsView.ID);
-							view.findingSelected(id);
+							FindingDetailsView.findingSelected(id, true);
 							close();
 
 						}

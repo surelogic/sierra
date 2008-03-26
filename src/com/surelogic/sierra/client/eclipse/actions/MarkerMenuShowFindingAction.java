@@ -32,7 +32,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.FindingListDialog;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
@@ -60,9 +59,7 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 					String s = (String) f_markers.get(0).getAttribute(
 							"findingid");
-					FindingDetailsView view = (FindingDetailsView) ViewUtility
-							.showView(FindingDetailsView.ID);
-					view.findingSelected(Long.parseLong(s));
+					FindingDetailsView.findingSelected(Long.parseLong(s), true);
 
 					// System.out.println(o);
 

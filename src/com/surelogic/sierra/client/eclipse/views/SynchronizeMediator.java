@@ -14,11 +14,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -255,10 +253,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			/*
 			 * Ensure the view is visible but don't change the focus.
 			 */
-			final FindingDetailsView view = (FindingDetailsView) ViewUtility
-					.showView(FindingDetailsView.ID, null,
-							IWorkbenchPage.VIEW_VISIBLE);
-			view.findingSelected(findingId);
+			FindingDetailsView.findingSelected(findingId, false);
 		}
 	}
 

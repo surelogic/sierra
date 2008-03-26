@@ -409,6 +409,12 @@ implements ISierraServerObserver {
 		
 		f_statusTree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
+				TreeItem item = (TreeItem) event.item;
+				if (item.getData() instanceof FindingAudits) {
+					FindingAudits f = (FindingAudits) item.getData();
+					FindingDetailsView.findingSelected(f.getFindingId(), false);
+				}
+				
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
 				if (onlyServer) {
@@ -981,7 +987,9 @@ implements ISierraServerObserver {
 			//status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {
-			createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), ps.earliestLocalAudit, ps.latestLocalAudit);
+			TreeItem audits = createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), 
+					                           ps.earliestLocalAudit, ps.latestLocalAudit);
+			createLocalAuditDetails(audits, ps.localFindings);
 			status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (ps.serverData == null) {
@@ -989,31 +997,9 @@ implements ISierraServerObserver {
 		} 
 		else if (!ps.serverData.isEmpty()) {
 			status = status.merge(ChangeStatus.REMOTE);
-			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
-			if (ps.comments > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment"+s(ps.comments));
-			}
-			if (ps.importance > 0) {
-				new TreeItem(audits, SWT.NONE)
-				    .setText(ps.importance+" change"+s(ps.importance)+" to the importance");
-			}
-			if (ps.summary > 0) {
-				new TreeItem(audits, SWT.NONE)
-				    .setText(ps.summary+" change"+s(ps.summary)+" to the summary");
-			}
-			if (ps.read > 0) {
-				new TreeItem(audits, SWT.NONE)
-				    .setText(ps.read+" other finding"+s(ps.read)+" examined");
-			}
-			for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
-				if (e.getValue() != null) {
-					int count = e.getValue().intValue();
-					if (count > 0) {
-						new TreeItem(audits, SWT.NONE)
-						    .setText(count+" audit"+s(count)+" by "+e.getKey());
-					}
-				}
-			}
+			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), 
+					                           ps.earliestServerAudit, ps.latestServerAudit);
+			createServerAuditDetails(ps, audits);
 		}
 		if (server != null) {
 			root.setText(status.getLabel()+ps.name+" ["+server.getLabel()+']');
@@ -1047,6 +1033,44 @@ implements ISierraServerObserver {
 		return audits;
 	}
 
+	private void createLocalAuditDetails(TreeItem audits, List<FindingAudits> findings) {
+		for(FindingAudits f : findings) {
+			TreeItem item = new TreeItem(audits, SWT.NONE);
+			int num = f.getAudits().size();
+			item.setText(num+" audit"+s(num)+" on finding "+f.getFindingId());
+			item.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+			item.setData(f);
+		}
+	}
+	
+	private void createServerAuditDetails(final ProjectStatus ps,
+			TreeItem audits) {
+		if (ps.comments > 0) {
+			new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment"+s(ps.comments));
+		}
+		if (ps.importance > 0) {
+			new TreeItem(audits, SWT.NONE)
+			    .setText(ps.importance+" change"+s(ps.importance)+" to the importance");
+		}
+		if (ps.summary > 0) {
+			new TreeItem(audits, SWT.NONE)
+			    .setText(ps.summary+" change"+s(ps.summary)+" to the summary");
+		}
+		if (ps.read > 0) {
+			new TreeItem(audits, SWT.NONE)
+			    .setText(ps.read+" other finding"+s(ps.read)+" examined");
+		}
+		for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
+			if (e.getValue() != null) {
+				int count = e.getValue().intValue();
+				if (count > 0) {
+					new TreeItem(audits, SWT.NONE)
+					    .setText(count+" audit"+s(count)+" by "+e.getKey());
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Show by Project
 	 */

@@ -26,10 +26,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchPage;
 
 import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -315,7 +317,13 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 				commentButton, scrollingLabelComposite, artifactTab, artifacts);
 	}
 
-	public void findingSelected(long findingID) {
-		f_mediator.asyncQueryAndShow(findingID);
+	public static void findingSelected(long findingID, boolean moveFocus) {
+		FindingDetailsView view;
+		if (moveFocus) {
+			view = (FindingDetailsView) ViewUtility.showView(ID);
+		} else {
+			view = (FindingDetailsView) ViewUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		}
+		view.f_mediator.asyncQueryAndShow(findingID);
 	}
 }

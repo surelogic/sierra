@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
@@ -48,7 +47,6 @@ import com.surelogic.common.StringComparators;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
@@ -501,11 +499,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 					/*
 					 * Ensure the view is visible but don't change the focus.
 					 */
-					final FindingDetailsView view = (FindingDetailsView) ViewUtility
-							.showView(FindingDetailsView.ID, null,
-									IWorkbenchPage.VIEW_VISIBLE);
 					f_selectedFindingId = data.f_findingId;
-					view.findingSelected(data.f_findingId);
+					FindingDetailsView.findingSelected(data.f_findingId, false);
 				} else {
 					LOG.severe("No data for " + item.getText(0));
 				}
