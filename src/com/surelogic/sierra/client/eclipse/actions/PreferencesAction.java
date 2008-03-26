@@ -17,10 +17,12 @@ public final class PreferencesAction extends Action {
 	public static final String TOOLS_ID = "com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage";
 	public static final String FILTER_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage";
 	public static final String DATA_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage";
-	public static final String SERVER_ID = "com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage";
+	public static final String LOCAL_SERVER_ID = "com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage";
+	public static final String SERVER_ID = "com.surelogic.sierra.client.eclipse.preferences.ServerPreferencePage";
 
+	
 	public static final String[] FILTER = new String[] { PREF_ID, TOOLS_ID,
-			FILTER_ID, DATA_ID, SERVER_ID };
+			FILTER_ID, DATA_ID, LOCAL_SERVER_ID, SERVER_ID };
 
 	@Override
 	public void run() {

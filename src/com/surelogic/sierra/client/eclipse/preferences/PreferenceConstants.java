@@ -158,6 +158,9 @@ public class PreferenceConstants {
 				P_SERVER_STATUS_SORT, value.toString());
 	}
 	
+	/**
+	 * Update views with info about what's on the server
+	 */
 	public static final String P_SERVER_AUTO_UPDATE = "com.surelogic.common.eclipse.server-auto-update";
 	
 	public static boolean doServerAutoUpdate() {
@@ -169,4 +172,43 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_AUTO_UPDATE, value);
 	}
+	
+	/**
+	 * Synchronize with the server
+	 */
+	public static final String P_SERVER_AUTO_SYNC = "com.surelogic.common.eclipse.server-auto-sync";
+	
+	public static boolean doServerAutoSync() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SERVER_AUTO_SYNC);
+	}
+
+	public static void setServerAutoSync(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_AUTO_SYNC, value);
+	}	
+	
+	public static final String P_SERVER_AUTO_SYNC_DELAY = "com.surelogic.common.eclipse.server-auto-sync-delay";
+	
+	public static int getServerAutoSyncDelay() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_SERVER_AUTO_SYNC_DELAY);
+	}
+
+	public static void setServerAutoSyncDelay(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_AUTO_SYNC_DELAY, value);
+	}	
+	
+	public static final String P_SERVER_AUTO_UPDATE_DELAY = "com.surelogic.common.eclipse.server-auto-update-delay";
+	
+	public static int getServerAutoUpdateDelay() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_SERVER_AUTO_UPDATE_DELAY);
+	}
+
+	public static void setServerAutoUpdateDelay(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_AUTO_UPDATE_DELAY, value);
+	}	
 }
