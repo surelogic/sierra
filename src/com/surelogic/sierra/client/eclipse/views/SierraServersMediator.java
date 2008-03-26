@@ -942,10 +942,10 @@ implements ISierraServerObserver {
 		if (ps.scanDoc != null && ps.scanDoc.exists()) {
 			TreeItem scan = new TreeItem(root, SWT.NONE);
 			Date modified = new Date(ps.scanDoc.lastModified());
-			scan.setText("> Last local/full scan on "+dateFormat.format(modified));
+			scan.setText("Last full scan done locally on "+dateFormat.format(modified));
 			scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
 			scan.setData(ps.scanDoc);
-			status = status.merge(ChangeStatus.LOCAL);
+			//status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {
 			createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), ps.earliestLocalAudit, ps.latestLocalAudit);
