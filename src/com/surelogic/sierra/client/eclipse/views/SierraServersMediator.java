@@ -485,6 +485,9 @@ implements ISierraServerObserver {
 		List<SierraServer> servers = new ArrayList<SierraServer>();
 		for (TreeItem item : si) {
 			if (item.getData() instanceof SierraServer) {
+				if (servers.contains(item.getData())) {
+					continue;
+				}
 				servers.add((SierraServer) item.getData());
 			}
 			else {
@@ -503,6 +506,9 @@ implements ISierraServerObserver {
 		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 		for (TreeItem item : si) {
 			if (item.getData() instanceof ProjectStatus) {
+				if (projects.contains(item.getData())) {
+					continue;
+				}
 				projects.add((ProjectStatus) item.getData());
 			}
 			else if (item.getData() instanceof SierraServer) {
@@ -520,6 +526,9 @@ implements ISierraServerObserver {
 
 	private void collectProjects(List<ProjectStatus> projects, TreeItem parent) {
 		for (TreeItem item : parent.getItems()) {
+			if (projects.contains(item.getData())) {
+				continue;
+			}
 			projects.add((ProjectStatus) item.getData());
 		}
 	}
@@ -1040,13 +1049,26 @@ implements ISierraServerObserver {
 		} else {
 			root.setText(status.getLabel()+ps.name);
 		}	
+		setAllDataIfNull(root, ps);
 		return status;
 	}
 
+	private void setAllDataIfNull(TreeItem root, ProjectStatus ps) {
+		if (root != null) {
+			if (root.getData() == null) {
+				root.setData(ps);
+			}
+			for(TreeItem item : root.getItems()) {
+				setAllDataIfNull(item, ps);
+			}
+		}
+	}
+	
 	private TreeItem createAuditItems(final TreeItem root, boolean server, 
 			                          int numAudits, int findings, Date earliestA, Date latestA) {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		TreeItem audits = new TreeItem(root, SWT.NONE);
+		
 		if (server) {
 			audits.setText("< "+numAudits+" audit"+s(numAudits)+
 					       " on "+findings+" finding"+s(findings)+" on the server");
