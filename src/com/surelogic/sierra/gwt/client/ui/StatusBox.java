@@ -36,4 +36,9 @@ public class StatusBox extends Composite {
 		this.status = status;
 	}
 
+	public void clear() {
+		status = null;
+		html.setHTML("");
+	}
+
 }
