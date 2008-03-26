@@ -958,22 +958,26 @@ implements ISierraServerObserver {
 			status = status.merge(ChangeStatus.REMOTE);
 			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), ps.earliestServerAudit, ps.latestServerAudit);
 			if (ps.comments > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment(s)");
+				new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment"+s(ps.comments));
 			}
 			if (ps.importance > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.importance+" change(s) to the importance");
+				new TreeItem(audits, SWT.NONE)
+				    .setText(ps.importance+" change"+s(ps.importance)+" to the importance");
 			}
 			if (ps.summary > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.summary+" change(s) to the summary");
+				new TreeItem(audits, SWT.NONE)
+				    .setText(ps.summary+" change"+s(ps.summary)+" to the summary");
 			}
 			if (ps.read > 0) {
-				new TreeItem(audits, SWT.NONE).setText(ps.read+" read");
+				new TreeItem(audits, SWT.NONE)
+				    .setText(ps.read+" other finding"+s(ps.read)+" examined");
 			}
 			for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
 				if (e.getValue() != null) {
 					int count = e.getValue().intValue();
 					if (count > 0) {
-						new TreeItem(audits, SWT.NONE).setText(count+" audits by "+e.getKey());
+						new TreeItem(audits, SWT.NONE)
+						    .setText(count+" audit"+s(count)+" by "+e.getKey());
 					}
 				}
 			}
@@ -991,9 +995,11 @@ implements ISierraServerObserver {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		TreeItem audits = new TreeItem(root, SWT.NONE);
 		if (server) {
-			audits.setText(numAudits+" audit(s) on "+findings+" finding(s) on the server");
+			audits.setText("< "+numAudits+" audit"+s(numAudits)+
+					       " on "+findings+" finding"+s(findings));
 		} else {
-			audits.setText(numAudits+" audit(s) on "+findings+" finding(s)");
+			audits.setText("> "+numAudits+" audit"+s(numAudits)+
+					       " on "+findings+" finding"+s(findings));
 		}
 		audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
 		
@@ -1014,5 +1020,9 @@ implements ISierraServerObserver {
 			final SierraServer server = f_manager.getServer(ps.name);
 			initProjectItem(root, server, ps);
 		}
+	}
+		
+	private static String s(int num) {
+		return num <= 1 ? "" : "s";
 	}
 }
