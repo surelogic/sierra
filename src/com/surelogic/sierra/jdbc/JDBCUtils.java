@@ -20,7 +20,7 @@ public class JDBCUtils {
 	public static void fill(PreparedStatement st, Object[] args)
 			throws SQLException {
 		int idx = 1;
-		for (Object o : args) {
+		for (final Object o : args) {
 			if (o instanceof Nulls) {
 				switch ((Nulls) o) {
 				case INT:
@@ -49,6 +49,7 @@ public class JDBCUtils {
 			} else if (o instanceof Date) {
 				st.setTimestamp(idx, new Timestamp(((Date) o).getTime()));
 			}
+			idx++;
 		}
 	}
 
@@ -131,7 +132,7 @@ public class JDBCUtils {
 	 */
 	public static Long getNullableLong(int idx, ResultSet set)
 			throws SQLException {
-		long l = set.getLong(idx);
+		final long l = set.getLong(idx);
 		if (set.wasNull()) {
 			return null;
 		} else {
@@ -150,7 +151,7 @@ public class JDBCUtils {
 	 */
 	public static Integer getNullableInteger(int idx, ResultSet set)
 			throws SQLException {
-		int i = set.getInt(idx);
+		final int i = set.getInt(idx);
 		if (set.wasNull()) {
 			return null;
 		} else {
@@ -199,14 +200,14 @@ public class JDBCUtils {
 	 */
 	public static boolean isServer(Connection conn) throws SQLException {
 		try {
-			Statement st = conn.createStatement();
+			final Statement st = conn.createStatement();
 			try {
 				st.executeQuery("SELECT UUID FROM SERVER");
 				return true;
 			} finally {
 				st.close();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			return false;
 		}
 	}

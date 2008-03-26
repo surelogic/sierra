@@ -1,10 +1,13 @@
-package com.surelogic.sierra.jdbc.record;
+package com.surelogic.sierra.jdbc.settings;
 
 import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.surelogic.sierra.jdbc.qrecord.LongUpdatableRecord;
+import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
 public class FilterSetRecord extends LongUpdatableRecord {
 
@@ -43,9 +46,9 @@ public class FilterSetRecord extends LongUpdatableRecord {
 
 	@Override
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		this.revision = set.getLong(idx++);
-		this.name = set.getString(idx++);
-		this.info = set.getString(idx++);
+		revision = set.getLong(idx++);
+		name = set.getString(idx++);
+		info = set.getString(idx++);
 		return idx;
 	}
 

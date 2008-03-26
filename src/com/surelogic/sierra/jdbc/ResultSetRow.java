@@ -11,12 +11,13 @@ public class ResultSetRow implements Row {
 
 	ResultSetRow(ResultSet set) {
 		this.set = set;
+		clear();
 	}
 
 	public Date nextDate() {
 		try {
 			return set.getTimestamp(idx++);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
@@ -24,7 +25,7 @@ public class ResultSetRow implements Row {
 	public int nextInt() {
 		try {
 			return set.getInt(idx++);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
@@ -32,7 +33,7 @@ public class ResultSetRow implements Row {
 	public long nextLong() {
 		try {
 			return set.getLong(idx++);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
@@ -40,7 +41,7 @@ public class ResultSetRow implements Row {
 	public String nextString() {
 		try {
 			return set.getString(idx++);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
@@ -48,7 +49,7 @@ public class ResultSetRow implements Row {
 	public Integer nullableInt() {
 		try {
 			return JDBCUtils.getNullableInteger(idx++, set);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
@@ -56,12 +57,12 @@ public class ResultSetRow implements Row {
 	public Long nullableLong() {
 		try {
 			return JDBCUtils.getNullableLong(idx++, set);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ResultSetException(e);
 		}
 	}
 
 	void clear() {
-		idx = 0;
+		idx = 1;
 	}
 }

@@ -13,8 +13,8 @@ class ResultRowHandler<T> implements ResultHandler<List<T>> {
 
 	public List<T> handle(Result result) {
 		final List<T> list = new ArrayList<T>();
-		for (Row row : result) {
-			rh.handle(row);
+		for (final Row row : result) {
+			list.add(rh.handle(row));
 		}
 		return list;
 	}

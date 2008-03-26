@@ -68,7 +68,7 @@ public class Server {
 			} finally {
 				set.close();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			st.close();
@@ -95,7 +95,7 @@ public class Server {
 	public void updateSchema() throws SQLException, FutureDatabaseException {
 		try {
 			SierraSchemaUtility.checkAndUpdate(conn, true);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -106,32 +106,36 @@ public class Server {
 	 * @return
 	 * @throws SQLException
 	 */
-	public long nextRevision() throws SQLException {
+	public long nextRevision() {
 		if (readOnly) {
 			throw new IllegalStateException("This connection is read-only");
 		}
-		PreparedStatement st;
-		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
-			st = conn.prepareStatement(
-					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
-					new String[] { "REVISION" });
-		} else {
-			st = conn.prepareStatement(
-					"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
-					Statement.RETURN_GENERATED_KEYS);
-		}
 		try {
-			st.setTimestamp(1, new Timestamp(new Date().getTime()));
-			st.execute();
-			ResultSet set = st.getGeneratedKeys();
-			try {
-				set.next();
-				return set.getLong(1);
-			} finally {
-				set.close();
+			PreparedStatement st;
+			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
+				st = conn.prepareStatement(
+						"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+						new String[] { "REVISION" });
+			} else {
+				st = conn.prepareStatement(
+						"INSERT INTO REVISION (DATE_TIME) VALUES (?)",
+						Statement.RETURN_GENERATED_KEYS);
 			}
-		} finally {
-			st.close();
+			try {
+				st.setTimestamp(1, new Timestamp(new Date().getTime()));
+				st.execute();
+				final ResultSet set = st.getGeneratedKeys();
+				try {
+					set.next();
+					return set.getLong(1);
+				} finally {
+					set.close();
+				}
+			} finally {
+				st.close();
+			}
+		} catch (final Exception e) {
+			throw new TransactionException(e);
 		}
 	}
 
@@ -150,7 +154,7 @@ public class Server {
 			final String user = n.getUser();
 			if ((to != null) && (to.length() > 0) && (host != null)
 					&& (host.length() > 0)) {
-				Properties props = new Properties();
+				final Properties props = new Properties();
 				props.setProperty("mail.transport.protocol", "smtp");
 				props.setProperty("mail.smtp.host", host);
 				props.setProperty("mail.smtp.starttls.enable", "true");
@@ -171,9 +175,9 @@ public class Server {
 				} else {
 					auth = null;
 				}
-				Session session = Session.getInstance(props, auth);
+				final Session session = Session.getInstance(props, auth);
 				try {
-					MimeMessage msg = new MimeMessage(session);
+					final MimeMessage msg = new MimeMessage(session);
 					msg.setSender(new InternetAddress(((from == null) || (from
 							.length() == 0)) ? to : from));
 					msg.setRecipient(Message.RecipientType.TO,
@@ -182,7 +186,7 @@ public class Server {
 					msg.setSentDate(new Date());
 					msg.setContent(message, "text/plain");
 					Transport.send(msg);
-				} catch (MessagingException mex) {
+				} catch (final MessagingException mex) {
 					log.log(Level.SEVERE,
 							"Mail notification of exception failed.", mex);
 				}
@@ -197,9 +201,9 @@ public class Server {
 	 * @throws SQLException
 	 */
 	public String getUid() throws SQLException {
-		Statement s = conn.createStatement();
+		final Statement s = conn.createStatement();
 		try {
-			ResultSet set = s.executeQuery("SELECT UUID FROM SERVER");
+			final ResultSet set = s.executeQuery("SELECT UUID FROM SERVER");
 			try {
 				set.next();
 				return set.getString(1);
@@ -253,7 +257,7 @@ public class Server {
 	}
 
 	private static String escapedTuple(Object[] values) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		sb.append(getLiteral(values[0]));
 		for (int i = 1; i < values.length; i++) {

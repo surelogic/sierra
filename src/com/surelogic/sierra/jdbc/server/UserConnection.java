@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.user.User;
 
 /**
@@ -29,6 +30,26 @@ public class UserConnection extends ServerConnection {
 		this.user = user;
 	}
 
+	public <T> T perform(UserQuery<T> t) {
+		try {
+			final T val = t.perform(new ConnectionQuery(conn), server, user);
+			if (!readOnly) {
+				conn.commit();
+			}
+			return val;
+		} catch (final Exception e) {
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (final SQLException e1) {
+					log.log(Level.WARNING, e1.getMessage(), e1);
+				}
+			}
+			exceptionNotify(user.getName(), e.getMessage(), e);
+			throw new TransactionException(e);
+		}
+	}
+
 	/**
 	 * Perform the specified transaction. If an exception occurs while executing
 	 * this method, the server notifies the administrator of an error. In
@@ -47,11 +68,11 @@ public class UserConnection extends ServerConnection {
 				conn.commit();
 			}
 			return val;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			if (!readOnly) {
 				try {
 					conn.rollback();
-				} catch (SQLException e1) {
+				} catch (final SQLException e1) {
 					log.log(Level.WARNING, e1.getMessage(), e1);
 				}
 			}
