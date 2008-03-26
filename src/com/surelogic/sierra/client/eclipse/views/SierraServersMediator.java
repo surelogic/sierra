@@ -59,8 +59,6 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver {
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
-	private static final long UPDATE_DELAY_SEC = 5;//300;
-	private static final long UPDATE_DELAY_MS = UPDATE_DELAY_SEC * 1000;
 	
 	/**
 	 * This should only be changed in the UI thread
@@ -75,6 +73,9 @@ implements ISierraServerObserver {
     	new HashMap<String,List<SyncTrailResponse>>();   
 
     private final AtomicLong lastServerUpdateTime = 
+    	new AtomicLong(System.currentTimeMillis());
+    
+    private final AtomicLong lastAllServersSyncTime = 
     	new AtomicLong(System.currentTimeMillis());
     
 	private final Tree f_statusTree;
@@ -96,6 +97,8 @@ implements ISierraServerObserver {
 	private final MenuItem f_scanProjectItem;
 	private final MenuItem f_rescanProjectItem;
 	private final MenuItem f_disconnectProjectItem;
+	private final Action f_autoSyncServerAction;
+	private final Action f_autoUpdateServerAction;
 
 	private abstract class ActionListener extends Action implements Listener {
 		ActionListener(String text, String tooltip) {
@@ -185,7 +188,8 @@ implements ISierraServerObserver {
 			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
-			MenuItem disconnectProjectItem) {
+			MenuItem disconnectProjectItem, 
+			Action autoUpdateServerAction, Action autoSyncServerAction) {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
@@ -279,6 +283,8 @@ implements ISierraServerObserver {
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
+		f_autoSyncServerAction = autoSyncServerAction;
+		f_autoUpdateServerAction = autoUpdateServerAction;
 	}
 
 	public String getHelpId() {
@@ -482,30 +488,67 @@ implements ISierraServerObserver {
 			}			
 		});
 		
-		final Job doServerAutoUpdate = new Job("Server auto-update") {
-			public void run() {
-				if (PreferenceConstants.doServerAutoUpdate()) {
-					long now  = System.currentTimeMillis();
-					long next = lastServerUpdateTime.get() + UPDATE_DELAY_MS;
-					long gap  = next - now;
-				    if (gap > 0) {
-				    	System.out.println("Wait a bit longer: "+gap);
-				    	schedule(gap);
-				    	return;
-				    } 				    	
-				    // No need to wait ...
-				    asyncUpdateServerInfo();				    
-				}
-				schedule(UPDATE_DELAY_MS);
+		final AutoJob doServerAutoUpdate = 
+			new AutoJob("Server auto-update", lastServerUpdateTime) {
+			@Override protected boolean isEnabled() {
+				return PreferenceConstants.doServerAutoUpdate();
 			}
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				run();
-				return Status.OK_STATUS;
-			}			
-		};
-		doServerAutoUpdate.setSystem(true);
-		doServerAutoUpdate.schedule(UPDATE_DELAY_MS);
+			@Override protected long getDelay() {
+				return PreferenceConstants.getServerAutoUpdateDelay() * 60000;			
+			}
+			@Override protected void run() {
+				asyncUpdateServerInfo();	
+			}
+		};		
+		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
+		
+		final AutoJob doServerAutoSync = 
+			new AutoJob("Server auto-sync", lastAllServersSyncTime) {
+			@Override protected boolean isEnabled() {
+				return PreferenceConstants.doServerAutoSync();
+			}
+			@Override protected long getDelay() {
+				return PreferenceConstants.getServerAutoSyncDelay() * 60000;			
+			}
+			@Override protected void run() {
+				asyncSyncWithServer();	
+			}
+		};		
+		doServerAutoSync.schedule(doServerAutoSync.getDelay());
+	}
+	
+	private abstract class AutoJob extends Job {
+		final AtomicLong lastTime;
+		public AutoJob(String name, AtomicLong last) {
+			super(name);
+			setSystem(true);
+			lastTime = last;
+		}
+		protected long computeGap() {
+			long now  = System.currentTimeMillis();
+			long next = lastTime.get() + getDelay();
+			return next - now;
+		}
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			if (isEnabled()) {
+
+				long gap  = computeGap();
+			    if (gap > 0) {
+			    	System.out.println("Wait a bit longer: "+gap);
+			    	schedule(gap);
+					return Status.OK_STATUS;
+			    } 				    	
+			    // No need to wait ...
+			    run();
+			}
+			schedule(getDelay());
+			
+			return Status.OK_STATUS;
+		}
+		protected abstract void run();
+		protected abstract boolean isEnabled();
+		protected abstract long getDelay(); // In msec
 	}
 	
 	private List<SierraServer> collectServers() {
@@ -684,6 +727,15 @@ implements ISierraServerObserver {
 		asyncUpdateContents();
 	}
 
+	void asyncSyncWithServer() {
+		long now = System.currentTimeMillis();
+		lastAllServersSyncTime.set(now);
+		lastServerUpdateTime.set(now); // Sync >> update
+		System.out.println("Sync at: "+now);
+		
+		new SynchronizeAllProjectsAction().run(null);
+	}
+	
 	void asyncUpdateServerInfo() {
 		long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now);

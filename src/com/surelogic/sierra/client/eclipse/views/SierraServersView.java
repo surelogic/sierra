@@ -104,8 +104,23 @@ public final class SierraServersView extends
 				}
 			}
 		};
+		final Action autoSyncServerAction =
+			new Action("Auto-sync With Server", IAction.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				boolean old = PreferenceConstants.doServerAutoSync();
+				PreferenceConstants.setServerAutoSync(isChecked());
+				if (!old && isChecked()) {
+					f_mediator.asyncSyncWithServer();
+				}
+			}
+		};
+		
 		autoUpdateServerAction.setChecked(PreferenceConstants.doServerAutoUpdate());
 		addToViewMenu(autoUpdateServerAction);
+		autoSyncServerAction.setChecked(PreferenceConstants.doServerAutoSync());
+		addToViewMenu(autoSyncServerAction);
+		addToViewMenu(new Separator());
 		
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
 		final Action sortByServerAction = 
@@ -131,6 +146,7 @@ public final class SierraServersView extends
 				newServerItem, browseServerItem, duplicateServerItem, deleteServerItem,
 				serverConnectItem, synchProjects, sendResultFilters,
 				getResultFilters, serverPropertiesItem, scanProjectItem,
-				rescanProjectItem, disconnectProjectItem);
+				rescanProjectItem, disconnectProjectItem,
+				autoUpdateServerAction, autoSyncServerAction);
 	}
 }
