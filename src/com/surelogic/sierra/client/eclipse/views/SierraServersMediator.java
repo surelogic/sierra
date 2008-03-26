@@ -57,7 +57,7 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver {
-
+	private static final String NO_SERVER_DATA = "Needs to grab from server";
 	/**
 	 * This should only be changed in the UI thread
 	 */
@@ -415,6 +415,17 @@ implements ISierraServerObserver {
 				if (item.getData() instanceof FindingAudits) {
 					FindingAudits f = (FindingAudits) item.getData();
 					FindingDetailsView.findingSelected(f.getFindingId(), false);
+				}
+				else if (item.getData() instanceof ScanInfo) {
+					ScanInfo info = (ScanInfo) item.getData();
+					if (info.isPartial()) {
+						TreeItem project = item.getParentItem(); 
+						ProjectStatus ps = (ProjectStatus) project.getData();
+						new NewScan().scan(ps.project);
+					}
+				}
+				else if (item.getData() == NO_SERVER_DATA) {
+					asyncUpdateServerInfo();
 				}
 				
 				List<SierraServer> servers = collectServers();
@@ -989,7 +1000,7 @@ implements ISierraServerObserver {
 				
 				if (ps.scanInfo.isPartial()) {
 					// Latest is a re-scan
-					scan.setText("Needs a full scan ... re-scan done locally on "+dateFormat.format(lastScanTime));
+					scan.setText("Re-scan done locally on "+dateFormat.format(lastScanTime)+" ... click to start full scan");
 					scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
 				} else {
 					scan.setText("Last full scan done locally on "+dateFormat.format(lastScanTime));
@@ -1012,7 +1023,9 @@ implements ISierraServerObserver {
 			status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (ps.serverData == null) {
-			new TreeItem(root, SWT.NONE).setText("No server info available");
+			TreeItem noServer = new TreeItem(root, SWT.NONE);
+			noServer.setText("No server info available ... click to update");
+			noServer.setData(NO_SERVER_DATA);
 		} 
 		else if (!ps.serverData.isEmpty()) {
 			status = status.merge(ChangeStatus.REMOTE);
