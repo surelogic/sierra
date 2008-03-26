@@ -93,6 +93,20 @@ public final class SierraServersView extends
 		addToViewMenu(exportAction);
 		addToViewMenu(new Separator());
 
+		final Action autoUpdateServerAction =
+			new Action("Auto-update Server Info", IAction.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				boolean old = PreferenceConstants.doServerAutoUpdate();
+				PreferenceConstants.setServerAutoUpdate(isChecked());
+				if (!old && isChecked()) {
+					f_mediator.asyncUpdateServerInfo();
+				}
+			}
+		};
+		autoUpdateServerAction.setChecked(PreferenceConstants.doServerAutoUpdate());
+		addToViewMenu(autoUpdateServerAction);
+		
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
 		final Action sortByServerAction = 
 			new Action("Show by Team Server", IAction.AS_RADIO_BUTTON) {
