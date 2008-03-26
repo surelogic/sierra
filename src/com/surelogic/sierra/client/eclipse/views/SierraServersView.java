@@ -64,7 +64,7 @@ public final class SierraServersView extends
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
-		serverPropertiesItem.setText("Properties...");
+		serverPropertiesItem.setText("Server Properties...");
 		statusTree.setMenu(contextMenu);
 
 		final Action importAction = new Action("Import Locations...") {
