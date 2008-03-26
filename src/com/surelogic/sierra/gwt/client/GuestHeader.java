@@ -10,10 +10,6 @@ public class GuestHeader extends HeaderComposite {
 		return instance;
 	}
 
-	public String getName() {
-		return "guest";
-	}
-
 	protected void onInitialize(VerticalPanel rootPanel) {
 		// nothing to do
 	}

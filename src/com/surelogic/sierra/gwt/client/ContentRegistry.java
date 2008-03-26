@@ -14,27 +14,38 @@ public class ContentRegistry {
 	}
 
 	public static void initialize() {
-		// TODO bind each content to a header composite
-		register("login", LoginContent.getInstance());
-		register("overview", OverviewContent.getInstance());
-		register("settings", SettingsContent.getInstance());
-		register("usermanagement", UserManagementContent.getInstance());
-		register("finding", FindingContent.getInstance());
-		register("filterset", FilterSetContent.getInstance());
+		register("login", LoginContent.getInstance(), GuestHeader.getInstance());
+
+		final UserHeader userHeader = UserHeader.getInstance();
+		register("overview", OverviewContent.getInstance(), userHeader);
+		register("finding", FindingContent.getInstance(), userHeader);
+		register("filterset", FilterSetContent.getInstance(), userHeader);
+
+		final AdminHeader adminHeader = AdminHeader.getInstance();
+		register("settings", SettingsContent.getInstance(), adminHeader);
+		register("usermanagement", UserManagementContent.getInstance(),
+				adminHeader);
 	}
 
 	public static ContentComposite getContent(String contentName) {
-		return (ContentComposite) contentMap.get(contentName);
-	}
-
-	public static String getContentName(ContentComposite content) {
 		for (Iterator it = contentMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry contentEntry = (Map.Entry) it.next();
-			if (contentEntry.getValue().equals(content)) {
-				return (String) contentEntry.getKey();
+			Map.Entry mapEntry = (Map.Entry) it.next();
+			ContentEntry contentEntry = (ContentEntry) mapEntry.getValue();
+			if (contentEntry.getName().equals(contentName)) {
+				return (ContentComposite) mapEntry.getKey();
 			}
 		}
 		return null;
+	}
+
+	public static String getContentName(ContentComposite content) {
+		ContentEntry entry = (ContentEntry) contentMap.get(content);
+		return entry != null ? entry.getName() : null;
+	}
+
+	public static HeaderComposite getContentHeader(ContentComposite content) {
+		ContentEntry entry = (ContentEntry) contentMap.get(content);
+		return entry != null ? entry.getHeader() : null;
 	}
 
 	public static String getContentUrl(ContentComposite content) {
@@ -43,7 +54,27 @@ public class ContentRegistry {
 		return url.toString();
 	}
 
-	private static void register(String contentName, ContentComposite content) {
-		contentMap.put(contentName, content);
+	private static void register(String contentName, ContentComposite content,
+			HeaderComposite header) {
+		contentMap.put(content, new ContentEntry(contentName, header));
+	}
+
+	private static class ContentEntry {
+		private final String name;
+		private final HeaderComposite header;
+
+		public ContentEntry(String name, HeaderComposite header) {
+			super();
+			this.name = name;
+			this.header = header;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public HeaderComposite getHeader() {
+			return header;
+		}
 	}
 }

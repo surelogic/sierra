@@ -65,8 +65,6 @@ public abstract class HeaderComposite extends Composite {
 		});
 	}
 
-	public abstract String getName();
-
 	public final void activate(Context context, UserAccount user) {
 		if (!uiCreated) {
 			uiCreated = true;

@@ -25,48 +25,46 @@ public final class HeaderPanel extends Composite {
 		ClientContext.addUserListener(new UserListener() {
 
 			public void onLogin(UserAccount user) {
-				updateHeader();
 				updateUser(user);
 			}
 
 			public void onLoginFailure(String message) {
-				updateHeader();
 				updateUser(null);
 			}
 
 			public void onLogout(UserAccount user, String errorMessage) {
-				updateHeader();
 				updateUser(null);
 			}
 
 			public void onUpdate(UserAccount user) {
-				updateHeader();
 				updateUser(user);
 			}
 		});
 		ClientContext.addContextListener(new ContextListener() {
 
 			public void onChange(Context context) {
-				updateHeader();
 				updateContext(context);
 			}
 
 		});
-		updateHeader();
 		updateUser(ClientContext.getUser());
 		updateContext(ClientContext.getContext());
 	}
 
 	private void updateHeader() {
 		final UserAccount user = ClientContext.getUser();
-		HeaderComposite newHeader;
+		final Context context = ClientContext.getContext();
+
+		HeaderComposite newHeader = null;
 		if (user == null) {
 			newHeader = GuestHeader.getInstance();
-		} else {
+		} else if (context != null) {
+			newHeader = ContentRegistry.getContentHeader(context.getContent());
+		}
+		if (newHeader == null) {
 			newHeader = UserHeader.getInstance();
 		}
-		// TODO need to add support for check and switch to the site manage
-		// header
+
 		if (currentHeader == newHeader) {
 			return;
 		}
@@ -80,12 +78,14 @@ public final class HeaderPanel extends Composite {
 	}
 
 	private void updateContext(Context context) {
+		updateHeader();
 		if (currentHeader != null) {
 			currentHeader.updateContext(context);
 		}
 	}
 
 	private void updateUser(UserAccount user) {
+		updateHeader();
 		if (currentHeader != null) {
 			currentHeader.updateUser(user);
 		}
