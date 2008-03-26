@@ -518,10 +518,28 @@ implements ISierraServerObserver {
 				collectProjects(projects, item);
 			}
 			else {
+				ProjectStatus status = inProject(item.getParentItem());
+				if (status != null) {
+					if (projects.contains(item.getData())) {
+						continue;
+					}
+					projects.add((ProjectStatus) item.getData());
+					continue;
+				}
 				System.out.println("Ignoring selection: "+item.getText());
 			}
 		}
 		return projects;
+	}
+
+	private ProjectStatus inProject(TreeItem item) {
+		while (item != null) {
+			if (item.getData() instanceof ProjectStatus) {
+				return (ProjectStatus) item.getData();
+			}
+			item = item.getParentItem();
+		}
+		return null;
 	}
 
 	private void collectProjects(List<ProjectStatus> projects, TreeItem parent) {
@@ -1049,10 +1067,11 @@ implements ISierraServerObserver {
 		} else {
 			root.setText(status.getLabel()+ps.name);
 		}	
-		setAllDataIfNull(root, ps);
+		//setAllDataIfNull(root, ps);
 		return status;
 	}
 
+	/*
 	private void setAllDataIfNull(TreeItem root, ProjectStatus ps) {
 		if (root != null) {
 			if (root.getData() == null) {
@@ -1063,6 +1082,7 @@ implements ISierraServerObserver {
 			}
 		}
 	}
+	*/
 	
 	private TreeItem createAuditItems(final TreeItem root, boolean server, 
 			                          int numAudits, int findings, Date earliestA, Date latestA) {
