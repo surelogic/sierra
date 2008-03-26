@@ -75,6 +75,13 @@ public abstract class AbstractScan<T extends IJavaElement> {
 		}
 		return sb;
 	}
+	
+	public void scan(final T elt) {
+		@SuppressWarnings("unchecked")
+		List<T> elts = new ArrayList(1);
+		elts.add(elt);
+		scan(elts);
+	}
 
 	public void scan(final Collection<T> elements) {
 		List<String> names = new ArrayList<String>(elements.size());
