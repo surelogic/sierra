@@ -44,6 +44,14 @@
 			<keywordReference id="com.surelogic.sierra.client.key5" />
 			<keywordReference id="com.surelogic.sierra.client.key6" />
 		</page>
+		<page
+			class="com.surelogic.sierra.client.eclipse.preferences.ServerPreferencePage"
+			id="com.surelogic.sierra.client.eclipse.preferences.ServerPreferencePage"
+			name="Server"
+			category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
+			<keywordReference id="com.surelogic.sierra.client.key1" />
+			<keywordReference id="com.surelogic.sierra.client.key7" />
+		</page>
 	</extension>
 
 	<extension point="org.eclipse.ui.keywords">
@@ -53,6 +61,7 @@
 		<keyword label="PMD" id="com.surelogic.sierra.client.key4" />
 		<keyword label="Data" id="com.surelogic.sierra.client.key5" />
 		<keyword label="Analysis" id="com.surelogic.sierra.client.key6" />
+		<keyword label="Server" id="com.surelogic.sierra.client.key7" />
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.preferences">
@@ -296,13 +305,6 @@
 			id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
 			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
 			name="Sierra Team Servers">
-		</view>
-		
-		<view category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig"
-			id="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig"
-			icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_server.gif"
-			name="Sierra Team Servers (Original)">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
