@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -24,23 +25,12 @@ public final class SierraServersView extends
 	protected SierraServersMediator createMorePartControls(
 			final Composite parent) {
 		final Tree statusTree = new Tree(parent, SWT.MULTI);
-
-		final Action sortByServerAction = new Action("Show by Team Server",
-				IAction.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				f_mediator.setSortByServer(isChecked());
-			}
-		};
-		sortByServerAction
-				.setChecked(ServerStatusSort.BY_SERVER == PreferenceConstants
-						.getServerStatusSort());
-		addToViewMenu(sortByServerAction);
-
 		final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);
 
 		final MenuItem newServerItem = createMenuItem(contextMenu, "New...",
 				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		final MenuItem browseServerItem = createMenuItem(contextMenu, "Browse",
+				SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
 
 		final MenuItem duplicateServerItem = createMenuItem(contextMenu,
 				"Duplicate", SLImages
@@ -67,8 +57,8 @@ public final class SierraServersView extends
 				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
-		final MenuItem sendResultFilters = new MenuItem(contextMenu, SWT.PUSH);
-		sendResultFilters.setText("Send Scan Filter...");
+		final MenuItem sendResultFilters = 
+			createMenuItem(contextMenu, "Send Scan Filter...", SLImages.IMG_FILTER);
 		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
 		getResultFilters.setText("Get Scan Filter...");
 		new MenuItem(contextMenu, SWT.SEPARATOR);
@@ -101,9 +91,30 @@ public final class SierraServersView extends
 			}
 		};
 		addToViewMenu(exportAction);
+		addToViewMenu(new Separator());
 
+		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
+		final Action sortByServerAction = 
+			new Action("Show by Team Server", IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				f_mediator.setSortByServer(isChecked());
+			}
+		};
+		final Action sortByProjectAction = 
+			new Action("Show by Project", IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				f_mediator.setSortByServer(!isChecked());
+			}
+		};
+		sortByServerAction.setChecked(ServerStatusSort.BY_SERVER == sort);
+		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
+		addToViewMenu(sortByProjectAction);
+		addToViewMenu(sortByServerAction);
+		
 		return new SierraServersMediator(this, statusTree, contextMenu,
-				newServerItem, duplicateServerItem, deleteServerItem,
+				newServerItem, browseServerItem, duplicateServerItem, deleteServerItem,
 				serverConnectItem, synchProjects, sendResultFilters,
 				getResultFilters, serverPropertiesItem, scanProjectItem,
 				rescanProjectItem, disconnectProjectItem);

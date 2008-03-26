@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -75,6 +76,7 @@ implements ISierraServerObserver {
 	private final ActionListener f_deleteServerAction;
 	private final ActionListener f_openInBrowserAction;	
 	private final MenuItem f_newServerItem;
+	private final MenuItem f_browseServerItem;
 	private final MenuItem f_duplicateServerItem;
 	private final MenuItem f_deleteServerItem;
 	private final MenuItem f_serverConnectItem;
@@ -168,7 +170,8 @@ implements ISierraServerObserver {
 	
 	public SierraServersMediator(SierraServersView view,
 			Tree statusTree, Menu contextMenu,
-			MenuItem newServerItem, MenuItem duplicateServerItem,
+			MenuItem newServerItem, MenuItem browseServerItem,
+			MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
 			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
@@ -187,6 +190,7 @@ implements ISierraServerObserver {
 			}
 		};		
 		view.addToActionBar(f_serverSyncAction);
+		view.addToActionBar(new Separator());
 		
 		f_newServerAction = 
 			new ActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
@@ -198,6 +202,18 @@ implements ISierraServerObserver {
 		};		
 		view.addToActionBar(f_newServerAction);
 
+		f_openInBrowserAction = 
+			new ServerActionListener("Browse", 
+				                     "Open the selected team server in a Web browser",
+				                     "No server to browse") {
+			@Override
+			protected void handleEventOnServer(SierraServer server) {
+				openInBrowser(server);		
+			}
+		};
+		f_openInBrowserAction.setEnabled(false);
+		view.addToActionBar(f_openInBrowserAction);
+		
 		f_duplicateServerAction = 
 			new ServerActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
 					                 "Duplicates the selected team server location",
@@ -242,19 +258,8 @@ implements ISierraServerObserver {
 		f_deleteServerAction.setEnabled(false);
 		view.addToActionBar(f_deleteServerAction);
 		
-		f_openInBrowserAction = 
-			new ServerActionListener("Browse", 
-				                     "Open the selected team server in a Web browser",
-				                     "No server to browse") {
-			@Override
-			protected void handleEventOnServer(SierraServer server) {
-				openInBrowser(server);		
-			}
-		};
-		f_openInBrowserAction.setEnabled(false);
-		view.addToActionBar(f_openInBrowserAction);
-		
 		f_newServerItem = newServerItem;
+		f_browseServerItem = browseServerItem;
 		f_duplicateServerItem = duplicateServerItem;
 		f_deleteServerItem = deleteServerItem;
 		f_serverConnectItem = serverConnectItem;
@@ -289,6 +294,7 @@ implements ISierraServerObserver {
 		// f_serverList.addListener(SWT.MouseDoubleClick, openInBrowserAction);
 
 		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
+		f_browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
 		f_duplicateServerItem.addListener(SWT.Selection, f_duplicateServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
@@ -422,6 +428,7 @@ implements ISierraServerObserver {
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
+				f_browseServerItem.setEnabled(onlyServer);
 				f_duplicateServerItem.setEnabled(onlyServer);
 				f_deleteServerItem.setEnabled(onlyServer);
 				f_serverConnectItem.setEnabled(onlyServer);
