@@ -56,10 +56,10 @@ public class ScanChangedProjectsAction extends
 							projects.size());
 					List<IJavaProject> noScanYet = null;
 					List<String> projectNames = null;
+					ScanManager manager = ScanManager.getInstance(conn);
 					try {
 						for (IJavaProject p : projects) {
-							ScanInfo info = ScanManager.getInstance(conn)
-									.getLatestScanInfo(p.getElementName());
+							ScanInfo info = manager.getLatestScanInfo(p.getElementName());
 							if (info != null) {
 								times.put(p, info.getScanTime());
 							} else {
