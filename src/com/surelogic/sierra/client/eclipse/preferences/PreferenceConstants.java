@@ -157,4 +157,16 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_STATUS_SORT, value.toString());
 	}
+	
+	public static final String P_SERVER_AUTO_UPDATE = "com.surelogic.common.eclipse.server-auto-update";
+	
+	public static boolean doServerAutoUpdate() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SERVER_AUTO_UPDATE);
+	}
+
+	public static void setServerAutoUpdate(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_AUTO_UPDATE, value);
+	}
 }

@@ -38,5 +38,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, false);
 		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT, 
 				         ServerStatusSort.BY_SERVER.toString());
+		store.setDefault(PreferenceConstants.P_SERVER_AUTO_UPDATE, true);
 	}
 }
