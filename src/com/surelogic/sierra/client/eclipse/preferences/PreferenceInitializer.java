@@ -37,6 +37,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN, true);
 		store.setDefault(PreferenceConstants.P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, false);
 		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT, 
-				         ServerStatusSort.BY_PROJECT.toString());
+				         ServerStatusSort.BY_SERVER.toString());
 	}
 }
