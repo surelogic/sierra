@@ -55,6 +55,27 @@ a.hover {
 	font-weight: bold;
 }
 
+/* Log */
+#log-pane {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+}
+
+.log-panel {
+	color: #666666;
+    border: 1px solid;    
+}
+
+.log-item {
+	
+}
+
+.log-item-text {
+	font-size: small;
+}
+
 /* Login Panel */
 .login-panel {
 	border: 2px groove;

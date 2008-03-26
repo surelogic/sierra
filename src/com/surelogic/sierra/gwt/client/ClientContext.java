@@ -33,8 +33,7 @@ public final class ClientContext {
 		return userAccount != null;
 	}
 
-	public static void login(String username, String password,
-			final UserListener callback) {
+	public static void login(String username, String password) {
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.login(username, password, new Callback() {
 
@@ -43,9 +42,6 @@ public final class ClientContext {
 				for (Iterator i = userListeners.iterator(); i.hasNext();) {
 					((UserListener) i.next()).onLoginFailure(message);
 				}
-				if (callback != null) {
-					callback.onLoginFailure(message);
-				}
 				refreshContext();
 			}
 
@@ -53,9 +49,6 @@ public final class ClientContext {
 				userAccount = (UserAccount) result;
 				for (Iterator i = userListeners.iterator(); i.hasNext();) {
 					((UserListener) i.next()).onLogin(userAccount);
-				}
-				if (callback != null) {
-					callback.onLogin(userAccount);
 				}
 				refreshContext();
 			}
@@ -73,6 +66,15 @@ public final class ClientContext {
 	public static void logout(final String errorMessage) {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
 		svc.logout(new Callback() {
+
+			protected void onException(Throwable caught) {
+				final UserAccount oldUser = userAccount;
+				userAccount = null;
+				for (Iterator i = userListeners.iterator(); i.hasNext();) {
+					((UserListener) i.next()).onLogout(oldUser, errorMessage);
+				}
+				refreshContext();
+			}
 
 			protected void onFailure(String message, Object result) {
 				if (errorMessage != null && !errorMessage.equals("")) {

@@ -59,9 +59,10 @@ public class LoginContent extends ContentComposite {
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
 
-		ClientContext.login(usernameText, passwordText, new UserListener() {
+		ClientContext.addUserListener(new UserListener() {
 
 			public void onLogin(UserAccount user) {
+				resetLoginAttempt();
 				errorMessage.setText("");
 				if (ClientContext.isContent(LoginContent.getInstance())) {
 					OverviewContent.getInstance().show();
@@ -79,9 +80,11 @@ public class LoginContent extends ContentComposite {
 
 			public void onLogout(UserAccount user, String errorMessageText) {
 				resetLoginAttempt();
-				errorMessage.setText("Logged out." + errorMessageText);
+				errorMessage.setText(errorMessageText);
 			}
 		});
+
+		ClientContext.login(usernameText, passwordText);
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {

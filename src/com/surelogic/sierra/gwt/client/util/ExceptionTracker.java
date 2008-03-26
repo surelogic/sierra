@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.util;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.LogPanel;
 
 /**
  * TODO Look up standard GWT exception model, this is an unverified approach
@@ -8,12 +9,12 @@ import com.google.gwt.user.client.Window;
  */
 public class ExceptionTracker {
 
+	private ExceptionTracker() {
+		// no instance
+	}
+
 	public static void logException(Throwable caught) {
-		// TODO log these traces to a hidden text field?
-		String message = caught.getMessage();
-		if (message == null) {
-			message = caught.toString();
-		}
-		Window.alert(message);
+		GWT.log("ExceptionTracker", caught);
+		LogPanel.getInstance().log(caught);
 	}
 }
