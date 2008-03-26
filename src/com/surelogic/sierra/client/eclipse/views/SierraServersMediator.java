@@ -792,7 +792,13 @@ implements ISierraServerObserver {
 			item.setExpanded(true);
 			if (byServer) {
 				for(TreeItem item2 : item.getItems()) {
-					item2.setExpanded(true);
+					if (item2.getText().endsWith("Connected Projects")) {
+						item2.setExpanded(true);
+						// Expand projects
+						for(TreeItem item3 : item2.getItems()) {
+							item3.setExpanded(true);
+						}
+					}
 				}
 			}
 		}
@@ -855,8 +861,18 @@ implements ISierraServerObserver {
 			if (focus != null && label.equals(focus.getLabel())) {
 				focused = item;
 			}
-			ChangeStatus status = createProjectItems(item, server);
-			item.setText(status.getLabel()+label+" ["+server.toURLWithContextPath()+']');
+			ChangeStatus status = ChangeStatus.NONE;
+			if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {
+				TreeItem projects = new TreeItem(item, SWT.NONE);
+				projects.setImage(SLImages
+						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+
+				status = createProjectItems(projects, server);
+				projects.setText(status.getLabel()+"Connected Projects");
+			}
+			ChangeStatus status2 = createScanFilters(item, server);
+			ChangeStatus status3 = status.merge(status2);
+			item.setText(status3.getLabel()+label+" ["+server.toURLWithContextPath()+']');
 		}
 		createUnassociatedProjectItems();
 		
@@ -865,6 +881,16 @@ implements ISierraServerObserver {
 		}
 	}
 	
+	private ChangeStatus createScanFilters(TreeItem parent, SierraServer server) {
+		TreeItem root = new TreeItem(parent, SWT.NONE);
+		root.setText("Scan Filters");
+		root.setImage(SLImages.getImage(SLImages.IMG_FILTER));
+		
+		TreeItem label = new TreeItem(root, SWT.NONE);
+		label.setText("Coming ...");
+		return ChangeStatus.NONE;
+	}
+
 	private void createUnassociatedProjectItems() {
 		TreeItem parent = null;
 		ChangeStatus status = ChangeStatus.NONE;
@@ -1003,7 +1029,7 @@ implements ISierraServerObserver {
 		TreeItem audits = new TreeItem(root, SWT.NONE);
 		if (server) {
 			audits.setText("< "+numAudits+" audit"+s(numAudits)+
-					       " on "+findings+" finding"+s(findings));
+					       " on "+findings+" finding"+s(findings)+" on the server");
 		} else {
 			audits.setText("> "+numAudits+" audit"+s(numAudits)+
 					       " on "+findings+" finding"+s(findings));
@@ -1021,6 +1047,9 @@ implements ISierraServerObserver {
 		return audits;
 	}
 
+	/**
+	 * Show by Project
+	 */
 	private void createProjectItems() {
 		for (ProjectStatus ps : projects) {
 			final TreeItem root = new TreeItem(f_statusTree, SWT.NONE);
