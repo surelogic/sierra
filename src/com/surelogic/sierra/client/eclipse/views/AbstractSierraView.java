@@ -87,16 +87,32 @@ implements IViewCallback {
 		getViewSite().getActionBars().setGlobalActionHandler(id, action);
 	}
 	
+	private IMenuManager getMenuManager() {
+		return getViewSite().getActionBars().getMenuManager();
+	}
+	
 	public final void addToViewMenu(IAction action) {
-		final IMenuManager menu = 
-			getViewSite().getActionBars().getMenuManager();
+		final IMenuManager menu = getMenuManager();
 		menu.prependToGroup(VIEW_GROUP, action);
 	}
 	
+	public final void addToViewMenu(IContributionItem item) {
+		final IMenuManager menu = getMenuManager();
+		menu.prependToGroup(VIEW_GROUP, item);
+	}
+	
+	private IToolBarManager getToolBarManager() {
+		return getViewSite().getActionBars().getToolBarManager();
+	}
+	
 	public final void addToActionBar(IAction action) {
-		final IToolBarManager bar = 
-			getViewSite().getActionBars().getToolBarManager();
+		final IToolBarManager bar = getToolBarManager();
 		bar.appendToGroup(VIEW_GROUP, action);
+	}
+	
+	public final void addToActionBar(IContributionItem item) {
+		final IToolBarManager bar = getToolBarManager();
+		bar.appendToGroup(VIEW_GROUP, item);
 	}
 	
 	@Override
