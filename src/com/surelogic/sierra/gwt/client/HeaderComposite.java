@@ -86,7 +86,7 @@ public abstract class HeaderComposite extends Composite {
 			if (context != null && context.getContent() != null) {
 				newIndex = tabContent.indexOf(context.getContent());
 			} else {
-				newIndex = -1;
+				newIndex = 0;
 			}
 			if (newIndex != mainBar.getSelectedTab()) {
 				mainBar.selectTab(newIndex);
