@@ -687,7 +687,9 @@ implements ISierraServerObserver {
 						try {
 							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
 						} catch (Exception e) {
-							e.printStackTrace(); // FIX to log
+							e.printStackTrace(); 
+							// FIX to log
+							// FIX to pop up dialog?
 						}
 					}
 					if (responses != null) {
