@@ -51,6 +51,8 @@ import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.jdbc.scan.ScanInfo;
+import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
@@ -705,6 +707,7 @@ implements ISierraServerObserver {
 		try {			
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
 			ClientFindingManager cfm = cpm.getFindingManager();
+			ScanManager sm           = ScanManager.getInstance(c);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 			synchronized (responseMap) {
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -720,8 +723,9 @@ implements ISierraServerObserver {
 					List<SyncTrailResponse> responses = responseMap.get(name);
 
 					// FIX Check for a full scan (later than what's on the server?)
-					final File scan = NewScan.getScanDocumentFile(name);
-					ProjectStatus s = new ProjectStatus(jp, scan, findings, responses);
+					final File scan = NewScan.getScanDocumentFile(name);					
+					ScanInfo info = sm.getLatestScanInfo(name);
+					ProjectStatus s = new ProjectStatus(jp, scan, info, findings, responses);
 					projects.add(s);
 				}
 			}
@@ -980,10 +984,25 @@ implements ISierraServerObserver {
 		
 		if (ps.scanDoc != null && ps.scanDoc.exists()) {
 			TreeItem scan = new TreeItem(root, SWT.NONE);
-			Date modified = new Date(ps.scanDoc.lastModified());
-			scan.setText("Last full scan done locally on "+dateFormat.format(modified));
-			scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
-			scan.setData(ps.scanDoc);
+			if (ps.scanInfo != null) {
+				Date lastScanTime = ps.scanInfo.getScanTime();
+				
+				if (ps.scanInfo.isPartial()) {
+					// Latest is a re-scan
+					scan.setText("Needs a full scan ... re-scan done locally on "+dateFormat.format(lastScanTime));
+					scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+				} else {
+					scan.setText("Last full scan done locally on "+dateFormat.format(lastScanTime));
+					scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+				}
+				scan.setData(ps.scanInfo);
+				
+			} else {
+				Date docModified = new Date(ps.scanDoc.lastModified());
+				scan.setText("Last full scan done locally on "+dateFormat.format(docModified));
+				scan.setData(ps.scanDoc);
+				scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+			}
 			//status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {

@@ -9,6 +9,7 @@ import java.util.*;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
+import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
@@ -16,6 +17,8 @@ class ProjectStatus {
 	final IJavaProject project;
 	final String name;
 	final File scanDoc;
+	final ScanInfo scanInfo;
+	
 	final List<FindingAudits> localFindings;
 	final int numLocalAudits;
 	final Date earliestLocalAudit, latestLocalAudit;
@@ -27,14 +30,16 @@ class ProjectStatus {
 	final Map<String,Integer> userCount = new HashMap<String,Integer>();
 	
 	public ProjectStatus(IJavaProject jp) {
-		this(jp, null, Collections.<FindingAudits>emptyList(), null);
+		this(jp, null, null, Collections.<FindingAudits>emptyList(), null);
 	}
 	
-	public ProjectStatus(IJavaProject jp, File scan, List<FindingAudits> findings,
+	public ProjectStatus(IJavaProject jp, File scan, ScanInfo info, 
+			             List<FindingAudits> findings,
 			             List<SyncTrailResponse> responses) {
 		project = jp;
 		name = jp.getElementName();
 		scanDoc = scan;
+		scanInfo = info;
 		this.localFindings = findings;
 		serverData = responses;
 
