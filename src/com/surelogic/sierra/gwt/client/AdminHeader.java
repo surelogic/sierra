@@ -7,6 +7,14 @@ public class AdminHeader extends AuthenticatedHeader {
 		return instance;
 	}
 
+	private AdminHeader() {
+		super();
+	}
+
+	protected void addUtilities() {
+		// do nothing for now
+	}
+
 	protected void addTabs() {
 		addTab("Settings", SettingsContent.getInstance());
 		addTab("Users", UserManagementContent.getInstance());

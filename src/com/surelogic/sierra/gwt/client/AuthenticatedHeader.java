@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -10,10 +9,8 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public abstract class AuthenticatedHeader extends HeaderComposite {
 	private Label userName;
-	private Label manageSite;
-	private Label manageSiteSeparator;
 
-	protected final void onInitialize(VerticalPanel rootPanel) {
+	protected void onInitialize(VerticalPanel rootPanel) {
 		StringBuffer location = new StringBuffer();
 		location.append("Logged in to ");
 		location.append(GWT.getHostPageBaseURL().replaceFirst(".*//", "")
@@ -25,15 +22,7 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 		userName.addStyleName("user");
 		addUtilitySeparator();
 
-		manageSite = addUtilityItem("Manage Site", new ClickListener() {
-
-			public void onClick(Widget sender) {
-				String url = ContentRegistry.getContentUrl(SettingsContent
-						.getInstance());
-				Window.open(url.toString(), null, null);
-			}
-		});
-		manageSiteSeparator = addUtilitySeparator();
+		addUtilities();
 
 		addUtilityItem("Log out", new ClickListener() {
 
@@ -44,6 +33,8 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 		addTabs();
 	}
+
+	protected abstract void addUtilities();
 
 	protected abstract void addTabs();
 
@@ -59,17 +50,9 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 		// nothing to do
 	}
 
-	protected final void onUpdateUser(UserAccount user) {
+	protected void onUpdateUser(UserAccount user) {
 		if (user != null) {
 			userName.setText(user.getUserName());
-
-			if (user.isAdministrator()) {
-				manageSite.setVisible(true);
-				manageSiteSeparator.setVisible(true);
-			} else {
-				manageSite.setVisible(false);
-				manageSiteSeparator.setVisible(false);
-			}
 		}
 	}
 }
