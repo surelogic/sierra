@@ -6,9 +6,6 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
@@ -62,7 +59,7 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver {
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
-	private static final long UPDATE_DELAY_SEC = 300;
+	private static final long UPDATE_DELAY_SEC = 5;//300;
 	private static final long UPDATE_DELAY_MS = UPDATE_DELAY_SEC * 1000;
 	
 	/**
@@ -76,10 +73,7 @@ implements ISierraServerObserver {
 	 */
     private final Map<String,List<SyncTrailResponse>> responseMap = 
     	new HashMap<String,List<SyncTrailResponse>>();   
-    
-    private final ScheduledExecutorService f_executor = 
-    	Executors.newScheduledThreadPool(1);
-    
+
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
     
@@ -488,7 +482,7 @@ implements ISierraServerObserver {
 			}			
 		});
 		
-		final Runnable doServerAutoUpdate = new Runnable() {
+		final Job doServerAutoUpdate = new Job("Server auto-update") {
 			public void run() {
 				if (PreferenceConstants.doServerAutoUpdate()) {
 					long now  = System.currentTimeMillis();
@@ -496,16 +490,22 @@ implements ISierraServerObserver {
 					long gap  = next - now;
 				    if (gap > 0) {
 				    	System.out.println("Wait a bit longer: "+gap);
-				    	f_executor.schedule(this, gap, TimeUnit.MILLISECONDS);
+				    	schedule(gap);
 				    	return;
 				    } 				    	
 				    // No need to wait ...
 				    asyncUpdateServerInfo();				    
 				}
-				f_executor.schedule(this, UPDATE_DELAY_SEC, TimeUnit.SECONDS);
+				schedule(UPDATE_DELAY_MS);
+			}
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				run();
+				return Status.OK_STATUS;
 			}			
 		};
-		f_executor.schedule(doServerAutoUpdate, UPDATE_DELAY_SEC, TimeUnit.SECONDS);
+		doServerAutoUpdate.setSystem(true);
+		doServerAutoUpdate.schedule(UPDATE_DELAY_MS);
 	}
 	
 	private List<SierraServer> collectServers() {
