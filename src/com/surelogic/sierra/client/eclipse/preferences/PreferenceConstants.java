@@ -200,6 +200,22 @@ public class PreferenceConstants {
 				P_SERVER_AUTO_SYNC_DELAY, value);
 	}	
 	
+	/**
+	 * Threshold of # of unsynchronized audits for triggering a sync
+	 */
+	public static final String P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD = 
+		"com.surelogic.common.eclipse.server-auto-sync-audit-threshold";
+	
+	public static int getServerAutoSyncAuditThreshold() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD);
+	}
+
+	public static void setServerAutoSyncAuditThreshold(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD, value);
+	}	
+	
 	public static final String P_SERVER_AUTO_UPDATE_DELAY = "com.surelogic.common.eclipse.server-auto-update-delay";
 	
 	public static int getServerAutoUpdateDelay() {

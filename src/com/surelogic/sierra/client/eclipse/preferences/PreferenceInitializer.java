@@ -42,5 +42,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC, true);
 		store.setDefault(PreferenceConstants.P_SERVER_AUTO_UPDATE_DELAY, 5);
 		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC_DELAY, 5);
+		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD, 200);
 	}
 }
