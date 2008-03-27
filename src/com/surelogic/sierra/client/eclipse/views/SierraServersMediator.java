@@ -837,9 +837,8 @@ implements ISierraServerObserver {
 		Exception exc = null;
 		try {			
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
-			synchronized (responseMap) {
-				// FIX to distinguish server failure/disconnection and RPC failure 
-				//Set<SierraServer> serverFailed;
+			synchronized (responseMap) {				
+				Set<SierraServer> failedServers = null;
 				responseMap.clear();				
 				
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -852,7 +851,11 @@ implements ISierraServerObserver {
 					final SierraServer server = f_manager.getServer(name);
 					List<SyncTrailResponse> responses = null;
 					if (server != null) {
+						if (failedServers != null && failedServers.contains(server)) {
+							continue;
+						}
 						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
+						// Try to distinguish server failure/disconnection and RPC failure 
 						try {
 							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
 						} catch (ServerMismatchException e) {
@@ -860,6 +863,10 @@ implements ISierraServerObserver {
 						} catch (SQLException e) {
 							handleServerFailure(server, e);
 						} catch (SierraServiceClientException e) {
+							if (failedServers == null) {
+								failedServers = new HashSet<SierraServer>();
+							}
+							failedServers.add(server);
 							handleServerFailure(server, e);
 						} catch (Exception e) {
 							handleServerFailure(server, e);
