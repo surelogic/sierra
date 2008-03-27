@@ -20,6 +20,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -38,6 +41,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.*;
 import com.surelogic.sierra.client.eclipse.dialogs.*;
@@ -49,6 +53,7 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
@@ -532,6 +537,38 @@ implements ISierraServerObserver {
 			}
 		};		
 		doServerAutoSync.schedule(doServerAutoSync.getDelay());
+		
+		final IPreferenceStore store = 
+			Activator.getDefault().getPreferenceStore();
+		store.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty() == PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
+					if (event.getNewValue() != event.getOldValue()) {
+						final ServerInteractionSetting s = 
+							ServerInteractionSetting.valueOf((String) event.getNewValue());
+						final Job job = new DatabaseJob("Switching server interaction") {
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								synchronized (responseMap) {
+									if (s.useAuditThreshold() && checkAutoSyncTrigger(projects)) {
+										asyncSyncWithServer();
+									}						
+									else if (s.doServerAutoSync()) {
+										asyncSyncWithServer();
+									}
+									else if (s.doServerAutoUpdate()) {
+										asyncUpdateServerInfo();
+									}
+								}
+								return Status.OK_STATUS;
+							}						
+						};
+						job.schedule();
+					}
+				}				
+			}
+			
+		});
 	}
 	
 	private abstract class AutoJob extends Job {
@@ -942,9 +979,12 @@ implements ISierraServerObserver {
 		checkAutoSyncTrigger(projects);
 	}
 
-	private void checkAutoSyncTrigger(final List<ProjectStatus> projects) {
+	/**
+	 * @return true if triggered an auto-sync
+	 */
+	private boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
 		if (!PreferenceConstants.getServerInteractionSetting().useAuditThreshold()) {
-			return;
+			return false;
 		}
 		final int auditThreshold = PreferenceConstants.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
@@ -955,8 +995,10 @@ implements ISierraServerObserver {
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
 				asyncSyncWithServer();
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	protected void createTreeItems() {
