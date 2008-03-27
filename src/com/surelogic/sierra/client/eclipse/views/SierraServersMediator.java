@@ -903,6 +903,22 @@ implements ISierraServerObserver {
 		
 		createTreeItems();
 		f_statusTree.setRedraw(true);
+		
+		checkAutoSyncTrigger(projects);
+	}
+
+	private void checkAutoSyncTrigger(final List<ProjectStatus> projects) {
+		final int auditThreshold = PreferenceConstants.getServerAutoSyncAuditThreshold();
+		if (auditThreshold > 0) {
+			int audits = 0;
+			for(ProjectStatus ps : projects) {
+				audits += ps.numLocalAudits + ps.numServerAudits;
+			}
+			// FIX should this be per-project?
+			if (audits > auditThreshold) {
+				asyncSyncWithServer();
+			}
+		}
 	}
 	
 	protected void createTreeItems() {
