@@ -171,6 +171,11 @@ public class PreferenceConstants {
 				.valueOf(resultString);
 		return result;
 	}
+	
+	public static void setServerInteractionSetting(ServerInteractionSetting s) {
+		Activator.getDefault().getPluginPreferences()
+			.setValue(P_SERVER_INTERACTION_SETTING, s.toString());
+	}
 
 	/**
 	 * Period in minutes of automatic server interaction.

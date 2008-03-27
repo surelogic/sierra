@@ -11,6 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
@@ -93,33 +94,36 @@ public final class SierraServersView extends
 		addToViewMenu(exportAction);
 		addToViewMenu(new Separator());
 
-		final Action autoUpdateServerAction =
-			new Action("Auto-update Server Info", IAction.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				boolean old = PreferenceConstants.doServerAutoUpdate();
-				PreferenceConstants.setServerAutoUpdate(isChecked());
-				if (!old && isChecked()) {
-					f_mediator.asyncUpdateServerInfo();
+		Action[] serverInteractionChoices = 
+			new Action[ServerInteractionSetting.values().length];
+		ServerInteractionSetting current = 
+			PreferenceConstants.getServerInteractionSetting();
+		int i=0;		
+		for(final ServerInteractionSetting s : ServerInteractionSetting.values()) {
+			serverInteractionChoices[i] = 
+				new Action(s.getLabel(), IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					ServerInteractionSetting old = 
+						PreferenceConstants.getServerInteractionSetting();
+					PreferenceConstants.setServerInteractionSetting(s);
+					if (old != s) {
+						if (s.doServerAutoSync()) {
+							f_mediator.asyncSyncWithServer();
+						}
+						else if (s.doServerAutoUpdate()) {
+							f_mediator.asyncUpdateServerInfo();
+						}
+					}
 				}
+			};
+			addToViewMenu(serverInteractionChoices[i]);
+			if (s == current) {
+				serverInteractionChoices[i].setChecked(true);
 			}
-		};
-		final Action autoSyncServerAction =
-			new Action("Auto-sync With Server", IAction.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				boolean old = PreferenceConstants.doServerAutoSync();
-				PreferenceConstants.setServerAutoSync(isChecked());
-				if (!old && isChecked()) {
-					f_mediator.asyncSyncWithServer();
-				}
-			}
-		};
-		
-		autoUpdateServerAction.setChecked(PreferenceConstants.doServerAutoUpdate());
-		addToViewMenu(autoUpdateServerAction);
-		autoSyncServerAction.setChecked(PreferenceConstants.doServerAutoSync());
-		addToViewMenu(autoSyncServerAction);
+			
+			i++;
+		}
 		addToViewMenu(new Separator());
 		
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
@@ -147,6 +151,6 @@ public final class SierraServersView extends
 				serverConnectItem, synchProjects, sendResultFilters,
 				getResultFilters, serverPropertiesItem, scanProjectItem,
 				rescanProjectItem, disconnectProjectItem,
-				autoUpdateServerAction, autoSyncServerAction);
+				serverInteractionChoices);
 	}
 }

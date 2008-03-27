@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -48,12 +49,15 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
@@ -66,12 +70,23 @@ implements ISierraServerObserver {
     private List<ProjectStatus> projects = Collections.emptyList();
     
 	/**
+	 * A map from a project to the server response
+	 * 
+	 * Protected by itself
 	 * This should only be accessed in a database job 
 	 * (possibly from multiple threads)
 	 */
     private final Map<String,List<SyncTrailResponse>> responseMap = 
     	new HashMap<String,List<SyncTrailResponse>>();   
-
+    
+    /**
+     * Counts of consecutive server failures
+     * 
+     * Protected by responseMap
+     */
+    private final Map<SierraServer,Integer> serverFailures = 
+    	new HashMap<SierraServer,Integer>();
+    
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
     
@@ -95,8 +110,7 @@ implements ISierraServerObserver {
 	private final MenuItem f_scanProjectItem;
 	private final MenuItem f_rescanProjectItem;
 	private final MenuItem f_disconnectProjectItem;
-	private final Action f_autoSyncServerAction;
-	private final Action f_autoUpdateServerAction;
+	private final Action[] f_serverInteractionChoices;
 
 	private abstract class ActionListener extends Action implements Listener {
 		ActionListener(String text, String tooltip) {
@@ -187,7 +201,7 @@ implements ISierraServerObserver {
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem disconnectProjectItem, 
-			Action autoUpdateServerAction, Action autoSyncServerAction) {
+			Action[] serverInteractionChoices) {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
@@ -290,8 +304,7 @@ implements ISierraServerObserver {
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
-		f_autoSyncServerAction = autoSyncServerAction;
-		f_autoUpdateServerAction = autoUpdateServerAction;
+		f_serverInteractionChoices = serverInteractionChoices;
 	}
 
 	public String getHelpId() {
@@ -498,7 +511,7 @@ implements ISierraServerObserver {
 		final AutoJob doServerAutoUpdate = 
 			new AutoJob("Server auto-update", lastServerUpdateTime) {
 			@Override protected boolean isEnabled() {
-				return PreferenceConstants.doServerAutoUpdate();
+				return PreferenceConstants.getServerInteractionSetting().doServerAutoUpdate();
 			}
 			@Override protected long getDelay() {
 				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
@@ -513,7 +526,7 @@ implements ISierraServerObserver {
 			new AutoJob("Server auto-sync", 
  					    SynchronizeAllProjectsAction.getLastSyncTime()) {
 			@Override protected boolean isEnabled() {
-				return PreferenceConstants.doServerAutoSync();
+				return PreferenceConstants.getServerInteractionSetting().doServerAutoSync();
 			}
 			@Override protected long getDelay() {
 				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
@@ -792,7 +805,9 @@ implements ISierraServerObserver {
 		try {			
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
 			synchronized (responseMap) {
-				responseMap.clear();
+				// FIX to distinguish server failure/disconnection and RPC failure 
+				//Set<SierraServer> serverFailed;
+				responseMap.clear();				
 				
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
@@ -801,20 +816,25 @@ implements ISierraServerObserver {
 					}		
 
 					// Check for new remote audits
-					SierraServer server = f_manager.getServer(name);
+					final SierraServer server = f_manager.getServer(name);
 					List<SyncTrailResponse> responses = null;
 					if (server != null) {
 						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
 						try {
 							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
+						} catch (ServerMismatchException e) {
+							handleServerFailure(server, e);
+						} catch (SQLException e) {
+							handleServerFailure(server, e);
+						} catch (SierraServiceClientException e) {
+							handleServerFailure(server, e);
 						} catch (Exception e) {
-							e.printStackTrace(); 
-							// FIX to log
-							// FIX to pop up dialog?
+							handleServerFailure(server, e);
 						}
 					}
 					if (responses != null) {
 						responseMap.put(name, responses);
+						handleServerSuccess(server);
 					}
 				}
 			}
@@ -833,6 +853,28 @@ implements ISierraServerObserver {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Protected by responseMap
+	 */
+	private void handleServerSuccess(SierraServer server) {
+		serverFailures.remove(server);		
+	}
+
+	/**
+	 * Protected by responseMap
+	 */
+	private void handleServerFailure(SierraServer server, Exception e) {
+		Integer count = serverFailures.get(server);
+		count = (count == null) ? 1 : count+1;
+		if (count > 0) {
+			// FIX do something when it gets above a certain threshold?
+		}		
+		serverFailures.put(server, count);
+		e.printStackTrace(); 
+		// FIX to log
+		// FIX to pop up dialog?
 	}
 	
 	private void updateContents() throws Exception {
@@ -884,8 +926,13 @@ implements ISierraServerObserver {
 	}
 	
 	public void updateContentsInUI(final List<ProjectStatus> projects) {
-		f_autoUpdateServerAction.setChecked(PreferenceConstants.doServerAutoUpdate());
-		f_autoSyncServerAction.setChecked(PreferenceConstants.doServerAutoSync());
+		// Update to match stored preferences
+		ServerInteractionSetting current = PreferenceConstants.getServerInteractionSetting();
+		for(int i=0; i < f_serverInteractionChoices.length; i++) {
+			if (current.getLabel().equals(f_serverInteractionChoices[i].getText())) {
+				f_serverInteractionChoices[i].setChecked(true);
+			}
+		}
 		
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
@@ -908,7 +955,10 @@ implements ISierraServerObserver {
 	}
 
 	private void checkAutoSyncTrigger(final List<ProjectStatus> projects) {
-		final int auditThreshold = PreferenceConstants.getServerAutoSyncAuditThreshold();
+		if (!PreferenceConstants.getServerInteractionSetting().useAuditThreshold()) {
+			return;
+		}
+		final int auditThreshold = PreferenceConstants.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
 			int audits = 0;
 			for(ProjectStatus ps : projects) {
