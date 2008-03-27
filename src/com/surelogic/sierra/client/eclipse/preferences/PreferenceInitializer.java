@@ -40,7 +40,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT,
 				ServerStatusSort.BY_SERVER.toString());
 		store.setDefault(PreferenceConstants.P_SERVER_INTERACTION_SETTING,
-				ServerInteractionSetting.NEVER.toString());
+				ServerInteractionSetting.CHECK.toString());
 		store.setDefault(
 				PreferenceConstants.P_SERVER_INTERACTION_PERIOD_IN_MINUTES, 5);
 		store.setDefault(
