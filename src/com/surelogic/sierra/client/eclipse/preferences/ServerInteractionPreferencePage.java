@@ -4,6 +4,8 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.ScaleFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,6 +32,7 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 	}
 
 	RadioGroupFieldEditor f_serverInteractionSetting;
+	Group f_group;
 	ScaleFieldEditor f_periodInMinutes;
 	IntegerFieldEditor f_auditThreshold;
 
@@ -56,8 +59,16 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		f_serverInteractionSetting.setPage(this);
 		f_serverInteractionSetting.setPreferenceStore(getPreferenceStore());
 		f_serverInteractionSetting.load();
+		f_serverInteractionSetting
+				.setPropertyChangeListener(new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						final ServerInteractionSetting value = ServerInteractionSetting
+								.valueOf(event.getNewValue().toString());
+						mediateDialogState(value);
+					}
+				});
 
-		final Group f_group = new Group(panel, SWT.NONE);
+		f_group = new Group(panel, SWT.NONE);
 		f_group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		f_group.setLayout(new GridLayout());
 		f_group.setText("Server Interaction Preferences");
@@ -83,7 +94,7 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 
 		f_auditThreshold = new IntegerFieldEditor(
 				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD,
-				"# of audits (the threshold), to trigger automatic synchronization:",
+				"Audit threshold (# of audits that have not been synchronized):",
 				f_group);
 		f_auditThreshold.setPage(this);
 		f_auditThreshold.setPreferenceStore(getPreferenceStore());
@@ -99,6 +110,8 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
+		mediateDialogState(PreferenceConstants.getServerInteractionSetting());
+
 		return panel;
 	}
 
@@ -107,6 +120,14 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 				.getSelection();
 		f_periodInMinutes
 				.setLabelText(I18N.msg(SERVER_PERIOD_LABEL, periodMin));
+	}
+
+	private void mediateDialogState(final ServerInteractionSetting currentChoice) {
+		f_group.setEnabled(currentChoice != ServerInteractionSetting.NEVER);
+		f_periodInMinutes.setEnabled(
+				currentChoice != ServerInteractionSetting.NEVER, f_group);
+		f_auditThreshold.setEnabled(
+				currentChoice == ServerInteractionSetting.THRESHOLD, f_group);
 	}
 
 	@Override

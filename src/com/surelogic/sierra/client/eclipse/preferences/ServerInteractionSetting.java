@@ -16,13 +16,13 @@ public enum ServerInteractionSetting {
 	PERIODIC {
 		@Override
 		public String getLabel() {
-			return "Automatically synchronize audits periodically";
+			return "Automatically synchronize audits (periodically)";
 		}
 	},
 	THRESHOLD {
 		@Override
 		public String getLabel() {
-			return "Automatically synchronize audits when threshold is reached";
+			return "Automatically synchronize audits when audit threshold is reached";
 		}
 	};
 	abstract public String getLabel();
