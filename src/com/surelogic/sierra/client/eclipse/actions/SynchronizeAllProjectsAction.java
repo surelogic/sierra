@@ -56,8 +56,9 @@ public final class SynchronizeAllProjectsAction implements
 					job.schedule();
 				}
 			};
-			final Shell shell = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell();
+			// FIX 
+			final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			final Shell shell = window == null? null : window.getShell();
 			ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
 					server, shell, serverAction);
 			joinJob.schedule();
