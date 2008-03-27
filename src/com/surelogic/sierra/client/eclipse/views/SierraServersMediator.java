@@ -49,7 +49,6 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
@@ -110,7 +109,6 @@ implements ISierraServerObserver {
 	private final MenuItem f_scanProjectItem;
 	private final MenuItem f_rescanProjectItem;
 	private final MenuItem f_disconnectProjectItem;
-	private final Action[] f_serverInteractionChoices;
 
 	private abstract class ActionListener extends Action implements Listener {
 		ActionListener(String text, String tooltip) {
@@ -200,8 +198,7 @@ implements ISierraServerObserver {
 			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
-			MenuItem disconnectProjectItem, 
-			Action[] serverInteractionChoices) {
+			MenuItem disconnectProjectItem) {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
@@ -304,7 +301,6 @@ implements ISierraServerObserver {
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
 		f_disconnectProjectItem = disconnectProjectItem;
-		f_serverInteractionChoices = serverInteractionChoices;
 	}
 
 	public String getHelpId() {
@@ -925,15 +921,7 @@ implements ISierraServerObserver {
 		}
 	}
 	
-	public void updateContentsInUI(final List<ProjectStatus> projects) {
-		// Update to match stored preferences
-		ServerInteractionSetting current = PreferenceConstants.getServerInteractionSetting();
-		for(int i=0; i < f_serverInteractionChoices.length; i++) {
-			if (current.getLabel().equals(f_serverInteractionChoices[i].getText())) {
-				f_serverInteractionChoices[i].setChecked(true);
-			}
-		}
-		
+	public void updateContentsInUI(final List<ProjectStatus> projects) {		
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 				

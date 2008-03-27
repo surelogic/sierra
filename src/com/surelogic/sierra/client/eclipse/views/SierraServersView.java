@@ -3,15 +3,18 @@ package com.surelogic.sierra.client.eclipse.views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
@@ -94,36 +97,20 @@ public final class SierraServersView extends
 		addToViewMenu(exportAction);
 		addToViewMenu(new Separator());
 
-		Action[] serverInteractionChoices = 
-			new Action[ServerInteractionSetting.values().length];
-		ServerInteractionSetting current = 
-			PreferenceConstants.getServerInteractionSetting();
-		int i=0;		
-		for(final ServerInteractionSetting s : ServerInteractionSetting.values()) {
-			serverInteractionChoices[i] = 
-				new Action(s.getLabel(), IAction.AS_RADIO_BUTTON) {
-				@Override
-				public void run() {
-					ServerInteractionSetting old = 
-						PreferenceConstants.getServerInteractionSetting();
-					PreferenceConstants.setServerInteractionSetting(s);
-					if (old != s) {
-						if (s.doServerAutoSync()) {
-							f_mediator.asyncSyncWithServer();
-						}
-						else if (s.doServerAutoUpdate()) {
-							f_mediator.asyncUpdateServerInfo();
-						}
-					}
-				}
-			};
-			addToViewMenu(serverInteractionChoices[i]);
-			if (s == current) {
-				serverInteractionChoices[i].setChecked(true);
+		Action serverInteractionAction =
+			new Action("Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
+			@SuppressWarnings("restriction")
+			@Override
+			public void run() {				
+				FilteredPreferenceDialog dialog = (FilteredPreferenceDialog) 
+					PreferencesUtil.createPreferenceDialogOn(null, PreferencesAction.PREF_ID,
+					PreferencesAction.SERVER_INTERACTION, null);
+				dialog.setCurrentPageId(PreferencesAction.SERVER_INTERACTION_ID);
+				dialog.open();
+
 			}
-			
-			i++;
-		}
+		};
+		addToViewMenu(serverInteractionAction);
 		addToViewMenu(new Separator());
 		
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
@@ -150,7 +137,6 @@ public final class SierraServersView extends
 				newServerItem, browseServerItem, duplicateServerItem, deleteServerItem,
 				serverConnectItem, synchProjects, sendResultFilters,
 				getResultFilters, serverPropertiesItem, scanProjectItem,
-				rescanProjectItem, disconnectProjectItem,
-				serverInteractionChoices);
+				rescanProjectItem, disconnectProjectItem);
 	}
 }
