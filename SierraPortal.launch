@@ -15,6 +15,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.GWTShell"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-out www com.surelogic.sierra.gwt.SierraPortal/SierraPortal.html"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-noserver -port 13376 -out www sl/SierraPortal.html"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="sierra-portal"/>
 </launchConfiguration>
