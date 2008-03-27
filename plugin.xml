@@ -45,9 +45,9 @@
 			<keywordReference id="com.surelogic.sierra.client.key6" />
 		</page>
 		<page
-			class="com.surelogic.sierra.client.eclipse.preferences.ServerPreferencePage"
-			id="com.surelogic.sierra.client.eclipse.preferences.ServerPreferencePage"
-			name="Server"
+			class="com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage"
+			id="com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage"
+			name="Server Interaction"
 			category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
 			<keywordReference id="com.surelogic.sierra.client.key1" />
 			<keywordReference id="com.surelogic.sierra.client.key7" />
@@ -342,7 +342,7 @@
 			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig">
-			</viewShortcut>			
+			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.ProjectStatusView">
 			</viewShortcut>

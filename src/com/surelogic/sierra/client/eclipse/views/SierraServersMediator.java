@@ -501,7 +501,7 @@ implements ISierraServerObserver {
 				return PreferenceConstants.doServerAutoUpdate();
 			}
 			@Override protected long getDelay() {
-				return PreferenceConstants.getServerAutoUpdateDelay() * 60000;			
+				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
 			}
 			@Override protected void run() {
 				asyncUpdateServerInfo();	
@@ -516,7 +516,7 @@ implements ISierraServerObserver {
 				return PreferenceConstants.doServerAutoSync();
 			}
 			@Override protected long getDelay() {
-				return PreferenceConstants.getServerAutoSyncDelay() * 60000;			
+				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
 			}
 			@Override protected void run() {
 				asyncSyncWithServer();	

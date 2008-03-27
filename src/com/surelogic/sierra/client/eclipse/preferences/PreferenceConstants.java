@@ -133,7 +133,7 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
-	
+
 	public static final String P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES = "com.surelogic.common.eclipse.omit-empty-synchronize-entries";
 
 	public static boolean hideEmptySynchronizeEntries() {
@@ -145,11 +145,12 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, value);
 	}
-	
+
 	public static final String P_SERVER_STATUS_SORT = "com.surelogic.common.eclipse.server-status-sort";
 
 	public static ServerStatusSort getServerStatusSort() {
-		String sort = Activator.getDefault().getPluginPreferences().getString(P_SERVER_STATUS_SORT);
+		String sort = Activator.getDefault().getPluginPreferences().getString(
+				P_SERVER_STATUS_SORT);
 		return ServerStatusSort.valueOf(sort);
 	}
 
@@ -157,74 +158,47 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_STATUS_SORT, value.toString());
 	}
-	
+
 	/**
-	 * Update views with info about what's on the server
+	 * Setting to control automatic synchronization with connected servers.
 	 */
-	public static final String P_SERVER_AUTO_UPDATE = "com.surelogic.common.eclipse.server-auto-update";
-	
-	public static boolean doServerAutoUpdate() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_SERVER_AUTO_UPDATE);
+	public static final String P_SERVER_INTERACTION_SETTING = "com.surelogic.sierra.server-interaction-setting";
+
+	public static ServerInteractionSetting getServerInteractionSetting() {
+		final String resultString = Activator.getDefault()
+				.getPluginPreferences().getString(P_SERVER_INTERACTION_SETTING);
+		final ServerInteractionSetting result = ServerInteractionSetting
+				.valueOf(resultString);
+		return result;
 	}
 
-	public static void setServerAutoUpdate(boolean value) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_AUTO_UPDATE, value);
-	}
-	
 	/**
-	 * Synchronize with the server
+	 * Period in minutes of automatic server interaction.
 	 */
-	public static final String P_SERVER_AUTO_SYNC = "com.surelogic.common.eclipse.server-auto-sync";
-	
-	public static boolean doServerAutoSync() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_SERVER_AUTO_SYNC);
-	}
+	public static final String P_SERVER_INTERACTION_PERIOD_IN_MINUTES = "com.surelogic.common.eclipse.server-interaction-period-in-minutes";
 
-	public static void setServerAutoSync(boolean value) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_AUTO_SYNC, value);
-	}	
-	
-	public static final String P_SERVER_AUTO_SYNC_DELAY = "com.surelogic.common.eclipse.server-auto-sync-delay";
-	
-	public static int getServerAutoSyncDelay() {
+	public static int getServerInteractionPeriodInMinutes() {
 		return Activator.getDefault().getPluginPreferences().getInt(
-				P_SERVER_AUTO_SYNC_DELAY);
+				P_SERVER_INTERACTION_PERIOD_IN_MINUTES);
 	}
 
-	public static void setServerAutoSyncDelay(int value) {
+	public static void setServerInteractionPeriodInMinutes(int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_AUTO_SYNC_DELAY, value);
-	}	
-	
+				P_SERVER_INTERACTION_PERIOD_IN_MINUTES, value);
+	}
+
 	/**
-	 * Threshold of # of unsynchronized audits for triggering a sync
+	 * Threshold of # of unsynchronized audits for triggering a sync.
 	 */
-	public static final String P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD = 
-		"com.surelogic.common.eclipse.server-auto-sync-audit-threshold";
-	
-	public static int getServerAutoSyncAuditThreshold() {
+	public static final String P_SERVER_INTERACTION_AUDIT_THRESHOLD = "com.surelogic.common.eclipse.server-interaction-audit-threshold";
+
+	public static int getServerInteractionAuditThreshold() {
 		return Activator.getDefault().getPluginPreferences().getInt(
-				P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD);
+				P_SERVER_INTERACTION_AUDIT_THRESHOLD);
 	}
 
-	public static void setServerAutoSyncAuditThreshold(int value) {
+	public static void setServerInteractionAuditThreshold(int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD, value);
-	}	
-	
-	public static final String P_SERVER_AUTO_UPDATE_DELAY = "com.surelogic.common.eclipse.server-auto-update-delay";
-	
-	public static int getServerAutoUpdateDelay() {
-		return Activator.getDefault().getPluginPreferences().getInt(
-				P_SERVER_AUTO_UPDATE_DELAY);
+				P_SERVER_INTERACTION_AUDIT_THRESHOLD, value);
 	}
-
-	public static void setServerAutoUpdateDelay(int value) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_AUTO_UPDATE_DELAY, value);
-	}	
 }

@@ -35,13 +35,15 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_WARN_MAXIMUM_FINDINGS_SHOWN,
 				true);
 		store.setDefault(PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN, true);
-		store.setDefault(PreferenceConstants.P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, false);
-		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT, 
-				         ServerStatusSort.BY_SERVER.toString());
-		store.setDefault(PreferenceConstants.P_SERVER_AUTO_UPDATE, true);
-		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC, true);
-		store.setDefault(PreferenceConstants.P_SERVER_AUTO_UPDATE_DELAY, 5);
-		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC_DELAY, 5);
-		store.setDefault(PreferenceConstants.P_SERVER_AUTO_SYNC_AUDIT_THRESHOLD, 200);
+		store.setDefault(PreferenceConstants.P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES,
+				false);
+		store.setDefault(PreferenceConstants.P_SERVER_STATUS_SORT,
+				ServerStatusSort.BY_SERVER.toString());
+		store.setDefault(PreferenceConstants.P_SERVER_INTERACTION_SETTING,
+				ServerInteractionSetting.NEVER.toString());
+		store.setDefault(
+				PreferenceConstants.P_SERVER_INTERACTION_PERIOD_IN_MINUTES, 5);
+		store.setDefault(
+				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD, 200);
 	}
 }
