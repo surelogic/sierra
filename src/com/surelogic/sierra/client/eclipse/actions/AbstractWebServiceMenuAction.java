@@ -39,6 +39,7 @@ public abstract class AbstractWebServiceMenuAction extends
 				runServerAction(family, projectName, server, shell);
 			}
 		};
+		runningOnProjects(projectNames);
 
 		for (String projectName : projectNames) {
 			/*
@@ -97,6 +98,10 @@ public abstract class AbstractWebServiceMenuAction extends
 		family.schedule();
 	}
 
+	void runningOnProjects(List<String> projectNames) {
+		// Nothing to do
+	}
+	
 	abstract void runServerAction(final ServerProjectGroupJob family,
 			final String projectName, final SierraServer server,
 			final Shell shell);

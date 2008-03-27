@@ -75,12 +75,10 @@ implements ISierraServerObserver {
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
     
-    private final AtomicLong lastAllServersSyncTime = 
-    	new AtomicLong(System.currentTimeMillis());
-    
 	private final Tree f_statusTree;
 	private final Menu f_contextMenu;
 	private final ActionListener f_serverSyncAction;
+	private final ActionListener f_serverUpdateAction;
 	private final ActionListener f_newServerAction;
 	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
@@ -200,6 +198,15 @@ implements ISierraServerObserver {
 			@Override
 			public void run() {
 				asyncUpdateServerInfo();		
+			}
+		};		
+		view.addToActionBar(f_serverSyncAction);
+		f_serverUpdateAction =
+			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
+            "Synchronize Connected Projects") {
+			@Override
+			public void run() {
+				asyncSyncWithServer();		
 			}
 		};		
 		view.addToActionBar(f_serverSyncAction);
@@ -503,7 +510,8 @@ implements ISierraServerObserver {
 		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
 		
 		final AutoJob doServerAutoSync = 
-			new AutoJob("Server auto-sync", lastAllServersSyncTime) {
+			new AutoJob("Server auto-sync", 
+ 					    SynchronizeAllProjectsAction.getLastSyncTime()) {
 			@Override protected boolean isEnabled() {
 				return PreferenceConstants.doServerAutoSync();
 			}
@@ -729,7 +737,6 @@ implements ISierraServerObserver {
 
 	void asyncSyncWithServer() {
 		long now = System.currentTimeMillis();
-		lastAllServersSyncTime.set(now);
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: "+now);
 		
@@ -877,6 +884,9 @@ implements ISierraServerObserver {
 	}
 	
 	public void updateContentsInUI(final List<ProjectStatus> projects) {
+		f_autoUpdateServerAction.setChecked(PreferenceConstants.doServerAutoUpdate());
+		f_autoSyncServerAction.setChecked(PreferenceConstants.doServerAutoSync());
+		
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 				
