@@ -113,6 +113,7 @@ implements ISierraServerObserver {
 	private final MenuItem f_serverPropertiesItem;
 	private final MenuItem f_scanProjectItem;
 	private final MenuItem f_rescanProjectItem;
+	private final MenuItem f_publishScansItem;
 	private final MenuItem f_disconnectProjectItem;
 
 	private abstract class ActionListener extends Action implements Listener {
@@ -203,7 +204,7 @@ implements ISierraServerObserver {
 			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
-			MenuItem disconnectProjectItem) {
+			MenuItem publishScansItem, MenuItem disconnectProjectItem) {
 		super(view);
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
@@ -305,6 +306,7 @@ implements ISierraServerObserver {
 		f_serverPropertiesItem = serverPropertiesItem;
 		f_scanProjectItem = scanProjectItem;
 		f_rescanProjectItem = rescanProjectItem;
+		f_publishScansItem = publishScansItem;
 		f_disconnectProjectItem = disconnectProjectItem;
 	}
 
@@ -431,6 +433,13 @@ implements ISierraServerObserver {
 						new ScanChangedProjectsAction().run(projects);
 					}
 				});
+		f_publishScansItem.addListener(SWT.Selection, new ProjectsActionListener() {
+			@Override
+			protected void run(List<IJavaProject> projects) {
+				// FIX check for projects w/o scans?
+				new PublishScanAction().run(projects);
+			}
+		});
 		f_disconnectProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
@@ -492,19 +501,21 @@ implements ISierraServerObserver {
 				List<ProjectStatus> status = collectSelectedProjectStatus();
 				final boolean someProjects = !status.isEmpty();
 				boolean allConnected = someProjects;
+				boolean allHasScans = someProjects;
 				if (someProjects) {
 					for(ProjectStatus ps : status) {
 						if (!f_manager.isConnected(ps.name)) {
-							allConnected = false;
-							break;
+							allConnected = false;							
+						}
+						if (ps.scanInfo.isPartial()) {
+							allHasScans = false;
 						}
 					}				
-				}
-			
+				}			
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
 				f_synchConnectedProjects.setEnabled(someProjects);
-				
+				f_publishScansItem.setEnabled(allHasScans);
 				f_disconnectProjectItem.setEnabled(allConnected);				
 			}			
 		});

@@ -56,6 +56,9 @@ public final class SierraServersView extends
 				"Synchronize Projects", SLImages.IMG_SIERRA_SYNC);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
+		final MenuItem publishScansItem = createMenuItem(contextMenu,
+				"Publish Scans", SLImages.IMG_SIERRA_PUBLISH);
+		
 		final MenuItem disconnectProjectItem = createMenuItem(contextMenu,
 				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
 
@@ -136,6 +139,6 @@ public final class SierraServersView extends
 				newServerItem, browseServerItem, duplicateServerItem, deleteServerItem,
 				serverConnectItem, synchProjects, sendResultFilters,
 				getResultFilters, serverPropertiesItem, scanProjectItem,
-				rescanProjectItem, disconnectProjectItem);
+				rescanProjectItem, publishScansItem, disconnectProjectItem);
 	}
 }
