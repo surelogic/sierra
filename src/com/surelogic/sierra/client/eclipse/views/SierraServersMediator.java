@@ -192,16 +192,16 @@ implements ISierraServerObserver {
 		f_statusTree = statusTree;
 		f_contextMenu = contextMenu;
 		
-		f_serverSyncAction = 
-			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
+		f_serverUpdateAction = 
+			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SERVER),
 	                           "Get latest server information") {
 			@Override
 			public void run() {
 				asyncUpdateServerInfo();		
 			}
 		};		
-		view.addToActionBar(f_serverSyncAction);
-		f_serverUpdateAction =
+		view.addToActionBar(f_serverUpdateAction);
+		f_serverSyncAction =
 			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
             "Synchronize Connected Projects") {
 			@Override
