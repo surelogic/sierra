@@ -19,6 +19,7 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 public final class SynchronizeAllProjectsAction implements
 		IWorkbenchWindowActionDelegate {
 	private final boolean force;
+	private ServerProjectGroupJob group;
 
 	public SynchronizeAllProjectsAction(boolean force) {
 		this.force = force;
@@ -71,11 +72,16 @@ public final class SynchronizeAllProjectsAction implements
 			final Shell shell = window == null? null : window.getShell();
 			ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
 					server, shell, serverAction);
-			joinJob.schedule();
 		}
+		group = joinJob;
+		joinJob.schedule();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do
+	}
+	
+	public ServerProjectGroupJob getGroup() {
+		return group;
 	}
 }

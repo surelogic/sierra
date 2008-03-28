@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.*;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -49,6 +49,7 @@ import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -87,6 +88,12 @@ implements ISierraServerObserver, IProjectsObserver {
     
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
+    
+    private final AtomicReference<ServerProjectGroupJob> lastSyncGroup =
+        new AtomicReference<ServerProjectGroupJob>();
+    
+    private final AtomicReference<Job> lastUpdateJob = 
+    	new AtomicReference<Job>();
     
 	private final Tree f_statusTree;
 	private final Menu f_contextMenu;
@@ -795,7 +802,14 @@ implements ISierraServerObserver, IProjectsObserver {
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: "+now);
 		
-		new SynchronizeAllProjectsAction(false).run(null);
+		if (lastSyncGroup.get().getResult() == null) {
+			SynchronizeAllProjectsAction sync = 
+				new SynchronizeAllProjectsAction(false);
+			sync.run(null);
+			lastSyncGroup.set(sync.getGroup());					
+		} else {
+			System.out.println("Last sync is still running");
+		}
 	}
 	
 	void asyncUpdateServerInfo() {
@@ -803,22 +817,25 @@ implements ISierraServerObserver, IProjectsObserver {
 		lastServerUpdateTime.set(now);
 		System.out.println("Update at: "+now);
 		
-		final Job job = new DatabaseJob("Updating server status") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN);
-				try {
-					updateServerInfo();
-				} catch (Exception e) {
-					final int errNo = 58; // FIX
-					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
+		if (lastUpdateJob.get().getResult() == null) {
+			final Job job = new DatabaseJob("Updating server status") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN);
+					try {
+						updateServerInfo();
+					} catch (Exception e) {
+						final int errNo = 58; // FIX
+						final String msg = I18N.err(errNo);
+						return SLStatus.createErrorStatus(errNo, msg, e);
+					}
+					monitor.done();
+					return Status.OK_STATUS;
 				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
+			};
+			lastUpdateJob.set(job);
+			job.schedule();
+		}
 	}
 	
 	private void asyncUpdateContents() {
