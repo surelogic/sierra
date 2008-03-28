@@ -60,8 +60,16 @@ public abstract class TroubleshootConnection {
 	 * Subclasses must override to take the appropriate UI actions to mutate the
 	 * server object.
 	 */
-	public abstract void fix();
+	public final void fix() {
+		realFix();
+		
+		if (failServer()) {
+			f_server.encounteredProblem();
+		}
+	}
 
+	protected abstract void realFix();
+	
 	/**	
 	 * @return true if the server should be considered failed
 	 */

@@ -66,6 +66,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				return Status.CANCEL_STATUS;
 			} else {
 				conn.commit();
+				f_server.markAsConnected();
 				DatabaseHub.getInstance().notifyServerSynchronized();
 				return Status.OK_STATUS;
 			}

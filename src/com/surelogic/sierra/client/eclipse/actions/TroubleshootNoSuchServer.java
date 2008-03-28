@@ -15,7 +15,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 	}
 
 	@Override
-	public void fix() {
+	protected void realFix() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				final String sl = f_server.getLabel();

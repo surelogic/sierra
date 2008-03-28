@@ -221,4 +221,19 @@ public final class SierraServer {
 		}
 		return s1.equals(s2);
 	}
+	
+	private int f_problemCount = 0;
+	
+	public synchronized void markAsConnected() {
+		f_problemCount = 0;
+	}
+
+	public synchronized int encounteredProblem() {
+		f_problemCount++;
+		return f_problemCount;
+	}
+	
+	public synchronized int getProblemCount() {
+		return f_problemCount;
+	}
 }

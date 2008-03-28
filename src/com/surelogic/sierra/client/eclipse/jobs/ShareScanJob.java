@@ -110,6 +110,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			SierraServiceClient.create(f_server.getServer()).publishRun(scan);
+			f_server.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (SierraServiceClientException e) {
 			troubleshoot = getTroubleshootConnection(e);

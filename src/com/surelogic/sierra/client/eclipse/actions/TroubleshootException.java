@@ -24,7 +24,7 @@ public final class TroubleshootException extends TroubleshootConnection {
 	}
 
 	@Override
-	public void fix() {
+	protected void realFix() {
 		final String sl = f_server.getLabel();
 		final int errNo = 97;
 		final String msg = I18N.err(errNo, f_projectName, sl);

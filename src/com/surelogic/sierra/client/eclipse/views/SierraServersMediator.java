@@ -85,14 +85,6 @@ implements ISierraServerObserver {
     	new HashMap<String,List<SyncTrailResponse>>();   
     
     /**
-     * Counts of consecutive server failures
-     * 
-     * Protected by responseMap
-     */
-    private final Map<SierraServer,Integer> serverProblems = 
-    	new HashMap<SierraServer,Integer>();
-    
-    /**
      * Counts of consecutive server project failures
      * 
      * Protected by responseMap
@@ -935,7 +927,7 @@ implements ISierraServerObserver {
 	 */
 	private void handleServerSuccess(SierraServer server, String project) {
 		// Contact was successful, so reset counts
-		serverProblems.remove(server);		
+		server.markAsConnected();		
 		projectProblems.remove(project);
 	}
 
@@ -948,7 +940,7 @@ implements ISierraServerObserver {
 		tc.fix();
 		
 		if (tc.failServer()) {
-			incrProblem(serverProblems, tc.getServer());
+			// Handled already
 		} else {
 			incrProblem(projectProblems, tc.getProjectName());
 		}
@@ -981,11 +973,9 @@ implements ISierraServerObserver {
 
 					// Check for new remote audits
 					List<SyncTrailResponse> responses = responseMap.get(name);
-					Integer numServerProblems = serverProblems.get(f_manager.getServer(name));
+					SierraServer server = f_manager.getServer(name);
+					int numServerProblems = server == null ? -1 : server.getProblemCount();
 					Integer numProjectProblems = projectProblems.get(name);
-					if (numServerProblems == null) {
-						numServerProblems = 0;
-					}
 					if (numProjectProblems == null) {
 						numProjectProblems = 0;
 					}
