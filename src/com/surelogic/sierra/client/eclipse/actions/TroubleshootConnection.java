@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 public abstract class TroubleshootConnection {
@@ -65,6 +66,8 @@ public abstract class TroubleshootConnection {
 		
 		if (failServer()) {
 			f_server.encounteredProblem();
+		} else {
+			Projects.getInstance().encounteredProblem(f_projectName);
 		}
 	}
 

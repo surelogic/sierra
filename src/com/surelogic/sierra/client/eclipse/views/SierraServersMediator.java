@@ -84,14 +84,6 @@ implements ISierraServerObserver {
     private final Map<String,List<SyncTrailResponse>> responseMap = 
     	new HashMap<String,List<SyncTrailResponse>>();   
     
-    /**
-     * Counts of consecutive server project failures
-     * 
-     * Protected by responseMap
-     */
-    private final Map<String,Integer> projectProblems =
-    	new HashMap<String,Integer>();
-    
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
     
@@ -928,7 +920,7 @@ implements ISierraServerObserver {
 	private void handleServerSuccess(SierraServer server, String project) {
 		// Contact was successful, so reset counts
 		server.markAsConnected();		
-		projectProblems.remove(project);
+		Projects.getInstance().markAsConnected(project);
 	}
 
 	/**
@@ -938,19 +930,7 @@ implements ISierraServerObserver {
 	 */
 	private boolean handleServerProblem(TroubleshootConnection tc, Exception e) {
 		tc.fix();
-		
-		if (tc.failServer()) {
-			// Handled already
-		} else {
-			incrProblem(projectProblems, tc.getProjectName());
-		}
 		return tc.failServer();
-	}
-	
-	private <T> void incrProblem(Map<T,Integer> map, T key) {
-		Integer count = map.get(key);
-		count = (count == null) ? 1 : count+1;
-		map.put(key, count);
 	}
 	
 	private void updateContents() throws Exception {
@@ -975,10 +955,7 @@ implements ISierraServerObserver {
 					List<SyncTrailResponse> responses = responseMap.get(name);
 					SierraServer server = f_manager.getServer(name);
 					int numServerProblems = server == null ? -1 : server.getProblemCount();
-					Integer numProjectProblems = projectProblems.get(name);
-					if (numProjectProblems == null) {
-						numProjectProblems = 0;
-					}
+					int numProjectProblems = Projects.getInstance().getProblemCount(name);
 
 					// FIX Check for a full scan (later than what's on the server?)
 					final File scan = NewScan.getScanDocumentFile(name);					

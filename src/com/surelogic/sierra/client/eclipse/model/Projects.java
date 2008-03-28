@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
@@ -61,6 +63,31 @@ public final class Projects extends AbstractDatabaseObserver {
 	 * Protected by a lock on <code>this</code>.
 	 */
 	private final LinkedList<String> f_projectNames = new LinkedList<String>();
+	
+    /**
+     * Counts of consecutive server project failures
+     */
+    private final Map<String,Integer> projectProblems = new HashMap<String,Integer>();
+    
+	private <T> int incrProblem(Map<T,Integer> map, T key) {
+		Integer count = map.get(key);
+		count = (count == null) ? 1 : count+1;
+		map.put(key, count);
+		return count;
+	}
+	
+	public synchronized void markAsConnected(String name) {
+		projectProblems.remove(name);
+	}
+
+	public synchronized int encounteredProblem(String name) {
+		return incrProblem(projectProblems, name);
+	}
+	
+	public synchronized int getProblemCount(String name) {
+		Integer count = projectProblems.get(name);
+		return count == null ? 0 : count;
+	}
 
 	/**
 	 * Gets the set of project names in the database.
