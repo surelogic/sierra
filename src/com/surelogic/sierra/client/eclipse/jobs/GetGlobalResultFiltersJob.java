@@ -75,6 +75,8 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 					.getServer());
 			final GlobalSettings settings = service
 					.getGlobalSettings(new GlobalSettingsRequest());
+			f_server.markAsConnected();
+			
 			SettingsManager.getInstance(conn).writeGlobalSettings(
 					settings.getFilter());
 			conn.commit();

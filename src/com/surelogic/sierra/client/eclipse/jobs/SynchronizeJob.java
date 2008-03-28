@@ -61,12 +61,12 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		try {
 			ClientProjectManager.getInstance(conn).synchronizeProject(
 					f_server.getServer(), f_projectName, slMonitor);
+			f_server.markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
 				return Status.CANCEL_STATUS;
 			} else {
 				conn.commit();
-				f_server.markAsConnected();
 				DatabaseHub.getInstance().notifyServerSynchronized();
 				return Status.OK_STATUS;
 			}

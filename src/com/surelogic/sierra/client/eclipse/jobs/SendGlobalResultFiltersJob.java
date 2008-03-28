@@ -76,6 +76,7 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			final SierraService service = SierraServiceClient.create(f_server
 					.getServer());
 			service.writeGlobalSettings(settings);
+			f_server.markAsConnected();
 		} catch (SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
