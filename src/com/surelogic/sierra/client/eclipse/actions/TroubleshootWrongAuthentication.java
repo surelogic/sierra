@@ -28,4 +28,9 @@ public final class TroubleshootWrongAuthentication extends
 		});
 		setRetry(f_dialogResult != Window.CANCEL);
 	}
+	
+	@Override
+	public boolean failServer() {
+		return false;
+	}
 }

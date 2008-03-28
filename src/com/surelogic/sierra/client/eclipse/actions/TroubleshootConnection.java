@@ -31,7 +31,11 @@ public abstract class TroubleshootConnection {
 	public final SierraServer getServer() {
 		return f_server;
 	}
-
+	
+	public final String getProjectName() {
+		return f_projectName;
+	}
+	
 	private boolean f_retry = true;
 
 	protected void setRetry(boolean retry) {
@@ -57,4 +61,11 @@ public abstract class TroubleshootConnection {
 	 * server object.
 	 */
 	public abstract void fix();
+
+	/**	
+	 * @return true if the server should be considered failed
+	 */
+	public boolean failServer() {
+		return !f_retry;
+	}
 }
