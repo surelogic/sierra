@@ -6668,8 +6668,276 @@ for more information. &lt;/p&gt;
 		<name>Possible null dereference on potentially infeasible path</name>
 	</findingType>	
 
+	<!-- For FB 1.3.3 -->
+	<findingType>
+		<id>HRS_REQUEST_PARAMETER_TO_HTTP_HEADER</id>
+		<artifact tool="FindBugs"
+			mnemonic="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER">
+		</artifact>
+		<shortMessage>
+			HTTP parameter directly written to HTTP header output
+		</shortMessage>
+		<info>
+	    &lt;p&gt; This code directly writes an HTTP parameter to an HTTP header, 
+	    which allows for a HTTP response splitting vulnerability. 
+	    See &lt;a href="http://en.wikipedia.org/wiki/HTTP_response_splitting"&gt;
+	    http://en.wikipedia.org/wiki/HTTP_response_splitting&lt;/a&gt;
+      for more information.&lt;/p&gt;
+		</info>
+		<name>HTTP Response splitting vulnerability</name>
+	</findingType>
+	<findingType>
+		<id>HRS_REQUEST_PARAMETER_TO_COOKIE</id>
+		<artifact tool="FindBugs"
+			mnemonic="HRS_REQUEST_PARAMETER_TO_COOKIE">
+		</artifact>
+		<shortMessage>
+			HTTP cookie formed from untrusted input
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This code constructs an HTTP Cookie using an untrusted HTTP parameter. 
+			If this cookie is added to an HTTP response, 
+			it will allow a HTTP response splitting vulnerability. 
+			See &lt;a href="http://en.wikipedia.org/wiki/HTTP_response_splitting"&gt;
+			http://en.wikipedia.org/wiki/HTTP_response_splitting&lt;/a&gt;
+      for more information.
+			&lt;/p&gt;
+		</info>
+		<name>HTTP cookie formed from untrusted input</name>
+	</findingType>
+	<findingType>
+		<id>CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE</id>
+		<artifact tool="FindBugs"
+			mnemonic="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE">
+		</artifact>
+		<shortMessage>
+			Class defines clone() but doesn't implement Cloneable
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This class defines a clone() method but the class doesn't implement Cloneable.
+There are some situations in which this is OK (e.g., you want to control how subclasses 
+can clone themselves), but just make sure that this is what you intended.
+			&lt;/p&gt;
+		</info>
+		<name>Class defines clone() but doesn't implement Cloneable</name>
+	</findingType>	
+	<findingType>
+		<id>DMI_CONSTANT_DB_PASSWORD</id>
+		<artifact tool="FindBugs"
+			mnemonic="DMI_CONSTANT_DB_PASSWORD">
+		</artifact>
+		<shortMessage>
+			Hardcoded constant database password
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This code creates a database connect using a hardcoded, 
+			constant password. Anyone with access to either the source code
+			or the compiled code can easily learn the password.
+			&lt;/p&gt;
+		</info>
+		<name>Hardcoded constant database password</name>
+	</findingType>
+	<findingType>
+		<id>DMI_EMPTY_DB_PASSWORD</id>
+		<artifact tool="FindBugs"
+			mnemonic="DMI_EMPTY_DB_PASSWORD">
+		</artifact>
+		<shortMessage>
+			Empty database password
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This code creates a database connect using a blank or empty password. 
+			This indicates that the database is not protected by a password. 
+			&lt;/p&gt;
+		</info>
+		<name>Empty database password</name>
+	</findingType>
+	<findingType>
+		<id>DL_SYNCHRONIZATION_ON_BOOLEAN</id>
+		<artifact tool="FindBugs"
+			mnemonic="DL_SYNCHRONIZATION_ON_BOOLEAN">
+		</artifact>
+		<shortMessage>
+			Synchronization on Boolean could lead to deadlock
+		</shortMessage>
+		<info>
+			&lt;p&gt; The code synchronizes on a boxed primitive constant, such as an Boolean.
+&lt;pre&gt;
+private static Boolean inited = Boolean.FALSE;
+...
+  synchronized(inited) { 
+    if (!inited) {
+       init();
+       inited = BOOLEAN.TRUE;
+       }
+     }
+...
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt; Since there normally exist only two Boolean objects, 
+this code could be synchronizing on the same object as other, unrelated code, 
+leading to unresponsiveness and possible deadlock &lt;/p&gt;			
+		</info>
+		<name>Synchronization on Boolean could lead to deadlock</name>
+	</findingType>	
+	<findingType>
+		<id>DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE</id>
+		<artifact tool="FindBugs"
+			mnemonic="DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE">
+		</artifact>
+		<shortMessage>
+			Synchronization on boxed primitive value could lead to deadlock
+		</shortMessage>
+		<info>
+			&lt;p&gt;
+			The code synchronizes on a boxed primitive constant, such as an Integer.
+&lt;pre&gt;
+private static Integer count = 0;
+...
+  synchronized(count) { 
+     count++;
+     }
+...
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;Since Integer objects can be cached and shared,
+this code could be synchronizing on the same object as other, unrelated code, leading to unresponsiveness
+and possible deadlock 
+			&lt;/p&gt;
+		</info>
+		<name>Synchronization on boxed primitive value could lead to deadlock</name>
+	</findingType>
+	<findingType>
+		<id>DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE</id>
+		<artifact tool="FindBugs"
+			mnemonic="DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE">
+		</artifact>
+		<shortMessage>
+			Synchronization on boxed primitive values
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			The code synchronizes on an apparently unshared boxed primitive, 
+such as an Integer.
+&lt;pre&gt;
+private static final Integer fileLock = new Integer(1);
+...
+  synchronized(fileLock) { 
+     .. do something ..
+     }
+...
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;It would be much better, in this code, to redeclare fileLock as
+&lt;pre&gt;
+private static final Object fileLock = new Object();
+&lt;/pre&gt;
+The existing code might be OK, but it is confusing and a 
+future refactoring, such as the "Remove Boxing" refactoring in IntelliJ,
+might replace this with the use of an intern'd Integer object shared 
+throughout the JVM, leading to very confusing behavior and potential deadlock.
+			&lt;/p&gt;
+		</info>
+		<name>Synchronization on boxed primitive values</name>
+	</findingType>
+	<findingType>
+		<id>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</id>
+		<artifact tool="FindBugs"
+			mnemonic="WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL">
+		</artifact>
+		<shortMessage>
+			Synchronization on getClass rather than class literal
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+     This instance method synchronizes on &lt;code&gt;this.getClass()&lt;/code&gt;. 
+     If this class is subclassed,
+     subclasses will synchronize on the class object for the subclass, 
+     which isn't likely what was intended.
+     For example, consider this code from &lt;code&gt;java.awt.Label&lt;/code&gt;:
+     &lt;pre&gt;
+     private static final String base = "label";
+     private static int nameCounter = 0;
+     String constructComponentName() {
+        synchronized (getClass()) {
+            return base + nameCounter++;
+        }
+     }
+     &lt;/pre&gt;&lt;/p&gt;
+     &lt;p&gt;Subclasses of &lt;code&gt;Label&lt;/code&gt; won't synchronize on the same subclass, 
+     giving rise to a data race.
+     Instead, this code should be synchronizing on &lt;code&gt;Label.class&lt;/code&gt;
+     &lt;pre&gt;
+     private static final String base = "label";
+     private static int nameCounter = 0;
+     String constructComponentName() {
+        synchronized (Label.class) {
+            return base + nameCounter++;
+        }
+     }
+     &lt;/pre&gt;&lt;/p&gt;
+     &lt;p&gt;Bug pattern contributed by Jason Mehrens
+		 &lt;/p&gt;
+		</info>
+		<name>Synchronization on getClass rather than class literal</name>
+	</findingType>	
+	<findingType>
+		<id>ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD</id>
+		<artifact tool="FindBugs"
+			mnemonic="ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD">
+		</artifact>
+		<shortMessage>
+			Synchronization on field in futile attempt to guard that field
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This method synchronizes on a field in what appears to be an attempt
+to guard against simultaneous updates to that field. But guarding a field
+gets a lock on the referenced object, not on the field. This may not 
+provide the mutual exclusion you need, and other threads might 
+be obtaining locks on the referenced objects (for other purposes). An example
+of this pattern would be:
+
+&lt;p&gt;&lt;pre&gt;
+private Long myNtfSeqNbrCounter = new Long(0);
+private Long getNotificationSequenceNumber() {
+     Long result = null;
+     synchronized(myNtfSeqNbrCounter) {
+         result = new Long(myNtfSeqNbrCounter.longValue() + 1);
+         myNtfSeqNbrCounter = new Long(result.longValue());
+     }
+     return result;
+ }
+&lt;/pre&gt;
+			&lt;/p&gt;
+		</info>
+		<name>Synchronization on field in futile attempt to guard that field</name>
+	</findingType>
+	<findingType>
+		<id>DLS_DEAD_LOCAL_STORE_IN_RETURN</id>
+		<artifact tool="FindBugs"
+			mnemonic="DLS_DEAD_LOCAL_STORE_IN_RETURN">
+		</artifact>
+		<shortMessage>
+			Useless assignment in return statement
+		</shortMessage>
+		<info>
+			&lt;p&gt; 
+			This statement assigns to a local variable in a return statement. 
+			This assignment has no lasting effect. 
+			Please verify that this statement does the right thing.
+			&lt;/p&gt;
+		</info>
+		<name>Useless assignment in return statement</name>
+	</findingType>
+
 	<category>
 		<id>Correctness</id>
+		<findingType>DLS_DEAD_LOCAL_STORE_IN_RETURN</findingType>
 		<findingType>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</findingType>
 		<findingType>EqualsDoesntOverride</findingType>
 		<findingType>EqualsDoesntOverrideInherited</findingType>
@@ -6821,6 +7089,7 @@ for more information. &lt;/p&gt;
 	</category>
 	<category>
 		<id>Bad practice</id>
+		<findingType>CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE</findingType>
 		<findingType>
 			SwingMethodsShouldBeInvokedInSwingThread
 		</findingType>
@@ -7082,9 +7351,13 @@ for more information. &lt;/p&gt;
 		<findingType>CannotBeFinal</findingType>
 		<findingType>HttpParameterWrittenToServlet</findingType>
 		<findingType>HttpParameterWrittenToJSP</findingType>
+		<findingType>HRS_REQUEST_PARAMETER_TO_HTTP_HEADER</findingType>
+		<findingType>HRS_REQUEST_PARAMETER_TO_COOKIE</findingType>
+		<findingType>DMI_CONSTANT_DB_PASSWORD</findingType>
+		<findingType>DMI_EMPTY_DB_PASSWORD</findingType>
 		<name>Malicious code vulnerability</name>
 		<description>
-			code that is vulnerable to attacks from untrusted code
+			Code that is vulnerable to attacks from untrusted code
 		</description>
 	</category>
 	<category>
@@ -7126,6 +7399,11 @@ for more information. &lt;/p&gt;
 		<findingType>AvoidCallingSynchronizedOnLock</findingType>
 		<findingType>AvoidCallingSleepWithLockHeld</findingType>
 		<findingType>LazyInitUpdateStatic</findingType>
+		<findingType>DL_SYNCHRONIZATION_ON_BOOLEAN</findingType>
+		<findingType>DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE</findingType>
+		<findingType>DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE</findingType>
+		<findingType>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</findingType>
+		<findingType>ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD</findingType>
 		<name>Multithreaded correctness</name>
 		<description>
 			code flaws having to do with threads, locks, and volatiles
