@@ -45,5 +45,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				PreferenceConstants.P_SERVER_INTERACTION_PERIOD_IN_MINUTES, 5);
 		store.setDefault(
 				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD, 200);
+		store.setDefault(
+				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD, 4);
 	}
 }

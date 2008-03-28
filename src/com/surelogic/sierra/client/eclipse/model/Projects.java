@@ -81,7 +81,11 @@ public final class Projects extends AbstractDatabaseObserver {
 	}
 
 	public synchronized int encounteredProblem(String name) {
-		return incrProblem(projectProblems, name);
+		try {
+			return incrProblem(projectProblems, name);
+		} finally {
+			notifyObservers();
+		}
 	}
 	
 	public synchronized int getProblemCount(String name) {

@@ -23,7 +23,7 @@ public class SynchronizeProjectAction extends
 	void runServerAction(ServerProjectGroupJob family, String projectName,
 			SierraServer server, Shell shell) {
 		final SynchronizeJob job = new SynchronizeJob(family, projectName,
-				server);
+				server, true);
 		job.schedule();
 	}
 }

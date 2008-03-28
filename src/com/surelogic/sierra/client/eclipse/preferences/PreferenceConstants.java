@@ -206,4 +206,16 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_AUDIT_THRESHOLD, value);
 	}
+
+	public static final String P_SERVER_INTERACTION_RETRY_THRESHOLD = "com.surelogic.common.eclipse.server-interaction-retry-limit";
+	
+	public static int getServerInteractionRetryThreshold() {
+		return Activator.getDefault().getPluginPreferences().getInt(
+				P_SERVER_INTERACTION_RETRY_THRESHOLD);
+	}
+	
+	public static void setServerInteractionRetryThreshold(int value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_INTERACTION_RETRY_THRESHOLD, value);
+	}
 }

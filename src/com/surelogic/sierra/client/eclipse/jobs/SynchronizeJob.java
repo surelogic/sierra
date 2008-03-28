@@ -16,20 +16,31 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class SynchronizeJob extends AbstractServerProjectJob {	
-	public SynchronizeJob(ServerProjectGroupJob family, String projectName, SierraServer server) {
+	private final boolean force;
+
+	public SynchronizeJob(ServerProjectGroupJob family, String projectName, SierraServer server,
+			              boolean force) {
 		super(family, "Synchronizing Sierra data from project '" + projectName + "'", 
 		      server, projectName);
+		this.force = force;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-
+		final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
+		final int numProblems = f_server.getProblemCount() + 
+                                Projects.getInstance().getProblemCount(f_projectName);
+		if (!force && numProblems > threshold) {			
+			return Status.CANCEL_STATUS;
+		}
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
 		slMonitor.beginTask("Synchronizing findings and settings for project "
 				+ f_projectName + ".", 5);

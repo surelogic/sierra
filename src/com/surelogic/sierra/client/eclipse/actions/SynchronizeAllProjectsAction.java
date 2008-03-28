@@ -18,6 +18,16 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
 public final class SynchronizeAllProjectsAction implements
 		IWorkbenchWindowActionDelegate {
+	private final boolean force;
+
+	public SynchronizeAllProjectsAction(boolean force) {
+		this.force = force;
+	}
+	
+	public SynchronizeAllProjectsAction() {
+		this(true);
+	}
+	
     private static final AtomicLong lastSyncTime = 
     	new AtomicLong(System.currentTimeMillis());
 	
@@ -52,7 +62,7 @@ public final class SynchronizeAllProjectsAction implements
 				public void run(String projectName, SierraServer server,
 						Shell shell) {
 					final SynchronizeJob job = new SynchronizeJob(joinJob,
-							projectName, server);
+							projectName, server, force);
 					job.schedule();
 				}
 			};

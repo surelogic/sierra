@@ -49,6 +49,7 @@ import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -66,7 +67,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
-implements ISierraServerObserver {
+implements ISierraServerObserver, IProjectsObserver {
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
 	
 	/**
@@ -731,6 +732,10 @@ implements ISierraServerObserver {
 		asyncUpdateContents();
 	}
 	
+	public void notify(Projects p) {
+		asyncUpdateContents();
+	}
+	
 	/*
 	private static boolean same(TableItem[] items, String[] labels) {
 		if (items.length != labels.length)
@@ -790,7 +795,7 @@ implements ISierraServerObserver {
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: "+now);
 		
-		new SynchronizeAllProjectsAction().run(null);
+		new SynchronizeAllProjectsAction(false).run(null);
 	}
 	
 	void asyncUpdateServerInfo() {
@@ -842,12 +847,15 @@ implements ISierraServerObserver {
 		try {			
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
 			synchronized (responseMap) {				
+				final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
 				Set<SierraServer> failedServers = null;
 				responseMap.clear();				
 				
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
-					if (!Projects.getInstance().contains(name)) {
+					final int numProblems = Projects.getInstance().getProblemCount(name);
+					if (!Projects.getInstance().contains(name) ||
+						numProblems > threshold) {
 						continue; // Not scanned
 					}		
 
@@ -858,6 +866,18 @@ implements ISierraServerObserver {
 						if (failedServers != null && failedServers.contains(server)) {
 							continue;
 						}
+						final int numServerProbs = server.getProblemCount();
+						if (numServerProbs > threshold) {
+							if (failedServers == null) {
+								failedServers = new HashSet<SierraServer>();
+							}
+							failedServers.add(server);
+							continue;
+						}
+						if (numServerProbs + numProblems > threshold) {
+							continue;
+						}
+						
 						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
 						// Try to distinguish server failure/disconnection and RPC failure 
 						TroubleshootConnection tc;
