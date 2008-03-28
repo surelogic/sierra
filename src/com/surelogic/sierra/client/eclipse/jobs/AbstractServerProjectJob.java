@@ -33,14 +33,17 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
     f_projectName = project;
   }
   
+  public static final TroubleshootConnection 
+  getTroubleshootConnection(SierraServer s, String proj, SierraServiceClientException e) {
+	  if (e instanceof InvalidLoginException) {
+		  return new TroubleshootWrongAuthentication(s, proj);
+	  } else {
+		  return new TroubleshootNoSuchServer(s, proj);
+	  }
+  }
+  
   protected final TroubleshootConnection getTroubleshootConnection(SierraServiceClientException e) {
-    if (e instanceof InvalidLoginException) {
-      return new TroubleshootWrongAuthentication(f_server,
-          f_projectName);
-    } else {
-      return new TroubleshootNoSuchServer(f_server,
-          f_projectName);
-    }
+	  return getTroubleshootConnection(f_server, f_projectName, e);
   }
   
   protected final IStatus createWarningStatus(final int errNo, Throwable t) {
