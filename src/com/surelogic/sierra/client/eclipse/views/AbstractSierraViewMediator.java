@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.util.logging.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -8,11 +10,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.*;
 
 public abstract class AbstractSierraViewMediator 
 extends AbstractDatabaseObserver implements IViewMediator 
 {
+	public static final Logger LOG = SLLogger.getLogger();
+	
 	public static final Listener DO_NOTHING = new Listener() {
 		public void handleEvent(Event event) {
 			// Do nothing
