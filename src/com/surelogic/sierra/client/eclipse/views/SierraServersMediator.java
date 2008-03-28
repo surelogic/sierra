@@ -802,7 +802,8 @@ implements ISierraServerObserver, IProjectsObserver {
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: "+now);
 		
-		if (lastSyncGroup.get().getResult() == null) {
+		Job group = lastSyncGroup.get();
+		if (group == null || group.getResult() != null) {
 			SynchronizeAllProjectsAction sync = 
 				new SynchronizeAllProjectsAction(false);
 			sync.run(null);
@@ -817,7 +818,8 @@ implements ISierraServerObserver, IProjectsObserver {
 		lastServerUpdateTime.set(now);
 		System.out.println("Update at: "+now);
 		
-		if (lastUpdateJob.get().getResult() == null) {
+		Job lastJob = lastUpdateJob.get();
+		if (lastJob == null || lastJob.getResult() != null) {
 			final Job job = new DatabaseJob("Updating server status") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
