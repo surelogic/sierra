@@ -29,20 +29,26 @@ class ProjectStatus {
 	final int comments, importance, read, summary;
 	final Map<String,Integer> userCount = new HashMap<String,Integer>();
 	
+	final int numProjectProblems;
+	final int numServerProblems;
+	
 	public ProjectStatus(IJavaProject jp) {
-		this(jp, null, null, Collections.<FindingAudits>emptyList(), null);
+		this(jp, null, null, Collections.<FindingAudits>emptyList(), null, 0, 0);
 	}
 	
 	public ProjectStatus(IJavaProject jp, File scan, ScanInfo info, 
 			             List<FindingAudits> findings,
-			             List<SyncTrailResponse> responses) {
+			             List<SyncTrailResponse> responses, 
+			             int numServerProblems, int numProjectProblems) {
 		project = jp;
 		name = jp.getElementName();
 		scanDoc = scan;
 		scanInfo = info;
 		this.localFindings = findings;
 		serverData = responses;
-
+		this.numServerProblems = numServerProblems;
+		this.numProjectProblems = numProjectProblems;
+		
 		// Preprocess local data
 		int newAudits = 0;
 		Date earliest = null;

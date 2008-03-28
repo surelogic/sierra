@@ -45,6 +45,7 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.*;
 import com.surelogic.sierra.client.eclipse.dialogs.*;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
@@ -88,8 +89,16 @@ implements ISierraServerObserver {
      * 
      * Protected by responseMap
      */
-    private final Map<SierraServer,Integer> serverFailures = 
+    private final Map<SierraServer,Integer> serverProblems = 
     	new HashMap<SierraServer,Integer>();
+    
+    /**
+     * Counts of consecutive server project failures
+     * 
+     * Protected by responseMap
+     */
+    private final Map<String,Integer> projectProblems =
+    	new HashMap<String,Integer>();
     
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
@@ -867,25 +876,39 @@ implements ISierraServerObserver {
 						}
 						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
 						// Try to distinguish server failure/disconnection and RPC failure 
+						TroubleshootConnection tc;
 						try {
 							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
 						} catch (ServerMismatchException e) {
-							handleServerFailure(server, e);
-						} catch (SQLException e) {
-							handleServerFailure(server, e);
-						} catch (SierraServiceClientException e) {
-							if (failedServers == null) {
-								failedServers = new HashSet<SierraServer>();
+							tc = new TroubleshootWrongServer(server, name);
+							if (handleServerProblem(tc, e)) {
+								if (failedServers == null) {
+									failedServers = new HashSet<SierraServer>();
+								}
+								failedServers.add(server);
 							}
-							failedServers.add(server);
-							handleServerFailure(server, e);
+						} catch (SierraServiceClientException e) {
+							tc = AbstractServerProjectJob.getTroubleshootConnection(server, name, e);													
+							if (handleServerProblem(tc, e)) {
+								if (failedServers == null) {
+									failedServers = new HashSet<SierraServer>();
+								}
+								failedServers.add(server);
+							}
 						} catch (Exception e) {
-							handleServerFailure(server, e);
+							tc = new TroubleshootException(server, name, e, 
+									                       e instanceof SQLException);
+							if (handleServerProblem(tc, e)) {
+								if (failedServers == null) {
+									failedServers = new HashSet<SierraServer>();
+								}
+								failedServers.add(server);
+							}
 						}
 					}
 					if (responses != null) {
 						responseMap.put(name, responses);
-						handleServerSuccess(server);
+						handleServerSuccess(server, name);
 					}
 				}
 			}
@@ -908,24 +931,34 @@ implements ISierraServerObserver {
 
 	/**
 	 * Protected by responseMap
+	 * @param project 
 	 */
-	private void handleServerSuccess(SierraServer server) {
-		serverFailures.remove(server);		
+	private void handleServerSuccess(SierraServer server, String project) {
+		// Contact was successful, so reset counts
+		serverProblems.remove(server);		
+		projectProblems.remove(project);
 	}
 
 	/**
 	 * Protected by responseMap
+	 * 
+	 * @return true if consider the server failed
 	 */
-	private void handleServerFailure(SierraServer server, Exception e) {
-		Integer count = serverFailures.get(server);
+	private boolean handleServerProblem(TroubleshootConnection tc, Exception e) {
+		tc.fix();
+		
+		if (tc.failServer()) {
+			incrProblem(serverProblems, tc.getServer());
+		} else {
+			incrProblem(projectProblems, tc.getProjectName());
+		}
+		return tc.failServer();
+	}
+	
+	private <T> void incrProblem(Map<T,Integer> map, T key) {
+		Integer count = map.get(key);
 		count = (count == null) ? 1 : count+1;
-		if (count > 0) {
-			// FIX do something when it gets above a certain threshold?
-		}		
-		serverFailures.put(server, count);
-		e.printStackTrace(); 
-		// FIX to log
-		// FIX to pop up dialog?
+		map.put(key, count);
 	}
 	
 	private void updateContents() throws Exception {
@@ -948,11 +981,20 @@ implements ISierraServerObserver {
 
 					// Check for new remote audits
 					List<SyncTrailResponse> responses = responseMap.get(name);
+					Integer numServerProblems = serverProblems.get(f_manager.getServer(name));
+					Integer numProjectProblems = projectProblems.get(name);
+					if (numServerProblems == null) {
+						numServerProblems = 0;
+					}
+					if (numProjectProblems == null) {
+						numProjectProblems = 0;
+					}
 
 					// FIX Check for a full scan (later than what's on the server?)
 					final File scan = NewScan.getScanDocumentFile(name);					
 					ScanInfo info = sm.getLatestScanInfo(name);
-					ProjectStatus s = new ProjectStatus(jp, scan, info, findings, responses);
+					ProjectStatus s = new ProjectStatus(jp, scan, info, findings, responses, 
+							numServerProblems, numProjectProblems);
 					projects.add(s);
 				}
 			}
@@ -1261,6 +1303,18 @@ implements ISierraServerObserver {
 					                           ps.earliestLocalAudit, ps.latestLocalAudit);
 			createLocalAuditDetails(audits, ps.localFindings);
 			status = status.merge(ChangeStatus.LOCAL);
+		}		
+		if (ps.numServerProblems > 0) {
+			TreeItem problems = new TreeItem(root, SWT.NONE);
+			problems.setText(ps.numServerProblems+" consecutive failure"+s(ps.numServerProblems)+
+					         " connecting to "+server.getLabel());
+			problems.setImage(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+		}
+		if (ps.numProjectProblems > 0) {
+			TreeItem problems = new TreeItem(root, SWT.NONE);
+			problems.setText(ps.numProjectProblems+" consecutive failure"+s(ps.numProjectProblems)+
+					         " getting server info from "+server.getLabel());
+			problems.setImage(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 		}
 		if (ps.serverData == null) {
 			TreeItem noServer = new TreeItem(root, SWT.NONE);
