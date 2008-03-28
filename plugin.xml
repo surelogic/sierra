@@ -150,50 +150,6 @@
 	</extension>
 
 	<extension point="org.eclipse.ui.popupMenus">
-		<viewerContribution
-			id="org.eclipse.ui.articles.action.contribution.popup.editor"
-			targetID="#CompilationUnitEditorContext">
-			<menu
-				id="com.surelogic.sierra.client.eclipse.editorContextMenu"
-				label="Sierra" path="additions">
-			</menu>
-			<action
-				id="org.eclipse.ui.articles.action.contribution.editor.scanAction"
-				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
-				label="Re-Scan"
-				menubarPath="com.surelogic.sierra.client.eclipse.editorContextMenu/additions"
-				class="com.surelogic.sierra.client.eclipse.actions.NewPartialScanAction">
-			</action>
-		</viewerContribution>
-
-		<objectContribution id="Sierra.CompilationUnitPopupMenu"
-			objectClass="org.eclipse.jdt.core.IPackageFragment">
-			<menu
-				id="com.surelogic.sierra.client.eclipse.packageContextMenu"
-				label="Sierra" path="additions">
-			</menu>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewPartialScanAction"
-				id="com.surelogic.sierra.client.eclipse.actions.PartialScanPackage"
-				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_pkg.gif"
-				label="Re-Scan" enablesFor="+"
-				menubarPath="com.surelogic.sierra.client.eclipse.packageContextMenu/additions">
-			</action>
-		</objectContribution>
-		<objectContribution id="Sierra.CompilationUnitPopupMenu"
-			objectClass="org.eclipse.jdt.core.ICompilationUnit">
-			<menu
-				id="com.surelogic.sierra.client.eclipse.compilationUnitContextMenu"
-				label="Sierra" path="additions">
-			</menu>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewPartialScanAction"
-				id="com.surelogic.sierra.client.eclipse.actions.PartialScanCU"
-				icon="platform:/plugin/com.surelogic.common.eclipse/lib/images/sierra_scan_class.gif"
-				label="Re-Scan" enablesFor="+"
-				menubarPath="com.surelogic.sierra.client.eclipse.compilationUnitContextMenu/additions">
-			</action>
-		</objectContribution>
 		<objectContribution id="Sierra.popupMenu"
 			objectClass="org.eclipse.jdt.core.IJavaProject">
 			<menu
