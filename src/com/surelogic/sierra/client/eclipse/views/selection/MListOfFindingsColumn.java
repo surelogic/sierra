@@ -450,7 +450,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			} else if (e.keyCode == SWT.ARROW_LEFT) {
 				getPreviousColumn().forceFocus();
 				e.doit = false; // Handled
-			} else if (e.keyCode == SWT.ARROW_RIGHT /* || == ENTER */) {
+			} else if (e.keyCode == SWT.ARROW_RIGHT || e.character == ' ') {
 				f_doubleClick.handleEvent(null);
 				e.doit = false; // Handled
 			}
@@ -555,8 +555,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						break;
 					case SWT.TRAVERSE_TAB_NEXT:
-						// Ignore, since we should be the last column
+						// Cycle back to the first columns
 						setCustomTabTraversal(e);
+						getFirstColumn().forceFocus();
 						break;
 					case SWT.TRAVERSE_TAB_PREVIOUS:
 						setCustomTabTraversal(e);
