@@ -199,11 +199,11 @@ public class RemoteTool extends AbstractTool {
     }
 
     public void error(String msg) {
-      out.println("##"+Remote.ERROR+", "+msg);
+      out.println("##"+Remote.WARNING+", "+msg);
     }
 
     public void error(String msg, Throwable t) {
-      out.println("##"+Remote.ERROR+", "+msg);
+      out.println("##"+Remote.WARNING+", "+msg);
       t.printStackTrace(out);
     }
 

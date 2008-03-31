@@ -406,7 +406,7 @@ public class LocalTool extends AbstractTool {
                 case WORK:
                   monitor.worked(Integer.valueOf(st.nextToken().trim()));
                   break;
-                case ERROR:
+                case WARNING:
                   System.out.println(line);
                   copyException(first, st.nextToken(), br);
                   break;
