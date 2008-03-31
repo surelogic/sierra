@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.SystemUtils;
+
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.HashGenerator;
@@ -292,6 +294,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
+    	final String clazz = line.getClassName();    	  
+    	if ("java.".startsWith(clazz) || "javax.".startsWith(clazz)) {    		
+    	  return null; // Ignore these
+    	}
     	if (handleWarning(line.getClassName())) {
           logError("Couldn't find source file for "+line.getClassName());
         }
@@ -395,6 +401,23 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         	System.out.println("Ignoring target "+t.getLocation());
         }
       }
+      /*
+      if (SystemUtils.IS_OS_WINDOWS) {
+    	  String vendor = SystemUtils.JAVA_VENDOR;
+    	  if (vendor.startsWith("Sun")) {
+    		  // Try finding it in the JDK source
+    		  String javaHome = System.getProperty("java.home");
+    		  File home = new File(javaHome);
+    		  File srcZip = new File(home, "src.zip");
+    		  if (!srcZip.exists()) {
+    			  srcZip = new File(home.getParentFile(), "src.zip");
+    			  if (!srcZip.exists()) {
+    				  return null;
+    			  }
+    		  }
+    	  }
+      }
+      */
       return null;
     }
   }
