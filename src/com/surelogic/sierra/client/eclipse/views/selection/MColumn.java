@@ -90,6 +90,19 @@ public abstract class MColumn {
 	}
 
 	/**
+	 * Gets the reference to the first column
+	 * 
+	 * @return a reference to the first column
+	 */
+	MColumn getFirstColumn() {
+		MColumn column = this;
+		while (column.getPreviousColumn() != null) {
+			column = column.getPreviousColumn();
+		}
+		return column;
+	}
+	
+	/**
 	 * Immutable reference to the column before this one, will be
 	 * <code>null</code> if this is the first column.
 	 */
@@ -109,7 +122,7 @@ public abstract class MColumn {
 	MColumn getPreviousColumn() {
 		return f_previousColumn;
 	}
-
+	
 	/**
 	 * Mutable reference to the column after this one, will be <code>null</code>
 	 * if this is the last column.
