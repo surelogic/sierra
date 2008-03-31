@@ -346,7 +346,11 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportSkippedAnalysis(MethodDescriptor method) {
-      LOG.info("Skipped analysis: "+method.getName()+method.getSignature());
+      String sig = method.getName()+method.getSignature();
+      if ("<clinit>()V".equals(sig)) {
+    	  return; // Ignore class initializers
+      }
+      LOG.info("Skipped analysis: "+sig);
     }
 
     /* ******************** For IClassObserver ********************* */
