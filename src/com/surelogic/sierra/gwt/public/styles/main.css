@@ -130,9 +130,19 @@ a.hover {
 }
 
 /* Overview tables */
+.dashboard {
+	margin: 0px;
+	
+}
+
+.dashboard-cell {
+    vertical-align: top;
+    
+}
+
 .overview-table {
-	border: 1px solid;
 	border-spacing: 0px;
+	width: 100%;
 }
 
 .overview-header {
@@ -184,6 +194,44 @@ a.hover {
 	text-indent: 3em;
 }
 
+/* Portlet */
+.sl-Portlet {
+	border: 1px solid;
+	margin: 5px;
+	padding: 2px;
+}
+
+.sl-Portlet-titlepanel {
+	width: 100%;
+	background-color: #DDDDFF;
+	margin: 0px;
+	padding: 2px;
+	border: 1px solid #666699;
+}
+
+.sl-Portlet-contentpanel {
+	border: 1px solid #666699;
+	width: 100%;
+}
+
+.sl-Portlet-title {
+	font-size: small;
+}
+
+.sl-Portlet-datatitle {
+	font-weight: bold;
+	font-size: small;
+}
+
+.sl-Portlet-moredetail {
+	font-size: small;
+    font-style: italic;
+    text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+}
+
+    
 /* Grid panel */
 .sl-GridPanel {
 	width: 100%;

@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
@@ -15,14 +15,16 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.gwt.client.service.OverviewServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.Chart;
+import com.surelogic.sierra.gwt.client.ui.Portlet;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class OverviewContent extends ContentComposite {
 
 	private static final OverviewContent instance = new OverviewContent();
-
-	private final VerticalPanel users = new VerticalPanel();
-	private final VerticalPanel projects = new VerticalPanel();
+	private final FlexTable dashboard = new FlexTable();
+	private VerticalPanel users;
+	private VerticalPanel projects;
 
 	private OverviewContent() {
 		super();
@@ -163,22 +165,51 @@ public class OverviewContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		panel.add(new HTML("<p>Welcome to Sierra Team Server!</p><br>"));
-		HorizontalPanel charts = new HorizontalPanel();
-		charts.add(ChartBuilder.name("LatestScanResults").width(450).build());
-		charts.add(ChartBuilder.name("AuditContributions").width(320).build());
-		panel.add(charts);
-		panel.add(new HTML("<h3>Projects</h3>"));
-		panel.add(projects);
-		panel.add(new HTML("<h3>Users</h3>"));
-		panel.add(users);
+		panel.setWidth("100%");
+		panel.add(new HTML("<p>Welcome to Sierra Team Server!</p>"));
+
+		panel.add(dashboard);
+		dashboard.addStyleName("dashboard");
+		dashboard.setWidth("100%");
+		dashboard.getColumnFormatter().setWidth(0, "50%");
+		dashboard.getColumnFormatter().setWidth(1, "50%");
+
+		final VerticalPanel latestScans = createPortlet(0, 0,
+				"Published Scans", "Latest Scan Results");
+		final Chart scansChart = ChartBuilder.name("LatestScanResults").width(
+				450).build();
+		latestScans.add(scansChart);
+		latestScans.setCellHorizontalAlignment(scansChart,
+				VerticalPanel.ALIGN_CENTER);
+
+		final VerticalPanel auditContributions = createPortlet(0, 1,
+				"Contributions", "In the Last 30 Days");
+		Chart auditChart = ChartBuilder.name("AuditContributions").width(320)
+				.build();
+		auditContributions.add(auditChart);
+		auditContributions.setCellHorizontalAlignment(auditChart,
+				VerticalPanel.ALIGN_CENTER);
+
+		projects = createPortlet(1, 0, "Projects", "All Published Projects");
+		users = createPortlet(1, 1, "Users", "Latest User Audits");
+
 		rootPanel.add(panel, DockPanel.CENTER);
+
 		projects.add(new HTML("Fetching latest information."));
 		users.add(new HTML("Fetching latest information."));
 	}
 
 	public static OverviewContent getInstance() {
 		return instance;
+	}
+
+	private VerticalPanel createPortlet(int row, int col, String title,
+			String dataTitle) {
+		final Portlet portlet = new Portlet(title);
+		portlet.setDataTitle(dataTitle);
+		dashboard.setWidget(row, col, portlet);
+		dashboard.getCellFormatter().addStyleName(row, col, "dashboard-cell");
+		return portlet.getContentPanel();
 	}
 
 	private static String iToS(int i) {
