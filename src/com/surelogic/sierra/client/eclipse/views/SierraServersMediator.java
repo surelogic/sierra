@@ -250,7 +250,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		};
 		f_openInBrowserAction.setEnabled(false);
-		view.addToActionBar(f_openInBrowserAction);
+		//view.addToActionBar(f_openInBrowserAction);
 		
 		f_duplicateServerAction = 
 			new ServerActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
@@ -262,7 +262,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}; 
 		f_duplicateServerAction.setEnabled(false);
-		view.addToActionBar(f_duplicateServerAction);
+		//view.addToActionBar(f_duplicateServerAction);
 		
 		f_deleteServerAction = new IJavaProjectsActionListener(
 					SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
@@ -294,7 +294,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		};
 		
 		f_deleteServerAction.setEnabled(false);
-		view.addToActionBar(f_deleteServerAction);
+		//view.addToActionBar(f_deleteServerAction);
 		
 		f_newServerItem = newServerItem;
 		f_browseServerItem = browseServerItem;
