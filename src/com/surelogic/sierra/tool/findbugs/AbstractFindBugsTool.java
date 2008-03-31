@@ -142,9 +142,20 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     final ArtifactGenerator generator;
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
-    final Set<String> missingClasses = new HashSet<String>();
+    final Set<String> ignoreSet = new HashSet<String>();
     {
-    	missingClasses.add("java.lang.Class");
+    	ignoreSet.add("java.lang.Class");
+    	ignoreSet.add("<clinit>()V");
+    }
+    /**
+     * @return true if it should be handle
+     */
+    private boolean handleWarning(String msg) {
+    	if (ignoreSet.contains(msg)) {
+    		return false;
+    	}
+    	ignoreSet.add(msg);
+    	return true;
     }
     
     public Monitor(AbstractToolInstance ti) {
@@ -281,9 +292,8 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
       if (path == null) {
         // No identifiable source location
-    	if (!missingClasses.contains(line.getClassName())) {
+    	if (handleWarning(line.getClassName())) {
           logError("Couldn't find source file for "+line.getClassName());
-          missingClasses.add(line.getClassName());
         }
         return null;
       }  
@@ -322,12 +332,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     }
 
     public void reportMissingClass(ClassNotFoundException ex) {      
-      if (missingClasses.contains(ex.getMessage())) {
-        return;
+      if (handleWarning(ex.getMessage())) {
+          //LOG.log(Level.WARNING, "Missing class", ex);
+          tool.reportError("Missing class", ex);
       }
-      missingClasses.add(ex.getMessage());
-      //LOG.log(Level.WARNING, "Missing class", ex);
-      tool.reportError("Missing class", ex);
     }
 
     public void reportMissingClass(ClassDescriptor desc) {
@@ -338,19 +346,16 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
       String msg = "Class "+desc.getClassName()+" cannot be resolved";
       LOG.warning(msg);
       
-      if (missingClasses.contains(msg)) {        
-        return;
+      if (handleWarning(msg)) {        
+          tool.reportError(msg);
       }
-      missingClasses.add(msg);
-      tool.reportError(msg);
     }
 
     public void reportSkippedAnalysis(MethodDescriptor method) {
       String sig = method.getName()+method.getSignature();
-      if ("<clinit>()V".equals(sig)) {
-    	  return; // Ignore class initializers
+      if (handleWarning(sig)) {
+    	  LOG.info("Skipped analysis: "+sig);
       }
-      LOG.info("Skipped analysis: "+sig);
     }
 
     /* ******************** For IClassObserver ********************* */
