@@ -29,6 +29,10 @@ a.hover {
 	text-decoration: underline;
 }
 
+img {
+    border: none;
+}
+
 /* Header */
 .header {
 	background-color: #005395;
