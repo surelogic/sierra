@@ -15,6 +15,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.*;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
@@ -34,16 +35,18 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
   }
   
   public static final TroubleshootConnection 
-  getTroubleshootConnection(SierraServer s, String proj, SierraServiceClientException e) {
+  getTroubleshootConnection(ServerFailureReport method, SierraServer s, String proj, SierraServiceClientException e) {
 	  if (e instanceof InvalidLoginException) {
-		  return new TroubleshootWrongAuthentication(s, proj);
+		  return new TroubleshootWrongAuthentication(method, s, proj);
 	  } else {
-		  return new TroubleshootNoSuchServer(s, proj);
+		  return new TroubleshootNoSuchServer(method, s, proj);
 	  }
   }
   
-  protected final TroubleshootConnection getTroubleshootConnection(SierraServiceClientException e) {
-	  return getTroubleshootConnection(f_server, f_projectName, e);
+  protected final TroubleshootConnection 
+  getTroubleshootConnection(ServerFailureReport method, 
+		                    SierraServiceClientException e) {
+	  return getTroubleshootConnection(method, f_server, f_projectName, e);
   }
   
   protected final IStatus createWarningStatus(final int errNo, Throwable t) {

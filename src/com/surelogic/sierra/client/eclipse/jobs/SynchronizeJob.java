@@ -19,6 +19,7 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -68,6 +69,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	
 	private IStatus synchronize(Connection conn, SLProgressMonitor slMonitor)
 			throws SQLException {
+		final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 		TroubleshootConnection troubleshoot;
 		try {
 			ClientProjectManager.getInstance(conn).synchronizeProject(
@@ -83,7 +85,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			}
 		} catch (ServerMismatchException e) {
 		  if (joinJob.troubleshoot(f_server)) {
-		    troubleshoot = new TroubleshootWrongServer(f_server, f_projectName);
+		    troubleshoot = new TroubleshootWrongServer(method, f_server, f_projectName);
 		    conn.rollback();
 		    troubleshoot.fix();
 		    if (troubleshoot.retry()) {
@@ -94,7 +96,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
       return fail(e);
 		} catch (SierraServiceClientException e) {
 		  if (joinJob.troubleshoot(f_server)) {
-		    troubleshoot = getTroubleshootConnection(e);
+		    troubleshoot = getTroubleshootConnection(method, e);
 		    conn.rollback();
 		    troubleshoot.fix();
 		    if (troubleshoot.retry()) {

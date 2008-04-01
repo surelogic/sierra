@@ -19,6 +19,8 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.GlobalSettings;
 import com.surelogic.sierra.tool.message.GlobalSettingsRequest;
@@ -70,6 +72,7 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 
 	private IStatus getResultFilters(Connection conn,
 			SLProgressMonitor slMonitor) throws SQLException {
+		final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 		try {
 			final SierraService service = SierraServiceClient.create(f_server
 					.getServer());
@@ -83,10 +86,10 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 		} catch (SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_server,
-						null);
+				troubleshoot = 
+					new TroubleshootWrongAuthentication(method, f_server, null);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_server, null);
+				troubleshoot = new TroubleshootNoSuchServer(method, f_server, null);
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.

@@ -1,14 +1,24 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.util.logging.Level;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.PlatformUI;
+
+import com.surelogic.common.eclipse.BalloonUtility;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public abstract class TroubleshootConnection {
 
+	protected final ServerFailureReport f_method;
 	protected final SierraServer f_server;
-
 	protected final String f_projectName;
+	protected IStatus f_status;
 
 	/**
 	 * Constructs this object.
@@ -19,8 +29,11 @@ public abstract class TroubleshootConnection {
 	 *            the project name, or <code>null</code> if no project or it
 	 *            is unknown.
 	 */
-	protected TroubleshootConnection(final SierraServer server,
-			final String projectName) {
+	protected TroubleshootConnection(final ServerFailureReport method, 
+			                         final SierraServer server,
+			                         final String projectName) {
+		f_method = method;
+		
 		if (server == null)
 			throw new IllegalStateException("server must be non-null");
 		f_server = server;
@@ -63,7 +76,19 @@ public abstract class TroubleshootConnection {
 	 * server object.
 	 */
 	public final void fix() {
-		realFix();
+		f_status = createStatus();
+		switch (f_method) {
+		default:
+		case SHOW_BALLOON:
+			showBalloon();
+			break;
+		case SHOW_DIALOG:
+			showDialog();
+			break;
+		case IGNORE:
+			SLLogger.log(Level.WARNING, f_status.getMessage(),
+					     f_status.getException());
+		}
 		
 		if (failServer()) {
 			f_server.encounteredProblem();
@@ -74,7 +99,22 @@ public abstract class TroubleshootConnection {
 		}
 	}
 
-	protected abstract void realFix();
+	protected void showDialog() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				ErrorDialogUtility.open(null, getLabel(), f_status);
+			}
+		});
+	}
+
+	private void showBalloon() {
+		SLLogger.log(Level.WARNING, f_status.getMessage(),
+			         f_status.getException());
+		BalloonUtility.showMessage(getLabel(), f_status.getMessage());		
+	}
+
+	protected abstract IStatus createStatus();
+	protected abstract String getLabel();
 	
 	/**	
 	 * @return true if the server should be considered failed

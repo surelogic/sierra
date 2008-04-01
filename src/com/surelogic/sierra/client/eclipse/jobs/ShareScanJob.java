@@ -20,6 +20,8 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.ScanVersionException;
@@ -90,7 +92,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			return new TreeSet<String>(timeseries);
 		} catch (SierraServiceClientException e) {
 			if (joinJob.troubleshoot(f_server)) {
-				troubleshoot = getTroubleshootConnection(e);
+				final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
+				troubleshoot = getTroubleshootConnection(method, e);
 
 				// We had a recoverable error. Rollback, run the appropriate
 				// troubleshoot, and try again.
@@ -113,7 +116,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			f_server.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (SierraServiceClientException e) {
-			troubleshoot = getTroubleshootConnection(e);
+			final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
+			troubleshoot = getTroubleshootConnection(method, e);
 
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.

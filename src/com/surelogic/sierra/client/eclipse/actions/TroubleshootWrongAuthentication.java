@@ -1,23 +1,37 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
-	public TroubleshootWrongAuthentication(SierraServer server,
+	public TroubleshootWrongAuthentication(final ServerFailureReport method,
+			                               SierraServer server,
 			String projectName) {
-		super(server, projectName);
+		super(method, server, projectName);
 	}
 
 	private int f_dialogResult;
 
 	@Override
-	protected void realFix() {
+	protected String getLabel() {
+		return "Unable To Authenicate";
+	}
+	@Override
+	protected IStatus createStatus() {
+		return SLStatus.createInfoStatus("Unable to authenicate to "+
+				                         f_server.getLabel());
+	}
+	
+	@Override
+	protected void showDialog() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
