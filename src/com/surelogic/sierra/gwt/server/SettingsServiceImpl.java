@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
@@ -109,7 +110,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				final FilterSetDO set = sets.createFilterSet(name, null,
 						revision);
 				set.getParents().addAll(parents);
-				final List doEntries = set.getFilters();
+				final Set<FilterEntryDO> doEntries = set.getFilters();
 				final List<FilterEntry> moEntries = entries;
 				for (final FilterEntry entry : moEntries) {
 					doEntries.add(new FilterEntryDO(entry.getId(), entry
