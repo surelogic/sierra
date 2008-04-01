@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.FindingTypeFilterRecord;
@@ -75,8 +74,6 @@ public final class SettingsManager {
 		return result;
 	}
 
-	private static final Logger log = SLLogger
-			.getLoggerFor(SettingsManager.class);
 	private static final String GLOBAL_NAME = "GLOBAL";
 	private static final String GLOBAL_UUID = "de3034ec-65d5-4d4a-b059-1adf8fc7b12d";
 
@@ -87,23 +84,11 @@ public final class SettingsManager {
 	private final PreparedStatement selectSettingUids;
 	private final PreparedStatement selectSettingProjects;
 	private final PreparedStatement selectSettingFilterSets;
-	private final PreparedStatement selectFilterSetSettings;
 	private final PreparedStatement getSettingsByProject;
 	private final PreparedStatement copySettings;
 	private final PreparedStatement selectSettingFilters;
 	private final PreparedStatement copySettingFilters;
 	private final PreparedStatement deleteSettingFilters;
-	private final PreparedStatement deleteFilterSetFilters;
-	private final PreparedStatement listFilterSetUids;
-	private final PreparedStatement loadFilterEntries;
-	private final PreparedStatement loadFilterSetParents;
-	private final PreparedStatement insertFilterSetParent;
-	private final PreparedStatement insertFilterSetEntry;
-	private final PreparedStatement selectFilterSetById;
-	private final PreparedStatement selectFilterSetChildren;
-	private final PreparedStatement selectFilterSetParents;
-	private final PreparedStatement deleteFilterSetEntries;
-	private final PreparedStatement deleteFilterSetParents;
 
 	private final SettingsProjectManager spManager;
 
@@ -117,8 +102,6 @@ public final class SettingsManager {
 				.prepareStatement("SELECT PROJECT_NAME FROM SETTINGS_PROJECT_RELTN WHERE SETTINGS_ID = ?");
 		selectSettingFilterSets = conn
 				.prepareStatement("SELECT FS.UUID FROM SETTING_FILTER_SETS S, FILTER_SET FS WHERE S.SETTINGS_ID = ? AND FS.ID = S.FILTER_SET_ID");
-		selectFilterSetSettings = conn
-				.prepareStatement("SELECT SFS.SETTINGS_ID, S.UUID FROM SETTING_FILTER_SETS SFS, SETTINGS S WHERE SFS.FILTER_SET_ID = ? AND S.ID = SFS.SETTINGS_ID");
 		getSettingsByProject = conn
 				.prepareStatement("SELECT S.UUID FROM SETTINGS_PROJECT_RELTN PSR, SETTINGS S WHERE PSR.PROJECT_NAME = ? AND S.ID = PSR.SETTINGS_ID");
 		copySettings = conn
@@ -130,29 +113,7 @@ public final class SettingsManager {
 		deleteSettingFilters = conn
 				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		spManager = SettingsProjectManager.getInstance(conn);
-		loadFilterEntries = conn
-				.prepareStatement("SELECT FT.UUID,FE.FILTERED FROM FILTER_ENTRY FE, FINDING_TYPE FT"
-						+ "   WHERE FE.FILTER_SET_ID = ? AND FT.ID = FE.FINDING_TYPE_ID");
-		loadFilterSetParents = conn
-				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		listFilterSetUids = conn
-				.prepareStatement("SELECT UUID FROM FILTER_SET");
-		insertFilterSetParent = conn
-				.prepareStatement("INSERT INTO FILTER_SET_RELTN (CHILD_ID,PARENT_ID) VALUES (?,?)");
-		insertFilterSetEntry = conn
-				.prepareStatement("INSERT INTO FILTER_ENTRY (FILTER_SET_ID,FINDING_TYPE_ID,FILTERED) VALUES (?,?,?)");
-		selectFilterSetById = conn
-				.prepareStatement("SELECT UUID, NAME FROM FILTER_SET WHERE ID = ?");
-		selectFilterSetChildren = conn
-				.prepareStatement("SELECT CHILD_ID FROM FILTER_SET_RELTN WHERE PARENT_ID = ?");
-		selectFilterSetParents = conn
-				.prepareStatement("SELECT PARENT_ID FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		deleteFilterSetParents = conn
-				.prepareStatement("DELETE FROM FILTER_SET_RELTN WHERE CHILD_ID = ?");
-		deleteFilterSetEntries = conn
-				.prepareStatement("DELETE FROM FILTER_ENTRY WHERE FILTER_SET_ID = ?");
-		deleteFilterSetFilters = conn
-				.prepareStatement("DELETE FROM FILTER_SET_FILTERS WHERE FILTER_SET_ID = ?");
+
 	}
 
 	public static SettingsManager getInstance(Connection conn)

@@ -38,7 +38,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String javaVersion;
 	private String uid;
 	private String user;
-	private Set<String> timeseries;
+	private final Set<String> timeseries;
 	private ScanRecord scan;
 
 	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
@@ -46,8 +46,8 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.timeseries = new TreeSet<String>();
-		this.partial = false;
+		timeseries = new TreeSet<String>();
+		partial = false;
 		this.filter = filter;
 	}
 
@@ -56,7 +56,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
-		this.timeseries = new TreeSet<String>();
+		timeseries = new TreeSet<String>();
 		this.partial = partial;
 		this.filter = filter;
 	}
@@ -65,7 +65,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		ProjectRecord p;
 		try {
 			p = ProjectRecordFactory.getInstance(conn).newProject();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ScanPersistenceException(e);
 		}
 		p.setName(projectName);
@@ -89,11 +89,11 @@ class JDBCScanGenerator implements ScanGenerator {
 				conn.commit();
 			}
 			scan.insert();
-			for (String name : timeseries) {
-				TimeseriesRecord q = factory.newTimeseries();
+			for (final String name : timeseries) {
+				final TimeseriesRecord q = factory.newTimeseries();
 				q.setName(name);
 				if (q.select()) {
-					TimeseriesScanRecord rq = factory
+					final TimeseriesScanRecord rq = factory
 							.newScanTimeseriesRelation();
 					rq
 							.setId(new RecordRelationRecord.PK<TimeseriesRecord, ScanRecord>(
@@ -109,12 +109,12 @@ class JDBCScanGenerator implements ScanGenerator {
 			generator = new JDBCArtifactGenerator(conn, factory, manager,
 					projectName, scan, filter);
 			return generator;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			try {
 				conn.rollback();
 				manager.deleteScan(uid, null);
 				conn.commit();
-			} catch (SQLException e1) {
+			} catch (final SQLException e1) {
 				// Quietly do nothing, we already have an exception
 			}
 			throw new ScanPersistenceException(e);
@@ -127,12 +127,12 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public ScanGenerator javaVendor(String vendor) {
-		this.javaVendor = vendor;
+		javaVendor = vendor;
 		return this;
 	}
 
 	public ScanGenerator javaVersion(String version) {
-		this.javaVersion = version;
+		javaVersion = version;
 		return this;
 	}
 
@@ -142,7 +142,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public ScanGenerator timeseries(Collection<String> timeseries) {
-		if (timeseries != null && !timeseries.isEmpty()) {
+		if ((timeseries != null) && !timeseries.isEmpty()) {
 			this.timeseries.addAll(timeseries);
 		}
 		return this;
@@ -168,7 +168,7 @@ class JDBCScanGenerator implements ScanGenerator {
 			}
 			conn.commit();
 			return scan.getUid();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ScanPersistenceException(e);
 		}
 	}
