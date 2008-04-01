@@ -1,15 +1,21 @@
 package com.surelogic.sierra.jdbc.settings;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * Represents a filter set in the database. Equality is defined based on uid.
+ * 
+ * @author nathan
+ * 
+ */
 public class FilterSetDO {
 
 	private String uid;
 	private String name;
 	private String info;
-	private final List<String> parents = new ArrayList<String>();
-	private final List<FilterEntryDO> filterEntries = new ArrayList<FilterEntryDO>();
+	private final Set<String> parents = new HashSet<String>();
+	private final Set<FilterEntryDO> filterEntries = new HashSet<FilterEntryDO>();
 	private long revision;
 
 	public String getUid() {
@@ -28,11 +34,11 @@ public class FilterSetDO {
 		this.name = name;
 	}
 
-	public List<String> getParents() {
+	public Set<String> getParents() {
 		return parents;
 	}
 
-	public List<FilterEntryDO> getFilters() {
+	public Set<FilterEntryDO> getFilters() {
 		return filterEntries;
 	}
 
@@ -50,6 +56,36 @@ public class FilterSetDO {
 
 	public void setRevision(long revision) {
 		this.revision = revision;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final FilterSetDO other = (FilterSetDO) obj;
+		if (uid == null) {
+			if (other.uid != null) {
+				return false;
+			}
+		} else if (!uid.equals(other.uid)) {
+			return false;
+		}
+		return true;
 	}
 
 }

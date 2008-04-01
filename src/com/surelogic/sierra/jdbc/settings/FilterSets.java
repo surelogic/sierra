@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.settings;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -156,7 +157,8 @@ public class FilterSets {
 	 *            the filter set uid
 	 * @throws IllegalArgumentException
 	 */
-	private void checkCyclicDependences(List<String> uids, String filterSetUid) {
+	private void checkCyclicDependences(Collection<String> uids,
+			String filterSetUid) {
 		for (final String uid : uids) {
 			if (!uid.equals(filterSetUid)) {
 				checkCyclicDependences(q.prepared("FilterSets.findParents",

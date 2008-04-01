@@ -389,11 +389,19 @@ public final class FindingTypeManager {
 				}
 			}
 			final FilterSets sets = new FilterSets(new ConnectionQuery(conn));
+			final Map<String, FilterSetDO> currentSets = new HashMap<String, FilterSetDO>();
+			for (final FilterSetDO set : sets.listFilterSets()) {
+				currentSets.put(set.getName(), set);
+			}
 			for (final Category cat : type.getCategory()) {
-				// TODO in the future, this needs to be an update.
-				final FilterSetDO set = sets.createFilterSet(cat.getName()
-						.trim(), cat.getDescription(), revision);
-				final List<FilterEntryDO> entries = set.getFilters();
+				final String name = cat.getName().trim();
+				FilterSetDO set = currentSets.get(name);
+				if (set == null) {
+					set = sets.createFilterSet(cat.getName().trim(), cat
+							.getDescription(), revision);
+				}
+				final Set<FilterEntryDO> entries = set.getFilters();
+				entries.clear();
 				for (String findingType : cat.getFindingType()) {
 					findingType = findingType.trim();
 					entries.add(new FilterEntryDO(findingType, false));
