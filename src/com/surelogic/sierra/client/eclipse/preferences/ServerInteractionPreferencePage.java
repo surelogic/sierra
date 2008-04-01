@@ -35,6 +35,8 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 	Group f_group;
 	ScaleFieldEditor f_periodInMinutes;
 	IntegerFieldEditor f_auditThreshold;
+	RadioGroupFieldEditor f_serverFailureReporting;
+	IntegerFieldEditor f_retryThreshold;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -99,7 +101,32 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		f_auditThreshold.setPage(this);
 		f_auditThreshold.setPreferenceStore(getPreferenceStore());
 		f_auditThreshold.load();
+		
+		f_serverFailureReporting = new RadioGroupFieldEditor(
+				PreferenceConstants.P_SERVER_FAILURE_REPORTING,
+				"Policy for handling server failures:",
+				1,
+				new String[][] {
+						{ "Ignore",
+						  ServerFailureReport.IGNORE.toString() },
+						{ "Pop-up a balloon",
+						  ServerFailureReport.SHOW_BALLOON.toString() },
+						{ "Pop-up a dialog",
+						  ServerFailureReport.SHOW_DIALOG.toString() },
+				},
+				f_group);
+		f_serverFailureReporting.setPage(this);
+		f_serverFailureReporting.setPreferenceStore(getPreferenceStore());
+		f_serverFailureReporting.load();
 
+		f_retryThreshold = new IntegerFieldEditor(
+				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD,
+				"Retry threshold (# of consecutive failures before switching into manual mode):",
+				f_group);
+		f_retryThreshold.setPage(this);
+		f_retryThreshold.setPreferenceStore(getPreferenceStore());
+		f_retryThreshold.load();
+		
 		GridLayout groupLayout = (GridLayout) f_group.getLayout();
 		groupLayout.numColumns = 1;
 		f_group.setLayout(groupLayout);
@@ -123,11 +150,13 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 	}
 
 	private void mediateDialogState(final ServerInteractionSetting currentChoice) {
-		f_group.setEnabled(currentChoice != ServerInteractionSetting.NEVER);
-		f_periodInMinutes.setEnabled(
-				currentChoice != ServerInteractionSetting.NEVER, f_group);
+		boolean auto = currentChoice != ServerInteractionSetting.NEVER;
+		f_group.setEnabled(auto);
+		f_periodInMinutes.setEnabled(auto, f_group);
 		f_auditThreshold.setEnabled(
 				currentChoice == ServerInteractionSetting.THRESHOLD, f_group);
+		f_serverFailureReporting.setEnabled(auto, f_group);
+		f_retryThreshold.setEnabled(auto, f_group);
 	}
 
 	@Override
@@ -135,6 +164,8 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		f_serverInteractionSetting.loadDefault();
 		f_periodInMinutes.loadDefault();
 		f_auditThreshold.loadDefault();
+		f_serverFailureReporting.loadDefault();
+		f_retryThreshold.loadDefault();
 		super.performDefaults();
 	}
 
@@ -143,6 +174,8 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		f_serverInteractionSetting.store();
 		f_periodInMinutes.store();
 		f_auditThreshold.store();
+		f_serverFailureReporting.store();
+		f_retryThreshold.store();
 		return super.performOk();
 	}
 }
