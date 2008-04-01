@@ -47,5 +47,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD, 200);
 		store.setDefault(
 				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD, 4);
+		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING, 
+				         ServerFailureReport.SHOW_BALLOON.toString()); 
 	}
 }

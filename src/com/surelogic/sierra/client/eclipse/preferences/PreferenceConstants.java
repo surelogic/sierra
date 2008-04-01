@@ -218,4 +218,22 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_RETRY_THRESHOLD, value);
 	}
+	
+	/**
+	 * Setting to control reporting of failures during automatic synchronization
+	 */
+	public static final String P_SERVER_FAILURE_REPORTING = "com.surelogic.sierra.server-failure-reporting";
+
+	public static ServerFailureReport getServerFailureReporting() {
+		final String resultString = Activator.getDefault()
+				.getPluginPreferences().getString(P_SERVER_FAILURE_REPORTING);
+		final ServerFailureReport result = ServerFailureReport
+				.valueOf(resultString);
+		return result;
+	}
+	
+	public static void getServerFailureReporting(ServerFailureReport s) {
+		Activator.getDefault().getPluginPreferences()
+			.setValue(P_SERVER_FAILURE_REPORTING, s.toString());
+	}
 }
