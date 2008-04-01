@@ -28,9 +28,9 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	private final boolean force;
 
 	public SynchronizeJob(ServerProjectGroupJob family, String projectName, SierraServer server,
-			              boolean force) {
+			              boolean force, ServerFailureReport method) {
 		super(family, "Synchronizing Sierra data from project '" + projectName + "'", 
-		      server, projectName);
+		      server, projectName, method);
 		this.force = force;
 	}
 
@@ -69,7 +69,6 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	
 	private IStatus synchronize(Connection conn, SLProgressMonitor slMonitor)
 			throws SQLException {
-		final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 		TroubleshootConnection troubleshoot;
 		try {
 			ClientProjectManager.getInstance(conn).synchronizeProject(
@@ -85,7 +84,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			}
 		} catch (ServerMismatchException e) {
 		  if (joinJob.troubleshoot(f_server)) {
-		    troubleshoot = new TroubleshootWrongServer(method, f_server, f_projectName);
+		    troubleshoot = new TroubleshootWrongServer(f_method, f_server, f_projectName);
 		    conn.rollback();
 		    troubleshoot.fix();
 		    if (troubleshoot.retry()) {
@@ -96,7 +95,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
       return fail(e);
 		} catch (SierraServiceClientException e) {
 		  if (joinJob.troubleshoot(f_server)) {
-		    troubleshoot = getTroubleshootConnection(method, e);
+		    troubleshoot = getTroubleshootConnection(f_method, e);
 		    conn.rollback();
 		    troubleshoot.fix();
 		    if (troubleshoot.retry()) {

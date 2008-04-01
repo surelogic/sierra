@@ -403,8 +403,8 @@ implements ISierraServerObserver, IProjectsObserver {
 							 * Yes was selected, so send the result filters to
 							 * the server.
 							 */
-							final Job job = new SendGlobalResultFiltersJob(
-									server);
+							final Job job = 
+							  new SendGlobalResultFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
 							job.schedule();
 						}
 					}
@@ -429,7 +429,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					 * Yes was selected, so get the result filters from the
 					 * server.
 					 */
-					final Job job = new GetGlobalResultFiltersJob(server);
+					final Job job = new GetGlobalResultFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
 					job.schedule();
 				}
 			}
@@ -829,7 +829,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		Job group = lastSyncGroup.get();
 		if (group == null || group.getResult() != null) {
 			SynchronizeAllProjectsAction sync = 
-				new SynchronizeAllProjectsAction(false);
+				new SynchronizeAllProjectsAction(PreferenceConstants.getServerFailureReporting(), false);
 			sync.run(null);
 			lastSyncGroup.set(sync.getGroup());					
 		} else {

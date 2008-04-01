@@ -12,6 +12,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
 public class PublishScanAction extends AbstractWebServiceMenuAction {
@@ -24,7 +25,7 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 		final File scanFile = new File(scanFileName);
 		if (scanFile.exists()) {
 			final ShareScanJob job = new ShareScanJob(family, projectName,
-					server, scanFile);
+					server, scanFile, ServerFailureReport.SHOW_DIALOG);
 			job.schedule();
 		} else {
 			final int errNo = 21;

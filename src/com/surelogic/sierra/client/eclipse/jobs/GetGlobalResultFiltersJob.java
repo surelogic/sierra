@@ -30,12 +30,13 @@ import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class GetGlobalResultFiltersJob extends DatabaseJob {
-
+  private final ServerFailureReport f_method;
 	private final SierraServer f_server;
 
-	public GetGlobalResultFiltersJob(SierraServer server) {
+	public GetGlobalResultFiltersJob(ServerFailureReport method, SierraServer server) {
 		super("Getting scan filter settings from " + server.getLabel());
 		f_server = server;
+		f_method = method;
 	}
 
 	@Override
@@ -72,7 +73,6 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 
 	private IStatus getResultFilters(Connection conn,
 			SLProgressMonitor slMonitor) throws SQLException {
-		final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 		try {
 			final SierraService service = SierraServiceClient.create(f_server
 					.getServer());
@@ -87,9 +87,9 @@ public final class GetGlobalResultFiltersJob extends DatabaseJob {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
 				troubleshoot = 
-					new TroubleshootWrongAuthentication(method, f_server, null);
+					new TroubleshootWrongAuthentication(f_method, f_server, null);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(method, f_server, null);
+				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server, null);
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.

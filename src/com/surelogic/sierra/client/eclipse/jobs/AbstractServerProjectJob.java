@@ -23,15 +23,17 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
   protected final SierraServer f_server;
   protected final String f_projectName;
   protected final ServerProjectGroupJob joinJob;
-  
+  protected final ServerFailureReport f_method;
   
   public AbstractServerProjectJob(ServerProjectGroupJob family, String name, 
-                                  SierraServer server, String project) {
+                                  SierraServer server, String project,
+                                  ServerFailureReport method) {
     super(family, name);
     joinJob = family;
     joinJob.add(this);
     f_server = server;
     f_projectName = project;
+    f_method = method;
   }
   
   public static final TroubleshootConnection 

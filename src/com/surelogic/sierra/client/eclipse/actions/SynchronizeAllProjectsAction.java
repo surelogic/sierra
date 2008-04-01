@@ -15,14 +15,21 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public final class SynchronizeAllProjectsAction implements
 		IWorkbenchWindowActionDelegate {
 	private final boolean force;
 	private ServerProjectGroupJob group;
+  private final ServerFailureReport f_method;
 
 	public SynchronizeAllProjectsAction(boolean force) {
-		this.force = force;
+		this(ServerFailureReport.SHOW_DIALOG, force);
+	}
+	
+	public SynchronizeAllProjectsAction(ServerFailureReport method, boolean force) {
+	  f_method = method;
+	  this.force = force;
 	}
 	
 	public SynchronizeAllProjectsAction() {
@@ -63,7 +70,7 @@ public final class SynchronizeAllProjectsAction implements
 				public void run(String projectName, SierraServer server,
 						Shell shell) {
 					final SynchronizeJob job = new SynchronizeJob(joinJob,
-							projectName, server, force);
+							projectName, server, force, f_method);
 					job.schedule();
 				}
 			};

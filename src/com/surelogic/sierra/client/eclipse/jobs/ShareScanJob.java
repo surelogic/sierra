@@ -33,9 +33,9 @@ public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
 
 	public ShareScanJob(ServerProjectGroupJob family, String projectName,
-			SierraServer server, File scanFile) {
+			SierraServer server, File scanFile, ServerFailureReport method) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
-				projectName);
+				projectName, method);
 		f_scanFile = scanFile;
 	}
 
@@ -92,8 +92,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			return new TreeSet<String>(timeseries);
 		} catch (SierraServiceClientException e) {
 			if (joinJob.troubleshoot(f_server)) {
-				final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
-				troubleshoot = getTroubleshootConnection(method, e);
+				troubleshoot = getTroubleshootConnection(f_method, e);
 
 				// We had a recoverable error. Rollback, run the appropriate
 				// troubleshoot, and try again.
@@ -116,8 +115,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			f_server.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (SierraServiceClientException e) {
-			final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
-			troubleshoot = getTroubleshootConnection(method, e);
+			troubleshoot = getTroubleshootConnection(f_method, e);
 
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
