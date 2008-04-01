@@ -187,4 +187,15 @@
 		<url-pattern>/services/SierraService</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>SureLogic Registration</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.servlets.RegistrationImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SureLogic Registration</servlet-name>
+		<url-pattern>/services/Registration</url-pattern>
+	</servlet-mapping>
 </web-app>
