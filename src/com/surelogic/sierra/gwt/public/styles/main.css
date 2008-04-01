@@ -196,7 +196,7 @@ a.hover {
 
 /* Portlet */
 .sl-Portlet {
-	border: 1px solid;
+	border-spacing: 1px;
 	margin: 5px;
 	padding: 2px;
 }
