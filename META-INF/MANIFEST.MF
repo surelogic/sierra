@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.surelogic.sierra.message
 Bundle-Version: 2.2.0.qualifier
 Bundle-Vendor: SureLogic, Inc.
 Export-Package: com.surelogic.sierra.tool.message,
+ com.surelogic.sierra.tool.registration,
  com.surelogic.sierra.tool.targets
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.java5.compatibility;resolution:=optional
