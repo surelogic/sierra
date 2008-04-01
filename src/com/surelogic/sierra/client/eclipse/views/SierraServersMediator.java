@@ -33,6 +33,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -56,6 +57,7 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -64,8 +66,10 @@ import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
+import com.surelogic.sierra.tool.registration.*;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver, IProjectsObserver {
@@ -295,6 +299,26 @@ implements ISierraServerObserver, IProjectsObserver {
 		
 		f_deleteServerAction.setEnabled(false);
 		//view.addToActionBar(f_deleteServerAction);
+		
+		ActionListener registerAction =
+			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_LOGO),
+			                   "Register your copy of SLIC") {
+			@Override
+			public void run() {
+				SierraServerLocation loc = f_manager.getFocus().getServer();
+				Registration r = RegistrationClient.create(loc);
+				ProductRegistrationInfo info = new ProductRegistrationInfo();
+				info.setName("SLIC");
+				info.setVersion("2.2");
+				info.setFirstName("Edwin");
+				info.setLastName("Chan");
+				
+				RegistrationResponse rr = r.register(info);
+				System.out.println(rr.getMessage());
+				BalloonUtility.showMessage("A message from SureLogic", rr.getMessage());
+			}
+		};		
+		view.addToActionBar(registerAction);
 		
 		f_newServerItem = newServerItem;
 		f_browseServerItem = browseServerItem;
@@ -899,11 +923,12 @@ implements ISierraServerObserver, IProjectsObserver {
 						
 						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
 						// Try to distinguish server failure/disconnection and RPC failure 
+						final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 						TroubleshootConnection tc;
 						try {
 							responses = cpm.getProjectUpdates(server.getServer(), name, monitor);
 						} catch (ServerMismatchException e) {
-							tc = new TroubleshootWrongServer(server, name);
+							tc = new TroubleshootWrongServer(method, server, name);
 							if (handleServerProblem(tc, e)) {
 								if (failedServers == null) {
 									failedServers = new HashSet<SierraServer>();
@@ -911,7 +936,7 @@ implements ISierraServerObserver, IProjectsObserver {
 								failedServers.add(server);
 							}
 						} catch (SierraServiceClientException e) {
-							tc = AbstractServerProjectJob.getTroubleshootConnection(server, name, e);													
+							tc = AbstractServerProjectJob.getTroubleshootConnection(method, server, name, e);													
 							if (handleServerProblem(tc, e)) {
 								if (failedServers == null) {
 									failedServers = new HashSet<SierraServer>();
@@ -919,7 +944,7 @@ implements ISierraServerObserver, IProjectsObserver {
 								failedServers.add(server);
 							}
 						} catch (Exception e) {
-							tc = new TroubleshootException(server, name, e, 
+							tc = new TroubleshootException(method, server, name, e, 
 									                       e instanceof SQLException);
 							if (handleServerProblem(tc, e)) {
 								if (failedServers == null) {
