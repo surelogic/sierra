@@ -12,6 +12,7 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.Query;
@@ -149,25 +150,23 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public FindingTypeInfo getFindingTypeInfo(final String uid) {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<FindingTypeInfo>() {
-					public FindingTypeInfo perform(Query q, Server s, User u) {
-						final FindingTypes types = new FindingTypes(q);
-						final FindingTypeDO type = types.getFindingType(uid);
-						if (type != null) {
-							final FindingTypeInfo info = new FindingTypeInfo();
-							info.setInfo(type.getInfo());
-							info.setName(type.getName());
-							info.setShortMessage(type.getShortMessage());
-							info.setUid(type.getUid());
-
-							return info;
-						} else {
-							return null;
-						}
-					}
-				});
+	public Result getFindingTypeInfo(final String uid) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Result>() {
+			public Result perform(Query q, Server s, User u) {
+				final FindingTypes types = new FindingTypes(q);
+				final FindingTypeDO type = types.getFindingType(uid);
+				if (type != null) {
+					final FindingTypeInfo info = new FindingTypeInfo();
+					info.setInfo(type.getInfo());
+					info.setName(type.getName());
+					info.setShortMessage(type.getShortMessage());
+					info.setUid(type.getUid());
+					return Result.success("Finding Type Found", info);
+				} else {
+					return Result.failure("No finding type found");
+				}
+			}
+		});
 
 	}
 }
