@@ -90,9 +90,10 @@ public class RulesContent extends ContentComposite {
 	private void selectCategory(Category cat) {
 		detailsPanel.clear();
 		final FlexTable catFields = new FlexTable();
-		catFields.setWidget(0, 1, UI.h3(cat.getName()));
-		catFields.getCellFormatter().setHorizontalAlignment(0, 1,
-				HasHorizontalAlignment.ALIGN_LEFT);
+		catFields.setWidget(0, 0, UI.h3(cat.getName()));
+		catFields.getCellFormatter().setHorizontalAlignment(0, 0,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		catFields.getFlexCellFormatter().setColSpan(0, 0, 2);
 		catFields.setText(1, 0, "Description:");
 		catFields.setText(2, 0, cat.getInfo());
 		catFields.getFlexCellFormatter().setColSpan(2, 0, 2);
