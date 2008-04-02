@@ -149,8 +149,25 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public FindingTypeInfo getFindingTypeInfo(String uid) {
-		// TODO Auto-generated method stub
-		return null;
+	public FindingTypeInfo getFindingTypeInfo(final String uid) {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<FindingTypeInfo>() {
+					public FindingTypeInfo perform(Query q, Server s, User u) {
+						final FindingTypes types = new FindingTypes(q);
+						final FindingTypeDO type = types.getFindingType(uid);
+						if (type != null) {
+							final FindingTypeInfo info = new FindingTypeInfo();
+							info.setInfo(type.getInfo());
+							info.setName(type.getName());
+							info.setShortMessage(type.getShortMessage());
+							info.setUid(type.getUid());
+
+							return info;
+						} else {
+							return null;
+						}
+					}
+				});
+
 	}
 }
