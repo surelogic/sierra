@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Set;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
+import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserQuery;
 import com.surelogic.sierra.jdbc.settings.FilterEntryDO;
@@ -42,9 +44,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final FindingTypes types = new FindingTypes(q);
 						final FilterSets fs = new FilterSets(q);
 						for (final FilterSetDO detail : fs.listFilterSets()) {
-							final Category set = getOrCreateSet(detail
-									.getUid(), sets);
+							final Category set = getOrCreateSet(
+									detail.getUid(), sets);
 							set.setName(detail.getName());
+							set.setInfo(detail.getInfo());
 							final List<Category> parents = new ArrayList<Category>();
 							for (final String parent : detail.getParents()) {
 								parents.add(getOrCreateSet(parent, sets));
@@ -89,7 +92,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public Status createFilterSet(final String name, final List entries,
+	public Status createCategory(final String name, final List entries,
 			final List parents) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(Query q, Server s, User u) {
@@ -111,4 +114,43 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	}
 
+	// TODO do this w/o passing back and forth the whole graph
+	public Status updateCategory(final Category c) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
+			@SuppressWarnings("unchecked")
+			public Status perform(Query q, Server s, User u) {
+				final FilterSets sets = new FilterSets(q);
+				final long revision = s.nextRevision();
+				final FilterSetDO set = new FilterSetDO();
+				set.setUid(c.getUuid());
+				set.setInfo(c.getInfo());
+				set.setName(c.getName());
+				set.setRevision(c.getRevision());
+				final Set<String> parentSet = set.getParents();
+				final List<Category> parents = c.getParents();
+				for (final Category parent : parents) {
+					parentSet.add(parent.getUuid());
+				}
+				final Set<FilterEntryDO> entrySet = set.getFilters();
+				final List<FilterEntry> entries = c.getEntries();
+				for (final FilterEntry entry : entries) {
+					entrySet.add(new FilterEntryDO(entry.getUid(), entry
+							.isFiltered()));
+				}
+				try {
+					sets.updateFilterSet(set, revision);
+				} catch (final RevisionException e) {
+					return Status.failure(e.getMessage());
+				} catch (final IllegalArgumentException e) {
+					return Status.failure(e.getMessage());
+				}
+				return Status.success("Category " + c.getName() + " updated.");
+			}
+		});
+	}
+
+	public FindingTypeInfo getFindingTypeInfo(String uid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
