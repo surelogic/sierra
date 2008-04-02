@@ -3,9 +3,10 @@ package com.surelogic.sierra.gwt.client;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -40,7 +41,7 @@ public class RulesContent extends ContentComposite {
 		categories.addTreeListener(new TreeListener() {
 
 			public void onTreeItemSelected(TreeItem item) {
-				selectCategoryItem(item);
+				selectCategory((Category) item.getUserObject());
 			}
 
 			public void onTreeItemStateChanged(TreeItem item) {
@@ -86,8 +87,18 @@ public class RulesContent extends ContentComposite {
 		item.setUserObject(cat);
 	}
 
-	private void selectCategoryItem(TreeItem item) {
+	private void selectCategory(Category cat) {
+		detailsPanel.clear();
+		final FlexTable catFields = new FlexTable();
+		catFields.setWidget(0, 1, UI.h3(cat.getName()));
+		catFields.getCellFormatter().setHorizontalAlignment(0, 1,
+				HasHorizontalAlignment.ALIGN_LEFT);
+		catFields.setText(1, 0, "Description:");
+		catFields.setText(2, 0, cat.getInfo());
+		catFields.getFlexCellFormatter().setColSpan(2, 0, 2);
+
+		detailsPanel.add(catFields);
 		// TODO select a category or finding type, and update detailsPanel
-		Window.alert("Category item clicked: " + item.getText());
+
 	}
 }
