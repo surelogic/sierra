@@ -15,6 +15,8 @@ public class SyncResponse {
 
 	private List<SyncTrailResponse> trails;
 
+	private long commitRevision;
+
 	public List<SyncTrailResponse> getTrails() {
 		if (trails == null) {
 			trails = new ArrayList<SyncTrailResponse>();
@@ -24,6 +26,14 @@ public class SyncResponse {
 
 	public void setTrails(List<SyncTrailResponse> trails) {
 		this.trails = trails;
+	}
+
+	public long getCommitRevision() {
+		return commitRevision;
+	}
+
+	public void setCommitRevision(long commitRevision) {
+		this.commitRevision = commitRevision;
 	}
 
 }
