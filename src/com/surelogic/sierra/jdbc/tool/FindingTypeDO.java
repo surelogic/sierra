@@ -1,11 +1,14 @@
 package com.surelogic.sierra.jdbc.tool;
 
+import java.util.Set;
+
 public class FindingTypeDO {
 	private long id;
 	private String uid;
 	private String name;
 	private String shortMessage;
 	private String info;
+	private Set<String> artifactTypes;
 
 	public long getId() {
 		return id;
@@ -45,6 +48,40 @@ public class FindingTypeDO {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	public Set<String> getArtifactTypes() {
+		return artifactTypes;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final FindingTypeDO other = (FindingTypeDO) obj;
+		if (uid == null) {
+			if (other.uid != null) {
+				return false;
+			}
+		} else if (!uid.equals(other.uid)) {
+			return false;
+		}
+		return true;
 	}
 
 }
