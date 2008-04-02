@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
-import com.surelogic.sierra.gwt.client.data.FilterSet;
+import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
@@ -74,7 +74,7 @@ public class FilterSetContent extends ContentComposite {
 				sets.clear();
 				sets.add(new HTML("<h3>Categories</h3>"));
 				for (final Iterator i = ((List) result).iterator(); i.hasNext();) {
-					sets.add(new FilterSetComposite((FilterSet) i.next()));
+					sets.add(new FilterSetComposite((Category) i.next()));
 				}
 			}
 		});
@@ -119,11 +119,11 @@ public class FilterSetContent extends ContentComposite {
 	}
 
 	private static class FilterSetComposite extends Composite {
-		private final FilterSet set;
+		private final Category set;
 		private final DisclosurePanel panel;
 		private final VerticalPanel entries;
 
-		FilterSetComposite(FilterSet set) {
+		FilterSetComposite(Category set) {
 			this.set = set;
 			panel = new DisclosurePanel();
 			entries = new VerticalPanel();
@@ -144,9 +144,9 @@ public class FilterSetContent extends ContentComposite {
 			initWidget(panel);
 		}
 
-		private void updateFilters(Set filters, FilterSet set) {
+		private void updateFilters(Set filters, Category set) {
 			for (final Iterator i = set.getParents().iterator(); i.hasNext();) {
-				final FilterSet parent = (FilterSet) i.next();
+				final Category parent = (Category) i.next();
 				updateFilters(filters, parent);
 			}
 			for (final Iterator i = set.getEntries().iterator(); i.hasNext();) {

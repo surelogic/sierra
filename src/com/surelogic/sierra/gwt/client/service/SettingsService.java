@@ -9,9 +9,9 @@ public interface SettingsService extends RemoteService {
 
 	/**
 	 * 
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.FilterSet>
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.Category>
 	 */
-	List getFilterSets();
+	List getCategories();
 
 	/**
 	 * 

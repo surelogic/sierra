@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 import java.util.List;
 
-public class FilterSet implements Serializable {
+public class Category implements Serializable {
 
 	/**
 	 * 
@@ -11,7 +11,7 @@ public class FilterSet implements Serializable {
 	private static final long serialVersionUID = 7604533742268537846L;
 
 	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.FilterSet>
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.Category>
 	 */
 	private List parents;
 
