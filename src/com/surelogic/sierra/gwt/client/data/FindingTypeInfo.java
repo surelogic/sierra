@@ -19,10 +19,7 @@ public class FindingTypeInfo implements Serializable {
 	 * @gwt.typeArgs <java.lang.String>
 	 */
 	private List reportedBy;
-	/**
-	 * @gwt.typeArgs <java.lang.String>
-	 */
-	private List foundIn;
+	private Ticket foundInTicket;
 
 	public String getUid() {
 		return uid;
@@ -56,18 +53,19 @@ public class FindingTypeInfo implements Serializable {
 		this.info = info;
 	}
 
+	public Ticket getFoundInTicket() {
+		return foundInTicket;
+	}
+
+	public void setFoundInTicket(Ticket foundInTicket) {
+		this.foundInTicket = foundInTicket;
+	}
+
 	public List getReportedBy() {
 		if (reportedBy == null) {
 			reportedBy = new ArrayList();
 		}
 		return reportedBy;
-	}
-
-	public List getFoundIn() {
-		if (foundIn == null) {
-			foundIn = new ArrayList();
-		}
-		return foundIn;
 	}
 
 }
