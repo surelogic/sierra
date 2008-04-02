@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
@@ -64,7 +64,7 @@ public class FilterSetContent extends ContentComposite {
 	}
 
 	private void refreshFilterList() {
-		ServiceHelper.getSettingsService().getFilterSets(new AsyncCallback() {
+		ServiceHelper.getSettingsService().getCategories(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
 				// TODO
@@ -99,7 +99,7 @@ public class FilterSetContent extends ContentComposite {
 				entries.addAll(fs.filteredEntries());
 			}
 		}
-		ServiceHelper.getSettingsService().createFilterSet(name, entries,
+		ServiceHelper.getSettingsService().createCategory(name, entries,
 				parents, new AsyncCallback() {
 
 					public void onFailure(Throwable caught) {

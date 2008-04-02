@@ -26,6 +26,8 @@ public class Category implements Serializable {
 
 	private long revision;
 
+	private String info;
+
 	public String getName() {
 		return name;
 	}
@@ -64,6 +66,14 @@ public class Category implements Serializable {
 
 	public void setRevision(long revision) {
 		this.revision = revision;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
 }

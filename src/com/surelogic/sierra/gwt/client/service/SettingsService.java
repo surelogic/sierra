@@ -3,6 +3,8 @@ package com.surelogic.sierra.gwt.client.service;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface SettingsService extends RemoteService {
@@ -27,6 +29,20 @@ public interface SettingsService extends RemoteService {
 	 *            a list of parent uuids
 	 * @return
 	 */
-	Status createFilterSet(String name, List entries, List parents);
+	Status createCategory(String name, List entries, List parents);
 
+	/**
+	 * 
+	 * @param c
+	 *            the category to update
+	 * @return the updated category, or a failure status
+	 */
+	Status updateCategory(Category c);
+
+	/**
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	FindingTypeInfo getFindingTypeInfo(String uid);
 }
