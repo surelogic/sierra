@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
-import com.surelogic.sierra.gwt.client.data.FilterSet;
+import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.Query;
@@ -32,20 +32,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = 6781260512153199775L;
 
-	public List<FilterSet> getFilterSets() {
+	public List<Category> getCategories() {
 		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<List<FilterSet>>() {
+				.withUserReadOnly(new UserQuery<List<Category>>() {
 
-					public List<FilterSet> perform(Query q, Server server,
+					public List<Category> perform(Query q, Server server,
 							User user) {
-						final Map<String, FilterSet> sets = new HashMap<String, FilterSet>();
+						final Map<String, Category> sets = new HashMap<String, Category>();
 						final FindingTypes types = new FindingTypes(q);
 						final FilterSets fs = new FilterSets(q);
 						for (final FilterSetDO detail : fs.listFilterSets()) {
-							final FilterSet set = getOrCreateSet(detail
+							final Category set = getOrCreateSet(detail
 									.getUid(), sets);
 							set.setName(detail.getName());
-							final List<FilterSet> parents = new ArrayList<FilterSet>();
+							final List<Category> parents = new ArrayList<Category>();
 							for (final String parent : detail.getParents()) {
 								parents.add(getOrCreateSet(parent, sets));
 							}
@@ -65,10 +65,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							}
 							set.setEntries(filters);
 						}
-						final List<FilterSet> values = new ArrayList<FilterSet>(
+						final List<Category> values = new ArrayList<Category>(
 								sets.values());
-						Collections.sort(values, new Comparator<FilterSet>() {
-							public int compare(FilterSet o1, FilterSet o2) {
+						Collections.sort(values, new Comparator<Category>() {
+							public int compare(Category o1, Category o2) {
 								return o1.getName().compareTo(o2.getName());
 							}
 						});
@@ -77,11 +77,11 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	private static FilterSet getOrCreateSet(String uid,
-			Map<String, FilterSet> sets) {
-		FilterSet set = sets.get(uid);
+	private static Category getOrCreateSet(String uid,
+			Map<String, Category> sets) {
+		Category set = sets.get(uid);
 		if (set == null) {
-			set = new FilterSet();
+			set = new Category();
 			set.setUuid(uid);
 			sets.put(uid, set);
 		}
