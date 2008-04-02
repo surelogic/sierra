@@ -15,7 +15,13 @@ public class FindingTypeInfo implements Serializable {
 	private String name;
 	private String shortMessage;
 	private String info;
+	/**
+	 * @gwt.typeArgs <java.lang.String>
+	 */
 	private List reportedBy;
+	/**
+	 * @gwt.typeArgs <java.lang.String>
+	 */
 	private List foundIn;
 
 	public String getUid() {
