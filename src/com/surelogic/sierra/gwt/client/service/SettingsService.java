@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface SettingsService extends RemoteService {
@@ -44,5 +44,5 @@ public interface SettingsService extends RemoteService {
 	 * @param uid
 	 * @return
 	 */
-	FindingTypeInfo getFindingTypeInfo(String uid);
+	Result getFindingTypeInfo(String uid);
 }

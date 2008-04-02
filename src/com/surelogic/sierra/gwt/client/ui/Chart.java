@@ -16,6 +16,9 @@ public class Chart extends Composite {
 	}
 
 	public void setChartTicket(final Ticket ticket) {
+		if (ticket == null) {
+			html.setHTML("No Chart Available");
+		}
 		ServiceHelper.getTicketService().getImageMap(ticket, new Callback() {
 
 			protected void onFailure(String message, Object result) {

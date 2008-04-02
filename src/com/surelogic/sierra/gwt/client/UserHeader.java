@@ -23,8 +23,8 @@ public class UserHeader extends AuthenticatedHeader {
 		manageSite = addUtilityItem("Manage Site", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				String url = ContentRegistry.getContentUrl(SettingsContent
-						.getInstance());
+				final String url = ContentRegistry
+						.getContentUrl(SettingsContent.getInstance());
 				Window.open(url.toString(), null, null);
 			}
 		});
@@ -36,6 +36,7 @@ public class UserHeader extends AuthenticatedHeader {
 		addTab("Rules", RulesContent.getInstance());
 		addTab("Filter Set", FilterSetContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());
+		addTab("Finding Type", FindingTypeContent.getInstance());
 	}
 
 	protected void onUpdateUser(UserAccount user) {

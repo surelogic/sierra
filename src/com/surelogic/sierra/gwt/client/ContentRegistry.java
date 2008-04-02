@@ -21,7 +21,7 @@ public class ContentRegistry {
 		register("rules", RulesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
 		register("filterset", FilterSetContent.getInstance(), userHeader);
-
+		register("findingtype", FindingTypeContent.getInstance(), userHeader);
 		final AdminHeader adminHeader = AdminHeader.getInstance();
 		register("settings", SettingsContent.getInstance(), adminHeader);
 		register("usermanagement", UserManagementContent.getInstance(),
@@ -29,9 +29,10 @@ public class ContentRegistry {
 	}
 
 	public static ContentComposite getContent(String contentName) {
-		for (Iterator it = contentMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry mapEntry = (Map.Entry) it.next();
-			ContentEntry contentEntry = (ContentEntry) mapEntry.getValue();
+		for (final Iterator it = contentMap.entrySet().iterator(); it.hasNext();) {
+			final Map.Entry mapEntry = (Map.Entry) it.next();
+			final ContentEntry contentEntry = (ContentEntry) mapEntry
+					.getValue();
 			if (contentEntry.getName().equals(contentName)) {
 				return (ContentComposite) mapEntry.getKey();
 			}
@@ -40,17 +41,17 @@ public class ContentRegistry {
 	}
 
 	public static String getContentName(ContentComposite content) {
-		ContentEntry entry = (ContentEntry) contentMap.get(content);
+		final ContentEntry entry = (ContentEntry) contentMap.get(content);
 		return entry != null ? entry.getName() : null;
 	}
 
 	public static HeaderComposite getContentHeader(ContentComposite content) {
-		ContentEntry entry = (ContentEntry) contentMap.get(content);
+		final ContentEntry entry = (ContentEntry) contentMap.get(content);
 		return entry != null ? entry.getHeader() : null;
 	}
 
 	public static String getContentUrl(ContentComposite content) {
-		StringBuffer url = new StringBuffer(GWT.getHostPageBaseURL());
+		final StringBuffer url = new StringBuffer(GWT.getHostPageBaseURL());
 		url.append('#').append(getContentName(content));
 		return url.toString();
 	}
