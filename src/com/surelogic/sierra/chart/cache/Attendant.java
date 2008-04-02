@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import javax.servlet.http.HttpSession;
 
+import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -21,15 +22,24 @@ import com.surelogic.common.logging.SLLogger;
  * <i>Implementation note:</i> Any access to the node or session ticket sets
  * requires a lock on {@code this}.
  */
-public final class Attendant {
+public final class Attendant implements Sweepable {
 
 	/**
 	 * The set of tickets cached on this node. This is intended to allow sharing
 	 * between sessions as best we can.
 	 * <p>
+	 * <i>Implementation note:</i> Any access to this object must be protected
+	 * by a lock on the owning {@link Attendant} object.
+	 * <p>
 	 * TODO: This class grows forever, this is bad and needs to be fixed.
 	 */
 	public final Set<Ticket> f_nodeTickets = new HashSet<Ticket>();
+
+	public void periodicSweep() {
+		synchronized (this) {
+			f_nodeTickets.clear();
+		}
+	}
 
 	/**
 	 * Gets or creates a {@link Ticket} object for the passed set of parameters.

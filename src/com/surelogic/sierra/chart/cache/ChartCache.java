@@ -26,6 +26,7 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.IDatabasePlot;
@@ -38,7 +39,7 @@ import com.surelogic.sierra.servlets.ServletUtility;
 /**
  * This class is thread safe.
  */
-public final class ChartCache {
+public final class ChartCache implements Sweepable {
 
 	public void sendPng(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
@@ -132,7 +133,8 @@ public final class ChartCache {
 					 */
 					final File mapFile = getMapFileFor(ticket);
 					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					ChartUtilities.writeImageMap(mapWriter, "map" + ticket.getUUID(), info, false);
+					ChartUtilities.writeImageMap(mapWriter, "map"
+							+ ticket.getUUID(), info, false);
 					mapWriter.close();
 					return null;
 				} catch (IOException e) {
@@ -272,5 +274,9 @@ public final class ChartCache {
 
 	private ChartCache() {
 		// singleton
+	}
+
+	public void periodicSweep() {
+		// TODO clear out the file cache and our references to it.
 	}
 }
