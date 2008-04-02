@@ -18,6 +18,7 @@ public class ContentRegistry {
 
 		final UserHeader userHeader = UserHeader.getInstance();
 		register("overview", OverviewContent.getInstance(), userHeader);
+		register("rules", RulesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
 		register("filterset", FilterSetContent.getInstance(), userHeader);
 

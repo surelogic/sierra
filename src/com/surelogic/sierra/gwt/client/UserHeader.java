@@ -33,6 +33,7 @@ public class UserHeader extends AuthenticatedHeader {
 
 	protected void addTabs() {
 		addTab("Welcome", OverviewContent.getInstance());
+		addTab("Rules", RulesContent.getInstance());
 		addTab("Filter Set", FilterSetContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());
 	}
