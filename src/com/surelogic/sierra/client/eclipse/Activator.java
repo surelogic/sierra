@@ -79,6 +79,8 @@ public final class Activator extends AbstractUIPlugin {
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
+			
+			checkRegistration();
 		} catch (FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
@@ -105,7 +107,36 @@ public final class Activator extends AbstractUIPlugin {
 		}
 	}
 
-	@Override
+  private void checkRegistration() {
+    switch (com.surelogic.common.eclipse.preferences.PreferenceConstants.getRegistrationPolicy()) {
+      case NEVER:
+      case DONE:
+        return;
+      case LATER:
+        long laterTime = com.surelogic.common.eclipse.preferences.PreferenceConstants.getRegistrationTime();
+        if (System.currentTimeMillis() < laterTime) {
+          return;
+        }
+        popupRegistrationDialog();
+        break;
+      case NOT_YET:     
+        popupRegistrationDialog();
+        break;
+    }
+  }
+
+	private void popupRegistrationDialog() {
+    final UIJob dialogJob = new SLUIJob() {
+      @Override
+      public IStatus runInUIThread(IProgressMonitor monitor) {
+        System.out.println("Put up registration dialog"); // FIX
+        return Status.OK_STATUS;
+      }
+    };
+    dialogJob.schedule();
+  }
+
+  @Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			if (f_databaseInSync.get()) {
