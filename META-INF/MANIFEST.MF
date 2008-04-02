@@ -6,7 +6,8 @@ Bundle-Version: 4.2.0
 Bundle-ClassPath: lib/pmd-4.2-sl.jar,
  .,
  lib/asm-3.1.jar,
- lib/jaxen-1.1.1.jar
+ lib/jaxen-1.1.1.jar,
+ lib/junit-4.4.jar
 Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.ant,
  net.sourceforge.pmd.ast,
