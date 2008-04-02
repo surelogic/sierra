@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc;
 
-import java.sql.Connection;
 import java.util.List;
 
 import com.surelogic.sierra.jdbc.qrecord.Record;
@@ -26,6 +25,4 @@ public interface Query {
 	<T> Queryable<List<T>> statement(String key, RowHandler<T> rh);
 
 	<T extends Record<?>> T record(Class<T> record);
-
-	Connection getConnection();
 }

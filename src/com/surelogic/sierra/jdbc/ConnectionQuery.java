@@ -1,7 +1,11 @@
 package com.surelogic.sierra.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.sierra.jdbc.qrecord.BaseMapper;
@@ -11,26 +15,38 @@ import com.surelogic.sierra.jdbc.qrecord.UpdatableRecord;
 import com.surelogic.sierra.jdbc.qrecord.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
+/**
+ * Implementation of {@link Query} using a {@link Connection}.
+ * 
+ * TODO: Change the Record pattern such that LazyPreparedStatement is no longer
+ * necessary.
+ * 
+ * @author nathan
+ * 
+ */
 public class ConnectionQuery implements Query {
 
 	private final Connection conn;
 
+	private final Map<String, PreparedStatement> map;
+
 	public ConnectionQuery(Connection conn) {
 		this.conn = conn;
+		map = new HashMap<String, PreparedStatement>();
 	}
 
 	public Queryable<Void> prepared(String key) {
-		return new QueryablePreparedStatement<Void>(conn, key,
+		return new QueryablePreparedStatement<Void>(findOrCreate(key),
 				new EmptyResultHandler());
 	}
 
 	public <T> Queryable<List<T>> prepared(String key, RowHandler<T> rh) {
-		return new QueryablePreparedStatement<List<T>>(conn, key,
+		return new QueryablePreparedStatement<List<T>>(findOrCreate(key),
 				new ResultRowHandler<T>(rh));
 	}
 
 	public <T> Queryable<T> prepared(String key, ResultHandler<T> rh) {
-		return new QueryablePreparedStatement<T>(conn, key, rh);
+		return new QueryablePreparedStatement<T>(findOrCreate(key), rh);
 	}
 
 	public Queryable<Void> statement(String key) {
@@ -77,7 +93,16 @@ public class ConnectionQuery implements Query {
 		}
 	}
 
-	public Connection getConnection() {
-		return conn;
+	private PreparedStatement findOrCreate(String key) {
+		PreparedStatement st = map.get(key);
+		if (st == null) {
+			try {
+				st = conn.prepareStatement(QB.get(key));
+				map.put(key, st);
+			} catch (final SQLException e) {
+				throw new StatementException(e);
+			}
+		}
+		return st;
 	}
 }

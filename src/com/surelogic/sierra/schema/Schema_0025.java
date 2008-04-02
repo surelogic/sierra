@@ -21,7 +21,5 @@ public class Schema_0025 implements SchemaAction {
 			}
 		}
 		FindBugs1_3_3ToolInfoGenerator.generateTool(conn);
-		SchemaUtil.updateFindingTypes(conn);
-		SchemaUtil.setupFilters(conn);
 	}
 }

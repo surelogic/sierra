@@ -11,14 +11,13 @@ import com.surelogic.sierra.jdbc.Queryable;
 import com.surelogic.sierra.jdbc.Row;
 import com.surelogic.sierra.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.StringRowHandler;
+import com.surelogic.sierra.jdbc.server.DefinitionalDAO;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 
-public class FilterSets {
-
-	private final Query q;
+public class FilterSets extends DefinitionalDAO {
 
 	public FilterSets(Query q) {
-		this.q = q;
+		super(q);
 	}
 
 	/**
@@ -104,7 +103,8 @@ public class FilterSets {
 		final FilterSetRecord rec = q.record(FilterSetRecord.class);
 		rec.setUid(set.getUid());
 		if (rec.select()) {
-			if (set.getRevision() == rec.getRevision()) {
+			if (checkAndUpdateRevision(set.getUid(), set.getRevision(),
+					revision)) {
 				checkCyclicDependences(set.getParents(), set.getUid());
 				rec.setRevision(revision);
 				rec.setName(set.getName());

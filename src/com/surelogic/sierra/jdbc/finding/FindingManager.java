@@ -52,7 +52,6 @@ public class FindingManager {
 	private final PreparedStatement latestAuditRevision;
 	private final PreparedStatement deleteMatches;
 	private final PreparedStatement deleteFindings;
-	private final PreparedStatement deleteLocalAudits;
 
 	private final PreparedStatement deleteScanOverview;
 	private final PreparedStatement populateScanOverview;
@@ -61,7 +60,7 @@ public class FindingManager {
 
 	protected FindingManager(Connection conn) throws SQLException {
 		this.conn = conn;
-		this.factory = FindingRecordFactory.getInstance(conn);
+		factory = FindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
 		touchFinding = conn
 				.prepareStatement("UPDATE FINDING SET IS_READ = 'Y', LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END WHERE ID = ?");
@@ -85,8 +84,6 @@ public class FindingManager {
 				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteFindings = conn
 				.prepareStatement("DELETE FROM FINDING WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
-		deleteLocalAudits = conn
-				.prepareStatement("DELETE FROM SIERRA_AUDIT WHERE FINDING_ID IN (SELECT F.ID FROM FINDING F WHERE F.PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?) AND F.IS_READ = 'Y') AND USER_ID IS NULL");
 		deleteScanOverview = conn
 				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ?");
 		populateScanOverview = conn
@@ -110,7 +107,7 @@ public class FindingManager {
 		scanArtifacts.setFetchSize(FETCH_SIZE);
 		selectFindingById = conn
 				.prepareStatement("SELECT UUID,PROJECT_ID,IMPORTANCE,SUMMARY,IS_READ,OBSOLETED_BY_ID,OBSOLETED_BY_REVISION FROM FINDING WHERE ID = ?");
-		
+
 	}
 
 	/**
@@ -121,21 +118,22 @@ public class FindingManager {
 	public void generateFindings(String projectName, String uid,
 			FindingFilter filter, SLProgressMonitor monitor) {
 		try {
-			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
+			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
+					.newScan();
 			scan.setUid(uid);
 			if (!scan.select()) {
 				throw new IllegalArgumentException("No scan with uid " + uid
 						+ " exists in the database");
 			}
-			Long projectId = scan.getProjectId();
+			final Long projectId = scan.getProjectId();
 			scanArtifacts.setLong(1, scan.getId());
-			ResultSet result = scanArtifacts.executeQuery();
+			final ResultSet result = scanArtifacts.executeQuery();
 			int counter = 0;
 			try {
 				while (result.next()) {
-					ArtifactResult art = createArtifactResult(result);
-					Long findingId = getFindingId(filter, projectId, art);
-					LongRelationRecord afr = factory.newArtifactFinding();
+					final ArtifactResult art = createArtifactResult(result);
+					final Long findingId = getFindingId(filter, projectId, art);
+					final LongRelationRecord afr = factory.newArtifactFinding();
 					afr.setId(new RelationRecord.PK<Long, Long>(art.id,
 							findingId));
 					afr.insert();
@@ -162,7 +160,7 @@ public class FindingManager {
 						+ ") persisted for scan " + uid + " in project "
 						+ projectName + ".");
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			sqlError(e);
 		}
 	}
@@ -174,10 +172,10 @@ public class FindingManager {
 			// We don't have a match, so we need to produce an
 			// entirely
 			// new finding
-			MatchRecord m = art.m;
-			Importance importance = filter.calculateImportance(art.m.getId()
-					.getFindingTypeId(), art.p, art.s);
-			FindingRecord f = factory.newFinding();
+			final MatchRecord m = art.m;
+			final Importance importance = filter.calculateImportance(art.m
+					.getId().getFindingTypeId(), art.p, art.s);
+			final FindingRecord f = factory.newFinding();
 			f.setProjectId(projectId);
 			f.setImportance(importance);
 			f.setSummary(art.message);
@@ -193,7 +191,7 @@ public class FindingManager {
 
 	protected ArtifactResult createArtifactResult(ResultSet result)
 			throws SQLException {
-		ArtifactResult art = new ArtifactResult();
+		final ArtifactResult art = new ArtifactResult();
 		int idx = 1;
 		art.id = result.getLong(idx++);
 		art.p = Priority.values()[result.getInt(idx++)];
@@ -201,7 +199,7 @@ public class FindingManager {
 		art.message = result.getString(idx++);
 		art.m = factory.newMatch();
 		// R.PROJECT_ID,S.HASH,CU.CLASS_NAME,CU.PACKAGE_NAME,A.FINDING_TYPE_ID
-		MatchRecord.PK pk = new MatchRecord.PK();
+		final MatchRecord.PK pk = new MatchRecord.PK();
 		pk.setProjectId(result.getLong(idx++));
 		pk.setHash(result.getLong(idx++));
 		pk.setClassName(result.getString(idx++));
@@ -227,8 +225,9 @@ public class FindingManager {
 		deleteMatches.setString(1, projectName);
 		deleteMatches.executeUpdate();
 		if (monitor != null) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 			monitor.worked(1);
 		}
 		if (monitor != null) {
@@ -237,15 +236,16 @@ public class FindingManager {
 		deleteFindings.setString(1, projectName);
 		deleteFindings.executeUpdate();
 		if (monitor != null) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 			monitor.worked(1);
 		}
 	}
 
 	public long getLatestAuditRevision(String projectName) throws SQLException {
 		latestAuditRevision.setString(1, projectName);
-		ResultSet set = latestAuditRevision.executeQuery();
+		final ResultSet set = latestAuditRevision.executeQuery();
 		try {
 			if (set.next()) {
 				return set.getLong(1);
@@ -309,7 +309,7 @@ public class FindingManager {
 
 	private void newAudit(Long userId, Long findingId, String value,
 			AuditEvent event, Date time, Long revision) throws SQLException {
-		AuditRecord record = factory.newAudit();
+		final AuditRecord record = factory.newAudit();
 		record.setUserId(userId);
 		record.setTimestamp(time);
 		record.setEvent(event);
@@ -329,9 +329,9 @@ public class FindingManager {
 	 * @throws SQLException
 	 */
 	protected FindingRecord getFinding(long findingId) throws SQLException {
-		FindingRecord record = factory.newFinding();
+		final FindingRecord record = factory.newFinding();
 		selectFindingById.setLong(1, findingId);
-		ResultSet set = selectFindingById.executeQuery();
+		final ResultSet set = selectFindingById.executeQuery();
 		try {
 			if (set.next()) {
 				int idx = 1;
@@ -385,7 +385,7 @@ public class FindingManager {
 	 * @param finding
 	 */
 	protected void delete(long deleted, long finding) throws SQLException {
-		FindingRecord fRec = getFinding(deleted);
+		final FindingRecord fRec = getFinding(deleted);
 		obsoleteArtifacts.setLong(1, finding);
 		obsoleteArtifacts.setLong(2, deleted);
 		obsoleteArtifacts.execute();
@@ -401,14 +401,12 @@ public class FindingManager {
 		fRec.delete();
 	}
 
-
-
 	protected void sqlError(SQLException e) {
 		throw new FindingGenerationException(e);
 	}
 
 	// FIXME Evil code!
-	protected Long getUserId(String user) throws SQLException {
+	protected long getUserId(String user) throws SQLException {
 		return ClientUser.getUser(user, conn).getId();
 	}
 
@@ -416,7 +414,7 @@ public class FindingManager {
 		pk.setClassName(match.getClassName());
 		pk.setPackageName(match.getPackageName());
 		pk.setHash(match.getHash());
-		String ft = match.getFindingType();
+		final String ft = match.getFindingType();
 		pk.setFindingTypeId(ftManager.getFindingTypeId(ft));
 	}
 
@@ -426,12 +424,6 @@ public class FindingManager {
 		Severity s;
 		String message;
 		MatchRecord m;
-	}
-
-	public void deleteLocalAudits(String projectName, SLProgressMonitor monitor)
-			throws SQLException {
-		deleteLocalAudits.setString(1, projectName);
-		deleteLocalAudits.executeUpdate();
 	}
 
 	public static FindingManager getInstance(Connection conn)

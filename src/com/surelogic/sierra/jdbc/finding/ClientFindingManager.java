@@ -6,7 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -52,18 +58,19 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement selectOldestScanByProject;
 	private final PreparedStatement selectLocalMerge;
 	private final PreparedStatement findLocalAudits;
+	private final PreparedStatement updateLocalAudits;
 	private final PreparedStatement selectFindingFindingType;
 
 	private ClientFindingManager(Connection conn) throws SQLException {
 		super(conn);
-		Statement st = conn.createStatement();
+		final Statement st = conn.createStatement();
 		String tempTableName;
 		try {
 			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 				try {
 					st
 							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					log.log(Level.WARNING, e.getMessage(), e);
 					// Do nothing, the table is probably already there.
 				}
@@ -72,7 +79,7 @@ public final class ClientFindingManager extends FindingManager {
 				try {
 					st
 							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					log.log(Level.WARNING, e.getMessage(), e);
 					// Do nothing, the table is probably already there.
 				}
@@ -97,11 +104,11 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
 						+ "       T.ID = ART.TOOL_ID"
 						+ " GROUP BY AFR.FINDING_ID");
-		String beginFindingOverviewUpdate = "UPDATE FINDINGS_OVERVIEW"
+		final String beginFindingOverviewUpdate = "UPDATE FINDINGS_OVERVIEW"
 				+ " SET AUDITED = 'Yes'"
 				+ ", LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END"
 				+ ", AUDIT_COUNT = AUDIT_COUNT + 1";
-		String endFindingOverviewUpdate = " WHERE FINDING_ID = ?";
+		final String endFindingOverviewUpdate = " WHERE FINDING_ID = ?";
 		updateFindingOverviewImportance = conn
 				.prepareStatement(beginFindingOverviewUpdate
 						+ ", IMPORTANCE = ?" + endFindingOverviewUpdate);
@@ -227,6 +234,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " ORDER BY A.FINDING_ID");
+		updateLocalAudits = conn
+				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE FINDING_ID IN (SELECT ID FROM FINDING WHERE PROJECT_ID IN (SELECT ID FROM PROJECT WHERE NAME = ?) AND REVISION IS NULL");
 		selectLocalMerge = conn
 				.prepareStatement("SELECT F.SUMMARY,F.IMPORTANCE,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
 						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
@@ -250,7 +259,7 @@ public final class ClientFindingManager extends FindingManager {
 	 */
 	public void comment(long findingId, String comment) throws SQLException {
 		checkFinding(findingId);
-		Timestamp now = JDBCUtils.now();
+		final Timestamp now = JDBCUtils.now();
 		comment(null, findingId, comment, now, null);
 		int idx = 1;
 		updateFindingOverviewComment.setTimestamp(idx++, now);
@@ -270,7 +279,7 @@ public final class ClientFindingManager extends FindingManager {
 	public void setImportance(long findingId, Importance importance)
 			throws SQLException {
 		checkFinding(findingId);
-		Timestamp now = JDBCUtils.now();
+		final Timestamp now = JDBCUtils.now();
 		setImportance(null, findingId, importance, now, null);
 		int idx = 1;
 		updateFindingOverviewImportance.setTimestamp(idx++, now);
@@ -281,11 +290,12 @@ public final class ClientFindingManager extends FindingManager {
 		updateFindingOverviewImportance.execute();
 	}
 
-	public void setImportance(Collection<Long> findingIds, Importance importance,
-			SLProgressMonitor monitor) throws SQLException {
+	public void setImportance(Collection<Long> findingIds,
+			Importance importance, SLProgressMonitor monitor)
+			throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
-		Timestamp now = JDBCUtils.now();
-		for (Long findingId : findingIds) {
+		final Timestamp now = JDBCUtils.now();
+		for (final Long findingId : findingIds) {
 			checkFinding(findingId);
 			setImportance(null, findingId, importance, now, null);
 			int idx = 1;
@@ -310,7 +320,7 @@ public final class ClientFindingManager extends FindingManager {
 	public void changeSummary(long findingId, String summary)
 			throws SQLException {
 		checkFinding(findingId);
-		Timestamp now = JDBCUtils.now();
+		final Timestamp now = JDBCUtils.now();
 		changeSummary(null, findingId, summary, now, null);
 		int idx = 1;
 		updateFindingOverviewSummary.setTimestamp(idx++, now);
@@ -333,31 +343,33 @@ public final class ClientFindingManager extends FindingManager {
 			SLProgressMonitor monitor) throws SQLException {
 		monitor.subTask("Generating overview");
 
-		ProjectRecord p = ProjectRecordFactory.getInstance(conn).newProject();
+		final ProjectRecord p = ProjectRecordFactory.getInstance(conn)
+				.newProject();
 		p.setName(projectName);
 		if (p.select()) {
-			ScanRecord scanRecord = ScanRecordFactory.getInstance(conn)
+			final ScanRecord scanRecord = ScanRecordFactory.getInstance(conn)
 					.newScan();
 			scanRecord.setUid(scan);
 			if (scanRecord.select()) {
-			  final boolean debug = log.isLoggable(Level.FINE);
-			  if (debug) {
-	        log.fine("Populating scan overview for scan "
-						+ scanRecord.getUid() + ".");
-			  }
+				final boolean debug = log.isLoggable(Level.FINE);
+				if (debug) {
+					log.fine("Populating scan overview for scan "
+							+ scanRecord.getUid() + ".");
+				}
 				populateScanOverview(scanRecord.getId());
 				monitor.worked(1);
 
 				if (debug) {
-          log.fine("Clearing overview for project " + p.getName() + ".");
+					log.fine("Clearing overview for project " + p.getName()
+							+ ".");
 				}
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
 				monitor.worked(1);
 
 				if (debug) {
-          log.fine("Calculating ids in overview for project "
-						+ p.getName() + ".");
+					log.fine("Calculating ids in overview for project "
+							+ p.getName() + ".");
 				}
 				int idx = 1;
 				populateTempIds.setString(idx++, projectName);
@@ -366,8 +378,8 @@ public final class ClientFindingManager extends FindingManager {
 				monitor.worked(1);
 
 				if (debug) {
-          log.fine("Populating overview for project " + p.getName()
-								+ ".");
+					log.fine("Populating overview for project " + p.getName()
+							+ ".");
 				}
 				idx = 1;
 				populateFindingOverviewCurrentFindings.setString(idx++,
@@ -407,7 +419,7 @@ public final class ClientFindingManager extends FindingManager {
 	@Override
 	public void deleteFindings(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
-		ProjectRecord pRec = ProjectRecordFactory.getInstance(conn)
+		final ProjectRecord pRec = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		pRec.setName(projectName);
 		if (pRec.select()) {
@@ -435,30 +447,32 @@ public final class ClientFindingManager extends FindingManager {
 			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
 		final Set<Long> scanFindingIds = new HashSet<Long>();
 		try {
-			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
+			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
+					.newScan();
 			scan.setUid(uid);
 			if (!scan.select()) {
 				throw new IllegalArgumentException("No scan with uid " + uid
 						+ " exists in the database");
 			}
-			Long projectId = scan.getProjectId();
+			final Long projectId = scan.getProjectId();
 			int total = 0;
-			for (Entry<String, List<String>> packageCompilations : compilations
+			for (final Entry<String, List<String>> packageCompilations : compilations
 					.entrySet()) {
 				final String pakkage = packageCompilations.getKey();
 				int counter = 0;
-				for (String compilation : packageCompilations.getValue()) {
+				for (final String compilation : packageCompilations.getValue()) {
 					int idx = 1;
 					selectArtifactsByCompilation.setLong(idx++, scan.getId());
 					selectArtifactsByCompilation.setString(idx++, pakkage);
 					selectArtifactsByCompilation.setString(idx++, compilation);
-					ResultSet result = selectArtifactsByCompilation
+					final ResultSet result = selectArtifactsByCompilation
 							.executeQuery();
 					try {
 						while (result.next()) {
-              ArtifactResult art = createArtifactResult(result);    
-              Long findingId = getFindingId(filter, projectId, art);
-							LongRelationRecord afr = factory
+							final ArtifactResult art = createArtifactResult(result);
+							final Long findingId = getFindingId(filter,
+									projectId, art);
+							final LongRelationRecord afr = factory
 									.newArtifactFinding();
 							afr.setId(new RelationRecord.PK<Long, Long>(art.id,
 									findingId));
@@ -494,17 +508,17 @@ public final class ClientFindingManager extends FindingManager {
 			scanFindingIds.addAll(previousFindingIds);
 			regenerateFindingsOverview(projectName, scanFindingIds, monitor);
 			if (log.isLoggable(Level.FINE)) {
-			  log.fine("All new findings (" + total + ") persisted for scan "
-					+ uid + " in project " + projectName + ".");
+				log.fine("All new findings (" + total + ") persisted for scan "
+						+ uid + " in project " + projectName + ".");
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			sqlError(e);
 		}
 	}
 
 	private void generatePartialScanOverview(long scanId, Set<Long> findingIds)
 			throws SQLException {
-		for (long id : findingIds) {
+		for (final long id : findingIds) {
 			insertTempId.setLong(1, id);
 			insertTempId.execute();
 		}
@@ -513,8 +527,8 @@ public final class ClientFindingManager extends FindingManager {
 		populatePartialScanOverview.execute();
 		deleteTempIds.execute();
 		if (log.isLoggable(Level.FINE)) {
-		  log.fine("Generated partial scan overview for scan " + scanId + ": "
-				+ findingIds.size() + " new");
+			log.fine("Generated partial scan overview for scan " + scanId
+					+ ": " + findingIds.size() + " new");
 		}
 	}
 
@@ -529,7 +543,7 @@ public final class ClientFindingManager extends FindingManager {
 			Set<Long> findingIds, SLProgressMonitor monitor)
 			throws SQLException {
 		int count = 0;
-		for (long id : findingIds) {
+		for (final long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
 			checkAndInsertTempId.setLong(1, id);
@@ -539,7 +553,8 @@ public final class ClientFindingManager extends FindingManager {
 			}
 		}
 		selectLatestScanByProject.setString(1, projectName);
-		ResultSet latestScanSet = selectLatestScanByProject.executeQuery();
+		final ResultSet latestScanSet = selectLatestScanByProject
+				.executeQuery();
 		try {
 			if (latestScanSet.next()) {
 				populateFindingOverviewCurrentFindings
@@ -548,7 +563,7 @@ public final class ClientFindingManager extends FindingManager {
 						.getLong(1));
 				populateFindingOverviewCurrentFindings.execute();
 				selectOldestScanByProject.setString(1, projectName);
-				ResultSet oldestScanSet = selectOldestScanByProject
+				final ResultSet oldestScanSet = selectOldestScanByProject
 						.executeQuery();
 				try {
 					if (oldestScanSet.next()) {
@@ -566,32 +581,31 @@ public final class ClientFindingManager extends FindingManager {
 		} finally {
 			latestScanSet.close();
 		}
-    if (log.isLoggable(Level.FINE)) {
-      log.info("Regenerated findings overview for project " + projectName
-				+ ": " + findingIds.size() + " old");
-    }
+		if (log.isLoggable(Level.FINE)) {
+			log.info("Regenerated findings overview for project " + projectName
+					+ ": " + findingIds.size() + " old");
+		}
 	}
 
 	/*
-	public List<> countNewLocalAudits(String projectName) {
-		
-	}
-	*/
-	
+	 * public List<> countNewLocalAudits(String projectName) { }
+	 */
+
 	private abstract class AuditHandler<T> {
-	    @SuppressWarnings("unchecked")
-    	List<T> results = new ArrayList();
-	    	    
-    	abstract void handle(ResultSet audits) throws SQLException;
-    }
-	
-	private <T> void processNewLocalAudits(String projectName, AuditHandler<T> handler) 
-	throws SQLException {
-		ProjectRecord rec = ProjectRecordFactory.getInstance(conn).newProject();
+		@SuppressWarnings("unchecked")
+		List<T> results = new ArrayList();
+
+		abstract void handle(ResultSet audits) throws SQLException;
+	}
+
+	private <T> void processNewLocalAudits(String projectName,
+			AuditHandler<T> handler) throws SQLException {
+		final ProjectRecord rec = ProjectRecordFactory.getInstance(conn)
+				.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
 			findLocalAudits.setLong(1, rec.getId());
-			ResultSet set = findLocalAudits.executeQuery();
+			final ResultSet set = findLocalAudits.executeQuery();
 			try {
 				handler.handle(set);
 			} finally {
@@ -602,10 +616,10 @@ public final class ClientFindingManager extends FindingManager {
 					+ projectName + " exists.");
 		}
 	}
-	
-	public List<FindingAudits> getNewLocalAudits(String projectName) 
-	throws SQLException {
-		AuditHandler<FindingAudits> handler = new AuditHandler<FindingAudits>() {
+
+	public List<FindingAudits> getNewLocalAudits(String projectName)
+			throws SQLException {
+		final AuditHandler<FindingAudits> handler = new AuditHandler<FindingAudits>() {
 			void handle(ResultSet set) throws SQLException {
 				long oldId = -1;
 				List<Audit> audits = null;
@@ -616,10 +630,10 @@ public final class ClientFindingManager extends FindingManager {
 						oldId = newId;
 						audits = new ArrayList<Audit>();
 						results.add(new FindingAudits(newId, audits));
-					}					
-					Audit a = new Audit(set.getTimestamp(idx++), 
-							            AuditEvent.valueOf(set.getString(idx++)), 
-							            set.getString(idx++));
+					}
+					Audit a = new Audit(set.getTimestamp(idx++), AuditEvent
+							.valueOf(set.getString(idx++)), set
+							.getString(idx++));
 					audits.add(a);
 				}
 			}
@@ -627,11 +641,10 @@ public final class ClientFindingManager extends FindingManager {
 		processNewLocalAudits(projectName, handler);
 		return handler.results;
 	}
-	
+
 	public List<SyncTrailRequest> getNewLocalAuditTrails(String projectName,
-			SLProgressMonitor monitor) 
-    throws SQLException {
-		AuditHandler<SyncTrailRequest> handler = new AuditHandler<SyncTrailRequest>() {
+			SLProgressMonitor monitor) throws SQLException {
+		final AuditHandler<SyncTrailRequest> handler = new AuditHandler<SyncTrailRequest>() {
 			void handle(ResultSet audits) throws SQLException {
 				getSyncTrailRequests(results, audits);
 			}
@@ -639,23 +652,24 @@ public final class ClientFindingManager extends FindingManager {
 		processNewLocalAudits(projectName, handler);
 		return handler.results;
 	}
-	
-	/**	 
-	 * @param set The set of local audits
+
+	/**
+	 * @param set
+	 *            The set of local audits
 	 */
-	private void getSyncTrailRequests(List<SyncTrailRequest> trails, ResultSet set) 
-	throws SQLException {
+	private void getSyncTrailRequests(List<SyncTrailRequest> trails,
+			ResultSet set) throws SQLException {
 		long oldId = -1;
 		List<Audit> audits = null;
 		while (set.next()) {
 			int idx = 1;
-			long newId = set.getLong(idx++);
+			final long newId = set.getLong(idx++);
 			if (!(newId == oldId)) {
 				oldId = newId;
 				audits = new LinkedList<Audit>();
-				SyncTrailRequest trail = new SyncTrailRequest();
+				final SyncTrailRequest trail = new SyncTrailRequest();
 				selectLocalMerge.setLong(1, oldId);
-				ResultSet mergeSet = selectLocalMerge.executeQuery();
+				final ResultSet mergeSet = selectLocalMerge.executeQuery();
 				final Merge merge = new Merge();
 				final Match match = new Match();
 				merge.setMatch(match);
@@ -668,9 +682,7 @@ public final class ClientFindingManager extends FindingManager {
 					match.setPackageName(mergeSet.getString(mergeIdx++));
 					match.setClassName(mergeSet.getString(mergeIdx++));
 					match.setHash(mergeSet.getLong(mergeIdx++));
-					match
-							.setFindingType(mergeSet
-									.getString(mergeIdx++));
+					match.setFindingType(mergeSet.getString(mergeIdx++));
 					match.setRevision(mergeSet.getLong(mergeIdx++));
 				} finally {
 					mergeSet.close();
@@ -680,11 +692,10 @@ public final class ClientFindingManager extends FindingManager {
 				trails.add(trail);
 			}
 			audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
-					.valueOf(set.getString(idx++)), set
-					.getString(idx++)));
+					.valueOf(set.getString(idx++)), set.getString(idx++)));
 		}
 	}
-	
+
 	public void updateLocalFindings(String projectName,
 			List<SyncTrailResponse> trails, SLProgressMonitor monitor)
 			throws SQLException {
@@ -698,7 +709,7 @@ public final class ClientFindingManager extends FindingManager {
 		final MatchRecord match = factory.newMatch();
 		final MatchRecord.PK id = new MatchRecord.PK();
 		match.setId(id);
-		for (SyncTrailResponse trail : trails) {
+		for (final SyncTrailResponse trail : trails) {
 			final String findingUid = trail.getFinding();
 			final Merge merge = trail.getMerge();
 			final Match m = merge.getMatch();
@@ -717,7 +728,7 @@ public final class ClientFindingManager extends FindingManager {
 					finding.update();
 				}
 				findingId = finding.getId();
-				if(!(m.getRevision().equals(match.getRevision()))) {
+				if (!(m.getRevision().equals(match.getRevision()))) {
 					match.setRevision(m.getRevision());
 					match.update();
 				}
@@ -734,8 +745,8 @@ public final class ClientFindingManager extends FindingManager {
 				match.insert();
 			}
 			findingIds.add(findingId);
-			for (Audit a : trail.getAudits()) {
-				Long userId = getUserId(a.getUser());
+			for (final Audit a : trail.getAudits()) {
+				final Long userId = getUserId(a.getUser());
 				switch (a.getEvent()) {
 				case COMMENT:
 					comment(userId, findingId, a.getValue(), a.getTimestamp(),
@@ -766,18 +777,18 @@ public final class ClientFindingManager extends FindingManager {
 		final ResultSet set = selectFindingFindingType.executeQuery();
 		try {
 			final SettingsManager sMan = SettingsManager.getInstance(conn);
-			List<FindingTypeFilter> filters = sMan.getGlobalSettings();
+			final List<FindingTypeFilter> filters = sMan.getGlobalSettings();
 			while (set.next()) {
-				String type = set.getString(1);
+				final String type = set.getString(1);
 				boolean exists = false;
-				for (FindingTypeFilter filter : filters) {
+				for (final FindingTypeFilter filter : filters) {
 					if (type.equals(filter.getName())) {
 						filter.setFiltered(true);
 						exists = true;
 					}
 				}
 				if (!exists) {
-					FindingTypeFilter newFilter = new FindingTypeFilter();
+					final FindingTypeFilter newFilter = new FindingTypeFilter();
 					newFilter.setName(type);
 					newFilter.setFiltered(true);
 					filters.add(newFilter);
@@ -805,6 +816,15 @@ public final class ClientFindingManager extends FindingManager {
 	public static ClientFindingManager getInstance(Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
+	}
+
+	public void updateLocalAuditRevision(String projectName, String user,
+			long commitRevision, SLProgressMonitor monitor) throws SQLException {
+		final long userId = getUserId(user);
+		updateLocalAudits.setLong(1, commitRevision);
+		updateLocalAudits.setLong(2, userId);
+		updateLocalAudits.setString(3, projectName);
+		updateLocalAudits.execute();
 	}
 
 }

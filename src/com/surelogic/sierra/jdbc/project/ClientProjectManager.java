@@ -11,7 +11,15 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.ServerUIDRequest;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.SierraService;
+import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.SyncRequest;
+import com.surelogic.sierra.tool.message.SyncResponse;
+import com.surelogic.sierra.tool.message.SyncTrailRequest;
+import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class ClientProjectManager extends ProjectManager {
 
@@ -23,35 +31,37 @@ public final class ClientProjectManager extends ProjectManager {
 
 	private ClientProjectManager(Connection conn) throws SQLException {
 		super(conn);
-		this.findingManager = ClientFindingManager.getInstance(conn);
-		this.insertSynchRecord = conn
-				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION) VALUES (?,?,?,?)");
-		this.deleteSynchByProject = conn
+		findingManager = ClientFindingManager.getInstance(conn);
+		insertSynchRecord = conn
+				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
+		deleteSynchByProject = conn
 				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
-		this.selectServerUid = conn
+		selectServerUid = conn
 				.prepareStatement("SELECT SERVER_UUID FROM PROJECT_SERVER WHERE PROJECT_ID = ?");
-		this.insertServerUid = conn
+		insertServerUid = conn
 				.prepareStatement("INSERT INTO PROJECT_SERVER (PROJECT_ID, SERVER_UUID) VALUES (?,?)");
 	}
 
 	public ClientFindingManager getFindingManager() {
 		return findingManager;
 	}
-	
+
 	public void synchronizeProject(SierraServerLocation server,
 			String projectName, SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
 		synchronizeProjectWithServer(server, projectName, monitor, false);
 	}
-	
-	public List<SyncTrailResponse> getProjectUpdates(SierraServerLocation server,
-			String projectName, SLProgressMonitor monitor) 
-	throws ServerMismatchException, SQLException {
+
+	public List<SyncTrailResponse> getProjectUpdates(
+			SierraServerLocation server, String projectName,
+			SLProgressMonitor monitor) throws ServerMismatchException,
+			SQLException {
 		return synchronizeProjectWithServer(server, projectName, monitor, true);
-	}	
-	
-	private List<SyncTrailResponse> synchronizeProjectWithServer(SierraServerLocation server,
-			String projectName, SLProgressMonitor monitor, boolean serverGet)
+	}
+
+	private List<SyncTrailResponse> synchronizeProjectWithServer(
+			SierraServerLocation server, String projectName,
+			SLProgressMonitor monitor, boolean serverGet)
 			throws ServerMismatchException, SQLException {
 		final SierraService service = SierraServiceClient.create(server);
 
@@ -91,17 +101,18 @@ public final class ClientProjectManager extends ProjectManager {
 		request.setServer(serverUid);
 		request.setRevision(findingManager.getLatestAuditRevision(projectName));
 		if (serverGet) {
-			request.setTrails(Collections.<SyncTrailRequest>emptyList());
+			request.setTrails(Collections.<SyncTrailRequest> emptyList());
 		} else {
-			request.setTrails(findingManager
-					.getNewLocalAuditTrails(projectName, monitor));
+			request.setTrails(findingManager.getNewLocalAuditTrails(
+					projectName, monitor));
 		}
 		final SyncResponse reply = service.synchronizeProject(request);
 		monitor.worked(1);
-		
+
 		if (!serverGet) {
 			monitor.subTask("Writing remote updates into local database.");
-			findingManager.deleteLocalAudits(projectName, monitor);
+			findingManager.updateLocalAuditRevision(projectName, server.getUser(),
+					reply.getCommitRevision(), monitor);
 			findingManager.updateLocalFindings(projectName, reply.getTrails(),
 					monitor);
 			monitor.worked(1);
@@ -116,6 +127,16 @@ public final class ClientProjectManager extends ProjectManager {
 			insertSynchRecord.setLong(idx++, findingManager
 					.getLatestAuditRevision(projectName));
 			insertSynchRecord.setLong(idx++, request.getRevision());
+			int commitCount = 0;
+			int updateCount = 0;
+			for (final SyncTrailRequest req : request.getTrails()) {
+				commitCount += req.getAudits().size();
+			}
+			for (final SyncTrailResponse rep : reply.getTrails()) {
+				updateCount += rep.getAudits().size();
+			}
+			insertSynchRecord.setLong(idx++, commitCount);
+			insertSynchRecord.setLong(idx++, updateCount);
 			insertSynchRecord.execute();
 		}
 		return reply.getTrails();
@@ -124,11 +145,12 @@ public final class ClientProjectManager extends ProjectManager {
 	@Override
 	public void deleteProject(String projectName, SLProgressMonitor monitor)
 			throws SQLException {
-		ProjectRecord rec = projectFactory.newProject();
+		final ProjectRecord rec = projectFactory.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
-			if (monitor != null)
+			if (monitor != null) {
 				monitor.subTask("Deleting scans for project " + projectName);
+			}
 			scanManager.deleteScans(getProjectScans(rec.getId()), monitor);
 			deleteSynchByProject.setLong(1, rec.getId());
 			deleteSynchByProject.execute();
