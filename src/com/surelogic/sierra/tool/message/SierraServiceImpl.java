@@ -43,7 +43,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	public SettingsReply getSettings(SettingsRequest request)
 			throws ServerMismatchException {
-		SettingsReply reply = new SettingsReply();
+		final SettingsReply reply = new SettingsReply();
 		// TODO
 		return reply;
 	}
@@ -78,7 +78,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 							public Void perform(Connection conn, Server server,
 									User user) throws SQLException {
-								ServerFindingManager fm = ServerFindingManager
+								final ServerFindingManager fm = ServerFindingManager
 										.getInstance(conn);
 								try {
 									fm.generateFindings(project, uid, filter,
@@ -89,10 +89,10 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 									ScanManager.getInstance(conn).finalizeScan(
 											uid);
 									log.info("Scan " + uid + " finalized");
-								} catch (RuntimeException e) {
+								} catch (final RuntimeException e) {
 									handleScanException(conn, uid);
 									throw e;
-								} catch (SQLException e) {
+								} catch (final SQLException e) {
 									handleScanException(conn, uid);
 									throw e;
 								}
@@ -109,7 +109,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			conn.rollback();
 			ScanManager.getInstance(conn).deleteScan(uid,
 					EmptyProgressMonitor.instance());
-		} catch (Exception e1) {
+		} catch (final Exception e1) {
 			log
 					.log(
 							Level.SEVERE,
@@ -124,7 +124,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 					public Timeseries perform(Connection conn, Server server,
 							User user) throws SQLException {
-						Timeseries q = new Timeseries();
+						final Timeseries q = new Timeseries();
 						q.setTimeseries(TimeseriesManager.getInstance(conn)
 								.getAllTimeseriesNames());
 						return q;
@@ -137,8 +137,8 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		final String serverUid = request.getServer();
 		final String project = request.getProject();
 		final List<SyncTrailRequest> trails = request.getTrails();
-		final UserTransaction<Void> commitChanges = new UserTransaction<Void>() {
-			public Void perform(Connection conn, Server server, User user)
+		final UserTransaction<Long> commitChanges = new UserTransaction<Long>() {
+			public Long perform(Connection conn, Server server, User user)
 					throws Exception {
 				final ProjectRecord projectRecord = ProjectRecordFactory
 						.getInstance(conn).newProject();
@@ -168,7 +168,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				man
 						.commitAuditTrails(projectId, user.getId(), revision,
 								audits);
-				return null;
+				return revision;
 			}
 		};
 		final long revision = request.getRevision();
@@ -193,14 +193,17 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			throw new ServerMismatchException(serverUid
 					+ " does not match the server's uid: " + localUid);
 		}
-		if (trails != null && !trails.isEmpty()) {
+		if ((trails != null) && !trails.isEmpty()) {
 			return ConnectionFactory
 					.withUserTransaction(new UserTransaction<SyncResponse>() {
 
 						public SyncResponse perform(Connection conn,
 								Server server, User user) throws Exception {
-							commitChanges.perform(conn, server, user);
-							return readChanges.perform(conn, server, user);
+							final SyncResponse response = readChanges.perform(
+									conn, server, user);
+							response.setCommitRevision(commitChanges.perform(
+									conn, server, user));
+							return response;
 						}
 					});
 		} else {
@@ -216,7 +219,7 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 	}
 
 	public ServerUIDReply getUid(ServerUIDRequest request) {
-		ServerUIDReply reply = new ServerUIDReply();
+		final ServerUIDReply reply = new ServerUIDReply();
 		reply.setUid(ConnectionFactory
 				.withUserReadOnly(new UserTransaction<String>() {
 
