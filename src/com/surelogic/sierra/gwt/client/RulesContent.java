@@ -23,6 +23,7 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
+	private static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
 	private final VerticalPanel categoriesPanel = new VerticalPanel();
 	private final TextBox search = new TextBox();
@@ -39,7 +40,7 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
-		rootPanel.add(categoriesPanel, DockPanel.WEST);
+		categoriesPanel.addStyleName(PRIMARY_STYLE + "-category-panel");
 		categoriesPanel.add(UI.h3("Categories"));
 		categoriesPanel.add(search);
 		categoriesPanel.add(categories);
@@ -53,7 +54,9 @@ public class RulesContent extends ContentComposite {
 				// nothing for now
 			}
 		});
+		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 
+		rootPanel.add(categoriesPanel, DockPanel.WEST);
 		rootPanel.add(detailsPanel, DockPanel.CENTER);
 
 	}

@@ -170,6 +170,16 @@ img {
 	empty-cells: show;
 }
 
+/* Rules Content */
+.rules-category-panel {
+
+}
+
+.rules-details-panel {
+	
+}
+
+
 .cell-text {
 	text-align: left;
 }
