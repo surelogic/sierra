@@ -23,7 +23,7 @@ public final class SierraSchemaUtility {
 	 * Up this number when you add a new schema version SQL script to this
 	 * package.
 	 */
-	public static final int schemaVersion = 25;
+	public static final int schemaVersion = 26;
 
 	public static final String SQL_SCRIPT_PREFIX = "/com/surelogic/sierra/schema/";
 	public static final String SQL_SCRIPT_SUFFIX = ".sql";
@@ -47,8 +47,8 @@ public final class SierraSchemaUtility {
 			schemaActions[i] = common.action;
 			if (serverDB) {
 				final Schema server = new Schema(db, num, true);
-				final boolean serverScriptOrAction = server.script != null
-						|| server.action != null;
+				final boolean serverScriptOrAction = (server.script != null)
+						|| (server.action != null);
 				if (serverScriptOrAction) {
 					final SchemaAction commonAction = common.action;
 					final URL serverScript = server.script;
@@ -69,7 +69,7 @@ public final class SierraSchemaUtility {
 								final Statement st = c.createStatement();
 								try {
 									SchemaUtility.runScript(serverScript, st);
-								} catch (IOException e) {
+								} catch (final IOException e) {
 									throw new SQLException(
 											"IOException reading server script file "
 													+ serverScript.getFile()
@@ -85,12 +85,12 @@ public final class SierraSchemaUtility {
 						}
 					};
 				}
-			} else if (common.script == null && common.action == null) {
+			} else if ((common.script == null) && (common.action == null)) {
 				// not server, and there's no common script/action
 				// Make sure that there's a server script/action
 				final Schema server = new Schema(db, num, true);
-				final boolean serverScriptOrAction = server.script != null
-						|| server.action != null;
+				final boolean serverScriptOrAction = (server.script != null)
+						|| (server.action != null);
 				if (serverScriptOrAction) {
 					// Dummy action to satisfy constraint in
 					// SchemaUtility.checkAndUpdate()
@@ -140,16 +140,16 @@ public final class SierraSchemaUtility {
 		try {
 			result = (SchemaAction) Class.forName(fullyQualifiedClassName)
 					.newInstance();
-		} catch (InstantiationException e) {
+		} catch (final InstantiationException e) {
 			throw new IllegalStateException(e);
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			throw new IllegalStateException(e);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			// It is okay to not have any jobs for this version, do
 			// nothing.
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			throw new IllegalStateException(e);
-		} catch (SecurityException e) {
+		} catch (final SecurityException e) {
 			throw new IllegalStateException(e);
 		}
 		return result;
