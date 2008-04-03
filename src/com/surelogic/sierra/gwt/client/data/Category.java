@@ -79,6 +79,11 @@ public class Category implements Serializable {
 		this.info = info;
 	}
 
+	/**
+	 * Returns the set of FilterEntries that are included in this category.
+	 * 
+	 * @return
+	 */
 	public Set getIncludedEntries() {
 		final Set set = new HashSet();
 		if (parents != null) {
