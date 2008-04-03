@@ -2,8 +2,11 @@ package com.surelogic.sierra.gwt.client;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -13,6 +16,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
@@ -24,6 +28,7 @@ public class RulesContent extends ContentComposite {
 	private final TextBox search = new TextBox();
 	private final Tree categories = new Tree();
 	private final VerticalPanel detailsPanel = new VerticalPanel();
+	private final VerticalPanel categoryEntries = new VerticalPanel();
 
 	public static RulesContent getInstance() {
 		return instance;
@@ -89,17 +94,39 @@ public class RulesContent extends ContentComposite {
 
 	private void selectCategory(Category cat) {
 		detailsPanel.clear();
-		final FlexTable catFields = new FlexTable();
-		catFields.setWidget(0, 0, UI.h3(cat.getName()));
-		catFields.getCellFormatter().setHorizontalAlignment(0, 0,
+		final FlexTable categoryInfo = new FlexTable();
+		categoryInfo.setWidget(0, 0, UI.h3(cat.getName()));
+		categoryInfo.getCellFormatter().setHorizontalAlignment(0, 0,
 				HasHorizontalAlignment.ALIGN_CENTER);
-		catFields.getFlexCellFormatter().setColSpan(0, 0, 2);
-		catFields.setText(1, 0, "Description:");
-		catFields.setText(2, 0, cat.getInfo());
-		catFields.getFlexCellFormatter().setColSpan(2, 0, 2);
+		categoryInfo.getFlexCellFormatter().setColSpan(0, 0, 2);
+		categoryInfo.setText(1, 0, "Description:");
+		categoryInfo.setText(2, 0, cat.getInfo());
+		categoryInfo.getFlexCellFormatter().setColSpan(2, 0, 2);
+		detailsPanel.add(categoryInfo);
 
-		detailsPanel.add(catFields);
-		// TODO select a category or finding type, and update detailsPanel
+		categoryEntries.clear();
+		for (Iterator it = cat.getEntries().iterator(); it.hasNext();) {
+			FilterEntry finding = (FilterEntry) it.next();
+			CheckBox rule = new CheckBox("Rule: " + finding.getName());
+			rule.setChecked(!finding.isFiltered());
+			categoryEntries.add(rule);
+		}
+		for (Iterator catIt = cat.getParents().iterator(); catIt.hasNext();) {
+			Category parent = (Category) catIt.next();
+			DisclosurePanel parentPanel = new DisclosurePanel(parent.getName());
+			VerticalPanel parentFindingsPanel = new VerticalPanel();
+			Set parentFindings = parent.getIncludedEntries();
+			for (Iterator findingIt = parentFindings.iterator(); catIt
+					.hasNext();) {
+				FilterEntry finding = (FilterEntry) findingIt.next();
+				CheckBox rule = new CheckBox("Rule: " + finding.getName());
+				rule.setChecked(!finding.isFiltered());
+				parentFindingsPanel.add(rule);
+			}
+			parentPanel.setContent(parentFindingsPanel);
+			categoryEntries.add(parentPanel);
+		}
 
+		detailsPanel.add(categoryEntries);
 	}
 }
