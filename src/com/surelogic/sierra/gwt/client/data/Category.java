@@ -80,7 +80,8 @@ public class Category implements Serializable {
 	}
 
 	/**
-	 * Returns the set of FilterEntries that are included in this category.
+	 * Returns the set of FilterEntry objects that are included in this
+	 * category.
 	 * 
 	 * @return
 	 */
