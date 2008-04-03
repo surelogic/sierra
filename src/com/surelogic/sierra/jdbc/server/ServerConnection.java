@@ -33,6 +33,18 @@ public class ServerConnection {
 		server = new Server(conn, readOnly);
 	}
 
+	ServerConnection(Connection conn, boolean readOnly, int isolationLevel)
+			throws SQLException {
+		this.conn = LazyPreparedStatementConnection.wrap(conn);
+		this.conn.setTransactionIsolation(isolationLevel);
+		this.conn.setReadOnly(readOnly);
+		if (!readOnly) {
+			this.conn.setAutoCommit(false);
+		}
+		this.readOnly = readOnly;
+		server = new Server(conn, readOnly);
+	}
+
 	public Connection getConnection() {
 		return conn;
 	}

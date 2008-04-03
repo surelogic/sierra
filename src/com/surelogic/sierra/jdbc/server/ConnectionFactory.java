@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +38,17 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
+	public static ServerConnection readUncommitted() throws SQLException {
+		return new ServerConnection(lookupConnection(), true,
+				Connection.TRANSACTION_READ_COMMITTED);
+	}
+
+	/**
+	 * Return a connection to the server in read-only mode.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public static ServerConnection readOnly() throws SQLException {
 		return new ServerConnection(lookupConnection(), true);
 	}
@@ -58,6 +71,48 @@ public final class ConnectionFactory {
 	 */
 	public static UserConnection userReadOnly() throws SQLException {
 		return new UserConnection(lookupConnection(), lookupUser(), true);
+	}
+
+	/**
+	 * Queue a transaction to occur at a later time.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static void scheduleTransactionWithFixedDelay(
+			final ServerQuery<?> t, long initialDelay, long delay, TimeUnit unit) {
+		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
+			public void run() {
+				try {
+					with(new ServerConnection(lookupConnection(), false), t);
+				} catch (final SQLException e) {
+					throw new IllegalStateException();
+				}
+
+			}
+		}, initialDelay, delay, unit);
+	}
+
+	/**
+	 * Queue a transaction to occur at a later time.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static void scheduleTransactionWithFixedDelay(
+			final ServerTransaction<?> t, long initialDelay, long delay,
+			TimeUnit unit) {
+		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
+			public void run() {
+				try {
+					with(new ServerConnection(lookupConnection(), false), t);
+				} catch (final SQLException e) {
+					throw new IllegalStateException();
+				}
+			}
+		}, initialDelay, delay, unit);
 	}
 
 	/**
@@ -221,6 +276,38 @@ public final class ConnectionFactory {
 	public static <T> T withTransaction(ServerTransaction<T> t) {
 		try {
 			return with(transaction(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given read-only user transaction
+	 * w/ a transaction isolation level of READ_UNCOMMITTED.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> T withReadUncommitted(ServerQuery<T> t) {
+		try {
+			return with(readUncommitted(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given read-only user transaction
+	 * w/ a transaction isolation level of READ_UNCOMMITTED.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> T withReadUncommitted(ServerTransaction<T> t) {
+		try {
+			return with(readUncommitted(), t);
 		} catch (final SQLException e) {
 			throw new TransactionException(e);
 		}
@@ -430,6 +517,25 @@ public final class ConnectionFactory {
 			try {
 				return (ExecutorService) new InitialContext()
 						.lookup("SierraTransactionHandler");
+			} finally {
+				context.close();
+			}
+		} catch (final NamingException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Returns the server's timer service.
+	 * 
+	 * @return
+	 */
+	public static ScheduledExecutorService lookupTimerService() {
+		try {
+			final InitialContext context = new InitialContext();
+			try {
+				return (ScheduledExecutorService) new InitialContext()
+						.lookup("SierraTimerService");
 			} finally {
 				context.close();
 			}
