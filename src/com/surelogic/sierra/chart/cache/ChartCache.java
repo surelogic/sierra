@@ -1,14 +1,15 @@
 package com.surelogic.sierra.chart.cache;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,8 +32,14 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.IDatabasePlot;
 import com.surelogic.sierra.chart.PlotSize;
+import com.surelogic.sierra.jdbc.ConnectionQuery;
+import com.surelogic.sierra.jdbc.Query;
+import com.surelogic.sierra.jdbc.Result;
+import com.surelogic.sierra.jdbc.ResultHandler;
+import com.surelogic.sierra.jdbc.Row;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerQuery;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.servlets.ServletUtility;
 
@@ -44,7 +51,7 @@ public final class ChartCache implements Sweepable {
 	public void sendPng(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
 		final File png = getPngFileFor(ticket);
-		checkAndUpdateCache(ticket, png);
+		checkAndUpdateCache(ticket);
 		ServletUtility
 				.sendFileToHttpServletResponse(png, response, "image/png");
 	}
@@ -52,7 +59,7 @@ public final class ChartCache implements Sweepable {
 	public void sendMap(final Ticket ticket, final HttpServletResponse response)
 			throws ServletException, IOException {
 		final File map = getMapFileFor(ticket);
-		checkAndUpdateCache(ticket, map);
+		checkAndUpdateCache(ticket);
 		ServletUtility.sendFileToHttpServletResponse(map, response,
 				"text/plain");
 	}
@@ -60,7 +67,7 @@ public final class ChartCache implements Sweepable {
 	public void sendMapTo(final Ticket ticket, final Writer out)
 			throws ServletException, IOException {
 		final File map = getMapFileFor(ticket);
-		checkAndUpdateCache(ticket, map);
+		checkAndUpdateCache(ticket);
 		ServletUtility.sendFileTo(map, out);
 	}
 
@@ -78,9 +85,16 @@ public final class ChartCache implements Sweepable {
 				+ ticket.getUUID().toString() + ".map");
 	}
 
-	private void checkAndUpdateCache(final Ticket ticket, final File file)
+	private File getRevFileFor(final Ticket ticket) {
+		return new File(FileUtility.getSierraTeamServerCacheDirectory()
+				+ File.separator + CHART_CACHE_FILE_PREFIX
+				+ ticket.getUUID().toString() + ".rev");
+	}
+
+	private void checkAndUpdateCache(final Ticket ticket)
 			throws ServletException {
 		boolean createOrUpdateCacheFiles = true;
+		final File file = getRevFileFor(ticket);
 		/*
 		 * Does a cached file exist?
 		 */
@@ -88,9 +102,17 @@ public final class ChartCache implements Sweepable {
 			/*
 			 * Is it OK to use cached file?
 			 */
-			final Date modified = new Date(file.lastModified());
-			// TODO add check against the last database change.
-			createOrUpdateCacheFiles = false;
+			try {
+				final BufferedReader reader = new BufferedReader(
+						new FileReader(file));
+				final long rev = Long.valueOf(reader.readLine());
+				final long lastRevision = ConnectionFactory
+						.withReadUncommitted(new RevisionQuery());
+
+				createOrUpdateCacheFiles = lastRevision > rev;
+			} catch (final Exception e) {
+				throw new IllegalStateException(e);
+			}
 		}
 		if (createOrUpdateCacheFiles) {
 			createCacheFiles(ticket);
@@ -136,14 +158,37 @@ public final class ChartCache implements Sweepable {
 					ChartUtilities.writeImageMap(mapWriter, "map"
 							+ ticket.getUUID(), info, false);
 					mapWriter.close();
+
+					/*
+					 * Output revision file.
+					 */
+					final File revFile = getRevFileFor(ticket);
+					final PrintWriter revWriter = new PrintWriter(revFile);
+					revWriter.println(new RevisionQuery().perform(
+							new ConnectionQuery(conn), server));
+					revWriter.close();
 					return null;
-				} catch (IOException e) {
-					SQLException sqle = new SQLException();
+				} catch (final IOException e) {
+					final SQLException sqle = new SQLException();
 					sqle.initCause(e);
 					throw sqle;
 				}
 			}
 		});
+	}
+
+	private static class RevisionQuery implements ServerQuery<Long> {
+		public Long perform(Query q, Server s) {
+			return q.statement("Revision.maxRevision",
+					new ResultHandler<Long>() {
+						public Long handle(Result r) {
+							for (final Row row : r) {
+								return row.nextLong();
+							}
+							return -1L;
+						}
+					}).call();
+		}
 	}
 
 	/**
@@ -169,16 +214,16 @@ public final class ChartCache implements Sweepable {
 					plotter = (IDatabasePlot) Class.forName(plotClassName)
 							.newInstance();
 					f_typeToPlotter.put(type, plotter);
-				} catch (ClassCastException e) {
+				} catch (final ClassCastException e) {
 					throw new ServletException(I18N
 							.err(82, type, plotClassName), e);
-				} catch (InstantiationException e) {
+				} catch (final InstantiationException e) {
 					throw new ServletException(I18N
 							.err(82, type, plotClassName), e);
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					throw new ServletException(I18N
 							.err(82, type, plotClassName), e);
-				} catch (ClassNotFoundException e) {
+				} catch (final ClassNotFoundException e) {
 					throw new ServletException(I18N
 							.err(82, type, plotClassName), e);
 				}
@@ -202,7 +247,7 @@ public final class ChartCache implements Sweepable {
 			try {
 				final int width = Integer.parseInt(value);
 				widthHint = width;
-			} catch (NumberFormatException ignore) {
+			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default width
 			}
 		}
@@ -225,7 +270,7 @@ public final class ChartCache implements Sweepable {
 			try {
 				final int height = Integer.parseInt(value);
 				heightHint = height;
-			} catch (NumberFormatException ignore) {
+			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default height
 			}
 		}
@@ -241,7 +286,7 @@ public final class ChartCache implements Sweepable {
 	private void setupTooltips(final JFreeChart chart) {
 		final Plot plot = chart.getPlot();
 		if (plot instanceof CategoryPlot) {
-			CategoryPlot cplot = (CategoryPlot) plot;
+			final CategoryPlot cplot = (CategoryPlot) plot;
 			int index = 0;
 			final StandardCategoryToolTipGenerator ttg = new StandardCategoryToolTipGenerator();
 			while (true) {
@@ -250,8 +295,9 @@ public final class ChartCache implements Sweepable {
 				 * renders without this mess. TODO: File a bug with JFreeChart.
 				 */
 				final CategoryItemRenderer r = cplot.getRenderer(index++);
-				if (r == null)
+				if (r == null) {
 					break;
+				}
 				r.setBaseToolTipGenerator(ttg);
 			}
 		}
