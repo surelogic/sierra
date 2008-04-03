@@ -1,7 +1,10 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class Category implements Serializable {
 
@@ -74,6 +77,26 @@ public class Category implements Serializable {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	public Set getIncludedEntries() {
+		final Set set = new HashSet();
+		if (parents != null) {
+			for (final Iterator i = parents.iterator(); i.hasNext();) {
+				set.addAll(((Category) i.next()).getIncludedEntries());
+			}
+		}
+		if (entries != null) {
+			for (final Iterator i = entries.iterator(); i.hasNext();) {
+				final FilterEntry entry = (FilterEntry) i.next();
+				if (entry.isFiltered()) {
+					set.remove(entry);
+				} else {
+					set.add(entry);
+				}
+			}
+		}
+		return set;
 	}
 
 }
