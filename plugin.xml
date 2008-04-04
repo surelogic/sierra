@@ -524,7 +524,7 @@
 
 	<!-- Enable the ad hoc query view on Sierra -->
 
-	<extension point="com.surelogic.adhoc.query">
+	<extension point="com.surelogic.adhoc.eclipse.query">
 		<instance
 			adHocQueryViewId="com.surelogic.sierra.client.eclipse.AdHocQueryView"
 			class="com.surelogic.sierra.client.eclipse.AdHocGlue">
