@@ -1,35 +1,41 @@
 package com.surelogic.sierra.gwt.client;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
 	private static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
-	private final VerticalPanel categoriesPanel = new VerticalPanel();
-	private final TextBox search = new TextBox();
-	private final Tree categories = new Tree();
+	private final VerticalPanel searchPanel = new VerticalPanel();
+	private final TextBox searchText = new TextBox();
+	private final VerticalPanel searchResults = new VerticalPanel();
+	private final Map searchResultsData = new HashMap();
 	private final VerticalPanel detailsPanel = new VerticalPanel();
 	private final VerticalPanel categoryEntries = new VerticalPanel();
+	private Label currentSearchSelection;
 
 	public static RulesContent getInstance() {
 		return instance;
@@ -40,46 +46,37 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
-		categoriesPanel.addStyleName(PRIMARY_STYLE + "-category-panel");
-		categoriesPanel.add(UI.h3("Categories"));
-		categoriesPanel.add(search);
-		categoriesPanel.add(categories);
-		categories.addTreeListener(new TreeListener() {
-
-			public void onTreeItemSelected(TreeItem item) {
-				selectCategory((Category) item.getUserObject());
-			}
-
-			public void onTreeItemStateChanged(TreeItem item) {
-				// nothing for now
-			}
-		});
+		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
+		searchPanel.add(UI.h3("Categories"));
+		searchPanel.add(searchText);
+		searchPanel.add(searchResults);
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 
-		rootPanel.add(categoriesPanel, DockPanel.WEST);
+		rootPanel.add(searchPanel, DockPanel.WEST);
 		rootPanel.add(detailsPanel, DockPanel.CENTER);
-
 	}
 
 	protected void onActivate(Context context) {
-		// TODO refresh categories
-		categories.clear();
-		categories.addItem(ImageHelper.getWaitImage(16));
+		clearSearch();
+
+		searchResults.add(ImageHelper.getWaitImage(16));
 		ServiceHelper.getSettingsService().getCategories(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
 				// TODO handle this in the normal way, or switch to Callback
-				categories.clear();
-				categories.addItem("Error retrieving categories");
+				clearSearch();
+
+				searchResults.add(new Label("Error retrieving categories"));
 				ExceptionTracker.logException(caught);
 			}
 
 			public void onSuccess(Object result) {
-				categories.clear();
+				clearSearch();
+
 				List categories = (List) result;
 				for (Iterator it = categories.iterator(); it.hasNext();) {
 					Category cat = (Category) it.next();
-					addCategory(cat);
+					addSearchCategory(cat);
 				}
 			}
 		});
@@ -90,12 +87,30 @@ public class RulesContent extends ContentComposite {
 		return true;
 	}
 
-	private void addCategory(Category cat) {
-		TreeItem item = categories.addItem(cat.getName());
-		item.setUserObject(cat);
+	private void clearSearch() {
+		searchResults.clear();
+		searchResultsData.clear();
+	}
+
+	private void addSearchCategory(Category cat) {
+		final Label catEntry = new Label(cat.getName());
+		catEntry.addStyleName(PRIMARY_STYLE + "-search-category");
+		catEntry.addClickListener(new SearchResultListener(cat));
+		searchResultsData.put(cat, catEntry);
+		searchResults.add(catEntry);
+	}
+
+	private void addSearchFinding(FilterEntry finding) {
+		final Label findingEntry = new Label(finding.getName());
+		findingEntry.addStyleName(PRIMARY_STYLE + "-search-finding");
+		findingEntry.addClickListener(new SearchResultListener(finding));
+		searchResultsData.put(finding, findingEntry);
+		searchResults.add(findingEntry);
 	}
 
 	private void selectCategory(Category cat) {
+		updateSelectionStyle(cat);
+
 		detailsPanel.clear();
 		final FlexTable categoryInfo = new FlexTable();
 		categoryInfo.setWidget(0, 0, UI.h3(cat.getName()));
@@ -131,5 +146,52 @@ public class RulesContent extends ContentComposite {
 		}
 
 		detailsPanel.add(categoryEntries);
+	}
+
+	private void selectFinding(FilterEntry finding) {
+		updateSelectionStyle(finding);
+
+		// TODO redirect to finding page or something
+		Window.alert("Finding selected: " + finding.getName());
+	}
+
+	private void updateSelectionStyle(Object searchData) {
+		final String selectedStyle = PRIMARY_STYLE + "-search-selected";
+		if (!LangUtil.equals(searchData, currentSearchSelection)) {
+			if (currentSearchSelection != null) {
+				currentSearchSelection.removeStyleName(selectedStyle);
+			}
+
+			currentSearchSelection = (Label) searchResultsData.get(searchData);
+			if (currentSearchSelection != null) {
+				currentSearchSelection.addStyleName(selectedStyle);
+			}
+		}
+	}
+
+	private class SearchResultListener implements ClickListener {
+		private final Category category;
+		private final FilterEntry finding;
+
+		public SearchResultListener(Category category) {
+			super();
+			this.category = category;
+			this.finding = null;
+		}
+
+		public SearchResultListener(FilterEntry finding) {
+			super();
+			this.category = null;
+			this.finding = finding;
+		}
+
+		public void onClick(Widget sender) {
+			if (category != null) {
+				selectCategory(category);
+			} else {
+				selectFinding(finding);
+			}
+		}
+
 	}
 }
