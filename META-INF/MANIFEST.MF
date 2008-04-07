@@ -25,6 +25,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  com.surelogic.sierra.message,
  org.eclipse.ui.workbench.texteditor,
- com.surelogic.adhoc.eclipse
+ com.surelogic.adhoc.eclipse,
+ com.surelogic.common.derby
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
