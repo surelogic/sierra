@@ -176,15 +176,21 @@ img {
 }
 
 .rules-search-category {
-
+	border-right: 1px solid;
+	padding: 2px;
 }
 
 .rules-search-finding {
-
+	border-right: 1px solid;
+	padding: 2px;
+	font-size: small;
 }
 
 .rules-search-selected {
-
+	border-right: none;
+	border-top: solid 1px;
+	border-bottom: solid 1px;
+	border-left: solid 1px;
 }
 
 .rules-details-panel {
