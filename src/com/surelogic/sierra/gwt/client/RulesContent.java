@@ -32,6 +32,7 @@ public class RulesContent extends ContentComposite {
 	private static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
 	private final VerticalPanel searchPanel = new VerticalPanel();
+	private final FlexTable searchHeaderGrid = new FlexTable();
 	private final TextBox searchText = new TextBox();
 	private final VerticalPanel searchResults = new VerticalPanel();
 	private final Map searchResultsData = new HashMap();
@@ -51,13 +52,23 @@ public class RulesContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
-		searchPanel.add(UI.h3("Categories"));
-		searchPanel.add(searchText);
+
+		searchHeaderGrid.addStyleName(PRIMARY_STYLE + "-search-header");
+		searchHeaderGrid.setWidget(0, 0, UI.h3("Categories"));
+		searchHeaderGrid.getFlexCellFormatter().setColSpan(0, 0, 2);
+		searchHeaderGrid.setWidget(1, 0, searchText);
+		searchHeaderGrid.setText(1, 1, "");
+		searchPanel.add(searchHeaderGrid);
+
+		searchResults.setWidth("100%");
 		searchPanel.add(searchResults);
+
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 
 		rootPanel.add(searchPanel, DockPanel.WEST);
+		rootPanel.setCellWidth(searchPanel, "25%");
 		rootPanel.add(detailsPanel, DockPanel.CENTER);
+		rootPanel.setCellWidth(detailsPanel, "75%");
 
 		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
 			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
@@ -76,7 +87,13 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onActivate(Context context) {
-		searchResults.add(ImageHelper.getWaitImage(16));
+		clearSearch();
+
+		final VerticalPanel waitPanel = new VerticalPanel();
+		waitPanel.setWidth("100%");
+		waitPanel.addStyleName(PRIMARY_STYLE + "-search-category");
+		waitPanel.add(ImageHelper.getWaitImage(16));
+		searchResults.add(waitPanel);
 		ServiceHelper.getSettingsService().getCategories(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
@@ -106,12 +123,15 @@ public class RulesContent extends ContentComposite {
 
 	private void search(String query) {
 		clearSearch();
+
+		searchHeaderGrid.setWidget(1, 1, ImageHelper.getWaitImage(16));
 		query = ".*" + query + ".*";
+
 		for (final Iterator it = categories.iterator(); it.hasNext();) {
 			final Category cat = (Category) it.next();
 			if (cat.getName().matches(query)) {
 				addSearchCategory(cat);
-			} else {
+			} else if (!"".equals(query)) {
 				boolean categoryAdded = false;
 				for (final Iterator i = cat.getEntries().iterator(); i
 						.hasNext();) {
@@ -126,6 +146,7 @@ public class RulesContent extends ContentComposite {
 				}
 			}
 		}
+		searchHeaderGrid.setText(1, 1, "");
 	}
 
 	private void addSearchCategory(Category cat) {
@@ -149,6 +170,7 @@ public class RulesContent extends ContentComposite {
 
 		detailsPanel.clear();
 		final FlexTable categoryInfo = new FlexTable();
+		categoryInfo.setWidth("100%");
 		categoryInfo.setWidget(0, 0, UI.h3(cat.getName()));
 		categoryInfo.getCellFormatter().setHorizontalAlignment(0, 0,
 				HasHorizontalAlignment.ALIGN_CENTER);
