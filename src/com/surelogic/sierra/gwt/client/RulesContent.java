@@ -117,17 +117,27 @@ public class RulesContent extends ContentComposite {
 		searchResultsData.clear();
 	}
 
-	private void search(String query) {
+	private void search(String text) {
 		clearSearch();
-
 		searchHeaderGrid.setWidget(1, 1, ImageHelper.getWaitImage(16));
-		query = ".*" + query + ".*";
-
+		final StringBuffer queryBuf = new StringBuffer();
+		queryBuf.append(".*");
+		for (int i = 0; i < text.length(); i++) {
+			final char ch = text.charAt(i);
+			if (Character.isLetterOrDigit(ch)) {
+				queryBuf.append("[");
+				queryBuf.append(Character.toLowerCase(ch));
+				queryBuf.append(Character.toUpperCase(ch));
+				queryBuf.append("]");
+			}
+		}
+		queryBuf.append(".*");
+		final String query = queryBuf.toString();
 		for (final Iterator it = categories.iterator(); it.hasNext();) {
 			final Category cat = (Category) it.next();
 			if (cat.getName().matches(query)) {
 				addSearchCategory(cat);
-			} else if (!"".equals(query)) {
+			} else if (!"".equals(text)) {
 				boolean categoryAdded = false;
 				for (final Iterator i = cat.getEntries().iterator(); i
 						.hasNext();) {
