@@ -8,12 +8,14 @@ import java.util.Set;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,6 +35,8 @@ public class RulesContent extends ContentComposite {
 	private final TextBox searchText = new TextBox();
 	private final VerticalPanel searchResults = new VerticalPanel();
 	private final Map searchResultsData = new HashMap();
+	// List of all Category objects
+	private List categories;
 	private final VerticalPanel detailsPanel = new VerticalPanel();
 	private final VerticalPanel categoryEntries = new VerticalPanel();
 	private Label currentSearchSelection;
@@ -54,30 +58,34 @@ public class RulesContent extends ContentComposite {
 
 		rootPanel.add(searchPanel, DockPanel.WEST);
 		rootPanel.add(detailsPanel, DockPanel.CENTER);
+
+		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
+			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+				search();
+			}
+		});
+		searchText.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				search();
+			}
+		});
 	}
 
 	protected void onActivate(Context context) {
-		clearSearch();
-
 		searchResults.add(ImageHelper.getWaitImage(16));
 		ServiceHelper.getSettingsService().getCategories(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
 				// TODO handle this in the normal way, or switch to Callback
 				clearSearch();
-
 				searchResults.add(new Label("Error retrieving categories"));
 				ExceptionTracker.logException(caught);
 			}
 
 			public void onSuccess(Object result) {
-				clearSearch();
-
-				List categories = (List) result;
-				for (Iterator it = categories.iterator(); it.hasNext();) {
-					Category cat = (Category) it.next();
-					addSearchCategory(cat);
-				}
+				categories = (List) result;
+				search();
+				searchText.setFocus(true);
 			}
 		});
 
@@ -90,6 +98,30 @@ public class RulesContent extends ContentComposite {
 	private void clearSearch() {
 		searchResults.clear();
 		searchResultsData.clear();
+	}
+
+	private void search() {
+		clearSearch();
+		final String query = ".*" + searchText.getText() + ".*";
+		for (final Iterator it = categories.iterator(); it.hasNext();) {
+			final Category cat = (Category) it.next();
+			if (cat.getName().matches(query)) {
+				addSearchCategory(cat);
+			} else {
+				boolean categoryAdded = false;
+				for (final Iterator i = cat.getEntries().iterator(); i
+						.hasNext();) {
+					final FilterEntry e = (FilterEntry) i.next();
+					if (e.getName().matches(query)) {
+						if (!categoryAdded) {
+							addSearchCategory(cat);
+							categoryAdded = true;
+						}
+						addSearchFinding(e);
+					}
+				}
+			}
+		}
 	}
 
 	private void addSearchCategory(Category cat) {
@@ -123,21 +155,23 @@ public class RulesContent extends ContentComposite {
 		detailsPanel.add(categoryInfo);
 
 		categoryEntries.clear();
-		for (Iterator it = cat.getEntries().iterator(); it.hasNext();) {
-			FilterEntry finding = (FilterEntry) it.next();
-			CheckBox rule = new CheckBox("Rule: " + finding.getName());
+		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
+			final FilterEntry finding = (FilterEntry) it.next();
+			final CheckBox rule = new CheckBox("Rule: " + finding.getName());
 			rule.setChecked(!finding.isFiltered());
 			categoryEntries.add(rule);
 		}
-		for (Iterator catIt = cat.getParents().iterator(); catIt.hasNext();) {
-			Category parent = (Category) catIt.next();
-			DisclosurePanel parentPanel = new DisclosurePanel(parent.getName());
-			VerticalPanel parentFindingsPanel = new VerticalPanel();
-			Set parentFindings = parent.getIncludedEntries();
-			for (Iterator findingIt = parentFindings.iterator(); catIt
+		for (final Iterator catIt = cat.getParents().iterator(); catIt
+				.hasNext();) {
+			final Category parent = (Category) catIt.next();
+			final DisclosurePanel parentPanel = new DisclosurePanel(parent
+					.getName());
+			final VerticalPanel parentFindingsPanel = new VerticalPanel();
+			final Set parentFindings = parent.getIncludedEntries();
+			for (final Iterator findingIt = parentFindings.iterator(); catIt
 					.hasNext();) {
-				FilterEntry finding = (FilterEntry) findingIt.next();
-				CheckBox rule = new CheckBox("Rule: " + finding.getName());
+				final FilterEntry finding = (FilterEntry) findingIt.next();
+				final CheckBox rule = new CheckBox("Rule: " + finding.getName());
 				rule.setChecked(!finding.isFiltered());
 				parentFindingsPanel.add(rule);
 			}
@@ -176,12 +210,12 @@ public class RulesContent extends ContentComposite {
 		public SearchResultListener(Category category) {
 			super();
 			this.category = category;
-			this.finding = null;
+			finding = null;
 		}
 
 		public SearchResultListener(FilterEntry finding) {
 			super();
-			this.category = null;
+			category = null;
 			this.finding = finding;
 		}
 
