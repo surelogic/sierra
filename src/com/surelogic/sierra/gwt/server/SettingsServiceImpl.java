@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,12 +50,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 									detail.getUid(), sets);
 							set.setName(detail.getName());
 							set.setInfo(detail.getInfo());
-							final List<Category> parents = new ArrayList<Category>();
+							final Set<Category> parents = new HashSet<Category>();
 							for (final String parent : detail.getParents()) {
 								parents.add(getOrCreateSet(parent, sets));
 							}
 							set.setParents(parents);
-							final List<FilterEntry> filters = new ArrayList<FilterEntry>();
+							final Set<FilterEntry> filters = new HashSet<FilterEntry>();
 							for (final FilterEntryDO fDetail : detail
 									.getFilters()) {
 								final FilterEntry filter = new FilterEntry();
@@ -128,12 +129,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				set.setName(c.getName());
 				set.setRevision(c.getRevision());
 				final Set<String> parentSet = set.getParents();
-				final List<Category> parents = c.getParents();
+				final Set<Category> parents = c.getParents();
 				for (final Category parent : parents) {
 					parentSet.add(parent.getUuid());
 				}
 				final Set<FilterEntryDO> entrySet = set.getFilters();
-				final List<FilterEntry> entries = c.getEntries();
+				final Set<FilterEntry> entries = c.getEntries();
 				for (final FilterEntry entry : entries) {
 					entrySet.add(new FilterEntryDO(entry.getUid(), entry
 							.isFiltered()));
