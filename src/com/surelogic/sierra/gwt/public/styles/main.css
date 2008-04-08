@@ -172,17 +172,25 @@ img {
 
 /* Rules Content */
 .rules-search-panel {
+	width: 100%;
+	border-bottom: 1px solid;
+}
 
+.rules-search-header {
+    width: 100%;
+    border-right: 1px solid;
+    padding-bottom: 10px;
 }
 
 .rules-search-category {
 	border-right: 1px solid;
 	padding: 2px;
+	font-size: small;
 }
 
 .rules-search-finding {
 	border-right: 1px solid;
-	padding: 2px;
+	padding: 2px 2px 2px 10px;
 	font-size: small;
 }
 
@@ -194,6 +202,7 @@ img {
 }
 
 .rules-details-panel {
+	width: 100%;
 	
 }
 
