@@ -8,152 +8,171 @@ package com.surelogic.sierra.tool.message;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for FilterSet complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="FilterSet">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="uid" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="parent" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="filter" type="{http://www.surelogic.com/sierra/1.0}FilterEntry" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
+ * <p>
+ * Java class for FilterSet complex type. Conceptually, a filter set consists of
+ * a list of finding types.
+ * 
+ * A filter set is uniquely identified by a uid, which in this case is the
+ * string representation of a {@link UUID}. A filter set also possesses an
+ * owner, which is referenced by the owner's server uid, and a revision.
+ * 
+ * The content of a filter set is represented by a list of parents, and a list
+ * of filter entries. Each filter entry names a particular finding type, and
+ * turns it on or off. The list of finding types comprising a given filter set
+ * is the application of its filter entries to the union of the finding types of
+ * its parents.
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FilterSet", propOrder =  {
-    "uid", "name", "parent", "filter"}
-)
+@XmlType(name = "FilterSet", propOrder = { "uid", "owner", "revision", "name",
+		"parent", "filter" })
 public class FilterSet {
-    @XmlElement(required = true)
-    protected String uid;
-    @XmlElement(required = true)
-    protected String name;
-    protected List<String> parent;
-    protected List<FilterEntry> filter;
+	@XmlElement(required = true)
+	protected String uid;
+	@XmlElement(required = true)
+	protected String name;
+	@XmlElement(required = true)
+	protected String owner;
+	@XmlElement(required = true)
+	protected long revision;
 
-    /**
-     * Gets the value of the uid property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getUid() {
-        return uid;
-    }
+	protected String info;
 
-    /**
-     * Sets the value of the uid property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setUid(String value) {
-        this.uid = value;
-    }
+	protected List<String> parent;
+	protected List<FilterEntry> filter;
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the uid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getUid() {
+		return uid;
+	}
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the uid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setUid(String value) {
+		uid = value;
+	}
 
-    /**
-     * Gets the value of the parent property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parent property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParent().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
-     */
-    public List<String> getParent() {
-        if (parent == null) {
-            parent = new ArrayList<String>();
-        }
+	public String getOwner() {
+		return owner;
+	}
 
-        return this.parent;
-    }
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
-    /**
-     * Gets the value of the filter property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the filter property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFilter().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FilterEntry }
-     *
-     *
-     */
-    public List<FilterEntry> getFilter() {
-        if (filter == null) {
-            filter = new ArrayList<FilterEntry>();
-        }
+	public long getRevision() {
+		return revision;
+	}
 
-        return this.filter;
-    }
+	public void setRevision(long revision) {
+		this.revision = revision;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		name = value;
+	}
+
+	/**
+	 * Gets the value of the parent property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a
+	 * snapshot. Therefore any modification you make to the returned list will
+	 * be present inside the JAXB object. This is why there is not a
+	 * <CODE>set</CODE> method for the parent property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getParent().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link String }
+	 * 
+	 * 
+	 */
+	public List<String> getParent() {
+		if (parent == null) {
+			parent = new ArrayList<String>();
+		}
+
+		return parent;
+	}
+
+	/**
+	 * Gets the value of the filter property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a
+	 * snapshot. Therefore any modification you make to the returned list will
+	 * be present inside the JAXB object. This is why there is not a
+	 * <CODE>set</CODE> method for the filter property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getFilter().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FilterEntry }
+	 * 
+	 * 
+	 */
+	public List<FilterEntry> getFilter() {
+		if (filter == null) {
+			filter = new ArrayList<FilterEntry>();
+		}
+
+		return filter;
+	}
 }
