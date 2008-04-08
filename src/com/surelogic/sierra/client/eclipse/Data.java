@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.common.FileUtility;
-import com.surelogic.common.eclipse.Derby;
+import com.surelogic.common.derby.Derby;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
