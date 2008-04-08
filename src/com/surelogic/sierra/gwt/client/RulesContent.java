@@ -61,12 +61,16 @@ public class RulesContent extends ContentComposite {
 
 		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
 			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-				search();
+				String query = searchText.getText();
+				if ((modifiers == 0) && Character.isLetterOrDigit(keyCode)) {
+					query = query + keyCode;
+				}
+				search(query);
 			}
 		});
 		searchText.addChangeListener(new ChangeListener() {
 			public void onChange(Widget sender) {
-				search();
+				search(searchText.getText());
 			}
 		});
 	}
@@ -84,7 +88,7 @@ public class RulesContent extends ContentComposite {
 
 			public void onSuccess(Object result) {
 				categories = (List) result;
-				search();
+				search("");
 				searchText.setFocus(true);
 			}
 		});
@@ -100,9 +104,9 @@ public class RulesContent extends ContentComposite {
 		searchResultsData.clear();
 	}
 
-	private void search() {
+	private void search(String query) {
 		clearSearch();
-		final String query = ".*" + searchText.getText() + ".*";
+		query = ".*" + query + ".*";
 		for (final Iterator it = categories.iterator(); it.hasNext();) {
 			final Category cat = (Category) it.next();
 			if (cat.getName().matches(query)) {
