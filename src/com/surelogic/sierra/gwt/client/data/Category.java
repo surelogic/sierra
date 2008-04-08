@@ -3,7 +3,6 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 public class Category implements Serializable {
@@ -16,12 +15,12 @@ public class Category implements Serializable {
 	/**
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.Category>
 	 */
-	private List parents;
+	private Set parents;
 
 	/**
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.FilterEntry>
 	 */
-	private List entries;
+	private Set entries;
 
 	private String name;
 
@@ -39,19 +38,19 @@ public class Category implements Serializable {
 		this.name = name;
 	}
 
-	public List getParents() {
+	public Set getParents() {
 		return parents;
 	}
 
-	public void setParents(List parents) {
+	public void setParents(Set parents) {
 		this.parents = parents;
 	}
 
-	public List getEntries() {
+	public Set getEntries() {
 		return entries;
 	}
 
-	public void setEntries(List entries) {
+	public void setEntries(Set entries) {
 		this.entries = entries;
 	}
 
@@ -103,6 +102,34 @@ public class Category implements Serializable {
 			}
 		}
 		return set;
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Category other = (Category) obj;
+		if (uuid == null) {
+			if (other.uuid != null) {
+				return false;
+			}
+		} else if (!uuid.equals(other.uuid)) {
+			return false;
+		}
+		return true;
 	}
 
 }
