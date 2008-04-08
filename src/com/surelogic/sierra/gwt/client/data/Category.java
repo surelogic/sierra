@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
+
 public class Category implements Serializable {
 
 	/**
@@ -118,7 +120,7 @@ public class Category implements Serializable {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (!GWT.getTypeName(this).equals(GWT.getTypeName(obj))) {
 			return false;
 		}
 		final Category other = (Category) obj;
