@@ -55,9 +55,10 @@ public class RulesContent extends ContentComposite {
 
 		searchHeaderGrid.addStyleName(PRIMARY_STYLE + "-search-header");
 		searchHeaderGrid.setWidget(0, 0, UI.h3("Categories"));
-		searchHeaderGrid.getFlexCellFormatter().setColSpan(0, 0, 2);
-		searchHeaderGrid.setWidget(1, 0, searchText);
-		searchHeaderGrid.setText(1, 1, "");
+		searchHeaderGrid.getFlexCellFormatter().setColSpan(0, 0, 3);
+		searchHeaderGrid.setText(1, 0, "Search");
+		searchHeaderGrid.setWidget(1, 1, searchText);
+		searchHeaderGrid.setText(1, 2, "");
 		searchPanel.add(searchHeaderGrid);
 
 		searchResults.setWidth("100%");
@@ -119,7 +120,7 @@ public class RulesContent extends ContentComposite {
 
 	private void search(String text) {
 		clearSearch();
-		searchHeaderGrid.setWidget(1, 1, ImageHelper.getWaitImage(16));
+		searchHeaderGrid.setWidget(1, 2, ImageHelper.getWaitImage(16));
 		final StringBuffer queryBuf = new StringBuffer();
 		for (int i = 0; i < text.length(); i++) {
 			final char ch = text.charAt(i);
@@ -147,7 +148,7 @@ public class RulesContent extends ContentComposite {
 				}
 			}
 		}
-		searchHeaderGrid.setText(1, 1, "");
+		searchHeaderGrid.setText(1, 2, "");
 	}
 
 	private void addSearchCategory(Category cat) {
