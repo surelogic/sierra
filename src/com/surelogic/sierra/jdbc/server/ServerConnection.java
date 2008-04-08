@@ -21,7 +21,8 @@ public class ServerConnection {
 	protected final boolean readOnly;
 	protected final Server server;
 
-	ServerConnection(Connection conn, boolean readOnly) throws SQLException {
+	public ServerConnection(Connection conn, boolean readOnly)
+			throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(conn);
 		this.conn
 				.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
@@ -33,8 +34,8 @@ public class ServerConnection {
 		server = new Server(conn, readOnly);
 	}
 
-	ServerConnection(Connection conn, boolean readOnly, int isolationLevel)
-			throws SQLException {
+	public ServerConnection(Connection conn, boolean readOnly,
+			int isolationLevel) throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(conn);
 		this.conn.setTransactionIsolation(isolationLevel);
 		this.conn.setReadOnly(readOnly);

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.surelogic.sierra.jdbc.Query;
@@ -12,6 +13,8 @@ import com.surelogic.sierra.jdbc.Row;
 import com.surelogic.sierra.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.server.RevisionException;
+import com.surelogic.sierra.tool.message.FilterEntry;
+import com.surelogic.sierra.tool.message.FilterSet;
 
 public class FilterSets {
 
@@ -87,6 +90,53 @@ public class FilterSets {
 		filterSetRec.setUid(UUID.randomUUID().toString());
 		filterSetRec.insert();
 		return getFilterSet(filterSetRec.getUid());
+	}
+
+	/**
+	 * Writes a filter set to the database, overwriting any local copy. This
+	 * should be used solely when updating filter sets owned by another server.
+	 * 
+	 * @param set
+	 */
+	public void writeFilterSet(FilterSetDO set) {
+		/*
+		 * Essentially the same as update, but w/o a revision check or failure
+		 * if it doesn't exist.
+		 */
+		final FilterSetRecord rec = q.record(FilterSetRecord.class);
+		rec.setUid(set.getUid());
+		if (rec.select()) {
+			checkCyclicDependences(set.getParents(), set.getUid());
+			rec.setRevision(set.getRevision());
+			rec.setName(set.getName());
+			rec.setInfo(set.getInfo());
+			rec.update();
+		} else {
+			rec.setRevision(set.getRevision());
+			rec.setName(set.getName());
+			rec.setInfo(set.getInfo());
+			rec.insert();
+		}
+		q.prepared("FilterSets.deleteFilterSetParents").call(rec.getId());
+		final Queryable<Void> insertParent = q
+				.prepared("FilterSets.insertFilterSetParent");
+		final FilterSetRecord parentRec = q.record(FilterSetRecord.class);
+		for (final String parent : set.getParents()) {
+			parentRec.setUid(parent);
+			if (parentRec.select()) {
+				insertParent.call(rec.getId(), parentRec.getId());
+			} else {
+				throw new IllegalArgumentException("The specified parent uid "
+						+ parent + " does not match an existing filter set.");
+			}
+		}
+		q.prepared("FilterSets.deleteFilterSetEntries").call(rec.getId());
+		final Queryable<Void> insertEntry = q
+				.prepared("FilterSets.insertFilterSetEntry");
+		for (final FilterEntryDO entry : set.getFilters()) {
+			insertEntry.call(rec.getId(), entry.getFindingType(), entry
+					.isFiltered() ? "Y" : "N");
+		}
 	}
 
 	/**
@@ -192,5 +242,38 @@ public class FilterSets {
 			throw new IllegalArgumentException("No filter set with the uid "
 					+ uid + " exists.");
 		}
+	}
+
+	// TODO Find a place for message conversion logic
+	public static FilterSet convert(FilterSetDO in, String server) {
+		final FilterSet out = new FilterSet();
+		out.setName(in.getName());
+		out.setOwner(server);
+		out.setRevision(in.getRevision());
+		out.setUid(in.getUid());
+		out.setInfo(in.getInfo());
+		final List<FilterEntry> entries = out.getFilter();
+		for (final FilterEntryDO entry : in.getFilters()) {
+			final FilterEntry e = new FilterEntry();
+			e.setFiltered(entry.isFiltered());
+			e.setType(entry.getFindingType());
+			entries.add(e);
+		}
+		out.getParent().addAll(in.getParents());
+		return out;
+	}
+
+	public static FilterSetDO convertDO(FilterSet in) {
+		final FilterSetDO out = new FilterSetDO();
+		out.setInfo(in.getInfo());
+		out.setName(in.getName());
+		out.setRevision(in.getRevision());
+		out.setUid(in.getUid());
+		final Set<FilterEntryDO> entries = out.getFilters();
+		for (final FilterEntry e : in.getFilter()) {
+			entries.add(new FilterEntryDO(e.getType(), e.isFiltered()));
+		}
+		out.getParents().addAll(in.getParent());
+		return out;
 	}
 }

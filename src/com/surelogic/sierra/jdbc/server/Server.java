@@ -26,6 +26,7 @@ import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.sierra.jdbc.StatementException;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 /**
@@ -198,20 +199,23 @@ public class Server {
 	 * Get the server uid.
 	 * 
 	 * @return
-	 * @throws SQLException
 	 */
-	public String getUid() throws SQLException {
-		final Statement s = conn.createStatement();
+	public String getUid() {
 		try {
-			final ResultSet set = s.executeQuery("SELECT UUID FROM SERVER");
+			final Statement s = conn.createStatement();
 			try {
-				set.next();
-				return set.getString(1);
+				final ResultSet set = s.executeQuery("SELECT UUID FROM SERVER");
+				try {
+					set.next();
+					return set.getString(1);
+				} finally {
+					set.close();
+				}
 			} finally {
-				set.close();
+				s.close();
 			}
-		} finally {
-			s.close();
+		} catch (final SQLException e) {
+			throw new StatementException(e);
 		}
 	}
 
