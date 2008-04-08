@@ -358,6 +358,7 @@ img {
 	font-weight: normal;
 	text-align: center;
 	color: white;
+	border-bottom: solid thin #000000;
 }
 
 .gwt-TabBar .gwt-TabBarFirst {
@@ -365,13 +366,17 @@ img {
 }
 
 .gwt-TabBar .gwt-TabBarRest {
-	
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
 	cursor: pointer;
 	cursor: hand;
-	background-color: #ff7011;
+	background-color: #FFFFFF;
+	border-top: solid thin #000000;
+	border-left: solid thin #000000;
+	border-right: solid thin #000000;
+	font-weight: bold;
+	color: #000000;
 }
 
 .gwt-TabBar .gwt-TabBarItem {
