@@ -71,12 +71,8 @@ public class RulesContent extends ContentComposite {
 		rootPanel.setCellWidth(detailsPanel, "75%");
 
 		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-				String query = searchText.getText();
-				if ((modifiers == 0) && Character.isLetterOrDigit(keyCode)) {
-					query = query + keyCode;
-				}
-				search(query);
+			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+				search(searchText.getText());
 			}
 		});
 		searchText.addChangeListener(new ChangeListener() {
