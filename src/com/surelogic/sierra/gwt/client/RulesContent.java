@@ -74,6 +74,7 @@ public class RulesContent extends ContentComposite {
 
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 		detailsPanel.add(new Label(""));
+		categoryEntries.setWidth("100%");
 
 		rootPanel.add(searchPanel, DockPanel.WEST);
 		rootPanel.setCellWidth(searchPanel, "25%");
@@ -191,7 +192,12 @@ public class RulesContent extends ContentComposite {
 				HasHorizontalAlignment.ALIGN_LEFT);
 		categoryInfo.getFlexCellFormatter().setColSpan(0, 0, 2);
 		categoryInfo.setText(1, 0, "Description:");
-		categoryInfo.setText(2, 0, cat.getInfo());
+		Label catDesc = new Label(cat.getInfo());
+		if ("".equals(catDesc.getText())) {
+			catDesc.setText("None");
+			catDesc.addStyleName("font-italic");
+		}
+		categoryInfo.setWidget(2, 0, catDesc);
 		categoryInfo.getFlexCellFormatter().setColSpan(2, 0, 2);
 		detailsPanel.add(categoryInfo);
 
@@ -199,24 +205,22 @@ public class RulesContent extends ContentComposite {
 		categoryEntries.add(UI.h3("Finding Types"));
 		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
 			final FilterEntry finding = (FilterEntry) it.next();
-			final CheckBox rule = new CheckBox("Rule: " + finding.getName());
-			rule.setChecked(!finding.isFiltered());
-			categoryEntries.add(rule);
+			categoryEntries.add(createDetailsRule(finding, !finding
+					.isFiltered()));
 		}
 		final Set excluded = cat.getExcludedEntries();
 		for (final Iterator catIt = cat.getParents().iterator(); catIt
 				.hasNext();) {
 			final Category parent = (Category) catIt.next();
-			final DisclosurePanel parentPanel = new DisclosurePanel(parent
-					.getName());
+			final DisclosurePanel parentPanel = new DisclosurePanel("From: "
+					+ parent.getName());
 			final VerticalPanel parentFindingsPanel = new VerticalPanel();
 			final Set parentFindings = parent.getIncludedEntries();
 			for (final Iterator findingIt = parentFindings.iterator(); findingIt
 					.hasNext();) {
 				final FilterEntry finding = (FilterEntry) findingIt.next();
-				final CheckBox rule = new CheckBox("Rule: " + finding.getName());
-				rule.setChecked(!excluded.contains(finding));
-				parentFindingsPanel.add(rule);
+				parentFindingsPanel.add(createDetailsRule(finding, !excluded
+						.contains(finding)));
 			}
 			parentPanel.setContent(parentFindingsPanel);
 			categoryEntries.add(parentPanel);
@@ -224,6 +228,13 @@ public class RulesContent extends ContentComposite {
 
 		detailsPanel.add(categoryEntries);
 
+	}
+
+	private CheckBox createDetailsRule(FilterEntry finding, boolean enabled) {
+		final CheckBox rule = new CheckBox(finding.getName());
+		rule.addStyleName(PRIMARY_STYLE + "-details-finding");
+		rule.setChecked(enabled);
+		return rule;
 	}
 
 	private void selectFinding(FilterEntry finding) {
