@@ -183,6 +183,7 @@ public class RulesContent extends ContentComposite {
 		detailsPanel.add(categoryInfo);
 
 		categoryEntries.clear();
+		categoryEntries.add(UI.h3("Finding Types"));
 		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
 			final FilterEntry finding = (FilterEntry) it.next();
 			final CheckBox rule = new CheckBox("Rule: " + finding.getName());
@@ -196,7 +197,7 @@ public class RulesContent extends ContentComposite {
 					.getName());
 			final VerticalPanel parentFindingsPanel = new VerticalPanel();
 			final Set parentFindings = parent.getIncludedEntries();
-			for (final Iterator findingIt = parentFindings.iterator(); catIt
+			for (final Iterator findingIt = parentFindings.iterator(); findingIt
 					.hasNext();) {
 				final FilterEntry finding = (FilterEntry) findingIt.next();
 				final CheckBox rule = new CheckBox("Rule: " + finding.getName());
