@@ -51,14 +51,18 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
-		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
+		final Label title = UI.h2("Rules");
+		rootPanel.add(title, DockPanel.NORTH);
+		rootPanel.setCellHorizontalAlignment(title, DockPanel.ALIGN_LEFT);
 
+		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
 		searchHeaderGrid.addStyleName(PRIMARY_STYLE + "-search-header");
-		searchHeaderGrid.setWidget(0, 0, UI.h3("Rules"));
-		searchHeaderGrid.getFlexCellFormatter().setColSpan(0, 0, 3);
-		searchHeaderGrid.setText(1, 0, "Search");
-		searchHeaderGrid.setWidget(1, 1, searchText);
-		searchHeaderGrid.setText(1, 2, "");
+		searchText.setWidth("100%");
+		searchHeaderGrid.setWidget(0, 0, searchText);
+		final Label searchTitle = new Label("Search");
+		searchTitle.addStyleName(PRIMARY_STYLE + "-search-title");
+		searchHeaderGrid.setWidget(0, 1, searchTitle);
+		searchHeaderGrid.setText(0, 2, "");
 		searchPanel.add(searchHeaderGrid);
 
 		searchResults.setWidth("100%");
@@ -69,6 +73,7 @@ public class RulesContent extends ContentComposite {
 		searchPanel.setCellWidth(searchFooter, "100%");
 
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
+		detailsPanel.add(new Label(""));
 
 		rootPanel.add(searchPanel, DockPanel.WEST);
 		rootPanel.setCellWidth(searchPanel, "25%");
@@ -108,6 +113,9 @@ public class RulesContent extends ContentComposite {
 				categories = (List) result;
 				search("");
 				searchText.setFocus(true);
+				if (!categories.isEmpty()) {
+					selectCategory((Category) categories.get(0));
+				}
 			}
 		});
 
@@ -124,7 +132,7 @@ public class RulesContent extends ContentComposite {
 
 	private void search(String text) {
 		clearSearch();
-		searchHeaderGrid.setWidget(1, 2, ImageHelper.getWaitImage(16));
+		searchHeaderGrid.setWidget(0, 2, ImageHelper.getWaitImage(16));
 		final StringBuffer queryBuf = new StringBuffer();
 		for (int i = 0; i < text.length(); i++) {
 			final char ch = text.charAt(i);
@@ -152,7 +160,7 @@ public class RulesContent extends ContentComposite {
 				}
 			}
 		}
-		searchHeaderGrid.setText(1, 2, "");
+		searchHeaderGrid.setText(0, 2, "");
 	}
 
 	private void addSearchCategory(Category cat) {
@@ -177,9 +185,10 @@ public class RulesContent extends ContentComposite {
 		detailsPanel.clear();
 		final FlexTable categoryInfo = new FlexTable();
 		categoryInfo.setWidth("100%");
-		categoryInfo.setWidget(0, 0, UI.h3(cat.getName()));
+		final Label categoryName = UI.h3(cat.getName());
+		categoryInfo.setWidget(0, 0, categoryName);
 		categoryInfo.getCellFormatter().setHorizontalAlignment(0, 0,
-				HasHorizontalAlignment.ALIGN_CENTER);
+				HasHorizontalAlignment.ALIGN_LEFT);
 		categoryInfo.getFlexCellFormatter().setColSpan(0, 0, 2);
 		categoryInfo.setText(1, 0, "Description:");
 		categoryInfo.setText(2, 0, cat.getInfo());
@@ -213,6 +222,7 @@ public class RulesContent extends ContentComposite {
 		}
 
 		detailsPanel.add(categoryEntries);
+
 	}
 
 	private void selectFinding(FilterEntry finding) {
