@@ -20,7 +20,6 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
@@ -46,7 +45,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		slMonitor.beginTask("Sharing scan of project " + f_projectName + " to "
 				+ f_server.getLabel() + ".", 5);
 		try {
-			Scan scan = MessageWarehouse.getInstance().fetchScan(f_scanFile, true);
+			Scan scan = MessageWarehouse.getInstance().fetchScan(f_scanFile,
+					true);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			} else {
@@ -134,7 +134,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				scanVersion = "(none)";
 			final String msg = I18N.err(errNo, scanVersion, f_projectName,
 					f_server);
-			//SLLogger.getLogger().log(Level.SEVERE, msg, e);
+			// SLLogger.getLogger().log(Level.SEVERE, msg, e);
 			IStatus s = SLStatus.createErrorStatus(errNo, msg);
 			showErrorDialog(msg, e, "Error while publishing run", s);
 			return s;
