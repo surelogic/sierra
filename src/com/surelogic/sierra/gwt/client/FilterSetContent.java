@@ -1,10 +1,8 @@
 package com.surelogic.sierra.gwt.client;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -144,27 +142,11 @@ public class FilterSetContent extends ContentComposite {
 			initWidget(panel);
 		}
 
-		private void updateFilters(Set filters, Category set) {
-			for (final Iterator i = set.getParents().iterator(); i.hasNext();) {
-				final Category parent = (Category) i.next();
-				updateFilters(filters, parent);
-			}
-			for (final Iterator i = set.getEntries().iterator(); i.hasNext();) {
-				final FilterEntry entry = (FilterEntry) i.next();
-				if (entry.isFiltered()) {
-					filters.remove(entry);
-				} else {
-					filters.add(entry);
-				}
-			}
-		}
-
 		private void updatePanel() {
-			final Set filters = new HashSet();
-			updateFilters(filters, set);
 			final TreeItem treeSet = new TreeItem(set.getName());
 			treeSet.setUserObject(set);
-			for (final Iterator fI = filters.iterator(); fI.hasNext();) {
+			for (final Iterator fI = set.getIncludedEntries().iterator(); fI
+					.hasNext();) {
 				entries.add(new FilterEntryComposite((FilterEntry) fI.next()));
 			}
 		}

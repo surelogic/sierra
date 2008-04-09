@@ -81,6 +81,24 @@ public class Category implements Serializable {
 	}
 
 	/**
+	 * Returns the set of FilterEntry objects that are explicitly excluded from
+	 * this filter set, which is equivalent to the set of entries from
+	 * {@link Category#getEntries()} that are filtered.
+	 * 
+	 * @return
+	 */
+	public Set getExcludedEntries() {
+		final HashSet set = new HashSet(entries.size());
+		for (final Iterator i = entries.iterator(); i.hasNext();) {
+			final FilterEntry e = (FilterEntry) i.next();
+			if (e.isFiltered()) {
+				set.add(e);
+			}
+		}
+		return set;
+	}
+
+	/**
 	 * Returns the set of FilterEntry objects that are included in this
 	 * category.
 	 * 

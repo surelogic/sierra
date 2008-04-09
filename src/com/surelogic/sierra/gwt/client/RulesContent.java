@@ -203,6 +203,7 @@ public class RulesContent extends ContentComposite {
 			rule.setChecked(!finding.isFiltered());
 			categoryEntries.add(rule);
 		}
+		final Set excluded = cat.getExcludedEntries();
 		for (final Iterator catIt = cat.getParents().iterator(); catIt
 				.hasNext();) {
 			final Category parent = (Category) catIt.next();
@@ -214,7 +215,7 @@ public class RulesContent extends ContentComposite {
 					.hasNext();) {
 				final FilterEntry finding = (FilterEntry) findingIt.next();
 				final CheckBox rule = new CheckBox("Rule: " + finding.getName());
-				rule.setChecked(!finding.isFiltered());
+				rule.setChecked(!excluded.contains(finding));
 				parentFindingsPanel.add(rule);
 			}
 			parentPanel.setContent(parentFindingsPanel);
