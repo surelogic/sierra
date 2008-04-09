@@ -358,25 +358,16 @@ img {
 	font-weight: normal;
 	text-align: center;
 	color: white;
-	border-bottom: solid thin #000000;
 }
 
 .gwt-TabBar .gwt-TabBarFirst {
-	display: none;
+	background-color: #005495;
+	width: 5px;
+	border-bottom: solid 1px #000000;
 }
 
 .gwt-TabBar .gwt-TabBarRest {
-}
-
-.gwt-TabBar .gwt-TabBarItem-selected {
-	cursor: pointer;
-	cursor: hand;
-	background-color: #FFFFFF;
-	border-top: solid thin #000000;
-	border-left: solid thin #000000;
-	border-right: solid thin #000000;
-	font-weight: bold;
-	color: #000000;
+	border-bottom: solid 1px #000000;
 }
 
 .gwt-TabBar .gwt-TabBarItem {
@@ -384,6 +375,19 @@ img {
 	cursor: hand;
 	padding-left: 1ex;
 	padding-right: 1ex;
+	border-bottom: solid 1px #000000;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FFFFFF;
+	border-top: solid 1px #000000;
+	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
+	border-bottom: none;
+	font-weight: bold;
+	color: #000000;
 }
 
 /* Filter Set page styling
