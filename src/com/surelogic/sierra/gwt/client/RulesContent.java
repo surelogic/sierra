@@ -54,7 +54,7 @@ public class RulesContent extends ContentComposite {
 		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
 
 		searchHeaderGrid.addStyleName(PRIMARY_STYLE + "-search-header");
-		searchHeaderGrid.setWidget(0, 0, UI.h3("Categories"));
+		searchHeaderGrid.setWidget(0, 0, UI.h3("Rules"));
 		searchHeaderGrid.getFlexCellFormatter().setColSpan(0, 0, 3);
 		searchHeaderGrid.setText(1, 0, "Search");
 		searchHeaderGrid.setWidget(1, 1, searchText);
@@ -63,6 +63,10 @@ public class RulesContent extends ContentComposite {
 
 		searchResults.setWidth("100%");
 		searchPanel.add(searchResults);
+		final Label searchFooter = new Label("");
+		searchFooter.addStyleName(PRIMARY_STYLE + "-search-footer");
+		searchPanel.add(searchFooter);
+		searchPanel.setCellWidth(searchFooter, "100%");
 
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 
