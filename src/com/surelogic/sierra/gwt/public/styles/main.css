@@ -219,6 +219,7 @@ img {
 .rules-details-panel {
 	width: 100%;
 	padding-left: 5px;
+	padding-top: 5px;
 	border-top: 1px solid;
 }
 
@@ -291,7 +292,13 @@ img {
 	cursor: hand;
 }
 
-    
+.sl-Section {
+	background-color: #DDDDFF;
+	border: 1px solid #666699;
+	font-weight: bold;
+	padding-left: 4px;
+}
+
 /* Grid panel */
 .sl-GridPanel {
 	width: 100%;
@@ -434,11 +441,13 @@ img {
 }
 
 .gwt-DisclosurePanel-open .header {
-	background-color: #b0c4de;
+	background-color: #AAAADD;
+	border: 1px solid #666699;
 }
 
 .gwt-DisclosurePanel-closed .header {
-	background-color: #e0ffff;
+	background-color: #DDDDFF;
+	border: 1px solid #666699;
 }
 
 .gwt-DisclosurePanel .header td {

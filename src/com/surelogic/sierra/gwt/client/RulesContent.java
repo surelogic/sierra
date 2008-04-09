@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -183,26 +182,29 @@ public class RulesContent extends ContentComposite {
 	private void selectCategory(Category cat) {
 		updateSelectionStyle(cat);
 
+		// TODO break this out into a separate component or at least move static
+		// pieces to onInitialize
 		detailsPanel.clear();
-		final FlexTable categoryInfo = new FlexTable();
+		final VerticalPanel categoryInfo = new VerticalPanel();
 		categoryInfo.setWidth("100%");
-		final Label categoryName = UI.h3(cat.getName());
-		categoryInfo.setWidget(0, 0, categoryName);
-		categoryInfo.getCellFormatter().setHorizontalAlignment(0, 0,
-				HasHorizontalAlignment.ALIGN_LEFT);
-		categoryInfo.getFlexCellFormatter().setColSpan(0, 0, 2);
-		categoryInfo.setText(1, 0, "Description:");
+		final Label categoryName = new Label(cat.getName());
+		categoryName.addStyleName("sl-Section");
+		categoryInfo.add(categoryName);
+		categoryInfo.setCellHorizontalAlignment(categoryName,
+				VerticalPanel.ALIGN_LEFT);
+		categoryInfo.add(new Label("Description:"));
 		Label catDesc = new Label(cat.getInfo());
 		if ("".equals(catDesc.getText())) {
 			catDesc.setText("None");
 			catDesc.addStyleName("font-italic");
 		}
-		categoryInfo.setWidget(2, 0, catDesc);
-		categoryInfo.getFlexCellFormatter().setColSpan(2, 0, 2);
+		categoryInfo.add(catDesc);
 		detailsPanel.add(categoryInfo);
 
 		categoryEntries.clear();
-		categoryEntries.add(UI.h3("Finding Types"));
+		final Label findingTypes = new Label("Finding Types");
+		findingTypes.addStyleName("sl-Section");
+		categoryEntries.add(findingTypes);
 		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
 			final FilterEntry finding = (FilterEntry) it.next();
 			categoryEntries.add(createDetailsRule(finding, !finding
@@ -227,7 +229,6 @@ public class RulesContent extends ContentComposite {
 		}
 
 		detailsPanel.add(categoryEntries);
-
 	}
 
 	private CheckBox createDetailsRule(FilterEntry finding, boolean enabled) {
