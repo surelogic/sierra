@@ -276,11 +276,6 @@ img {
 	border: 1px solid #666699;
 }
 
-.sl-Portlet-contentpanel {
-	border: 1px solid #666699;
-	width: 100%;
-}
-
 .sl-Portlet-title {
 	font-size: small;
 }
@@ -290,12 +285,17 @@ img {
 	font-size: small;
 }
 
-.sl-Portlet-moredetail {
+.sl-Portlet-actionpanel {
 	font-size: small;
     font-style: italic;
     text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
+}
+
+.sl-Portlet-contentpanel {
+	border: 1px solid #666699;
+	width: 100%;
 }
 
 .sl-Section {

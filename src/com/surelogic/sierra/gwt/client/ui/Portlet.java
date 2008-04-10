@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Portlet extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Portlet";
@@ -12,10 +13,10 @@ public class Portlet extends Composite {
 	private final HorizontalPanel titlePanel = new HorizontalPanel();
 	private final Label portletTitle = new Label();
 	private final Label dataTitle = new Label();
-	private final Label moreDetail = new Label("more detail >>");
+	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final VerticalPanel contentPanel = new VerticalPanel();
 
-	public Portlet(String title) {
+	public Portlet(String portletName, String dataName) {
 		super();
 		initWidget(rootPanel);
 		rootPanel.addStyleName(PRIMARY_STYLE);
@@ -24,21 +25,23 @@ public class Portlet extends Composite {
 
 		rootPanel.add(titlePanel, DockPanel.NORTH);
 		titlePanel.addStyleName(PRIMARY_STYLE + "-titlepanel");
-
 		titlePanel.add(portletTitle);
-		if (!title.endsWith(":")) {
-			title += ":";
+
+		if (!portletName.endsWith(":")) {
+			portletName += ":";
 		}
-		portletTitle.setText(title);
+		portletTitle.setText(portletName);
 		portletTitle.addStyleName(PRIMARY_STYLE + "-title");
+
 		titlePanel.add(dataTitle);
 		titlePanel.setCellHorizontalAlignment(dataTitle,
 				HorizontalPanel.ALIGN_CENTER);
 		dataTitle.addStyleName(PRIMARY_STYLE + "-datatitle");
-		titlePanel.add(moreDetail);
-		moreDetail.addStyleName(PRIMARY_STYLE + "-moredetail");
+		dataTitle.setText(dataName);
 
-		titlePanel.setCellHorizontalAlignment(moreDetail,
+		titlePanel.add(actionPanel);
+		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
+		titlePanel.setCellHorizontalAlignment(actionPanel,
 				HorizontalPanel.ALIGN_RIGHT);
 
 		rootPanel.add(contentPanel, DockPanel.CENTER);
@@ -47,6 +50,10 @@ public class Portlet extends Composite {
 
 	public VerticalPanel getContentPanel() {
 		return contentPanel;
+	}
+
+	public void addAction(Widget w) {
+		actionPanel.add(w);
 	}
 
 	public String getDataTitle() {

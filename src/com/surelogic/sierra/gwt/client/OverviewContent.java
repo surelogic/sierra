@@ -205,8 +205,7 @@ public class OverviewContent extends ContentComposite {
 
 	private VerticalPanel createPortlet(int row, int col, String title,
 			String dataTitle) {
-		final Portlet portlet = new Portlet(title);
-		portlet.setDataTitle(dataTitle);
+		final Portlet portlet = new Portlet(title, dataTitle);
 		dashboard.setWidget(row, col, portlet);
 		dashboard.getCellFormatter().addStyleName(row, col, "dashboard-cell");
 		return portlet.getContentPanel();
