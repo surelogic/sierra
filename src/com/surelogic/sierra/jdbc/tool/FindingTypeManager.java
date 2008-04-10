@@ -21,9 +21,9 @@ import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.settings.CategoryView;
-import com.surelogic.sierra.jdbc.settings.FilterEntryDO;
-import com.surelogic.sierra.jdbc.settings.FilterSetDO;
-import com.surelogic.sierra.jdbc.settings.FilterSets;
+import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
@@ -388,25 +388,25 @@ public final class FindingTypeManager {
 					}
 				}
 			}
-			final FilterSets sets = new FilterSets(new ConnectionQuery(conn));
-			final Map<String, FilterSetDO> currentSets = new HashMap<String, FilterSetDO>();
-			for (final FilterSetDO set : sets.listFilterSets()) {
+			final Categories sets = new Categories(new ConnectionQuery(conn));
+			final Map<String, CategoryDO> currentSets = new HashMap<String, CategoryDO>();
+			for (final CategoryDO set : sets.listCategories()) {
 				currentSets.put(set.getName(), set);
 			}
 			for (final Category cat : type.getCategory()) {
 				final String name = cat.getName().trim();
-				FilterSetDO set = currentSets.get(name);
+				CategoryDO set = currentSets.get(name);
 				if (set == null) {
-					set = sets.createFilterSet(cat.getName().trim(), cat
+					set = sets.createCategory(cat.getName().trim(), cat
 							.getDescription(), revision);
 				}
-				final Set<FilterEntryDO> entries = set.getFilters();
+				final Set<CategoryEntryDO> entries = set.getFilters();
 				entries.clear();
 				for (String findingType : cat.getFindingType()) {
 					findingType = findingType.trim();
-					entries.add(new FilterEntryDO(findingType, false));
+					entries.add(new CategoryEntryDO(findingType, false));
 				}
-				sets.updateFilterSet(set, revision);
+				sets.updateCategory(set, revision);
 			}
 		}
 		// Ensure that all artifact types belong to a finding type, and all

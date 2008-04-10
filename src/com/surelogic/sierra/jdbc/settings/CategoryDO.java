@@ -9,13 +9,13 @@ import java.util.Set;
  * @author nathan
  * 
  */
-public class FilterSetDO {
+public class CategoryDO {
 
 	private String uid;
 	private String name;
 	private String info;
 	private final Set<String> parents = new HashSet<String>();
-	private final Set<FilterEntryDO> filterEntries = new HashSet<FilterEntryDO>();
+	private final Set<CategoryEntryDO> filterEntries = new HashSet<CategoryEntryDO>();
 	private long revision;
 
 	public String getUid() {
@@ -38,7 +38,7 @@ public class FilterSetDO {
 		return parents;
 	}
 
-	public Set<FilterEntryDO> getFilters() {
+	public Set<CategoryEntryDO> getFilters() {
 		return filterEntries;
 	}
 
@@ -77,7 +77,7 @@ public class FilterSetDO {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final FilterSetDO other = (FilterSetDO) obj;
+		final CategoryDO other = (CategoryDO) obj;
 		if (uid == null) {
 			if (other.uid != null) {
 				return false;

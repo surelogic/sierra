@@ -15,4 +15,8 @@ public interface Row {
 	String nextString();
 
 	Date nextDate();
+
+	boolean nextBoolean();
+
+	Boolean nullableBoolean();
 }

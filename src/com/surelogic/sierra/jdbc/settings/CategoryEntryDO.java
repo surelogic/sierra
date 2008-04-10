@@ -7,13 +7,13 @@ package com.surelogic.sierra.jdbc.settings;
  * @author nathan
  * 
  */
-public class FilterEntryDO {
+public class CategoryEntryDO {
 
 	private final String findingType;
 
 	private final boolean filtered;
 
-	public FilterEntryDO(String findingType, boolean filtered) {
+	public CategoryEntryDO(String findingType, boolean filtered) {
 		this.filtered = filtered;
 		this.findingType = findingType;
 	}
@@ -46,7 +46,7 @@ public class FilterEntryDO {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final FilterEntryDO other = (FilterEntryDO) obj;
+		final CategoryEntryDO other = (CategoryEntryDO) obj;
 		if (findingType == null) {
 			if (other.findingType != null) {
 				return false;

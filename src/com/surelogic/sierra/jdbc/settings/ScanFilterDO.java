@@ -3,13 +3,17 @@ package com.surelogic.sierra.jdbc.settings;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SettingsDO {
+public class ScanFilterDO {
 
 	private String uid;
 
+	private String name;
+
 	private long revision;
 
-	private final Set<String> filterSets = new HashSet<String>();
+	private final Set<CategoryFilterDO> filterSets = new HashSet<CategoryFilterDO>();
+
+	private final Set<TypeFilterDO> filterTypes = new HashSet<TypeFilterDO>();
 
 	private final Set<String> projects = new HashSet<String>();
 
@@ -21,6 +25,14 @@ public class SettingsDO {
 		this.uid = uid;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public long getRevision() {
 		return revision;
 	}
@@ -29,8 +41,12 @@ public class SettingsDO {
 		this.revision = revision;
 	}
 
-	public Set<String> getFilterSets() {
+	public Set<CategoryFilterDO> getCategories() {
 		return filterSets;
+	}
+
+	public Set<TypeFilterDO> getFilterTypes() {
+		return filterTypes;
 	}
 
 	public Set<String> getProjects() {

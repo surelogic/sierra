@@ -16,11 +16,11 @@ import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;
 
-public class FilterSets {
+public class Categories {
 
 	Query q;
 
-	public FilterSets(Query q) {
+	public Categories(Query q) {
 		this.q = q;
 	}
 
@@ -29,11 +29,11 @@ public class FilterSets {
 	 * 
 	 * @return
 	 */
-	public List<FilterSetDO> listFilterSets() {
-		final List<FilterSetDO> list = new ArrayList<FilterSetDO>();
+	public List<CategoryDO> listCategories() {
+		final List<CategoryDO> list = new ArrayList<CategoryDO>();
 		for (final String uid : q.prepared("FilterSets.listFilterSets",
 				new StringRowHandler()).call()) {
-			list.add(getFilterSet(uid));
+			list.add(getCategory(uid));
 		}
 		return list;
 	}
@@ -45,20 +45,20 @@ public class FilterSets {
 	 * @return
 	 * @throws SQLException
 	 */
-	public FilterSetDO getFilterSet(final String uid) {
+	public CategoryDO getCategory(final String uid) {
 		final FilterSetRecord rec = q.record(FilterSetRecord.class);
 		rec.setUid(uid);
 		if (rec.select()) {
-			final FilterSetDO set = new FilterSetDO();
+			final CategoryDO set = new CategoryDO();
 			set.setInfo(rec.getInfo());
 			set.setName(rec.getName());
 			set.setRevision(rec.getRevision());
 			set.setUid(rec.getUid());
 			set.getFilters().addAll(
 					q.prepared("FilterSets.listFilterSetFilters",
-							new RowHandler<FilterEntryDO>() {
-								public FilterEntryDO handle(Row r) {
-									return new FilterEntryDO(r.nextString(),
+							new RowHandler<CategoryEntryDO>() {
+								public CategoryEntryDO handle(Row r) {
+									return new CategoryEntryDO(r.nextString(),
 											"Y".equals(r.nextString()));
 								}
 							}).call(rec.getId()));
@@ -76,12 +76,12 @@ public class FilterSets {
 	 * 
 	 * @param name
 	 * @param description
-	 * @param revision
 	 *            an (optional) brief description of the filter set
+	 * @param revision
 	 * @return the uid of this filter set
 	 * @throws SQLException
 	 */
-	public FilterSetDO createFilterSet(String name, String description,
+	public CategoryDO createCategory(String name, String description,
 			long revision) {
 		final FilterSetRecord filterSetRec = q.record(FilterSetRecord.class);
 		filterSetRec.setName(name);
@@ -89,7 +89,7 @@ public class FilterSets {
 		filterSetRec.setRevision(revision);
 		filterSetRec.setUid(UUID.randomUUID().toString());
 		filterSetRec.insert();
-		return getFilterSet(filterSetRec.getUid());
+		return getCategory(filterSetRec.getUid());
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class FilterSets {
 	 * 
 	 * @param set
 	 */
-	public void writeFilterSet(FilterSetDO set) {
+	public void writeCategory(CategoryDO set) {
 		/*
 		 * Essentially the same as update, but w/o a revision check or failure
 		 * if it doesn't exist.
@@ -133,7 +133,7 @@ public class FilterSets {
 		q.prepared("FilterSets.deleteFilterSetEntries").call(rec.getId());
 		final Queryable<Void> insertEntry = q
 				.prepared("FilterSets.insertFilterSetEntry");
-		for (final FilterEntryDO entry : set.getFilters()) {
+		for (final CategoryEntryDO entry : set.getFilters()) {
 			insertEntry.call(rec.getId(), entry.getFindingType(), entry
 					.isFiltered() ? "Y" : "N");
 		}
@@ -150,7 +150,7 @@ public class FilterSets {
 	 * @throws IllegalArgumentException
 	 *             if the filter set would in fact create a cyclic graph.
 	 */
-	public FilterSetDO updateFilterSet(FilterSetDO set, long revision) {
+	public CategoryDO updateCategory(CategoryDO set, long revision) {
 		final FilterSetRecord rec = q.record(FilterSetRecord.class);
 		rec.setUid(set.getUid());
 		if (rec.select()) {
@@ -181,11 +181,11 @@ public class FilterSets {
 						rec.getId());
 				final Queryable<Void> insertEntry = q
 						.prepared("FilterSets.insertFilterSetEntry");
-				for (final FilterEntryDO entry : set.getFilters()) {
+				for (final CategoryEntryDO entry : set.getFilters()) {
 					insertEntry.call(rec.getId(), entry.getFindingType(), entry
 							.isFiltered() ? "Y" : "N");
 				}
-				return getFilterSet(set.getUid());
+				return getCategory(set.getUid());
 			} else {
 				throw new RevisionException(
 						"Filter set revision did not match the current revision for "
@@ -226,7 +226,7 @@ public class FilterSets {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteFilterSet(String uid) {
+	public void deleteCategory(String uid) {
 		final FilterSetRecord set = q.record(FilterSetRecord.class);
 		set.setUid(uid);
 		if (set.select()) {
@@ -245,7 +245,7 @@ public class FilterSets {
 	}
 
 	// TODO Find a place for message conversion logic
-	public static FilterSet convert(FilterSetDO in, String server) {
+	public static FilterSet convert(CategoryDO in, String server) {
 		final FilterSet out = new FilterSet();
 		out.setName(in.getName());
 		out.setOwner(server);
@@ -253,7 +253,7 @@ public class FilterSets {
 		out.setUid(in.getUid());
 		out.setInfo(in.getInfo());
 		final List<FilterEntry> entries = out.getFilter();
-		for (final FilterEntryDO entry : in.getFilters()) {
+		for (final CategoryEntryDO entry : in.getFilters()) {
 			final FilterEntry e = new FilterEntry();
 			e.setFiltered(entry.isFiltered());
 			e.setType(entry.getFindingType());
@@ -263,15 +263,15 @@ public class FilterSets {
 		return out;
 	}
 
-	public static FilterSetDO convertDO(FilterSet in) {
-		final FilterSetDO out = new FilterSetDO();
+	public static CategoryDO convertDO(FilterSet in) {
+		final CategoryDO out = new CategoryDO();
 		out.setInfo(in.getInfo());
 		out.setName(in.getName());
 		out.setRevision(in.getRevision());
 		out.setUid(in.getUid());
-		final Set<FilterEntryDO> entries = out.getFilters();
+		final Set<CategoryEntryDO> entries = out.getFilters();
 		for (final FilterEntry e : in.getFilter()) {
-			entries.add(new FilterEntryDO(e.getType(), e.isFiltered()));
+			entries.add(new CategoryEntryDO(e.getType(), e.isFiltered()));
 		}
 		out.getParents().addAll(in.getParent());
 		return out;

@@ -19,4 +19,13 @@ public abstract class SingleRowHandler<T> implements ResultHandler<T> {
 
 	public abstract T handleRow(Row r);
 
+	public static <R> ResultHandler<R> fromRowHandler(
+			final RowHandler<R> handler) {
+		return new SingleRowHandler<R>() {
+			@Override
+			public R handleRow(Row r) {
+				return handler.handle(r);
+			}
+		};
+	}
 }

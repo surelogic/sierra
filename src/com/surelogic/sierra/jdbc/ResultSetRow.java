@@ -65,4 +65,20 @@ public class ResultSetRow implements Row {
 	void clear() {
 		idx = 1;
 	}
+
+	public boolean nextBoolean() {
+		try {
+			return JDBCUtils.getBoolean(idx++, set);
+		} catch (final SQLException e) {
+			throw new ResultSetException(e);
+		}
+	}
+
+	public Boolean nullableBoolean() {
+		try {
+			return JDBCUtils.getNullableBoolean(idx++, set);
+		} catch (final SQLException e) {
+			throw new ResultSetException(e);
+		}
+	}
 }

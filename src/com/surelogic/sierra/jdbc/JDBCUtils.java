@@ -30,6 +30,7 @@ public class JDBCUtils {
 					setNullableLong(idx, st, null);
 					break;
 				case STRING:
+				case BOOLEAN:
 					setNullableString(idx, st, null);
 					break;
 				case TIMESTAMP:
@@ -48,6 +49,8 @@ public class JDBCUtils {
 				st.setTimestamp(idx, (Timestamp) o);
 			} else if (o instanceof Date) {
 				st.setTimestamp(idx, new Timestamp(((Date) o).getTime()));
+			} else if (o instanceof Boolean) {
+				st.setString(idx, ((Boolean) o) ? "Y" : "N");
 			}
 			idx++;
 		}
@@ -210,5 +213,15 @@ public class JDBCUtils {
 		} catch (final SQLException e) {
 			return false;
 		}
+	}
+
+	public static boolean getBoolean(int i, ResultSet set) throws SQLException {
+		return set.getString(i).equals("Y");
+	}
+
+	public static Boolean getNullableBoolean(int i, ResultSet set)
+			throws SQLException {
+		final String c = set.getString(i);
+		return c == null ? null : c.equals("Y");
 	}
 }
