@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -12,7 +13,11 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.derby.Derby;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.jdbc.ConnectionQuery;
+import com.surelogic.sierra.jdbc.DBQuery;
+import com.surelogic.sierra.jdbc.DBTransaction;
 import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
+import com.surelogic.sierra.jdbc.server.TransactionException;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 
 public final class Data {
@@ -25,6 +30,8 @@ public final class Data {
 	private static final String DATABASE_DIR = "db";
 	private static final String JDBC_PRE = "jdbc:derby:";
 	private static final String JDBC_POST = ";user=" + SCHEMA_NAME;
+
+	private static final Logger log = SLLogger.getLoggerFor(Data.class);
 
 	public static void bootAndCheckSchema() throws Exception {
 
@@ -60,12 +67,12 @@ public final class Data {
 			c.setAutoCommit(false);
 			SierraSchemaUtility.checkAndUpdate(c, false);
 			c.commit();
-		} catch (Exception exc) {
+		} catch (final Exception exc) {
 			e = exc;
 		} finally {
 			try {
 				c.close();
-			} catch (Exception exc) {
+			} catch (final Exception exc) {
 				if (e == null) {
 					e = exc;
 				}
@@ -77,21 +84,129 @@ public final class Data {
 	}
 
 	public static Connection readOnlyConnection() throws SQLException {
-		Connection conn = getConnection();
+		final Connection conn = getConnection();
 		conn.setReadOnly(true);
 		return conn;
 	}
 
 	public static Connection transactionConnection() throws SQLException {
-		Connection conn = getConnection();
+		final Connection conn = getConnection();
 		conn.setAutoCommit(false);
 		return conn;
 	}
 
 	public static Connection getConnection() throws SQLException {
-		Connection conn = LazyPreparedStatementConnection.wrap(DriverManager
-				.getConnection(getConnectionURL()));
+		final Connection conn = LazyPreparedStatementConnection
+				.wrap(DriverManager.getConnection(getConnectionURL()));
 		return conn;
+	}
+
+	/**
+	 * Perform a query in read-only mode
+	 * 
+	 * @param <T>
+	 * @param action
+	 * @return
+	 * @throws TransactionException
+	 *             if an exception occurs.
+	 */
+	public static <T> T withReadOnly(DBQuery<T> action) {
+		try {
+			return with(readOnlyConnection(), action);
+		} catch (final SQLException e) {
+			throw new TransactionException("Could not establish connection.", e);
+		}
+	}
+
+	/**
+	 * Perform a query in read-only mode
+	 * 
+	 * @param <T>
+	 * @param action
+	 * @return
+	 * @throws TransactionException
+	 *             if an exception occurs.
+	 */
+	public static <T> T withReadOnly(DBTransaction<T> action) {
+		try {
+			return with(readOnlyConnection(), action);
+		} catch (final SQLException e) {
+			throw new TransactionException("Could not establish connection.", e);
+		}
+	}
+
+	/**
+	 * Perform a query transaction
+	 * 
+	 * @param <T>
+	 * @param action
+	 * @return
+	 * @throws TransactionException
+	 *             if an exception occurs.
+	 */
+	public static <T> T withTransaction(DBQuery<T> action) {
+		try {
+			return with(transactionConnection(), action);
+		} catch (final SQLException e) {
+			throw new TransactionException("Could not establish connection.", e);
+		}
+	}
+
+	/**
+	 * Perform a query transaction.
+	 * 
+	 * @param <T>
+	 * @param action
+	 * @return
+	 * @throws TransactionException
+	 *             if an exception occurs.
+	 */
+	public static <T> T withTransaction(DBTransaction<T> action) {
+		try {
+			return with(transactionConnection(), action);
+		} catch (final SQLException e) {
+			throw new TransactionException("Could not establish connection.", e);
+		}
+	}
+
+	private static <T> T with(Connection conn, DBTransaction<T> t) {
+		Exception exc = null;
+		try {
+			return t.perform(conn);
+		} catch (final Exception exc0) {
+			exc = exc0;
+		} finally {
+			try {
+				conn.close();
+			} catch (final SQLException e) {
+				if (exc == null) {
+					exc = new TransactionException(e);
+				} else {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+		}
+		throw new TransactionException(exc);
+	}
+
+	private static <T> T with(Connection conn, DBQuery<T> t) {
+		RuntimeException exc = null;
+		try {
+			return t.perform(new ConnectionQuery(conn));
+		} catch (final RuntimeException exc0) {
+			exc = exc0;
+		} finally {
+			try {
+				conn.close();
+			} catch (final SQLException e) {
+				if (exc == null) {
+					exc = new TransactionException(e);
+				} else {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+		}
+		throw exc;
 	}
 
 	private static String getConnectionURL() {
