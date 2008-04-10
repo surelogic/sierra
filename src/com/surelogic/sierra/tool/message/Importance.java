@@ -11,12 +11,12 @@ import javax.xml.bind.annotation.XmlEnum;
 /**
  * <p>
  * Java class for Importance.
- *
+ * 
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
  * <p>
- *
+ * 
  * <pre>
  * &lt;simpleType name=&quot;Importance&quot;&gt;
  *   &lt;restriction base=&quot;{http://www.w3.org/2001/XMLSchema}string&quot;&gt;
@@ -28,33 +28,30 @@ import javax.xml.bind.annotation.XmlEnum;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
- *
+ * 
  */
 @XmlEnum
-public enum Importance {IRRELEVANT,
-    LOW,
-    MEDIUM,
-    HIGH,
-    CRITICAL;
+public enum Importance {
+	IRRELEVANT, LOW, MEDIUM, HIGH, CRITICAL;
 
-    private final String value = toString().substring(0, 1) +
-        toString().toLowerCase().substring(1);
+	private final String value = toString().substring(0, 1)
+			+ toString().toLowerCase().substring(1);
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static Importance fromValue(String v) {
-        for (Importance i : values()) {
-            if (i.value.equals(v)) {
-                return i;
-            }
-        }
+	public static Importance fromValue(String v) {
+		for (final Importance i : values()) {
+			if (i.value.equals(v)) {
+				return i;
+			}
+		}
 
-        return valueOf(v.toUpperCase());
-    }
+		return valueOf(v.toUpperCase());
+	}
 
-    public String toStringSentenceCase() {
-        return value;
-    }
+	public String toStringSentenceCase() {
+		return value;
+	}
 }

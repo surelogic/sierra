@@ -6,7 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ListFilterSetResponse {
+public class ListCategoryResponse {
 
 	private List<FilterSet> filterSets;
 

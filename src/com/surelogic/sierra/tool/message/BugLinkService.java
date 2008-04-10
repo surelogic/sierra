@@ -5,11 +5,11 @@ import com.surelogic.sierra.message.srpc.Service;
 public interface BugLinkService extends Service {
 	public static final String VERSION = "2.2";
 
-	ListFilterSetResponse listFilterSets(ListFilterSetRequest request);
+	ListCategoryResponse listCategories(ListCategoryRequest request);
 
-	CreateFilterSetResponse createFilterSet(CreateFilterSetRequest request);
+	CreateCategoryResponse createCategory(CreateCategoryRequest request);
 
-	UpdateFilterSetResponse updateFilterSet(UpdateFilterSetRequest request)
+	UpdateCategoryResponse updateCategory(UpdateCategoryRequest request)
 			throws RevisionException;
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class CreateFilterSetRequest {
+public class CreateCategoryRequest {
 	private String name;
 	private String description;
 	private List<FilterEntry> filter;

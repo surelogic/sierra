@@ -3,8 +3,9 @@ package com.surelogic.sierra.tool.message;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class UpdateFilterSetRequest {
-	private FilterSet set;
+public class CreateCategoryResponse {
+
+	protected FilterSet set;
 
 	public FilterSet getSet() {
 		return set;

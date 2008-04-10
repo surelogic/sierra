@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool.message;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class UpdateFilterSetResponse {
+public class UpdateCategoryRequest {
 	private FilterSet set;
 
 	public FilterSet getSet() {
