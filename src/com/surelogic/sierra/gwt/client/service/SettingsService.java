@@ -40,6 +40,12 @@ public interface SettingsService extends RemoteService {
 	Status updateCategory(Category c);
 
 	/**
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilter>
+	 * @return
+	 */
+	List getScanFilters();
+
+	/**
 	 * 
 	 * @param uid
 	 * @return

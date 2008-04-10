@@ -14,6 +14,8 @@ public interface SettingsServiceAsync {
 
 	void updateCategory(Category c, AsyncCallback callback);
 
+	void getScanFilters(AsyncCallback callback);
+
 	void getFindingTypeInfo(String uid, AsyncCallback callback);
 
 }
