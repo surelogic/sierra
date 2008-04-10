@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Portlet extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Portlet";
 	private final DockPanel rootPanel = new DockPanel();
-	private final HorizontalPanel titlePanel = new HorizontalPanel();
+	private final DockPanel titlePanel = new DockPanel();
 	private final Label portletTitle = new Label();
 	private final Label dataTitle = new Label();
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
@@ -25,7 +25,7 @@ public class Portlet extends Composite {
 
 		rootPanel.add(titlePanel, DockPanel.NORTH);
 		titlePanel.addStyleName(PRIMARY_STYLE + "-titlepanel");
-		titlePanel.add(portletTitle);
+		titlePanel.add(portletTitle, DockPanel.WEST);
 
 		if (!portletName.endsWith(":")) {
 			portletName += ":";
@@ -33,16 +33,20 @@ public class Portlet extends Composite {
 		portletTitle.setText(portletName);
 		portletTitle.addStyleName(PRIMARY_STYLE + "-title");
 
-		titlePanel.add(dataTitle);
+		titlePanel.add(dataTitle, DockPanel.CENTER);
 		titlePanel.setCellHorizontalAlignment(dataTitle,
 				HorizontalPanel.ALIGN_CENTER);
 		dataTitle.addStyleName(PRIMARY_STYLE + "-datatitle");
 		dataTitle.setText(dataName);
 
-		titlePanel.add(actionPanel);
+		titlePanel.add(actionPanel, DockPanel.EAST);
 		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
 		titlePanel.setCellHorizontalAlignment(actionPanel,
 				HorizontalPanel.ALIGN_RIGHT);
+
+		titlePanel.setCellWidth(portletTitle, "25%");
+		titlePanel.setCellWidth(dataTitle, "50%");
+		titlePanel.setCellWidth(actionPanel, "25%");
 
 		rootPanel.add(contentPanel, DockPanel.CENTER);
 		contentPanel.addStyleName(PRIMARY_STYLE + "-contentpanel");
