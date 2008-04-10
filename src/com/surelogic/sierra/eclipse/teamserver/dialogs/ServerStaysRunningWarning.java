@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class ServerStaysRunningWarning extends Dialog {
@@ -29,7 +30,7 @@ public final class ServerStaysRunningWarning extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO));
 		newShell.setText("Local Team Server Warning");
 	}
 
@@ -44,7 +45,7 @@ public final class ServerStaysRunningWarning extends Dialog {
 		Label banner = new Label(panel, SWT.NONE);
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+				.getImage(CommonImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite msgPanel = new Composite(panel, SWT.NONE);
 		msgPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

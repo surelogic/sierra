@@ -38,6 +38,7 @@ import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
 import com.surelogic.sierra.eclipse.teamserver.model.IServerLogObserver;
@@ -240,11 +241,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	private Image getTrafficLightImage() {
 		if (f_teamServer.isRunning()) {
-			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_GREEN);
+			return SLImages.getImage(CommonImages.IMG_TRAFFIC_LIGHT_GREEN);
 		} else if (f_teamServer.isNotRunning()) {
-			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_RED);
+			return SLImages.getImage(CommonImages.IMG_TRAFFIC_LIGHT_RED);
 		} else {
-			return SLImages.getImage(SLImages.IMG_TRAFFIC_LIGHT_YELLOW);
+			return SLImages.getImage(CommonImages.IMG_TRAFFIC_LIGHT_YELLOW);
 		}
 	}
 

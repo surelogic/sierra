@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.eclipse.teamserver.actions.PreferenceAction;
 
 public class TeamServerView extends ViewPart {
@@ -74,10 +75,10 @@ public class TeamServerView extends ViewPart {
 		data = new GridData(SWT.CENTER, SWT.TOP, false, true);
 		logBar.setLayoutData(data);
 		final ToolItem jettyConsoleLogItem = new ToolItem(logBar, SWT.RADIO);
-		jettyConsoleLogItem.setImage(SLImages.getImage(SLImages.IMG_CONSOLE));
+		jettyConsoleLogItem.setImage(SLImages.getImage(CommonImages.IMG_CONSOLE));
 		jettyConsoleLogItem.setToolTipText("Show Jetty Console Output");
 		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
-		jettyRequestLogItem.setImage(SLImages.getImage(SLImages.IMG_JETTY_LOG));
+		jettyRequestLogItem.setImage(SLImages.getImage(CommonImages.IMG_JETTY_LOG));
 		jettyRequestLogItem.setToolTipText("Show Jetty Request Log");
 
 		final Text logText = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
