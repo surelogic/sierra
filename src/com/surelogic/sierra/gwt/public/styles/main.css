@@ -201,12 +201,16 @@ img {
 	border-right: 1px solid;
 	padding: 2px;
 	font-size: small;
+	cursor: pointer;
+	cursor: hand;
 }
 
 .rules-search-finding {
 	border-right: 1px solid;
 	padding: 2px 4px 2px 10px;
 	font-size: small;
+	cursor: pointer;
+	cursor: hand;
 }
 
 .rules-search-selected {
@@ -214,6 +218,8 @@ img {
 	border-top: solid 1px;
 	border-bottom: solid 1px;
 	border-left: solid 1px;
+	cursor: pointer;
+	cursor: hand;
 }
 
 .rules-details-panel {
@@ -402,6 +408,9 @@ img {
 	padding-left: 1ex;
 	padding-right: 1ex;
 	border-bottom: solid 1px #000000;
+	border-left: solid 1px #001166;
+	border-right: solid 1px #001166;
+	border-top: solid 1px #001166;
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
