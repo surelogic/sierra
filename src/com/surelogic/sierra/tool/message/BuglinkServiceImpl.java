@@ -7,9 +7,9 @@ import com.surelogic.sierra.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
-import com.surelogic.sierra.jdbc.settings.FilterEntryDO;
-import com.surelogic.sierra.jdbc.settings.FilterSetDO;
-import com.surelogic.sierra.jdbc.settings.FilterSets;
+import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.settings.Categories;
 
 public class BuglinkServiceImpl extends SierraServiceImpl implements
 		BugLinkService {
@@ -19,57 +19,57 @@ public class BuglinkServiceImpl extends SierraServiceImpl implements
 	 */
 	private static final long serialVersionUID = 8719740627758175475L;
 
-	public CreateFilterSetResponse createFilterSet(
-			final CreateFilterSetRequest request) {
+	public CreateCategoryResponse createCategory(
+			final CreateCategoryRequest request) {
 		return ConnectionFactory
-				.withTransaction(new ServerQuery<CreateFilterSetResponse>() {
-					public CreateFilterSetResponse perform(Query q, Server s) {
-						final FilterSets sets = new FilterSets(q);
+				.withTransaction(new ServerQuery<CreateCategoryResponse>() {
+					public CreateCategoryResponse perform(Query q, Server s) {
+						final Categories sets = new Categories(q);
 						final long revision = s.nextRevision();
-						final FilterSetDO set = sets.createFilterSet(request
+						final CategoryDO set = sets.createCategory(request
 								.getName(), request.getDescription(), revision);
-						final Set<FilterEntryDO> entries = set.getFilters();
+						final Set<CategoryEntryDO> entries = set.getFilters();
 						for (final FilterEntry e : request.getFilter()) {
-							entries.add(new FilterEntryDO(e.getType(), e
+							entries.add(new CategoryEntryDO(e.getType(), e
 									.isFiltered()));
 						}
 						final Set<String> parents = set.getParents();
 						for (final String p : request.getParent()) {
 							parents.add(p);
 						}
-						final CreateFilterSetResponse response = new CreateFilterSetResponse();
-						response.setSet(FilterSets.convert(sets
-								.updateFilterSet(set, revision), s.getUid()));
+						final CreateCategoryResponse response = new CreateCategoryResponse();
+						response.setSet(Categories.convert(sets
+								.updateCategory(set, revision), s.getUid()));
 						return response;
 					}
 				});
 	}
 
-	public ListFilterSetResponse listFilterSets(ListFilterSetRequest request) {
+	public ListCategoryResponse listCategories(ListCategoryRequest request) {
 		return ConnectionFactory
-				.withReadOnly(new ServerQuery<ListFilterSetResponse>() {
+				.withReadOnly(new ServerQuery<ListCategoryResponse>() {
 
-					public ListFilterSetResponse perform(Query q, Server s) {
-						final ListFilterSetResponse response = new ListFilterSetResponse();
+					public ListCategoryResponse perform(Query q, Server s) {
+						final ListCategoryResponse response = new ListCategoryResponse();
 						final String server = s.getUid();
 						final List<FilterSet> sets = response.getFilterSets();
-						for (final FilterSetDO set : new FilterSets(q)
-								.listFilterSets()) {
-							sets.add(FilterSets.convert(set, server));
+						for (final CategoryDO set : new Categories(q)
+								.listCategories()) {
+							sets.add(Categories.convert(set, server));
 						}
 						return response;
 					}
 				});
 	}
 
-	public UpdateFilterSetResponse updateFilterSet(
-			final UpdateFilterSetRequest request) throws RevisionException {
+	public UpdateCategoryResponse updateCategory(
+			final UpdateCategoryRequest request) throws RevisionException {
 		return ConnectionFactory
-				.withTransaction(new ServerQuery<UpdateFilterSetResponse>() {
-					public UpdateFilterSetResponse perform(Query q, Server s) {
-						final UpdateFilterSetResponse response = new UpdateFilterSetResponse();
-						response.setSet(FilterSets.convert(new FilterSets(q)
-								.updateFilterSet(FilterSets.convertDO(request
+				.withTransaction(new ServerQuery<UpdateCategoryResponse>() {
+					public UpdateCategoryResponse perform(Query q, Server s) {
+						final UpdateCategoryResponse response = new UpdateCategoryResponse();
+						response.setSet(Categories.convert(new Categories(q)
+								.updateCategory(Categories.convertDO(request
 										.getSet()), s.nextRevision()), s
 								.getUid()));
 						return response;
