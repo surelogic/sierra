@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
 
 public class NewScanDialogAction extends NewScanAction {
@@ -13,7 +14,7 @@ public class NewScanDialogAction extends NewScanAction {
 			final List<String> projectNames) {
 		final List<IJavaProject> projects = JavaProjectSelectionDialog
 				.getProjects("Select project(s) to scan:", "Scan Project",
-						SLImages.getImage(SLImages.IMG_SIERRA_SCAN),
+						SLImages.getImage(CommonImages.IMG_SIERRA_SCAN),
 						selectedProjects);
 		if (selectedProjects == projects) {
 			/*

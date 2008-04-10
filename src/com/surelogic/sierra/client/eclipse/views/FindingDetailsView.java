@@ -35,6 +35,7 @@ import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediator> {
@@ -114,7 +115,7 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		final Button synopsisAudit = new Button(quickSynopsis, SWT.FLAT
 				| SWT.PUSH);
 		synopsisAudit.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_STAMP_SMALL));
+				.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL));
 		synopsisAudit.setToolTipText(STAMP_TOOLTIP_MESSAGE);
 
 		final Link findingSynopsis = new Link(quickSynopsis, SWT.NONE);
@@ -183,9 +184,9 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 				final Point size = auditPane.getSize();
 				final Image image;
 				if (size.y < 250) {
-					image = SLImages.getImage(SLImages.IMG_SIERRA_STAMP_SMALL);
+					image = SLImages.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL);
 				} else {
-					image = SLImages.getImage(SLImages.IMG_SIERRA_STAMP);
+					image = SLImages.getImage(CommonImages.IMG_SIERRA_STAMP);
 				}
 				quickAudit.setImage(image);
 				auditPane.layout();
@@ -201,34 +202,34 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		final Button criticalButton = new Button(importanceGroup, SWT.RADIO);
 		criticalButton.setText("Critical");
 		criticalButton.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_100));
 		criticalButton
 				.setToolTipText("An urgent issue\u2014need to handle immediately");
 		criticalButton.setData(Importance.CRITICAL);
 
 		final Button highButton = new Button(importanceGroup, SWT.RADIO);
 		highButton.setText("High");
-		highButton.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
+		highButton.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		highButton.setToolTipText("A serious issue\u2014need to handle soon");
 		highButton.setData(Importance.HIGH);
 
 		final Button mediumButton = new Button(importanceGroup, SWT.RADIO);
 		mediumButton.setText("Medium");
 		mediumButton.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 		mediumButton.setToolTipText("An issue\u2014handle as we get time");
 		mediumButton.setData(Importance.MEDIUM);
 
 		final Button lowButton = new Button(importanceGroup, SWT.RADIO);
 		lowButton.setText("Low");
-		lowButton.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
+		lowButton.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		lowButton.setToolTipText("A minor issue\u2014handle later if at all");
 		lowButton.setData(Importance.LOW);
 
 		final Button irrelevantButton = new Button(importanceGroup, SWT.RADIO);
 		irrelevantButton.setText("Irrelevant");
 		irrelevantButton.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_0));
 		irrelevantButton.setToolTipText("Not an issue in our code");
 		irrelevantButton.setData(Importance.IRRELEVANT);
 

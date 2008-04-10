@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 
 public final class TimeseriesSelectionDialog extends Dialog {
 
@@ -65,7 +66,7 @@ public final class TimeseriesSelectionDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		newShell.setText("Select Timeseries");
 	}
 
@@ -80,7 +81,7 @@ public final class TimeseriesSelectionDialog extends Dialog {
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
 				1));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+				.getImage(CommonImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));

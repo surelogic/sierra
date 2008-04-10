@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.TestCode;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -24,7 +25,7 @@ public class ScanTestCodeSelectionDialog extends Dialog {
   @Override
   protected void configureShell(Shell newShell) {
     super.configureShell(newShell);
-    newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+    newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO));
     newShell.setText("Select Test Codes for Scan Jobs");
   }
   

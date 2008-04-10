@@ -41,6 +41,7 @@ import com.surelogic.common.eclipse.WorkspaceUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -215,7 +216,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		f_contextMenu = contextMenu;
 		
 		f_serverUpdateAction = 
-			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SERVER),
+			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER),
 	                           "Get latest server information") {
 			@Override
 			public void run() {
@@ -224,7 +225,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		};		
 		view.addToActionBar(f_serverUpdateAction);
 		f_serverSyncAction =
-			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
+			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SYNC),
             "Synchronize Connected Projects") {
 			@Override
 			public void run() {
@@ -301,7 +302,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		//view.addToActionBar(f_deleteServerAction);
 		
 		ActionListener registerAction =
-			new ActionListener(SLImages.getImage(SLImages.IMG_SIERRA_LOGO),
+			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
 			                   "Register your copy of SLIC") {
 			@Override
 			public void run() {
@@ -1189,7 +1190,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			SierraServer server = f_manager.getServerByLabel(label);
 			TreeItem item = new TreeItem(f_statusTree, SWT.NONE);
 	
-			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 			item.setData(server);
 			
 			if (focus != null && label.equals(focus.getLabel())) {
@@ -1218,7 +1219,7 @@ implements ISierraServerObserver, IProjectsObserver {
 	private ChangeStatus createScanFilters(TreeItem parent, SierraServer server) {
 		TreeItem root = new TreeItem(parent, SWT.NONE);
 		root.setText("Scan Filters");
-		root.setImage(SLImages.getImage(SLImages.IMG_FILTER));
+		root.setImage(SLImages.getImage(CommonImages.IMG_FILTER));
 		
 		TreeItem label = new TreeItem(root, SWT.NONE);
 		label.setText("Coming ...");
@@ -1234,7 +1235,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			if (server == null) {
 				if (parent == null) {
 					parent = new TreeItem(f_statusTree, SWT.NONE);
-					parent.setImage(SLImages.getImage(SLImages.IMG_QUERY));
+					parent.setImage(SLImages.getImage(CommonImages.IMG_QUERY));
 				}
 				ChangeStatus pStatus = initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
 				status = status.merge(pStatus);
@@ -1314,10 +1315,10 @@ implements ISierraServerObserver, IProjectsObserver {
 				if (ps.scanInfo.isPartial()) {
 					// Latest is a re-scan
 					scan.setText("Re-scan done locally on "+dateFormat.format(lastScanTime)+" ... click to start full scan");
-					scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+					scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
 				} else {
 					scan.setText("Last full scan done locally on "+dateFormat.format(lastScanTime));
-					scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+					scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 				}
 				scan.setData(ps.scanInfo);
 				
@@ -1325,7 +1326,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				Date docModified = new Date(ps.scanDoc.lastModified());
 				scan.setText("Last full scan done locally on "+dateFormat.format(docModified));
 				scan.setData(ps.scanDoc);
-				scan.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SCAN));
+				scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 			}
 			//status = status.merge(ChangeStatus.LOCAL);
 		}
@@ -1392,7 +1393,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			audits.setText("> "+numAudits+" audit"+s(numAudits)+
 					       " on "+findings+" finding"+s(findings));
 		}
-		audits.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP));
+		audits.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
 		
 		if (earliestA != null) {
 			TreeItem earliest = new TreeItem(audits, SWT.NONE);
@@ -1410,7 +1411,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			TreeItem item = new TreeItem(audits, SWT.NONE);
 			int num = f.getAudits().size();
 			item.setText(num+" audit"+s(num)+" on finding "+f.getFindingId());
-			item.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+			item.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 			item.setData(f);
 		}
 	}

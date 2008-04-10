@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
 /**
@@ -48,7 +49,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_LOGO));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO));
 		newShell.setText("Sierra Server Authentication");
 	}
 
@@ -64,7 +65,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
 				1));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+				.getImage(CommonImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		gridLayout = new GridLayout();
@@ -79,7 +80,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 				+ f_server.getLabel() + "'");
 
 		final Label serverImg = new Label(entryPanel, SWT.NONE);
-		serverImg.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+		serverImg.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		data = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
 		data.heightHint = 25;
 		serverImg.setLayoutData(data);

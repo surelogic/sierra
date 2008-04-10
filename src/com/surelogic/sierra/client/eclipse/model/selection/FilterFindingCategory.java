@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public final class FilterFindingCategory extends Filter {
 
@@ -32,6 +33,6 @@ public final class FilterFindingCategory extends Filter {
 
 	@Override
 	public Image getImageFor(String value) {
-		return SLImages.getImage(SLImages.IMG_CATEGORY);
+		return SLImages.getImage(CommonImages.IMG_CATEGORY);
 	}
 }

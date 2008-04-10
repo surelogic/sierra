@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public final class DeleteSearchDialog extends AbstractSearchDialog {
 	public DeleteSearchDialog(Shell parentShell) {
@@ -35,6 +36,6 @@ public final class DeleteSearchDialog extends AbstractSearchDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Delete Search");
-		newShell.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_GRAY_X));
 	}
 }

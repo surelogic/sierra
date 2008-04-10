@@ -22,6 +22,7 @@ import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.tool.message.ServerUIDReply;
@@ -86,7 +87,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		newShell.setText(f_title);
 	}
 

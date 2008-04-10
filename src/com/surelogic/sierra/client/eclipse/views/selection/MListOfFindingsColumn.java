@@ -52,6 +52,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -795,10 +796,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 		Image img;
 		switch (data.getSort()) {
 		case SORT_DOWN:
-			img = SLImages.getImage(SLImages.IMG_SORT_DOWN);
+			img = SLImages.getImage(CommonImages.IMG_SORT_DOWN);
 			break;
 		case SORT_UP:
-			img = SLImages.getImage(SLImages.IMG_SORT_UP);
+			img = SLImages.getImage(CommonImages.IMG_SORT_UP);
 			break;
 		case UNSORTED:
 		default:
@@ -935,7 +936,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private void setupMenu(final Menu menu) {
 		final MenuItem set = new MenuItem(menu, SWT.CASCADE);
 		set.setText("Set Importance");
-		set.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_DIAMOND_ORANGE));
+		set.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_DIAMOND_ORANGE));
 
 		/*
 		 * Quick audit
@@ -943,7 +944,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		final MenuItem quickAudit = new MenuItem(menu, SWT.PUSH);
 		quickAudit.setText("Mark As Examined by Me");
-		quickAudit.setImage(SLImages.getImage(SLImages.IMG_SIERRA_STAMP_SMALL));
+		quickAudit.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL));
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
@@ -958,24 +959,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 		final MenuItem setCritical = new MenuItem(importanceMenu, SWT.PUSH);
 		setCritical.setText(Importance.CRITICAL.toStringSentenceCase());
 		setCritical.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_100));
 		final MenuItem setHigh = new MenuItem(importanceMenu, SWT.PUSH);
 		setHigh.setText(Importance.HIGH.toStringSentenceCase());
-		setHigh.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
+		setHigh.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		final MenuItem setMedium = new MenuItem(importanceMenu, SWT.PUSH);
 		setMedium.setText(Importance.MEDIUM.toStringSentenceCase());
-		setMedium.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+		setMedium.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 		final MenuItem setLow = new MenuItem(importanceMenu, SWT.PUSH);
 		setLow.setText(Importance.LOW.toStringSentenceCase());
-		setLow.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
+		setLow.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		final MenuItem setIrrelevant = new MenuItem(importanceMenu, SWT.PUSH);
 		setIrrelevant.setText(Importance.IRRELEVANT.toStringSentenceCase());
 		setIrrelevant.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_0));
 
 		final MenuItem export = new MenuItem(menu, SWT.PUSH);
 		export.setText("Export...");
-		export.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		export.setImage(SLImages.getImage(CommonImages.IMG_EXPORT));
 
 		final AtomicBoolean menuLocked = new AtomicBoolean();
 		menu.addListener(SWT.Hide, new Listener() {

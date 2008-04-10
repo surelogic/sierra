@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
 public final class OpenSearchDialog extends AbstractSearchDialog {
@@ -46,6 +47,6 @@ public final class OpenSearchDialog extends AbstractSearchDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Open Search");
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
 	}
 }

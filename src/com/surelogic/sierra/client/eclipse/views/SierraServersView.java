@@ -12,6 +12,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
@@ -33,7 +34,7 @@ public final class SierraServersView extends
 		final MenuItem newServerItem = createMenuItem(contextMenu, "New...",
 				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		final MenuItem browseServerItem = createMenuItem(contextMenu, "Browse",
-				SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 
 		final MenuItem duplicateServerItem = createMenuItem(contextMenu,
 				"Duplicate", SLImages
@@ -45,26 +46,26 @@ public final class SierraServersView extends
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 
 		final MenuItem serverConnectItem = createMenuItem(contextMenu,
-				"Connect...", SLImages.IMG_SIERRA_SERVER);
+				"Connect...", CommonImages.IMG_SIERRA_SERVER);
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 
 		final MenuItem scanProjectItem = createMenuItem(contextMenu,
-				"Scan Project", SLImages.IMG_SIERRA_SCAN);
+				"Scan Project", CommonImages.IMG_SIERRA_SCAN);
 		final MenuItem rescanProjectItem = createMenuItem(contextMenu,
-				"Re-Scan Changes in Project", SLImages.IMG_SIERRA_SCAN_DELTA);
+				"Re-Scan Changes in Project", CommonImages.IMG_SIERRA_SCAN_DELTA);
 		final MenuItem synchProjects = createMenuItem(contextMenu,
-				"Synchronize Projects", SLImages.IMG_SIERRA_SYNC);
+				"Synchronize Projects", CommonImages.IMG_SIERRA_SYNC);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem publishScansItem = createMenuItem(contextMenu,
-				"Publish Scans", SLImages.IMG_SIERRA_PUBLISH);
+				"Publish Scans", CommonImages.IMG_SIERRA_PUBLISH);
 		
 		final MenuItem disconnectProjectItem = createMenuItem(contextMenu,
-				"Disconnect", SLImages.IMG_SIERRA_DISCONNECT);
+				"Disconnect", CommonImages.IMG_SIERRA_DISCONNECT);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = 
-			createMenuItem(contextMenu, "Send Scan Filter...", SLImages.IMG_FILTER);
+			createMenuItem(contextMenu, "Send Scan Filter...", CommonImages.IMG_FILTER);
 		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
 		getResultFilters.setText("Get Scan Filter...");
 		new MenuItem(contextMenu, SWT.SEPARATOR);

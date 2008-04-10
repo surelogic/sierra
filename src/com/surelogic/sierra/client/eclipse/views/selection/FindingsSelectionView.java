@@ -14,6 +14,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
@@ -62,12 +63,12 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 				false, false));
 		final ToolItem columnSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.DROP_DOWN);
-		columnSelectionItem.setImage(SLImages.getImage(SLImages.IMG_COLUMNS));
+		columnSelectionItem.setImage(SLImages.getImage(CommonImages.IMG_COLUMNS));
 		columnSelectionItem.setToolTipText("Set Columns to Show");
 
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.PUSH);
-		clearSelectionItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X));
+		clearSelectionItem.setImage(SLImages.getImage(CommonImages.IMG_GRAY_X));
 		clearSelectionItem.setToolTipText("Clear Current Search");
 
 		final CascadingList cascadingList = new CascadingList(findingsPage,
@@ -99,13 +100,13 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 				false));
 		final ToolItem openSearchItem = new ToolItem(searchBar, SWT.PUSH);
 		openSearchItem.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_INVESTIGATE_DOT));
+				.getImage(CommonImages.IMG_SIERRA_INVESTIGATE_DOT));
 		openSearchItem.setToolTipText("Open Search");
 		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
-		saveSearchAsItem.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
+		saveSearchAsItem.setImage(SLImages.getImage(CommonImages.IMG_SAVEAS_EDIT));
 		saveSearchAsItem.setToolTipText("Save Search As");
 		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
-		deleteSearchItem.setImage(SLImages.getImage(SLImages.IMG_GRAY_X_DOT));
+		deleteSearchItem.setImage(SLImages.getImage(CommonImages.IMG_GRAY_X_DOT));
 		deleteSearchItem.setToolTipText("Delete Saved Search");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);

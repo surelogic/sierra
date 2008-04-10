@@ -20,6 +20,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.*;
@@ -159,7 +160,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			item.setImage(0, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			item.setText(1, serverName);
-			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 			item.setText(2, dateFormat.format(so.getTime()));
 			item.setData(so);
 		}

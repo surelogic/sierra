@@ -5,6 +5,7 @@ import java.util.*;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
 
 public class DisconnectDialogAction extends DisconnectAction {
@@ -13,7 +14,7 @@ public class DisconnectDialogAction extends DisconnectAction {
       List<String> projectNames) {
     final List<IJavaProject> projects = JavaProjectSelectionDialog
     .getProjects("Select project(s) to disconnect:", "Disconnect Project",
-        SLImages.getImage(SLImages.IMG_SIERRA_DISCONNECT),
+        SLImages.getImage(CommonImages.IMG_SIERRA_DISCONNECT),
         selectedProjects);
     if (selectedProjects == projects) {
       super.run(selectedProjects, projectNames);    

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInCSVFormatJob;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInXMLFormatJob;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetJob;
@@ -40,7 +41,7 @@ public final class ExportFindingSetDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_EXPORT));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_EXPORT));
 		newShell.setText("Export Findings");
 	}
 

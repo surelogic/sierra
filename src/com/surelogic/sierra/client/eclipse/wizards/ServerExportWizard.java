@@ -6,6 +6,7 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public class ServerExportWizard extends Wizard implements IExportWizard {
 
@@ -26,6 +27,6 @@ public class ServerExportWizard extends Wizard implements IExportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export");
 		setDefaultPageImageDescriptor(SLImages
-				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
+				.getImageDescriptor(CommonImages.IMG_EXPORT_WEB));
 	}
 }

@@ -35,6 +35,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
@@ -379,28 +380,28 @@ implements IViewUpdater {
 				SWT.RADIO);
 		criticalItem.setText("Critical");
 		criticalItem.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_100));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_100));
 		criticalItem.setData(Importance.CRITICAL);
 		criticalItem.addListener(SWT.Selection, f_radioListener);
 
 		final MenuItem highItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		highItem.setText("High");
-		highItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_75));
+		highItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		highItem.setData(Importance.HIGH);
 		highItem.addListener(SWT.Selection, f_radioListener);
 
 		final MenuItem mediumItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		mediumItem.setText("Medium");
-		mediumItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_50));
+		mediumItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 		mediumItem.setData(Importance.MEDIUM);
 		mediumItem.addListener(SWT.Selection, f_radioListener);
 
 		final MenuItem lowItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		lowItem.setText("Low");
-		lowItem.setImage(SLImages.getImage(SLImages.IMG_ASTERISK_ORANGE_25));
+		lowItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		lowItem.setData(Importance.LOW);
 		lowItem.addListener(SWT.Selection, f_radioListener);
 
@@ -408,7 +409,7 @@ implements IViewUpdater {
 				f_importanceRadioPopupMenu, SWT.RADIO);
 		irrelevantItem.setText("Irrelevant");
 		irrelevantItem.setImage(SLImages
-				.getImage(SLImages.IMG_ASTERISK_ORANGE_0));
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_0));
 		irrelevantItem.setData(Importance.IRRELEVANT);
 		irrelevantItem.addListener(SWT.Selection, f_radioListener);
 
@@ -609,8 +610,8 @@ implements IViewUpdater {
 		}
 
 		f_artifacts.removeAll();
-		final Image findbugs = SLImages.getImage(SLImages.IMG_FINDBUGS_FINDING);
-		final Image pmd = SLImages.getImage(SLImages.IMG_PMD_FINDING);
+		final Image findbugs = SLImages.getImage(CommonImages.IMG_FINDBUGS_FINDING);
+		final Image pmd = SLImages.getImage(CommonImages.IMG_PMD_FINDING);
 		final Image pkgImage = SLImages
 				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE);
 		final Image classImage = SLImages

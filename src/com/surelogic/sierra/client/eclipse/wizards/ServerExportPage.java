@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServerPersistence;
@@ -78,7 +78,7 @@ public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
 
 		public Image getImage(Object element) {
 			if (element instanceof SierraServer) {
-				return SLImages.getImage(SLImages.IMG_SIERRA_SERVER);
+				return SLImages.getImage(CommonImages.IMG_SIERRA_SERVER);
 			}
 			return null;
 		}

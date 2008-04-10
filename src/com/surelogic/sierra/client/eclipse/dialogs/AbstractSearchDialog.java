@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
 /**
@@ -56,7 +57,7 @@ public abstract class AbstractSearchDialog extends Dialog {
     for (String projectName : f_manager.getSavedSelectionNames()) {
       TableItem item = new TableItem(projectList, SWT.NONE);
       item.setText(projectName);
-      item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_INVESTIGATE));
+      item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
     }
 
     createMediator(projectList);

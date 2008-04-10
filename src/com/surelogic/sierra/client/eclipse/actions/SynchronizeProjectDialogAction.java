@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
 
 public class SynchronizeProjectDialogAction extends SynchronizeProjectAction {
@@ -13,7 +14,7 @@ public class SynchronizeProjectDialogAction extends SynchronizeProjectAction {
       List<String> projectNames) {
     final List<IJavaProject> projects = JavaProjectSelectionDialog
     .getProjects("Select project(s) to synchronize:", "Synchronize Project",
-        SLImages.getImage(SLImages.IMG_SIERRA_SYNC),
+        SLImages.getImage(CommonImages.IMG_SIERRA_SYNC),
         selectedProjects);
     if (selectedProjects == projects) {
       super.run(selectedProjects, projectNames);

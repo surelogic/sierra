@@ -6,6 +6,7 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public class ServerImportWizard extends Wizard implements IImportWizard {
 	private ServerImportPage f_mainPage;
@@ -25,7 +26,7 @@ public class ServerImportWizard extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import");
 		setDefaultPageImageDescriptor(SLImages
-				.getImageDescriptor(SLImages.IMG_EXPORT_WEB));
+				.getImageDescriptor(CommonImages.IMG_EXPORT_WEB));
 	}
 
 }

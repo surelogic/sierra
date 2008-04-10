@@ -19,6 +19,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -46,7 +47,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 	@Override
 	protected final void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		newShell.setText("Select Sierra Server");
 	}
 
@@ -61,7 +62,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		banner.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1,
 				1));
 		banner.setImage(SLImages
-				.getImage(SLImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
+				.getImage(CommonImages.IMG_SIERRA_POWERED_BY_SURELOGIC));
 
 		final Composite entryPanel = new Composite(panel, SWT.NONE);
 		entryPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -77,7 +78,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		for (SierraServer server : f_manager.getServers()) {
 			TableItem item = new TableItem(f_serverTable, SWT.NONE);
 			item.setText(server.getLabel());
-			item.setImage(SLImages.getImage(SLImages.IMG_SIERRA_SERVER));
+			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 			item.setData(server);
 		}
 

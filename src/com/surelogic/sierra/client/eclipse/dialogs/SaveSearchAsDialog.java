@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public final class SaveSearchAsDialog extends Dialog {
 
@@ -29,7 +30,7 @@ public final class SaveSearchAsDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(SLImages.getImage(SLImages.IMG_SAVEAS_EDIT));
+		newShell.setImage(SLImages.getImage(CommonImages.IMG_SAVEAS_EDIT));
 		newShell.setText("Save Search As");
 	}
 

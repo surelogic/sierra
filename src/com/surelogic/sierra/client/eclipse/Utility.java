@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse;
 import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class Utility {
@@ -14,15 +15,15 @@ public final class Utility {
 	public static Image getImageFor(Importance importance) {
 		final String imageName;
 		if (importance == Importance.IRRELEVANT)
-			imageName = SLImages.IMG_ASTERISK_ORANGE_0;
+			imageName = CommonImages.IMG_ASTERISK_ORANGE_0;
 		else if (importance == Importance.LOW)
-			imageName = SLImages.IMG_ASTERISK_ORANGE_25;
+			imageName = CommonImages.IMG_ASTERISK_ORANGE_25;
 		else if (importance == Importance.MEDIUM)
-			imageName = SLImages.IMG_ASTERISK_ORANGE_50;
+			imageName = CommonImages.IMG_ASTERISK_ORANGE_50;
 		else if (importance == Importance.HIGH)
-			imageName = SLImages.IMG_ASTERISK_ORANGE_75;
+			imageName = CommonImages.IMG_ASTERISK_ORANGE_75;
 		else
-			imageName = SLImages.IMG_ASTERISK_ORANGE_100;
+			imageName = CommonImages.IMG_ASTERISK_ORANGE_100;
 		return SLImages.getImage(imageName);
 	}
 }
