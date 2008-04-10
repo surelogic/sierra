@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 import org.eclipse.core.runtime.IPath;
 
-import com.surelogic.adhoc.IAdHoc;
+import com.surelogic.adhoc.AbstractAdHocGlue;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class AdHocGlue implements IAdHoc {
+public final class AdHocGlue extends AbstractAdHocGlue {
 
 	public Connection getConnection() throws SQLException {
 		return Data.getConnection();
