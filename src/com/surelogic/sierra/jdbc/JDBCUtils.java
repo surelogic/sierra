@@ -16,7 +16,26 @@ import java.util.Date;
  * 
  */
 public class JDBCUtils {
-
+	/**
+	 * Fill the parameters of a {@link PreparedStatement} with the values in
+	 * args. Supported types include {@link Integer}, {@link Long},
+	 * {@link Boolean}, {@link String}, and {@link Date}. Due to constraints
+	 * in JDBC, null values for these types may not be represented as
+	 * {@code null}. Instead, use one of the values of {@link Nulls}.
+	 * 
+	 * Example:
+	 * 
+	 * <pre>
+	 * // Fill a statement with an int, a long, and an empty date
+	 * fill(statement, new Object[] { 3, 4L, Nulls.DATE });
+	 * 
+	 * </pre>
+	 * 
+	 * @param st
+	 * @param args
+	 *            the arguments given to the prepared statement
+	 * @throws SQLException
+	 */
 	public static void fill(PreparedStatement st, Object[] args)
 			throws SQLException {
 		int idx = 1;
@@ -33,7 +52,7 @@ public class JDBCUtils {
 				case BOOLEAN:
 					setNullableString(idx, st, null);
 					break;
-				case TIMESTAMP:
+				case DATE:
 					setNullableTimestamp(idx, st, null);
 					break;
 				default:

@@ -5,7 +5,8 @@ package com.surelogic.sierra.jdbc.settings;
  * it's finding type.
  * 
  * @author nathan
- * 
+ * @see Categories
+ * @see CategoryDO
  */
 public class CategoryEntryDO {
 
@@ -22,6 +23,10 @@ public class CategoryEntryDO {
 		return findingType;
 	}
 
+	/**
+	 * 
+	 * @return {@code true} if the finding type should be removed from this category
+	 */
 	public boolean isFiltered() {
 		return filtered;
 	}

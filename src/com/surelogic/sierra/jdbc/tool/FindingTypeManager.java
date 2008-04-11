@@ -20,10 +20,9 @@ import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
-import com.surelogic.sierra.jdbc.settings.CategoryView;
-import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
-import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.Categories;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
@@ -58,7 +57,6 @@ public final class FindingTypeManager {
 		}
 	};
 
-	private final PreparedStatement listCategories;
 	private final PreparedStatement listCategoryFindingTypes;
 	private final PreparedStatement selectArtifactTypesByFindingTypeId;
 	private final PreparedStatement selectArtifactType;
@@ -86,8 +84,6 @@ public final class FindingTypeManager {
 				.prepareStatement("SELECT T.NAME,T.VERSION,A.MNEMONIC FROM ARTIFACT_TYPE A, TOOL T WHERE A.FINDING_TYPE_ID IS NULL AND T.ID = A.TOOL_ID");
 		checkUncategorizedFindingTypes = conn
 				.prepareStatement("SELECT UUID,NAME FROM FINDING_TYPE WHERE CATEGORY_ID IS NULL");
-		listCategories = conn
-				.prepareStatement("SELECT UUID,NAME FROM FINDING_CATEGORY");
 		listCategoryFindingTypes = conn
 				.prepareStatement("SELECT UUID FROM FINDING_TYPE WHERE CATEGORY_ID = ?");
 		factory = FindingTypeRecordFactory.getInstance(conn);
@@ -272,19 +268,6 @@ public final class FindingTypeManager {
 		} else {
 			return EMPTY_FILTER;
 		}
-	}
-
-	public List<CategoryView> listCategories() throws SQLException {
-		final ResultSet set = listCategories.executeQuery();
-		final List<CategoryView> view = new ArrayList<CategoryView>();
-		try {
-			while (set.next()) {
-				view.add(new CategoryView(set.getString(1), set.getString(2)));
-			}
-		} finally {
-			set.close();
-		}
-		return view;
 	}
 
 	/**

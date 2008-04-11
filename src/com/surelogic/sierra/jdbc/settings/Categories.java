@@ -16,6 +16,18 @@ import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;
 
+/**
+ * This class implements data access for {@link CategoryDO} objects. A Category
+ * represents a collection of finding types. It is defined in terms of a set of
+ * parent categories, and a set of finding types to include/exclude. The finding
+ * types present in a category consist of the union of the finding types in the
+ * parent categories masked by the set of finding types to include/exclude.
+ * 
+ * Categories can be created, updated, and deleted.
+ * 
+ * @author nathan
+ * 
+ */
 public class Categories {
 
 	Query q;
@@ -79,7 +91,6 @@ public class Categories {
 	 *            an (optional) brief description of the filter set
 	 * @param revision
 	 * @return the uid of this filter set
-	 * @throws SQLException
 	 */
 	public CategoryDO createCategory(String name, String description,
 			long revision) {
@@ -244,6 +255,15 @@ public class Categories {
 		}
 	}
 
+	/**
+	 * Produce a {@link FilterSet} backed by the provided {@link CategoryDO} and
+	 * owned by the given server
+	 * 
+	 * @param in
+	 * @param server
+	 *            a server uid
+	 * @return
+	 */
 	// TODO Find a place for message conversion logic
 	public static FilterSet convert(CategoryDO in, String server) {
 		final FilterSet out = new FilterSet();
@@ -263,6 +283,12 @@ public class Categories {
 		return out;
 	}
 
+	/**
+	 * Produce a {@link CategoryDO} from the provided {@link FilterSet}.
+	 * 
+	 * @param in
+	 * @return
+	 */
 	public static CategoryDO convertDO(FilterSet in) {
 		final CategoryDO out = new CategoryDO();
 		out.setInfo(in.getInfo());

@@ -15,6 +15,19 @@ import com.surelogic.sierra.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.tool.message.Importance;
 
+/**
+ * This class implements data access for {@link ScanFilterDO} objects. A scan
+ * filter represents a collection of finding types that should be included when
+ * processing the output of a scan, and the importance that each should be
+ * given. Finding types can be included singly, or a whole category can be
+ * included and assigned an importance. Finding types can also be excluded if,
+ * for instance, some finding types in a category should not be included.
+ * 
+ * Categories can be created, updated, and deleted.
+ * 
+ * @author nathan
+ * @see ScanFilterDO
+ */
 public class ScanFilters {
 
 	private final Query q;
@@ -23,6 +36,11 @@ public class ScanFilters {
 		this.q = q;
 	}
 
+	/**
+	 * List all available scan filters.
+	 * 
+	 * @return
+	 */
 	public List<ScanFilterDO> listScanFilters() {
 		final List<ScanFilterDO> list = new ArrayList<ScanFilterDO>();
 		for (final String s : q.prepared("ScanFilters.listScanFilters",
@@ -33,7 +51,7 @@ public class ScanFilters {
 	}
 
 	/**
-	 * Create empty settings
+	 * Create a new scan filter. Nothing is included in the scan filter.
 	 * 
 	 * @param name
 	 * @param revision
@@ -49,6 +67,16 @@ public class ScanFilters {
 		return getScanFilter(settingsRec.getUid());
 	}
 
+	/**
+	 * Update an existing scan filter
+	 * 
+	 * @param settings
+	 * @param revision
+	 * @return
+	 * @throws RevisionException
+	 *             if the revision in the database does not match the expected
+	 *             revision
+	 */
 	public ScanFilterDO updateScanFilter(ScanFilterDO settings, long revision) {
 		final SettingsRecord settingsRec = q.record(SettingsRecord.class);
 		settingsRec.setUid(settings.getUid());
@@ -76,7 +104,7 @@ public class ScanFilters {
 				for (final CategoryFilterDO cat : settings.getCategories()) {
 					insertCategoryFilter.call(cat.getUid(),
 							cat.getImportance() == null ? Nulls.STRING : cat
-									.getImportance(), cat.isFiltered());
+									.getImportance());
 				}
 				for (final TypeFilterDO type : settings.getFilterTypes()) {
 					insertTypeFilter.call(type.getFindingType(), type
@@ -93,6 +121,12 @@ public class ScanFilters {
 		}
 	}
 
+	/**
+	 * Write a scan filter into the local database, over an existing filter if
+	 * necessary.
+	 * 
+	 * @param settings
+	 */
 	public void writeScanFilter(ScanFilterDO settings) {
 		final SettingsRecord settingsRec = q.record(SettingsRecord.class);
 		settingsRec.setUid(settings.getUid());
@@ -122,7 +156,7 @@ public class ScanFilters {
 		for (final CategoryFilterDO cat : settings.getCategories()) {
 			insertCategoryFilter.call(cat.getUid(),
 					cat.getImportance() == null ? Nulls.STRING : cat
-							.getImportance(), cat.isFiltered());
+							.getImportance());
 		}
 		for (final TypeFilterDO type : settings.getFilterTypes()) {
 			insertTypeFilter.call(type.getFindingType(),
@@ -131,6 +165,12 @@ public class ScanFilters {
 		}
 	}
 
+	/**
+	 * Return the relevant {@link ScanFilterDO}
+	 * 
+	 * @param uid
+	 * @return
+	 */
 	public ScanFilterDO getScanFilter(String uid) {
 		final SettingsRecord settingsRec = q.record(SettingsRecord.class);
 		settingsRec.setUid(uid);
@@ -153,12 +193,18 @@ public class ScanFilters {
 		}
 	}
 
+	/**
+	 * Get the scan filter associated with a given project.
+	 * 
+	 * @param project
+	 * @return
+	 */
 	public ScanFilterDO getScanFilterByProject(String project) {
 		if (project == null) {
 			throw new IllegalArgumentException("Project may not be null.");
 		}
 		final String uid = q.prepared("ScanFilters.selectByProject",
-				SingleRowHandler.fromRowHandler(new StringRowHandler())).call(
+				SingleRowHandler.from(new StringRowHandler())).call(
 				project);
 		return uid == null ? null : getScanFilter(uid);
 	}
@@ -168,7 +214,7 @@ public class ScanFilters {
 
 		public CategoryFilterDO handle(Row r) {
 			return new CategoryFilterDO(r.nextString(), toImportance(r
-					.nextString()), r.nextBoolean());
+					.nextString()));
 		}
 	}
 

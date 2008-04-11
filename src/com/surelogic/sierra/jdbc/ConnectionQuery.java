@@ -16,14 +16,19 @@ import com.surelogic.sierra.jdbc.qrecord.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
 /**
- * Implementation of {@link Query} using a {@link Connection}.
+ * Implementation of {@link Query} using a {@link Connection}. ConnectionQuery
+ * produces JDBC statements and prepared statements. The statements are stored
+ * in the query bank accessible by {@link QB}. See
+ * {@link QueryablePreparedStatement} and {@link QueryableStatement} for more on
+ * the behavior of this class.
  * 
- * TODO: Change the Record pattern such that LazyPreparedStatement is no longer
- * necessary.
+ * 
  * 
  * @author nathan
  * 
  */
+// TODO: Change the Record pattern such that LazyPreparedStatement is no longer
+// necessary.
 public class ConnectionQuery implements Query {
 
 	private final Connection conn;
@@ -63,6 +68,19 @@ public class ConnectionQuery implements Query {
 				new ResultRowHandler<T>(rh));
 	}
 
+	/**
+	 * Returns a record backed by prepared statements associated w/ this JDBC
+	 * Connection. If the name of the record is {@code foo}, then the following
+	 * keys will be looked up:
+	 * 
+	 * <pre>
+	 * foo.select            - The select statement by natural key
+	 * foo.delete            - The delete statement by primary key
+	 * foo.insert            - The insert statement
+	 * foo.update (optional) - An update statement by primary key
+	 * foo.generated         - Whether or not this record has an auto-generated primary key
+	 * </pre>
+	 */
 	public <T extends Record<?>> T record(Class<T> record) {
 		if (!Record.class.isAssignableFrom(record)) {
 			throw new IllegalArgumentException(

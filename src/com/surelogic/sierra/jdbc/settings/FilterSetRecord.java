@@ -9,6 +9,13 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.qrecord.LongUpdatableRecord;
 import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
+/**
+ * Represents a record on the FilterSet table. A FilterSet record can be
+ * selected by {@code uid}.
+ * 
+ * @author nathan
+ * 
+ */
 public class FilterSetRecord extends LongUpdatableRecord {
 
 	private String uid;

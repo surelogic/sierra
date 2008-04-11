@@ -35,11 +35,11 @@ public final class SettingsRecordFactory {
 				"UPDATE SETTINGS SET REVISION = ?, NAME = ? WHERE ID = ?");
 		settingsFilterMapper = new BaseMapper(
 				conn,
-				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
+				"INSERT INTO SETTING_FILTERS (SETTINGS_ID, FINDING_TYPE_ID,IMPORTANCE,FILTERED) VALUES (?,?,?,?)",
 				null, null, false);
 		filterSetFilterMapper = new BaseMapper(
 				conn,
-				"INSERT INTO FILTER_SET_FILTERS (FILTER_SET_ID, FINDING_TYPE_ID,DELTA,IMPORTANCE,FILTERED) VALUES (?,?,?,?,?)",
+				"INSERT INTO FILTER_SET_FILTERS (FILTER_SET_ID, FINDING_TYPE_ID,IMPORTANCE,FILTERED) VALUES (?,?,?,?)",
 				null, null, false);
 	}
 

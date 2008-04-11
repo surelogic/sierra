@@ -3,26 +3,24 @@ package com.surelogic.sierra.jdbc.settings;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
- * Represents a filter on a category. This data object is owned by a
- * {@link ScanFilterDO}.
+ * Represents a filter on a category. Category filters can set the importance of
+ * a category. Equality is based on uid.
  * 
  * @author nathan
- * 
+ * @see ScanFilters
+ * @see ScanFilterDO
  */
 public class CategoryFilterDO {
 	private String uid;
 
 	private Importance importance;
 
-	private boolean filtered;
-
 	public CategoryFilterDO() {
 	}
 
-	public CategoryFilterDO(String uid, Importance importance, boolean filtered) {
+	public CategoryFilterDO(String uid, Importance importance) {
 		this.uid = uid;
 		this.importance = importance;
-		this.filtered = filtered;
 	}
 
 	public String getUid() {
@@ -39,14 +37,6 @@ public class CategoryFilterDO {
 
 	public void setImportance(Importance importance) {
 		this.importance = importance;
-	}
-
-	public boolean isFiltered() {
-		return filtered;
-	}
-
-	public void setFiltered(boolean filtered) {
-		this.filtered = filtered;
 	}
 
 	@Override

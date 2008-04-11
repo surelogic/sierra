@@ -6,6 +6,15 @@ import java.sql.Statement;
 
 import com.surelogic.common.jdbc.QB;
 
+/**
+ * A queryable JDBC statement, backed by a key. Any arguments passed into the
+ * call are interpreted as arguments to a formatted string stored in the query
+ * bank by the given key.
+ * 
+ * @author nathan
+ * 
+ * @param <T>
+ */
 final class QueryableStatement<T> implements Queryable<T> {
 
 	private final Statement st;
@@ -15,7 +24,7 @@ final class QueryableStatement<T> implements Queryable<T> {
 	QueryableStatement(Connection conn, String key, ResultHandler<T> handler) {
 		try {
 			this.st = conn.createStatement();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new StatementException();
 		}
 		this.query = QB.get(key);
@@ -26,25 +35,15 @@ final class QueryableStatement<T> implements Queryable<T> {
 		try {
 			st.execute(String.format(query, args));
 			return handler.handle(new ResultSetResult(st.getResultSet()));
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new StatementException(e);
 		}
-	}
-
-	public T call() {
-		try {
-			st.execute(query);
-			return handler.handle(new ResultSetResult(st.getResultSet()));
-		} catch (SQLException e) {
-			throw new StatementException(e);
-		}
-
 	}
 
 	public void finished() {
 		try {
 			st.close();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new StatementException(e);
 		}
 	}

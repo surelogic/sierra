@@ -107,9 +107,9 @@ public final class SettingsManager {
 		copySettings = conn
 				.prepareStatement("INSERT INTO SETTING_FILTER_SETS SELECT ?,FILTER_SET_ID FROM SETTING_FILTER_SETS WHERE SETTINGS_ID = ?");
 		selectSettingFilters = conn
-				.prepareStatement("SELECT FT.UUID, FTF.DELTA, FTF.IMPORTANCE, FTF.FILTERED FROM SETTING_FILTERS FTF, FINDING_TYPE FT WHERE FTF.SETTINGS_ID = ? AND FT.ID = FTF.FINDING_TYPE_ID");
+				.prepareStatement("SELECT FT.UUID, FTF.IMPORTANCE, FTF.FILTERED FROM SETTING_FILTERS FTF, FINDING_TYPE FT WHERE FTF.SETTINGS_ID = ? AND FT.ID = FTF.FINDING_TYPE_ID");
 		copySettingFilters = conn
-				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?, FINDING_TYPE_ID, DELTA, IMPORTANCE, FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
+				.prepareStatement("INSERT INTO SETTING_FILTERS SELECT ?, FINDING_TYPE_ID, IMPORTANCE, FILTERED FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		deleteSettingFilters = conn
 				.prepareStatement("DELETE FROM SETTING_FILTERS WHERE SETTINGS_ID = ?");
 		spManager = SettingsProjectManager.getInstance(conn);
@@ -404,10 +404,6 @@ public final class SettingsManager {
 					final FindingTypeFilter filter = new FindingTypeFilter();
 					int idx = 1;
 					filter.setName(set.getString(idx++));
-					final int delta = set.getInt(idx++);
-					if (!set.wasNull()) {
-						filter.setDelta(delta);
-					}
 					final int importance = set.getInt(idx++);
 					if (!set.wasNull()) {
 						filter.setImportance(Importance.values()[importance]);
@@ -493,7 +489,6 @@ public final class SettingsManager {
 						findingTypeId));
 				rec.setImportance(filter.getImportance());
 				rec.setFiltered(filter.isFiltered());
-				rec.setDelta(filter.getDelta());
 				rec.insert();
 			} else {
 				throw new IllegalArgumentException(filter.getName()

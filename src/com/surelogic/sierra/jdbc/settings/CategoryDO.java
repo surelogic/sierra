@@ -7,7 +7,7 @@ import java.util.Set;
  * Represents a filter set in the database. Equality is defined based on uid.
  * 
  * @author nathan
- * 
+ * @see Categories
  */
 public class CategoryDO {
 

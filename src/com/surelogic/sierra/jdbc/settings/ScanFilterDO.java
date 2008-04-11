@@ -3,6 +3,12 @@ package com.surelogic.sierra.jdbc.settings;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a scan filter in the database. Equality is based on uid.
+ * 
+ * @author nathan
+ * @see ScanFilters
+ */
 public class ScanFilterDO {
 
 	private String uid;

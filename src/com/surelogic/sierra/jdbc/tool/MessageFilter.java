@@ -15,25 +15,21 @@ public class MessageFilter implements FindingFilter {
 
 	private final Set<Long> filtered;
 	private final Map<Long, Importance> importances;
-	private final Map<Long, Integer> deltas;
 
 	MessageFilter(Map<Long, FindingTypeFilter> findingMap,
 			Map<Long, FindingTypeFilter> artifactMap) {
 		filtered = new HashSet<Long>(artifactMap.size());
 		importances = new HashMap<Long, Importance>(findingMap.size());
-		deltas = new HashMap<Long, Integer>(findingMap.size());
-		for (Entry<Long, FindingTypeFilter> entry : findingMap.entrySet()) {
-			FindingTypeFilter ftf = entry.getValue();
-			Importance i = ftf.getImportance();
-			Integer d = ftf.getDelta();
+		for (final Entry<Long, FindingTypeFilter> entry : findingMap.entrySet()) {
+			final FindingTypeFilter ftf = entry.getValue();
+			final Importance i = ftf.getImportance();
 			if (i != null) {
 				importances.put(entry.getKey(), i);
-			} else if (d != null) {
-				deltas.put(entry.getKey(), d);
 			}
 		}
-		for (Entry<Long, FindingTypeFilter> entry : artifactMap.entrySet()) {
-			FindingTypeFilter ftf = entry.getValue();
+		for (final Entry<Long, FindingTypeFilter> entry : artifactMap
+				.entrySet()) {
+			final FindingTypeFilter ftf = entry.getValue();
 			if (ftf.isFiltered()) {
 				filtered.add(entry.getKey());
 			}
@@ -62,10 +58,6 @@ public class MessageFilter implements FindingFilter {
 		if (i == null) {
 			Integer val = ((int) (((float) (severity.ordinal() + priority
 					.ordinal())) / 2));
-			Integer delta = deltas.get(findingTypeId);
-			if (delta != null) {
-				val += delta;
-			}
 			if (val > 3) {
 				val = 3;
 			} else if (val < 1) {

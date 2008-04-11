@@ -1,11 +1,13 @@
 package com.surelogic.sierra.jdbc.record;
 
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableInt;
+import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.surelogic.sierra.tool.message.Importance;
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
 
 public class FindingTypeFilterRecord extends
 		AbstractRecord<FindingTypeFilterRecord.PK> {
@@ -16,17 +18,15 @@ public class FindingTypeFilterRecord extends
 	}
 
 	private PK id;
-	private Integer delta;
 	private Importance importance;
 	private boolean filtered;
 
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithPk(st, idx);
-		setNullableInt(idx++, st, delta);
-		Integer imp = importance == null ? null : importance.ordinal();
+		final Integer imp = importance == null ? null : importance.ordinal();
 		setNullableInt(idx++, st, imp);
-		String fil = filtered ? "Y" : null;
+		final String fil = filtered ? "Y" : null;
 		setNullableString(idx++, st, fil);
 		return idx;
 	}
@@ -47,18 +47,15 @@ public class FindingTypeFilterRecord extends
 	protected int readAttributes(ResultSet set, int idx) throws SQLException {
 		boolean hasImportance;
 		boolean hasFiltered;
-		int delta = set.getInt(idx++);
-		int importance = set.getInt(idx++);
+		final int importance = set.getInt(idx++);
 		hasImportance = !set.wasNull();
 		if (hasImportance) {
 			this.importance = Importance.values()[importance];
 		} else {
-			String filtered = set.getString(idx++);
+			final String filtered = set.getString(idx++);
 			hasFiltered = !set.wasNull();
 			if (hasFiltered) {
 				this.filtered = "Y".equals(filtered);
-			} else {
-				this.delta = delta;
 			}
 		}
 		return idx;
@@ -107,14 +104,6 @@ public class FindingTypeFilterRecord extends
 			this.findingTypeId = findingTypeId;
 		}
 
-	}
-
-	public Integer getDelta() {
-		return delta;
-	}
-
-	public void setDelta(Integer delta) {
-		this.delta = delta;
 	}
 
 	public Importance getImportance() {
