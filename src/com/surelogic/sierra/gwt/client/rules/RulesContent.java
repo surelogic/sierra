@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -30,7 +27,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
-	private static final String PRIMARY_STYLE = "rules";
+	public static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
 	private final VerticalPanel searchPanel = new VerticalPanel();
 	private final FlexTable searchHeaderGrid = new FlexTable();
@@ -40,7 +37,7 @@ public class RulesContent extends ContentComposite {
 	// List of all Category objects
 	private List categories;
 	private final VerticalPanel detailsPanel = new VerticalPanel();
-	private final VerticalPanel categoryEntries = new VerticalPanel();
+	private final CategoryPanel categoryPanel = new CategoryPanel();
 	private Label currentSearchSelection;
 
 	public static RulesContent getInstance() {
@@ -75,7 +72,6 @@ public class RulesContent extends ContentComposite {
 
 		detailsPanel.addStyleName(PRIMARY_STYLE + "-details-panel");
 		detailsPanel.add(new Label(""));
-		categoryEntries.setWidth("100%");
 
 		rootPanel.add(searchPanel, DockPanel.WEST);
 		rootPanel.setCellWidth(searchPanel, "25%");
@@ -184,60 +180,11 @@ public class RulesContent extends ContentComposite {
 	private void selectCategory(Category cat) {
 		updateSelectionStyle(cat);
 
-		// TODO break this out into a separate component or at least move static
-		// pieces to onInitialize
-		detailsPanel.clear();
-		final VerticalPanel categoryInfo = new VerticalPanel();
-		categoryInfo.setWidth("100%");
-		final Label categoryName = new Label(cat.getName());
-		categoryName.addStyleName("sl-Section");
-		categoryInfo.add(categoryName);
-		categoryInfo.setCellHorizontalAlignment(categoryName,
-				VerticalPanel.ALIGN_LEFT);
-		categoryInfo.add(new Label("Description:"));
-		Label catDesc = new Label(cat.getInfo());
-		if ("".equals(catDesc.getText())) {
-			catDesc.setText("None");
-			catDesc.addStyleName("font-italic");
+		categoryPanel.setCategory(cat);
+		if (detailsPanel.getWidgetIndex(categoryPanel) == -1) {
+			detailsPanel.clear();
+			detailsPanel.add(categoryPanel);
 		}
-		categoryInfo.add(catDesc);
-		detailsPanel.add(categoryInfo);
-
-		categoryEntries.clear();
-		final Label findingTypes = new Label("Finding Types");
-		findingTypes.addStyleName("sl-Section");
-		categoryEntries.add(findingTypes);
-		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
-			final FilterEntry finding = (FilterEntry) it.next();
-			categoryEntries.add(createDetailsRule(finding, !finding
-					.isFiltered()));
-		}
-		final Set excluded = cat.getExcludedEntries();
-		for (final Iterator catIt = cat.getParents().iterator(); catIt
-				.hasNext();) {
-			final Category parent = (Category) catIt.next();
-			final DisclosurePanel parentPanel = new DisclosurePanel("From: "
-					+ parent.getName());
-			final VerticalPanel parentFindingsPanel = new VerticalPanel();
-			final Set parentFindings = parent.getIncludedEntries();
-			for (final Iterator findingIt = parentFindings.iterator(); findingIt
-					.hasNext();) {
-				final FilterEntry finding = (FilterEntry) findingIt.next();
-				parentFindingsPanel.add(createDetailsRule(finding, !excluded
-						.contains(finding)));
-			}
-			parentPanel.setContent(parentFindingsPanel);
-			categoryEntries.add(parentPanel);
-		}
-
-		detailsPanel.add(categoryEntries);
-	}
-
-	private CheckBox createDetailsRule(FilterEntry finding, boolean enabled) {
-		final CheckBox rule = new CheckBox(finding.getName());
-		rule.addStyleName(PRIMARY_STYLE + "-details-finding");
-		rule.setChecked(enabled);
-		return rule;
 	}
 
 	private void selectFinding(FilterEntry finding) {
