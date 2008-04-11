@@ -27,7 +27,7 @@ public class BugLinkClient {
 	 * @param loc
 	 * @return
 	 */
-	public static final DBQuery<ListCategoryResponse> updateCategories(
+	public static final DBQuery<ListCategoryResponse> getCategories(
 			SierraServerLocation loc) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(new ListCategoryRequest());
