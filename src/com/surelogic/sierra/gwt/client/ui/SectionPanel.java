@@ -43,6 +43,8 @@ public class SectionPanel extends Composite {
 		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
 		titlePanel.setCellHorizontalAlignment(actionPanel,
 				HorizontalPanel.ALIGN_RIGHT);
+		titlePanel.setCellVerticalAlignment(actionPanel,
+				HorizontalPanel.ALIGN_MIDDLE);
 
 		titlePanel.setCellWidth(sectionTitle, "25%");
 		titlePanel.setCellWidth(sectionInfo, "50%");

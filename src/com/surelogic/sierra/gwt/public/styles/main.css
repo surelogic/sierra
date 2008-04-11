@@ -273,7 +273,7 @@ img {
 	width: 100%;
 	background-color: #DDDDFF;
 	margin: 0px;
-	padding: 2px;
+	padding: 2px 4px 4px 2px;
 	border: 1px solid #666699;
 }
 
@@ -288,7 +288,7 @@ img {
 
 .sl-Section-actionpanel {
 	font-size: small;
-    font-style: italic;
+    font-weight: bold;
     text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
