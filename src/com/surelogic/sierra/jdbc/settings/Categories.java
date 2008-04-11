@@ -151,7 +151,10 @@ public class Categories {
 	}
 
 	/**
-	 * Update a filter set.
+	 * Update a filter set. This should only be done by the server that owns the
+	 * category. Any one else should call {@link #writeCategory(CategoryDO)},
+	 * and then request that the owning server be updated when they are ready to
+	 * commit their local changes.
 	 * 
 	 * @param set
 	 * @param revision
