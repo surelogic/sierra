@@ -11,133 +11,103 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for FindingTypeFilter complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p>
+ * Java class for FindingTypeFilter complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * 
  * <pre>
- * &lt;complexType name="FindingTypeFilter">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;whiteSpace value="collapse"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *         &lt;choice>
- *           &lt;element name="importance" type="{http://www.surelogic.com/sierra/1.0}Importance"/>
- *           &lt;element name="delta" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;/choice>
- *         &lt;element name="filtered" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name=&quot;FindingTypeFilter&quot;&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base=&quot;{http://www.w3.org/2001/XMLSchema}anyType&quot;&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name=&quot;name&quot;&gt;
+ *           &lt;simpleType&gt;
+ *             &lt;restriction base=&quot;{http://www.w3.org/2001/XMLSchema}string&quot;&gt;
+ *               &lt;whiteSpace value=&quot;collapse&quot;/&gt;
+ *             &lt;/restriction&gt;
+ *           &lt;/simpleType&gt;
+ *         &lt;/element&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name=&quot;importance&quot; type=&quot;{http://www.surelogic.com/sierra/1.0}Importance&quot;/&gt;
+ *           &lt;element name=&quot;delta&quot; type=&quot;{http://www.w3.org/2001/XMLSchema}int&quot;/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element name=&quot;filtered&quot; type=&quot;{http://www.w3.org/2001/XMLSchema}boolean&quot;/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FindingTypeFilter", propOrder =  {
-    "name", "importance", "delta", "filtered"}
-)
+@XmlType(name = "FindingTypeFilter", propOrder = { "name", "importance",
+		"filtered" })
 public class FindingTypeFilter {
-    @XmlElement(required = true)
-    protected String name;
-    protected Importance importance;
-    protected Integer delta;
-    protected boolean filtered;
+	@XmlElement(required = true)
+	protected String name;
+	protected Importance importance;
+	protected boolean filtered;
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		name = value;
+	}
 
-    /**
-     * Gets the value of the importance property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Importance }
-     *
-     */
-    public Importance getImportance() {
-        return importance;
-    }
+	/**
+	 * Gets the value of the importance property.
+	 * 
+	 * @return possible object is {@link Importance }
+	 * 
+	 */
+	public Importance getImportance() {
+		return importance;
+	}
 
-    /**
-     * Sets the value of the importance property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Importance }
-     *
-     */
-    public void setImportance(Importance value) {
-        this.importance = value;
-    }
+	/**
+	 * Sets the value of the importance property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Importance }
+	 * 
+	 */
+	public void setImportance(Importance value) {
+		importance = value;
+	}
 
-    /**
-     * Gets the value of the delta property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
-     */
-    public Integer getDelta() {
-        return delta;
-    }
+	/**
+	 * Gets the value of the filtered property.
+	 * 
+	 */
+	public boolean isFiltered() {
+		return filtered;
+	}
 
-    /**
-     * Sets the value of the delta property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
-     */
-    public void setDelta(Integer value) {
-        this.delta = value;
-    }
-
-    /**
-     * Gets the value of the filtered property.
-     *
-     */
-    public boolean isFiltered() {
-        return filtered;
-    }
-
-    /**
-     * Sets the value of the filtered property.
-     *
-     */
-    public void setFiltered(boolean value) {
-        this.filtered = value;
-    }
+	/**
+	 * Sets the value of the filtered property.
+	 * 
+	 */
+	public void setFiltered(boolean value) {
+		filtered = value;
+	}
 }
