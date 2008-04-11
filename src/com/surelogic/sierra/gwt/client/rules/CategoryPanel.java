@@ -3,11 +3,14 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
@@ -20,9 +23,9 @@ public class CategoryPanel extends Composite {
 	private final SectionPanel categorySection = new SectionPanel("Category",
 			"");
 	private final Label categoryDescription = new Label();
-	private final SubsectionPanel findingTypesPortlet = new SubsectionPanel(
+	private final SubsectionPanel findingsSubsection = new SubsectionPanel(
 			"Finding Types", "");
-	private final VerticalPanel findingTypes = findingTypesPortlet
+	private final VerticalPanel findingTypes = findingsSubsection
 			.getContentPanel();
 
 	public CategoryPanel() {
@@ -33,9 +36,18 @@ public class CategoryPanel extends Composite {
 		final VerticalPanel catInfoContent = categorySection.getContentPanel();
 		catInfoContent.add(new Label("Description:"));
 		catInfoContent.add(categoryDescription);
+		catInfoContent.add(findingsSubsection);
 
-		catInfoContent.add(findingTypesPortlet);
+		final Label edit = new Label("Edit");
+		edit.addStyleName("clickable");
+		edit.addClickListener(new ClickListener() {
 
+			public void onClick(Widget sender) {
+				editMode();
+			}
+		});
+
+		categorySection.addAction(edit);
 		rootPanel.add(categorySection);
 	}
 
@@ -80,5 +92,9 @@ public class CategoryPanel extends Composite {
 		rule.addStyleName(PRIMARY_STYLE + "-details-finding");
 		rule.setChecked(enabled);
 		return rule;
+	}
+
+	private void editMode() {
+		Window.alert("Change to edit mode");
 	}
 }
