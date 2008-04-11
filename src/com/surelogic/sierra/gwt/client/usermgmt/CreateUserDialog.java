@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.usermgmt;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;

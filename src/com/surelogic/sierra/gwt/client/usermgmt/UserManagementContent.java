@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.usermgmt;
 
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +13,9 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContentComposite;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;

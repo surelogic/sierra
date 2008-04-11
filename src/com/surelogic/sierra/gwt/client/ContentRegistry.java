@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.rules.RulesContent;
+import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {
 	private static final Map contentMap = new HashMap();

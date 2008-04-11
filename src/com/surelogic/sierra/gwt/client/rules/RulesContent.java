@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ContentComposite;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
