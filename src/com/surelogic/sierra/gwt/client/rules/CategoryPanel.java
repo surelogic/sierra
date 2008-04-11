@@ -10,44 +10,37 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
 
 public class CategoryPanel extends Composite {
 	public static final String PRIMARY_STYLE = RulesContent.PRIMARY_STYLE;
 
 	private final VerticalPanel rootPanel = new VerticalPanel();
-	private final VerticalPanel categoryEntries = new VerticalPanel();
-	private final Label categoryName = new Label();
+	private final SectionPanel categorySection = new SectionPanel("Category",
+			"");
 	private final Label categoryDescription = new Label();
+	private final SubsectionPanel findingTypesPortlet = new SubsectionPanel(
+			"Finding Types", "");
+	private final VerticalPanel findingTypes = findingTypesPortlet
+			.getContentPanel();
 
 	public CategoryPanel() {
 		super();
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
 
-		final VerticalPanel categoryInfo = new VerticalPanel();
-		categoryInfo.setWidth("100%");
+		final VerticalPanel catInfoContent = categorySection.getContentPanel();
+		catInfoContent.add(new Label("Description:"));
+		catInfoContent.add(categoryDescription);
 
-		categoryName.addStyleName("sl-Section");
-		categoryInfo.add(categoryName);
-		categoryInfo.setCellHorizontalAlignment(categoryName,
-				VerticalPanel.ALIGN_LEFT);
+		catInfoContent.add(findingTypesPortlet);
 
-		categoryInfo.add(new Label("Description:"));
-		categoryInfo.add(categoryDescription);
-
-		rootPanel.add(categoryInfo);
-
-		categoryEntries.setWidth("100%");
-		final Label findingTypes = new Label("Finding Types");
-		findingTypes.addStyleName("sl-Section");
-		categoryEntries.add(findingTypes);
-
-		rootPanel.add(categoryEntries);
+		rootPanel.add(categorySection);
 	}
 
 	public void setCategory(Category cat) {
-
-		categoryName.setText(cat.getName());
+		categorySection.getSectionInfo().setText(cat.getName());
 		final String catInfo = cat.getInfo();
 
 		if (catInfo == null || "".equals(catInfo)) {
@@ -58,13 +51,10 @@ public class CategoryPanel extends Composite {
 			categoryDescription.removeStyleName("font-italic");
 		}
 
-		while (categoryEntries.getWidgetCount() > 1) {
-			categoryEntries.remove(1);
-		}
+		findingTypes.clear();
 		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
 			final FilterEntry finding = (FilterEntry) it.next();
-			categoryEntries.add(createDetailsRule(finding, !finding
-					.isFiltered()));
+			findingTypes.add(createDetailsRule(finding, !finding.isFiltered()));
 		}
 		final Set excluded = cat.getExcludedEntries();
 		for (final Iterator catIt = cat.getParents().iterator(); catIt
@@ -81,7 +71,7 @@ public class CategoryPanel extends Composite {
 						.contains(finding)));
 			}
 			parentPanel.setContent(parentFindingsPanel);
-			categoryEntries.add(parentPanel);
+			findingTypes.add(parentPanel);
 		}
 	}
 

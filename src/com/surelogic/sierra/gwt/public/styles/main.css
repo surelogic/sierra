@@ -151,6 +151,7 @@ img {
 .overview-table {
 	border-spacing: 0px;
 	width: 100%;
+	border-bottom: 1px solid #D3D3D3;
 }
 
 .overview-header {
@@ -261,14 +262,14 @@ img {
 	text-indent: 3em;
 }
 
-/* Portlet */
-.sl-Portlet {
+/* Section */
+.sl-Section {
 	border-spacing: 1px;
 	margin: 5px;
 	padding: 2px;
 }
 
-.sl-Portlet-titlepanel {
+.sl-Section-titlepanel {
 	width: 100%;
 	background-color: #DDDDFF;
 	margin: 0px;
@@ -276,16 +277,16 @@ img {
 	border: 1px solid #666699;
 }
 
-.sl-Portlet-title {
-	font-size: small;
+.sl-Section-title {
+	
 }
 
-.sl-Portlet-datatitle {
+.sl-Section-info {
 	font-weight: bold;
-	font-size: small;
+	
 }
 
-.sl-Portlet-actionpanel {
+.sl-Section-actionpanel {
 	font-size: small;
     font-style: italic;
     text-decoration: underline;
@@ -293,16 +294,22 @@ img {
 	cursor: hand;
 }
 
-.sl-Portlet-contentpanel {
+.sl-Section-contentpanel {
 	border: 1px solid #666699;
 	width: 100%;
+	padding: 4px;
 }
 
-.sl-Section {
-	background-color: #DDDDFF;
-	border: 1px solid #666699;
-	font-weight: bold;
-	padding-left: 4px;
+.sl-Subsection-titlepanel {
+	background-color: #FFFFFF;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid #000000;
+}
+
+.sl-Subsection-contentpanel {
+	border: none;
 }
 
 /* Grid panel */
