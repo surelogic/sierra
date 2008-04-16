@@ -28,7 +28,8 @@ import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
  * 
  */
 // TODO: Change the Record pattern such that LazyPreparedStatement is no longer
-// necessary.
+// necessary. We will probably have to use a shared prepared statement cache
+// mechanism here.
 public class ConnectionQuery implements Query {
 
 	private final Connection conn;

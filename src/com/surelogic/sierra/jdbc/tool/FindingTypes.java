@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.tool;
 
 import com.surelogic.sierra.jdbc.Query;
 import com.surelogic.sierra.jdbc.Row;
+import com.surelogic.sierra.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.SingleRowHandler;
 
 public class FindingTypes {
@@ -16,8 +17,12 @@ public class FindingTypes {
 		if (uid == null) {
 			throw new IllegalArgumentException("May not be null");
 		}
-		return q.prepared("FindingTypes.findByUid", new FindingTypeDOHandler())
-				.call(uid);
+		final FindingTypeDO t = q.prepared("FindingTypes.findByUid",
+				new FindingTypeDOHandler()).call(uid);
+		t.getArtifactTypes().addAll(
+				q.prepared("FindingTypes.findArtifactTypeById",
+						new ArtifactTypeDOHandler()).call(t.getId()));
+		return t;
 	}
 
 	public FindingTypeDO getFindingType(long id) {
@@ -36,6 +41,14 @@ public class FindingTypes {
 			ft.setInfo(r.nextString());
 			return ft;
 		}
+	}
+
+	private static class ArtifactTypeDOHandler implements
+			RowHandler<ArtifactTypeDO> {
+		public ArtifactTypeDO handle(Row r) {
+			return new ArtifactTypeDO(r.nextLong(), r.nextString());
+		}
+
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.DBType;
 import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
@@ -28,11 +29,13 @@ import com.surelogic.sierra.jdbc.record.RelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
-import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
@@ -771,30 +774,36 @@ public final class ClientFindingManager extends FindingManager {
 		regenerateFindingsOverview(projectName, findingIds, monitor);
 	}
 
+	/**
+	 * Remove the finding type linked to this finding id from the global
+	 * settings.
+	 * 
+	 * @param findingId
+	 * @param monitor
+	 * @throws SQLException
+	 */
 	public void filterFindingTypeFromScans(long findingId,
 			SLProgressMonitor monitor) throws SQLException {
 		selectFindingFindingType.setLong(1, findingId);
 		final ResultSet set = selectFindingFindingType.executeQuery();
 		try {
-			final SettingsManager sMan = SettingsManager.getInstance(conn);
-			final List<FindingTypeFilter> filters = sMan.getGlobalSettings();
-			while (set.next()) {
-				final String type = set.getString(1);
-				boolean exists = false;
-				for (final FindingTypeFilter filter : filters) {
-					if (type.equals(filter.getName())) {
-						filter.setFiltered(true);
-						exists = true;
-					}
-				}
-				if (!exists) {
-					final FindingTypeFilter newFilter = new FindingTypeFilter();
-					newFilter.setName(type);
-					newFilter.setFiltered(true);
-					filters.add(newFilter);
+			set.next();
+			final String type = set.getString(1);
+			final ScanFilters filters = new ScanFilters(new ConnectionQuery(
+					conn));
+			final ScanFilterDO scanFilter = filters
+					.getScanFilter(SettingQueries.GLOBAL_UUID);
+			for (final TypeFilterDO filter : scanFilter.getFilterTypes()) {
+				if (type.equals(filter.getFindingType())) {
+					filter.setFiltered(true);
+					filters.writeScanFilter(scanFilter);
+					return;
 				}
 			}
-			sMan.writeGlobalSettings(filters);
+			// We did not find the type filter, so we make one
+			final TypeFilterDO filter = new TypeFilterDO(type, null, true);
+			scanFilter.getFilterTypes().add(filter);
+			filters.writeScanFilter(scanFilter);
 		} finally {
 			set.close();
 		}

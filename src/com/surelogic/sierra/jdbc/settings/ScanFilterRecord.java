@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import com.surelogic.sierra.jdbc.qrecord.LongUpdatableRecord;
 import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
-public class SettingsRecord extends LongUpdatableRecord {
+public class ScanFilterRecord extends LongUpdatableRecord {
 
 	private String name;
 	private String uid;
 	private Long revision;
 
-	public SettingsRecord(UpdateRecordMapper mapper) {
+	public ScanFilterRecord(UpdateRecordMapper mapper) {
 		super(mapper);
 	}
 
@@ -52,8 +52,10 @@ public class SettingsRecord extends LongUpdatableRecord {
 
 	public void setName(String name) {
 		if ((name == null) || (name.length() > 255)) {
-			throw new IllegalArgumentException("The name " + name
-					+ " cannot be longer than 255 characters in length.");
+			throw new IllegalArgumentException(
+					"The name "
+							+ name
+							+ " cannot be null or longer than 255 characters in length.");
 		}
 		this.name = name;
 	}

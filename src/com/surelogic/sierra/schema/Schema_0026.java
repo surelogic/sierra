@@ -17,8 +17,6 @@ public class Schema_0026 implements SchemaAction {
 		} finally {
 			st.close();
 		}
-		SchemaUtil.updateFindingTypes(c);
-		SchemaUtil.setupFilters(c);
 	}
 
 }

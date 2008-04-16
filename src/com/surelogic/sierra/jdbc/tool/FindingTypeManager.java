@@ -23,7 +23,6 @@ import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
@@ -31,7 +30,6 @@ import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Priority;
-import com.surelogic.sierra.tool.message.Settings;
 import com.surelogic.sierra.tool.message.Severity;
 
 public final class FindingTypeManager {
@@ -257,17 +255,6 @@ public final class FindingTypeManager {
 			}
 		}
 		return new MessageFilter(findingMap, artifactMap);
-	}
-
-	public FindingFilter getMessageFilter(Settings settings)
-			throws SQLException {
-		if (settings != null) {
-			final Collection<FindingTypeFilter> filters = SettingsManager
-					.getInstance(conn).getSettingFilters(settings.getUid());
-			return getMessageFilter(filters);
-		} else {
-			return EMPTY_FILTER;
-		}
 	}
 
 	/**

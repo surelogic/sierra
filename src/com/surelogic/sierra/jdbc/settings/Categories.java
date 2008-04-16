@@ -3,7 +3,9 @@ package com.surelogic.sierra.jdbc.settings;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -80,6 +82,61 @@ public class Categories {
 			return set;
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * Return a graph of this category and all of its dependencies.
+	 * 
+	 * @param uid
+	 *            a category uid
+	 * @return a CategoryGraph if the category exists <code>null</code>
+	 *         otherwise
+	 */
+	public CategoryGraph getCategoryGraph(String uid) {
+		final CategoryDO cat = getCategory(uid);
+		if (cat != null) {
+			final Map<String, CategoryDO> map = new HashMap<String, CategoryDO>();
+			graphHelper(map, cat);
+			return new CategoryGraph(cat, map);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Return a graph of this category and all of its dependencies.
+	 * 
+	 * @param uid
+	 *            a category uid
+	 * @return an in-order list of CategoryGraph objects. References may be
+	 *         <code>null</code> if a category does not exist.
+	 */
+	public List<CategoryGraph> getCategoryGraphs(List<String> uids) {
+		final Map<String, CategoryDO> map = new HashMap<String, CategoryDO>();
+		final List<CategoryGraph> graphs = new ArrayList<CategoryGraph>(uids
+				.size());
+		for (final String uid : uids) {
+			final CategoryDO cat = getCategory(uid);
+			if (cat != null) {
+				graphHelper(map, cat);
+				graphs.add(new CategoryGraph(cat, map));
+			} else {
+				graphs.add(null);
+			}
+		}
+		return graphs;
+	}
+
+	/*
+	 * Add this category and all of its dependencies to the map
+	 */
+	private void graphHelper(Map<String, CategoryDO> map, CategoryDO cat) {
+		map.put(cat.getUid(), cat);
+		for (final String uid : cat.getParents()) {
+			if (map.get(uid) == null) {
+				graphHelper(map, getCategory(uid));
+			}
 		}
 	}
 
@@ -213,7 +270,9 @@ public class Categories {
 
 	/**
 	 * Checks to make sure that adding the given parent uids will not introduce
-	 * a cyclic dependency
+	 * a cyclic dependency. This method is called anytime new edges are added to
+	 * our graph. As long as the graph is valid before the edges are added,
+	 * checkCyclicDependencies will ensure that the same is true afterwards.
 	 * 
 	 * @param uids
 	 *            the parent uids

@@ -1,5 +1,6 @@
 package com.surelogic.sierra.jdbc.tool;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class FindingTypeDO {
@@ -8,7 +9,7 @@ public class FindingTypeDO {
 	private String name;
 	private String shortMessage;
 	private String info;
-	private Set<String> artifactTypes;
+	private final Set<ArtifactTypeDO> artifactTypes = new HashSet<ArtifactTypeDO>();
 
 	public long getId() {
 		return id;
@@ -50,7 +51,7 @@ public class FindingTypeDO {
 		this.info = info;
 	}
 
-	public Set<String> getArtifactTypes() {
+	public Set<ArtifactTypeDO> getArtifactTypes() {
 		return artifactTypes;
 	}
 
