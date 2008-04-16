@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
@@ -58,7 +60,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							final Category set = getOrCreateSet(
 									detail.getUid(), sets);
 							set.setName(detail.getName());
-							set.setInfo(detail.getInfo());
+							String info = StringUtils.remove(detail.getInfo(),
+									'\t');
+							info = StringUtils.remove(info, '\n');
+							set.setInfo(info);
 							final Set<Category> parents = new HashSet<Category>();
 							for (final String parent : detail.getParents()) {
 								parents.add(getOrCreateSet(parent, sets));
