@@ -7,9 +7,13 @@ import com.surelogic.sierra.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
-import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
-import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.Categories;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 
 public class BuglinkServiceImpl extends SierraServiceImpl implements
 		BugLinkService {
@@ -38,8 +42,8 @@ public class BuglinkServiceImpl extends SierraServiceImpl implements
 							parents.add(p);
 						}
 						final CreateCategoryResponse response = new CreateCategoryResponse();
-						response.setSet(Categories.convert(sets
-								.updateCategory(set, revision), s.getUid()));
+						response.setSet(Categories.convert(sets.updateCategory(
+								set, revision), s.getUid()));
 						return response;
 					}
 				});
@@ -77,4 +81,64 @@ public class BuglinkServiceImpl extends SierraServiceImpl implements
 				});
 	}
 
+	public CreateScanFilterResponse createScanFilter(
+			final CreateScanFilterRequest request) {
+		return ConnectionFactory
+				.withTransaction(new ServerQuery<CreateScanFilterResponse>() {
+					public CreateScanFilterResponse perform(Query q, Server s) {
+						final ScanFilters filters = new ScanFilters(q);
+						final long revision = s.nextRevision();
+						final ScanFilterDO filter = filters.createScanFilter(
+								request.getName(), revision);
+						final Set<CategoryFilterDO> cSet = filter
+								.getCategories();
+						for (final CategoryFilter c : request
+								.getCategoryFilter()) {
+							cSet.add(new CategoryFilterDO(c.getUid(), c
+									.getImportance()));
+						}
+						final Set<TypeFilterDO> tSet = filter.getFilterTypes();
+						for (final TypeFilter t : request.getTypeFilter()) {
+							tSet.add(new TypeFilterDO(t.getUid(), t
+									.getImportance(), t.isFiltered()));
+						}
+						filters.updateScanFilter(filter, revision);
+						final CreateScanFilterResponse response = new CreateScanFilterResponse();
+						response.setFilter(ScanFilters.convert(filter, s
+								.getUid()));
+						return response;
+					}
+				});
+
+	}
+
+	public ListScanFilterResponse listScanFilters(ListScanFilterRequest request) {
+		return ConnectionFactory
+				.withReadOnly(new ServerQuery<ListScanFilterResponse>() {
+					public ListScanFilterResponse perform(Query q, Server s) {
+						final ListScanFilterResponse response = new ListScanFilterResponse();
+						final List<ScanFilter> list = response.getScanFilter();
+						for (final ScanFilterDO filter : new ScanFilters(q)
+								.listScanFilters()) {
+							list.add(ScanFilters.convert(filter, s.getUid()));
+						}
+						return response;
+					}
+				});
+	}
+
+	public UpdateScanFilterResponse updateScanFilter(
+			final UpdateScanFilterRequest request) throws RevisionException {
+		return ConnectionFactory
+				.withTransaction(new ServerQuery<UpdateScanFilterResponse>() {
+					public UpdateScanFilterResponse perform(Query q, Server s) {
+						final UpdateScanFilterResponse response = new UpdateScanFilterResponse();
+						response.setFilter(ScanFilters.convert(new ScanFilters(
+								q).updateScanFilter(ScanFilters
+								.convertDO(request.getFilter()), s
+								.nextRevision()), s.getUid()));
+						return response;
+					}
+				});
+	}
 }

@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
@@ -24,10 +25,9 @@ import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.jdbc.server.UserContext;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.timeseries.TimeseriesManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
-import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.message.srpc.SRPCServlet;
 
@@ -40,13 +40,6 @@ import com.surelogic.sierra.message.srpc.SRPCServlet;
 public class SierraServiceImpl extends SRPCServlet implements SierraService {
 
 	private static final long serialVersionUID = -8265889420077755990L;
-
-	public SettingsReply getSettings(SettingsRequest request)
-			throws ServerMismatchException {
-		final SettingsReply reply = new SettingsReply();
-		// TODO
-		return reply;
-	}
 
 	public void publishRun(final Scan scan) throws ScanVersionException {
 		if (!Server.getSoftwareVersion().equals(scan.getVersion())) {
@@ -66,9 +59,9 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 				final String uid = scan.getUid();
 				final String project = scan.getConfig().getProject();
 				final ScanManager manager = ScanManager.getInstance(conn);
-				final FindingFilter filter = FindingTypeManager.getInstance(
-						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getGlobalSettings());
+				final FindingFilter filter = SettingQueries
+						.scanFilterForProject(project).perform(
+								new ConnectionQuery(conn));
 				final ScanGenerator generator = manager
 						.getScanGenerator(filter);
 				generator.timeseries(timeseries).user(user.getName());
@@ -229,32 +222,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 					}
 				}));
 		return reply;
-	}
-
-	public GlobalSettings getGlobalSettings(GlobalSettingsRequest request) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<GlobalSettings>() {
-
-					public GlobalSettings perform(Connection conn,
-							Server server, User user) throws SQLException {
-						final GlobalSettings settings = new GlobalSettings();
-						settings.setFilter(SettingsManager.getInstance(conn)
-								.getGlobalSettings());
-						return settings;
-					}
-				});
-	}
-
-	public void writeGlobalSettings(final GlobalSettings settings) {
-		ConnectionFactory.withUserTransaction(new UserTransaction<Object>() {
-
-			public Object perform(Connection conn, Server server, User user)
-					throws SQLException {
-				SettingsManager.getInstance(conn).writeGlobalSettings(
-						settings.getFilter());
-				return null;
-			}
-		});
 	}
 
 	@Override
