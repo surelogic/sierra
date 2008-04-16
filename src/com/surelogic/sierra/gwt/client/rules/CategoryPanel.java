@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
@@ -22,11 +23,13 @@ public class CategoryPanel extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final SectionPanel categorySection = new SectionPanel("Category",
 			"");
-	private final Label categoryDescription = new Label();
+	private final TextArea categoryDescription = new TextArea();
 	private final SubsectionPanel findingsSubsection = new SubsectionPanel(
 			"Finding Types", "");
 	private final VerticalPanel findingTypes = findingsSubsection
 			.getContentPanel();
+	private Category currentCategory;
+	private boolean editing;
 
 	public CategoryPanel() {
 		super();
@@ -36,6 +39,7 @@ public class CategoryPanel extends Composite {
 		final VerticalPanel catInfoContent = categorySection.getContentPanel();
 		catInfoContent.add(new Label("Description:"));
 		catInfoContent.add(categoryDescription);
+		categoryDescription.setVisibleLines(5);
 		catInfoContent.add(findingsSubsection);
 
 		final Label edit = new Label("Edit");
@@ -43,7 +47,7 @@ public class CategoryPanel extends Composite {
 		edit.addClickListener(new ClickListener() {
 
 			public void onClick(Widget sender) {
-				editMode();
+				edit();
 			}
 		});
 
@@ -52,9 +56,16 @@ public class CategoryPanel extends Composite {
 	}
 
 	public void setCategory(Category cat) {
-		categorySection.getSectionInfo().setText(cat.getName());
-		final String catInfo = cat.getInfo();
+		if (checkEditing()) {
+			return;
+		}
 
+		currentCategory = cat;
+
+		categorySection.getSectionInfo().setText(cat.getName());
+
+		categoryDescription.setReadOnly(true);
+		final String catInfo = cat.getInfo();
 		if (catInfo == null || "".equals(catInfo)) {
 			categoryDescription.setText("None");
 			categoryDescription.addStyleName("font-italic");
@@ -94,7 +105,37 @@ public class CategoryPanel extends Composite {
 		return rule;
 	}
 
-	private void editMode() {
+	private void edit() {
+		if (isEditing() || currentCategory == null) {
+			return;
+		}
+
+		String catInfo = currentCategory.getInfo();
+		if (catInfo == null) {
+			catInfo = "";
+		}
+		categoryDescription.setReadOnly(false);
+		categoryDescription.setText(catInfo);
+
+		// TODO update UI based on mode, selectCategory must reset mode
+
+		// TODO update actions to have save/cancel
+
+		categorySection.removeActions();
+
 		Window.alert("Change to edit mode");
+	}
+
+	private boolean isEditing() {
+		return editing;
+	}
+
+	private boolean checkEditing() {
+		final boolean editing = isEditing();
+		if (editing) {
+			Window
+					.alert("You are currently editing a selection. Please save or cancel your changes.");
+		}
+		return editing;
 	}
 }

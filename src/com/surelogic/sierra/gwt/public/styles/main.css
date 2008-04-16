@@ -300,6 +300,10 @@ img {
 	padding: 4px;
 }
 
+.sl-Section-contentpanel-editing {
+	border: 3px groove #666699; 
+}
+
 .sl-Subsection-titlepanel {
 	background-color: #FFFFFF;
 	border-top: none;
@@ -311,6 +315,8 @@ img {
 .sl-Subsection-contentpanel {
 	border: none;
 }
+
+
 
 /* Grid panel */
 .sl-GridPanel {
@@ -472,4 +478,18 @@ img {
 
 .gwt-DisclosurePanel .content {
 	width: 100%;
+}
+
+/* TextArea styling */
+.gwt-TextArea {
+	width: 100%;
+	border: ridge 2px;
+	padding: 4px;
+	cursor: text;
+}
+
+.gwt-TextArea-readonly {
+	border: none;
+	padding: 6px;
+	cursor: default;
 }
