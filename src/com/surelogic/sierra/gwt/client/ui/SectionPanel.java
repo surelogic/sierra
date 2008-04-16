@@ -74,6 +74,16 @@ public class SectionPanel extends Composite {
 		actionPanel.add(w);
 	}
 
+	public void removeAction(Widget w) {
+		actionPanel.remove(w);
+	}
+
+	public void removeActions() {
+		while (actionPanel.getWidgetCount() > 0) {
+			actionPanel.remove(0);
+		}
+	}
+
 	public VerticalPanel getContentPanel() {
 		return contentPanel;
 	}
