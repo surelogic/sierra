@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilterSet", propOrder = { "uid", "owner", "revision", "name",
-		"parent", "filter" })
+		"info", "parent", "filter" })
 public class FilterSet {
 	@XmlElement(required = true)
 	protected String uid;

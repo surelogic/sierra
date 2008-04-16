@@ -1,11 +1,7 @@
 package com.surelogic.sierra.tool.message;
 
-import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.common.logging.SLLogger;
-
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ErrorBuilder;
-import com.surelogic.sierra.tool.targets.*;
+import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,10 +22,18 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
-import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.ErrorBuilder;
+import com.surelogic.sierra.tool.targets.FileTarget;
+import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
+import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
+import com.surelogic.sierra.tool.targets.JarTarget;
+import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
  * General utility class for working with the sps message layer.
@@ -49,16 +52,16 @@ public final class MessageWarehouse {
 
 	private MessageWarehouse() {
 		try {
-			this.ctx = JAXBContext.newInstance(Scan.class, Settings.class,
-					FindingTypes.class, Config.class, ToolTarget.class,
-					FileTarget.class, JarTarget.class,
-					Error.class,
-					FullDirectoryTarget.class, FilteredDirectoryTarget.class);
+			ctx = JAXBContext.newInstance(Scan.class, ScanFilter.class,
+					FilterSet.class, FindingTypes.class, Config.class,
+					ToolTarget.class, FileTarget.class, JarTarget.class,
+					Error.class, FullDirectoryTarget.class,
+					FilteredDirectoryTarget.class);
 			marshaller = ctx.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			unmarshaller = ctx.createUnmarshaller();
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -81,10 +84,10 @@ public final class MessageWarehouse {
 			out = new FileWriter(dest);
 			marshaller.marshal(to, out);
 			out.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.log(Level.SEVERE,
 					"Error writing parser output to file " + dest, e);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ dest, e);
 		}
@@ -99,7 +102,7 @@ public final class MessageWarehouse {
 	public void writeClassMetric(ClassMetric metric, OutputStream out) {
 		try {
 			marshaller.marshal(metric, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -114,7 +117,7 @@ public final class MessageWarehouse {
 	public void writeClassMetric(ClassMetric metric, Writer out) {
 		try {
 			marshaller.marshal(metric, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -129,7 +132,7 @@ public final class MessageWarehouse {
 	public void writeError(Error error, OutputStream out) {
 		try {
 			marshaller.marshal(error, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -144,7 +147,7 @@ public final class MessageWarehouse {
 	public void writeArtifact(Artifact a, OutputStream out) {
 		try {
 			marshaller.marshal(a, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -159,7 +162,7 @@ public final class MessageWarehouse {
 	public void writeArtifact(Artifact a, Writer out) {
 		try {
 			marshaller.marshal(a, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -168,7 +171,7 @@ public final class MessageWarehouse {
 	public void writeConfig(Config config, OutputStream artOut) {
 		try {
 			marshaller.marshal(config, artOut);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -177,25 +180,7 @@ public final class MessageWarehouse {
 	public void writeConfig(Config config, Writer artOut) {
 		try {
 			marshaller.marshal(config, artOut);
-		} catch (JAXBException e) {
-			log.log(Level.SEVERE, "Error marshalling parser output to file "
-					+ e);
-		}
-	}
-
-	public void writeSettings(Settings settings, OutputStream out) {
-		try {
-			marshaller.marshal(settings, out);
-		} catch (JAXBException e) {
-			log.log(Level.SEVERE, "Error marshalling parser output to file "
-					+ e);
-		}
-	}
-
-	public void writeSettings(Settings settings, Writer out) {
-		try {
-			marshaller.marshal(settings, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -204,7 +189,7 @@ public final class MessageWarehouse {
 	public void writeFindingTypes(FindingTypes types, OutputStream out) {
 		try {
 			marshaller.marshal(types, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -213,7 +198,7 @@ public final class MessageWarehouse {
 	public void writeFindingTypes(FindingTypes types, Writer out) {
 		try {
 			marshaller.marshal(types, out);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.SEVERE, "Error marshalling parser output to file "
 					+ e);
 		}
@@ -274,7 +259,7 @@ public final class MessageWarehouse {
 	public ToolOutput fetchToolOutput(String src) {
 		try {
 			return fetchToolOutput(new FileInputStream(src));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -282,7 +267,7 @@ public final class MessageWarehouse {
 	public ToolOutput fetchToolOutput(InputStream in) {
 		try {
 			return (ToolOutput) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
 		}
 
@@ -292,7 +277,7 @@ public final class MessageWarehouse {
 	public ToolOutput fetchToolOutput(Reader in) {
 		try {
 			return (ToolOutput) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
 		}
 
@@ -309,28 +294,28 @@ public final class MessageWarehouse {
 	public Scan fetchScan(String src) {
 		try {
 			return fetchScan(new FileInputStream(src));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	public Scan fetchScan(File src, boolean compressed) {
 		try {
-			InputStream is = new FileInputStream(src);
-			Scan s = fetchScan(compressed ? new GZIPInputStream(is) : is);
+			final InputStream is = new FileInputStream(src);
+			final Scan s = fetchScan(compressed ? new GZIPInputStream(is) : is);
 			is.close();
 			return s;
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException(src+" is not a valid document", e);
-		} catch (IOException e) {
-			throw new IllegalStateException(src+" is not a valid document", e);
+		} catch (final FileNotFoundException e) {
+			throw new IllegalStateException(src + " is not a valid document", e);
+		} catch (final IOException e) {
+			throw new IllegalStateException(src + " is not a valid document", e);
 		}
 	}
-	
+
 	public Scan fetchScan(InputStream in) {
 		try {
 			return (Scan) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
 		}
 
@@ -340,38 +325,8 @@ public final class MessageWarehouse {
 	public Scan fetchScan(Reader in) {
 		try {
 			return (Scan) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch tool output.", e);
-		}
-
-		return null;
-	}
-
-	public Settings fetchSettings(String src) {
-		try {
-			return (Settings) fetchSettings(new FileInputStream(src));
-		} catch (FileNotFoundException e) {
-			log.log(Level.WARNING, "Could not fetch settings output", e);
-		}
-
-		return null;
-	}
-
-	public Settings fetchSettings(InputStream in) {
-		try {
-			return (Settings) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fetch settings output", e);
-		}
-
-		return null;
-	}
-
-	public Settings fetchSettings(Reader reader) {
-		try {
-			return (Settings) unmarshaller.unmarshal(reader);
-		} catch (JAXBException e) {
-			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 
 		return null;
@@ -380,7 +335,7 @@ public final class MessageWarehouse {
 	public FindingTypes fetchFindingTypes(InputStream in) {
 		try {
 			return (FindingTypes) unmarshaller.unmarshal(in);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 
@@ -390,7 +345,7 @@ public final class MessageWarehouse {
 	public FindingTypes fetchFindingTypes(Reader reader) {
 		try {
 			return (FindingTypes) unmarshaller.unmarshal(reader);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			log.log(Level.WARNING, "Could not fetch settings output", e);
 		}
 
@@ -405,10 +360,10 @@ public final class MessageWarehouse {
 			}
 
 			// set up a parser
-			XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			XMLStreamReader xmlr;
 
-			FileInputStream stream = new FileInputStream(runDocument);
+			final FileInputStream stream = new FileInputStream(runDocument);
 
 			try {
 				if (runDocument.getName().endsWith(".gz")) {
@@ -445,7 +400,7 @@ public final class MessageWarehouse {
 					} else {
 						work(monitor);
 					}
-				} catch (JAXBException e) {
+				} catch (final JAXBException e) {
 					/*
 					 * Throwable linked = e.getLinkedException(); while (linked
 					 * instanceof JAXBException) { JAXBException e2 =
@@ -461,12 +416,12 @@ public final class MessageWarehouse {
 			} finally {
 				stream.close();
 			}
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name "
 					+ runDocument.getName() + " does not exist.", e);
-		} catch (XMLStreamException e) {
+		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.severe("Error when trying to read compressed file " + e);
 		}
 
@@ -479,9 +434,9 @@ public final class MessageWarehouse {
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
 			// set up a parser
-			XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			XMLStreamReader xmlr;
-			InputStream stream = new FileInputStream(runDocument);
+			final InputStream stream = new FileInputStream(runDocument);
 
 			try {
 				if (runDocument.getName().endsWith(".gz")) {
@@ -515,7 +470,7 @@ public final class MessageWarehouse {
 						xmlr.nextTag(); // move to classMetric
 						// Unmarshal classMetric
 
-						MetricBuilder mBuilder = generator.metric();
+						final MetricBuilder mBuilder = generator.metric();
 
 						while ((xmlr.getEventType() == START_ELEMENT)
 								&& xmlr.getLocalName().equals("classMetric")) {
@@ -547,7 +502,7 @@ public final class MessageWarehouse {
 					xmlr.nextTag();
 
 					// Unmarshal artifacts
-					ArtifactBuilder aBuilder = generator.artifact();
+					final ArtifactBuilder aBuilder = generator.artifact();
 
 					while ((xmlr.getEventType() == START_ELEMENT)
 							&& xmlr.getLocalName().equals("artifact")) {
@@ -578,7 +533,7 @@ public final class MessageWarehouse {
 					xmlr.nextTag();
 
 					// Unmarshal errors
-					ErrorBuilder eBuilder = generator.error();
+					final ErrorBuilder eBuilder = generator.error();
 
 					while ((xmlr.getEventType() == START_ELEMENT)
 							&& xmlr.getLocalName().equals("errors")) {
@@ -610,7 +565,7 @@ public final class MessageWarehouse {
 					if (monitor != null) {
 						monitor.subTask("Generating findings");
 					}
-				} catch (JAXBException e) {
+				} catch (final JAXBException e) {
 					throw new IllegalArgumentException("File with name"
 							+ runDocument.getName()
 							+ " is not a valid document", e);
@@ -620,12 +575,12 @@ public final class MessageWarehouse {
 			} finally {
 				stream.close();
 			}
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name"
 					+ runDocument.getName() + " does not exist.", e);
-		} catch (XMLStreamException e) {
+		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.severe("Error when trying to read compressed file " + e);
 		}
 	}
@@ -634,7 +589,7 @@ public final class MessageWarehouse {
 		generator.uid(scan.getUid());
 		readConfig(scan.getConfig(), generator);
 
-		ArtifactGenerator aGen = generator.build();
+		final ArtifactGenerator aGen = generator.build();
 		readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
 		readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
 		readErrors(scan.getToolOutput().getErrors().getError(), aGen);
@@ -645,9 +600,9 @@ public final class MessageWarehouse {
 	private static void readArtifacts(Collection<Artifact> artifacts,
 			ArtifactGenerator generator) {
 		if (artifacts != null) {
-			ArtifactBuilder aBuilder = generator.artifact();
+			final ArtifactBuilder aBuilder = generator.artifact();
 
-			for (Artifact a : artifacts) {
+			for (final Artifact a : artifacts) {
 				readArtifact(a, aBuilder);
 			}
 		}
@@ -656,9 +611,9 @@ public final class MessageWarehouse {
 	private static void readErrors(Collection<Error> errors,
 			ArtifactGenerator generator) {
 		if (errors != null) {
-			ErrorBuilder eBuilder = generator.error();
+			final ErrorBuilder eBuilder = generator.error();
 
-			for (Error e : errors) {
+			for (final Error e : errors) {
 				readError(e, eBuilder);
 			}
 		}
@@ -667,9 +622,9 @@ public final class MessageWarehouse {
 	private static void readMetrics(Collection<ClassMetric> metrics,
 			ArtifactGenerator generator) {
 		if (metrics != null) {
-			MetricBuilder mBuilder = generator.metric();
+			final MetricBuilder mBuilder = generator.metric();
 
-			for (ClassMetric m : metrics) {
+			for (final ClassMetric m : metrics) {
 				readClassMetric(m, mBuilder);
 			}
 		}
@@ -692,10 +647,11 @@ public final class MessageWarehouse {
 				.getMnemonic());
 		readPrimarySource(builder, artifact.getPrimarySourceLocation());
 
-		Collection<SourceLocation> sources = artifact.getAdditionalSources();
+		final Collection<SourceLocation> sources = artifact
+				.getAdditionalSources();
 
 		if (sources != null) {
-			for (SourceLocation sl : sources) {
+			for (final SourceLocation sl : sources) {
 				readSource(builder, sl);
 			}
 		}

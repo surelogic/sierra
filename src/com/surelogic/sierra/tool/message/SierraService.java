@@ -38,21 +38,4 @@ public interface SierraService extends Service {
 	SyncResponse synchronizeProject(SyncRequest request)
 			throws ServerMismatchException;
 
-	/**
-	 * Return the settings associated with a given timeseries.
-	 * 
-	 * @param request
-	 * @return the settings associated with a given timeseries.
-	 */
-	SettingsReply getSettings(SettingsRequest request)
-			throws ServerMismatchException;
-
-	/**
-	 * 
-	 * @param request
-	 * @return the global settings associated with this server.
-	 */
-	GlobalSettings getGlobalSettings(GlobalSettingsRequest request);
-
-	void writeGlobalSettings(GlobalSettings settings);
 }
