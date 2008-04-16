@@ -13,12 +13,12 @@ import java.util.logging.Logger;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
-import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
@@ -63,13 +63,13 @@ public final class ScanDocumentUtility {
 		}
 		Throwable exc = null;
 		try {
-			Connection conn = Data.transactionConnection();
+			final Connection conn = Data.transactionConnection();
 			try {
 				final ScanManager sMan = ScanManager.getInstance(conn);
 				final Set<Long> findingIds = new HashSet<Long>();
-				final FindingFilter filter = FindingTypeManager.getInstance(
-						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getGlobalSettings());
+				final FindingFilter filter = SettingQueries
+						.scanFilterForProject(projectName).perform(
+								new ConnectionQuery(conn));
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
 				final String uid = MessageWarehouse.getInstance()
@@ -82,22 +82,22 @@ public final class ScanDocumentUtility {
 					fm.updateScanFindings(projectName, uid, compilations,
 							filter, findingIds, monitor);
 					conn.commit();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					try {
 						conn.rollback();
 						sMan.deleteScan(uid, null);
 						conn.commit();
-					} catch (SQLException e1) {
+					} catch (final SQLException e1) {
 						// Do nothing, we already have an exception
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				exc = e;
 				conn.rollback();
 			} finally {
 				try {
 					conn.close();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					if (exc == null) {
 						exc = e;
 					}
@@ -106,7 +106,7 @@ public final class ScanDocumentUtility {
 			if (exc != null) {
 				throw new ScanPersistenceException(exc);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			// Could not get a valid connection
 			throw new IllegalStateException(e);
 		}
@@ -144,9 +144,9 @@ public final class ScanDocumentUtility {
 					sMan.deleteOldestScan(projectName, monitor);
 				}
 				conn.commit();
-				final FindingFilter filter = FindingTypeManager.getInstance(
-						conn).getMessageFilter(
-						SettingsManager.getInstance(conn).getGlobalSettings());
+				final FindingFilter filter = SettingQueries
+						.scanFilterForProject(projectName).perform(
+								new ConnectionQuery(conn));
 				final ScanGenerator gen = sMan.getScanGenerator(filter);
 				final String uid = MessageWarehouse.getInstance()
 						.parseScanDocument(scanDocument, gen, monitor);
@@ -162,13 +162,13 @@ public final class ScanDocumentUtility {
 				fm.generateOverview(projectName, uid, monitor);
 				sMan.finalizeScan(uid);
 				conn.commit();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				exc = e;
 				conn.rollback();
 			} finally {
 				try {
 					conn.close();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					if (exc == null) {
 						exc = e;
 					}
@@ -177,7 +177,7 @@ public final class ScanDocumentUtility {
 			if (exc != null) {
 				throw new ScanPersistenceException(exc);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			// Could not get a valid connection
 			throw new IllegalStateException(e);
 		}

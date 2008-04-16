@@ -49,8 +49,8 @@ import com.surelogic.sierra.client.eclipse.actions.*;
 import com.surelogic.sierra.client.eclipse.dialogs.*;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
-import com.surelogic.sierra.client.eclipse.jobs.GetGlobalResultFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.SendGlobalResultFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.GetScanFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
@@ -405,7 +405,7 @@ implements ISierraServerObserver, IProjectsObserver {
 							 * the server.
 							 */
 							final Job job = 
-							  new SendGlobalResultFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
+							  new SendScanFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
 							job.schedule();
 						}
 					}
@@ -430,7 +430,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					 * Yes was selected, so get the result filters from the
 					 * server.
 					 */
-					final Job job = new GetGlobalResultFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
+					final Job job = new GetScanFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
 					job.schedule();
 				}
 			}

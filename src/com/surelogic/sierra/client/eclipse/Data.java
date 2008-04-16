@@ -112,7 +112,7 @@ public final class Data {
 	 */
 	public static <T> T withReadOnly(DBQuery<T> action) {
 		try {
-			return with(readOnlyConnection(), action);
+			return with(readOnlyConnection(), action, true);
 		} catch (final SQLException e) {
 			throw new TransactionException("Could not establish connection.", e);
 		}
@@ -129,7 +129,7 @@ public final class Data {
 	 */
 	public static <T> T withReadOnly(DBTransaction<T> action) {
 		try {
-			return with(readOnlyConnection(), action);
+			return with(readOnlyConnection(), action, true);
 		} catch (final SQLException e) {
 			throw new TransactionException("Could not establish connection.", e);
 		}
@@ -146,7 +146,7 @@ public final class Data {
 	 */
 	public static <T> T withTransaction(DBQuery<T> action) {
 		try {
-			return with(transactionConnection(), action);
+			return with(transactionConnection(), action, false);
 		} catch (final SQLException e) {
 			throw new TransactionException("Could not establish connection.", e);
 		}
@@ -163,18 +163,30 @@ public final class Data {
 	 */
 	public static <T> T withTransaction(DBTransaction<T> action) {
 		try {
-			return with(transactionConnection(), action);
+			return with(transactionConnection(), action, false);
 		} catch (final SQLException e) {
 			throw new TransactionException("Could not establish connection.", e);
 		}
 	}
 
-	private static <T> T with(Connection conn, DBTransaction<T> t) {
+	private static <T> T with(Connection conn, DBTransaction<T> t,
+			boolean readOnly) {
 		Exception exc = null;
+		T val = null;
 		try {
-			return t.perform(conn);
+			val = t.perform(conn);
+			if (!readOnly) {
+				conn.commit();
+			}
 		} catch (final Exception exc0) {
 			exc = exc0;
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (final SQLException e) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
 		} finally {
 			try {
 				conn.close();
@@ -186,15 +198,29 @@ public final class Data {
 				}
 			}
 		}
-		throw new TransactionException(exc);
+		if (exc != null) {
+			throw new TransactionException(exc);
+		}
+		return val;
 	}
 
-	private static <T> T with(Connection conn, DBQuery<T> t) {
-		RuntimeException exc = null;
+	private static <T> T with(Connection conn, DBQuery<T> t, boolean readOnly) {
+		Exception exc = null;
+		T val = null;
 		try {
-			return t.perform(new ConnectionQuery(conn));
-		} catch (final RuntimeException exc0) {
+			val = t.perform(new ConnectionQuery(conn));
+			if (!readOnly) {
+				conn.commit();
+			}
+		} catch (final Exception exc0) {
 			exc = exc0;
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (final SQLException e) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
 		} finally {
 			try {
 				conn.close();
@@ -206,7 +232,10 @@ public final class Data {
 				}
 			}
 		}
-		throw exc;
+		if (exc != null) {
+			throw new TransactionException(exc);
+		}
+		return val;
 	}
 
 	private static String getConnectionURL() {

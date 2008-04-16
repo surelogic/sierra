@@ -49,7 +49,12 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
+import com.surelogic.sierra.jdbc.DBQueryEmpty;
+import com.surelogic.sierra.jdbc.Query;
+import com.surelogic.sierra.jdbc.Row;
+import com.surelogic.sierra.jdbc.RowHandler;
+import com.surelogic.sierra.jdbc.server.TransactionException;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 
 public class ScanFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -90,15 +95,15 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performDefaults() {
-		final Set<String> sureLogicDefaults = SettingsManager
-				.getSureLogicDefaultFilterSet();
-		for (TreeItem category : f_findingTypes.getItems()) {
-			for (TreeItem item : category.getItems()) {
+		final Set<String> filter = SettingQueries
+				.getSureLogicDefaultScanFilters();
+		for (final TreeItem category : f_findingTypes.getItems()) {
+			for (final TreeItem item : category.getItems()) {
 				/*
 				 * All of these should have the UUID string as data.
 				 */
-				String uuid = (String) item.getData();
-				item.setChecked(!sureLogicDefaults.contains(uuid));
+				final String uuid = (String) item.getData();
+				item.setChecked(!filter.contains(uuid));
 			}
 		}
 		fixCategoryChecked();
@@ -112,15 +117,18 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	}
 
 	private void applyChanges() {
-		final List<String> filterUUIDList = new ArrayList<String>();
-		for (TreeItem category : f_findingTypes.getItems()) {
-			for (TreeItem item : category.getItems()) {
-				if (!item.getChecked()) {
-					/*
-					 * All of these should have the UUID string as data.
-					 */
-					String uuid = (String) item.getData();
-					filterUUIDList.add(uuid);
+		final List<String> filterUUIDExcludes = new ArrayList<String>();
+		final List<String> filterUUIDIncludes = new ArrayList<String>();
+		for (final TreeItem category : f_findingTypes.getItems()) {
+			for (final TreeItem item : category.getItems()) {
+				/*
+				 * All of these should have the UUID string as data.
+				 */
+				final String uuid = (String) item.getData();
+				if (item.getChecked()) {
+					filterUUIDIncludes.add(uuid);
+				} else {
+					filterUUIDExcludes.add(uuid);
 				}
 			}
 		}
@@ -132,19 +140,19 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			 * 
 			 * This will only occur if the logger is set to a level of FINEST.
 			 */
-			File output = new File(System.getProperty("user.home")
+			final File output = new File(System.getProperty("user.home")
 					+ System.getProperty("file.separator")
 					+ "SierraFilterSet.txt");
 			try {
-				PrintWriter p = new PrintWriter(output);
+				final PrintWriter p = new PrintWriter(output);
 				try {
-					for (String uuid : filterUUIDList) {
+					for (final String uuid : filterUUIDExcludes) {
 						p.println(uuid);
 					}
 				} finally {
 					p.close();
 				}
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				SLLogger.getLogger().log(Level.SEVERE,
 						"IO failure writing " + output + " filter set file", e);
 			}
@@ -154,7 +162,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Updating Global Sierra Settings",
 						IProgressMonitor.UNKNOWN);
-				return updateSettings(filterUUIDList);
+				return updateSettings(filterUUIDIncludes);
 			}
 		};
 		job.schedule();
@@ -184,7 +192,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				/*
 				 * Selection of an item (not the same as checking it).
 				 */
-				TreeItem[] items = f_findingTypes.getSelection();
+				final TreeItem[] items = f_findingTypes.getSelection();
 				if (items.length > 0) {
 					final Object rawData = items[0].getData();
 					if (rawData instanceof String) {
@@ -215,17 +223,19 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				/*
 				 * Check state of an item.
 				 */
-				if (event.detail == SWT.CHECK && event.item instanceof TreeItem) {
-					TreeItem item = (TreeItem) event.item;
+				if ((event.detail == SWT.CHECK)
+						&& (event.item instanceof TreeItem)) {
+					final TreeItem item = (TreeItem) event.item;
 					/*
 					 * Only categories have sub-items so pass along the change.
 					 */
-					for (TreeItem sub : item.getItems()) {
+					for (final TreeItem sub : item.getItems()) {
 						sub.setChecked(item.getChecked());
 					}
 				}
-				if (clearHTMLDescription)
+				if (clearHTMLDescription) {
 					clearHTMLDescription();
+				}
 				fixCategoryChecked();
 			}
 		});
@@ -247,7 +257,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 
 		try {
 			f_detailsText = new Browser(description, SWT.NONE);
-		} catch (SWTError e) {
+		} catch (final SWTError e) {
 			final int errNo = 26;
 			final String msg = I18N.err(errNo);
 			final IStatus reason = SLStatus.createErrorStatus(errNo, msg, e);
@@ -276,6 +286,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 
 	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
 
+	// List of included finding types
 	private final List<String> f_filterList = new ArrayList<String>();
 
 	/**
@@ -284,32 +295,28 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private IStatus queryTableContents() {
 		f_artifactList.clear();
 		try {
-			final Connection c = Data.readOnlyConnection();
-			try {
-				final Statement st = c.createStatement();
-				try {
-					final ResultSet rs = st.executeQuery(QB.get(2));
-					try {
-						while (rs.next()) {
-							FindingTypeRow row = new FindingTypeRow();
-							row.categoryName = rs.getString(1);
-							row.findingTypeName = rs.getString(2);
-							row.findingTypeDescription = rs.getString(3);
-							row.findingTypeUUID = rs.getString(4);
-							f_artifactList.add(row);
-						}
-						f_filterList.addAll(SettingsManager.getInstance(c)
-								.getGlobalSettingsUUID());
-					} finally {
-						rs.close();
-					}
-				} finally {
-					st.close();
+			Data.withReadOnly(new DBQueryEmpty() {
+				@Override
+				public void doPerform(Query q) {
+					f_artifactList.addAll(q.statement("query.00002",
+							new RowHandler<FindingTypeRow>() {
+								public FindingTypeRow handle(Row r) {
+									final FindingTypeRow row = new FindingTypeRow();
+									row.categoryName = r.nextString();
+									row.findingTypeName = r.nextString();
+									row.findingTypeDescription = r.nextString();
+									row.findingTypeUUID = r.nextString();
+									return row;
+								}
+							}).call());
+
+					f_filterList.addAll(SettingQueries.scanFilterForUid(
+							SettingQueries.GLOBAL_UUID).perform(q)
+							.getIncludedFindingTypes());
+
 				}
-			} finally {
-				c.close();
-			}
-		} catch (SQLException e) {
+			});
+		} catch (final TransactionException e) {
 			final int errNo = 54;
 			final String msg = I18N.err(errNo);
 			return SLStatus.createErrorStatus(errNo, msg, e);
@@ -340,7 +347,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 							findingTypeUUID));
 					try {
 						while (ars.next()) {
-							ArtifactTypeRow row = new ArtifactTypeRow();
+							final ArtifactTypeRow row = new ArtifactTypeRow();
 							row.toolName = ars.getString(1);
 							row.mnemonic = ars.getString(2);
 							row.link = ars.getString(3);
@@ -375,7 +382,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			} finally {
 				c.close();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			final int errNo = 55;
 			final String msg = I18N.err(errNo);
 			return SLStatus.createErrorStatus(errNo, msg, e);
@@ -390,11 +397,12 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		/**
 		 * Fix to bug 1355, we should have checked if the panel is still up.
 		 */
-		if (f_findingTypes.isDisposed())
+		if (f_findingTypes.isDisposed()) {
 			return;
+		}
 		String currentCategoryName = null;
 		TreeItem currentCategoryItem = null;
-		for (FindingTypeRow row : f_artifactList) {
+		for (final FindingTypeRow row : f_artifactList) {
 			if (!row.categoryName.equals(currentCategoryName)) {
 				currentCategoryItem = new TreeItem(f_findingTypes, SWT.NONE);
 				currentCategoryName = row.categoryName;
@@ -404,7 +412,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			item.setText(0, row.findingTypeName);
 			item.setText(1, row.findingTypeDescription);
 			item.setData(row.findingTypeUUID);
-			item.setChecked(!f_filterList.contains(row.findingTypeUUID));
+			item.setChecked(f_filterList.contains(row.findingTypeUUID));
 		}
 		fixCategoryChecked();
 		getShell().layout();
@@ -414,10 +422,10 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 * Must be called from the UI thread.
 	 */
 	private void fixCategoryChecked() {
-		for (TreeItem category : f_findingTypes.getItems()) {
+		for (final TreeItem category : f_findingTypes.getItems()) {
 			boolean noneSelected = true;
 			boolean allSelected = true;
-			for (TreeItem item : category.getItems()) {
+			for (final TreeItem item : category.getItems()) {
 				if (item.getChecked()) {
 					noneSelected = false;
 				} else {
@@ -446,11 +454,11 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 */
 	private void setHTMLDescription(final String description,
 			List<ArtifactTypeRow> artifactList) {
-		StringBuffer b = new StringBuffer();
+		final StringBuffer b = new StringBuffer();
 		HTMLPrinter.insertPageProlog(b, 0, fBackgroundColorRGB,
 				StyleSheetHelper.getInstance().getStyleSheet());
 		b.append(description);
-		if (artifactList != null && !artifactList.isEmpty()) {
+		if ((artifactList != null) && !artifactList.isEmpty()) {
 			b.append("<br><br>");
 			b.append("<center>Reporting Tool Information<table border=1>");
 			b.append("<tr>");
@@ -458,12 +466,12 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			b.append("<th>Category</th>");
 			b.append("<th>Rule</th>");
 			b.append("</tr>");
-			for (ArtifactTypeRow row : artifactList) {
+			for (final ArtifactTypeRow row : artifactList) {
 				b.append("<tr>");
 				b.append("<td>").append(row.toolName).append("</td>");
 				b.append("<td>").append(row.categoryName).append("</td>");
 				b.append("<td>");
-				if (row.link != null && !"".equals(row.link.trim())) {
+				if ((row.link != null) && !"".equals(row.link.trim())) {
 					b.append("<A HREF=\"").append(row.link).append("\">");
 					b.append(row.mnemonic);
 					b.append("</A>");
@@ -489,18 +497,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 */
 	private IStatus updateSettings(List<String> filterUUIDList) {
 		try {
-			final Connection c = Data.transactionConnection();
-			try {
-				SettingsManager.getInstance(c).writeGlobalSettingsUUID(
-						filterUUIDList);
-				c.commit();
-			} catch (SQLException e) {
-				c.rollback();
-				throw e;
-			} finally {
-				c.close();
-			}
-		} catch (SQLException e) {
+			Data.withTransaction(SettingQueries
+					.updateGlobalFilterSet(filterUUIDList));
+		} catch (final TransactionException e) {
 			final int errNo = 56;
 			final String msg = I18N.err(errNo);
 			return SLStatus.createErrorStatus(errNo, msg, e);

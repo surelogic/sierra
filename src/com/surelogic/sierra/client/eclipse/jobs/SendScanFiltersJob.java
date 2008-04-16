@@ -20,18 +20,15 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.jdbc.settings.SettingsManager;
-import com.surelogic.sierra.tool.message.GlobalSettings;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
-import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
-public final class SendGlobalResultFiltersJob extends DatabaseJob {
-  private final ServerFailureReport f_method;
+public final class SendScanFiltersJob extends DatabaseJob {
+	private final ServerFailureReport f_method;
 	private final SierraServer f_server;
 
-	public SendGlobalResultFiltersJob(ServerFailureReport method, SierraServer server) {
+	public SendScanFiltersJob(ServerFailureReport method,
+			SierraServer server) {
 		super("Sending scan filter settings to " + server.getLabel());
 		f_server = server;
 		f_method = method;
@@ -39,7 +36,8 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
+		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+				monitor);
 		final String msg = "Sending scan filter settings to the Sierra team server '"
 				+ f_server + "'";
 		slMonitor.beginTask(msg, 5);
@@ -48,7 +46,7 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			final Connection conn = Data.readOnlyConnection();
 			try {
 				status = sendResultFilters(conn, slMonitor);
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				final int errNo = 49;
 				final String errMsg = I18N.err(errNo, f_server);
 				status = SLStatus.createWarningStatus(errNo, errMsg, e);
@@ -56,7 +54,7 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 			} finally {
 				conn.close();
 			}
-		} catch (SQLException e1) {
+		} catch (final SQLException e1) {
 			if (status == null) {
 				final int errNo = 49;
 				final String errMsg = I18N.err(errNo, f_server);
@@ -72,20 +70,22 @@ public final class SendGlobalResultFiltersJob extends DatabaseJob {
 	private IStatus sendResultFilters(Connection conn,
 			SLProgressMonitor slMonitor) throws SQLException {
 		try {
-			final GlobalSettings settings = new GlobalSettings();
-			settings.getFilter().addAll(
-					SettingsManager.getInstance(conn).getGlobalSettings());
-			final SierraService service = SierraServiceClient.create(f_server
-					.getServer());
-			service.writeGlobalSettings(settings);
+			// TODO
+			// final GlobalSettings settings = new GlobalSettings();
+			// settings.getFilter().addAll(
+			// SettingsManager.getInstance(conn).getGlobalSettings());
+			// final SierraService service = SierraServiceClient.create(f_server
+			// .getServer());
+			// service.writeGlobalSettings(settings);
 			f_server.markAsConnected();
-		} catch (SierraServiceClientException e) {
+		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
-				troubleshoot = 
-					new TroubleshootWrongAuthentication(f_method, f_server, null);
+				troubleshoot = new TroubleshootWrongAuthentication(f_method,
+						f_server, null);
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server, null);
+				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server,
+						null);
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
