@@ -151,6 +151,9 @@ public class Categories {
 	 */
 	public CategoryDO createCategory(String name, String description,
 			long revision) {
+		if ((name == null) || (name.length() == 0) || (name.length() > 2000)) {
+			throw new IllegalArgumentException(name + " is not a valid name");
+		}
 		final FilterSetRecord filterSetRec = q.record(FilterSetRecord.class);
 		filterSetRec.setName(name);
 		filterSetRec.setInfo(description);

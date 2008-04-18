@@ -1,7 +1,6 @@
 package com.surelogic.sierra.jdbc.settings;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -65,10 +64,13 @@ public class ScanFilters {
 	 * 
 	 * @param name
 	 * @param revision
-	 * @return the uid of this filter set
-	 * @throws SQLException
+	 * @return the newly created scan filter
 	 */
 	public ScanFilterDO createScanFilter(String name, long revision) {
+		if ((name == null) || (name.length() == 0) || (name.length() > 255)) {
+			throw new IllegalArgumentException(name
+					+ " is not a valid scan filter name.");
+		}
 		final ScanFilterRecord settingsRec = q.record(ScanFilterRecord.class);
 		settingsRec.setName(name);
 		settingsRec.setRevision(revision);
