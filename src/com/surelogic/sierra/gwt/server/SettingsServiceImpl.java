@@ -22,6 +22,8 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.Query;
+import com.surelogic.sierra.jdbc.ResultHandler;
+import com.surelogic.sierra.jdbc.Row;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -46,6 +48,59 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	 * 
 	 */
 	private static final long serialVersionUID = 6781260512153199775L;
+
+	public Map<String, String> searchCategories(final String query,
+			final int limit) {
+		return ConnectionFactory
+				.withUserReadOnly(new UserQuery<Map<String, String>>() {
+					public Map<String, String> perform(Query q, Server s, User u) {
+						return q.prepared("FilterSets.query",
+								new QueryHandler(limit)).call(
+								query.replace("*", "%").concat("%"));
+					}
+				});
+	}
+
+	public Map<String, String> searchFindingTypes(final String query,
+			final int limit) {
+		return ConnectionFactory
+				.withUserReadOnly(new UserQuery<Map<String, String>>() {
+					public Map<String, String> perform(Query q, Server s, User u) {
+						return q.prepared("FindingTypes.query",
+								new QueryHandler(limit)).call(
+								query.replace('*', '%').concat("%"));
+					}
+				});
+	}
+
+	/**
+	 * Handles a result set with two columns. The first is the key, and the
+	 * second is the value.
+	 * 
+	 * @author nathan
+	 * 
+	 */
+	private static class QueryHandler implements
+			ResultHandler<Map<String, String>> {
+		private final int limit;
+
+		QueryHandler(int limit) {
+			this.limit = limit;
+		}
+
+		public Map<String, String> handle(com.surelogic.sierra.jdbc.Result r) {
+			final Map<String, String> results = new HashMap<String, String>();
+			int count = 0;
+			for (final Row row : r) {
+				if (count++ < limit) {
+					results.put(row.nextString(), row.nextString());
+				} else {
+					return results;
+				}
+			}
+			return results;
+		}
+	}
 
 	public List<Category> getCategories() {
 		return ConnectionFactory
@@ -196,42 +251,61 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
 						for (final ScanFilterDO fDO : new ScanFilters(q)
 								.listScanFilters()) {
-							final ScanFilter f = new ScanFilter();
-							f.setName(fDO.getName());
-							f.setRevision(fDO.getRevision());
-							f.setUid(fDO.getUid());
-							final Set<ScanFilterEntry> filters = f
-									.getFilterEntries();
-							for (final CategoryFilterDO c : fDO.getCategories()) {
-								final ScanFilterEntry e = new ScanFilterEntry();
-								e.setCategory(true);
-								e.setImportance(view(c.getImportance()));
-								final CategoryDO catDO = fs.getCategory(c
-										.getUid());
-								e.setName(catDO.getName());
-								e.setShortMessage(catDO.getInfo());
-								e.setUid(c.getUid());
-								filters.add(e);
-							}
-							for (final TypeFilterDO t : fDO.getFilterTypes()) {
-								final ScanFilterEntry e = new ScanFilterEntry();
-								e.setCategory(true);
-								e.setImportance(view(t.getImportance()));
-								final FindingTypeDO tDO = ft.getFindingType(t
-										.getFindingType());
-								e.setName(tDO.getName());
-								e.setShortMessage(tDO.getShortMessage());
-								e.setUid(tDO.getUid());
-								filters.add(e);
-							}
-							list.add(f);
+							list.add(getFilter(fDO, ft, fs));
 						}
 						return list;
 					}
 				});
 	}
 
+	@SuppressWarnings("unchecked")
+	protected ScanFilter getFilter(ScanFilterDO fDO, FindingTypes ft,
+			Categories cs) {
+		final ScanFilter f = new ScanFilter();
+		f.setName(fDO.getName());
+		f.setRevision(fDO.getRevision());
+		f.setUid(fDO.getUid());
+		Set<ScanFilterEntry> filters = f.getCategories();
+		for (final CategoryFilterDO c : fDO.getCategories()) {
+			final ScanFilterEntry e = new ScanFilterEntry();
+			e.setCategory(true);
+			e.setImportance(view(c.getImportance()));
+			final CategoryDO catDO = cs.getCategory(c.getUid());
+			e.setName(catDO.getName());
+			e.setShortMessage(catDO.getInfo());
+			e.setUid(c.getUid());
+			filters.add(e);
+		}
+		filters = f.getTypes();
+		for (final TypeFilterDO t : fDO.getFilterTypes()) {
+			final ScanFilterEntry e = new ScanFilterEntry();
+			e.setCategory(false);
+			e.setImportance(view(t.getImportance()));
+			final FindingTypeDO tDO = ft.getFindingType(t.getFindingType());
+			e.setName(tDO.getName());
+			e.setShortMessage(tDO.getShortMessage());
+			e.setUid(tDO.getUid());
+			filters.add(e);
+		}
+		return f;
+	}
+
+	public ScanFilter createScanFilter(final String name) {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<ScanFilter>() {
+					public ScanFilter perform(Query q, Server s, User u) {
+						final ScanFilters filters = new ScanFilters(q);
+						return getFilter(filters.createScanFilter(name, s
+								.nextRevision()), new FindingTypes(q),
+								new Categories(q));
+					}
+				});
+	}
+
 	private static ImportanceView view(Importance i) {
+		if (i == null) {
+			return null;
+		}
 		switch (i) {
 		case CRITICAL:
 			return ImportanceView.CRITICAL;
@@ -246,4 +320,5 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		}
 		throw new IllegalStateException();
 	}
+
 }
