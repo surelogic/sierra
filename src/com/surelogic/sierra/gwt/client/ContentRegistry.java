@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
+import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.RulesContent;
+import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {
@@ -23,6 +26,7 @@ public class ContentRegistry {
 		register("rules", RulesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
 		register("filterset", FilterSetContent.getInstance(), userHeader);
+		register("scanfilters", ScanFilterContent.getInstance(), userHeader);
 		register("findingtype", FindingTypeContent.getInstance(), userHeader);
 		final AdminHeader adminHeader = AdminHeader.getInstance();
 		register("settings", SettingsContent.getInstance(), adminHeader);

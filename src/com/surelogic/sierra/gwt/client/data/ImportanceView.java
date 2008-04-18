@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ListBox;
 
 /**
  * Typesafe Enumeration of importances
@@ -71,6 +72,15 @@ public final class ImportanceView implements Serializable {
 		}
 		throw new IllegalArgumentException("There is no ImportanceView: "
 				+ readString);
+	}
+
+	public static ListBox createChoice() {
+		final ListBox box = new ListBox();
+		box.addItem("None Specified");
+		for (int i = 0; i < VALUES.length; i++) {
+			box.addItem(VALUES[i].getName());
+		}
+		return box;
 	}
 
 }

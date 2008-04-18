@@ -19,7 +19,12 @@ public class ScanFilter implements Serializable {
 	/**
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
 	 */
-	private Set filterEntries;
+	private Set categories;
+	/**
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
+	 */
+	private Set types;
+
 	/**
 	 * @gwt.typeArgs <java.lang.String>
 	 */
@@ -61,14 +66,28 @@ public class ScanFilter implements Serializable {
 	}
 
 	/**
+	 * Return the categories defined in this scan filter
+	 * 
 	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
 	 * @return
 	 */
-	public Set getFilterEntries() {
-		if (filterEntries == null) {
-			filterEntries = new HashSet();
+	public Set getCategories() {
+		if (categories == null) {
+			categories = new HashSet();
 		}
-		return filterEntries;
+		return categories;
 	}
 
+	/**
+	 * Return the finding types referenced in this scan filter
+	 * 
+	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
+	 * @return
+	 */
+	public Set getTypes() {
+		if (types == null) {
+			types = new HashSet();
+		}
+		return types;
+	}
 }

@@ -1,8 +1,10 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.rules;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.ContentComposite;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;

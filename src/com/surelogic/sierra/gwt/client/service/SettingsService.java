@@ -1,13 +1,34 @@
 package com.surelogic.sierra.gwt.client.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface SettingsService extends RemoteService {
+	/**
+	 * Search for a list of finding types that match the query string
+	 * 
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * 
+	 * @param query
+	 * @return a map of key/name pairs
+	 */
+	Map searchFindingTypes(String query, int limit);
+
+	/**
+	 * Search for a list of categories that match the query string
+	 * 
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * 
+	 * @param query
+	 * @return a map of key/name pairs
+	 */
+	Map searchCategories(String query, int limit);
 
 	/**
 	 * 
@@ -44,6 +65,14 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	List getScanFilters();
+
+	/**
+	 * Create a new scan filter with the given name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	ScanFilter createScanFilter(String name);
 
 	/**
 	 * 

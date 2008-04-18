@@ -7,6 +7,10 @@ import com.surelogic.sierra.gwt.client.data.Category;
 
 public interface SettingsServiceAsync {
 
+	void searchFindingTypes(String query, int limit, AsyncCallback callback);
+
+	void searchCategories(String query, int limit, AsyncCallback callback);
+
 	void getCategories(AsyncCallback callback);
 
 	void createCategory(String name, List entries, List parents,
@@ -17,5 +21,7 @@ public interface SettingsServiceAsync {
 	void getScanFilters(AsyncCallback callback);
 
 	void getFindingTypeInfo(String uid, AsyncCallback callback);
+
+	void createScanFilter(String name, AsyncCallback callback);
 
 }

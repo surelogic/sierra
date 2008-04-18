@@ -5,7 +5,10 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
+import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.RulesContent;
+import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 
 public class UserHeader extends AuthenticatedHeader {
 	private static final UserHeader instance = new UserHeader();
@@ -36,6 +39,7 @@ public class UserHeader extends AuthenticatedHeader {
 		addTab("Welcome", OverviewContent.getInstance());
 		addTab("Rules", RulesContent.getInstance());
 		addTab("Filter Set", FilterSetContent.getInstance());
+		addTab("Scan Filters", ScanFilterContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());
 		addTab("Finding Type", FindingTypeContent.getInstance());
 	}
