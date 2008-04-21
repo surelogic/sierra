@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client.ui;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -72,6 +73,14 @@ public class SectionPanel extends Composite {
 
 	public void addAction(Widget w) {
 		actionPanel.add(w);
+		w.addStyleName("sl-Section-actionpanel-item");
+	}
+
+	public void addAction(String text, ClickListener clickListener) {
+		final Label textLabel = new Label(text);
+		textLabel.addStyleName("clickable");
+		textLabel.addClickListener(clickListener);
+		addAction(textLabel);
 	}
 
 	public void removeAction(Widget w) {

@@ -232,6 +232,8 @@ img {
 
 .rules-details-finding {
     font-size: small;
+    padding: 2px;
+    cursor: default;
 }
 
 .cell-text {
@@ -292,6 +294,10 @@ img {
     text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
+}
+
+.sl-Section-actionpanel-item {
+    padding-left: 6px;
 }
 
 .sl-Section-contentpanel {
@@ -483,8 +489,8 @@ img {
 /* TextArea styling */
 .gwt-TextArea {
 	width: 100%;
-	border: ridge 2px;
-	padding: 4px;
+	border: 1px solid #001166;
+	padding: 5px;
 	cursor: text;
 }
 
@@ -493,3 +499,14 @@ img {
 	padding: 6px;
 	cursor: default;
 }
+
+/* TextBox styling */
+.gwt-TextBox {
+    border: 1px solid #001166;
+}
+
+/* PasswordTextBox styling */
+.gwt-PasswordTextBox {
+	border: 1px solid #001166;
+}
+
