@@ -47,6 +47,13 @@ public class FilterEntry implements Serializable {
 		this.shortMessage = shortMessage;
 	}
 
+	public void copy(FilterEntry source) {
+		name = source.getName();
+		filtered = source.isFiltered();
+		uid = source.getUid();
+		shortMessage = source.getShortMessage();
+	}
+
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

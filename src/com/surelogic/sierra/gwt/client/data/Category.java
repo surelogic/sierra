@@ -124,6 +124,33 @@ public class Category implements Serializable {
 		return set;
 	}
 
+	public void copy(Category source) {
+		uuid = source.getUuid();
+		revision = source.getRevision();
+		name = source.getName();
+		info = source.getInfo();
+		if (source.getParents() != null) {
+			parents = new HashSet();
+			for (Iterator it = source.getParents().iterator(); it.hasNext();) {
+				Category parent = new Category();
+				parent.copy((Category) it.next());
+				parents.add(parent);
+			}
+		} else {
+			parents = null;
+		}
+		if (source.getEntries() != null) {
+			entries = new HashSet();
+			for (Iterator it = source.getEntries().iterator(); it.hasNext();) {
+				FilterEntry entry = new FilterEntry();
+				entry.copy((FilterEntry) it.next());
+				entries.add(entry);
+			}
+		} else {
+			entries = null;
+		}
+	}
+
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
