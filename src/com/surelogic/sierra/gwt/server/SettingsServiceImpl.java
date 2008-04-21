@@ -117,7 +117,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							set.setName(detail.getName());
 							String info = StringUtils.remove(detail.getInfo(),
 									'\t');
-							info = StringUtils.remove(info, '\n');
+							info = StringUtils.replaceChars(info, '\n', ' ');
 							set.setInfo(info);
 							final Set<Category> parents = new HashSet<Category>();
 							for (final String parent : detail.getParents()) {
