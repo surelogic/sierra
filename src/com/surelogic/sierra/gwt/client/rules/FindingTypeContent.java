@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public final class FindingTypeContent extends ContentComposite {
-
+	public static final String PARAM_FINDING = "finding";
 	private static final FindingTypeContent instance = new FindingTypeContent();
 
 	private final HTML name = new HTML();
@@ -24,11 +24,11 @@ public final class FindingTypeContent extends ContentComposite {
 	}
 
 	protected void onActivate(Context context) {
-		final String arg = context.getArgs();
-		if ((arg == null) || (arg.length() == 0)) {
+		final String findingType = context.getParameter(PARAM_FINDING);
+		if ((findingType == null) || (findingType.length() == 0)) {
 			setEmpty();
 		} else {
-			ServiceHelper.getSettingsService().getFindingTypeInfo(arg,
+			ServiceHelper.getSettingsService().getFindingTypeInfo(findingType,
 					new Callback() {
 
 						protected void onFailure(String message, Object result) {

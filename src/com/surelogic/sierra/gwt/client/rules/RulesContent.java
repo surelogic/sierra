@@ -27,6 +27,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
+	public static final String PARAM_CATEGORY = "category";
 	public static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
 	private final VerticalPanel searchPanel = new VerticalPanel();
@@ -55,6 +56,8 @@ public class RulesContent extends ContentComposite {
 
 		searchPanel.addStyleName(PRIMARY_STYLE + "-search-panel");
 		searchHeaderGrid.addStyleName(PRIMARY_STYLE + "-search-header");
+		searchHeaderGrid.getColumnFormatter().setWidth(0, "75%");
+		searchHeaderGrid.getColumnFormatter().setWidth(1, "25%");
 		searchText.setWidth("100%");
 		searchHeaderGrid.setWidget(0, 0, searchText);
 		final Label searchTitle = new Label("Search");
@@ -90,7 +93,7 @@ public class RulesContent extends ContentComposite {
 		});
 	}
 
-	protected void onActivate(Context context) {
+	protected void onActivate(final Context context) {
 		clearSearch();
 
 		final VerticalPanel waitPanel = new VerticalPanel();
@@ -112,7 +115,12 @@ public class RulesContent extends ContentComposite {
 				search("");
 				searchText.setFocus(true);
 				if (!categories.isEmpty()) {
-					selectCategory((Category) categories.get(0));
+					String categoryName = context.getParameter(PARAM_CATEGORY);
+					if (categoryName != null && !"".equals(categoryName)) {
+						selectCategory(categoryName);
+					} else {
+						selectCategory((Category) categories.get(0));
+					}
 				}
 			}
 		});
@@ -175,6 +183,17 @@ public class RulesContent extends ContentComposite {
 		findingEntry.addClickListener(new SearchResultListener(finding));
 		searchResultsData.put(finding, findingEntry);
 		searchResults.add(findingEntry);
+	}
+
+	private void selectCategory(String name) {
+		final String lowerName = name.toLowerCase();
+		for (Iterator it = categories.iterator(); it.hasNext();) {
+			final Category cat = (Category) it.next();
+			if (cat.getName().equalsIgnoreCase(lowerName)) {
+				selectCategory(cat);
+				return;
+			}
+		}
 	}
 
 	private void selectCategory(Category cat) {

@@ -12,6 +12,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class FindingContent extends ContentComposite {
+	public static final String PARAM_FINDING = "finding";
 
 	private static final FindingContent instance = new FindingContent();
 
@@ -30,21 +31,22 @@ public class FindingContent extends ContentComposite {
 	}
 
 	protected void onActivate(Context context) {
-		final String arg = context.getArgs();
-		if (arg == null || arg.length() == 0) {
+		final String findingType = context.getParameter(PARAM_FINDING);
+		if (findingType == null || findingType.length() == 0) {
 			setEmpty();
 		} else {
-			ServiceHelper.getFindingService().getFinding(arg, new Callback() {
+			ServiceHelper.getFindingService().getFinding(findingType,
+					new Callback() {
 
-				protected void onFailure(String message, Object result) {
-					setEmpty();
-				}
+						protected void onFailure(String message, Object result) {
+							setEmpty();
+						}
 
-				protected void onSuccess(String message, Object result) {
-					setFinding((FindingOverview) result);
-				}
+						protected void onSuccess(String message, Object result) {
+							setFinding((FindingOverview) result);
+						}
 
-			});
+					});
 		}
 	}
 

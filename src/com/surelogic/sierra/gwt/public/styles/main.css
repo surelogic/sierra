@@ -181,7 +181,6 @@ img {
 }
 
 .rules-search-header {
-    width: 100%;
     border-right: 1px outset;
     padding-bottom: 10px;
 }
@@ -225,8 +224,7 @@ img {
 
 .rules-details-panel {
 	width: 100%;
-	padding-left: 5px;
-	padding-top: 5px;
+	padding: 5px;
 	border-top: 1px inset;
 }
 
@@ -274,7 +272,6 @@ img {
 .sl-Section-titlepanel {
 	width: 100%;
 	background-color: #DDDDFF;
-	margin: 0px;
 	padding: 2px 4px 4px 2px;
 	border: 1px solid #666699;
 }
@@ -503,10 +500,12 @@ img {
 /* TextBox styling */
 .gwt-TextBox {
     border: 1px solid #001166;
+    padding: 2px;
 }
 
 /* PasswordTextBox styling */
 .gwt-PasswordTextBox {
 	border: 1px solid #001166;
+	padding: 2px;
 }
 

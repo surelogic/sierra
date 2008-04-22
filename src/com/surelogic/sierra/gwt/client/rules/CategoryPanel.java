@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -16,6 +17,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
 
@@ -43,10 +46,11 @@ public class CategoryPanel extends Composite {
 		final VerticalPanel catInfoContent = categorySection.getContentPanel();
 		categoryInfo.setWidth("100%");
 		categoryInfo.getColumnFormatter().setWidth(0, "15%");
-		nameEditText.setWidth("20em");
+		categoryInfo.getColumnFormatter().setWidth(1, "35%");
+		categoryInfo.getColumnFormatter().setWidth(2, "50%");
 		categoryInfo.setText(0, 0, "Description:");
 		categoryInfo.setWidget(1, 0, description);
-		categoryInfo.getFlexCellFormatter().setColSpan(1, 0, 2);
+		categoryInfo.getFlexCellFormatter().setColSpan(1, 0, 3);
 		description.setVisibleLines(5);
 		catInfoContent.add(categoryInfo);
 
@@ -128,9 +132,7 @@ public class CategoryPanel extends Composite {
 		}
 		description.setText(catInfo);
 
-		// TODO update UI based on mode, selectCategory must reset mode
-
-		// TODO update actions to have save/cancel
+		// TODO update finding types to allow enable/disable
 
 		categorySection.removeActions();
 
@@ -157,9 +159,32 @@ public class CategoryPanel extends Composite {
 	}
 
 	private void saveEdit() {
-		// TODO implement save
-		Window.alert("Save not implemented yet.");
+		final Category rpcCategory = new Category();
+		rpcCategory.copy(currentCategory);
 
+		rpcCategory.setName(nameEditText.getText());
+		rpcCategory.setInfo(description.getText());
+
+		// TODO copy filter settings from UI here
+
+		ServiceHelper.getSettingsService().updateCategory(rpcCategory,
+				new AsyncCallback() {
+
+					public void onFailure(Throwable caught) {
+						// TODO show the error and do not cancel editing
+					}
+
+					public void onSuccess(Object result) {
+						Status status = (Status) result;
+						if (status.isSuccess()) {
+							// TODO reload all categories and select the new
+							// category by name I guess
+							// will need access to RulesContent
+						} else {
+							// TODO show the error and do not cancel editing
+						}
+					}
+				});
 	}
 
 	private boolean isEditing() {
