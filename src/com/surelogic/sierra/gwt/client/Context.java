@@ -31,7 +31,7 @@ public class Context {
 			if (argString != null && argString.length() != 0) {
 				String[] argArray = argString.split("/");
 				for (int i = 0; i < argArray.length; i++) {
-					String[] argPair = argArray[i].split("\\+");
+					String[] argPair = argArray[i].split("\\=");
 					if (argPair.length < 2) {
 						parameters.put(argPair[0], null);
 					} else {
