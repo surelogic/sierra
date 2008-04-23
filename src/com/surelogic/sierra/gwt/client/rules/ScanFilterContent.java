@@ -34,12 +34,12 @@ public class ScanFilterContent extends ContentComposite {
 	private List filters;
 	private final ScanFilterComposite sf = new ScanFilterComposite();
 
-	protected void onActivate(Context context) {
-		refreshFilterList();
+	public static ScanFilterContent getInstance() {
+		return instance;
 	}
 
-	protected boolean onDeactivate() {
-		return true;
+	private ScanFilterContent() {
+		// no instances
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -94,6 +94,18 @@ public class ScanFilterContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 	}
 
+	protected void onActivate(Context context) {
+		refreshFilterList();
+	}
+
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
+	protected boolean onDeactivate() {
+		return true;
+	}
+
 	private void refreshFilterList() {
 		ServiceHelper.getSettingsService().getScanFilters(new AsyncCallback() {
 
@@ -117,10 +129,6 @@ public class ScanFilterContent extends ContentComposite {
 				}
 			}
 		});
-	}
-
-	public static ScanFilterContent getInstance() {
-		return instance;
 	}
 
 	private static class ScanFilterComposite extends Composite {

@@ -26,8 +26,25 @@ public class FindingContent extends ContentComposite {
 
 	private VerticalPanel artifacts = new VerticalPanel();
 
+	public static FindingContent getInstance() {
+		return instance;
+	}
+
 	private FindingContent() {
 		// Do nothing
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
+		final VerticalPanel panel = new VerticalPanel();
+		panel.add(UI.h3("Synopsis"));
+		panel.add(synopsis);
+		panel.add(UI.h3("Location"));
+		panel.add(location);
+		panel.add(UI.h3("Description"));
+		panel.add(description);
+		panel.add(UI.h3("Audits"));
+		panel.add(audits);
+		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
 	protected void onActivate(Context context) {
@@ -48,6 +65,14 @@ public class FindingContent extends ContentComposite {
 
 					});
 		}
+	}
+
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
+	protected boolean onDeactivate() {
+		return true;
 	}
 
 	private void clear() {
@@ -93,26 +118,5 @@ public class FindingContent extends ContentComposite {
 		synopsis.setHTML(s);
 		location.setHTML(f.getPackageName() + "." + f.getClassName());
 		description.setHTML(f.getSummary());
-	}
-
-	protected boolean onDeactivate() {
-		return true;
-	}
-
-	protected void onInitialize(DockPanel rootPanel) {
-		final VerticalPanel panel = new VerticalPanel();
-		panel.add(UI.h3("Synopsis"));
-		panel.add(synopsis);
-		panel.add(UI.h3("Location"));
-		panel.add(location);
-		panel.add(UI.h3("Description"));
-		panel.add(description);
-		panel.add(UI.h3("Audits"));
-		panel.add(audits);
-		getRootPanel().add(panel, DockPanel.CENTER);
-	}
-
-	public static FindingContent getInstance() {
-		return instance;
 	}
 }

@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 public abstract class ContentComposite extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
 	private boolean uiCreated;
+	private boolean active;
 
 	public ContentComposite() {
 		super();
@@ -23,10 +24,18 @@ public abstract class ContentComposite extends Composite {
 			onInitialize(rootPanel);
 		}
 
+		active = true;
 		onActivate(context);
 	}
 
+	public final void update(Context context) {
+		if (active) {
+			onUpdate(context);
+		}
+	}
+
 	public final boolean deactivate() {
+		active = false;
 		return onDeactivate();
 	}
 
@@ -37,6 +46,8 @@ public abstract class ContentComposite extends Composite {
 	protected abstract void onInitialize(DockPanel rootPanel);
 
 	protected abstract void onActivate(Context context);
+
+	protected abstract void onUpdate(Context context);
 
 	protected abstract boolean onDeactivate();
 

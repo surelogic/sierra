@@ -37,14 +37,6 @@ public class FilterSetContent extends ContentComposite {
 	private final StatusBox status = new StatusBox();
 	private final VerticalPanel sets = new VerticalPanel();
 
-	protected void onActivate(Context context) {
-		refreshFilterList();
-	}
-
-	protected boolean onDeactivate() {
-		return true;
-	}
-
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		final HorizontalPanel head = new HorizontalPanel();
@@ -61,6 +53,18 @@ public class FilterSetContent extends ContentComposite {
 				createFilter();
 			}
 		});
+	}
+
+	protected void onActivate(Context context) {
+		refreshFilterList();
+	}
+
+	protected void onUpdate(Context context) {
+		// nothing to do yet
+	}
+
+	protected boolean onDeactivate() {
+		return true;
 	}
 
 	private void refreshFilterList() {

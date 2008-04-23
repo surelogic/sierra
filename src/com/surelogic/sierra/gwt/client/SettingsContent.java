@@ -84,12 +84,12 @@ public class SettingsContent extends ContentComposite {
 		at.setWidget(2, 1, smtpHostTextBox);
 		at.setWidget(1, 1, serverEmailTextBox);
 		at.setWidget(0, 1, adminEmailTextBox);
-		at.setWidget(5, 0, label("SMTP Password (Optional):"));
-		at.setWidget(4, 0, label("STMP User (Optional):"));
-		at.setWidget(3, 0, label("Port:"));
-		at.setWidget(2, 0, label("SMTP Host:"));
-		at.setWidget(1, 0, label("From:"));
-		at.setWidget(0, 0, label("To:"));
+		at.setWidget(5, 0, createLabel("SMTP Password (Optional):"));
+		at.setWidget(4, 0, createLabel("STMP User (Optional):"));
+		at.setWidget(3, 0, createLabel("Port:"));
+		at.setWidget(2, 0, createLabel("SMTP Host:"));
+		at.setWidget(1, 0, createLabel("From:"));
+		at.setWidget(0, 0, createLabel("To:"));
 		panel
 				.add(new HTML(
 						"<h3>Administration Email</h3><span class=\"settings-info-text\">The below settings configure this team server to send email about any problems it encounters to a designated administrator.</span>"));
@@ -101,12 +101,6 @@ public class SettingsContent extends ContentComposite {
 		panel.add(status);
 		updateInfo(ServerInfo.getDefault());
 		getRootPanel().add(panel, DockPanel.CENTER);
-	}
-
-	private static Label label(String text) {
-		Label label = new Label(text);
-		label.addStyleName(".settings-label-text");
-		return label;
 	}
 
 	protected void onActivate(Context context) {
@@ -189,8 +183,18 @@ public class SettingsContent extends ContentComposite {
 		});
 	}
 
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
 	protected boolean onDeactivate() {
 		return true;
+	}
+
+	private Label createLabel(String text) {
+		Label label = new Label(text);
+		label.addStyleName(".settings-label-text");
+		return label;
 	}
 
 	private void updateInfo(ServerInfo info) {

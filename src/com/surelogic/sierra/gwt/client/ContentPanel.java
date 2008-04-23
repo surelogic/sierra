@@ -31,6 +31,7 @@ public class ContentPanel extends Composite implements ContextListener {
 			}
 		}
 		if (currentContent == content) {
+			currentContent.update(context);
 			return;
 		}
 		if (currentContent == null || currentContent.deactivate()) {

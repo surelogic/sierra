@@ -127,6 +127,11 @@ public class RulesContent extends ContentComposite {
 
 	}
 
+	protected void onUpdate(Context context) {
+		// TODO update based on selection, etc
+		Window.alert("Category=" + context.getParameter(PARAM_CATEGORY));
+	}
+
 	protected boolean onDeactivate() {
 		return true;
 	}

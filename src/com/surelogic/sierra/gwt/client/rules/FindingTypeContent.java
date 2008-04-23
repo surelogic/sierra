@@ -19,8 +19,26 @@ public final class FindingTypeContent extends ContentComposite {
 	private final HTML description = new HTML();
 	private final VerticalPanel chart = new VerticalPanel();
 
+	public static FindingTypeContent getInstance() {
+		return instance;
+	}
+
 	private FindingTypeContent() {
 		// Do nothing
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
+		final VerticalPanel panel = new VerticalPanel();
+		panel.add(new HTML("<h3>Finding Type</h3>"));
+		panel.add(name);
+		panel.add(new HTML("<h3>Summary</h3>"));
+		panel.add(summary);
+		panel.add(new HTML("<h3>Description</h3>"));
+		panel.add(description);
+		panel.add(new HTML("<h3>Found In</h3>"));
+		panel.add(chart);
+		getRootPanel().add(panel, DockPanel.CENTER);
+
 	}
 
 	protected void onActivate(Context context) {
@@ -44,6 +62,15 @@ public final class FindingTypeContent extends ContentComposite {
 
 	}
 
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
+	protected boolean onDeactivate() {
+		setEmpty();
+		return true;
+	}
+
 	protected void setEmpty() {
 		name.setHTML("None");
 		summary.setHTML(null);
@@ -57,29 +84,6 @@ public final class FindingTypeContent extends ContentComposite {
 		description.setHTML(result.getInfo());
 		chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
 				result.getUid()).build());
-	}
-
-	protected boolean onDeactivate() {
-		setEmpty();
-		return true;
-	}
-
-	protected void onInitialize(DockPanel rootPanel) {
-		final VerticalPanel panel = new VerticalPanel();
-		panel.add(new HTML("<h3>Finding Type</h3>"));
-		panel.add(name);
-		panel.add(new HTML("<h3>Summary</h3>"));
-		panel.add(summary);
-		panel.add(new HTML("<h3>Description</h3>"));
-		panel.add(description);
-		panel.add(new HTML("<h3>Found In</h3>"));
-		panel.add(chart);
-		getRootPanel().add(panel, DockPanel.CENTER);
-
-	}
-
-	public static FindingTypeContent getInstance() {
-		return instance;
 	}
 
 }

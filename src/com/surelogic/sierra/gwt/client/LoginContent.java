@@ -178,6 +178,10 @@ public class LoginContent extends ContentComposite {
 		}
 	}
 
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
 	protected boolean onDeactivate() {
 		return true;
 	}

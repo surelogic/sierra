@@ -20,14 +20,53 @@ import com.surelogic.sierra.gwt.client.ui.Portlet;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class OverviewContent extends ContentComposite {
-
 	private static final OverviewContent instance = new OverviewContent();
 	private final FlexTable dashboard = new FlexTable();
 	private VerticalPanel users;
 	private VerticalPanel projects;
 
+	public static OverviewContent getInstance() {
+		return instance;
+	}
+
 	private OverviewContent() {
 		super();
+	}
+
+	protected void onInitialize(DockPanel rootPanel) {
+		final VerticalPanel panel = new VerticalPanel();
+		panel.setWidth("100%");
+		panel.add(new HTML("<p>Welcome to Sierra Team Server!</p>"));
+
+		panel.add(dashboard);
+		dashboard.addStyleName("dashboard");
+		dashboard.setWidth("100%");
+		dashboard.getColumnFormatter().setWidth(0, "50%");
+		dashboard.getColumnFormatter().setWidth(1, "50%");
+
+		final VerticalPanel latestScans = createPortlet(0, 0,
+				"Published Scans", "Latest Scan Results");
+		final Chart scansChart = ChartBuilder.name("LatestScanResults").width(
+				450).build();
+		latestScans.add(scansChart);
+		latestScans.setCellHorizontalAlignment(scansChart,
+				VerticalPanel.ALIGN_CENTER);
+
+		final VerticalPanel auditContributions = createPortlet(0, 1,
+				"Contributions", "In the Last 30 Days");
+		Chart auditChart = ChartBuilder.name("AuditContributions").width(320)
+				.build();
+		auditContributions.add(auditChart);
+		auditContributions.setCellHorizontalAlignment(auditChart,
+				VerticalPanel.ALIGN_CENTER);
+
+		projects = createPortlet(1, 0, "Projects", "All Published Projects");
+		users = createPortlet(1, 1, "Users", "Latest User Audits");
+
+		rootPanel.add(panel, DockPanel.CENTER);
+
+		projects.add(new HTML("Fetching latest information."));
+		users.add(new HTML("Fetching latest information."));
 	}
 
 	protected void onActivate(Context context) {
@@ -159,48 +198,12 @@ public class OverviewContent extends ContentComposite {
 		});
 	}
 
+	protected void onUpdate(Context context) {
+		// nothing to do
+	}
+
 	protected boolean onDeactivate() {
 		return true;
-	}
-
-	protected void onInitialize(DockPanel rootPanel) {
-		final VerticalPanel panel = new VerticalPanel();
-		panel.setWidth("100%");
-		panel.add(new HTML("<p>Welcome to Sierra Team Server!</p>"));
-
-		panel.add(dashboard);
-		dashboard.addStyleName("dashboard");
-		dashboard.setWidth("100%");
-		dashboard.getColumnFormatter().setWidth(0, "50%");
-		dashboard.getColumnFormatter().setWidth(1, "50%");
-
-		final VerticalPanel latestScans = createPortlet(0, 0,
-				"Published Scans", "Latest Scan Results");
-		final Chart scansChart = ChartBuilder.name("LatestScanResults").width(
-				450).build();
-		latestScans.add(scansChart);
-		latestScans.setCellHorizontalAlignment(scansChart,
-				VerticalPanel.ALIGN_CENTER);
-
-		final VerticalPanel auditContributions = createPortlet(0, 1,
-				"Contributions", "In the Last 30 Days");
-		Chart auditChart = ChartBuilder.name("AuditContributions").width(320)
-				.build();
-		auditContributions.add(auditChart);
-		auditContributions.setCellHorizontalAlignment(auditChart,
-				VerticalPanel.ALIGN_CENTER);
-
-		projects = createPortlet(1, 0, "Projects", "All Published Projects");
-		users = createPortlet(1, 1, "Users", "Latest User Audits");
-
-		rootPanel.add(panel, DockPanel.CENTER);
-
-		projects.add(new HTML("Fetching latest information."));
-		users.add(new HTML("Fetching latest information."));
-	}
-
-	public static OverviewContent getInstance() {
-		return instance;
 	}
 
 	private VerticalPanel createPortlet(int row, int col, String title,

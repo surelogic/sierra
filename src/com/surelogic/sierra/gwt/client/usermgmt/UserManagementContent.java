@@ -114,6 +114,10 @@ public class UserManagementContent extends ContentComposite {
 		refreshUsers();
 	}
 
+	protected void onUpdate(Context context) {
+		// nothing to do yet
+	}
+
 	protected boolean onDeactivate() {
 		// clear the grid to free up some resources
 		usersGrid.removeRows();
