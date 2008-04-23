@@ -90,4 +90,15 @@ public class ScanFilter implements Serializable {
 		}
 		return types;
 	}
+
+	public ScanFilter copy() {
+		final ScanFilter copy = new ScanFilter();
+		copy.uid = uid;
+		copy.name = name;
+		copy.revision = revision;
+		copy.categories = new HashSet(categories);
+		copy.types = new HashSet(types);
+		copy.projects = new HashSet(projects);
+		return copy;
+	}
 }

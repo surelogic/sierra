@@ -15,6 +15,9 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestionEvent;
+import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -135,6 +138,7 @@ public class ScanFilterContent extends ContentComposite {
 
 		private final VerticalPanel panel;
 		private ScanFilter filter;
+		private ScanFilter backup;
 
 		ScanFilterComposite() {
 			panel = new VerticalPanel();
@@ -164,7 +168,16 @@ public class ScanFilterContent extends ContentComposite {
 		}
 
 		private Widget addFindingTypeBox() {
-			return new SuggestBox(new FindingTypeSuggestOracle());
+			final SuggestBox box = new SuggestBox(
+					new FindingTypeSuggestOracle());
+			box.addEventHandler(new SuggestionHandler() {
+				public void onSuggestionSelected(SuggestionEvent event) {
+					final SuggestOracle.Suggestion s = event
+							.getSelectedSuggestion();
+
+				}
+			});
+			return box;
 		}
 
 		private Widget addCategoryBox() {
@@ -189,7 +202,8 @@ public class ScanFilterContent extends ContentComposite {
 		}
 
 		public void setFilter(ScanFilter filter) {
-			this.filter = filter;
+			backup = filter;
+			this.filter = backup.copy();
 			refresh();
 		}
 	}
