@@ -123,6 +123,10 @@ public final class ClientContext {
 		setContext(ContentRegistry.getContentName(content));
 	}
 
+	public static void setContext(Context context) {
+		setContext(context.toString());
+	}
+
 	public static void setContext(String token) {
 		// Note: newItem calls onHistoryChanged, which calls
 		// notifyContextListeners only if the token changes

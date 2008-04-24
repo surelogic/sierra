@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ClientContext;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
@@ -27,7 +28,6 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
-	public static final String PARAM_CATEGORY = "category";
 	public static final String PRIMARY_STYLE = "rules";
 	private static final RulesContent instance = new RulesContent();
 	private final VerticalPanel searchPanel = new VerticalPanel();
@@ -114,12 +114,15 @@ public class RulesContent extends ContentComposite {
 				categories = (List) result;
 				search("");
 				searchText.setFocus(true);
+
 				if (!categories.isEmpty()) {
-					String categoryName = context.getParameter(PARAM_CATEGORY);
+					final String categoryName = new RulesContext(context)
+							.getCategory();
 					if (categoryName != null && !"".equals(categoryName)) {
 						selectCategory(categoryName);
 					} else {
-						selectCategory((Category) categories.get(0));
+						final Category firstCat = (Category) categories.get(0);
+						new RulesContext(context, firstCat).updateContext();
 					}
 				}
 			}
@@ -128,7 +131,7 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onUpdate(Context context) {
-		final String categoryName = context.getParameter(PARAM_CATEGORY);
+		final String categoryName = new RulesContext(context).getCategory();
 		if (categoryName != null && !"".equals(categoryName)) {
 			selectCategory(categoryName);
 		}
@@ -252,8 +255,10 @@ public class RulesContent extends ContentComposite {
 
 		public void onClick(Widget sender) {
 			if (category != null) {
-				selectCategory(category);
+				new RulesContext(ClientContext.getContext(), category)
+						.updateContext();
 			} else {
+				// TODO convert to use context instead of direct update
 				selectFinding(finding);
 			}
 		}

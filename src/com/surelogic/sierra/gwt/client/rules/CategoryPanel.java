@@ -159,8 +159,7 @@ public class CategoryPanel extends Composite {
 	}
 
 	private void saveEdit() {
-		final Category rpcCategory = new Category();
-		rpcCategory.copy(currentCategory);
+		final Category rpcCategory = currentCategory.copy();
 
 		rpcCategory.setName(nameEditText.getText());
 		rpcCategory.setInfo(description.getText());

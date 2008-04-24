@@ -124,31 +124,29 @@ public class Category implements Serializable {
 		return set;
 	}
 
-	public void copy(Category source) {
-		uuid = source.getUuid();
-		revision = source.getRevision();
-		name = source.getName();
-		info = source.getInfo();
-		if (source.getParents() != null) {
-			parents = new HashSet();
-			for (Iterator it = source.getParents().iterator(); it.hasNext();) {
-				Category parent = new Category();
-				parent.copy((Category) it.next());
-				parents.add(parent);
+	public Category copy() {
+		Category copy = new Category();
+		copy.uuid = uuid;
+		copy.revision = revision;
+		copy.name = name;
+		copy.info = info;
+		if (parents != null) {
+			copy.parents = new HashSet();
+			for (Iterator it = parents.iterator(); it.hasNext();) {
+				copy.parents.add(((Category) it.next()).copy());
 			}
 		} else {
-			parents = null;
+			copy.parents = null;
 		}
-		if (source.getEntries() != null) {
-			entries = new HashSet();
-			for (Iterator it = source.getEntries().iterator(); it.hasNext();) {
-				FilterEntry entry = new FilterEntry();
-				entry.copy((FilterEntry) it.next());
-				entries.add(entry);
+		if (entries != null) {
+			copy.entries = new HashSet();
+			for (Iterator it = entries.iterator(); it.hasNext();) {
+				copy.entries.add(((FilterEntry) it.next()).copy());
 			}
 		} else {
-			entries = null;
+			copy.entries = null;
 		}
+		return copy;
 	}
 
 	public int hashCode() {

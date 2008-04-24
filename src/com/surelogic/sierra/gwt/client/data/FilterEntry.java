@@ -47,11 +47,13 @@ public class FilterEntry implements Serializable {
 		this.shortMessage = shortMessage;
 	}
 
-	public void copy(FilterEntry source) {
-		name = source.getName();
-		filtered = source.isFiltered();
-		uid = source.getUid();
-		shortMessage = source.getShortMessage();
+	public FilterEntry copy() {
+		FilterEntry copy = new FilterEntry();
+		copy.name = name;
+		copy.filtered = filtered;
+		copy.uid = uid;
+		copy.shortMessage = shortMessage;
+		return copy;
 	}
 
 	public int hashCode() {
