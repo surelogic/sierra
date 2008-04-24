@@ -1,7 +1,7 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.getNullableLong;
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableLong;
+import static com.surelogic.common.jdbc.JDBCUtils.getNullableLong;
+import static com.surelogic.common.jdbc.JDBCUtils.setNullableLong;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

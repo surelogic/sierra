@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
+import com.surelogic.common.jdbc.DBType;
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.SchemaAction;
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 
 /**
  * The intent of this schema update is to copy over the server settings

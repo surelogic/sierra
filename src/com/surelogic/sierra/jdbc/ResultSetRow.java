@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.surelogic.common.jdbc.JDBCUtils;
+
 public class ResultSetRow implements Row {
 
 	private final ResultSet set;

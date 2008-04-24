@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.DBType;
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.MatchRecord;

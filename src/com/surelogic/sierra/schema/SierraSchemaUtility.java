@@ -6,12 +6,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public final class SierraSchemaUtility {
 

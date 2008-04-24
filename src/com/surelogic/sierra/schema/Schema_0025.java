@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.sierra.findbugs1_3_3.FindBugs1_3_3ToolInfoGenerator;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public class Schema_0025 implements SchemaAction {
 	public void run(Connection conn) throws SQLException {

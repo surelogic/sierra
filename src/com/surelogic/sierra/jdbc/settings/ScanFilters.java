@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.sierra.jdbc.ConnectionQuery;
-import com.surelogic.sierra.jdbc.Nulls;
 import com.surelogic.sierra.jdbc.Query;
 import com.surelogic.sierra.jdbc.Queryable;
 import com.surelogic.sierra.jdbc.Row;

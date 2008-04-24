@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import static com.surelogic.common.jdbc.JDBCUtils.*;
 
 public class FindingTypeRecord extends LongUpdatableRecord {
 

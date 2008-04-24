@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.setNullableString;
+import static com.surelogic.common.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

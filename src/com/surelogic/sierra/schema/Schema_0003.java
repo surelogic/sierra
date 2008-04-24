@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.SchemaAction;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 
 public class Schema_0003 implements SchemaAction {
 

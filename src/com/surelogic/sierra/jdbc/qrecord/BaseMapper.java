@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.DBType;
+import com.surelogic.common.jdbc.JDBCUtils;
 
 public class BaseMapper implements RecordMapper {
 

@@ -22,10 +22,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.DBType;
-import com.surelogic.sierra.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.StatementException;
 import com.surelogic.sierra.schema.SierraSchemaUtility;
 

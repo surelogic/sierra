@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.surelogic.sierra.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.JDBCUtils;
 
 public final class SynchDetail {
 

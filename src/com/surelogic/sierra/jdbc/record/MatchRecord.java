@@ -1,6 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.sierra.jdbc.JDBCUtils.*;
+import static com.surelogic.common.jdbc.JDBCUtils.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
