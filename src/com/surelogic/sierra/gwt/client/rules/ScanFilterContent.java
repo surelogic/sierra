@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
@@ -172,8 +171,8 @@ public class ScanFilterContent extends ContentComposite {
 					new FindingTypeSuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
 				public void onSuggestionSelected(SuggestionEvent event) {
-					final SuggestOracle.Suggestion s = event
-							.getSelectedSuggestion();
+					// final SuggestOracle.Suggestion s = event
+					// .getSelectedSuggestion();
 
 				}
 			});
