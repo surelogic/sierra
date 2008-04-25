@@ -21,6 +21,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public class CategoryPanel extends Composite {
 	public static final String PRIMARY_STYLE = RulesContent.PRIMARY_STYLE;
@@ -171,17 +172,25 @@ public class CategoryPanel extends Composite {
 				new AsyncCallback() {
 
 					public void onFailure(Throwable caught) {
+						ExceptionUtil.log(caught);
+
 						// TODO show the error and do not cancel editing
 					}
 
 					public void onSuccess(Object result) {
 						Status status = (Status) result;
 						if (status.isSuccess()) {
+							editing = false;
+							RulesContent.getInstance().refreshCategories(
+									rpcCategory.getName());
+
 							// TODO reload all categories and select the new
 							// category by name I guess
 							// will need access to RulesContent
 						} else {
 							// TODO show the error and do not cancel editing
+
+							Window.alert("Save failed: " + status.getMessage());
 						}
 					}
 				});
