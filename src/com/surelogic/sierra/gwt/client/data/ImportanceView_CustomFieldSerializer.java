@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 
-public class ImportanceView_CustomFieldSerializer {
+public final class ImportanceView_CustomFieldSerializer {
 	public static void deserialize(SerializationStreamReader reader,
 			ImportanceView instance) throws SerializationException {
 		// nothing to do

@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
 
-public class FindingContent extends ContentComposite {
+public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
 
 	private static final FindingContent instance = new FindingContent();

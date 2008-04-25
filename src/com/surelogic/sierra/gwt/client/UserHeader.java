@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.RulesContent;
 import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 
-public class UserHeader extends AuthenticatedHeader {
+public final class UserHeader extends AuthenticatedHeader {
 	private static final UserHeader instance = new UserHeader();
 	private Label manageSite;
 	private Label manageSiteSeparator;

@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
-public class LoginContent extends ContentComposite {
+public final class LoginContent extends ContentComposite {
 	private static final LoginContent instance = new LoginContent();
 
 	private final VerticalPanel loginPanel = new VerticalPanel();

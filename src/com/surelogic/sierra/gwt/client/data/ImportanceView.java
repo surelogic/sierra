@@ -17,11 +17,11 @@ public final class ImportanceView implements Serializable {
 	 */
 	private static final long serialVersionUID = 2718025202305850540L;
 
-	public static ImportanceView IRRELEVANT = new ImportanceView("Irrelevant");
-	public static ImportanceView LOW = new ImportanceView("Low");
-	public static ImportanceView MEDIUM = new ImportanceView("Medium");
-	public static ImportanceView HIGH = new ImportanceView("High");
-	public static ImportanceView CRITICAL = new ImportanceView("Critical");
+	public static final ImportanceView IRRELEVANT = new ImportanceView("Irrelevant");
+	public static final ImportanceView LOW = new ImportanceView("Low");
+	public static final ImportanceView MEDIUM = new ImportanceView("Medium");
+	public static final ImportanceView HIGH = new ImportanceView("High");
+	public static final ImportanceView CRITICAL = new ImportanceView("Critical");
 
 	private static final ImportanceView[] VALUES = new ImportanceView[] {
 			IRRELEVANT, LOW, MEDIUM, HIGH, CRITICAL };

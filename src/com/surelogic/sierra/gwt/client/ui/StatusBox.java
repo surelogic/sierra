@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.surelogic.sierra.gwt.client.data.Status;
 
-public class StatusBox extends Composite {
+public final class StatusBox extends Composite {
 
 	private final HTML html = new HTML();
 

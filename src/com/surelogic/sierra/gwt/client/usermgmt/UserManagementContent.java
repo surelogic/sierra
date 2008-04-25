@@ -28,7 +28,7 @@ import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
-public class UserManagementContent extends ContentComposite {
+public final class UserManagementContent extends ContentComposite {
 
 	private static final UserManagementContent instance = new UserManagementContent();
 

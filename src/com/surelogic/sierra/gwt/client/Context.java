@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import com.google.gwt.core.client.GWT;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class Context {
+public final class Context {
 	private ContentComposite content;
 	private final Map parameters = new HashMap();
 

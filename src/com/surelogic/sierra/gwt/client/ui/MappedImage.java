@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client.ui;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Image;
 
-public class MappedImage extends Image {
+public final class MappedImage extends Image {
 
 	public MappedImage() {
 		super();

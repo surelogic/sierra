@@ -22,7 +22,7 @@ import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
-public class SettingsContent extends ContentComposite {
+public final class SettingsContent extends ContentComposite {
 	private static final SettingsContent instance = new SettingsContent();
 
 	private final HTML currentVersion = new HTML();

@@ -19,7 +19,7 @@ import com.surelogic.sierra.gwt.client.ui.Chart;
 import com.surelogic.sierra.gwt.client.ui.Portlet;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
-public class OverviewContent extends ContentComposite {
+public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
 	private final FlexTable dashboard = new FlexTable();
 	private VerticalPanel users;

@@ -8,7 +8,7 @@ import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.Chart;
 
-public class ChartBuilder {
+public final class ChartBuilder {
 
 	private final Map parameters;
 

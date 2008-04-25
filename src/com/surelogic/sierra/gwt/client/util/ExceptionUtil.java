@@ -8,7 +8,7 @@ import com.surelogic.sierra.gwt.client.LogPanel;
  * TODO Look up standard GWT exception model, this is an unverified approach
  * 
  */
-public class ExceptionUtil {
+public final class ExceptionUtil {
 
 	private ExceptionUtil() {
 		// no instance
