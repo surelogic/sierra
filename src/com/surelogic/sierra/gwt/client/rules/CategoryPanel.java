@@ -126,6 +126,7 @@ public class CategoryPanel extends Composite {
 		}
 		nameEditText.setText(currentCategory.getName());
 		description.setReadOnly(false);
+		description.removeStyleName("font-italic");
 		String catInfo = currentCategory.getInfo();
 		if (catInfo == null) {
 			catInfo = "";

@@ -16,9 +16,9 @@ public final class RulesContext {
 		this.context = context;
 	}
 
-	public RulesContext(Context context, Category category) {
+	public RulesContext(Category category) {
 		super();
-		this.context = context;
+		this.context = ClientContext.getContext();
 		setCategory(category.getName());
 	}
 

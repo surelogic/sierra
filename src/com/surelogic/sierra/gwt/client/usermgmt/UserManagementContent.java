@@ -26,7 +26,7 @@ import com.surelogic.sierra.gwt.client.ui.SelectableGrid;
 import com.surelogic.sierra.gwt.client.ui.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.TextBoxEditor;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public class UserManagementContent extends ContentComposite {
 
@@ -128,7 +128,7 @@ public class UserManagementContent extends ContentComposite {
 		ServiceHelper.getManageUserService().getUsers(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
-				ExceptionTracker.logException(caught);
+				ExceptionUtil.log(caught);
 
 				usersGrid.setStatus("error",
 						"Unable to retrieve user list. (Server may be down)");
@@ -277,7 +277,7 @@ public class UserManagementContent extends ContentComposite {
 					new AsyncCallback() {
 
 						public void onFailure(Throwable caught) {
-							ExceptionTracker.logException(caught);
+							ExceptionUtil.log(caught);
 
 							// TODO all error handling needs a cleaning pass
 							usersGrid

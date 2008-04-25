@@ -4,7 +4,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.ClientContext;
 import com.surelogic.sierra.gwt.client.data.Result;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public abstract class Callback implements AsyncCallback {
 	private final String debugMessage;
@@ -23,7 +23,7 @@ public abstract class Callback implements AsyncCallback {
 		if (debugMessage != null) {
 			showDebugFailure(caught);
 		}
-		ExceptionTracker.logException(caught);
+		ExceptionUtil.log(caught);
 		onException(caught);
 	}
 

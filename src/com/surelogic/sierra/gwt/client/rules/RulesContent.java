@@ -16,13 +16,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ClientContext;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.ExceptionTracker;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
@@ -94,6 +93,11 @@ public class RulesContent extends ContentComposite {
 	}
 
 	protected void onActivate(final Context context) {
+		final String categoryName = new RulesContext(context).getCategory();
+		refreshCategories(categoryName);
+	}
+
+	public void refreshCategories(final String categoryName) {
 		clearSearch();
 
 		final VerticalPanel waitPanel = new VerticalPanel();
@@ -101,13 +105,14 @@ public class RulesContent extends ContentComposite {
 		waitPanel.addStyleName(PRIMARY_STYLE + "-search-category");
 		waitPanel.add(ImageHelper.getWaitImage(16));
 		searchResults.add(waitPanel);
+
 		ServiceHelper.getSettingsService().getCategories(new AsyncCallback() {
 
 			public void onFailure(Throwable caught) {
 				// TODO handle this in the normal way, or switch to Callback
 				clearSearch();
 				searchResults.add(new Label("Error retrieving categories"));
-				ExceptionTracker.logException(caught);
+				ExceptionUtil.log(caught);
 			}
 
 			public void onSuccess(Object result) {
@@ -116,24 +121,23 @@ public class RulesContent extends ContentComposite {
 				searchText.setFocus(true);
 
 				if (!categories.isEmpty()) {
-					final String categoryName = new RulesContext(context)
-							.getCategory();
+					Category cat;
 					if (categoryName != null && !"".equals(categoryName)) {
-						selectCategory(categoryName);
+						cat = findCategory(categoryName);
 					} else {
-						final Category firstCat = (Category) categories.get(0);
-						new RulesContext(context, firstCat).updateContext();
+						cat = (Category) categories.get(0);
 					}
+					new RulesContext(cat).updateContext();
 				}
 			}
 		});
-
 	}
 
 	protected void onUpdate(Context context) {
 		final String categoryName = new RulesContext(context).getCategory();
 		if (categoryName != null && !"".equals(categoryName)) {
-			selectCategory(categoryName);
+			final Category cat = findCategory(categoryName);
+			selectCategory(cat);
 		}
 	}
 
@@ -195,15 +199,15 @@ public class RulesContent extends ContentComposite {
 		searchResults.add(findingEntry);
 	}
 
-	private void selectCategory(String name) {
+	private Category findCategory(String name) {
 		final String lowerName = name.toLowerCase();
 		for (Iterator it = categories.iterator(); it.hasNext();) {
 			final Category cat = (Category) it.next();
 			if (cat.getName().equalsIgnoreCase(lowerName)) {
-				selectCategory(cat);
-				return;
+				return cat;
 			}
 		}
+		return null;
 	}
 
 	private void selectCategory(Category cat) {
@@ -255,8 +259,7 @@ public class RulesContent extends ContentComposite {
 
 		public void onClick(Widget sender) {
 			if (category != null) {
-				new RulesContext(ClientContext.getContext(), category)
-						.updateContext();
+				new RulesContext(category).updateContext();
 			} else {
 				// TODO convert to use context instead of direct update
 				selectFinding(finding);
