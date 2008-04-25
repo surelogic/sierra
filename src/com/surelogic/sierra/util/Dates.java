@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Dates {
+public final class Dates {
 
 	private Dates() {
 		// Not instantiable
