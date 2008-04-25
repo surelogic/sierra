@@ -138,6 +138,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								filters.add(filter);
 							}
 							set.setEntries(filters);
+							set.setRevision(detail.getRevision());
 						}
 						final List<Category> values = new ArrayList<Category>(
 								sets.values());
