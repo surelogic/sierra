@@ -183,10 +183,6 @@ public class CategoryPanel extends Composite {
 							editing = false;
 							RulesContent.getInstance().refreshCategories(
 									rpcCategory.getName());
-
-							// TODO reload all categories and select the new
-							// category by name I guess
-							// will need access to RulesContent
 						} else {
 							// TODO show the error and do not cancel editing
 
