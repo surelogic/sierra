@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.LazyPreparedStatementConnection;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.ConnectionQuery;
-import com.surelogic.sierra.jdbc.LazyPreparedStatementConnection;
 
 public class ServerConnection {
 

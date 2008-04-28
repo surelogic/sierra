@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.DBQueryEmpty;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.DBQuery;
-import com.surelogic.sierra.jdbc.DBQueryEmpty;
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.Queryable;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;

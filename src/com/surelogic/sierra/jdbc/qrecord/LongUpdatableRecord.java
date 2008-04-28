@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.surelogic.common.jdbc.AbstractUpdatableRecord;
+import com.surelogic.common.jdbc.UpdateRecordMapper;
+
 public abstract class LongUpdatableRecord extends AbstractUpdatableRecord<Long> {
 
 	protected Long id;

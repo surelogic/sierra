@@ -1,9 +1,9 @@
 package com.surelogic.sierra.jdbc.tool;
 
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.Row;
-import com.surelogic.sierra.jdbc.RowHandler;
-import com.surelogic.sierra.jdbc.SingleRowHandler;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
 
 public class FindingTypes {
 

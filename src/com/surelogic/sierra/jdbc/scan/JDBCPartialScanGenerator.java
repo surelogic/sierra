@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;

@@ -2,10 +2,10 @@ package com.surelogic.sierra.jdbc.server;
 
 import java.util.UUID;
 
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.Result;
-import com.surelogic.sierra.jdbc.ResultHandler;
-import com.surelogic.sierra.jdbc.Row;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Result;
+import com.surelogic.common.jdbc.ResultHandler;
+import com.surelogic.common.jdbc.Row;
 
 public abstract class DefinitionalDAO {
 

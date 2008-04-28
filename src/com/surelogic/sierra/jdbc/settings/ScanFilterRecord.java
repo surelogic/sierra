@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.surelogic.common.jdbc.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.qrecord.LongUpdatableRecord;
-import com.surelogic.sierra.jdbc.qrecord.UpdateRecordMapper;
 
 public class ScanFilterRecord extends LongUpdatableRecord {
 

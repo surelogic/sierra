@@ -17,9 +17,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.JDBCUtils;
-import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.FindingRecord;
 import com.surelogic.sierra.jdbc.record.LongRelationRecord;

@@ -14,8 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
 import com.surelogic.sierra.jdbc.record.ArtifactSourceRecord;
 import com.surelogic.sierra.jdbc.record.ClassMetricRecord;

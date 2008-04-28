@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.Queryable;
-import com.surelogic.sierra.jdbc.Row;
-import com.surelogic.sierra.jdbc.RowHandler;
-import com.surelogic.sierra.jdbc.StringRowHandler;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Queryable;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;

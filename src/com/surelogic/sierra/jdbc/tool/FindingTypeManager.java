@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
-import com.surelogic.sierra.jdbc.ConnectionQuery;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.settings.Categories;

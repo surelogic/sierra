@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.surelogic.sierra.jdbc.ConnectionQuery;
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.StringRowHandler;
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
