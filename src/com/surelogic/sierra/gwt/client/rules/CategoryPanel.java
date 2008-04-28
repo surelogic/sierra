@@ -60,21 +60,14 @@ public class CategoryPanel extends Composite {
 		rootPanel.add(categorySection);
 	}
 
-	public void setCategory(Category cat) {
+	public boolean setCategory(Category cat) {
 		if (checkEditing()) {
-			return;
+			return false;
 		}
 
 		currentCategory = cat;
 
 		categorySection.getSectionInfo().setText(cat.getName());
-		categorySection.removeActions();
-		categorySection.addAction("Edit", new ClickListener() {
-
-			public void onClick(Widget sender) {
-				edit();
-			}
-		});
 
 		if (nameEditText.isAttached()) {
 			categoryInfo.removeRow(0);
@@ -90,29 +83,17 @@ public class CategoryPanel extends Composite {
 			description.removeStyleName("font-italic");
 		}
 
-		findingTypes.clear();
-		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
-			final FilterEntry finding = (FilterEntry) it.next();
-			findingTypes.add(createDetailsRule(finding, false, !finding
-					.isFiltered()));
-		}
-		final Set excluded = cat.getExcludedEntries();
-		for (final Iterator catIt = cat.getParents().iterator(); catIt
-				.hasNext();) {
-			final Category parent = (Category) catIt.next();
-			final DisclosurePanel parentPanel = new DisclosurePanel("From: "
-					+ parent.getName());
-			final VerticalPanel parentFindingsPanel = new VerticalPanel();
-			final Set parentFindings = parent.getIncludedEntries();
-			for (final Iterator findingIt = parentFindings.iterator(); findingIt
-					.hasNext();) {
-				final FilterEntry finding = (FilterEntry) findingIt.next();
-				parentFindingsPanel.add(createDetailsRule(finding, false,
-						!excluded.contains(finding)));
+		updateFindingTypes(cat, false);
+
+		categorySection.removeActions();
+		categorySection.addAction("Edit", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				edit();
 			}
-			parentPanel.setContent(parentFindingsPanel);
-			findingTypes.add(parentPanel);
-		}
+		});
+
+		return true;
 	}
 
 	private void edit() {
@@ -134,10 +115,9 @@ public class CategoryPanel extends Composite {
 		}
 		description.setText(catInfo);
 
-		// TODO update finding types to allow enable/disable
+		updateFindingTypes(currentCategory, true);
 
 		categorySection.removeActions();
-
 		categorySection.addAction("Save", new ClickListener() {
 
 			public void onClick(Widget sender) {
@@ -205,6 +185,50 @@ public class CategoryPanel extends Composite {
 		return editing;
 	}
 
+	private void updateFindingTypes(Category cat, boolean editing) {
+		findingTypes.clear();
+		if (editing) {
+			findingsSubsection.addAction("Add Category", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					addCategory();
+				}
+			});
+		} else {
+			findingsSubsection.removeActions();
+		}
+
+		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
+			final FilterEntry finding = (FilterEntry) it.next();
+			final Widget findingUI = createDetailsRule(finding, editing,
+					!finding.isFiltered());
+			if (findingUI != null) {
+				findingTypes.add(findingUI);
+			}
+		}
+		final Set excluded = cat.getExcludedEntries();
+		for (final Iterator catIt = cat.getParents().iterator(); catIt
+				.hasNext();) {
+			final Category parent = (Category) catIt.next();
+			final DisclosurePanel parentPanel = new DisclosurePanel("From: "
+					+ parent.getName());
+			final VerticalPanel parentFindingsPanel = new VerticalPanel();
+			final Set parentFindings = parent.getIncludedEntries();
+			for (final Iterator findingIt = parentFindings.iterator(); findingIt
+					.hasNext();) {
+				final FilterEntry finding = (FilterEntry) findingIt.next();
+				final Widget findingUI = createDetailsRule(finding, editing,
+						!excluded.contains(finding));
+				if (findingUI != null) {
+					parentFindingsPanel.add(findingUI);
+				}
+			}
+			parentPanel.setContent(parentFindingsPanel);
+			parentPanel.setOpen(true);
+			findingTypes.add(parentPanel);
+		}
+	}
+
 	private Widget createDetailsRule(FilterEntry finding, boolean editing,
 			boolean enabled) {
 		if (editing) {
@@ -221,6 +245,10 @@ public class CategoryPanel extends Composite {
 			return rule;
 		}
 		return null;
+	}
+
+	private void addCategory() {
+		// TODO need a dialog or UI update to add categories + findings
 	}
 
 }

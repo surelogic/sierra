@@ -211,12 +211,13 @@ public class RulesContent extends ContentComposite {
 	}
 
 	private void selectCategory(Category cat) {
-		updateSelectionStyle(cat);
+		if (categoryPanel.setCategory(cat)) {
+			updateSelectionStyle(cat);
 
-		categoryPanel.setCategory(cat);
-		if (detailsPanel.getWidgetIndex(categoryPanel) == -1) {
-			detailsPanel.clear();
-			detailsPanel.add(categoryPanel);
+			if (detailsPanel.getWidgetIndex(categoryPanel) == -1) {
+				detailsPanel.clear();
+				detailsPanel.add(categoryPanel);
+			}
 		}
 	}
 
