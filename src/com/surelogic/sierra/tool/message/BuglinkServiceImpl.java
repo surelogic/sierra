@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool.message;
 import java.util.List;
 import java.util.Set;
 
-import com.surelogic.sierra.jdbc.Query;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;

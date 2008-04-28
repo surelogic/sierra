@@ -14,8 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.surelogic.sierra.jdbc.ConnectionQuery;
-import com.surelogic.sierra.jdbc.EmptyProgressMonitor;
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
