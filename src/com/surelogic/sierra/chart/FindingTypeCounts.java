@@ -10,10 +10,10 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.surelogic.sierra.jdbc.ConnectionQuery;
-import com.surelogic.sierra.jdbc.Result;
-import com.surelogic.sierra.jdbc.ResultHandler;
-import com.surelogic.sierra.jdbc.Row;
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Result;
+import com.surelogic.common.jdbc.ResultHandler;
+import com.surelogic.common.jdbc.Row;
 
 public class FindingTypeCounts implements IDatabasePlot {
 

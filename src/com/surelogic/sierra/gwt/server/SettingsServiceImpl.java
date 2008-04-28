@@ -11,6 +11,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.ResultHandler;
+import com.surelogic.common.jdbc.Row;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
@@ -21,9 +24,6 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
-import com.surelogic.sierra.jdbc.Query;
-import com.surelogic.sierra.jdbc.ResultHandler;
-import com.surelogic.sierra.jdbc.Row;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -88,7 +88,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			this.limit = limit;
 		}
 
-		public Map<String, String> handle(com.surelogic.sierra.jdbc.Result r) {
+		public Map<String, String> handle(com.surelogic.common.jdbc.Result r) {
 			final Map<String, String> results = new HashMap<String, String>();
 			int count = 0;
 			for (final Row row : r) {
