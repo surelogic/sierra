@@ -509,3 +509,8 @@ img {
 	padding: 2px;
 }
 
+/* ListBox styling */
+.gwt-ListBox {
+    border: 1px solid #001166;
+}
+
