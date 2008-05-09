@@ -10,9 +10,6 @@ public class UserOverview implements Serializable {
 	private String lastSynch;
 	private int audits;
 	private int findings;
-	/*
-	 * TODO: is this enabled/disabled?
-	 */
 	private boolean active;
 
 	public String getUserName() {

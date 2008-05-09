@@ -4,10 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.LogPanel;
 
-/**
- * TODO Look up standard GWT exception model, this is an unverified approach
- * 
- */
 public final class ExceptionUtil {
 
 	private ExceptionUtil() {
