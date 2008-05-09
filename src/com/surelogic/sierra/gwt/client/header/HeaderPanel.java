@@ -1,8 +1,13 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.header;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.ContentRegistry;
+import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextListener;
+import com.surelogic.sierra.gwt.client.UserListener;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public final class HeaderPanel extends Composite {
@@ -22,7 +27,7 @@ public final class HeaderPanel extends Composite {
 		rootPanel.setWidth("100%");
 
 		// Listen for user session changes
-		ClientContext.addUserListener(new UserListener() {
+		ContextManager.addUserListener(new UserListener() {
 
 			public void onLogin(UserAccount user) {
 				updateUser(user);
@@ -40,20 +45,20 @@ public final class HeaderPanel extends Composite {
 				updateUser(user);
 			}
 		});
-		ClientContext.addContextListener(new ContextListener() {
+		ContextManager.addContextListener(new ContextListener() {
 
 			public void onChange(Context context) {
 				updateContext(context);
 			}
 
 		});
-		updateUser(ClientContext.getUser());
-		updateContext(ClientContext.getContext());
+		updateUser(ContextManager.getUser());
+		updateContext(ContextManager.getContext());
 	}
 
 	private void updateHeader() {
-		final UserAccount user = ClientContext.getUser();
-		final Context context = ClientContext.getContext();
+		final UserAccount user = ContextManager.getUser();
+		final Context context = ContextManager.getContext();
 
 		HeaderComposite newHeader = null;
 		if (user == null) {
@@ -74,7 +79,7 @@ public final class HeaderPanel extends Composite {
 		currentHeader = newHeader;
 		rootPanel.clear();
 		rootPanel.add(currentHeader, DockPanel.CENTER);
-		currentHeader.activate(ClientContext.getContext(), user);
+		currentHeader.activate(ContextManager.getContext(), user);
 	}
 
 	private void updateContext(Context context) {

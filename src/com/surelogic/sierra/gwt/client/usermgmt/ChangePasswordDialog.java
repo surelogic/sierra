@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -35,7 +35,7 @@ public class ChangePasswordDialog extends DialogBox {
 		userGrid.setWidget(1, 1, userPassword);
 		userGrid.setText(2, 0,
 				"New Password"
-						+ (ClientContext.getUser().getUserName().equals(
+						+ (ContextManager.getUser().getUserName().equals(
 								user.getUserName()) ? "" : " for "
 								+ user.getUserName()) + ":");
 		userGrid.setWidget(2, 1, password);

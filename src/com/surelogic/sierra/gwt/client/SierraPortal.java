@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.header.HeaderPanel;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
@@ -18,7 +19,7 @@ public class SierraPortal implements EntryPoint {
 	 * has a valid session already established.
 	 */
 	public void onModuleLoad() {
-		ClientContext.initialize();
+		ContextManager.initialize();
 		ContentRegistry.initialize();
 
 		// create and display the main panels
@@ -34,11 +35,11 @@ public class SierraPortal implements EntryPoint {
 		sessionService.getUserAccount(new Callback() {
 
 			protected void onFailure(String message, Object result) {
-				ClientContext.refreshContext();
+				ContextManager.refreshContext();
 			}
 
 			protected void onSuccess(String message, Object result) {
-				ClientContext.updateUser((UserAccount) result);
+				ContextManager.updateUser((UserAccount) result);
 			}
 		});
 

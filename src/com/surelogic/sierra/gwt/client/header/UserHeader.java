@@ -1,9 +1,13 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.header;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ContentRegistry;
+import com.surelogic.sierra.gwt.client.FindingContent;
+import com.surelogic.sierra.gwt.client.OverviewContent;
+import com.surelogic.sierra.gwt.client.SettingsContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;

@@ -63,8 +63,8 @@ public class FilterSetContent extends ContentComposite {
 		// nothing to do yet
 	}
 
-	protected boolean onDeactivate() {
-		return true;
+	protected void onDeactivate() {
+		// nothing to do
 	}
 
 	private void refreshFilterList() {

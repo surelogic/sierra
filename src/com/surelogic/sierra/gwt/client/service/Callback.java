@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.service;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
@@ -40,7 +40,7 @@ public abstract class Callback implements AsyncCallback {
 	}
 
 	protected void onException(Throwable caught) {
-		ClientContext
+		ContextManager
 				.logout("Unable to communicate with server. (Server may be down)");
 	}
 

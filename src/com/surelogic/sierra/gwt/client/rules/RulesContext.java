@@ -3,12 +3,14 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
 
 public final class RulesContext {
 	private static final String PARAM_CATEGORY = "category";
+	private static final String PARAM_FINDING = "finding";
 	private Context context;
 
 	public RulesContext(Context context) {
@@ -18,12 +20,18 @@ public final class RulesContext {
 
 	public RulesContext(Category category) {
 		super();
-		this.context = ClientContext.getContext();
-		setCategory(category.getName());
+		this.context = ContextManager.getContext();
+		setCategory(category.getUuid());
+	}
+
+	public RulesContext(FilterEntry finding) {
+		super();
+		this.context = ContextManager.getContext();
+		setFinding(finding.getUid());
 	}
 
 	public void updateContext() {
-		ClientContext.setContext(context);
+		ContextManager.setContext(context);
 	}
 
 	public Context getContext() {
@@ -34,8 +42,16 @@ public final class RulesContext {
 		return context.getParameter(PARAM_CATEGORY);
 	}
 
-	public RulesContext setCategory(String name) {
-		return setParameter(PARAM_CATEGORY, name);
+	public RulesContext setCategory(String uuid) {
+		return setParameter(PARAM_CATEGORY, uuid);
+	}
+
+	public String getFinding() {
+		return context.getParameter(PARAM_FINDING);
+	}
+
+	public RulesContext setFinding(String uuid) {
+		return setParameter(PARAM_FINDING, uuid);
 	}
 
 	private RulesContext setParameter(String name, String value) {

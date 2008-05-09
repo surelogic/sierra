@@ -17,12 +17,12 @@ public class ContentPanel extends Composite implements ContextListener {
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
 
-		ClientContext.addContextListener(this);
+		ContextManager.addContextListener(this);
 	}
 
 	public void onChange(Context context) {
 		ContentComposite content;
-		if (!ClientContext.isLoggedIn()) {
+		if (!ContextManager.isLoggedIn()) {
 			content = LoginContent.getInstance();
 		} else {
 			content = context.getContent();
@@ -34,12 +34,14 @@ public class ContentPanel extends Composite implements ContextListener {
 			currentContent.update(context);
 			return;
 		}
-		if (currentContent == null || currentContent.deactivate()) {
-			currentContent = content;
-			rootPanel.clear();
-			rootPanel.add(currentContent, DockPanel.CENTER);
-			currentContent.activate(context);
+		if (currentContent != null) {
+			currentContent.deactivate();
 		}
+
+		currentContent = content;
+		rootPanel.clear();
+		rootPanel.add(currentContent, DockPanel.CENTER);
+		currentContent.activate(context);
 	}
 
 }

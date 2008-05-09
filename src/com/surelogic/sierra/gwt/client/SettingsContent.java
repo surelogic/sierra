@@ -187,8 +187,8 @@ public final class SettingsContent extends ContentComposite {
 		// nothing to do
 	}
 
-	protected boolean onDeactivate() {
-		return true;
+	protected void onDeactivate() {
+		// nothing to do
 	}
 
 	private Label createLabel(String text) {

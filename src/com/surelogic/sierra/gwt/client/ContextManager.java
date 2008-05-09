@@ -11,13 +11,13 @@ import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
-public final class ClientContext {
+public final class ContextManager {
 
 	private static UserAccount userAccount;
 	private static List userListeners = new ArrayList();
 	private static List contextListeners = new ArrayList();
 
-	private ClientContext() {
+	private ContextManager() {
 		// Not instantiable
 	}
 

@@ -31,4 +31,11 @@ public final class LangUtil {
 		return s1 != null && s1.equalsIgnoreCase(s2);
 	}
 
+	public static boolean notEmpty(String value) {
+		return value == null ? false : "".equals(value.trim());
+	}
+
+	public static String emptyZeroString(int i) {
+		return i == 0 ? "" : Integer.toString(i);
+	}
 }

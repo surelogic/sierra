@@ -1,44 +1,121 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
+import com.surelogic.sierra.gwt.client.LifecycleComposite;
+import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
-public class SectionPanel extends Composite {
+public abstract class SectionPanel extends LifecycleComposite {
 	private static final String PRIMARY_STYLE = "sl-Section";
 	private final DockPanel rootPanel = new DockPanel();
 	private final DockPanel titlePanel = new DockPanel();
 	private final Label sectionTitle = new Label();
-	private final Label sectionInfo = new Label();
+	private final Label sectionSummary = new Label();
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final VerticalPanel contentPanel = new VerticalPanel();
+	private Widget status;
 
-	public SectionPanel(String title, String info) {
+	public SectionPanel() {
 		super();
 		initWidget(rootPanel);
+	}
+
+	public final String getTitle() {
+		return sectionTitle.getText();
+	}
+
+	public final void setTitle(String text) {
+		sectionTitle.setText(text);
+		updateHeader();
+	}
+
+	public final String getSummary() {
+		return sectionSummary.getText();
+	}
+
+	public final void setSummary(String text) {
+		if (!"".equals(text) && !text.endsWith(":")) {
+			text += ":";
+		}
+		sectionSummary.setText(text);
+		updateHeader();
+	}
+
+	public final void addAction(Widget w) {
+		actionPanel.add(w);
+		w.addStyleName("sl-Section-actionpanel-item");
+		updateHeader();
+	}
+
+	public final void addAction(String text, ClickListener clickListener) {
+		final Label textLabel = new Label(text);
+		textLabel.addStyleName("clickable");
+		textLabel.addClickListener(clickListener);
+		addAction(textLabel);
+	}
+
+	public final void removeAction(Widget w) {
+		actionPanel.remove(w);
+		updateHeader();
+	}
+
+	public final void removeActions() {
+		while (actionPanel.getWidgetCount() > 0) {
+			actionPanel.remove(0);
+		}
+		updateHeader();
+	}
+
+	protected void setWaitStatus() {
+		setStatus(ImageHelper.getWaitImage(16),
+				HasHorizontalAlignment.ALIGN_CENTER);
+	}
+
+	protected void setErrorStatus(String text) {
+		final Label textLbl = new Label(text);
+		textLbl.addStyleName("error");
+		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
+	}
+
+	protected void setSuccessStatus(String text) {
+		final Label textLbl = new Label(text);
+		textLbl.addStyleName("success");
+		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
+	}
+
+	protected void setStatus(Widget w, HorizontalAlignmentConstant align) {
+		clearStatus();
+		status = w;
+		contentPanel.add(status);
+		contentPanel.setCellHorizontalAlignment(status, align);
+	}
+
+	protected void clearStatus() {
+		if (status != null) {
+			contentPanel.remove(status);
+		}
+		status = null;
+	}
+
+	protected final void onInitialize() {
 		rootPanel.addStyleName(PRIMARY_STYLE);
 		rootPanel.setWidth("100%");
 		rootPanel.setHeight("100%");
 
-		rootPanel.add(titlePanel, DockPanel.NORTH);
 		titlePanel.addStyleName(PRIMARY_STYLE + "-titlepanel");
 		titlePanel.add(sectionTitle, DockPanel.WEST);
-
-		if (!title.endsWith(":")) {
-			title += ":";
-		}
-		sectionTitle.setText(title);
 		sectionTitle.addStyleName(PRIMARY_STYLE + "-title");
 
-		titlePanel.add(sectionInfo, DockPanel.CENTER);
-		titlePanel.setCellHorizontalAlignment(sectionInfo,
+		titlePanel.add(sectionSummary, DockPanel.CENTER);
+		titlePanel.setCellHorizontalAlignment(sectionSummary,
 				HorizontalPanel.ALIGN_CENTER);
-		sectionInfo.addStyleName(PRIMARY_STYLE + "-info");
-		sectionInfo.setText(info);
+		sectionSummary.addStyleName(PRIMARY_STYLE + "-info");
 
 		titlePanel.add(actionPanel, DockPanel.EAST);
 		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
@@ -48,53 +125,39 @@ public class SectionPanel extends Composite {
 				HorizontalPanel.ALIGN_MIDDLE);
 
 		titlePanel.setCellWidth(sectionTitle, "25%");
-		titlePanel.setCellWidth(sectionInfo, "50%");
+		titlePanel.setCellWidth(sectionSummary, "50%");
 		titlePanel.setCellWidth(actionPanel, "25%");
 
-		rootPanel.add(contentPanel, DockPanel.CENTER);
+		updateHeader();
+
 		contentPanel.addStyleName(PRIMARY_STYLE + "-contentpanel");
+		rootPanel.add(contentPanel, DockPanel.CENTER);
+
+		onInitialize(contentPanel);
 	}
 
-	public DockPanel getTitlePanel() {
+	protected abstract void onInitialize(VerticalPanel contentPanel);
+
+	protected final DockPanel getTitlePanel() {
 		return titlePanel;
 	}
 
-	public Label getSectionTitle() {
-		return sectionTitle;
-	}
-
-	public Label getSectionInfo() {
-		return sectionInfo;
-	}
-
-	public HorizontalPanel getActionPanel() {
-		return actionPanel;
-	}
-
-	public void addAction(Widget w) {
-		actionPanel.add(w);
-		w.addStyleName("sl-Section-actionpanel-item");
-	}
-
-	public void addAction(String text, ClickListener clickListener) {
-		final Label textLabel = new Label(text);
-		textLabel.addStyleName("clickable");
-		textLabel.addClickListener(clickListener);
-		addAction(textLabel);
-	}
-
-	public void removeAction(Widget w) {
-		actionPanel.remove(w);
-	}
-
-	public void removeActions() {
-		while (actionPanel.getWidgetCount() > 0) {
-			actionPanel.remove(0);
-		}
-	}
-
-	public VerticalPanel getContentPanel() {
+	protected final VerticalPanel getContentPanel() {
 		return contentPanel;
+	}
+
+	private void updateHeader() {
+		if (!isInitialized()) {
+			return;
+		}
+
+		if ("".equals(sectionTitle.getText())
+				&& "".equals(sectionSummary.getText())
+				&& actionPanel.getWidgetCount() == 0) {
+			rootPanel.remove(titlePanel);
+		} else if (rootPanel.getWidgetIndex(titlePanel) == -1) {
+			rootPanel.add(titlePanel, DockPanel.NORTH);
+		}
 	}
 
 }

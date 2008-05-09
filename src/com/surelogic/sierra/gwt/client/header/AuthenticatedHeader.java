@@ -1,10 +1,12 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.header;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public abstract class AuthenticatedHeader extends HeaderComposite {
@@ -27,7 +29,7 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 		addUtilityItem("Log out", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				ClientContext.logout(null);
+				ContextManager.logout(null);
 			}
 		});
 

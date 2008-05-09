@@ -1,6 +1,7 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.header;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public class GuestHeader extends HeaderComposite {

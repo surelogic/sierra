@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.header.AdminHeader;
+import com.surelogic.sierra.gwt.client.header.GuestHeader;
+import com.surelogic.sierra.gwt.client.header.HeaderComposite;
+import com.surelogic.sierra.gwt.client.header.UserHeader;
 import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.RulesContent;

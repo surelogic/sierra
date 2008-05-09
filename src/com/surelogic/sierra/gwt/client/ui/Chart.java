@@ -16,7 +16,7 @@ public class Chart extends Composite {
 
 	public Chart() {
 		initWidget(rootPanel);
-		rootPanel.add(ImageHelper.getWaitImage(32));
+		rootPanel.add(ImageHelper.getWaitImage(16));
 	}
 
 	public void setChartTicket(final Ticket ticket) {

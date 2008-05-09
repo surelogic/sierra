@@ -59,12 +59,12 @@ public final class LoginContent extends ContentComposite {
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
 
-		ClientContext.addUserListener(new UserListener() {
+		ContextManager.addUserListener(new UserListener() {
 
 			public void onLogin(UserAccount user) {
 				resetLoginAttempt();
 				errorMessage.setText("");
-				if (ClientContext.isContent(LoginContent.getInstance())) {
+				if (ContextManager.isContent(LoginContent.getInstance())) {
 					OverviewContent.getInstance().show();
 				}
 			}
@@ -84,7 +84,7 @@ public final class LoginContent extends ContentComposite {
 			}
 		});
 
-		ClientContext.login(usernameText, passwordText);
+		ContextManager.login(usernameText, passwordText);
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -182,8 +182,8 @@ public final class LoginContent extends ContentComposite {
 		// nothing to do
 	}
 
-	protected boolean onDeactivate() {
-		return true;
+	protected void onDeactivate() {
+		// nothing to do
 	}
 
 	private void resetLoginAttempt() {

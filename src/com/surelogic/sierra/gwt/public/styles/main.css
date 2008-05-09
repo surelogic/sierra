@@ -148,90 +148,32 @@ img {
     
 }
 
-.overview-table {
+/* Table Section */
+.sl-TableSection {
 	border-spacing: 0px;
 	width: 100%;
 	border-bottom: 1px solid #D3D3D3;
 }
 
-.overview-header {
+.sl-TableSection-header {
 	text-align: left;
 	color: white;
 	background-color: #005395;
 }
 
-.overview-header td {
+.sl-TableSection-header td {
 	border-collapse: collapse;
 	padding-right: 5px;
 	padding-left: 5px;
 }
 
-.overview-data td {
+.sl-TableSection-data td {
 	border-right: 1px solid #d3d3d3;
 	border-left: 1px solid #d3d3d3;
 	border-collapse: collapse;
 	padding-right: 5px;
 	padding-left: 5px;
 	empty-cells: show;
-}
-
-/* Rules Content */
-.rules-search-panel {
-	width: 100%;
-}
-
-.rules-search-header {
-    border-right: 1px outset;
-    padding-bottom: 10px;
-}
-
-.rules-search-title {
-    font-size: small;
-    font-weight: bold;
-    text-align: center;
-}
-
-.rules-search-footer {
-	height: 24px;
-	border-right: 1px outset;
-	border-bottom: 1px outset;
-}
-
-.rules-search-category {
-	border-right: 1px outset;
-	padding: 2px;
-	font-size: small;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.rules-search-finding {
-	border-right: 1px outset;
-	padding: 2px 4px 2px 10px;
-	font-size: small;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.rules-search-selected {
-	border-right: none 0px;
-	border-top: inset 1px;
-	border-bottom: inset 1px;
-	border-left: inset 1px;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.rules-details-panel {
-	width: 100%;
-	padding: 5px;
-	border-top: 1px inset;
-}
-
-.rules-details-finding {
-    font-size: small;
-    padding: 2px;
-    cursor: default;
 }
 
 .cell-text {
@@ -265,8 +207,7 @@ img {
 /* Section */
 .sl-Section {
 	border-spacing: 1px;
-	margin: 5px;
-	padding: 2px;
+	margin: 3px;
 }
 
 .sl-Section-titlepanel {
@@ -300,7 +241,7 @@ img {
 .sl-Section-contentpanel {
 	border: 1px solid #666699;
 	width: 100%;
-	padding: 4px;
+	padding: 1px;
 }
 
 .sl-Section-contentpanel-editing {

@@ -66,9 +66,8 @@ public final class FindingTypeContent extends ContentComposite {
 		// nothing to do
 	}
 
-	protected boolean onDeactivate() {
+	protected void onDeactivate() {
 		setEmpty();
-		return true;
 	}
 
 	protected void setEmpty() {

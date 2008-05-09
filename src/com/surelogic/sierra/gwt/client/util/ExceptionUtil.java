@@ -1,7 +1,7 @@
 package com.surelogic.sierra.gwt.client.util;
 
 import com.google.gwt.core.client.GWT;
-import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.LogPanel;
 
 /**
@@ -27,7 +27,7 @@ public final class ExceptionUtil {
 	 */
 	public static void handle(Throwable caught) {
 		log(caught);
-		ClientContext
+		ContextManager
 				.logout("Unable to communicate with server. (Server may be down)");
 	}
 }

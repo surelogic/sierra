@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ClientContext;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Result;
@@ -55,7 +55,7 @@ public final class UserManagementContent extends ContentComposite {
 
 	protected void onInitialize(DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
-		final boolean isAdmin = ClientContext.getUser().isAdministrator();
+		final boolean isAdmin = ContextManager.getUser().isAdministrator();
 		if (isAdmin) {
 			userActionsPanel.addAction("Create a new user",
 					new ClickListener() {
@@ -118,10 +118,9 @@ public final class UserManagementContent extends ContentComposite {
 		// nothing to do yet
 	}
 
-	protected boolean onDeactivate() {
+	protected void onDeactivate() {
 		// clear the grid to free up some resources
 		usersGrid.removeRows();
-		return true;
 	}
 
 	private void refreshUsers() {
@@ -135,7 +134,7 @@ public final class UserManagementContent extends ContentComposite {
 			}
 
 			public void onSuccess(Object result) {
-				final UserAccount currentUser = ClientContext.getUser();
+				final UserAccount currentUser = ContextManager.getUser();
 				final List users = (List) result;
 
 				usersGrid.removeRows();
@@ -212,7 +211,7 @@ public final class UserManagementContent extends ContentComposite {
 							public void onSuccess(Object result) {
 								Result r = (Result) result;
 								updateRow(row, (UserAccount) r.getResult(),
-										ClientContext.getUser());
+										ContextManager.getUser());
 								status.setStatus(Status.fromResult(r));
 							}
 						});
@@ -244,7 +243,7 @@ public final class UserManagementContent extends ContentComposite {
 							public void onSuccess(Object result) {
 								Result r = (Result) result;
 								updateRow(row, (UserAccount) r.getResult(),
-										ClientContext.getUser());
+										ContextManager.getUser());
 								status.setStatus(Status.fromResult(r));
 							}
 						});
@@ -289,12 +288,12 @@ public final class UserManagementContent extends ContentComposite {
 							final Result r = (Result) result;
 							final UserAccount user = (UserAccount) r
 									.getResult();
-							final UserAccount current = ClientContext.getUser();
+							final UserAccount current = ContextManager.getUser();
 							if (r.isSuccess()
 									&& (user.getId() == current.getId())) {
-								ClientContext.updateUser(user);
+								ContextManager.updateUser(user);
 							}
-							updateRow(row, user, ClientContext.getUser());
+							updateRow(row, user, ContextManager.getUser());
 							status.setStatus(Status.fromResult(r));
 
 						}
