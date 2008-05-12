@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LoadListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -13,28 +14,31 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class Chart extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();
+	private final Image waitImage = ImageHelper.getWaitImage(16);
 
 	public Chart() {
 		initWidget(rootPanel);
-		rootPanel.add(ImageHelper.getWaitImage(16));
+		rootPanel.add(waitImage);
 	}
 
 	public void setChartTicket(final Ticket ticket) {
 		if (ticket == null) {
 			rootPanel.clear();
 			rootPanel.add(new Label("No Chart Available"));
+		} else {
+			ServiceHelper.getTicketService().getImageMap(ticket,
+					new Callback() {
+
+						protected void onFailure(String message, Object result) {
+							loadFailed(message);
+						}
+
+						protected void onSuccess(String message, Object result) {
+							loadChart(ticket, (ImageMapData) result);
+						}
+
+					});
 		}
-		ServiceHelper.getTicketService().getImageMap(ticket, new Callback() {
-
-			protected void onFailure(String message, Object result) {
-				loadFailed(message);
-			}
-
-			protected void onSuccess(String message, Object result) {
-				loadChart(ticket, (ImageMapData) result);
-			}
-
-		});
 	}
 
 	private void loadChart(final Ticket ticket, ImageMapData mapData) {
@@ -50,9 +54,7 @@ public class Chart extends Composite {
 			}
 
 			public void onLoad(Widget sender) {
-				while (rootPanel.getWidgetCount() > 1) {
-					rootPanel.remove(1);
-				}
+				rootPanel.remove(waitImage);
 			}
 		});
 
