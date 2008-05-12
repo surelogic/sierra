@@ -13,7 +13,6 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
-import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public class CategorySection extends SectionPanel {
@@ -178,8 +177,11 @@ public class CategorySection extends SectionPanel {
 		return editing;
 	}
 
-	private class FindingTypesSection extends SubsectionPanel {
+	private class FindingTypesSection extends SectionPanel {
+
 		protected void onInitialize(VerticalPanel contentPanel) {
+			setSubsectionStyle(true);
+
 			// TODO Auto-generated method stub
 
 		}

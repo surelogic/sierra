@@ -14,20 +14,20 @@ import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
-import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
+import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
-public class SearchResultsSubsection extends SubsectionPanel {
+public class SearchResultsSection extends SectionPanel {
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
 	private String searchText;
 
-	public SearchResultsSubsection(CategoryCache categories) {
+	public SearchResultsSection(CategoryCache categories) {
 		super();
 		this.categories = categories;
-		setTitle("Results");
 	}
 
 	protected void onInitialize(VerticalPanel contentPanel) {
+		setTitle("Results");
 		categories.addListener(new CacheListener() {
 
 			public void onRefresh(Cache cache, Throwable failure) {

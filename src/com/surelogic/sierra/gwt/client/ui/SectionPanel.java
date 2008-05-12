@@ -13,6 +13,7 @@ import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public abstract class SectionPanel extends LifecycleComposite {
 	private static final String PRIMARY_STYLE = "sl-Section";
+	private static final String SUBSECTION_STYLE = "sl-Subsection";
 	private final DockPanel rootPanel = new DockPanel();
 	private final DockPanel titlePanel = new DockPanel();
 	private final Label sectionTitle = new Label();
@@ -45,6 +46,17 @@ public abstract class SectionPanel extends LifecycleComposite {
 	public final void setSummary(String text) {
 		sectionSummary.setText(text);
 		updateHeader();
+	}
+
+	public final void setSubsectionStyle(boolean enable) {
+		if (enable) {
+			getTitlePanel().addStyleName(SUBSECTION_STYLE + "-titlepanel");
+			getContentPanel().addStyleName(SUBSECTION_STYLE + "-contentpanel");
+		} else {
+			getTitlePanel().removeStyleName(SUBSECTION_STYLE + "-titlepanel");
+			getContentPanel().removeStyleName(
+					SUBSECTION_STYLE + "-contentpanel");
+		}
 	}
 
 	public final void addAction(Widget w) {
