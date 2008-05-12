@@ -8,8 +8,8 @@ import com.surelogic.common.jdbc.SchemaAction;
 public class Schema_0029 implements SchemaAction {
 
 	public void run(Connection c) throws SQLException {
-		SchemaUtil.updateFindingTypes(c);
-		SchemaUtil.setupFilters(c);
+		//SchemaUtil.updateFindingTypes(c);
+		//SchemaUtil.setupFilters(c);
 	}
 
 }
