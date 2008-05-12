@@ -96,9 +96,9 @@ public class ScanFilter implements Serializable {
 		copy.uid = uid;
 		copy.name = name;
 		copy.revision = revision;
-		copy.categories = categories == null ? null : new HashSet(categories);
-		copy.types = types == null ? null : new HashSet(types);
-		copy.projects = projects == null ? null : new HashSet(projects);
+		copy.categories = new HashSet(getCategories());
+		copy.types = new HashSet(getTypes());
+		copy.projects = new HashSet(getProjects());
 		return copy;
 	}
 }
