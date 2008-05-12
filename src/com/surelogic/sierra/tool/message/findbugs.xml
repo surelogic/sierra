@@ -6935,8 +6935,195 @@ private Long getNotificationSequenceNumber() {
 		<name>Useless assignment in return statement</name>
 	</findingType>
 
+<!-- For FB 1.3.4 -->
+	<findingType>
+		<id>XSS_REQUEST_PARAMETER_TO_SEND_ERROR</id>
+		<artifact tool="FindBugs"
+			mnemonic="XSS_REQUEST_PARAMETER_TO_SEND_ERROR">
+		</artifact>
+		<shortMessage>
+			Servlet reflected cross site scripting vulnerability
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This code directly writes an HTTP parameter to a Server error page 
+	    (using HttpServletResponse.sendError). Echoing this untrusted input allows
+      for a reflected cross site scripting vulnerability. 
+      See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;
+      http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
+      for more information.&lt;/p&gt;
+      &lt;p&gt;FindBugs looks only for the most blatent, obvious cases of cross site scripting.
+		</info>
+		<name>Servlet reflected cross site scripting vulnerability</name>
+	</findingType>
+	<findingType>
+		<id>SKIPPED_CLASS_TOO_BIG</id>
+		<artifact tool="FindBugs"
+			mnemonic="SKIPPED_CLASS_TOO_BIG">
+		</artifact>
+		<shortMessage>
+			Class too big for analysis
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class is bigger than can be effectively handled, and was not fully analyzed for errors.
+	    &lt;/p&gt;
+		</info>
+		<name>Class too big for analysis</name>
+	</findingType>
+	<findingType>
+		<id>EQ_COMPARING_CLASS_NAMES</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_COMPARING_CLASS_NAMES">
+		</artifact>
+		<shortMessage>
+			equals() compares class names rather than class objects
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This method checks to see if two objects are the same class by checking to see if the names
+of their classes are equal. You can have different classes with the same name if they are loaded by
+different class loaders. Just check to see if the class objects are the same.
+	    &lt;/p&gt;
+		</info>
+		<name>Comparing Class Names</name>
+	</findingType>
+	<findingType>
+		<id>EQ_UNUSUAL</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_UNUSUAL">
+		</artifact>
+		<shortMessage>
+			Unusual equals() method
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class doesn't do any of the patterns we recognize for checking that the type of the argument 
+is compatible with the type of the &lt;code&gt;this&lt;/code&gt; object. There might not be anything wrong with
+this code, but it is worth reviewing
+	    &lt;/p&gt;
+		</info>
+		<name>Unusual equals() method</name>
+	</findingType>
+	<findingType>
+		<id>EQ_GETCLASS_AND_CLASS_CONSTANT</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_GETCLASS_AND_CLASS_CONSTANT">
+		</artifact>
+		<shortMessage>
+			equals() method fails for subtypes
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class has an equals method that will be broken if it is inherited by subclasses.
+It compares a class literal with the class of the argument (e.g., in class &lt;code&gt;Foo&lt;/code&gt;
+it might check if &lt;code&gt;Foo.class == o.getClass()&lt;/code&gt;).
+It is better to check  if  &lt;code&gt;this.getClass() == o.getClass()&lt;/code&gt;.
+	    &lt;/p&gt;
+		</info>
+		<name>equals() fails for subtypes</name>
+	</findingType>
+	<findingType>
+		<id>EQ_ALWAYS_TRUE</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_ALWAYS_TRUE">
+		</artifact>
+		<shortMessage>
+			equals() method always returns true
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class defines an equals method that always returns true. This is imaginative, but not very smart.
+Plus, it means that the equals method is not symmetric.
+	    &lt;/p&gt;
+		</info>
+		<name>equals() always returns true</name>
+	</findingType>
+	<findingType>
+		<id>EQ_ALWAYS_FALSE</id>
+		<artifact tool="FindBugs"
+			mnemonic="EQ_ALWAYS_FALSE">
+		</artifact>
+		<shortMessage>
+			equals() method always returns false
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class defines an equals method that always returns false. 
+	    This means that an object is not equal to itself, and it is impossible to 
+	    create useful Maps or Sets of this class. More fundamentally, it means
+      that equals() is not reflexive, one of the requirements of the equals method.&lt;/p&gt;
+&lt;p&gt;The likely intended semantics are object identity: that an object is equal to itself. 
+      This is the behavior inherited from class &lt;code&gt;Object&lt;/code&gt;. If you need to override an 
+      equals inherited from a different superclass, you can use:
+&lt;pre&gt;
+public boolean equals(Object o) { return this == o; }
+&lt;/pre&gt;
+	    &lt;/p&gt;
+		</info>
+		<name>equals() always returns false</name>
+	</findingType>
+	<findingType>
+		<id>MSF_MUTABLE_SERVLET_FIELD</id>
+		<artifact tool="FindBugs"
+			mnemonic="MSF_MUTABLE_SERVLET_FIELD">
+		</artifact>
+		<shortMessage>
+			Mutable servlet field
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    A web server generally only creates one instance of servlet or jsp class (i.e., treats
+the class as a Singleton), and will have multiple threads invoke methods on that instance to
+service multiple simultaneous requests.
+Thus, having a mutable instance field generally creates race conditions.
+	    &lt;/p&gt;
+		</info>
+		<name>Mutable servlet field</name>
+	</findingType>
+	<findingType>
+		<id>SE_READ_RESOLVE_IS_STATIC</id>
+		<artifact tool="FindBugs"
+			mnemonic="SE_READ_RESOLVE_IS_STATIC">
+		</artifact>
+		<shortMessage>
+			readResolve() must not be declared as a static method.
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    In order for the readResolve method to be recognized by the serialization
+mechanism, it must not be declared as a static method.
+	    &lt;/p&gt;
+		</info>
+		<name>Static readResolve() method</name>
+	</findingType>
+	<findingType>
+		<id>SE_PRIVATE_READ_RESOLVE_NOT_INHERITED</id>
+		<artifact tool="FindBugs"
+			mnemonic="SE_PRIVATE_READ_RESOLVE_NOT_INHERITED">
+		</artifact>
+		<shortMessage>
+			private readResolve() not inherited by subclasses
+		</shortMessage>
+		<info>
+	    &lt;p&gt; 
+	    This class defines a private readResolve method. Since it is private, 
+	    it won't be inherited by subclasses.  This might be intentional and OK, 
+	    but should be reviewed to ensure it is what is intended.
+	    &lt;/p&gt;
+		</info>
+		<name>Private readResolve() not inherited</name>
+	</findingType>
+
 	<category>
 		<id>Correctness</id>
+		<findingType>EQ_COMPARING_CLASS_NAMES</findingType>
+		<findingType>EQ_UNUSUAL</findingType>
+		<findingType>EQ_GETCLASS_AND_CLASS_CONSTANT</findingType>
+		<findingType>EQ_ALWAYS_TRUE</findingType>
+		<findingType>EQ_ALWAYS_FALSE</findingType>
+		<findingType>SE_READ_RESOLVE_IS_STATIC</findingType>
+		<findingType>SE_PRIVATE_READ_RESOLVE_NOT_INHERITED</findingType>		
 		<findingType>DLS_DEAD_LOCAL_STORE_IN_RETURN</findingType>
 		<findingType>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</findingType>
 		<findingType>EqualsDoesntOverride</findingType>
@@ -7355,6 +7542,7 @@ private Long getNotificationSequenceNumber() {
 		<findingType>HRS_REQUEST_PARAMETER_TO_COOKIE</findingType>
 		<findingType>DMI_CONSTANT_DB_PASSWORD</findingType>
 		<findingType>DMI_EMPTY_DB_PASSWORD</findingType>
+		<findingType>XSS_REQUEST_PARAMETER_TO_SEND_ERROR</findingType>
 		<name>Malicious code vulnerability</name>
 		<description>
 			Code that is vulnerable to attacks from untrusted code
@@ -7362,6 +7550,7 @@ private Long getNotificationSequenceNumber() {
 	</category>
 	<category>
 		<id>Multithreaded correctness</id>
+		<findingType>MSF_MUTABLE_SERVLET_FIELD</findingType>
 		<findingType>AvoidStaticCalendar</findingType>
 		<findingType>AvoidStaticDateformat</findingType>
 		<findingType>CallToStaticCalendar</findingType>
@@ -7415,6 +7604,14 @@ private Long getNotificationSequenceNumber() {
 		<name>Internationalization</name>
 		<description>
 			code flaws having to do with internationalization and locale
+		</description>
+	</category>
+	<category>
+		<id>Miscellaneous</id>
+		<findingType>SKIPPED_CLASS_TOO_BIG</findingType>
+		<name>Miscellaneous</name>
+		<description>
+			Other issues that don't fall into an obvious category
 		</description>
 	</category>
 </findingTypes>
