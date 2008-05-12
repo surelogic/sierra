@@ -5,13 +5,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.data.Cache;
+import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class RulesContent extends ContentComposite {
 	private static final RulesContent instance = new RulesContent();
 	private final CategoryCache categories = new CategoryCache();
-
 	private final SearchSection searchSection = new SearchSection(categories);
 
 	private final VerticalPanel selectionPanel = new VerticalPanel();
@@ -23,7 +26,7 @@ public class RulesContent extends ContentComposite {
 	}
 
 	private RulesContent() {
-		// no instances
+		// singleton
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -38,34 +41,58 @@ public class RulesContent extends ContentComposite {
 		rootPanel.setCellWidth(searchSection, "25%");
 		rootPanel.add(selectionPanel, DockPanel.CENTER);
 		rootPanel.setCellWidth(selectionPanel, "75%");
+
+		categories.addListener(new CacheListener() {
+
+			public void onItemUpdate(Cache cache, Cacheable item,
+					Throwable failure) {
+				refreshSelection();
+			}
+
+			public void onRefresh(Cache cache, Throwable failure) {
+				refreshSelection();
+			}
+		});
 	}
 
-	protected void onActivate(Context context) {
-		categories.refresh();
-
-		searchSection.activate(context);
-
+	private void refreshSelection() {
+		final Context context = ContextManager.getContext();
 		final RulesContext rulesCtx = new RulesContext(context);
+
 		final String categoryUuid = rulesCtx.getCategory();
 		if (LangUtil.notEmpty(categoryUuid)) {
 			if (selectionPanel.getWidgetIndex(categorySelection) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categorySelection);
 			}
-			categorySelection.activate(context);
+			if (categorySelection.isActive()) {
+				categorySelection.update(context);
+			} else {
+				categorySelection.activate(context);
+			}
 		}
+		// TODO make sure to remove and deactivate non-selected ui if it is
+		// active
+	}
+
+	protected void onActivate(Context context) {
+		searchSection.activate(context);
+
+		categories.refresh();
 	}
 
 	protected void onUpdate(Context context) {
 		searchSection.update(context);
-		if (selectionPanel.getWidgetIndex(categorySelection) >= 0) {
-			categorySelection.update(context);
-		}
+
+		refreshSelection();
 	}
 
 	protected void onDeactivate() {
 		searchSection.deactivate();
-		categorySelection.deactivate();
+
+		if (categorySelection.isActive()) {
+			categorySelection.deactivate();
+		}
 	}
 
 }
