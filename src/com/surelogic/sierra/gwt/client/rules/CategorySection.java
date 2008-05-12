@@ -46,33 +46,38 @@ public class CategorySection extends SectionPanel {
 	}
 
 	protected void onActivate(Context context) {
-		// TODO Auto-generated method stub
-
+		refresh(context);
 	}
 
 	protected void onDeactivate() {
-		// TODO Auto-generated method stub
-
+		// nothing for now
 	}
 
 	protected void onUpdate(Context context) {
-		// TODO Auto-generated method stub
-
+		refresh(context);
 	}
 
-	public void setCategory(Category cat) {
-		// TODO this must be converted to use context updates
+	private void refresh(Context context) {
+		final String categoryUuid = new RulesContext(context).getCategory();
+		refresh((Category) categories.getItem(categoryUuid));
+	}
+
+	private void refresh(Category cat) {
 		currentCategory = cat;
 		editing = false;
 
-		setSummary(cat.getName());
+		if (cat != null) {
+			setSummary(cat.getName());
+		} else {
+			setSummary("Select a Category");
+		}
 
 		if (nameEditText.isAttached()) {
 			categoryInfo.removeRow(0);
 		}
 
 		description.setReadOnly(true);
-		final String catInfo = cat.getInfo();
+		final String catInfo = cat == null ? "" : cat.getInfo();
 		if (catInfo == null || "".equals(catInfo)) {
 			description.setText("None");
 			description.addStyleName("font-italic");
@@ -84,12 +89,14 @@ public class CategorySection extends SectionPanel {
 		// updateFindingTypes(cat, false);
 
 		removeActions();
-		addAction("Edit", new ClickListener() {
+		if (cat != null) {
+			addAction("Edit", new ClickListener() {
 
-			public void onClick(Widget sender) {
-				edit();
-			}
-		});
+				public void onClick(Widget sender) {
+					edit();
+				}
+			});
+		}
 	}
 
 	private void edit() {
@@ -132,7 +139,7 @@ public class CategorySection extends SectionPanel {
 	}
 
 	private void cancelEdit() {
-		setCategory(currentCategory);
+		refresh(currentCategory);
 	}
 
 	private void saveEdit() {
