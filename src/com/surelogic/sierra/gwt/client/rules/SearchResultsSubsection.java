@@ -19,10 +19,12 @@ import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
 public class SearchResultsSubsection extends SubsectionPanel {
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
+	private String searchText;
 
 	public SearchResultsSubsection(CategoryCache categories) {
 		super();
 		this.categories = categories;
+		setTitle("Results");
 	}
 
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -59,6 +61,8 @@ public class SearchResultsSubsection extends SubsectionPanel {
 	}
 
 	public void search(String text) {
+		searchText = text;
+
 		clearResults();
 		setWaitStatus();
 		final StringBuffer queryBuf = new StringBuffer();
@@ -97,7 +101,7 @@ public class SearchResultsSubsection extends SubsectionPanel {
 	}
 
 	private void refreshResults() {
-		// TODO rebuild the results UI
+		search(searchText);
 	}
 
 	private void addSearchCategory(Category cat) {
