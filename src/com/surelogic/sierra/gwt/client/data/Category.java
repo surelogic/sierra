@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 
-public class Category implements Serializable {
+public class Category implements Serializable, Cacheable {
 
 	/**
 	 * 
