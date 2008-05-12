@@ -24,10 +24,10 @@ public class ToolUtil {
     }
     final MultiTool t = new MultiTool(true);
     if (!config.getExcludedToolsList().contains("findbugs")) {
-      t.addTool(new FindBugs1_3_3Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
+      t.addTool(new FindBugs1_3_4Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
     }
     if (!config.getExcludedToolsList().contains("pmd")) {
-      t.addTool(new PMD4_2Tool(debug));
+      t.addTool(new PMD4_2_1Tool(debug));
       t.addTool(new CPD4_1Tool(debug));
     }
     if (!config.getExcludedToolsList().contains("reckoner")) {
