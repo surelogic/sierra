@@ -56,15 +56,15 @@ public class SearchSection extends SectionPanel {
 	}
 
 	protected void onActivate(Context context) {
-		results.onActivate(context);
+		results.activate(context);
 	}
 
 	protected void onDeactivate() {
-		results.onDeactivate();
+		results.deactivate();
 	}
 
 	protected void onUpdate(Context context) {
-		results.onUpdate(context);
+		results.update(context);
 	}
 
 }
