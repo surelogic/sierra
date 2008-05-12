@@ -31,6 +31,9 @@ public abstract class SectionPanel extends LifecycleComposite {
 	}
 
 	public final void setTitle(String text) {
+		if (!"".equals(text) && !text.endsWith(":")) {
+			text += ":";
+		}
 		sectionTitle.setText(text);
 		updateHeader();
 	}
@@ -40,9 +43,6 @@ public abstract class SectionPanel extends LifecycleComposite {
 	}
 
 	public final void setSummary(String text) {
-		if (!"".equals(text) && !text.endsWith(":")) {
-			text += ":";
-		}
 		sectionSummary.setText(text);
 		updateHeader();
 	}
