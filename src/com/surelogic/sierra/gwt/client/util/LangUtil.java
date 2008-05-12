@@ -32,7 +32,7 @@ public final class LangUtil {
 	}
 
 	public static boolean notEmpty(String value) {
-		return value == null ? false : "".equals(value.trim());
+		return value == null ? false : !"".equals(value.trim());
 	}
 
 	public static String emptyZeroString(int i) {
