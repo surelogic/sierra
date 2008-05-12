@@ -36,6 +36,7 @@ public abstract class ChartSection extends SectionPanel {
 		chart = buildChart(context);
 		content.add(chart);
 		content.setCellHorizontalAlignment(chart, VerticalPanel.ALIGN_CENTER);
+		clearStatus();
 	}
 
 }
