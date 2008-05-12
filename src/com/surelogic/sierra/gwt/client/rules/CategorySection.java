@@ -13,6 +13,7 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.ui.SubsectionPanel;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public class CategorySection extends SectionPanel {
@@ -177,68 +178,93 @@ public class CategorySection extends SectionPanel {
 		return editing;
 	}
 
-	// private void updateFindingTypes(Category cat, boolean editing) {
-	// findingTypes.clear();
-	// if (editing) {
-	// findingsSubsection.addAction("Add Category", new ClickListener() {
-	//
-	// public void onClick(Widget sender) {
-	// addCategory();
-	// }
-	// });
-	// } else {
-	// findingsSubsection.removeActions();
-	// }
-	//
-	// for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
-	// final FilterEntry finding = (FilterEntry) it.next();
-	// final Widget findingUI = createDetailsRule(finding, editing,
-	// !finding.isFiltered());
-	// if (findingUI != null) {
-	// findingTypes.add(findingUI);
-	// }
-	// }
-	// final Set excluded = cat.getExcludedEntries();
-	// for (final Iterator catIt = cat.getParents().iterator(); catIt
-	// .hasNext();) {
-	// final Category parent = (Category) catIt.next();
-	// final DisclosurePanel parentPanel = new DisclosurePanel("From: "
-	// + parent.getName());
-	// final VerticalPanel parentFindingsPanel = new VerticalPanel();
-	// final Set parentFindings = parent.getIncludedEntries();
-	// for (final Iterator findingIt = parentFindings.iterator(); findingIt
-	// .hasNext();) {
-	// final FilterEntry finding = (FilterEntry) findingIt.next();
-	// final Widget findingUI = createDetailsRule(finding, editing,
-	// !excluded.contains(finding));
-	// if (findingUI != null) {
-	// parentFindingsPanel.add(findingUI);
-	// }
-	// }
-	// parentPanel.setContent(parentFindingsPanel);
-	// parentPanel.setOpen(true);
-	// findingTypes.add(parentPanel);
-	// }
-	// }
+	private class FindingTypesSection extends SubsectionPanel {
+		protected void onInitialize(VerticalPanel contentPanel) {
+			// TODO Auto-generated method stub
 
-	// private Widget createDetailsRule(FilterEntry finding, boolean editing,
-	// boolean enabled) {
-	// if (editing) {
-	// final CheckBox rule = new CheckBox(finding.getName());
-	// rule.setTitle(finding.getShortMessage());
-	// rule.setChecked(enabled);
-	// return rule;
-	// }
-	// if (enabled) {
-	// final Label rule = new Label(finding.getName());
-	// rule.setTitle(finding.getShortMessage());
-	// return rule;
-	// }
-	// return null;
-	// }
-	//
-	// private void addCategory() {
-	// // TODO need a dialog or UI update to add categories + findings
-	// }
+		}
 
+		protected void onActivate(Context context) {
+			// TODO Auto-generated method stub
+
+		}
+
+		protected void onDeactivate() {
+			// TODO Auto-generated method stub
+
+		}
+
+		protected void onUpdate(Context context) {
+			// TODO Auto-generated method stub
+
+		}
+
+		// private void updateFindingTypes(Category cat, boolean editing) {
+		// findingTypes.clear();
+		// if (editing) {
+		// findingsSubsection.addAction("Add Category",
+		// new ClickListener() {
+		//
+		// public void onClick(Widget sender) {
+		// addCategory();
+		// }
+		// });
+		// } else {
+		// findingsSubsection.removeActions();
+		// }
+		//
+		// for (final Iterator it = cat.getEntries().iterator(); it.hasNext();)
+		// {
+		// final FilterEntry finding = (FilterEntry) it.next();
+		// final Widget findingUI = createDetailsRule(finding, editing,
+		// !finding.isFiltered());
+		// if (findingUI != null) {
+		// findingTypes.add(findingUI);
+		// }
+		// }
+		// final Set excluded = cat.getExcludedEntries();
+		// for (final Iterator catIt = cat.getParents().iterator(); catIt
+		// .hasNext();) {
+		// final Category parent = (Category) catIt.next();
+		// final DisclosurePanel parentPanel = new DisclosurePanel(
+		// "From: " + parent.getName());
+		// final VerticalPanel parentFindingsPanel = new VerticalPanel();
+		// final Set parentFindings = parent.getIncludedEntries();
+		// for (final Iterator findingIt = parentFindings.iterator(); findingIt
+		// .hasNext();) {
+		// final FilterEntry finding = (FilterEntry) findingIt.next();
+		// final Widget findingUI = createDetailsRule(finding,
+		// editing, !excluded.contains(finding));
+		// if (findingUI != null) {
+		// parentFindingsPanel.add(findingUI);
+		// }
+		// }
+		// parentPanel.setContent(parentFindingsPanel);
+		// parentPanel.setOpen(true);
+		// findingTypes.add(parentPanel);
+		// }
+		// }
+		//
+		// private Widget createDetailsRule(FilterEntry finding, boolean
+		// editing,
+		// boolean enabled) {
+		// if (editing) {
+		// final CheckBox rule = new CheckBox(finding.getName());
+		// rule.setTitle(finding.getShortMessage());
+		// rule.setChecked(enabled);
+		// return rule;
+		// }
+		// if (enabled) {
+		// final Label rule = new Label(finding.getName());
+		// rule.setTitle(finding.getShortMessage());
+		// return rule;
+		// }
+		// return null;
+		// }
+		//
+		// private void addCategory() {
+		// // TODO need a dialog or UI update to add categories + findings
+		// }
+
+	}
 }
