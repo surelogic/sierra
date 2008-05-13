@@ -101,9 +101,9 @@ public class ScanFilters {
 				settingsRec.setRevision(revision);
 				settingsRec.update();
 				q.prepared("ScanFilters.deleteTypeFilters").call(
-						settings.getUid());
+						settingsRec.getId());
 				q.prepared("ScanFilters.deleteCategoryFilters").call(
-						settings.getUid());
+						settingsRec.getId());
 				final Queryable<Void> insertTypeFilter = q
 						.prepared("ScanFilters.insertTypeFilter");
 				final Queryable<Void> insertCategoryFilter = q
