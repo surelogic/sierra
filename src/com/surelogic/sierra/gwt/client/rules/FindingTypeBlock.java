@@ -14,7 +14,7 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
-public class FindingTypeSection extends SectionPanel {
+public class FindingTypeBlock extends SectionPanel {
 
 	public void refresh(Category cat, boolean editing) {
 		final VerticalPanel findingTypes = getContentPanel();

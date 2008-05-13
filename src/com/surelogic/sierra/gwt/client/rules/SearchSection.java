@@ -16,12 +16,12 @@ public class SearchSection extends SectionPanel {
 	private final FlexTable grid = new FlexTable();
 	private final ListBox categoryView = new ListBox();
 	private final TextBox searchText = new TextBox();
-	private final SearchResultsSection results;
+	private final SearchResultsBlock results;
 
 	public SearchSection(CategoryCache categories) {
 		super();
 		this.categories = categories;
-		this.results = new SearchResultsSection(this.categories);
+		this.results = new SearchResultsBlock(this.categories);
 	}
 
 	protected void onInitialize(VerticalPanel contentPanel) {

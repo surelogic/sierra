@@ -16,17 +16,17 @@ import com.surelogic.sierra.gwt.client.ui.Editable;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
-public class CategorySection extends SectionPanel implements Editable {
+public class CategoryBlock extends SectionPanel implements Editable {
 	private final CategoryCache categories;
 	private final FlexTable categoryInfo = new FlexTable();
 	private final TextBox nameEditText = new TextBox();
 	private final TextArea description = new TextArea();
-	private final FindingTypeSection findingTypes = new FindingTypeSection();
+	private final FindingTypeBlock findingTypes = new FindingTypeBlock();
 
 	private Category currentCategory;
 	private boolean editing;
 
-	public CategorySection(CategoryCache categories) {
+	public CategoryBlock(CategoryCache categories) {
 		super();
 		this.categories = categories;
 		setTitle("Category");

@@ -19,7 +19,7 @@ public class RulesContent extends ContentComposite {
 	private final SearchSection searchSection = new SearchSection(categories);
 
 	private final VerticalPanel selectionPanel = new VerticalPanel();
-	private final CategorySection categorySelection = new CategorySection(
+	private final CategoryBlock categorySelection = new CategoryBlock(
 			categories);
 
 	public static RulesContent getInstance() {

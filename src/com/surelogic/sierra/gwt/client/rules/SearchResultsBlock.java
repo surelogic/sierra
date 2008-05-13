@@ -18,14 +18,14 @@ import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class SearchResultsSection extends SectionPanel {
+public class SearchResultsBlock extends SectionPanel {
 	public static final String PRIMARY_STYLE = "rules";
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
 	private String searchText;
 	private Widget selectedItem;
 
-	public SearchResultsSection(CategoryCache categories) {
+	public SearchResultsBlock(CategoryCache categories) {
 		super();
 		this.categories = categories;
 	}
