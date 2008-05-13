@@ -303,6 +303,61 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
+	public Status updateScanFilter(ScanFilter f) {
+		final ScanFilterDO fDO = new ScanFilterDO();
+		fDO.setName(f.getName());
+		fDO.setRevision(f.getRevision());
+		fDO.setUid(f.getUid());
+		final Set<CategoryFilterDO> cats = fDO.getCategories();
+		final Set<TypeFilterDO> types = fDO.getFilterTypes();
+		for (final Object o : f.getCategories()) {
+			final ScanFilterEntry e = (ScanFilterEntry) o;
+			final CategoryFilterDO c = new CategoryFilterDO();
+			c.setImportance(importance(e.getImportance()));
+			c.setUid(e.getUid());
+			cats.add(c);
+		}
+		for (final Object o : f.getTypes()) {
+			final ScanFilterEntry e = (ScanFilterEntry) o;
+			final TypeFilterDO t = new TypeFilterDO();
+			t.setImportance(importance(e.getImportance()));
+			t.setFiltered(false);
+			t.setFindingType(e.getUid());
+			types.add(t);
+		}
+		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
+			public Status perform(Query q, Server s, User u) {
+				final ScanFilters sf = new ScanFilters(q);
+				try {
+					sf.updateScanFilter(fDO, s.nextRevision());
+				} catch (final RevisionException e) {
+					return Status
+							.failure("Someone else has already updated this scan filter.");
+				}
+				return Status.success("Scan filter updated");
+			}
+		});
+
+	}
+
+	private static Importance importance(ImportanceView i) {
+		if (i == null) {
+			return null;
+		}
+		if (i == ImportanceView.CRITICAL) {
+			return Importance.CRITICAL;
+		} else if (i == ImportanceView.HIGH) {
+			return Importance.HIGH;
+		} else if (i == ImportanceView.IRRELEVANT) {
+			return Importance.IRRELEVANT;
+		} else if (i == ImportanceView.LOW) {
+			return Importance.LOW;
+		} else if (i == ImportanceView.MEDIUM) {
+			return Importance.MEDIUM;
+		}
+		throw new IllegalStateException();
+	}
+
 	private static ImportanceView view(Importance i) {
 		if (i == null) {
 			return null;
@@ -320,11 +375,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			return ImportanceView.MEDIUM;
 		}
 		throw new IllegalStateException();
-	}
-
-	public Status updateScanFilter(ScanFilter f) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
