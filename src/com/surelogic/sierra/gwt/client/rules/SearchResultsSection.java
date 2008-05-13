@@ -58,7 +58,6 @@ public class SearchResultsSection extends SectionPanel {
 
 	protected void onActivate(Context context) {
 		search("");
-		updateSelectionUI(context);
 	}
 
 	protected void onUpdate(Context context) {
@@ -102,6 +101,7 @@ public class SearchResultsSection extends SectionPanel {
 			}
 		}
 		clearStatus();
+		updateSelectionUI(ContextManager.getContext());
 	}
 
 	private void clearResults() {
@@ -111,7 +111,6 @@ public class SearchResultsSection extends SectionPanel {
 
 	private void refreshResults() {
 		search(searchText);
-		updateSelectionUI(ContextManager.getContext());
 	}
 
 	private void addSearchCategory(Category cat) {
