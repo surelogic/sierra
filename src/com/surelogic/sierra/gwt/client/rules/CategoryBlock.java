@@ -136,7 +136,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 		rpcCategory.setName(nameEditText.getText());
 		rpcCategory.setInfo(description.getText());
 
-		// TODO copy filter settings from UI here
+		findingTypes.saveTo(rpcCategory);
 
 		categories.save(rpcCategory);
 	}

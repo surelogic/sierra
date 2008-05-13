@@ -1,7 +1,10 @@
 package com.surelogic.sierra.gwt.client.rules;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,10 +18,16 @@ import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class CategoryFindingsBlock extends SectionPanel {
+	private final Map findings = new HashMap();
+	private boolean editing;
 
 	public void refresh(Category cat, boolean editing) {
+		this.editing = editing;
+
 		final VerticalPanel findingTypes = getContentPanel();
 		findingTypes.clear();
+		findings.clear();
+
 		if (editing) {
 			addAction("Add Category", new ClickListener() {
 
@@ -61,12 +70,38 @@ public class CategoryFindingsBlock extends SectionPanel {
 		}
 	}
 
+	public void saveTo(Category cat) {
+		if (!editing) {
+			return;
+		}
+
+		for (Iterator it = findings.entrySet().iterator(); it.hasNext();) {
+			Entry findingEntry = (Entry) it.next();
+			CheckBox ui = (CheckBox) findingEntry.getKey();
+			FilterEntry finding = (FilterEntry) findingEntry.getValue();
+			updateFilterEntry(cat.getEntries(), finding, !ui.isChecked());
+		}
+	}
+
+	private void updateFilterEntry(Set entries, FilterEntry finding,
+			boolean filtered) {
+		final String findingUuid = finding.getUuid();
+		for (Iterator it = entries.iterator(); it.hasNext();) {
+			FilterEntry nextFilter = (FilterEntry) it.next();
+			if (findingUuid.equals(nextFilter.getUuid())) {
+				nextFilter.setFiltered(filtered);
+				break;
+			}
+		}
+	}
+
 	private Widget createDetailsRule(FilterEntry finding, boolean editing,
 			boolean enabled) {
 		if (editing) {
 			final CheckBox rule = new CheckBox(finding.getName());
 			rule.setTitle(finding.getShortMessage());
 			rule.setChecked(enabled);
+			findings.put(rule, finding);
 			return rule;
 		}
 		if (enabled) {
@@ -74,6 +109,7 @@ public class CategoryFindingsBlock extends SectionPanel {
 			rule.setTitle(finding.getShortMessage());
 			rule.addStyleName("clickable2");
 			rule.addClickListener(new FindingTypeListener(finding));
+			findings.put(rule, finding);
 			return rule;
 		}
 		return null;
