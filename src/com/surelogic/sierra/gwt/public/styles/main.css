@@ -37,6 +37,10 @@ img {
     font-style: italic;
 }
 
+.logo {
+	padding: 4px;
+}
+
 /* Header */
 .header {
 	background-color: #005395;
@@ -397,14 +401,14 @@ img {
 	border-bottom: solid 1px #000000;
 	border-left: solid 1px #001166;
 	border-right: solid 1px #001166;
-	border-top: solid 1px #001166;
+	border-top: solid 3px #001166;
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
 	cursor: pointer;
 	cursor: hand;
 	background-color: #FFFFFF;
-	border-top: solid 1px #000000;
+	border-top: solid 3px #000000;
 	border-left: solid 1px #000000;
 	border-right: solid 1px #000000;
 	border-bottom: none;

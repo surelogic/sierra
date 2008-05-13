@@ -12,7 +12,7 @@ public class FilterEntry implements Serializable {
 	private String name;
 
 	private boolean filtered;
-	private String uid;
+	private String uuid;
 	private String shortMessage;
 
 	public String getName() {
@@ -31,12 +31,12 @@ public class FilterEntry implements Serializable {
 		this.filtered = filtered;
 	}
 
-	public String getUid() {
-		return uid;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setUid(String id) {
-		uid = id;
+	public void setUuid(String id) {
+		uuid = id;
 	}
 
 	public String getShortMessage() {
@@ -51,7 +51,7 @@ public class FilterEntry implements Serializable {
 		FilterEntry copy = new FilterEntry();
 		copy.name = name;
 		copy.filtered = filtered;
-		copy.uid = uid;
+		copy.uuid = uuid;
 		copy.shortMessage = shortMessage;
 		return copy;
 	}
@@ -59,7 +59,7 @@ public class FilterEntry implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		return result;
 	}
 
@@ -71,11 +71,11 @@ public class FilterEntry implements Serializable {
 			return false;
 		}
 		final FilterEntry other = (FilterEntry) obj;
-		if (uid == null) {
-			if (other.uid != null) {
+		if (uuid == null) {
+			if (other.uuid != null) {
 				return false;
 			}
-		} else if (!uid.equals(other.uid)) {
+		} else if (!uuid.equals(other.uuid)) {
 			return false;
 		}
 		return true;

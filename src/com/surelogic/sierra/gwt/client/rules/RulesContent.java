@@ -21,6 +21,7 @@ public class RulesContent extends ContentComposite {
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final CategoryBlock categorySelection = new CategoryBlock(
 			categories);
+	private final FindingTypeBlock findingSelection = new FindingTypeBlock();
 
 	public static RulesContent getInstance() {
 		return instance;
@@ -64,7 +65,8 @@ public class RulesContent extends ContentComposite {
 	private void refreshSelection() {
 		final Context context = ContextManager.getContext();
 		final RulesContext rulesCtx = new RulesContext(context);
-		String categoryUuid = rulesCtx.getCategory();
+		final String categoryUuid = rulesCtx.getCategory();
+		final String findingUuid = rulesCtx.getFinding();
 		boolean selectionMade = false;
 		if (LangUtil.notEmpty(categoryUuid)) {
 			if (selectionPanel.getWidgetIndex(categorySelection) == -1) {
@@ -77,10 +79,19 @@ public class RulesContent extends ContentComposite {
 				categorySelection.activate(context);
 			}
 			selectionMade = true;
+		} else if (LangUtil.notEmpty(findingUuid)) {
+			if (selectionPanel.getWidgetIndex(findingSelection) == -1) {
+				selectionPanel.clear();
+				selectionPanel.add(findingSelection);
+			}
+			if (findingSelection.isActive()) {
+				findingSelection.update(context);
+			} else {
+				findingSelection.activate(context);
+			}
+			selectionMade = true;
 		}
-		// TODO select finding type if available and a cat isn't selected
-		// TODO make sure to remove and deactivate non-selected ui if it is
-		// active
+
 		if (!selectionMade && categories.getItemCount() > 0) {
 			new RulesContext((Category) categories.getItem(0)).updateContext();
 		}
@@ -103,6 +114,9 @@ public class RulesContent extends ContentComposite {
 
 		if (categorySelection.isActive()) {
 			categorySelection.deactivate();
+		}
+		if (findingSelection.isActive()) {
+			findingSelection.deactivate();
 		}
 	}
 

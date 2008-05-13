@@ -3,8 +3,8 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 
@@ -21,13 +21,15 @@ public final class RulesContext {
 	public RulesContext(Category category) {
 		super();
 		this.context = ContextManager.getContext();
+		setFinding("");
 		setCategory(category.getUuid());
 	}
 
 	public RulesContext(FilterEntry finding) {
 		super();
 		this.context = ContextManager.getContext();
-		setFinding(finding.getUid());
+		setFinding(finding.getUuid());
+		setCategory("");
 	}
 
 	public void updateContext() {

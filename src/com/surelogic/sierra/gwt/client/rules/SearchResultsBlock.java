@@ -117,7 +117,7 @@ public class SearchResultsBlock extends SectionPanel {
 		final Label catEntry = new Label(cat.getName());
 		catEntry.addStyleName(PRIMARY_STYLE + "-category");
 		catEntry.addClickListener(new SearchResultListener(cat));
-		searchResultsData.put(cat, catEntry);
+		searchResultsData.put("C" + cat.getUuid(), catEntry);
 		getContentPanel().add(catEntry);
 	}
 
@@ -125,7 +125,7 @@ public class SearchResultsBlock extends SectionPanel {
 		final Label findingEntry = new Label(finding.getName());
 		findingEntry.addStyleName(PRIMARY_STYLE + "-finding");
 		findingEntry.addClickListener(new SearchResultListener(finding));
-		searchResultsData.put(finding, findingEntry);
+		searchResultsData.put("F" + finding.getUuid(), findingEntry);
 		getContentPanel().add(findingEntry);
 	}
 
@@ -137,12 +137,18 @@ public class SearchResultsBlock extends SectionPanel {
 
 		final RulesContext rulesCtx = new RulesContext(context);
 		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
-			Category cat = (Category) categories
-					.getItem(rulesCtx.getCategory());
-			Widget catEntry = (Widget) searchResultsData.get(cat);
+			Widget catEntry = (Widget) searchResultsData.get("C"
+					+ rulesCtx.getCategory());
 			if (catEntry != null) {
 				catEntry.addStyleName(PRIMARY_STYLE + "-category-selected");
 				selectedItem = catEntry;
+			}
+		} else if (LangUtil.notEmpty(rulesCtx.getFinding())) {
+			Widget findingEntry = (Widget) searchResultsData.get("F"
+					+ rulesCtx.getFinding());
+			if (findingEntry != null) {
+				findingEntry.addStyleName(PRIMARY_STYLE + "-finding-selected");
+				selectedItem = findingEntry;
 			}
 		}
 	}

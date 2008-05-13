@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
@@ -41,6 +41,7 @@ public abstract class HeaderComposite extends Composite {
 		headerRow.addStyleName(PRIMARY_STYLE);
 		headerRow.setWidth("100%");
 		final Image sierraLogo = ImageHelper.getImage("surelogic.png");
+		sierraLogo.addStyleName("logo");
 		headerRow.add(sierraLogo);
 		headerRow.setCellVerticalAlignment(sierraLogo,
 				HorizontalPanel.ALIGN_MIDDLE);
