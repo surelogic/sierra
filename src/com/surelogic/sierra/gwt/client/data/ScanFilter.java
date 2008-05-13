@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ScanFilter implements Serializable {
+public class ScanFilter implements Serializable, Cacheable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5806872701106755880L;
 
-	private String uid;
+	private String uuid;
 
 	private String name;
 
@@ -30,12 +30,12 @@ public class ScanFilter implements Serializable {
 	 */
 	private Set projects;
 
-	public String getUid() {
-		return uid;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
@@ -93,7 +93,7 @@ public class ScanFilter implements Serializable {
 
 	public ScanFilter copy() {
 		final ScanFilter copy = new ScanFilter();
-		copy.uid = uid;
+		copy.uuid = uuid;
 		copy.name = name;
 		copy.revision = revision;
 		copy.categories = new HashSet(getCategories());
@@ -101,4 +101,5 @@ public class ScanFilter implements Serializable {
 		copy.projects = new HashSet(getProjects());
 		return copy;
 	}
+
 }

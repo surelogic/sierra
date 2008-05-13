@@ -25,7 +25,6 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
-import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -284,7 +283,7 @@ public class ScanFilterContent extends ContentComposite {
 		final HorizontalPanel panel = new HorizontalPanel();
 		final HTML h = new HTML(e.getName());
 		h.setTitle(e.getShortMessage());
-		final ListBox box = ImportanceView.createChoice();
+		final ListBox box = new ImportanceChoice();
 		box.addChangeListener(new ChangeListener() {
 			public void onChange(Widget sender) {
 
