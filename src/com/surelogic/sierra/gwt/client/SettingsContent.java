@@ -43,7 +43,7 @@ public final class SettingsContent extends ContentComposite {
 	}
 
 	private SettingsContent() {
-		super();
+		// singleton
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -103,7 +103,7 @@ public final class SettingsContent extends ContentComposite {
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
-	protected void onActivate(Context context) {
+	protected void onUpdate(Context context) {
 		final AsyncCallback updateServerInfo = new AsyncCallback() {
 			public void onSuccess(Object result) {
 				updateInfo((ServerInfo) result);
@@ -181,10 +181,6 @@ public final class SettingsContent extends ContentComposite {
 				// TODO do some UI stuff to show failure
 			}
 		});
-	}
-
-	protected void onUpdate(Context context) {
-		// nothing to do
 	}
 
 	protected void onDeactivate() {

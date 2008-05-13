@@ -71,20 +71,14 @@ public class CategoryBlock extends SectionPanel implements Editable {
 		});
 	}
 
-	protected void onActivate(Context context) {
-		findingTypes.activate(context);
+	protected void onUpdate(Context context) {
+		findingTypes.update(context);
 
 		refresh(context);
 	}
 
 	protected void onDeactivate() {
 		findingTypes.deactivate();
-	}
-
-	protected void onUpdate(Context context) {
-		findingTypes.update(context);
-
-		refresh(context);
 	}
 
 	public void edit() {

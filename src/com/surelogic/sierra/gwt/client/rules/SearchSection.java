@@ -56,17 +56,12 @@ public class SearchSection extends SectionPanel {
 		});
 	}
 
-	protected void onActivate(Context context) {
-		results.activate(context);
-		searchText.setText("");
+	protected void onUpdate(Context context) {
+		results.update(context);
 	}
 
 	protected void onDeactivate() {
 		results.deactivate();
-	}
-
-	protected void onUpdate(Context context) {
-		results.update(context);
 	}
 
 }

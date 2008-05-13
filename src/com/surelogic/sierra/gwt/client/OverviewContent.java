@@ -46,12 +46,6 @@ public final class OverviewContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 	}
 
-	protected void onActivate(Context context) {
-		for (Iterator it = sections.iterator(); it.hasNext();) {
-			((SectionPanel) it.next()).activate(context);
-		}
-	}
-
 	protected void onUpdate(Context context) {
 		for (Iterator it = sections.iterator(); it.hasNext();) {
 			((SectionPanel) it.next()).update(context);

@@ -99,12 +99,8 @@ public class ScanFilterContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 	}
 
-	protected void onActivate(Context context) {
-		refreshFilterList();
-	}
-
 	protected void onUpdate(Context context) {
-		// nothing to do
+		refreshFilterList();
 	}
 
 	protected void onDeactivate() {

@@ -41,7 +41,7 @@ public class ContentPanel extends Composite implements ContextListener {
 		currentContent = content;
 		rootPanel.clear();
 		rootPanel.add(currentContent, DockPanel.CENTER);
-		currentContent.activate(context);
+		currentContent.update(context);
 	}
 
 }

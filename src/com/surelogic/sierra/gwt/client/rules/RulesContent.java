@@ -74,22 +74,16 @@ public class RulesContent extends ContentComposite {
 				selectionPanel.clear();
 				selectionPanel.add(categorySelection);
 			}
-			if (categorySelection.isActive()) {
-				categorySelection.update(context);
-			} else {
-				categorySelection.activate(context);
-			}
+			categorySelection.update(context);
+
 			selectionMade = true;
 		} else if (LangUtil.notEmpty(findingUuid)) {
 			if (selectionPanel.getWidgetIndex(findingSelection) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(findingSelection);
 			}
-			if (findingSelection.isActive()) {
-				findingSelection.update(context);
-			} else {
-				findingSelection.activate(context);
-			}
+			findingSelection.update(context);
+
 			selectionMade = true;
 		}
 
@@ -98,16 +92,14 @@ public class RulesContent extends ContentComposite {
 		}
 	}
 
-	protected void onActivate(Context context) {
-		searchSection.activate(context);
-
-		categories.refresh();
-	}
-
 	protected void onUpdate(Context context) {
 		searchSection.update(context);
 
-		refreshSelection();
+		if (categories.getItemCount() == 0) {
+			categories.refresh();
+		} else {
+			refreshSelection();
+		}
 	}
 
 	protected void onDeactivate() {

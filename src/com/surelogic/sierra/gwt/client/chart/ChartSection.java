@@ -12,23 +12,7 @@ public abstract class ChartSection extends SectionPanel {
 		// nothing to do
 	}
 
-	protected void onActivate(Context context) {
-		updateChart(context);
-	}
-
-	protected void onDeactivate() {
-		if (chart != null) {
-			getContentPanel().remove(chart);
-		}
-	}
-
 	protected void onUpdate(Context context) {
-		updateChart(context);
-	}
-
-	protected abstract Chart buildChart(Context context);
-
-	private void updateChart(Context context) {
 		final VerticalPanel content = getContentPanel();
 		if (chart != null) {
 			content.remove(chart);
@@ -37,5 +21,13 @@ public abstract class ChartSection extends SectionPanel {
 		content.add(chart);
 		content.setCellHorizontalAlignment(chart, VerticalPanel.ALIGN_CENTER);
 	}
+
+	protected void onDeactivate() {
+		if (chart != null) {
+			getContentPanel().remove(chart);
+		}
+	}
+
+	protected abstract Chart buildChart(Context context);
 
 }

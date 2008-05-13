@@ -26,19 +26,7 @@ public class FindingTypeBlock extends SectionPanel {
 		contentPanel.add(chart);
 	}
 
-	protected void onActivate(Context context) {
-		refresh(context);
-	}
-
-	protected void onDeactivate() {
-		// nothing to do
-	}
-
 	protected void onUpdate(Context context) {
-		refresh(context);
-	}
-
-	private void refresh(Context context) {
 		final RulesContext rulesCtx = new RulesContext(context);
 		final String findingUuid = rulesCtx.getFinding();
 		if (LangUtil.notEmpty(findingUuid)) {
@@ -57,6 +45,10 @@ public class FindingTypeBlock extends SectionPanel {
 		} else {
 			setEmpty();
 		}
+	}
+
+	protected void onDeactivate() {
+		// nothing to do
 	}
 
 	protected void setEmpty() {

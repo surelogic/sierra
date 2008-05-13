@@ -123,10 +123,6 @@ public class CategoryFindingsBlock extends SectionPanel {
 		setTitle("Finding Type");
 	}
 
-	protected void onActivate(Context context) {
-		// nothing to do
-	}
-
 	protected void onUpdate(Context context) {
 		// nothing to do
 	}

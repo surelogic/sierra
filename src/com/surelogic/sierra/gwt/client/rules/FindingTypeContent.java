@@ -24,7 +24,7 @@ public final class FindingTypeContent extends ContentComposite {
 	}
 
 	private FindingTypeContent() {
-		// Do nothing
+		// singleton
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -41,7 +41,7 @@ public final class FindingTypeContent extends ContentComposite {
 
 	}
 
-	protected void onActivate(Context context) {
+	protected void onUpdate(Context context) {
 		final String findingType = context.getParameter(PARAM_FINDING);
 		if ((findingType == null) || (findingType.length() == 0)) {
 			setEmpty();
@@ -59,11 +59,6 @@ public final class FindingTypeContent extends ContentComposite {
 
 					});
 		}
-
-	}
-
-	protected void onUpdate(Context context) {
-		// nothing to do
 	}
 
 	protected void onDeactivate() {

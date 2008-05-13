@@ -57,12 +57,12 @@ public class SearchResultsBlock extends SectionPanel {
 		});
 	}
 
-	protected void onActivate(Context context) {
-		search("");
-	}
-
 	protected void onUpdate(Context context) {
-		updateSelectionUI(context);
+		if (searchText == null) {
+			search("");
+		} else {
+			updateSelectionUI(context);
+		}
 	}
 
 	protected void onDeactivate() {

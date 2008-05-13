@@ -24,16 +24,12 @@ public abstract class TableSection extends SectionPanel {
 		grid.getRowFormatter().setStyleName(0, PRIMARY_STYLE + "-header");
 	}
 
-	protected final void onActivate(Context context) {
+	protected final void onUpdate(Context context) {
 		updateTable(context);
 	}
 
 	protected final void onDeactivate() {
 		clearRows();
-	}
-
-	protected final void onUpdate(Context context) {
-		updateTable(context);
 	}
 
 	protected void clearRows() {

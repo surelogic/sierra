@@ -49,7 +49,7 @@ public final class LoginContent extends ContentComposite {
 	}
 
 	private LoginContent() {
-		super();
+		// singleton
 	}
 
 	public void login() {
@@ -168,7 +168,7 @@ public final class LoginContent extends ContentComposite {
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
-	protected void onActivate(Context context) {
+	protected void onUpdate(Context context) {
 		// TODO accept an error message param in the context?
 		resetLoginAttempt();
 		if (username.getText().trim().length() > 0) {
@@ -176,10 +176,6 @@ public final class LoginContent extends ContentComposite {
 		} else {
 			username.setFocus(true);
 		}
-	}
-
-	protected void onUpdate(Context context) {
-		// nothing to do
 	}
 
 	protected void onDeactivate() {

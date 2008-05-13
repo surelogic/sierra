@@ -37,6 +37,14 @@ public class FilterSetContent extends ContentComposite {
 	private final StatusBox status = new StatusBox();
 	private final VerticalPanel sets = new VerticalPanel();
 
+	public static FilterSetContent getInstance() {
+		return instance;
+	}
+
+	private FilterSetContent() {
+		// singleton
+	}
+
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		final HorizontalPanel head = new HorizontalPanel();
@@ -55,12 +63,8 @@ public class FilterSetContent extends ContentComposite {
 		});
 	}
 
-	protected void onActivate(Context context) {
-		refreshFilterList();
-	}
-
 	protected void onUpdate(Context context) {
-		// nothing to do yet
+		refreshFilterList();
 	}
 
 	protected void onDeactivate() {
@@ -116,10 +120,6 @@ public class FilterSetContent extends ContentComposite {
 						status.setStatus((Status) result);
 					}
 				});
-	}
-
-	public static FilterSetContent getInstance() {
-		return instance;
 	}
 
 	private static class FilterSetComposite extends Composite {

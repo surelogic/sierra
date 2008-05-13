@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -50,7 +50,7 @@ public final class UserManagementContent extends ContentComposite {
 	}
 
 	private UserManagementContent() {
-		super();
+		// singleton
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
@@ -108,14 +108,10 @@ public final class UserManagementContent extends ContentComposite {
 		usersPanel.add(status);
 	}
 
-	protected void onActivate(Context context) {
+	protected void onUpdate(Context context) {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
-	}
-
-	protected void onUpdate(Context context) {
-		// nothing to do yet
 	}
 
 	protected void onDeactivate() {
@@ -288,7 +284,8 @@ public final class UserManagementContent extends ContentComposite {
 							final Result r = (Result) result;
 							final UserAccount user = (UserAccount) r
 									.getResult();
-							final UserAccount current = ContextManager.getUser();
+							final UserAccount current = ContextManager
+									.getUser();
 							if (r.isSuccess()
 									&& (user.getId() == current.getId())) {
 								ContextManager.updateUser(user);

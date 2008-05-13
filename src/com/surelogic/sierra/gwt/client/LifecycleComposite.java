@@ -6,20 +6,14 @@ public abstract class LifecycleComposite extends Composite implements Lifecycle 
 	private boolean initialized;
 	private boolean active;
 
-	public final void activate(Context context) {
+	public final void update(Context context) {
 		if (!initialized) {
 			initialized = true;
 			onInitialize();
 		}
 
 		active = true;
-		onActivate(context);
-	}
-
-	public final void update(Context context) {
-		if (active) {
-			onUpdate(context);
-		}
+		onUpdate(context);
 	}
 
 	public final void deactivate() {
@@ -36,8 +30,6 @@ public abstract class LifecycleComposite extends Composite implements Lifecycle 
 	}
 
 	protected abstract void onInitialize();
-
-	protected abstract void onActivate(Context context);
 
 	protected abstract void onUpdate(Context context);
 
