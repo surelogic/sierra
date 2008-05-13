@@ -98,6 +98,33 @@ img {
 	color: #FF3333;
 }
 
+/* Rules Content */
+.rules-category {
+    font-size: small;
+    padding: 2px;
+    cursor: pointer;
+	cursor: hand;
+}
+
+.rules-category-selected {
+	border: 1px solid #666699;
+	background-color: #DDDDFF;
+	padding: 1px;
+}
+
+.rules-finding {
+	font-size: small;
+	padding: 2px 2px 2px 12px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.rules-finding-selected {
+    border: 1px solid #666699;
+	background-color: #DDDDFF;
+	padding: 1px 9px 1px 11px;
+}
+
 /* Class for items that can be clicked */
 .clickable {
 	color: #005596;
@@ -350,13 +377,16 @@ img {
 }
 
 .gwt-TabBar .gwt-TabBarFirst {
-	background-color: #005495;
-	width: 5px;
+	width: 10px;
 	border-bottom: solid 1px #000000;
+	background-image: url(../images/tab-first-gradient.png);
+	background-repeat: repeat-y; 
 }
 
 .gwt-TabBar .gwt-TabBarRest {
 	border-bottom: solid 1px #000000;
+	background-image: url(../images/tab-rest-gradient.png);
+	background-repeat: repeat-y; 
 }
 
 .gwt-TabBar .gwt-TabBarItem {
