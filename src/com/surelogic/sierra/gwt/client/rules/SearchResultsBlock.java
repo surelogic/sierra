@@ -58,7 +58,7 @@ public class SearchResultsBlock extends SectionPanel {
 	}
 
 	protected void onUpdate(Context context) {
-		if (searchText == null) {
+		if (!isActive()) {
 			search("");
 		} else {
 			updateSelectionUI(context);

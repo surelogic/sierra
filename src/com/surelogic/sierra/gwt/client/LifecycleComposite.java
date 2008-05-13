@@ -12,8 +12,8 @@ public abstract class LifecycleComposite extends Composite implements Lifecycle 
 			onInitialize();
 		}
 
-		active = true;
 		onUpdate(context);
+		active = true;
 	}
 
 	public final void deactivate() {

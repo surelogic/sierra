@@ -95,7 +95,7 @@ public class RulesContent extends ContentComposite {
 	protected void onUpdate(Context context) {
 		searchSection.update(context);
 
-		if (categories.getItemCount() == 0) {
+		if (!isActive()) {
 			categories.refresh();
 		} else {
 			refreshSelection();
