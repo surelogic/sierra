@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.rules;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextArea;
@@ -9,12 +8,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.data.Cache;
+import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.Editable;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
-import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public class CategoryBlock extends SectionPanel implements Editable {
 	private final CategoryCache categories;
@@ -45,6 +46,29 @@ public class CategoryBlock extends SectionPanel implements Editable {
 
 		findingTypes.setSubsectionStyle(true);
 		contentPanel.add(findingTypes);
+
+		categories.addListener(new CacheListener() {
+
+			public void onItemUpdate(Cache cache, Cacheable item,
+					Status status, Throwable failure) {
+				if (failure == null && status.isSuccess()) {
+					editing = false;
+					new RulesContext((Category) item).updateContext();
+				} else if (!status.isSuccess()) {
+					Window.alert("Save rejected: " + status.getMessage());
+				} else if (failure != null) {
+					Window.alert("Save failed: " + failure.getMessage());
+				}
+			}
+
+			public void onRefresh(Cache cache, Throwable failure) {
+				refresh(ContextManager.getContext());
+			}
+
+			public void onStartRefresh(Cache cache) {
+				// nothing to do
+			}
+		});
 	}
 
 	protected void onActivate(Context context) {
@@ -114,28 +138,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 
 		// TODO copy filter settings from UI here
 
-		// TODO call CategoryCache.save instead of this
-		ServiceHelper.getSettingsService().updateCategory(rpcCategory,
-				new AsyncCallback() {
-
-					public void onFailure(Throwable caught) {
-						ExceptionUtil.log(caught);
-
-						// TODO show the error and do not cancel editing
-					}
-
-					public void onSuccess(Object result) {
-						Status status = (Status) result;
-						if (status.isSuccess()) {
-							editing = false;
-							new RulesContext(rpcCategory).updateContext();
-						} else {
-							// TODO show the error and do not cancel editing
-
-							Window.alert("Save failed: " + status.getMessage());
-						}
-					}
-				});
+		categories.save(rpcCategory);
 	}
 
 	public boolean isEditing() {

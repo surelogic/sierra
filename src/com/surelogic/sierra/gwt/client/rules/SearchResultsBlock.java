@@ -15,6 +15,7 @@ import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -49,7 +50,7 @@ public class SearchResultsBlock extends SectionPanel {
 			}
 
 			public void onItemUpdate(Cache cache, Cacheable item,
-					Throwable failure) {
+					Status status, Throwable failure) {
 				// TODO Auto-generated method stub
 
 			}

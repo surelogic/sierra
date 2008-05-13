@@ -10,6 +10,7 @@ import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
@@ -55,7 +56,7 @@ public class RulesContent extends ContentComposite {
 			}
 
 			public void onItemUpdate(Cache cache, Cacheable item,
-					Throwable failure) {
+					Status status, Throwable failure) {
 				refreshSelection();
 			}
 

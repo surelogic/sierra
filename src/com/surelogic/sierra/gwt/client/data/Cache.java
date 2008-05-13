@@ -18,7 +18,12 @@ public abstract class Cache {
 		}
 		doRefreshCall(new CacheCallback() {
 
-			protected void callListener(CacheListener listener,
+			protected void processResult(Object result) {
+				items.clear();
+				items.addAll((List) result);
+			}
+
+			protected void callListener(CacheListener listener, Object result,
 					Throwable failure) {
 				listener.onRefresh(Cache.this, failure);
 			}
@@ -26,11 +31,26 @@ public abstract class Cache {
 	}
 
 	public final void save(final Cacheable item) {
-		doSaveCall(new CacheCallback() {
+		doSaveCall(item, new CacheCallback() {
 
-			protected void callListener(CacheListener listener,
+			protected void processResult(Object result) {
+				Status s = (Status) result;
+				if (s.isSuccess()) {
+					int itemIndex = getItemIndex(item);
+					if (itemIndex != -1) {
+						items.remove(itemIndex);
+						items.add(itemIndex, item);
+					} else {
+						items.add(item);
+					}
+
+				}
+			}
+
+			protected void callListener(CacheListener listener, Object result,
 					Throwable failure) {
-				listener.onItemUpdate(Cache.this, item, failure);
+				listener.onItemUpdate(Cache.this, item, (Status) result,
+						failure);
 			}
 		});
 	}
@@ -57,6 +77,25 @@ public abstract class Cache {
 		return null;
 	}
 
+	public final int getItemIndex(Cacheable item) {
+		final String uuid = item.getUuid();
+		for (int i = 0; i < items.size(); i++) {
+			if (LangUtil.equals(uuid, ((Cacheable) items.get(i)).getUuid())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public final int getItemIndex(String uuid) {
+		for (int i = 0; i < items.size(); i++) {
+			if (LangUtil.equals(uuid, ((Cacheable) items.get(i)).getUuid())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public final Iterator getItemIterator() {
 		return items.iterator();
 	}
@@ -71,31 +110,29 @@ public abstract class Cache {
 
 	protected abstract void doRefreshCall(AsyncCallback callback);
 
-	protected abstract void doSaveCall(AsyncCallback callback);
+	protected abstract void doSaveCall(Cacheable item, AsyncCallback callback);
 
 	private abstract class CacheCallback implements AsyncCallback {
-
-		public CacheCallback() {
-			super();
-		}
 
 		public void onFailure(Throwable caught) {
 			ExceptionUtil.log(caught);
 			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				callListener((CacheListener) it.next(), caught);
+				callListener((CacheListener) it.next(), null, caught);
 			}
 		}
 
 		public void onSuccess(Object result) {
-			items.clear();
-			items.addAll((List) result);
+			processResult(result);
 			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				callListener((CacheListener) it.next(), null);
+				callListener((CacheListener) it.next(), result, null);
 			}
 		}
 
+		protected abstract void processResult(Object result);
+
 		protected abstract void callListener(CacheListener listener,
-				Throwable failure);
+				Object result, Throwable failure);
 
 	}
+
 }

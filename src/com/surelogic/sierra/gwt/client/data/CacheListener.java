@@ -6,6 +6,7 @@ public interface CacheListener {
 
 	void onRefresh(Cache cache, Throwable failure);
 
-	void onItemUpdate(Cache cache, Cacheable item, Throwable failure);
+	void onItemUpdate(Cache cache, Cacheable item, Status status,
+			Throwable failure);
 
 }
