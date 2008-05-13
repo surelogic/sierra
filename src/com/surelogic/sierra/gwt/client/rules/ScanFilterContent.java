@@ -188,7 +188,8 @@ public class ScanFilterContent extends ContentComposite {
 								filter, new AsyncCallback() {
 
 									public void onFailure(Throwable caught) {
-
+										status.setStatus(Status
+												.failure("Server comm error."));
 									}
 
 									public void onSuccess(Object result) {
@@ -229,7 +230,7 @@ public class ScanFilterContent extends ContentComposite {
 							.getSelectedSuggestion();
 					final ScanFilterEntry e = s.getEntry();
 					if (!filter.getCategories().contains(e)) {
-						filter.getTypes().add(e);
+						filter.getCategories().add(e);
 						cPanel.add(entry(e));
 					}
 				}
