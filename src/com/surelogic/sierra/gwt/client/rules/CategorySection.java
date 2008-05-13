@@ -113,6 +113,7 @@ public class CategorySection extends SectionPanel implements Editable {
 
 		// TODO copy filter settings from UI here
 
+		// TODO call CategoryCache.save instead of this
 		ServiceHelper.getSettingsService().updateCategory(rpcCategory,
 				new AsyncCallback() {
 
