@@ -9,6 +9,7 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
+import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
@@ -44,22 +45,27 @@ public class RulesContent extends ContentComposite {
 
 		categories.addListener(new CacheListener() {
 
-			public void onItemUpdate(Cache cache, Cacheable item,
-					Throwable failure) {
-				refreshSelection();
+			public void onStartRefresh(Cache cache) {
+				// nothing to do
 			}
 
 			public void onRefresh(Cache cache, Throwable failure) {
 				refreshSelection();
 			}
+
+			public void onItemUpdate(Cache cache, Cacheable item,
+					Throwable failure) {
+				refreshSelection();
+			}
+
 		});
 	}
 
 	private void refreshSelection() {
 		final Context context = ContextManager.getContext();
 		final RulesContext rulesCtx = new RulesContext(context);
-
-		final String categoryUuid = rulesCtx.getCategory();
+		String categoryUuid = rulesCtx.getCategory();
+		boolean selectionMade = false;
 		if (LangUtil.notEmpty(categoryUuid)) {
 			if (selectionPanel.getWidgetIndex(categorySelection) == -1) {
 				selectionPanel.clear();
@@ -70,9 +76,14 @@ public class RulesContent extends ContentComposite {
 			} else {
 				categorySelection.activate(context);
 			}
+			selectionMade = true;
 		}
+		// TODO select finding type if available and a cat isn't selected
 		// TODO make sure to remove and deactivate non-selected ui if it is
 		// active
+		if (!selectionMade && categories.getItemCount() > 0) {
+			new RulesContext((Category) categories.getItem(0)).updateContext();
+		}
 	}
 
 	protected void onActivate(Context context) {

@@ -58,6 +58,7 @@ public class SearchSection extends SectionPanel {
 
 	protected void onActivate(Context context) {
 		results.activate(context);
+		searchText.setText("");
 	}
 
 	protected void onDeactivate() {

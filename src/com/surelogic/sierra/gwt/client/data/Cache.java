@@ -13,6 +13,9 @@ public abstract class Cache {
 	private final List listeners = new ArrayList();
 
 	public final void refresh() {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			((CacheListener) it.next()).onStartRefresh(this);
+		}
 		doRefreshCall(new CacheCallback() {
 
 			protected void callListener(CacheListener listener,

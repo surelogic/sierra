@@ -30,6 +30,11 @@ public class SearchResultsSection extends SectionPanel {
 		setTitle("Results");
 		categories.addListener(new CacheListener() {
 
+			public void onStartRefresh(Cache cache) {
+				clearResults();
+				setWaitStatus();
+			}
+
 			public void onRefresh(Cache cache, Throwable failure) {
 				if (failure == null) {
 					refreshResults();
