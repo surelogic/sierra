@@ -133,7 +133,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 										.getFindingType(fDetail
 												.getFindingType());
 								filter.setName(type.getName());
-								filter.setUid(type.getUid());
+								filter.setUuid(type.getUid());
 								filter.setShortMessage(type.getShortMessage());
 								filters.add(filter);
 							}
@@ -176,7 +176,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				final Set<CategoryEntryDO> doEntries = set.getFilters();
 				final List<FilterEntry> moEntries = entries;
 				for (final FilterEntry entry : moEntries) {
-					doEntries.add(new CategoryEntryDO(entry.getUid(), entry
+					doEntries.add(new CategoryEntryDO(entry.getUuid(), entry
 							.isFiltered()));
 				}
 				sets.updateCategory(set, revision);
@@ -206,7 +206,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				final Set<CategoryEntryDO> entrySet = set.getFilters();
 				final Set<FilterEntry> entries = c.getEntries();
 				for (final FilterEntry entry : entries) {
-					entrySet.add(new CategoryEntryDO(entry.getUid(), entry
+					entrySet.add(new CategoryEntryDO(entry.getUuid(), entry
 							.isFiltered()));
 				}
 				try {
