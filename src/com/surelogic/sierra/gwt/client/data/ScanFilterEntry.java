@@ -2,6 +2,8 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
+import com.google.gwt.core.client.GWT;
+
 public class ScanFilterEntry implements Serializable {
 
 	/**
@@ -53,6 +55,34 @@ public class ScanFilterEntry implements Serializable {
 
 	public void setImportance(ImportanceView importance) {
 		this.importance = importance;
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!GWT.getTypeName(this).equals(GWT.getTypeName(obj))) {
+			return false;
+		}
+		final ScanFilterEntry other = (ScanFilterEntry) obj;
+		if (uid == null) {
+			if (other.uid != null) {
+				return false;
+			}
+		} else if (!uid.equals(other.uid)) {
+			return false;
+		}
+		return true;
 	}
 
 }

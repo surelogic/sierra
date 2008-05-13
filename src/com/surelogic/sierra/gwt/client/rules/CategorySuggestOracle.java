@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SettingsServiceAsync;
 
@@ -66,6 +67,13 @@ public class CategorySuggestOracle extends SuggestOracle {
 			return uuid;
 		}
 
+		public ScanFilterEntry getEntry() {
+			final ScanFilterEntry e = new ScanFilterEntry();
+			e.setUid(uuid);
+			e.setName(display);
+			e.setCategory(true);
+			return e;
+		}
 	}
 
 }

@@ -25,7 +25,10 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFilterContent extends ContentComposite {
@@ -133,14 +136,18 @@ public class ScanFilterContent extends ContentComposite {
 		});
 	}
 
-	private static class ScanFilterComposite extends Composite {
+	private class ScanFilterComposite extends Composite {
 
 		private final VerticalPanel panel;
+		private VerticalPanel ftPanel;
+		private VerticalPanel cPanel;
 		private ScanFilter filter;
 		private ScanFilter backup;
+		private StatusBox status;
 
 		ScanFilterComposite() {
 			panel = new VerticalPanel();
+			status = new StatusBox();
 			initWidget(panel);
 			refresh();
 		}
@@ -148,19 +155,50 @@ public class ScanFilterContent extends ContentComposite {
 		private void refresh() {
 			panel.clear();
 			if (filter != null) {
+				status = new StatusBox();
+				panel.add(status);
 				panel.add(UI.h2(filter.getName()));
-				panel.add(UI.h3("Categories"));
+				cPanel = new VerticalPanel();
+				panel.add(cPanel);
+				cPanel.add(UI.h3("Categories"));
 				for (final Iterator i = filter.getCategories().iterator(); i
 						.hasNext();) {
-					panel.add(entry((ScanFilterEntry) i.next()));
+					cPanel.add(entry((ScanFilterEntry) i.next()));
 				}
-				panel.add(addCategoryBox());
-				panel.add(UI.h3("Finding Types"));
+				cPanel.add(addCategoryBox());
+				ftPanel = new VerticalPanel();
+				panel.add(ftPanel);
+				ftPanel.add(UI.h3("Finding Types"));
 				for (final Iterator i = filter.getTypes().iterator(); i
 						.hasNext();) {
-					panel.add(entry((ScanFilterEntry) i.next()));
+					ftPanel.add(entry((ScanFilterEntry) i.next()));
 				}
-				panel.add(addFindingTypeBox());
+				ftPanel.add(addFindingTypeBox());
+				final HorizontalPanel buttonPanel = new HorizontalPanel();
+				panel.add(buttonPanel);
+				buttonPanel.add(new Button("Revert", new ClickListener() {
+					public void onClick(Widget sender) {
+						filter = backup;
+						refresh();
+					}
+				}));
+				buttonPanel.add(new Button("Update", new ClickListener() {
+					public void onClick(Widget sender) {
+						ServiceHelper.getSettingsService().updateScanFilter(
+								filter, new AsyncCallback() {
+
+									public void onFailure(Throwable caught) {
+
+									}
+
+									public void onSuccess(Object result) {
+										status.setStatus((Status) result);
+										refreshFilterList();
+									}
+								});
+
+					}
+				}));
 			} else {
 				panel.add(UI.h1("None selected"));
 			}
@@ -171,40 +209,54 @@ public class ScanFilterContent extends ContentComposite {
 					new FindingTypeSuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
 				public void onSuggestionSelected(SuggestionEvent event) {
-					// final SuggestOracle.Suggestion s = event
-					// .getSelectedSuggestion();
-
+					final FindingTypeSuggestOracle.Suggestion s = (Suggestion) event
+							.getSelectedSuggestion();
+					final ScanFilterEntry e = s.getEntry();
+					if (!filter.getTypes().contains(e)) {
+						filter.getTypes().add(e);
+						ftPanel.add(entry(e));
+					}
 				}
 			});
 			return box;
 		}
 
 		private Widget addCategoryBox() {
-			return new SuggestBox(new CategorySuggestOracle());
-		}
-
-		private static Widget entry(ScanFilterEntry e) {
-			final HorizontalPanel panel = new HorizontalPanel();
-			final HTML h = new HTML(e.getName());
-			h.setTitle(e.getShortMessage());
-			final ListBox box = ImportanceView.createChoice();
-			box.addChangeListener(new ChangeListener() {
-				public void onChange(Widget sender) {
-					panel
-							.add(new Label(box.getItemText(box
-									.getSelectedIndex())));
+			final SuggestBox box = new SuggestBox(new CategorySuggestOracle());
+			box.addEventHandler(new SuggestionHandler() {
+				public void onSuggestionSelected(SuggestionEvent event) {
+					final CategorySuggestOracle.Suggestion s = (com.surelogic.sierra.gwt.client.rules.CategorySuggestOracle.Suggestion) event
+							.getSelectedSuggestion();
+					final ScanFilterEntry e = s.getEntry();
+					if (!filter.getCategories().contains(e)) {
+						filter.getTypes().add(e);
+						cPanel.add(entry(e));
+					}
 				}
 			});
-			panel.add(h);
-			panel.add(box);
-			return panel;
+			return box;
 		}
 
 		public void setFilter(ScanFilter filter) {
 			backup = filter;
-			this.filter = backup.copy();
+			this.filter = filter.copy();
 			refresh();
 		}
 	}
 
+	private static Widget entry(ScanFilterEntry e) {
+		final HorizontalPanel panel = new HorizontalPanel();
+		final HTML h = new HTML(e.getName());
+		h.setTitle(e.getShortMessage());
+		final ListBox box = ImportanceView.createChoice();
+		box.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+
+				panel.add(new Label(box.getItemText(box.getSelectedIndex())));
+			}
+		});
+		panel.add(h);
+		panel.add(box);
+		return panel;
+	}
 }

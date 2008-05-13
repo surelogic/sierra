@@ -80,4 +80,6 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	Result getFindingTypeInfo(String uid);
+
+	Status updateScanFilter(ScanFilter f);
 }

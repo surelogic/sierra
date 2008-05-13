@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.ScanFilter;
 
 public interface SettingsServiceAsync {
 
@@ -24,4 +25,5 @@ public interface SettingsServiceAsync {
 
 	void createScanFilter(String name, AsyncCallback callback);
 
+	void updateScanFilter(ScanFilter f, AsyncCallback callback);
 }
