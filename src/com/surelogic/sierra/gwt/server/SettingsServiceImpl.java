@@ -265,7 +265,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		final ScanFilter f = new ScanFilter();
 		f.setName(fDO.getName());
 		f.setRevision(fDO.getRevision());
-		f.setUid(fDO.getUid());
+		f.setUuid(fDO.getUid());
 		Set<ScanFilterEntry> filters = f.getCategories();
 		for (final CategoryFilterDO c : fDO.getCategories()) {
 			final ScanFilterEntry e = new ScanFilterEntry();
@@ -307,7 +307,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		final ScanFilterDO fDO = new ScanFilterDO();
 		fDO.setName(f.getName());
 		fDO.setRevision(f.getRevision());
-		fDO.setUid(f.getUid());
+		fDO.setUid(f.getUuid());
 		final Set<CategoryFilterDO> cats = fDO.getCategories();
 		final Set<TypeFilterDO> types = fDO.getFilterTypes();
 		for (final Object o : f.getCategories()) {
