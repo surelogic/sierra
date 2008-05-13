@@ -41,6 +41,7 @@ public class SearchSection extends SectionPanel {
 		grid.setWidget(1, 1, searchText);
 		searchText.setWidth("100%");
 
+		results.initialize();
 		results.setSubsectionStyle(true);
 		contentPanel.add(results);
 
@@ -57,11 +58,15 @@ public class SearchSection extends SectionPanel {
 	}
 
 	protected void onUpdate(Context context) {
-		results.update(context);
+		if (!isActive()) {
+			results.search("");
+		} else {
+			results.updateSelectionUI(context);
+		}
 	}
 
 	protected void onDeactivate() {
-		results.deactivate();
+		results.clearResults();
 	}
 
 }

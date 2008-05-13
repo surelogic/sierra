@@ -16,10 +16,10 @@ import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class SearchResultsBlock extends SectionPanel {
+public class SearchResultsBlock extends BlockPanel {
 	public static final String PRIMARY_STYLE = "rules";
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
@@ -55,18 +55,6 @@ public class SearchResultsBlock extends SectionPanel {
 
 			}
 		});
-	}
-
-	protected void onUpdate(Context context) {
-		if (!isActive()) {
-			search("");
-		} else {
-			updateSelectionUI(context);
-		}
-	}
-
-	protected void onDeactivate() {
-		clearResults();
 	}
 
 	public void search(String text) {
@@ -105,32 +93,16 @@ public class SearchResultsBlock extends SectionPanel {
 		updateSelectionUI(ContextManager.getContext());
 	}
 
-	private void clearResults() {
+	public void clearResults() {
 		getContentPanel().clear();
 		searchResultsData.clear();
 	}
 
-	private void refreshResults() {
+	public void refreshResults() {
 		search(searchText);
 	}
 
-	private void addSearchCategory(Category cat) {
-		final Label catEntry = new Label(cat.getName());
-		catEntry.addStyleName(PRIMARY_STYLE + "-category");
-		catEntry.addClickListener(new SearchResultListener(cat));
-		searchResultsData.put("C" + cat.getUuid(), catEntry);
-		getContentPanel().add(catEntry);
-	}
-
-	private void addSearchFinding(FilterEntry finding) {
-		final Label findingEntry = new Label(finding.getName());
-		findingEntry.addStyleName(PRIMARY_STYLE + "-finding");
-		findingEntry.addClickListener(new SearchResultListener(finding));
-		searchResultsData.put("F" + finding.getUuid(), findingEntry);
-		getContentPanel().add(findingEntry);
-	}
-
-	private void updateSelectionUI(Context context) {
+	public void updateSelectionUI(Context context) {
 		if (selectedItem != null) {
 			selectedItem.removeStyleName(PRIMARY_STYLE + "-category-selected");
 			selectedItem.removeStyleName(PRIMARY_STYLE + "-finding-selected");
@@ -152,6 +124,22 @@ public class SearchResultsBlock extends SectionPanel {
 				selectedItem = findingEntry;
 			}
 		}
+	}
+
+	private void addSearchCategory(Category cat) {
+		final Label catEntry = new Label(cat.getName());
+		catEntry.addStyleName(PRIMARY_STYLE + "-category");
+		catEntry.addClickListener(new SearchResultListener(cat));
+		searchResultsData.put("C" + cat.getUuid(), catEntry);
+		getContentPanel().add(catEntry);
+	}
+
+	private void addSearchFinding(FilterEntry finding) {
+		final Label findingEntry = new Label(finding.getName());
+		findingEntry.addStyleName(PRIMARY_STYLE + "-finding");
+		findingEntry.addClickListener(new SearchResultListener(finding));
+		searchResultsData.put("F" + finding.getUuid(), findingEntry);
+		getContentPanel().add(findingEntry);
 	}
 
 	private class SearchResultListener implements ClickListener {
