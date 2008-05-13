@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.Iterator;
-import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -11,6 +10,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -22,41 +22,102 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.data.Cache;
+import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFilterContent extends ContentComposite {
 
-	private static final ScanFilterContent instance = new ScanFilterContent();
+	private static final String FILTER = "filter";
 
-	private final VerticalPanel list = new VerticalPanel();
-	private List filters;
+	private final ScanFilterList scans = new ScanFilterList();
+	private final ScanFilterCache cache = new ScanFilterCache();
 	private final ScanFilterComposite sf = new ScanFilterComposite();
 
-	public static ScanFilterContent getInstance() {
-		return instance;
-	}
-
-	private ScanFilterContent() {
-		// no instances
-	}
+	private String filterUuid;
 
 	protected void onInitialize(DockPanel rootPanel) {
-		final HorizontalPanel panel = new HorizontalPanel();
-		final VerticalPanel select = new VerticalPanel();
-		final HorizontalPanel add = new HorizontalPanel();
-		final TextBox box = new TextBox();
-		final Button button = new Button("Create");
-		box.addKeyboardListener(new KeyboardListenerAdapter() {
-			public void onKeyUp(final Widget sender, final char keyCode,
-					final int modifiers) {
-				if (keyCode == KEY_ENTER) {
+		rootPanel.add(scans, DockPanel.WEST);
+		rootPanel.add(sf, DockPanel.EAST);
+		rootPanel.setCellWidth(scans, "25%");
+		cache.addListener(new CacheListener() {
+
+			public void onItemUpdate(Cache cache, Cacheable item,
+					Status status, Throwable failure) {
+
+			}
+
+			public void onRefresh(Cache cache, Throwable failure) {
+				checkForFilter();
+			}
+
+			public void onStartRefresh(Cache cache) {
+
+			}
+		});
+	}
+
+	protected void onDeactivate() {
+		scans.deactivate();
+	}
+
+	protected void onUpdate(Context context) {
+		scans.update(context);
+		filterUuid = context.getParameter(FILTER);
+		checkForFilter();
+	}
+
+	private void checkForFilter() {
+		if (filterUuid != null) {
+			for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
+				final ScanFilter f = (ScanFilter) i.next();
+				if (f.getUuid().equals(filterUuid)) {
+					sf.setFilter(f);
+				}
+			}
+		}
+	}
+
+	class ScanFilterList extends SectionPanel {
+		private final VerticalPanel list = new VerticalPanel();
+
+		protected void onInitialize(VerticalPanel contentPanel) {
+			final TextBox box = new TextBox();
+			final Button button = new Button("Create");
+			box.addKeyboardListener(new KeyboardListenerAdapter() {
+				public void onKeyUp(final Widget sender, final char keyCode,
+						final int modifiers) {
+					if (keyCode == KEY_ENTER) {
+						final String name = box.getText();
+						if (name.length() > 0) {
+							ServiceHelper.getSettingsService()
+									.createScanFilter(name,
+											new AsyncCallback() {
+												public void onFailure(
+														Throwable caught) {
+													// TODO
+												}
+
+												public void onSuccess(
+														Object result) {
+													cache.refresh();
+												}
+											});
+						}
+					}
+				}
+			});
+			button.addClickListener(new ClickListener() {
+				public void onClick(Widget sender) {
 					final String name = box.getText();
 					if (name.length() > 0) {
 						ServiceHelper.getSettingsService().createScanFilter(
@@ -66,70 +127,46 @@ public class ScanFilterContent extends ContentComposite {
 									}
 
 									public void onSuccess(Object result) {
-										refreshFilterList();
+										cache.refresh();
 									}
 								});
 					}
 				}
-			}
-		});
-		button.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				final String name = box.getText();
-				if (name.length() > 0) {
-					ServiceHelper.getSettingsService().createScanFilter(name,
-							new AsyncCallback() {
-								public void onFailure(Throwable caught) {
-									// TODO
-								}
+			});
+			contentPanel.add(box);
+			contentPanel.add(button);
+			contentPanel.add(list);
+			cache.addListener(new CacheListener() {
+				public void onItemUpdate(Cache cache, Cacheable item,
+						Status status, Throwable failure) {
 
-								public void onSuccess(Object result) {
-									refreshFilterList();
-								}
-							});
 				}
-			}
-		});
-		add.add(box);
-		add.add(button);
-		select.add(add);
-		select.add(list);
-		panel.add(select);
-		panel.add(sf);
-		rootPanel.add(panel, DockPanel.CENTER);
-	}
 
-	protected void onUpdate(Context context) {
-		refreshFilterList();
-	}
-
-	protected void onDeactivate() {
-		// nothing to do
-	}
-
-	private void refreshFilterList() {
-		ServiceHelper.getSettingsService().getScanFilters(new AsyncCallback() {
-
-			public void onFailure(Throwable caught) {
-				// TODO
-			}
-
-			public void onSuccess(Object result) {
-				list.clear();
-				filters = (List) result;
-				for (final Iterator i = filters.iterator(); i.hasNext();) {
-					final ScanFilter f = (ScanFilter) i.next();
-					final Label l = new Label(f.getName());
-					l.addStyleName("clickable");
-					l.addClickListener(new ClickListener() {
-						public void onClick(Widget sender) {
-							sf.setFilter(f);
-						}
-					});
-					list.add(l);
+				public void onRefresh(Cache cache, Throwable failure) {
+					list.clear();
+					for (final Iterator i = cache.getItemIterator(); i
+							.hasNext();) {
+						final ScanFilter f = (ScanFilter) i.next();
+						list.add(new Hyperlink(f.getName(), "scanfilters/"
+								+ FILTER + "=" + f.getUuid()));
+					}
 				}
-			}
-		});
+
+				public void onStartRefresh(Cache cache) {
+
+				}
+			});
+			cache.refresh();
+		}
+
+		protected void onDeactivate() {
+
+		}
+
+		protected void onUpdate(Context context) {
+
+		}
+
 	}
 
 	private class ScanFilterComposite extends Composite {
@@ -146,6 +183,21 @@ public class ScanFilterContent extends ContentComposite {
 			status = new StatusBox();
 			initWidget(panel);
 			refresh();
+			cache.addListener(new CacheListener() {
+
+				public void onItemUpdate(Cache cache, Cacheable item,
+						Status status, Throwable failure) {
+					ScanFilterComposite.this.status.setStatus(status);
+				}
+
+				public void onRefresh(Cache cache, Throwable failure) {
+
+				}
+
+				public void onStartRefresh(Cache cache) {
+
+				}
+			});
 		}
 
 		private void refresh() {
@@ -180,20 +232,7 @@ public class ScanFilterContent extends ContentComposite {
 				}));
 				buttonPanel.add(new Button("Update", new ClickListener() {
 					public void onClick(Widget sender) {
-						ServiceHelper.getSettingsService().updateScanFilter(
-								filter, new AsyncCallback() {
-
-									public void onFailure(Throwable caught) {
-										status.setStatus(Status
-												.failure("Server comm error."));
-									}
-
-									public void onSuccess(Object result) {
-										status.setStatus((Status) result);
-										refreshFilterList();
-									}
-								});
-
+						cache.save(filter);
 					}
 				}));
 			} else {
@@ -256,4 +295,16 @@ public class ScanFilterContent extends ContentComposite {
 		panel.add(box);
 		return panel;
 	}
+
+	// Singleton
+	private ScanFilterContent() {
+
+	}
+
+	private static final ScanFilterContent instance = new ScanFilterContent();
+
+	public static ScanFilterContent getInstance() {
+		return instance;
+	}
+
 }
