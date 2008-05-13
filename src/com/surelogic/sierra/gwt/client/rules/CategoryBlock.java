@@ -21,7 +21,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 	private final FlexTable categoryInfo = new FlexTable();
 	private final TextBox nameEditText = new TextBox();
 	private final TextArea description = new TextArea();
-	private final FindingTypeBlock findingTypes = new FindingTypeBlock();
+	private final CategoryFindingsBlock findingTypes = new CategoryFindingsBlock();
 
 	private Category currentCategory;
 	private boolean editing;
