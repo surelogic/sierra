@@ -137,6 +137,12 @@ img {
 	cursor: hand;
 }
 
+/* Temp non-styled clickable */
+.clickable2 {
+	cursor: pointer;
+	cursor: hand;
+}
+
 .error {
 	color: red;
 }

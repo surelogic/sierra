@@ -72,6 +72,8 @@ public class CategoryFindingsBlock extends SectionPanel {
 		if (enabled) {
 			final Label rule = new Label(finding.getName());
 			rule.setTitle(finding.getShortMessage());
+			rule.addStyleName("clickable2");
+			rule.addClickListener(new FindingTypeListener(finding));
 			return rule;
 		}
 		return null;
@@ -95,6 +97,20 @@ public class CategoryFindingsBlock extends SectionPanel {
 
 	protected void onDeactivate() {
 		// nothing to do
+	}
+
+	private class FindingTypeListener implements ClickListener {
+		private final FilterEntry finding;
+
+		public FindingTypeListener(FilterEntry finding) {
+			super();
+			this.finding = finding;
+		}
+
+		public void onClick(Widget sender) {
+			new RulesContext(finding).updateContext();
+		}
+
 	}
 
 }

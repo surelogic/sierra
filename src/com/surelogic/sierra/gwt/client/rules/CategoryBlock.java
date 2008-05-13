@@ -33,6 +33,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 	}
 
 	protected void onInitialize(VerticalPanel contentPanel) {
+		categoryInfo.setWidth("100%");
 		categoryInfo.getColumnFormatter().setWidth(0, "15%");
 		categoryInfo.getColumnFormatter().setWidth(1, "35%");
 		categoryInfo.getColumnFormatter().setWidth(2, "50%");
