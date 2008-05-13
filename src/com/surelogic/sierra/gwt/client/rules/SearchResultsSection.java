@@ -9,17 +9,21 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class SearchResultsSection extends SectionPanel {
+	public static final String PRIMARY_STYLE = "rules";
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
 	private String searchText;
+	private Widget selectedItem;
 
 	public SearchResultsSection(CategoryCache categories) {
 		super();
@@ -107,10 +111,12 @@ public class SearchResultsSection extends SectionPanel {
 
 	private void refreshResults() {
 		search(searchText);
+		updateSelectionUI(ContextManager.getContext());
 	}
 
 	private void addSearchCategory(Category cat) {
 		final Label catEntry = new Label(cat.getName());
+		catEntry.addStyleName(PRIMARY_STYLE + "-category");
 		catEntry.addClickListener(new SearchResultListener(cat));
 		searchResultsData.put(cat, catEntry);
 		getContentPanel().add(catEntry);
@@ -118,20 +124,28 @@ public class SearchResultsSection extends SectionPanel {
 
 	private void addSearchFinding(FilterEntry finding) {
 		final Label findingEntry = new Label(finding.getName());
+		findingEntry.addStyleName(PRIMARY_STYLE + "-finding");
 		findingEntry.addClickListener(new SearchResultListener(finding));
 		searchResultsData.put(finding, findingEntry);
 		getContentPanel().add(findingEntry);
 	}
 
 	private void updateSelectionUI(Context context) {
-		// TODO need to update the search results UI to show which item is
-		// selected
+		if (selectedItem != null) {
+			selectedItem.removeStyleName(PRIMARY_STYLE + "-category-selected");
+			selectedItem.removeStyleName(PRIMARY_STYLE + "-finding-selected");
+		}
 
-		// final String categoryUuid = new RulesContext(context).getCategory();
-		// if (LangUtil.notEmpty(categoryUuid)) {
-		// final Category cat = (Category) categories.getItem(categoryUuid);
-		//
-		// }
+		final RulesContext rulesCtx = new RulesContext(context);
+		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
+			Category cat = (Category) categories
+					.getItem(rulesCtx.getCategory());
+			Widget catEntry = (Widget) searchResultsData.get(cat);
+			if (catEntry != null) {
+				catEntry.addStyleName(PRIMARY_STYLE + "-category-selected");
+				selectedItem = catEntry;
+			}
+		}
 	}
 
 	private class SearchResultListener implements ClickListener {
