@@ -322,4 +322,9 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		throw new IllegalStateException();
 	}
 
+	public Status updateScanFilter(ScanFilter f) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
