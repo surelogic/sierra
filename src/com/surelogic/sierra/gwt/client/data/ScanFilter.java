@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class ScanFilter implements Serializable, Cacheable {
@@ -96,9 +97,18 @@ public class ScanFilter implements Serializable, Cacheable {
 		copy.uuid = uuid;
 		copy.name = name;
 		copy.revision = revision;
-		copy.categories = new HashSet(getCategories());
-		copy.types = new HashSet(getTypes());
-		copy.projects = new HashSet(getProjects());
+		copy.categories = new HashSet(getCategories().size());
+		for (final Iterator i = getCategories().iterator(); i.hasNext();) {
+			copy.categories.add(i.next());
+		}
+		copy.types = new HashSet(getTypes().size());
+		for (final Iterator i = getTypes().iterator(); i.hasNext();) {
+			copy.types.add(i.next());
+		}
+		copy.projects = new HashSet(getProjects().size());
+		for (final Iterator i = getProjects().iterator(); i.hasNext();) {
+			copy.projects.add(i.next());
+		}
 		return copy;
 	}
 

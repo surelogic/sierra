@@ -68,7 +68,7 @@ public final class ImportanceView implements Serializable {
 		return VALUES;
 	}
 
-	static ImportanceView fromString(String readString) {
+	public static ImportanceView fromString(String readString) {
 		for (int i = 0; i < VALUES.length; i++) {
 			if (VALUES[i].getName().equals(readString)) {
 				return VALUES[i];

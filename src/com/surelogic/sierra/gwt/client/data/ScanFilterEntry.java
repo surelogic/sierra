@@ -85,4 +85,14 @@ public class ScanFilterEntry implements Serializable {
 		return true;
 	}
 
+	public ScanFilterEntry copy() {
+		final ScanFilterEntry e = new ScanFilterEntry();
+		e.category = category;
+		e.importance = importance;
+		e.name = name;
+		e.shortMessage = shortMessage;
+		e.uid = uid;
+		return e;
+	}
+
 }
