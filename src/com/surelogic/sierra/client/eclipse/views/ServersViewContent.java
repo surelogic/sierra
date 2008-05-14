@@ -1,7 +1,9 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
 
+import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.*;
 
 class ServersViewContent implements IServerActionFilter {
@@ -58,6 +60,12 @@ class ServersViewContent implements IServerActionFilter {
 		if (STATUS_ATTR.equals(name)) {			
 			//System.out.println("Checking if "+name+" = "+value+" for "+this);
 			return status.toString().equals(value);
+		}
+		else if (SOURCE_ATTR.equals(name)) {
+			if (WARNING_SRC.equals(value)) {
+				return image.equals(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+			}
+			return false;
 		}
 		return false;
 	}

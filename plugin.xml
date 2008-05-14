@@ -554,6 +554,9 @@
         <and>
           <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
           <objectState name="Status" value="WARNING"/>
+          <not>
+            <objectState name="Source" value="WARNING"/>
+          </not>
         </and>
       </enablement>
     </decorator>            			
