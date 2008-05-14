@@ -76,7 +76,6 @@ import com.surelogic.sierra.tool.registration.*;
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver, IProjectsObserver {
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
-	private static final String DECORATOR = "com.surelogic.sierra.client.content.decorator";
 	
 	/**
 	 * This should only be changed in the UI thread
@@ -485,10 +484,21 @@ implements ISierraServerObserver, IProjectsObserver {
 					}
 				});
 		
-		/*
-		f_statusTree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				TreeItem item = (TreeItem) event.item;
+		f_statusTree.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				if(event.getSelection().isEmpty()) {
+					return; // FIX					
+				}
+				IStructuredSelection selection;
+				if(event.getSelection() instanceof IStructuredSelection) {
+					selection = (IStructuredSelection)event.getSelection();
+				} else {
+					return;
+				}
+ 				if (selection.size() != 1) {
+ 					return;
+ 				}
+ 				ServersViewContent item = (ServersViewContent) selection.getFirstElement();
 				if (item.getData() instanceof FindingAudits) {
 					FindingAudits f = (FindingAudits) item.getData();
 					FindingDetailsView.findingSelected(f.getFindingId(), false);
@@ -496,7 +506,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				else if (item.getData() instanceof ScanInfo) {
 					ScanInfo info = (ScanInfo) item.getData();
 					if (info.isPartial()) {
-						TreeItem project = item.getParentItem(); 
+						ServersViewContent project = item.getParent(); 
 						ProjectStatus ps = (ProjectStatus) project.getData();
 						new NewScan().scan(ps.project);
 					}
@@ -504,7 +514,20 @@ implements ISierraServerObserver, IProjectsObserver {
 				else if (item.getData() == NO_SERVER_DATA) {
 					asyncUpdateServerInfo();
 				}
-				
+			}
+			
+		});
+		f_statusTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if(event.getSelection().isEmpty()) {
+					return; // FIX					
+				}
+				IStructuredSelection selection;
+				if(event.getSelection() instanceof IStructuredSelection) {
+					selection = (IStructuredSelection)event.getSelection();
+				} else {
+					return;
+				}
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
 				if (onlyServer) {
@@ -515,7 +538,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				f_openInBrowserAction.setEnabled(onlyServer);
 			}			
 		});
-		*/
+		
 		f_contextMenu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
 				f_newServerItem.setEnabled(true);
@@ -652,13 +675,15 @@ implements ISierraServerObserver, IProjectsObserver {
 	}
 			
 	private List<SierraServer> collectServers() {
-		/*
-		final TreeItem[] si = f_statusTree.getSelection();
-		if (si.length == 0) {
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
 		List<SierraServer> servers = new ArrayList<SierraServer>();
-		for (TreeItem item : si) {
+		@SuppressWarnings("unchecked")
+		Iterator it = si.iterator();
+		while (it.hasNext()) {
+		    ServersViewContent item = (ServersViewContent) it.next();
 			if (item.getData() instanceof SierraServer) {
 				if (servers.contains(item.getData())) {
 					continue;
@@ -671,18 +696,18 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 		return servers;
-		*/
-		return Collections.emptyList();
 	}
 	
 	private List<ProjectStatus> collectSelectedProjectStatus() {
-		/*
-		final TreeItem[] si = f_statusTree.getSelection();
-		if (si.length == 0) {
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
 		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-		for (TreeItem item : si) {
+		@SuppressWarnings("unchecked")
+		Iterator it = si.iterator();
+		while (it.hasNext()) {
+		    ServersViewContent item = (ServersViewContent) it.next();
 			if (item.getData() instanceof ProjectStatus) {
 				if (projects.contains(item.getData())) {
 					continue;
@@ -696,7 +721,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				collectProjects(projects, item);
 			}
 			else {
-				ProjectStatus status = inProject(item.getParentItem());
+				ProjectStatus status = inProject(item.getParent());
 				if (status != null) {
 					if (projects.contains(item.getData())) {
 						continue;
@@ -708,22 +733,20 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 		return projects;
-		*/
-		return Collections.emptyList();
 	}
 
-	private ProjectStatus inProject(TreeItem item) {
+	private ProjectStatus inProject(ServersViewContent item) {
 		while (item != null) {
 			if (item.getData() instanceof ProjectStatus) {
 				return (ProjectStatus) item.getData();
 			}
-			item = item.getParentItem();
+			item = item.getParent();
 		}
 		return null;
 	}
 
-	private void collectProjects(List<ProjectStatus> projects, TreeItem parent) {
-		for (TreeItem item : parent.getItems()) {
+	private void collectProjects(List<ProjectStatus> projects, ServersViewContent parent) {
+		for (ServersViewContent item : parent.getChildren()) {
 			if (projects.contains(item.getData())) {
 				continue;
 			}

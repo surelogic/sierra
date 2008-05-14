@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
@@ -46,6 +47,12 @@ class ServersViewContent implements IServerActionFilter {
 	}
 	public Image getImage() {
 		return image;
+	}
+	public Object getData() {
+		return data;
+	}
+	public ServersViewContent getParent() {
+		return parent;
 	}
 	public ServersViewContent[] getChildren() {
 		return children;
