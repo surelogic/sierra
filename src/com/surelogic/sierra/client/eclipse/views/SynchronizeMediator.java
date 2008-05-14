@@ -45,7 +45,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		return "com.surelogic.sierra.client.eclipse.view-synchronize-history";
 	}
 
-	public String getNoDataId() {
+	public String getNoDataI18N() {
 		return "sierra.eclipse.noDataSynchronizeHistory";
 	}
 
@@ -149,10 +149,10 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 				serverName = "(unknown)";
 			}
 			item.setText(0, dateFormat.format(so.getTime()));
-			item.setText(1, projectName);
-			item.setImage(1, SLImages
+			item.setText(1, serverName);
+			item.setText(2, projectName);
+			item.setImage(2, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-			item.setText(2, serverName);
 			final int numCommitted = so.getNumCommitted();
 			final int numReceived = so.getNumReceived();
 			item.setText(3, numCommitted

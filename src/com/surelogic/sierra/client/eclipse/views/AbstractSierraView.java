@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IActionBars;
@@ -68,8 +69,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		final M mediator = f_mediator = createMorePartControls(actualPage);
 		mediator.init();
 
-		noDataPage.setText(I18N.msg(mediator.getNoDataId()));
-		noDataPage.addListener(SWT.Selection, mediator.getNoDataListener());
+		noDataPage.setText(I18N.msg(mediator.getNoDataI18N()));
+		final Listener noDataListener = mediator.getNoDataListener();
+		if (noDataListener != null)
+			noDataPage.addListener(SWT.Selection, noDataListener);
 
 		/*
 		 * Allow access to help via the F1 key.

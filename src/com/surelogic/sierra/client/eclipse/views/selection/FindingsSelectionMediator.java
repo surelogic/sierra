@@ -90,7 +90,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		return "com.surelogic.sierra.client.eclipse.view-findings-quick-search";
 	}
 
-	public String getNoDataId() {
+	public String getNoDataI18N() {
 		return "sierra.eclipse.noDataFindingsQuickSearch";
 	}
 

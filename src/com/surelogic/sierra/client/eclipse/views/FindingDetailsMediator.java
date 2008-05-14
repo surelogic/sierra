@@ -202,7 +202,7 @@ implements IViewUpdater {
 		return "com.surelogic.sierra.client.eclipse.view-finding-details";
 	}
 
-	public String getNoDataId() {
+	public String getNoDataI18N() {
 		return "sierra.eclipse.noDataFindingDetails";
 	}
 	@Override

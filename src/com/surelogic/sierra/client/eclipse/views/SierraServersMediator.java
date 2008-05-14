@@ -346,7 +346,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		return "com.surelogic.sierra.client.eclipse.view-team-servers";
 	}
 
-	public String getNoDataId() {
+	public String getNoDataI18N() {
 		return "sierra.eclipse.noDataSierraServers";
 	}
 
