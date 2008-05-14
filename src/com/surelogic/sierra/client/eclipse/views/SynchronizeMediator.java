@@ -20,23 +20,25 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
+import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
-import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeMediator extends AbstractSierraViewMediator {
-	private final Table f_syncTable;
-	private final Table f_eventsTable;
 
-	public SynchronizeMediator(IViewCallback cb, Table syncTable, Table eventsTable) {
+	private final Table f_syncTable;
+
+	public SynchronizeMediator(IViewCallback cb, Table syncTable) {
 		super(cb);
 		f_syncTable = syncTable;
-		f_eventsTable = eventsTable;
 	}
 
 	public String getHelpId() {
@@ -50,25 +52,25 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {				
+			public void handleEvent(Event event) {
 				new SynchronizeProjectDialogAction().run();
 			}
 		};
 	}
-	
+
 	@Override
 	public void init() {
 		super.init();
-		f_syncTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				updateEventTable();
-			}
-		});
-		f_eventsTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				focusOnFindingId();
-			}
-		});
+		// f_syncTable.addListener(SWT.Selection, new Listener() {
+		// public void handleEvent(Event event) {
+		// //updateEventTable();
+		// }
+		// });
+		// f_eventsTable.addListener(SWT.Selection, new Listener() {
+		// public void handleEvent(Event event) {
+		// focusOnFindingId();
+		// }
+		// });
 		asyncUpdateContents();
 	}
 
@@ -107,41 +109,30 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void updateContents() throws Exception {
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			final List<SynchOverview> synchList = SynchOverview
-					.listOverviews(c);
-			asyncUpdateContentsForUI(new IViewUpdater() {
-				public void updateContentsForUI() {
-					updateSyncTableContents(synchList);	
-				}				
-			});
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
+		Data.withReadOnly(new DBTransaction<Void>() {
+			public Void perform(Connection conn) throws Exception {
+				final List<SynchOverview> synchList = SynchOverview
+						.listOverviews(conn);
+				asyncUpdateContentsForUI(new IViewUpdater() {
+					public void updateContentsForUI() {
+						updateSyncTableContents(synchList);
+					}
+				});
+				return null;
 			}
-		}
+		});
 	}
 
 	/**
 	 * Must be called from the SWT thread.
 	 */
 	private void updateSyncTableContents(List<SynchOverview> synchList) {
-		final boolean hideEmpty = PreferenceConstants.hideEmptySynchronizeEntries();
+		final boolean hideEmpty = PreferenceConstants
+				.hideEmptySynchronizeEntries();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();
-		
+
 		for (SynchOverview so : synchList) {
 			if (hideEmpty && so.isEmpty()) {
 				continue;
@@ -160,12 +151,18 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			item.setImage(0, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			item.setText(1, serverName);
-			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 			item.setText(2, dateFormat.format(so.getTime()));
 			item.setData(so);
+			final int numCommitted = so.getNumCommitted();
+			final int numReceived = so.getNumReceived();
+			item.setText(3, numCommitted
+					+ (numCommitted == 1 ? " audit" : " audits") + " sent and "
+					+ numReceived + (numReceived == 1 ? " audit" : " audits")
+					+ " received");
 		}
 
-		f_view.hasData(!synchList.isEmpty() && !Projects.getInstance().isEmpty());
+		f_view.hasData(!synchList.isEmpty()
+				&& !Projects.getInstance().isEmpty());
 		packTable(f_syncTable);
 	}
 
@@ -191,6 +188,12 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
+		Data.withReadOnly(new DBTransaction<Void>() {
+			public Void perform(Connection conn) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {
@@ -199,7 +202,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
 					updateEventTableContents(auditList);
-				}				
+				}
 			});
 			c.commit();
 			DatabaseHub.getInstance().notifyFindingMutated();
@@ -220,16 +223,16 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	private void updateEventTableContents(final List<AuditDetail> auditList) {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
-		f_eventsTable.removeAll();
-		f_eventsTable.setVisible(true);
-		for (AuditDetail ad : auditList) {
-			final TableItem item = new TableItem(f_eventsTable, SWT.NONE);
-			item.setText(0, ad.getUser());
-			item.setText(1, dateFormat.format(ad.getTime()));
-			item.setText(2, Long.toString(ad.getFindingId()));
-			item.setText(3, ad.getText());
-		}
-		packTable(f_eventsTable);
+		// f_eventsTable.removeAll();
+		// f_eventsTable.setVisible(true);
+		// for (AuditDetail ad : auditList) {
+		// final TableItem item = new TableItem(f_eventsTable, SWT.NONE);
+		// item.setText(0, ad.getUser());
+		// item.setText(1, dateFormat.format(ad.getTime()));
+		// item.setText(2, Long.toString(ad.getFindingId()));
+		// item.setText(3, ad.getText());
+		// }
+		// packTable(f_eventsTable);
 	}
 
 	private void updateEventTable() {
@@ -245,17 +248,17 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void focusOnFindingId() {
-		TableItem[] items = f_eventsTable.getSelection();
-		if (items.length > 0) {
-			TableItem item = items[0];
-			String findingIdString = item.getText(2);
-			long findingId = Long.parseLong(findingIdString);
-			// System.out.println("focus on finding " + findingId);
-			/*
-			 * Ensure the view is visible but don't change the focus.
-			 */
-			FindingDetailsView.findingSelected(findingId, false);
-		}
+		// TableItem[] items = f_eventsTable.getSelection();
+		// if (items.length > 0) {
+		// TableItem item = items[0];
+		// String findingIdString = item.getText(2);
+		// long findingId = Long.parseLong(findingIdString);
+		// // System.out.println("focus on finding " + findingId);
+		// /*
+		// * Ensure the view is visible but don't change the focus.
+		// */
+		// FindingDetailsView.findingSelected(findingId, false);
+		// }
 	}
 
 	private void packTable(final Table table) {
