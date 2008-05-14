@@ -14,8 +14,8 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
-public class CategoryContent extends ContentComposite {
-	private static final CategoryContent instance = new CategoryContent();
+public class CategoriesContent extends ContentComposite {
+	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryCache categories = new CategoryCache();
 	private final SearchSection searchSection = new SearchSection(categories);
 
@@ -24,11 +24,11 @@ public class CategoryContent extends ContentComposite {
 			categories);
 	private final FindingTypeBlock findingSelection = new FindingTypeBlock();
 
-	public static CategoryContent getInstance() {
+	public static CategoriesContent getInstance() {
 		return instance;
 	}
 
-	private CategoryContent() {
+	private CategoriesContent() {
 		// singleton
 	}
 
@@ -65,7 +65,7 @@ public class CategoryContent extends ContentComposite {
 
 	private void refreshSelection() {
 		final Context context = ContextManager.getContext();
-		final CategoryContext rulesCtx = new CategoryContext(context);
+		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		final String categoryUuid = rulesCtx.getCategory();
 		final String findingUuid = rulesCtx.getFinding();
 		boolean selectionMade = false;
@@ -88,7 +88,7 @@ public class CategoryContent extends ContentComposite {
 		}
 
 		if (!selectionMade && categories.getItemCount() > 0) {
-			new CategoryContext((Category) categories.getItem(0))
+			new CategoriesContext((Category) categories.getItem(0))
 					.updateContext();
 		}
 	}

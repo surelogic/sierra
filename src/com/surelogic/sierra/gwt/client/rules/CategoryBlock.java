@@ -53,7 +53,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 					Status status, Throwable failure) {
 				if (failure == null && status.isSuccess()) {
 					editing = false;
-					new CategoryContext((Category) item).updateContext();
+					new CategoriesContext((Category) item).updateContext();
 				} else if (!status.isSuccess()) {
 					Window.alert("Save rejected: " + status.getMessage());
 				} else if (failure != null) {
@@ -140,7 +140,7 @@ public class CategoryBlock extends SectionPanel implements Editable {
 	}
 
 	private void refresh(Context context) {
-		final String categoryUuid = new CategoryContext(context).getCategory();
+		final String categoryUuid = new CategoriesContext(context).getCategory();
 		refresh((Category) categories.getItem(categoryUuid));
 	}
 

@@ -27,7 +27,7 @@ public class FindingTypeBlock extends SectionPanel {
 	}
 
 	protected void onUpdate(Context context) {
-		final CategoryContext rulesCtx = new CategoryContext(context);
+		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		final String findingUuid = rulesCtx.getFinding();
 		if (LangUtil.notEmpty(findingUuid)) {
 			ServiceHelper.getSettingsService().getFindingTypeInfo(findingUuid,

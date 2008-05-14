@@ -140,7 +140,7 @@ public class CategoryFindingsBlock extends SectionPanel {
 		}
 
 		public void onClick(Widget sender) {
-			new CategoryContext(finding).updateContext();
+			new CategoriesContext(finding).updateContext();
 		}
 
 	}

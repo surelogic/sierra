@@ -8,24 +8,24 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 
-public final class CategoryContext {
+public final class CategoriesContext {
 	private static final String PARAM_CATEGORY = "category";
 	private static final String PARAM_FINDING = "finding";
 	private Context context;
 
-	public CategoryContext(Context context) {
+	public CategoriesContext(Context context) {
 		super();
 		this.context = context;
 	}
 
-	public CategoryContext(Category category) {
+	public CategoriesContext(Category category) {
 		super();
 		this.context = ContextManager.getContext();
 		setFinding("");
 		setCategory(category.getUuid());
 	}
 
-	public CategoryContext(FilterEntry finding) {
+	public CategoriesContext(FilterEntry finding) {
 		super();
 		this.context = ContextManager.getContext();
 		setFinding(finding.getUuid());
@@ -44,7 +44,7 @@ public final class CategoryContext {
 		return context.getParameter(PARAM_CATEGORY);
 	}
 
-	public CategoryContext setCategory(String uuid) {
+	public CategoriesContext setCategory(String uuid) {
 		return setParameter(PARAM_CATEGORY, uuid);
 	}
 
@@ -52,11 +52,11 @@ public final class CategoryContext {
 		return context.getParameter(PARAM_FINDING);
 	}
 
-	public CategoryContext setFinding(String uuid) {
+	public CategoriesContext setFinding(String uuid) {
 		return setParameter(PARAM_FINDING, uuid);
 	}
 
-	private CategoryContext setParameter(String name, String value) {
+	private CategoriesContext setParameter(String name, String value) {
 		Map params = new HashMap();
 		params.put(name, value);
 		context = Context.create(context, params);
