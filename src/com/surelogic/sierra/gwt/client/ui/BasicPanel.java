@@ -94,10 +94,7 @@ public class BasicPanel extends Composite {
 	}
 
 	public final void addAction(String text, ClickListener clickListener) {
-		final Label textLabel = new Label(text);
-		textLabel.addStyleName("clickable");
-		textLabel.addClickListener(clickListener);
-		addAction(textLabel);
+		addAction(new ClickLabel(text, clickListener));
 	}
 
 	public final void removeAction(Widget w) {
