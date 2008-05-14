@@ -1,12 +1,14 @@
 package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -163,10 +165,9 @@ public class ScanFilterContent extends ContentComposite {
 	private class ScanFilterComposite extends BlockPanel {
 
 		private VerticalPanel panel;
-		private VerticalPanel ftPanel;
-		private VerticalPanel cPanel;
+		private FilterEntries ftPanel;
+		private FilterEntries cPanel;
 		private ScanFilter filter;
-		private ScanFilter backup;
 		private StatusBox status;
 
 		protected void onInitialize(VerticalPanel panel) {
@@ -196,30 +197,17 @@ public class ScanFilterContent extends ContentComposite {
 				status = new StatusBox();
 				panel.add(status);
 				setTitle(filter.getName());
-				cPanel = new VerticalPanel();
-				cPanel.add(UI.h3("Categories"));
-				for (final Iterator i = filter.getCategories().iterator(); i
-						.hasNext();) {
-					cPanel.add(entry((ScanFilterEntry) i.next()));
-				}
-				cPanel.add(addCategoryBox());
+				panel.add(UI.h3("Categories"));
+				cPanel = new FilterEntries(filter.getCategories());
+
+				panel.add(addCategoryBox());
 				panel.add(cPanel);
-				ftPanel = new VerticalPanel();
-				ftPanel.add(UI.h3("Finding Types"));
-				for (final Iterator i = filter.getTypes().iterator(); i
-						.hasNext();) {
-					ftPanel.add(entry((ScanFilterEntry) i.next()));
-				}
-				ftPanel.add(addFindingTypeBox());
+				panel.add(UI.h3("Finding Types"));
+				ftPanel = new FilterEntries(filter.getTypes());
+				panel.add(addFindingTypeBox());
 				final HorizontalPanel buttonPanel = new HorizontalPanel();
 				panel.add(ftPanel);
 				panel.add(buttonPanel);
-				buttonPanel.add(new Button("Revert", new ClickListener() {
-					public void onClick(Widget sender) {
-						filter = backup;
-						refresh();
-					}
-				}));
 				buttonPanel.add(new Button("Update", new ClickListener() {
 					public void onClick(Widget sender) {
 						cache.save(filter);
@@ -237,11 +225,7 @@ public class ScanFilterContent extends ContentComposite {
 				public void onSuggestionSelected(SuggestionEvent event) {
 					final FindingTypeSuggestOracle.Suggestion s = (Suggestion) event
 							.getSelectedSuggestion();
-					final ScanFilterEntry e = s.getEntry();
-					if (!filter.getTypes().contains(e)) {
-						filter.getTypes().add(e);
-						ftPanel.add(entry(e));
-					}
+					ftPanel.addEntry(s.getEntry());
 				}
 			});
 			return box;
@@ -253,27 +237,47 @@ public class ScanFilterContent extends ContentComposite {
 				public void onSuggestionSelected(SuggestionEvent event) {
 					final CategorySuggestOracle.Suggestion s = (com.surelogic.sierra.gwt.client.rules.CategorySuggestOracle.Suggestion) event
 							.getSelectedSuggestion();
-					final ScanFilterEntry e = s.getEntry();
-					if (!filter.getCategories().contains(e)) {
-						filter.getCategories().add(e);
-						cPanel.add(entry(e));
-					}
+					cPanel.addEntry(s.getEntry());
 				}
 			});
 			return box;
 		}
 
 		public void setFilter(ScanFilter filter) {
-			backup = filter;
 			this.filter = filter.copy();
 			refresh();
 		}
 
-		private Widget entry(final ScanFilterEntry e) {
-			final HorizontalPanel panel = new HorizontalPanel();
+	}
+
+	private static class FilterEntries extends Grid {
+
+		private final Set entries;
+
+		public FilterEntries(Set entries) {
+			super();
+			this.entries = entries;
+			resize(entries.size(), 3);
+			int row = 0;
+			for (final Iterator i = entries.iterator(); i.hasNext();) {
+				entry(row++, (ScanFilterEntry) i.next());
+			}
+		}
+
+		public void addEntry(ScanFilterEntry e) {
+			if (!entries.contains(e)) {
+				entries.add(e);
+				final int row = getRowCount();
+				resize(row + 1, 3);
+				entry(row, e);
+			}
+		}
+
+		private void entry(int row, final ScanFilterEntry e) {
 			final HTML h = new HTML(e.getName());
 			h.setTitle(e.getShortMessage());
 			final ImportanceChoice box = new ImportanceChoice();
+			box.setSelectedImportance(e.getImportance());
 			box.addChangeListener(new ChangeListener() {
 				public void onChange(Widget sender) {
 					e.setImportance(((ImportanceChoice) sender)
@@ -282,20 +286,18 @@ public class ScanFilterContent extends ContentComposite {
 			});
 			final Label remove = new ClickLabel("remove", new ClickListener() {
 				public void onClick(Widget sender) {
-					if (e.isCategory()) {
-						filter.getCategories().remove(e);
-					} else {
-						filter.getTypes().remove(e);
+					entries.remove(e);
+					resize(getRowCount() - 1, 3);
+					int row = 0;
+					for (final Iterator i = entries.iterator(); i.hasNext();) {
+						entry(row++, (ScanFilterEntry) i.next());
 					}
-					panel.clear();
 				}
 			});
-			panel.add(h);
-			panel.add(box);
-			panel.add(remove);
-			return panel;
+			setWidget(row, 0, h);
+			setWidget(row, 1, box);
+			setWidget(row, 2, remove);
 		}
-
 	}
 
 	// Singleton
