@@ -541,4 +541,21 @@
 			</run>
 		</builder>
 	</extension>
+	
+  <extension
+       point="org.eclipse.ui.decorators">
+    <decorator id="com.surelogic.sierra.client.content.decorator"
+               label="SureLogic Server Content Decorator"
+               state="true"
+               lightweight="true"
+               icon="lib/icons/warning_decr.gif"               
+               location="BOTTOM_LEFT">
+      <enablement>
+        <and>
+          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
+          <objectState name="Status" value="WARNING"/>
+        </and>
+      </enablement>
+    </decorator>       
+ </extension>
 </plugin>
