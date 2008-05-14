@@ -49,7 +49,6 @@ public final class SynchOverview {
 		try {
 			final ResultSet set = oSt
 					.executeQuery("SELECT P.NAME, S.DATE_TIME, S.COMMIT_COUNT, S.UPDATE_COUNT FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
-			// FIX
 			try {
 				while (set.next()) {
 					overview.add(new SynchOverview(set));
