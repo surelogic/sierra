@@ -41,7 +41,7 @@ public final class SynchOverview {
 	}
 
 	public boolean isEmpty() {
-		return (numCommitted == 0) && (numReceived == 0);
+		return numCommitted == 0 && numReceived == 0;
 	}
 
 	public static List<SynchOverview> listOverviews(Connection conn)
