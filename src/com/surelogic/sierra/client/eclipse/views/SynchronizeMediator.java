@@ -127,14 +127,15 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	 * Must be called from the SWT thread.
 	 */
 	private void updateSyncTableContents(List<SynchOverview> synchList) {
-		final boolean hideEmpty = PreferenceConstants
-				.hideEmptySynchronizeEntries();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();
 
+		System.out.println("updateSyncTableContents: " + synchList);
+
 		for (SynchOverview so : synchList) {
-			if (hideEmpty && so.isEmpty()) {
+			if (PreferenceConstants.hideEmptySynchronizeEntries()
+					&& so.isEmpty()) {
 				continue;
 			}
 			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
