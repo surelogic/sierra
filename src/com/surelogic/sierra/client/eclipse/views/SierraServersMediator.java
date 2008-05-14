@@ -1573,12 +1573,10 @@ implements ISierraServerObserver, IProjectsObserver {
 		}		
 	}
 	
-	private class LabelProvider implements ILabelProvider, ILabelProviderListener {
+	private class LabelProvider implements ILabelProvider {
 		final ILabelDecorator decorator = 
 			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
-		{
-			decorator.addListener(this);
-		}
+
 		public Image getImage(Object element) {
 			if (element instanceof ServersViewContent) {
 				System.out.println("Getting image for "+element);
@@ -1613,6 +1611,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			decorator.addListener(listener);		
 		}
 
+		/*
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
 			for(Object o : event.getElements()) {
 				if (o instanceof ServersViewContent) {
@@ -1621,5 +1620,6 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 			//f_statusTree.refresh();
 		}		
+		*/
 	}
 }
