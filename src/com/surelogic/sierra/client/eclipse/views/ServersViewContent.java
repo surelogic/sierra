@@ -2,26 +2,20 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.graphics.Image;
 
-import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.ChangeStatus;
+import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.*;
 
 class ServersViewContent implements IServerActionFilter {
 	final ServersViewContent parent;
-	private ServersViewContent[] children;
-	private ChangeStatus changeStatus;
-	//private Status status;
+	private ServersViewContent[] children = SierraServersMediator.emptyChildren;
+	private ChangeStatus changeStatus = ChangeStatus.NONE;
+	private ServerStatus status = ServerStatus.OK;
 	final Image image;
-	private String text;
-	private Object data;	
+	private String text = "";
+	private Object data = null;	
 	
 	ServersViewContent(ServersViewContent p, Image i) {
-		this(p, null, i, "", ChangeStatus.NONE);			
-	}
-	ServersViewContent(ServersViewContent p, ServersViewContent[] c, Image i, String t, ChangeStatus s) {
 		parent = p;
-		image = i;
-		children = c;
-		changeStatus = s;
-		text = t;
+		image = i;	
 	}
 	public void setText(String t) {
 		text = t;
@@ -31,6 +25,19 @@ class ServersViewContent implements IServerActionFilter {
 	}
 	public void setChildren(ServersViewContent[] c) {
 		children = c;
+		for(ServersViewContent svc : c) {
+			mergeStatus(svc);
+		}
+	}
+	private void mergeStatus(ServersViewContent c) {
+		status = status.merge(c.status);
+		changeStatus = changeStatus.merge(c.changeStatus);
+	}
+	public void setChangeStatus(ChangeStatus s) {
+		changeStatus = s;
+	}
+	public void setServerStatus(ServerStatus s) {
+		status = s;
 	}
 	public String getText() {
 		return text;
@@ -49,8 +56,8 @@ class ServersViewContent implements IServerActionFilter {
 			return false;
 		}
 		if (STATUS_ATTR.equals(name)) {			
-			System.out.println("Checking if "+name+" = "+value+" for "+this);
-			return true;
+			//System.out.println("Checking if "+name+" = "+value+" for "+this);
+			return status.toString().equals(value);
 		}
 		return false;
 	}

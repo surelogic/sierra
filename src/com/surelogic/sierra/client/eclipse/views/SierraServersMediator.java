@@ -1165,6 +1165,21 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 	}
 	
+	enum ServerStatus {
+		OK, WARNING, ERROR;
+		
+		ServerStatus merge(ServerStatus s) {
+			switch (s) {
+			case ERROR:
+				return ERROR;
+			case WARNING:
+				return this == ERROR ? ERROR : WARNING;
+			case OK:
+		    default:
+				return this;
+			}
+		}
+	}
 	enum ChangeStatus { 
 		NONE() {
 			@Override String getLabel() {
@@ -1401,6 +1416,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					         ps.earliestLocalAudit, ps.latestLocalAudit);			
 			createLocalAuditDetails(audits, auditContents, ps.localFindings);
 			audits.setChildren(auditContents.toArray(emptyChildren));
+			audits.setChangeStatus(ChangeStatus.LOCAL);
 			status = status.merge(ChangeStatus.LOCAL);
 		}		
 		if (ps.numServerProblems > 0) {
@@ -1408,12 +1424,14 @@ implements ISierraServerObserver, IProjectsObserver {
 			contents.add(problems);
 			problems.setText(ps.numServerProblems+" consecutive failure"+s(ps.numServerProblems)+
 					         " connecting to "+server.getLabel());
+			problems.setServerStatus(ServerStatus.WARNING);
 		}
 		if (ps.numProjectProblems > 0) {
 			ServersViewContent problems = new ServersViewContent(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 			contents.add(problems);
 			problems.setText(ps.numProjectProblems+" consecutive failure"+s(ps.numProjectProblems)+
 					         " getting server info from "+server.getLabel());
+			problems.setServerStatus(ServerStatus.WARNING);
 		}
 		if (ps.serverData == null) {
 			ServersViewContent noServer = new ServersViewContent(root, null);
@@ -1430,6 +1448,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					         ps.earliestServerAudit, ps.latestServerAudit);	
 			createServerAuditDetails(ps, audits, auditContents);
 			audits.setChildren(auditContents.toArray(emptyChildren));
+			audits.setChangeStatus(ChangeStatus.REMOTE);
 			status = status.merge(ChangeStatus.REMOTE);
 		}
 		if (server != null) {
@@ -1533,7 +1552,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		return num <= 1 ? "" : "s";
 	}
 	
-	private static final ServersViewContent[] emptyChildren = new ServersViewContent[0];
+	static final ServersViewContent[] emptyChildren = new ServersViewContent[0];
 	
 	private class ContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {

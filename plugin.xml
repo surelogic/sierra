@@ -556,6 +556,6 @@
           <objectState name="Status" value="WARNING"/>
         </and>
       </enablement>
-    </decorator>       
+    </decorator>            			
  </extension>
 </plugin>
