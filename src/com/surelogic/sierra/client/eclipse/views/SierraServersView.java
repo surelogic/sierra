@@ -1,8 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -31,7 +30,7 @@ public final class SierraServersView extends
 	@Override
 	protected SierraServersMediator createMorePartControls(
 			final Composite parent) {
-		final Tree statusTree = new Tree(parent, SWT.MULTI);
+		final TreeViewer statusTree = new TreeViewer(parent, SWT.MULTI);
 		final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);
 
 		final MenuItem newServerItem = createMenuItem(contextMenu, "New...",
@@ -76,7 +75,7 @@ public final class SierraServersView extends
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
 		serverPropertiesItem.setText("Server Properties...");
-		statusTree.setMenu(contextMenu);
+		statusTree.getTree().setMenu(contextMenu);
 
 		final Action importAction = new Action("Import Locations...") {
 			@Override

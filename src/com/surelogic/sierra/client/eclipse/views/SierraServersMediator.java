@@ -23,6 +23,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -100,7 +107,7 @@ implements ISierraServerObserver, IProjectsObserver {
     private final AtomicReference<Job> lastUpdateJob = 
     	new AtomicReference<Job>();
     
-	private final Tree f_statusTree;
+	private final TreeViewer f_statusTree;
 	private final Menu f_contextMenu;
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_serverUpdateAction;
@@ -203,7 +210,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			.getInstance();
 	
 	public SierraServersMediator(SierraServersView view,
-			Tree statusTree, Menu contextMenu,
+			TreeViewer statusTree, Menu contextMenu,
 			MenuItem newServerItem, MenuItem browseServerItem,
 			MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
@@ -212,7 +219,14 @@ implements ISierraServerObserver, IProjectsObserver {
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem publishScansItem, MenuItem disconnectProjectItem) {
 		super(view);
+		
 		f_statusTree = statusTree;
+		f_statusTree.setContentProvider(new ContentProvider());
+		
+		final ILabelDecorator decorator = 
+			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		f_statusTree.setLabelProvider(new DecoratingLabelProvider(new LabelProvider(), decorator));
+		
 		f_contextMenu = contextMenu;
 		
 		f_serverUpdateAction = 
@@ -240,7 +254,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					           "New team server location") {
 			@Override
 			public void run() {
-				ServerLocationDialog.newServer(f_statusTree.getShell());			
+				ServerLocationDialog.newServer(f_statusTree.getTree().getShell());			
 			}
 		};		
 		view.addToActionBar(f_newServerAction);
@@ -366,7 +380,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			@Override
 			protected void handleEventOnServer(SierraServer server) {
 				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
-						f_statusTree.getShell());
+						f_statusTree.getTree().getShell());
 				dialog.open();
 			}
 		};
@@ -396,7 +410,8 @@ implements ISierraServerObserver, IProjectsObserver {
 						msg.append(server.getLabel());
 						msg.append("'?");
 						MessageDialog dialog = new MessageDialog(f_statusTree
-								.getShell(), "Send Scan Filters", null, msg
+								.getTree().getShell(), 
+								"Send Scan Filters", null, msg
 								.toString(), MessageDialog.QUESTION,
 								new String[] { "Yes", "No" }, 0);
 						if (dialog.open() == 0) {
@@ -423,7 +438,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				msg.append(server.getLabel());
 				msg.append("'?");
 				MessageDialog dialog = new MessageDialog(f_statusTree
-						.getShell(), "Get Scan Filters", null, msg.toString(),
+						.getTree().getShell(), "Get Scan Filters", null, msg.toString(),
 						MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
 				if (dialog.open() == 0) {
 					/*
@@ -441,7 +456,7 @@ implements ISierraServerObserver, IProjectsObserver {
 						"Edit server pressed with no server focus.") {
 					@Override
 					protected void handleEventOnServer(SierraServer server) {
-						ServerLocationDialog.editServer(f_statusTree.getShell(), server);
+						ServerLocationDialog.editServer(f_statusTree.getTree().getShell(), server);
 					}
 				});
 
@@ -478,6 +493,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					}
 				});
 		
+		/*
 		f_statusTree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				TreeItem item = (TreeItem) event.item;
@@ -507,6 +523,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				f_openInBrowserAction.setEnabled(onlyServer);
 			}			
 		});
+		*/
 		f_contextMenu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
 				f_newServerItem.setEnabled(true);
@@ -641,8 +658,9 @@ implements ISierraServerObserver, IProjectsObserver {
 		protected abstract boolean isEnabled();
 		protected abstract long getDelay(); // In msec
 	}
-	
+			
 	private List<SierraServer> collectServers() {
+		/*
 		final TreeItem[] si = f_statusTree.getSelection();
 		if (si.length == 0) {
 			return Collections.emptyList();
@@ -661,9 +679,12 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 		return servers;
+		*/
+		return Collections.emptyList();
 	}
 	
 	private List<ProjectStatus> collectSelectedProjectStatus() {
+		/*
 		final TreeItem[] si = f_statusTree.getSelection();
 		if (si.length == 0) {
 			return Collections.emptyList();
@@ -695,6 +716,8 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 		return projects;
+		*/
+		return Collections.emptyList();
 	}
 
 	private ProjectStatus inProject(TreeItem item) {
@@ -719,6 +742,7 @@ implements ISierraServerObserver, IProjectsObserver {
 	private abstract class ProjectsActionListener implements Listener {
 		public final void handleEvent(Event event) {
 			List<IJavaProject> projects = new ArrayList<IJavaProject>();
+			/*
 			final TreeItem[] si = f_statusTree.getSelection();
 			for (TreeItem item : si) {
 				if (item.getData() instanceof ProjectStatus) {
@@ -735,6 +759,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					System.out.println("Ignoring selection: "+item.getText());
 				}
 			}
+			*/
 			if (!projects.isEmpty()) {
 				run(projects);
 			}
@@ -752,12 +777,12 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	@Override
 	public void dispose() {
-		f_statusTree.dispose();
+		//f_statusTree.dispose();
 		super.dispose();
 	}
 
 	public void setFocus() {
-		f_statusTree.setFocus();
+		//f_statusTree.setFocus();
 	}
 
 	public void notify(SierraServerManager manager) {
@@ -1053,20 +1078,40 @@ implements ISierraServerObserver, IProjectsObserver {
 	public void updateContentsInUI(final List<ProjectStatus> projects) {		
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
-				
+
+		/*
 		if (f_statusTree.isDisposed())
 			return;
 		
 		f_statusTree.setRedraw(false);
-		
+		*/
 		List<SierraServer> servers = collectServers();
 		final boolean onlyServer = servers.size() == 1;
 		f_duplicateServerAction.setEnabled(onlyServer);
 		f_deleteServerAction.setEnabled(onlyServer);
 		f_openInBrowserAction.setEnabled(onlyServer);
 		
-		createTreeItems();
-		f_statusTree.setRedraw(true);
+		final TreeInput input = createTreeInput();
+		f_statusTree.setInput(input);
+		f_statusTree.getTree().getParent().layout();
+		f_statusTree.expandToLevel(3);
+		/*
+		for(TreeItem item : f_statusTree.getItems()) {
+			item.setExpanded(true);
+			if (byServer) {
+				for(TreeItem item2 : item.getItems()) {
+					if (item2.getText().endsWith("Connected Projects")) {
+						item2.setExpanded(true);
+						// Expand projects
+						for(TreeItem item3 : item2.getItems()) {
+							item3.setExpanded(true);
+						}
+					}
+				}
+			}
+		}
+		*/
+		//f_statusTree.setRedraw(true);
 		
 		checkAutoSyncTrigger(projects);
 	}
@@ -1093,49 +1138,38 @@ implements ISierraServerObserver, IProjectsObserver {
 		return false;
 	}
 	
-	protected void createTreeItems() {
-		f_statusTree.removeAll();
-				
+	static class TreeInput {
+		final boolean byServer;
+		final Content[] content;
+		
+		TreeInput(boolean server, Content[] c) {
+			byServer = server;
+			content = c;
+		}
+	}
+	
+	private TreeInput createTreeInput() {		
 		final boolean someServers = !f_manager.isEmpty();
 		final boolean someProjects = !projects.isEmpty();
 		final boolean somethingToSee = someServers || someProjects;
-		f_statusTree.setVisible(somethingToSee);
+		//f_statusTree.setVisible(somethingToSee);
 		f_view.hasData(somethingToSee);
 		
-		boolean byServer = false;
 		if (!somethingToSee) {
-			return;
+			return new TreeInput(false, emptyChildren);
 		}
 		else if (!someServers) {
-			createProjectItems();
+			return new TreeInput(false, createProjectItems());
 		}
 		else if (!someProjects) {
-			byServer = true;
-			createServerItems();
+			return new TreeInput(true, createServerItems());
 		}
 		else switch (PreferenceConstants.getServerStatusSort()) {
 		case BY_PROJECT:
-			createProjectItems();
-			break;
+			return new TreeInput(false, createProjectItems());
 		case BY_SERVER:
 		default: 
-			byServer = true;
-			createServerItems();
-		}
-		f_statusTree.getParent().layout();
-		for(TreeItem item : f_statusTree.getItems()) {
-			item.setExpanded(true);
-			if (byServer) {
-				for(TreeItem item2 : item.getItems()) {
-					if (item2.getText().endsWith("Connected Projects")) {
-						item2.setExpanded(true);
-						// Expand projects
-						for(TreeItem item3 : item2.getItems()) {
-							item3.setExpanded(true);
-						}
-					}
-				}
-			}
+			return new TreeInput(true, createServerItems());
 		}
 	}
 	
@@ -1183,72 +1217,90 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
  	}
 	
-	private void createServerItems() {
+	private Content[] createServerItems() {
+		final List<Content> content = new ArrayList<Content>();
+		/*
 		final SierraServer focus = f_manager.getFocus();
 		TreeItem focused = null;
+		*/
 		for(String label : f_manager.getLabels()) {
-			SierraServer server = f_manager.getServerByLabel(label);
-			TreeItem item = new TreeItem(f_statusTree, SWT.NONE);
-	
-			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
-			item.setData(server);
+			final SierraServer server = f_manager.getServerByLabel(label);				
+			final Content[] serverContent;
+			int i=0;
 			
+			final Content serverNode = new Content(null, 
+					SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
+			serverNode.setData(server);
+			/*
 			if (focus != null && label.equals(focus.getLabel())) {
 				focused = item;
 			}
+			*/
 			ChangeStatus status = ChangeStatus.NONE;
 			if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {
-				TreeItem projects = new TreeItem(item, SWT.NONE);
-				projects.setImage(SLImages
+				serverContent = new Content[2];				
+				serverContent[i] = new Content(serverNode, SLImages
 						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-
-				status = createProjectItems(projects, server);
-				projects.setText(status.getLabel()+"Connected Projects");
+				status = createProjectItems(serverContent[i], server);
+				serverContent[i].setText(status.getLabel()+"Connected Projects");
+				i++;
+			} else {
+				serverContent = new Content[1];		
 			}
-			ChangeStatus status2 = createScanFilters(item, server);
-			ChangeStatus status3 = status.merge(status2);
-			item.setText(status3.getLabel()+label+" ["+server.toURLWithContextPath()+']');
+			serverContent[i] = createScanFilters(serverNode, server);			
+			ChangeStatus status3 = status.merge(serverContent[i].status);
+
+			serverNode.setChildren(serverContent);
+			serverNode.setText(status3.getLabel()+label+" ["+server.toURLWithContextPath()+']');
+			content.add(serverNode);
 		}
-		createUnassociatedProjectItems();
-		
+		createUnassociatedProjectItems(content);
+		/*
 		if (focused != null) {
 			f_statusTree.setSelection(focused);
 		}
+		*/
+		return content.toArray(emptyChildren);
 	}
 	
-	private ChangeStatus createScanFilters(TreeItem parent, SierraServer server) {
-		TreeItem root = new TreeItem(parent, SWT.NONE);
+	private Content createScanFilters(Content serverNode, SierraServer server) {
+		Content root = new Content(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
 		root.setText("Scan Filters");
-		root.setImage(SLImages.getImage(CommonImages.IMG_FILTER));
 		
-		TreeItem label = new TreeItem(root, SWT.NONE);
-		label.setText("Coming ...");
-		return ChangeStatus.NONE;
+		createLabel(root, "Coming ...");
+		return root;
 	}
 
-	private void createUnassociatedProjectItems() {
-		TreeItem parent = null;
-		ChangeStatus status = ChangeStatus.NONE;
+	private void createUnassociatedProjectItems(List<Content> content) {
+		List<Content> children = null;
+		Content parent = null;
+		ChangeStatus status = ChangeStatus.NONE;		
 		
 		for(ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
-					parent = new TreeItem(f_statusTree, SWT.NONE);
-					parent.setImage(SLImages.getImage(CommonImages.IMG_QUERY));
+					parent = new Content(null, SLImages.getImage(CommonImages.IMG_QUERY));
+					children = new ArrayList<Content>();
 				}
-				ChangeStatus pStatus = initProjectItem(new TreeItem(parent, SWT.NONE), server, ps);
+				Content project = new Content(parent, SLImages
+						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+				children.add(project);
+				ChangeStatus pStatus = initProjectItem(project, server, ps);
 				status = status.merge(pStatus);
 			}
 		}
 		if (parent != null) {
+			parent.setChildren(children.toArray(emptyChildren));
 			parent.setText(status.getLabel()+"Unconnected");
-		}
-		
+			content.add(parent);
+		}		
 	}
 
-	private ChangeStatus createProjectItems(TreeItem parent, SierraServer server) {
+	private ChangeStatus createProjectItems(Content parent, SierraServer server) {
 		ChangeStatus status = ChangeStatus.NONE;
+		List<Content> content = new ArrayList<Content>();
+		
 		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
 			ProjectStatus s = null;
 			for(ProjectStatus p : projects) {
@@ -1261,11 +1313,12 @@ implements ISierraServerObserver, IProjectsObserver {
 				IJavaProject jp = JDTUtility.getJavaProject(projectName);				
 				if (jp != null) {
 					// No scan data?
-					TreeItem root = 
+					Content root = 
 						createProjectItem(parent, server, projectName);					
 					root.setData(new ProjectStatus(jp));
+					content.add(root);
 					
-					new TreeItem(root, SWT.NONE).setText("Needs a local scan");
+					createLabel(root, "Needs a local scan");
 					continue;
 				} else { // closed project?
 					IProject p = WorkspaceUtility.getProject(projectName);
@@ -1273,91 +1326,119 @@ implements ISierraServerObserver, IProjectsObserver {
 						if (p.isOpen()) {
 							throw new IllegalStateException("Not a Java project: "+projectName);
 						} else { // closed
-							TreeItem root = 
+							Content root = 
 								createProjectItem(parent, server, projectName);	
-							new TreeItem(root, SWT.NONE).setText("Closed ... no info available");
+							content.add(root);
+							
+							createLabel(root, "Closed ... no info available");
 							continue;
 						}
 					}
 					throw new IllegalStateException("No such Java project: "+projectName);
 				}
 			}
-			ChangeStatus pStatus = initProjectItem(new TreeItem(parent, SWT.NONE), server, s);
+			Content root = new Content(parent, SLImages
+				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			ChangeStatus pStatus = initProjectItem(root, server, s);
 			status = status.merge(pStatus);
+			content.add(root);
 		}
+		parent.setChildren(content.toArray(emptyChildren));
 		return status;
 	}
 
-	private TreeItem createProjectItem(TreeItem parent, SierraServer server,
+	private Content createLabel(Content parent, String text) {
+		Content[] contents = new Content[1];
+		Content c = new Content(parent, null);
+		c.setText(text);
+		contents[0] = c;
+		parent.setChildren(contents);
+		return c;
+	}
+	
+	private Content createLabel(Content parent, List<Content> children, String text) {
+		Content c = new Content(parent, null);
+		c.setText(text);
+		children.add(c);
+		return c;
+	}
+	
+	private Content createProjectItem(Content parent, SierraServer server,
 			String projectName) {
-		TreeItem root = new TreeItem(parent, SWT.NONE);
-		root.setText(projectName+" ["+server.getLabel()+']');
-		root.setImage(SLImages
+		Content root = new Content(parent, SLImages
 				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		root.setText(projectName+" ["+server.getLabel()+']');
 		return root;
 	}
 	
-	private ChangeStatus initProjectItem(final TreeItem root, final SierraServer server, 
-			                             final ProjectStatus ps) { 
+	private ChangeStatus initProjectItem(Content root, final SierraServer server, final ProjectStatus ps) { 
+		final List<Content> contents = new ArrayList<Content>();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 		ChangeStatus status = ChangeStatus.NONE;
-			
-		root.setImage(SLImages
-				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-		root.setData(ps);
-		root.setExpanded(true);
-		
+
 		if (ps.scanDoc != null && ps.scanDoc.exists()) {
-			TreeItem scan = new TreeItem(root, SWT.NONE);
+			Content scan;
 			if (ps.scanInfo != null) {
 				Date lastScanTime = ps.scanInfo.getScanTime();
 				
 				if (ps.scanInfo.isPartial()) {
 					// Latest is a re-scan
+					scan = new Content(root, SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
 					scan.setText("Re-scan done locally on "+dateFormat.format(lastScanTime)+" ... click to start full scan");
-					scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
 				} else {
+					scan = new Content(root, SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 					scan.setText("Last full scan done locally on "+dateFormat.format(lastScanTime));
-					scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 				}
 				scan.setData(ps.scanInfo);
 				
 			} else {
 				Date docModified = new Date(ps.scanDoc.lastModified());
+				scan = new Content(root, SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 				scan.setText("Last full scan done locally on "+dateFormat.format(docModified));
 				scan.setData(ps.scanDoc);
-				scan.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 			}
+			contents.add(scan);
 			//status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {
-			TreeItem audits = createAuditItems(root, false, ps.numLocalAudits, ps.localFindings.size(), 
-					                           ps.earliestLocalAudit, ps.latestLocalAudit);
-			createLocalAuditDetails(audits, ps.localFindings);
+			Content audits = new Content(root, SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
+			contents.add(audits);
+
+			List<Content> auditContents = new ArrayList<Content>();
+			createAuditItems(audits, auditContents, false, ps.numLocalAudits, ps.localFindings.size(), 
+					         ps.earliestLocalAudit, ps.latestLocalAudit);			
+			createLocalAuditDetails(audits, auditContents, ps.localFindings);
+			audits.setChildren(auditContents.toArray(emptyChildren));
 			status = status.merge(ChangeStatus.LOCAL);
 		}		
 		if (ps.numServerProblems > 0) {
-			TreeItem problems = new TreeItem(root, SWT.NONE);
+			Content problems = new Content(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+			contents.add(problems);
 			problems.setText(ps.numServerProblems+" consecutive failure"+s(ps.numServerProblems)+
 					         " connecting to "+server.getLabel());
-			problems.setImage(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 		}
 		if (ps.numProjectProblems > 0) {
-			TreeItem problems = new TreeItem(root, SWT.NONE);
+			Content problems = new Content(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+			contents.add(problems);
 			problems.setText(ps.numProjectProblems+" consecutive failure"+s(ps.numProjectProblems)+
 					         " getting server info from "+server.getLabel());
-			problems.setImage(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 		}
 		if (ps.serverData == null) {
-			TreeItem noServer = new TreeItem(root, SWT.NONE);
+			Content noServer = new Content(root, null);
+			contents.add(noServer);
 			noServer.setText("No server info available ... click to update");
 			noServer.setData(NO_SERVER_DATA);
 		} 
 		else if (!ps.serverData.isEmpty()) {
+			Content audits = new Content(root, SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
+			contents.add(audits);
+			
+			List<Content> auditContents = new ArrayList<Content>();
+			createAuditItems(audits, auditContents, true, ps.numServerAudits, ps.serverData.size(), 
+					         ps.earliestServerAudit, ps.latestServerAudit);	
+			createServerAuditDetails(ps, audits, auditContents);
+			audits.setChildren(auditContents.toArray(emptyChildren));
 			status = status.merge(ChangeStatus.REMOTE);
-			TreeItem audits = createAuditItems(root, true, ps.numServerAudits, ps.serverData.size(), 
-					                           ps.earliestServerAudit, ps.latestServerAudit);
-			createServerAuditDetails(ps, audits);
 		}
 		if (server != null) {
 			root.setText(status.getLabel()+ps.name+" ["+server.getLabel()+']');
@@ -1365,6 +1446,9 @@ implements ISierraServerObserver, IProjectsObserver {
 			root.setText(status.getLabel()+ps.name);
 		}	
 		//setAllDataIfNull(root, ps);
+		
+		root.setChildren(contents.toArray(emptyChildren));
+		root.setData(ps);
 		return status;
 	}
 
@@ -1381,10 +1465,9 @@ implements ISierraServerObserver, IProjectsObserver {
 	}
 	*/
 	
-	private TreeItem createAuditItems(final TreeItem root, boolean server, 
+	private Content createAuditItems(final Content audits, List<Content> contents, boolean server, 
 			                          int numAudits, int findings, Date earliestA, Date latestA) {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
-		TreeItem audits = new TreeItem(root, SWT.NONE);
 		
 		if (server) {
 			audits.setText("< "+numAudits+" audit"+s(numAudits)+
@@ -1393,52 +1476,46 @@ implements ISierraServerObserver, IProjectsObserver {
 			audits.setText("> "+numAudits+" audit"+s(numAudits)+
 					       " on "+findings+" finding"+s(findings));
 		}
-		audits.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
 		
 		if (earliestA != null) {
-			TreeItem earliest = new TreeItem(audits, SWT.NONE);
-			earliest.setText("Earliest on "+dateFormat.format(earliestA));
+			createLabel(audits, contents, "Earliest on "+dateFormat.format(earliestA));
 		}
 		if (latestA != null && earliestA != latestA) {
-			TreeItem latest = new TreeItem(audits, SWT.NONE);
-			latest.setText("Latest on "+dateFormat.format(latestA));
+			createLabel(audits, contents, "Latest on "+dateFormat.format(latestA));
 		}
 		return audits;
 	}
 
-	private void createLocalAuditDetails(TreeItem audits, List<FindingAudits> findings) {
+	private void createLocalAuditDetails(Content audits, List<Content> contents, 
+			                             List<FindingAudits> findings) {
 		for(FindingAudits f : findings) {
-			TreeItem item = new TreeItem(audits, SWT.NONE);
+			Content item = new Content(audits, SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 			int num = f.getAudits().size();
 			item.setText(num+" audit"+s(num)+" on finding "+f.getFindingId());
-			item.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 			item.setData(f);
+			contents.add(item);
 		}
 	}
 	
 	private void createServerAuditDetails(final ProjectStatus ps,
-			TreeItem audits) {
+			Content audits, List<Content> contents) {
 		if (ps.comments > 0) {
-			new TreeItem(audits, SWT.NONE).setText(ps.comments+" comment"+s(ps.comments));
+			createLabel(audits, contents, ps.comments+" comment"+s(ps.comments));
 		}
 		if (ps.importance > 0) {
-			new TreeItem(audits, SWT.NONE)
-			    .setText(ps.importance+" change"+s(ps.importance)+" to the importance");
+			createLabel(audits, contents, ps.importance+" change"+s(ps.importance)+" to the importance");
 		}
 		if (ps.summary > 0) {
-			new TreeItem(audits, SWT.NONE)
-			    .setText(ps.summary+" change"+s(ps.summary)+" to the summary");
+			createLabel(audits, contents, ps.summary+" change"+s(ps.summary)+" to the summary");
 		}
 		if (ps.read > 0) {
-			new TreeItem(audits, SWT.NONE)
-			    .setText(ps.read+" other finding"+s(ps.read)+" examined");
+			createLabel(audits, contents, ps.read+" other finding"+s(ps.read)+" examined");
 		}
 		for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
 			if (e.getValue() != null) {
 				int count = e.getValue().intValue();
 				if (count > 0) {
-					new TreeItem(audits, SWT.NONE)
-					    .setText(count+" audit"+s(count)+" by "+e.getKey());
+					createLabel(audits, contents, count+" audit"+s(count)+" by "+e.getKey());
 				}
 			}
 		}
@@ -1447,15 +1524,128 @@ implements ISierraServerObserver, IProjectsObserver {
 	/**
 	 * Show by Project
 	 */
-	private void createProjectItems() {
+	private Content[] createProjectItems() {
+		Content[] content = new Content[projects.size()];
+		int i=0;
 		for (ProjectStatus ps : projects) {
-			final TreeItem root = new TreeItem(f_statusTree, SWT.NONE);
 			final SierraServer server = f_manager.getServer(ps.name);
-			initProjectItem(root, server, ps);
+			content[i] = new Content(null, SLImages
+					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			initProjectItem(content[i], server, ps);
+			i++;
 		}
+		return content;
 	}
 		
 	private static String s(int num) {
 		return num <= 1 ? "" : "s";
+	}
+	
+	private class Content {
+		final Content parent;
+		Content[] children;
+		ChangeStatus status;
+		final Image image;
+		private String text;
+		Object data;
+		
+		Content(Content p, Image i) {
+			this(p, null, i, "", ChangeStatus.NONE);			
+		}
+		Content(Content p, Content[] c, Image i, String t, ChangeStatus s) {
+			parent = p;
+			image = i;
+			children = c;
+			status = s;
+			text = t;
+		}
+		public void setText(String t) {
+			text = t;
+		}
+		public void setData(Object o) {
+			data = o;			
+		}
+		public void setChildren(Content[] c) {
+			children = c;
+		}
+		public String getText() {
+			return text;
+		}
+		public Image getImage() {
+			return image;
+		}
+	}
+	
+	private static final Content[] emptyChildren = new Content[0];
+	
+	private class ContentProvider implements ITreeContentProvider {
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof Content) {
+				Content[] children = ((Content) parentElement).children;
+				return children != null ? children : emptyChildren;						
+			}
+			return null;
+		}
+
+		public Object getParent(Object element) {
+			if (element instanceof Content) {
+				return ((Content) element).parent;
+			}
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			if (element instanceof Content) {
+				Content[] children = ((Content) element).children;
+				return children != null && children.length > 0;
+			}
+			return false;
+		}
+
+		public Object[] getElements(Object inputElement) {
+			TreeInput input = (TreeInput) inputElement;
+            return input.content;
+		}
+
+		public void dispose() {
+			// TODO Auto-generated method stub		
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub			
+		}		
+	}
+	
+	private class LabelProvider implements ILabelProvider {
+		public Image getImage(Object element) {
+			if (element instanceof Content) {
+				return ((Content) element).getImage();
+			}
+			return null;
+		}
+
+		public String getText(Object element) {
+			if (element instanceof Content) {
+				return ((Content) element).getText();
+			}
+			return null;
+		}
+
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub			
+		}
+
+		public void dispose() {
+			// TODO Auto-generated method stub			
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub			
+		}		
 	}
 }
