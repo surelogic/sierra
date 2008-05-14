@@ -3,13 +3,16 @@ package com.surelogic.sierra.client.eclipse.views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
@@ -52,20 +55,21 @@ public final class SierraServersView extends
 		final MenuItem scanProjectItem = createMenuItem(contextMenu,
 				"Scan Project", CommonImages.IMG_SIERRA_SCAN);
 		final MenuItem rescanProjectItem = createMenuItem(contextMenu,
-				"Re-Scan Changes in Project", CommonImages.IMG_SIERRA_SCAN_DELTA);
+				"Re-Scan Changes in Project",
+				CommonImages.IMG_SIERRA_SCAN_DELTA);
 		final MenuItem synchProjects = createMenuItem(contextMenu,
 				"Synchronize Projects", CommonImages.IMG_SIERRA_SYNC);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem publishScansItem = createMenuItem(contextMenu,
 				"Publish Scans", CommonImages.IMG_SIERRA_PUBLISH);
-		
+
 		final MenuItem disconnectProjectItem = createMenuItem(contextMenu,
 				"Disconnect", CommonImages.IMG_SIERRA_DISCONNECT);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
-		final MenuItem sendResultFilters = 
-			createMenuItem(contextMenu, "Send Scan Filter...", CommonImages.IMG_FILTER);
+		final MenuItem sendResultFilters = createMenuItem(contextMenu,
+				"Send Scan Filter...", CommonImages.IMG_FILTER);
 		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
 		getResultFilters.setText("Get Scan Filter...");
 		new MenuItem(contextMenu, SWT.SEPARATOR);
@@ -100,32 +104,30 @@ public final class SierraServersView extends
 		addToViewMenu(exportAction);
 		addToViewMenu(new Separator());
 
-		Action serverInteractionAction =
-			new Action("Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
-			@SuppressWarnings("restriction")
+		Action serverInteractionAction = new Action(
+				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
 			@Override
-			public void run() {				
-				FilteredPreferenceDialog dialog = (FilteredPreferenceDialog) 
-					PreferencesUtil.createPreferenceDialogOn(null, PreferencesAction.PREF_ID,
-					PreferencesAction.SERVER_INTERACTION, null);
-				dialog.setCurrentPageId(PreferencesAction.SERVER_INTERACTION_ID);
+			public void run() {
+				final PreferenceDialog dialog = PreferencesUtil
+						.createPreferenceDialogOn(null,
+								PreferencesAction.SERVER_INTERACTION_ID,
+								PreferencesAction.FILTER, null);
 				dialog.open();
-
 			}
 		};
 		addToViewMenu(serverInteractionAction);
 		addToViewMenu(new Separator());
-		
+
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
-		final Action sortByServerAction = 
-			new Action("Show by Team Server", IAction.AS_RADIO_BUTTON) {
+		final Action sortByServerAction = new Action("Show by Team Server",
+				IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				f_mediator.setSortByServer(isChecked());
 			}
 		};
-		final Action sortByProjectAction = 
-			new Action("Show by Project", IAction.AS_RADIO_BUTTON) {
+		final Action sortByProjectAction = new Action("Show by Project",
+				IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				f_mediator.setSortByServer(!isChecked());
@@ -135,11 +137,12 @@ public final class SierraServersView extends
 		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
 		addToViewMenu(sortByProjectAction);
 		addToViewMenu(sortByServerAction);
-		
+
 		return new SierraServersMediator(this, statusTree, contextMenu,
-				newServerItem, browseServerItem, duplicateServerItem, deleteServerItem,
-				serverConnectItem, synchProjects, sendResultFilters,
-				getResultFilters, serverPropertiesItem, scanProjectItem,
-				rescanProjectItem, publishScansItem, disconnectProjectItem);
+				newServerItem, browseServerItem, duplicateServerItem,
+				deleteServerItem, serverConnectItem, synchProjects,
+				sendResultFilters, getResultFilters, serverPropertiesItem,
+				scanProjectItem, rescanProjectItem, publishScansItem,
+				disconnectProjectItem);
 	}
 }
