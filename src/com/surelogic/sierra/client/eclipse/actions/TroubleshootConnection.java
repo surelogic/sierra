@@ -81,6 +81,7 @@ public abstract class TroubleshootConnection {
 		default:
 		case SHOW_BALLOON:
 			showBalloon();
+			setRetry(false);
 			break;
 		case SHOW_DIALOG:
 			showDialog();
@@ -88,6 +89,7 @@ public abstract class TroubleshootConnection {
 		case IGNORE:
 			SLLogger.log(Level.WARNING, f_status.getMessage(),
 					     f_status.getException());
+			setRetry(false);
 		}
 		
 		if (failServer()) {
