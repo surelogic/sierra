@@ -25,7 +25,13 @@ public final class SynchronizeView extends
 		syncTable.setLinesVisible(true);
 		syncTable.setVisible(true);
 
-		TableColumn column = new TableColumn(syncTable, SWT.NONE);
+		TableColumn column = new TableColumn(syncTable, SWT.RIGHT);
+		column.setText("Occurred");
+		column.addListener(SWT.Selection,
+				TableUtility.SORT_COLUMN_ALPHABETICALLY);
+		column.setMoveable(true);
+
+		column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("Project");
 		column.addListener(SWT.Selection,
 				TableUtility.SORT_COLUMN_ALPHABETICALLY);
@@ -33,12 +39,6 @@ public final class SynchronizeView extends
 
 		column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("To Server");
-		column.addListener(SWT.Selection,
-				TableUtility.SORT_COLUMN_ALPHABETICALLY);
-		column.setMoveable(true);
-
-		column = new TableColumn(syncTable, SWT.RIGHT);
-		column.setText("Occurred");
 		column.addListener(SWT.Selection,
 				TableUtility.SORT_COLUMN_ALPHABETICALLY);
 		column.setMoveable(true);

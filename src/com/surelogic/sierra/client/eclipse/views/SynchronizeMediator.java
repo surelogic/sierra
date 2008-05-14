@@ -148,18 +148,18 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			} else {
 				serverName = "(unknown)";
 			}
-			item.setText(0, projectName);
-			item.setImage(0, SLImages
+			item.setText(0, dateFormat.format(so.getTime()));
+			item.setText(1, projectName);
+			item.setImage(1, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-			item.setText(1, serverName);
-			item.setText(2, dateFormat.format(so.getTime()));
-			item.setData(so);
+			item.setText(2, serverName);
 			final int numCommitted = so.getNumCommitted();
 			final int numReceived = so.getNumReceived();
 			item.setText(3, numCommitted
 					+ (numCommitted == 1 ? " audit" : " audits") + " sent and "
 					+ numReceived + (numReceived == 1 ? " audit" : " audits")
 					+ " received");
+			item.setData(so);
 		}
 
 		f_view.hasData(!synchList.isEmpty()
