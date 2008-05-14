@@ -19,10 +19,7 @@ public final class PreferencesAction extends Action {
 	public static final String DATA_ID = "com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage";
 	public static final String LOCAL_SERVER_ID = "com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage";
 	public static final String SERVER_INTERACTION_ID = "com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage";
-	public static final String[] SERVER_INTERACTION = {
-		SERVER_INTERACTION_ID
-	};
-	
+
 	public static final String[] FILTER = new String[] { PREF_ID, TOOLS_ID,
 			FILTER_ID, DATA_ID, LOCAL_SERVER_ID, SERVER_INTERACTION_ID };
 
