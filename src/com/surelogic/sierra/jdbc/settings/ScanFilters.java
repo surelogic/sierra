@@ -120,7 +120,7 @@ public class ScanFilters {
 					insertCategoryFilter.call(settingsRec.getId(),
 							cat.getUid(),
 							cat.getImportance() == null ? Nulls.STRING : cat
-									.getImportance());
+									.getImportance().ordinal());
 				}
 				for (final TypeFilterDO type : settings.getFilterTypes()) {
 					insertTypeFilter.call(settingsRec.getId(), type
@@ -234,20 +234,20 @@ public class ScanFilters {
 
 		public CategoryFilterDO handle(Row r) {
 			return new CategoryFilterDO(r.nextString(), toImportance(r
-					.nextString()));
+					.nullableInt()));
 		}
 	}
 
 	private static class FilterHandler implements RowHandler<TypeFilterDO> {
 
 		public TypeFilterDO handle(Row r) {
-			return new TypeFilterDO(r.nextString(),
-					toImportance(r.nextString()), r.nextBoolean());
+			return new TypeFilterDO(r.nextString(), toImportance(r
+					.nullableInt()), r.nextBoolean());
 		}
 	}
 
-	private static Importance toImportance(String imp) {
-		return imp == null ? null : Importance.fromValue(imp);
+	private static Importance toImportance(Integer imp) {
+		return imp == null ? null : Importance.values()[imp];
 	}
 
 	public static ScanFilterDO convertDO(ScanFilter message) {
