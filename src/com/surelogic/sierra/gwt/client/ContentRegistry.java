@@ -9,9 +9,9 @@ import com.surelogic.sierra.gwt.client.header.AdminHeader;
 import com.surelogic.sierra.gwt.client.header.GuestHeader;
 import com.surelogic.sierra.gwt.client.header.HeaderComposite;
 import com.surelogic.sierra.gwt.client.header.UserHeader;
+import com.surelogic.sierra.gwt.client.rules.CategoryContent;
 import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
-import com.surelogic.sierra.gwt.client.rules.RulesContent;
 import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
@@ -27,7 +27,7 @@ public class ContentRegistry {
 
 		final UserHeader userHeader = UserHeader.getInstance();
 		register("overview", OverviewContent.getInstance(), userHeader);
-		register("rules", RulesContent.getInstance(), userHeader);
+		register("category", CategoryContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
 		register("filterset", FilterSetContent.getInstance(), userHeader);
 		register("scanfilters", ScanFilterContent.getInstance(), userHeader);

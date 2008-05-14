@@ -9,9 +9,9 @@ import com.surelogic.sierra.gwt.client.FindingContent;
 import com.surelogic.sierra.gwt.client.OverviewContent;
 import com.surelogic.sierra.gwt.client.SettingsContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.rules.CategoryContent;
 import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
-import com.surelogic.sierra.gwt.client.rules.RulesContent;
 import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 
 public final class UserHeader extends AuthenticatedHeader {
@@ -41,7 +41,7 @@ public final class UserHeader extends AuthenticatedHeader {
 
 	protected void addTabs() {
 		addTab("Welcome", OverviewContent.getInstance());
-		addTab("Rules", RulesContent.getInstance());
+		addTab("Categories", CategoryContent.getInstance());
 		addTab("Filter Set", FilterSetContent.getInstance());
 		addTab("Scan Filters", ScanFilterContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());

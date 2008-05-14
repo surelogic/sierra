@@ -4,7 +4,6 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,7 +13,6 @@ import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 public class SearchSection extends SectionPanel {
 	private final CategoryCache categories;
 	private final FlexTable grid = new FlexTable();
-	private final ListBox categoryView = new ListBox();
 	private final TextBox searchText = new TextBox();
 	private final SearchResultsBlock results;
 
@@ -31,14 +29,9 @@ public class SearchSection extends SectionPanel {
 		grid.getColumnFormatter().setWidth(0, "25%");
 		grid.getColumnFormatter().setWidth(1, "75%");
 
-		final Label viewLabel = new Label("View");
-		grid.setWidget(0, 0, viewLabel);
-		grid.setWidget(0, 1, categoryView);
-		categoryView.setWidth("100%");
-
 		final Label searchLabel = new Label("Search");
-		grid.setWidget(1, 0, searchLabel);
-		grid.setWidget(1, 1, searchText);
+		grid.setWidget(0, 0, searchLabel);
+		grid.setWidget(0, 1, searchText);
 		searchText.setWidth("100%");
 
 		results.initialize();

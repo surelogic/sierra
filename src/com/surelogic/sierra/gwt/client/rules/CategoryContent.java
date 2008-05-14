@@ -14,8 +14,8 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
-public class RulesContent extends ContentComposite {
-	private static final RulesContent instance = new RulesContent();
+public class CategoryContent extends ContentComposite {
+	private static final CategoryContent instance = new CategoryContent();
 	private final CategoryCache categories = new CategoryCache();
 	private final SearchSection searchSection = new SearchSection(categories);
 
@@ -24,16 +24,16 @@ public class RulesContent extends ContentComposite {
 			categories);
 	private final FindingTypeBlock findingSelection = new FindingTypeBlock();
 
-	public static RulesContent getInstance() {
+	public static CategoryContent getInstance() {
 		return instance;
 	}
 
-	private RulesContent() {
+	private CategoryContent() {
 		// singleton
 	}
 
 	protected void onInitialize(DockPanel rootPanel) {
-		final Label title = UI.h2("Rules");
+		final Label title = UI.h2("Categories");
 		rootPanel.add(title, DockPanel.NORTH);
 		rootPanel.setCellHorizontalAlignment(title, DockPanel.ALIGN_LEFT);
 
@@ -65,7 +65,7 @@ public class RulesContent extends ContentComposite {
 
 	private void refreshSelection() {
 		final Context context = ContextManager.getContext();
-		final RulesContext rulesCtx = new RulesContext(context);
+		final CategoryContext rulesCtx = new CategoryContext(context);
 		final String categoryUuid = rulesCtx.getCategory();
 		final String findingUuid = rulesCtx.getFinding();
 		boolean selectionMade = false;
@@ -88,7 +88,8 @@ public class RulesContent extends ContentComposite {
 		}
 
 		if (!selectionMade && categories.getItemCount() > 0) {
-			new RulesContext((Category) categories.getItem(0)).updateContext();
+			new CategoryContext((Category) categories.getItem(0))
+					.updateContext();
 		}
 	}
 

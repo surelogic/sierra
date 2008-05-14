@@ -108,7 +108,7 @@ public class SearchResultsBlock extends BlockPanel {
 			selectedItem.removeStyleName(PRIMARY_STYLE + "-finding-selected");
 		}
 
-		final RulesContext rulesCtx = new RulesContext(context);
+		final CategoryContext rulesCtx = new CategoryContext(context);
 		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
 			Widget catEntry = (Widget) searchResultsData.get("C"
 					+ rulesCtx.getCategory());
@@ -160,9 +160,9 @@ public class SearchResultsBlock extends BlockPanel {
 
 		public void onClick(Widget sender) {
 			if (category != null) {
-				new RulesContext(category).updateContext();
+				new CategoryContext(category).updateContext();
 			} else {
-				new RulesContext(finding).updateContext();
+				new CategoryContext(finding).updateContext();
 			}
 		}
 
