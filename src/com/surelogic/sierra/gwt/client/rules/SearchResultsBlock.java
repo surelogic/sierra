@@ -20,7 +20,7 @@ import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class SearchResultsBlock extends BlockPanel {
-	public static final String PRIMARY_STYLE = "rules";
+	public static final String PRIMARY_STYLE = "categories-search";
 	private final CategoryCache categories;
 	private final Map searchResultsData = new HashMap();
 	private String searchText;

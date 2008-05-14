@@ -18,6 +18,7 @@ import com.surelogic.sierra.gwt.client.ui.Editable;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class CategoryBlock extends SectionPanel implements Editable {
+	public static final String PRIMARY_STYLE = "categories-category";
 	private final CategoryCache categories;
 	private final FlexTable categoryInfo = new FlexTable();
 	private final TextBox nameEditText = new TextBox();
@@ -140,7 +141,8 @@ public class CategoryBlock extends SectionPanel implements Editable {
 	}
 
 	private void refresh(Context context) {
-		final String categoryUuid = new CategoriesContext(context).getCategory();
+		final String categoryUuid = new CategoriesContext(context)
+				.getCategory();
 		refresh((Category) categories.getItem(categoryUuid));
 	}
 

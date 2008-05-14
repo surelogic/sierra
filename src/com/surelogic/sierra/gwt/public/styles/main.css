@@ -103,30 +103,34 @@ img {
 }
 
 /* Rules Content */
-.rules-category {
+.categories-search-category {
     font-size: small;
     padding: 2px;
     cursor: pointer;
 	cursor: hand;
 }
 
-.rules-category-selected {
+.categories-search-category-selected {
 	border: 1px solid #666699;
 	background-color: #DDDDFF;
 	padding: 1px;
 }
 
-.rules-finding {
+.categories-search-finding {
 	font-size: small;
 	padding: 2px 2px 2px 12px;
 	cursor: pointer;
 	cursor: hand;
 }
 
-.rules-finding-selected {
+.categories-search-finding-selected {
     border: 1px solid #666699;
 	background-color: #DDDDFF;
 	padding: 1px 9px 1px 11px;
+}
+
+.categories-category-finding {
+	font-size: small;
 }
 
 /* Class for items that can be clicked */

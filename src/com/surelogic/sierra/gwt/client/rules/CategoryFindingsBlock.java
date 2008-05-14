@@ -1,7 +1,9 @@
 package com.surelogic.sierra.gwt.client.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -18,6 +20,7 @@ import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class CategoryFindingsBlock extends SectionPanel {
+	private static final String PRIMARY_STYLE = CategoryBlock.PRIMARY_STYLE;
 	private final Map findings = new HashMap();
 	private boolean editing;
 
@@ -28,6 +31,52 @@ public class CategoryFindingsBlock extends SectionPanel {
 		findingTypes.clear();
 		findings.clear();
 
+		final List visibleFindings = new ArrayList();
+		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
+			final FilterEntry finding = (FilterEntry) it.next();
+			final String findingUuid = finding.getUuid();
+			if (visibleFindings.indexOf(findingUuid) == -1) {
+				final Widget findingUI = createDetailsRule(finding, editing,
+						!finding.isFiltered());
+				if (findingUI != null) {
+					findingTypes.add(findingUI);
+					visibleFindings.add(findingUuid);
+				}
+			}
+		}
+		final Set excluded = cat.getExcludedEntries();
+		for (final Iterator catIt = cat.getParents().iterator(); catIt
+				.hasNext();) {
+			final Category parent = (Category) catIt.next();
+			VerticalPanel targetPanel;
+			if (editing) {
+				final DisclosurePanel parentPanel = new DisclosurePanel(
+						"From: " + parent.getName());
+				findingTypes.add(parentPanel);
+				targetPanel = new VerticalPanel();
+				parentPanel.setContent(targetPanel);
+				parentPanel.setOpen(true);
+			} else {
+				targetPanel = findingTypes;
+			}
+
+			final Set parentFindings = parent.getIncludedEntries();
+			for (final Iterator findingIt = parentFindings.iterator(); findingIt
+					.hasNext();) {
+				final FilterEntry finding = (FilterEntry) findingIt.next();
+				final String findingUuid = finding.getUuid();
+				if (visibleFindings.indexOf(findingUuid) == -1) {
+					final Widget findingUI = createDetailsRule(finding,
+							editing, !excluded.contains(finding));
+					if (findingUI != null) {
+						targetPanel.add(findingUI);
+						visibleFindings.add(findingUuid);
+					}
+				}
+			}
+
+		}
+
 		if (editing) {
 			addAction("Add Category", new ClickListener() {
 
@@ -37,36 +86,6 @@ public class CategoryFindingsBlock extends SectionPanel {
 			});
 		} else {
 			removeActions();
-		}
-
-		for (final Iterator it = cat.getEntries().iterator(); it.hasNext();) {
-			final FilterEntry finding = (FilterEntry) it.next();
-			final Widget findingUI = createDetailsRule(finding, editing,
-					!finding.isFiltered());
-			if (findingUI != null) {
-				findingTypes.add(findingUI);
-			}
-		}
-		final Set excluded = cat.getExcludedEntries();
-		for (final Iterator catIt = cat.getParents().iterator(); catIt
-				.hasNext();) {
-			final Category parent = (Category) catIt.next();
-			final DisclosurePanel parentPanel = new DisclosurePanel("From: "
-					+ parent.getName());
-			final VerticalPanel parentFindingsPanel = new VerticalPanel();
-			final Set parentFindings = parent.getIncludedEntries();
-			for (final Iterator findingIt = parentFindings.iterator(); findingIt
-					.hasNext();) {
-				final FilterEntry finding = (FilterEntry) findingIt.next();
-				final Widget findingUI = createDetailsRule(finding, editing,
-						!excluded.contains(finding));
-				if (findingUI != null) {
-					parentFindingsPanel.add(findingUI);
-				}
-			}
-			parentPanel.setContent(parentFindingsPanel);
-			parentPanel.setOpen(true);
-			findingTypes.add(parentPanel);
 		}
 	}
 
@@ -101,6 +120,7 @@ public class CategoryFindingsBlock extends SectionPanel {
 			final CheckBox rule = new CheckBox(finding.getName());
 			rule.setTitle(finding.getShortMessage());
 			rule.setChecked(enabled);
+			rule.addStyleName(PRIMARY_STYLE + "-finding");
 			findings.put(rule, finding);
 			return rule;
 		}
@@ -109,6 +129,7 @@ public class CategoryFindingsBlock extends SectionPanel {
 			rule.setTitle(finding.getShortMessage());
 			rule.addStyleName("clickable2");
 			rule.addClickListener(new FindingTypeListener(finding));
+			rule.addStyleName(PRIMARY_STYLE + "-finding");
 			findings.put(rule, finding);
 			return rule;
 		}
