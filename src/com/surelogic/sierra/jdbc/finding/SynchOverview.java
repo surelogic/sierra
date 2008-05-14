@@ -12,12 +12,14 @@ public final class SynchOverview {
 
 	private final String project;
 	private final Date time;
-	private final int numAudits;
-	
+	private final int numCommitted;
+	private final int numReceived;
+
 	private SynchOverview(ResultSet set) throws SQLException {
-		this.project = set.getString(1);
-		this.time = set.getTimestamp(2);
-		this.numAudits = 1; // FIX set.getInt(3);
+		project = set.getString(1);
+		time = set.getTimestamp(2);
+		numCommitted = set.getInt(3);
+		numReceived = set.getInt(4);
 	}
 
 	public String getProject() {
@@ -27,30 +29,34 @@ public final class SynchOverview {
 	public Date getTime() {
 		return time;
 	}
-	
-	public int getNumAudits() {
-		return numAudits;
+
+	public int getNumCommitted() {
+		return numCommitted;
+	}
+
+	public int getNumReceived() {
+		return numReceived;
 	}
 
 	public boolean isEmpty() {
-		return numAudits == 0;
+		return (numCommitted == 0) && (numReceived == 0);
 	}
-	
+
 	public static List<SynchOverview> listOverviews(Connection conn)
 			throws SQLException {
-		Statement oSt = conn.createStatement();
-		List<SynchOverview> overview = new ArrayList<SynchOverview>();
+		final Statement oSt = conn.createStatement();
+		final List<SynchOverview> overview = new ArrayList<SynchOverview>();
 		try {
-		  ResultSet set = oSt
-		  .executeQuery("SELECT P.NAME, S.DATE_TIME FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
-		  // FIX
-		  try {
-		    while (set.next()) {
-		      overview.add(new SynchOverview(set));
-		    }
-		  } finally {
-		    set.close();
-		  }
+			final ResultSet set = oSt
+					.executeQuery("SELECT P.NAME, S.DATE_TIME, S.COMMIT_COUNT, S.UPDATE_COUNT FROM SYNCH S, PROJECT P WHERE P.ID = S.PROJECT_ID ORDER BY 2,1");
+			// FIX
+			try {
+				while (set.next()) {
+					overview.add(new SynchOverview(set));
+				}
+			} finally {
+				set.close();
+			}
 		} finally {
 			oSt.close();
 		}
