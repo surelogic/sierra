@@ -552,23 +552,22 @@ implements ISierraServerObserver, IProjectsObserver {
 				} else {
 					return;
 				}
+
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
-				final boolean onlyTeamServer;
 				if (onlyServer) {
 					SierraServer focus = servers.get(0);
 					if (f_manager.getFocus() != focus) {
 					    f_manager.setFocus(servers.get(0));
 					}
-					onlyTeamServer = focus.isTeamServer();
-				} else {
-					onlyTeamServer = false;
 				}
+				/*
 				//System.out.println("onlyTeamServer=" + onlyTeamServer);
 				f_serverConnectItem.setEnabled(onlyTeamServer);
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
+				*/
 			}			
 		});
 		
@@ -578,15 +577,24 @@ implements ISierraServerObserver, IProjectsObserver {
 				
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
+				final boolean onlyTeamServer;
+				final boolean onlyBugLink;
+				if (onlyServer) {
+					SierraServer focus = servers.get(0);
+					onlyTeamServer = focus.isTeamServer();
+					onlyBugLink = focus.isBugLink();
+				} else {
+					onlyTeamServer = onlyBugLink = false;
+				}
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
 				f_browseServerItem.setEnabled(onlyServer);
 				f_duplicateServerItem.setEnabled(onlyServer);
 				f_deleteServerItem.setEnabled(onlyServer);
-				f_serverConnectItem.setEnabled(onlyServer);
-				f_sendResultFilters.setEnabled(onlyServer);
-				f_getResultFilters.setEnabled(onlyServer);
+				f_serverConnectItem.setEnabled(onlyTeamServer);
+				f_sendResultFilters.setEnabled(onlyBugLink);
+				f_getResultFilters.setEnabled(onlyBugLink);
 				f_serverPropertiesItem.setEnabled(onlyServer);
 				
 				List<ProjectStatus> status = collectSelectedProjectStatus();
