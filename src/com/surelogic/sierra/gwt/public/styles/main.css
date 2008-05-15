@@ -301,6 +301,12 @@ img {
 	border: none;
 }
 
+/* SL Button */
+.sl-Button {
+	border: 2px groove #001166;
+	text-align: center;
+	background-color: #DDDDFF;
+}
 
 
 /* Grid panel */

@@ -59,9 +59,6 @@ public class BasicPanel extends Composite {
 	}
 
 	public final void setTitle(String text) {
-		if (!"".equals(text) && !text.endsWith(":")) {
-			text += ":";
-		}
 		sectionTitle.setText(text);
 		updateHeader();
 	}

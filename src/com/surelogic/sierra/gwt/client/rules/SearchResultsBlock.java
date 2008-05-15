@@ -32,7 +32,7 @@ public class SearchResultsBlock extends BlockPanel {
 	}
 
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Results");
+		setTitle(" ");
 		categories.addListener(new CacheListener() {
 
 			public void onStartRefresh(Cache cache) {
