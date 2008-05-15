@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
@@ -32,6 +31,7 @@ import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
+import com.surelogic.sierra.gwt.client.ui.EnterListener;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.UI;
 
@@ -92,29 +92,25 @@ public class ScanFilterContent extends ContentComposite {
 		private final VerticalPanel list = new VerticalPanel();
 
 		protected void onInitialize(VerticalPanel contentPanel) {
-			setTitle("Scan Filters");
+			setTitle("Search");
+			final HorizontalPanel searchPanel = new HorizontalPanel();
 			final TextBox box = new TextBox();
 			final Button button = new Button("Create");
-			box.addKeyboardListener(new KeyboardListenerAdapter() {
-				public void onKeyUp(final Widget sender, final char keyCode,
+			box.addKeyboardListener(new EnterListener() {
+				public void onEnter(final Widget sender, final char keyCode,
 						final int modifiers) {
-					if (keyCode == KEY_ENTER) {
-						final String name = box.getText();
-						if (name.length() > 0) {
-							ServiceHelper.getSettingsService()
-									.createScanFilter(name,
-											new AsyncCallback() {
-												public void onFailure(
-														Throwable caught) {
-													// TODO
-												}
+					final String name = box.getText();
+					if (name.length() > 0) {
+						ServiceHelper.getSettingsService().createScanFilter(
+								name, new AsyncCallback() {
+									public void onFailure(Throwable caught) {
+										// TODO
+									}
 
-												public void onSuccess(
-														Object result) {
-													cache.refresh();
-												}
-											});
-						}
+									public void onSuccess(Object result) {
+										cache.refresh();
+									}
+								});
 					}
 				}
 			});
@@ -135,8 +131,9 @@ public class ScanFilterContent extends ContentComposite {
 					}
 				}
 			});
-			contentPanel.add(box);
-			contentPanel.add(button);
+			searchPanel.add(box);
+			searchPanel.add(button);
+			contentPanel.add(searchPanel);
 			contentPanel.add(list);
 			cache.addListener(new CacheListener() {
 				public void onItemUpdate(Cache cache, Cacheable item,
@@ -194,18 +191,18 @@ public class ScanFilterContent extends ContentComposite {
 		private void refresh() {
 			panel.clear();
 			if (filter != null) {
-				status = new StatusBox();
-				panel.add(status);
 				setTitle(filter.getName());
+				panel
+						.add(new Label(
+								"A scan filter specifies the finding types that are included when a scan is loaded into the system.  You can add finding types individually, or you can add all of the finding types in a category at once. You can also set the importance that a particular finding type or category is given."));
 				panel.add(UI.h3("Categories"));
-				cPanel = new FilterEntries(filter.getCategories());
-
 				panel.add(addCategoryBox());
+				cPanel = new FilterEntries(filter.getCategories());
 				panel.add(cPanel);
 				panel.add(UI.h3("Finding Types"));
-				ftPanel = new FilterEntries(filter.getTypes());
 				panel.add(addFindingTypeBox());
 				final HorizontalPanel buttonPanel = new HorizontalPanel();
+				ftPanel = new FilterEntries(filter.getTypes());
 				panel.add(ftPanel);
 				panel.add(buttonPanel);
 				buttonPanel.add(new Button("Update", new ClickListener() {
@@ -213,12 +210,18 @@ public class ScanFilterContent extends ContentComposite {
 						cache.save(filter);
 					}
 				}));
+				status = new StatusBox();
+				panel.add(status);
 			} else {
 				panel.add(UI.h1("None selected"));
 			}
 		}
 
 		private Widget addFindingTypeBox() {
+			final VerticalPanel panel = new VerticalPanel();
+			panel
+					.add(new Label(
+							"Begin typing to search for a finding type to add to this scan filter.  Use * to match any text."));
 			final SuggestBox box = new SuggestBox(
 					new FindingTypeSuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
@@ -228,10 +231,15 @@ public class ScanFilterContent extends ContentComposite {
 					ftPanel.addEntry(s.getEntry());
 				}
 			});
-			return box;
+			panel.add(box);
+			return panel;
 		}
 
 		private Widget addCategoryBox() {
+			final VerticalPanel panel = new VerticalPanel();
+			panel
+					.add(new Label(
+							"Begin typing to search for a category to add to this scan filter.  Use * to match any text."));
 			final SuggestBox box = new SuggestBox(new CategorySuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
 				public void onSuggestionSelected(SuggestionEvent event) {
@@ -240,7 +248,8 @@ public class ScanFilterContent extends ContentComposite {
 					cPanel.addEntry(s.getEntry());
 				}
 			});
-			return box;
+			panel.add(box);
+			return panel;
 		}
 
 		public void setFilter(ScanFilter filter) {
@@ -257,8 +266,10 @@ public class ScanFilterContent extends ContentComposite {
 		public FilterEntries(Set entries) {
 			super();
 			this.entries = entries;
-			resize(entries.size(), 3);
-			int row = 0;
+			resize(entries.size() + 1, 3);
+			setText(0, 0, "Name");
+			setText(0, 1, "Importance");
+			int row = 1;
 			for (final Iterator i = entries.iterator(); i.hasNext();) {
 				entry(row++, (ScanFilterEntry) i.next());
 			}
@@ -288,7 +299,7 @@ public class ScanFilterContent extends ContentComposite {
 				public void onClick(Widget sender) {
 					entries.remove(e);
 					resize(getRowCount() - 1, 3);
-					int row = 0;
+					int row = 1;
 					for (final Iterator i = entries.iterator(); i.hasNext();) {
 						entry(row++, (ScanFilterEntry) i.next());
 					}
