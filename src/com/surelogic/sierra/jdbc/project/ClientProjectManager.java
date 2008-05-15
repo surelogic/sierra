@@ -11,8 +11,9 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
+import com.surelogic.sierra.tool.message.ServerInfoRequest;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.ServerUIDRequest;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
@@ -81,7 +82,8 @@ public final class ClientProjectManager extends ProjectManager {
 			if (set.next()) {
 				serverUid = set.getString(1);
 			} else {
-				serverUid = service.getUid(new ServerUIDRequest()).getUid();
+				serverUid = ServerInfoServiceClient.create(server)
+						.getServerInfo(new ServerInfoRequest()).getUid();
 				insertServerUid.setLong(1, p.getId());
 				insertServerUid.setString(2, serverUid);
 				insertServerUid.execute();
@@ -111,8 +113,8 @@ public final class ClientProjectManager extends ProjectManager {
 
 		if (!serverGet) {
 			monitor.subTask("Writing remote updates into local database.");
-			findingManager.updateLocalAuditRevision(projectName, server.getUser(),
-					reply.getCommitRevision(), monitor);
+			findingManager.updateLocalAuditRevision(projectName, server
+					.getUser(), reply.getCommitRevision(), monitor);
 			findingManager.updateLocalFindings(projectName, reply.getTrails(),
 					monitor);
 			monitor.worked(1);
