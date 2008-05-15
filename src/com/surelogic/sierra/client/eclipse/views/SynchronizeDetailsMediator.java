@@ -10,17 +10,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.DBTransaction;
+import com.surelogic.common.jdbc.DBTransactionNoResult;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
@@ -29,7 +25,6 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 
 	protected SynchronizeDetailsMediator(IViewCallback cb) {
 		super(cb);
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getHelpId() {
@@ -54,58 +49,20 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 
 	}
 
-	private void asyncEventTableContents(final SynchOverview so) {
-		final Job job = new DatabaseJob(
-				"Updating reading events from server synchronize") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
-				try {
-					updateEventTableContents(so);
-				} catch (Exception e) {
-					final int errNo = 59;
-					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
-		Data.withReadOnly(new DBTransaction<Void>() {
-			public Void perform(Connection conn) throws Exception {
-				// TODO Auto-generated method stub
-				return null;
+		Data.withReadOnly(new DBTransactionNoResult() {
+			@Override
+			public void doPerform(Connection conn) throws Exception {
+				SynchDetail sd = SynchDetail.getSyncDetail(conn, so);
+				final List<AuditDetail> auditList = sd.getAudits();
+				asyncUpdateContentsForUI(new IViewUpdater() {
+					public void updateContentsForUI() {
+						updateEventTableContents(auditList);
+					}
+				});
 			}
 		});
-		Connection c = Data.transactionConnection();
-		Exception exc = null;
-		try {
-			SynchDetail sd = SynchDetail.getSyncDetail(c, so);
-			final List<AuditDetail> auditList = sd.getAudits();
-			asyncUpdateContentsForUI(new IViewUpdater() {
-				public void updateContentsForUI() {
-					updateEventTableContents(auditList);
-				}
-			});
-			c.commit();
-			DatabaseHub.getInstance().notifyFindingMutated();
-		} catch (Exception e) {
-			c.rollback();
-			exc = e;
-		} finally {
-			try {
-				c.close();
-			} finally {
-				if (exc != null) {
-					throw exc;
-				}
-			}
-		}
 	}
 
 	private void updateEventTableContents(final List<AuditDetail> auditList) {
@@ -149,9 +106,23 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 		// }
 	}
 
-	public void asyncQueryAndShow(SynchOverview syncOverview) {
-		// TODO Auto-generated method stub
-
+	public void asyncQueryAndShow(final SynchOverview syncOverview) {
+		final Job job = new DatabaseJob(
+				"Updating reading events from server synchronize") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
+				try {
+					updateEventTableContents(syncOverview);
+				} catch (Exception e) {
+					final int errNo = 59;
+					final String msg = I18N.err(errNo);
+					return SLStatus.createErrorStatus(errNo, msg, e);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
-
 }

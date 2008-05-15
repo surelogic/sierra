@@ -20,7 +20,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.common.jdbc.DBTransaction;
+import com.surelogic.common.jdbc.DBTransactionNoResult;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -109,8 +109,9 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void updateContents() throws Exception {
-		Data.withReadOnly(new DBTransaction<Void>() {
-			public Void perform(Connection conn) throws Exception {
+		Data.withReadOnly(new DBTransactionNoResult() {
+			@Override
+			public void doPerform(Connection conn) throws Exception {
 				final List<SynchOverview> synchList = SynchOverview
 						.listOverviews(conn);
 				asyncUpdateContentsForUI(new IViewUpdater() {
@@ -118,7 +119,6 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 						updateSyncTableContents(synchList);
 					}
 				});
-				return null;
 			}
 		});
 	}
