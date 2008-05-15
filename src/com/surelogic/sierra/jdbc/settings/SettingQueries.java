@@ -126,22 +126,40 @@ public class SettingQueries {
 
 	public static final DBQuery<ListScanFilterResponse> retrieveScanFilters(
 			SierraServerLocation loc) {
+		return getScanFilters(loc, true);
+	}
+	
+	public static final DBQuery<ListScanFilterResponse> getNewScanFilters(
+			SierraServerLocation loc) {
+		return getScanFilters(loc, false);
+	}
+	
+	private static final DBQuery<ListScanFilterResponse> getScanFilters(
+			SierraServerLocation loc, final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
 				.create(loc).listScanFilters(new ListScanFilterRequest());
 		return new DBQuery<ListScanFilterResponse>() {
 			public ListScanFilterResponse perform(Query q) {
 				final ScanFilters filters = new ScanFilters(q);
-				final Queryable<Void> delete = q
-						.prepared("Definitions.deleteDefinition");
-				final Queryable<Void> insert = q
-						.prepared("Definitions.insertDefinition");
-				for (final ScanFilter filter : response.getScanFilter()) {
+				final Queryable<Void> delete = update ? q
+						.prepared("Definitions.deleteDefinition") : null;
+				final Queryable<Void> insert = update ? q
+						.prepared("Definitions.insertDefinition") : null;
+				//for (final ScanFilter filter : response.getScanFilter()) {
+				final Iterator<ScanFilter> it = response.getScanFilter().iterator();
+				while (it.hasNext()) {
+					final ScanFilter filter = it.next();
 					final String uid = filter.getUid();
 					final ScanFilterDO f = filters.getScanFilter(uid);
 					if ((f != null) && (f.getRevision() < filter.getRevision())) {
-						delete.call(uid);
-						insert.call(uid, filter.getOwner());
-						filters.writeScanFilter(ScanFilters.convertDO(filter));
+						if (update) {
+							delete.call(uid);
+							insert.call(uid, filter.getOwner());
+							filters.writeScanFilter(ScanFilters.convertDO(filter));
+						}
+					}
+					else if (!update) {
+						it.remove(); // Remove since it's older
 					}
 				}
 				return response;
@@ -149,6 +167,15 @@ public class SettingQueries {
 		};
 	}
 
+	public static final DBQuery<List<ScanFilterDO>> getLocalScanFilters() {
+		return new DBQuery<List<ScanFilterDO>>() {
+			public List<ScanFilterDO> perform(Query q) {
+				final ScanFilters filters = new ScanFilters(q);
+				return filters.listScanFilters();
+			}
+		};
+	}
+	
 	/**
 	 * Generates a filter to be used when when filtering artifacts from a scan
 	 * and assigning importance to findings during a scan publish action.
