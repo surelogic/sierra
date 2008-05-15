@@ -188,14 +188,14 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>SureLogic Registration</servlet-name>
+		<servlet-name>Server Info Service</servlet-name>
 		<servlet-class>
-			com.surelogic.sierra.servlets.RegistrationImpl
+			com.surelogic.sierra.tool.message.ServerInfoServiceImpl
 		</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>SureLogic Registration</servlet-name>
-		<url-pattern>/services/Registration</url-pattern>
+		<servlet-name>Server Info Service</servlet-name>
+		<url-pattern>/services/ServerInfoService</url-pattern>
 	</servlet-mapping>
 </web-app>
