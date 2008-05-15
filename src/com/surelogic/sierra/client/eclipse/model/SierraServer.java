@@ -7,7 +7,7 @@ import java.util.logging.Level;
 
 import com.surelogic.common.base64.Base64;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.ServerInfoClient;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
@@ -255,7 +255,7 @@ public final class SierraServer {
 			return;
 		}
 		try {
-			final ServerInfoService sis = ServerInfoClient.create(getServer());
+			final ServerInfoService sis = ServerInfoServiceClient.create(getServer());
 			final ServerInfoReply reply = sis
 					.getServerInfo(new ServerInfoRequest());
 			isBugLink = reply.getServices().contains(Services.BUGLINK);

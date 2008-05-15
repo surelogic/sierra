@@ -25,11 +25,11 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.tool.message.ServerUIDReply;
-import com.surelogic.sierra.tool.message.ServerUIDRequest;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.tool.message.ServerInfoRequest;
+import com.surelogic.sierra.tool.message.ServerInfoService;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
-import com.surelogic.sierra.tool.message.SierraService;
-import com.surelogic.sierra.tool.message.SierraServiceClient;
 
 /**
  * Dialog to allow the user to enter or edit the location and authentication
@@ -95,7 +95,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite contents = (Composite) super.createDialogArea(parent);
 
-		Composite panel = new Composite(contents, SWT.NONE);
+		final Composite panel = new Composite(contents, SWT.NONE);
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
@@ -108,19 +108,19 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final Label label = new Label(panel, SWT.RIGHT);
 		label.setText("Label:");
 		label.setLayoutData(new GridData(SWT.RIGHT));
-		Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
+		final Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		labelText.setText(f_server.getLabel());
 		labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		labelText.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(Event event) {
-				String text = event.text;
-				char[] chars = new char[text.length()];
+				final String text = event.text;
+				final char[] chars = new char[text.length()];
 				text.getChars(0, chars.length, chars, 0);
-				for (char c : chars) {
-					boolean number = '0' <= c && c <= '9';
-					boolean alpha = 'A' <= c && c <= 'z';
-					boolean spec = c == '?' || c == ' ' || c == '(' || c == ')'
-							|| c == '.';
+				for (final char c : chars) {
+					final boolean number = ('0' <= c) && (c <= '9');
+					final boolean alpha = ('A' <= c) && (c <= 'z');
+					final boolean spec = (c == '?') || (c == ' ') || (c == '(')
+							|| (c == ')') || (c == '.');
 					if (!(number || alpha || spec)) {
 						event.doit = false;
 						return;
@@ -143,7 +143,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		hostLabel.setLayoutData(data);
-		Text hostText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
+		final Text hostText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
 		hostText.setText(f_server.getHost());
 		hostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -152,16 +152,16 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		portLabel.setLayoutData(data);
-		Text portText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
+		final Text portText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
 		portText.setText(Integer.toString(f_server.getPort()));
 		portText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portText.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(Event event) {
-				String text = event.text;
-				char[] chars = new char[text.length()];
+				final String text = event.text;
+				final char[] chars = new char[text.length()];
 				text.getChars(0, chars.length, chars, 0);
-				for (char c : chars) {
-					boolean number = '0' <= c && c <= '9';
+				for (final char c : chars) {
+					boolean number = ('0' <= c) && (c <= '9');
 
 					if (!number) {
 						event.doit = false;
@@ -176,7 +176,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		contextPathLabel.setLayoutData(data);
-		Text contextPathText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
+		final Text contextPathText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
 		contextPathText.setText(f_server.getContextPath());
 		contextPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -219,7 +219,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		userLabel.setLayoutData(data);
-		Text userText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
+		final Text userText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		userText.setText(f_server.getUser());
 		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -228,7 +228,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		passwordLabel.setLayoutData(data);
-		Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
+		final Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		passwordText.setText(f_server.getPass());
 		passwordText.setEchoChar('\u25CF');
@@ -355,8 +355,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			}
 
 			final String cp = f_contextPathText.getText().trim();
-			boolean slashStartEnd = cp.startsWith("/") && cp.endsWith("/");
-			boolean noSpaces = cp.indexOf(' ') == -1;
+			final boolean slashStartEnd = cp.startsWith("/")
+					&& cp.endsWith("/");
+			final boolean noSpaces = cp.indexOf(' ') == -1;
 			boolean validCP = slashStartEnd && noSpaces;
 			if (!validCP) {
 				valid = false;
@@ -400,7 +401,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	public int open() {
-		int rv = super.open();
+		final int rv = super.open();
 		if (rv == Window.OK) {
 			return validateServer();
 		}
@@ -413,11 +414,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			return Window.OK;
 		}
 
-		ServerUIDRequest request = new ServerUIDRequest();
-		SierraService ss = SierraServiceClient.create(f_server);
+		final ServerInfoService ss = ServerInfoServiceClient.create(f_server);
 		String uid = null;
 		try {
-			ServerUIDReply reply = ss.getUid(request);
+			final ServerInfoReply reply = ss
+					.getServerInfo(new ServerInfoRequest());
 			uid = reply.getUid();
 			if (uid == null) {
 				f_serverValidated = false;
@@ -426,7 +427,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				f_serverValidated = true;
 				return Window.OK;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			f_serverValidated = false;
 			return RETRY;
 		}
@@ -436,7 +437,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	// since we manually notify observers
 	public static void newServer(final Shell shell) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
-		ServerLocationDialog dialog = editServer(shell, manager
+		final ServerLocationDialog dialog = editServer(shell, manager
 				.createLocation(), ServerLocationDialog.NEW_TITLE, true);
 		if (dialog != null) {
 			final SierraServer newServer = manager.create();
@@ -445,8 +446,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	}
 
 	public static void editServer(final Shell shell, SierraServer server) {
-		ServerLocationDialog dialog = editServer(shell, server.getServer(),
-				ServerLocationDialog.EDIT_TITLE, server.savePassword());
+		final ServerLocationDialog dialog = editServer(shell, server
+				.getServer(), ServerLocationDialog.EDIT_TITLE, server
+				.savePassword());
 		updateServer(dialog, server);
 	}
 
@@ -465,7 +467,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			final SierraServer server) {
 		if (dialog != null) {
 			boolean changed = server.setServer(dialog.f_server);
-			changed = changed || server.savePassword() != dialog.f_savePassword;
+			changed = changed
+					|| (server.savePassword() != dialog.f_savePassword);
 
 			server.setSavePassword(dialog.f_savePassword);
 
