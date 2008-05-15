@@ -22,13 +22,6 @@ public interface SierraService extends Service {
 	Timeseries getTimeseries(TimeseriesRequest request);
 
 	/**
-	 * Return the server's unique identifier
-	 * 
-	 * @return
-	 */
-	ServerUIDReply getUid(ServerUIDRequest request);
-
-	/**
 	 * Synchronize the projects between a client and server.
 	 * 
 	 * @param request
