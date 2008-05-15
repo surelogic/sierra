@@ -17,4 +17,7 @@ public class ServerInfoReply {
 		return services;
 	}
 
+	public void setServices(List<Services> s) {
+		services = s;
+	}
 }
