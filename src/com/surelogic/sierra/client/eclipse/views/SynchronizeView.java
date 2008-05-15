@@ -38,12 +38,6 @@ public final class SynchronizeView extends
 		column.setMoveable(true);
 
 		column = new TableColumn(syncTable, SWT.NONE);
-		column.setText("Project");
-		column.addListener(SWT.Selection,
-				TableUtility.SORT_COLUMN_ALPHABETICALLY);
-		column.setMoveable(true);
-
-		column = new TableColumn(syncTable, SWT.NONE);
 		column.setText("Summary");
 		column.addListener(SWT.Selection,
 				TableUtility.SORT_COLUMN_ALPHABETICALLY);
