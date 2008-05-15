@@ -18,7 +18,7 @@ import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 
-public class BuglinkServiceImpl extends SierraServiceImpl implements
+public class BugLinkServiceImpl extends SierraServiceImpl implements
 		BugLinkService {
 
 	/**

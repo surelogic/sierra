@@ -212,19 +212,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 		}
 	}
 
-	public ServerUIDReply getUid(ServerUIDRequest request) {
-		final ServerUIDReply reply = new ServerUIDReply();
-		reply.setUid(ConnectionFactory
-				.withUserReadOnly(new UserTransaction<String>() {
-
-					public String perform(Connection conn, Server server,
-							User user) throws SQLException {
-						return server.getUid();
-					}
-				}));
-		return reply;
-	}
-
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
