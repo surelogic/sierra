@@ -3,6 +3,9 @@ package com.surelogic.sierra.tool.message;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -141,4 +144,11 @@ public class BuglinkServiceImpl extends SierraServiceImpl implements
 					}
 				});
 	}
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		ServerInfoServiceImpl.registerService(Services.BUGLINK);
+	}
+
 }

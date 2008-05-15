@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -234,4 +235,11 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 			UserContext.remove();
 		}
 	}
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		ServerInfoServiceImpl.registerService(Services.TEAMSERVER);
+	}
+
 }
