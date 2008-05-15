@@ -51,7 +51,7 @@ import com.surelogic.sierra.client.eclipse.actions.*;
 import com.surelogic.sierra.client.eclipse.dialogs.*;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
-import com.surelogic.sierra.client.eclipse.jobs.GetScanFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.GetCategoriesJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
@@ -436,7 +436,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					 * Yes was selected, so get the result filters from the
 					 * server.
 					 */
-					final Job job = new GetScanFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
+					final Job job = new GetCategoriesJob(ServerFailureReport.SHOW_DIALOG, server);
 					job.schedule();
 				}
 			}
