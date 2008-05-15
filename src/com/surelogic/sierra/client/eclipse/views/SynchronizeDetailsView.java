@@ -1,6 +1,10 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 
 import com.surelogic.common.eclipse.LinkTrail;
@@ -14,11 +18,29 @@ public final class SynchronizeDetailsView extends
 
 	@Override
 	protected SynchronizeDetailsMediator createMorePartControls(Composite parent) {
-		final LinkTrail detailsComposite = new LinkTrail(parent);
-		return new SynchronizeDetailsMediator(this, detailsComposite);
+		final Composite panel = new Composite(parent, SWT.NONE);
+		panel.setLayout(new GridLayout());
+		final Label eventInfo = new Label(panel, SWT.NONE);
+		eventInfo
+				.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+		final LinkTrail detailsComposite = new LinkTrail(panel);
+		detailsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
+		return new SynchronizeDetailsMediator(this, panel, eventInfo,
+				detailsComposite);
 	}
 
-	public static void findingSelected(SynchOverview syncOverview,
+	/**
+	 * Tells this view what synchronization event to show the details of.
+	 * 
+	 * @param syncOverview
+	 *            the synchronization event to show the details of, or
+	 *            {@code null} to clear the view.
+	 * @param moveFocus
+	 *            {@code true} to focus on this view}, {@code false} to leave
+	 *            the focus as it is.
+	 */
+	public static void eventSelected(SynchOverview syncOverview,
 			boolean moveFocus) {
 		SynchronizeDetailsView view;
 		if (moveFocus) {

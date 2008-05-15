@@ -66,7 +66,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 					final Object data = item.getData();
 					if (data instanceof SynchOverview) {
 						final SynchOverview so = (SynchOverview) data;
-						SynchronizeDetailsView.findingSelected(so, false);
+						SynchronizeDetailsView.eventSelected(so, false);
 					}
 				}
 			}
@@ -168,6 +168,9 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		f_syncTable.setSortColumn(f_syncTable.getColumn(0));
 		f_syncTable.setSortDirection(SWT.DOWN);
 		packTable(f_syncTable);
+
+		// clear out the details view because nothing is selected
+		SynchronizeDetailsView.eventSelected(null, false);
 	}
 
 	private void packTable(final Table table) {
