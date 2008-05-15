@@ -8,10 +8,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
@@ -31,8 +33,8 @@ import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
-import com.surelogic.sierra.gwt.client.ui.EnterListener;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
+import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFilterContent extends ContentComposite {
@@ -89,73 +91,102 @@ public class ScanFilterContent extends ContentComposite {
 	}
 
 	class ScanFilterList extends BlockPanel {
-		private final VerticalPanel list = new VerticalPanel();
+		private final FlexTable grid = new FlexTable();
+		private final ScanFilterResults results = new ScanFilterResults();
+		private TextBox searchText;
 
 		protected void onInitialize(VerticalPanel contentPanel) {
-			setTitle("Search");
-			final HorizontalPanel searchPanel = new HorizontalPanel();
-			final TextBox box = new TextBox();
-			final Button button = new Button("Create");
-			box.addKeyboardListener(new EnterListener() {
-				public void onEnter(final Widget sender, final char keyCode,
-						final int modifiers) {
-					final String name = box.getText();
-					if (name.length() > 0) {
-						ServiceHelper.getSettingsService().createScanFilter(
-								name, new AsyncCallback() {
-									public void onFailure(Throwable caught) {
-										// TODO
-									}
-
-									public void onSuccess(Object result) {
-										cache.refresh();
-									}
-								});
-					}
+			final Label searchLabel = new Label("Search");
+			searchText = new TextBox();
+			searchText.addKeyboardListener(new KeyboardListenerAdapter() {
+				public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+					results.search();
 				}
 			});
-			button.addClickListener(new ClickListener() {
-				public void onClick(Widget sender) {
-					final String name = box.getText();
-					if (name.length() > 0) {
-						ServiceHelper.getSettingsService().createScanFilter(
-								name, new AsyncCallback() {
-									public void onFailure(Throwable caught) {
-										// TODO
-									}
-
-									public void onSuccess(Object result) {
-										cache.refresh();
-									}
-								});
-					}
+			searchText.addChangeListener(new ChangeListener() {
+				public void onChange(Widget sender) {
+					results.search();
 				}
 			});
-			searchPanel.add(box);
-			searchPanel.add(button);
-			contentPanel.add(searchPanel);
-			contentPanel.add(list);
-			cache.addListener(new CacheListener() {
-				public void onItemUpdate(Cache cache, Cacheable item,
-						Status status, Throwable failure) {
+			final StyledButton createScanFilter = new StyledButton(
+					"Create ScanFilter", new ClickListener() {
 
+						public void onClick(Widget sender) {
+							final String name = searchText.getText();
+							if (name.length() > 0) {
+								ServiceHelper.getSettingsService()
+										.createScanFilter(name,
+												new AsyncCallback() {
+													public void onFailure(
+															Throwable caught) {
+														// TODO
+													}
+
+													public void onSuccess(
+															Object result) {
+														cache.refresh();
+													}
+												});
+							}
+						}
+					});
+			grid.setWidth("100%");
+			grid.getColumnFormatter().setWidth(0, "25%");
+			grid.getColumnFormatter().setWidth(1, "75%");
+			grid.setWidget(0, 0, createScanFilter);
+			grid.getFlexCellFormatter().setColSpan(0, 0, 2);
+			searchText.setWidth("100%");
+			grid.setWidget(1, 0, searchLabel);
+			grid.setWidget(1, 1, searchText);
+			contentPanel.add(grid);
+			contentPanel.add(results);
+			results.initialize();
+		}
+
+		private class ScanFilterResults extends BlockPanel {
+
+			private VerticalPanel list;
+
+			protected void onInitialize(VerticalPanel contentPanel) {
+				list = contentPanel;
+				cache.addListener(new CacheListener() {
+					public void onItemUpdate(Cache cache, Cacheable item,
+							Status status, Throwable failure) {
+
+					}
+
+					public void onStartRefresh(Cache cache) {
+
+					}
+
+					public void onRefresh(Cache cache, Throwable failure) {
+						search();
+					}
+				});
+				cache.refresh();
+			}
+
+			void search() {
+				final String text = searchText.getText();
+				final StringBuffer queryBuf = new StringBuffer();
+				for (int i = 0; i < text.length(); i++) {
+					final char ch = text.charAt(i);
+					if (Character.isLetterOrDigit(ch)) {
+						queryBuf.append(Character.toLowerCase(ch));
+					}
 				}
-
-				public void onRefresh(Cache cache, Throwable failure) {
-					list.clear();
-					for (final Iterator i = cache.getItemIterator(); i
-							.hasNext();) {
-						final ScanFilter f = (ScanFilter) i.next();
+				queryBuf.append(".*");
+				final String query = queryBuf.toString();
+				list.clear();
+				for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
+					final ScanFilter f = (ScanFilter) i.next();
+					if (f.getName().toLowerCase().matches(query)) {
 						list.add(new Hyperlink(f.getName(), "scanfilters/"
 								+ FILTER + "=" + f.getUuid()));
 					}
 				}
+			}
 
-				public void onStartRefresh(Cache cache) {
-
-				}
-			});
-			cache.refresh();
 		}
 	}
 
@@ -194,7 +225,7 @@ public class ScanFilterContent extends ContentComposite {
 				setTitle(filter.getName());
 				panel
 						.add(new Label(
-								"A scan filter specifies the finding types that are included when a scan is loaded into the system.  You can add finding types individually, or you can add all of the finding types in a category at once. You can also set the importance that a particular finding type or category is given."));
+								"A scan filter specifies the finding types that are included when a scan is loaded into the system.  You can add finding types individually, or you can add all of the finding types in a category at once. You can also set the importance that a particular finding type or category has."));
 				panel.add(UI.h3("Categories"));
 				panel.add(addCategoryBox());
 				cPanel = new FilterEntries(filter.getCategories());
