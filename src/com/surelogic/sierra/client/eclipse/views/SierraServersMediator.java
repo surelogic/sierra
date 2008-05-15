@@ -554,12 +554,18 @@ implements ISierraServerObserver, IProjectsObserver {
 				}
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
+				final boolean onlyTeamServer;
 				if (onlyServer) {
 					SierraServer focus = servers.get(0);
 					if (f_manager.getFocus() != focus) {
 					    f_manager.setFocus(servers.get(0));
 					}
+					onlyTeamServer = focus.isTeamServer();
+				} else {
+					onlyTeamServer = false;
 				}
+				//System.out.println("onlyTeamServer=" + onlyTeamServer);
+				f_serverConnectItem.setEnabled(onlyTeamServer);
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
