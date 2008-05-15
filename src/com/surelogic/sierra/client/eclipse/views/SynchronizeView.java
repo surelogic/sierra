@@ -48,8 +48,8 @@ public final class SynchronizeView extends
 			c.pack();
 		}
 
-		final Action omitEmptyEntriesAction = new Action("Omit Empty Entries",
-				IAction.AS_CHECK_BOX) {
+		final Action omitEmptyEntriesAction = new Action(
+				"Omit Empty Synchronize Events", IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				f_mediator.setHideEmptyEntries(isChecked());
