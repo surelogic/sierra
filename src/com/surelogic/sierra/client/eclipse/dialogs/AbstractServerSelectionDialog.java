@@ -75,7 +75,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		f_serverTable = new Table(entryPanel, SWT.FULL_SELECTION);
 		f_serverTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		for (SierraServer server : f_manager.getServers()) {
+		for (SierraServer server : f_manager.getTeamServers()) {
 			TableItem item = new TableItem(f_serverTable, SWT.NONE);
 			item.setText(server.getLabel());
 			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));

@@ -53,6 +53,17 @@ public final class SierraServerManager {
 		return servers;
 	}
 
+	public Set<SierraServer> getTeamServers() {
+		Set<SierraServer> servers = getServers();
+		for (Iterator<SierraServer> iterator = servers.iterator(); iterator
+				.hasNext();) {
+			SierraServer sierraServer = iterator.next();
+			if (sierraServer.isTeamServer())
+				iterator.remove();
+		}
+		return servers;
+	}
+
 	/**
 	 * Gets the server with the passed label. If the server does not exist then
 	 * it is created.
@@ -87,12 +98,11 @@ public final class SierraServerManager {
 
 	public SierraServerLocation createLocation() {
 		final String label = newUniqueLabel("server");
-		return new SierraServerLocation(label, "", false, 
+		return new SierraServerLocation(label, "", false,
 				SierraServerLocation.DEFAULT_PORT,
-				SierraServerLocation.DEFAULT_PATH,
-				"", "");
+				SierraServerLocation.DEFAULT_PATH, "", "");
 	}
-	
+
 	public void delete(SierraServer server) {
 		if (server.getManager() != this) {
 			SLLogger.getLogger().log(
