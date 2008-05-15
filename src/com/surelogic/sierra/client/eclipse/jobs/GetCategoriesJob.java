@@ -29,7 +29,7 @@ public final class GetCategoriesJob extends DatabaseJob {
 	private final SierraServer f_server;
 
 	public GetCategoriesJob(ServerFailureReport method, SierraServer server) {
-		super("Getting scan filter settings from " + server.getLabel());
+		super("Getting categories from " + server.getLabel());
 		f_server = server;
 		f_method = method;
 	}
