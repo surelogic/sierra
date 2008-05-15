@@ -116,19 +116,6 @@ img {
 	padding: 1px;
 }
 
-.categories-search-finding {
-	font-size: small;
-	padding: 2px 2px 2px 12px;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.categories-search-finding-selected {
-    border: 1px solid #666699;
-	background-color: #DDDDFF;
-	padding: 1px 9px 1px 11px;
-}
-
 .categories-category-finding {
 	font-size: small;
 }
@@ -303,11 +290,32 @@ img {
 
 /* SL Button */
 .sl-Button {
-	border: 2px groove #001166;
+    border: 2px groove #001166;
 	text-align: center;
 	background-color: #DDDDFF;
+	cursor: pointer;
+	cursor: hand;
 }
 
+.sl-Button-up {
+
+}
+
+.sl-Button-down {
+	background-color: #333366;
+}
+
+.sl-Button-up-hovering {
+    background-color: #EEEEFF;
+}
+
+.sl-Button-up-disabled {
+    background-color: #DDDDDD;
+}
+
+.sl-Button-down-disabled {
+    background-color: #333333;
+}
 
 /* Grid panel */
 .sl-GridPanel {

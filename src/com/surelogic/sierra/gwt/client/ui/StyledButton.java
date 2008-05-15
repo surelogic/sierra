@@ -1,15 +1,13 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.CustomButton;
 
-public class StyledButton extends Label {
+public class StyledButton extends CustomButton {
 	private static final String PRIMARY_STYLE = "sl-Button";
 
 	public StyledButton(String text, ClickListener listener) {
-		super(text);
-		addStyleName(PRIMARY_STYLE);
-		addStyleName("clickable2");
-		addClickListener(listener);
+		super(text, listener);
+		setStyleName(PRIMARY_STYLE);
 	}
 }

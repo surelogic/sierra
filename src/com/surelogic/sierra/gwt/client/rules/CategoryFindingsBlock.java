@@ -161,7 +161,8 @@ public class CategoryFindingsBlock extends SectionPanel {
 		}
 
 		public void onClick(Widget sender) {
-			new CategoriesContext(finding).updateContext();
+			// TODO disabled while porting Categories and Findings - new
+			// CategoriesContext(finding).updateContext();
 		}
 
 	}

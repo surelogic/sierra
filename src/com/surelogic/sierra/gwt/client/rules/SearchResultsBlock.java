@@ -14,7 +14,6 @@ import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -74,19 +73,6 @@ public class SearchResultsBlock extends BlockPanel {
 			final Category cat = (Category) it.next();
 			if (cat.getName().toLowerCase().indexOf(query) >= 0) {
 				addSearchCategory(cat);
-			} else if (!"".equals(text)) {
-				boolean categoryAdded = false;
-				for (final Iterator i = cat.getEntries().iterator(); i
-						.hasNext();) {
-					final FilterEntry e = (FilterEntry) i.next();
-					if (e.getName().toLowerCase().indexOf(query) >= 0) {
-						if (!categoryAdded) {
-							addSearchCategory(cat);
-							categoryAdded = true;
-						}
-						addSearchFinding(e);
-					}
-				}
 			}
 		}
 		clearStatus();
@@ -105,23 +91,15 @@ public class SearchResultsBlock extends BlockPanel {
 	public void updateSelectionUI(Context context) {
 		if (selectedItem != null) {
 			selectedItem.removeStyleName(PRIMARY_STYLE + "-category-selected");
-			selectedItem.removeStyleName(PRIMARY_STYLE + "-finding-selected");
 		}
 
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
-			Widget catEntry = (Widget) searchResultsData.get("C"
-					+ rulesCtx.getCategory());
+			Widget catEntry = (Widget) searchResultsData.get(rulesCtx
+					.getCategory());
 			if (catEntry != null) {
 				catEntry.addStyleName(PRIMARY_STYLE + "-category-selected");
 				selectedItem = catEntry;
-			}
-		} else if (LangUtil.notEmpty(rulesCtx.getFinding())) {
-			Widget findingEntry = (Widget) searchResultsData.get("F"
-					+ rulesCtx.getFinding());
-			if (findingEntry != null) {
-				findingEntry.addStyleName(PRIMARY_STYLE + "-finding-selected");
-				selectedItem = findingEntry;
 			}
 		}
 	}
@@ -130,40 +108,20 @@ public class SearchResultsBlock extends BlockPanel {
 		final Label catEntry = new Label(cat.getName());
 		catEntry.addStyleName(PRIMARY_STYLE + "-category");
 		catEntry.addClickListener(new SearchResultListener(cat));
-		searchResultsData.put("C" + cat.getUuid(), catEntry);
+		searchResultsData.put(cat.getUuid(), catEntry);
 		getContentPanel().add(catEntry);
-	}
-
-	private void addSearchFinding(FilterEntry finding) {
-		final Label findingEntry = new Label(finding.getName());
-		findingEntry.addStyleName(PRIMARY_STYLE + "-finding");
-		findingEntry.addClickListener(new SearchResultListener(finding));
-		searchResultsData.put("F" + finding.getUuid(), findingEntry);
-		getContentPanel().add(findingEntry);
 	}
 
 	private class SearchResultListener implements ClickListener {
 		private final Category category;
-		private final FilterEntry finding;
 
 		public SearchResultListener(Category category) {
 			super();
 			this.category = category;
-			finding = null;
-		}
-
-		public SearchResultListener(FilterEntry finding) {
-			super();
-			category = null;
-			this.finding = finding;
 		}
 
 		public void onClick(Widget sender) {
-			if (category != null) {
-				new CategoriesContext(category).updateContext();
-			} else {
-				new CategoriesContext(finding).updateContext();
-			}
+			new CategoriesContext(category).updateContext();
 		}
 
 	}

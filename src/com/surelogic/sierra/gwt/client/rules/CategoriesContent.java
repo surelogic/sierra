@@ -22,7 +22,6 @@ public class CategoriesContent extends ContentComposite {
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final CategoryBlock categorySelection = new CategoryBlock(
 			categories);
-	private final FindingTypeBlock findingSelection = new FindingTypeBlock();
 
 	public static CategoriesContent getInstance() {
 		return instance;
@@ -67,7 +66,6 @@ public class CategoriesContent extends ContentComposite {
 		final Context context = ContextManager.getContext();
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		final String categoryUuid = rulesCtx.getCategory();
-		final String findingUuid = rulesCtx.getFinding();
 		boolean selectionMade = false;
 		if (LangUtil.notEmpty(categoryUuid)) {
 			if (selectionPanel.getWidgetIndex(categorySelection) == -1) {
@@ -75,14 +73,6 @@ public class CategoriesContent extends ContentComposite {
 				selectionPanel.add(categorySelection);
 			}
 			categorySelection.update(context);
-
-			selectionMade = true;
-		} else if (LangUtil.notEmpty(findingUuid)) {
-			if (selectionPanel.getWidgetIndex(findingSelection) == -1) {
-				selectionPanel.clear();
-				selectionPanel.add(findingSelection);
-			}
-			findingSelection.update(context);
 
 			selectionMade = true;
 		}
@@ -108,9 +98,6 @@ public class CategoriesContent extends ContentComposite {
 
 		if (categorySelection.isActive()) {
 			categorySelection.deactivate();
-		}
-		if (findingSelection.isActive()) {
-			findingSelection.deactivate();
 		}
 	}
 

@@ -28,7 +28,9 @@ public class FindingTypeBlock extends SectionPanel {
 
 	protected void onUpdate(Context context) {
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		final String findingUuid = rulesCtx.getFinding();
+		final String findingUuid = null; // TODO disabled while gutting
+											// Categories -
+											// rulesCtx.getFinding();
 		if (LangUtil.notEmpty(findingUuid)) {
 			ServiceHelper.getSettingsService().getFindingTypeInfo(findingUuid,
 					new Callback() {
