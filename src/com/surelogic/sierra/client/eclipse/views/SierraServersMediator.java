@@ -531,7 +531,10 @@ implements ISierraServerObserver, IProjectsObserver {
 				List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
 				if (onlyServer) {
-					f_manager.setFocus(servers.get(0));
+					SierraServer focus = servers.get(0);
+					if (f_manager.getFocus() != focus) {
+					    f_manager.setFocus(servers.get(0));
+					}
 				}
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
@@ -906,6 +909,19 @@ implements ISierraServerObserver, IProjectsObserver {
 	}
 	
 	private void asyncUpdateContents() {
+		final Job infoJob = new Job("Getting server info") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SierraServerManager mgr = SierraServerManager.getInstance();
+				for(final SierraServer s : mgr.getServers()) {		
+					s.updateServerInfo();					
+				}
+				return Status.OK_STATUS;
+			}
+			
+		};
+		infoJob.setSystem(true);
+		infoJob.schedule();
 		final Job job = new DatabaseJob(
 				"Updating project status") {
 			@Override
@@ -1621,7 +1637,7 @@ implements ISierraServerObserver, IProjectsObserver {
 
 		public Image getImage(Object element) {
 			if (element instanceof ServersViewContent) {
-				System.out.println("Getting image for "+element);
+				//System.out.println("Getting image for "+element);
 				Image i1 = ((ServersViewContent) element).getImage();
 				Image i2 = decorator.decorateImage(i1, element);
 				return i2 == null ? i1 : i2;

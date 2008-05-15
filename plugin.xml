@@ -549,21 +549,49 @@
 		</builder>
 	</extension>
 
-	<extension point="org.eclipse.ui.decorators">
-		<decorator id="com.surelogic.sierra.client.content.decorator"
-			label="SureLogic Server Content Decorator" state="true"
-			lightweight="true" icon="lib/icons/warning_decr.gif"
-			location="BOTTOM_LEFT">
-			<enablement>
-				<and>
-					<objectClass
-						name="com.surelogic.sierra.client.eclipse.views.ServersViewContent" />
-					<objectState name="Status" value="WARNING" />
-					<not>
-						<objectState name="Source" value="WARNING" />
-					</not>
-				</and>
-			</enablement>
-		</decorator>
-	</extension>
+  <extension
+       point="org.eclipse.ui.decorators">
+    <decorator id="com.surelogic.sierra.client.content.warning.decorator"
+               label="SureLogic Server Warning Decorator"
+               state="true"
+               lightweight="true"
+               icon="lib/icons/warning_decr.gif"               
+               location="BOTTOM_LEFT">
+      <enablement>
+        <and>
+          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
+          <objectState name="Status" value="WARNING"/>
+          <not>
+            <objectState name="Source" value="WARNING"/>
+          </not>
+        </and>
+      </enablement>
+    </decorator>   
+    <decorator id="com.surelogic.sierra.client.content.team.decorator"
+               label="SureLogic Team Server Decorator"
+               state="true"
+               lightweight="true"
+               icon="lib/icons/team_server_decr.gif"               
+               location="TOP_RIGHT">
+      <enablement>
+        <and>
+          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
+          <objectState name="ServerType" value="TEAM_SERVER"/>
+        </and>
+      </enablement>
+    </decorator>
+    <decorator id="com.surelogic.sierra.client.content.buglink.decorator"
+               label="SureLogic BugLink Server Decorator"
+               state="true"
+               lightweight="true"
+               icon="lib/icons/buglink_decr.gif"               
+               location="BOTTOM_RIGHT">
+      <enablement>
+        <and>
+          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
+          <objectState name="ServerType" value="BUGLINK"/>
+        </and>
+      </enablement>
+    </decorator>                 			
+ </extension>
 </plugin>

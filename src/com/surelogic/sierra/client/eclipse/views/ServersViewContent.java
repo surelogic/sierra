@@ -1,10 +1,10 @@
 package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.*;
 
 class ServersViewContent implements IServerActionFilter {
@@ -72,7 +72,17 @@ class ServersViewContent implements IServerActionFilter {
 			if (WARNING_SRC.equals(value)) {
 				return image.equals(SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 			}
-			return false;
+		}
+		else if (SERVER_TYPE_ATTR.equals(name)) {
+			if (data instanceof SierraServer) {
+				SierraServer server = (SierraServer) data;
+				if (BUGLINK_TYPE.equals(value)) {
+					return server.isBugLink();
+				}
+				else if (TEAM_SERVER_TYPE.equals(value)) {
+					return server.isTeamServer();
+				}
+			}
 		}
 		return false;
 	}

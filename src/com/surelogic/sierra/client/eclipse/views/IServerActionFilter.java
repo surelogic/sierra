@@ -9,4 +9,8 @@ public interface IServerActionFilter extends IActionFilter {
   
   String SOURCE_ATTR = "Source";
   String WARNING_SRC = WARNING_STATUS;
+  
+  String SERVER_TYPE_ATTR = "ServerType";
+  String BUGLINK_TYPE = "BUGLINK";
+  String TEAM_SERVER_TYPE = "TEAM_SERVER";
 }

@@ -3,10 +3,13 @@ package com.surelogic.sierra.client.eclipse.model;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+
+import org.eclipse.swt.internal.win32.LOGBRUSH;
 
 import com.surelogic.common.base64.Base64;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.*;
 
 public final class SierraServer {
 
@@ -235,5 +238,36 @@ public final class SierraServer {
 	
 	public synchronized int getProblemCount() {
 		return f_problemCount;
+	}
+
+	private boolean gotServerInfo;
+	private boolean isTeamServer;
+	private boolean isBugLink;
+	
+	public void updateServerInfo() {
+		updateServerInfo(false);
+	}
+	
+	public synchronized void updateServerInfo(boolean force) {
+		if (gotServerInfo && !force) {
+			return;
+		}
+		try {
+			ServerInfoService sis = ServerInfoClient.create(getServer());
+			ServerInfoReply reply = sis.getServerInfo(new ServerInfoRequest());
+			isBugLink = reply.getServices().contains(Services.BUGLINK);
+			isTeamServer = reply.getServices().contains(Services.TEAMSERVER);
+			gotServerInfo = true;
+		} catch (Exception e) {
+			SLLogger.log(Level.WARNING, "Exception while updating server info", e);
+		}
+ 	}
+	
+	public synchronized boolean isBugLink() {
+		return isBugLink;
+	}
+
+	public synchronized boolean isTeamServer() {
+		return isTeamServer;
 	}
 }
