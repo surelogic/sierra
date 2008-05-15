@@ -72,6 +72,10 @@ public class ScanFilter {
 		return project;
 	}
 
+	public String getOwner() {
+		return owner;
+	}
+
 	public void setOwner(String server) {
 		owner = server;
 	}
