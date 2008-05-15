@@ -1,6 +1,8 @@
 package com.surelogic.sierra.tool.message;
 
-public interface ServerInfoService {
+import com.surelogic.sierra.message.srpc.Service;
+
+public interface ServerInfoService extends Service {
 
 	ServerInfoReply getServerInfo(ServerInfoRequest request);
 }
