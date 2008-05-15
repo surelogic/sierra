@@ -60,7 +60,15 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		super.init();
 		f_syncTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				// updateEventTable();
+				final TableItem[] items = f_syncTable.getSelection();
+				if (items.length > 0) {
+					final TableItem item = items[0];
+					final Object data = item.getData();
+					if (data instanceof SynchOverview) {
+						final SynchOverview so = (SynchOverview) data;
+						SynchronizeDetailsView.findingSelected(so, false);
+					}
+				}
 			}
 		});
 		asyncUpdateContents();

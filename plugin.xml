@@ -260,7 +260,7 @@
 			class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
 			id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif"
-			name="Sierra Team Servers">
+			name="Sierra Servers">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"

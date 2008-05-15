@@ -12,6 +12,7 @@ import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class SynchronizeView extends
 		AbstractSierraView<SynchronizeMediator> {
+
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.SynchronizeView";
 
 	@Override

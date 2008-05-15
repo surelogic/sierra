@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -19,6 +20,7 @@ import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
@@ -36,14 +38,14 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 
 	public String getNoDataI18N() {
 		// TODO
-		return "sierra.eclipse.noDataSynchronizeHistory";
+		return "sierra.eclipse.noDataSynchronizeDetails";
 	}
 
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {
-				new SynchronizeProjectDialogAction().run();
+				ViewUtility.showView(SynchronizeView.ID);
 			}
 		};
 	}
@@ -51,7 +53,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	public void setFocus() {
 
 	}
-	
+
 	private void asyncEventTableContents(final SynchOverview so) {
 		final Job job = new DatabaseJob(
 				"Updating reading events from server synchronize") {
@@ -122,15 +124,15 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	}
 
 	private void updateEventTable() {
-//		TableItem[] items = f_syncTable.getSelection();
-//		if (items.length > 0) {
-//			TableItem item = items[0];
-//			SynchOverview so = (SynchOverview) item.getData();
-//			if (so != null) {
-//				// System.out.println("updating event table contents");
-//				asyncEventTableContents(so);
-//			}
-//		}
+		// TableItem[] items = f_syncTable.getSelection();
+		// if (items.length > 0) {
+		// TableItem item = items[0];
+		// SynchOverview so = (SynchOverview) item.getData();
+		// if (so != null) {
+		// // System.out.println("updating event table contents");
+		// asyncEventTableContents(so);
+		// }
+		// }
 	}
 
 	private void focusOnFindingId() {
@@ -147,5 +149,9 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 		// }
 	}
 
+	public void asyncQueryAndShow(SynchOverview syncOverview) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

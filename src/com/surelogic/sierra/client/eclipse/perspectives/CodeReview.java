@@ -7,6 +7,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
+import com.surelogic.sierra.client.eclipse.views.SynchronizeDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeView;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 
@@ -21,24 +22,24 @@ public final class CodeReview implements IPerspectiveFactory {
 		final String editorArea = layout.getEditorArea();
 		final String quickSearchArea = FindingsSelectionView.ID;
 
-		final IFolderLayout leftEditor = layout.createFolder("leftEditor",
-				IPageLayout.LEFT, 0.55f, editorArea);
-		leftEditor.addView(quickSearchArea);
-		leftEditor.addView(SynchronizeView.ID);
-
-		final IFolderLayout belowFinder = layout.createFolder("belowFinder",
-				IPageLayout.BOTTOM, 0.45f, quickSearchArea);
-		belowFinder.addView(FindingDetailsView.ID);
-
-		final IFolderLayout belowEditor = layout.createFolder("belowEditor",
-				IPageLayout.BOTTOM, 0.70f, editorArea);
-		belowEditor.addView(SierraServersView.ID);
+		final IFolderLayout aboveEditorArea = layout.createFolder(
+				"aboveEditorArea", IPageLayout.TOP, 0.4f, editorArea);
+		aboveEditorArea.addView(quickSearchArea);
+		aboveEditorArea.addView(packageExplorer);
 		/*
 		 * The local team server view only will exist if that optional feature
 		 * is loaded. So we need to check before we add this to the perspective.
 		 */
 		if (ViewUtility.viewExists(localTeamServer))
-			belowEditor.addView(localTeamServer);
-		belowEditor.addView(packageExplorer);
+			aboveEditorArea.addView(localTeamServer);
+
+		final IFolderLayout leftOfEditorArea = layout.createFolder(
+				"leftOfEditorArea", IPageLayout.LEFT, 0.4f, editorArea);
+		leftOfEditorArea.addView(FindingDetailsView.ID);
+		leftOfEditorArea.addView(SierraServersView.ID);
+		leftOfEditorArea.addView(SynchronizeView.ID);
+
+		layout.addPlaceholder(SynchronizeDetailsView.ID, IPageLayout.BOTTOM,
+				0.6f, editorArea);
 	}
 }
