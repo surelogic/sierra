@@ -572,7 +572,7 @@
                state="true"
                lightweight="true"
                icon="lib/icons/team_server_decr.gif"               
-               location="TOP_RIGHT">
+               location="BOTTOM_RIGHT">
       <enablement>
         <and>
           <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
@@ -585,7 +585,7 @@
                state="true"
                lightweight="true"
                icon="lib/icons/buglink_decr.gif"               
-               location="BOTTOM_RIGHT">
+               location="TOP_RIGHT">
       <enablement>
         <and>
           <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
