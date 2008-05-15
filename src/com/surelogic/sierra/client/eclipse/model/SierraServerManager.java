@@ -83,6 +83,23 @@ public final class SierraServerManager {
 		return server;
 	}
 
+	static public final String BUGLINK_ORG = "buglink.org";
+
+	public boolean isThereABugLinkOrg() {
+		return exists(BUGLINK_ORG);
+	}
+
+	public void createBugLinkOrg() {
+		final SierraServer server = getOrCreate(BUGLINK_ORG);
+		server.setHost("buglink.org");
+	}
+
+	public SierraServer getOrCreateBugLinkOrg() {
+		if (!isThereABugLinkOrg())
+			createBugLinkOrg();
+		return getOrCreate(BUGLINK_ORG);
+	}
+
 	/**
 	 * Creates a server with a unique label. The new server is set as the focus
 	 * server.
@@ -308,6 +325,10 @@ public final class SierraServerManager {
 
 	public void load(File file) throws Exception {
 		SierraServerPersistence.load(this, file);
+		/*
+		 * Add BugLink server if necessary
+		 */
+		getOrCreateBugLinkOrg();
 	}
 
 	public SierraServer getServerByLabel(String label) {
