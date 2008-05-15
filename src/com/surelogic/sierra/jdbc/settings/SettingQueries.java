@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,25 +65,58 @@ public class SettingQueries {
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
 			SierraServerLocation loc) {
+		return getCategories(loc, true);
+	}
+	
+	/**
+	 * Queries the specified server for a list of categories, and returns a
+	 * {@link DBQuery} that, when run, will return a list of categories
+	 * that would have been updated.  Categories that are of a lower revision
+	 * than the local copy will not be returned.
+	 */
+	public static final DBQuery<ListCategoryResponse> getNewCategories(
+			SierraServerLocation loc) {
+		return getCategories(loc, false);
+	}
+	
+	private static final DBQuery<ListCategoryResponse> getCategories(
+			SierraServerLocation loc, final boolean update) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(new ListCategoryRequest());
 		return new DBQuery<ListCategoryResponse>() {
 			public ListCategoryResponse perform(Query q) {
 				final Categories sets = new Categories(q);
-				final Queryable<Void> delete = q
-						.prepared("Definitions.deleteDefinition");
-				final Queryable<Void> insert = q
-						.prepared("Definitions.insertDefinition");
-				for (final FilterSet set : response.getFilterSets()) {
+				final Queryable<Void> delete = update ? q
+						.prepared("Definitions.deleteDefinition") : null;
+				final Queryable<Void> insert = update ? q
+						.prepared("Definitions.insertDefinition") : null;
+				//for (final FilterSet set : response.getFilterSets()) {
+				final Iterator<FilterSet> it = response.getFilterSets().iterator();
+				while (it.hasNext()) {
+					final FilterSet set = it.next();
 					final String uid = set.getUid();
 					final CategoryDO c = sets.getCategory(uid);
 					if ((c != null) && (c.getRevision() < set.getRevision())) {
-						delete.call(uid);
-						insert.call(uid, set.getOwner());
-						sets.writeCategory(Categories.convertDO(set));
+						if (update) {
+							delete.call(uid);
+							insert.call(uid, set.getOwner());
+							sets.writeCategory(Categories.convertDO(set));
+						} 
+					}
+					else if (!update) {
+						it.remove(); // Remove since it's older
 					}
 				}
 				return response;
+			}
+		};
+	}
+	
+	public static final DBQuery<List<CategoryDO>> getLocalCategories() {
+		return new DBQuery<List<CategoryDO>>() {
+			public List<CategoryDO> perform(Query q) {
+				final Categories sets = new Categories(q);
+				return sets.listCategories();
 			}
 		};
 	}
