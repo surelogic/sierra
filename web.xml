@@ -174,7 +174,7 @@
 		<filter-name>Security Filter</filter-name>
 		<url-pattern>/services/*</url-pattern>
 	</filter-mapping>
-
+<!-- 
 	<servlet>
 		<servlet-name>Sierra Service</servlet-name>
 		<servlet-class>
@@ -186,7 +186,7 @@
 		<servlet-name>Sierra Service</servlet-name>
 		<url-pattern>/services/SierraService</url-pattern>
 	</servlet-mapping>
-
+ -->
 	<servlet>
 		<servlet-name>Server Info Service</servlet-name>
 		<servlet-class>
