@@ -198,4 +198,16 @@
 		<servlet-name>Server Info Service</servlet-name>
 		<url-pattern>/services/ServerInfoService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>BugLink Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.tool.message.BugLinkServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BugLink Service</servlet-name>
+		<url-pattern>/services/BugLinkService</url-pattern>
+	</servlet-mapping>
 </web-app>
