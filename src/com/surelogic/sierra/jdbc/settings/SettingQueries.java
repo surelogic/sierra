@@ -25,6 +25,9 @@ import com.surelogic.sierra.tool.message.BugLinkServiceClient;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
+import com.surelogic.sierra.tool.message.ListScanFilterRequest;
+import com.surelogic.sierra.tool.message.ListScanFilterResponse;
+import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 /**
@@ -117,6 +120,31 @@ public class SettingQueries {
 			public List<CategoryDO> perform(Query q) {
 				final Categories sets = new Categories(q);
 				return sets.listCategories();
+			}
+		};
+	}
+
+	public static final DBQuery<ListScanFilterResponse> retrieveScanFilters(
+			SierraServerLocation loc) {
+		final ListScanFilterResponse response = BugLinkServiceClient
+				.create(loc).listScanFilters(new ListScanFilterRequest());
+		return new DBQuery<ListScanFilterResponse>() {
+			public ListScanFilterResponse perform(Query q) {
+				final ScanFilters filters = new ScanFilters(q);
+				final Queryable<Void> delete = q
+						.prepared("Definitions.deleteDefinition");
+				final Queryable<Void> insert = q
+						.prepared("Definitions.insertDefinition");
+				for (final ScanFilter filter : response.getScanFilter()) {
+					final String uid = filter.getUid();
+					final ScanFilterDO f = filters.getScanFilter(uid);
+					if ((f != null) && (f.getRevision() < filter.getRevision())) {
+						delete.call(uid);
+						insert.call(uid, filter.getOwner());
+						filters.writeScanFilter(ScanFilters.convertDO(filter));
+					}
+				}
+				return response;
 			}
 		};
 	}
