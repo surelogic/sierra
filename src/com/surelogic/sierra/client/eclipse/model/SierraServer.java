@@ -5,11 +5,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 
-import org.eclipse.swt.internal.win32.LOGBRUSH;
-
 import com.surelogic.common.base64.Base64;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ServerInfoClient;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.tool.message.ServerInfoRequest;
+import com.surelogic.sierra.tool.message.ServerInfoService;
+import com.surelogic.sierra.tool.message.Services;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class SierraServer {
 
@@ -35,8 +38,9 @@ public final class SierraServer {
 	}
 
 	public void setLabel(String label) {
-		if (label == null || label.equals(f_label))
+		if ((label == null) || label.equals(f_label)) {
 			return;
+		}
 		// overwrite semantics, i.e., no check if the new name is in use
 		f_manager.f_labelToServer.remove(f_label);
 		f_label = label;
@@ -196,37 +200,35 @@ public final class SierraServer {
 	 * @return true if changed
 	 */
 	public boolean setServer(SierraServerLocation loc) {
-		boolean changed = 
-			differs(f_label, loc.getLabel()) ||
-			differs(f_host, loc.getHost()) ||
-			f_secure != loc.isSecure() ||
-			f_port != loc.getPort() || 
-			differs(f_contextPath, loc.getContextPath()) ||
-			differs(f_user, loc.getUser()) ||
-			differs(f_password, loc.getPass());
+		final boolean changed = differs(f_label, loc.getLabel())
+				|| differs(f_host, loc.getHost())
+				|| (f_secure != loc.isSecure()) || (f_port != loc.getPort())
+				|| differs(f_contextPath, loc.getContextPath())
+				|| differs(f_user, loc.getUser())
+				|| differs(f_password, loc.getPass());
 		f_label = loc.getLabel();
 		f_host = loc.getHost();
 		f_secure = loc.isSecure();
-		f_port = loc.getPort();		
+		f_port = loc.getPort();
 		f_contextPath = loc.getContextPath();
 		f_user = loc.getUser();
 		f_password = loc.getPass();
 		return changed;
 	}
-	
+
 	private static boolean differs(String s1, String s2) {
 		if (s1 == s2) {
 			return false;
 		}
-		if (s1 == null || s2 == null) {
+		if ((s1 == null) || (s2 == null)) {
 			// The other must be non-null
 			return true;
 		}
 		return s1.equals(s2);
 	}
-	
+
 	private int f_problemCount = 0;
-	
+
 	public synchronized void markAsConnected() {
 		f_problemCount = 0;
 	}
@@ -235,7 +237,7 @@ public final class SierraServer {
 		f_problemCount++;
 		return f_problemCount;
 	}
-	
+
 	public synchronized int getProblemCount() {
 		return f_problemCount;
 	}
@@ -243,26 +245,28 @@ public final class SierraServer {
 	private boolean gotServerInfo;
 	private boolean isTeamServer;
 	private boolean isBugLink;
-	
+
 	public void updateServerInfo() {
 		updateServerInfo(false);
 	}
-	
+
 	public synchronized void updateServerInfo(boolean force) {
 		if (gotServerInfo && !force) {
 			return;
 		}
 		try {
-			ServerInfoService sis = ServerInfoClient.create(getServer());
-			ServerInfoReply reply = sis.getServerInfo(new ServerInfoRequest());
+			final ServerInfoService sis = ServerInfoClient.create(getServer());
+			final ServerInfoReply reply = sis
+					.getServerInfo(new ServerInfoRequest());
 			isBugLink = reply.getServices().contains(Services.BUGLINK);
 			isTeamServer = reply.getServices().contains(Services.TEAMSERVER);
 			gotServerInfo = true;
-		} catch (Exception e) {
-			SLLogger.log(Level.WARNING, "Exception while updating server info", e);
+		} catch (final Exception e) {
+			SLLogger.log(Level.WARNING, "Exception while updating server info",
+					e);
 		}
- 	}
-	
+	}
+
 	public synchronized boolean isBugLink() {
 		return isBugLink;
 	}
