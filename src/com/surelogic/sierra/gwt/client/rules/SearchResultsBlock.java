@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -16,14 +15,16 @@ import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.ItemLabel;
+import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class SearchResultsBlock extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-search";
 	private final CategoryCache categories;
+	private final SelectionTracker selectionTracker = new SelectionTracker();
 	private final Map searchResultsData = new HashMap();
 	private String searchText;
-	private Widget selectedItem;
 
 	public SearchResultsBlock(CategoryCache categories) {
 		super();
@@ -82,6 +83,7 @@ public class SearchResultsBlock extends BlockPanel {
 	public void clearResults() {
 		getContentPanel().clear();
 		searchResultsData.clear();
+		selectionTracker.setSelected(null);
 	}
 
 	public void refreshResults() {
@@ -89,25 +91,19 @@ public class SearchResultsBlock extends BlockPanel {
 	}
 
 	public void updateSelectionUI(Context context) {
-		if (selectedItem != null) {
-			selectedItem.removeStyleName(PRIMARY_STYLE + "-category-selected");
-		}
-
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
-			Widget catEntry = (Widget) searchResultsData.get(rulesCtx
+			ItemLabel catEntry = (ItemLabel) searchResultsData.get(rulesCtx
 					.getCategory());
 			if (catEntry != null) {
-				catEntry.addStyleName(PRIMARY_STYLE + "-category-selected");
-				selectedItem = catEntry;
+				catEntry.setSelected(true);
 			}
 		}
 	}
 
 	private void addSearchCategory(Category cat) {
-		final Label catEntry = new Label(cat.getName());
-		catEntry.addStyleName(PRIMARY_STYLE + "-category");
-		catEntry.addClickListener(new SearchResultListener(cat));
+		final ItemLabel catEntry = new ItemLabel(cat.getName(), cat,
+				selectionTracker, new SearchResultListener(cat));
 		searchResultsData.put(cat.getUuid(), catEntry);
 		getContentPanel().add(catEntry);
 	}

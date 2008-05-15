@@ -369,6 +369,27 @@ img {
 	font-style: italic;
 }
 
+/* SL Item Label */
+.sl-ItemLabel {
+	font-size: small;
+	padding: 2px;
+    cursor: pointer;
+	cursor: hand;
+}
+
+.sl-ItemLabel-over {
+	border: 1px solid #AAAAFF;
+	background-color: #EEEEFF;
+	padding: 1px;
+	
+}
+
+.sl-ItemLabel-selected {
+	border: 1px solid #666699;
+	background-color: #DDDDFF;
+	padding: 1px;
+}
+
 /* GWT Component Styling */ /* DialogBox Styling */
 .gwt-DialogBox {
 	border: 2px outset;
