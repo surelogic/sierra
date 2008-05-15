@@ -20,4 +20,7 @@ public class ListScanFilterResponse {
 		return scanFilter;
 	}
 
+	public void setScanFilter(List<ScanFilter> sf) {
+		scanFilter = sf;
+	}
 }

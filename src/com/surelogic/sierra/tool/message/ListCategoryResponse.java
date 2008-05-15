@@ -17,4 +17,7 @@ public class ListCategoryResponse {
 		return filterSets;
 	}
 
+	public void setFilterSets(List<FilterSet> fs) {
+		filterSets = fs;
+	}
 }
