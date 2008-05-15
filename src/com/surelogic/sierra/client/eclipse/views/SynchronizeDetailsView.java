@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.views;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
 
+import com.surelogic.common.eclipse.LinkTrail;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
@@ -13,7 +14,8 @@ public final class SynchronizeDetailsView extends
 
 	@Override
 	protected SynchronizeDetailsMediator createMorePartControls(Composite parent) {
-		return new SynchronizeDetailsMediator(this);
+		final LinkTrail detailsComposite = new LinkTrail(parent);
+		return new SynchronizeDetailsMediator(this, detailsComposite);
 	}
 
 	public static void findingSelected(SynchOverview syncOverview,
