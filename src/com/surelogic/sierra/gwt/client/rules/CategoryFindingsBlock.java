@@ -11,16 +11,18 @@ import java.util.Map.Entry;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 
 public class CategoryFindingsBlock extends SectionPanel {
 	private static final String PRIMARY_STYLE = CategoryBlock.PRIMARY_STYLE;
+	private final SelectionTracker selectionTracker = new SelectionTracker();
 	private final Map findings = new HashMap();
 	private boolean editing;
 
@@ -125,11 +127,9 @@ public class CategoryFindingsBlock extends SectionPanel {
 			return rule;
 		}
 		if (enabled) {
-			final Label rule = new Label(finding.getName());
+			final ItemLabel rule = new ItemLabel(finding.getName(), finding,
+					selectionTracker, new FindingTypeListener());
 			rule.setTitle(finding.getShortMessage());
-			rule.addStyleName("clickable2");
-			rule.addClickListener(new FindingTypeListener(finding));
-			rule.addStyleName(PRIMARY_STYLE + "-finding");
 			findings.put(rule, finding);
 			return rule;
 		}
@@ -153,14 +153,9 @@ public class CategoryFindingsBlock extends SectionPanel {
 	}
 
 	private class FindingTypeListener implements ClickListener {
-		private final FilterEntry finding;
-
-		public FindingTypeListener(FilterEntry finding) {
-			super();
-			this.finding = finding;
-		}
-
 		public void onClick(Widget sender) {
+			// FilterEntry finding = (FilterEntry) ((ItemLabel)
+			// sender).getItem();
 			// TODO disabled while porting Categories and Findings - new
 			// CategoriesContext(finding).updateContext();
 		}
