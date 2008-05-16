@@ -1,6 +1,5 @@
 package com.surelogic.sierra.tool.message;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import java.util.logging.Level;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.EmptyProgressMonitor;
@@ -24,13 +21,11 @@ import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
-import com.surelogic.sierra.jdbc.server.UserContext;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.timeseries.TimeseriesManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.message.srpc.SRPCServlet;
 
 /**
  * Implementation of {@link SierraService}.
@@ -38,7 +33,8 @@ import com.surelogic.sierra.message.srpc.SRPCServlet;
  * @author nathan
  * 
  */
-public class SierraServiceImpl extends SRPCServlet implements SierraService {
+public class SierraServiceImpl extends SecureServiceServlet implements
+		SierraService {
 
 	private static final long serialVersionUID = -8265889420077755990L;
 
@@ -209,17 +205,6 @@ public class SierraServiceImpl extends SRPCServlet implements SierraService {
 							return readChanges.perform(conn, server, user);
 						}
 					});
-		}
-	}
-
-	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		try {
-			UserContext.set((User) req.getAttribute("SierraUser"));
-			super.service(req, resp);
-		} finally {
-			UserContext.remove();
 		}
 	}
 

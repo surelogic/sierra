@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
-import com.surelogic.sierra.jdbc.server.UserTransaction;
-import com.surelogic.sierra.jdbc.user.User;
+import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.message.srpc.SRPCServlet;
 
 public class ServerInfoServiceImpl extends SRPCServlet implements
@@ -23,10 +22,10 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 			reply.getServices().addAll(services);
 		}
 		reply.setUid(ConnectionFactory
-				.withUserReadOnly(new UserTransaction<String>() {
+				.withReadOnly(new ServerTransaction<String>() {
 
-					public String perform(Connection conn, Server server,
-							User user) throws SQLException {
+					public String perform(Connection conn, Server server)
+							throws SQLException {
 						return server.getUid();
 					}
 				}));
