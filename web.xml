@@ -172,7 +172,8 @@
 
 	<filter-mapping>
 		<filter-name>Security Filter</filter-name>
-		<url-pattern>/services/*</url-pattern>
+		<url-pattern>/services/SierraService</url-pattern>
+		<url-pattern>/services/BugLinkService</url-pattern>
 	</filter-mapping>
 
 	<servlet>
