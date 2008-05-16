@@ -45,6 +45,8 @@ public class CategoryBlock extends SectionPanel implements Editable {
 		description.setVisibleLines(5);
 		contentPanel.add(categoryInfo);
 
+		nameEditText.setWidth("100%");
+
 		findingTypes.setSubsectionStyle(true);
 		contentPanel.add(findingTypes);
 
