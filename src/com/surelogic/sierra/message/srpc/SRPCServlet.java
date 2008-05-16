@@ -45,19 +45,19 @@ public abstract class SRPCServlet extends HttpServlet {
 				try {
 					response = method.invoke(this);
 					status = ResponseStatus.OK;
-				} catch (InvocationTargetException e) {
+				} catch (final InvocationTargetException e) {
 					response = new RaisedException(e.getCause());
 					status = ResponseStatus.RAISED;
 				}
 				log.info("Request: " + method + "Response Status: " + status);
-			} catch (SRPCException e) {
+			} catch (final SRPCException e) {
 				// If we had some type of general messaging/processing
 				// exception, send a failure.
 				e.printStackTrace();
 				response = new Failure(e);
 				status = ResponseStatus.FAIL;
 				log.log(Level.INFO, "Exception processing request: " + e, e);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 				response = new Failure(e);
@@ -67,7 +67,7 @@ public abstract class SRPCServlet extends HttpServlet {
 			}
 			resp.setContentType(codec.getContentType());
 			codec.encodeResponse(resp.getOutputStream(), status, response);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// We couldn't even send a message back to the client, log out a
 			// failure.
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -75,7 +75,7 @@ public abstract class SRPCServlet extends HttpServlet {
 	}
 
 	private Encoding getEncoding(String contentType) throws SRPCException {
-		for (Class<?> c : this.getClass().getInterfaces()) {
+		for (final Class<?> c : this.getClass().getInterfaces()) {
 			if (Service.class.isAssignableFrom(c)) {
 				return Encoding.getEncoding(c, contentType);
 			}
