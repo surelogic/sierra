@@ -1015,10 +1015,7 @@ implements ISierraServerObserver, IProjectsObserver {
 						}
 						final int numServerProbs = server.getProblemCount();
 						if (numServerProbs > threshold) {
-							if (failedServers == null) {
-								failedServers = new HashSet<SierraServer>();
-							}
-							failedServers.add(server);
+							failedServers = markAsFailedServer(failedServers, server);
 							continue;
 						}
 						if (numServerProbs + numProblems > threshold) {
@@ -1033,41 +1030,17 @@ implements ISierraServerObserver, IProjectsObserver {
 							final SierraServerLocation loc = server.getServer();
 							responses = cpm.getProjectUpdates(loc, name, monitor);
 							
-							// See if we need to pick up BugLink data
-							if (serverResponse == null) {
-								final Query q = new ConnectionQuery(c);	
-								ListCategoryResponse cr = SettingQueries.getNewCategories(loc).perform(q);
-								ListScanFilterResponse sfr = SettingQueries.getNewScanFilters(loc).perform(q);
-								serverResponse = new ServerUpdateStatus(cr, sfr);
-							} else {
-								// No need to update it again
-								serverResponse = null;
-							}
+							serverResponse = checkForBugLinkUpdates(c, serverResponse, loc);
 						} catch (ServerMismatchException e) {
 							tc = new TroubleshootWrongServer(method, server, name);
-							if (handleServerProblem(tc, e)) {
-								if (failedServers == null) {
-									failedServers = new HashSet<SierraServer>();
-								}
-								failedServers.add(server);
-							}
+							failedServers = handleServerProblem(failedServers, server, tc, e);
 						} catch (SierraServiceClientException e) {
 							tc = AbstractServerProjectJob.getTroubleshootConnection(method, server, name, e);													
-							if (handleServerProblem(tc, e)) {
-								if (failedServers == null) {
-									failedServers = new HashSet<SierraServer>();
-								}
-								failedServers.add(server);
-							}
+							failedServers = handleServerProblem(failedServers, server, tc, e);
 						} catch (Exception e) {
 							tc = new TroubleshootException(method, server, name, e, 
 									                       e instanceof SQLException);
-							if (handleServerProblem(tc, e)) {
-								if (failedServers == null) {
-									failedServers = new HashSet<SierraServer>();
-								}
-								failedServers.add(server);
-							}
+							failedServers = handleServerProblem(failedServers, server, tc, e);
 						}
 					}
 					if (responses != null) {
@@ -1095,6 +1068,39 @@ implements ISierraServerObserver, IProjectsObserver {
 				}
 			}
 		}
+	}
+
+	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c, 
+			                                          ServerUpdateStatus serverResponse, 
+			                                          final SierraServerLocation loc) {
+		// See if we need to pick up BugLink data
+		if (serverResponse == null) {
+			final Query q = new ConnectionQuery(c);	
+			ListCategoryResponse cr = SettingQueries.getNewCategories(loc).perform(q);
+			ListScanFilterResponse sfr = SettingQueries.getNewScanFilters(loc).perform(q);
+			serverResponse = new ServerUpdateStatus(cr, sfr);
+		} else {
+			// No need to update it again
+			serverResponse = null;
+		}
+		return serverResponse;
+	}
+
+	private Set<SierraServer> handleServerProblem(Set<SierraServer> failedServers, final SierraServer server,
+			                                      TroubleshootConnection tc, Exception e) {
+		if (handleServerProblem(tc, e)) {
+			failedServers = markAsFailedServer(failedServers, server);
+		}
+		return failedServers;
+	}
+
+	private Set<SierraServer> markAsFailedServer(Set<SierraServer> failedServers, 
+			                                     final SierraServer server) {
+		if (failedServers == null) {
+			failedServers = new HashSet<SierraServer>();
+		}
+		failedServers.add(server);
+		return failedServers;
 	}
 
 	/**
