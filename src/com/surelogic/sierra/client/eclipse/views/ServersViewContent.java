@@ -84,7 +84,8 @@ class ServersViewContent implements IServerActionFilter {
 				}
 			} 
 			else if (BUGLINK_TYPE.equals(value)) {
-				return text.endsWith(SierraServersMediator.SCAN_FILTERS);
+				return text.endsWith(SierraServersMediator.SCAN_FILTERS) || 
+				       text.endsWith(SierraServersMediator.CATEGORIES);
 			}
 			else if (TEAM_SERVER_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.CONNECTED_PROJECTS);

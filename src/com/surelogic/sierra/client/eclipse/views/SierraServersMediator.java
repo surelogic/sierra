@@ -43,8 +43,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
+import com.surelogic.common.jdbc.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -70,16 +69,14 @@ import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.tool.message.ListCategoryResponse;
-import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
-import com.surelogic.sierra.tool.message.SierraServiceClientException;
-import com.surelogic.sierra.tool.message.SyncTrailResponse;
+import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.registration.*;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator 
 implements ISierraServerObserver, IProjectsObserver {
 	static final String SCAN_FILTERS = "Scan Filters";
+	
+	static final String CATEGORIES = "Categories";
 
 	static final String CONNECTED_PROJECTS = "Connected Projects";
 
@@ -113,8 +110,8 @@ implements ISierraServerObserver, IProjectsObserver {
     /** 
      * Used in a similar way as responseMap     
      */
-    private final Map<SierraServer,ListCategoryResponse> categoriesResponseMap = 
-    	new HashMap<SierraServer,ListCategoryResponse>();   
+    private final Map<SierraServer,ServerUpdateStatus> serverResponseMap = 
+    	new HashMap<SierraServer,ServerUpdateStatus>();   
     
     private final AtomicLong lastServerUpdateTime = 
     	new AtomicLong(System.currentTimeMillis());
@@ -990,7 +987,7 @@ implements ISierraServerObserver, IProjectsObserver {
 	}
 
 	private void updateServerInfo() throws Exception {
-		Connection c = Data.transactionConnection();
+		final Connection c = Data.transactionConnection();
 		Exception exc = null;
 		try {			
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
@@ -998,7 +995,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
 				Set<SierraServer> failedServers = null;
 				responseMap.clear();				
-				categoriesResponseMap.clear();
+				serverResponseMap.clear();
 				
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
@@ -1011,7 +1008,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					// Check for new remote audits
 					final SierraServer server = f_manager.getServer(name);
 					List<SyncTrailResponse> responses = null;
-					ListCategoryResponse categoriesResponse = categoriesResponseMap.get(server);
+					ServerUpdateStatus serverResponse = serverResponseMap.get(server);
 					if (server != null) {
 						if (failedServers != null && failedServers.contains(server)) {
 							continue;
@@ -1033,16 +1030,18 @@ implements ISierraServerObserver, IProjectsObserver {
 						final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
 						TroubleshootConnection tc;
 						try {
-							SierraServerLocation loc = server.getServer();
+							final SierraServerLocation loc = server.getServer();
 							responses = cpm.getProjectUpdates(loc, name, monitor);
 							
-							if (categoriesResponse == null) {
-								final DBQuery<ListCategoryResponse> query = 
-									SettingQueries.getNewCategories(loc);
-								categoriesResponse = Data.withTransaction(query);
+							// See if we need to pick up BugLink data
+							if (serverResponse == null) {
+								final Query q = new ConnectionQuery(c);	
+								ListCategoryResponse cr = SettingQueries.getNewCategories(loc).perform(q);
+								ListScanFilterResponse sfr = SettingQueries.getNewScanFilters(loc).perform(q);
+								serverResponse = new ServerUpdateStatus(cr, sfr);
 							} else {
 								// No need to update it again
-								categoriesResponse = null;
+								serverResponse = null;
 							}
 						} catch (ServerMismatchException e) {
 							tc = new TroubleshootWrongServer(method, server, name);
@@ -1075,8 +1074,8 @@ implements ISierraServerObserver, IProjectsObserver {
 						responseMap.put(name, responses);
 						handleServerSuccess(server, name);
 					}
-					if (categoriesResponse != null) {
-						categoriesResponseMap.put(server, categoriesResponse);
+					if (serverResponse != null) {
+						serverResponseMap.put(server, serverResponse);
 						server.markAsConnected();
 					}
 				}
@@ -1125,9 +1124,8 @@ implements ISierraServerObserver, IProjectsObserver {
 			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
 			ClientFindingManager cfm = cpm.getFindingManager();
 			ScanManager sm           = ScanManager.getInstance(c);
-			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			final Map<SierraServer,ServerUpdateStatus> serverUpdates = 
-				new HashMap<SierraServer,ServerUpdateStatus>();
+			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();		
+			final Map<SierraServer,ServerUpdateStatus> serverUpdates;
 			synchronized (responseMap) {
 				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
@@ -1151,11 +1149,7 @@ implements ISierraServerObserver, IProjectsObserver {
 							numServerProblems, numProjectProblems);
 					projects.add(s);
 				}
-				for(SierraServer server : f_manager.getServers()) {					
-					// Check for updates to scan filters
-					ListCategoryResponse categoriesResponse = categoriesResponseMap.get(server);
-					serverUpdates.put(server, new ServerUpdateStatus(categoriesResponse));
-				}
+				serverUpdates = new HashMap<SierraServer,ServerUpdateStatus>(serverResponseMap);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
@@ -1368,35 +1362,53 @@ implements ISierraServerObserver, IProjectsObserver {
 			focused = item;
 		}
 		*/
-		ChangeStatus status = ChangeStatus.NONE;
+		ServersViewContent categories = createCategories(serverNode, server);	
+		if (categories != null) {
+			serverContent.add(categories);
+		}
+		ServersViewContent scanFilters = createScanFilters(serverNode, server);	
+		if (scanFilters != null) {
+			serverContent.add(scanFilters);
+		}
 		if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {			
 			ServersViewContent projects = new ServersViewContent(serverNode, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			serverContent.add(projects);
 			
-			status = createProjectItems(projects, server);
+			final ChangeStatus status = createProjectItems(projects, server);
 			projects.setText(status.getLabel()+CONNECTED_PROJECTS);
-		}
-		ServersViewContent scanFilters = createScanFilters(serverNode, server);	
-		ChangeStatus status3 = status;
-		if (scanFilters != null) {
-			serverContent.add(scanFilters);
-			status3 = status.merge(scanFilters.getChangeStatus());
 		}
 
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
+		final ChangeStatus status3 = serverNode.getChangeStatus();
 		serverNode.setText(status3.getLabel()+label+" ["+server.toURLWithContextPath()+']');
 		return serverNode;
 	}
 	
-	private ServersViewContent createScanFilters(ServersViewContent serverNode, SierraServer server) {		
+	private ServersViewContent createCategories(ServersViewContent serverNode, SierraServer server) {
 		ServerUpdateStatus update = serverUpdates.get(server);
 		final int numCategories = update == null ? 0 : update.getNumUpdatedFilterSets();
 		if (numCategories > 0) {									
 			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
+			root.setText(CATEGORIES);
+			if (numCategories > 1) {
+			    createLabel(root, numCategories+" updated categories"+s(numCategories));
+			} else {
+				createLabel(root, "1 updated category");
+			}
+			return root;
+		}
+		return null;
+	}
+
+	private ServersViewContent createScanFilters(ServersViewContent serverNode, SierraServer server) {		
+		ServerUpdateStatus update = serverUpdates.get(server);
+		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
+		if (num > 0) {									
+			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
 			root.setText(SCAN_FILTERS);
 			
-			createLabel(root, numCategories+" updated categories"+s(numCategories));
+			createLabel(root, num+" updated scan filter"+s(num));
 			return root;
 		}
 		return null;
