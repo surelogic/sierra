@@ -57,8 +57,8 @@ public final class GetCategoriesJob extends DatabaseJob {
 		try {
 			final DBQuery<?> query = SettingQueries.retrieveCategories(f_server
 					.getServer());
-			f_server.markAsConnected();
 			Data.withTransaction(query);
+			f_server.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
