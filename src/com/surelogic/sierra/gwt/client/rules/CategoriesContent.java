@@ -57,7 +57,7 @@ public class CategoriesContent extends ContentComposite {
 
 			public void onItemUpdate(Cache cache, Cacheable item,
 					Status status, Throwable failure) {
-				searchBlock.refresh();
+				categories.refresh();
 
 				if (failure == null && status.isSuccess()) {
 					new CategoriesContext((Category) item).updateContext();
@@ -65,8 +65,6 @@ public class CategoriesContent extends ContentComposite {
 					Window.alert("Save rejected: " + status.getMessage());
 				} else if (failure != null) {
 					Window.alert("Save failed: " + failure.getMessage());
-				} else {
-					refreshSelection(ContextManager.getContext());
 				}
 			}
 
