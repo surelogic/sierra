@@ -603,6 +603,10 @@ implements ISierraServerObserver, IProjectsObserver {
 				boolean allHasScans = someProjects;
 				if (someProjects) {
 					for(ProjectStatus ps : status) {
+						if (f_manager == null || ps == null) {
+							LOG.severe("Null project status");
+							continue;
+						}
 						if (!f_manager.isConnected(ps.name)) {
 							allConnected = false;							
 						}
@@ -764,10 +768,10 @@ implements ISierraServerObserver, IProjectsObserver {
 			else {
 				ProjectStatus status = inProject(item.getParent());
 				if (status != null) {
-					if (projects.contains(item.getData())) {
+					if (projects.contains(status)) {
 						continue;
 					}
-					projects.add((ProjectStatus) item.getData());
+					projects.add(status);
 					continue;
 				}
 				System.out.println("Ignoring selection: "+item.getText());
