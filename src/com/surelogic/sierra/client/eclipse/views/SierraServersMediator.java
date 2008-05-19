@@ -950,9 +950,12 @@ implements ISierraServerObserver, IProjectsObserver {
 		final Job infoJob = new Job("Getting server info") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				SierraServerManager mgr = SierraServerManager.getInstance();
+			  final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
+				final SierraServerManager mgr = SierraServerManager.getInstance();
 				for(final SierraServer s : mgr.getServers()) {		
-					s.updateServerInfo();					
+				  if (s.getProblemCount() <= threshold) {
+				    s.updateServerInfo();			
+				  }
 				}
 				return Status.OK_STATUS;
 			}
