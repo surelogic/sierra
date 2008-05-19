@@ -6,8 +6,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public class SynchronizeProjectAction extends
@@ -24,7 +23,7 @@ public class SynchronizeProjectAction extends
 	void runServerAction(ServerProjectGroupJob family, String projectName,
 			SierraServer server, Shell shell) {
 		final SynchronizeJob job = new SynchronizeJob(family, projectName,
-				server, true, ServerFailureReport.SHOW_DIALOG);
+				server, ServerSyncType.ALL, true, ServerFailureReport.SHOW_DIALOG);
 		job.schedule();
 	}
 }

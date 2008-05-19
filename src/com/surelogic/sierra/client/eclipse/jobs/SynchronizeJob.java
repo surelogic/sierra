@@ -11,27 +11,32 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class SynchronizeJob extends AbstractServerProjectJob {	
 	private final boolean force;
+	private final ServerSyncType syncType;
 
 	public SynchronizeJob(ServerProjectGroupJob family, String projectName, SierraServer server,
-			              boolean force, ServerFailureReport method) {
-		super(family, "Synchronizing Sierra data from project '" + projectName + "'", 
+			              ServerSyncType sync, boolean force, ServerFailureReport method) {
+		super(family, sync.equals(ServerSyncType.BUGLINK) ?
+				      "Synchronizing BugLink data for server '" + server.getLabel() + "'" :
+				      "Synchronizing Sierra data for project '" + projectName + "'", 
 		      server, projectName, method);
 		this.force = force;
+		syncType = sync;
 	}
 
 	@Override
@@ -43,8 +48,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			return Status.CANCEL_STATUS;
 		}
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
-		slMonitor.beginTask("Synchronizing findings and settings for project "
-				+ f_projectName + ".", 5);
+		slMonitor.beginTask(getName(), 6);
 		IStatus status = null;
 		try {
 			final Connection conn = Data.transactionConnection();
@@ -71,8 +75,17 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			throws SQLException {
 		TroubleshootConnection troubleshoot;
 		try {
-			ClientProjectManager.getInstance(conn).synchronizeProject(
-					f_server.getServer(), f_projectName, slMonitor);
+			if (syncType.syncBugLink() && joinJob.process(f_server)) {
+				final SierraServerLocation loc = f_server.getServer();
+				final Query q = new ConnectionQuery(conn);	
+				SettingQueries.retrieveCategories(loc).perform(q);
+				SettingQueries.retrieveScanFilters(loc).perform(q);
+				slMonitor.worked(1);
+			}			
+			if (syncType.syncProjects()) {
+				ClientProjectManager.getInstance(conn).synchronizeProject(
+						f_server.getServer(), f_projectName, slMonitor);
+			}
 			f_server.markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();

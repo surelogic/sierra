@@ -32,8 +32,8 @@ public abstract class AbstractWebServiceMenuAction extends
 		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
-		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
-				.getServers().toArray(ServerProjectGroupJob.NO_SERVERS));
+		final ServerProjectGroupJob family = 
+			new ServerProjectGroupJob(manager.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 			public void run(String projectName, SierraServer server, Shell shell) {
 				runServerAction(family, projectName, server, shell);

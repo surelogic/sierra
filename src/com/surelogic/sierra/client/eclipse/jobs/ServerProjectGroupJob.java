@@ -6,8 +6,7 @@
  */
 package com.surelogic.sierra.client.eclipse.jobs;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,13 +24,14 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 public class ServerProjectGroupJob extends Job {
   public static final SierraServer[] NO_SERVERS = new SierraServer[0];
   
-  private List<AbstractServerProjectJob> jobs = new ArrayList<AbstractServerProjectJob>();
-  private SierraServer[] servers;
+  private final List<AbstractServerProjectJob> jobs = new ArrayList<AbstractServerProjectJob>();
+  private final Set<SierraServer> okServers, serversToProcess;
   
-  public ServerProjectGroupJob(SierraServer... servers) {
+  public ServerProjectGroupJob(Set<SierraServer> servers) {
     super("Waiting for synchronize jobs");
     setSystem(true);
-    this.servers = servers;
+    okServers = servers;
+    serversToProcess = new HashSet<SierraServer>(servers);
   }
 
   void add(AbstractServerProjectJob j) {
@@ -57,26 +57,26 @@ public class ServerProjectGroupJob extends Job {
     return Status.OK_STATUS;
   }
 
+  public boolean process(SierraServer server) {
+	  return serversToProcess.contains(server);	  
+  }
+  
+  public void doneProcessing(SierraServer server) {
+	  serversToProcess.remove(server);
+  }
+  
   /**
    * @return true if we should bother trying to troubleshoot
    */
   public boolean troubleshoot(SierraServer server) {
-    for(SierraServer s : servers) {
-      if (server == s) {
-        return true;
-      }
-    }
-    return false;
+      return okServers.contains(server);
   }
   
   /**
    * Mark the server as failed
    */
   public void fail(SierraServer server) {
-    for(int i=0; i<servers.length; i++) {
-      if (servers[i] == server) {
-        servers[i] = null;
-      }
-    }
+	  okServers.remove(server);
+	  doneProcessing(server);
   }
 }

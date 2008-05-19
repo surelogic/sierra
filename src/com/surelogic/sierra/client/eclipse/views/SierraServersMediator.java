@@ -58,6 +58,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -914,8 +915,10 @@ implements ISierraServerObserver, IProjectsObserver {
 		
 		Job group = lastSyncGroup.get();
 		if (group == null || group.getResult() != null) {
-			SynchronizeAllProjectsAction sync = 
-				new SynchronizeAllProjectsAction(PreferenceConstants.getServerFailureReporting(), false);
+			SynchronizeAllProjectsAction sync = 				
+				new SynchronizeAllProjectsAction(ServerSyncType.ALL,
+						                         PreferenceConstants.getServerFailureReporting(), 
+						                         false);
 			sync.run(null);
 			lastSyncGroup.set(sync.getGroup());					
 		} else {
