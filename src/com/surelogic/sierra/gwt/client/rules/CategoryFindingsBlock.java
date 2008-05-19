@@ -13,18 +13,21 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 
-public class CategoryFindingsBlock extends SectionPanel {
+public class CategoryFindingsBlock extends BlockPanel {
 	private static final String PRIMARY_STYLE = CategoryBlock.PRIMARY_STYLE;
 	private final SelectionTracker selectionTracker = new SelectionTracker();
 	private final Map findings = new HashMap();
 	private boolean editing;
+
+	protected void onInitialize(VerticalPanel contentPanel) {
+		setTitle("Finding Type");
+	}
 
 	public void refresh(Category cat, boolean editing) {
 		this.editing = editing;
@@ -138,18 +141,6 @@ public class CategoryFindingsBlock extends SectionPanel {
 
 	private void addCategory() {
 		// TODO need a dialog or UI update to add categories + findings
-	}
-
-	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Finding Type");
-	}
-
-	protected void onUpdate(Context context) {
-		// nothing to do
-	}
-
-	protected void onDeactivate() {
-		// nothing to do
 	}
 
 	private class FindingTypeListener implements ClickListener {
