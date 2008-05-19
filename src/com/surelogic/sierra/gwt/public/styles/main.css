@@ -474,6 +474,13 @@ img {
 .filter-entry-widget {
 	width: 100%;
 }
+
+/*
+ * Scan filter content styling
+ */
+.scan-filter-entry-title {
+	text-decoration: underline;
+}
 /*
  * Disclosure panel styling
  */

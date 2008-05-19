@@ -292,6 +292,8 @@ public class ScanFilterContent extends ContentComposite {
 			resize(entries.size() + 1, 3);
 			setText(0, 0, "Name");
 			setText(0, 1, "Importance");
+			getCellFormatter().addStyleName(0, 0, "scan-filter-entry-title");
+			getCellFormatter().addStyleName(0, 1, "scan-filter-entry-title");
 			int row = 1;
 			for (final Iterator i = entries.iterator(); i.hasNext();) {
 				entry(row++, (ScanFilterEntry) i.next());
