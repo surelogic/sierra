@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.google.gwt.core.client.GWT;
 
-public class ScanFilterEntry implements Serializable {
+public class ScanFilterEntry implements Serializable, Comparable {
 
 	/**
 	 * 
@@ -93,6 +93,19 @@ public class ScanFilterEntry implements Serializable {
 		e.shortMessage = shortMessage;
 		e.uid = uid;
 		return e;
+	}
+
+	public int compareTo(Object that) {
+		if (this == that) {
+			return 0;
+		}
+		if (this == null) {
+			return -1;
+		}
+		if (that == null) {
+			return 1;
+		}
+		return name.compareTo(((ScanFilterEntry) that).name);
 	}
 
 }

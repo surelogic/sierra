@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class FindingTypeSuggestOracle extends SuggestOracle {
 							suggestions.add(new Suggestion((String) e.getKey(),
 									(String) e.getValue()));
 						}
+						Collections.sort(suggestions);
 						final Response response = new Response(suggestions);
 						callback.onSuggestionsReady(request, response);
 					}
@@ -45,7 +47,7 @@ public class FindingTypeSuggestOracle extends SuggestOracle {
 	}
 
 	public static class Suggestion implements
-			com.google.gwt.user.client.ui.SuggestOracle.Suggestion {
+			com.google.gwt.user.client.ui.SuggestOracle.Suggestion, Comparable {
 
 		private final String uuid;
 		private final String display;
@@ -73,6 +75,10 @@ public class FindingTypeSuggestOracle extends SuggestOracle {
 			e.setName(display);
 			e.setCategory(false);
 			return e;
+		}
+
+		public int compareTo(Object that) {
+			return display.compareTo(((Suggestion) that).display);
 		}
 	}
 

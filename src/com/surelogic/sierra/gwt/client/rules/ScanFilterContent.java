@@ -1,7 +1,10 @@
 package com.surelogic.sierra.gwt.client.rules;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -178,12 +181,17 @@ public class ScanFilterContent extends ContentComposite {
 								.create("scanfilters"), map));
 					}
 				};
+				boolean success = false;
 				for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
 					final ScanFilter f = (ScanFilter) i.next();
 					if (f.getName().toLowerCase().matches(query)) {
+						success = true;
 						list.add(new ItemLabel(f.getName(), f, selection,
 								listener));
 					}
+				}
+				if (!success) {
+					list.add(new HTML("None found."));
 				}
 			}
 
@@ -206,6 +214,7 @@ public class ScanFilterContent extends ContentComposite {
 
 				public void onItemUpdate(Cache cache, Cacheable item,
 						Status status, Throwable failure) {
+					cache.refresh();
 					ScanFilterComposite.this.status.setStatus(status);
 				}
 			});
@@ -276,7 +285,7 @@ public class ScanFilterContent extends ContentComposite {
 		}
 
 		public void setFilter(ScanFilter filter) {
-			this.filter = filter.copy();
+			this.filter = filter;
 			refresh();
 		}
 
@@ -295,7 +304,9 @@ public class ScanFilterContent extends ContentComposite {
 			getCellFormatter().addStyleName(0, 0, "scan-filter-entry-title");
 			getCellFormatter().addStyleName(0, 1, "scan-filter-entry-title");
 			int row = 1;
-			for (final Iterator i = entries.iterator(); i.hasNext();) {
+			final List sortedEntries = new ArrayList(entries);
+			Collections.sort(sortedEntries);
+			for (final Iterator i = sortedEntries.iterator(); i.hasNext();) {
 				entry(row++, (ScanFilterEntry) i.next());
 			}
 		}

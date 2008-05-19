@@ -45,7 +45,7 @@ public class CategorySuggestOracle extends SuggestOracle {
 	}
 
 	public static class Suggestion implements
-			com.google.gwt.user.client.ui.SuggestOracle.Suggestion {
+			com.google.gwt.user.client.ui.SuggestOracle.Suggestion, Comparable {
 
 		private final String uuid;
 		private final String display;
@@ -73,6 +73,10 @@ public class CategorySuggestOracle extends SuggestOracle {
 			e.setName(display);
 			e.setCategory(true);
 			return e;
+		}
+
+		public int compareTo(Object that) {
+			return display.compareTo(((Suggestion) that).display);
 		}
 	}
 
