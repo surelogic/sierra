@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.logging.Level;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.EmptyProgressMonitor;
@@ -37,6 +40,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		SierraService {
 
 	private static final long serialVersionUID = -8265889420077755990L;
+	private boolean on;
 
 	public void publishRun(final Scan scan) throws ScanVersionException {
 		if (!Server.getSoftwareVersion().equals(scan.getVersion())) {
@@ -209,9 +213,24 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	}
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		ServerInfoServiceImpl.registerService(Services.TEAMSERVER);
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		synchronized (this) {
+			if (on) {
+				super.service(req, resp);
+			} else {
+				resp.setStatus(404);
+			}
+		}
+
 	}
 
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		synchronized (this) {
+			on = "on".equals(config.getServletContext().getInitParameter(
+					"teamserver"));
+		}
+	}
 }

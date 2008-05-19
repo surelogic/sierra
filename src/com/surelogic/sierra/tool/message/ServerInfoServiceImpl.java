@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -14,7 +17,7 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 		ServerInfoService {
 	private static final long serialVersionUID = 557394723869102797L;
 
-	private static final List<Services> services = new ArrayList<Services>();
+	private final List<Services> services = new ArrayList<Services>();
 
 	public ServerInfoReply getServerInfo(ServerInfoRequest request) {
 		final ServerInfoReply reply = new ServerInfoReply();
@@ -32,9 +35,18 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 		return reply;
 	}
 
-	public static void registerService(Services service) {
+	@Override
+	public void init(ServletConfig config) throws ServletException {
 		synchronized (services) {
-			services.add(service);
+			if ("on".equals(config.getServletContext().getInitParameter(
+					"teamserver"))) {
+				services.add(Services.TEAMSERVER);
+			}
+			if ("on".equals(config.getServletContext().getInitParameter(
+					"buglink"))) {
+				services.add(Services.BUGLINK);
+			}
 		}
 	}
+
 }

@@ -1,10 +1,13 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -20,6 +23,8 @@ import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 
 public class BugLinkServiceImpl extends SecureServiceServlet implements
 		BugLinkService {
+
+	private boolean on;
 
 	/**
 	 * 
@@ -146,9 +151,25 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 	}
 
 	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		synchronized (this) {
+			if (on) {
+				super.service(req, resp);
+			} else {
+				resp.setStatus(404);
+			}
+		}
+
+	}
+
+	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		ServerInfoServiceImpl.registerService(Services.BUGLINK);
+		synchronized (this) {
+			on = "on".equals(config.getServletContext().getInitParameter(
+					"buglink"));
+		}
 	}
 
 }
