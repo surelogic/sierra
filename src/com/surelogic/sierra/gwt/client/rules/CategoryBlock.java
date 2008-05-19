@@ -1,40 +1,31 @@
 package com.surelogic.sierra.gwt.client.rules;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
-import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.Editable;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.ui.EditableListener;
+import com.surelogic.sierra.gwt.client.ui.EditableListenerCollection;
 
-public class CategoryBlock extends SectionPanel implements Editable {
+public class CategoryBlock extends BlockPanel implements Editable {
 	public static final String PRIMARY_STYLE = "categories-category";
-	private final CategoryCache categories;
 	private final FlexTable categoryInfo = new FlexTable();
 	private final TextBox nameEditText = new TextBox();
 	private final TextArea description = new TextArea();
 	private final CategoryFindingsBlock findingTypes = new CategoryFindingsBlock();
 
+	private final EditableListenerCollection listeners = new EditableListenerCollection();
 	private Category currentCategory;
 	private boolean editing;
 
-	public CategoryBlock(CategoryCache categories) {
-		super();
-		this.categories = categories;
-		setTitle("Category");
-	}
-
 	protected void onInitialize(VerticalPanel contentPanel) {
+		setTitle("Category");
+
 		categoryInfo.setWidth("100%");
 		categoryInfo.getColumnFormatter().setWidth(0, "15%");
 		categoryInfo.getColumnFormatter().setWidth(1, "35%");
@@ -49,39 +40,43 @@ public class CategoryBlock extends SectionPanel implements Editable {
 
 		findingTypes.setSubsectionStyle(true);
 		contentPanel.add(findingTypes);
+	}
 
-		categories.addListener(new CacheListener() {
+	public void setSelection(Category cat) {
+		currentCategory = cat;
+		editing = false;
 
-			public void onItemUpdate(Cache cache, Cacheable item,
-					Status status, Throwable failure) {
-				if (failure == null && status.isSuccess()) {
-					editing = false;
-					new CategoriesContext((Category) item).updateContext();
-				} else if (!status.isSuccess()) {
-					Window.alert("Save rejected: " + status.getMessage());
-				} else if (failure != null) {
-					Window.alert("Save failed: " + failure.getMessage());
+		if (cat != null) {
+			setSummary(cat.getName());
+		} else {
+			setSummary("Select a Category");
+		}
+
+		if (nameEditText.isAttached()) {
+			categoryInfo.removeRow(0);
+		}
+
+		description.setReadOnly(true);
+		final String catInfo = cat == null ? "" : cat.getInfo();
+		if (catInfo == null || "".equals(catInfo)) {
+			description.setText("None");
+			description.addStyleName("font-italic");
+		} else {
+			description.setText(catInfo);
+			description.removeStyleName("font-italic");
+		}
+
+		findingTypes.refresh(currentCategory, false);
+
+		removeActions();
+		if (cat != null) {
+			addAction("Edit", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					edit();
 				}
-			}
-
-			public void onRefresh(Cache cache, Throwable failure) {
-				refresh(ContextManager.getContext());
-			}
-
-			public void onStartRefresh(Cache cache) {
-				// nothing to do
-			}
-		});
-	}
-
-	protected void onUpdate(Context context) {
-		findingTypes.update(context);
-
-		refresh(context);
-	}
-
-	protected void onDeactivate() {
-		findingTypes.deactivate();
+			});
+		}
 	}
 
 	public void edit() {
@@ -121,10 +116,14 @@ public class CategoryBlock extends SectionPanel implements Editable {
 		});
 
 		editing = true;
+
+		listeners.fireEdit(this);
 	}
 
 	public void cancelEdit() {
-		refresh(currentCategory);
+		setSelection(currentCategory);
+
+		listeners.fireCancelEdit(this);
 	}
 
 	public void saveEdit() {
@@ -135,54 +134,19 @@ public class CategoryBlock extends SectionPanel implements Editable {
 
 		findingTypes.saveTo(rpcCategory);
 
-		categories.save(rpcCategory);
+		listeners.fireSave(this, rpcCategory);
 	}
 
 	public boolean isEditing() {
 		return editing;
 	}
 
-	private void refresh(Context context) {
-		final String categoryUuid = new CategoriesContext(context)
-				.getCategory();
-		refresh((Category) categories.getItem(categoryUuid));
+	public void addListener(EditableListener listener) {
+		listeners.addListener(listener);
 	}
 
-	private void refresh(Category cat) {
-		currentCategory = cat;
-		editing = false;
-
-		if (cat != null) {
-			setSummary(cat.getName());
-		} else {
-			setSummary("Select a Category");
-		}
-
-		if (nameEditText.isAttached()) {
-			categoryInfo.removeRow(0);
-		}
-
-		description.setReadOnly(true);
-		final String catInfo = cat == null ? "" : cat.getInfo();
-		if (catInfo == null || "".equals(catInfo)) {
-			description.setText("None");
-			description.addStyleName("font-italic");
-		} else {
-			description.setText(catInfo);
-			description.removeStyleName("font-italic");
-		}
-
-		findingTypes.refresh(currentCategory, false);
-
-		removeActions();
-		if (cat != null) {
-			addAction("Edit", new ClickListener() {
-
-				public void onClick(Widget sender) {
-					edit();
-				}
-			});
-		}
+	public void removeListener(EditableListener listener) {
+		listeners.removeListener(listener);
 	}
 
 }

@@ -1,27 +1,25 @@
 package com.surelogic.sierra.gwt.client.rules;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.util.LangUtil;
+import com.surelogic.sierra.gwt.client.ui.EditableListenerAdapter;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class CategoriesContent extends ContentComposite {
 	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryCache categories = new CategoryCache();
-	private final SearchSection searchSection = new SearchSection(categories);
-
-	private final VerticalPanel selectionPanel = new VerticalPanel();
-	private final CategoryBlock categorySelection = new CategoryBlock(
-			categories);
+	private final SearchBlock searchBlock = new SearchBlock(categories);
+	private final CategoryBlock categoryBlock = new CategoryBlock();
 
 	public static CategoriesContent getInstance() {
 		return instance;
@@ -36,68 +34,67 @@ public class CategoriesContent extends ContentComposite {
 		rootPanel.add(title, DockPanel.NORTH);
 		rootPanel.setCellHorizontalAlignment(title, DockPanel.ALIGN_LEFT);
 
-		selectionPanel.setWidth("100%");
-		selectionPanel.add(new Label(""));
+		searchBlock.initialize();
+		rootPanel.add(searchBlock, DockPanel.WEST);
+		rootPanel.setCellWidth(searchBlock, "25%");
 
-		rootPanel.add(searchSection, DockPanel.WEST);
-		rootPanel.setCellWidth(searchSection, "25%");
-		rootPanel.add(selectionPanel, DockPanel.CENTER);
-		rootPanel.setCellWidth(selectionPanel, "75%");
+		categoryBlock.initialize();
+		categoryBlock.addListener(new EditableListenerAdapter() {
 
-		categories.addListener(new CacheListener() {
-
-			public void onStartRefresh(Cache cache) {
-				// nothing to do
+			public void onSave(Widget sender, Object item) {
+				categories.save((Category) item);
 			}
+		});
+		rootPanel.add(categoryBlock, DockPanel.CENTER);
+		rootPanel.setCellWidth(categoryBlock, "75%");
+
+		categories.addListener(new CacheListenerAdapter() {
 
 			public void onRefresh(Cache cache, Throwable failure) {
-				refreshSelection();
+				searchBlock.refresh();
+				refreshSelection(ContextManager.getContext());
 			}
 
 			public void onItemUpdate(Cache cache, Cacheable item,
 					Status status, Throwable failure) {
-				refreshSelection();
+				searchBlock.refresh();
+
+				if (failure == null && status.isSuccess()) {
+					new CategoriesContext((Category) item).updateContext();
+				} else if (!status.isSuccess()) {
+					Window.alert("Save rejected: " + status.getMessage());
+				} else if (failure != null) {
+					Window.alert("Save failed: " + failure.getMessage());
+				} else {
+					refreshSelection(ContextManager.getContext());
+				}
 			}
 
 		});
 	}
 
-	private void refreshSelection() {
-		final Context context = ContextManager.getContext();
-		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		final String categoryUuid = rulesCtx.getCategory();
-		boolean selectionMade = false;
-		if (LangUtil.notEmpty(categoryUuid)) {
-			if (selectionPanel.getWidgetIndex(categorySelection) == -1) {
-				selectionPanel.clear();
-				selectionPanel.add(categorySelection);
-			}
-			categorySelection.update(context);
-
-			selectionMade = true;
-		}
-
-		if (!selectionMade && categories.getItemCount() > 0) {
-			new CategoriesContext((Category) categories.getItem(0))
-					.updateContext();
-		}
-	}
-
 	protected void onUpdate(Context context) {
-		searchSection.update(context);
-
 		if (!isActive()) {
 			categories.refresh();
 		} else {
-			refreshSelection();
+			refreshSelection(context);
 		}
 	}
 
 	protected void onDeactivate() {
-		searchSection.deactivate();
+		searchBlock.clear();
+	}
 
-		if (categorySelection.isActive()) {
-			categorySelection.deactivate();
+	private void refreshSelection(Context context) {
+		final CategoriesContext rulesCtx = new CategoriesContext(context);
+		final Category cat = (Category) categories.getItem(rulesCtx
+				.getCategory());
+		if (cat != null) {
+			searchBlock.setSelection(cat);
+			categoryBlock.setSelection(cat);
+		} else if (categories.getItemCount() > 0) {
+			new CategoriesContext((Category) categories.getItem(0))
+					.updateContext();
 		}
 	}
 

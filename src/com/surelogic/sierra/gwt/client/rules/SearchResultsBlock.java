@@ -7,17 +7,10 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
-import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
-import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class SearchResultsBlock extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-search";
@@ -25,6 +18,7 @@ public class SearchResultsBlock extends BlockPanel {
 	private final SelectionTracker selectionTracker = new SelectionTracker();
 	private final Map searchResultsData = new HashMap();
 	private String searchText;
+	private Category currentSelection;
 
 	public SearchResultsBlock(CategoryCache categories) {
 		super();
@@ -33,28 +27,6 @@ public class SearchResultsBlock extends BlockPanel {
 
 	protected void onInitialize(VerticalPanel contentPanel) {
 		setTitle(" ");
-		categories.addListener(new CacheListener() {
-
-			public void onStartRefresh(Cache cache) {
-				clearResults();
-				setWaitStatus();
-			}
-
-			public void onRefresh(Cache cache, Throwable failure) {
-				if (failure == null) {
-					refreshResults();
-				} else {
-					clearResults();
-					setErrorStatus("Error retrieving categories");
-				}
-			}
-
-			public void onItemUpdate(Cache cache, Cacheable item,
-					Status status, Throwable failure) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 	}
 
 	public void search(String text) {
@@ -77,7 +49,7 @@ public class SearchResultsBlock extends BlockPanel {
 			}
 		}
 		clearStatus();
-		updateSelectionUI(ContextManager.getContext());
+		setSelection(currentSelection);
 	}
 
 	public void clearResults() {
@@ -90,11 +62,13 @@ public class SearchResultsBlock extends BlockPanel {
 		search(searchText);
 	}
 
-	public void updateSelectionUI(Context context) {
-		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		if (LangUtil.notEmpty(rulesCtx.getCategory())) {
-			ItemLabel catEntry = (ItemLabel) searchResultsData.get(rulesCtx
-					.getCategory());
+	public void setSelection(Category cat) {
+		currentSelection = cat;
+		if (cat == null) {
+			selectionTracker.setSelected(null);
+		} else {
+			ItemLabel catEntry = (ItemLabel) searchResultsData.get(cat
+					.getUuid());
 			if (catEntry != null) {
 				catEntry.setSelected(true);
 			}

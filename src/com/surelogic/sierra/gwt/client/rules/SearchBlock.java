@@ -9,17 +9,18 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 
-public class SearchSection extends SectionPanel {
+public class SearchBlock extends BlockPanel {
 	private final CategoryCache categories;
 	private final FlexTable grid = new FlexTable();
 	private final TextBox searchText = new TextBox();
 	private final SearchResultsBlock results;
+	private Category currentCategory;
 
-	public SearchSection(CategoryCache categories) {
+	public SearchBlock(CategoryCache categories) {
 		super();
 		this.categories = categories;
 		this.results = new SearchResultsBlock(this.categories);
@@ -62,20 +63,23 @@ public class SearchSection extends SectionPanel {
 		});
 	}
 
-	protected void onUpdate(Context context) {
-		if (!isActive()) {
-			results.search("");
-		} else {
-			results.updateSelectionUI(context);
-		}
+	public void refresh() {
+		results.search(searchText.getText());
+		results.setSelection(currentCategory);
 	}
 
-	protected void onDeactivate() {
+	public void clear() {
 		results.clearResults();
+	}
+
+	public void setSelection(Category cat) {
+		currentCategory = cat;
+		results.setSelection(currentCategory);
 	}
 
 	private void createCategory() {
 		// TODO finish
 		Window.alert("Create category");
 	}
+
 }
