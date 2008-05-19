@@ -94,8 +94,8 @@
 		<servlet-name>Finding Service</servlet-name>
 		<url-pattern>/rpc/FindingService</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<servlet>
 		<servlet-name>Ticket Service</servlet-name>
 		<servlet-class>
@@ -187,7 +187,7 @@
 		<servlet-name>Sierra Service</servlet-name>
 		<url-pattern>/services/SierraService</url-pattern>
 	</servlet-mapping>
- 
+
 	<servlet>
 		<servlet-name>Server Info Service</servlet-name>
 		<servlet-class>
@@ -199,7 +199,7 @@
 		<servlet-name>Server Info Service</servlet-name>
 		<url-pattern>/services/ServerInfoService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>BugLink Service</servlet-name>
 		<servlet-class>
@@ -211,4 +211,22 @@
 		<servlet-name>BugLink Service</servlet-name>
 		<url-pattern>/services/BugLinkService</url-pattern>
 	</servlet-mapping>
+
+	<!-- Configure the server -->
+	<context-param>
+		<description>
+			Determines whether or not team server capabilities are
+			turned on.
+		</description>
+		<param-name>teamserver</param-name>
+		<param-value>on</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			Determines whether or not buglink capabilities are
+			turned on.
+		</description>
+		<param-name>buglink</param-name>
+		<param-value>on</param-value>
+	</context-param>
 </web-app>

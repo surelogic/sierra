@@ -1,6 +1,8 @@
 package com.surelogic.sierra.gwt.client.rules;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,7 +14,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
@@ -33,6 +35,8 @@ import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
+import com.surelogic.sierra.gwt.client.ui.ItemLabel;
+import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.UI;
@@ -146,6 +150,7 @@ public class ScanFilterContent extends ContentComposite {
 		private class ScanFilterResults extends BlockPanel {
 
 			private VerticalPanel list;
+			private final SelectionTracker selection = new SelectionTracker();
 
 			protected void onInitialize(VerticalPanel contentPanel) {
 				list = contentPanel;
@@ -169,6 +174,7 @@ public class ScanFilterContent extends ContentComposite {
 			void search() {
 				final String text = searchText.getText();
 				final StringBuffer queryBuf = new StringBuffer();
+				queryBuf.append(".*");
 				for (int i = 0; i < text.length(); i++) {
 					final char ch = text.charAt(i);
 					if (Character.isLetterOrDigit(ch)) {
@@ -178,11 +184,21 @@ public class ScanFilterContent extends ContentComposite {
 				queryBuf.append(".*");
 				final String query = queryBuf.toString();
 				list.clear();
+				final ClickListener listener = new ClickListener() {
+					public void onClick(Widget sender) {
+						ItemLabel label = (ItemLabel) sender;
+						Map map = new HashMap();
+						map.put(FILTER, ((ScanFilter) (label.getItem()))
+								.getUuid());
+						ContextManager.setContext(Context.create(Context
+								.create("scanfilters"), map));
+					}
+				};
 				for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
 					final ScanFilter f = (ScanFilter) i.next();
 					if (f.getName().toLowerCase().matches(query)) {
-						list.add(new Hyperlink(f.getName(), "scanfilters/"
-								+ FILTER + "=" + f.getUuid()));
+						list.add(new ItemLabel(f.getName(), f, selection,
+								listener));
 					}
 				}
 			}
@@ -227,13 +243,13 @@ public class ScanFilterContent extends ContentComposite {
 						.add(new Label(
 								"A scan filter specifies the finding types that are included when a scan is loaded into the system.  You can add finding types individually, or you can add all of the finding types in a category at once. You can also set the importance that a particular finding type or category has."));
 				panel.add(UI.h3("Categories"));
-				panel.add(addCategoryBox());
 				cPanel = new FilterEntries(filter.getCategories());
+				panel.add(addCategoryBox());
 				panel.add(cPanel);
 				panel.add(UI.h3("Finding Types"));
-				panel.add(addFindingTypeBox());
 				final HorizontalPanel buttonPanel = new HorizontalPanel();
 				ftPanel = new FilterEntries(filter.getTypes());
+				panel.add(addFindingTypeBox());
 				panel.add(ftPanel);
 				panel.add(buttonPanel);
 				buttonPanel.add(new Button("Update", new ClickListener() {
