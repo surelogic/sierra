@@ -534,6 +534,11 @@ img {
     border: 1px solid #001166;
 }
 
+.gwt-SuggestBoxPopup {
+	border: thin solid #001166;
+	background-color: white;	
+}
+
 .gwt-SuggestBoxPopup .item-selected { 
 	background-color: yellow;	
 }
