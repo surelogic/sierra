@@ -197,15 +197,19 @@ public final class SierraServer {
 	}
 
 	/**
+	 * @param serverReply 
 	 * @return true if changed
 	 */
-	public boolean setServer(SierraServerLocation loc) {
+	public synchronized boolean setServer(SierraServerLocation loc, 
+			                              ServerInfoReply serverReply) {
+		final boolean changedInfo = !gotServerInfo && serverReply != null;
 		final boolean changed = differs(f_label, loc.getLabel())
 				|| differs(f_host, loc.getHost())
 				|| (f_secure != loc.isSecure()) || (f_port != loc.getPort())
 				|| differs(f_contextPath, loc.getContextPath())
 				|| differs(f_user, loc.getUser())
-				|| differs(f_password, loc.getPass());
+				|| differs(f_password, loc.getPass())
+		        || changedInfo;
 		f_label = loc.getLabel();
 		f_host = loc.getHost();
 		f_secure = loc.isSecure();
@@ -213,6 +217,9 @@ public final class SierraServer {
 		f_contextPath = loc.getContextPath();
 		f_user = loc.getUser();
 		f_password = loc.getPass();
+		if (changedInfo) {
+			updateServerInfo(serverReply);
+		}
 		return changed;
 	}
 
@@ -250,25 +257,33 @@ public final class SierraServer {
 		updateServerInfo(false);
 	}
 
-	public synchronized void updateServerInfo(boolean force) {
+	public synchronized boolean updateServerInfo(boolean force) {
 		if (gotServerInfo && !force) {
-			return;
+			return true;
 		}
 		try {
 			final ServerInfoService sis = ServerInfoServiceClient.create(getServer());
 			final ServerInfoReply reply = sis
 					.getServerInfo(new ServerInfoRequest());
-			isBugLink = reply.getServices().contains(Services.BUGLINK);
-			isTeamServer = reply.getServices().contains(Services.TEAMSERVER);
-			gotServerInfo = true;
+			updateServerInfo(reply);
 		} catch (final Exception e) {
 			SLLogger.log(Level.WARNING, "Exception while updating server info",
-					e);
-			encounteredProblem();
+					e);	
+			encounteredProblem();			
 		}
+		return gotServerInfo;
 	}
 
-	synchronized boolean gotServerInfo() {
+	/**
+	 * @RequiresLock ServerInfoLock
+	 */
+	private void updateServerInfo(final ServerInfoReply reply) {
+		isBugLink = reply.getServices().contains(Services.BUGLINK);
+		isTeamServer = reply.getServices().contains(Services.TEAMSERVER);
+		gotServerInfo = true;
+	}
+
+	public synchronized boolean gotServerInfo() {
 	  return gotServerInfo;
 	}
 	
@@ -283,5 +298,6 @@ public final class SierraServer {
   synchronized void setServerType(boolean team, boolean bug) {
     isTeamServer = team;
     isBugLink = bug;
+    gotServerInfo = true;
   }
 }

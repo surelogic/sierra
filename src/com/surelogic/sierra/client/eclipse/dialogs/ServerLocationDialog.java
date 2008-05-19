@@ -51,6 +51,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private static final int INFO_WIDTH_HINT = 70;
 
 	private SierraServerLocation f_server;
+	private ServerInfoReply f_serverReply;
 
 	private final String f_title;
 
@@ -409,6 +410,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	}
 
 	private int validateServer() {
+		f_serverReply = null;
+		
 		if (!f_validateServer) {
 			f_serverValidated = true;
 			return Window.OK;
@@ -417,9 +420,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final ServerInfoService ss = ServerInfoServiceClient.create(f_server);
 		String uid = null;
 		try {
-			final ServerInfoReply reply = ss
-					.getServerInfo(new ServerInfoRequest());
-			uid = reply.getUid();
+			f_serverReply = ss.getServerInfo(new ServerInfoRequest());
+			uid = f_serverReply.getUid();
 			if (uid == null) {
 				f_serverValidated = false;
 				return RETRY;
@@ -466,10 +468,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private static void updateServer(ServerLocationDialog dialog,
 			final SierraServer server) {
 		if (dialog != null) {
-			boolean changed = server.setServer(dialog.f_server);
+			boolean changed = server.setServer(dialog.f_server, 					
+					                           dialog.f_serverReply);
 			changed = changed
 					|| (server.savePassword() != dialog.f_savePassword);
-
+			
 			server.setSavePassword(dialog.f_savePassword);
 
 			if (changed) {
