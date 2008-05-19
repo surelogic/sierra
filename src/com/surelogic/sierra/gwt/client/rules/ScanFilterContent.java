@@ -26,7 +26,7 @@ import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
@@ -58,20 +58,12 @@ public class ScanFilterContent extends ContentComposite {
 		rootPanel.add(sf, DockPanel.EAST);
 		rootPanel.setCellWidth(scans, "25%");
 		rootPanel.setCellWidth(sf, "75%");
-		cache.addListener(new CacheListener() {
-
-			public void onItemUpdate(Cache cache, Cacheable item,
-					Status status, Throwable failure) {
-
-			}
+		cache.addListener(new CacheListenerAdapter() {
 
 			public void onRefresh(Cache cache, Throwable failure) {
 				checkForFilter();
 			}
 
-			public void onStartRefresh(Cache cache) {
-
-			}
 		});
 	}
 
@@ -154,15 +146,7 @@ public class ScanFilterContent extends ContentComposite {
 
 			protected void onInitialize(VerticalPanel contentPanel) {
 				list = contentPanel;
-				cache.addListener(new CacheListener() {
-					public void onItemUpdate(Cache cache, Cacheable item,
-							Status status, Throwable failure) {
-
-					}
-
-					public void onStartRefresh(Cache cache) {
-
-					}
+				cache.addListener(new CacheListenerAdapter() {
 
 					public void onRefresh(Cache cache, Throwable failure) {
 						search();
@@ -218,19 +202,11 @@ public class ScanFilterContent extends ContentComposite {
 			this.panel = panel;
 			status = new StatusBox();
 			refresh();
-			cache.addListener(new CacheListener() {
+			cache.addListener(new CacheListenerAdapter() {
 
 				public void onItemUpdate(Cache cache, Cacheable item,
 						Status status, Throwable failure) {
 					ScanFilterComposite.this.status.setStatus(status);
-				}
-
-				public void onRefresh(Cache cache, Throwable failure) {
-
-				}
-
-				public void onStartRefresh(Cache cache) {
-
 				}
 			});
 		}
