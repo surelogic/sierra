@@ -264,9 +264,14 @@ public final class SierraServer {
 		} catch (final Exception e) {
 			SLLogger.log(Level.WARNING, "Exception while updating server info",
 					e);
+			encounteredProblem();
 		}
 	}
 
+	synchronized boolean gotServerInfo() {
+	  return gotServerInfo;
+	}
+	
 	public synchronized boolean isBugLink() {
 		return isBugLink;
 	}
@@ -274,4 +279,9 @@ public final class SierraServer {
 	public synchronized boolean isTeamServer() {
 		return isTeamServer;
 	}
+
+  synchronized void setServerType(boolean team, boolean bug) {
+    isTeamServer = team;
+    isBugLink = bug;
+  }
 }

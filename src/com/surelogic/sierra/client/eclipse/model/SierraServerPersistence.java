@@ -26,6 +26,7 @@ import com.surelogic.adhoc.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
+import com.surelogic.sierra.tool.message.Services;
 
 public final class SierraServerPersistence {
 
@@ -38,6 +39,7 @@ public final class SierraServerPersistence {
 	private static final String CONTEXT_PATH = "context-path";
 	private static final String PROTOCOL = "protocol";
 	private static final String SAVE_PASSWORD = "save-password";
+	private static final String SERVER_TYPE = "server-type";
 	private static final String SERVER = "server";
 	private static final String USER = "user";
 	private static final String VERSION = "version";
@@ -134,10 +136,23 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(PORT, server.getPort(), b);
 		Entities.addAttribute(CONTEXT_PATH, server.getContextPath(), b);
 		Entities.addAttribute(USER, server.getUser(), b);
+		if (server.gotServerInfo()) {
+		  final StringBuilder sb = new StringBuilder();
+		  if (server.isTeamServer()) {
+		    sb.append(Services.TEAMSERVER);
+		  }
+		  if (server.isBugLink()) {
+		    if (sb.length() > 0) {
+		      sb.append(',');
+		    }
+		    sb.append(Services.BUGLINK);
+		  }
+		  Entities.addAttribute(SERVER_TYPE, sb.toString(), b);
+		}
 		if (save) {
 			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server
 					.savePassword()), b);
-		}
+		}		
 		b.append(">");
 		pw.println(b.toString());
 
@@ -216,6 +231,7 @@ public final class SierraServerPersistence {
 					contextPath = "/";
 				final int port = Integer.parseInt(portString);
 				final String user = attributes.getValue(USER);
+				final String serverType = attributes.getValue(SERVER_TYPE);
 				final String savePasswordString = attributes
 						.getValue(SAVE_PASSWORD);
 				final boolean savePassword = Boolean
@@ -227,6 +243,10 @@ public final class SierraServerPersistence {
 				f_server.setContextPath(contextPath);
 				f_server.setUser(user);
 				f_server.setSavePassword(savePassword);
+				if (serverType != null) {				  
+				  f_server.setServerType(serverType.contains(Services.TEAMSERVER.toString()),
+				                         serverType.contains(Services.BUGLINK.toString()));
+				}
 
 				/* Retrieve password from keyring */
 				if (f_map != null && savePassword) {
