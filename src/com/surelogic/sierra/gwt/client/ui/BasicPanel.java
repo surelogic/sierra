@@ -29,16 +29,19 @@ public class BasicPanel extends Composite {
 		rootPanel.setWidth("100%");
 
 		titlePanel.addStyleName(PRIMARY_STYLE + "-titlepanel");
-		titlePanel.add(sectionTitle, DockPanel.WEST);
-		sectionTitle.addStyleName(PRIMARY_STYLE + "-title");
 
+		sectionTitle.addStyleName(PRIMARY_STYLE + "-title");
+		sectionTitle.setWordWrap(false);
+		titlePanel.add(sectionTitle, DockPanel.WEST);
+
+		sectionSummary.addStyleName(PRIMARY_STYLE + "-info");
+		sectionSummary.setWordWrap(false);
 		titlePanel.add(sectionSummary, DockPanel.CENTER);
 		titlePanel.setCellHorizontalAlignment(sectionSummary,
 				HorizontalPanel.ALIGN_CENTER);
-		sectionSummary.addStyleName(PRIMARY_STYLE + "-info");
 
-		titlePanel.add(actionPanel, DockPanel.EAST);
 		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
+		titlePanel.add(actionPanel, DockPanel.EAST);
 		titlePanel.setCellHorizontalAlignment(actionPanel,
 				HorizontalPanel.ALIGN_RIGHT);
 		titlePanel.setCellVerticalAlignment(actionPanel,
