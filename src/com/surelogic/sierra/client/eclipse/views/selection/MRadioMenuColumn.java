@@ -183,7 +183,7 @@ public final class MRadioMenuColumn extends MColumn implements
 					final String msg = I18N.err(errNo, filter.getFactory()
 							.getFilterLabel());
 					final IStatus reason = SLStatus.createErrorStatus(errNo,
-							msg);
+							msg, e);
 					ErrorDialogUtility.open(null, "Selection Error", reason);
 					return Status.OK_STATUS;
 				}
