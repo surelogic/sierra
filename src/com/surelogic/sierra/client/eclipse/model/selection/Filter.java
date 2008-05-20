@@ -114,19 +114,21 @@ public abstract class Filter {
 	 */
 	protected final Map<String, Integer> f_counts = new HashMap<String, Integer>();
 
-	public Map<String, Integer> getSummaryCounts() {
+	/*
+	private Map<String, Integer> getSummaryCounts() {
 		synchronized (this) {
 			return new HashMap<String, Integer>(f_counts);
 		}
 	}
-
+    */
+	
 	public int getSummaryCountFor(String value) {
 		Integer result = f_counts.get(value);
 		return result == null ? 0 : result.intValue();
 	}
 
 	/**
-	 * Set by {@link #deriveSummaryCounts()}. Only mutated by
+	 * Set by {@link #queryCounts()}. Only mutated by
 	 * {@link #refresh()}.
 	 */
 	protected int f_countTotal = 0;
@@ -218,7 +220,7 @@ public abstract class Filter {
 	 * <p>
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
-	protected void deriveAllValues() {
+	protected void deriveAllValues() throws Exception {
 		f_allValues.clear();
 		f_allValues.addAll(f_counts.keySet());
 		Collections.sort(f_allValues);
