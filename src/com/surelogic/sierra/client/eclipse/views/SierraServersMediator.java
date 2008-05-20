@@ -951,6 +951,14 @@ implements ISierraServerObserver, IProjectsObserver {
 	}
 	
 	private void asyncUpdateContents() {
+		asyncUpdateContentsForUI(new IViewUpdater() {
+			public void updateContentsForUI() {
+				// FIX switch to waiting if there's already stale data?
+				if (f_view.getStatus() != IViewCallback.Status.DATA_READY) {
+					f_view.setStatus(IViewCallback.Status.WAITING_FOR_DATA);
+				}
+			}
+		});
 		final Job infoJob = new Job("Getting server info") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

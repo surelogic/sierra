@@ -3,7 +3,13 @@ package com.surelogic.sierra.client.eclipse.views;
 import org.eclipse.jface.action.*;
 
 public interface IViewCallback {
-  void hasData(boolean yes);
+	enum Status {
+		NO_DATA, WAITING_FOR_DATA, DATA_READY
+	}	
+	
+	Status getStatus();
+	void setStatus(Status s);
+	void hasData(boolean yes);
   boolean showingData();
   
   void setGlobalActionHandler(String id, IAction action);

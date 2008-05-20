@@ -25,7 +25,6 @@ import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 
 public abstract class AbstractSierraView<M extends IViewMediator> extends
 		ViewPart implements IViewCallback {
-
 	public static final String VIEW_GROUP = "com.surelogic.sierra.client.eclipse.views";
 
 	protected static MenuItem createMenuItem(Menu menu, String name, Image image) {
@@ -42,6 +41,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 	private PageBook f_pages;
 	private Control f_noDataPage;
+	private Control f_waitingForDataPage;
 	private Control f_dataPage;
 	protected M f_mediator;
 
@@ -49,8 +49,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	public final void createPartControl(Composite parent) {
 		final PageBook pages = f_pages = new PageBook(parent, SWT.NONE);
 		final Link noDataPage = new Link(pages, SWT.WRAP);
+		final Link waitingForDataPage = new Link(pages, SWT.WRAP);
 		final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
 		actualPage.setLayout(new FillLayout());
+		f_waitingForDataPage = waitingForDataPage;	
 		f_noDataPage = noDataPage;
 		f_dataPage = actualPage;
 
@@ -65,10 +67,12 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 		bars.getToolBarManager().add(new GroupMarker(VIEW_GROUP));
 
-		hasData(false);
+		setStatus(Status.WAITING_FOR_DATA);
 		final M mediator = f_mediator = createMorePartControls(actualPage);
 		mediator.init();
 
+		waitingForDataPage.setText("Waiting for data ...");
+		
 		noDataPage.setText(I18N.msg(mediator.getNoDataI18N()));
 		final Listener noDataListener = mediator.getNoDataListener();
 		if (noDataListener != null)
@@ -94,6 +98,31 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 	public final boolean showingData() {
 		return f_pages.getPage() == f_dataPage;
+	}
+
+	public final void setStatus(Status s) {
+		switch (s) {
+		default:
+		case NO_DATA:
+			f_pages.showPage(f_noDataPage);
+			break;
+		case WAITING_FOR_DATA:
+			f_pages.showPage(f_waitingForDataPage);
+			break;
+		case DATA_READY:
+			f_pages.showPage(f_dataPage);
+			break;
+		}
+	}
+	
+	public final Status getStatus() {
+		if (f_pages.getPage() == f_dataPage) {
+			return Status.DATA_READY;
+		}
+		if (f_pages.getPage() == f_waitingForDataPage) {
+			return Status.WAITING_FOR_DATA;
+		}
+		return Status.NO_DATA;
 	}
 
 	public final void setGlobalActionHandler(String id, IAction action) {
@@ -130,7 +159,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 	@Override
 	public final void setFocus() {
-		if (!showingData()) {
+		if (getStatus() == Status.NO_DATA) {
 			f_noDataPage.setFocus();
 		}
 		if (f_mediator != null)
