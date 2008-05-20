@@ -7,7 +7,8 @@ Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .,
  lib/mail.jar
 Require-Bundle: com.surelogic.common,
- com.surelogic.sierra.message
+ com.surelogic.sierra.message,
+ com.surelogic.sierra.java5.compatibility;resolution:=optional
 Export-Package: com.surelogic.sierra.checkstyle4_3,
  com.surelogic.sierra.cpd,
  com.surelogic.sierra.findbugs,
