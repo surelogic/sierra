@@ -70,18 +70,18 @@ public class SettingQueries {
 			SierraServerLocation loc) {
 		return getCategories(loc, true);
 	}
-	
+
 	/**
 	 * Queries the specified server for a list of categories, and returns a
-	 * {@link DBQuery} that, when run, will return a list of categories
-	 * that would have been updated.  Categories that are of a lower revision
-	 * than the local copy will not be returned.
+	 * {@link DBQuery} that, when run, will return a list of categories that
+	 * would have been updated. Categories that are of a lower revision than the
+	 * local copy will not be returned.
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
 			SierraServerLocation loc) {
 		return getCategories(loc, false);
 	}
-	
+
 	private static final DBQuery<ListCategoryResponse> getCategories(
 			SierraServerLocation loc, final boolean update) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
@@ -93,20 +93,25 @@ public class SettingQueries {
 						.prepared("Definitions.deleteDefinition") : null;
 				final Queryable<Void> insert = update ? q
 						.prepared("Definitions.insertDefinition") : null;
-				//for (final FilterSet set : response.getFilterSets()) {
-				final Iterator<FilterSet> it = response.getFilterSets().iterator();
+				// for (final FilterSet set : response.getFilterSets()) {
+				final Iterator<FilterSet> it = response.getFilterSets()
+						.iterator();
 				while (it.hasNext()) {
 					final FilterSet set = it.next();
 					final String uid = set.getUid();
 					final CategoryDO c = sets.getCategory(uid);
-					if ((c != null) && (c.getRevision() < set.getRevision())) {
+					if (c == null) {
+						if (update) {
+							insert.call(uid, set.getOwner());
+							sets.writeCategory(Categories.convertDO(set));
+						}
+					} else if (c.getRevision() < set.getRevision()) {
 						if (update) {
 							delete.call(uid);
 							insert.call(uid, set.getOwner());
 							sets.writeCategory(Categories.convertDO(set));
-						} 
-					}
-					else if (!update) {
+						}
+					} else if (!update) {
 						it.remove(); // Remove since it's older
 					}
 				}
@@ -114,7 +119,7 @@ public class SettingQueries {
 			}
 		};
 	}
-	
+
 	public static final DBQuery<List<CategoryDO>> getLocalCategories() {
 		return new DBQuery<List<CategoryDO>>() {
 			public List<CategoryDO> perform(Query q) {
@@ -128,12 +133,12 @@ public class SettingQueries {
 			SierraServerLocation loc) {
 		return getScanFilters(loc, true);
 	}
-	
+
 	public static final DBQuery<ListScanFilterResponse> getNewScanFilters(
 			SierraServerLocation loc) {
 		return getScanFilters(loc, false);
 	}
-	
+
 	private static final DBQuery<ListScanFilterResponse> getScanFilters(
 			SierraServerLocation loc, final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
@@ -145,20 +150,24 @@ public class SettingQueries {
 						.prepared("Definitions.deleteDefinition") : null;
 				final Queryable<Void> insert = update ? q
 						.prepared("Definitions.insertDefinition") : null;
-				//for (final ScanFilter filter : response.getScanFilter()) {
-				final Iterator<ScanFilter> it = response.getScanFilter().iterator();
+				// for (final ScanFilter filter : response.getScanFilter()) {
+				final Iterator<ScanFilter> it = response.getScanFilter()
+						.iterator();
 				while (it.hasNext()) {
 					final ScanFilter filter = it.next();
 					final String uid = filter.getUid();
 					final ScanFilterDO f = filters.getScanFilter(uid);
-					if ((f != null) && (f.getRevision() < filter.getRevision())) {
+					if (f == null) {
+						insert.call(uid, filter.getOwner());
+						filters.writeScanFilter(ScanFilters.convertDO(filter));
+					} else if (f.getRevision() < filter.getRevision()) {
 						if (update) {
 							delete.call(uid);
 							insert.call(uid, filter.getOwner());
-							filters.writeScanFilter(ScanFilters.convertDO(filter));
+							filters.writeScanFilter(ScanFilters
+									.convertDO(filter));
 						}
-					}
-					else if (!update) {
+					} else if (!update) {
 						it.remove(); // Remove since it's older
 					}
 				}
@@ -175,7 +184,7 @@ public class SettingQueries {
 			}
 		};
 	}
-	
+
 	/**
 	 * Generates a filter to be used when when filtering artifacts from a scan
 	 * and assigning importance to findings during a scan publish action.
