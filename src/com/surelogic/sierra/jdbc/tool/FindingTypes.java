@@ -1,9 +1,13 @@
 package com.surelogic.sierra.jdbc.tool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 
 public class FindingTypes {
 
@@ -11,6 +15,15 @@ public class FindingTypes {
 
 	public FindingTypes(Query q) {
 		this.q = q;
+	}
+
+	public List<FindingTypeDO> listFindingTypes() {
+		final List<FindingTypeDO> list = new ArrayList<FindingTypeDO>();
+		for (final String uid : q.statement("FindingTypes.listFindingTypes",
+				new StringRowHandler()).call()) {
+			list.add(getFindingType(uid));
+		}
+		return list;
 	}
 
 	public FindingTypeDO getFindingType(String uid) {
