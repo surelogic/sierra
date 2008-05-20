@@ -34,6 +34,11 @@ public class CategoryDO {
 		this.name = name;
 	}
 
+	/**
+	 * Returns a set of the uuid's that this category depends on.
+	 * 
+	 * @return
+	 */
 	public Set<String> getParents() {
 		return parents;
 	}
