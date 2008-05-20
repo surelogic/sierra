@@ -32,8 +32,16 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 
 	/**
 	 * Needs to synchronize on this
+	 * Key: uid of the category
 	 */
 	private Map<String,Set<String>> f_categories;
+	/**
+	 * Key: name of the category
+	 */
+	private Map<String,CategoryDO> f_categoryDefs;
+	/**
+	 * Key: name of the finding type
+	 */
 	private Map<String,FindingTypeDO> f_findingTypes;
 	
 	private BuglinkData() {
@@ -47,6 +55,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	
 	public void refresh() {
 		Map<String,FindingTypeDO> findingTypes = new HashMap<String,FindingTypeDO>();
+		Map<String,CategoryDO> categoryDefs = new HashMap<String,CategoryDO>();
 		Map<String,Set<String>> categories = new HashMap<String,Set<String>>();
 		try {
 			Connection conn = Data.readOnlyConnection();
@@ -58,14 +67,16 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 					findingTypes.put(ftype.getUid(), ftype);
 				}
 
-				List<CategoryDO> raw = Data.withReadOnly(SettingQueries.getLocalCategories());	
+				List<CategoryDO> raw = Data.withReadOnly(SettingQueries.getLocalCategories());
+				// Key: uid of the category
 				Map<String,CategoryDO> rawCategories = new HashMap<String, CategoryDO>(raw.size());
 
 				for(CategoryDO c : raw) {
-					rawCategories.put(c.getName(), c);
+					rawCategories.put(c.getUid(), c);
+					categoryDefs.put(c.getName(), c);
 				}
 				for(CategoryDO c : raw) {
-					String cat = c.getName();
+					String cat = c.getUid();
 					computeCategory(categories, rawCategories, cat);
 				}
 			} finally {
@@ -75,6 +86,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 			synchronized (this) {
 				if (true) { // FIX check if equal?
 					f_categories = categories;
+					f_categoryDefs = categoryDefs;
 					f_findingTypes = findingTypes;
 					notify = true;
 				}
@@ -90,13 +102,13 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	 * Computes the finding types in each category
 	 */
 	private static Set<String> computeCategory(Map<String,Set<String>> categories,
-			                                   Map<String,CategoryDO> rawCategories, String name) {
-		Set<String> categoryTypes = categories.get(name);
+			                                   Map<String,CategoryDO> rawCategories, String uid) {
+		Set<String> categoryTypes = categories.get(uid);
 		if (categoryTypes == null) {
 		    // Compute which finding types are in the category
-			CategoryDO defn = rawCategories.get(name);
+			CategoryDO defn = rawCategories.get(uid);
 			if (defn == null) {
-				SLLogger.getLogger().severe("No category def'n for "+name);
+				SLLogger.getLogger().severe("No category def'n for "+uid);
 				return Collections.emptySet();
 			}
 			categoryTypes = new HashSet<String>();			
@@ -110,7 +122,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 					categoryTypes.add(filter.getFindingType());
 				}
 			}
-			categories.put(name, categoryTypes);
+			categories.put(uid, categoryTypes);
 		}
 		return categoryTypes;
 	}
@@ -126,13 +138,20 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	}
 
 	public synchronized Collection<String> getCategoryNames() {
-		return f_categories.keySet();
+		return f_categoryDefs.keySet();
 	}
 
-	public synchronized Collection<String> getFindingTypes(String cat) {
-		return f_categories.get(cat);
+	/**	 
+	 * @param name Name of the category	
+	 */
+	public synchronized Collection<String> getFindingTypes(String name) {
+		CategoryDO defn = f_categoryDefs.get(name);
+		return f_categories.get(defn.getUid());
 	}
 
+	/**
+	 * @param findingType Name of the finding type
+	 */
 	public synchronized FindingTypeDO getFindingType(String findingType) {
 		return f_findingTypes.get(findingType);
 	}
