@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
-public final class SierraServerManager {
+public final class SierraServerManager extends DatabaseObservable<ISierraServerObserver> {
 
 	public static final SierraServerManager INSTANCE = new SierraServerManager();
 
@@ -283,40 +283,11 @@ public final class SierraServerManager {
 	}
 
 	/**
-	 * The set of observers to changes to the state of this class.
-	 */
-	private final Set<ISierraServerObserver> f_serverObservers = new HashSet<ISierraServerObserver>();
-
-	/**
-	 * Registers a {@link ISierraServerObserver} object to receive notifications
-	 * of changes to the state of this class.
-	 * 
-	 * @param o
-	 *            the observer.
-	 */
-	public void addObserver(final ISierraServerObserver o) {
-		if (o == null)
-			return;
-		f_serverObservers.add(o);
-	}
-
-	/**
-	 * Removes a {@link SierraServerObserver} object from the set of registered
-	 * observers.
-	 * 
-	 * @param o
-	 *            the observer.
-	 */
-	public void removeObserver(final ISierraServerObserver o) {
-		f_serverObservers.remove(o);
-	}
-
-	/**
 	 * Notifies all registered {@link ISierraServerObserver} objects.
 	 */
-	public void notifyObservers() {
-		for (ISierraServerObserver o : f_serverObservers)
-			o.notify(this);
+	@Override
+	protected void notifyObserver(ISierraServerObserver o) {
+		o.notify(this);
 	}
 
 	public void save(File file) {

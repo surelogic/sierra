@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.QB;
@@ -26,7 +24,7 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * The class allows observers to changes to this list of projects
  */
-public final class Projects extends AbstractDatabaseObserver {
+public final class Projects extends DatabaseObservable<IProjectsObserver> {
 
 	private static final Projects INSTANCE = new Projects();
 
@@ -42,21 +40,9 @@ public final class Projects extends AbstractDatabaseObserver {
 		// singleton
 	}
 
-	private final Set<IProjectsObserver> f_observers = new CopyOnWriteArraySet<IProjectsObserver>();
-
-	public void addObserver(final IProjectsObserver o) {
-		if (o == null)
-			return;
-		f_observers.add(o);
-	}
-
-	public void removeObserver(final IProjectsObserver o) {
-		f_observers.remove(o);
-	}
-
-	private void notifyObservers() {
-		for (IProjectsObserver o : f_observers)
-			o.notify(this);
+	@Override
+	protected void notifyObserver(IProjectsObserver o) {
+		o.notify(this);
 	}
 
 	/**
