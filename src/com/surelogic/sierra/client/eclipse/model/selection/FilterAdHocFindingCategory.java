@@ -109,21 +109,16 @@ public final class FilterAdHocFindingCategory extends Filter {
 	}
 
     @Override
-	public int getFindingCountPorous() {
-		int result = 0;
-		synchronized (this) {
-			Set<String> porous = new HashSet<String>();
-			for (String value : f_porousValues) {
-				porous.addAll(f_categories.get(value));
-			}
-			for(String value : porous) {
-				String typeName = f_findingTypes.get(value).getName();
-				Integer count = f_counts.get(typeName);
-				if (count != null)
-					result += count;
-			}
+    protected Iterable<String> getMappedPorousValues() {
+    	Set<String> porous = new HashSet<String>();
+		for (String value : f_porousValues) {
+			porous.addAll(f_categories.get(value));
+		}
+		List<String> result = new ArrayList<String>(porous.size());
+		for(String value : porous) {
+			String typeName = f_findingTypes.get(value).getName();
+			result.add(typeName);
 		}
 		return result;
-	}
-
+    }
 }

@@ -516,7 +516,7 @@ public abstract class Filter {
 	public int getFindingCountPorous() {
 		int result = 0;
 		synchronized (this) {
-			for (String value : f_porousValues) {
+			for (String value : getMappedPorousValues()) {
 				Integer count = f_counts.get(value);
 				if (count != null)
 					result += count;
@@ -609,7 +609,7 @@ public abstract class Filter {
 			throw new IllegalStateException(this + " has no where clause");
 		b.append(getColumnName()).append(" in (");
 		boolean first = true;
-		for (String value : f_porousValues) {
+		for (String value : getMappedPorousValues()) {
 			if (first) {
 				first = false;
 			} else {
@@ -630,6 +630,13 @@ public abstract class Filter {
 		return b.toString();
 	}
 
+	/**
+	 * Any caller must be holding a lock on <code>this</code>.
+	 */
+	protected Iterable<String> getMappedPorousValues() {
+		return f_porousValues;
+	}
+	
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
