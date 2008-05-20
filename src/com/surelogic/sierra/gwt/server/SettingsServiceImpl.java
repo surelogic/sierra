@@ -164,10 +164,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public Status createCategory(final String name, final List entries,
+	public Result createCategory(final String name, final List entries,
 			final List parents) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(Query q, Server s, User u) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Result>() {
+			public Result perform(Query q, Server s, User u) {
 				final Categories sets = new Categories(q);
 				final long revision = s.nextRevision();
 				final CategoryDO set = sets
@@ -180,7 +180,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							.isFiltered()));
 				}
 				sets.updateCategory(set, revision);
-				return Status.success("Filter set " + name + " created.");
+				return Result.success("Filter set " + name + " created.", set
+						.getUid());
 			}
 		});
 
