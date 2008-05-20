@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.settings;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
@@ -33,9 +34,15 @@ public class CategoryUtil {
 			}
 			final Marshaller m = JAXBContext.newInstance(
 					ListCategoryResponse.class).createMarshaller();
-			m.setProperty("jaxb.formatted.output", true);
-			m.marshal(BugLinkServiceClient.create(buglink).listCategories(
-					new ListCategoryRequest()), file);
+			final FileOutputStream o = new FileOutputStream(file);
+			try {
+				m.setProperty("jaxb.formatted.output", true);
+				m.marshal(BugLinkServiceClient.create(buglink).listCategories(
+						new ListCategoryRequest()), o);
+			} finally {
+				o.flush();
+				o.close();
+			}
 			System.out.println("Data written out to " + file.getPath());
 		} catch (final JAXBException e) {
 			e.printStackTrace();
