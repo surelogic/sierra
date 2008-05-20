@@ -95,7 +95,11 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 		if (categoryTypes == null) {
 		    // Compute which finding types are in the category
 			CategoryDO defn = rawCategories.get(name);
-			categoryTypes = new HashSet<String>();
+			if (defn == null) {
+				SLLogger.getLogger().severe("No category def'n for "+name);
+				return Collections.emptySet();
+			}
+			categoryTypes = new HashSet<String>();			
 			for(String parent : defn.getParents()) {
 				categoryTypes.addAll(computeCategory(categories, rawCategories, parent));
 			}
