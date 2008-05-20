@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
@@ -17,8 +18,12 @@ public class CategoryUtil {
 		final SierraServerLocation buglink = new SierraServerLocation(
 				"buglink", "buglink.org", false, 13376, "/sl/", "admin",
 				"fluid!sl!ftw");
-		writeCategories(buglink, new File(System.getProperty("user.dir")
-				+ File.separator + "buglink-categories.xml"));
+		writeCategories(
+				buglink,
+				new File(
+						System.getProperty("user.dir")
+								+ File.separator
+								+ "src/com/surelogic/sierra/jdbc/settings/buglink-categories.xml"));
 	}
 
 	private static void writeCategories(SierraServerLocation buglink, File file) {
@@ -26,11 +31,11 @@ public class CategoryUtil {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			JAXBContext.newInstance(ListCategoryResponse.class)
-					.createMarshaller().marshal(
-							BugLinkServiceClient.create(buglink)
-									.listCategories(new ListCategoryRequest()),
-							file);
+			final Marshaller m = JAXBContext.newInstance(
+					ListCategoryResponse.class).createMarshaller();
+			m.setProperty("jaxb.formatted.output", true);
+			m.marshal(BugLinkServiceClient.create(buglink).listCategories(
+					new ListCategoryRequest()), file);
 			System.out.println("Data written out to " + file.getPath());
 		} catch (final JAXBException e) {
 			e.printStackTrace();
