@@ -154,7 +154,7 @@ img {
 
 /* Action panel - holds a horizontal set of action links */
 .sl-ActionPanel {
-	margin: 1ex;
+	padding-bottom: 4px;
 }
 
 .sl-ActionPanel .sl-ActionPanel-item {
