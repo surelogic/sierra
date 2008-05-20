@@ -68,7 +68,9 @@ public class SettingQueries {
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
 			SierraServerLocation loc) {
-		return getCategories(loc, true);
+		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
+				.listCategories(new ListCategoryRequest());
+		return updateCategories(response, true);
 	}
 
 	/**
@@ -79,13 +81,13 @@ public class SettingQueries {
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
 			SierraServerLocation loc) {
-		return getCategories(loc, false);
-	}
-
-	private static final DBQuery<ListCategoryResponse> getCategories(
-			SierraServerLocation loc, final boolean update) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(new ListCategoryRequest());
+		return updateCategories(response, false);
+	}
+
+	public static final DBQuery<ListCategoryResponse> updateCategories(
+			final ListCategoryResponse response, final boolean update) {
 		return new DBQuery<ListCategoryResponse>() {
 			public ListCategoryResponse perform(Query q) {
 				final Categories sets = new Categories(q);

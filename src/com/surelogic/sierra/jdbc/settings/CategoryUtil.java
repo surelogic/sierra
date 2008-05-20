@@ -27,7 +27,7 @@ public class CategoryUtil {
 								+ "src/com/surelogic/sierra/jdbc/settings/buglink-categories.xml"));
 	}
 
-	private static void writeCategories(SierraServerLocation buglink, File file) {
+	public static void writeCategories(SierraServerLocation buglink, File file) {
 		try {
 			if (!file.exists()) {
 				file.createNewFile();
