@@ -16,6 +16,12 @@ public final class CategoriesContext {
 		this.context = context;
 	}
 
+	public CategoriesContext(String categoryUuid) {
+		super();
+		this.context = ContextManager.getContext();
+		setCategory(categoryUuid);
+	}
+
 	public CategoriesContext(Category category) {
 		super();
 		this.context = ContextManager.getContext();

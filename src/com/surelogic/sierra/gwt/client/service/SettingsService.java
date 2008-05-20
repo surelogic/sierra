@@ -48,9 +48,9 @@ public interface SettingsService extends RemoteService {
 	 *            a list of finding type uuids to disallow
 	 * @param parents
 	 *            a list of parent uuids
-	 * @return
+	 * @return creation status along with the uuid of the new category
 	 */
-	Status createCategory(String name, List entries, List parents);
+	Result createCategory(String name, List entries, List parents);
 
 	/**
 	 * 
