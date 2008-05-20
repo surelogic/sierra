@@ -18,8 +18,7 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
@@ -74,6 +73,7 @@ public final class Activator extends AbstractUIPlugin {
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			// start observing data changes
 			Projects.getInstance().refresh();
+			BuglinkData.getInstance().refresh();
 			// listen changes to the active editor and preference listener
 			MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
