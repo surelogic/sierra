@@ -1,9 +1,11 @@
 package com.surelogic.sierra.jdbc.tool;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
@@ -18,10 +20,24 @@ public class FindingTypes {
 	}
 
 	public List<FindingTypeDO> listFindingTypes() {
+		return getFindingTypes(q.statement("FindingTypes.listFindingTypes",
+				new StringRowHandler()).call());
+	}
+
+	public List<FindingTypeDO> getFindingTypes(Collection<String> uids) {
 		final List<FindingTypeDO> list = new ArrayList<FindingTypeDO>();
-		for (final String uid : q.statement("FindingTypes.listFindingTypes",
-				new StringRowHandler()).call()) {
-			list.add(getFindingType(uid));
+		final Queryable<FindingTypeDO> getType = q.prepared(
+				"FindingTypes.findByUid", new FindingTypeDOHandler());
+		final Queryable<List<ArtifactTypeDO>> getArts = q.prepared(
+				"FindingTypes.findArtifactTypeById",
+				new ArtifactTypeDOHandler());
+		for (final String uid : uids) {
+			if (uid == null) {
+				throw new IllegalArgumentException("May not be null");
+			}
+			final FindingTypeDO t = getType.call(uid);
+			t.getArtifactTypes().addAll(getArts.call(t.getId()));
+			list.add(t);
 		}
 		return list;
 	}
