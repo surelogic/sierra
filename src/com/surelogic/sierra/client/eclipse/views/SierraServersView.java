@@ -76,66 +76,6 @@ public final class SierraServersView extends
 		serverPropertiesItem.setText("Server Properties...");
 		statusTree.getTree().setMenu(contextMenu);
 
-		final Action importAction = new Action("Import Locations...") {
-			@Override
-			public void run() {
-				final ServerImportWizard wizard = new ServerImportWizard();
-				wizard.init(PlatformUI.getWorkbench(), null);
-				WizardDialog dialog = new WizardDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						wizard);
-				dialog.open();
-			}
-		};
-		addToViewMenu(importAction);
-		final Action exportAction = new Action("Export Locations...") {
-			@Override
-			public void run() {
-				final ServerExportWizard wizard = new ServerExportWizard();
-				wizard.init(PlatformUI.getWorkbench(), null);
-				WizardDialog dialog = new WizardDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						wizard);
-				dialog.open();
-			}
-		};
-		addToViewMenu(exportAction);
-		addToViewMenu(new Separator());
-
-		Action serverInteractionAction = new Action(
-				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
-			@Override
-			public void run() {
-				final PreferenceDialog dialog = PreferencesUtil
-						.createPreferenceDialogOn(null,
-								PreferencesAction.SERVER_INTERACTION_ID,
-								PreferencesAction.FILTER, null);
-				dialog.open();
-			}
-		};
-		addToViewMenu(serverInteractionAction);
-		addToViewMenu(new Separator());
-
-		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
-		final Action sortByServerAction = new Action("Show by Team Server",
-				IAction.AS_RADIO_BUTTON) {
-			@Override
-			public void run() {
-				f_mediator.setSortByServer(isChecked());
-			}
-		};
-		final Action sortByProjectAction = new Action("Show by Project",
-				IAction.AS_RADIO_BUTTON) {
-			@Override
-			public void run() {
-				f_mediator.setSortByServer(!isChecked());
-			}
-		};
-		sortByServerAction.setChecked(ServerStatusSort.BY_SERVER == sort);
-		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
-		addToViewMenu(sortByProjectAction);
-		addToViewMenu(sortByServerAction);
-
 		return new SierraServersMediator(this, statusTree, contextMenu,
 				newServerItem, browseServerItem, duplicateServerItem,
 				deleteServerItem, serverConnectItem, synchProjects,

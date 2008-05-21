@@ -21,9 +21,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -31,6 +33,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.SLProgressMonitor;
@@ -63,6 +66,8 @@ import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
+import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
+import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
@@ -241,8 +246,8 @@ implements ISierraServerObserver, IProjectsObserver {
 		
 		f_contextMenu = contextMenu;		
 		f_serverUpdateAction = 
-			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER),
-	                           "Get latest server information") {
+			new ActionListener("Get Latest Server Info",
+	                           "Get the latest information about changes on the servers") {
 			@Override
 			public void run() {
 				asyncUpdateServerInfo();		
@@ -250,8 +255,8 @@ implements ISierraServerObserver, IProjectsObserver {
 		};		
 		//view.addToActionBar(f_serverUpdateAction);
 		f_serverSyncAction =
-			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SYNC),
-            "Synchronize Connected Projects") {
+			new ActionListener("Synchronize All",
+                               "Synchronize servers and connected projects") {
 			@Override
 			public void run() {
 				asyncSyncWithServer();		
@@ -375,6 +380,69 @@ implements ISierraServerObserver, IProjectsObserver {
 	
 	@Override
 	public void init() {
+		// Actions in reverse order
+		final Action importAction = new Action("Import Locations...") {
+			@Override
+			public void run() {
+				final ServerImportWizard wizard = new ServerImportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		f_view.addToViewMenu(importAction);
+		final Action exportAction = new Action("Export Locations...") {
+			@Override
+			public void run() {
+				final ServerExportWizard wizard = new ServerExportWizard();
+				wizard.init(PlatformUI.getWorkbench(), null);
+				WizardDialog dialog = new WizardDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						wizard);
+				dialog.open();
+			}
+		};
+		f_view.addToViewMenu(exportAction);
+		f_view.addToViewMenu(new Separator());
+
+		Action serverInteractionAction = new Action(
+				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
+			@Override
+			public void run() {
+				final PreferenceDialog dialog = PreferencesUtil
+						.createPreferenceDialogOn(null,
+								PreferencesAction.SERVER_INTERACTION_ID,
+								PreferencesAction.FILTER, null);
+				dialog.open();
+			}
+		};
+		f_view.addToViewMenu(serverInteractionAction);
+		f_view.addToViewMenu(f_serverSyncAction);
+		f_view.addToViewMenu(f_serverUpdateAction);
+		f_view.addToViewMenu(new Separator());
+
+		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
+		final Action sortByServerAction = new Action("Show by Team Server",
+				IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				setSortByServer(isChecked());
+			}
+		};
+		final Action sortByProjectAction = new Action("Show by Project",
+				IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				setSortByServer(!isChecked());
+			}
+		};
+		sortByServerAction.setChecked(ServerStatusSort.BY_SERVER == sort);
+		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
+		f_view.addToViewMenu(sortByProjectAction);
+		f_view.addToViewMenu(sortByServerAction);
+		
 		super.init();
 		f_manager.addObserver(this);
 		notify(f_manager);

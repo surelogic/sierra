@@ -14,5 +14,7 @@ public interface IViewCallback {
   
   void setGlobalActionHandler(String id, IAction action);
   void addToViewMenu(IAction action);
+  void addToViewMenu(IContributionItem item);
   void addToActionBar(IAction action);
+  void addToActionBar(IContributionItem item);
 }
