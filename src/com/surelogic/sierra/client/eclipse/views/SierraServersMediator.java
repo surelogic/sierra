@@ -799,10 +799,18 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	private abstract class ProjectsActionListener implements Listener {
 		public final void handleEvent(Event event) {
+			// FIX merge with collectProjects?
+			final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+			if (si.size() == 0) {
+				return;
+			}
 			List<IJavaProject> projects = new ArrayList<IJavaProject>();
-			/*
-			final TreeItem[] si = f_statusTree.getSelection();
-			for (TreeItem item : si) {
+			
+			for (Object o : new Iterable<Object>() {
+				@SuppressWarnings("unchecked")
+				public Iterator<Object> iterator() { return si.iterator(); }								
+			}) {
+				ServersViewContent item = (ServersViewContent) o;
 				if (item.getData() instanceof ProjectStatus) {
 					ProjectStatus ps = (ProjectStatus) item.getData();
 					projects.add(ps.project);
@@ -817,14 +825,14 @@ implements ISierraServerObserver, IProjectsObserver {
 					System.out.println("Ignoring selection: "+item.getText());
 				}
 			}
-			*/
 			if (!projects.isEmpty()) {
 				run(projects);
 			}
 		}
 
-		private void handleProjects(List<IJavaProject> projects, TreeItem parent) {
-			for (TreeItem item : parent.getItems()) {
+		private void handleProjects(List<IJavaProject> projects, 
+				                    ServersViewContent parent) {
+			for (ServersViewContent item : parent.getChildren()) {
 				ProjectStatus ps = (ProjectStatus) item.getData();
 				projects.add(ps.project);
 			}
