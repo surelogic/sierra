@@ -1397,8 +1397,8 @@ implements ISierraServerObserver, IProjectsObserver {
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			serverContent.add(projects);
 			
-			final ChangeStatus status = createProjectItems(projects, server);
-			projects.setText(status.getLabel()+CONNECTED_PROJECTS);
+			createProjectItems(projects, server);
+			projects.setText(projects.getChangeStatus().getLabel()+CONNECTED_PROJECTS);
 		}
 
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
@@ -1407,17 +1407,23 @@ implements ISierraServerObserver, IProjectsObserver {
 		return serverNode;
 	}
 	
+	private static final String delta = ChangeStatus.REMOTE.getLabel();
+	
 	private ServersViewContent createCategories(ServersViewContent serverNode, SierraServer server) {
 		ServerUpdateStatus update = serverUpdates.get(server);
 		final int numCategories = update == null ? 0 : update.getNumUpdatedFilterSets();
 		if (numCategories > 0) {									
-			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
-			root.setText(CATEGORIES);
+			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));			
+			root.setText(delta+CATEGORIES);
+			ServersViewContent label;
 			if (numCategories > 1) {
-			    createLabel(root, numCategories+" updated categories"+s(numCategories));
+			    label = createLabel(root, delta+numCategories+" categories to update",
+			    		            ChangeStatus.REMOTE);
 			} else {
-				createLabel(root, "1 updated category");
+				label = createLabel(root, delta+"1 category to update",
+						            ChangeStatus.REMOTE);
 			}
+			label.setChangeStatus(ChangeStatus.REMOTE);
 			return root;
 		}
 		return null;
@@ -1428,9 +1434,10 @@ implements ISierraServerObserver, IProjectsObserver {
 		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
 		if (num > 0) {									
 			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
-			root.setText(SCAN_FILTERS);
+			root.setText(delta+SCAN_FILTERS);
 			
-			createLabel(root, num+" updated scan filter"+s(num));
+			createLabel(root, delta+num+" scan filter"+s(num)+" to update", 
+					    ChangeStatus.REMOTE);
 			return root;
 		}
 		return null;
@@ -1438,26 +1445,24 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	private void createUnassociatedProjectItems(List<ServersViewContent> content) {
 		List<ServersViewContent> children = null;
-		ServersViewContent parent = null;
-		ChangeStatus status = ChangeStatus.NONE;		
+		ServersViewContent parent = null;		
 		
 		for(ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
-					parent = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_QUERY));
+					parent = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_CONSOLE));
 					children = new ArrayList<ServersViewContent>();
 				}
 				ServersViewContent project = new ServersViewContent(parent, SLImages
 						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 				children.add(project);
-				ChangeStatus pStatus = initProjectItem(project, server, ps);
-				status = status.merge(pStatus);
+				initProjectItem(project, server, ps);
 			}
 		}
 		if (parent != null) {
 			parent.setChildren(children.toArray(emptyChildren));
-			parent.setText(status.getLabel()+"Unconnected");
+			parent.setText(parent.getChangeStatus().getLabel()+"Unconnected");
 			content.add(parent);
 		}		
 	}
@@ -1466,8 +1471,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		// FIX localStatus
 	}
 	
-	private ChangeStatus createProjectItems(ServersViewContent parent, SierraServer server) {
-		ChangeStatus status = ChangeStatus.NONE;
+	private void createProjectItems(ServersViewContent parent, SierraServer server) {
 		List<ServersViewContent> content = new ArrayList<ServersViewContent>();
 		
 		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
@@ -1508,19 +1512,23 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 			ServersViewContent root = new ServersViewContent(parent, SLImages
 				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-			ChangeStatus pStatus = initProjectItem(root, server, s);
-			status = status.merge(pStatus);
+			initProjectItem(root, server, s);
 			content.add(root);
 		}
 		parent.setChildren(content.toArray(emptyChildren));
-		return status;
 	}
 
 	private ServersViewContent createLabel(ServersViewContent parent, String text) {
+		return createLabel(parent, text, ChangeStatus.NONE);
+	}
+	
+	private ServersViewContent createLabel(ServersViewContent parent, String text,
+			                               ChangeStatus delta) {
 		ServersViewContent[] contents = new ServersViewContent[1];
 		ServersViewContent c = new ServersViewContent(parent, null);
 		c.setText(text);
-		contents[0] = c;
+		c.setChangeStatus(delta);
+		contents[0] = c;		
 		parent.setChildren(contents);
 		return c;
 	}
@@ -1540,10 +1548,9 @@ implements ISierraServerObserver, IProjectsObserver {
 		return root;
 	}
 	
-	private ChangeStatus initProjectItem(ServersViewContent root, final SierraServer server, final ProjectStatus ps) { 
+	private void initProjectItem(ServersViewContent root, final SierraServer server, final ProjectStatus ps) { 
 		final List<ServersViewContent> contents = new ArrayList<ServersViewContent>();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
-		ChangeStatus status = ChangeStatus.NONE;
 
 		if (ps.scanDoc != null && ps.scanDoc.exists()) {
 			ServersViewContent scan;
@@ -1579,7 +1586,6 @@ implements ISierraServerObserver, IProjectsObserver {
 			createLocalAuditDetails(audits, auditContents, ps.localFindings);
 			audits.setChildren(auditContents.toArray(emptyChildren));
 			audits.setChangeStatus(ChangeStatus.LOCAL);
-			status = status.merge(ChangeStatus.LOCAL);
 		}		
 		if (ps.numServerProblems > 0) {
 			ServersViewContent problems = new ServersViewContent(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
@@ -1613,18 +1619,18 @@ implements ISierraServerObserver, IProjectsObserver {
 			createServerAuditDetails(ps, audits, auditContents);
 			audits.setChildren(auditContents.toArray(emptyChildren));
 			audits.setChangeStatus(ChangeStatus.REMOTE);
-			status = status.merge(ChangeStatus.REMOTE);
 		}
+		// Also sets status
+		root.setChildren(contents.toArray(emptyChildren));
+		final String label = root.getChangeStatus().getLabel();
 		if (server != null) {
-			root.setText(status.getLabel()+ps.name+" ["+server.getLabel()+']');
+			root.setText(label+ps.name+" ["+server.getLabel()+']');
 		} else {
-			root.setText(status.getLabel()+ps.name);
+			root.setText(label+ps.name);
 		}	
 		//setAllDataIfNull(root, ps);
 		
-		root.setChildren(contents.toArray(emptyChildren));
 		root.setData(ps);
-		return status;
 	}
 
 	/*
