@@ -95,9 +95,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 			f_pages.showPage(f_noDataPage);
 		}
 	}
-
-	public final boolean showingData() {
-		return f_pages.getPage() == f_dataPage;
+	
+	public final boolean matchesStatus(boolean showing) {
+		return showing ? f_pages.getPage() == f_dataPage :
+			             f_pages.getPage() == f_noDataPage;
 	}
 
 	public final void setStatus(Status s) {

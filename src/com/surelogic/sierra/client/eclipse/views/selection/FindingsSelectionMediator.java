@@ -252,7 +252,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		final UIJob job = new SLUIJob() {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (dataShouldShow != f_view.showingData()) {
+				if (!f_view.matchesStatus(dataShouldShow)) {
 					/*
 					 * Only gets run when the page actually has changed.
 					 */

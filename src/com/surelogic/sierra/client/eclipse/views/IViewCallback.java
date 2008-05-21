@@ -9,8 +9,8 @@ public interface IViewCallback {
 	
 	Status getStatus();
 	void setStatus(Status s);
+	boolean matchesStatus(boolean showing);
 	void hasData(boolean yes);
-  boolean showingData();
   
   void setGlobalActionHandler(String id, IAction action);
   void addToViewMenu(IAction action);

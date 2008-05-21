@@ -517,10 +517,10 @@ implements IViewUpdater {
 	 */
 	public void updateContentsForUI() {
 		final boolean noFinding = f_finding == null;
-		final boolean showingData = f_view.showingData();
+		//final boolean showingData = f_view.showingData();
 
 		// Page doesn't match our state
-		if (noFinding == showingData) {
+		if (f_view.matchesStatus(noFinding)) {
 			f_view.hasData(!noFinding);
 			/*
 			 * For some reason on the Mac the browser shows up as a little
