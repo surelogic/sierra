@@ -58,7 +58,7 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 		for (Iterator<SierraServer> iterator = servers.iterator(); iterator
 				.hasNext();) {
 			SierraServer sierraServer = iterator.next();
-			if (sierraServer.isTeamServer())
+			if (!sierraServer.isTeamServer())
 				iterator.remove();
 		}
 		return servers;
