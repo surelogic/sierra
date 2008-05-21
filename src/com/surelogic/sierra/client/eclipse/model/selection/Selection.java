@@ -35,7 +35,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterAuditCount.FACTORY);
 		allFilters.add(FilterAudited.FACTORY);
 		allFilters.add(FilterAdHocFindingCategory.FACTORY);
-		allFilters.add(FilterFindingCategory.FACTORY);
+		//allFilters.add(FilterFindingCategory.FACTORY);
 		allFilters.add(FilterFindingType.FACTORY);
 		allFilters.add(FilterImportance.FACTORY);
 		allFilters.add(FilterJavaClass.FACTORY);

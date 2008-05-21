@@ -2,6 +2,10 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.*;
 
+import org.eclipse.swt.graphics.Image;
+
+import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.IBuglinkDataObserver;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
@@ -16,7 +20,7 @@ implements IBuglinkDataObserver {
 		}
 
 		public String getFilterLabel() {
-			return "Adhoc Category";
+			return "Finding Category";
 		}
 	};
 	
@@ -34,6 +38,11 @@ implements IBuglinkDataObserver {
 		return "FINDING_TYPE"; // For the raw data
 	}
 
+	@Override
+	public Image getImageFor(String value) {
+		return SLImages.getImage(CommonImages.IMG_CATEGORY);
+	}
+	
 	@Override
 	public String getLabel(String uid) {
 		CategoryDO cat = BuglinkData.getInstance().getCategoryDef(uid);
