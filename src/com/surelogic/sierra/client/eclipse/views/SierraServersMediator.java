@@ -239,8 +239,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		f_statusTree.setContentProvider(new ContentProvider());
 		f_statusTree.setLabelProvider(new LabelProvider());
 		
-		f_contextMenu = contextMenu;
-		
+		f_contextMenu = contextMenu;		
 		f_serverUpdateAction = 
 			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER),
 	                           "Get latest server information") {
@@ -249,7 +248,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				asyncUpdateServerInfo();		
 			}
 		};		
-		view.addToActionBar(f_serverUpdateAction);
+		//view.addToActionBar(f_serverUpdateAction);
 		f_serverSyncAction =
 			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_SYNC),
             "Synchronize Connected Projects") {
@@ -257,10 +256,11 @@ implements ISierraServerObserver, IProjectsObserver {
 			public void run() {
 				asyncSyncWithServer();		
 			}
-		};		
+		};
+		/*
 		view.addToActionBar(f_serverSyncAction);
 		view.addToActionBar(new Separator());
-		
+		*/
 		f_newServerAction = 
 			new ActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
 					           "New team server location") {
@@ -270,7 +270,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		};		
 		view.addToActionBar(f_newServerAction);
-
+        
 		f_openInBrowserAction = 
 			new ServerActionListener("Browse", 
 				                     "Open the selected team server in a Web browser",
@@ -281,7 +281,6 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		};
 		f_openInBrowserAction.setEnabled(false);
-		//view.addToActionBar(f_openInBrowserAction);
 		
 		f_duplicateServerAction = 
 			new ServerActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
@@ -293,7 +292,6 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}; 
 		f_duplicateServerAction.setEnabled(false);
-		//view.addToActionBar(f_duplicateServerAction);
 		
 		f_deleteServerAction = new IJavaProjectsActionListener(
 					SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
@@ -325,8 +323,8 @@ implements ISierraServerObserver, IProjectsObserver {
 		};
 		
 		f_deleteServerAction.setEnabled(false);
-		//view.addToActionBar(f_deleteServerAction);
 		
+		/*
 		ActionListener registerAction =
 			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
 			                   "Register your copy of SLIC") {
@@ -346,7 +344,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		};		
 		view.addToActionBar(registerAction);
-		
+		*/
 		f_newServerItem = newServerItem;
 		f_browseServerItem = browseServerItem;
 		f_duplicateServerItem = duplicateServerItem;
