@@ -516,19 +516,18 @@ implements IViewUpdater {
 	 * Must be invoked from the SWT thread.
 	 */
 	public void updateContentsForUI() {
-		final boolean noFinding = f_finding == null;
-		//final boolean showingData = f_view.showingData();
+		final boolean showFinding = f_finding != null;
 
 		// Page doesn't match our state
-		if (f_view.matchesStatus(noFinding)) {
-			f_view.hasData(!noFinding);
+		if (!f_view.matchesStatus(showFinding)) {
+			f_view.hasData(showFinding);
 			/*
 			 * For some reason on the Mac the browser shows up as a little
 			 * square window covering the view's icon. This seems to fix that.
 			 */
-			f_detailsText.setVisible(!noFinding);
+			f_detailsText.setVisible(showFinding);
 		}
-		if (noFinding)
+		if (!showFinding)
 			return;
 
 		/*

@@ -96,6 +96,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		}
 	}
 	
+	/**
+	 * Note that this should be negated, since it doesn't
+	 * take the wait state into account
+	 */
 	public final boolean matchesStatus(boolean showing) {
 		return showing ? f_pages.getPage() == f_dataPage :
 			             f_pages.getPage() == f_noDataPage;

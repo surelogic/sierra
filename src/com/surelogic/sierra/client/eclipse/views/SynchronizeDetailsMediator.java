@@ -65,6 +65,12 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 		f_detailsComposite.setFocus();
 	}
 
+	@Override
+	public void init() {
+		super.init();
+		f_view.setStatus(IViewCallback.Status.NO_DATA);
+	}
+	
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
 		Data.withReadOnly(new DBTransactionNoResult() {
