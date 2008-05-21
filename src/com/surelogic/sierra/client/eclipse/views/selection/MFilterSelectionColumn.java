@@ -580,8 +580,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 	}
 	  
 	void updateData(final TableItem item, String value) {
-	  item.setText(value);
-	  item.setText(0, value);
+		final String label = f_filter.getLabel(value); 
+	  item.setText(label);
+	  item.setText(0, label);
     item.setData(value);
     item.setChecked(f_filter.isPorous(value));
 	}
@@ -614,7 +615,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		/*
 		 * The selection changed on a line.
 		 */
-		f_filter.setPorous(item.getText(), item.getChecked());
+		f_filter.setPorous((String) item.getData(), item.getChecked());
 		updateReport();
 	}
 	

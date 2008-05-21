@@ -648,6 +648,10 @@ public abstract class Filter {
 		}
 	}
 
+	public String getLabel(String value) {
+		return value;
+	}
+	
 	public Image getImageFor(String value) {
 		return null;
 	}

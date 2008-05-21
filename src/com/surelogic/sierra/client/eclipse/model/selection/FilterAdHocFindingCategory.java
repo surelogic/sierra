@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.IBuglinkDataObserver;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
 
 public final class FilterAdHocFindingCategory extends Filter 
 implements IBuglinkDataObserver {
@@ -34,18 +35,32 @@ implements IBuglinkDataObserver {
 	}
 
 	@Override
+	public String getLabel(String uid) {
+		CategoryDO cat = BuglinkData.getInstance().getCategoryDef(uid);
+		return cat.getName();
+	}
+	
+	@Override
 	protected void deriveAllValues() throws Exception {	
 		f_allValues.clear();
 		
-		synchronized (BuglinkData.getInstance()) {
-			f_allValues.addAll(BuglinkData.getInstance().getCategoryNames());
-			Collections.sort(f_allValues);
+		final BuglinkData buglink = BuglinkData.getInstance();
+		synchronized (buglink) {
+			f_allValues.addAll(buglink.getCategoryUids());
+			Collections.sort(f_allValues, new Comparator<String>() {
+				public int compare(String o1, String o2) {
+					// FIX cache one of these?
+					CategoryDO cat1 = buglink.getCategoryDef(o1);
+					CategoryDO cat2 = buglink.getCategoryDef(o2);
+					return cat1.getName().compareTo(cat2.getName());
+				}				
+			});
 
 			for(String cat : f_allValues) {
 				// Compute the count for the category
 				int count = 0;
-				for(String findingType : BuglinkData.getInstance().getFindingTypes(cat)) {
-					String typeName = BuglinkData.getInstance().getFindingType(findingType).getName();
+				for(String findingType : buglink.getFindingTypes(cat)) {
+					String typeName = buglink.getFindingType(findingType).getName();
 					Integer inc = f_counts.get(typeName);
 					if (inc != null) {
 						count += inc;
@@ -62,7 +77,10 @@ implements IBuglinkDataObserver {
     	
     	synchronized (BuglinkData.getInstance()) {
     		for (String value : f_porousValues) {
-    			porous.addAll(BuglinkData.getInstance().getFindingTypes(value));
+    			Collection<String> types = BuglinkData.getInstance().getFindingTypes(value);
+    			if (types != null) {
+    				porous.addAll(types);
+    			}
     		}
     		List<String> result = new ArrayList<String>(porous.size());
     		for(String value : porous) {

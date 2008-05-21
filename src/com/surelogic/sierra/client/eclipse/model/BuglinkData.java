@@ -36,7 +36,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	 */
 	private Map<String,Set<String>> f_categories;
 	/**
-	 * Key: name of the category
+	 * Key: uid of the category
 	 */
 	private Map<String,CategoryDO> f_categoryDefs;
 	/**
@@ -73,7 +73,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 
 				for(CategoryDO c : raw) {
 					rawCategories.put(c.getUid(), c);
-					categoryDefs.put(c.getName(), c);
+					categoryDefs.put(c.getUid(), c);
 				}
 				for(CategoryDO c : raw) {
 					String cat = c.getUid();
@@ -137,18 +137,24 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 		}
 	}
 
-	public synchronized Collection<String> getCategoryNames() {
+	public synchronized Collection<String> getCategoryUids() {
 		return f_categoryDefs.keySet();
 	}
 
 	/**	 
-	 * @param name Name of the category	
+	 * @param name Uid of the category	
 	 */
-	public synchronized Collection<String> getFindingTypes(String name) {
-		CategoryDO defn = f_categoryDefs.get(name);
-		return f_categories.get(defn.getUid());
+	public synchronized Collection<String> getFindingTypes(String uid) {
+		return f_categories.get(uid);
 	}
 
+	/**	 
+	 * @param name Uid of the category	
+	 */
+	public synchronized CategoryDO getCategoryDef(String uid) {
+		return f_categoryDefs.get(uid);
+	}
+	
 	/**
 	 * @param findingType Name of the finding type
 	 */
