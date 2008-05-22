@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -16,7 +17,9 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -36,18 +39,20 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
+import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFilterContent extends ContentComposite {
 
 	private static final String FILTER = "filter";
-
+	private final ActionBlock block = new ActionBlock();
 	private final ScanFilterList scans = new ScanFilterList();
 	private final ScanFilterCache cache = new ScanFilterCache();
 	private final ScanFilterComposite sf = new ScanFilterComposite();
@@ -55,11 +60,16 @@ public class ScanFilterContent extends ContentComposite {
 	private String filterUuid;
 
 	protected void onInitialize(DockPanel rootPanel) {
+		block.initialize();
 		scans.initialize();
 		sf.initialize();
-		rootPanel.add(scans, DockPanel.WEST);
+		final VerticalPanel west = new VerticalPanel();
+		west.add(block);
+		west.add(scans);
+		west.setWidth("100%");
+		rootPanel.add(west, DockPanel.WEST);
 		rootPanel.add(sf, DockPanel.EAST);
-		rootPanel.setCellWidth(scans, "25%");
+		rootPanel.setCellWidth(west, "25%");
 		rootPanel.setCellWidth(sf, "75%");
 		cache.addListener(new CacheListenerAdapter() {
 
@@ -107,36 +117,12 @@ public class ScanFilterContent extends ContentComposite {
 					results.search();
 				}
 			});
-			final StyledButton createScanFilter = new StyledButton(
-					"Create ScanFilter", new ClickListener() {
-
-						public void onClick(Widget sender) {
-							final String name = searchText.getText();
-							if (name.length() > 0) {
-								ServiceHelper.getSettingsService()
-										.createScanFilter(name,
-												new AsyncCallback() {
-													public void onFailure(
-															Throwable caught) {
-														// TODO
-													}
-
-													public void onSuccess(
-															Object result) {
-														cache.refresh();
-													}
-												});
-							}
-						}
-					});
 			grid.setWidth("100%");
 			grid.getColumnFormatter().setWidth(0, "25%");
 			grid.getColumnFormatter().setWidth(1, "75%");
-			grid.setWidget(0, 0, createScanFilter);
-			grid.getFlexCellFormatter().setColSpan(0, 0, 2);
 			searchText.setWidth("100%");
-			grid.setWidget(1, 0, searchLabel);
-			grid.setWidget(1, 1, searchText);
+			grid.setWidget(0, 0, searchLabel);
+			grid.setWidget(0, 1, searchText);
 			contentPanel.add(grid);
 			contentPanel.add(results);
 			results.initialize();
@@ -174,11 +160,8 @@ public class ScanFilterContent extends ContentComposite {
 				final ClickListener listener = new ClickListener() {
 					public void onClick(Widget sender) {
 						ItemLabel label = (ItemLabel) sender;
-						Map map = new HashMap();
-						map.put(FILTER, ((ScanFilter) (label.getItem()))
+						goToScanFilter(((ScanFilter) (label.getItem()))
 								.getUuid());
-						ContextManager.setContext(Context.create(Context
-								.create("scanfilters"), map));
 					}
 				};
 				boolean success = false;
@@ -345,6 +328,95 @@ public class ScanFilterContent extends ContentComposite {
 			setWidget(row, 1, box);
 			setWidget(row, 2, remove);
 		}
+	}
+
+	private class ActionBlock extends BlockPanel {
+		private final StyledButton createScanFilterButton = new StyledButton(
+				"Create a Scan Filter");
+		private final VerticalPanel scanFilterCreatePanel = new VerticalPanel();
+		private final ActionPanel scanFilterActions = new ActionPanel();
+		private final FlexTable fieldTable = new FlexTable();
+		private final TextBox categoryName = new TextBox();
+		private final Image waitImage = ImageHelper.getWaitImage(16);
+
+		protected void onInitialize(VerticalPanel contentPanel) {
+			createScanFilterButton.addClickListener(new ClickListener() {
+
+				public void onClick(Widget sender) {
+					toggleCreateScanFilter();
+				}
+			});
+			contentPanel.add(createScanFilterButton);
+
+			scanFilterCreatePanel.setWidth("100%");
+			fieldTable.setWidth("100%");
+			fieldTable.setText(0, 0, "Name:");
+			fieldTable.setWidget(0, 1, categoryName);
+			scanFilterCreatePanel.add(fieldTable);
+
+			scanFilterActions.addAction("Save", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					createScanFilter(categoryName.getText());
+				}
+			});
+			scanFilterActions.addAction("Cancel", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					toggleCreateScanFilter();
+				}
+			});
+			scanFilterCreatePanel.add(scanFilterActions);
+			scanFilterCreatePanel.setCellHorizontalAlignment(scanFilterActions,
+					HasHorizontalAlignment.ALIGN_RIGHT);
+		}
+
+		private void toggleCreateScanFilter() {
+			final VerticalPanel contentPanel = getContentPanel();
+			if (contentPanel.getWidgetIndex(scanFilterCreatePanel) != -1) {
+				contentPanel.remove(scanFilterCreatePanel);
+			} else {
+				categoryName.setText("");
+				if (scanFilterCreatePanel.getWidgetIndex(scanFilterActions) == -1) {
+					scanFilterCreatePanel.add(scanFilterActions);
+				}
+				if (scanFilterCreatePanel.getWidgetIndex(waitImage) != -1) {
+					scanFilterCreatePanel.remove(waitImage);
+				}
+				final int panelIndex = contentPanel
+						.getWidgetIndex(createScanFilterButton);
+				contentPanel.insert(scanFilterCreatePanel, panelIndex + 1);
+			}
+		}
+
+		private void createScanFilter(String name) {
+			scanFilterActions.removeFromParent();
+			scanFilterCreatePanel.add(waitImage);
+
+			ServiceHelper.getSettingsService().createScanFilter(name,
+					new AsyncCallback() {
+
+						public void onFailure(Throwable caught) {
+							Window.alert("Category creation failed: "
+									+ caught.getMessage());
+							scanFilterCreatePanel.remove(waitImage);
+							scanFilterCreatePanel.add(scanFilterActions);
+						}
+
+						public void onSuccess(Object result) {
+							toggleCreateScanFilter();
+							cache.refresh();
+							goToScanFilter(((ScanFilter) result).getUuid());
+						}
+					});
+		}
+	}
+
+	private static void goToScanFilter(String uuid) {
+		final Map map = new HashMap();
+		map.put(FILTER, uuid);
+		ContextManager.setContext(Context.create(Context.create("scanfilters"),
+				map));
 	}
 
 	// Singleton
