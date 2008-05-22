@@ -16,33 +16,50 @@
 <!-- The module root element -->
 <!ELEMENT module (inherits | source | public | super-source | entry-point | 
   stylesheet | script | servlet | replace-with | generate-with |
-  define-property | extend-property | set-property | property-provider)*>
+  define-property | extend-property | set-property | property-provider |
+  define-linker | add-linker)*>
+<!ATTLIST module
+	rename-to CDATA #IMPLIED
+>
 <!-- Inherit the contents of another module -->
 <!ELEMENT inherits EMPTY>
 <!ATTLIST inherits
 	name CDATA #REQUIRED
 >
 <!-- Specify the source path, relative to the classpath location of the module descriptor -->
-<!ELEMENT source EMPTY>
+<!ELEMENT source (include | exclude)*>
 <!ATTLIST source
 	path CDATA #REQUIRED
+		includes CDATA #IMPLIED
+		excludes CDATA #IMPLIED
+		defaultexclude (yes | no) "yes"
+		casesensitive (true | false) "true"
 >
 <!-- Specify the public resource path, relative to the classpath location of the module descriptor -->
 <!ELEMENT public (include | exclude)*>
 <!ATTLIST public
 	path CDATA #REQUIRED
-        includes CDATA #IMPLIED
-        excludes CDATA #IMPLIED
-        defaultexclude (yes | no) "yes"
-        casesensitive (true | false) "true"
+		includes CDATA #IMPLIED
+		excludes CDATA #IMPLIED
+		defaultexclude (yes | no) "yes"
+		casesensitive (true | false) "true"
+>
+<!-- Specify a source path that rebases subpackages into the root namespace -->
+<!ELEMENT super-source (include | exclude)*>
+<!ATTLIST super-source
+	path CDATA #REQUIRED
+		includes CDATA #IMPLIED
+		excludes CDATA #IMPLIED
+		defaultexclude (yes | no) "yes"
+		casesensitive (true | false) "true"
 >
 <!ELEMENT include EMPTY>
 <!ATTLIST include
-        name CDATA #REQUIRED
+	name CDATA #REQUIRED
 >
 <!ELEMENT exclude EMPTY>
 <!ATTLIST exclude
-        name CDATA #REQUIRED
+	name CDATA #REQUIRED
 >
 
 <!-- Define a module entry point -->
@@ -50,6 +67,7 @@
 <!ATTLIST entry-point
 	class CDATA #REQUIRED
 >
+
 <!-- Preload a stylesheet before executing the GWT application -->
 <!ELEMENT stylesheet EMPTY>
 <!ATTLIST stylesheet
@@ -63,8 +81,22 @@
 <!-- Map a named servlet class to a module-relative path in hosted mode -->
 <!ELEMENT servlet EMPTY>
 <!ATTLIST servlet 
-    path CDATA #REQUIRED
-    class CDATA #REQUIRED
+	path CDATA #REQUIRED
+	class CDATA #REQUIRED
+>
+
+<!-- Adds a Linker to the compilation process -->
+<!ELEMENT add-linker EMPTY>
+<!-- A comma-separated list of linker names -->
+<!ATTLIST add-linker
+  name CDATA #REQUIRED
+>
+
+<!-- Defines a Linker type to package compiler output -->
+<!ELEMENT define-linker EMPTY>
+<!ATTLIST define-linker
+  class CDATA #REQUIRED
+  name CDATA #REQUIRED
 >
 
 <!--                 ^^^ Commonly-used elements ^^^                -->
@@ -127,5 +159,3 @@
 <!ELEMENT any (%predicates;)*>
 <!-- Predicate that NANDs all child conditions -->
 <!ELEMENT none (%predicates;)*>
-<!-- Used internally by GWT system modules to rebase packages into the root namespace -->
-<!ELEMENT super-source EMPTY>
