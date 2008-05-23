@@ -2,27 +2,16 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class Category implements Serializable, Cacheable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7604533742268537846L;
 
-	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.Category>
-	 */
-	private Set parents;
+	private Set<Category> parents;
 
-	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.FilterEntry>
-	 */
-	private Set entries;
+	private Set<FilterEntry> entries;
 
 	private String name;
 
@@ -40,19 +29,19 @@ public class Category implements Serializable, Cacheable {
 		this.name = name;
 	}
 
-	public Set getParents() {
+	public Set<Category> getParents() {
 		return parents;
 	}
 
-	public void setParents(Set parents) {
+	public void setParents(Set<Category> parents) {
 		this.parents = parents;
 	}
 
-	public Set getEntries() {
+	public Set<FilterEntry> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(Set entries) {
+	public void setEntries(Set<FilterEntry> entries) {
 		this.entries = entries;
 	}
 
@@ -87,12 +76,12 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set getExcludedEntries() {
-		final HashSet set = new HashSet(entries.size());
-		for (final Iterator i = entries.iterator(); i.hasNext();) {
-			final FilterEntry e = (FilterEntry) i.next();
-			if (e.isFiltered()) {
-				set.add(e);
+	public Set<FilterEntry> getExcludedEntries() {
+		final HashSet<FilterEntry> set = new HashSet<FilterEntry>(entries
+				.size());
+		for (FilterEntry entry : entries) {
+			if (entry.isFiltered()) {
+				set.add(entry);
 			}
 		}
 		return set;
@@ -104,16 +93,15 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set getIncludedEntries() {
-		final Set set = new HashSet();
+	public Set<FilterEntry> getIncludedEntries() {
+		final Set<FilterEntry> set = new HashSet<FilterEntry>();
 		if (parents != null) {
-			for (final Iterator i = parents.iterator(); i.hasNext();) {
-				set.addAll(((Category) i.next()).getIncludedEntries());
+			for (Category parent : parents) {
+				set.addAll(parent.getIncludedEntries());
 			}
 		}
 		if (entries != null) {
-			for (final Iterator i = entries.iterator(); i.hasNext();) {
-				final FilterEntry entry = (FilterEntry) i.next();
+			for (FilterEntry entry : entries) {
 				if (entry.isFiltered()) {
 					set.remove(entry);
 				} else {
@@ -131,17 +119,17 @@ public class Category implements Serializable, Cacheable {
 		copy.name = name;
 		copy.info = info;
 		if (parents != null) {
-			copy.parents = new HashSet();
-			for (Iterator it = parents.iterator(); it.hasNext();) {
-				copy.parents.add(((Category) it.next()).copy());
+			copy.parents = new HashSet<Category>();
+			for (Category parent : parents) {
+				copy.parents.add(parent.copy());
 			}
 		} else {
 			copy.parents = null;
 		}
 		if (entries != null) {
-			copy.entries = new HashSet();
-			for (Iterator it = entries.iterator(); it.hasNext();) {
-				copy.entries.add(((FilterEntry) it.next()).copy());
+			copy.entries = new HashSet<FilterEntry>();
+			for (FilterEntry entry : entries) {
+				copy.entries.add(entry.copy());
 			}
 		} else {
 			copy.entries = null;
@@ -149,6 +137,7 @@ public class Category implements Serializable, Cacheable {
 		return copy;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -156,25 +145,15 @@ public class Category implements Serializable, Cacheable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj != null && obj instanceof Category) {
+			return LangUtil.equals(uuid, ((Category) obj).uuid);
 		}
-		if (!GWT.getTypeName(this).equals(GWT.getTypeName(obj))) {
-			return false;
-		}
-		final Category other = (Category) obj;
-		if (uuid == null) {
-			if (other.uuid != null) {
-				return false;
-			}
-		} else if (!uuid.equals(other.uuid)) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 }

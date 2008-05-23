@@ -15,10 +15,7 @@ public class FindingTypeInfo implements Serializable {
 	private String name;
 	private String shortMessage;
 	private String info;
-	/**
-	 * @gwt.typeArgs <java.lang.String>
-	 */
-	private List reportedBy;
+	private List<String> reportedBy;
 
 	public String getUid() {
 		return uid;
@@ -52,9 +49,9 @@ public class FindingTypeInfo implements Serializable {
 		this.info = info;
 	}
 
-	public List getReportedBy() {
+	public List<String> getReportedBy() {
 		if (reportedBy == null) {
-			reportedBy = new ArrayList();
+			reportedBy = new ArrayList<String>();
 		}
 		return reportedBy;
 	}

@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 /**
  * Typesafe Enumeration of importances
@@ -36,6 +36,7 @@ public final class ImportanceView implements Serializable {
 		return name;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -43,25 +44,15 @@ public final class ImportanceView implements Serializable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj != null && obj instanceof ImportanceView) {
+			return LangUtil.equals(name, ((ImportanceView) obj).name);
 		}
-		if (!GWT.getTypeName(obj).equals(GWT.getTypeName(this))) {
-			return false;
-		}
-		final ImportanceView other = (ImportanceView) obj;
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	public static ImportanceView[] values() {

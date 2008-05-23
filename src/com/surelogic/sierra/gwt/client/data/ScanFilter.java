@@ -2,8 +2,9 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFilter implements Serializable, Cacheable {
 
@@ -17,19 +18,12 @@ public class ScanFilter implements Serializable, Cacheable {
 	private String name;
 
 	private long revision;
-	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
-	 */
-	private Set categories;
-	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
-	 */
-	private Set types;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String>
-	 */
-	private Set projects;
+	private Set<ScanFilterEntry> categories;
+
+	private Set<ScanFilterEntry> types;
+
+	private Set<String> projects;
 
 	public String getUuid() {
 		return uuid;
@@ -55,13 +49,9 @@ public class ScanFilter implements Serializable, Cacheable {
 		this.revision = revision;
 	}
 
-	/**
-	 * @gwt.typeArgs <java.lang.String>
-	 * @return
-	 */
-	public Set getProjects() {
+	public Set<String> getProjects() {
 		if (projects == null) {
-			projects = new HashSet();
+			projects = new HashSet<String>();
 		}
 		return projects;
 	}
@@ -69,12 +59,11 @@ public class ScanFilter implements Serializable, Cacheable {
 	/**
 	 * Return the categories defined in this scan filter
 	 * 
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
 	 * @return
 	 */
-	public Set getCategories() {
+	public Set<ScanFilterEntry> getCategories() {
 		if (categories == null) {
-			categories = new HashSet();
+			categories = new HashSet<ScanFilterEntry>();
 		}
 		return categories;
 	}
@@ -82,12 +71,11 @@ public class ScanFilter implements Serializable, Cacheable {
 	/**
 	 * Return the finding types referenced in this scan filter
 	 * 
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilterEntry>
 	 * @return
 	 */
-	public Set getTypes() {
+	public Set<ScanFilterEntry> getTypes() {
 		if (types == null) {
-			types = new HashSet();
+			types = new HashSet<ScanFilterEntry>();
 		}
 		return types;
 	}
@@ -97,21 +85,22 @@ public class ScanFilter implements Serializable, Cacheable {
 		copy.uuid = uuid;
 		copy.name = name;
 		copy.revision = revision;
-		copy.categories = new HashSet(getCategories().size());
-		for (final Iterator i = getCategories().iterator(); i.hasNext();) {
-			copy.categories.add(i.next());
+		copy.categories = new HashSet<ScanFilterEntry>(getCategories().size());
+		for (ScanFilterEntry entry : getCategories()) {
+			copy.categories.add(entry);
 		}
-		copy.types = new HashSet(getTypes().size());
-		for (final Iterator i = getTypes().iterator(); i.hasNext();) {
-			copy.types.add(i.next());
+		copy.types = new HashSet<ScanFilterEntry>(getTypes().size());
+		for (ScanFilterEntry entry : getTypes()) {
+			copy.types.add(entry);
 		}
-		copy.projects = new HashSet(getProjects().size());
-		for (final Iterator i = getProjects().iterator(); i.hasNext();) {
-			copy.projects.add(i.next());
+		copy.projects = new HashSet<String>(getProjects().size());
+		for (String project : getProjects()) {
+			copy.projects.add(project);
 		}
 		return copy;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -119,22 +108,15 @@ public class ScanFilter implements Serializable, Cacheable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj != null && obj instanceof ScanFilter) {
+			return LangUtil.equals(uuid, ((ScanFilter) obj).uuid);
 		}
-		final ScanFilter other = (ScanFilter) obj;
-		if (uuid == null) {
-			if (other.uuid != null) {
-				return false;
-			}
-		} else if (!uuid.equals(other.uuid)) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 }

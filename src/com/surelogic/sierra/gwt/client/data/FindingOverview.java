@@ -10,10 +10,6 @@ import java.util.List;
  * 
  */
 public class FindingOverview implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6080219515417976528L;
 
 	private String findingType;
@@ -27,15 +23,13 @@ public class FindingOverview implements Serializable {
 	/**
 	 * Ordered by time.
 	 * 
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.AuditOverview>
 	 */
-	private List audits;
+	private List<AuditOverview> audits;
 	/**
 	 * Ordered by time.
 	 * 
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ArtifactOverview>
 	 */
-	private List artifacts;
+	private List<ArtifactOverview> artifacts;
 
 	public FindingOverview() {
 		// Do nothing
@@ -97,19 +91,19 @@ public class FindingOverview implements Serializable {
 		this.className = className;
 	}
 
-	public List getAudits() {
+	public List<AuditOverview> getAudits() {
 		return audits;
 	}
 
-	public void setAudits(List audits) {
+	public void setAudits(List<AuditOverview> audits) {
 		this.audits = audits;
 	}
 
-	public List getArtifacts() {
+	public List<ArtifactOverview> getArtifacts() {
 		return artifacts;
 	}
 
-	public void setArtifacts(List artifacts) {
+	public void setArtifacts(List<ArtifactOverview> artifacts) {
 		this.artifacts = artifacts;
 	}
 

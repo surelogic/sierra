@@ -2,13 +2,10 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ScanFilterEntry implements Serializable, Comparable {
-
-	/**
-	 * 
-	 */
+public class ScanFilterEntry implements Serializable,
+		Comparable<ScanFilterEntry> {
 	private static final long serialVersionUID = 6408580757889309477L;
 
 	private String uid;
@@ -57,6 +54,7 @@ public class ScanFilterEntry implements Serializable, Comparable {
 		this.importance = importance;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -64,25 +62,15 @@ public class ScanFilterEntry implements Serializable, Comparable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj != null && obj instanceof ScanFilterEntry) {
+			return LangUtil.equals(uid, ((ScanFilterEntry) obj).uid);
 		}
-		if (!GWT.getTypeName(this).equals(GWT.getTypeName(obj))) {
-			return false;
-		}
-		final ScanFilterEntry other = (ScanFilterEntry) obj;
-		if (uid == null) {
-			if (other.uid != null) {
-				return false;
-			}
-		} else if (!uid.equals(other.uid)) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	public ScanFilterEntry copy() {
@@ -95,17 +83,14 @@ public class ScanFilterEntry implements Serializable, Comparable {
 		return e;
 	}
 
-	public int compareTo(Object that) {
+	public int compareTo(ScanFilterEntry that) {
 		if (this == that) {
 			return 0;
-		}
-		if (this == null) {
-			return -1;
 		}
 		if (that == null) {
 			return 1;
 		}
-		return name.compareTo(((ScanFilterEntry) that).name);
+		return name.compareTo(that.name);
 	}
 
 }
