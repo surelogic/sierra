@@ -1,17 +1,18 @@
 package com.surelogic.sierra.gwt.client.data;
 
-public class CacheListenerAdapter implements CacheListener {
+public class CacheListenerAdapter<E extends Cacheable> implements
+		CacheListener<E> {
 
-	public void onItemUpdate(Cache cache, Cacheable item, Status status,
+	public void onItemUpdate(Cache<E> cache, E item, Status status,
 			Throwable failure) {
 		// override this method if needed
 	}
 
-	public void onRefresh(Cache cache, Throwable failure) {
+	public void onRefresh(Cache<E> cache, Throwable failure) {
 		// override this method if needed
 	}
 
-	public void onStartRefresh(Cache cache) {
+	public void onStartRefresh(Cache<E> cache) {
 		// override this method if needed
 	}
 

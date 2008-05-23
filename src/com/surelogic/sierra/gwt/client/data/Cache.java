@@ -8,34 +8,37 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public abstract class Cache {
-	private final List items = new ArrayList();
-	private final List listeners = new ArrayList();
+public abstract class Cache<E extends Cacheable> {
+	private final List<E> items = new ArrayList<E>();
+	private final List<CacheListener<E>> listeners = new ArrayList<CacheListener<E>>();
 
 	public final void refresh() {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			((CacheListener) it.next()).onStartRefresh(this);
+		for (CacheListener<E> listener : listeners) {
+			listener.onStartRefresh(this);
 		}
-		doRefreshCall(new CacheCallback() {
+		doRefreshCall(new CacheCallback<List<E>>() {
 
-			protected void processResult(Object result) {
+			@Override
+			protected void processResult(List<E> result) {
 				items.clear();
-				items.addAll((List) result);
+				items.addAll(result);
 			}
 
-			protected void callListener(CacheListener listener, Object result,
-					Throwable failure) {
+			@Override
+			protected void callListener(CacheListener<E> listener,
+					List<E> result, Throwable failure) {
 				listener.onRefresh(Cache.this, failure);
 			}
+
 		});
 	}
 
-	public final void save(final Cacheable item) {
-		doSaveCall(item, new CacheCallback() {
+	public final void save(final E item) {
+		doSaveCall(item, new CacheCallback<Status>() {
 
-			protected void processResult(Object result) {
-				Status s = (Status) result;
-				if (s.isSuccess()) {
+			@Override
+			protected void processResult(Status result) {
+				if (result.isSuccess()) {
 					int itemIndex = getItemIndex(item);
 					if (itemIndex != -1) {
 						items.remove(itemIndex);
@@ -47,10 +50,10 @@ public abstract class Cache {
 				}
 			}
 
-			protected void callListener(CacheListener listener, Object result,
-					Throwable failure) {
-				listener.onItemUpdate(Cache.this, item, (Status) result,
-						failure);
+			@Override
+			protected void callListener(CacheListener<E> listener,
+					Status result, Throwable failure) {
+				listener.onItemUpdate(Cache.this, item, result, failure);
 			}
 		});
 	}
@@ -63,75 +66,69 @@ public abstract class Cache {
 		return items.size();
 	}
 
-	public final Cacheable getItem(int index) {
-		return (Cacheable) items.get(index);
+	public final E getItem(int index) {
+		return items.get(index);
 	}
 
-	public final Cacheable getItem(String uuid) {
-		for (Iterator it = items.iterator(); it.hasNext();) {
-			final Cacheable nextItem = (Cacheable) it.next();
-			if (LangUtil.equals(uuid, nextItem.getUuid())) {
-				return nextItem;
+	public final E getItem(String uuid) {
+		for (E item : items) {
+			if (LangUtil.equals(uuid, item.getUuid())) {
+				return item;
 			}
 		}
 		return null;
 	}
 
-	public final int getItemIndex(Cacheable item) {
-		final String uuid = item.getUuid();
-		for (int i = 0; i < items.size(); i++) {
-			if (LangUtil.equals(uuid, ((Cacheable) items.get(i)).getUuid())) {
-				return i;
-			}
-		}
-		return -1;
+	public final int getItemIndex(E item) {
+		return getItemIndex(item.getUuid());
 	}
 
 	public final int getItemIndex(String uuid) {
 		for (int i = 0; i < items.size(); i++) {
-			if (LangUtil.equals(uuid, ((Cacheable) items.get(i)).getUuid())) {
+			if (LangUtil.equals(uuid, items.get(i).getUuid())) {
 				return i;
 			}
 		}
 		return -1;
 	}
 
-	public final Iterator getItemIterator() {
+	public final Iterator<E> getItemIterator() {
 		return items.iterator();
 	}
 
-	public final void addListener(CacheListener listener) {
+	public final void addListener(CacheListener<E> listener) {
 		listeners.add(listener);
 	}
 
-	public final void removeListener(CacheListener listener) {
+	public final void removeListener(CacheListener<E> listener) {
 		listeners.remove(listener);
 	}
 
-	protected abstract void doRefreshCall(AsyncCallback callback);
+	protected abstract <T> void doRefreshCall(AsyncCallback<T> callback);
 
-	protected abstract void doSaveCall(Cacheable item, AsyncCallback callback);
+	protected abstract <T> void doSaveCall(Cacheable item,
+			AsyncCallback<T> callback);
 
-	private abstract class CacheCallback implements AsyncCallback {
+	private abstract class CacheCallback<T> implements AsyncCallback<T> {
 
 		public void onFailure(Throwable caught) {
 			ExceptionUtil.log(caught);
-			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				callListener((CacheListener) it.next(), null, caught);
+			for (CacheListener<E> listener : listeners) {
+				callListener(listener, null, caught);
 			}
 		}
 
-		public void onSuccess(Object result) {
+		public void onSuccess(T result) {
 			processResult(result);
-			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				callListener((CacheListener) it.next(), result, null);
+			for (CacheListener<E> listener : listeners) {
+				callListener(listener, result, null);
 			}
 		}
 
-		protected abstract void processResult(Object result);
+		protected abstract void processResult(T result);
 
-		protected abstract void callListener(CacheListener listener,
-				Object result, Throwable failure);
+		protected abstract void callListener(CacheListener<E> listener,
+				T result, Throwable failure);
 
 	}
 
