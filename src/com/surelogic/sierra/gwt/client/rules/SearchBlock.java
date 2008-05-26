@@ -23,6 +23,7 @@ public class SearchBlock extends BlockPanel {
 		this.results = new SearchResultsBlock(this.categories);
 	}
 
+	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
 		contentPanel.add(grid);
 
@@ -40,6 +41,7 @@ public class SearchBlock extends BlockPanel {
 		contentPanel.add(results);
 
 		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
+			@Override
 			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
 				results.search(searchText.getText());
 			}
@@ -49,6 +51,11 @@ public class SearchBlock extends BlockPanel {
 				results.search(searchText.getText());
 			}
 		});
+	}
+
+	public void startRefresh() {
+		results.clearResults();
+		results.setWaitStatus();
 	}
 
 	public void refresh() {
