@@ -19,10 +19,11 @@ public class CategoryBlock extends BlockPanel implements Editable {
 	private final TextArea description = new TextArea();
 	private final CategoryFindingsBlock findingTypes = new CategoryFindingsBlock();
 
-	private final EditableListenerCollection listeners = new EditableListenerCollection();
+	private final EditableListenerCollection<Category> listeners = new EditableListenerCollection<Category>();
 	private Category currentCategory;
 	private boolean editing;
 
+	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
 		setTitle("Category");
 
@@ -141,11 +142,11 @@ public class CategoryBlock extends BlockPanel implements Editable {
 		return editing;
 	}
 
-	public void addListener(EditableListener listener) {
+	public void addListener(EditableListener<Category> listener) {
 		listeners.addListener(listener);
 	}
 
-	public void removeListener(EditableListener listener) {
+	public void removeListener(EditableListener<Category> listener) {
 		listeners.removeListener(listener);
 	}
 

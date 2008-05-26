@@ -6,7 +6,7 @@ import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class CategoryCache extends Cache {
+public class CategoryCache extends Cache<Category> {
 
 	protected void doRefreshCall(AsyncCallback callback) {
 		ServiceHelper.getSettingsService().getCategories(callback);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 
 public interface SettingsServiceAsync {
@@ -14,8 +15,8 @@ public interface SettingsServiceAsync {
 
 	void getCategories(AsyncCallback callback);
 
-	void createCategory(String name, List entries, List parents,
-			AsyncCallback callback);
+	void createCategory(String name, List<FilterEntry> entries,
+			List<Category> parents, AsyncCallback callback);
 
 	void updateCategory(Category c, AsyncCallback callback);
 

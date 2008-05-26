@@ -17,8 +17,8 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
-import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -62,31 +62,31 @@ public class CategoriesContent extends ContentComposite {
 		westPanel.add(searchBlock);
 
 		categoryBlock.initialize();
-		categoryBlock.addListener(new EditableListenerAdapter() {
+		categoryBlock.addListener(new EditableListenerAdapter<Category>() {
 
 			@Override
-			public void onSave(Widget sender, Object item) {
-				categories.save((Category) item);
+			public void onSave(Widget sender, Category item) {
+				categories.save(item);
 			}
 		});
 		rootPanel.add(categoryBlock, DockPanel.CENTER);
 		rootPanel.setCellWidth(categoryBlock, "75%");
 
-		categories.addListener(new CacheListenerAdapter() {
+		categories.addListener(new CacheListenerAdapter<Category>() {
 
 			@Override
-			public void onRefresh(Cache cache, Throwable failure) {
+			public void onRefresh(Cache<Category> cache, Throwable failure) {
 				searchBlock.refresh();
 				refreshSelection(ContextManager.getContext());
 			}
 
 			@Override
-			public void onItemUpdate(Cache cache, Cacheable item,
+			public void onItemUpdate(Cache<Category> cache, Category item,
 					Status status, Throwable failure) {
 				categories.refresh();
 
 				if (failure == null && status.isSuccess()) {
-					new CategoriesContext((Category) item).updateContext();
+					new CategoriesContext(item).updateContext();
 				} else if (!status.isSuccess()) {
 					Window.alert("Save rejected: " + status.getMessage());
 				} else if (failure != null) {
@@ -113,14 +113,12 @@ public class CategoriesContent extends ContentComposite {
 
 	private void refreshSelection(Context context) {
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		final Category cat = (Category) categories.getItem(rulesCtx
-				.getCategory());
+		final Category cat = categories.getItem(rulesCtx.getCategory());
 		if (cat != null) {
 			searchBlock.setSelection(cat);
 			categoryBlock.setSelection(cat);
 		} else if (categories.getItemCount() > 0) {
-			new CategoriesContext((Category) categories.getItem(0))
-					.updateContext();
+			new CategoriesContext(categories.getItem(0)).updateContext();
 		}
 	}
 
@@ -189,9 +187,10 @@ public class CategoriesContent extends ContentComposite {
 			categoryCreatePanel.add(waitImage);
 
 			ServiceHelper.getSettingsService().createCategory(name,
-					new ArrayList(), new ArrayList(),
+					new ArrayList<FilterEntry>(), new ArrayList<Category>(),
 					new ResultCallback<String>() {
 
+						@Override
 						protected void doFailure(String message, String result) {
 							Window
 									.alert("Category creation failed: "
@@ -200,6 +199,7 @@ public class CategoriesContent extends ContentComposite {
 							categoryCreatePanel.add(categoryActions);
 						}
 
+						@Override
 						protected void doSuccess(String message, String result) {
 							toggleCreateCategory();
 							categories.refresh();
