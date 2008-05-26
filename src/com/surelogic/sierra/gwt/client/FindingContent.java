@@ -53,14 +53,14 @@ public final class FindingContent extends ContentComposite {
 			setEmpty();
 		} else {
 			ServiceHelper.getFindingService().getFinding(findingType,
-					new Callback() {
+					new Callback<FindingOverview>() {
 
-						protected void onFailure(String message, Object result) {
+						protected void onFailure(String message, FindingOverview result) {
 							setEmpty();
 						}
 
-						protected void onSuccess(String message, Object result) {
-							setFinding((FindingOverview) result);
+						protected void onSuccess(String message, FindingOverview result) {
+							setFinding(result);
 						}
 
 					});

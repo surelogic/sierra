@@ -27,6 +27,7 @@ public final class FindingTypeContent extends ContentComposite {
 		// singleton
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel.add(new HTML("<h3>Finding Type</h3>"));
@@ -41,26 +42,32 @@ public final class FindingTypeContent extends ContentComposite {
 
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		final String findingType = context.getParameter(PARAM_FINDING);
 		if ((findingType == null) || (findingType.length() == 0)) {
 			setEmpty();
 		} else {
 			ServiceHelper.getSettingsService().getFindingTypeInfo(findingType,
-					new Callback() {
+					new Callback<FindingTypeInfo>() {
 
-						protected void onFailure(String message, Object result) {
+						@Override
+						protected void onFailure(String message,
+								FindingTypeInfo result) {
 							setEmpty();
 						}
 
-						protected void onSuccess(String message, Object result) {
-							setFindingType((FindingTypeInfo) result);
+						@Override
+						protected void onSuccess(String message,
+								FindingTypeInfo result) {
+							setFindingType(result);
 						}
 
 					});
 		}
 	}
 
+	@Override
 	protected void onDeactivate() {
 		setEmpty();
 	}

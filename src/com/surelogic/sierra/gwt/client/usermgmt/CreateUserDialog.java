@@ -115,18 +115,18 @@ public class CreateUserDialog extends DialogBox {
 			account.setAdministrator(isAdmin.isChecked());
 			account.setUserName(userText);
 			ServiceHelper.getManageUserService().createUser(account, passText,
-					new Callback() {
+					new Callback<String>() {
 
 						protected void onException(Throwable caught) {
 							setErrorMessage("Unable to create user. (Server may be down)");
 						}
 
-						protected void onFailure(String message, Object result) {
+						protected void onFailure(String message, String result) {
 							status = Status.failure(message);
 							hide();
 						}
 
-						protected void onSuccess(String message, Object result) {
+						protected void onSuccess(String message, String result) {
 							status = Status.success(message);
 							hide();
 						}

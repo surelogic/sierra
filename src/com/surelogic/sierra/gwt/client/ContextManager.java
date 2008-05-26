@@ -35,9 +35,9 @@ public final class ContextManager {
 
 	public static void login(String username, String password) {
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.login(username, password, new Callback() {
+		sessionService.login(username, password, new Callback<UserAccount>() {
 
-			public void onFailure(String message, Object result) {
+			public void onFailure(String message, UserAccount result) {
 				userAccount = null;
 				for (Iterator i = userListeners.iterator(); i.hasNext();) {
 					((UserListener) i.next()).onLoginFailure(message);
@@ -45,8 +45,8 @@ public final class ContextManager {
 				refreshContext();
 			}
 
-			public void onSuccess(String message, Object result) {
-				userAccount = (UserAccount) result;
+			public void onSuccess(String message, UserAccount result) {
+				userAccount = result;
 				for (Iterator i = userListeners.iterator(); i.hasNext();) {
 					((UserListener) i.next()).onLogin(userAccount);
 				}
@@ -65,7 +65,7 @@ public final class ContextManager {
 
 	public static void logout(final String errorMessage) {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
-		svc.logout(new Callback() {
+		svc.logout(new Callback<String>() {
 
 			protected void onException(Throwable caught) {
 				final UserAccount oldUser = userAccount;
@@ -76,7 +76,7 @@ public final class ContextManager {
 				refreshContext();
 			}
 
-			protected void onFailure(String message, Object result) {
+			protected void onFailure(String message, String result) {
 				if (errorMessage != null && !errorMessage.equals("")) {
 					message += " (" + errorMessage + ")";
 				}
@@ -86,7 +86,7 @@ public final class ContextManager {
 				refreshContext();
 			}
 
-			protected void onSuccess(String message, Object result) {
+			protected void onSuccess(String message, String result) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
 				for (Iterator i = userListeners.iterator(); i.hasNext();) {

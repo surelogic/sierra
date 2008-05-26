@@ -27,13 +27,13 @@ public class Chart extends Composite {
 			rootPanel.add(new Label("No Chart Available"));
 		} else {
 			ServiceHelper.getTicketService().getImageMap(ticket,
-					new Callback() {
+					new Callback<ImageMapData>() {
 
-						protected void onFailure(String message, Object result) {
+						protected void onFailure(String message, ImageMapData result) {
 							loadFailed(message);
 						}
 
-						protected void onSuccess(String message, Object result) {
+						protected void onSuccess(String message, ImageMapData result) {
 							loadChart(ticket, (ImageMapData) result);
 						}
 

@@ -10,10 +10,9 @@ import com.surelogic.sierra.gwt.client.ui.Chart;
 
 public final class ChartBuilder {
 
-	private final Map parameters;
+	private final Map<String, String> parameters = new HashMap<String, String>();
 
-	private ChartBuilder(String name) {
-		parameters = new HashMap();
+	private ChartBuilder(String name) {		
 		parameters.put("type", name);
 	}
 
@@ -34,13 +33,13 @@ public final class ChartBuilder {
 
 	public Chart build() {
 		final Chart chart = new Chart();
-		ServiceHelper.getTicketService().getTicket(parameters, new Callback() {
+		ServiceHelper.getTicketService().getTicket(parameters, new Callback<Ticket>() {
 
-			protected void onFailure(String message, Object result) {
+			protected void onFailure(String message, Ticket result) {
 				// TODO
 			}
 
-			protected void onSuccess(String message, Object result) {
+			protected void onSuccess(String message, Ticket result) {
 				chart.setChartTicket((Ticket) result);
 			}
 		});

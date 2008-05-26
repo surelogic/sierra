@@ -44,6 +44,7 @@ public class CategoriesContent extends ContentComposite {
 		// singleton
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		final Label title = UI.h2("Categories");
 		rootPanel.add(title, DockPanel.NORTH);
@@ -63,6 +64,7 @@ public class CategoriesContent extends ContentComposite {
 		categoryBlock.initialize();
 		categoryBlock.addListener(new EditableListenerAdapter() {
 
+			@Override
 			public void onSave(Widget sender, Object item) {
 				categories.save((Category) item);
 			}
@@ -72,11 +74,13 @@ public class CategoriesContent extends ContentComposite {
 
 		categories.addListener(new CacheListenerAdapter() {
 
+			@Override
 			public void onRefresh(Cache cache, Throwable failure) {
 				searchBlock.refresh();
 				refreshSelection(ContextManager.getContext());
 			}
 
+			@Override
 			public void onItemUpdate(Cache cache, Cacheable item,
 					Status status, Throwable failure) {
 				categories.refresh();
@@ -93,6 +97,7 @@ public class CategoriesContent extends ContentComposite {
 		});
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		if (!isActive()) {
 			categories.refresh();
@@ -101,6 +106,7 @@ public class CategoriesContent extends ContentComposite {
 		}
 	}
 
+	@Override
 	protected void onDeactivate() {
 		searchBlock.clear();
 	}
@@ -127,6 +133,7 @@ public class CategoriesContent extends ContentComposite {
 		private final TextBox categoryName = new TextBox();
 		private final Image waitImage = ImageHelper.getWaitImage(16);
 
+		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
 			createCategoryButton.addClickListener(new ClickListener() {
 
@@ -182,9 +189,10 @@ public class CategoriesContent extends ContentComposite {
 			categoryCreatePanel.add(waitImage);
 
 			ServiceHelper.getSettingsService().createCategory(name,
-					new ArrayList(), new ArrayList(), new ResultCallback() {
+					new ArrayList(), new ArrayList(),
+					new ResultCallback<String>() {
 
-						protected void doFailure(String message, Object result) {
+						protected void doFailure(String message, String result) {
 							Window
 									.alert("Category creation failed: "
 											+ message);
@@ -192,11 +200,10 @@ public class CategoriesContent extends ContentComposite {
 							categoryCreatePanel.add(categoryActions);
 						}
 
-						protected void doSuccess(String message, Object result) {
+						protected void doSuccess(String message, String result) {
 							toggleCreateCategory();
 							categories.refresh();
-							new CategoriesContext((String) result)
-									.updateContext();
+							new CategoriesContext(result).updateContext();
 						}
 					});
 		}

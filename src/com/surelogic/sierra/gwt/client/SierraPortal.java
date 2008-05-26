@@ -32,14 +32,14 @@ public class SierraPortal implements EntryPoint {
 
 		// see if the user has an established session, or needs to log in
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.getUserAccount(new Callback() {
+		sessionService.getUserAccount(new Callback<UserAccount>() {
 
-			protected void onFailure(String message, Object result) {
+			protected void onFailure(String message, UserAccount result) {
 				ContextManager.refreshContext();
 			}
 
-			protected void onSuccess(String message, Object result) {
-				ContextManager.updateUser((UserAccount) result);
+			protected void onSuccess(String message, UserAccount result) {
+				ContextManager.updateUser(result);
 			}
 		});
 

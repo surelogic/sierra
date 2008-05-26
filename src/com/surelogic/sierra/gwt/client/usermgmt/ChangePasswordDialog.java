@@ -113,13 +113,13 @@ public class ChangePasswordDialog extends DialogBox {
 			ServiceHelper.getManageUserService().changeUserPassword(
 					user.getUserName(), currentPassText, passText,
 
-					new Callback() {
+					new Callback<String>() {
 
-						protected void onFailure(String message, Object result) {
+						protected void onFailure(String message, String result) {
 							setErrorMessage("Unable to create user: " + message);
 						}
 
-						protected void onSuccess(String message, Object result) {
+						protected void onSuccess(String message, String result) {
 							hide();
 						}
 					});

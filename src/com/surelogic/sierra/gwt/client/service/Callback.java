@@ -1,12 +1,15 @@
 package com.surelogic.sierra.gwt.client.service;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
-public abstract class Callback implements AsyncCallback {
+public abstract class Callback<T extends Serializable> implements
+		AsyncCallback<Result<T>> {
 	private final String debugMessage;
 
 	public Callback() {
@@ -27,15 +30,14 @@ public abstract class Callback implements AsyncCallback {
 		onException(caught);
 	}
 
-	public final void onSuccess(Object result) {
-		Result slResult = (Result) result;
+	public final void onSuccess(Result<T> result) {
 		if (debugMessage != null) {
-			showDebugSuccess(slResult);
+			showDebugSuccess(result);
 		}
-		if (slResult.isSuccess()) {
-			onSuccess(slResult.getMessage(), slResult.getResult());
+		if (result.isSuccess()) {
+			onSuccess(result.getMessage(), result.getResult());
 		} else {
-			onFailure(slResult.getMessage(), slResult.getResult());
+			onFailure(result.getMessage(), result.getResult());
 		}
 	}
 
@@ -44,15 +46,15 @@ public abstract class Callback implements AsyncCallback {
 				.logout("Unable to communicate with server. (Server may be down)");
 	}
 
-	protected abstract void onSuccess(String message, Object result);
+	protected abstract void onSuccess(String message, T result);
 
-	protected abstract void onFailure(String message, Object result);
+	protected abstract void onFailure(String message, T result);
 
 	private void showDebugFailure(Throwable caught) {
 		showDebugMessage("onFailure", caught.toString());
 	}
 
-	private void showDebugSuccess(Result result) {
+	private void showDebugSuccess(Result<T> result) {
 		final StringBuffer paramBuf = new StringBuffer();
 		paramBuf.append(result.isSuccess()).append(',');
 		paramBuf.append(result.getMessage()).append(',');

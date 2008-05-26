@@ -3,9 +3,6 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 
 public class Status implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3150761641714394024L;
 
 	private boolean success;
@@ -43,7 +40,7 @@ public class Status implements Serializable {
 		return new Status(false, message);
 	}
 
-	public static Status fromResult(Result result) {
+	public static Status fromResult(Result<?> result) {
 		return new Status(result.isSuccess(), result.getMessage());
 	}
 }
