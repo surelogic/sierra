@@ -142,6 +142,10 @@ img {
 	color: green;
 }
 
+.padded {
+	padding: 4px;
+}
+
 /* SureLogic Component Styling */
 .sl-ContentComposite {
 	width: 100%;
