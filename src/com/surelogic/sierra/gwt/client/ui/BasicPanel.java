@@ -57,10 +57,12 @@ public class BasicPanel extends Composite {
 		rootPanel.add(contentPanel, DockPanel.CENTER);
 	}
 
+	@Override
 	public final String getTitle() {
 		return sectionTitle.getText();
 	}
 
+	@Override
 	public final void setTitle(String text) {
 		sectionTitle.setText(text);
 		updateHeader();
@@ -108,31 +110,31 @@ public class BasicPanel extends Composite {
 		updateHeader();
 	}
 
-	protected void setWaitStatus() {
+	public void setWaitStatus() {
 		setStatus(ImageHelper.getWaitImage(16),
 				HasHorizontalAlignment.ALIGN_CENTER);
 	}
 
-	protected void setErrorStatus(String text) {
+	public void setErrorStatus(String text) {
 		final Label textLbl = new Label(text);
 		textLbl.addStyleName("error");
 		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
 	}
 
-	protected void setSuccessStatus(String text) {
+	public void setSuccessStatus(String text) {
 		final Label textLbl = new Label(text);
 		textLbl.addStyleName("success");
 		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
 	}
 
-	protected void setStatus(Widget w, HorizontalAlignmentConstant align) {
+	public void setStatus(Widget w, HorizontalAlignmentConstant align) {
 		clearStatus();
 		status = w;
 		contentPanel.add(status);
 		contentPanel.setCellHorizontalAlignment(status, align);
 	}
 
-	protected void clearStatus() {
+	public void clearStatus() {
 		if (status != null) {
 			contentPanel.remove(status);
 		}
