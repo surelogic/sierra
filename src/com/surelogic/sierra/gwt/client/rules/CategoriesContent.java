@@ -24,7 +24,6 @@ import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.EditableListenerAdapter;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
@@ -34,7 +33,7 @@ public class CategoriesContent extends ContentComposite {
 	private final CategoryCache categories = new CategoryCache();
 	private final ActionBlock actionBlock = new ActionBlock();
 	private final SearchBlock searchBlock = new SearchBlock(categories);
-	private final CategoryBlock categoryBlock = new CategoryBlock();
+	private final CategoryView categoryView = new CategoryView();
 
 	public static CategoriesContent getInstance() {
 		return instance;
@@ -61,16 +60,22 @@ public class CategoriesContent extends ContentComposite {
 		searchBlock.initialize();
 		westPanel.add(searchBlock);
 
-		categoryBlock.initialize();
-		categoryBlock.addListener(new EditableListenerAdapter<Category>() {
+		categoryView.initialize();
+		categoryView.addAction("Edit", new ClickListener() {
 
-			@Override
-			public void onSave(Widget sender, Category item) {
-				categories.save(item);
+			public void onClick(Widget sender) {
+				editCategory(categoryView.getCategory());
 			}
 		});
-		rootPanel.add(categoryBlock, DockPanel.CENTER);
-		rootPanel.setCellWidth(categoryBlock, "75%");
+		// categoryBlock.addListener(new EditableListenerAdapter<Category>() {
+		//
+		// @Override
+		// public void onSave(Widget sender, Category item) {
+		// categories.save(item);
+		// }
+		// });
+		rootPanel.add(categoryView, DockPanel.CENTER);
+		rootPanel.setCellWidth(categoryView, "75%");
 
 		categories.addListener(new CacheListener<Category>() {
 
@@ -118,10 +123,14 @@ public class CategoriesContent extends ContentComposite {
 		final Category cat = categories.getItem(rulesCtx.getCategory());
 		if (cat != null) {
 			searchBlock.setSelection(cat);
-			categoryBlock.setSelection(cat);
+			categoryView.setCategory(cat);
 		} else if (categories.getItemCount() > 0) {
 			new CategoriesContext(categories.getItem(0)).updateContext();
 		}
+	}
+
+	private void editCategory(Category cat) {
+		// TODO remove CategoryView and add CategoryEditor
 	}
 
 	private class ActionBlock extends BlockPanel {
