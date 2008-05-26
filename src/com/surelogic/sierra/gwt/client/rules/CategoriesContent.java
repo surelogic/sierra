@@ -16,7 +16,7 @@ import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
+import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -72,15 +72,17 @@ public class CategoriesContent extends ContentComposite {
 		rootPanel.add(categoryBlock, DockPanel.CENTER);
 		rootPanel.setCellWidth(categoryBlock, "75%");
 
-		categories.addListener(new CacheListenerAdapter<Category>() {
+		categories.addListener(new CacheListener<Category>() {
 
-			@Override
+			public void onStartRefresh(Cache<Category> cache) {
+				searchBlock.startRefresh();
+			}
+
 			public void onRefresh(Cache<Category> cache, Throwable failure) {
 				searchBlock.refresh();
 				refreshSelection(ContextManager.getContext());
 			}
 
-			@Override
 			public void onItemUpdate(Cache<Category> cache, Category item,
 					Status status, Throwable failure) {
 				categories.refresh();
