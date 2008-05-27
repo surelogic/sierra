@@ -2,14 +2,14 @@ package com.surelogic.sierra.gwt.client.service;
 
 import com.surelogic.sierra.gwt.client.data.Status;
 
-public abstract class StatusCallback extends StandardCallback {
+public abstract class StatusCallback extends StandardCallback<Status> {
 
-	protected void doSuccess(Object result) {
-		Status status = (Status) result;
-		if (status == null) {
-			status = Status.failure("No result returned");
+	@Override
+	protected void doSuccess(Status result) {
+		if (result == null) {
+			result = Status.failure("No result returned");
 		}
-		doStatus(status);
+		doStatus(result);
 	}
 
 	protected abstract void doStatus(Status status);

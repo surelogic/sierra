@@ -2,13 +2,14 @@ package com.surelogic.sierra.gwt.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public interface SessionService extends RemoteService {
 
-	Result getUserAccount();
+	Result<UserAccount> getUserAccount();
 
-	Result login(String username, String password);
+	Result<UserAccount> login(String username, String password);
 
-	Result logout();
+	Result<String> logout();
 
 }

@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.History;
@@ -14,8 +13,8 @@ import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 public final class ContextManager {
 
 	private static UserAccount userAccount;
-	private static List userListeners = new ArrayList();
-	private static List contextListeners = new ArrayList();
+	private static List<UserListener> userListeners = new ArrayList<UserListener>();
+	private static List<ContextListener> contextListeners = new ArrayList<ContextListener>();
 
 	private ContextManager() {
 		// Not instantiable
@@ -37,18 +36,20 @@ public final class ContextManager {
 		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
 		sessionService.login(username, password, new Callback<UserAccount>() {
 
+			@Override
 			public void onFailure(String message, UserAccount result) {
 				userAccount = null;
-				for (Iterator i = userListeners.iterator(); i.hasNext();) {
-					((UserListener) i.next()).onLoginFailure(message);
+				for (UserListener listener : userListeners) {
+					listener.onLoginFailure(message);
 				}
 				refreshContext();
 			}
 
+			@Override
 			public void onSuccess(String message, UserAccount result) {
 				userAccount = result;
-				for (Iterator i = userListeners.iterator(); i.hasNext();) {
-					((UserListener) i.next()).onLogin(userAccount);
+				for (UserListener listener : userListeners) {
+					listener.onLogin(userAccount);
 				}
 				refreshContext();
 			}
@@ -57,8 +58,8 @@ public final class ContextManager {
 
 	public static void updateUser(UserAccount user) {
 		userAccount = user;
-		for (Iterator i = userListeners.iterator(); i.hasNext();) {
-			((UserListener) i.next()).onUpdate(userAccount);
+		for (UserListener listener : userListeners) {
+			listener.onUpdate(userAccount);
 		}
 		refreshContext();
 	}
@@ -67,30 +68,33 @@ public final class ContextManager {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
 		svc.logout(new Callback<String>() {
 
+			@Override
 			protected void onException(Throwable caught) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (Iterator i = userListeners.iterator(); i.hasNext();) {
-					((UserListener) i.next()).onLogout(oldUser, errorMessage);
+				for (UserListener listener : userListeners) {
+					listener.onLogout(oldUser, errorMessage);
 				}
 				refreshContext();
 			}
 
+			@Override
 			protected void onFailure(String message, String result) {
 				if (errorMessage != null && !errorMessage.equals("")) {
 					message += " (" + errorMessage + ")";
 				}
-				for (Iterator i = userListeners.iterator(); i.hasNext();) {
-					((UserListener) i.next()).onLogout(userAccount, message);
+				for (UserListener listener : userListeners) {
+					listener.onLogout(userAccount, message);
 				}
 				refreshContext();
 			}
 
+			@Override
 			protected void onSuccess(String message, String result) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (Iterator i = userListeners.iterator(); i.hasNext();) {
-					((UserListener) i.next()).onLogout(oldUser, errorMessage);
+				for (UserListener listener : userListeners) {
+					listener.onLogout(oldUser, errorMessage);
 				}
 				refreshContext();
 			}
@@ -151,8 +155,7 @@ public final class ContextManager {
 
 	private static void notifyContextListeners() {
 		final Context context = getContext();
-		for (Iterator i = contextListeners.iterator(); i.hasNext();) {
-			final ContextListener listener = (ContextListener) i.next();
+		for (ContextListener listener : contextListeners) {
 			listener.onChange(context);
 		}
 	}
