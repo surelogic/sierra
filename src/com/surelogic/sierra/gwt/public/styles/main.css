@@ -30,11 +30,11 @@ a.hover {
 }
 
 img {
-    border: none;
+	border: none;
 }
 
 .font-italic {
-    font-style: italic;
+	font-style: italic;
 }
 
 .logo {
@@ -77,7 +77,7 @@ img {
 
 .log-panel {
 	color: #666666;
-    border: 1px solid;    
+	border: 1px solid;
 }
 
 .log-item {
@@ -104,9 +104,9 @@ img {
 
 /* Rules Content */
 .categories-search-category {
-    font-size: small;
-    padding: 2px;
-    cursor: pointer;
+	font-size: small;
+	padding: 2px;
+	cursor: pointer;
 	cursor: hand;
 }
 
@@ -172,12 +172,10 @@ img {
 /* Overview tables */
 .dashboard {
 	margin: 0px;
-	
 }
 
 .dashboard-cell {
-    vertical-align: top;
-    
+	vertical-align: top;
 }
 
 /* Table Section */
@@ -255,19 +253,18 @@ img {
 
 .sl-Section-info {
 	font-weight: bold;
-	
 }
 
 .sl-Section-actionpanel {
 	font-size: small;
-    font-weight: bold;
-    text-decoration: underline;
+	font-weight: bold;
+	text-decoration: underline;
 	cursor: pointer;
 	cursor: hand;
 }
 
 .sl-Section-actionpanel-item {
-    padding-left: 6px;
+	padding-left: 6px;
 }
 
 .sl-Section-contentpanel {
@@ -277,7 +274,7 @@ img {
 }
 
 .sl-Section-contentpanel-editing {
-	border: 3px groove #666699; 
+	border: 3px groove #666699;
 }
 
 .sl-Subsection-titlepanel {
@@ -294,7 +291,7 @@ img {
 
 /* SL Button */
 .sl-Button {
-    border: 2px groove #001166;
+	border: 2px groove #001166;
 	text-align: center;
 	background-color: #DDDDFF;
 	cursor: pointer;
@@ -302,7 +299,7 @@ img {
 }
 
 .sl-Button-up {
-
+	
 }
 
 .sl-Button-down {
@@ -310,15 +307,15 @@ img {
 }
 
 .sl-Button-up-hovering {
-    background-color: #EEEEFF;
+	background-color: #EEEEFF;
 }
 
 .sl-Button-up-disabled {
-    background-color: #DDDDDD;
+	background-color: #DDDDDD;
 }
 
 .sl-Button-down-disabled {
-    background-color: #333333;
+	background-color: #333333;
 }
 
 /* Grid panel */
@@ -377,7 +374,7 @@ img {
 .sl-ItemLabel {
 	font-size: small;
 	padding: 2px;
-    cursor: pointer;
+	cursor: pointer;
 	cursor: hand;
 }
 
@@ -385,7 +382,6 @@ img {
 	border: 1px solid #AAAAFF;
 	background-color: #EEEEFF;
 	padding: 1px;
-	
 }
 
 .sl-ItemLabel-selected {
@@ -433,13 +429,13 @@ img {
 	width: 10px;
 	border-bottom: solid 1px #000000;
 	background-image: url(../images/tab-first-gradient.png);
-	background-repeat: repeat-y; 
+	background-repeat: repeat-y;
 }
 
 .gwt-TabBar .gwt-TabBarRest {
 	border-bottom: solid 1px #000000;
 	background-image: url(../images/tab-rest-gradient.png);
-	background-repeat: repeat-y; 
+	background-repeat: repeat-y;
 }
 
 .gwt-TabBar .gwt-TabBarItem {
@@ -469,13 +465,14 @@ img {
 /* Filter Set page styling
  * 
  */
- 
 .filter-set-name {
-	font-size: smaller;	
+	font-size: smaller;
 }
+
 .filter-entry-name {
- 	font-size: smaller;	
+	font-size: smaller;
 }
+
 .filter-entry-widget {
 	width: 100%;
 }
@@ -486,6 +483,7 @@ img {
 .scan-filter-entry-title {
 	text-decoration: underline;
 }
+
 /*
  * Disclosure panel styling
  */
@@ -498,12 +496,12 @@ img {
 }
 
 .gwt-DisclosurePanel-open .header {
-	background-color: #AAAADD;
+	background-color: #DDDDFF;
 	border: 1px solid #666699;
 }
 
 .gwt-DisclosurePanel-closed .header {
-	background-color: #DDDDFF;
+	background-color: #EEEEFF;
 	border: 1px solid #666699;
 }
 
@@ -531,8 +529,8 @@ img {
 
 /* TextBox styling */
 .gwt-TextBox {
-    border: 1px solid #001166;
-    padding: 2px;
+	border: 1px solid #001166;
+	padding: 2px;
 }
 
 /* PasswordTextBox styling */
@@ -543,14 +541,14 @@ img {
 
 /* ListBox styling */
 .gwt-ListBox {
-    border: 1px solid #001166;
+	border: 1px solid #001166;
 }
 
 .gwt-SuggestBoxPopup {
 	border: thin solid #001166;
-	background-color: white;	
+	background-color: white;
 }
 
-.gwt-SuggestBoxPopup .item-selected { 
-	background-color: yellow;	
+.gwt-SuggestBoxPopup .item-selected {
+	background-color: yellow;
 }
