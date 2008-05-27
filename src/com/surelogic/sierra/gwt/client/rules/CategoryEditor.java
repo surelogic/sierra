@@ -32,9 +32,6 @@ public class CategoryEditor extends BlockPanel {
 		setTitle("Category");
 
 		categoryInfo.setWidth("100%");
-		categoryInfo.getColumnFormatter().setWidth(0, "15%");
-		categoryInfo.getColumnFormatter().setWidth(1, "35%");
-		categoryInfo.getColumnFormatter().setWidth(2, "50%");
 
 		categoryInfo.setText(0, 0, "Name:");
 		nameEditText.setWidth("100%");
@@ -43,6 +40,10 @@ public class CategoryEditor extends BlockPanel {
 		categoryInfo.setText(1, 0, "Description:");
 		description.setVisibleLines(5);
 		categoryInfo.setWidget(2, 0, description);
+
+		categoryInfo.getColumnFormatter().setWidth(0, "15%");
+		categoryInfo.getColumnFormatter().setWidth(1, "35%");
+		categoryInfo.getColumnFormatter().setWidth(2, "50%");
 		categoryInfo.getFlexCellFormatter().setColSpan(2, 0, 3);
 
 		contentPanel.add(categoryInfo);
