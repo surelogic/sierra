@@ -25,16 +25,17 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 	private static final Logger log = SLLogger
 			.getLoggerFor(SessionServiceImpl.class);
 
-	public Result getUserAccount() {
+	public Result<UserAccount> getUserAccount() {
 		final User u = UserContext.peek();
 		if (u == null) {
-			return Result.failure("");
+			return Result.failure("", null);
 		}
 
 		return Result.success(getUserAccount(u));
 	}
 
-	public Result login(final String userName, final String password) {
+	public Result<UserAccount> login(final String userName,
+			final String password) {
 		if (userName != null && password != null) {
 			final User u = ConnectionFactory
 					.withReadOnly(new ServerTransaction<User>() {
@@ -53,21 +54,22 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 				return Result.success(getUserAccount(u));
 			} else {
 				log.info("Failed logging attempt for user " + userName + ".");
-				return Result.failure("Invalid username or password");
+				return Result.failure("Invalid username or password", null);
 			}
 		} else {
-			return Result.failure("Missing username or password");
+			return Result.failure("Missing username or password", null);
 		}
 	}
 
-	public Result logout() {
+	public Result<String> logout() {
+		// TODO change this to return a Status instead
 		try {
 			getThreadLocalRequest().getSession().invalidate();
 		} catch (IllegalStateException ise) {
 			// ignore exception if already logged out
 		}
 		UserContext.set(null);
-		return Result.success("Logged out.");
+		return Result.success("Logged out.", null);
 	}
 
 	private UserAccount getUserAccount(final User user) {
