@@ -53,7 +53,7 @@ public class CategoryView extends BlockPanel {
 
 		final String catInfo = cat == null ? "" : cat.getInfo();
 		if (catInfo == null || "".equals(catInfo)) {
-			description.setText("None");
+			description.setText("No summary information.");
 			description.addStyleName("font-italic");
 		} else {
 			description.setText(catInfo);
