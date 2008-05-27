@@ -33,7 +33,9 @@ public class CategoriesContent extends ContentComposite {
 	private final CategoryCache categories = new CategoryCache();
 	private final ActionBlock actionBlock = new ActionBlock();
 	private final SearchBlock searchBlock = new SearchBlock(categories);
+	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final CategoryView categoryView = new CategoryView();
+	private final CategoryEditor categoryEditor = new CategoryEditor();
 
 	public static CategoriesContent getInstance() {
 		return instance;
@@ -64,18 +66,27 @@ public class CategoriesContent extends ContentComposite {
 		categoryView.addAction("Edit", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				editCategory(categoryView.getCategory());
+				setCategory(categoryView.getCategory(), true);
 			}
 		});
-		// categoryBlock.addListener(new EditableListenerAdapter<Category>() {
-		//
-		// @Override
-		// public void onSave(Widget sender, Category item) {
-		// categories.save(item);
-		// }
-		// });
-		rootPanel.add(categoryView, DockPanel.CENTER);
-		rootPanel.setCellWidth(categoryView, "75%");
+
+		categoryEditor.initialize();
+		categoryEditor.addAction("Save", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				categories.save(categoryEditor.getUpdatedCategory());
+			}
+		});
+		categoryEditor.addAction("Cancel", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				setCategory(categoryEditor.getCategory(), false);
+			}
+		});
+
+		selectionPanel.setWidth("100%");
+		rootPanel.add(selectionPanel, DockPanel.CENTER);
+		rootPanel.setCellWidth(selectionPanel, "75%");
 
 		categories.addListener(new CacheListener<Category>() {
 
@@ -85,7 +96,7 @@ public class CategoriesContent extends ContentComposite {
 
 			public void onRefresh(Cache<Category> cache, Throwable failure) {
 				searchBlock.refresh();
-				refreshSelection(ContextManager.getContext());
+				refreshContext(ContextManager.getContext());
 			}
 
 			public void onItemUpdate(Cache<Category> cache, Category item,
@@ -109,7 +120,7 @@ public class CategoriesContent extends ContentComposite {
 		if (!isActive()) {
 			categories.refresh();
 		} else {
-			refreshSelection(context);
+			refreshContext(context);
 		}
 	}
 
@@ -118,19 +129,31 @@ public class CategoriesContent extends ContentComposite {
 		searchBlock.clear();
 	}
 
-	private void refreshSelection(Context context) {
+	private void refreshContext(Context context) {
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
 		final Category cat = categories.getItem(rulesCtx.getCategory());
 		if (cat != null) {
 			searchBlock.setSelection(cat);
-			categoryView.setCategory(cat);
+			setCategory(cat, false);
 		} else if (categories.getItemCount() > 0) {
 			new CategoriesContext(categories.getItem(0)).updateContext();
 		}
 	}
 
-	private void editCategory(Category cat) {
-		// TODO remove CategoryView and add CategoryEditor
+	private void setCategory(Category cat, boolean edit) {
+		if (edit) {
+			categoryEditor.setCategory(cat);
+			if (selectionPanel.getWidgetIndex(categoryEditor) == -1) {
+				selectionPanel.clear();
+				selectionPanel.add(categoryEditor);
+			}
+		} else {
+			categoryView.setCategory(cat);
+			if (selectionPanel.getWidgetIndex(categoryView) == -1) {
+				selectionPanel.clear();
+				selectionPanel.add(categoryView);
+			}
+		}
 	}
 
 	private class ActionBlock extends BlockPanel {

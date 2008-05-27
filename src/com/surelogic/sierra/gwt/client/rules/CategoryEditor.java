@@ -3,12 +3,11 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextArea;
@@ -44,7 +43,7 @@ public class CategoryEditor extends BlockPanel {
 		categoryInfo.setText(1, 0, "Description:");
 		description.setVisibleLines(5);
 		categoryInfo.setWidget(2, 0, description);
-		categoryInfo.getFlexCellFormatter().setColSpan(1, 0, 3);
+		categoryInfo.getFlexCellFormatter().setColSpan(2, 0, 3);
 
 		contentPanel.add(categoryInfo);
 
@@ -60,6 +59,7 @@ public class CategoryEditor extends BlockPanel {
 
 	public void setCategory(Category cat) {
 		category = cat;
+		setSummary(category.getName());
 		nameEditText.setText(category.getName());
 		String catInfo = category.getInfo();
 		if (catInfo == null) {
@@ -81,7 +81,7 @@ public class CategoryEditor extends BlockPanel {
 	}
 
 	private class FindingsEditor extends BlockPanel {
-		private static final String PRIMARY_STYLE = CategoryBlock.PRIMARY_STYLE;
+		private Map<FilterEntry, ItemCheckBox<FilterEntry>> findings = new HashMap<FilterEntry, ItemCheckBox<FilterEntry>>();
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
@@ -91,14 +91,15 @@ public class CategoryEditor extends BlockPanel {
 		public void setCategory(Category cat) {
 			final VerticalPanel contentPanel = getContentPanel();
 			contentPanel.clear();
+			findings.clear();
 
 			// add the findings that belong to the selected category
-			final List<FilterEntry> findings = new ArrayList<FilterEntry>(cat
-					.getEntries());
+			final List<FilterEntry> catFindings = new ArrayList<FilterEntry>(
+					cat.getEntries());
 			final FilterEntryComparator filterComparator = new FilterEntryComparator();
-			Collections.sort(findings, filterComparator);
+			Collections.sort(catFindings, filterComparator);
 
-			for (FilterEntry finding : findings) {
+			for (FilterEntry finding : catFindings) {
 				contentPanel
 						.add(createFindingUI(finding, finding.isFiltered()));
 			}
@@ -131,33 +132,28 @@ public class CategoryEditor extends BlockPanel {
 			findingUI.setTitle(finding.getShortMessage());
 			findingUI.setChecked(!filtered);
 			findingUI.addStyleName(PRIMARY_STYLE + "-finding");
-
+			findings.put(finding, findingUI);
 			return findingUI;
 		}
 
-		public void saveTo(Category cat) {
-			for (Iterator it = findings.entrySet().iterator(); it.hasNext();) {
-				Entry findingEntry = (Entry) it.next();
-				CheckBox ui = (CheckBox) findingEntry.getKey();
-				FilterEntry finding = (FilterEntry) findingEntry.getValue();
-				updateFilterEntry(cat.getEntries(), finding, !ui.isChecked());
+		public void saveTo(Category target) {
+			Set<FilterEntry> targetEntries = target.getEntries();
+			for (Map.Entry<FilterEntry, ItemCheckBox<FilterEntry>> findingEntry : findings
+					.entrySet()) {
+				FilterEntry targetFinding = findEntry(targetEntries,
+						findingEntry.getKey().getUuid());
+				targetFinding.setFiltered(!findingEntry.getValue().isChecked());
 			}
 		}
 
-		private void updateFilterEntry(Set entries, FilterEntry finding,
-				boolean filtered) {
-			final String findingUuid = finding.getUuid();
-			for (Iterator it = entries.iterator(); it.hasNext();) {
-				FilterEntry nextFilter = (FilterEntry) it.next();
-				if (findingUuid.equals(nextFilter.getUuid())) {
-					nextFilter.setFiltered(filtered);
-					break;
+		private FilterEntry findEntry(Set<FilterEntry> targetEntries,
+				String uuid) {
+			for (FilterEntry finding : targetEntries) {
+				if (finding.getUuid().equals(uuid)) {
+					return finding;
 				}
 			}
-		}
-
-		private void addCategory() {
-			// TODO need a dialog or UI update to add categories + findings
+			return null;
 		}
 
 		private class FilterEntryComparator implements Comparator<FilterEntry> {
