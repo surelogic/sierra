@@ -26,6 +26,7 @@ import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class CategoriesContent extends ContentComposite {
@@ -67,6 +68,12 @@ public class CategoriesContent extends ContentComposite {
 
 			public void onClick(Widget sender) {
 				setCategory(categoryView.getCategory(), true);
+			}
+		});
+		categoryView.addAction("Delete", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				deleteCategory(categoryView.getCategory());
 			}
 		});
 
@@ -156,6 +163,11 @@ public class CategoriesContent extends ContentComposite {
 		}
 	}
 
+	private void deleteCategory(Category cat) {
+		// TODO add the category delete service call
+		Window.alert("TODO: Service call to delete category: " + cat.getName());
+	}
+
 	private class ActionBlock extends BlockPanel {
 		private final StyledButton createCategoryButton = new StyledButton(
 				"Create a Category");
@@ -178,10 +190,11 @@ public class CategoriesContent extends ContentComposite {
 			categoryCreatePanel.setWidth("100%");
 			fieldTable.setWidth("100%");
 			fieldTable.setText(0, 0, "Name:");
+			categoryName.setWidth("100%");
 			fieldTable.setWidget(0, 1, categoryName);
 			categoryCreatePanel.add(fieldTable);
 
-			categoryActions.addAction("Save", new ClickListener() {
+			categoryActions.addAction("Create", new ClickListener() {
 
 				public void onClick(Widget sender) {
 					createCategory(categoryName.getText());
@@ -217,29 +230,35 @@ public class CategoriesContent extends ContentComposite {
 		}
 
 		private void createCategory(String name) {
-			categoryActions.removeFromParent();
-			categoryCreatePanel.add(waitImage);
+			if (LangUtil.notEmpty(name)) {
+				categoryActions.removeFromParent();
+				categoryCreatePanel.add(waitImage);
 
-			ServiceHelper.getSettingsService().createCategory(name,
-					new ArrayList<FilterEntry>(), new ArrayList<Category>(),
-					new ResultCallback<String>() {
+				ServiceHelper.getSettingsService().createCategory(name,
+						new ArrayList<FilterEntry>(),
+						new ArrayList<Category>(),
+						new ResultCallback<String>() {
 
-						@Override
-						protected void doFailure(String message, String result) {
-							Window
-									.alert("Category creation failed: "
-											+ message);
-							categoryCreatePanel.remove(waitImage);
-							categoryCreatePanel.add(categoryActions);
-						}
+							@Override
+							protected void doFailure(String message,
+									String result) {
+								Window.alert("Category creation failed: "
+										+ message);
+								categoryCreatePanel.remove(waitImage);
+								categoryCreatePanel.add(categoryActions);
+							}
 
-						@Override
-						protected void doSuccess(String message, String result) {
-							toggleCreateCategory();
-							categories.refresh();
-							new CategoriesContext(result).updateContext();
-						}
-					});
+							@Override
+							protected void doSuccess(String message,
+									String result) {
+								toggleCreateCategory();
+								categories.refresh();
+								new CategoriesContext(result).updateContext();
+							}
+						});
+			} else {
+				Window.alert("Please enter a category name");
+			}
 		}
 	}
 
