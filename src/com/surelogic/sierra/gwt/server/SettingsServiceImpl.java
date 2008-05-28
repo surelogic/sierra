@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
@@ -180,6 +181,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							.isFiltered()));
 				}
 				sets.updateCategory(set, revision);
+				q.prepared("Definitions.insertDefinition").call(set.getUid(),
+						s.getUid());
 				return Result.success("Filter set " + name + " created.", set
 						.getUid());
 			}
@@ -192,6 +195,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			@SuppressWarnings("unchecked")
 			public Status perform(Query q, Server s, User u) {
+				if (!s.getUid().equals(
+						q.prepared("Definitions.getDefinitionServer",
+								new StringResultHandler()).call(c.getUuid()))) {
+					return Status
+							.failure("This category is not owned by this server, and cannot be updated.");
+				}
 				final Categories sets = new Categories(q);
 				final long revision = s.nextRevision();
 				final CategoryDO set = new CategoryDO();
@@ -297,9 +306,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				.withUserTransaction(new UserQuery<ScanFilter>() {
 					public ScanFilter perform(Query q, Server s, User u) {
 						final ScanFilters filters = new ScanFilters(q);
-						return getFilter(filters.createScanFilter(name, s
-								.nextRevision()), new FindingTypes(q),
-								new Categories(q));
+						final ScanFilter f = getFilter(filters
+								.createScanFilter(name, s.nextRevision()),
+								new FindingTypes(q), new Categories(q));
+						q.prepared("Definitions.insertDefinition").call(
+								f.getUuid(), s.getUid());
+						return f;
 					}
 				});
 	}
@@ -328,6 +340,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		}
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(Query q, Server s, User u) {
+				if (!s.getUid().equals(
+						q.prepared("Definitions.getDefinitionServer",
+								new StringResultHandler()).call(fDO.getUid()))) {
+					return Status
+							.failure("This scan filter is not owned by this server, and cannot be updated.");
+				}
 				final ScanFilters sf = new ScanFilters(q);
 				try {
 					sf.updateScanFilter(fDO, s.nextRevision());
