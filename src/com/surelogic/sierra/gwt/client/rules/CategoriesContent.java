@@ -18,7 +18,6 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -110,7 +109,7 @@ public class CategoriesContent extends ContentComposite {
 					Status status, Throwable failure) {
 				categories.refresh();
 
-				if (failure == null && status.isSuccess()) {
+				if ((failure == null) && status.isSuccess()) {
 					new CategoriesContext(item).updateContext();
 				} else if (!status.isSuccess()) {
 					Window.alert("Save rejected: " + status.getMessage());
@@ -223,7 +222,7 @@ public class CategoriesContent extends ContentComposite {
 				if (categoryCreatePanel.getWidgetIndex(waitImage) != -1) {
 					categoryCreatePanel.remove(waitImage);
 				}
-				int panelIndex = contentPanel
+				final int panelIndex = contentPanel
 						.getWidgetIndex(createCategoryButton);
 				contentPanel.insert(categoryCreatePanel, panelIndex + 1);
 			}
@@ -235,8 +234,7 @@ public class CategoriesContent extends ContentComposite {
 				categoryCreatePanel.add(waitImage);
 
 				ServiceHelper.getSettingsService().createCategory(name,
-						new ArrayList<FilterEntry>(),
-						new ArrayList<Category>(),
+						new ArrayList<String>(), new ArrayList<String>(),
 						new ResultCallback<String>() {
 
 							@Override
