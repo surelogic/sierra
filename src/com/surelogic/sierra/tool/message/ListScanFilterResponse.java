@@ -13,6 +13,8 @@ public class ListScanFilterResponse {
 
 	protected List<ScanFilter> scanFilter;
 
+	protected List<String> deletions;
+
 	public List<ScanFilter> getScanFilter() {
 		if (scanFilter == null) {
 			scanFilter = new ArrayList<ScanFilter>();
@@ -20,7 +22,11 @@ public class ListScanFilterResponse {
 		return scanFilter;
 	}
 
-	public void setScanFilter(List<ScanFilter> sf) {
-		scanFilter = sf;
+	public List<String> getDeletions() {
+		if (deletions == null) {
+			deletions = new ArrayList<String>();
+		}
+		return deletions;
 	}
+
 }
