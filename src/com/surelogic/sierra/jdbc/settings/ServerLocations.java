@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class ServerLocations {
@@ -24,4 +26,13 @@ public class ServerLocations {
 		}
 	}
 
+	public List<SierraServerLocation> fetch() {
+		return q.statement("ServerLocation.listLocations",
+				new RowHandler<SierraServerLocation>() {
+					public SierraServerLocation handle(Row r) {
+
+						return null;
+					}
+				}).call();
+	}
 }
