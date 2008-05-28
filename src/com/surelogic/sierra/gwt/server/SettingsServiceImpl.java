@@ -164,36 +164,34 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Result createCategory(final String name, final List entries,
-			final List parents) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Result>() {
-			public Result perform(Query q, Server s, User u) {
-				final Categories sets = new Categories(q);
-				final long revision = s.nextRevision();
-				final CategoryDO set = sets
-						.createCategory(name, null, revision);
-				set.getParents().addAll(parents);
-				final Set<CategoryEntryDO> doEntries = set.getFilters();
-				final List<FilterEntry> moEntries = entries;
-				for (final FilterEntry entry : moEntries) {
-					doEntries.add(new CategoryEntryDO(entry.getUuid(), entry
-							.isFiltered()));
-				}
-				sets.updateCategory(set, revision);
-				q.prepared("Definitions.insertDefinition").call(set.getUid(),
-						s.getUid());
-				return Result.success("Filter set " + name + " created.", set
-						.getUid());
-			}
-		});
+	public Result<String> createCategory(final String name,
+			final List<String> entries, final List<String> parents) {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<Result<String>>() {
+					public Result<String> perform(Query q, Server s, User u) {
+						final Categories sets = new Categories(q);
+						final long revision = s.nextRevision();
+						final CategoryDO set = sets.createCategory(name, null,
+								revision);
+						set.getParents().addAll(parents);
+						final Set<CategoryEntryDO> doEntries = set.getFilters();
+						final List<String> moEntries = entries;
+						for (final String entry : moEntries) {
+							doEntries.add(new CategoryEntryDO(entry, true));
+						}
+						sets.updateCategory(set, revision);
+						q.prepared("Definitions.insertDefinition").call(
+								set.getUid(), s.getUid());
+						return Result.success("Filter set " + name
+								+ " created.", set.getUid());
+					}
+				});
 
 	}
 
 	// TODO do this w/o passing back and forth the whole graph
 	public Status updateCategory(final Category c) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			@SuppressWarnings("unchecked")
 			public Status perform(Query q, Server s, User u) {
 				if (!s.getUid().equals(
 						q.prepared("Definitions.getDefinitionServer",
@@ -231,23 +229,48 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public Result getFindingTypeInfo(final String uid) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Result>() {
-			public Result perform(Query q, Server s, User u) {
-				final FindingTypes types = new FindingTypes(q);
-				final FindingTypeDO type = types.getFindingType(uid);
-				if (type != null) {
-					final FindingTypeInfo info = new FindingTypeInfo();
-					info.setInfo(type.getInfo());
-					info.setName(type.getName());
-					info.setShortMessage(type.getShortMessage());
-					info.setUid(type.getUid());
-					return Result.success("Finding Type Found", info);
+	public Status deleteCategory(final String uuid) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
+			public Status perform(Query q, Server s, User u) {
+				final Categories cats = new Categories(q);
+				if (s.getUid().equals(
+						q.prepared("Definitions.getServerDefinition",
+								new StringResultHandler()).call(uuid))) {
+					try {
+						cats.deleteCategory(uuid);
+					} catch (final IllegalArgumentException e) {
+						return Status.failure(e.getMessage());
+					}
 				} else {
-					return Result.failure("No finding type found");
+					return Status
+							.failure("The category does not belong to this server and cannot be deleted.");
 				}
+				return Status.success("Category deleted");
 			}
 		});
+
+	}
+
+	public Result<FindingTypeInfo> getFindingTypeInfo(final String uid) {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<Result<FindingTypeInfo>>() {
+					public Result<FindingTypeInfo> perform(Query q, Server s,
+							User u) {
+						final FindingTypes types = new FindingTypes(q);
+						final FindingTypeDO type = types.getFindingType(uid);
+						if (type != null) {
+							final FindingTypeInfo info = new FindingTypeInfo();
+							info.setInfo(type.getInfo());
+							info.setName(type.getName());
+							info.setShortMessage(type.getShortMessage());
+							info.setUid(type.getUid());
+							return Result.success("Finding Type Found", info);
+						} else {
+							return Result
+									.failure("No finding type found", null);
+						}
+					}
+				});
 
 	}
 
@@ -255,7 +278,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return ConnectionFactory
 				.withReadOnly(new ServerQuery<List<ScanFilter>>() {
 
-					@SuppressWarnings("unchecked")
 					public List<ScanFilter> perform(Query q, Server s) {
 						final FindingTypes ft = new FindingTypes(q);
 						final Categories fs = new Categories(q);
@@ -269,7 +291,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	@SuppressWarnings("unchecked")
 	protected ScanFilter getFilter(ScanFilterDO fDO, FindingTypes ft,
 			Categories cs) {
 		final ScanFilter f = new ScanFilter();
