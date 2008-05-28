@@ -82,7 +82,9 @@ public class CategoryEditor extends BlockPanel {
 	}
 
 	private class FindingsEditor extends BlockPanel {
-		private Map<FilterEntry, ItemCheckBox<FilterEntry>> findings = new HashMap<FilterEntry, ItemCheckBox<FilterEntry>>();
+		private final Map<FilterEntry, ItemCheckBox<FilterEntry>> findings = new HashMap<FilterEntry, ItemCheckBox<FilterEntry>>();
+		private final List<Category> parentCategories = new ArrayList<Category>();
+		private Category category;
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
@@ -90,13 +92,16 @@ public class CategoryEditor extends BlockPanel {
 		}
 
 		public void setCategory(Category cat) {
+			this.category = cat;
+
 			final VerticalPanel contentPanel = getContentPanel();
 			contentPanel.clear();
 			findings.clear();
+			parentCategories.clear();
 
 			// add the findings that belong to the selected category
 			final List<FilterEntry> catFindings = new ArrayList<FilterEntry>(
-					cat.getEntries());
+					category.getEntries());
 			final FilterEntryComparator filterComparator = new FilterEntryComparator();
 			Collections.sort(catFindings, filterComparator);
 
@@ -107,8 +112,10 @@ public class CategoryEditor extends BlockPanel {
 
 			// add findings that belong to the parent categories of the selected
 			// category
-			final Set<FilterEntry> excluded = cat.getExcludedEntries();
-			for (Category parent : cat.getParents()) {
+			final Set<FilterEntry> excluded = category.getExcludedEntries();
+			for (Category parent : category.getParents()) {
+				parentCategories.add(parent);
+
 				final DisclosurePanel parentPanel = new DisclosurePanel(
 						"From: " + parent.getName());
 				contentPanel.add(parentPanel);
@@ -138,11 +145,31 @@ public class CategoryEditor extends BlockPanel {
 		}
 
 		public void saveTo(Category target) {
-			Set<FilterEntry> targetEntries = target.getEntries();
+			// clone the parent categories from the UI into the target
+			final Set<Category> targetParents = target.getParents();
+			targetParents.clear();
+			for (Category parentCat : parentCategories) {
+				targetParents.add(parentCat.copy());
+			}
+
+			// clone the selected category's entries
+			final Set<FilterEntry> targetFindings = target.getEntries();
+			targetFindings.clear();
+			for (FilterEntry catFinding : category.getEntries()) {
+				targetFindings.add(catFinding.copy());
+			}
+
+			// copy settings or clone the filter entries to the target
+			final Set<FilterEntry> targetEntries = target.getEntries();
 			for (Map.Entry<FilterEntry, ItemCheckBox<FilterEntry>> findingEntry : findings
 					.entrySet()) {
-				FilterEntry targetFinding = findEntry(targetEntries,
-						findingEntry.getKey().getUuid());
+				final FilterEntry uiFinding = findingEntry.getKey();
+				FilterEntry targetFinding = findEntry(targetEntries, uiFinding
+						.getUuid());
+				if (targetFinding == null) {
+					targetFinding = uiFinding.copy();
+					targetEntries.add(targetFinding);
+				}
 				targetFinding.setFiltered(!findingEntry.getValue().isChecked());
 			}
 		}
