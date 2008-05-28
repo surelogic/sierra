@@ -83,6 +83,14 @@ public interface SettingsService extends RemoteService {
 	ScanFilter createScanFilter(String name);
 
 	/**
+	 * Delete the scan filter with the given uuid
+	 * 
+	 * @param uuid
+	 * @return whether or not the scan filter was deleted
+	 */
+	Status deleteScanFilter(String uuid);
+
+	/**
 	 * 
 	 * @param uid
 	 * @return

@@ -35,4 +35,6 @@ public interface SettingsServiceAsync {
 	void createScanFilter(String name, AsyncCallback<ScanFilter> callback);
 
 	void updateScanFilter(ScanFilter f, AsyncCallback<Status> callback);
+
+	void deleteScanFilter(String uuid, AsyncCallback<Status> callback);
 }
