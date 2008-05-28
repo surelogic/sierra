@@ -30,12 +30,31 @@ import com.surelogic.sierra.tool.message.FilterSet;
  * @author nathan
  * 
  */
-public class Categories {
+public final class Categories {
 
 	Query q;
 
 	public Categories(Query q) {
 		this.q = q;
+	}
+
+	/**
+	 * List all of the categories owned by a particular server
+	 * 
+	 * @param server
+	 *            a server uid. May not be null.
+	 * @return
+	 */
+	public List<CategoryDO> listServerCategories(String server) {
+		if (server == null) {
+			throw new IllegalArgumentException("server may not be null");
+		}
+		final List<CategoryDO> list = new ArrayList<CategoryDO>();
+		for (final String uid : q.prepared("FilterSets.listServerFilterSets",
+				new StringRowHandler()).call(server)) {
+			list.add(getCategory(uid));
+		}
+		return list;
 	}
 
 	/**
@@ -297,7 +316,7 @@ public class Categories {
 	}
 
 	/**
-	 * Delete an existing filter set.
+	 * Delete an existing category
 	 * 
 	 * @param uid
 	 * @throws SQLException

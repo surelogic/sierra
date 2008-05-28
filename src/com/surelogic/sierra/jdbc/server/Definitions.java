@@ -7,23 +7,22 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 
-public abstract class DefinitionalDAO {
+public final class Definitions {
 
 	protected final Query q;
 
-	public DefinitionalDAO(Query q) {
+	public Definitions(Query q) {
 		this.q = q;
 	}
 
-	protected String createLocalDefinition(DefinitionType type, long revision) {
+	public String createLocalDefinition(DefinitionType type, long revision) {
 		final String uuid = UUID.randomUUID().toString();
 		q.prepared("Definitions.insertLocalDefinition").call(uuid, type.name(),
 				revision);
 		return uuid;
 	}
 
-	protected boolean checkAndUpdateRevision(String uuid, long old,
-			long revision) {
+	public boolean checkAndUpdateRevision(String uuid, long old, long revision) {
 		q.prepared("Definitions.updateRevision").call(revision, uuid, old);
 		final Long rev = q.prepared("Definitions.selectRevision",
 				new ResultHandler<Long>() {

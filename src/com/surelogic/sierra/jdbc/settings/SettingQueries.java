@@ -57,6 +57,18 @@ public class SettingQueries {
 		};
 	}
 
+	public static final DBQuery<ListCategoryRequest> categoryRequest() {
+		return new DBQuery<ListCategoryRequest>() {
+			public ListCategoryRequest perform(Query q) {
+				final ListCategoryRequest r = new ListCategoryRequest();
+				r.getServerRevisions().addAll(
+						q.statement("FilterSets.latestServerRevisions",
+								new ServerRevisionRowHandler()).call());
+				return r;
+			}
+		};
+	}
+
 	/**
 	 * Queries the specified server for a list of categories, and returns a
 	 * {@link DBQuery} that, when run, will write the given categories into the
@@ -117,6 +129,11 @@ public class SettingQueries {
 						it.remove(); // Remove since it's older
 					}
 				}
+				if (update) {
+					for (final String uid : response.getDeletions()) {
+						sets.deleteCategory(uid);
+					}
+				}
 				return response;
 			}
 		};
@@ -127,6 +144,18 @@ public class SettingQueries {
 			public List<CategoryDO> perform(Query q) {
 				final Categories sets = new Categories(q);
 				return sets.listCategories();
+			}
+		};
+	}
+
+	public static final DBQuery<ListScanFilterRequest> scanFilterRequest() {
+		return new DBQuery<ListScanFilterRequest>() {
+			public ListScanFilterRequest perform(Query q) {
+				final ListScanFilterRequest r = new ListScanFilterRequest();
+				r.getServerRevisions().addAll(
+						q.statement("ScanFilters.latestServerRevisions",
+								new ServerRevisionRowHandler()).call());
+				return r;
 			}
 		};
 	}
@@ -171,6 +200,11 @@ public class SettingQueries {
 						}
 					} else if (!update) {
 						it.remove(); // Remove since it's older
+					}
+				}
+				if (update) {
+					for (final String uid : response.getDeletions()) {
+						filters.deleteScanFilter(uid);
 					}
 				}
 				return response;

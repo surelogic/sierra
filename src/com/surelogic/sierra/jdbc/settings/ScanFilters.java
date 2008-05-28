@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.settings;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,15 @@ public class ScanFilters {
 
 	public ScanFilters(Connection conn) {
 		q = new ConnectionQuery(conn);
+	}
+
+	public List<ScanFilterDO> listServerScanFilters(String server) {
+		final List<ScanFilterDO> list = new ArrayList<ScanFilterDO>();
+		for (final String s : q.prepared("ScanFilters.listScanFilters",
+				new StringRowHandler()).call(server)) {
+			list.add(getScanFilter(s));
+		}
+		return list;
 	}
 
 	/**
@@ -186,6 +196,23 @@ public class ScanFilters {
 	}
 
 	/**
+	 * Delete an existing filter set.
+	 * 
+	 * @param uid
+	 * @throws SQLException
+	 */
+	public void deleteScanFilter(String uid) {
+		final ScanFilterRecord set = q.record(ScanFilterRecord.class);
+		set.setUid(uid);
+		if (set.select()) {
+			set.delete();
+		} else {
+			throw new IllegalArgumentException("No scan filter with the uid "
+					+ uid + " exists.");
+		}
+	}
+
+	/**
 	 * Return the relevant {@link ScanFilterDO}
 	 * 
 	 * @param uid
@@ -290,5 +317,4 @@ public class ScanFilters {
 		}
 		return filter;
 	}
-
 }
