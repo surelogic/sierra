@@ -233,10 +233,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(Query q, Server s, User u) {
 				final Categories cats = new Categories(q);
-				if (s.getUid().equals(
-						q.prepared("Definitions.getServerDefinition",
-								new StringResultHandler()).call(uuid))) {
+				final String server = s.getUid();
+				if (server.equals(q.prepared("Definitions.getServerDefinition",
+						new StringResultHandler()).call(uuid))) {
 					try {
+						q.prepared("FilterSets.insertDeletedFilterSet").call(
+								uuid, server, s.nextRevision());
 						cats.deleteCategory(uuid);
 					} catch (final IllegalArgumentException e) {
 						return Status.failure(e.getMessage());
@@ -248,7 +250,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				return Status.success("Category deleted");
 			}
 		});
-
 	}
 
 	public Result<FindingTypeInfo> getFindingTypeInfo(final String uid) {
@@ -378,6 +379,38 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			}
 		});
 
+	}
+
+	public Status deleteScanFilter(final String uuid) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
+			public Status perform(Query q, Server s, User u) {
+				return ConnectionFactory
+						.withUserTransaction(new UserQuery<Status>() {
+							public Status perform(Query q, Server s, User u) {
+								final ScanFilters filters = new ScanFilters(q);
+								final String server = s.getUid();
+								if (server.equals(q.prepared(
+										"Definitions.getServerDefinition",
+										new StringResultHandler()).call(uuid))) {
+									try {
+										q
+												.prepared(
+														"ScanFilters.insertDeletedScanFilter")
+												.call(uuid, server,
+														s.nextRevision());
+										filters.deleteScanFilter(uuid);
+									} catch (final IllegalArgumentException e) {
+										return Status.failure(e.getMessage());
+									}
+								} else {
+									return Status
+											.failure("The scan filter does not belong to this server and cannot be deleted.");
+								}
+								return Status.success("Category deleted");
+							}
+						});
+			}
+		});
 	}
 
 	private static Importance importance(ImportanceView i) {
