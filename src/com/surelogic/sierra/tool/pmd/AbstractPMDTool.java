@@ -14,9 +14,8 @@ import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.renderers.Renderer;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.*;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.analyzer.HashGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;

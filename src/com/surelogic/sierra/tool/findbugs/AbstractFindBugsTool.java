@@ -5,11 +5,8 @@ import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.SystemUtils;
-
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.*;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.analyzer.HashGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.*;

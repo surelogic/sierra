@@ -6,11 +6,10 @@ import java.util.*;
 
 import net.sourceforge.pmd.cpd.*;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.*;
 import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.IToolInstance;
-import com.surelogic.sierra.tool.analyzer.HashGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
