@@ -234,7 +234,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			public Status perform(Query q, Server s, User u) {
 				final Categories cats = new Categories(q);
 				final String server = s.getUid();
-				if (server.equals(q.prepared("Definitions.getServerDefinition",
+				if (server.equals(q.prepared("Definitions.getDefinitionServer",
 						new StringResultHandler()).call(uuid))) {
 					try {
 						q.prepared("FilterSets.insertDeletedFilterSet").call(
@@ -390,7 +390,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								final ScanFilters filters = new ScanFilters(q);
 								final String server = s.getUid();
 								if (server.equals(q.prepared(
-										"Definitions.getServerDefinition",
+										"Definitions.getDefinitionServer",
 										new StringResultHandler()).call(uuid))) {
 									try {
 										q
