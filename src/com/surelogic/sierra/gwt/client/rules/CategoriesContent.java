@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -163,8 +164,16 @@ public class CategoriesContent extends ContentComposite {
 	}
 
 	private void deleteCategory(Category cat) {
-		// TODO add the category delete service call
-		Window.alert("TODO: Service call to delete category: " + cat.getName());
+		ServiceHelper.getSettingsService().deleteCategory(cat.getUuid(),
+				new AsyncCallback<Status>() {
+					public void onFailure(Throwable caught) {
+						// TODO
+					}
+
+					public void onSuccess(Status result) {
+						categories.refresh();
+					}
+				});
 	}
 
 	private class ActionBlock extends BlockPanel {
