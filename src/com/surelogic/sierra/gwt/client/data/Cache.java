@@ -13,7 +13,7 @@ public abstract class Cache<E extends Cacheable> {
 	private final List<CacheListener<E>> listeners = new ArrayList<CacheListener<E>>();
 
 	public final void refresh() {
-		for (CacheListener<E> listener : listeners) {
+		for (final CacheListener<E> listener : listeners) {
 			listener.onStartRefresh(this);
 		}
 		doRefreshCall(new CacheCallback<List<E>>() {
@@ -39,7 +39,7 @@ public abstract class Cache<E extends Cacheable> {
 			@Override
 			protected void processResult(Status result) {
 				if (result.isSuccess()) {
-					int itemIndex = getItemIndex(item);
+					final int itemIndex = getItemIndex(item);
 					if (itemIndex != -1) {
 						items.remove(itemIndex);
 						items.add(itemIndex, item);
@@ -71,7 +71,7 @@ public abstract class Cache<E extends Cacheable> {
 	}
 
 	public final E getItem(String uuid) {
-		for (E item : items) {
+		for (final E item : items) {
 			if (LangUtil.equals(uuid, item.getUuid())) {
 				return item;
 			}
@@ -104,23 +104,23 @@ public abstract class Cache<E extends Cacheable> {
 		listeners.remove(listener);
 	}
 
-	protected abstract <T> void doRefreshCall(AsyncCallback<T> callback);
+	protected abstract void doRefreshCall(AsyncCallback<List<E>> callback);
 
-	protected abstract <T> void doSaveCall(Cacheable item,
-			AsyncCallback<T> callback);
+	protected abstract void doSaveCall(Cacheable item,
+			AsyncCallback<Status> callback);
 
 	private abstract class CacheCallback<T> implements AsyncCallback<T> {
 
 		public void onFailure(Throwable caught) {
 			ExceptionUtil.log(caught);
-			for (CacheListener<E> listener : listeners) {
+			for (final CacheListener<E> listener : listeners) {
 				callListener(listener, null, caught);
 			}
 		}
 
 		public void onSuccess(T result) {
 			processResult(result);
-			for (CacheListener<E> listener : listeners) {
+			for (final CacheListener<E> listener : listeners) {
 				callListener(listener, result, null);
 			}
 		}
