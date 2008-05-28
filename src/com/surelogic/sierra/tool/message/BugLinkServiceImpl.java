@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.message;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Queryable;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
@@ -49,6 +54,8 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 						for (final String p : request.getParent()) {
 							parents.add(p);
 						}
+						q.prepared("Definitions.insertDefinition").call(
+								set.getUid(), s.getUid());
 						final CreateCategoryResponse response = new CreateCategoryResponse();
 						response.setSet(Categories.convert(sets.updateCategory(
 								set, revision), s.getUid()));
@@ -57,17 +64,51 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
-	public ListCategoryResponse listCategories(ListCategoryRequest request) {
+	public ListCategoryResponse listCategories(final ListCategoryRequest request) {
 		return ConnectionFactory
 				.withReadOnly(new ServerQuery<ListCategoryResponse>() {
 
 					public ListCategoryResponse perform(Query q, Server s) {
 						final ListCategoryResponse response = new ListCategoryResponse();
-						final String server = s.getUid();
+						// Filter out all servers w/ that do not have a newer
+						// revision than the client claims to have.
+						final HashMap<String, Long> servers = new HashMap<String, Long>();
+						q.statement("FilterSets.latestServerRevisions",
+								new RowHandler<Void>() {
+									public Void handle(Row r) {
+										servers.put(r.nextString(), r
+												.nextLong());
+										return null;
+									}
+								}).call();
+						final Queryable<List<String>> deletions = q.prepared(
+								"FilterSets.listServerDeletions",
+								new StringRowHandler());
+						for (final ServerRevision r : request
+								.getServerRevisions()) {
+							final Long revision = servers.get(r.getServer());
+							if (revision != null) {
+								// Don't return any categories from this server
+								// if nothing new
+								// has changed
+								if (r.getRevision() >= revision) {
+									servers.remove(r.getServer());
+								}
+								// Find any deletions to report
+								response.getDeletions().addAll(
+										deletions.call(r.getServer(), r
+												.getRevision()));
+							}
+						}
+						final Categories cats = new Categories(q);
 						final List<FilterSet> sets = response.getFilterSets();
-						for (final CategoryDO set : new Categories(q)
-								.listCategories()) {
-							sets.add(Categories.convert(set, server));
+						for (final String server : servers.keySet()) {
+							for (final CategoryDO set : cats
+									.listServerCategories(server)) {
+								// TODO we probably want to only return newly
+								// updated categories
+								sets.add(Categories.convert(set, server));
+							}
 						}
 						return response;
 					}
@@ -111,6 +152,8 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 									.getImportance(), t.isFiltered()));
 						}
 						filters.updateScanFilter(filter, revision);
+						q.prepared("Definitions.insertDefinition").call(
+								filter.getUid(), s.getUid());
 						final CreateScanFilterResponse response = new CreateScanFilterResponse();
 						response.setFilter(ScanFilters.convert(filter, s
 								.getUid()));
@@ -120,15 +163,51 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	}
 
-	public ListScanFilterResponse listScanFilters(ListScanFilterRequest request) {
+	public ListScanFilterResponse listScanFilters(
+			final ListScanFilterRequest request) {
 		return ConnectionFactory
 				.withReadOnly(new ServerQuery<ListScanFilterResponse>() {
 					public ListScanFilterResponse perform(Query q, Server s) {
 						final ListScanFilterResponse response = new ListScanFilterResponse();
+						// Filter out all servers w/ that do not have a newer
+						// revision than the client claims to have.
+						final HashMap<String, Long> servers = new HashMap<String, Long>();
+						q.statement("ScanFilters.latestServerRevisions",
+								new RowHandler<Void>() {
+									public Void handle(Row r) {
+										servers.put(r.nextString(), r
+												.nextLong());
+										return null;
+									}
+								}).call();
+						final Queryable<List<String>> deletions = q.prepared(
+								"ScanFilters.listServerDeletions",
+								new StringRowHandler());
+						for (final ServerRevision r : request
+								.getServerRevisions()) {
+							final Long revision = servers.get(r.getServer());
+							if (revision != null) {
+								// Don't return any categories from this server
+								// if nothing new
+								// has changed
+								if (r.getRevision() >= revision) {
+									servers.remove(r.getServer());
+								}
+								// Find any deletions to report
+								response.getDeletions().addAll(
+										deletions.call(r.getServer(), r
+												.getRevision()));
+							}
+						}
 						final List<ScanFilter> list = response.getScanFilter();
-						for (final ScanFilterDO filter : new ScanFilters(q)
-								.listScanFilters()) {
-							list.add(ScanFilters.convert(filter, s.getUid()));
+						final ScanFilters filters = new ScanFilters(q);
+						for (final String server : servers.keySet()) {
+							for (final ScanFilterDO set : filters
+									.listServerScanFilters(server)) {
+								// TODO we probably want to only return newly
+								// updated categories
+								list.add(ScanFilters.convert(set, server));
+							}
 						}
 						return response;
 					}
