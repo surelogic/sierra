@@ -26,12 +26,14 @@ public final class StatusBox extends Composite {
 	}
 
 	public void setStatus(Status status) {
-		if (status.isSuccess()) {
-			html.setHTML("<span class=\"success\">" + status.getMessage()
-					+ "</span>");
-		} else {
-			html.setHTML("<span class=\"error\">" + status.getMessage()
-					+ "</span>");
+		if (status != null) {
+			if (status.isSuccess()) {
+				html.setHTML("<span class=\"success\">" + status.getMessage()
+						+ "</span>");
+			} else {
+				html.setHTML("<span class=\"error\">" + status.getMessage()
+						+ "</span>");
+			}
 		}
 		this.status = status;
 	}
