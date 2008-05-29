@@ -28,12 +28,11 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 	private static final Logger log = 
 		SLLogger.getLoggerFor(ImportJSureDocumentJob.class);
 	
-	final ConfigCompilationUnit config;
+	final Config config;
 
-	public ImportJSureDocumentJob(ConfigCompilationUnit ccu) {
-		super("Loading JSure document for "
-				+ ccu.getConfig().getProject());
-		config = ccu;
+	public ImportJSureDocumentJob(Config c) {
+		super("Loading JSure document for "+ c.getProject());
+		config = c;
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
 				                Set<Long> findingIds, SLProgressMonitor mon) {
 				final ScanGenerator generator = 
-					sMan.getPartialScanGenerator(config.getConfig().getProject(), 
+					sMan.getPartialScanGenerator(config.getProject(), 
 							                     filter, Collections.singletonList("JSure"), 
 							                     findingIds);				
 				/*
@@ -86,10 +85,9 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 				return generator.finished();
 			}
 		};
-		final File location = config.getConfig().getScanDocument();
+		final File location = config.getScanDocument();
 		ScanDocumentUtility.loadPartialScanDocument(location, wrapper, 
-				      config.getConfig().getProject(), 
-				      config.getPackageCompilationUnitMap(), parser);
+				      config.getProject(), null, parser); // FIX null
 		/*
 		// Delete partial scan when done
 		location.delete();
