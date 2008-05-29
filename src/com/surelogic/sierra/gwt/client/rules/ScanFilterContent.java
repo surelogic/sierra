@@ -71,9 +71,9 @@ public class ScanFilterContent extends ContentComposite {
 		rootPanel.add(sf, DockPanel.EAST);
 		rootPanel.setCellWidth(west, "25%");
 		rootPanel.setCellWidth(sf, "75%");
-		cache.addListener(new CacheListenerAdapter() {
+		cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
-			public void onRefresh(Cache cache, Throwable failure) {
+			public void onRefresh(Cache<ScanFilter> cache, Throwable failure) {
 				checkForFilter();
 			}
 
@@ -90,8 +90,7 @@ public class ScanFilterContent extends ContentComposite {
 
 	private void checkForFilter() {
 		if (filterUuid != null) {
-			for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
-				final ScanFilter f = (ScanFilter) i.next();
+			for (final ScanFilter f : cache.getItems()) {
 				if (f.getUuid().equals(filterUuid)) {
 					sf.setFilter(f);
 				}
