@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +13,8 @@ import java.util.logging.Level;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
-public final class SierraServerManager extends DatabaseObservable<ISierraServerObserver> {
+public final class SierraServerManager extends
+		DatabaseObservable<ISierraServerObserver> {
 
 	public static final SierraServerManager INSTANCE = new SierraServerManager();
 
@@ -48,18 +48,19 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public Set<SierraServer> getServers() {
-		Set<SierraServer> servers = new HashSet<SierraServer>(f_labelToServer
-				.values());
+		final Set<SierraServer> servers = new HashSet<SierraServer>(
+				f_labelToServer.values());
 		return servers;
 	}
 
 	public Set<SierraServer> getTeamServers() {
-		Set<SierraServer> servers = getServers();
-		for (Iterator<SierraServer> iterator = servers.iterator(); iterator
+		final Set<SierraServer> servers = getServers();
+		for (final Iterator<SierraServer> iterator = servers.iterator(); iterator
 				.hasNext();) {
-			SierraServer sierraServer = iterator.next();
-			if (!sierraServer.isTeamServer())
+			final SierraServer sierraServer = iterator.next();
+			if (!sierraServer.isTeamServer()) {
 				iterator.remove();
+			}
 		}
 		return servers;
 	}
@@ -73,8 +74,9 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	 * @return the server with the passed label.
 	 */
 	public SierraServer getOrCreate(final String label) {
-		if (label == null)
+		if (label == null) {
 			throw new IllegalArgumentException("label must be non-null");
+		}
 		SierraServer server = f_labelToServer.get(label);
 		if (server == null) {
 			server = new SierraServer(this, label);
@@ -95,8 +97,9 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public SierraServer getOrCreateBugLinkOrg() {
-		if (!isThereABugLinkOrg())
+		if (!isThereABugLinkOrg()) {
 			createBugLinkOrg();
+		}
 		return getOrCreate(BUGLINK_ORG);
 	}
 
@@ -128,18 +131,19 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 							+ server);
 			return;
 		}
-		if (f_focus == server)
+		if (f_focus == server) {
 			f_focus = null;
-		for (Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
+		}
+		for (final Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
 				.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<String, SierraServer> entry = i.next();
+			final Map.Entry<String, SierraServer> entry = i.next();
 			if (entry.getValue() == server) {
 				i.remove();
 			}
 		}
-		for (Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
+		for (final Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
 				.entrySet().iterator(); j.hasNext();) {
-			Map.Entry<String, SierraServer> entry = j.next();
+			final Map.Entry<String, SierraServer> entry = j.next();
 			if (entry.getValue() == server) {
 				j.remove();
 			}
@@ -148,7 +152,7 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public void delete(String label) {
-		SierraServer server = f_labelToServer.get(label);
+		final SierraServer server = f_labelToServer.get(label);
 		if (server != null) {
 			delete(server);
 		}
@@ -184,10 +188,11 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	private String newUniqueLabel(String prefix) {
 		// strip off any previous number, e.g., (1)
 		if (prefix.endsWith(")")) {
-			int index = prefix.lastIndexOf('(');
-			if (index != -1 && index > 1) {
-				if (prefix.charAt(index - 1) == ' ')
+			final int index = prefix.lastIndexOf('(');
+			if ((index != -1) && (index > 1)) {
+				if (prefix.charAt(index - 1) == ' ') {
 					prefix = prefix.substring(0, index - 1);
+				}
 			}
 		}
 		// create a new label
@@ -207,7 +212,8 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	 * @return the ordered list of server labels.
 	 */
 	public String[] getLabels() {
-		List<String> labels = new ArrayList<String>(f_labelToServer.keySet());
+		final List<String> labels = new ArrayList<String>(f_labelToServer
+				.keySet());
 		Collections.sort(labels);
 		return labels.toArray(new String[labels.size()]);
 	}
@@ -224,8 +230,9 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	 *            the non-null server to be the focus of this model.
 	 */
 	public void setFocus(final SierraServer server) {
-		if (server == null)
+		if (server == null) {
 			throw new IllegalArgumentException("server must be non-null");
+		}
 		f_focus = server;
 		notifyObservers();
 	}
@@ -246,18 +253,21 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public void connect(String projectName, SierraServer server) {
-		if (projectName == null)
+		if (projectName == null) {
 			throw new IllegalArgumentException("project name must be non-null.");
-		if (server == null)
+		}
+		if (server == null) {
 			throw new IllegalArgumentException("server must be non-null.");
+		}
 		f_projectNameToServer.put(projectName, server);
 		notifyObservers();
 
 	}
 
 	public void disconnect(String projectName) {
-		if (f_projectNameToServer.remove(projectName) != null)
+		if (f_projectNameToServer.remove(projectName) != null) {
 			notifyObservers();
+		}
 	}
 
 	public SierraServer getServer(String projectName) {
@@ -265,8 +275,8 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public List<String> getProjectsConnectedTo(SierraServer server) {
-		List<String> projects = new ArrayList<String>();
-		for (Map.Entry<String, SierraServer> entry : f_projectNameToServer
+		final List<String> projects = new ArrayList<String>();
+		for (final Map.Entry<String, SierraServer> entry : f_projectNameToServer
 				.entrySet()) {
 			if (entry.getValue() == server) {
 				projects.add(entry.getKey());
@@ -277,7 +287,7 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 	}
 
 	public Set<String> getConnectedProjects() {
-		Set<String> projects = new HashSet<String>(f_projectNameToServer
+		final Set<String> projects = new HashSet<String>(f_projectNameToServer
 				.keySet());
 		return projects;
 	}
@@ -290,12 +300,12 @@ public final class SierraServerManager extends DatabaseObservable<ISierraServerO
 		o.notify(this);
 	}
 
-	public void save(File file) {
-		SierraServerPersistence.save(this, file);
+	public void save() {
+		SierraServerPersistence.save(this);
 	}
 
-	public void load(File file) throws Exception {
-		SierraServerPersistence.load(this, file);
+	public void load() throws Exception {
+		SierraServerPersistence.load(this);
 		/*
 		 * Add BugLink server if necessary
 		 */

@@ -1,20 +1,17 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -26,7 +23,11 @@ import com.surelogic.adhoc.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
+import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.jdbc.server.TransactionException;
+import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.Services;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class SierraServerPersistence {
 
@@ -54,44 +55,40 @@ public final class SierraServerPersistence {
 		URL temp = null;
 		try {
 			temp = new URL(urlString);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(41, urlString), e);
 		}
 		FAKE_URL = temp;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void save(final SierraServerManager manager, final File file) {
+	public static void save(final SierraServerManager manager) {
 		try {
 			Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL,
 					"", AUTH_SCHEME);
-			PrintWriter pw = new PrintWriter(new FileWriter(file));
-			outputXMLHeader(pw);
-			for (SierraServer server : manager.getServers()) {
-				outputServer(pw, server,
-						manager.getProjectsConnectedTo(server), true);
-
+			final Map<SierraServerLocation, Collection<String>> locMap = new HashMap<SierraServerLocation, Collection<String>>();
+			for (final SierraServer server : manager.getServers()) {
+				locMap.put(server.getServer(), manager
+						.getProjectsConnectedTo(server));
 				/* Store the password in the keyring */
 				if (map == null) {
 					map = new java.util.HashMap<String, String>();
 				}
-				if (server.getUser() != null && server.savePassword()) {
+				if ((server.getUser() != null) && server.savePassword()) {
 					// "@" symbol to ensure that one user can have multiple
 					// passwords on different servers
 					map.put(server.getUser() + "@" + server.getHost(), server
 							.getPassword());
 				}
 			}
-			outputXMLFooter(pw);
+			Data.withTransaction(ServerLocations.save(locMap));
 			if (map != null) {
 				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
 			}
-
-			pw.close();
-		} catch (IOException e) {
+		} catch (final TransactionException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					I18N.err(38, "Team Servers", file), e);
-		} catch (CoreException e) {
+					I18N.err(38, "Team Servers"), e);
+		} catch (final CoreException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 		}
 	}
@@ -99,15 +96,15 @@ public final class SierraServerPersistence {
 	public static void export(final SierraServerManager manager,
 			List<SierraServer> serversToExport, final File file) {
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(file));
+			final PrintWriter pw = new PrintWriter(new FileWriter(file));
 			outputXMLHeader(pw);
-			for (SierraServer server : serversToExport) {
+			for (final SierraServer server : serversToExport) {
 				outputServer(pw, server,
 						manager.getProjectsConnectedTo(server), false);
 			}
 			outputXMLFooter(pw);
 			pw.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					I18N.err(38, "Team Servers", file), e);
 		}
@@ -116,7 +113,7 @@ public final class SierraServerPersistence {
 	private static void outputXMLHeader(PrintWriter pw) {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
-		StringBuilder b = new StringBuilder();
+		final StringBuilder b = new StringBuilder();
 		b.append("<").append(TEAM_SERVERS);
 		Entities.addAttribute(VERSION, "1.0", b);
 		b.append(">"); // don't end this element
@@ -137,27 +134,27 @@ public final class SierraServerPersistence {
 		Entities.addAttribute(CONTEXT_PATH, server.getContextPath(), b);
 		Entities.addAttribute(USER, server.getUser(), b);
 		if (server.gotServerInfo()) {
-		  final StringBuilder sb = new StringBuilder();
-		  if (server.isTeamServer()) {
-		    sb.append(Services.TEAMSERVER);
-		  }
-		  if (server.isBugLink()) {
-		    if (sb.length() > 0) {
-		      sb.append(',');
-		    }
-		    sb.append(Services.BUGLINK);
-		  }
-		  Entities.addAttribute(SERVER_TYPE, sb.toString(), b);
+			final StringBuilder sb = new StringBuilder();
+			if (server.isTeamServer()) {
+				sb.append(Services.TEAMSERVER);
+			}
+			if (server.isBugLink()) {
+				if (sb.length() > 0) {
+					sb.append(',');
+				}
+				sb.append(Services.BUGLINK);
+			}
+			Entities.addAttribute(SERVER_TYPE, sb.toString(), b);
 		}
 		if (save) {
 			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server
 					.savePassword()), b);
-		}		
+		}
 		b.append(">");
 		pw.println(b.toString());
 
-		for (String projectName : connectedProjectNames) {
-		  b.setLength(0);
+		for (final String projectName : connectedProjectNames) {
+			b.setLength(0);
 			b.append("    <").append(CONNECTED_PROJECT);
 			Entities.addAttribute(NAME, projectName, b);
 			b.append("/>");
@@ -173,27 +170,26 @@ public final class SierraServerPersistence {
 		pw.println("</" + TEAM_SERVERS + ">");
 	}
 
-	public static void load(final SierraServerManager manager, final File file)
-			throws Exception {
-		InputStream stream;
+	@SuppressWarnings("unchecked")
+	public static void load(final SierraServerManager manager) throws Exception {
+		final Map<String, String> passwords = Platform.getAuthorizationInfo(
+				FAKE_URL, "", AUTH_SCHEME);
 		try {
-			stream = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			/*
-			 * This means we are running the tool for the first time.
-			 */
-			return;
-		}
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SaveFileReader handler = new SaveFileReader(manager);
-		try {
-			// Parse the input
-			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse(stream, handler);
-		} catch (SAXException e) {
-			SLLogger.getLogger().log(Level.SEVERE, I18N.err(39, file), e);
+			for (final Entry<SierraServerLocation, Collection<String>> locEntry : Data
+					.withReadOnly(ServerLocations.fetch(passwords)).entrySet()) {
+				final SierraServerLocation loc = locEntry.getKey();
+				final SierraServer s = manager.getOrCreate(loc.getLabel());
+				s.setContextPath(loc.getContextPath());
+				s.setHost(loc.getHost());
+				s.setPassword(loc.getPass());
+				s.setPort(loc.getPort());
+				s.setSecure(loc.isSecure());
+				s.setUser(loc.getUser());
+				for (final String project : locEntry.getValue()) {
+					manager.connect(project, s);
+				}
+			}
 		} finally {
-			stream.close();
 			/*
 			 * Clear all the user and password information for sierra servers
 			 */
@@ -227,8 +223,9 @@ public final class SierraServerPersistence {
 				final String protocol = attributes.getValue(PROTOCOL);
 				final String portString = attributes.getValue(PORT);
 				String contextPath = attributes.getValue(CONTEXT_PATH);
-				if (contextPath == null)
+				if (contextPath == null) {
 					contextPath = "/";
+				}
 				final int port = Integer.parseInt(portString);
 				final String user = attributes.getValue(USER);
 				final String serverType = attributes.getValue(SERVER_TYPE);
@@ -243,14 +240,15 @@ public final class SierraServerPersistence {
 				f_server.setContextPath(contextPath);
 				f_server.setUser(user);
 				f_server.setSavePassword(savePassword);
-				if (serverType != null) {				  
-				  f_server.setServerType(serverType.contains(Services.TEAMSERVER.toString()),
-				                         serverType.contains(Services.BUGLINK.toString()));
+				if (serverType != null) {
+					f_server.setServerType(serverType
+							.contains(Services.TEAMSERVER.toString()),
+							serverType.contains(Services.BUGLINK.toString()));
 				}
 
 				/* Retrieve password from keyring */
-				if (f_map != null && savePassword) {
-					String password = f_map.get(f_server.getUser() + "@"
+				if ((f_map != null) && savePassword) {
+					final String password = f_map.get(f_server.getUser() + "@"
 							+ f_server.getHost());
 					if (password != null) {
 						// "@" symbol to ensure that one user can have multiple

@@ -18,7 +18,9 @@ import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
-import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.client.eclipse.model.BuglinkData;
+import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
@@ -46,9 +48,10 @@ public final class Activator extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public Activator() {
-		if (f_plugin != null)
+		if (f_plugin != null) {
 			throw new IllegalStateException(I18N.err(1, PLUGIN_ID,
 					Activator.class.getName()));
+		}
 		f_plugin = this;
 	}
 
@@ -68,20 +71,20 @@ public final class Activator extends AbstractUIPlugin {
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			Data.bootAndCheckSchema();
 			// load up persisted sierra servers
-			SierraServerManager.getInstance().load(getServerSaveFile());
+			SierraServerManager.getInstance().load();
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			// start observing data changes
 			Projects.getInstance().refresh();
 			BuglinkData.getInstance().refresh();
 			// listen changes to the active editor and preference listener
-			MarkersHandler handler = MarkersHandler.getInstance();
+			final MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
-			
+
 			checkRegistration();
-		} catch (FutureDatabaseException e) {
+		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
 			 * run with this version of the code.
@@ -107,40 +110,42 @@ public final class Activator extends AbstractUIPlugin {
 		}
 	}
 
-  private void checkRegistration() {
-    switch (com.surelogic.common.eclipse.preferences.PreferenceConstants.getRegistrationPolicy()) {
-      case NEVER:
-      case DONE:
-        return;
-      case LATER:
-        long laterTime = com.surelogic.common.eclipse.preferences.PreferenceConstants.getRegistrationTime();
-        if (System.currentTimeMillis() < laterTime) {
-          return;
-        }
-        popupRegistrationDialog();
-        break;
-      case NOT_YET:     
-        popupRegistrationDialog();
-        break;
-    }
-  }
+	private void checkRegistration() {
+		switch (com.surelogic.common.eclipse.preferences.PreferenceConstants
+				.getRegistrationPolicy()) {
+		case NEVER:
+		case DONE:
+			return;
+		case LATER:
+			final long laterTime = com.surelogic.common.eclipse.preferences.PreferenceConstants
+					.getRegistrationTime();
+			if (System.currentTimeMillis() < laterTime) {
+				return;
+			}
+			popupRegistrationDialog();
+			break;
+		case NOT_YET:
+			popupRegistrationDialog();
+			break;
+		}
+	}
 
 	private void popupRegistrationDialog() {
-    final UIJob dialogJob = new SLUIJob() {
-      @Override
-      public IStatus runInUIThread(IProgressMonitor monitor) {
-        System.out.println("Put up registration dialog"); // FIX
-        return Status.OK_STATUS;
-      }
-    };
-    dialogJob.schedule();
-  }
+		final UIJob dialogJob = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				System.out.println("Put up registration dialog"); // FIX
+				return Status.OK_STATUS;
+			}
+		};
+		dialogJob.schedule();
+	}
 
-  @Override
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			if (f_databaseInSync.get()) {
-				SierraServerManager.getInstance().save(getServerSaveFile());
+				SierraServerManager.getInstance().save();
 				SelectionManager.getInstance().save(getSelectionSaveFile());
 			}
 			f_plugin = null;
@@ -158,26 +163,20 @@ public final class Activator extends AbstractUIPlugin {
 		return f_plugin;
 	}
 
-	private File getServerSaveFile() {
-		IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString() + File.separator
-				+ "servers.xml");
-	}
-
 	private File getSelectionSaveFile() {
-		IPath pluginState = Activator.getDefault().getStateLocation();
+		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString() + File.separator
 				+ "selections.xml");
 	}
 
 	public File getFindingDetailsViewSaveFile() {
-		IPath pluginState = Activator.getDefault().getStateLocation();
+		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString() + File.separator
 				+ "finding-details-view.xml");
 	}
 
 	private String getDerbyLogFile() {
-		IPath pluginState = Activator.getDefault().getStateLocation();
+		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return pluginState.toOSString() + File.separator + "derby.log";
 	}
 }
