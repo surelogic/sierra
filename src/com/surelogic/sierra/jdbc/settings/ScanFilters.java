@@ -48,7 +48,7 @@ public class ScanFilters {
 
 	public List<ScanFilterDO> listServerScanFilters(String server) {
 		final List<ScanFilterDO> list = new ArrayList<ScanFilterDO>();
-		for (final String s : q.prepared("ScanFilters.listScanFilters",
+		for (final String s : q.prepared("ScanFilters.listServerScanFilters",
 				new StringRowHandler()).call(server)) {
 			list.add(getScanFilter(s));
 		}

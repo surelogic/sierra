@@ -1,38 +1,105 @@
 package com.surelogic.sierra.jdbc.settings;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.DBQueryNoResult;
+import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
+import com.surelogic.common.jdbc.Result;
+import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
-import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
-public class ServerLocations {
-
-	private final Query q;
-
-	public ServerLocations(Query q) {
-		this.q = q;
-	}
-
-	public void save(List<SierraServerLocation> locations) {
-		q.statement("ServerLocation.deleteLocations").call();
-		final Queryable<Void> insertLocation = q
-				.prepared("ServerLocation.insertLocation");
-		for (final SierraServerLocation l : locations) {
-			insertLocation.call(l.getLabel(), l.getProtocol(), l.getHost(), l
-					.getPort(), l.getContextPath(), l.getUser());
-		}
-	}
-
-	public List<SierraServerLocation> fetch() {
-		return q.statement("ServerLocation.listLocations",
-				new RowHandler<SierraServerLocation>() {
-					public SierraServerLocation handle(Row r) {
-
-						return null;
+public final class ServerLocations {
+	/**
+	 * Store the provided list of server locations. Passwords will not be saved.
+	 * 
+	 * @param locations
+	 *            a map of server locations, and the projects connected to them
+	 * @return
+	 */
+	public static DBQueryNoResult save(
+			final Map<SierraServerLocation, Collection<String>> locations) {
+		return new DBQueryNoResult() {
+			@Override
+			public void doPerform(Query q) {
+				q.statement("ServerLocations.deleteLocations").call();
+				q.statement("ServerLocations.deleteProjects").call();
+				final Queryable<Void> insertServerProject = q
+						.prepared("ServerLocations.insertServerProject");
+				final Queryable<Long> insertLocation = q.prepared(
+						"ServerLocations.insertLocation", new LongIdHandler());
+				for (final Entry<SierraServerLocation, Collection<String>> locEntry : locations
+						.entrySet()) {
+					final SierraServerLocation l = locEntry.getKey();
+					final long id = insertLocation.call(l.getLabel(), l
+							.getProtocol(), l.getHost(), l.getPort(), l
+							.getContextPath(), l.getUser());
+					for (final String project : locEntry.getValue()) {
+						insertServerProject.call(id, project);
 					}
-				}).call();
+				}
+			}
+		};
+	}
+
+	/**
+	 * Return a list of server locations. Any password information used in the
+	 * locations should be provided.
+	 * 
+	 * @param a
+	 *            map of passwords by keyed by {@code user@host}. May be
+	 *            {@code null}
+	 * @return
+	 */
+	public static DBQuery<Map<SierraServerLocation, Collection<String>>> fetch(
+			Map<String, String> passwords) {
+		final Map<String, String> empty = Collections.emptyMap();
+		final Map<String, String> passMap = passwords == null ? empty
+				: passwords;
+		return new DBQuery<Map<SierraServerLocation, Collection<String>>>() {
+			public Map<SierraServerLocation, Collection<String>> perform(Query q) {
+				final Queryable<List<String>> projects = q.prepared(
+						"ServerLocations.listServerProjects",
+						new StringRowHandler());
+				return q
+						.statement(
+								"ServerLocations.listLocations",
+								new ResultHandler<Map<SierraServerLocation, Collection<String>>>() {
+									public Map<SierraServerLocation, Collection<String>> handle(
+											Result result) {
+										final Map<SierraServerLocation, Collection<String>> map = new HashMap<SierraServerLocation, Collection<String>>();
+										// ID,LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER
+										for (final Row r : result) {
+											final long id = r.nextLong();
+											final String label = r.nextString();
+											final String protocol = r
+													.nextString();
+											final String host = r.nextString();
+											final int port = r.nextInt();
+											final String contextPath = r
+													.nextString();
+											final String user = r.nextString();
+											final SierraServerLocation loc = new SierraServerLocation(
+													label, host, "https"
+															.equals(protocol),
+													port, contextPath, user,
+													passMap.get(user + "@"
+															+ host));
+											map.put(loc, projects.call(id));
+										}
+										return map;
+									}
+								}).call();
+			}
+		};
 	}
 }
