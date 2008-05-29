@@ -16,21 +16,13 @@ import org.eclipse.core.runtime.*;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.jsure.xml.JSureXMLReader;
-import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.*;
-import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
-import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
-import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.message.ScanGenerator;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
+import com.surelogic.sierra.tool.message.*;
 
 public class ImportJSureDocumentJob extends DatabaseJob {
 	private static final Logger log = 
