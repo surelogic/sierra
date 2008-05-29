@@ -42,19 +42,21 @@ public final class ScanManager {
 	private final PreparedStatement selectCurrentFindingByCompilation;
 	private final PreparedStatement deleteScanOverviewByFinding;
 	private final PreparedStatement updateScanOverviewByFinding;
+	private final PreparedStatement selectArtifactsByTool;
+	private final PreparedStatement selectCurrentFindingByTool;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
-		this.factory = ScanRecordFactory.getInstance(conn);
+		factory = ScanRecordFactory.getInstance(conn);
 
 		/** Make sure this is called only once per connection */
-		Statement st = conn.createStatement();
+		final Statement st = conn.createStatement();
 		String tempTableName;
 		try {
 			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 				try {
 					st.execute(MAKE_TEMP_ORACLE);
-				} catch (SQLException sql) {
+				} catch (final SQLException sql) {
 					// XXX Silently ignore this...this needs to be corrected
 					// eventually
 				}
@@ -62,7 +64,7 @@ public final class ScanManager {
 			} else {
 				try {
 					st.execute(MAKE_TEMP_DERBY);
-				} catch (SQLException sql) {
+				} catch (final SQLException sql) {
 					// XXX Silently ignore this...this needs to be corrected
 					// eventually
 				}
@@ -71,13 +73,13 @@ public final class ScanManager {
 		} finally {
 			st.close();
 		}
-		this.deleteCompilations = conn
+		deleteCompilations = conn
 				.prepareStatement("DELETE FROM COMPILATION_UNIT WHERE ID IN ("
 						+ " SELECT ID FROM " + tempTableName + ")");
-		this.deleteSources = conn
+		deleteSources = conn
 				.prepareStatement("DELETE FROM SOURCE_LOCATION WHERE ID IN ("
 						+ " SELECT ID FROM " + tempTableName + ")");
-		this.insertTempSources = conn
+		insertTempSources = conn
 				.prepareStatement("INSERT INTO "
 						+ tempTableName
 						+ " SELECT NO_PRIMARY.ID FROM ("
@@ -88,7 +90,7 @@ public final class ScanManager {
 						+ " ) NO_PRIMARY"
 						+ " LEFT OUTER JOIN ARTIFACT_SOURCE_LOCATION_RELTN ASLR ON ASLR.SOURCE_LOCATION_ID = NO_PRIMARY.ID"
 						+ " WHERE ASLR.SOURCE_LOCATION_ID IS NULL");
-		this.insertTempCompilations = conn
+		insertTempCompilations = conn
 				.prepareStatement("INSERT INTO "
 						+ tempTableName
 						+ " SELECT NO_SOURCE.ID FROM ("
@@ -98,31 +100,47 @@ public final class ScanManager {
 						+ " WHERE SL.COMPILATION_UNIT_ID IS NULL) NO_SOURCE"
 						+ " LEFT OUTER JOIN METRIC_CU CM ON CM.COMPILATION_UNIT_ID = NO_SOURCE.ID"
 						+ " WHERE CM.COMPILATION_UNIT_ID IS NULL");
-		this.getOldestScanByProject = conn
+		getOldestScanByProject = conn
 				.prepareStatement("SELECT SCAN_UUID FROM OLDEST_SCANS WHERE PROJECT = ?");
-		this.getLatestScanByProject = conn
+		getLatestScanByProject = conn
 				.prepareStatement("SELECT SCAN_UUID FROM LATEST_SCANS WHERE PROJECT = ?");
-		this.selectArtifactsByCompilation = conn
+		selectArtifactsByCompilation = conn
 				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
 						+ "   CU.ID = ? AND"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
 						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
-		this.updateArtifactScan = conn
+		selectArtifactsByTool = conn
+				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE AT, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
+						+ "   CU.ID = ? AND"
+						+ "   A.SCAN_ID = ? AND"
+						+ "   A.ARTIFACT_TYPE_ID = AT.ID AND"
+						+ "   A.TOOL_ID = T.ID AND"
+						+ "   T.NAME = ?"
+						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
+						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
+		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
-		this.deleteMetricByCompilation = conn
+		deleteMetricByCompilation = conn
 				.prepareStatement("DELETE FROM METRIC_CU WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
-		this.updateMetricScan = conn
+		updateMetricScan = conn
 				.prepareStatement("UPDATE METRIC_CU SET SCAN_ID = ? WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
-		this.selectCurrentFindingByCompilation = conn
+		selectCurrentFindingByCompilation = conn
 				.prepareStatement("SELECT DISTINCT FINDING_ID FROM SOURCE_LOCATION SL, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
 						+ "   WHERE SL.COMPILATION_UNIT_ID = ? AND"
 						+ "      A.PRIMARY_SOURCE_LOCATION_ID = SL.ID AND"
 						+ "      A.SCAN_ID IN (?,?) AND"
 						+ "      AFR.ARTIFACT_ID = A.ID");
-		this.deleteScanOverviewByFinding = conn
+		selectCurrentFindingByTool = conn
+				.prepareStatement("SELECT DISTINCT FINDING_ID FROM TOOL T, ARTIFACT_TYPE AT, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+						+ "   WHERE T.NAME = ? AND"
+						+ "      AT.TOOL_ID = T.ID AND"
+						+ "      A.ARTIFACT_TYPE_ID = AT.ID AND"
+						+ "      A.SCAN_ID IN (?,?) AND"
+						+ "      AFR.ARTIFACT_ID = A.ID");
+		deleteScanOverviewByFinding = conn
 				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID = ?");
-		this.updateScanOverviewByFinding = conn
+		updateScanOverviewByFinding = conn
 				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID = ?");
 	}
 
@@ -176,19 +194,20 @@ public final class ScanManager {
 			record.setStatus(ScanStatus.FINISHED);
 			record.update();
 		} else {
-			throw new IllegalArgumentException("No scan with id " + scanUid + " exists.");
+			throw new IllegalArgumentException("No scan with id " + scanUid
+					+ " exists.");
 		}
 	}
 
 	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)
 			throws SQLException {
-		for (String uid : uids) {
+		for (final String uid : uids) {
 			if (monitor != null) {
 				if (monitor.isCanceled()) {
 					return;
 				}
 			}
-			ScanRecord rec = factory.newScan();
+			final ScanRecord rec = factory.newScan();
 			rec.setUid(uid);
 			if (rec.select()) {
 				rec.delete();
@@ -196,8 +215,9 @@ public final class ScanManager {
 			work(monitor);
 		}
 		if (monitor != null) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 		}
 		conn.commit();
 		insertTempSources.execute();
@@ -205,8 +225,9 @@ public final class ScanManager {
 		conn.commit();
 		work(monitor);
 		if (monitor != null) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 		}
 		insertTempCompilations.execute();
 		deleteCompilations.execute();
@@ -236,7 +257,7 @@ public final class ScanManager {
 			throws SQLException {
 		monitor.subTask("Deleting oldest scan");
 		getOldestScanByProject.setString(1, projectName);
-		ResultSet set = getOldestScanByProject.executeQuery();
+		final ResultSet set = getOldestScanByProject.executeQuery();
 		try {
 			if (set.next()) {
 				deleteScan(set.getString(1), monitor);
@@ -248,6 +269,116 @@ public final class ScanManager {
 
 	public static ScanManager getInstance(Connection conn) throws SQLException {
 		return new ScanManager(conn);
+	}
+
+	public ScanGenerator getPartialScanGenerator(String projectName,
+			FindingFilter filter, List<String> tools, Set<Long> findingIds) {
+		try {
+			String oldestScan = null;
+			String latestScan = null;
+			getOldestScanByProject.setString(1, projectName);
+			ResultSet set = getOldestScanByProject.executeQuery();
+			try {
+				if (set.next()) {
+					oldestScan = set.getString(1);
+				}
+			} finally {
+				set.close();
+			}
+			getLatestScanByProject.setString(1, projectName);
+			set = getLatestScanByProject.executeQuery();
+			try {
+				if (set.next()) {
+					latestScan = set.getString(1);
+				}
+			} finally {
+				set.close();
+			}
+			if (latestScan == null) {
+				// New scan, treat this as a normal scan
+				return new JDBCScanGenerator(conn, factory, this, filter, false);
+			} else {
+				final ScanRecord latest = factory.newScan();
+				latest.setUid(latestScan);
+				latest.select();
+				final ScanRecord oldest = factory.newScan();
+				if (oldestScan == null) {
+					// We have to create an older scan. We will copy it over
+					// from the latest scan.
+					oldest.setJavaVendor(latest.getJavaVendor());
+					oldest.setJavaVersion(latest.getJavaVersion());
+					oldest.setPartial(true);
+					oldest.setProjectId(latest.getProjectId());
+					oldest.setStatus(ScanStatus.FINISHED);
+					oldest.setTimestamp(latest.getTimestamp());
+					oldest.setUserId(latest.getUserId());
+					oldest.setUid(UUID.randomUUID().toString());
+					oldest.insert();
+				} else {
+					// Use the existing oldest scan
+					oldest.setUid(oldestScan);
+					oldest.select();
+				}
+				for (final String tool : tools) {
+					selectArtifactsByTool.setString(1, tool);
+					final ResultSet artToolSet = selectArtifactsByTool
+							.executeQuery();
+					final List<Long> artifactIds = new ArrayList<Long>();
+					try {
+						while (artToolSet.next()) {
+							artifactIds.add(artToolSet.getLong(1));
+						}
+					} finally {
+						artToolSet.close();
+					}
+					for (final long artifactId : artifactIds) {
+						int idx = 1;
+						updateArtifactScan.setLong(idx++, oldest.getId());
+						updateArtifactScan.setLong(idx++, artifactId);
+						updateArtifactScan.execute();
+					}
+					int idx = 1;
+					selectCurrentFindingByTool.setString(idx++, tool);
+					selectCurrentFindingByTool.setLong(idx++, latest.getId());
+					selectCurrentFindingByTool.setLong(idx++, oldest.getId());
+					set = selectCurrentFindingByTool.executeQuery();
+					try {
+						while (set.next()) {
+							findingIds.add(set.getLong(1));
+						}
+					} finally {
+						set.close();
+					}
+				}
+
+				for (final long findingId : findingIds) {
+					int idx = 1;
+					deleteScanOverviewByFinding.setLong(idx++, oldest.getId());
+					deleteScanOverviewByFinding.setLong(idx++, findingId);
+					deleteScanOverviewByFinding.execute();
+					idx = 1;
+					updateScanOverviewByFinding.setLong(idx++, oldest.getId());
+					updateScanOverviewByFinding.setLong(idx++, latest.getId());
+					updateScanOverviewByFinding.setLong(idx++, findingId);
+					updateScanOverviewByFinding.execute();
+				}
+
+				conn.commit();
+				// Copy the appropriate artifacts to the previous scan, then run
+				// against the latest scan
+				return new JDBCPartialScanGenerator(conn, factory, this,
+						latest, filter);
+			}
+		} catch (final SQLException e) {
+			try {
+				conn.rollback();
+			} catch (final SQLException e1) {
+				// We already have an exception
+			}
+			throw new ScanPersistenceException(
+					"Could not persist partial scan for project " + projectName
+							+ " and tools " + tools + ".", e);
+		}
 	}
 
 	/**
@@ -310,12 +441,13 @@ public final class ScanManager {
 					oldest.setUid(oldestScan);
 					oldest.select();
 				}
-				for (Entry<String, List<String>> packageCompilations : compilations
+				for (final Entry<String, List<String>> packageCompilations : compilations
 						.entrySet()) {
 					final String pakkage = packageCompilations.getKey();
 					for (final String compilation : packageCompilations
 							.getValue()) {
-						CompilationUnitRecord cu = factory.newCompilationUnit();
+						final CompilationUnitRecord cu = factory
+								.newCompilationUnit();
 						cu.setPackageName(pakkage);
 						cu.setCompilation(compilation);
 						if (cu.select()) {
@@ -330,7 +462,7 @@ public final class ScanManager {
 								while (set.next()) {
 									artifactIds.add(set.getLong(1));
 								}
-								for (long artifactId : artifactIds) {
+								for (final long artifactId : artifactIds) {
 									idx = 1;
 									updateArtifactScan.setLong(idx++, oldest
 											.getId());
@@ -370,7 +502,7 @@ public final class ScanManager {
 							updateMetricScan.execute();
 						}
 					}
-					for (long findingId : findingIds) {
+					for (final long findingId : findingIds) {
 						int idx = 1;
 						deleteScanOverviewByFinding.setLong(idx++, oldest
 								.getId());
@@ -392,10 +524,10 @@ public final class ScanManager {
 				return new JDBCPartialScanGenerator(conn, factory, this,
 						latest, filter);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			try {
 				conn.rollback();
-			} catch (SQLException e1) {
+			} catch (final SQLException e1) {
 				// We already have an exception
 			}
 			throw new ScanPersistenceException(
