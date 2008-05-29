@@ -71,19 +71,21 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 		final ScanDocumentUtility.Parser parser = new ScanDocumentUtility.Parser() {
 			public String parse(File scanDocument, ScanGenerator generator,
 					            SLProgressMonitor mon) {
-				generator.uid("");
 				/*
 				 builder.javaVendor(config.getJavaVendor());
 		         builder.javaVersion(config.getJavaVersion());
 		         builder.project(config.getProject());
 		         builder.timeseries(config.getTimeseries());
 				 */
-				final ArtifactGenerator aGenerator = generator.build();
+				final JSureDocumentListener l = new JSureDocumentListener(generator, mon);
 				try {
-					JSureXMLReader.readSnapshot(scanDocument, 
-							new JSureDocumentListener(aGenerator, mon));
+					JSureXMLReader.readSnapshot(scanDocument, l); 
 				} catch(Exception e) {
-					aGenerator.rollback();
+					ArtifactGenerator aGenerator = l.getArtifactGenerator();
+					if (aGenerator != null) {
+						aGenerator.rollback();
+					}
+					log.log(Level.SEVERE, "Exception while reading snapshot", e);
 				}
 				return generator.finished();
 			}
