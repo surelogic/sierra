@@ -27,10 +27,24 @@ public final class ScanDocumentUtility {
 	private static final Logger log = SLLogger
 			.getLoggerFor(ScanDocumentUtility.class);
 
+	public interface Parser {
+		String parse(File scanDocument, ScanGenerator gen, SLProgressMonitor monitor)
+		throws ScanPersistenceException;
+	}
+	
+	private static final Parser defaultParser = new Parser() {
+		public String parse(File scanDocument, ScanGenerator gen,
+				            SLProgressMonitor monitor) {
+			return MessageWarehouse.getInstance()
+			       .parseScanDocument(scanDocument, gen, monitor);
+		}
+		
+	};
+	
 	private ScanDocumentUtility() {
 		// no instances
 	}
-
+	
 	/**
 	 * Parses a partial scan document into the database and generates findings.
 	 * When this method is completed the scan document has been fully loaded
@@ -56,6 +70,14 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
+		loadPartialScanDocument(scanDocument, monitor, projectName, 
+				                compilations, defaultParser);
+	}
+	
+	public static void loadPartialScanDocument(final File scanDocument,
+			final SLProgressMonitor monitor, final String projectName,
+			final Map<String, List<String>> compilations, final Parser parser)
+			throws ScanPersistenceException {	
 		final boolean debug = log.isLoggable(Level.FINE);
 		if (debug) {
 			log.info("Loading partial scan document " + scanDocument
@@ -72,8 +94,7 @@ public final class ScanDocumentUtility {
 								new ConnectionQuery(conn));
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
-				final String uid = MessageWarehouse.getInstance()
-						.parseScanDocument(scanDocument, gen, monitor);
+				final String uid = parser.parse(scanDocument, gen, monitor);
 				conn.commit();
 				try {
 
