@@ -20,6 +20,7 @@ import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.rules.CategoryEditor.FindingsEditor;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
@@ -91,6 +92,16 @@ public class CategoriesContent extends ContentComposite {
 			}
 		});
 
+		final FindingsEditor findingsEditor = categoryEditor
+				.getFindingsEditor();
+		findingsEditor.addAction("Add Category", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				Window.alert("TODO: Add Category");
+				// TODO addCategory();
+			}
+		});
+
 		selectionPanel.setWidth("100%");
 		rootPanel.add(selectionPanel, DockPanel.CENTER);
 		rootPanel.setCellWidth(selectionPanel, "75%");
@@ -157,12 +168,14 @@ public class CategoriesContent extends ContentComposite {
 	private void setCategory(Category cat, boolean edit) {
 		if (edit && cat != null) {
 			categoryEditor.setCategory(cat);
+			categoryEditor.setActionsVisible(true);
 			if (selectionPanel.getWidgetIndex(categoryEditor) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categoryEditor);
 			}
 		} else {
 			categoryView.setCategory(cat);
+			categoryView.setActionsVisible(cat != null);
 			if (selectionPanel.getWidgetIndex(categoryView) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categoryView);

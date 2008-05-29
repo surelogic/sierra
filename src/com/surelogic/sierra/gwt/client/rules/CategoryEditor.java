@@ -81,7 +81,11 @@ public class CategoryEditor extends BlockPanel {
 		return cat;
 	}
 
-	private class FindingsEditor extends BlockPanel {
+	public FindingsEditor getFindingsEditor() {
+		return findingsEditor;
+	}
+
+	public static class FindingsEditor extends BlockPanel {
 		private final Map<FilterEntry, ItemCheckBox<FilterEntry>> findings = new HashMap<FilterEntry, ItemCheckBox<FilterEntry>>();
 		private final List<Category> parentCategories = new ArrayList<Category>();
 		private Category category;

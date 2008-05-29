@@ -88,6 +88,10 @@ public class BasicPanel extends Composite {
 		}
 	}
 
+	public final void setActionsVisible(boolean visible) {
+		actionPanel.setVisible(visible);
+	}
+
 	public final void addAction(Widget w) {
 		actionPanel.add(w);
 		w.addStyleName("sl-Section-actionpanel-item");
