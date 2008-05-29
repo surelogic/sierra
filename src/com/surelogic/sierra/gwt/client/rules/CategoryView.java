@@ -16,6 +16,7 @@ import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-category";
@@ -52,14 +53,13 @@ public class CategoryView extends BlockPanel {
 		}
 
 		final String catInfo = cat == null ? "" : cat.getInfo();
-		if (catInfo == null || "".equals(catInfo)) {
-			description.setText("No summary information.");
-			description.addStyleName("font-italic");
-		} else {
+		if (LangUtil.notEmpty(catInfo)) {
 			description.setText(catInfo);
 			description.removeStyleName("font-italic");
+		} else {
+			description.setText("No summary information.");
+			description.addStyleName("font-italic");
 		}
-
 		findingsView.setCategory(category);
 	}
 
@@ -77,36 +77,39 @@ public class CategoryView extends BlockPanel {
 			findingTypes.clear();
 			findings.clear();
 
-			final List<FilterEntry> visibleFindings = new ArrayList<FilterEntry>();
-			for (FilterEntry finding : cat.getIncludedEntries()) {
-				if (!visibleFindings.contains(finding)) {
-					visibleFindings.add(finding);
-				}
-			}
-
-			Collections.sort(visibleFindings, new Comparator<FilterEntry>() {
-
-				public int compare(FilterEntry o1, FilterEntry o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-
-			ClickListener findingListener = new ClickListener() {
-
-				public void onClick(Widget sender) {
-					// TODO view the finding that was clicked
-					// FilterEntry finding = (FilterEntry) ((ItemLabel)
-					// sender).getItem();
-					// CategoriesContext(finding).updateContext();
+			if (cat != null) {
+				final List<FilterEntry> visibleFindings = new ArrayList<FilterEntry>();
+				for (FilterEntry finding : cat.getIncludedEntries()) {
+					if (!visibleFindings.contains(finding)) {
+						visibleFindings.add(finding);
+					}
 				}
 
-			};
+				Collections.sort(visibleFindings,
+						new Comparator<FilterEntry>() {
 
-			for (FilterEntry finding : visibleFindings) {
-				final ItemLabel rule = new ItemLabel(finding.getName(),
-						finding, selectionTracker, findingListener);
-				rule.setTitle(finding.getShortMessage());
-				findingTypes.add(rule);
+							public int compare(FilterEntry o1, FilterEntry o2) {
+								return o1.getName().compareTo(o2.getName());
+							}
+						});
+
+				ClickListener findingListener = new ClickListener() {
+
+					public void onClick(Widget sender) {
+						// TODO view the finding that was clicked
+						// FilterEntry finding = (FilterEntry) ((ItemLabel)
+						// sender).getItem();
+						// CategoriesContext(finding).updateContext();
+					}
+
+				};
+
+				for (FilterEntry finding : visibleFindings) {
+					final ItemLabel rule = new ItemLabel(finding.getName(),
+							finding, selectionTracker, findingListener);
+					rule.setTitle(finding.getShortMessage());
+					findingTypes.add(rule);
+				}
 			}
 		}
 

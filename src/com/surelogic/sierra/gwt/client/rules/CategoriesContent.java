@@ -138,17 +138,24 @@ public class CategoriesContent extends ContentComposite {
 
 	private void refreshContext(Context context) {
 		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		final Category cat = categories.getItem(rulesCtx.getCategory());
-		if (cat != null) {
-			searchBlock.setSelection(cat);
-			setCategory(cat, false);
-		} else if (categories.getItemCount() > 0) {
-			new CategoriesContext(categories.getItem(0)).updateContext();
+		final String catUuid = rulesCtx.getCategory();
+		if (LangUtil.notEmpty(catUuid)) {
+			final Category cat = categories.getItem(catUuid);
+			if (cat != null) {
+				searchBlock.setSelection(cat);
+				setCategory(cat, false);
+			} else {
+				setCategory(null, false);
+			}
+		} else {
+			if (categories.getItemCount() > 0) {
+				new CategoriesContext(categories.getItem(0)).updateContext();
+			}
 		}
 	}
 
 	private void setCategory(Category cat, boolean edit) {
-		if (edit) {
+		if (edit && cat != null) {
 			categoryEditor.setCategory(cat);
 			if (selectionPanel.getWidgetIndex(categoryEditor) == -1) {
 				selectionPanel.clear();
