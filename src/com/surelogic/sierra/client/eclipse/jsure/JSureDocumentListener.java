@@ -20,8 +20,9 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	}
 	
 	@Override
-	public void uid(String uid) {
+	public void start(String uid, String project) {
 		generator.uid(uid);
+		generator.project(project);
 		aGenerator = generator.build();
 		builder = aGenerator.artifact();
 	}

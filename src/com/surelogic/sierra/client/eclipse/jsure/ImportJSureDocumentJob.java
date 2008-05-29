@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.jsure;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +68,13 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 	}
 
 	private void loadScanDocument(final SLProgressMonitor wrapper) {
-		final File location = config.getConfig().getScanDocument();
 		final ScanDocumentUtility.Parser parser = new ScanDocumentUtility.Parser() {
-			public String parse(File scanDocument, ScanGenerator generator,
-					            SLProgressMonitor mon) {
+			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
+				                Set<Long> findingIds, SLProgressMonitor mon) {
+				final ScanGenerator generator = 
+					sMan.getPartialScanGenerator(config.getConfig().getProject(), 
+							                     filter, Collections.singletonList("JSure"), 
+							                     findingIds);				
 				/*
 				 builder.javaVendor(config.getJavaVendor());
 		         builder.javaVersion(config.getJavaVersion());
@@ -90,6 +94,7 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 				return generator.finished();
 			}
 		};
+		final File location = config.getConfig().getScanDocument();
 		ScanDocumentUtility.loadPartialScanDocument(location, wrapper, 
 				      config.getConfig().getProject(), 
 				      config.getPackageCompilationUnitMap(), parser);

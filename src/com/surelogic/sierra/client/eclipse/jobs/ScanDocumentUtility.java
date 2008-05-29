@@ -28,18 +28,10 @@ public final class ScanDocumentUtility {
 			.getLoggerFor(ScanDocumentUtility.class);
 
 	public interface Parser {
-		String parse(File scanDocument, ScanGenerator gen, SLProgressMonitor monitor)
+		String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
+				     Set<Long> findingIds, SLProgressMonitor monitor)
 		throws ScanPersistenceException;
 	}
-	
-	private static final Parser defaultParser = new Parser() {
-		public String parse(File scanDocument, ScanGenerator gen,
-				            SLProgressMonitor monitor) {
-			return MessageWarehouse.getInstance()
-			       .parseScanDocument(scanDocument, gen, monitor);
-		}
-		
-	};
 	
 	private ScanDocumentUtility() {
 		// no instances
@@ -70,8 +62,18 @@ public final class ScanDocumentUtility {
 			final SLProgressMonitor monitor, final String projectName,
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
+		final Parser p = new Parser() {
+			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
+					            Set<Long> findingIds, SLProgressMonitor monitor)
+					throws ScanPersistenceException {
+				final ScanGenerator gen = sMan.getPartialScanGenerator(
+						projectName, filter, compilations, findingIds);
+				return MessageWarehouse.getInstance()
+			       .parseScanDocument(scanDocument, gen, monitor);
+			}			
+		};
 		loadPartialScanDocument(scanDocument, monitor, projectName, 
-				                compilations, defaultParser);
+				                compilations, p);
 	}
 	
 	public static void loadPartialScanDocument(final File scanDocument,
@@ -92,9 +94,7 @@ public final class ScanDocumentUtility {
 				final FindingFilter filter = SettingQueries
 						.scanFilterForProject(projectName).perform(
 								new ConnectionQuery(conn));
-				final ScanGenerator gen = sMan.getPartialScanGenerator(
-						projectName, filter, compilations, findingIds);
-				final String uid = parser.parse(scanDocument, gen, monitor);
+				final String uid = parser.parse(scanDocument, sMan, filter, findingIds, monitor);
 				conn.commit();
 				try {
 
