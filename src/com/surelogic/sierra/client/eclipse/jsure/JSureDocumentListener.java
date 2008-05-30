@@ -38,7 +38,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		final boolean warning;
 		if (RESULT_DROP.equals(name) || PROMISE_DROP.equals(name)) {
 			final String consistent = e.getAttribute(PROVED_ATTR);
-			warning = "true".equals(consistent); 
+			warning = !"true".equals(consistent); 
 		} 
 		else if (IR_DROP.equals(name)) {	
 			final String type = e.getAttribute(TYPE_ATTR);
@@ -47,12 +47,13 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			return;
 		}		
 		if (createSourceLocation(builder.primarySourceLocation(), e.getSource())) {
+			final String msg = e.getAttribute(MESSAGE_ATTR);
+			builder.message(msg);
 			if (warning) {
 				builder.severity(Severity.WARNING).priority(Priority.HIGH);
 			} else {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
 			}
-			builder.message(e.getAttribute(MESSAGE_ATTR));
 			builder.findingType("JSure", "0.9", "JSure");
 			//e.getAttribute(CATEGORY_ATTR));
 		}
