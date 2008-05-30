@@ -46,6 +46,7 @@ public final class ClientFindingManager extends FindingManager {
 
 	private final PreparedStatement populatePartialScanOverview;
 	private final PreparedStatement selectArtifactsByCompilation;
+	private final PreparedStatement selectArtifactsByTool;
 	private final PreparedStatement deleteFindingFromOverview;
 	private final PreparedStatement deleteOverview;
 	private final PreparedStatement checkAndInsertTempId;
@@ -248,6 +249,11 @@ public final class ClientFindingManager extends FindingManager {
 						+ " FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
 						+ " WHERE"
 						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND CU.PACKAGE_NAME = ? AND CU.CU = ?");
+		selectArtifactsByTool = conn
+				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,S.PROJECT_ID,SL.HASH,SL.CLASS_NAME,CU.PACKAGE_NAME,ART.FINDING_TYPE_ID"
+						+ " FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
+						+ " WHERE"
+						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND ART.TOOL_ID = T.ID AND T.NAME = ?");
 		selectFindingFindingType = conn
 				.prepareStatement("SELECT DISTINCT FT.UUID FROM LOCATION_MATCH LM, FINDING_TYPE FT WHERE FT.ID = LM.FINDING_TYPE_ID AND LM.FINDING_ID = ?");
 	}
@@ -430,6 +436,87 @@ public final class ClientFindingManager extends FindingManager {
 			deleteOverview.execute();
 		}
 		super.deleteFindings(projectName, monitor);
+	}
+
+	/**
+	 * Update the findings for a scan that has been partially updated. This
+	 * should also regenerate the findings overview.
+	 * 
+	 * @param projectName
+	 * @param uid
+	 * @param tools
+	 * @param filter
+	 * @param previousFindingIds
+	 *            the set of finding ids belonging to the compilation units
+	 *            before the scan was altered
+	 * @param monitor
+	 */
+	public void updateScanFindings(String projectName, String uid,
+			List<String> tools, FindingFilter filter,
+			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
+		final Set<Long> scanFindingIds = new HashSet<Long>();
+		try {
+			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
+					.newScan();
+			scan.setUid(uid);
+			if (!scan.select()) {
+				throw new IllegalArgumentException("No scan with uid " + uid
+						+ " exists in the database");
+			}
+			final Long projectId = scan.getProjectId();
+			int total = 0;
+			for (final String tool : tools) {
+				int counter = 0;
+				int idx = 1;
+				selectArtifactsByTool.setLong(idx++, scan.getId());
+				selectArtifactsByTool.setString(idx++, tool);
+				final ResultSet result = selectArtifactsByTool.executeQuery();
+				try {
+					while (result.next()) {
+						final ArtifactResult art = createArtifactResult(result);
+						final Long findingId = getFindingId(filter, projectId,
+								art);
+						final LongRelationRecord afr = factory
+								.newArtifactFinding();
+						afr.setId(new RelationRecord.PK<Long, Long>(art.id,
+								findingId));
+						afr.insert();
+						if ((++counter % FETCH_SIZE) == 0) {
+							conn.commit();
+						}
+						if ((counter % CHECK_SIZE) == 0) {
+							if (monitor != null) {
+								if (monitor.isCanceled()) {
+									conn.rollback();
+									ScanManager.getInstance(conn).deleteScan(
+											uid, null);
+									return;
+								}
+								monitor.worked(1);
+							}
+						}
+						scanFindingIds.add(findingId);
+					}
+				} finally {
+					result.close();
+				}
+				total += counter;
+			}
+			conn.commit();
+			generatePartialScanOverview(scan.getId(), scanFindingIds);
+			/*
+			 * Regenerate the findings overview for all current and previous
+			 * findings.
+			 */
+			scanFindingIds.addAll(previousFindingIds);
+			regenerateFindingsOverview(projectName, scanFindingIds, monitor);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("All new findings (" + total + ") persisted for scan "
+						+ uid + " in project " + projectName + ".");
+			}
+		} catch (final SQLException e) {
+			sqlError(e);
+		}
 	}
 
 	/**
