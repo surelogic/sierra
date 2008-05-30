@@ -1,13 +1,8 @@
 package com.surelogic.sierra.client.eclipse.jsure;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +15,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.jsure.xml.JSureXMLReader;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.*;
@@ -60,14 +56,14 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 		}
 	}
 
+	private static final List<String> tools = Collections.singletonList("JSure");
+	
 	private void loadScanDocument(final SLProgressMonitor wrapper) {
 		final ScanDocumentUtility.Parser parser = new ScanDocumentUtility.Parser() {
 			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
 				                Set<Long> findingIds, SLProgressMonitor mon) {
 				final ScanGenerator generator = 
-					sMan.getPartialScanGenerator(project, 
-							                     filter, Collections.singletonList("JSure"), 
-							                     findingIds);				
+					sMan.getPartialScanGenerator(project, filter, tools, findingIds);				
 				/*
 				 builder.javaVendor(config.getJavaVendor());
 		         builder.javaVersion(config.getJavaVersion());
@@ -86,9 +82,14 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 				}
 				return generator.finished();
 			}
+			public void updateOverview(ClientFindingManager fm, String uid,
+					FindingFilter filter, Set<Long> findingIds,
+					SLProgressMonitor monitor) {
+				fm.updateScanFindings(project, uid, tools, filter, findingIds, monitor);
+			}
 		};
 		ScanDocumentUtility.loadPartialScanDocument(location, wrapper, 
-				      project, null, parser); // FIX null
+				      project, parser);
 		/*
 		// Delete partial scan when done
 		location.delete();

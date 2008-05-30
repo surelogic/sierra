@@ -31,6 +31,9 @@ public final class ScanDocumentUtility {
 		String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
 				     Set<Long> findingIds, SLProgressMonitor monitor)
 		throws ScanPersistenceException;
+		
+		void updateOverview(ClientFindingManager fm, String uid, FindingFilter filter, 
+				            Set<Long> findingIds, SLProgressMonitor monitor);
 	}
 	
 	private ScanDocumentUtility() {
@@ -70,20 +73,22 @@ public final class ScanDocumentUtility {
 						projectName, filter, compilations, findingIds);
 				return MessageWarehouse.getInstance()
 			       .parseScanDocument(scanDocument, gen, monitor);
+			}
+			public void updateOverview(ClientFindingManager fm, String uid, FindingFilter filter,
+					Set<Long> findingIds, SLProgressMonitor monitor) {
+				fm.updateScanFindings(projectName, uid, compilations,
+						filter, findingIds, monitor);
 			}			
 		};
-		loadPartialScanDocument(scanDocument, monitor, projectName, 
-				                compilations, p);
+		loadPartialScanDocument(scanDocument, monitor, projectName, p);
 	}
 	
 	public static void loadPartialScanDocument(final File scanDocument,
-			final SLProgressMonitor monitor, final String projectName,
-			final Map<String, List<String>> compilations, final Parser parser)
+			final SLProgressMonitor monitor, final String projectName, final Parser parser)
 			throws ScanPersistenceException {	
 		final boolean debug = log.isLoggable(Level.FINE);
 		if (debug) {
-			log.info("Loading partial scan document " + scanDocument
-					+ " with compilations " + compilations + ".");
+			log.info("Loading partial scan document " + scanDocument);
 		}
 		Throwable exc = null;
 		try {
@@ -100,8 +105,7 @@ public final class ScanDocumentUtility {
 
 					final ClientFindingManager fm = ClientFindingManager
 							.getInstance(conn);
-					fm.updateScanFindings(projectName, uid, compilations,
-							filter, findingIds, monitor);
+					parser.updateOverview(fm, uid, filter, findingIds, monitor);
 					conn.commit();
 				} catch (final SQLException e) {
 					try {
