@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<findingTypes>
+	<findingType>
+		<id>JSure</id>
+		<artifact tool="JSure"
+			mnemonic="JSure">
+		</artifact>
+		<shortMessage>
+		  TBD
+		</shortMessage>
+		<info>
+		  TBD
+		</info>
+		<name>JSure Issue</name>
+	</findingType>
+	
+	<category>
+		<id>JSure</id>
+		<findingType>JSure</findingType>
+		<name>JSure Issue</name>
+		<description>
+			This encompasses various issues related to JSure
+		</description>
+	</category>
+</findingTypes>
