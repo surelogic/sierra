@@ -57,16 +57,14 @@ public final class ScanManager {
 				try {
 					st.execute(MAKE_TEMP_ORACLE);
 				} catch (final SQLException sql) {
-					// XXX Silently ignore this...this needs to be corrected
-					// eventually
+					// Silently ignore this...
 				}
 				tempTableName = "TEMP_IDS";
 			} else {
 				try {
 					st.execute(MAKE_TEMP_DERBY);
 				} catch (final SQLException sql) {
-					// XXX Silently ignore this...this needs to be corrected
-					// eventually
+					// Silently ignore this...
 				}
 				tempTableName = "SESSION.TEMP_IDS";
 			}
@@ -114,7 +112,7 @@ public final class ScanManager {
 				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE AT, TOOL T WHERE"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   A.ARTIFACT_TYPE_ID = AT.ID AND"
-						+ "   A.TOOL_ID = T.ID AND" + "   T.NAME = ?");
+						+ "   A.TOOL_ID = T.ID AND T.NAME = ?");
 		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
 		deleteMetricByCompilation = conn
