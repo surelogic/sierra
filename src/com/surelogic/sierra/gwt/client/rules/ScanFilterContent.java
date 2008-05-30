@@ -211,8 +211,12 @@ public class ScanFilterContent extends ContentComposite {
 									}
 
 									public void onSuccess(Status result) {
-										status.setStatus(result);
-										cache.refresh();
+										if (result.isSuccess()) {
+											cache.refresh();
+											setFilter(null);
+										} else {
+											status.setStatus(result);
+										}
 									}
 								});
 					}
