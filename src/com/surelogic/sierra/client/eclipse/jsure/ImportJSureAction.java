@@ -42,7 +42,7 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
     		String first = null;
     		for(String file : desktop.list()) {
     			if (file.endsWith(".sea.xml")) {
-    				first = file;
+    				first = new File(desktop, file).getAbsolutePath();
     				break;
     			}
     		}
