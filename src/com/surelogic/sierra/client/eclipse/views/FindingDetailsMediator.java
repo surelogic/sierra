@@ -717,6 +717,10 @@ implements IViewUpdater {
 			throw new IllegalArgumentException("Bad number of artifacts: "
 					+ numArtifacts);
 		}
+		if (numArtifacts != finding.getArtifacts().size()) {
+			LOG.severe("Number of artifacts don't match");
+			return;	
+		}
 		final ArtifactDetail firstArtifact = finding.getArtifacts().get(0);
 		if (finding.getNumberOfArtifacts() == 1
 				&& firstArtifact.getAdditionalSources().isEmpty()) {
