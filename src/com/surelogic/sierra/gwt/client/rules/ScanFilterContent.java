@@ -3,7 +3,6 @@ package com.surelogic.sierra.gwt.client.rules;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +32,6 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
-import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -134,9 +132,10 @@ public class ScanFilterContent extends ContentComposite {
 
 			protected void onInitialize(VerticalPanel contentPanel) {
 				list = contentPanel;
-				cache.addListener(new CacheListenerAdapter() {
+				cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
-					public void onRefresh(Cache cache, Throwable failure) {
+					public void onRefresh(Cache<ScanFilter> cache,
+							Throwable failure) {
 						search();
 					}
 				});
@@ -164,8 +163,7 @@ public class ScanFilterContent extends ContentComposite {
 					}
 				};
 				boolean success = false;
-				for (final Iterator i = cache.getItemIterator(); i.hasNext();) {
-					final ScanFilter f = (ScanFilter) i.next();
+				for (final ScanFilter f : cache.getItems()) {
 					if (f.getName().toLowerCase().matches(query)) {
 						success = true;
 						list.add(new ItemLabel(f.getName(), f, selection,
@@ -192,12 +190,32 @@ public class ScanFilterContent extends ContentComposite {
 			this.panel = panel;
 			status = new StatusBox();
 			refresh();
-			cache.addListener(new CacheListenerAdapter() {
+			cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
-				public void onItemUpdate(Cache cache, Cacheable item,
-						Status status, Throwable failure) {
+				public void onItemUpdate(Cache<ScanFilter> cache,
+						ScanFilter item, Status status, Throwable failure) {
 					cache.refresh();
 					ScanFilterComposite.this.status.setStatus(status);
+				}
+			});
+			addAction("Delete", new ClickListener() {
+
+				public void onClick(Widget sender) {
+					if (filter != null) {
+						ServiceHelper.getSettingsService().deleteScanFilter(
+								filter.getUuid(), new AsyncCallback<Status>() {
+
+									public void onFailure(Throwable caught) {
+										status.setStatus(Status.failure(caught
+												.getMessage()));
+									}
+
+									public void onSuccess(Status result) {
+										status.setStatus(result);
+										cache.refresh();
+									}
+								});
+					}
 				}
 			});
 		}
@@ -275,9 +293,9 @@ public class ScanFilterContent extends ContentComposite {
 
 	private static class FilterEntries extends Grid {
 
-		private final Set entries;
+		private final Set<ScanFilterEntry> entries;
 
-		public FilterEntries(Set entries) {
+		public FilterEntries(Set<ScanFilterEntry> entries) {
 			super();
 			this.entries = entries;
 			resize(entries.size() + 1, 3);
@@ -286,10 +304,11 @@ public class ScanFilterContent extends ContentComposite {
 			getCellFormatter().addStyleName(0, 0, "scan-filter-entry-title");
 			getCellFormatter().addStyleName(0, 1, "scan-filter-entry-title");
 			int row = 1;
-			final List sortedEntries = new ArrayList(entries);
+			final List<ScanFilterEntry> sortedEntries = new ArrayList<ScanFilterEntry>(
+					entries);
 			Collections.sort(sortedEntries);
-			for (final Iterator i = sortedEntries.iterator(); i.hasNext();) {
-				entry(row++, (ScanFilterEntry) i.next());
+			for (final ScanFilterEntry entry : sortedEntries) {
+				entry(row++, entry);
 			}
 		}
 
@@ -318,8 +337,8 @@ public class ScanFilterContent extends ContentComposite {
 					entries.remove(e);
 					resize(getRowCount() - 1, 3);
 					int row = 1;
-					for (final Iterator i = entries.iterator(); i.hasNext();) {
-						entry(row++, (ScanFilterEntry) i.next());
+					for (final Object element2 : entries) {
+						entry(row++, (ScanFilterEntry) element2);
 					}
 				}
 			});
@@ -393,7 +412,7 @@ public class ScanFilterContent extends ContentComposite {
 			scanFilterCreatePanel.add(waitImage);
 
 			ServiceHelper.getSettingsService().createScanFilter(name,
-					new AsyncCallback() {
+					new AsyncCallback<ScanFilter>() {
 
 						public void onFailure(Throwable caught) {
 							Window.alert("Category creation failed: "
@@ -402,17 +421,17 @@ public class ScanFilterContent extends ContentComposite {
 							scanFilterCreatePanel.add(scanFilterActions);
 						}
 
-						public void onSuccess(Object result) {
+						public void onSuccess(ScanFilter result) {
 							toggleCreateScanFilter();
 							cache.refresh();
-							goToScanFilter(((ScanFilter) result).getUuid());
+							goToScanFilter(result.getUuid());
 						}
 					});
 		}
 	}
 
 	private static void goToScanFilter(String uuid) {
-		final Map map = new HashMap();
+		final Map<String, String> map = new HashMap<String, String>();
 		map.put(FILTER, uuid);
 		ContextManager.setContext(Context.create(Context.create("scanfilters"),
 				map));
