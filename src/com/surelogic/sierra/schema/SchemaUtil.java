@@ -31,6 +31,7 @@ public class SchemaUtil {
 		types.add(getFindingTypes("findbugs.xml"));
 		types.add(getFindingTypes("pmd.xml"));
 		types.add(getFindingTypes("cpd.xml"));
+		types.add(getFindingTypes("jsure.xml"));
 		types.add(getFindingTypes("checkstyle.xml"));
 		ftMan.updateFindingTypes(types, 0);
 	}

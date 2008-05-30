@@ -8,7 +8,8 @@ import com.surelogic.common.jdbc.SchemaAction;
 public class Schema_0031 implements SchemaAction {
 
 	public void run(Connection c) throws SQLException {
-		SchemaUtil.setupCategories(c);
+		//Moved to schema 34
+		//SchemaUtil.setupCategories(c);
 	}
 
 }
