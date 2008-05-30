@@ -15,14 +15,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
-import com.surelogic.sierra.jdbc.settings.Categories;
-import com.surelogic.sierra.jdbc.settings.CategoryDO;
-import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 import com.surelogic.sierra.tool.message.ArtifactType;
 import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
@@ -357,26 +353,6 @@ public final class FindingTypeManager {
 						}
 					}
 				}
-			}
-			final Categories sets = new Categories(new ConnectionQuery(conn));
-			final Map<String, CategoryDO> currentSets = new HashMap<String, CategoryDO>();
-			for (final CategoryDO set : sets.listCategories()) {
-				currentSets.put(set.getName(), set);
-			}
-			for (final Category cat : type.getCategory()) {
-				final String name = cat.getName().trim();
-				CategoryDO set = currentSets.get(name);
-				if (set == null) {
-					set = sets.createCategory(cat.getName().trim(), cat
-							.getDescription(), revision);
-				}
-				final Set<CategoryEntryDO> entries = set.getFilters();
-				entries.clear();
-				for (String findingType : cat.getFindingType()) {
-					findingType = findingType.trim();
-					entries.add(new CategoryEntryDO(findingType, false));
-				}
-				sets.updateCategory(set, revision);
 			}
 		}
 		// Ensure that all artifact types belong to a finding type, and all
