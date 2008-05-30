@@ -109,9 +109,9 @@ public final class ScanManager {
 						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
 						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
 		selectArtifactsByTool = conn
-				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE AT, TOOL T WHERE"
+				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, TOOL T WHERE"
 						+ "   A.SCAN_ID = ? AND"
-						+ "   A.ARTIFACT_TYPE_ID = AT.ID AND"
+						+ "   A.ARTIFACT_TYPE_ID = ART.ID AND"
 						+ "   A.TOOL_ID = T.ID AND T.NAME = ?");
 		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
@@ -126,10 +126,10 @@ public final class ScanManager {
 						+ "      A.SCAN_ID IN (?,?) AND"
 						+ "      AFR.ARTIFACT_ID = A.ID");
 		selectCurrentFindingByTool = conn
-				.prepareStatement("SELECT DISTINCT FINDING_ID FROM TOOL T, ARTIFACT_TYPE AT, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
+				.prepareStatement("SELECT DISTINCT FINDING_ID FROM TOOL T, ARTIFACT_TYPE ART, ARTIFACT A, ARTIFACT_FINDING_RELTN AFR"
 						+ "   WHERE T.NAME = ? AND"
-						+ "      AT.TOOL_ID = T.ID AND"
-						+ "      A.ARTIFACT_TYPE_ID = AT.ID AND"
+						+ "      ART.TOOL_ID = T.ID AND"
+						+ "      A.ARTIFACT_TYPE_ID = ART.ID AND"
 						+ "      A.SCAN_ID IN (?,?) AND"
 						+ "      AFR.ARTIFACT_ID = A.ID");
 		deleteScanOverviewByFinding = conn
