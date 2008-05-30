@@ -112,7 +112,7 @@ public final class ScanManager {
 				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, TOOL T WHERE"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   A.ARTIFACT_TYPE_ID = ART.ID AND"
-						+ "   A.TOOL_ID = T.ID AND T.NAME = ?");
+						+ "   ART.TOOL_ID = T.ID AND T.NAME = ?");
 		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
 		deleteMetricByCompilation = conn
