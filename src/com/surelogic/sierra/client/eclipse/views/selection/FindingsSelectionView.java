@@ -12,9 +12,12 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.jsure.ImportJSureAction;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
@@ -140,6 +143,16 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 			}
 		};
 		addToViewMenu(exportAction);
+		
+		if (XUtil.useExperimental()) {			
+			final Action jsureAction = new Action("Import JSure Document") {
+				@Override
+				public void run() {
+					new ImportJSureAction().run(null);
+				}
+			};
+			addToViewMenu(jsureAction);
+		}
 
 		return new FindingsSelectionMediator(this, 
 				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
