@@ -111,14 +111,10 @@ public final class ScanManager {
 						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
 						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
 		selectArtifactsByTool = conn
-				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE AT, TOOL T, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
-						+ "   CU.ID = ? AND"
+				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE AT, TOOL T WHERE"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   A.ARTIFACT_TYPE_ID = AT.ID AND"
-						+ "   A.TOOL_ID = T.ID AND"
-						+ "   T.NAME = ?"
-						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
-						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
+						+ "   A.TOOL_ID = T.ID AND" + "   T.NAME = ?");
 		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
 		deleteMetricByCompilation = conn
@@ -320,7 +316,8 @@ public final class ScanManager {
 					oldest.select();
 				}
 				for (final String tool : tools) {
-					selectArtifactsByTool.setString(1, tool);
+					selectArtifactsByTool.setLong(1, latest.getId());
+					selectArtifactsByTool.setString(2, tool);
 					final ResultSet artToolSet = selectArtifactsByTool
 							.executeQuery();
 					final List<Long> artifactIds = new ArrayList<Long>();
