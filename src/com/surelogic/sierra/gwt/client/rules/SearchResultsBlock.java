@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,7 +15,7 @@ public class SearchResultsBlock extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-search";
 	private final CategoryCache categories;
 	private final SelectionTracker selectionTracker = new SelectionTracker();
-	private final Map searchResultsData = new HashMap();
+	private final Map<String, ItemLabel> searchResultsData = new HashMap<String, ItemLabel>();
 	private String searchText;
 	private Category currentSelection;
 
@@ -25,6 +24,7 @@ public class SearchResultsBlock extends BlockPanel {
 		this.categories = categories;
 	}
 
+	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
 		setTitle(" ");
 	}
@@ -42,8 +42,7 @@ public class SearchResultsBlock extends BlockPanel {
 			}
 		}
 		final String query = queryBuf.toString();
-		for (final Iterator it = categories.getItemIterator(); it.hasNext();) {
-			final Category cat = (Category) it.next();
+		for (Category cat : categories) {
 			if (cat.getName().toLowerCase().indexOf(query) >= 0) {
 				addSearchCategory(cat);
 			}
@@ -67,8 +66,7 @@ public class SearchResultsBlock extends BlockPanel {
 		if (cat == null) {
 			selectionTracker.setSelected(null);
 		} else {
-			ItemLabel catEntry = (ItemLabel) searchResultsData.get(cat
-					.getUuid());
+			ItemLabel catEntry = searchResultsData.get(cat.getUuid());
 			if (catEntry != null) {
 				catEntry.setSelected(true);
 			}

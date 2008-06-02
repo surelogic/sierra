@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public abstract class Cache<E extends Cacheable> {
+public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 	private final List<E> items = new ArrayList<E>();
 	private final List<CacheListener<E>> listeners = new ArrayList<CacheListener<E>>();
 
@@ -97,7 +97,7 @@ public abstract class Cache<E extends Cacheable> {
 		return Collections.unmodifiableList(items);
 	}
 
-	public final Iterator<E> getItemIterator() {
+	public final Iterator<E> iterator() {
 		return items.iterator();
 	}
 

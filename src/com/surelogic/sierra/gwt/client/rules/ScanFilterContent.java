@@ -57,6 +57,7 @@ public class ScanFilterContent extends ContentComposite {
 
 	private String filterUuid;
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		block.initialize();
 		scans.initialize();
@@ -71,6 +72,7 @@ public class ScanFilterContent extends ContentComposite {
 		rootPanel.setCellWidth(sf, "75%");
 		cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
+			@Override
 			public void onRefresh(Cache<ScanFilter> cache, Throwable failure) {
 				checkForFilter();
 			}
@@ -78,9 +80,11 @@ public class ScanFilterContent extends ContentComposite {
 		});
 	}
 
+	@Override
 	protected void onDeactivate() {
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		filterUuid = context.getParameter(FILTER);
 		checkForFilter();
@@ -101,10 +105,12 @@ public class ScanFilterContent extends ContentComposite {
 		private final ScanFilterResults results = new ScanFilterResults();
 		private TextBox searchText;
 
+		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
 			final Label searchLabel = new Label("Search");
 			searchText = new TextBox();
 			searchText.addKeyboardListener(new KeyboardListenerAdapter() {
+				@Override
 				public void onKeyUp(Widget sender, char keyCode, int modifiers) {
 					results.search();
 				}
@@ -130,10 +136,12 @@ public class ScanFilterContent extends ContentComposite {
 			private VerticalPanel list;
 			private final SelectionTracker selection = new SelectionTracker();
 
+			@Override
 			protected void onInitialize(VerticalPanel contentPanel) {
 				list = contentPanel;
 				cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
+					@Override
 					public void onRefresh(Cache<ScanFilter> cache,
 							Throwable failure) {
 						search();
@@ -163,7 +171,7 @@ public class ScanFilterContent extends ContentComposite {
 					}
 				};
 				boolean success = false;
-				for (final ScanFilter f : cache.getItems()) {
+				for (final ScanFilter f : cache) {
 					if (f.getName().toLowerCase().matches(query)) {
 						success = true;
 						list.add(new ItemLabel(f.getName(), f, selection,
@@ -186,12 +194,14 @@ public class ScanFilterContent extends ContentComposite {
 		private ScanFilter filter;
 		private StatusBox status;
 
+		@Override
 		protected void onInitialize(VerticalPanel panel) {
 			this.panel = panel;
 			status = new StatusBox();
 			refresh();
 			cache.addListener(new CacheListenerAdapter<ScanFilter>() {
 
+				@Override
 				public void onItemUpdate(Cache<ScanFilter> cache,
 						ScanFilter item, Status status, Throwable failure) {
 					cache.refresh();
@@ -361,6 +371,7 @@ public class ScanFilterContent extends ContentComposite {
 		private final TextBox categoryName = new TextBox();
 		private final Image waitImage = ImageHelper.getWaitImage(16);
 
+		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
 			createScanFilterButton.addClickListener(new ClickListener() {
 
