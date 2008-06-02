@@ -552,3 +552,12 @@ img {
 .gwt-SuggestBoxPopup .item-selected {
 	background-color: yellow;
 }
+
+/* Tree */
+.gwt-TreeItem {
+    font-size: small;
+}
+
+.gwt-TreeItem-selected {
+    font-size: small;
+}
