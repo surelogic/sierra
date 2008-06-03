@@ -190,8 +190,11 @@ public class SettingQueries {
 					final String uid = filter.getUid();
 					final ScanFilterDO f = filters.getScanFilter(uid);
 					if (f == null) {
-						insert.call(uid, filter.getOwner());
-						filters.writeScanFilter(ScanFilters.convertDO(filter));
+						if (update) {
+							insert.call(uid, filter.getOwner());
+							filters.writeScanFilter(ScanFilters
+									.convertDO(filter));
+						}
 					} else if (f.getRevision() < filter.getRevision()) {
 						if (update) {
 							delete.call(uid);
