@@ -19,7 +19,12 @@
 			com.surelogic.sierra.server.lifecycle.BootUpServletContextListener
 		</listener-class>
 	</listener>
-
+	<listener>
+		<listener-class>
+			com.surelogic.sierra.server.lifecycle.BugLinkServletContextListener
+		</listener-class>
+	</listener>
+	
 	<!--  GWT browser to server communication -->
 
 	<servlet>
@@ -223,10 +228,23 @@
 	</context-param>
 	<context-param>
 		<description>
-			Determines whether or not buglink capabilities are
-			turned on.
+			Where to go to update your buglink data
 		</description>
-		<param-name>buglink</param-name>
-		<param-value>on</param-value>
+		<param-name>parent-server</param-name>
+		<param-value>buglink.org</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			The user used to update buglink data
+		</description>
+		<param-name>parent-user</param-name>
+		<param-value>buglink-user</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			The password used to update buglink data
+		</description>
+		<param-name>parent-pass</param-name>
+		<param-value>bl!uzer</param-value>
 	</context-param>
 </web-app>

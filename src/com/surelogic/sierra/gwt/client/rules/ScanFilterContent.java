@@ -246,10 +246,14 @@ public class ScanFilterContent extends ContentComposite {
 				panel.add(addCategoryBox());
 				panel.add(cPanel);
 				panel.add(UI.h3("Finding Types"));
-				final HorizontalPanel buttonPanel = new HorizontalPanel();
 				ftPanel = new FilterEntries(filter.getTypes());
 				panel.add(addFindingTypeBox());
 				panel.add(ftPanel);
+				panel.add(UI.h3("Projects"));
+				for (final String project : filter.getProjects()) {
+					panel.add(new Label(project));
+				}
+				final HorizontalPanel buttonPanel = new HorizontalPanel();
 				panel.add(buttonPanel);
 				buttonPanel.add(new Button("Update", new ClickListener() {
 					public void onClick(Widget sender) {
