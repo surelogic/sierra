@@ -52,7 +52,9 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		else if (IR_DROP.equals(name)) {	
 			final String type = e.getAttribute(TYPE_ATTR);
 			warning = "WarningDrop".equals(type);
-			aType = "JSure";
+			
+			final String result = e.getAttribute(RESULT_ATTR);
+			aType = result != null ? result : "JSure";
 		} else {
 			return;
 		}		
