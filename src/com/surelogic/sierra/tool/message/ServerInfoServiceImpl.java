@@ -32,10 +32,8 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 					"teamserver"))) {
 				services.add(Services.TEAMSERVER);
 			}
-			if ("on".equals(config.getServletContext().getInitParameter(
-					"buglink"))) {
-				services.add(Services.BUGLINK);
-			}
+			// XXX for now buglink is always on
+			services.add(Services.BUGLINK);
 			reply.setUid(ConnectionFactory
 					.withReadOnly(new ServerTransaction<String>() {
 
