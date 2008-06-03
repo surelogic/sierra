@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.LazyPreparedStatementConnection;
 import com.surelogic.common.logging.SLLogger;
 
@@ -65,6 +66,37 @@ public class ServerConnection {
 			conn.commit();
 		}
 		conn.close();
+	}
+
+	/**
+	 * Perform the specified query transaction. If an exception occurs while
+	 * executing this method, the server notifies the administrator of an error.
+	 * In addition, the transaction is rolled back.
+	 * 
+	 * @throws TransactionException
+	 *             when an error occurs while executing the transaction
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public <T> T perform(DBQuery<T> t) {
+		try {
+			final T val = t.perform(new ConnectionQuery(conn));
+			if (!readOnly) {
+				conn.commit();
+			}
+			return val;
+		} catch (final Exception e) {
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (final SQLException e1) {
+					log.log(Level.WARNING, e1.getMessage(), e1);
+				}
+			}
+			exceptionNotify("Server", e.getMessage(), e);
+			throw new TransactionException(e);
+		}
 	}
 
 	/**

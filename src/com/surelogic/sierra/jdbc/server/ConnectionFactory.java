@@ -14,6 +14,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
 
@@ -258,6 +259,21 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
+	public static <T> T withTransaction(DBQuery<T> t) {
+		try {
+			return with(transaction(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
 	public static <T> T withTransaction(ServerQuery<T> t) {
 		try {
 			return with(transaction(), t);
@@ -308,6 +324,21 @@ public final class ConnectionFactory {
 	public static <T> T withReadUncommitted(ServerTransaction<T> t) {
 		try {
 			return with(readUncommitted(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given read-only user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public static <T> T withReadOnly(DBQuery<T> t) {
+		try {
+			return with(readOnly(), t);
 		} catch (final SQLException e) {
 			throw new TransactionException(e);
 		}
@@ -424,6 +455,26 @@ public final class ConnectionFactory {
 	}
 
 	private static <T> T withUser(UserConnection server, UserTransaction<T> t) {
+		RuntimeException exc = null;
+		try {
+			return server.perform(t);
+		} catch (final RuntimeException exc0) {
+			exc = exc0;
+		} finally {
+			try {
+				server.finished();
+			} catch (final SQLException e) {
+				if (exc == null) {
+					exc = new TransactionException(e);
+				} else {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+		}
+		throw exc;
+	}
+
+	private static <T> T with(ServerConnection server, DBQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);

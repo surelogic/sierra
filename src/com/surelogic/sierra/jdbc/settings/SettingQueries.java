@@ -79,9 +79,9 @@ public class SettingQueries {
 	 * @return
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
-			SierraServerLocation loc) {
+			SierraServerLocation loc, ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
-				.listCategories(new ListCategoryRequest());
+				.listCategories(request);
 		return updateCategories(response, true);
 	}
 
@@ -92,9 +92,9 @@ public class SettingQueries {
 	 * local copy will not be returned.
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
-			SierraServerLocation loc) {
+			SierraServerLocation loc, ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
-				.listCategories(new ListCategoryRequest());
+				.listCategories(request);
 		return updateCategories(response, false);
 	}
 
@@ -161,19 +161,20 @@ public class SettingQueries {
 	}
 
 	public static final DBQuery<ListScanFilterResponse> retrieveScanFilters(
-			SierraServerLocation loc) {
-		return getScanFilters(loc, true);
+			SierraServerLocation loc, ListScanFilterRequest request) {
+		return getScanFilters(loc, request, true);
 	}
 
 	public static final DBQuery<ListScanFilterResponse> getNewScanFilters(
-			SierraServerLocation loc) {
-		return getScanFilters(loc, false);
+			SierraServerLocation loc, ListScanFilterRequest request) {
+		return getScanFilters(loc, request, false);
 	}
 
 	private static final DBQuery<ListScanFilterResponse> getScanFilters(
-			SierraServerLocation loc, final boolean update) {
+			SierraServerLocation loc, ListScanFilterRequest request,
+			final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
-				.create(loc).listScanFilters(new ListScanFilterRequest());
+				.create(loc).listScanFilters(request);
 		return new DBQuery<ListScanFilterResponse>() {
 			public ListScanFilterResponse perform(Query q) {
 				final ScanFilters filters = new ScanFilters(q);

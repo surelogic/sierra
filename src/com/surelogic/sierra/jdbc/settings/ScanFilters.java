@@ -291,6 +291,7 @@ public class ScanFilters {
 			tSet.add(new TypeFilterDO(t.getUid(), t.getImportance(), t
 					.isFiltered()));
 		}
+		filter.getProjects().addAll(message.getProject());
 		return filter;
 	}
 
@@ -315,6 +316,7 @@ public class ScanFilters {
 			tf.setFiltered(t.isFiltered());
 			tSet.add(tf);
 		}
+		filter.getProject().addAll(data.getProjects());
 		return filter;
 	}
 }
