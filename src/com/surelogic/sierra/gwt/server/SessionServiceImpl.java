@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.ServerType;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.SessionService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -36,7 +37,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 
 	public Result<UserAccount> login(final String userName,
 			final String password) {
-		if (userName != null && password != null) {
+		if ((userName != null) && (password != null)) {
 			final User u = ConnectionFactory
 					.withReadOnly(new ServerTransaction<User>() {
 
@@ -65,11 +66,18 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 		// TODO change this to return a Status instead
 		try {
 			getThreadLocalRequest().getSession().invalidate();
-		} catch (IllegalStateException ise) {
+		} catch (final IllegalStateException ise) {
 			// ignore exception if already logged out
 		}
 		UserContext.set(null);
 		return Result.success("Logged out.", null);
+	}
+
+	public ServerType getServerType() {
+		final String teamserver = getServletContext().getInitParameter(
+				"teamserver");
+		return ((teamserver == null) || !"on".equals(teamserver)) ? ServerType.BUGLINK
+				: ServerType.TEAMSERVER;
 	}
 
 	private UserAccount getUserAccount(final User user) {

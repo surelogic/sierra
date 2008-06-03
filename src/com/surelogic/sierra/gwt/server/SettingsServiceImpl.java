@@ -320,6 +320,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			e.setUid(tDO.getUid());
 			filters.add(e);
 		}
+		f.getProjects().addAll(fDO.getProjects());
 		return f;
 	}
 
