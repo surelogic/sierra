@@ -35,14 +35,24 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	protected void define(Entity e) {
 		// Only build for Sierra-like entities
 		final String name = e.getName();
-		final boolean warning;
-		if (RESULT_DROP.equals(name) || PROMISE_DROP.equals(name)) {
+		final boolean warning;	
+		final String aType;
+		
+		final boolean isResultDrop = RESULT_DROP.equals(name);
+		if (isResultDrop || PROMISE_DROP.equals(name)) {
 			final String consistent = e.getAttribute(PROVED_ATTR);
 			warning = !"true".equals(consistent); 
+			if (isResultDrop) {
+				aType = e.getAttribute(RESULT_ATTR);
+			} else {
+				final String type = e.getAttribute(TYPE_ATTR);				
+				aType = "MethodControlFlow".equals(type) ? "UniquenessAssurance" : type;
+			}
 		} 
 		else if (IR_DROP.equals(name)) {	
 			final String type = e.getAttribute(TYPE_ATTR);
 			warning = "WarningDrop".equals(type);
+			aType = "JSure";
 		} else {
 			return;
 		}		
@@ -54,7 +64,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			} else {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
 			}
-			builder.findingType("JSure", "0.9", "JSure");
+			builder.findingType("JSure", "1.0", aType);
 			//e.getAttribute(CATEGORY_ATTR));
 		}
 		builder.build();
