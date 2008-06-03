@@ -55,8 +55,9 @@ public class GetScanFiltersJob extends DatabaseJob {
 	private IStatus getResultFilters(SLProgressMonitor slMonitor)
 			throws SQLException {
 		try {
-			final DBQuery<?> query = SettingQueries
-					.retrieveScanFilters(f_server.getServer());
+			final DBQuery<?> query = SettingQueries.retrieveScanFilters(
+					f_server.getServer(), Data.withReadOnly(SettingQueries
+							.scanFilterRequest()));
 			f_server.markAsConnected();
 			Data.withTransaction(query);
 		} catch (final SierraServiceClientException e) {

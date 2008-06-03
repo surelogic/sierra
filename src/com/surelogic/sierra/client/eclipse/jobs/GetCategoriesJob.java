@@ -56,7 +56,8 @@ public final class GetCategoriesJob extends DatabaseJob {
 			throws SQLException {
 		try {
 			final DBQuery<?> query = SettingQueries.retrieveCategories(f_server
-					.getServer());
+					.getServer(), Data.withReadOnly(SettingQueries
+					.categoryRequest()));
 			Data.withTransaction(query);
 			f_server.markAsConnected();
 		} catch (final SierraServiceClientException e) {

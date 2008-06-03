@@ -5,9 +5,17 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -24,11 +32,24 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -37,7 +58,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.SLProgressMonitor;
-import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -46,12 +66,23 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.common.jdbc.*;
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.EmptyProgressMonitor;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.actions.*;
-import com.surelogic.sierra.client.eclipse.dialogs.*;
+import com.surelogic.sierra.client.eclipse.actions.NewScan;
+import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
+import com.surelogic.sierra.client.eclipse.actions.PublishScanAction;
+import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootException;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
+import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.GetCategoriesJob;
@@ -74,59 +105,59 @@ import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.tool.message.*;
-import com.surelogic.sierra.tool.registration.*;
+import com.surelogic.sierra.tool.message.ListCategoryResponse;
+import com.surelogic.sierra.tool.message.ListScanFilterResponse;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
+import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
-public final class SierraServersMediator extends AbstractSierraViewMediator 
-implements ISierraServerObserver, IProjectsObserver {
+public final class SierraServersMediator extends AbstractSierraViewMediator
+		implements ISierraServerObserver, IProjectsObserver {
 	static final String SCAN_FILTERS = "Scan Filters";
-	
+
 	static final String CATEGORIES = "Categories";
 
 	static final String CONNECTED_PROJECTS = "Connected Projects";
 
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
-	
+
 	/**
 	 * This should only be changed in the UI thread
 	 */
-    private List<ProjectStatus> projects = Collections.emptyList();
-    
-    /**
+	private List<ProjectStatus> projects = Collections.emptyList();
+
+	/**
 	 * This should only be changed in the UI thread
 	 */
-    private Map<SierraServer,ServerUpdateStatus> serverUpdates = Collections.emptyMap();
-    
-    /**
+	private Map<SierraServer, ServerUpdateStatus> serverUpdates = Collections
+			.emptyMap();
+
+	/**
 	 * This should only be changed in the UI thread
 	 */
-    private LocalStatus localStatus = new LocalStatus();
-    
+	private final LocalStatus localStatus = new LocalStatus();
+
 	/**
 	 * A map from a project to the server response
 	 * 
-	 * Protected by itself
-	 * This should only be accessed in a database job 
+	 * Protected by itself This should only be accessed in a database job
 	 * (possibly from multiple threads)
 	 */
-    private final Map<String,List<SyncTrailResponse>> responseMap = 
-    	new HashMap<String,List<SyncTrailResponse>>();   
-    
-    /** 
-     * Used in a similar way as responseMap     
-     */
-    private final Map<SierraServer,ServerUpdateStatus> serverResponseMap = 
-    	new HashMap<SierraServer,ServerUpdateStatus>();   
-    
-    private final AtomicLong lastServerUpdateTime = 
-    	new AtomicLong(System.currentTimeMillis());
-    
-    private final AtomicReference<ServerProjectGroupJob> lastSyncGroup =
-        new AtomicReference<ServerProjectGroupJob>();
-    
-    private final AtomicReference<Job> lastUpdateJob = 
-    	new AtomicReference<Job>();
-    
+	private final Map<String, List<SyncTrailResponse>> responseMap = new HashMap<String, List<SyncTrailResponse>>();
+
+	/**
+	 * Used in a similar way as responseMap
+	 */
+	private final Map<SierraServer, ServerUpdateStatus> serverResponseMap = new HashMap<SierraServer, ServerUpdateStatus>();
+
+	private final AtomicLong lastServerUpdateTime = new AtomicLong(System
+			.currentTimeMillis());
+
+	private final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<ServerProjectGroupJob>();
+
+	private final AtomicReference<Job> lastUpdateJob = new AtomicReference<Job>();
+
 	private final TreeViewer f_statusTree;
 	private final Menu f_contextMenu;
 	private final ActionListener f_serverSyncAction;
@@ -134,7 +165,7 @@ implements ISierraServerObserver, IProjectsObserver {
 	private final ActionListener f_newServerAction;
 	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
-	private final ActionListener f_openInBrowserAction;	
+	private final ActionListener f_openInBrowserAction;
 	private final MenuItem f_newServerItem;
 	private final MenuItem f_browseServerItem;
 	private final MenuItem f_duplicateServerItem;
@@ -152,22 +183,23 @@ implements ISierraServerObserver, IProjectsObserver {
 	private abstract class ActionListener extends Action implements Listener {
 		ActionListener(String text, String tooltip) {
 			super(text, IAction.AS_PUSH_BUTTON);
-			this.setToolTipText(tooltip);
-			
+			setToolTipText(tooltip);
+
 		}
+
 		ActionListener(Image image, String tooltip) {
 			this(tooltip, tooltip);
-			this.setImageDescriptor(new ImageImageDescriptor(image));			
+			setImageDescriptor(new ImageImageDescriptor(image));
 		}
-		
+
 		public final void handleEvent(Event event) {
 			run();
 		}
-		
+
 		@Override
-		public abstract void run();		
+		public abstract void run();
 	}
-	
+
 	private class ServerActionListener extends ActionListener {
 		private final String msgIfNoServer;
 
@@ -175,12 +207,12 @@ implements ISierraServerObserver, IProjectsObserver {
 			super(text, tooltip);
 			msgIfNoServer = msg;
 		}
-		
+
 		ServerActionListener(Image image, String tooltip, String msg) {
 			super(image, tooltip);
 			msgIfNoServer = msg;
 		}
-		
+
 		ServerActionListener(String msg) {
 			super("", "");
 			msgIfNoServer = msg;
@@ -188,7 +220,7 @@ implements ISierraServerObserver, IProjectsObserver {
 
 		@Override
 		public final void run() {
-			SierraServer server = f_manager.getFocus();
+			final SierraServer server = f_manager.getFocus();
 			if (server != null) {
 				handleEventOnServer(server);
 			} else {
@@ -211,11 +243,12 @@ implements ISierraServerObserver, IProjectsObserver {
 			ServerActionListener {
 		IJavaProjectsActionListener(String msg) {
 			super(msg);
-		} 
+		}
+
 		IJavaProjectsActionListener(Image image, String tooltip, String msg) {
 			super(image, tooltip, msg);
 		}
-		
+
 		@Override
 		protected final void handleEventOnServer(SierraServer server) {
 			final SierraServerManager manager = server.getManager();
@@ -228,80 +261,77 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	private final SierraServerManager f_manager = SierraServerManager
 			.getInstance();
-	
-	public SierraServersMediator(SierraServersView view,
-			TreeViewer statusTree, Menu contextMenu,
-			MenuItem newServerItem, MenuItem browseServerItem,
-			MenuItem duplicateServerItem,
+
+	public SierraServersMediator(SierraServersView view, TreeViewer statusTree,
+			Menu contextMenu, MenuItem newServerItem,
+			MenuItem browseServerItem, MenuItem duplicateServerItem,
 			MenuItem deleteServerItem, MenuItem serverConnectItem,
 			MenuItem synchConnectedProjects, MenuItem sendResultFilters,
 			MenuItem getResultFilters, MenuItem serverPropertiesItem,
 			MenuItem scanProjectItem, MenuItem rescanProjectItem,
 			MenuItem publishScansItem, MenuItem disconnectProjectItem) {
 		super(view);
-		
+
 		f_statusTree = statusTree;
 		f_statusTree.setContentProvider(new ContentProvider());
 		f_statusTree.setLabelProvider(new LabelProvider());
-		
-		f_contextMenu = contextMenu;		
-		f_serverUpdateAction = 
-			new ActionListener("Get Latest Server Info",
-	                           "Get the latest information about changes on the servers") {
+
+		f_contextMenu = contextMenu;
+		f_serverUpdateAction = new ActionListener("Get Latest Server Info",
+				"Get the latest information about changes on the servers") {
 			@Override
 			public void run() {
-				asyncUpdateServerInfo();		
+				asyncUpdateServerInfo();
 			}
-		};		
-		//view.addToActionBar(f_serverUpdateAction);
-		f_serverSyncAction =
-			new ActionListener("Synchronize All",
-                               "Synchronize servers and connected projects") {
+		};
+		// view.addToActionBar(f_serverUpdateAction);
+		f_serverSyncAction = new ActionListener("Synchronize All",
+				"Synchronize servers and connected projects") {
 			@Override
 			public void run() {
-				asyncSyncWithServer();		
+				asyncSyncWithServer();
 			}
 		};
 		/*
-		view.addToActionBar(f_serverSyncAction);
-		view.addToActionBar(new Separator());
-		*/
-		f_newServerAction = 
-			new ActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
-					           "New team server location") {
+		 * view.addToActionBar(f_serverSyncAction); view.addToActionBar(new
+		 * Separator());
+		 */
+		f_newServerAction = new ActionListener(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
+				"New team server location") {
 			@Override
 			public void run() {
-				ServerLocationDialog.newServer(f_statusTree.getTree().getShell());			
+				ServerLocationDialog.newServer(f_statusTree.getTree()
+						.getShell());
 			}
-		};		
+		};
 		view.addToActionBar(f_newServerAction);
-        
-		f_openInBrowserAction = 
-			new ServerActionListener("Browse", 
-				                     "Open the selected team server in a Web browser",
-				                     "No server to browse") {
+
+		f_openInBrowserAction = new ServerActionListener("Browse",
+				"Open the selected team server in a Web browser",
+				"No server to browse") {
 			@Override
 			protected void handleEventOnServer(SierraServer server) {
-				openInBrowser(server);		
+				openInBrowser(server);
 			}
 		};
 		f_openInBrowserAction.setEnabled(false);
-		
-		f_duplicateServerAction = 
-			new ServerActionListener(SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
-					                 "Duplicates the selected team server location",
-					                 "No server to duplicate") {
+
+		f_duplicateServerAction = new ServerActionListener(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
+				"Duplicates the selected team server location",
+				"No server to duplicate") {
 			@Override
 			protected void handleEventOnServer(SierraServer server) {
-				f_manager.duplicate();		
+				f_manager.duplicate();
 			}
-		}; 
+		};
 		f_duplicateServerAction.setEnabled(false);
-		
-		f_deleteServerAction = new IJavaProjectsActionListener(
-					SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
-					"Deletes the selected team server location",
-					"No server to delete") {
+
+		f_deleteServerAction = new IJavaProjectsActionListener(SLImages
+				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
+				"Deletes the selected team server location",
+				"No server to delete") {
 			@Override
 			protected void run(SierraServer server, List<String> projectNames) {
 				final String serverName = server.getLabel();
@@ -326,30 +356,24 @@ implements ISierraServerObserver, IProjectsObserver {
 				}
 			}
 		};
-		
+
 		f_deleteServerAction.setEnabled(false);
-		
+
 		/*
-		ActionListener registerAction =
-			new ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
-			                   "Register your copy of SLIC") {
-			@Override
-			public void run() {
-				SierraServerLocation loc = f_manager.getFocus().getServer();
-				Registration r = RegistrationClient.create(loc);
-				ProductRegistrationInfo info = new ProductRegistrationInfo();
-				info.setName("SLIC");
-				info.setVersion("2.2");
-				info.setFirstName("Edwin");
-				info.setLastName("Chan");
-				
-				RegistrationResponse rr = r.register(info);
-				System.out.println(rr.getMessage());
-				BalloonUtility.showMessage("A message from SureLogic", rr.getMessage());
-			}
-		};		
-		view.addToActionBar(registerAction);
-		*/
+		 * ActionListener registerAction = new
+		 * ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
+		 * "Register your copy of SLIC") { @Override public void run() {
+		 * SierraServerLocation loc = f_manager.getFocus().getServer();
+		 * Registration r = RegistrationClient.create(loc);
+		 * ProductRegistrationInfo info = new ProductRegistrationInfo();
+		 * info.setName("SLIC"); info.setVersion("2.2");
+		 * info.setFirstName("Edwin"); info.setLastName("Chan");
+		 * 
+		 * RegistrationResponse rr = r.register(info);
+		 * System.out.println(rr.getMessage()); BalloonUtility.showMessage("A
+		 * message from SureLogic", rr.getMessage()); } };
+		 * view.addToActionBar(registerAction);
+		 */
 		f_newServerItem = newServerItem;
 		f_browseServerItem = browseServerItem;
 		f_duplicateServerItem = duplicateServerItem;
@@ -377,7 +401,7 @@ implements ISierraServerObserver, IProjectsObserver {
 	public Listener getNoDataListener() {
 		return f_newServerAction;
 	}
-	
+
 	@Override
 	public void init() {
 		// Actions in reverse order
@@ -407,7 +431,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		f_view.addToViewMenu(exportAction);
 		f_view.addToViewMenu(new Separator());
 
-		Action serverInteractionAction = new Action(
+		final Action serverInteractionAction = new Action(
 				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
 			@Override
 			public void run() {
@@ -442,7 +466,7 @@ implements ISierraServerObserver, IProjectsObserver {
 		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
 		f_view.addToViewMenu(sortByProjectAction);
 		f_view.addToViewMenu(sortByServerAction);
-		
+
 		super.init();
 		f_manager.addObserver(this);
 		notify(f_manager);
@@ -451,10 +475,12 @@ implements ISierraServerObserver, IProjectsObserver {
 
 		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
 		f_browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
-		f_duplicateServerItem.addListener(SWT.Selection, f_duplicateServerAction);
+		f_duplicateServerItem.addListener(SWT.Selection,
+				f_duplicateServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-		final Listener connectAction = new ServerActionListener("No server to connect to") {
+		final Listener connectAction = new ServerActionListener(
+				"No server to connect to") {
 			@Override
 			protected void handleEventOnServer(SierraServer server) {
 				ConnectProjectsDialog dialog = new ConnectProjectsDialog(
@@ -466,13 +492,13 @@ implements ISierraServerObserver, IProjectsObserver {
 		f_serverConnectItem.addListener(SWT.Selection, connectAction);
 
 		f_synchConnectedProjects.addListener(SWT.Selection,
-			new ProjectsActionListener() {
-				@Override
-				protected void run(List<IJavaProject> projects) {
-					new SynchronizeProjectAction().run(projects);
-				}
-			
-		    });
+				new ProjectsActionListener() {
+					@Override
+					protected void run(List<IJavaProject> projects) {
+						new SynchronizeProjectAction().run(projects);
+					}
+
+				});
 
 		f_sendResultFilters.addListener(SWT.Selection,
 				new ServerActionListener(
@@ -487,18 +513,18 @@ implements ISierraServerObserver, IProjectsObserver {
 						msg.append(" the Sierra server '");
 						msg.append(server.getLabel());
 						msg.append("'?");
-						MessageDialog dialog = new MessageDialog(f_statusTree
-								.getTree().getShell(), 
-								"Send Scan Filters", null, msg
-								.toString(), MessageDialog.QUESTION,
-								new String[] { "Yes", "No" }, 0);
+						final MessageDialog dialog = new MessageDialog(
+								f_statusTree.getTree().getShell(),
+								"Send Scan Filters", null, msg.toString(),
+								MessageDialog.QUESTION, new String[] { "Yes",
+										"No" }, 0);
 						if (dialog.open() == 0) {
 							/*
 							 * Yes was selected, so send the result filters to
 							 * the server.
 							 */
-							final Job job = 
-							  new SendScanFiltersJob(ServerFailureReport.SHOW_DIALOG, server);
+							final Job job = new SendScanFiltersJob(
+									ServerFailureReport.SHOW_DIALOG, server);
 							job.schedule();
 						}
 					}
@@ -515,16 +541,18 @@ implements ISierraServerObserver, IProjectsObserver {
 				msg.append(" the Sierra server '");
 				msg.append(server.getLabel());
 				msg.append("'?");
-				MessageDialog dialog = new MessageDialog(f_statusTree
-						.getTree().getShell(), "Get Scan Filters", null, msg.toString(),
-						MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
+				final MessageDialog dialog = new MessageDialog(f_statusTree
+						.getTree().getShell(), "Get Scan Filters", null, msg
+						.toString(), MessageDialog.QUESTION, new String[] {
+						"Yes", "No" }, 0);
 				if (dialog.open() == 0) {
 					/*
 					 * Yes was selected, so get the result filters from the
 					 * server.
 					 */
-					
-					final Job job = new GetCategoriesJob(ServerFailureReport.SHOW_DIALOG, server);
+
+					final Job job = new GetCategoriesJob(
+							ServerFailureReport.SHOW_DIALOG, server);
 					job.schedule();
 				}
 			}
@@ -535,7 +563,8 @@ implements ISierraServerObserver, IProjectsObserver {
 						"Edit server pressed with no server focus.") {
 					@Override
 					protected void handleEventOnServer(SierraServer server) {
-						ServerLocationDialog.editServer(f_statusTree.getTree().getShell(), server);
+						ServerLocationDialog.editServer(f_statusTree.getTree()
+								.getShell(), server);
 					}
 				});
 
@@ -553,98 +582,102 @@ implements ISierraServerObserver, IProjectsObserver {
 						new ScanChangedProjectsAction().run(projects);
 					}
 				});
-		f_publishScansItem.addListener(SWT.Selection, new ProjectsActionListener() {
-			@Override
-			protected void run(List<IJavaProject> projects) {
-				// FIX check for projects w/o scans?
-				new PublishScanAction().run(projects);
-			}
-		});
+		f_publishScansItem.addListener(SWT.Selection,
+				new ProjectsActionListener() {
+					@Override
+					protected void run(List<IJavaProject> projects) {
+						// FIX check for projects w/o scans?
+						new PublishScanAction().run(projects);
+					}
+				});
 		f_disconnectProjectItem.addListener(SWT.Selection,
 				new ProjectsActionListener() {
 					@Override
 					protected void run(List<IJavaProject> projects) {
-						List<String> projectNames = new ArrayList<String>();
-						for(IJavaProject p : projects) {
+						final List<String> projectNames = new ArrayList<String>();
+						for (final IJavaProject p : projects) {
 							projectNames.add(p.getElementName());
 						}
 						DeleteProjectDataJob.utility(projectNames, null, true);
 					}
 				});
-		
+
 		f_statusTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				if(event.getSelection().isEmpty()) {
-					return; // FIX					
+				if (event.getSelection().isEmpty()) {
+					return; // FIX
 				}
 				IStructuredSelection selection;
-				if(event.getSelection() instanceof IStructuredSelection) {
-					selection = (IStructuredSelection)event.getSelection();
+				if (event.getSelection() instanceof IStructuredSelection) {
+					selection = (IStructuredSelection) event.getSelection();
 				} else {
 					return;
 				}
- 				if (selection.size() != 1) {
- 					return;
- 				}
- 				ServersViewContent item = (ServersViewContent) selection.getFirstElement();
-				if (item.getData() instanceof FindingAudits) {
-					FindingAudits f = (FindingAudits) item.getData();
-					FindingDetailsView.findingSelected(f.getFindingId(), false);
+				if (selection.size() != 1) {
+					return;
 				}
-				else if (item.getData() instanceof ScanInfo) {
-					ScanInfo info = (ScanInfo) item.getData();
+				final ServersViewContent item = (ServersViewContent) selection
+						.getFirstElement();
+				if (item.getData() instanceof FindingAudits) {
+					final FindingAudits f = (FindingAudits) item.getData();
+					FindingDetailsView.findingSelected(f.getFindingId(), false);
+				} else if (item.getData() instanceof ScanInfo) {
+					final ScanInfo info = (ScanInfo) item.getData();
 					if (info.isPartial()) {
-						ServersViewContent project = item.getParent(); 
-						ProjectStatus ps = (ProjectStatus) project.getData();
+						final ServersViewContent project = item.getParent();
+						final ProjectStatus ps = (ProjectStatus) project
+								.getData();
 						new NewScan().scan(ps.project);
 					}
-				}
-				else if (item.getData() == NO_SERVER_DATA) {
+				} else if (item.getData() == NO_SERVER_DATA) {
 					asyncUpdateServerInfo();
 				}
 			}
-			
-		});
-		f_statusTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				if(event.getSelection().isEmpty()) {
-					return; // FIX					
-				}
-				IStructuredSelection selection;
-				if(event.getSelection() instanceof IStructuredSelection) {
-					selection = (IStructuredSelection)event.getSelection();
-				} else {
-					return;
-				}
 
-				List<SierraServer> servers = collectServers();
-				final boolean onlyServer = servers.size() == 1;
-				if (onlyServer) {
-					SierraServer focus = servers.get(0);
-					if (f_manager.getFocus() != focus) {
-					    f_manager.setFocus(servers.get(0));
-					}
-				}
-				/*
-				//System.out.println("onlyTeamServer=" + onlyTeamServer);
-				f_serverConnectItem.setEnabled(onlyTeamServer);
-				f_duplicateServerAction.setEnabled(onlyServer);
-				f_deleteServerAction.setEnabled(onlyServer);
-				f_openInBrowserAction.setEnabled(onlyServer);
-				*/
-			}			
 		});
-		
+		f_statusTree
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						if (event.getSelection().isEmpty()) {
+							return; // FIX
+						}
+						IStructuredSelection selection;
+						if (event.getSelection() instanceof IStructuredSelection) {
+							selection = (IStructuredSelection) event
+									.getSelection();
+						} else {
+							return;
+						}
+
+						final List<SierraServer> servers = collectServers();
+						final boolean onlyServer = servers.size() == 1;
+						if (onlyServer) {
+							final SierraServer focus = servers.get(0);
+							if (f_manager.getFocus() != focus) {
+								f_manager.setFocus(servers.get(0));
+							}
+						}
+						/*
+						 * //System.out.println("onlyTeamServer=" +
+						 * onlyTeamServer);
+						 * f_serverConnectItem.setEnabled(onlyTeamServer);
+						 * f_duplicateServerAction.setEnabled(onlyServer);
+						 * f_deleteServerAction.setEnabled(onlyServer);
+						 * f_openInBrowserAction.setEnabled(onlyServer);
+						 */
+					}
+				});
+
 		f_contextMenu.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
 				f_newServerItem.setEnabled(true);
-				
-				List<SierraServer> servers = collectServers();
+
+				final List<SierraServer> servers = collectServers();
 				final boolean onlyServer = servers.size() == 1;
 				final boolean onlyTeamServer;
 				final boolean onlyBugLink;
 				if (onlyServer) {
-					SierraServer focus = servers.get(0);
+					final SierraServer focus = servers.get(0);
 					onlyTeamServer = focus.isTeamServer();
 					onlyBugLink = focus.isBugLink();
 				} else {
@@ -660,177 +693,195 @@ implements ISierraServerObserver, IProjectsObserver {
 				f_sendResultFilters.setEnabled(onlyBugLink);
 				f_getResultFilters.setEnabled(onlyBugLink);
 				f_serverPropertiesItem.setEnabled(onlyServer);
-				
-				List<ProjectStatus> status = collectSelectedProjectStatus();
+
+				final List<ProjectStatus> status = collectSelectedProjectStatus();
 				final boolean someProjects = !status.isEmpty();
 				boolean allConnected = someProjects;
 				boolean allHasScans = someProjects;
 				if (someProjects) {
-					for(ProjectStatus ps : status) {
-						if (f_manager == null || ps == null) {
+					for (final ProjectStatus ps : status) {
+						if ((f_manager == null) || (ps == null)) {
 							LOG.severe("Null project status");
 							continue;
 						}
 						if (!f_manager.isConnected(ps.name)) {
-							allConnected = false;							
+							allConnected = false;
 						}
 						if (ps.scanInfo.isPartial()) {
 							allHasScans = false;
 						}
-					}				
-				}			
+					}
+				}
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
 				f_synchConnectedProjects.setEnabled(someProjects);
 				f_publishScansItem.setEnabled(allHasScans);
-				f_disconnectProjectItem.setEnabled(allConnected);				
-			}			
+				f_disconnectProjectItem.setEnabled(allConnected);
+			}
 		});
-		
-		final AutoJob doServerAutoUpdate = 
-			new AutoJob("Server auto-update", lastServerUpdateTime) {
-			@Override protected boolean isEnabled() {
-				return PreferenceConstants.getServerInteractionSetting().doServerAutoUpdate();
+
+		final AutoJob doServerAutoUpdate = new AutoJob("Server auto-update",
+				lastServerUpdateTime) {
+			@Override
+			protected boolean isEnabled() {
+				return PreferenceConstants.getServerInteractionSetting()
+						.doServerAutoUpdate();
 			}
-			@Override protected long getDelay() {
-				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
+
+			@Override
+			protected long getDelay() {
+				return PreferenceConstants
+						.getServerInteractionPeriodInMinutes() * 60000;
 			}
-			@Override protected void run() {
-				asyncUpdateServerInfo();	
+
+			@Override
+			protected void run() {
+				asyncUpdateServerInfo();
 			}
-		};		
+		};
 		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
-		
-		final AutoJob doServerAutoSync = 
-			new AutoJob("Server auto-sync", 
- 					    SynchronizeAllProjectsAction.getLastSyncTime()) {
-			@Override protected boolean isEnabled() {
-				return PreferenceConstants.getServerInteractionSetting().doServerAutoSync();
+
+		final AutoJob doServerAutoSync = new AutoJob("Server auto-sync",
+				SynchronizeAllProjectsAction.getLastSyncTime()) {
+			@Override
+			protected boolean isEnabled() {
+				return PreferenceConstants.getServerInteractionSetting()
+						.doServerAutoSync();
 			}
-			@Override protected long getDelay() {
-				return PreferenceConstants.getServerInteractionPeriodInMinutes() * 60000;			
+
+			@Override
+			protected long getDelay() {
+				return PreferenceConstants
+						.getServerInteractionPeriodInMinutes() * 60000;
 			}
-			@Override protected void run() {
-				asyncSyncWithServer();	
+
+			@Override
+			protected void run() {
+				asyncSyncWithServer();
 			}
-		};		
+		};
 		doServerAutoSync.schedule(doServerAutoSync.getDelay());
-		
-		final IPreferenceStore store = 
-			Activator.getDefault().getPreferenceStore();
+
+		final IPreferenceStore store = Activator.getDefault()
+				.getPreferenceStore();
 		store.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty() == PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
 					if (event.getNewValue() != event.getOldValue()) {
-						final ServerInteractionSetting s = 
-							ServerInteractionSetting.valueOf((String) event.getNewValue());
-						final Job job = new DatabaseJob("Switching server interaction") {
+						final ServerInteractionSetting s = ServerInteractionSetting
+								.valueOf((String) event.getNewValue());
+						final Job job = new DatabaseJob(
+								"Switching server interaction") {
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
 								synchronized (responseMap) {
-									if (s.useAuditThreshold() && checkAutoSyncTrigger(projects)) {
+									if (s.useAuditThreshold()
+											&& checkAutoSyncTrigger(projects)) {
 										asyncSyncWithServer();
-									}						
-									else if (s.doServerAutoSync()) {
+									} else if (s.doServerAutoSync()) {
 										asyncSyncWithServer();
-									}
-									else if (s.doServerAutoUpdate()) {
+									} else if (s.doServerAutoUpdate()) {
 										asyncUpdateServerInfo();
 									}
 								}
 								return Status.OK_STATUS;
-							}						
+							}
 						};
 						job.schedule();
 					}
-				}				
+				}
 			}
-			
+
 		});
 	}
-	
+
 	private abstract class AutoJob extends Job {
 		final AtomicLong lastTime;
+
 		public AutoJob(String name, AtomicLong last) {
 			super(name);
 			setSystem(true);
 			lastTime = last;
 		}
+
 		protected long computeGap() {
-			long now  = System.currentTimeMillis();
-			long next = lastTime.get() + getDelay();
+			final long now = System.currentTimeMillis();
+			final long next = lastTime.get() + getDelay();
 			return next - now;
 		}
+
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (isEnabled()) {
 
-				long gap  = computeGap();
-			    if (gap > 0) {
-			    	System.out.println("Wait a bit longer: "+gap);
-			    	schedule(gap);
+				final long gap = computeGap();
+				if (gap > 0) {
+					System.out.println("Wait a bit longer: " + gap);
+					schedule(gap);
 					return Status.OK_STATUS;
-			    } 				    	
-			    // No need to wait ...
-			    run();
+				}
+				// No need to wait ...
+				run();
 			}
 			schedule(getDelay());
-			
+
 			return Status.OK_STATUS;
 		}
+
 		protected abstract void run();
+
 		protected abstract boolean isEnabled();
+
 		protected abstract long getDelay(); // In msec
 	}
-			
+
 	private List<SierraServer> collectServers() {
-		final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree
+				.getSelection();
 		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
-		List<SierraServer> servers = new ArrayList<SierraServer>();
+		final List<SierraServer> servers = new ArrayList<SierraServer>();
 		@SuppressWarnings("unchecked")
-		Iterator it = si.iterator();
+		final Iterator it = si.iterator();
 		while (it.hasNext()) {
-		    ServersViewContent item = (ServersViewContent) it.next();
+			final ServersViewContent item = (ServersViewContent) it.next();
 			if (item.getData() instanceof SierraServer) {
 				if (servers.contains(item.getData())) {
 					continue;
 				}
 				servers.add((SierraServer) item.getData());
-			}
-			else {
-				// System.out.println("Got a non-server selection: "+item.getText());
+			} else {
+				// System.out.println("Got a non-server selection:
+				// "+item.getText());
 				return Collections.emptyList();
 			}
 		}
 		return servers;
 	}
-	
+
 	private List<ProjectStatus> collectSelectedProjectStatus() {
-		final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree
+				.getSelection();
 		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
-		List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+		final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 		@SuppressWarnings("unchecked")
-		Iterator it = si.iterator();
+		final Iterator it = si.iterator();
 		while (it.hasNext()) {
-		    ServersViewContent item = (ServersViewContent) it.next();
+			final ServersViewContent item = (ServersViewContent) it.next();
 			if (item.getData() instanceof ProjectStatus) {
 				if (projects.contains(item.getData())) {
 					continue;
 				}
 				projects.add((ProjectStatus) item.getData());
-			}
-			else if (item.getData() instanceof SierraServer) {
+			} else if (item.getData() instanceof SierraServer) {
 				collectProjects(projects, item);
-			}
-			else if ("Unconnected".equals(item.getText())) {
+			} else if ("Unconnected".equals(item.getText())) {
 				collectProjects(projects, item);
-			}
-			else {
-				ProjectStatus status = inProject(item.getParent());
+			} else {
+				final ProjectStatus status = inProject(item.getParent());
 				if (status != null) {
 					if (projects.contains(status)) {
 						continue;
@@ -838,7 +889,7 @@ implements ISierraServerObserver, IProjectsObserver {
 					projects.add(status);
 					continue;
 				}
-				System.out.println("Ignoring selection: "+item.getText());
+				System.out.println("Ignoring selection: " + item.getText());
 			}
 		}
 		return projects;
@@ -854,8 +905,9 @@ implements ISierraServerObserver, IProjectsObserver {
 		return null;
 	}
 
-	private void collectProjects(List<ProjectStatus> projects, ServersViewContent parent) {
-		for (ServersViewContent item : parent.getChildren()) {
+	private void collectProjects(List<ProjectStatus> projects,
+			ServersViewContent parent) {
+		for (final ServersViewContent item : parent.getChildren()) {
 			if (projects.contains(item.getData())) {
 				continue;
 			}
@@ -866,29 +918,29 @@ implements ISierraServerObserver, IProjectsObserver {
 	private abstract class ProjectsActionListener implements Listener {
 		public final void handleEvent(Event event) {
 			// FIX merge with collectProjects?
-			final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+			final IStructuredSelection si = (IStructuredSelection) f_statusTree
+					.getSelection();
 			if (si.size() == 0) {
 				return;
 			}
-			List<IJavaProject> projects = new ArrayList<IJavaProject>();
-			
-			for (Object o : new Iterable<Object>() {
+			final List<IJavaProject> projects = new ArrayList<IJavaProject>();
+
+			for (final Object o : new Iterable<Object>() {
 				@SuppressWarnings("unchecked")
-				public Iterator<Object> iterator() { return si.iterator(); }								
+				public Iterator<Object> iterator() {
+					return si.iterator();
+				}
 			}) {
-				ServersViewContent item = (ServersViewContent) o;
+				final ServersViewContent item = (ServersViewContent) o;
 				if (item.getData() instanceof ProjectStatus) {
-					ProjectStatus ps = (ProjectStatus) item.getData();
+					final ProjectStatus ps = (ProjectStatus) item.getData();
 					projects.add(ps.project);
-				}
-				else if (item.getData() instanceof SierraServer) {
+				} else if (item.getData() instanceof SierraServer) {
 					handleProjects(projects, item);
-				}
-				else if ("Unconnected".equals(item.getText())) {
+				} else if ("Unconnected".equals(item.getText())) {
 					handleProjects(projects, item);
-				}
-				else {
-					System.out.println("Ignoring selection: "+item.getText());
+				} else {
+					System.out.println("Ignoring selection: " + item.getText());
 				}
 			}
 			if (!projects.isEmpty()) {
@@ -896,10 +948,10 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 
-		private void handleProjects(List<IJavaProject> projects, 
-				                    ServersViewContent parent) {
-			for (ServersViewContent item : parent.getChildren()) {
-				ProjectStatus ps = (ProjectStatus) item.getData();
+		private void handleProjects(List<IJavaProject> projects,
+				ServersViewContent parent) {
+			for (final ServersViewContent item : parent.getChildren()) {
+				final ProjectStatus ps = (ProjectStatus) item.getData();
 				projects.add(ps.project);
 			}
 		}
@@ -909,39 +961,34 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	@Override
 	public void dispose() {
-		//f_statusTree.dispose();
+		// f_statusTree.dispose();
 		super.dispose();
 	}
 
 	public void setFocus() {
-		//f_statusTree.setFocus();
+		// f_statusTree.setFocus();
 	}
 
 	public void notify(SierraServerManager manager) {
 		asyncUpdateContents();
 	}
-	
+
 	public void notify(Projects p) {
 		asyncUpdateContents();
 	}
-	
+
 	/*
-	private static boolean same(TableItem[] items, String[] labels) {
-		if (items.length != labels.length)
-			return false;
-		for (int i = 0; i < labels.length; i++) {
-			boolean same = items[i].getText().equals(labels[i]);
-			if (!same)
-				return false;
-		}
-		return true;
-	}
-    */
+	 * private static boolean same(TableItem[] items, String[] labels) { if
+	 * (items.length != labels.length) return false; for (int i = 0; i <
+	 * labels.length; i++) { boolean same =
+	 * items[i].getText().equals(labels[i]); if (!same) return false; } return
+	 * true; }
+	 */
 
 	private static void openInBrowser(SierraServer server) {
 		if (server == null) {
 			return;
-		}		
+		}
 		final String name = "Sierra Server '" + server.getLabel() + "'";
 
 		try {
@@ -953,7 +1000,7 @@ implements ISierraServerObserver, IProjectsObserver {
 							server.getLabel(), name, name);
 			final URL url = server.toAuthorizedURL();
 			browser.openURL(url);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
 		}
 	}
@@ -967,47 +1014,48 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 		if (sort != PreferenceConstants.getServerStatusSort()) {
 			PreferenceConstants.setServerStatusSort(sort);
-			updateContentsInUI(projects, serverUpdates); 
+			updateContentsInUI(projects, serverUpdates);
 		}
 	}
-	
-	/* Below this is the code to update the view from the database
+
+	/*
+	 * Below this is the code to update the view from the database
 	 */
-	
+
 	@Override
 	public void changed() {
 		asyncUpdateContents();
 	}
 
 	void asyncSyncWithServer() {
-		long now = System.currentTimeMillis();
+		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
-		System.out.println("Sync at: "+now);
-		
-		Job group = lastSyncGroup.get();
-		if (group == null || group.getResult() != null) {
-			SynchronizeAllProjectsAction sync = 				
-				new SynchronizeAllProjectsAction(ServerSyncType.ALL,
-						                         PreferenceConstants.getServerFailureReporting(), 
-						                         false);
+		System.out.println("Sync at: " + now);
+
+		final Job group = lastSyncGroup.get();
+		if ((group == null) || (group.getResult() != null)) {
+			final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
+					ServerSyncType.ALL, PreferenceConstants
+							.getServerFailureReporting(), false);
 			sync.run(null);
-			lastSyncGroup.set(sync.getGroup());					
+			lastSyncGroup.set(sync.getGroup());
 		} else {
 			System.out.println("Last sync is still running");
 		}
 	}
-	
+
 	void asyncUpdateServerInfo() {
-		long now = System.currentTimeMillis();
+		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now);
-		System.out.println("Update at: "+now);
-		
-		Job lastJob = lastUpdateJob.get();
-		if (lastJob == null || lastJob.getResult() != null) {
+		System.out.println("Update at: " + now);
+
+		final Job lastJob = lastUpdateJob.get();
+		if ((lastJob == null) || (lastJob.getResult() != null)) {
 			final Job job = new DatabaseJob("Updating server status") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN);
+					monitor.beginTask("Updating server info",
+							IProgressMonitor.UNKNOWN);
 					try {
 						updateServerInfo();
 					} catch (Exception e) {
@@ -1023,7 +1071,7 @@ implements ISierraServerObserver, IProjectsObserver {
 			job.schedule();
 		}
 	}
-	
+
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
 			public void updateContentsForUI() {
@@ -1036,21 +1084,22 @@ implements ISierraServerObserver, IProjectsObserver {
 		final Job infoJob = new Job("Getting server info") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-			  final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
-				final SierraServerManager mgr = SierraServerManager.getInstance();
-				for(final SierraServer s : mgr.getServers()) {		
-				  if (s.getProblemCount() <= threshold) {
-				    s.updateServerInfo();			
-				  }
+				final int threshold = PreferenceConstants
+						.getServerInteractionRetryThreshold();
+				final SierraServerManager mgr = SierraServerManager
+						.getInstance();
+				for (final SierraServer s : mgr.getServers()) {
+					if (s.getProblemCount() <= threshold) {
+						s.updateServerInfo();
+					}
 				}
 				return Status.OK_STATUS;
 			}
-			
+
 		};
 		infoJob.setSystem(true);
 		infoJob.schedule();
-		final Job job = new DatabaseJob(
-				"Updating project status") {
+		final Job job = new DatabaseJob("Updating project status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
@@ -1071,58 +1120,75 @@ implements ISierraServerObserver, IProjectsObserver {
 	private void updateServerInfo() throws Exception {
 		final Connection c = Data.transactionConnection();
 		Exception exc = null;
-		try {			
-			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
-			synchronized (responseMap) {				
-				final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
+		try {
+			final ClientProjectManager cpm = ClientProjectManager
+					.getInstance(c);
+			synchronized (responseMap) {
+				final int threshold = PreferenceConstants
+						.getServerInteractionRetryThreshold();
 				Set<SierraServer> failedServers = null;
-				responseMap.clear();				
+				responseMap.clear();
 				serverResponseMap.clear();
-				
-				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
+
+				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
-					final int numProblems = Projects.getInstance().getProblemCount(name);
-					if (!Projects.getInstance().contains(name) ||
-						numProblems > threshold) {
+					final int numProblems = Projects.getInstance()
+							.getProblemCount(name);
+					if (!Projects.getInstance().contains(name)
+							|| (numProblems > threshold)) {
 						continue; // Not scanned
-					}		
+					}
 
 					// Check for new remote audits
 					final SierraServer server = f_manager.getServer(name);
 					List<SyncTrailResponse> responses = null;
-					ServerUpdateStatus serverResponse = serverResponseMap.get(server);
+					ServerUpdateStatus serverResponse = serverResponseMap
+							.get(server);
 					if (server != null) {
-						if (failedServers != null && failedServers.contains(server)) {
+						if ((failedServers != null)
+								&& failedServers.contains(server)) {
 							continue;
 						}
 						final int numServerProbs = server.getProblemCount();
 						if (numServerProbs > threshold) {
-							failedServers = markAsFailedServer(failedServers, server);
+							failedServers = markAsFailedServer(failedServers,
+									server);
 							continue;
 						}
 						if (numServerProbs + numProblems > threshold) {
 							continue;
 						}
-						
-						SLProgressMonitor monitor = EmptyProgressMonitor.instance();
-						// Try to distinguish server failure/disconnection and RPC failure 
-						final ServerFailureReport method = PreferenceConstants.getServerFailureReporting();
+
+						final SLProgressMonitor monitor = EmptyProgressMonitor
+								.instance();
+						// Try to distinguish server failure/disconnection and
+						// RPC failure
+						final ServerFailureReport method = PreferenceConstants
+								.getServerFailureReporting();
 						TroubleshootConnection tc;
 						try {
 							final SierraServerLocation loc = server.getServer();
-							responses = cpm.getProjectUpdates(loc, name, monitor);
-							
-							serverResponse = checkForBugLinkUpdates(c, serverResponse, loc);
-						} catch (ServerMismatchException e) {
-							tc = new TroubleshootWrongServer(method, server, name);
-							failedServers = handleServerProblem(failedServers, server, tc, e);
-						} catch (SierraServiceClientException e) {
-							tc = AbstractServerProjectJob.getTroubleshootConnection(method, server, name, e);													
-							failedServers = handleServerProblem(failedServers, server, tc, e);
-						} catch (Exception e) {
-							tc = new TroubleshootException(method, server, name, e, 
-									                       e instanceof SQLException);
-							failedServers = handleServerProblem(failedServers, server, tc, e);
+							responses = cpm.getProjectUpdates(loc, name,
+									monitor);
+
+							serverResponse = checkForBugLinkUpdates(c,
+									serverResponse, loc);
+						} catch (final ServerMismatchException e) {
+							tc = new TroubleshootWrongServer(method, server,
+									name);
+							failedServers = handleServerProblem(failedServers,
+									server, tc, e);
+						} catch (final SierraServiceClientException e) {
+							tc = AbstractServerProjectJob
+									.getTroubleshootConnection(method, server,
+											name, e);
+							failedServers = handleServerProblem(failedServers,
+									server, tc, e);
+						} catch (final Exception e) {
+							tc = new TroubleshootException(method, server,
+									name, e, e instanceof SQLException);
+							failedServers = handleServerProblem(failedServers,
+									server, tc, e);
 						}
 					}
 					if (responses != null) {
@@ -1136,9 +1202,9 @@ implements ISierraServerObserver, IProjectsObserver {
 				}
 			}
 			c.commit();
-			
+
 			asyncUpdateContents();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			c.rollback();
 			exc = e;
 		} finally {
@@ -1152,14 +1218,18 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 	}
 
-	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c, 
-			                                          ServerUpdateStatus serverResponse, 
-			                                          final SierraServerLocation loc) {
+	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c,
+			ServerUpdateStatus serverResponse, final SierraServerLocation loc) {
 		// See if we need to pick up BugLink data
 		if (serverResponse == null) {
-			final Query q = new ConnectionQuery(c);	
-			ListCategoryResponse cr = SettingQueries.getNewCategories(loc).perform(q);
-			ListScanFilterResponse sfr = SettingQueries.getNewScanFilters(loc).perform(q);
+			final Query q = new ConnectionQuery(c);
+			final ListCategoryResponse cr = SettingQueries.getNewCategories(
+					loc, SettingQueries.categoryRequest().perform(q))
+					.perform(q);
+			final ListScanFilterResponse sfr = SettingQueries
+					.getNewScanFilters(loc,
+							SettingQueries.scanFilterRequest().perform(q))
+					.perform(q);
 			serverResponse = new ServerUpdateStatus(cr, sfr);
 		} else {
 			// No need to update it again
@@ -1168,16 +1238,17 @@ implements ISierraServerObserver, IProjectsObserver {
 		return serverResponse;
 	}
 
-	private Set<SierraServer> handleServerProblem(Set<SierraServer> failedServers, final SierraServer server,
-			                                      TroubleshootConnection tc, Exception e) {
+	private Set<SierraServer> handleServerProblem(
+			Set<SierraServer> failedServers, final SierraServer server,
+			TroubleshootConnection tc, Exception e) {
 		if (handleServerProblem(tc, e)) {
 			failedServers = markAsFailedServer(failedServers, server);
 		}
 		return failedServers;
 	}
 
-	private Set<SierraServer> markAsFailedServer(Set<SierraServer> failedServers, 
-			                                     final SierraServer server) {
+	private Set<SierraServer> markAsFailedServer(
+			Set<SierraServer> failedServers, final SierraServer server) {
 		if (failedServers == null) {
 			failedServers = new HashSet<SierraServer>();
 		}
@@ -1187,11 +1258,12 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	/**
 	 * Protected by responseMap
-	 * @param project 
+	 * 
+	 * @param project
 	 */
 	private void handleServerSuccess(SierraServer server, String project) {
 		// Contact was successful, so reset counts
-		server.markAsConnected();		
+		server.markAsConnected();
 		Projects.getInstance().markAsConnected(project);
 	}
 
@@ -1204,40 +1276,48 @@ implements ISierraServerObserver, IProjectsObserver {
 		tc.fix();
 		return tc.failServer();
 	}
-	
+
 	private void updateContents() throws Exception {
-		Connection c = Data.transactionConnection();
+		final Connection c = Data.transactionConnection();
 		Exception exc = null;
-		try {			
-			ClientProjectManager cpm = ClientProjectManager.getInstance(c);
-			ClientFindingManager cfm = cpm.getFindingManager();
-			ScanManager sm           = ScanManager.getInstance(c);
-			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();		
-			final Map<SierraServer,ServerUpdateStatus> serverUpdates;
+		try {
+			final ClientProjectManager cpm = ClientProjectManager
+					.getInstance(c);
+			final ClientFindingManager cfm = cpm.getFindingManager();
+			final ScanManager sm = ScanManager.getInstance(c);
+			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+			final Map<SierraServer, ServerUpdateStatus> serverUpdates;
 			synchronized (responseMap) {
-				for(IJavaProject jp : JDTUtility.getJavaProjects()) {
+				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
 					if (!Projects.getInstance().contains(name)) {
 						continue; // Not scanned
-					}		
+					}
 
 					// Check for new local audits
-					List<FindingAudits> findings = cfm.getNewLocalAudits(name); 
+					final List<FindingAudits> findings = cfm
+							.getNewLocalAudits(name);
 
 					// Check for new remote audits
-					List<SyncTrailResponse> responses = responseMap.get(name);
-					SierraServer server = f_manager.getServer(name);
-					int numServerProblems = server == null ? -1 : server.getProblemCount();
-					int numProjectProblems = Projects.getInstance().getProblemCount(name);
-					
-					// FIX Check for a full scan (later than what's on the server?)
-					final File scan = NewScan.getScanDocumentFile(name);					
-					ScanInfo info = sm.getLatestScanInfo(name);
-					ProjectStatus s = new ProjectStatus(jp, scan, info, findings, responses, 
-							numServerProblems, numProjectProblems);
+					final List<SyncTrailResponse> responses = responseMap
+							.get(name);
+					final SierraServer server = f_manager.getServer(name);
+					final int numServerProblems = server == null ? -1 : server
+							.getProblemCount();
+					final int numProjectProblems = Projects.getInstance()
+							.getProblemCount(name);
+
+					// FIX Check for a full scan (later than what's on the
+					// server?)
+					final File scan = NewScan.getScanDocumentFile(name);
+					final ScanInfo info = sm.getLatestScanInfo(name);
+					final ProjectStatus s = new ProjectStatus(jp, scan, info,
+							findings, responses, numServerProblems,
+							numProjectProblems);
 					projects.add(s);
 				}
-				serverUpdates = new HashMap<SierraServer,ServerUpdateStatus>(serverResponseMap);
+				serverUpdates = new HashMap<SierraServer, ServerUpdateStatus>(
+						serverResponseMap);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
@@ -1245,7 +1325,7 @@ implements ISierraServerObserver, IProjectsObserver {
 				}
 			});
 			c.commit();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			c.rollback();
 			exc = e;
 		} finally {
@@ -1258,47 +1338,36 @@ implements ISierraServerObserver, IProjectsObserver {
 			}
 		}
 	}
-	
-	public void updateContentsInUI(final List<ProjectStatus> projects, 
-			                       final Map<SierraServer,ServerUpdateStatus> serverUpdates) {		
+
+	public void updateContentsInUI(final List<ProjectStatus> projects,
+			final Map<SierraServer, ServerUpdateStatus> serverUpdates) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 		this.serverUpdates = serverUpdates;
 
 		/*
-		if (f_statusTree.isDisposed())
-			return;
-		
-		f_statusTree.setRedraw(false);
-		*/
-		List<SierraServer> servers = collectServers();
+		 * if (f_statusTree.isDisposed()) return;
+		 * 
+		 * f_statusTree.setRedraw(false);
+		 */
+		final List<SierraServer> servers = collectServers();
 		final boolean onlyServer = servers.size() == 1;
 		f_duplicateServerAction.setEnabled(onlyServer);
 		f_deleteServerAction.setEnabled(onlyServer);
 		f_openInBrowserAction.setEnabled(onlyServer);
-		
+
 		final TreeInput input = createTreeInput();
 		f_statusTree.setInput(input);
 		f_statusTree.getTree().getParent().layout();
 		f_statusTree.expandToLevel(3);
 		/*
-		for(TreeItem item : f_statusTree.getItems()) {
-			item.setExpanded(true);
-			if (byServer) {
-				for(TreeItem item2 : item.getItems()) {
-					if (item2.getText().endsWith("Connected Projects")) {
-						item2.setExpanded(true);
-						// Expand projects
-						for(TreeItem item3 : item2.getItems()) {
-							item3.setExpanded(true);
-						}
-					}
-				}
-			}
-		}
-		*/
-		//f_statusTree.setRedraw(true);
-		
+		 * for(TreeItem item : f_statusTree.getItems()) {
+		 * item.setExpanded(true); if (byServer) { for(TreeItem item2 :
+		 * item.getItems()) { if (item2.getText().endsWith("Connected
+		 * Projects")) { item2.setExpanded(true); // Expand projects
+		 * for(TreeItem item3 : item2.getItems()) { item3.setExpanded(true); } } } } }
+		 */
+		// f_statusTree.setRedraw(true);
 		checkAutoSyncTrigger(projects);
 	}
 
@@ -1306,13 +1375,15 @@ implements ISierraServerObserver, IProjectsObserver {
 	 * @return true if triggered an auto-sync
 	 */
 	private boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
-		if (!PreferenceConstants.getServerInteractionSetting().useAuditThreshold()) {
+		if (!PreferenceConstants.getServerInteractionSetting()
+				.useAuditThreshold()) {
 			return false;
 		}
-		final int auditThreshold = PreferenceConstants.getServerInteractionAuditThreshold();
+		final int auditThreshold = PreferenceConstants
+				.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
 			int audits = 0;
-			for(ProjectStatus ps : projects) {
+			for (final ProjectStatus ps : projects) {
 				audits += ps.numLocalAudits + ps.numServerAudits;
 			}
 			// FIX should this be per-project?
@@ -1323,45 +1394,44 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 		return false;
 	}
-	
+
 	static class TreeInput {
 		final boolean byServer;
 		final ServersViewContent[] content;
-		
+
 		TreeInput(boolean server, ServersViewContent[] c) {
 			byServer = server;
 			content = c;
 		}
 	}
-	
-	private TreeInput createTreeInput() {		
+
+	private TreeInput createTreeInput() {
 		final boolean someServers = !f_manager.isEmpty();
 		final boolean someProjects = !projects.isEmpty();
 		final boolean somethingToSee = someServers || someProjects;
-		//f_statusTree.setVisible(somethingToSee);
+		// f_statusTree.setVisible(somethingToSee);
 		f_view.hasData(somethingToSee);
-		
+
 		if (!somethingToSee) {
 			return new TreeInput(false, emptyChildren);
-		}
-		else if (!someServers) {
+		} else if (!someServers) {
 			return new TreeInput(false, createProjectItems());
-		}
-		else if (!someProjects) {
+		} else if (!someProjects) {
 			return new TreeInput(true, createServerItems());
-		}
-		else switch (PreferenceConstants.getServerStatusSort()) {
-		case BY_PROJECT:
-			return new TreeInput(false, createProjectItems());
-		case BY_SERVER:
-		default: 
-			return new TreeInput(true, createServerItems());
+		} else {
+			switch (PreferenceConstants.getServerStatusSort()) {
+			case BY_PROJECT:
+				return new TreeInput(false, createProjectItems());
+			case BY_SERVER:
+			default:
+				return new TreeInput(true, createServerItems());
+			}
 		}
 	}
-	
+
 	enum ServerStatus {
 		OK, WARNING, ERROR;
-		
+
 		ServerStatus merge(ServerStatus s) {
 			switch (s) {
 			case ERROR:
@@ -1369,31 +1439,39 @@ implements ISierraServerObserver, IProjectsObserver {
 			case WARNING:
 				return this == ERROR ? ERROR : WARNING;
 			case OK:
-		    default:
+			default:
 				return this;
 			}
 		}
 	}
-	enum ChangeStatus { 
+
+	enum ChangeStatus {
 		NONE() {
-			@Override String getLabel() {
+			@Override
+			String getLabel() {
 				return "";
 			}
-		}, LOCAL() {
-			@Override String getLabel() {
+		},
+		LOCAL() {
+			@Override
+			String getLabel() {
 				return "> ";
 			}
-		}, REMOTE() {
-			@Override String getLabel() {
+		},
+		REMOTE() {
+			@Override
+			String getLabel() {
 				return "< ";
 			}
-		}, BOTH() {
-			@Override String getLabel() {
+		},
+		BOTH() {
+			@Override
+			String getLabel() {
 				return "< ";
 			}
 		};
 		abstract String getLabel();
-		
+
 		ChangeStatus merge(ChangeStatus s) {
 			if (s == null) {
 				return this;
@@ -1411,83 +1489,89 @@ implements ISierraServerObserver, IProjectsObserver {
 					return REMOTE;
 				}
 				return s == LOCAL ? BOTH : s;
-			case BOTH:			
+			case BOTH:
 			default:
 				return BOTH;
 			}
 		}
- 	}
-	
+	}
+
 	private ServersViewContent[] createServerItems() {
 		final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
 		/*
-		final SierraServer focus = f_manager.getFocus();
-		TreeItem focused = null;
-		*/
-		for(String label : f_manager.getLabels()) {
+		 * final SierraServer focus = f_manager.getFocus(); TreeItem focused =
+		 * null;
+		 */
+		for (final String label : f_manager.getLabels()) {
 			final ServersViewContent serverNode = createServerItem(label);
 			content.add(serverNode);
 		}
 		createUnassociatedProjectItems(content);
 		/*
-		if (focused != null) {
-			f_statusTree.setSelection(focused);
-		}
-		*/
+		 * if (focused != null) { f_statusTree.setSelection(focused); }
+		 */
 		createLocalScanFilterItems(content);
 		return content.toArray(emptyChildren);
 	}
 
 	private ServersViewContent createServerItem(String label) {
-		final SierraServer server = f_manager.getServerByLabel(label);				
+		final SierraServer server = f_manager.getServerByLabel(label);
 		final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
-		
-		final ServersViewContent serverNode = new ServersViewContent(null, 
+
+		final ServersViewContent serverNode = new ServersViewContent(null,
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		serverNode.setData(server);
 		/*
-		if (focus != null && label.equals(focus.getLabel())) {
-			focused = item;
-		}
-		*/
-		ServersViewContent categories = createCategories(serverNode, server);	
+		 * if (focus != null && label.equals(focus.getLabel())) { focused =
+		 * item; }
+		 */
+		final ServersViewContent categories = createCategories(serverNode,
+				server);
 		if (categories != null) {
 			serverContent.add(categories);
 		}
-		ServersViewContent scanFilters = createScanFilters(serverNode, server);	
+		final ServersViewContent scanFilters = createScanFilters(serverNode,
+				server);
 		if (scanFilters != null) {
 			serverContent.add(scanFilters);
 		}
-		if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {			
-			ServersViewContent projects = new ServersViewContent(serverNode, SLImages
-					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {
+			final ServersViewContent projects = new ServersViewContent(
+					serverNode,
+					SLImages
+							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			serverContent.add(projects);
-			
+
 			createProjectItems(projects, server);
-			projects.setText(projects.getChangeStatus().getLabel()+CONNECTED_PROJECTS);
+			projects.setText(projects.getChangeStatus().getLabel()
+					+ CONNECTED_PROJECTS);
 		}
 
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
 		final ChangeStatus status3 = serverNode.getChangeStatus();
-		serverNode.setText(status3.getLabel()+label+" ["+server.toURLWithContextPath()+']');
+		serverNode.setText(status3.getLabel() + label + " ["
+				+ server.toURLWithContextPath() + ']');
 		return serverNode;
 	}
-	
+
 	private static final String delta = ChangeStatus.REMOTE.getLabel();
-	
-	private ServersViewContent createCategories(ServersViewContent serverNode, SierraServer server) {
-		ServerUpdateStatus update = serverUpdates.get(server);
-		final int numCategories = update == null ? 0 : update.getNumUpdatedFilterSets();
-		if (numCategories > 0) {									
-			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));			
-			root.setText(delta+CATEGORIES);
+
+	private ServersViewContent createCategories(ServersViewContent serverNode,
+			SierraServer server) {
+		final ServerUpdateStatus update = serverUpdates.get(server);
+		final int numCategories = update == null ? 0 : update
+				.getNumUpdatedFilterSets();
+		if (numCategories > 0) {
+			final ServersViewContent root = new ServersViewContent(serverNode,
+					SLImages.getImage(CommonImages.IMG_FILTER));
+			root.setText(delta + CATEGORIES);
 			ServersViewContent label;
 			if (numCategories > 1) {
-			    label = createLabel(root, delta+numCategories+" categories to update",
-			    		            ChangeStatus.REMOTE);
+				label = createLabel(root, delta + numCategories
+						+ " categories to update", ChangeStatus.REMOTE);
 			} else {
-				label = createLabel(root, delta+"1 category to update",
-						            ChangeStatus.REMOTE);
+				label = createLabel(root, delta + "1 category to update",
+						ChangeStatus.REMOTE);
 			}
 			label.setChangeStatus(ChangeStatus.REMOTE);
 			return root;
@@ -1495,15 +1579,17 @@ implements ISierraServerObserver, IProjectsObserver {
 		return null;
 	}
 
-	private ServersViewContent createScanFilters(ServersViewContent serverNode, SierraServer server) {		
-		ServerUpdateStatus update = serverUpdates.get(server);
+	private ServersViewContent createScanFilters(ServersViewContent serverNode,
+			SierraServer server) {
+		final ServerUpdateStatus update = serverUpdates.get(server);
 		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
-		if (num > 0) {									
-			ServersViewContent root = new ServersViewContent(serverNode, SLImages.getImage(CommonImages.IMG_FILTER));
-			root.setText(delta+SCAN_FILTERS);
-			
-			createLabel(root, delta+num+" scan filter"+s(num)+" to update", 
-					    ChangeStatus.REMOTE);
+		if (num > 0) {
+			final ServersViewContent root = new ServersViewContent(serverNode,
+					SLImages.getImage(CommonImages.IMG_FILTER));
+			root.setText(delta + SCAN_FILTERS);
+
+			createLabel(root, delta + num + " scan filter" + s(num)
+					+ " to update", ChangeStatus.REMOTE);
 			return root;
 		}
 		return null;
@@ -1511,177 +1597,206 @@ implements ISierraServerObserver, IProjectsObserver {
 
 	private void createUnassociatedProjectItems(List<ServersViewContent> content) {
 		List<ServersViewContent> children = null;
-		ServersViewContent parent = null;		
-		
-		for(ProjectStatus ps : projects) {
+		ServersViewContent parent = null;
+
+		for (final ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
-					parent = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_CONSOLE));
+					parent = new ServersViewContent(null, SLImages
+							.getImage(CommonImages.IMG_CONSOLE));
 					children = new ArrayList<ServersViewContent>();
 				}
-				ServersViewContent project = new ServersViewContent(parent, SLImages
-						.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+				final ServersViewContent project = new ServersViewContent(
+						parent,
+						SLImages
+								.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 				children.add(project);
 				initProjectItem(project, server, ps);
 			}
 		}
 		if (parent != null) {
 			parent.setChildren(children.toArray(emptyChildren));
-			parent.setText(parent.getChangeStatus().getLabel()+"Unconnected");
+			parent.setText(parent.getChangeStatus().getLabel() + "Unconnected");
 			content.add(parent);
-		}		
+		}
 	}
 
 	private void createLocalScanFilterItems(List<ServersViewContent> content) {
 		// FIX localStatus
 	}
-	
-	private void createProjectItems(ServersViewContent parent, SierraServer server) {
-		List<ServersViewContent> content = new ArrayList<ServersViewContent>();
-		
-		for(String projectName : f_manager.getProjectsConnectedTo(server)) {
+
+	private void createProjectItems(ServersViewContent parent,
+			SierraServer server) {
+		final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
+
+		for (final String projectName : f_manager
+				.getProjectsConnectedTo(server)) {
 			ProjectStatus s = null;
-			for(ProjectStatus p : projects) {
+			for (final ProjectStatus p : projects) {
 				if (projectName.equals(p.name)) {
 					s = p;
 					break;
 				}
 			}
 			if (s == null) {
-				IJavaProject jp = JDTUtility.getJavaProject(projectName);				
+				final IJavaProject jp = JDTUtility.getJavaProject(projectName);
 				if (jp != null) {
 					// No scan data?
-					ServersViewContent root = 
-						createProjectItem(parent, server, projectName);					
+					final ServersViewContent root = createProjectItem(parent,
+							server, projectName);
 					root.setData(new ProjectStatus(jp));
 					content.add(root);
-					
+
 					createLabel(root, "Needs a local scan");
 					continue;
 				} else { // closed project?
-					IProject p = WorkspaceUtility.getProject(projectName);
-					if (p != null && p.exists()) {
+					final IProject p = WorkspaceUtility.getProject(projectName);
+					if ((p != null) && p.exists()) {
 						if (p.isOpen()) {
-							throw new IllegalStateException("Not a Java project: "+projectName);
+							throw new IllegalStateException(
+									"Not a Java project: " + projectName);
 						} else { // closed
-							ServersViewContent root = 
-								createProjectItem(parent, server, projectName);	
+							final ServersViewContent root = createProjectItem(
+									parent, server, projectName);
 							content.add(root);
-							
+
 							createLabel(root, "Closed ... no info available");
 							continue;
 						}
 					}
-					throw new IllegalStateException("No such Java project: "+projectName);
+					throw new IllegalStateException("No such Java project: "
+							+ projectName);
 				}
 			}
-			ServersViewContent root = new ServersViewContent(parent, SLImages
-				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			final ServersViewContent root = new ServersViewContent(
+					parent,
+					SLImages
+							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
 			initProjectItem(root, server, s);
 			content.add(root);
 		}
 		parent.setChildren(content.toArray(emptyChildren));
 	}
 
-	private ServersViewContent createLabel(ServersViewContent parent, String text) {
+	private ServersViewContent createLabel(ServersViewContent parent,
+			String text) {
 		return createLabel(parent, text, ChangeStatus.NONE);
 	}
-	
-	private ServersViewContent createLabel(ServersViewContent parent, String text,
-			                               ChangeStatus delta) {
-		ServersViewContent[] contents = new ServersViewContent[1];
-		ServersViewContent c = new ServersViewContent(parent, null);
+
+	private ServersViewContent createLabel(ServersViewContent parent,
+			String text, ChangeStatus delta) {
+		final ServersViewContent[] contents = new ServersViewContent[1];
+		final ServersViewContent c = new ServersViewContent(parent, null);
 		c.setText(text);
 		c.setChangeStatus(delta);
-		contents[0] = c;		
+		contents[0] = c;
 		parent.setChildren(contents);
 		return c;
 	}
-	
-	private ServersViewContent createLabel(ServersViewContent parent, List<ServersViewContent> children, String text) {
-		ServersViewContent c = new ServersViewContent(parent, null);
+
+	private ServersViewContent createLabel(ServersViewContent parent,
+			List<ServersViewContent> children, String text) {
+		final ServersViewContent c = new ServersViewContent(parent, null);
 		c.setText(text);
 		children.add(c);
 		return c;
 	}
-	
-	private ServersViewContent createProjectItem(ServersViewContent parent, SierraServer server,
-			String projectName) {
-		ServersViewContent root = new ServersViewContent(parent, SLImages
+
+	private ServersViewContent createProjectItem(ServersViewContent parent,
+			SierraServer server, String projectName) {
+		final ServersViewContent root = new ServersViewContent(parent, SLImages
 				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
-		root.setText(projectName+" ["+server.getLabel()+']');
+		root.setText(projectName + " [" + server.getLabel() + ']');
 		return root;
 	}
-	
-	private void initProjectItem(ServersViewContent root, final SierraServer server, final ProjectStatus ps) { 
-		final List<ServersViewContent> contents = new ArrayList<ServersViewContent>();
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 
-		if (ps.scanDoc != null && ps.scanDoc.exists()) {
+	private void initProjectItem(ServersViewContent root,
+			final SierraServer server, final ProjectStatus ps) {
+		final List<ServersViewContent> contents = new ArrayList<ServersViewContent>();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"yyyy/MM/dd 'at' HH:mm:ss");
+
+		if ((ps.scanDoc != null) && ps.scanDoc.exists()) {
 			ServersViewContent scan;
 			if (ps.scanInfo != null) {
-				Date lastScanTime = ps.scanInfo.getScanTime();
-				
+				final Date lastScanTime = ps.scanInfo.getScanTime();
+
 				if (ps.scanInfo.isPartial()) {
 					// Latest is a re-scan
-					scan = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
-					scan.setText("Re-scan done locally on "+dateFormat.format(lastScanTime)+" ... click to start full scan");
+					scan = new ServersViewContent(root, SLImages
+							.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
+					scan.setText("Re-scan done locally on "
+							+ dateFormat.format(lastScanTime)
+							+ " ... click to start full scan");
 				} else {
-					scan = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
-					scan.setText("Last full scan done locally on "+dateFormat.format(lastScanTime));
+					scan = new ServersViewContent(root, SLImages
+							.getImage(CommonImages.IMG_SIERRA_SCAN));
+					scan.setText("Last full scan done locally on "
+							+ dateFormat.format(lastScanTime));
 				}
 				scan.setData(ps.scanInfo);
-				
+
 			} else {
-				Date docModified = new Date(ps.scanDoc.lastModified());
-				scan = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
-				scan.setText("Last full scan done locally on "+dateFormat.format(docModified));
+				final Date docModified = new Date(ps.scanDoc.lastModified());
+				scan = new ServersViewContent(root, SLImages
+						.getImage(CommonImages.IMG_SIERRA_SCAN));
+				scan.setText("Last full scan done locally on "
+						+ dateFormat.format(docModified));
 				scan.setData(ps.scanDoc);
 			}
 			contents.add(scan);
-			//status = status.merge(ChangeStatus.LOCAL);
+			// status = status.merge(ChangeStatus.LOCAL);
 		}
 		if (!ps.localFindings.isEmpty()) {
-			ServersViewContent audits = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
+			final ServersViewContent audits = new ServersViewContent(root,
+					SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
 			contents.add(audits);
 
-			List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
-			createAuditItems(audits, auditContents, false, ps.numLocalAudits, ps.localFindings.size(), 
-					         ps.earliestLocalAudit, ps.latestLocalAudit);			
+			final List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
+			createAuditItems(audits, auditContents, false, ps.numLocalAudits,
+					ps.localFindings.size(), ps.earliestLocalAudit,
+					ps.latestLocalAudit);
 			createLocalAuditDetails(audits, auditContents, ps.localFindings);
 			audits.setChildren(auditContents.toArray(emptyChildren));
 			audits.setChangeStatus(ChangeStatus.LOCAL);
-		}		
+		}
 		if (ps.numServerProblems > 0) {
-			ServersViewContent problems = new ServersViewContent(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+			final ServersViewContent problems = new ServersViewContent(root,
+					SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 			contents.add(problems);
-			problems.setText(ps.numServerProblems+" consecutive failure"+s(ps.numServerProblems)+
-					         " connecting to "+server.getLabel());
+			problems.setText(ps.numServerProblems + " consecutive failure"
+					+ s(ps.numServerProblems) + " connecting to "
+					+ server.getLabel());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}
 		if (ps.numProjectProblems > 0) {
-			ServersViewContent problems = new ServersViewContent(root, SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+			final ServersViewContent problems = new ServersViewContent(root,
+					SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
 			contents.add(problems);
-			problems.setText(ps.numProjectProblems+" consecutive failure"+s(ps.numProjectProblems)+
-					         " getting server info from "+server.getLabel());
+			problems.setText(ps.numProjectProblems + " consecutive failure"
+					+ s(ps.numProjectProblems) + " getting server info from "
+					+ server.getLabel());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}
 		if (ps.serverData == null) {
 			if (server != null) {
-				ServersViewContent noServer = new ServersViewContent(root, null);
+				final ServersViewContent noServer = new ServersViewContent(
+						root, null);
 				contents.add(noServer);
-				noServer.setText("No server info available ... click to update");
+				noServer
+						.setText("No server info available ... click to update");
 				noServer.setData(NO_SERVER_DATA);
 			}
-		} 
-		else if (!ps.serverData.isEmpty()) {
-			ServersViewContent audits = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
+		} else if (!ps.serverData.isEmpty()) {
+			final ServersViewContent audits = new ServersViewContent(root,
+					SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
 			contents.add(audits);
-			
-			List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
-			createAuditItems(audits, auditContents, true, ps.numServerAudits, ps.serverData.size(), 
-					         ps.earliestServerAudit, ps.latestServerAudit);	
+
+			final List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
+			createAuditItems(audits, auditContents, true, ps.numServerAudits,
+					ps.serverData.size(), ps.earliestServerAudit,
+					ps.latestServerAudit);
 			createServerAuditDetails(ps, audits, auditContents);
 			audits.setChildren(auditContents.toArray(emptyChildren));
 			audits.setChangeStatus(ChangeStatus.REMOTE);
@@ -1690,91 +1805,97 @@ implements ISierraServerObserver, IProjectsObserver {
 		root.setChildren(contents.toArray(emptyChildren));
 		final String label = root.getChangeStatus().getLabel();
 		if (server != null) {
-			root.setText(label+ps.name+" ["+server.getLabel()+']');
+			root.setText(label + ps.name + " [" + server.getLabel() + ']');
 		} else {
-			root.setText(label+ps.name);
-		}	
-		//setAllDataIfNull(root, ps);
-		
+			root.setText(label + ps.name);
+		}
+		// setAllDataIfNull(root, ps);
+
 		root.setData(ps);
 	}
 
 	/*
-	private void setAllDataIfNull(TreeItem root, ProjectStatus ps) {
-		if (root != null) {
-			if (root.getData() == null) {
-				root.setData(ps);
-			}
-			for(TreeItem item : root.getItems()) {
-				setAllDataIfNull(item, ps);
-			}
-		}
-	}
-	*/
-	
-	private ServersViewContent createAuditItems(final ServersViewContent audits, List<ServersViewContent> contents, boolean server, 
-			                          int numAudits, int findings, Date earliestA, Date latestA) {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
-		
+	 * private void setAllDataIfNull(TreeItem root, ProjectStatus ps) { if (root !=
+	 * null) { if (root.getData() == null) { root.setData(ps); } for(TreeItem
+	 * item : root.getItems()) { setAllDataIfNull(item, ps); } } }
+	 */
+
+	private ServersViewContent createAuditItems(
+			final ServersViewContent audits, List<ServersViewContent> contents,
+			boolean server, int numAudits, int findings, Date earliestA,
+			Date latestA) {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"yyyy/MM/dd 'at' HH:mm:ss");
+
 		if (server) {
-			audits.setText("< "+numAudits+" audit"+s(numAudits)+
-					       " on "+findings+" finding"+s(findings)+" on the server");
+			audits.setText("< " + numAudits + " audit" + s(numAudits) + " on "
+					+ findings + " finding" + s(findings) + " on the server");
 		} else {
-			audits.setText("> "+numAudits+" audit"+s(numAudits)+
-					       " on "+findings+" finding"+s(findings));
+			audits.setText("> " + numAudits + " audit" + s(numAudits) + " on "
+					+ findings + " finding" + s(findings));
 		}
-		
+
 		if (earliestA != null) {
-			createLabel(audits, contents, "Earliest on "+dateFormat.format(earliestA));
+			createLabel(audits, contents, "Earliest on "
+					+ dateFormat.format(earliestA));
 		}
-		if (latestA != null && earliestA != latestA) {
-			createLabel(audits, contents, "Latest on "+dateFormat.format(latestA));
+		if ((latestA != null) && (earliestA != latestA)) {
+			createLabel(audits, contents, "Latest on "
+					+ dateFormat.format(latestA));
 		}
 		return audits;
 	}
 
-	private void createLocalAuditDetails(ServersViewContent audits, List<ServersViewContent> contents, 
-			                             List<FindingAudits> findings) {
-		for(FindingAudits f : findings) {
-			ServersViewContent item = new ServersViewContent(audits, SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
-			int num = f.getAudits().size();
-			item.setText(num+" audit"+s(num)+" on finding "+f.getFindingId());
+	private void createLocalAuditDetails(ServersViewContent audits,
+			List<ServersViewContent> contents, List<FindingAudits> findings) {
+		for (final FindingAudits f : findings) {
+			final ServersViewContent item = new ServersViewContent(audits,
+					SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
+			final int num = f.getAudits().size();
+			item.setText(num + " audit" + s(num) + " on finding "
+					+ f.getFindingId());
 			item.setData(f);
 			contents.add(item);
 		}
 	}
-	
+
 	private void createServerAuditDetails(final ProjectStatus ps,
 			ServersViewContent audits, List<ServersViewContent> contents) {
 		if (ps.comments > 0) {
-			createLabel(audits, contents, ps.comments+" comment"+s(ps.comments));
+			createLabel(audits, contents, ps.comments + " comment"
+					+ s(ps.comments));
 		}
 		if (ps.importance > 0) {
-			createLabel(audits, contents, ps.importance+" change"+s(ps.importance)+" to the importance");
+			createLabel(audits, contents, ps.importance + " change"
+					+ s(ps.importance) + " to the importance");
 		}
 		if (ps.summary > 0) {
-			createLabel(audits, contents, ps.summary+" change"+s(ps.summary)+" to the summary");
+			createLabel(audits, contents, ps.summary + " change"
+					+ s(ps.summary) + " to the summary");
 		}
 		if (ps.read > 0) {
-			createLabel(audits, contents, ps.read+" other finding"+s(ps.read)+" examined");
+			createLabel(audits, contents, ps.read + " other finding"
+					+ s(ps.read) + " examined");
 		}
-		for(Map.Entry<String,Integer> e : ps.userCount.entrySet()) {
+		for (final Map.Entry<String, Integer> e : ps.userCount.entrySet()) {
 			if (e.getValue() != null) {
-				int count = e.getValue().intValue();
+				final int count = e.getValue().intValue();
 				if (count > 0) {
-					createLabel(audits, contents, count+" audit"+s(count)+" by "+e.getKey());
+					createLabel(audits, contents, count + " audit" + s(count)
+							+ " by " + e.getKey());
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Show by Project
 	 */
 	private ServersViewContent[] createProjectItems() {
-		ServersViewContent[] content = new ServersViewContent[projects.size()];
-		int i=0;
-		for (ProjectStatus ps : projects) {
+		final ServersViewContent[] content = new ServersViewContent[projects
+				.size()];
+		int i = 0;
+		for (final ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			content[i] = new ServersViewContent(null, SLImages
 					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
@@ -1783,18 +1904,19 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 		return content;
 	}
-		
+
 	private static String s(int num) {
 		return num <= 1 ? "" : "s";
 	}
-	
+
 	static final ServersViewContent[] emptyChildren = new ServersViewContent[0];
-	
+
 	private class ContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ServersViewContent) {
-				ServersViewContent[] children = ((ServersViewContent) parentElement).getChildren();
-				return children != null ? children : emptyChildren;						
+				final ServersViewContent[] children = ((ServersViewContent) parentElement)
+						.getChildren();
+				return children != null ? children : emptyChildren;
 			}
 			return null;
 		}
@@ -1808,35 +1930,36 @@ implements ISierraServerObserver, IProjectsObserver {
 
 		public boolean hasChildren(Object element) {
 			if (element instanceof ServersViewContent) {
-				ServersViewContent[] children = ((ServersViewContent) element).getChildren();
-				return children != null && children.length > 0;
+				final ServersViewContent[] children = ((ServersViewContent) element)
+						.getChildren();
+				return (children != null) && (children.length > 0);
 			}
 			return false;
 		}
 
 		public Object[] getElements(Object inputElement) {
-			TreeInput input = (TreeInput) inputElement;
-            return input.content;
+			final TreeInput input = (TreeInput) inputElement;
+			return input.content;
 		}
 
 		public void dispose() {
-			// TODO Auto-generated method stub		
+			// TODO Auto-generated method stub
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub			
-		}		
+			// TODO Auto-generated method stub
+		}
 	}
-	
+
 	private class LabelProvider implements ILabelProvider {
-		final ILabelDecorator decorator = 
-			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		final ILabelDecorator decorator = PlatformUI.getWorkbench()
+				.getDecoratorManager().getLabelDecorator();
 
 		public Image getImage(Object element) {
 			if (element instanceof ServersViewContent) {
-				//System.out.println("Getting image for "+element);
-				Image i1 = ((ServersViewContent) element).getImage();
-				Image i2 = decorator.decorateImage(i1, element);
+				// System.out.println("Getting image for "+element);
+				final Image i1 = ((ServersViewContent) element).getImage();
+				final Image i2 = decorator.decorateImage(i1, element);
 				return i2 == null ? i1 : i2;
 			}
 			return null;
@@ -1850,11 +1973,11 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 
 		public void addListener(ILabelProviderListener listener) {
-			decorator.addListener(listener);			
+			decorator.addListener(listener);
 		}
 
 		public void dispose() {
-			// TODO Auto-generated method stub			
+			// TODO Auto-generated method stub
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -1863,18 +1986,14 @@ implements ISierraServerObserver, IProjectsObserver {
 		}
 
 		public void removeListener(ILabelProviderListener listener) {
-			decorator.addListener(listener);		
+			decorator.addListener(listener);
 		}
 
 		/*
-		public void labelProviderChanged(LabelProviderChangedEvent event) {
-			for(Object o : event.getElements()) {
-				if (o instanceof ServersViewContent) {
-					System.out.println("Label changed for "+o);
-				}
-			}
-			//f_statusTree.refresh();
-		}		
-		*/
+		 * public void labelProviderChanged(LabelProviderChangedEvent event) {
+		 * for(Object o : event.getElements()) { if (o instanceof
+		 * ServersViewContent) { System.out.println("Label changed for "+o); } }
+		 * //f_statusTree.refresh(); }
+		 */
 	}
 }
