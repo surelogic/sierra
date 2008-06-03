@@ -295,12 +295,12 @@ public class ScanFilters {
 		return filter;
 	}
 
-	public static ScanFilter convert(ScanFilterDO data, String server) {
+	public static ScanFilter convert(ScanFilterDO data, String owner) {
 		final ScanFilter filter = new ScanFilter();
 		filter.setName(data.getName());
 		filter.setUid(data.getUid());
 		filter.setRevision(data.getRevision());
-		filter.setOwner(server);
+		filter.setOwner(owner);
 		final List<CategoryFilter> cSet = filter.getCategoryFilter();
 		for (final CategoryFilterDO c : data.getCategories()) {
 			final CategoryFilter cf = new CategoryFilter();
