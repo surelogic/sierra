@@ -87,7 +87,7 @@ public final class SierraServerPersistence {
 			}
 		} catch (final TransactionException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
-					I18N.err(38, "Team Servers"), e);
+					I18N.err(38, "Team Servers", "database"), e);
 		} catch (final CoreException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 		}
