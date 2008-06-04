@@ -65,7 +65,10 @@ implements IBuglinkDataObserver {
 				}				
 			});
 
-			for(String cat : f_allValues) {
+			final Iterator<String> it = f_allValues.iterator();
+			while (it.hasNext()) {
+			  final String cat = it.next();
+			  
 				// Compute the count for the category
 				int count = 0;
 				for(String findingType : buglink.getFindingTypes(cat)) {
@@ -75,7 +78,11 @@ implements IBuglinkDataObserver {
 						count += inc;
 					}
 				}
-				f_counts.put(cat, count);
+				if (count == 0) {
+				  it.remove();
+				} else {
+				  f_counts.put(cat, count);
+				}
 			}
 		}
 	}
