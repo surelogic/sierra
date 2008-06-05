@@ -53,6 +53,10 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			return new DefaultSourceBuilder();
 		}
 
+		public ArtifactBuilder scanNumber(int number) {
+			return this;
+		}
+
 	}
 
 	public static class DefaultSourceBuilder implements SourceLocationBuilder {
@@ -165,6 +169,10 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 	}
 
 	public void rollback() {
+		// Nothing to do
+	}
+
+	public void relation(int parentNumber, int childNumber) {
 		// Nothing to do
 	}
 }

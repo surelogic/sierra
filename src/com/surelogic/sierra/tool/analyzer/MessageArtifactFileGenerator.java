@@ -1,6 +1,14 @@
 package com.surelogic.sierra.tool.analyzer;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -78,9 +86,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			metricsHolder = File.createTempFile("metrics", "tmp");
 			metricsOut = new FileOutputStream(metricsHolder, true);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
 		}
 
@@ -112,8 +120,9 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			monitor.subTask("Writing header");
 			OutputStream stream = new FileOutputStream(parsedFile);
 			stream = new GZIPOutputStream(stream, 4096);
-			OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
-			PrintWriter finalFile = new PrintWriter(osw);
+			final OutputStreamWriter osw = new OutputStreamWriter(stream,
+					ENCODING);
+			final PrintWriter finalFile = new PrintWriter(osw);
 			finalFile.write(XML_START);
 			finalFile.write('\n');
 			finalFile.write(MessageFormat.format(RUN_START, I18N
@@ -166,8 +175,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			finalFile.write(TOOL_OUTPUT_END);
 
 			monitor.subTask("Writing config");
-			File configOutput = File.createTempFile("config", "tmp");
-			FileOutputStream fos = new FileOutputStream(configOutput);
+			final File configOutput = File.createTempFile("config", "tmp");
+			final FileOutputStream fos = new FileOutputStream(configOutput);
 			MessageWarehouse.getInstance().writeConfig(config, fos);
 			fos.close();
 
@@ -179,13 +188,13 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			osw.close();
 			stream.close();
 			monitor.worked(1);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
 			throw new RuntimeException(e.getMessage());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.log(Level.SEVERE, "Unable to read/write from/to the file", e);
 			throw new RuntimeException(e.getMessage());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.log(Level.SEVERE,
 					"Error when trying to generate the scan document", e);
 			throw new RuntimeException(e.getMessage());
@@ -195,7 +204,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private static void copyContents(File file, PrintWriter out)
 			throws FileNotFoundException, IOException {
-		BufferedReader in = new BufferedReader(new FileReader(file));
+		final BufferedReader in = new BufferedReader(new FileReader(file));
 		/*
 		 * String line;
 		 * 
@@ -203,7 +212,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 		 * out.write("\n"); } in.close(); out.flush();
 		 */
 		// Transfer bytes from in to out
-		char[] buf = new char[4096];
+		final char[] buf = new char[4096];
 		int len;
 		while ((len = in.read(buf)) > 0) {
 			out.write(buf, 0, len);
@@ -228,7 +237,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 		public void build() {
 
-			Error error = new Error();
+			final Error error = new Error();
 			error.setMessage(message);
 			error.setTool(tool);
 			mw.writeError(error, errOut);
@@ -254,7 +263,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 		private final MessageWarehouse mw = MessageWarehouse.getInstance();
 
 		public void build() {
-			ClassMetric metric = new ClassMetric();
+			final ClassMetric metric = new ClassMetric();
 			metric.setName(clazz);
 			metric.setPackage(pakkage);
 			metric.setLoc(linesOfCode);
@@ -262,20 +271,20 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 		}
 
 		public MetricBuilder compilation(String name) {
-			this.clazz = name;
+			clazz = name;
 			return this;
 		}
 
 		public MetricBuilder linesOfCode(int line) {
-			this.linesOfCode = line;
+			linesOfCode = line;
 			return this;
 		}
 
 		public MetricBuilder packageName(String name) {
-			if (name == null || "".equals(name)) {
+			if ((name == null) || "".equals(name)) {
 				name = JavaConstants.DEFAULT_PACKAGE;
 			}
-			this.pakkage = name;
+			pakkage = name;
 			return this;
 		}
 
@@ -290,7 +299,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 		}
 
 		public void build() {
-			Artifact a = artBuilder.build();
+			final Artifact a = artBuilder.build();
 			mw.writeArtifact(a, artOut);
 		}
 
@@ -329,7 +338,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			public SourceLocationAdapter(boolean isPrimary) {
 				this.isPrimary = isPrimary;
-				this.sourceBuilder = new SourceLocation.Builder();
+				sourceBuilder = new SourceLocation.Builder();
 			}
 
 			public void build() {
@@ -366,7 +375,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			}
 
 			public SourceLocationBuilder packageName(String name) {
-				if (name == null || "".equals(name)) {
+				if ((name == null) || "".equals(name)) {
 					name = JavaConstants.DEFAULT_PACKAGE;
 				}
 				sourceBuilder.packageName(name);
@@ -383,6 +392,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 				return null;
 			}
 
+		}
+
+		public ArtifactBuilder scanNumber(int number) {
+			// TODO
+			return null;
 		}
 	}
 
