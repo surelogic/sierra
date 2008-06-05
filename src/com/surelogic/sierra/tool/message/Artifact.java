@@ -8,254 +8,279 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
 public class Artifact {
-    private ArtifactType artifactType;
-    private SourceLocation primarySourceLocation;
-    private List<SourceLocation> additionalSources;
-    private Priority priority;
-    private Severity severity;
-    private String message;
+	private ArtifactType artifactType;
+	private SourceLocation primarySourceLocation;
+	private List<SourceLocation> additionalSources;
+	private Priority priority;
+	private Severity severity;
+	private String message;
+	private Integer scanNumber;
 
-    public Artifact() {
-        // Nothing to do
-    }
+	public Artifact() {
+		// Nothing to do
+	}
 
-    public Artifact(Builder builder) {
-        this.artifactType = builder.artifactType;
-        this.primarySourceLocation = builder.primarySourceLocation;
-        this.additionalSources = new ArrayList<SourceLocation>(builder.sources);
+	public Artifact(Builder builder) {
+		artifactType = builder.artifactType;
+		primarySourceLocation = builder.primarySourceLocation;
+		additionalSources = new ArrayList<SourceLocation>(builder.sources);
 
-        if (builder.priority != null) {
-            this.priority = builder.priority;
-        }
+		if (builder.priority != null) {
+			priority = builder.priority;
+		}
 
-        if (builder.severity != null) {
-            this.severity = builder.severity;
-        }
+		if (builder.severity != null) {
+			severity = builder.severity;
+		}
 
-        this.message = builder.message;
-    }
+		message = builder.message;
+		scanNumber = builder.scanNumber;
+	}
 
-    public ArtifactType getArtifactType() {
-        return artifactType;
-    }
+	public ArtifactType getArtifactType() {
+		return artifactType;
+	}
 
-    public void setArtifactType(ArtifactType artifactType) {
-        this.artifactType = artifactType;
-    }
+	public void setArtifactType(ArtifactType artifactType) {
+		this.artifactType = artifactType;
+	}
 
-    public SourceLocation getPrimarySourceLocation() {
-        return primarySourceLocation;
-    }
+	public SourceLocation getPrimarySourceLocation() {
+		return primarySourceLocation;
+	}
 
-    public List<SourceLocation> getAdditionalSources() {
-        return additionalSources;
-    }
+	public List<SourceLocation> getAdditionalSources() {
+		return additionalSources;
+	}
 
-    public Priority getPriority() {
-        return priority;
-    }
+	public Priority getPriority() {
+		return priority;
+	}
 
-    public Severity getSeverity() {
-        return severity;
-    }
+	public Severity getSeverity() {
+		return severity;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setPrimarySourceLocation(SourceLocation primarySourceLocation) {
-        this.primarySourceLocation = primarySourceLocation;
-    }
+	public void setPrimarySourceLocation(SourceLocation primarySourceLocation) {
+		this.primarySourceLocation = primarySourceLocation;
+	}
 
-    public void setAdditionalSources(List<SourceLocation> additionalSources) {
-        this.additionalSources = additionalSources;
-    }
+	public void setAdditionalSources(List<SourceLocation> additionalSources) {
+		this.additionalSources = additionalSources;
+	}
 
-    public void setPriority(Priority priority) {
-        this.priority = priority;
-    }
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
 
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
-    }
+	public void setSeverity(Severity severity) {
+		this.severity = severity;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) +
-            ((additionalSources == null) ? 0 : additionalSources.hashCode());
-        result = (prime * result) +
-            ((artifactType == null) ? 0 : artifactType.hashCode());
-        result = (prime * result) +
-            ((message == null) ? 0 : message.hashCode());
-        result = (prime * result) +
-            ((primarySourceLocation == null) ? 0
-                                             : primarySourceLocation.hashCode());
-        result = (prime * result) +
-            ((priority == null) ? 0 : priority.hashCode());
-        result = (prime * result) +
-            ((severity == null) ? 0 : severity.hashCode());
+	public Integer getScanNumber() {
+		return scanNumber;
+	}
 
-        return result;
-    }
+	public void setScanNumber(Integer scanNumber) {
+		this.scanNumber = scanNumber;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result)
+				+ ((additionalSources == null) ? 0 : additionalSources
+						.hashCode());
+		result = (prime * result)
+				+ ((artifactType == null) ? 0 : artifactType.hashCode());
+		result = (prime * result)
+				+ ((message == null) ? 0 : message.hashCode());
+		result = (prime * result)
+				+ ((primarySourceLocation == null) ? 0 : primarySourceLocation
+						.hashCode());
+		result = (prime * result)
+				+ ((priority == null) ? 0 : priority.hashCode());
+		result = (prime * result)
+				+ ((severity == null) ? 0 : severity.hashCode());
 
-        if (obj == null) {
-            return false;
-        }
+		return result;
+	}
 
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 
-        final Artifact other = (Artifact) obj;
+		if (obj == null) {
+			return false;
+		}
 
-        if (additionalSources == null) {
-            if (other.additionalSources != null) {
-                return false;
-            }
-        } else if (!additionalSources.equals(other.additionalSources)) {
-            return false;
-        }
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
 
-        if (artifactType == null) {
-            if (other.artifactType != null) {
-                return false;
-            }
-        } else if (!artifactType.equals(other.artifactType)) {
-            return false;
-        }
+		final Artifact other = (Artifact) obj;
 
-        if (message == null) {
-            if (other.message != null) {
-                return false;
-            }
-        } else if (!message.equals(other.message)) {
-            return false;
-        }
+		if (additionalSources == null) {
+			if (other.additionalSources != null) {
+				return false;
+			}
+		} else if (!additionalSources.equals(other.additionalSources)) {
+			return false;
+		}
 
-        if (primarySourceLocation == null) {
-            if (other.primarySourceLocation != null) {
-                return false;
-            }
-        } else if (!primarySourceLocation.equals(other.primarySourceLocation)) {
-            return false;
-        }
+		if (artifactType == null) {
+			if (other.artifactType != null) {
+				return false;
+			}
+		} else if (!artifactType.equals(other.artifactType)) {
+			return false;
+		}
 
-        if (priority == null) {
-            if (other.priority != null) {
-                return false;
-            }
-        } else if (!priority.equals(other.priority)) {
-            return false;
-        }
+		if (message == null) {
+			if (other.message != null) {
+				return false;
+			}
+		} else if (!message.equals(other.message)) {
+			return false;
+		}
 
-        if (severity == null) {
-            if (other.severity != null) {
-                return false;
-            }
-        } else if (!severity.equals(other.severity)) {
-            return false;
-        }
+		if (primarySourceLocation == null) {
+			if (other.primarySourceLocation != null) {
+				return false;
+			}
+		} else if (!primarySourceLocation.equals(other.primarySourceLocation)) {
+			return false;
+		}
 
-        return true;
-    }
+		if (priority == null) {
+			if (other.priority != null) {
+				return false;
+			}
+		} else if (!priority.equals(other.priority)) {
+			return false;
+		}
 
-    public static class Builder {
-        private ArtifactType artifactType;
-        private Priority priority;
-        private Severity severity;
-        private final List<SourceLocation> sources = new ArrayList<SourceLocation>();
-        private String message;
-        private SourceLocation primarySourceLocation;
+		if (severity == null) {
+			if (other.severity != null) {
+				return false;
+			}
+		} else if (!severity.equals(other.severity)) {
+			return false;
+		}
 
-        public Builder() {
-            clear();
-        }
+		if (scanNumber == null) {
+			if (other.scanNumber != null) {
+				return false;
+			}
+		} else if (!scanNumber.equals(other.scanNumber)) {
+			return false;
+		}
 
-        public Builder findingType(String tool, String version, String mnemonic) {
-            this.artifactType = new ArtifactType();
-            artifactType.setTool(tool);
-            artifactType.setVersion(version);
-            artifactType.setMnemonic(mnemonic);
+		return true;
+	}
 
-            return this;
-        }
+	public static class Builder {
+		private ArtifactType artifactType;
+		private Priority priority;
+		private Severity severity;
+		private final List<SourceLocation> sources = new ArrayList<SourceLocation>();
+		private String message;
+		private SourceLocation primarySourceLocation;
+		private int scanNumber;
 
-        public Builder priority(Priority priority) {
-            this.priority = priority;
+		public Builder() {
+			clear();
+		}
 
-            return this;
-        }
+		public Builder findingType(String tool, String version, String mnemonic) {
+			artifactType = new ArtifactType();
+			artifactType.setTool(tool);
+			artifactType.setVersion(version);
+			artifactType.setMnemonic(mnemonic);
 
-        public Builder severity(Severity severity) {
-            this.severity = severity;
+			return this;
+		}
 
-            return this;
-        }
+		public Builder priority(Priority priority) {
+			this.priority = priority;
 
-        public Builder sourceLocation(SourceLocation sourceLocation) {
-            sources.add(sourceLocation);
+			return this;
+		}
 
-            return this;
-        }
+		public Builder severity(Severity severity) {
+			this.severity = severity;
 
-        public Builder message(String message) {
-            this.message = message;
+			return this;
+		}
 
-            return this;
-        }
+		public Builder sourceLocation(SourceLocation sourceLocation) {
+			sources.add(sourceLocation);
 
-        public Builder primarySourceLocation(
-            SourceLocation primarySourceLocation) {
-            this.primarySourceLocation = primarySourceLocation;
+			return this;
+		}
 
-            return this;
-        }
+		public Builder message(String message) {
+			this.message = message;
 
-        public Artifact build() {
-            validate();
+			return this;
+		}
 
-            Artifact a = new Artifact(this);
-            clear();
+		public Builder primarySourceLocation(
+				SourceLocation primarySourceLocation) {
+			this.primarySourceLocation = primarySourceLocation;
 
-            return a;
-        }
+			return this;
+		}
 
-        private void validate() {
-            if (this.artifactType == null) {
-                throw new IllegalArgumentException(
-                    "An artifact is being built with no artifact type.");
-            }
+		public Builder scanNumber(int scanNumber) {
+			this.scanNumber = scanNumber;
 
-            if (this.primarySourceLocation == null) {
-                throw new IllegalArgumentException(
-                    "An artifact is being build with no primary source location");
-            }
-        }
+			return this;
+		}
 
-        private void clear() {
-            this.artifactType = null;
-            this.priority = null;
-            this.severity = null;
-            this.sources.clear();
-            this.message = null;
-            this.primarySourceLocation = null;
-        }
-    }
+		public Artifact build() {
+			validate();
+
+			final Artifact a = new Artifact(this);
+			clear();
+
+			return a;
+		}
+
+		private void validate() {
+			if (artifactType == null) {
+				throw new IllegalArgumentException(
+						"An artifact is being built with no artifact type.");
+			}
+
+			if (primarySourceLocation == null) {
+				throw new IllegalArgumentException(
+						"An artifact is being build with no primary source location");
+			}
+		}
+
+		private void clear() {
+			artifactType = null;
+			priority = null;
+			severity = null;
+			sources.clear();
+			message = null;
+			primarySourceLocation = null;
+		}
+	}
 }

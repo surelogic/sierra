@@ -12,6 +12,8 @@ public interface ArtifactGenerator {
 
 	public ArtifactBuilder artifact();
 
+	public void relation(int parentNumber, int childNumber);
+
 	public ErrorBuilder error();
 
 	public void finished(SLProgressMonitor monitor);
@@ -42,6 +44,14 @@ public interface ArtifactGenerator {
 		public ArtifactBuilder severity(Severity severity);
 
 		public ArtifactBuilder message(String message);
+
+		/**
+		 * Assigns the artifact a number that should be unique for this scan.
+		 * 
+		 * @param number
+		 * @return
+		 */
+		public ArtifactBuilder scanNumber(int number);
 
 		public void build();
 	}
