@@ -34,6 +34,7 @@ public class JSure1_0ToolInfoGenerator {
 		"AggregatePromiseDrop",
 		"StartsPromiseDrop",		
 		"RegionEffectsPromiseDrop",
+		"InRegionPromiseDrop",
 		"RegionModel",
 		"LockModel",		
 		"RequiresLockPromiseDrop",
