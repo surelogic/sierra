@@ -64,25 +64,25 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
 			FindingFilter filter) throws SQLException {
-	  if (log.isLoggable(Level.FINE)) {
-	    log.fine("Now persisting artifacts to database for scan "
-	        + scan.getUid() + " in project " + projectName + ".");
-	  }
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Now persisting artifacts to database for scan "
+					+ scan.getUid() + " in project " + projectName + ".");
+		}
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.filter = filter;
-		this.ftMan = FindingTypeManager.getInstance(conn);
-		this.artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
-		this.classMetrics = new ArrayList<ClassMetricRecord>(COMMIT_SIZE);
-		this.sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
-		this.compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
+		ftMan = FindingTypeManager.getInstance(conn);
+		artifacts = new ArrayList<ArtifactRecord>(COMMIT_SIZE);
+		classMetrics = new ArrayList<ClassMetricRecord>(COMMIT_SIZE);
+		sources = new HashMap<SourceRecord, SourceRecord>(COMMIT_SIZE * 3);
+		compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
-		this.relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
+		relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
 		this.projectName = projectName;
 		this.scan = scan;
-		this.aBuilder = new JDBCArtifactBuilder();
-		this.mBuilder = new JDBCMetricBuilder();
+		aBuilder = new JDBCArtifactBuilder();
+		mBuilder = new JDBCMetricBuilder();
 	}
 
 	/*
@@ -90,17 +90,17 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	 * actually persisted.
 	 */
 	public void finished(SLProgressMonitor monitor) {
-	  monitor.beginTask("Scan DB", 100);
+		monitor.beginTask("Scan DB", 100);
 		persist(monitor);
 	}
-	
+
 	private void persist(SLProgressMonitor monitor) {
 		try {
-		  monitor.subTask("Persisting comp units");
+			monitor.subTask("Persisting comp units");
 			lookupOrInsert(compUnits.values());
 			monitor.worked(1);
 			compUnits.clear();
-			
+
 			monitor.subTask("Persisting sources");
 			lookupOrInsert(sources.values());
 			monitor.worked(1);
@@ -124,8 +124,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			monitor.subTask("Committing ...");
 			conn.commit();
 			monitor.worked(1);
-		} catch (SQLException e) {
-		  monitor.subTask("Rolling back ...");
+		} catch (final SQLException e) {
+			monitor.subTask("Rolling back ...");
 			quietlyRollback();
 			monitor.worked(1);
 			throw new ScanPersistenceException(e);
@@ -148,7 +148,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private void insert(Collection<? extends Record<?>> objects)
 			throws SQLException {
-		for (Record<?> rec : objects) {
+		for (final Record<?> rec : objects) {
 			rec.insert();
 		}
 	}
@@ -175,7 +175,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 		private void clear() {
-			this.compUnit = factory.newCompilationUnit();
+			compUnit = factory.newCompilationUnit();
 			linesOfCode = null;
 		}
 
@@ -185,7 +185,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				compUnits.put(compUnit, compUnit);
 				currentComp = compUnit;
 			}
-			ClassMetricRecord rec = factory.newClassMetric();
+			final ClassMetricRecord rec = factory.newClassMetric();
 			rec.setId(new RelationRecord.PK<ScanRecord, CompilationUnitRecord>(
 					scan, currentComp));
 			rec.setLinesOfCode(linesOfCode);
@@ -202,7 +202,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 		public MetricBuilder linesOfCode(int line) {
-			this.linesOfCode = line;
+			linesOfCode = line;
 			return this;
 		}
 
@@ -240,13 +240,13 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		private SourceRecord pSource;
 
 		public JDBCArtifactBuilder() {
-			this.scanId = scan.getId();
-			this.aSources = new ArrayList<SourceRecord>();
+			scanId = scan.getId();
+			aSources = new ArrayList<SourceRecord>();
 			clear();
 		}
 
 		private SourceRecord addSource(SourceRecord source) {
-			CompilationUnitRecord compUnit = source.getCompUnit();
+			final CompilationUnitRecord compUnit = source.getCompUnit();
 			CompilationUnitRecord currentComp = compUnits.get(compUnit);
 			if (currentComp == null) {
 				compUnits.put(compUnit, compUnit);
@@ -264,9 +264,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		public void build() {
 			if (filter.accept(artifact.getArtifactTypeId())) {
 				artifact.setPrimary(addSource(pSource));
-				for (SourceRecord source : aSources) {
-					SourceRecord currentSource = addSource(source);
-					ArtifactSourceRecord rel = factory
+				for (final SourceRecord source : aSources) {
+					final SourceRecord currentSource = addSource(source);
+					final ArtifactSourceRecord rel = factory
 							.newArtifactSourceRelation();
 					rel
 							.setId(new RecordRelationRecord.PK<ArtifactRecord, SourceRecord>(
@@ -275,7 +275,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				}
 				artifacts.add(artifact);
 				if (artifacts.size() == COMMIT_SIZE) {
-				  persist(EmptyProgressMonitor.instance());
+					persist(EmptyProgressMonitor.instance());
 				}
 			}
 			clear();
@@ -286,7 +286,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			try {
 				artifact.setFindingTypeId(ftMan.getArtifactTypeId(tool,
 						version, mnemonic));
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				quietlyRollback();
 				throw new ScanPersistenceException(e);
 			}
@@ -386,12 +386,17 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		}
 
+		public ArtifactBuilder scanNumber(int number) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	private void quietlyRollback() {
 		try {
 			rollback();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// Do nothing
 		}
 	}
@@ -401,9 +406,14 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			conn.rollback();
 			manager.deleteScan(scan.getUid(), null);
 			conn.commit();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ScanPersistenceException(e);
 		}
+	}
+
+	public void relation(int parentNumber, int childNumber) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
