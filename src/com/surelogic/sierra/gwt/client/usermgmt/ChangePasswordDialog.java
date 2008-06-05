@@ -1,105 +1,48 @@
 package com.surelogic.sierra.gwt.client.usermgmt;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
+import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.FormDialog;
 
-public class ChangePasswordDialog extends DialogBox {
-	private final VerticalPanel rootPanel = new VerticalPanel();
-	private final FlexTable userGrid = new FlexTable();
-	private final Label errorMessage = new Label("", false);
+public class ChangePasswordDialog extends FormDialog {
+	private final Label userPasswordTitle = new Label("", false);
 	private final PasswordTextBox userPassword = new PasswordTextBox();
 	private final PasswordTextBox password = new PasswordTextBox();
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
-	private final UserAccount user;
-	private boolean successful;
+	private UserAccount user;
 
-	public ChangePasswordDialog(UserAccount user) {
-		super();
+	public void setUserAccount(UserAccount user) {
 		this.user = user;
-		setText("Change Password");
 
-		errorMessage.addStyleName("error");
-		userGrid.setText(1, 0, "Your Password");
-		userGrid.setWidget(1, 1, userPassword);
-		userGrid.setText(2, 0,
-				"New Password"
-						+ (ContextManager.getUser().getUserName().equals(
-								user.getUserName()) ? "" : " for "
-								+ user.getUserName()) + ":");
-		userGrid.setWidget(2, 1, password);
-		userGrid.setText(3, 0, "Confirm Password:");
-		userGrid.setWidget(3, 1, passwordAgain);
-		rootPanel.add(userGrid);
-
-		final HorizontalPanel buttonPanel = new HorizontalPanel();
-		final Button ok = new Button("Ok");
-		ok.addClickListener(new ClickListener() {
-
-			public void onClick(Widget sender) {
-				changePassword();
-			}
-		});
-		buttonPanel.add(ok);
-		final Button cancel = new Button("Cancel");
-		cancel.addClickListener(new ClickListener() {
-
-			public void onClick(Widget sender) {
-				hide();
-			}
-		});
-		buttonPanel.add(cancel);
-		final KeyboardListenerAdapter keyboardListener = new KeyboardListenerAdapter() {
-			public void onKeyUp(final Widget sender, final char keyCode,
-					final int modifiers) {
-				if (keyCode == KEY_ENTER) {
-					if (ok.isEnabled()) {
-						ok.click();
-					}
-				}
-			}
-		};
-		userPassword.addKeyboardListener(keyboardListener);
-		password.addKeyboardListener(keyboardListener);
-		passwordAgain.addKeyboardListener(keyboardListener);
-		rootPanel.add(buttonPanel);
-		rootPanel.setCellHorizontalAlignment(buttonPanel,
-				VerticalPanel.ALIGN_RIGHT);
-		setWidget(rootPanel);
-	}
-
-	public void show() {
-		super.show();
-		userPassword.setFocus(true);
-	}
-
-	public boolean isSuccessful() {
-		return successful;
-	}
-
-	private void setErrorMessage(String text) {
-		if (rootPanel.getWidgetIndex(errorMessage) == -1) {
-			rootPanel.insert(errorMessage, 0);
+		StringBuffer pwdTitle = new StringBuffer("New Password");
+		if (!ContextManager.getUser().getUserName().equals(user.getUserName())) {
+			pwdTitle.append(" for ").append(user.getUserName());
 		}
-		errorMessage.setText(text);
+		pwdTitle.append(":");
+		userPasswordTitle.setText(pwdTitle.toString());
 	}
 
-	private void clearErrorMessage() {
-		rootPanel.remove(errorMessage);
+	@Override
+	protected void doInitialize(FlexTable contentTable) {
+		setText("Change Password");
+		addField("Your Password:", userPassword);
+		addField(userPasswordTitle, password);
+		addField("Confirm Password:", passwordAgain);
 	}
 
-	private void changePassword() {
+	@Override
+	protected HasFocus getInitialFocus() {
+		return userPassword;
+	}
+
+	@Override
+	protected void doOkClick() {
 		clearErrorMessage();
 		final String currentPassText = userPassword.getText();
 		final String passText = password.getText();
@@ -115,10 +58,13 @@ public class ChangePasswordDialog extends DialogBox {
 
 					new Callback<String>() {
 
+						@Override
 						protected void onFailure(String message, String result) {
-							setErrorMessage("Unable to create user: " + message);
+							setErrorMessage("Unable to change password: "
+									+ message);
 						}
 
+						@Override
 						protected void onSuccess(String message, String result) {
 							hide();
 						}

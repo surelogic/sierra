@@ -53,6 +53,7 @@ public final class UserManagementContent extends ContentComposite {
 		// singleton
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
 		final boolean isAdmin = ContextManager.getUser().isAdministrator();
@@ -108,12 +109,14 @@ public final class UserManagementContent extends ContentComposite {
 		usersPanel.add(status);
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
 	}
 
+	@Override
 	protected void onDeactivate() {
 		// clear the grid to free up some resources
 		usersGrid.removeRows();
@@ -176,8 +179,8 @@ public final class UserManagementContent extends ContentComposite {
 		html.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				usersGrid.clearStatus();
-				final ChangePasswordDialog dialog = new ChangePasswordDialog(
-						user);
+				final ChangePasswordDialog dialog = new ChangePasswordDialog();
+				dialog.setUserAccount(user);
 				dialog.center();
 			}
 		});
