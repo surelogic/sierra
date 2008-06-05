@@ -365,6 +365,13 @@
     <name>@RegionEffects</name>
   </findingType>
   <findingType>
+    <id>InRegionPromiseDrop</id>
+    <artifact tool="JSure" mnemonic="InRegionPromiseDrop"/>
+    <shortMessage>TBD</shortMessage>
+    <info>TBD</info>
+    <name>@InRegion</name>
+  </findingType>
+  <findingType>
     <id>RegionModel</id>
     <artifact tool="JSure" mnemonic="RegionModel"/>
     <shortMessage>TBD</shortMessage>
@@ -502,6 +509,7 @@
 		<findingType>AggregatePromiseDrop</findingType>
 		<findingType>StartsPromiseDrop</findingType>	
 		<findingType>RegionEffectsPromiseDrop</findingType>
+		<findingType>InRegionPromiseDrop</findingType>
 		<findingType>RegionModel</findingType>
 		<findingType>LockModel</findingType>		
 		<findingType>RequiresLockPromiseDrop</findingType>
