@@ -1,23 +1,14 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
-import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 
 public final class SierraServersView extends
 		AbstractSierraView<SierraServersMediator> {
