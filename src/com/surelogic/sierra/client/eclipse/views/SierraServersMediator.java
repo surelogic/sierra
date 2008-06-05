@@ -56,6 +56,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
@@ -63,6 +64,7 @@ import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.WorkspaceUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
@@ -1032,16 +1034,23 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: " + now);
 
-		final Job group = lastSyncGroup.get();
-		if ((group == null) || (group.getResult() != null)) {
-			final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
-					ServerSyncType.ALL, PreferenceConstants
-							.getServerFailureReporting(), false);
-			sync.run(null);
-			lastSyncGroup.set(sync.getGroup());
-		} else {
-			System.out.println("Last sync is still running");
-		}
+    final UIJob job = new SLUIJob() {
+      @Override
+      public IStatus runInUIThread(IProgressMonitor monitor) {
+        final Job group = lastSyncGroup.get();
+        if ((group == null) || (group.getResult() != null)) {
+          final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
+              ServerSyncType.ALL, PreferenceConstants
+              .getServerFailureReporting(), false);
+          sync.run(null);
+          lastSyncGroup.set(sync.getGroup());
+        } else {
+          System.out.println("Last sync is still running");
+        }
+        return Status.OK_STATUS;
+      }
+    };
+    job.schedule();
 	}
 
 	void asyncUpdateServerInfo() {
