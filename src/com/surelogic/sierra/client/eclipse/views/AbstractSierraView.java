@@ -43,18 +43,29 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	private Control f_noDataPage;
 	private Control f_waitingForDataPage;
 	private Control f_dataPage;
+	private Composite[] f_dataPages;
 	protected M f_mediator;
 
+	protected AbstractSierraView(int numDataPages) {
+	  f_dataPages = new Composite[numDataPages];
+	}
+	protected AbstractSierraView() {
+	  this(1);
+	}
+	
 	@Override
 	public final void createPartControl(Composite parent) {
 		final PageBook pages = f_pages = new PageBook(parent, SWT.NONE);
 		final Link noDataPage = new Link(pages, SWT.WRAP);
 		final Link waitingForDataPage = new Link(pages, SWT.WRAP);
-		final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
-		actualPage.setLayout(new FillLayout());
+		for(int i=f_dataPages.length-1; i>=0; i--) {
+		  final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
+		  actualPage.setLayout(new FillLayout());
+		  f_dataPages[i] = actualPage;
+		}
 		f_waitingForDataPage = waitingForDataPage;	
 		f_noDataPage = noDataPage;
-		f_dataPage = actualPage;
+		f_dataPage = f_dataPages[0];
 
 		/*
 		 * Allow direct access to the preferences from the view.
@@ -68,7 +79,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		bars.getToolBarManager().add(new GroupMarker(VIEW_GROUP));
 
 		setStatus(Status.WAITING_FOR_DATA);
-		final M mediator = f_mediator = createMorePartControls(actualPage);
+		final M mediator = f_mediator = createMorePartControls(f_dataPages);
 		mediator.init();
 
 		waitingForDataPage.setText("Waiting for data ...");
@@ -86,6 +97,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		// parent.layout(true, true);
 	}
 
+	protected M createMorePartControls(Composite[] parents) {
+	  return createMorePartControls(parents[0]);
+	}
+	
 	protected abstract M createMorePartControls(Composite parent);
 
 	public final void hasData(boolean data) {
@@ -101,10 +116,35 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	 * take the wait state into account
 	 */
 	public final boolean matchesStatus(boolean showing) {
-		return showing ? f_pages.getPage() == f_dataPage :
-			             f_pages.getPage() == f_noDataPage;
+	  return matchesStatus(showing, 0);
 	}
-
+	
+	public final boolean matchesStatus(boolean showing, int dataIndex) {
+	  if (showing) {
+	    /*
+	    Control actualPage = f_pages.getPage();
+	    for(Control page : f_dataPages) {
+	      if (actualPage == page) {
+	        return true;
+	      }
+	    }
+	    return false;
+	    */
+	    return f_pages.getPage() == f_dataPages[dataIndex];
+	  }
+		return f_pages.getPage() == f_noDataPage;
+	}
+	 
+  public final void setDataPage(int i) {
+    final Control oldPage = f_dataPage;
+    final Control newPage = f_dataPages[i];
+    if (oldPage != newPage) {
+      f_dataPage = newPage;
+      if (f_pages.getPage() == oldPage) {
+        f_pages.showPage(newPage);
+      }
+    }
+  }
 	public final void setStatus(Status s) {
 		switch (s) {
 		default:
@@ -121,13 +161,13 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	}
 	
 	public final Status getStatus() {
-		if (f_pages.getPage() == f_dataPage) {
-			return Status.DATA_READY;
+		if (f_pages.getPage() == f_noDataPage) {
+			return Status.NO_DATA;
 		}
 		if (f_pages.getPage() == f_waitingForDataPage) {
 			return Status.WAITING_FOR_DATA;
 		}
-		return Status.NO_DATA;
+		return Status.DATA_READY;
 	}
 
 	public final void setGlobalActionHandler(String id, IAction action) {
