@@ -112,6 +112,21 @@ public class Category implements Serializable, Cacheable {
 		return set;
 	}
 
+	public boolean parentContains(FilterEntry finding) {
+		for (Category parent : getParents()) {
+			boolean contains = parent.getEntries().contains(finding);
+			if (contains) {
+				return true;
+			}
+			boolean recursiveContains = parent.parentContains(finding);
+			if (recursiveContains) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public Category copy() {
 		Category copy = new Category();
 		copy.uuid = uuid;
