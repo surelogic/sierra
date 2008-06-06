@@ -18,6 +18,8 @@ public class ReportsContent extends ContentComposite {
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel) {
+		setCaption("Reports");
+
 		// TODO Auto-generated method stub
 
 	}

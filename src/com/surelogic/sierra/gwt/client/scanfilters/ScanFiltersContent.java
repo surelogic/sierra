@@ -59,6 +59,8 @@ public class ScanFiltersContent extends ContentComposite {
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel) {
+		setCaption("Scan Filters");
+
 		block.initialize();
 		scans.initialize();
 		sf.initialize();

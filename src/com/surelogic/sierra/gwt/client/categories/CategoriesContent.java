@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -30,7 +29,6 @@ import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
-import com.surelogic.sierra.gwt.client.util.UI;
 
 public class CategoriesContent extends ContentComposite {
 	private static final CategoriesContent instance = new CategoriesContent();
@@ -51,9 +49,7 @@ public class CategoriesContent extends ContentComposite {
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel) {
-		final Label title = UI.h2("Categories");
-		rootPanel.add(title, DockPanel.NORTH);
-		rootPanel.setCellHorizontalAlignment(title, DockPanel.ALIGN_LEFT);
+		setCaption("Categories");
 
 		final VerticalPanel westPanel = new VerticalPanel();
 		westPanel.setWidth("100%");
