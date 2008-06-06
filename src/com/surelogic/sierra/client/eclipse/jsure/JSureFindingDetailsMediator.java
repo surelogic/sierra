@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
@@ -59,12 +60,14 @@ implements IViewUpdater {
 	private final RGB f_BackgroundColorRGB;
 
 	private final Composite[] f_parents;
-
+	private final TreeViewer[] f_viewers;
+	
 	private volatile FindingDetail f_finding;
 
-	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite[] parents) {
+	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite[] parents, TreeViewer[] viewers) {
 		super(view);
 		f_parents = parents;
+		f_viewers = viewers;
 
 		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();

@@ -19,28 +19,40 @@ public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFi
 	
 	@Override
 	protected JSureFindingDetailsMediator createMorePartControls(Composite[] parents) {
+	  final TreeViewer[] viewers = new TreeViewer[parents.length];
+	  int i = 0;
+	  
 	  for(Composite parent : parents) {
 	    final TreeViewer tree = new TreeViewer(parent, SWT.SINGLE);
+	    viewers[i] = tree;
+	    i++;
+	    
 	    // TODO add menu items
 	    /*
-    final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);
+      final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);
 
-    final MenuItem deleteServerItem = createMenuItem(contextMenu, "Delete",
+      final MenuItem deleteServerItem = createMenuItem(contextMenu, "Delete",
         SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
 
-    new MenuItem(contextMenu, SWT.SEPARATOR);
+      new MenuItem(contextMenu, SWT.SEPARATOR);
 	     */    
 	  }
-		return new JSureFindingDetailsMediator(this, parents); // FIX tree);
+		return new JSureFindingDetailsMediator(this, parents, viewers); // FIX tree);
 	}
 		
 	public static void findingSelected(FindingDetail detail, boolean moveFocus) {
 		JSureFindingDetailsView view;
-		if (moveFocus) {
-			view = (JSureFindingDetailsView) ViewUtility.showView(ID);
-		} else {
-			view = (JSureFindingDetailsView) ViewUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		try {
+		  if (moveFocus) {
+		    view = (JSureFindingDetailsView) ViewUtility.showView(ID);
+		  } else {
+		    view = (JSureFindingDetailsView) ViewUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		  }
+		} catch (NullPointerException npe) {
+		  return;
 		}
-		view.f_mediator.asyncQueryAndShow(detail);
+		if (view != null) {
+		  view.f_mediator.asyncQueryAndShow(detail);
+		}
 	}
 }
