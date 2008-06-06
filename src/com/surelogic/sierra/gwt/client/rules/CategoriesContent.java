@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -94,11 +96,10 @@ public class CategoriesContent extends ContentComposite {
 
 		final FindingsEditor findingsEditor = categoryEditor
 				.getFindingsEditor();
-		findingsEditor.addAction("Add Category", new ClickListener() {
+		findingsEditor.addAction("Add Finding", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				Window.alert("TODO: Add Category");
-				// TODO addCategory();
+				promptForFindings(categoryEditor.getCategory());
 			}
 		});
 
@@ -194,6 +195,23 @@ public class CategoriesContent extends ContentComposite {
 						categories.refresh();
 					}
 				});
+	}
+
+	private void promptForFindings(final Category cat) {
+		final FindingSelectionDialog dialog = new FindingSelectionDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					categoryEditor.addFindings(dialog.getSelectedCategories(),
+							dialog.getExcludedFilters());
+				}
+			}
+
+		});
+		dialog.center();
+		dialog.setCategories(categories, cat);
 	}
 
 	private class ActionBlock extends BlockPanel {

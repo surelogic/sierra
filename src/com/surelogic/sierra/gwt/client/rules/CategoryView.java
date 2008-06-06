@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.FilterEntryComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
@@ -85,13 +85,7 @@ public class CategoryView extends BlockPanel {
 					}
 				}
 
-				Collections.sort(visibleFindings,
-						new Comparator<FilterEntry>() {
-
-							public int compare(FilterEntry o1, FilterEntry o2) {
-								return o1.getName().compareTo(o2.getName());
-							}
-						});
+				Collections.sort(visibleFindings, new FilterEntryComparator());
 
 				ClickListener findingListener = new ClickListener() {
 

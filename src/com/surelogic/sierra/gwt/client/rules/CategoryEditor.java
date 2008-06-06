@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.rules;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.FilterEntryComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 
@@ -81,6 +82,21 @@ public class CategoryEditor extends BlockPanel {
 		return cat;
 	}
 
+	public void addFindings(Set<Category> selectedCategories,
+			Set<FilterEntry> excludedFilters) {
+		final Category updatedCat = category.copy();
+		findingsEditor.saveTo(updatedCat);
+		for (Category newCat : selectedCategories) {
+			updatedCat.getParents().add(newCat.copy());
+		}
+		for (FilterEntry excludedFilter : excludedFilters) {
+			FilterEntry newEntry = excludedFilter.copy();
+			newEntry.setFiltered(true);
+			updatedCat.getEntries().add(newEntry);
+		}
+		setCategory(updatedCat);
+	}
+
 	public FindingsEditor getFindingsEditor() {
 		return findingsEditor;
 	}
@@ -110,14 +126,19 @@ public class CategoryEditor extends BlockPanel {
 			Collections.sort(catFindings, filterComparator);
 
 			for (FilterEntry finding : catFindings) {
-				contentPanel
-						.add(createFindingUI(finding, finding.isFiltered()));
+				if (!category.parentContains(finding)) {
+					contentPanel.add(createFindingUI(finding, finding
+							.isFiltered()));
+				}
 			}
 
 			// add findings that belong to the parent categories of the selected
 			// category
 			final Set<FilterEntry> excluded = category.getExcludedEntries();
-			for (Category parent : category.getParents()) {
+			List<Category> sortedParents = new ArrayList<Category>(category
+					.getParents());
+			Collections.sort(sortedParents, new CategoryComparator());
+			for (Category parent : sortedParents) {
 				parentCategories.add(parent);
 
 				final DisclosurePanel parentPanel = new DisclosurePanel(
@@ -167,14 +188,16 @@ public class CategoryEditor extends BlockPanel {
 			final Set<FilterEntry> targetEntries = target.getEntries();
 			for (Map.Entry<FilterEntry, ItemCheckBox<FilterEntry>> findingEntry : findings
 					.entrySet()) {
-				final FilterEntry uiFinding = findingEntry.getKey();
-				FilterEntry targetFinding = findEntry(targetEntries, uiFinding
-						.getUuid());
-				if (targetFinding == null) {
-					targetFinding = uiFinding.copy();
-					targetEntries.add(targetFinding);
+				if (!findingEntry.getValue().isChecked()) {
+					final FilterEntry uiFinding = findingEntry.getKey();
+					FilterEntry targetFinding = findEntry(targetEntries,
+							uiFinding.getUuid());
+					if (targetFinding == null) {
+						targetFinding = uiFinding.copy();
+						targetEntries.add(targetFinding);
+					}
+					targetFinding.setFiltered(true);
 				}
-				targetFinding.setFiltered(!findingEntry.getValue().isChecked());
 			}
 		}
 
@@ -187,12 +210,6 @@ public class CategoryEditor extends BlockPanel {
 			}
 			return null;
 		}
-
-		private class FilterEntryComparator implements Comparator<FilterEntry> {
-
-			public int compare(FilterEntry o1, FilterEntry o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		}
 	}
+
 }
