@@ -32,6 +32,10 @@ public class Status implements Serializable {
 		this.message = message;
 	}
 
+	public static Status success() {
+		return new Status(true, null);
+	}
+
 	public static Status success(String message) {
 		return new Status(true, message);
 	}
