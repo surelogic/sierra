@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.scanfilters;
 
 import java.util.ArrayList;
 import java.util.Collections;

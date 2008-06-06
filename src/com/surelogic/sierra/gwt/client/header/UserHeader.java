@@ -8,11 +8,11 @@ import com.surelogic.sierra.gwt.client.ContentRegistry;
 import com.surelogic.sierra.gwt.client.FindingContent;
 import com.surelogic.sierra.gwt.client.OverviewContent;
 import com.surelogic.sierra.gwt.client.SettingsContent;
+import com.surelogic.sierra.gwt.client.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.reports.ReportsContent;
-import com.surelogic.sierra.gwt.client.rules.CategoriesContent;
-import com.surelogic.sierra.gwt.client.rules.FindingTypesContent;
-import com.surelogic.sierra.gwt.client.rules.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.scanfilters.ScanFiltersContent;
 
 public final class UserHeader extends AuthenticatedHeader {
 	private static final UserHeader instance = new UserHeader();

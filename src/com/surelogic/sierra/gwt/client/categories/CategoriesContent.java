@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.categories;
 
 import java.util.ArrayList;
 
@@ -18,11 +18,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.categories.CategoryEditor.FindingsEditor;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.rules.CategoryEditor.FindingsEditor;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;

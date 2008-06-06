@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.surelogic.sierra.gwt.client.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.header.AdminHeader;
 import com.surelogic.sierra.gwt.client.header.GuestHeader;
 import com.surelogic.sierra.gwt.client.header.HeaderComposite;
 import com.surelogic.sierra.gwt.client.header.UserHeader;
 import com.surelogic.sierra.gwt.client.reports.ReportsContent;
-import com.surelogic.sierra.gwt.client.rules.CategoriesContent;
-import com.surelogic.sierra.gwt.client.rules.FindingTypesContent;
-import com.surelogic.sierra.gwt.client.rules.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {

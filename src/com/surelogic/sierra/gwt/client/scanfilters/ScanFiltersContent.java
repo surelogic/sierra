@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.scanfilters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +35,7 @@ import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion;
-import com.surelogic.sierra.gwt.client.scanfilters.ScanFilterCache;
+import com.surelogic.sierra.gwt.client.scanfilters.FindingTypeSuggestOracle.Suggestion;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
@@ -294,7 +293,7 @@ public class ScanFiltersContent extends ContentComposite {
 			final SuggestBox box = new SuggestBox(new CategorySuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
 				public void onSuggestionSelected(SuggestionEvent event) {
-					final CategorySuggestOracle.Suggestion s = (com.surelogic.sierra.gwt.client.rules.CategorySuggestOracle.Suggestion) event
+					final CategorySuggestOracle.Suggestion s = (com.surelogic.sierra.gwt.client.scanfilters.CategorySuggestOracle.Suggestion) event
 							.getSelectedSuggestion();
 					cPanel.addEntry(s.getEntry());
 				}

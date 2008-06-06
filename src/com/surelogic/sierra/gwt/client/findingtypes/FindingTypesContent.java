@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.findingtypes;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;

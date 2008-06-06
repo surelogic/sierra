@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.categories;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Cache;

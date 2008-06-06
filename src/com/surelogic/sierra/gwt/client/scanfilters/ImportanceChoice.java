@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.rules;
+package com.surelogic.sierra.gwt.client.scanfilters;
 
 import com.google.gwt.user.client.ui.ListBox;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
