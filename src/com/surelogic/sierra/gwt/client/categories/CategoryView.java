@@ -64,7 +64,7 @@ public class CategoryView extends BlockPanel {
 	}
 
 	private class FindingsView extends BlockPanel {
-		private final SelectionTracker selectionTracker = new SelectionTracker();
+		private final SelectionTracker<ItemLabel<FilterEntry>> selectionTracker = new SelectionTracker<ItemLabel<FilterEntry>>();
 		private final Map<Widget, FilterEntry> findings = new HashMap<Widget, FilterEntry>();
 
 		@Override
@@ -99,8 +99,9 @@ public class CategoryView extends BlockPanel {
 				};
 
 				for (FilterEntry finding : visibleFindings) {
-					final ItemLabel rule = new ItemLabel(finding.getName(),
-							finding, selectionTracker, findingListener);
+					final ItemLabel<FilterEntry> rule = new ItemLabel<FilterEntry>(
+							finding.getName(), finding, selectionTracker,
+							findingListener);
 					rule.setTitle(finding.getShortMessage());
 					findingTypes.add(rule);
 				}

@@ -6,19 +6,20 @@ import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ItemLabel extends Label {
+public class ItemLabel<T> extends Label {
 	private static final String PRIMARY_STYLE = "sl-ItemLabel";
-	private final SelectionTracker selectionTracker;
-	private Object item;
+	private final SelectionTracker<ItemLabel<T>> selectionTracker;
+	private T item;
 	private boolean mouseOver;
 	private boolean selected;
 
-	public ItemLabel(String text, Object item, ClickListener listener) {
+	public ItemLabel(String text, T item, ClickListener listener) {
 		this(text, item, null, listener);
 	}
 
-	public ItemLabel(String text, Object item,
-			SelectionTracker selectionTracker, final ClickListener listener) {
+	public ItemLabel(String text, T item,
+			SelectionTracker<ItemLabel<T>> selectionTracker,
+			final ClickListener listener) {
 		super(text);
 		this.item = item;
 		this.selectionTracker = selectionTracker;
@@ -56,11 +57,11 @@ public class ItemLabel extends Label {
 		});
 	}
 
-	public Object getItem() {
+	public T getItem() {
 		return item;
 	}
 
-	public void setItem(Object item) {
+	public void setItem(T item) {
 		this.item = item;
 	}
 
@@ -79,7 +80,7 @@ public class ItemLabel extends Label {
 		if (selectionTracker != null) {
 			if (selected) {
 				if (!LangUtil.equals(this, selectionTracker.getSelected())) {
-					ItemLabel lastSelection = (ItemLabel) selectionTracker
+					ItemLabel<T> lastSelection = selectionTracker
 							.setSelected(this);
 					if (lastSelection != null) {
 						lastSelection.setSelected(false);

@@ -2,19 +2,19 @@ package com.surelogic.sierra.gwt.client.ui;
 
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class SelectionTracker {
-	private Object selected;
+public class SelectionTracker<T> {
+	private T selected;
 
 	public boolean isSelected(Object item) {
 		return LangUtil.equals(selected, item);
 	}
 
-	public Object getSelected() {
+	public T getSelected() {
 		return selected;
 	}
 
-	public Object setSelected(Object selected) {
-		final Object lastSelection = this.selected;
+	public T setSelected(T selected) {
+		final T lastSelection = this.selected;
 		this.selected = selected;
 		return lastSelection;
 	}

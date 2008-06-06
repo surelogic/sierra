@@ -136,7 +136,7 @@ public class ScanFiltersContent extends ContentComposite {
 		private class ScanFilterResults extends BlockPanel {
 
 			private VerticalPanel list;
-			private final SelectionTracker selection = new SelectionTracker();
+			private final SelectionTracker<ItemLabel<ScanFilter>> selection = new SelectionTracker<ItemLabel<ScanFilter>>();
 
 			@Override
 			protected void onInitialize(VerticalPanel contentPanel) {
@@ -167,17 +167,16 @@ public class ScanFiltersContent extends ContentComposite {
 				list.clear();
 				final ClickListener listener = new ClickListener() {
 					public void onClick(Widget sender) {
-						ItemLabel label = (ItemLabel) sender;
-						goToScanFilter(((ScanFilter) (label.getItem()))
-								.getUuid());
+						ItemLabel<ScanFilter> label = (ItemLabel<ScanFilter>) sender;
+						goToScanFilter(((label.getItem())).getUuid());
 					}
 				};
 				boolean success = false;
 				for (final ScanFilter f : cache) {
 					if (f.getName().toLowerCase().matches(query)) {
 						success = true;
-						list.add(new ItemLabel(f.getName(), f, selection,
-								listener));
+						list.add(new ItemLabel<ScanFilter>(f.getName(), f,
+								selection, listener));
 					}
 				}
 				if (!success) {

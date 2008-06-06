@@ -14,8 +14,8 @@ import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 public class SearchResultsBlock extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-search";
 	private final CategoryCache categories;
-	private final SelectionTracker selectionTracker = new SelectionTracker();
-	private final Map<String, ItemLabel> searchResultsData = new HashMap<String, ItemLabel>();
+	private final SelectionTracker<ItemLabel<Category>> selectionTracker = new SelectionTracker<ItemLabel<Category>>();
+	private final Map<String, ItemLabel<Category>> searchResultsData = new HashMap<String, ItemLabel<Category>>();
 	private String searchText;
 	private Category currentSelection;
 
@@ -66,7 +66,7 @@ public class SearchResultsBlock extends BlockPanel {
 		if (cat == null) {
 			selectionTracker.setSelected(null);
 		} else {
-			ItemLabel catEntry = searchResultsData.get(cat.getUuid());
+			ItemLabel<Category> catEntry = searchResultsData.get(cat.getUuid());
 			if (catEntry != null) {
 				catEntry.setSelected(true);
 			}
@@ -74,8 +74,9 @@ public class SearchResultsBlock extends BlockPanel {
 	}
 
 	private void addSearchCategory(Category cat) {
-		final ItemLabel catEntry = new ItemLabel(cat.getName(), cat,
-				selectionTracker, new SearchResultListener(cat));
+		final ItemLabel<Category> catEntry = new ItemLabel<Category>(cat
+				.getName(), cat, selectionTracker,
+				new SearchResultListener(cat));
 		searchResultsData.put(cat.getUuid(), catEntry);
 		getContentPanel().add(catEntry);
 	}

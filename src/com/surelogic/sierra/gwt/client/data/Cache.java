@@ -111,8 +111,7 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 
 	protected abstract void doRefreshCall(AsyncCallback<List<E>> callback);
 
-	protected abstract void doSaveCall(Cacheable item,
-			AsyncCallback<Status> callback);
+	protected abstract void doSaveCall(E item, AsyncCallback<Status> callback);
 
 	private abstract class CacheCallback<T> implements AsyncCallback<T> {
 
