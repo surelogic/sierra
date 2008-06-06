@@ -8,9 +8,10 @@ import com.surelogic.sierra.gwt.client.header.AdminHeader;
 import com.surelogic.sierra.gwt.client.header.GuestHeader;
 import com.surelogic.sierra.gwt.client.header.HeaderComposite;
 import com.surelogic.sierra.gwt.client.header.UserHeader;
+import com.surelogic.sierra.gwt.client.reports.ReportsContent;
 import com.surelogic.sierra.gwt.client.rules.CategoriesContent;
-import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
-import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
+import com.surelogic.sierra.gwt.client.rules.FindingTypesContent;
+import com.surelogic.sierra.gwt.client.rules.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {
@@ -27,8 +28,9 @@ public class ContentRegistry {
 		register("overview", OverviewContent.getInstance(), userHeader);
 		register("categories", CategoriesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
-		register("scanfilters", ScanFilterContent.getInstance(), userHeader);
-		register("findingtype", FindingTypeContent.getInstance(), userHeader);
+		register("scanfilters", ScanFiltersContent.getInstance(), userHeader);
+		register("findingtype", FindingTypesContent.getInstance(), userHeader);
+		register("reports", ReportsContent.getInstance(), userHeader);
 		final AdminHeader adminHeader = AdminHeader.getInstance();
 		register("settings", SettingsContent.getInstance(), adminHeader);
 		register("usermanagement", UserManagementContent.getInstance(),

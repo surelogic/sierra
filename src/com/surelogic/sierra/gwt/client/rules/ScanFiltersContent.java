@@ -36,6 +36,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeSuggestOracle.Suggestion;
+import com.surelogic.sierra.gwt.client.scanfilters.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
@@ -47,7 +48,7 @@ import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.UI;
 
-public class ScanFilterContent extends ContentComposite {
+public class ScanFiltersContent extends ContentComposite {
 
 	private static final String FILTER = "filter";
 	private final ActionBlock block = new ActionBlock();
@@ -457,13 +458,13 @@ public class ScanFilterContent extends ContentComposite {
 	}
 
 	// Singleton
-	private ScanFilterContent() {
+	private ScanFiltersContent() {
 
 	}
 
-	private static final ScanFilterContent instance = new ScanFilterContent();
+	private static final ScanFiltersContent instance = new ScanFiltersContent();
 
-	public static ScanFilterContent getInstance() {
+	public static ScanFiltersContent getInstance() {
 		return instance;
 	}
 

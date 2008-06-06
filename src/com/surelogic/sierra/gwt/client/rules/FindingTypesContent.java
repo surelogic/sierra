@@ -10,20 +10,20 @@ import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
-public final class FindingTypeContent extends ContentComposite {
+public final class FindingTypesContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
-	private static final FindingTypeContent instance = new FindingTypeContent();
+	private static final FindingTypesContent instance = new FindingTypesContent();
 
 	private final HTML name = new HTML();
 	private final HTML summary = new HTML();
 	private final HTML description = new HTML();
 	private final VerticalPanel chart = new VerticalPanel();
 
-	public static FindingTypeContent getInstance() {
+	public static FindingTypesContent getInstance() {
 		return instance;
 	}
 
-	private FindingTypeContent() {
+	private FindingTypesContent() {
 		// singleton
 	}
 
