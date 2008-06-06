@@ -53,17 +53,20 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 implements IViewUpdater {
+  private static final int VIEW_DEPENDENT_ON_THIS = 0;
+  private static final int VIEW_OWN_DEPENDENCIES = 1;
+  
 	private final RGB f_BackgroundColorRGB;
 
-	private final Composite f_parent;
+	private final Composite[] f_parents;
 
 	private volatile FindingDetail f_finding;
 
-	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite parent) {
+	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite[] parents) {
 		super(view);
-		f_parent = parent;
+		f_parents = parents;
 
-		f_BackgroundColorRGB = parent.getDisplay().getSystemColor(
+		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();
 	}
 
@@ -85,44 +88,11 @@ implements IViewUpdater {
 		};
 	}
 	
-	//private AtomicLong findingQueryInProgress = new AtomicLong();
-	
-	void asyncQueryAndShow(final long findingId) {
-		/*
-		long lastId = findingQueryInProgress.getAndSet(findingId);
-		if (lastId == findingId) {
-			return;
-		}
-		*/
-		final Job job = new DatabaseJob("Querying details of finding "
-				+ findingId) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Querying finding data",
-						IProgressMonitor.UNKNOWN);
-				try {
-					Connection c = Data.readOnlyConnection();
-					try {
-						f_finding = FindingDetail.getDetailOrNull(c, findingId);
+	void asyncQueryAndShow(final FindingDetail detail) {
+	  f_finding = detail;
 
-						// got details, update the view in the UI thread
-						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);
-					} catch (IllegalArgumentException iae) {
-						f_finding = null;
-						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);
-					} finally {
-						c.close();
-					}
-					monitor.done();
-					return Status.OK_STATUS;
-				} catch (SQLException e) {
-					final int errNo = 57;
-					final String msg = I18N.err(errNo, findingId);
-					return SLStatus.createErrorStatus(errNo, msg, e);
-				}
-			}
-		};
-		job.schedule();
+	  // got details, update the view in the UI thread
+	  asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);
 	}
 
 	private final Listener f_radioListener = new Listener() {
@@ -207,18 +177,6 @@ implements IViewUpdater {
 		String details = f_finding.getFindingTypeDetail();
 		b.append(details);
 */		
-		f_parent.layout(true, true);
-	}
-
-	@Override
-	public void changed() {
-		if (f_finding != null) {
-			asyncQueryAndShow(f_finding.getFindingId());
-		}
-	}
-
-	@Override
-	public void serverSynchronized() {
-		findingMutated();
+		//f_parent.layout(true, true);
 	}
 }
