@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FilterEntry;
 import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
@@ -143,11 +143,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						}
 						final List<Category> values = new ArrayList<Category>(
 								sets.values());
-						Collections.sort(values, new Comparator<Category>() {
-							public int compare(Category o1, Category o2) {
-								return o1.getName().compareTo(o2.getName());
-							}
-						});
+						Collections.sort(values, new CategoryComparator());
 						return values;
 					}
 				});
