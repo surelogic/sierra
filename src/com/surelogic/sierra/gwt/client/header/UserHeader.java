@@ -10,7 +10,6 @@ import com.surelogic.sierra.gwt.client.OverviewContent;
 import com.surelogic.sierra.gwt.client.SettingsContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.rules.CategoriesContent;
-import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 
@@ -27,6 +26,7 @@ public final class UserHeader extends AuthenticatedHeader {
 		super();
 	}
 
+	@Override
 	protected void addUtilities() {
 		manageSite = addUtilityItem("Manage Site", new ClickListener() {
 
@@ -39,15 +39,16 @@ public final class UserHeader extends AuthenticatedHeader {
 		manageSiteSeparator = addUtilitySeparator();
 	}
 
+	@Override
 	protected void addTabs() {
 		addTab("Welcome", OverviewContent.getInstance());
 		addTab("Categories", CategoriesContent.getInstance());
-		addTab("Filter Set", FilterSetContent.getInstance());
 		addTab("Scan Filters", ScanFilterContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());
 		addTab("Finding Type", FindingTypeContent.getInstance());
 	}
 
+	@Override
 	protected void onUpdateUser(UserAccount user) {
 		super.onUpdateUser(user);
 

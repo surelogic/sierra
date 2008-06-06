@@ -1,7 +1,5 @@
 package com.surelogic.sierra.gwt.client;
 
-import java.util.Iterator;
-
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,6 +32,7 @@ public final class FindingContent extends ContentComposite {
 		// singleton
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel.add(UI.h3("Synopsis"));
@@ -47,6 +46,7 @@ public final class FindingContent extends ContentComposite {
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		final String findingType = context.getParameter(PARAM_FINDING);
 		if (findingType == null || findingType.length() == 0) {
@@ -55,11 +55,15 @@ public final class FindingContent extends ContentComposite {
 			ServiceHelper.getFindingService().getFinding(findingType,
 					new Callback<FindingOverview>() {
 
-						protected void onFailure(String message, FindingOverview result) {
+						@Override
+						protected void onFailure(String message,
+								FindingOverview result) {
 							setEmpty();
 						}
 
-						protected void onSuccess(String message, FindingOverview result) {
+						@Override
+						protected void onSuccess(String message,
+								FindingOverview result) {
 							setFinding(result);
 						}
 
@@ -67,6 +71,7 @@ public final class FindingContent extends ContentComposite {
 		}
 	}
 
+	@Override
 	protected void onDeactivate() {
 		// nothing to do
 	}
@@ -88,8 +93,7 @@ public final class FindingContent extends ContentComposite {
 		clear();
 		String firstReported = null;
 		String firstReportedBy = null;
-		for (Iterator i = f.getAudits().iterator(); i.hasNext();) {
-			AuditOverview audit = (AuditOverview) i.next();
+		for (AuditOverview audit : f.getAudits()) {
 			if (firstReported == null) {
 				firstReported = audit.getTime();
 				firstReportedBy = audit.getUser();

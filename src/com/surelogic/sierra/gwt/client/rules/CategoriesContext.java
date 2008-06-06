@@ -45,7 +45,7 @@ public final class CategoriesContext {
 	}
 
 	private CategoriesContext setParameter(String name, String value) {
-		Map params = new HashMap();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put(name, value);
 		context = Context.create(context, params);
 		return this;

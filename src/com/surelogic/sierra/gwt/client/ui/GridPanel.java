@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Button;
@@ -17,7 +16,7 @@ public class GridPanel extends Composite {
 
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final HorizontalPanel gridActionPanel = new HorizontalPanel();
-	private final List actions = new ArrayList();
+	private final List<ButtonBase> actions = new ArrayList<ButtonBase>();
 	private final SelectableGrid grid;
 
 	private boolean enabled;
@@ -37,7 +36,8 @@ public class GridPanel extends Composite {
 		enabled = true;
 	}
 
-	public void addGridOption(String text, ClickListener actionListener, boolean checked) {
+	public void addGridOption(String text, ClickListener actionListener,
+			boolean checked) {
 		final CheckBox box = new CheckBox(text);
 		box.addClickListener(actionListener);
 		box.setEnabled(enabled);
@@ -45,7 +45,7 @@ public class GridPanel extends Composite {
 		gridActionPanel.add(box);
 		actions.add(box);
 	}
-	
+
 	public void addGridAction(String text, ClickListener actionListener) {
 		final Button action = new Button(text);
 		action.addClickListener(actionListener);
@@ -64,8 +64,7 @@ public class GridPanel extends Composite {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		for (Iterator i = actions.iterator(); i.hasNext();) {
-			ButtonBase b = (ButtonBase) i.next();
+		for (ButtonBase b : actions) {
 			b.setEnabled(enabled);
 		}
 	}

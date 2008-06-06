@@ -462,21 +462,6 @@ img {
 	color: #000000;
 }
 
-/* Filter Set page styling
- * 
- */
-.filter-set-name {
-	font-size: smaller;
-}
-
-.filter-entry-name {
-	font-size: smaller;
-}
-
-.filter-entry-widget {
-	width: 100%;
-}
-
 /*
  * Scan filter content styling
  */

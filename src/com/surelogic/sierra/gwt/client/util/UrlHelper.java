@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.util;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,21 +12,19 @@ public final class UrlHelper {
 		// no instances
 	}
 
-	public static String encodeParameters(Map parameters) {
+	public static String encodeParameters(Map<String, String> parameters) {
 		StringBuffer b = new StringBuffer();
-		for (Iterator i = parameters.entrySet().iterator(); i.hasNext();) {
-			final Entry e = (Entry) i.next();
-			final String prop = (String) e.getKey();
-			final String val = (String) e.getValue();
-			b.append(URL.encodeComponent(prop));
+		for (Entry<String, String> e : parameters.entrySet()) {
+			b.append(URL.encodeComponent(e.getKey()));
 			b.append("=");
-			b.append(URL.encodeComponent(val));
+			b.append(URL.encodeComponent(e.getValue()));
 			b.append("&");
 		}
 		return b.toString();
 	}
 
-	public static String appendParameters(String url, Map parameters) {
+	public static String appendParameters(String url,
+			Map<String, String> parameters) {
 		StringBuffer newUrl = new StringBuffer(url);
 		if (url.indexOf('?') == -1) {
 			newUrl.append('?');
@@ -55,7 +52,7 @@ public final class UrlHelper {
 		return Long.toString(System.currentTimeMillis());
 	}
 
-	public static void setUniqueRequestId(Map parameters) {
+	public static void setUniqueRequestId(Map<String, String> parameters) {
 		parameters.put(UNIQUE_REQUEST_ID, getUniqueRequestId());
 	}
 

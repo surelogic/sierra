@@ -29,7 +29,7 @@ public abstract class HeaderComposite extends Composite {
 	private final HorizontalPanel headerRow = new HorizontalPanel();
 	private final HorizontalPanel utilityRow = new HorizontalPanel();
 	private final TabBar mainBar = new TabBar();
-	private final List tabContent = new ArrayList();
+	private final List<ContentComposite> tabContent = new ArrayList<ContentComposite>();
 	private boolean uiCreated;
 
 	public HeaderComposite() {
@@ -59,8 +59,7 @@ public abstract class HeaderComposite extends Composite {
 
 			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
 				if (tabIndex >= 0 && tabIndex < tabContent.size()) {
-					ContentComposite content = (ContentComposite) tabContent
-							.get(tabIndex);
+					ContentComposite content = tabContent.get(tabIndex);
 					if (!ContextManager.isContent(content)) {
 						ContextManager.setContent(content);
 					}

@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.CheckBox;
@@ -25,9 +24,9 @@ public class SelectableGrid extends Composite {
 	private static final String EDITABLE_STYLE = "clickable";
 
 	private final FlexTable grid = new FlexTable();
-	private final List rowData = new ArrayList();
-	private final List inplaceEditorFactories = new ArrayList();
-	private final List listeners = new ArrayList();
+	private final List<Object> rowData = new ArrayList<Object>();
+	private final List<InplaceEditorFactory> inplaceEditorFactories = new ArrayList<InplaceEditorFactory>();
+	private final List<SelectableGridListener> listeners = new ArrayList<SelectableGridListener>();
 	private boolean rowSelection;
 	private CheckBox selectAll;
 	private boolean statusShowing;
@@ -92,7 +91,7 @@ public class SelectableGrid extends Composite {
 
 	public InplaceEditorFactory getInplaceEditor(int column) {
 		if (column < inplaceEditorFactories.size()) {
-			return (InplaceEditorFactory) inplaceEditorFactories.get(column);
+			return inplaceEditorFactories.get(column);
 		}
 		return null;
 	}
@@ -278,34 +277,26 @@ public class SelectableGrid extends Composite {
 	}
 
 	public void fireSelectionEvent(int row) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			SelectableGridListener listener = (SelectableGridListener) it
-					.next();
+		for (SelectableGridListener listener : listeners) {
 			listener.onSelect(row, getRowData(row));
 		}
 	}
 
 	public void fireHeaderClickEvent(int column) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			SelectableGridListener listener = (SelectableGridListener) it
-					.next();
+		for (SelectableGridListener listener : listeners) {
 			listener.onHeaderClick(grid, column);
 		}
 	}
 
 	public void fireClickEvent(int row, int column) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			SelectableGridListener listener = (SelectableGridListener) it
-					.next();
+		for (SelectableGridListener listener : listeners) {
 			listener.onClick(grid, row, column, getRowData(row));
 		}
 	}
 
 	public Object fireChangeEvent(int row, int column, Object oldValue,
 			Object newValue) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			SelectableGridListener listener = (SelectableGridListener) it
-					.next();
+		for (SelectableGridListener listener : listeners) {
 			newValue = listener.onChange(grid, row, column, oldValue, newValue);
 		}
 		return newValue;

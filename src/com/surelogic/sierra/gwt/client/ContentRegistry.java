@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -10,13 +9,12 @@ import com.surelogic.sierra.gwt.client.header.GuestHeader;
 import com.surelogic.sierra.gwt.client.header.HeaderComposite;
 import com.surelogic.sierra.gwt.client.header.UserHeader;
 import com.surelogic.sierra.gwt.client.rules.CategoriesContent;
-import com.surelogic.sierra.gwt.client.rules.FilterSetContent;
 import com.surelogic.sierra.gwt.client.rules.FindingTypeContent;
 import com.surelogic.sierra.gwt.client.rules.ScanFilterContent;
 import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {
-	private static final Map contentMap = new HashMap();
+	private static final Map<ContentComposite, ContentEntry> contentMap = new HashMap<ContentComposite, ContentEntry>();
 
 	private ContentRegistry() {
 		// no instances
@@ -29,7 +27,6 @@ public class ContentRegistry {
 		register("overview", OverviewContent.getInstance(), userHeader);
 		register("categories", CategoriesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
-		register("filterset", FilterSetContent.getInstance(), userHeader);
 		register("scanfilters", ScanFilterContent.getInstance(), userHeader);
 		register("findingtype", FindingTypeContent.getInstance(), userHeader);
 		final AdminHeader adminHeader = AdminHeader.getInstance();
@@ -39,24 +36,23 @@ public class ContentRegistry {
 	}
 
 	public static ContentComposite getContent(String contentName) {
-		for (final Iterator it = contentMap.entrySet().iterator(); it.hasNext();) {
-			final Map.Entry mapEntry = (Map.Entry) it.next();
-			final ContentEntry contentEntry = (ContentEntry) mapEntry
-					.getValue();
+		for (Map.Entry<ContentComposite, ContentEntry> mapEntry : contentMap
+				.entrySet()) {
+			final ContentEntry contentEntry = mapEntry.getValue();
 			if (contentEntry.getName().equals(contentName)) {
-				return (ContentComposite) mapEntry.getKey();
+				return mapEntry.getKey();
 			}
 		}
 		return null;
 	}
 
 	public static String getContentName(ContentComposite content) {
-		final ContentEntry entry = (ContentEntry) contentMap.get(content);
+		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getName() : null;
 	}
 
 	public static HeaderComposite getContentHeader(ContentComposite content) {
-		final ContentEntry entry = (ContentEntry) contentMap.get(content);
+		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getHeader() : null;
 	}
 

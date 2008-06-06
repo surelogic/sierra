@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.DockPanel;
@@ -17,7 +16,7 @@ import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
 	private final FlexTable dashboard = new FlexTable();
-	private final List sections = new ArrayList();
+	private final List<SectionPanel> sections = new ArrayList<SectionPanel>();
 
 	public static OverviewContent getInstance() {
 		return instance;
@@ -27,6 +26,7 @@ public final class OverviewContent extends ContentComposite {
 		super();
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("100%");
@@ -46,15 +46,17 @@ public final class OverviewContent extends ContentComposite {
 		rootPanel.add(panel, DockPanel.CENTER);
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
-		for (Iterator it = sections.iterator(); it.hasNext();) {
-			((SectionPanel) it.next()).update(context);
+		for (SectionPanel section : sections) {
+			section.update(context);
 		}
 	}
 
+	@Override
 	protected void onDeactivate() {
-		for (Iterator it = sections.iterator(); it.hasNext();) {
-			((SectionPanel) it.next()).deactivate();
+		for (SectionPanel section : sections) {
+			section.deactivate();
 		}
 	}
 

@@ -1,16 +1,13 @@
 package com.surelogic.sierra.gwt.client;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import com.google.gwt.core.client.GWT;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class Context {
 	private ContentComposite content;
-	private final Map parameters = new HashMap();
+	private final Map<String, String> parameters = new HashMap<String, String>();
 
 	public static Context create(String context) {
 		Context ctx = new Context();
@@ -18,7 +15,7 @@ public final class Context {
 		return ctx;
 	}
 
-	public static Context create(Context context, Map parameters) {
+	public static Context create(Context context, Map<String, String> parameters) {
 		Context ctx = new Context();
 		ctx.initContext(context);
 		ctx.initContext(parameters);
@@ -34,20 +31,20 @@ public final class Context {
 	}
 
 	public String getParameter(String name) {
-		return (String) parameters.get(name);
+		return parameters.get(name);
 	}
 
+	@Override
 	public String toString() {
 		final StringBuffer buf = new StringBuffer();
 		if (content != null) {
 			buf.append(ContentRegistry.getContentName(content));
 		}
 		if (!parameters.isEmpty()) {
-			for (Iterator it = parameters.entrySet().iterator(); it.hasNext();) {
-				Map.Entry parameter = (Entry) it.next();
+			for (Map.Entry<String, String> parameter : parameters.entrySet()) {
 				buf.append('/');
 				buf.append(parameter.getKey());
-				String paramValue = (String) parameter.getValue();
+				String paramValue = parameter.getValue();
 				if (paramValue != null) {
 					buf.append('=');
 					buf.append(paramValue);
@@ -57,6 +54,7 @@ public final class Context {
 		return buf.toString();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -64,7 +62,7 @@ public final class Context {
 		if (obj == this) {
 			return true;
 		}
-		if (GWT.getTypeName(obj).equals(GWT.getTypeName(this))) {
+		if (obj instanceof Context) {
 			Context objCtx = (Context) obj;
 			return objCtx.content == this.content
 					&& LangUtil.equals(objCtx.parameters, this.parameters);
@@ -72,6 +70,7 @@ public final class Context {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		int hash = 31;
 		if (content != null) {
@@ -124,7 +123,7 @@ public final class Context {
 		parameters.putAll(context.parameters);
 	}
 
-	private void initContext(Map parameters) {
+	private void initContext(Map<String, String> parameters) {
 		this.parameters.putAll(parameters);
 	}
 

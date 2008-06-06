@@ -29,12 +29,16 @@ public class Chart extends Composite {
 			ServiceHelper.getTicketService().getImageMap(ticket,
 					new Callback<ImageMapData>() {
 
-						protected void onFailure(String message, ImageMapData result) {
+						@Override
+						protected void onFailure(String message,
+								ImageMapData result) {
 							loadFailed(message);
 						}
 
-						protected void onSuccess(String message, ImageMapData result) {
-							loadChart(ticket, (ImageMapData) result);
+						@Override
+						protected void onSuccess(String message,
+								ImageMapData result) {
+							loadChart(ticket, result);
 						}
 
 					});

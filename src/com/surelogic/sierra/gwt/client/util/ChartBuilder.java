@@ -12,7 +12,7 @@ public final class ChartBuilder {
 
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
-	private ChartBuilder(String name) {		
+	private ChartBuilder(String name) {
 		parameters.put("type", name);
 	}
 
@@ -33,16 +33,19 @@ public final class ChartBuilder {
 
 	public Chart build() {
 		final Chart chart = new Chart();
-		ServiceHelper.getTicketService().getTicket(parameters, new Callback<Ticket>() {
+		ServiceHelper.getTicketService().getTicket(parameters,
+				new Callback<Ticket>() {
 
-			protected void onFailure(String message, Ticket result) {
-				// TODO
-			}
+					@Override
+					protected void onFailure(String message, Ticket result) {
+						// TODO
+					}
 
-			protected void onSuccess(String message, Ticket result) {
-				chart.setChartTicket((Ticket) result);
-			}
-		});
+					@Override
+					protected void onSuccess(String message, Ticket result) {
+						chart.setChartTicket(result);
+					}
+				});
 		return chart;
 	}
 
