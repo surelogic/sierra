@@ -32,6 +32,15 @@ public interface SettingsService extends RemoteService {
 	Map<String, String> searchCategories(String query, int limit);
 
 	/**
+	 * Search for a list of projects that match the query string
+	 * 
+	 * @param query
+	 * @param limit
+	 * @return a list of project names
+	 */
+	List<String> searchProjects(String query, int limit);
+
+	/**
 	 * 
 	 * 
 	 */

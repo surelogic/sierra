@@ -18,6 +18,9 @@ public interface SettingsServiceAsync {
 	void searchCategories(String query, int limit,
 			AsyncCallback<Map<String, String>> callback);
 
+	void searchProjects(String query, int limit,
+			AsyncCallback<List<String>> asyncCallback);
+
 	void getCategories(AsyncCallback<List<Category>> callback);
 
 	void createCategory(String name, List<String> entries,
@@ -37,4 +40,5 @@ public interface SettingsServiceAsync {
 	void updateScanFilter(ScanFilter f, AsyncCallback<Status> callback);
 
 	void deleteScanFilter(String uuid, AsyncCallback<Status> callback);
+
 }

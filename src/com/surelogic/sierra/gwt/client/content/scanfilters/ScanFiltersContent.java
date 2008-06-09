@@ -30,7 +30,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.content.scanfilters.FindingTypeSuggestOracle.Suggestion;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
@@ -251,6 +250,7 @@ public class ScanFiltersContent extends ContentComposite {
 				panel.add(addFindingTypeBox());
 				panel.add(ftPanel);
 				panel.add(UI.h3("Projects"));
+				panel.add(addProjectBox());
 				for (final String project : filter.getProjects()) {
 					panel.add(new Label(project));
 				}
@@ -277,9 +277,9 @@ public class ScanFiltersContent extends ContentComposite {
 					new FindingTypeSuggestOracle());
 			box.addEventHandler(new SuggestionHandler() {
 				public void onSuggestionSelected(SuggestionEvent event) {
-					final FindingTypeSuggestOracle.Suggestion s = (Suggestion) event
+					final CategorySuggestOracle.Suggestion s = (com.surelogic.sierra.gwt.client.content.scanfilters.CategorySuggestOracle.Suggestion) event
 							.getSelectedSuggestion();
-					ftPanel.addEntry(s.getEntry());
+					cPanel.addEntry(s.getEntry());
 				}
 			});
 			panel.add(box);
@@ -300,6 +300,29 @@ public class ScanFiltersContent extends ContentComposite {
 				}
 			});
 			panel.add(box);
+			return panel;
+		}
+
+		private Widget addProjectBox() {
+			final VerticalPanel panel = new VerticalPanel();
+			panel
+					.add(new Label(
+							"Begin typing to search for a category to add to this scan filter.  Use * to match any text."));
+			final HorizontalPanel hPanel = new HorizontalPanel();
+			final SuggestBox box = new SuggestBox(new ProjectSuggestOracle());
+			final Button projectButton = new Button("Add Project",
+					new ClickListener() {
+						public void onClick(Widget sender) {
+							String project = box.getText();
+							if ((project != null) && (project.length() > 0)) {
+								filter.getProjects().add(project);
+								refresh();
+							}
+						}
+					});
+			hPanel.add(box);
+			hPanel.add(projectButton);
+			panel.add(hPanel);
 			return panel;
 		}
 
