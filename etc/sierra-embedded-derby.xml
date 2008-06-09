@@ -201,7 +201,16 @@
 			<Call name="newSingleThreadExecutor" class="java.util.concurrent.Executors"/>
 		</Arg>
 	</New>
-	
+
+	<New id="SierraTS" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>SierraTimerService</Arg>
+		<Arg>
+			<Call name="newScheduledThreadPool" class="java.util.concurrent.Executors">
+				<Arg type="int">2</Arg>
+			</Call>
+		</Arg>
+	</New>
+		
 	<!--  SSL -->
 	<Call name="addConnector">
     <Arg>
