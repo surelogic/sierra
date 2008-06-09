@@ -1,7 +1,9 @@
 package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +51,8 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final List<ArtifactRecord> artifacts;
 	private final List<ClassMetricRecord> classMetrics;
+	private final List<ArtifactArtifactRelation> artifactRelations;
+	private final List<ArtifactScanNumber> artifactNumbers;
 	private final Map<SourceRecord, SourceRecord> sources;
 	private final Map<CompilationUnitRecord, CompilationUnitRecord> compUnits;
 	private final Set<ArtifactSourceRecord> relations;
@@ -60,6 +64,9 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
+
+	private final PreparedStatement insertArtifactNumber;
+	private final PreparedStatement insertArtifact;
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
@@ -79,10 +86,23 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		compUnits = new HashMap<CompilationUnitRecord, CompilationUnitRecord>(
 				COMMIT_SIZE * 3);
 		relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
+		artifactRelations = new ArrayList<ArtifactArtifactRelation>();
+		artifactNumbers = new ArrayList<ArtifactScanNumber>();
 		this.projectName = projectName;
 		this.scan = scan;
 		aBuilder = new JDBCArtifactBuilder();
 		mBuilder = new JDBCMetricBuilder();
+		final Statement st = conn.createStatement();
+		try {
+			st
+					.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_ART_NUMBER (ID BIGINT NOT NULL, SCAN_NUMBER INTEGER NOT NULL) NOT LOGGED ON COMMIT DELETE ROWS");
+			insertArtifactNumber = conn
+					.prepareStatement("INSERT INTO TEMP_ART_NUMBER (ID, SCAN_NUMBER) VALUES (?,?)");
+			insertArtifact = conn
+					.prepareStatement("INSERT INTO ARTIFACT_ARTIFACT_RELTN (PARENT_NUM,CHILD_NUM) VALUES (SELECT ID FROM TEMP_ART_NUMBER WHERE SCAN_NUMBER = ?),(SELECT ID FROM TEMP_ART_NUMBER WHERE SCAN_NUMBER = ?))");
+		} finally {
+			st.close();
+		}
 	}
 
 	/*
@@ -108,9 +128,20 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 			monitor.subTask("Persisting artifacts");
 			insert(artifacts);
+			for (final ArtifactScanNumber number : artifactNumbers) {
+				insertArtifactNumber.setLong(1, number.art.getId());
+				insertArtifactNumber.setInt(2, number.number);
+				insertArtifactNumber.execute();
+			}
+			for (final ArtifactArtifactRelation relation : artifactRelations) {
+				insertArtifact.setLong(1, relation.parentNumber);
+				insertArtifact.setLong(2, relation.childNumber);
+				insertArtifact.execute();
+			}
 			monitor.worked(1);
 			artifacts.clear();
-
+			artifactNumbers.clear();
+			artifactRelations.clear();
 			monitor.subTask("Persisting relations");
 			insert(relations);
 			monitor.worked(1);
@@ -312,6 +343,11 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			return this;
 		}
 
+		public ArtifactBuilder scanNumber(int number) {
+			artifactNumbers.add(new ArtifactScanNumber(artifact, number));
+			return this;
+		}
+
 		public SourceLocationBuilder sourceLocation() {
 			return new JDBCSourceLocationBuilder(false);
 		}
@@ -386,11 +422,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		}
 
-		public ArtifactBuilder scanNumber(int number) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 	}
 
 	private void quietlyRollback() {
@@ -412,8 +443,29 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	}
 
 	public void relation(int parentNumber, int childNumber) {
-		// TODO Auto-generated method stub
+		artifactRelations.add(new ArtifactArtifactRelation(parentNumber,
+				childNumber));
 
+	}
+
+	private static class ArtifactArtifactRelation {
+		final int childNumber;
+		final int parentNumber;
+
+		ArtifactArtifactRelation(int parentNumber, int childNumber) {
+			this.parentNumber = parentNumber;
+			this.childNumber = childNumber;
+		}
+	}
+
+	private static class ArtifactScanNumber {
+		final ArtifactRecord art;
+		final int number;
+
+		ArtifactScanNumber(ArtifactRecord art, int number) {
+			this.art = art;
+			this.number = number;
+		}
 	}
 
 }
