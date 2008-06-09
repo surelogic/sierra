@@ -74,6 +74,31 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
+	public List<String> searchProjects(final String query, final int limit) {
+		return ConnectionFactory
+				.withUserReadOnly(new UserQuery<List<String>>() {
+					public List<String> perform(Query q, Server s, User u) {
+						return q.prepared("Projects.query",
+								new ResultHandler<List<String>>() {
+									public List<String> handle(
+											com.surelogic.common.jdbc.Result r) {
+										final List<String> result = new ArrayList<String>();
+										final int count = 0;
+										for (final Row row : r) {
+											if (count < limit) {
+												result.add(row.nextString());
+											} else {
+												return result;
+											}
+										}
+										return result;
+									}
+
+								}).call(query.replace('*', '%').concat("%"));
+					}
+				});
+	}
+
 	/**
 	 * Handles a result set with two columns. The first is the key, and the
 	 * second is the value.
@@ -342,21 +367,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		fDO.setUid(f.getUuid());
 		final Set<CategoryFilterDO> cats = fDO.getCategories();
 		final Set<TypeFilterDO> types = fDO.getFilterTypes();
-		for (final Object o : f.getCategories()) {
-			final ScanFilterEntry e = (ScanFilterEntry) o;
+		for (final ScanFilterEntry e : f.getCategories()) {
 			final CategoryFilterDO c = new CategoryFilterDO();
 			c.setImportance(importance(e.getImportance()));
 			c.setUid(e.getUid());
 			cats.add(c);
 		}
-		for (final Object o : f.getTypes()) {
-			final ScanFilterEntry e = (ScanFilterEntry) o;
+		for (final ScanFilterEntry e : f.getTypes()) {
 			final TypeFilterDO t = new TypeFilterDO();
 			t.setImportance(importance(e.getImportance()));
 			t.setFiltered(false);
 			t.setFindingType(e.getUid());
 			types.add(t);
 		}
+		fDO.getProjects().addAll(f.getProjects());
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(Query q, Server s, User u) {
 				if (!s.getUid().equals(
