@@ -124,7 +124,7 @@ public class ScanFilters {
 						.prepared("ScanFilters.insertProject");
 				for (final String project : settings.getProjects()) {
 					deleteProjectRelation.call(project);
-					insertProject.call(project);
+					insertProject.call(settingsRec.getId(), project);
 				}
 				for (final CategoryFilterDO cat : settings.getCategories()) {
 					insertCategoryFilter.call(settingsRec.getId(),
