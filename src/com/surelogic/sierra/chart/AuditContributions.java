@@ -26,8 +26,8 @@ import com.surelogic.sierra.portal.PortalOverview;
 public final class AuditContributions implements IDatabasePlot {
 
 	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String> parameters, Connection c)
-			throws SQLException, IOException {
+			Map<String, String> parameters, Connection c) throws SQLException,
+			IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final PortalOverview po = PortalOverview.getInstance(c);
 		List<UserOverview> userOverviewList = po.getEnabledUserOverviews();
@@ -41,10 +41,9 @@ public final class AuditContributions implements IDatabasePlot {
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (UserOverview uo : userOverviewList) {
-			dataset.setValue((double) (uo.getAudits()), "Audits", uo
+			dataset.setValue(uo.getAudits(), "Audits", uo.getUserName());
+			dataset.setValue(uo.getFindings(), "Findings Examined", uo
 					.getUserName());
-			dataset.setValue((double) (uo.getFindings()), "Findings Examined",
-					uo.getUserName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
 				null, "# in the last 30 days", dataset,

@@ -25,15 +25,16 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = 946194129762715684L;
 
-	public Result createUser(final UserAccount account, final String password) {
+	public Result<String> createUser(final UserAccount account,
+			final String password) {
 		if ((account == null) || (password == null)
 				|| (account.getUserName() == null)
 				|| (account.getUserName().length() == 0)) {
 			return Result.failure("Missing required field.");
 		} else {
-			return performAdmin(false, new UserTransaction<Result>() {
+			return performAdmin(false, new UserTransaction<Result<String>>() {
 
-				public Result perform(Connection conn, Server server,
+				public Result<String> perform(Connection conn, Server server,
 						User serverUser) throws SQLException {
 					final ServerUserManager man = ServerUserManager
 							.getInstance(conn);
@@ -101,13 +102,13 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public Result changeUserPassword(final String targetUser,
+	public Result<String> changeUserPassword(final String targetUser,
 			final String currentUserPassword, final String newPassword) {
 		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<Result>() {
+				.withUserTransaction(new UserTransaction<Result<String>>() {
 
-					public Result perform(Connection conn, Server server,
-							User user) throws Exception {
+					public Result<String> perform(Connection conn,
+							Server server, User user) throws Exception {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						if (user.getName().equals(targetUser)
@@ -129,11 +130,11 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public Result updateUser(final UserAccount account) {
-		return performAdmin(false, new UserTransaction<Result>() {
+	public Result<UserAccount> updateUser(final UserAccount account) {
+		return performAdmin(false, new UserTransaction<Result<UserAccount>>() {
 
-			public Result perform(Connection conn, Server server, User user)
-					throws Exception {
+			public Result<UserAccount> perform(Connection conn, Server server,
+					User user) throws Exception {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
@@ -204,8 +205,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		return new UserAccount(u.getId(), userName, isAdmin, u.isActive());
 	}
 
-	@SuppressWarnings("unchecked")
-	public void updateUsersStatus(final List users, final boolean isActive) {
+	public void updateUsersStatus(final List<String> users,
+			final boolean isActive) {
 		if (users != null && !users.isEmpty()) {
 			performAdmin(false, new UserTransaction<Void>() {
 

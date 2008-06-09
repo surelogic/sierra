@@ -20,17 +20,12 @@ import com.surelogic.sierra.gwt.client.service.TicketService;
 
 public class TicketServiceImpl extends RemoteServiceServlet implements
 		TicketService {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7681941332780937563L;
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(TicketServiceImpl.class);
 
-	@SuppressWarnings("unchecked")
-	public Result getTicket(Map args) {
+	public Result<Ticket> getTicket(Map<String, String> args) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
 				args, getThreadLocalRequest().getSession()).getUUID()
 				.toString());
@@ -38,8 +33,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		return Result.success(ticket);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Result getImageMap(Ticket ticket) {
+	public Result<ImageMapData> getImageMap(Ticket ticket) {
 		final StringWriter out = new StringWriter();
 		try {
 			ChartCache.getInstance().sendMapTo(
@@ -53,8 +47,8 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		} catch (IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
-		return Result
-				.failure("Error retrieving image map for ticket " + ticket);
+		return Result.failure(
+				"Error retrieving image map for ticket " + ticket, null);
 	}
 
 }

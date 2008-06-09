@@ -28,8 +28,8 @@ import com.surelogic.sierra.portal.PortalOverview;
 public final class LatestScanResults implements IDatabasePlot {
 
 	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String> parameters, Connection c)
-			throws SQLException, IOException {
+			Map<String, String> parameters, Connection c) throws SQLException,
+			IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
@@ -43,13 +43,10 @@ public final class LatestScanResults implements IDatabasePlot {
 		mutableSize.setHeight(50 * overview.size() + 100);
 
 		for (ProjectOverview po : overview) {
-			importanceData.setValue((double) po.getCritical(), "Critical", po
-					.getName());
-			importanceData
-					.setValue((double) po.getHigh(), "High", po.getName());
-			importanceData.setValue((double) po.getMedium(), "Medium", po
-					.getName());
-			importanceData.setValue((double) po.getLow(), "Low", po.getName());
+			importanceData.setValue(po.getCritical(), "Critical", po.getName());
+			importanceData.setValue(po.getHigh(), "High", po.getName());
+			importanceData.setValue(po.getMedium(), "Medium", po.getName());
+			importanceData.setValue(po.getLow(), "Low", po.getName());
 		}
 		final JFreeChart chart = ChartFactory.createBarChart(
 				"Latest Scan Results", null, "# of Findings", importanceData,
@@ -69,10 +66,9 @@ public final class LatestScanResults implements IDatabasePlot {
 
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		for (ProjectOverview po : overview) {
-			totalData.setValue((double) po.getTotalFindings(), "Total", po
+			totalData.setValue(po.getTotalFindings(), "Total", po.getName());
+			totalData.setValue(po.getCommentedFindings(), "Audited", po
 					.getName());
-			totalData.setValue((double) po.getCommentedFindings(), "Audited",
-					po.getName());
 		}
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);

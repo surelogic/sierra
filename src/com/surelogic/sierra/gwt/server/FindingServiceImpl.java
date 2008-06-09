@@ -30,15 +30,15 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = -5522046767503450943L;
 
-	public Result getFinding(final String key) {
+	public Result<FindingOverview> getFinding(final String key) {
 		if (key == null || "".equals(key)) {
-			return Result.failure("No key specified");
+			return Result.failure("No key specified", null);
 		}
 		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<Result>() {
+				.withUserReadOnly(new UserTransaction<Result<FindingOverview>>() {
 
-					public Result perform(Connection conn, Server server,
-							User user) throws Exception {
+					public Result<FindingOverview> perform(Connection conn,
+							Server server, User user) throws Exception {
 						PreparedStatement st;
 						try {
 							final long id = Long.parseLong(key);
@@ -52,8 +52,8 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 								st = conn.prepareStatement(QB
 										.get("portal.finding.byUuid"));
 							} catch (IllegalArgumentException ex) {
-								return Result
-										.failure("Unparseable key: " + key);
+								return Result.failure(
+										"Unparseable key: " + key, null);
 							}
 						}
 						// F.ID,F.IMPORTANCE,F.SUMMARY,FT.NAME,FC.NAME,P.NAME,LM.PACKAGE_NAME,LM.CLASS_NAME
@@ -126,7 +126,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 								return Result.success(f);
 							} else {
 								return Result.failure("No finding with id "
-										+ key + " exists.");
+										+ key + " exists.", null);
 							}
 						} finally {
 							set.close();
