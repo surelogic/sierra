@@ -1,6 +1,7 @@
 package com.surelogic.sierra.jdbc.record;
 
-import static com.surelogic.common.jdbc.JDBCUtils.*;
+import static com.surelogic.common.jdbc.JDBCUtils.setNullableInt;
+import static com.surelogic.common.jdbc.JDBCUtils.setNullableString;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,7 @@ public final class ArtifactRecord extends LongRecord {
 	private Severity severity;
 	private String message;
 	private SourceRecord primary;
+	private Integer scanNumber;
 
 	public ArtifactRecord(RecordMapper mapper) {
 		super(mapper);
@@ -70,6 +72,18 @@ public final class ArtifactRecord extends LongRecord {
 		this.primary = primary;
 	}
 
+	public void setScanNumber(int number) {
+		scanNumber = number;
+	}
+
+	public Integer getScanNumber() {
+		return scanNumber;
+	}
+
+	public void setScanNumber(Integer scanNumber) {
+		this.scanNumber = scanNumber;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, scanId);
@@ -78,6 +92,7 @@ public final class ArtifactRecord extends LongRecord {
 		setNullableInt(idx++, st, priority == null ? null : priority.ordinal());
 		setNullableInt(idx++, st, severity == null ? null : severity.ordinal());
 		setNullableString(idx++, st, message);
+		setNullableInt(idx++, st, scanNumber);
 		return idx;
 	}
 

@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.scan;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final List<ArtifactRecord> artifacts;
 	private final List<ClassMetricRecord> classMetrics;
 	private final List<ArtifactArtifactRelation> artifactRelations;
-	private final List<ArtifactScanNumber> artifactNumbers;
 	private final Map<SourceRecord, SourceRecord> sources;
 	private final Map<CompilationUnitRecord, CompilationUnitRecord> compUnits;
 	private final Set<ArtifactSourceRecord> relations;
@@ -65,8 +63,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	private final ArtifactBuilder aBuilder;
 	private final MetricBuilder mBuilder;
 
-	private final PreparedStatement insertArtifactNumber;
-	private final PreparedStatement insertArtifact;
+	private final PreparedStatement insertArtifactNumberRelation;
 
 	public JDBCArtifactGenerator(Connection conn, ScanRecordFactory factory,
 			ScanManager manager, String projectName, ScanRecord scan,
@@ -87,22 +84,12 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				COMMIT_SIZE * 3);
 		relations = new HashSet<ArtifactSourceRecord>(COMMIT_SIZE * 2);
 		artifactRelations = new ArrayList<ArtifactArtifactRelation>();
-		artifactNumbers = new ArrayList<ArtifactScanNumber>();
 		this.projectName = projectName;
 		this.scan = scan;
 		aBuilder = new JDBCArtifactBuilder();
 		mBuilder = new JDBCMetricBuilder();
-		final Statement st = conn.createStatement();
-		try {
-			st
-					.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_ART_NUMBER (ID BIGINT NOT NULL, SCAN_NUMBER INTEGER NOT NULL) NOT LOGGED ON COMMIT DELETE ROWS");
-			insertArtifactNumber = conn
-					.prepareStatement("INSERT INTO TEMP_ART_NUMBER (ID, SCAN_NUMBER) VALUES (?,?)");
-			insertArtifact = conn
-					.prepareStatement("INSERT INTO ARTIFACT_ARTIFACT_RELTN (PARENT_NUM,CHILD_NUM) VALUES (SELECT ID FROM TEMP_ART_NUMBER WHERE SCAN_NUMBER = ?),(SELECT ID FROM TEMP_ART_NUMBER WHERE SCAN_NUMBER = ?))");
-		} finally {
-			st.close();
-		}
+		insertArtifactNumberRelation = conn
+				.prepareStatement("INSERT INTO ARTIFACT_NUMBER_RELTN (SCAN_ID,PARENT_NUMBER,CHILD_NUMBER) VALUES (?,?,?)");
 	}
 
 	/*
@@ -128,19 +115,14 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 			monitor.subTask("Persisting artifacts");
 			insert(artifacts);
-			for (final ArtifactScanNumber number : artifactNumbers) {
-				insertArtifactNumber.setLong(1, number.art.getId());
-				insertArtifactNumber.setInt(2, number.number);
-				insertArtifactNumber.execute();
-			}
 			for (final ArtifactArtifactRelation relation : artifactRelations) {
-				insertArtifact.setLong(1, relation.parentNumber);
-				insertArtifact.setLong(2, relation.childNumber);
-				insertArtifact.execute();
+				insertArtifactNumberRelation.setLong(1, scan.getId());
+				insertArtifactNumberRelation.setInt(2, relation.parentNumber);
+				insertArtifactNumberRelation.setInt(3, relation.childNumber);
+				insertArtifactNumberRelation.execute();
 			}
 			monitor.worked(1);
 			artifacts.clear();
-			artifactNumbers.clear();
 			artifactRelations.clear();
 			monitor.subTask("Persisting relations");
 			insert(relations);
@@ -344,7 +326,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 
 		public ArtifactBuilder scanNumber(int number) {
-			artifactNumbers.add(new ArtifactScanNumber(artifact, number));
+			artifact.setScanNumber(number);
 			return this;
 		}
 
@@ -455,16 +437,6 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		ArtifactArtifactRelation(int parentNumber, int childNumber) {
 			this.parentNumber = parentNumber;
 			this.childNumber = childNumber;
-		}
-	}
-
-	private static class ArtifactScanNumber {
-		final ArtifactRecord art;
-		final int number;
-
-		ArtifactScanNumber(ArtifactRecord art, int number) {
-			this.art = art;
-			this.number = number;
 		}
 	}
 
