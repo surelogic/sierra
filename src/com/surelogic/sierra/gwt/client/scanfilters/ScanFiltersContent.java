@@ -167,8 +167,8 @@ public class ScanFiltersContent extends ContentComposite {
 				list.clear();
 				final ClickListener listener = new ClickListener() {
 					public void onClick(Widget sender) {
-						ItemLabel<ScanFilter> label = (ItemLabel<ScanFilter>) sender;
-						goToScanFilter(((label.getItem())).getUuid());
+						ItemLabel<?> label = (ItemLabel<?>) sender;
+						goToScanFilter(((ScanFilter) label.getItem()).getUuid());
 					}
 				};
 				boolean success = false;

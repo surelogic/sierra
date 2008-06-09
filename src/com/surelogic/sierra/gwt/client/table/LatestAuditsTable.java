@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.table;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,37 +16,36 @@ public class LatestAuditsTable extends TableSection {
 		setSummary("Latest User Audits");
 	}
 
+	@Override
 	protected String[] getHeaderTitles() {
 		return new String[] { "User", "Audits", "Last Contribution" };
 	}
 
+	@Override
 	protected String[] getHeaderDataTypes() {
 		return new String[] { "cell-text", "cell-text", "cell-date" };
 	}
 
+	@Override
 	protected void updateTable(Context context) {
 		clearRows();
 		setWaitStatus();
 
 		ServiceHelper.getOverviewService().getUserOverviews(
-				new AsyncCallback() {
+				new AsyncCallback<List<UserOverview>>() {
 
 					public void onFailure(Throwable caught) {
 						ExceptionUtil.log(caught);
 						setErrorStatus("Unable to retrieve user overviews. (Server may be down)");
 					}
 
-					public void onSuccess(Object result) {
+					public void onSuccess(List<UserOverview> result) {
 						clearStatus();
 
-						final List list = (List) result;
-						if (list.isEmpty()) {
+						if (result.isEmpty()) {
 							setSuccessStatus("No users defined for this server.");
 						} else {
-							for (Iterator rows = list.iterator(); rows
-									.hasNext();) {
-								final UserOverview uo = (UserOverview) rows
-										.next();
+							for (UserOverview uo : result) {
 								addRow();
 								addColumn(uo.getUserName());
 								StringBuffer audits = new StringBuffer();

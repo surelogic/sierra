@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.usermgmt;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -123,36 +122,38 @@ public final class UserManagementContent extends ContentComposite {
 	}
 
 	private void refreshUsers() {
-		ServiceHelper.getManageUserService().getUsers(new AsyncCallback() {
+		ServiceHelper.getManageUserService().getUsers(
+				new AsyncCallback<List<UserAccount>>() {
 
-			public void onFailure(Throwable caught) {
-				ExceptionUtil.log(caught);
+					public void onFailure(Throwable caught) {
+						ExceptionUtil.log(caught);
 
-				usersGrid.setStatus("error",
-						"Unable to retrieve user list. (Server may be down)");
-			}
+						usersGrid
+								.setStatus("error",
+										"Unable to retrieve user list. (Server may be down)");
+					}
 
-			public void onSuccess(Object result) {
-				final UserAccount currentUser = ContextManager.getUser();
-				final List users = (List) result;
+					public void onSuccess(List<UserAccount> result) {
+						final UserAccount currentUser = ContextManager
+								.getUser();
 
-				usersGrid.removeRows();
-				if (users.isEmpty()) {
-					usersGrid.setStatus("info", "No users found");
-				} else {
-					usersGrid.clearStatus();
-					for (Iterator i = users.iterator(); i.hasNext();) {
-						// need to convert the service return to UserAccount
-						final UserAccount user = (UserAccount) i.next();
-						if (user.isActive() || showDisabled) {
-							final int row = usersGrid.addRow();
-							updateRow(row, user, currentUser);
+						usersGrid.removeRows();
+						if (result.isEmpty()) {
+							usersGrid.setStatus("info", "No users found");
+						} else {
+							usersGrid.clearStatus();
+							for (UserAccount user : result) {
+								// need to convert the service return to
+								// UserAccount
+								if (user.isActive() || showDisabled) {
+									final int row = usersGrid.addRow();
+									updateRow(row, user, currentUser);
+								}
+							}
 						}
 					}
-				}
-			}
 
-		});
+				});
 	}
 
 	private void updateRow(int row, UserAccount user, UserAccount currentUser) {
@@ -198,7 +199,7 @@ public final class UserManagementContent extends ContentComposite {
 				user.setActive(ENABLED.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
-						new AsyncCallback() {
+						new AsyncCallback<Result<UserAccount>>() {
 
 							public void onFailure(Throwable caught) {
 								usersGrid.setStatus("error",
@@ -207,11 +208,10 @@ public final class UserManagementContent extends ContentComposite {
 												+ ". (Server may be down)");
 							}
 
-							public void onSuccess(Object result) {
-								Result r = (Result) result;
-								updateRow(row, (UserAccount) r.getResult(),
+							public void onSuccess(Result<UserAccount> result) {
+								updateRow(row, result.getResult(),
 										ContextManager.getUser());
-								status.setStatus(Status.fromResult(r));
+								status.setStatus(Status.fromResult(result));
 							}
 						});
 			}
@@ -230,7 +230,7 @@ public final class UserManagementContent extends ContentComposite {
 				user.setAdministrator(ADMIN.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
-						new AsyncCallback() {
+						new AsyncCallback<Result<UserAccount>>() {
 
 							public void onFailure(Throwable caught) {
 								usersGrid.setStatus("error",
@@ -239,11 +239,10 @@ public final class UserManagementContent extends ContentComposite {
 												+ ". (Server may be down)");
 							}
 
-							public void onSuccess(Object result) {
-								Result r = (Result) result;
-								updateRow(row, (UserAccount) r.getResult(),
+							public void onSuccess(Result<UserAccount> result) {
+								updateRow(row, result.getResult(),
 										ContextManager.getUser());
-								status.setStatus(Status.fromResult(r));
+								status.setStatus(Status.fromResult(result));
 							}
 						});
 
@@ -272,7 +271,7 @@ public final class UserManagementContent extends ContentComposite {
 		if (account != null) {
 			account.setUserName(newValue);
 			ServiceHelper.getManageUserService().updateUser(account,
-					new AsyncCallback() {
+					new AsyncCallback<Result<UserAccount>>() {
 
 						public void onFailure(Throwable caught) {
 							ExceptionUtil.log(caught);
@@ -283,18 +282,16 @@ public final class UserManagementContent extends ContentComposite {
 											"Unable to change user name. (Server may be down)");
 						}
 
-						public void onSuccess(Object result) {
-							final Result r = (Result) result;
-							final UserAccount user = (UserAccount) r
-									.getResult();
+						public void onSuccess(Result<UserAccount> result) {
+							final UserAccount user = result.getResult();
 							final UserAccount current = ContextManager
 									.getUser();
-							if (r.isSuccess()
+							if (result.isSuccess()
 									&& (user.getId() == current.getId())) {
 								ContextManager.updateUser(user);
 							}
 							updateRow(row, user, ContextManager.getUser());
-							status.setStatus(Status.fromResult(r));
+							status.setStatus(Status.fromResult(result));
 
 						}
 					});

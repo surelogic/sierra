@@ -15,7 +15,6 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 public class ReportView extends BlockPanel {
 	private final Label description = new Label("", true);
 	private final FlexTable parametersTable = new FlexTable();
-	private Report currentSelection;
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -30,8 +29,6 @@ public class ReportView extends BlockPanel {
 	}
 
 	public void setSelection(Report report) {
-		this.currentSelection = report;
-
 		if (report != null) {
 			setSummary(report.getName());
 		} else {

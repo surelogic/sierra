@@ -69,7 +69,6 @@ public interface SettingsService extends RemoteService {
 	Status deleteCategory(String uuid);
 
 	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.ScanFilter>
 	 * @return
 	 */
 	List<ScanFilter> getScanFilters();

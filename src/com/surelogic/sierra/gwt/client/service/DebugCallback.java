@@ -3,17 +3,17 @@ package com.surelogic.sierra.gwt.client.service;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class DebugCallback implements AsyncCallback {
+public class DebugCallback<T> implements AsyncCallback<T> {
 	private final String debugMessage;
-	private final AsyncCallback target;
+	private final AsyncCallback<T> target;
 
-	public DebugCallback(AsyncCallback target) {
+	public DebugCallback(AsyncCallback<T> target) {
 		super();
 		debugMessage = null;
 		this.target = target;
 	}
 
-	public DebugCallback(String debugMessage, AsyncCallback target) {
+	public DebugCallback(String debugMessage, AsyncCallback<T> target) {
 		super();
 		this.debugMessage = debugMessage;
 		this.target = target;
@@ -25,7 +25,7 @@ public class DebugCallback implements AsyncCallback {
 		target.onFailure(caught);
 	}
 
-	public void onSuccess(Object result) {
+	public void onSuccess(T result) {
 		final StringBuffer paramBuf = new StringBuffer();
 		if (result != null) {
 			paramBuf.append(result.toString());

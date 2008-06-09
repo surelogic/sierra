@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.table;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,40 +16,39 @@ public class PublishedProjectsTable extends TableSection {
 		setSummary("All Published Projects");
 	}
 
+	@Override
 	protected String[] getHeaderTitles() {
 		return new String[] { "Project", "Last Scan", "Audits", "Critical",
 				"High", "Medium", "Low", "Irrelevant", "Last Audit", "By" };
 	}
 
+	@Override
 	protected String[] getHeaderDataTypes() {
 		return new String[] { "cell-text", "cell-date", "cell-text",
 				"cell-number", "cell-number", "cell-number", "cell-number",
 				"cell-number", "cell-date", "cell-text" };
 	}
 
+	@Override
 	protected void updateTable(Context context) {
 		clearRows();
 		setWaitStatus();
 
 		ServiceHelper.getOverviewService().getProjectOverviews(
-				new AsyncCallback() {
+				new AsyncCallback<List<ProjectOverview>>() {
 
 					public void onFailure(Throwable caught) {
 						ExceptionUtil.log(caught);
 						setErrorStatus("Unable to retrieve project overviews. (Server may be down)");
 					}
 
-					public void onSuccess(Object result) {
+					public void onSuccess(List<ProjectOverview> result) {
 						clearStatus();
 
-						List list = (List) result;
-						if (list.isEmpty()) {
+						if (result.isEmpty()) {
 							setSuccessStatus("No project scans have been published to this server.");
 						} else {
-							for (Iterator rows = list.iterator(); rows
-									.hasNext();) {
-								ProjectOverview po = (ProjectOverview) rows
-										.next();
+							for (ProjectOverview po : result) {
 								addRow();
 								addColumn(po.getName());
 								addColumn(po.getLastScanDate());

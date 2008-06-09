@@ -16,16 +16,14 @@ public interface ManageUserAdminService extends RemoteService {
 	boolean isAvailable();
 
 	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.UserAccount>
 	 * @return a list of user names
 	 */
-	List getUsers();
+	List<UserAccount> getUsers();
 
 	/**
-	 * @gwt.typeArgs <com.surelogic.sierra.gwt.client.data.UserAccount>
 	 * @return a list of user names
 	 */
-	List findUser(String userQueryString);
+	List<UserAccount> findUser(String userQueryString);
 
 	/**
 	 * Create a new user with the given password.
@@ -34,7 +32,7 @@ public interface ManageUserAdminService extends RemoteService {
 	 * @return A user-readable {@link Result} message indicating whether or not
 	 *         creation succeeded.
 	 */
-	Result createUser(UserAccount account, String password);
+	Result<String> createUser(UserAccount account, String password);
 
 	/**
 	 * Get details about a user's information
@@ -56,8 +54,8 @@ public interface ManageUserAdminService extends RemoteService {
 	 * @return a {@link Result} indicating whether the password change was
 	 *         successful or not
 	 */
-	Result changeUserPassword(String targetUser, String currentUserPassword,
-			String newPassword);
+	Result<String> changeUserPassword(String targetUser,
+			String currentUserPassword, String newPassword);
 
 	/**
 	 * 
@@ -65,18 +63,16 @@ public interface ManageUserAdminService extends RemoteService {
 	 *            the user's updated account info
 	 * @return
 	 */
-	Result updateUser(UserAccount account);
+	Result<UserAccount> updateUser(UserAccount account);
 
 	/**
 	 * Update the status of a list of users. User passwords cannot currently be
 	 * updated in a batch.
 	 * 
-	 * @gwt.typeArgs users <java.lang.String>
-	 * 
 	 * @param account
 	 *            the user's updated account info
 	 * @return
 	 */
-	void updateUsersStatus(List users, boolean status);
+	void updateUsersStatus(List<String> users, boolean status);
 
 }

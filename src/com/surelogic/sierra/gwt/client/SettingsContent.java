@@ -46,6 +46,7 @@ public final class SettingsContent extends ContentComposite {
 		// singleton
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
 		panel
@@ -103,10 +104,11 @@ public final class SettingsContent extends ContentComposite {
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
-		final AsyncCallback updateServerInfo = new AsyncCallback() {
-			public void onSuccess(Object result) {
-				updateInfo((ServerInfo) result);
+		final AsyncCallback<ServerInfo> updateServerInfo = new AsyncCallback<ServerInfo>() {
+			public void onSuccess(ServerInfo result) {
+				updateInfo(result);
 				status.setStatus(new Status(true, "Information updated."));
 			}
 
@@ -138,18 +140,19 @@ public final class SettingsContent extends ContentComposite {
 						getString(smtpUserTextBox), getString(smtpPassTextBox),
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
-				msService.setEmail(email, new AsyncCallback() {
-					public void onSuccess(Object result) {
+				msService.setEmail(email, new AsyncCallback<ServerInfo>() {
+					public void onSuccess(ServerInfo result) {
 
-						msService.testAdminEmail(new AsyncCallback() {
-							public void onSuccess(Object result) {
-								updateInfo((ServerInfo) result);
+						msService.testAdminEmail(new AsyncCallback<Void>() {
+							public void onSuccess(Void result) {
+								status.setStatus(Status
+										.success("Test email sent."));
 							}
 
 							public void onFailure(Throwable caught) {
 								status
-										.setStatus(new Status(false,
-												"Unable to test admin email. (Server may be down)"));
+										.setStatus(Status
+												.failure("Unable to test admin email. (Server may be down)"));
 								// TODO do some UI stuff to show failure
 							}
 						});
@@ -168,10 +171,10 @@ public final class SettingsContent extends ContentComposite {
 				});
 			}
 		});
-		msService.getServerInfo(new AsyncCallback() {
+		msService.getServerInfo(new AsyncCallback<ServerInfo>() {
 
-			public void onSuccess(Object result) {
-				updateInfo((ServerInfo) result);
+			public void onSuccess(ServerInfo result) {
+				updateInfo(result);
 			}
 
 			public void onFailure(Throwable caught) {
@@ -183,6 +186,7 @@ public final class SettingsContent extends ContentComposite {
 		});
 	}
 
+	@Override
 	protected void onDeactivate() {
 		// nothing to do
 	}
