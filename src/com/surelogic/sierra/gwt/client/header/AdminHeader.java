@@ -1,7 +1,7 @@
 package com.surelogic.sierra.gwt.client.header;
 
-import com.surelogic.sierra.gwt.client.SettingsContent;
-import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
+import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
+import com.surelogic.sierra.gwt.client.content.usermgmt.UserManagementContent;
 
 public final class AdminHeader extends AuthenticatedHeader {
 	private static final AdminHeader instance = new AdminHeader();

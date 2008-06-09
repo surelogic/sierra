@@ -4,15 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.surelogic.sierra.gwt.client.categories.CategoriesContent;
-import com.surelogic.sierra.gwt.client.findingtypes.FindingTypesContent;
+import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
+import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
+import com.surelogic.sierra.gwt.client.content.login.LoginContent;
+import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
+import com.surelogic.sierra.gwt.client.content.reports.ReportsContent;
+import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
+import com.surelogic.sierra.gwt.client.content.usermgmt.UserManagementContent;
 import com.surelogic.sierra.gwt.client.header.AdminHeader;
 import com.surelogic.sierra.gwt.client.header.GuestHeader;
 import com.surelogic.sierra.gwt.client.header.HeaderComposite;
 import com.surelogic.sierra.gwt.client.header.UserHeader;
-import com.surelogic.sierra.gwt.client.reports.ReportsContent;
-import com.surelogic.sierra.gwt.client.scanfilters.ScanFiltersContent;
-import com.surelogic.sierra.gwt.client.usermgmt.UserManagementContent;
 
 public class ContentRegistry {
 	private static final Map<ContentComposite, ContentEntry> contentMap = new HashMap<ContentComposite, ContentEntry>();

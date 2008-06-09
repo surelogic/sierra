@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.content.overview;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.ContentComposite;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.chart.AuditContributionsChart;
 import com.surelogic.sierra.gwt.client.chart.LatestScansChart;
 import com.surelogic.sierra.gwt.client.table.LatestAuditsTable;

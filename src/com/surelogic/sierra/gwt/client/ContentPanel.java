@@ -3,6 +3,8 @@ package com.surelogic.sierra.gwt.client;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.surelogic.sierra.gwt.client.content.login.LoginContent;
+import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 
 public class ContentPanel extends Composite implements ContextListener {
 	private final DockPanel rootPanel = new DockPanel();

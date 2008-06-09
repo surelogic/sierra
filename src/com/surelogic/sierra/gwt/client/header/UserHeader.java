@@ -5,14 +5,14 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentRegistry;
-import com.surelogic.sierra.gwt.client.FindingContent;
-import com.surelogic.sierra.gwt.client.OverviewContent;
-import com.surelogic.sierra.gwt.client.SettingsContent;
-import com.surelogic.sierra.gwt.client.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
+import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
+import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
+import com.surelogic.sierra.gwt.client.content.reports.ReportsContent;
+import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.findingtypes.FindingTypesContent;
-import com.surelogic.sierra.gwt.client.reports.ReportsContent;
-import com.surelogic.sierra.gwt.client.scanfilters.ScanFiltersContent;
 
 public final class UserHeader extends AuthenticatedHeader {
 	private static final UserHeader instance = new UserHeader();
