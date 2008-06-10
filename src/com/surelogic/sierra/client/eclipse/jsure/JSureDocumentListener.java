@@ -1,24 +1,39 @@
 package com.surelogic.sierra.client.eclipse.jsure;
 
-import com.surelogic.common.*;
-import com.surelogic.jsure.xml.*;
-import com.surelogic.sierra.tool.message.*;
+import static com.surelogic.jsure.xml.JSureXMLReader.CUNIT_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.HASH_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.IR_DROP;
+import static com.surelogic.jsure.xml.JSureXMLReader.MESSAGE_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.PKG_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.PROMISE_DROP;
+import static com.surelogic.jsure.xml.JSureXMLReader.PROVED_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_DROP;
+import static com.surelogic.jsure.xml.JSureXMLReader.TYPE_ATTR;
+
+import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.jsure.xml.AbstractXMLResultListener;
+import com.surelogic.jsure.xml.Entity;
+import com.surelogic.jsure.xml.SourceRef;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.ScanGenerator;
+import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
-
-import static com.surelogic.jsure.xml.JSureXMLReader.*;
 
 public class JSureDocumentListener extends AbstractXMLResultListener {
 	final ScanGenerator generator;
 	final SLProgressMonitor monitor;
 	ArtifactGenerator aGenerator;
 	ArtifactBuilder builder;
-	
+
 	public JSureDocumentListener(ScanGenerator gen, SLProgressMonitor mon) {
 		generator = gen;
 		monitor = mon;
 	}
-	
+
 	@Override
 	public void start(String uid, String project) {
 		generator.uid(uid);
@@ -30,34 +45,34 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	public ArtifactGenerator getArtifactGenerator() {
 		return aGenerator;
 	}
-	
+
 	@Override
 	protected void define(final int id, Entity e) {
 		// Only build for Sierra-like entities
 		final String name = e.getName();
-		final boolean warning;	
+		final boolean warning;
 		final String aType;
-		
+
 		final boolean isResultDrop = RESULT_DROP.equals(name);
 		if (isResultDrop || PROMISE_DROP.equals(name)) {
 			final String consistent = e.getAttribute(PROVED_ATTR);
-			warning = !"true".equals(consistent); 
+			warning = !"true".equals(consistent);
 			if (isResultDrop) {
 				aType = e.getAttribute(RESULT_ATTR);
 			} else {
-				final String type = e.getAttribute(TYPE_ATTR);				
-				aType = "MethodControlFlow".equals(type) ? "UniquenessAssurance" : type;
+				final String type = e.getAttribute(TYPE_ATTR);
+				aType = "MethodControlFlow".equals(type) ? "UniquenessAssurance"
+						: type;
 			}
-		} 
-		else if (IR_DROP.equals(name)) {	
+		} else if (IR_DROP.equals(name)) {
 			final String type = e.getAttribute(TYPE_ATTR);
 			warning = "WarningDrop".equals(type);
-			
+
 			final String result = e.getAttribute(RESULT_ATTR);
 			aType = result != null ? result : "JSure";
 		} else {
 			return;
-		}		
+		}
 		if (createSourceLocation(builder.primarySourceLocation(), e.getSource())) {
 			final String msg = e.getAttribute(MESSAGE_ATTR);
 			builder.message(msg);
@@ -68,7 +83,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			}
 			builder.findingType("JSure", "1.0", aType);
 			builder.scanNumber(id);
-			//e.getAttribute(CATEGORY_ATTR));
+			// e.getAttribute(CATEGORY_ATTR));
 		}
 		builder.build();
 	}
@@ -79,7 +94,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			loc.compilation(cu);
 			loc.className(cu);
 			loc.packageName(s.getAttribute(PKG_ATTR));
-			
+
 			final int line = Integer.parseInt(s.getLine());
 			loc.lineOfCode(line);
 			loc.endLine(line);
@@ -95,12 +110,12 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	@Override
 	protected void handleRef(String from, int fromId, Entity to) {
 		// TODO handle
-		System.out.println("Handled "+to+" ref from "+from+" to "+to.getId());
-		aGenerator.relation(fromId, Integer.valueOf(to.getId()));
-	}	
-	/*
-	@Override
-	public void done() {
+		System.out.println("Handled " + to + " ref from " + from + " to "
+				+ to.getId());
+		// TODO
+		aGenerator.relation(fromId, Integer.valueOf(to.getId()), "TYPE");
 	}
-	*/	
+	/*
+	 * @Override public void done() { }
+	 */
 }
