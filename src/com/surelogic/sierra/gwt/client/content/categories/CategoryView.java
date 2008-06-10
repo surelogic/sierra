@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
-import com.surelogic.sierra.gwt.client.data.FilterEntryComparator;
+import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.FindingTypeComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
@@ -64,8 +64,8 @@ public class CategoryView extends BlockPanel {
 	}
 
 	private class FindingsView extends BlockPanel {
-		private final SelectionTracker<ItemLabel<FilterEntry>> selectionTracker = new SelectionTracker<ItemLabel<FilterEntry>>();
-		private final Map<Widget, FilterEntry> findings = new HashMap<Widget, FilterEntry>();
+		private final SelectionTracker<ItemLabel<FindingType>> selectionTracker = new SelectionTracker<ItemLabel<FindingType>>();
+		private final Map<Widget, FindingType> findings = new HashMap<Widget, FindingType>();
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
@@ -78,14 +78,14 @@ public class CategoryView extends BlockPanel {
 			findings.clear();
 
 			if (cat != null) {
-				final List<FilterEntry> visibleFindings = new ArrayList<FilterEntry>();
-				for (FilterEntry finding : cat.getIncludedEntries()) {
+				final List<FindingType> visibleFindings = new ArrayList<FindingType>();
+				for (FindingType finding : cat.getIncludedEntries()) {
 					if (!visibleFindings.contains(finding)) {
 						visibleFindings.add(finding);
 					}
 				}
 
-				Collections.sort(visibleFindings, new FilterEntryComparator());
+				Collections.sort(visibleFindings, new FindingTypeComparator());
 
 				ClickListener findingListener = new ClickListener() {
 
@@ -98,8 +98,8 @@ public class CategoryView extends BlockPanel {
 
 				};
 
-				for (FilterEntry finding : visibleFindings) {
-					final ItemLabel<FilterEntry> rule = new ItemLabel<FilterEntry>(
+				for (FindingType finding : visibleFindings) {
+					final ItemLabel<FindingType> rule = new ItemLabel<FindingType>(
 							finding.getName(), finding, selectionTracker,
 							findingListener);
 					rule.setTitle(finding.getShortMessage());

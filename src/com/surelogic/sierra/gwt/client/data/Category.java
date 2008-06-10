@@ -11,7 +11,7 @@ public class Category implements Serializable, Cacheable {
 
 	private Set<Category> parents;
 
-	private Set<FilterEntry> entries;
+	private Set<FindingType> entries;
 
 	private String name;
 
@@ -37,11 +37,11 @@ public class Category implements Serializable, Cacheable {
 		this.parents = parents;
 	}
 
-	public Set<FilterEntry> getEntries() {
+	public Set<FindingType> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(Set<FilterEntry> entries) {
+	public void setEntries(Set<FindingType> entries) {
 		this.entries = entries;
 	}
 
@@ -76,10 +76,10 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set<FilterEntry> getExcludedEntries() {
-		final HashSet<FilterEntry> set = new HashSet<FilterEntry>(entries
+	public Set<FindingType> getExcludedEntries() {
+		final HashSet<FindingType> set = new HashSet<FindingType>(entries
 				.size());
-		for (FilterEntry entry : entries) {
+		for (FindingType entry : entries) {
 			if (entry.isFiltered()) {
 				set.add(entry);
 			}
@@ -93,15 +93,15 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set<FilterEntry> getIncludedEntries() {
-		final Set<FilterEntry> set = new HashSet<FilterEntry>();
+	public Set<FindingType> getIncludedEntries() {
+		final Set<FindingType> set = new HashSet<FindingType>();
 		if (parents != null) {
 			for (Category parent : parents) {
 				set.addAll(parent.getIncludedEntries());
 			}
 		}
 		if (entries != null) {
-			for (FilterEntry entry : entries) {
+			for (FindingType entry : entries) {
 				if (entry.isFiltered()) {
 					set.remove(entry);
 				} else {
@@ -112,7 +112,7 @@ public class Category implements Serializable, Cacheable {
 		return set;
 	}
 
-	public boolean parentContains(FilterEntry finding) {
+	public boolean parentContains(FindingType finding) {
 		for (Category parent : getParents()) {
 			boolean contains = parent.getEntries().contains(finding);
 			if (contains) {
@@ -142,8 +142,8 @@ public class Category implements Serializable, Cacheable {
 			copy.parents = null;
 		}
 		if (entries != null) {
-			copy.entries = new HashSet<FilterEntry>();
-			for (FilterEntry entry : entries) {
+			copy.entries = new HashSet<FindingType>();
+			for (FindingType entry : entries) {
 				copy.entries.add(entry.copy());
 			}
 		} else {

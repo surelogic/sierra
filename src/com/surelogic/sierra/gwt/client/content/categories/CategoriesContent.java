@@ -201,7 +201,7 @@ public class CategoriesContent extends ContentComposite {
 				Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
 					categoryEditor.addFindings(dialog.getSelectedCategories(),
-							dialog.getExcludedFilters());
+							dialog.getExcludedFindings());
 				}
 			}
 

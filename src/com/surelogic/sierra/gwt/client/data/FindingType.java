@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-public class FilterEntry implements Serializable {
+public class FindingType implements Serializable {
 
 	/**
 	 * 
@@ -47,8 +47,8 @@ public class FilterEntry implements Serializable {
 		this.shortMessage = shortMessage;
 	}
 
-	public FilterEntry copy() {
-		FilterEntry copy = new FilterEntry();
+	public FindingType copy() {
+		FindingType copy = new FindingType();
 		copy.name = name;
 		copy.filtered = filtered;
 		copy.uuid = uuid;
@@ -70,7 +70,7 @@ public class FilterEntry implements Serializable {
 		if (obj == null) {
 			return false;
 		}
-		final FilterEntry other = (FilterEntry) obj;
+		final FindingType other = (FindingType) obj;
 		if (uuid == null) {
 			if (other.uuid != null) {
 				return false;
