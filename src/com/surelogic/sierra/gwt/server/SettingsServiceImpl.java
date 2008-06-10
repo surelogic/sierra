@@ -85,7 +85,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 										final List<String> result = new ArrayList<String>();
 										final int count = 0;
 										for (final Row row : r) {
-											if (count < limit) {
+											if ((limit == -1)
+													|| (count < limit)) {
 												result.add(row.nextString());
 											} else {
 												return result;
@@ -118,7 +119,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final Map<String, String> results = new HashMap<String, String>();
 			int count = 0;
 			for (final Row row : r) {
-				if (count++ < limit) {
+				if ((limit == -1) || (count++ < limit)) {
 					results.put(row.nextString(), row.nextString());
 				} else {
 					return results;
