@@ -414,6 +414,10 @@ public final class ClientFindingManager extends FindingManager {
 
 				log.fine("Deleting temp ids");
 				deleteTempIds.execute();
+
+				if (debug) {
+					log.fine("Calculating finding relations");
+				}
 				monitor.worked(1);
 			} else {
 				throw new IllegalArgumentException("No scan with uid " + scan

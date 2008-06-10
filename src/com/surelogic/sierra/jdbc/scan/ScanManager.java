@@ -5,9 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +44,9 @@ public final class ScanManager {
 	private final PreparedStatement updateScanOverviewByFinding;
 	private final PreparedStatement selectArtifactsByTool;
 	private final PreparedStatement selectCurrentFindingByTool;
+	private final PreparedStatement deleteArtifact;
+	private final PreparedStatement deleteArtifactRelation;
+	private final PreparedStatement updateArtifactRelationScan;
 
 	private ScanManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -103,18 +106,28 @@ public final class ScanManager {
 		getLatestScanByProject = conn
 				.prepareStatement("SELECT SCAN_UUID FROM LATEST_SCANS WHERE PROJECT = ?");
 		selectArtifactsByCompilation = conn
-				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
+				.prepareStatement("SELECT A.ID,A.SCAN_NUMBER FROM SCAN S, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU WHERE"
 						+ "   CU.ID = ? AND"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND"
 						+ "   CU.ID = SL.COMPILATION_UNIT_ID");
 		selectArtifactsByTool = conn
-				.prepareStatement("SELECT A.ID FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, TOOL T WHERE"
+				.prepareStatement("SELECT A.ID,A.SCAN_NUMBER FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, TOOL T WHERE"
 						+ "   A.SCAN_ID = ? AND"
 						+ "   A.ARTIFACT_TYPE_ID = ART.ID AND"
 						+ "   ART.TOOL_ID = T.ID AND T.NAME = ?");
 		updateArtifactScan = conn
 				.prepareStatement("UPDATE ARTIFACT SET SCAN_ID = ? WHERE ID = ?");
+		updateArtifactRelationScan = conn
+				.prepareStatement("UPDATE ARTIFACT_NUMBER_RELTN SET SCAN_ID = ? "
+						+ "   WHERE (SCAN_ID = ?) AND ((CHILD_NUMBER = ?) "
+						+ "      OR (PARENT_NUMBER = ?))");
+		deleteArtifactRelation = conn
+				.prepareStatement("DELETE FROM ARTIFACT_NUMBER_RELTN "
+						+ "   WHERE (SCAN_ID = ?) AND ((CHILD_NUMBER = ?) "
+						+ "      OR (PARENT_NUMBER = ?))");
+		deleteArtifact = conn
+				.prepareStatement("DELETE FROM ARTIFACT WHERE ID = ?");
 		deleteMetricByCompilation = conn
 				.prepareStatement("DELETE FROM METRIC_CU WHERE COMPILATION_UNIT_ID = ? AND SCAN_ID = ?");
 		updateMetricScan = conn
@@ -314,17 +327,52 @@ public final class ScanManager {
 					oldest.select();
 				}
 				for (final String tool : tools) {
+					selectArtifactsByTool.setLong(1, oldest.getId());
+					selectArtifactsByTool.setString(2, tool);
+					final ResultSet oldToolSet = selectArtifactsByTool
+							.executeQuery();
+					try {
+						while (oldToolSet.next()) {
+							final long id = oldToolSet.getLong(1);
+							final Integer number = JDBCUtils
+									.getNullableInteger(2, oldToolSet);
+							if (number != null) {
+								deleteArtifactRelation.setLong(1, oldest
+										.getId());
+								deleteArtifactRelation.setInt(1, number);
+								deleteArtifactRelation.setInt(2, number);
+								deleteArtifactRelation.execute();
+							}
+							deleteArtifact.setLong(1, id);
+							deleteArtifact.execute();
+						}
+					} finally {
+						oldToolSet.close();
+					}
 					selectArtifactsByTool.setLong(1, latest.getId());
 					selectArtifactsByTool.setString(2, tool);
 					final ResultSet artToolSet = selectArtifactsByTool
 							.executeQuery();
-					final List<Long> artifactIds = new ArrayList<Long>();
+					final Set<Long> artifactIds = new HashSet<Long>();
+					final Set<Integer> artifactNumbers = new HashSet<Integer>();
 					try {
 						while (artToolSet.next()) {
 							artifactIds.add(artToolSet.getLong(1));
+							final Integer number = JDBCUtils
+									.getNullableInteger(2, artToolSet);
+							if (number != null) {
+								artifactNumbers.add(number);
+							}
 						}
 					} finally {
 						artToolSet.close();
+					}
+					for (final int number : artifactNumbers) {
+						updateArtifactRelationScan.setLong(1, oldest.getId());
+						updateArtifactRelationScan.setLong(2, latest.getId());
+						updateArtifactRelationScan.setInt(3, number);
+						updateArtifactRelationScan.setInt(4, number);
+						updateArtifactRelationScan.execute();
 					}
 					for (final long artifactId : artifactIds) {
 						int idx = 1;
@@ -449,18 +497,65 @@ public final class ScanManager {
 							int idx = 1;
 							selectArtifactsByCompilation.setLong(idx++, cu
 									.getId());
+							selectArtifactsByCompilation.setLong(idx++, oldest
+									.getId());
+							set = selectArtifactsByCompilation.executeQuery();
+							try {
+								while (set.next()) {
+									final long id = set.getLong(1);
+									final Integer number = JDBCUtils
+											.getNullableInteger(2, set);
+									if (number != null) {
+										deleteArtifactRelation.setLong(1,
+												oldest.getId());
+										deleteArtifactRelation
+												.setInt(2, number);
+										deleteArtifactRelation
+												.setInt(3, number);
+										deleteArtifactRelation.execute();
+									}
+									deleteArtifact.setLong(1, id);
+									deleteArtifact.execute();
+								}
+							} finally {
+								set.close();
+							}
+							idx = 1;
+							selectArtifactsByCompilation.setLong(idx++, cu
+									.getId());
 							selectArtifactsByCompilation.setLong(idx++, latest
 									.getId());
 							set = selectArtifactsByCompilation.executeQuery();
 							try {
-								final List<Long> artifactIds = new ArrayList<Long>();
+								final Set<Long> artifactIds = new HashSet<Long>();
+								final Set<Integer> artifactNumbers = new HashSet<Integer>();
 								while (set.next()) {
 									artifactIds.add(set.getLong(1));
+									final Integer number = JDBCUtils
+											.getNullableInteger(2, set);
+									if (number != null) {
+										artifactNumbers.add(number);
+									}
+								}
+								for (final int number : artifactNumbers) {
+									updateArtifactRelationScan.setLong(1,
+											oldest.getId());
+									updateArtifactRelationScan.setLong(2,
+											latest.getId());
+									updateArtifactRelationScan
+											.setInt(3, number);
+									updateArtifactRelationScan
+											.setInt(4, number);
+									updateArtifactRelationScan.execute();
 								}
 								for (final long artifactId : artifactIds) {
 									idx = 1;
 									updateArtifactScan.setLong(idx++, oldest
 											.getId());
+									updateArtifactScan.setLong(idx++, latest
+											.getId());
+									updateArtifactScan.setLong(idx++,
+											artifactId);
 									updateArtifactScan.setLong(idx++,
 											artifactId);
 									updateArtifactScan.execute();
