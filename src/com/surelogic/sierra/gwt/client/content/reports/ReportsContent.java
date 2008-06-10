@@ -12,7 +12,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 public class ReportsContent extends ContentComposite {
 	private static final ReportsContent instance = new ReportsContent();
 	private final ReportsListView reportsView = new ReportsListView();
-	private final ReportView reportView = new ReportView();
+	private final ReportParametersView reportView = new ReportParametersView();
 	private final ReportCache reports = new ReportCache();
 
 	public static ReportsContent getInstance() {

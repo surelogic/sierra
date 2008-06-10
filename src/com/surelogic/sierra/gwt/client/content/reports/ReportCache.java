@@ -29,7 +29,8 @@ public class ReportCache extends Cache<Report> {
 		report.setName("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
 		Set<Parameter> params = new HashSet<Parameter>();
-		params.add(new Parameter("Projects", Type.MultiList));
+		params.add(new Parameter("Projects", Type.PROJECTS));
+		params.add(new Parameter("Priority", Type.PRIORITY));
 		report.setParameters(params);
 		return report;
 	}
