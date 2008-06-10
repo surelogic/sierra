@@ -92,7 +92,11 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		if (s != null) {
 			final String cu = s.getAttribute(CUNIT_ATTR);
 			loc.compilation(cu);
-			loc.className(cu);
+			if (cu.endsWith(".java")) {
+	       loc.className(cu.substring(0, cu.length() - 5));
+			} else {
+			  loc.className(cu);
+			}
 			loc.packageName(s.getAttribute(PKG_ATTR));
 
 			final int line = Integer.parseInt(s.getLine());
