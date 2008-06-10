@@ -172,7 +172,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 		// Nothing to do
 	}
 
-	public void relation(int parentNumber, int childNumber) {
+	public void relation(int parentNumber, int childNumber, String type) {
 		// Nothing to do
 	}
 }
