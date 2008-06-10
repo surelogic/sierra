@@ -120,13 +120,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				insertArtifactNumberRelation.setInt(2, relation.parentNumber);
 				insertArtifactNumberRelation.setInt(3, relation.childNumber);
 				insertArtifactNumberRelation.setString(4, relation.type);
-				try {
-					insertArtifactNumberRelation.execute();
-				} catch (final SQLException e) {
-					System.out.println("scan: " + scan.getId() + " parent: "
-							+ relation.parentNumber + " child: "
-							+ relation.childNumber + " type: " + relation.type);
-				}
+				insertArtifactNumberRelation.execute();
 			}
 			monitor.worked(1);
 			artifacts.clear();
