@@ -233,8 +233,10 @@ public final class SierraServerManager extends
 		if (server == null) {
 			throw new IllegalArgumentException("server must be non-null");
 		}
-		f_focus = server;
-		notifyObservers();
+		if (f_focus != server) {
+		  f_focus = server;
+		  notifyObservers();
+		}
 	}
 
 	/**
