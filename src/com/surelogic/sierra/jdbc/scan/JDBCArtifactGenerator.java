@@ -89,7 +89,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		aBuilder = new JDBCArtifactBuilder();
 		mBuilder = new JDBCMetricBuilder();
 		insertArtifactNumberRelation = conn
-				.prepareStatement("INSERT INTO ARTIFACT_NUMBER_RELTN (SCAN_ID,PARENT_NUMBER,CHILD_NUMBER) VALUES (?,?,?)");
+				.prepareStatement("INSERT INTO ARTIFACT_NUMBER_RELTN (SCAN_ID,PARENT_NUMBER,CHILD_NUMBER,RELATION_TYPE) VALUES (?,?,?,?)");
 	}
 
 	/*
