@@ -47,7 +47,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	}
 
 	@Override
-	protected void define(final int id, Entity e) {
+	protected boolean define(final int id, Entity e) {
 		// Only build for Sierra-like entities
 		final String name = e.getName();
 		final boolean warning;
@@ -71,7 +71,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			final String result = e.getAttribute(RESULT_ATTR);
 			aType = result != null ? result : "JSure";
 		} else {
-			return;
+			return false;
 		}
 		if (createSourceLocation(builder.primarySourceLocation(), e.getSource())) {
 			final String msg = e.getAttribute(MESSAGE_ATTR);
@@ -84,8 +84,10 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			builder.findingType("JSure", "1.0", aType);
 			builder.scanNumber(id);
 			// e.getAttribute(CATEGORY_ATTR));
+			builder.build();
+			return true;
 		}
-		builder.build();
+		return false;
 	}
 
 	private boolean createSourceLocation(SourceLocationBuilder loc, SourceRef s) {
