@@ -231,7 +231,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		passwordLabel.setLayoutData(data);
 		final Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		passwordText.setText(f_server.getPass());
+		if (f_server.getPass() == null) {
+		  passwordText.setText("");
+		} else {
+		  passwordText.setText(f_server.getPass());
+		}
 		passwordText.setEchoChar('\u25CF');
 
 		final Button validateButton = new Button(panel, SWT.CHECK);
