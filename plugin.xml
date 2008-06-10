@@ -263,6 +263,13 @@
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/asterisk_diamond_orange.gif"
 			name="Finding Details">
 		</view>
+		
+		<view category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
+			id="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
+			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/plus.gif"
+			name="JSure Finding Details">
+		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.client.eclipse.views.SierraServersView"

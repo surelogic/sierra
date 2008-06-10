@@ -103,7 +103,7 @@ public final class FindingDetailsPersistence {
 							"Findings Details View was showing the finding "
 									+ findingId + " according to " + file);
 				}
-				view.asyncQueryAndShow(findingId);
+				view.asyncQueryAndShow(findingId, false);
 			}
 			// regardless set the sash weights
 			final int sashLocationWeight = handler.getSashLocationWeight();

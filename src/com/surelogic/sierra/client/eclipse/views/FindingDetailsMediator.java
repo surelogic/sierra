@@ -30,6 +30,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.*;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
@@ -40,6 +41,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
@@ -216,7 +218,7 @@ implements IViewUpdater {
 	
 	//private AtomicLong findingQueryInProgress = new AtomicLong();
 	
-	void asyncQueryAndShow(final long findingId) {
+	void asyncQueryAndShow(final long findingId, final boolean moveFocus) {
 		/*
 		long lastId = findingQueryInProgress.getAndSet(findingId);
 		if (lastId == findingId) {
@@ -232,7 +234,12 @@ implements IViewUpdater {
 				try {
 					Connection c = Data.readOnlyConnection();
 					try {
-						f_finding = FindingDetail.getDetailOrNull(c, findingId);
+					  FindingDetail detail = FindingDetail.getDetailOrNull(c, findingId);
+						f_finding = detail;
+						
+				    if (XUtil.useExperimental()) {
+				      JSureFindingDetailsView.findingSelected(detail, moveFocus);
+				    }
 
 						// got details, update the view in the UI thread
 						asyncUpdateContentsForUI(FindingDetailsMediator.this);
@@ -860,7 +867,7 @@ implements IViewUpdater {
 	@Override
 	public void changed() {
 		if (f_finding != null) {
-			asyncQueryAndShow(f_finding.getFindingId());
+			asyncQueryAndShow(f_finding.getFindingId(), false);
 		}
 	}
 

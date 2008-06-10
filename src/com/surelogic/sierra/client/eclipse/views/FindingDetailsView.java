@@ -325,6 +325,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		} else {
 			view = (FindingDetailsView) ViewUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		}
-		view.f_mediator.asyncQueryAndShow(findingID);
+		if (view != null) {
+		  view.f_mediator.asyncQueryAndShow(findingID, moveFocus);
+		}
 	}
 }
