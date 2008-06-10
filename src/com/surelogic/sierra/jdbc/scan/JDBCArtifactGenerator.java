@@ -119,6 +119,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				insertArtifactNumberRelation.setLong(1, scan.getId());
 				insertArtifactNumberRelation.setInt(2, relation.parentNumber);
 				insertArtifactNumberRelation.setInt(3, relation.childNumber);
+				insertArtifactNumberRelation.setString(4, relation.type);
 				insertArtifactNumberRelation.execute();
 			}
 			monitor.worked(1);
@@ -424,19 +425,21 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 		}
 	}
 
-	public void relation(int parentNumber, int childNumber) {
+	public void relation(int parentNumber, int childNumber, String type) {
 		artifactRelations.add(new ArtifactArtifactRelation(parentNumber,
-				childNumber));
+				childNumber, type));
 
 	}
 
 	private static class ArtifactArtifactRelation {
 		final int childNumber;
 		final int parentNumber;
+		final String type;
 
-		ArtifactArtifactRelation(int parentNumber, int childNumber) {
+		ArtifactArtifactRelation(int parentNumber, int childNumber, String type) {
 			this.parentNumber = parentNumber;
 			this.childNumber = childNumber;
+			this.type = type;
 		}
 	}
 
