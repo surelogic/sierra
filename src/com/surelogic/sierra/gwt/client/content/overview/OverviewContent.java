@@ -40,10 +40,10 @@ public final class OverviewContent extends ContentComposite {
 		dashboard.getColumnFormatter().setWidth(0, "50%");
 		dashboard.getColumnFormatter().setWidth(1, "50%");
 
-		addDashboardSection(0, 0, new LatestScansChart());
-		addDashboardSection(0, 1, new AuditContributionsChart());
-		addDashboardSection(1, 0, new PublishedProjectsTable());
-		addDashboardSection(1, 1, new LatestAuditsTable());
+		addDashboardSection(0, 0, 2, 1, new LatestScansChart());
+		addDashboardSection(0, 1, 1, 1, new AuditContributionsChart());
+		addDashboardSection(1, 0, 1, 1, new LatestAuditsTable());
+		addDashboardSection(2, 0, 1, 2, new PublishedProjectsTable());
 
 		rootPanel.add(panel, DockPanel.CENTER);
 	}
@@ -62,9 +62,12 @@ public final class OverviewContent extends ContentComposite {
 		}
 	}
 
-	private void addDashboardSection(int row, int col, SectionPanel section) {
+	private void addDashboardSection(int row, int col, int rowSpan,
+			int colSpan, SectionPanel section) {
 		dashboard.setWidget(row, col, section);
 		dashboard.getCellFormatter().addStyleName(row, col, "dashboard-cell");
+		dashboard.getFlexCellFormatter().setRowSpan(row, col, rowSpan);
+		dashboard.getFlexCellFormatter().setColSpan(row, col, colSpan);
 		sections.add(section);
 	}
 
