@@ -27,6 +27,7 @@ public class BasicPanel extends Composite {
 		initWidget(rootPanel);
 		rootPanel.addStyleName(PRIMARY_STYLE);
 		rootPanel.setWidth("100%");
+		rootPanel.setHeight("auto");
 
 		titlePanel.addStyleName(PRIMARY_STYLE + "-titlepanel");
 
