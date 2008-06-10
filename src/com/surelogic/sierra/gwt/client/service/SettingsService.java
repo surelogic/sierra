@@ -17,6 +17,8 @@ public interface SettingsService extends RemoteService {
 	 * 
 	 * 
 	 * @param query
+	 * @param limit
+	 *            the number of results to return, or -1 for an unbounded number
 	 * @return a map of key/name pairs
 	 */
 	Map<String, String> searchFindingTypes(String query, int limit);
@@ -27,6 +29,8 @@ public interface SettingsService extends RemoteService {
 	 * 
 	 * 
 	 * @param query
+	 * @param limit
+	 *            the number of results to return, or -1 for an unbounded number
 	 * @return a map of key/name pairs
 	 */
 	Map<String, String> searchCategories(String query, int limit);
@@ -36,6 +40,7 @@ public interface SettingsService extends RemoteService {
 	 * 
 	 * @param query
 	 * @param limit
+	 *            the number of results to return, or -1 for an unbounded number
 	 * @return a list of project names
 	 */
 	List<String> searchProjects(String query, int limit);
