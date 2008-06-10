@@ -574,31 +574,27 @@ public abstract class Filter {
 			if (filter instanceof FilterSelection)
 				stateFilterNotUsed = false;
 			if (filter.hasWhereClausePart()) {
-				if (first) {
-					b.append("where ");
-					first = false;
-				} else {
-					b.append(" and ");
-				}
+				first = addClausePrefix(b, first);
 				b.append(filter.getWhereClausePart());
 			}
 			filter = filter.f_previous;
 		}
 		if (stateFilterNotUsed && !(this instanceof FilterSelection)) {
-			/*
-			 * In this case we need to add to the where clause to filter out all
-			 * the findings that have been fixed.
-			 */
-			if (first) {
-				b.append("where ");
-				first = false;
-			} else {
-				b.append(" and ");
-			}
+			first = addClausePrefix(b, first);
 			FilterSelection.addWhereClauseToFilterOutFixed(b);
 		}
 		return b.toString();
 	}
+
+  private boolean addClausePrefix(final StringBuilder b, boolean first) {
+    if (first) {
+    	b.append("where ");
+    	first = false;
+    } else {
+    	b.append(" and ");
+    }
+    return first;
+  }
 
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
