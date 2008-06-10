@@ -37,16 +37,21 @@ public final class SierraServer {
 		return f_label;
 	}
 
-	public void setLabel(String label) {
+	public boolean setLabel(String label) {
 		if ((label == null) || label.equals(f_label)) {
-			return;
+			return false;
 		}
-		// overwrite semantics, i.e., no check if the new name is in use
+		setLabel_internal(label);
+		f_manager.notifyObservers();
+		return true;
+	}
+
+  private void setLabel_internal(String label) {
+    // overwrite semantics, i.e., no check if the new name is in use
 		f_manager.f_labelToServer.remove(f_label);
 		f_label = label;
 		f_manager.f_labelToServer.put(f_label, this);
-		f_manager.notifyObservers();
-	}
+  }
 
 	private boolean f_secure = false;
 
@@ -210,7 +215,7 @@ public final class SierraServer {
 				|| differs(f_user, loc.getUser())
 				|| differs(f_password, loc.getPass())
 		        || changedInfo;
-		f_label = loc.getLabel();
+		setLabel_internal(loc.getLabel());
 		f_host = loc.getHost();
 		f_secure = loc.isSecure();
 		f_port = loc.getPort();
