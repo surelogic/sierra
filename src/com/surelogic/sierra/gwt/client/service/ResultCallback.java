@@ -1,11 +1,8 @@
 package com.surelogic.sierra.gwt.client.service;
 
-import java.io.Serializable;
-
 import com.surelogic.sierra.gwt.client.data.Result;
 
-public abstract class ResultCallback<T extends Serializable> extends
-		StandardCallback<Result<T>> {
+public abstract class ResultCallback<T> extends StandardCallback<Result<T>> {
 
 	@Override
 	protected final void doSuccess(Result<T> result) {

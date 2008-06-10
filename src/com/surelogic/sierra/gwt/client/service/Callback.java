@@ -1,15 +1,12 @@
 package com.surelogic.sierra.gwt.client.service;
 
-import java.io.Serializable;
-
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
-public abstract class Callback<T extends Serializable> implements
-		AsyncCallback<Result<T>> {
+public abstract class Callback<T> implements AsyncCallback<Result<T>> {
 	private final String debugMessage;
 
 	public Callback() {
