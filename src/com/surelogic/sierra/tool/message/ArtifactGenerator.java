@@ -12,7 +12,7 @@ public interface ArtifactGenerator {
 
 	public ArtifactBuilder artifact();
 
-	public void relation(int parentNumber, int childNumber);
+	public void relation(int parentNumber, int childNumber, String type);
 
 	public ErrorBuilder error();
 
