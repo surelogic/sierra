@@ -40,7 +40,7 @@ public final class LatestScanResults implements IDatabasePlot {
 			}
 		});
 
-		mutableSize.setHeight(50 * overview.size() + 100);
+		mutableSize.setHeight(25 * overview.size() + 100);
 
 		for (ProjectOverview po : overview) {
 			importanceData.setValue(po.getCritical(), "Critical", po.getName());
