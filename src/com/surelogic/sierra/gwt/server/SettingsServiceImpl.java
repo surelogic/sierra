@@ -17,7 +17,7 @@ import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.CategoryComparator;
-import com.surelogic.sierra.gwt.client.data.FilterEntry;
+import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Result;
@@ -151,10 +151,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								parents.add(getOrCreateSet(parent, sets));
 							}
 							set.setParents(parents);
-							final Set<FilterEntry> filters = new HashSet<FilterEntry>();
+							final Set<FindingType> filters = new HashSet<FindingType>();
 							for (final CategoryEntryDO fDetail : detail
 									.getFilters()) {
-								final FilterEntry filter = new FilterEntry();
+								final FindingType filter = new FindingType();
 								filter.setFiltered(fDetail.isFiltered());
 								final FindingTypeDO type = types
 										.getFindingType(fDetail
@@ -234,8 +234,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					parentSet.add(parent.getUuid());
 				}
 				final Set<CategoryEntryDO> entrySet = set.getFilters();
-				final Set<FilterEntry> entries = c.getEntries();
-				for (final FilterEntry entry : entries) {
+				final Set<FindingType> entries = c.getEntries();
+				for (final FindingType entry : entries) {
 					entrySet.add(new CategoryEntryDO(entry.getUuid(), entry
 							.isFiltered()));
 				}
