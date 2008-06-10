@@ -32,7 +32,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	}
 	
 	@Override
-	protected void define(Entity e) {
+	protected void define(final int id, Entity e) {
 		// Only build for Sierra-like entities
 		final String name = e.getName();
 		final boolean warning;	
@@ -67,7 +67,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
 			}
 			builder.findingType("JSure", "1.0", aType);
-			builder.scanNumber(Integer.valueOf(e.getId()));
+			builder.scanNumber(id);
 			//e.getAttribute(CATEGORY_ATTR));
 		}
 		builder.build();
@@ -93,9 +93,10 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	}
 
 	@Override
-	protected void handleDanglingRef(String from, Entity to) {
+	protected void handleRef(String from, int fromId, Entity to) {
 		// TODO handle
 		System.out.println("Handled "+to+" ref from "+from+" to "+to.getId());
+		aGenerator.relation(fromId, Integer.valueOf(to.getId()));
 	}	
 	/*
 	@Override
