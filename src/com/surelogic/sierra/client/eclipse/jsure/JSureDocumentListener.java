@@ -109,11 +109,8 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 
 	@Override
 	protected void handleRef(String from, int fromId, Entity to) {
-		// TODO handle
-		System.out.println("Handled " + to + " ref from " + from + " to "
-				+ to.getId());
-		// TODO
-		aGenerator.relation(fromId, Integer.valueOf(to.getId()), "TYPE");
+		System.out.println("Handled " + to + " ref from " + from + " to "	+ to.getId());
+		aGenerator.relation(fromId, Integer.valueOf(to.getId()), to.getName());
 	}
 	/*
 	 * @Override public void done() { }
