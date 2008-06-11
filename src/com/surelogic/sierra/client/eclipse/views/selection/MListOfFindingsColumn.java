@@ -901,7 +901,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 		if (longest < 25) {
 			return 30;
 		}
-		return longest + 5;
+		final int rv = longest + 5;
+		Rectangle bounds = f_table.getClientArea();
+		Composite p = f_table.getParent();
+		while (p != null) {
+			System.out.println(p+" : "+p.getClientArea().width);
+			if (p instanceof CascadingList) {
+				bounds = p.getClientArea();
+				break;
+			}
+			p = p.getParent();
+		}
+		final int maxWidth = bounds.width - 50;
+		return rv > maxWidth ? maxWidth : rv;
 	}
 
 	private boolean initTableItem(final int i, FindingData data,
