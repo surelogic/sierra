@@ -19,7 +19,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.categories.CategoryEditor.FindingsEditor;
 import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
+import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
@@ -105,17 +105,14 @@ public class CategoriesContent extends ContentComposite {
 		rootPanel.add(selectionPanel, DockPanel.CENTER);
 		rootPanel.setCellWidth(selectionPanel, "75%");
 
-		categories.addListener(new CacheListener<Category>() {
+		categories.addListener(new CacheListenerAdapter<Category>() {
 
-			public void onStartRefresh(Cache<Category> cache) {
-				searchBlock.startRefresh();
-			}
-
+			@Override
 			public void onRefresh(Cache<Category> cache, Throwable failure) {
-				searchBlock.refresh();
 				refreshContext(ContextManager.getContext());
 			}
 
+			@Override
 			public void onItemUpdate(Cache<Category> cache, Category item,
 					Status status, Throwable failure) {
 				categories.refresh();
@@ -314,7 +311,7 @@ public class CategoriesContent extends ContentComposite {
 
 		@Override
 		protected boolean isMatch(Category item, String query) {
-			return item.getName().toLowerCase().indexOf(query) >= 0;
+			return item.getName().toLowerCase().indexOf(query.toLowerCase()) >= 0;
 		}
 
 		@Override

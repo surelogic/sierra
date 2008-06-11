@@ -6,13 +6,16 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Cache;
+import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
+import com.surelogic.sierra.gwt.client.data.Status;
 
 public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		extends BlockPanel {
@@ -55,16 +58,26 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 				results.search(searchText.getText());
 			}
 		});
-	}
 
-	public void startRefresh() {
-		results.clearResults();
-		results.setWaitStatus();
-	}
+		cache.addListener(new CacheListener<E>() {
 
-	public void refresh() {
-		results.search(searchText.getText());
-		results.setSelection(selection);
+			public void onStartRefresh(Cache<E> cache) {
+				results.clearResults();
+				results.setWaitStatus();
+			}
+
+			public void onItemUpdate(Cache<E> cache, E item, Status status,
+					Throwable failure) {
+				results.search(searchText.getText());
+				results.setSelection(selection);
+			}
+
+			public void onRefresh(Cache<E> cache, Throwable failure) {
+				results.search(searchText.getText());
+				results.setSelection(selection);
+			}
+
+		});
 	}
 
 	public void clear() {
@@ -106,10 +119,15 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 				}
 			}
 			final String query = queryBuf.toString();
+			boolean matchFound = false;
 			for (E item : cache) {
 				if (isMatch(item, query)) {
 					addItem(item);
+					matchFound = true;
 				}
+			}
+			if (!matchFound) {
+				getContentPanel().add(new HTML("No matches found."));
 			}
 			clearStatus();
 			setSelection(selection);
