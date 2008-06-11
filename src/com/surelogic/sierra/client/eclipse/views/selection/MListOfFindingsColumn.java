@@ -905,7 +905,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		Rectangle bounds = f_table.getClientArea();
 		Composite p = f_table.getParent();
 		while (p != null) {
-			System.out.println(p+" : "+p.getClientArea().width);
+			//System.out.println(p+" : "+p.getClientArea().width);
 			if (p instanceof CascadingList) {
 				bounds = p.getClientArea();
 				break;
