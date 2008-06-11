@@ -460,7 +460,7 @@
     <artifact tool="JSure" mnemonic="LockAnalysis_ds_NoMatchingUnlocks"/>
     <shortMessage>No Matching Unlocks</shortMessage>
     <info>TBD</info>
-    <name>Scoped Promise</name>
+    <name>No Matching Unlocks</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_MatchingUnlock</id>
