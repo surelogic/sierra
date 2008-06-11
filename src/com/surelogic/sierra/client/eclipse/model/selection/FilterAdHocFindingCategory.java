@@ -9,6 +9,7 @@ import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.IBuglinkDataObserver;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 
 public final class FilterAdHocFindingCategory extends Filter 
 implements IBuglinkDataObserver {
@@ -68,19 +69,23 @@ implements IBuglinkDataObserver {
 			final Iterator<String> it = f_allValues.iterator();
 			while (it.hasNext()) {
 			  final String cat = it.next();
+			  //final CategoryDO catDef = buglink.getCategoryDef(cat);
 			  
 				// Compute the count for the category
 				int count = 0;
 				for(String findingType : buglink.getFindingTypes(cat)) {
-					String typeName = buglink.getFindingType(findingType).getName();
+					final FindingTypeDO def = buglink.getFindingType(findingType);
+					//final String typeId = def.getUid();
+					final String typeName = def.getName();
 					Integer inc = f_counts.get(typeName);
 					if (inc != null) {
+						//System.out.println(catDef.getName()+" : "+def.getName()+" - "+typeId+" = "+inc);
 						count += inc;
 					}
 				}
 				if (count == 0) {
 				  it.remove();
-				} else {
+				} else {					
 				  f_counts.put(cat, count);
 				}
 			}
