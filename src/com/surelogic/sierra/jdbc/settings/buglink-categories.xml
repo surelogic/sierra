@@ -3206,7 +3206,7 @@
         <filter><type>LockAnalysis_ds_AggregationNeeded</type></filter>
 		    <filter><type>LockAnalysis_ds_UnidentifiableLock</type></filter>
 		    <filter><type>LockAnalysis_ds_NonfinalExpression</type></filter>
-		    <filter><type>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</type></filter>
+		    <!-- LockAnalysis_ds_IndirectFieldAccessAssuredAlternative -->
 		    <filter><type>LockAnalysis_ds_MatchingLock</type></filter>
 		    <filter><type>LockAnalysis_ds_ReturnNotAssured</type></filter>
 		    <filter><type>LockAnalysis_ds_MasqueradingCall</type></filter>
