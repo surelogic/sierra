@@ -3185,4 +3185,182 @@
             <filtered>false</filtered>
         </filter>
     </filterSets>
+    
+    <!-- JSure stuff --> 
+    <filterSets>
+        <uid>00000001-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Thread Effects Assurance</name>
+        <filter><type>ThreadEffectsAnalysis_threadEffectDrop</type></filter>
+		    <filter><type>ThreadEffectsAnalysis_callPromiseDrop</type></filter>
+		    <filter><type>ThreadEffectsAnalysis_callNotPromiseDrop</type></filter>
+		    <filter><type>ThreadEffectsAnalysis_noThreadsDrop</type></filter>
+        <info></info>
+    </filterSets>    
+    <filterSets>
+        <uid>00000002-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Lock Assurance</name>
+        <filter><type>LockAnalysis_ds_AggregationNeeded</type></filter>
+		    <filter><type>LockAnalysis_ds_UnidentifiableLock</type></filter>
+		    <filter><type>LockAnalysis_ds_NonfinalExpression</type></filter>
+		    <filter><type>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</type></filter>
+		    <filter><type>LockAnalysis_ds_MatchingLock</type></filter>
+		    <filter><type>LockAnalysis_ds_ReturnNotAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_MasqueradingCall</type></filter>
+		    <filter><type>LockAnalysis_ds_SynchronizedStaticMethodWarningDetails</type></filter>
+		    <filter><type>LockAnalysis_ds_SynchronizationUnused</type></filter>
+		    <filter><type>LockAnalysis_ds_IndirectFieldAccessAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_AggregationNeeded2</type></filter>
+		    <filter><type>LockAnalysis_ds_AggregationEvidence</type></filter>
+		    <filter><type>LockAnalysis_ds_NoMatchingUnlocks</type></filter>
+        <filter><type>LockAnalysis_ds_IndirectFieldAccessNotAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_SynchronizedMethodWarningDetails</type></filter>
+		    <filter><type>LockAnalysis_ds_HeldJUCLock</type></filter>
+		    <filter><type>LockAnalysis_ds_ReturnAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_MatchingUnlock</type></filter>
+		    <filter><type>LockAnalysis_ds_SynchronizedConstructorAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_OnBehalfOfConstructor</type></filter>
+		    <filter><type>LockAnalysis_ds_FieldAccessNotAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_DeclaredJUCLockField</type></filter>
+		    <filter><type>LockAnalysis_ds_SyncedJUCLock</type></filter>
+		    <filter><type>LockAnalysis_ds_PreconditionsAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_PreconditionsNotAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_PreconditionsAssuredAlternative</type></filter>
+		    <filter><type>LockAnalysis_ds_PoisonedLockCall</type></filter>
+		    <filter><type>LockAnalysis_ds_RedundantSynchronized</type></filter>
+		    <filter><type>LockAnalysis_ds_FieldAccessAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_FieldAccessNotResolvable</type></filter>
+		    <filter><type>LockAnalysis_ds_MasqueradingCall2</type></filter>		    
+		    <filter><type>LockAnalysis_ds_JUCLockFields</type></filter>
+		    <filter><type>LockAnalysis_ds_PreconditionNotResolvable</type></filter>
+		    <filter><type>LockAnalysis_ds_HeldLock</type></filter>
+		    <filter><type>LockAnalysis_ds_SynchronizedConstructorNotAssured</type></filter>
+		    <filter><type>LockAnalysis_ds_FieldDeclaration</type></filter>
+		    <filter><type>LockAnalysis_ds_PoisonedUnlockCall</type></filter>
+		    <filter><type>LockAnalysis_ds_FieldAccessAssuredAlternative</type></filter>
+		    <filter><type>LockAnalysis_ds_NoMatchingLocks</type></filter>
+        <info></info>
+    </filterSets>    
+    <filterSets>
+        <uid>00000003-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Uniqueness Assurance</name>
+        <info></info>
+        <filter><type>UniquenessAssurance_uniquenessContraints1</type></filter>
+		    <filter><type>UniquenessAssurance_uniquenessContraints2</type></filter>
+		    <filter><type>UniquenessAssurance_uniqueReturnDrop</type></filter>
+		    <filter><type>UniquenessAssurance_borrowedParametersDrop</type></filter>
+		    <filter><type>UniquenessAssurance_uniqueParametersDrop</type></filter>
+		    <filter><type>UniquenessAssurance_effectOfCallDrop</type></filter>
+		    <filter><type>UniquenessAssurance_dependencyDrop</type></filter>
+		    <filter><type>UniquenessAssurance_error</type></filter>
+		    <filter><type>UniquenessAssurance</type></filter>
+    </filterSets>      
+    <filterSets>
+        <uid>00000004-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Thread Color Assurance</name>        
+        <info></info>
+        <filter><type>ColorSecondPass_inheritedColor</type></filter>
+		    <filter><type>ColorSecondPass_inferredColor</type></filter>
+		    <filter><type>ColorSecondPass_inheritedTransparent</type></filter>
+		    <filter><type>ColorSecondPass_colorContextDrop</type></filter>
+    </filterSets>               
+    <filterSets>
+        <uid>10000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Uniqueness Annotations</name>
+        <info></info>
+        <filter><type>BorrowedPromiseDrop</type></filter>
+		    <filter><type>UniquePromiseDrop</type></filter>
+		    <filter><type>AggregatePromiseDrop</type></filter>
+    </filterSets>      
+    <filterSets>
+        <uid>20000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Thread Effects Annotations</name>
+        <info></info>
+        <filter><type>StartsPromiseDrop</type></filter>
+    </filterSets>  
+    <filterSets>
+        <uid>30000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Lock Annotations</name>
+        <info></info>
+        <filter><type>LockModel</type></filter>		
+		    <filter><type>RequiresLockPromiseDrop</type></filter>
+		    <filter><type>SelfProtectedPromiseDrop</type></filter>
+		    <filter><type>SingleThreadedPromiseDrop</type></filter>
+    </filterSets>  
+    <filterSets>
+        <uid>40000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Thread Color Annotations</name>
+        <info></info>
+        <filter><type>TransparentPromiseDrop</type></filter>
+    </filterSets>  
+    <filterSets>
+        <uid>50000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Region / Effects Annotations</name>
+        <info></info>
+        <filter><type>RegionEffectsPromiseDrop</type></filter>
+		    <filter><type>InRegionPromiseDrop</type></filter>
+		    <filter><type>RegionModel</type></filter>
+    </filterSets>  
+    <filterSets>
+        <uid>60000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>Scoped Promise Annotations</name>
+        <info></info>
+        <filter><type>PromisePromiseDrop</type></filter>
+    </filterSets>  
+    <filterSets>
+        <uid>00000006-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>JSure Models</name>
+        <info></info>
+        <filter><type>LockModel</type></filter>
+    </filterSets>
+    <filterSets>
+        <uid>00000005-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>JSure Annotations</name>
+        <info></info>
+        <parent>10000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>20000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>30000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>40000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>50000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>60000005-ef51-4f9c-92f6-351d214f46e7</parent>
+    </filterSets>    
+    <filterSets>
+        <uid>00000000-ef51-4f9c-92f6-351d214f46e7</uid>
+        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+        <revision>0</revision>
+        <name>JSure</name>        
+        <info></info>
+        <parent>00000001-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>00000002-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>00000003-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>00000004-ef51-4f9c-92f6-351d214f46e7</parent>
+        <parent>00000005-ef51-4f9c-92f6-351d214f46e7</parent>
+        <filter><type>JSure</type></filter>
+    </filterSets>     
 </listCategoryResponse>
+
+
+		    
