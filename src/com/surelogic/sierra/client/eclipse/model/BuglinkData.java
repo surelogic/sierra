@@ -113,13 +113,28 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 			}
 			categoryTypes = new HashSet<String>();			
 			for(String parent : defn.getParents()) {
-				categoryTypes.addAll(computeCategory(categories, rawCategories, parent));
+				//categoryTypes.addAll(computeCategory(categories, rawCategories, parent));
+				for(String type : computeCategory(categories, rawCategories, parent)) {
+					boolean added = categoryTypes.add(type);
+					/*
+					if (!added) {
+						System.out.println();
+					} else {
+						System.out.println(type);
+					}
+					*/
+				}
 			}
 			for(CategoryEntryDO filter : defn.getFilters()) {				
 				if (filter.isFiltered()) {
 					categoryTypes.remove(filter.getFindingType());
 				} else {
-					categoryTypes.add(filter.getFindingType());
+					boolean added = categoryTypes.add(filter.getFindingType());
+					/*
+					if (!added) {
+						System.out.println();
+					}
+					*/
 				}
 			}
 			categories.put(uid, categoryTypes);
