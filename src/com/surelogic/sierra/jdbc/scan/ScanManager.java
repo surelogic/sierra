@@ -42,6 +42,8 @@ public final class ScanManager {
 	private final PreparedStatement selectCurrentFindingByCompilation;
 	private final PreparedStatement deleteScanOverviewByFinding;
 	private final PreparedStatement updateScanOverviewByFinding;
+	private final PreparedStatement deleteScanOverviewFindingRelation;
+	private final PreparedStatement updateScanOverviewFindingRelation;
 	private final PreparedStatement selectArtifactsByTool;
 	private final PreparedStatement selectCurrentFindingByTool;
 	private final PreparedStatement deleteArtifact;
@@ -149,6 +151,10 @@ public final class ScanManager {
 				.prepareStatement("DELETE FROM SCAN_OVERVIEW WHERE SCAN_ID = ? AND FINDING_ID = ?");
 		updateScanOverviewByFinding = conn
 				.prepareStatement("UPDATE SCAN_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND FINDING_ID = ?");
+		deleteScanOverviewFindingRelation = conn
+				.prepareStatement("DELETE FROM SCAN_FINDING_RELATION_OVERVIEW WHERE SCAN_ID = ? AND (PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?)");
+		updateScanOverviewFindingRelation = conn
+				.prepareStatement("UPDATE SCAN_FINDING_RELATION_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND (PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?)");
 	}
 
 	public ScanGenerator getScanGenerator(FindingFilter filter) {
@@ -339,8 +345,8 @@ public final class ScanManager {
 							if (number != null) {
 								deleteArtifactRelation.setLong(1, oldest
 										.getId());
-								deleteArtifactRelation.setInt(1, number);
 								deleteArtifactRelation.setInt(2, number);
+								deleteArtifactRelation.setInt(3, number);
 								deleteArtifactRelation.execute();
 							}
 							deleteArtifact.setLong(1, id);
@@ -393,13 +399,27 @@ public final class ScanManager {
 						set.close();
 					}
 				}
-
 				for (final long findingId : findingIds) {
+					// Deletions must happen first, then updates
+					deleteScanOverviewFindingRelation
+							.setLong(1, oldest.getId());
+					deleteScanOverviewFindingRelation.setLong(2, findingId);
+					deleteScanOverviewFindingRelation.setLong(3, findingId);
+					deleteScanOverviewFindingRelation.execute();
 					int idx = 1;
 					deleteScanOverviewByFinding.setLong(idx++, oldest.getId());
 					deleteScanOverviewByFinding.setLong(idx++, findingId);
 					deleteScanOverviewByFinding.execute();
-					idx = 1;
+				}
+				for (final long findingId : findingIds) {
+					updateScanOverviewFindingRelation
+							.setLong(1, oldest.getId());
+					updateScanOverviewFindingRelation
+							.setLong(2, latest.getId());
+					updateScanOverviewFindingRelation.setLong(3, findingId);
+					updateScanOverviewFindingRelation.setLong(4, findingId);
+					updateScanOverviewFindingRelation.execute();
+					int idx = 1;
 					updateScanOverviewByFinding.setLong(idx++, oldest.getId());
 					updateScanOverviewByFinding.setLong(idx++, latest.getId());
 					updateScanOverviewByFinding.setLong(idx++, findingId);

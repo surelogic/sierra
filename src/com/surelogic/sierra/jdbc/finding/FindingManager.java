@@ -55,6 +55,7 @@ public class FindingManager {
 
 	private final PreparedStatement deleteScanOverview;
 	private final PreparedStatement populateScanOverview;
+	private final PreparedStatement populateScanRelationOverview;
 
 	private final PreparedStatement scanArtifacts;
 
@@ -99,6 +100,19 @@ public class FindingManager {
 						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
 						+ "       T.ID = ART.TOOL_ID"
 						+ " GROUP BY AFR.FINDING_ID");
+		populateScanRelationOverview = conn
+				.prepareStatement("INSERT INTO SCAN_FINDING_RELATION_OVERVIEW (SCAN_ID,PARENT_FINDING_ID,CHILD_FINDING_ID,RELATION_TYPE) "
+						+ "SELECT "
+						+ "   S.ID,PFR.FINDING_ID,CFR.FINDING_ID,ANR.RELATION_TYPE"
+						+ "FROM ARTIFACT_NUMBER_RELTN ANR, ARTIFACT P, ARTIFACT C, ARTIFACT_FINDING_RELTN PFR, ARTIFACT_FINDING_RELTN CFR, SCAN S"
+						+ "WHERE S.ID = ? AND "
+						+ "      ANR.SCAN_ID = S.ID AND "
+						+ "      P.SCAN_ID = ANR.SCAN_ID AND "
+						+ "      P.SCAN_NUMBER = ANR.PARENT_NUMBER AND "
+						+ "      C.SCAN_ID = ANR.SCAN_ID AND "
+						+ "      C.SCAN_NUMBER = ANR.CHILD_NUMBER AND "
+						+ "      PFR.ARTIFACT_ID = P.ID AND "
+						+ "      CFR.ARTIFACT_ID = C.ID ");
 		scanArtifacts = conn
 				.prepareStatement("SELECT A.ID,A.PRIORITY,A.SEVERITY,A.MESSAGE,S.PROJECT_ID,SL.HASH,SL.CLASS_NAME,CU.PACKAGE_NAME,ART.FINDING_TYPE_ID"
 						+ " FROM SCAN S, ARTIFACT A, ARTIFACT_TYPE ART, SOURCE_LOCATION SL, COMPILATION_UNIT CU"
@@ -294,10 +308,11 @@ public class FindingManager {
 	protected void populateScanOverview(Long scanId) throws SQLException {
 		deleteScanOverview.setLong(1, scanId);
 		deleteScanOverview.execute();
-		int idx = 1;
-		populateScanOverview.setLong(idx++, scanId);
-		populateScanOverview.setLong(idx++, scanId);
+		populateScanOverview.setLong(1, scanId);
+		populateScanOverview.setLong(2, scanId);
 		populateScanOverview.execute();
+		populateScanRelationOverview.setLong(1, scanId);
+		populateScanRelationOverview.execute();
 	}
 
 	private void touchFinding(Long findingId, Date time) throws SQLException {

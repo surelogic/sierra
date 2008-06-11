@@ -45,15 +45,20 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class ClientFindingManager extends FindingManager {
 
 	private final PreparedStatement populatePartialScanOverview;
+	private final PreparedStatement populatePartialScanRelationOverview;
 	private final PreparedStatement selectArtifactsByCompilation;
 	private final PreparedStatement selectArtifactsByTool;
 	private final PreparedStatement deleteFindingFromOverview;
+	private final PreparedStatement deleteFindingRelationFromOverview;
+	private final PreparedStatement deleteFindingRelationOverview;
 	private final PreparedStatement deleteOverview;
 	private final PreparedStatement checkAndInsertTempId;
 	private final PreparedStatement insertTempId;
 	private final PreparedStatement populateTempIds;
 	private final PreparedStatement deleteTempIds;
 	private final PreparedStatement populateFindingOverviewCurrentFindings;
+	private final PreparedStatement populateFindingRelationOverviewCurrentFindings;
+	private final PreparedStatement populateFindingRelationOverviewFixedFindings;
 	private final PreparedStatement populateFindingOverviewFixedFindings;
 	private final PreparedStatement updateFindingOverviewImportance;
 	private final PreparedStatement updateFindingOverviewSummary;
@@ -108,6 +113,25 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       ART.ID = A.ARTIFACT_TYPE_ID AND"
 						+ "       T.ID = ART.TOOL_ID"
 						+ " GROUP BY AFR.FINDING_ID");
+		populatePartialScanRelationOverview = conn
+				.prepareStatement("INSERT INTO SCAN_FINDING_RELATION_OVERVIEW (SCAN_ID,PARENT_FINDING_ID,CHILD_FINDING_ID,RELATION_TYPE) "
+						+ "SELECT DISTINCT "
+						+ "   S.ID,PFR.FINDING_ID,CFR.FINDING_ID,ANR.RELATION_TYPE "
+						+ "FROM ARTIFACT_NUMBER_RELTN ANR, ARTIFACT P, ARTIFACT C, ARTIFACT_FINDING_RELTN PFR, ARTIFACT_FINDING_RELTN CFR, SCAN S, "
+						+ tempTableName
+						+ " TFP, "
+						+ tempTableName
+						+ " TFC "
+						+ "WHERE S.ID = ? AND "
+						+ "      ANR.SCAN_ID = S.ID AND "
+						+ "      P.SCAN_ID = ANR.SCAN_ID AND "
+						+ "      P.SCAN_NUMBER = ANR.PARENT_NUMBER AND "
+						+ "      C.SCAN_ID = ANR.SCAN_ID AND "
+						+ "      C.SCAN_NUMBER = ANR.CHILD_NUMBER AND "
+						+ "      PFR.FINDING_ID = TFP.ID AND "
+						+ "      PFR.ARTIFACT_ID = P.ID AND "
+						+ "      CFR.ARTIFACT_ID = C.ID AND "
+						+ "      CFR.FINDING_ID = TFC.ID");
 		final String beginFindingOverviewUpdate = "UPDATE FINDINGS_OVERVIEW"
 				+ " SET AUDITED = 'Yes'"
 				+ ", LAST_CHANGED = CASE WHEN (? > LAST_CHANGED) THEN ? ELSE LAST_CHANGED END"
@@ -122,6 +146,37 @@ public final class ClientFindingManager extends FindingManager {
 		updateFindingOverviewComment = conn
 				.prepareStatement(beginFindingOverviewUpdate
 						+ endFindingOverviewUpdate);
+		populateFindingRelationOverviewCurrentFindings = conn
+				.prepareStatement("INSERT INTO FINDING_RELATION_OVERVIEW (PARENT_FINDING_ID,CHILD_FINDING_ID,PROJECT_ID,RELATION_TYPE,STATUS) "
+						+ "SELECT DISTINCT"
+						+ "  L.PARENT_FINDING_ID, "
+						+ "  L.CHILD_FINDING_ID, "
+						+ "  ?, "
+						+ "  L.RELATION_TYPE, "
+						+ "  CASE WHEN O.CHILD_FINDING_ID IS NULL THEN 'New' ELSE 'Unchanged' END "
+						+ "FROM "
+						+ tempTableName
+						+ " TF INNER JOIN SCAN_FINDING_RELATION_OVERVIEW L ON (L.PARENT_FINDING_ID = TF.ID OR L.CHILD_FINDING_ID = TF.ID) AND L.SCAN_ID = ? "
+						+ "    LEFT OUTER JOIN SCAN_FINDING_RELATION_OVERVIEW O ON "
+						+ "     O.PARENT_FINDING_ID = L.PARENT_FINDING_ID AND "
+						+ "     O.CHILD_FINDING_ID = L.CHILD_FINDING_ID AND "
+						+ "     O.RELATION_TYPE = L.RELATION_TYPE AND O.SCAN_ID = ?");
+		populateFindingRelationOverviewFixedFindings = conn
+				.prepareStatement("INSERT INTO FINDING_RELATION_OVERVIEW  (PARENT_FINDING_ID,CHILD_FINDING_ID,PROJECT_ID,RELATION_TYPE,STATUS) "
+						+ "SELECT DISTINCT"
+						+ "  O.PARENT_FINDING_ID, "
+						+ "  O.CHILD_FINDING_ID, "
+						+ "  ?, "
+						+ "  O.RELATION_TYPE, "
+						+ "  'Fixed'"
+						+ "FROM "
+						+ tempTableName
+						+ " TF INNER JOIN SCAN_FINDING_RELATION_OVERVIEW O ON (O.PARENT_FINDING_ID = TF.ID OR O.CHILD_FINDING_ID = TF.ID) AND O.SCAN_ID = ? "
+						+ "   LEFT OUTER JOIN SCAN_FINDING_RELATION_OVERVIEW L ON "
+						+ "     L.PARENT_FINDING_ID = O.PARENT_FINDING_ID AND "
+						+ "     L.CHILD_FINDING_ID = O.CHILD_FINDING_ID AND "
+						+ "     L.RELATION_TYPE = O.RELATION_TYPE  AND L.SCAN_ID = ? "
+						+ " WHERE L.CHILD_FINDING_ID IS NULL");
 		populateFindingOverviewCurrentFindings = conn
 				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
@@ -226,6 +281,10 @@ public final class ClientFindingManager extends FindingManager {
 						+ "      AND AFR.ARTIFACT_ID = A.ID");
 		deleteFindingFromOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE FINDING_ID = ?");
+		deleteFindingRelationFromOverview = conn
+				.prepareStatement("DELETE FROM FINDING_RELATION_OVERVIEW WHERE PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?");
+		deleteFindingRelationOverview = conn
+				.prepareStatement("DELETE FROM FINDING_RELATION_OVERVIEW WHERE PROJECT_ID = ?");
 		deleteOverview = conn
 				.prepareStatement("DELETE FROM FINDINGS_OVERVIEW WHERE PROJECT_ID = ?");
 		selectLatestScanByProject = conn
@@ -374,6 +433,8 @@ public final class ClientFindingManager extends FindingManager {
 				}
 				deleteOverview.setLong(1, p.getId());
 				deleteOverview.execute();
+				deleteFindingRelationOverview.setLong(1, p.getId());
+				deleteFindingRelationOverview.execute();
 				monitor.worked(1);
 
 				if (debug) {
@@ -400,12 +461,39 @@ public final class ClientFindingManager extends FindingManager {
 				final ResultSet set = selectOldestScanByProject.executeQuery();
 				try {
 					if (set.next()) {
+						final long oldestScanId = set.getLong(1);
 						idx = 1;
 						populateFindingOverviewFixedFindings.setString(idx++,
 								projectName);
-						populateFindingOverviewFixedFindings.setLong(idx++, set
-								.getLong(1));
+						populateFindingOverviewFixedFindings.setLong(idx++,
+								oldestScanId);
 						populateFindingOverviewFixedFindings.execute();
+
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								1, p.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								2, scanRecord.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								3, oldestScanId);
+						populateFindingRelationOverviewCurrentFindings
+								.execute();
+						populateFindingRelationOverviewFixedFindings.setLong(1,
+								p.getId());
+						populateFindingRelationOverviewFixedFindings.setLong(2,
+								oldestScanId);
+						populateFindingRelationOverviewFixedFindings.setLong(3,
+								scanRecord.getId());
+						populateFindingRelationOverviewFixedFindings.execute();
+					} else {
+						// We still need to populate new finding relations
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								1, p.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								2, scanRecord.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								3, -1);
+						populateFindingRelationOverviewCurrentFindings
+								.execute();
 					}
 				} finally {
 					set.close();
@@ -438,6 +526,8 @@ public final class ClientFindingManager extends FindingManager {
 		if (pRec.select()) {
 			deleteOverview.setLong(1, pRec.getId());
 			deleteOverview.execute();
+			deleteFindingRelationOverview.setLong(1, pRec.getId());
+			deleteFindingRelationOverview.execute();
 		}
 		super.deleteFindings(projectName, monitor);
 	}
@@ -619,6 +709,8 @@ public final class ClientFindingManager extends FindingManager {
 		populatePartialScanOverview.setLong(1, scanId);
 		populatePartialScanOverview.setLong(2, scanId);
 		populatePartialScanOverview.execute();
+		populatePartialScanRelationOverview.setLong(1, scanId);
+		populatePartialScanRelationOverview.execute();
 		deleteTempIds.execute();
 		if (log.isLoggable(Level.FINE)) {
 			log.fine("Generated partial scan overview for scan " + scanId
@@ -640,32 +732,66 @@ public final class ClientFindingManager extends FindingManager {
 		for (final long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
 			deleteFindingFromOverview.executeUpdate();
+			deleteFindingRelationFromOverview.setLong(1, id);
+			deleteFindingRelationFromOverview.setLong(2, id);
+			deleteFindingRelationFromOverview.execute();
 			checkAndInsertTempId.setLong(1, id);
 			checkAndInsertTempId.execute();
 			if (count++ % 3 == 0) {
 				monitor.worked(1);
 			}
 		}
+		final ProjectRecord p = ProjectRecordFactory.getInstance(conn)
+				.newProject();
+		p.setName(projectName);
+		p.select();
 		selectLatestScanByProject.setString(1, projectName);
 		final ResultSet latestScanSet = selectLatestScanByProject
 				.executeQuery();
 		try {
 			if (latestScanSet.next()) {
+				final long latestScanId = latestScanSet.getLong(1);
 				populateFindingOverviewCurrentFindings
 						.setString(1, projectName);
-				populateFindingOverviewCurrentFindings.setLong(2, latestScanSet
-						.getLong(1));
+				populateFindingOverviewCurrentFindings.setLong(2, latestScanId);
 				populateFindingOverviewCurrentFindings.execute();
 				selectOldestScanByProject.setString(1, projectName);
 				final ResultSet oldestScanSet = selectOldestScanByProject
 						.executeQuery();
 				try {
 					if (oldestScanSet.next()) {
+						final long oldestScanId = oldestScanSet.getLong(1);
 						populateFindingOverviewFixedFindings.setString(1,
 								projectName);
 						populateFindingOverviewFixedFindings.setLong(2,
-								oldestScanSet.getLong(1));
+								oldestScanId);
 						populateFindingOverviewFixedFindings.execute();
+
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								1, p.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								2, latestScanId);
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								3, oldestScanId);
+						populateFindingRelationOverviewCurrentFindings
+								.execute();
+						populateFindingRelationOverviewFixedFindings.setLong(1,
+								p.getId());
+						populateFindingRelationOverviewFixedFindings.setLong(2,
+								oldestScanId);
+						populateFindingRelationOverviewFixedFindings.setLong(3,
+								latestScanId);
+						populateFindingRelationOverviewFixedFindings.execute();
+					} else {
+						// We still need to populate new relations
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								1, p.getId());
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								2, latestScanId);
+						populateFindingRelationOverviewCurrentFindings.setLong(
+								3, -1);
+						populateFindingRelationOverviewCurrentFindings
+								.execute();
 					}
 				} finally {
 					oldestScanSet.close();
