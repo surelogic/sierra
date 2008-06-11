@@ -19,7 +19,6 @@ import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BlockPanel {
-	public static final String PRIMARY_STYLE = "categories-category";
 	private final VerticalPanel categoryInfo = new VerticalPanel();
 	private final Label description = new Label();
 	private final FindingsView findingsView = new FindingsView();

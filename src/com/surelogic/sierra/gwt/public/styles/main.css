@@ -102,24 +102,6 @@ img {
 	color: #FF3333;
 }
 
-/* Rules Content */
-.categories-search-category {
-	font-size: small;
-	padding: 2px;
-	cursor: pointer;
-	cursor: hand;
-}
-
-.categories-search-category-selected {
-	border: 1px solid #666699;
-	background-color: #DDDDFF;
-	padding: 1px;
-}
-
-.categories-category-finding {
-	font-size: small;
-}
-
 /* Class for items that can be clicked */
 .clickable {
 	color: #005596;

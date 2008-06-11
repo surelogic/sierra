@@ -26,6 +26,7 @@ import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.SearchBlock;
 import com.surelogic.sierra.gwt.client.ui.StyledButton;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -34,7 +35,8 @@ public class CategoriesContent extends ContentComposite {
 	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryCache categories = new CategoryCache();
 	private final ActionBlock actionBlock = new ActionBlock();
-	private final SearchBlock searchBlock = new SearchBlock(categories);
+	private final CategorySearchBlock searchBlock = new CategorySearchBlock(
+			categories);
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final CategoryView categoryView = new CategoryView();
 	private final CategoryEditor categoryEditor = new CategoryEditor();
@@ -303,4 +305,27 @@ public class CategoriesContent extends ContentComposite {
 		}
 	}
 
+	private class CategorySearchBlock extends
+			SearchBlock<Category, CategoryCache> {
+
+		public CategorySearchBlock(CategoryCache cache) {
+			super(cache);
+		}
+
+		@Override
+		protected boolean isMatch(Category item, String query) {
+			return item.getName().toLowerCase().indexOf(query) >= 0;
+		}
+
+		@Override
+		protected String getItemText(Category item) {
+			return item.getName();
+		}
+
+		@Override
+		protected void doItemClick(Category item) {
+			new CategoriesContext(item).updateContext();
+		}
+
+	}
 }
