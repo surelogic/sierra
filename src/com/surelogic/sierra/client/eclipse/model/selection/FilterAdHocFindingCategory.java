@@ -103,12 +103,14 @@ implements IBuglinkDataObserver {
     				porous.addAll(types);
     			}
     		}
+    		/*
     		List<String> result = new ArrayList<String>(porous.size());
     		for(String value : porous) {
     			String typeName = BuglinkData.getInstance().getFindingType(value).getName();
     			result.add(typeName);
     		}
-    		return result;
+    		*/
+    		return porous;
     	}
     }
     
