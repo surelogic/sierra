@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.util;
 
-
 public final class LangUtil {
 
 	/**
@@ -24,6 +23,10 @@ public final class LangUtil {
 			return true;
 		}
 		return s1 != null && s1.equalsIgnoreCase(s2);
+	}
+
+	public static boolean isEmpty(String value) {
+		return value == null ? true : value.equals("");
 	}
 
 	public static boolean notEmpty(String value) {
