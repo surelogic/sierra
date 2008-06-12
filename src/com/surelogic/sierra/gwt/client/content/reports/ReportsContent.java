@@ -42,14 +42,22 @@ public class ReportsContent extends ContentComposite {
 		reportView.initialize();
 
 		reportParamsView.initialize();
-		reportParamsView.addReportAction("Show Report", new ClickListener() {
+		reportParamsView.addReportAction("Show Table", new ClickListener() {
 
 			public void onClick(Widget sender) {
 				if (selectionPanel.getWidgetIndex(reportView) == -1) {
 					selectionPanel.add(reportView);
 				}
-				reportView.retrieveReport(reportParamsView.getSelection(),
-						reportParamsView.getParameters());
+				reportView.retrieveReport(reportParamsView.getUpdatedReport());
+			}
+		});
+		reportParamsView.addReportAction("Show Chart", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				if (selectionPanel.getWidgetIndex(reportView) == -1) {
+					selectionPanel.add(reportView);
+				}
+				reportView.retrieveReport(reportParamsView.getUpdatedReport());
 			}
 		});
 		reportParamsView.addReportAction("Export to PDF", new ClickListener() {

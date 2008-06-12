@@ -1,15 +1,21 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class Report implements Serializable, Cacheable {
 	private static final long serialVersionUID = -5559871759716632180L;
 	private String uuid;
 	private String name;
+	private String title;
 	private long revision;
 	private String description;
-	private Set<Parameter> parameters;
+	private final Set<Parameter> parameters = new HashSet<Parameter>();
 
 	public String getUuid() {
 		return uuid;
@@ -25,6 +31,14 @@ public class Report implements Serializable, Cacheable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public long getRevision() {
@@ -47,8 +61,27 @@ public class Report implements Serializable, Cacheable {
 		return parameters;
 	}
 
-	public void setParameters(Set<Parameter> parameters) {
-		this.parameters = parameters;
+	public Parameter getParameter(String name) {
+		for (Parameter param : parameters) {
+			if (LangUtil.equals(param.getName(), name)) {
+				return param;
+			}
+		}
+		return null;
+	}
+
+	public Report copy() {
+		Report copy = new Report();
+		copy.uuid = uuid;
+		copy.revision = revision;
+		copy.name = name;
+		copy.title = title;
+		copy.description = description;
+		for (Parameter param : parameters) {
+			copy.getParameters().add(param.copy());
+		}
+
+		return copy;
 	}
 
 	public static class Parameter implements Serializable {
@@ -58,25 +91,26 @@ public class Report implements Serializable, Cacheable {
 			TEXT, PRIORITY, PROJECTS
 		};
 
-		private String title;
+		private String name;
 		private Type type;
+		private final List<String> values = new ArrayList<String>();
 
 		public Parameter() {
 			super();
 		}
 
-		public Parameter(String title, Type type) {
+		public Parameter(String name, Type type) {
 			super();
-			this.title = title;
+			this.name = name;
 			this.type = type;
 		}
 
-		public String getTitle() {
-			return title;
+		public String getName() {
+			return name;
 		}
 
-		public void setTitle(String title) {
-			this.title = title;
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public Type getType() {
@@ -87,6 +121,15 @@ public class Report implements Serializable, Cacheable {
 			this.type = type;
 		}
 
+		public List<String> getValues() {
+			return values;
+		}
+
+		public Parameter copy() {
+			Parameter copy = new Parameter(name, type);
+			copy.getValues().addAll(values);
+			return copy;
+		}
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.reports;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,7 @@ public class ReportParametersView extends BlockPanel {
 
 		int rowIndex = 0;
 		for (Report.Parameter param : report.getParameters()) {
-			parametersTable.setText(rowIndex, 0, param.getTitle() + ":");
+			parametersTable.setText(rowIndex, 0, param.getName() + ":");
 			parametersTable.getCellFormatter().setVerticalAlignment(rowIndex,
 					0, HasVerticalAlignment.ALIGN_TOP);
 			final Widget paramUI = getParameterUI(param);
@@ -85,26 +84,28 @@ public class ReportParametersView extends BlockPanel {
 		return selection;
 	}
 
-	public Map<String, List<String>> getParameters() {
-		final Map<String, List<String>> paramValueMap = new HashMap<String, List<String>>();
+	public Report getUpdatedReport() {
+		final Report report = selection.copy();
+
 		for (Map.Entry<Report.Parameter, Widget> paramEntry : paramUIMap
 				.entrySet()) {
-			final List<String> values = new ArrayList<String>();
+			final Parameter reportParam = report.getParameter(paramEntry
+					.getKey().getName());
+			final List<String> reportParamValues = reportParam.getValues();
+			reportParamValues.clear();
 			final Widget paramUI = paramEntry.getValue();
 			if (paramUI instanceof TextBox) {
-				values.add(((TextBox) paramUI).getText());
+				reportParamValues.add(((TextBox) paramUI).getText());
 			} else if (paramUI instanceof ListBox) {
 				final ListBox lb = (ListBox) paramUI;
 				for (int i = 0; i < lb.getItemCount(); i++) {
 					if (lb.isItemSelected(i)) {
-						values.add(lb.getItemText(i));
+						reportParamValues.add(lb.getItemText(i));
 					}
 				}
 			}
-			paramValueMap.put(paramEntry.getKey().getTitle(), values);
 		}
-
-		return paramValueMap;
+		return report;
 	}
 
 	public void addReportAction(String text, ClickListener clickListener) {

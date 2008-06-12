@@ -1,11 +1,11 @@
 package com.surelogic.sierra.gwt.client.content.reports;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 
 public class ReportView extends BlockPanel {
@@ -16,14 +16,13 @@ public class ReportView extends BlockPanel {
 
 	}
 
-	public void retrieveReport(Report selection,
-			Map<String, List<String>> parameters) {
+	public void retrieveReport(Report selection) {
 		setWaitStatus();
 
 		StringBuffer str = new StringBuffer(selection.getName()).append(" (");
-		for (Map.Entry<String, List<String>> param : parameters.entrySet()) {
-			str.append(param.getKey()).append("=");
-			List<String> values = param.getValue();
+		for (Parameter param : selection.getParameters()) {
+			str.append(param.getName()).append("=");
+			List<String> values = param.getValues();
 			if (values.size() == 1) {
 				str.append(values.get(0));
 			} else if (values.size() > 1) {

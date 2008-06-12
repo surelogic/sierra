@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.content.reports;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,10 +27,9 @@ public class ReportCache extends Cache<Report> {
 		report.setUuid("Temp1");
 		report.setName("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
-		Set<Parameter> params = new HashSet<Parameter>();
+		Set<Parameter> params = report.getParameters();
 		params.add(new Parameter("Projects", Type.PROJECTS));
 		params.add(new Parameter("Priority", Type.PRIORITY));
-		report.setParameters(params);
 		return report;
 	}
 
