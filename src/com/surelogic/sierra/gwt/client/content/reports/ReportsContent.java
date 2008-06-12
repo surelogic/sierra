@@ -89,8 +89,7 @@ public class ReportsContent extends ContentComposite {
 	}
 
 	private void refreshContext(Context context) {
-		final ReportsContext reportsCtx = new ReportsContext(context);
-		final String reportUuid = reportsCtx.getReport();
+		final String reportUuid = context.getUuid();
 		reportsListView.updateReports(reports);
 		if (LangUtil.notEmpty(reportUuid)) {
 			final Report report = reports.getItem(reportUuid);
@@ -102,7 +101,7 @@ public class ReportsContent extends ContentComposite {
 			}
 		} else {
 			if (reports.getItemCount() > 0) {
-				new ReportsContext(reports.getItem(0)).updateContext();
+				Context.createWithUuid(reports.getItem(0)).submit();
 			}
 		}
 	}

@@ -2,9 +2,7 @@ package com.surelogic.sierra.gwt.client.content.scanfilters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.Window;
@@ -28,7 +26,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
@@ -46,8 +43,6 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFiltersContent extends ContentComposite {
-
-	private static final String FILTER = "filter";
 	private final ActionBlock block = new ActionBlock();
 	private final ScanFilterCache cache = new ScanFilterCache();
 	private final ScanSearchBlock scans = new ScanSearchBlock(cache);
@@ -89,7 +84,7 @@ public class ScanFiltersContent extends ContentComposite {
 		if (!isActive()) {
 			cache.refresh();
 		} else {
-			filterUuid = context.getParameter(FILTER);
+			filterUuid = context.getUuid();
 			checkForFilter();
 		}
 	}
@@ -127,7 +122,7 @@ public class ScanFiltersContent extends ContentComposite {
 
 		@Override
 		protected void doItemClick(ScanFilter item) {
-			goToScanFilter(item.getUuid());
+			Context.createWithUuid(item).submit();
 		}
 
 	}
@@ -413,17 +408,10 @@ public class ScanFiltersContent extends ContentComposite {
 						public void onSuccess(ScanFilter result) {
 							toggleCreateScanFilter();
 							cache.refresh();
-							goToScanFilter(result.getUuid());
+							Context.createWithUuid(result).submit();
 						}
 					});
 		}
-	}
-
-	private static void goToScanFilter(String uuid) {
-		final Map<String, String> map = new HashMap<String, String>();
-		map.put(FILTER, uuid);
-		ContextManager.setContext(Context.create(Context.create("scanfilters"),
-				map));
 	}
 
 	// Singleton

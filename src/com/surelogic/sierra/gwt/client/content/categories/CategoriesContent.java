@@ -118,7 +118,7 @@ public class CategoriesContent extends ContentComposite {
 				categories.refresh();
 
 				if ((failure == null) && status.isSuccess()) {
-					new CategoriesContext(item).updateContext();
+					Context.createWithUuid(item).submit();
 				} else if (!status.isSuccess()) {
 					Window.alert("Save rejected: " + status.getMessage());
 				} else if (failure != null) {
@@ -144,8 +144,7 @@ public class CategoriesContent extends ContentComposite {
 	}
 
 	private void refreshContext(Context context) {
-		final CategoriesContext rulesCtx = new CategoriesContext(context);
-		final String catUuid = rulesCtx.getCategory();
+		final String catUuid = context.getUuid();
 		if (LangUtil.notEmpty(catUuid)) {
 			final Category cat = categories.getItem(catUuid);
 			if (cat != null) {
@@ -156,7 +155,7 @@ public class CategoriesContent extends ContentComposite {
 			}
 		} else {
 			if (!categories.isEmpty()) {
-				new CategoriesContext(categories.getItem(0)).updateContext();
+				Context.createWithUuid(categories.getItem(0)).submit();
 			}
 		}
 	}
@@ -293,7 +292,7 @@ public class CategoriesContent extends ContentComposite {
 									String result) {
 								toggleCreateCategory();
 								categories.refresh();
-								new CategoriesContext(result).updateContext();
+								Context.createWithUuid(result).submit();
 							}
 						});
 			} else {
@@ -321,7 +320,7 @@ public class CategoriesContent extends ContentComposite {
 
 		@Override
 		protected void doItemClick(Category item) {
-			new CategoriesContext(item).updateContext();
+			Context.createWithUuid(item).submit();
 		}
 
 	}

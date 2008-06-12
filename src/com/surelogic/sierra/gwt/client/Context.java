@@ -3,9 +3,12 @@ package com.surelogic.sierra.gwt.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class Context {
+	private static final String PARAM_UUID = "uuid";
+
 	private ContentComposite content;
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
@@ -22,12 +25,30 @@ public final class Context {
 		return ctx;
 	}
 
+	public static Context createWithUuid(String uuid) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(PARAM_UUID, uuid);
+		return Context.create(ContextManager.getContext(), params);
+	}
+
+	public static Context createWithUuid(Cacheable item) {
+		return createWithUuid(item.getUuid());
+	}
+
 	private Context() {
 		// use static create methods
 	}
 
+	public void submit() {
+		ContextManager.setContext(this);
+	}
+
 	public ContentComposite getContent() {
 		return content;
+	}
+
+	public String getUuid() {
+		return getParameter(PARAM_UUID);
 	}
 
 	public String getParameter(String name) {

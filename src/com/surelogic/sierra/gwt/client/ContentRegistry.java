@@ -9,6 +9,7 @@ import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
+import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
 import com.surelogic.sierra.gwt.client.content.reports.ReportsContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
@@ -32,6 +33,7 @@ public class ContentRegistry {
 		register("overview", OverviewContent.getInstance(), userHeader);
 		register("categories", CategoriesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
+		register("projects", ProjectsContent.getInstance(), userHeader);
 		register("scanfilters", ScanFiltersContent.getInstance(), userHeader);
 		register("findingtype", FindingTypesContent.getInstance(), userHeader);
 		register("reports", ReportsContent.getInstance(), userHeader);

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
@@ -54,7 +55,7 @@ public class ReportsListView extends BlockPanel {
 		}
 
 		public void onClick(Widget sender) {
-			new ReportsContext(report).updateContext();
+			Context.createWithUuid(report).submit();
 		}
 
 	}
