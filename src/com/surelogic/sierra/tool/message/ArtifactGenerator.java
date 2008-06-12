@@ -53,6 +53,16 @@ public interface ArtifactGenerator {
 		 */
 		public ArtifactBuilder scanNumber(int number);
 
+		/**
+		 * Assigns an assurance type, which indicates whether or not the
+		 * artifact is consistent or inconsistent. May be <code>null</code> if
+		 * the artifact is from a rule-based tool.
+		 * 
+		 * @param type
+		 * @return
+		 */
+		public ArtifactBuilder assurance(AssuranceType type);
+
 		public void build();
 	}
 

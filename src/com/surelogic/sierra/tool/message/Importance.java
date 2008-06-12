@@ -37,10 +37,6 @@ public enum Importance {
 	private final String value = toString().substring(0, 1)
 			+ toString().toLowerCase().substring(1);
 
-	public String value() {
-		return name();
-	}
-
 	public static Importance fromValue(String v) {
 		for (final Importance i : values()) {
 			if (i.value.equals(v)) {

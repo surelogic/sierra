@@ -19,6 +19,7 @@ public class Artifact {
 	private Severity severity;
 	private String message;
 	private Integer scanNumber;
+	private AssuranceType assurance;
 
 	public Artifact() {
 		// Nothing to do
@@ -39,6 +40,7 @@ public class Artifact {
 
 		message = builder.message;
 		scanNumber = builder.scanNumber;
+		assurance = builder.assurance;
 	}
 
 	public ArtifactType getArtifactType() {
@@ -97,101 +99,12 @@ public class Artifact {
 		this.scanNumber = scanNumber;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result)
-				+ ((additionalSources == null) ? 0 : additionalSources
-						.hashCode());
-		result = (prime * result)
-				+ ((artifactType == null) ? 0 : artifactType.hashCode());
-		result = (prime * result)
-				+ ((message == null) ? 0 : message.hashCode());
-		result = (prime * result)
-				+ ((primarySourceLocation == null) ? 0 : primarySourceLocation
-						.hashCode());
-		result = (prime * result)
-				+ ((priority == null) ? 0 : priority.hashCode());
-		result = (prime * result)
-				+ ((severity == null) ? 0 : severity.hashCode());
-
-		return result;
+	public AssuranceType getAssurance() {
+		return assurance;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (obj == null) {
-			return false;
-		}
-
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-
-		final Artifact other = (Artifact) obj;
-
-		if (additionalSources == null) {
-			if (other.additionalSources != null) {
-				return false;
-			}
-		} else if (!additionalSources.equals(other.additionalSources)) {
-			return false;
-		}
-
-		if (artifactType == null) {
-			if (other.artifactType != null) {
-				return false;
-			}
-		} else if (!artifactType.equals(other.artifactType)) {
-			return false;
-		}
-
-		if (message == null) {
-			if (other.message != null) {
-				return false;
-			}
-		} else if (!message.equals(other.message)) {
-			return false;
-		}
-
-		if (primarySourceLocation == null) {
-			if (other.primarySourceLocation != null) {
-				return false;
-			}
-		} else if (!primarySourceLocation.equals(other.primarySourceLocation)) {
-			return false;
-		}
-
-		if (priority == null) {
-			if (other.priority != null) {
-				return false;
-			}
-		} else if (!priority.equals(other.priority)) {
-			return false;
-		}
-
-		if (severity == null) {
-			if (other.severity != null) {
-				return false;
-			}
-		} else if (!severity.equals(other.severity)) {
-			return false;
-		}
-
-		if (scanNumber == null) {
-			if (other.scanNumber != null) {
-				return false;
-			}
-		} else if (!scanNumber.equals(other.scanNumber)) {
-			return false;
-		}
-
-		return true;
+	public void setAssurance(AssuranceType assurance) {
+		this.assurance = assurance;
 	}
 
 	public static class Builder {
@@ -201,7 +114,8 @@ public class Artifact {
 		private final List<SourceLocation> sources = new ArrayList<SourceLocation>();
 		private String message;
 		private SourceLocation primarySourceLocation;
-		private int scanNumber;
+		private Integer scanNumber;
+		private AssuranceType assurance;
 
 		public Builder() {
 			clear();
@@ -213,6 +127,11 @@ public class Artifact {
 			artifactType.setVersion(version);
 			artifactType.setMnemonic(mnemonic);
 
+			return this;
+		}
+
+		public Builder assurance(AssuranceType assurance) {
+			this.assurance = assurance;
 			return this;
 		}
 
@@ -281,6 +200,106 @@ public class Artifact {
 			sources.clear();
 			message = null;
 			primarySourceLocation = null;
+			assurance = null;
+			scanNumber = null;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((additionalSources == null) ? 0 : additionalSources
+						.hashCode());
+		result = prime * result
+				+ ((artifactType == null) ? 0 : artifactType.hashCode());
+		result = prime * result
+				+ ((assurance == null) ? 0 : assurance.hashCode());
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		result = prime
+				* result
+				+ ((primarySourceLocation == null) ? 0 : primarySourceLocation
+						.hashCode());
+		result = prime * result
+				+ ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result
+				+ ((scanNumber == null) ? 0 : scanNumber.hashCode());
+		result = prime * result
+				+ ((severity == null) ? 0 : severity.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Artifact other = (Artifact) obj;
+		if (additionalSources == null) {
+			if (other.additionalSources != null) {
+				return false;
+			}
+		} else if (!additionalSources.equals(other.additionalSources)) {
+			return false;
+		}
+		if (artifactType == null) {
+			if (other.artifactType != null) {
+				return false;
+			}
+		} else if (!artifactType.equals(other.artifactType)) {
+			return false;
+		}
+		if (assurance == null) {
+			if (other.assurance != null) {
+				return false;
+			}
+		} else if (!assurance.equals(other.assurance)) {
+			return false;
+		}
+		if (message == null) {
+			if (other.message != null) {
+				return false;
+			}
+		} else if (!message.equals(other.message)) {
+			return false;
+		}
+		if (primarySourceLocation == null) {
+			if (other.primarySourceLocation != null) {
+				return false;
+			}
+		} else if (!primarySourceLocation.equals(other.primarySourceLocation)) {
+			return false;
+		}
+		if (priority == null) {
+			if (other.priority != null) {
+				return false;
+			}
+		} else if (!priority.equals(other.priority)) {
+			return false;
+		}
+		if (scanNumber == null) {
+			if (other.scanNumber != null) {
+				return false;
+			}
+		} else if (!scanNumber.equals(other.scanNumber)) {
+			return false;
+		}
+		if (severity == null) {
+			if (other.severity != null) {
+				return false;
+			}
+		} else if (!severity.equals(other.severity)) {
+			return false;
+		}
+		return true;
+	}
+
 }
