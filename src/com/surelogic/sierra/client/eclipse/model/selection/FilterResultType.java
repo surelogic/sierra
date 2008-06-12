@@ -1,10 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import com.surelogic.sierra.tool.message.AssuranceType;
 
 public final class FilterResultType extends Filter {
 	private static final String COLUMN_NAME = "ASSURANCE_TYPE"; // For the raw data
@@ -41,6 +38,11 @@ public final class FilterResultType extends Filter {
 			f_allValues.clear();
 			f_allValues.add(FINDING);
 			f_allValues.add(VERIFICATION);
+			
+			int verifications = f_counts.get(FilterVerificationStatus.CONSISTENT) +
+			                    f_counts.get(FilterVerificationStatus.INCONSISTENT);
+			f_counts.put(VERIFICATION, verifications);
+			f_counts.put(FINDING, f_counts.get(null));		
 		}
 	}
 	
