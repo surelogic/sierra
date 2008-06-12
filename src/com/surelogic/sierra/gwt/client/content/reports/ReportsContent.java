@@ -121,12 +121,12 @@ public class ReportsContent extends ContentComposite {
 
 		@Override
 		protected boolean isMatch(Report item, String query) {
-			return item.getName().toLowerCase().contains(query.toLowerCase());
+			return item.getTitle().toLowerCase().contains(query.toLowerCase());
 		}
 
 		@Override
 		protected String getItemText(Report item) {
-			return item.getName();
+			return item.getTitle();
 		}
 
 		@Override

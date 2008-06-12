@@ -19,7 +19,8 @@ public class ReportView extends BlockPanel {
 	public void retrieveReport(Report selection) {
 		setWaitStatus();
 
-		StringBuffer str = new StringBuffer(selection.getName()).append(" (");
+		StringBuffer str = new StringBuffer(selection.getName()).append(" ");
+		str.append(" \"").append(selection.getTitle()).append("\" (");
 		for (Parameter param : selection.getParameters()) {
 			str.append(param.getName()).append("=");
 			List<String> values = param.getValues();

@@ -47,7 +47,7 @@ public class ReportParametersView extends BlockPanel {
 		this.selection = report;
 
 		if (report != null) {
-			setSummary(report.getName());
+			setSummary(report.getTitle());
 		} else {
 			setSummary("Select a report");
 		}
