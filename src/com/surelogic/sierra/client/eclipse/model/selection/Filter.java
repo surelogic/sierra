@@ -583,7 +583,7 @@ public abstract class Filter {
 		unused.remove(this.getFactory());
 		
 		for (ISelectionFilterFactory unusedFilter : unused) {
-			first = unusedFilter.addWhereClauseIfUnusedFilter(b, first);
+			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first);
 		}
 		return b.toString();
 	}

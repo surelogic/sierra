@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
+import java.util.Set;
+
 public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 
 	public final int compareTo(ISelectionFilterFactory o) {
@@ -25,7 +27,8 @@ public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 		return getFilterLabel();
 	}
 	
-	public boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first) {
+	public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
+			                                    StringBuilder b, boolean first) {
 		return first;
 	}
 }

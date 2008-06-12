@@ -1,13 +1,11 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.Arrays;
-
-import com.surelogic.sierra.tool.message.AssuranceType;
+import java.util.Set;
 
 public final class FilterVerificationStatus extends Filter {
 	private static final String COLUMN_NAME = "ASSURANCE_TYPE";
-	private static final String CONSISTENT = "C";
-	private static final String INCONSISTENT = "I";
+	public static final String CONSISTENT = "C";
+	public static final String INCONSISTENT = "I";
 	
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
@@ -19,9 +17,12 @@ public final class FilterVerificationStatus extends Filter {
 		}
 		
 		@Override
-		public boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first) {
-			first = addClausePrefix(b, first);
-			b.append(COLUMN_NAME + " is NULL");
+		public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
+				                                    StringBuilder b, boolean first) {
+			if (unused.contains(FilterResultType.FACTORY)) { // both unused
+				first = addClausePrefix(b, first);
+				b.append(COLUMN_NAME + " is NULL");
+			}
 			return first;
 		}
 	};

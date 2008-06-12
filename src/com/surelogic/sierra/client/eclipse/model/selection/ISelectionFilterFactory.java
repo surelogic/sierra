@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
+import java.util.Set;
+
 public interface ISelectionFilterFactory extends
 		Comparable<ISelectionFilterFactory> {
 
@@ -28,5 +30,6 @@ public interface ISelectionFilterFactory extends
 	 * Add a where clause if the filter is unused
 	 * @return an updated value of first
 	 */
-	boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first);
+	boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
+			                             StringBuilder b, boolean first);
 }

@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.Arrays;
+import java.util.*;
 
 public final class FilterSelection extends Filter {
 
@@ -14,7 +14,8 @@ public final class FilterSelection extends Filter {
 		}
 		
 		@Override
-		public boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first) {
+		public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
+				                                    StringBuilder b, boolean first) {
 			first = addClausePrefix(b, first);
 			addWhereClauseToFilterOutFixed(b);
 			return first;
