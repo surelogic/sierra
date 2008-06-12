@@ -496,10 +496,37 @@
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Aggregation Evidence</name>
+  </findingType>
+  
+  <findingType>
+    <id>EffectAssurance_msgUnaccountedFor</id>
+    <artifact tool="JSure" mnemonic="EffectAssurance_msgUnaccountedFor"/>
+    <shortMessage>TBD</shortMessage>
+    <info>TBD</info>
+    <name>Unaccounted Region Effects</name>
   </findingType>	
-	
-
-
+  <findingType>
+    <id>EffectAssurance_msgCheckedBy</id>
+    <artifact tool="JSure" mnemonic="EffectAssurance_msgCheckedBy"/>
+    <shortMessage>TBD</shortMessage>
+    <info>TBD</info>
+    <name>Checked Region Effects</name>
+  </findingType>	
+  <findingType>
+    <id>EffectAssurance_msgEmptyEffects</id>
+    <artifact tool="JSure" mnemonic="EffectAssurance_msgEmptyEffects"/>
+    <shortMessage>TBD</shortMessage>
+    <info>TBD</info>
+    <name>Empty Region Effects</name>
+  </findingType>	
+  <findingType>
+    <id>EffectAssurance_msgContructorRule</id>
+    <artifact tool="JSure" mnemonic="EffectAssurance_msgContructorRule"/>
+    <shortMessage>TBD</shortMessage>
+    <info>TBD</info>
+    <name>Region Effects Checked By Constructor</name>
+  </findingType>	
+  	
 	
 	<category>
 		<id>JSure</id>
@@ -573,6 +600,10 @@
 		<findingType>LockAnalysis_ds_NoMatchingLocks</findingType>
 		<findingType>LockAnalysis_ds_MatchingLock</findingType>
 		<findingType>LockAnalysis_ds_AggregationEvidence</findingType>
+		<findingType>EffectAssurance_msgUnaccountedFor</findingType>
+		<findingType>EffectAssurance_msgCheckedBy</findingType>
+		<findingType>EffectAssurance_msgEmptyEffects</findingType>
+		<findingType>EffectAssurance_msgContructorRule</findingType>
 
 		<name>JSure Issue</name>
 		<description>
