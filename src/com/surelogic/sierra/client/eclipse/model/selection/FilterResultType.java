@@ -39,8 +39,8 @@ public final class FilterResultType extends Filter {
 			f_allValues.add(FINDING);
 			f_allValues.add(VERIFICATION);
 			
-			int verifications = f_counts.get(FilterVerificationStatus.CONSISTENT) +
-			                    f_counts.get(FilterVerificationStatus.INCONSISTENT);
+			int verifications = getSummaryCountFor(FilterVerificationStatus.CONSISTENT) +
+			                    getSummaryCountFor(FilterVerificationStatus.INCONSISTENT);
 			f_counts.put(VERIFICATION, verifications);
 			f_counts.put(FINDING, f_counts.get(null));		
 		}
