@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -32,8 +32,9 @@ public interface SettingsServiceAsync {
 
 	void getScanFilters(AsyncCallback<List<ScanFilter>> callback);
 
-	void getFindingTypeInfo(String uid,
-			AsyncCallback<Result<FindingTypeInfo>> callback);
+	void getFindingTypes(AsyncCallback<List<FindingType>> callback);
+
+	void getFindingType(String uid, AsyncCallback<Result<FindingType>> callback);
 
 	void createScanFilter(String name, AsyncCallback<ScanFilter> callback);
 

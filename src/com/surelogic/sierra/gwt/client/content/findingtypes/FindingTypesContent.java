@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
@@ -48,18 +48,18 @@ public final class FindingTypesContent extends ContentComposite {
 		if ((findingType == null) || (findingType.length() == 0)) {
 			setEmpty();
 		} else {
-			ServiceHelper.getSettingsService().getFindingTypeInfo(findingType,
-					new Callback<FindingTypeInfo>() {
+			ServiceHelper.getSettingsService().getFindingType(findingType,
+					new Callback<FindingType>() {
 
 						@Override
 						protected void onFailure(String message,
-								FindingTypeInfo result) {
+								FindingType result) {
 							setEmpty();
 						}
 
 						@Override
 						protected void onSuccess(String message,
-								FindingTypeInfo result) {
+								FindingType result) {
 							setFindingType(result);
 						}
 
@@ -79,12 +79,12 @@ public final class FindingTypesContent extends ContentComposite {
 		chart.clear();
 	}
 
-	protected void setFindingType(FindingTypeInfo result) {
+	protected void setFindingType(FindingType result) {
 		name.setHTML(result.getName());
 		summary.setHTML(result.getShortMessage());
 		description.setHTML(result.getInfo());
 		chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
-				result.getUid()).build());
+				result.getUuid()).build());
 	}
 
 }

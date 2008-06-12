@@ -1,19 +1,25 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FindingType implements Serializable {
+public class FindingType implements Cacheable, Serializable {
+	private static final long serialVersionUID = 1766277814214421247L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 47046359782973349L;
-
-	private String name;
-
-	private boolean filtered;
 	private String uuid;
+	private String name;
 	private String shortMessage;
+	private String info;
+	private List<String> reportedBy;
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uid) {
+		this.uuid = uid;
+	}
 
 	public String getName() {
 		return name;
@@ -21,22 +27,6 @@ public class FindingType implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean isFiltered() {
-		return filtered;
-	}
-
-	public void setFiltered(boolean filtered) {
-		this.filtered = filtered;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String id) {
-		uuid = id;
 	}
 
 	public String getShortMessage() {
@@ -47,38 +37,19 @@ public class FindingType implements Serializable {
 		this.shortMessage = shortMessage;
 	}
 
-	public FindingType copy() {
-		FindingType copy = new FindingType();
-		copy.name = name;
-		copy.filtered = filtered;
-		copy.uuid = uuid;
-		copy.shortMessage = shortMessage;
-		return copy;
+	public String getInfo() {
+		return info;
 	}
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-		return result;
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+	public List<String> getReportedBy() {
+		if (reportedBy == null) {
+			reportedBy = new ArrayList<String>();
 		}
-		if (obj == null) {
-			return false;
-		}
-		final FindingType other = (FindingType) obj;
-		if (uuid == null) {
-			if (other.uuid != null) {
-				return false;
-			}
-		} else if (!uuid.equals(other.uuid)) {
-			return false;
-		}
-		return true;
+		return reportedBy;
 	}
 
 }

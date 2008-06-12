@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.data.FindingTypeComparator;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
@@ -56,11 +56,11 @@ public class FindingSelectionDialog extends FormDialog {
 						cat.getName(), cat);
 				final TreeItem catItem = categoryTree.addItem(catCheck);
 				catCheck.addClickListener(new CategoryCheckListener(catItem));
-				List<FindingType> sortedFindings = new ArrayList<FindingType>(
+				List<FindingTypeFilter> sortedFindings = new ArrayList<FindingTypeFilter>(
 						cat.getEntries());
-				Collections.sort(sortedFindings, new FindingTypeComparator());
-				for (FindingType finding : sortedFindings) {
-					ItemCheckBox<FindingType> findingCheck = new ItemCheckBox<FindingType>(
+				Collections.sort(sortedFindings, new FindingTypeFilterComparator());
+				for (FindingTypeFilter finding : sortedFindings) {
+					ItemCheckBox<FindingTypeFilter> findingCheck = new ItemCheckBox<FindingTypeFilter>(
 							finding.getName(), finding);
 					catItem.addItem(findingCheck);
 				}
@@ -112,11 +112,11 @@ public class FindingSelectionDialog extends FormDialog {
 		return cats;
 	}
 
-	public Set<FindingType> getExcludedFindings() {
-		Set<FindingType> excluded = new HashSet<FindingType>();
+	public Set<FindingTypeFilter> getExcludedFindings() {
+		Set<FindingTypeFilter> excluded = new HashSet<FindingTypeFilter>();
 		for (int catIndex = 0; catIndex < categoryTree.getItemCount(); catIndex++) {
 			TreeItem catItem = categoryTree.getItem(catIndex);
-			Set<FindingType> nonSelected = new HashSet<FindingType>();
+			Set<FindingTypeFilter> nonSelected = new HashSet<FindingTypeFilter>();
 			boolean hasSelected = false;
 			for (int findingIndex = 0; findingIndex < catItem.getChildCount(); findingIndex++) {
 				TreeItem findingItem = catItem.getChild(findingIndex);
@@ -125,7 +125,7 @@ public class FindingSelectionDialog extends FormDialog {
 				if (findingCheck.isChecked()) {
 					hasSelected = true;
 				} else {
-					nonSelected.add((FindingType) findingCheck.getItem());
+					nonSelected.add((FindingTypeFilter) findingCheck.getItem());
 				}
 			}
 			if (hasSelected) {

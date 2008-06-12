@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -104,11 +104,16 @@ public interface SettingsService extends RemoteService {
 	Status deleteScanFilter(String uuid);
 
 	/**
-	 * 
-	 * @param uid
 	 * @return
 	 */
-	Result<FindingTypeInfo> getFindingTypeInfo(String uid);
+	List<FindingType> getFindingTypes();
+
+	/**
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	Result<FindingType> getFindingType(String uuid);
 
 	Status updateScanFilter(ScanFilter f);
 }

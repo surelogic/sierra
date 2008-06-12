@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.CategoryComparator;
-import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.data.FindingTypeComparator;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 
@@ -83,14 +83,14 @@ public class CategoryEditor extends BlockPanel {
 	}
 
 	public void addFindings(Set<Category> selectedCategories,
-			Set<FindingType> excludedFindings) {
+			Set<FindingTypeFilter> excludedFindings) {
 		final Category updatedCat = category.copy();
 		findingsEditor.saveTo(updatedCat);
 		for (Category newCat : selectedCategories) {
 			updatedCat.getParents().add(newCat.copy());
 		}
-		for (FindingType excludedFinding : excludedFindings) {
-			FindingType newEntry = excludedFinding.copy();
+		for (FindingTypeFilter excludedFinding : excludedFindings) {
+			FindingTypeFilter newEntry = excludedFinding.copy();
 			newEntry.setFiltered(true);
 			updatedCat.getEntries().add(newEntry);
 		}
@@ -102,7 +102,7 @@ public class CategoryEditor extends BlockPanel {
 	}
 
 	public static class FindingsEditor extends BlockPanel {
-		private final Map<FindingType, ItemCheckBox<FindingType>> findings = new HashMap<FindingType, ItemCheckBox<FindingType>>();
+		private final Map<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findings = new HashMap<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>>();
 		private final List<Category> parentCategories = new ArrayList<Category>();
 		private Category category;
 
@@ -120,12 +120,12 @@ public class CategoryEditor extends BlockPanel {
 			parentCategories.clear();
 
 			// add the findings that belong to the selected category
-			final List<FindingType> catFindings = new ArrayList<FindingType>(
+			final List<FindingTypeFilter> catFindings = new ArrayList<FindingTypeFilter>(
 					category.getEntries());
-			final FindingTypeComparator filterComparator = new FindingTypeComparator();
+			final FindingTypeFilterComparator filterComparator = new FindingTypeFilterComparator();
 			Collections.sort(catFindings, filterComparator);
 
-			for (FindingType finding : catFindings) {
+			for (FindingTypeFilter finding : catFindings) {
 				if (!category.parentContains(finding)) {
 					contentPanel.add(createFindingUI(finding, finding
 							.isFiltered()));
@@ -134,7 +134,7 @@ public class CategoryEditor extends BlockPanel {
 
 			// add findings that belong to the parent categories of the selected
 			// category
-			final Set<FindingType> excluded = category.getExcludedEntries();
+			final Set<FindingTypeFilter> excluded = category.getExcludedEntries();
 			List<Category> sortedParents = new ArrayList<Category>(category
 					.getParents());
 			Collections.sort(sortedParents, new CategoryComparator());
@@ -148,19 +148,19 @@ public class CategoryEditor extends BlockPanel {
 				parentPanel.setContent(findingsPanel);
 				parentPanel.setOpen(true);
 
-				final List<FindingType> parentFindings = new ArrayList<FindingType>(
+				final List<FindingTypeFilter> parentFindings = new ArrayList<FindingTypeFilter>(
 						parent.getIncludedEntries());
 				Collections.sort(parentFindings, filterComparator);
-				for (FindingType finding : parentFindings) {
+				for (FindingTypeFilter finding : parentFindings) {
 					findingsPanel.add(createFindingUI(finding, excluded
 							.contains(finding)));
 				}
 			}
 		}
 
-		private ItemCheckBox<FindingType> createFindingUI(FindingType finding,
+		private ItemCheckBox<FindingTypeFilter> createFindingUI(FindingTypeFilter finding,
 				boolean filtered) {
-			final ItemCheckBox<FindingType> findingUI = new ItemCheckBox<FindingType>(
+			final ItemCheckBox<FindingTypeFilter> findingUI = new ItemCheckBox<FindingTypeFilter>(
 					finding.getName(), finding);
 			findingUI.setTitle(finding.getShortMessage());
 			findingUI.setChecked(!filtered);
@@ -178,19 +178,19 @@ public class CategoryEditor extends BlockPanel {
 			}
 
 			// clone the selected category's entries
-			final Set<FindingType> targetFindings = target.getEntries();
+			final Set<FindingTypeFilter> targetFindings = target.getEntries();
 			targetFindings.clear();
-			for (FindingType catFinding : category.getEntries()) {
+			for (FindingTypeFilter catFinding : category.getEntries()) {
 				targetFindings.add(catFinding.copy());
 			}
 
 			// copy settings or clone the filter entries to the target
-			final Set<FindingType> targetEntries = target.getEntries();
-			for (Map.Entry<FindingType, ItemCheckBox<FindingType>> findingEntry : findings
+			final Set<FindingTypeFilter> targetEntries = target.getEntries();
+			for (Map.Entry<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findingEntry : findings
 					.entrySet()) {
 				if (!findingEntry.getValue().isChecked()) {
-					final FindingType uiFinding = findingEntry.getKey();
-					FindingType targetFinding = findEntry(targetEntries,
+					final FindingTypeFilter uiFinding = findingEntry.getKey();
+					FindingTypeFilter targetFinding = findEntry(targetEntries,
 							uiFinding.getUuid());
 					if (targetFinding == null) {
 						targetFinding = uiFinding.copy();
@@ -201,9 +201,9 @@ public class CategoryEditor extends BlockPanel {
 			}
 		}
 
-		private FindingType findEntry(Set<FindingType> targetEntries,
+		private FindingTypeFilter findEntry(Set<FindingTypeFilter> targetEntries,
 				String uuid) {
-			for (FindingType finding : targetEntries) {
+			for (FindingTypeFilter finding : targetEntries) {
 				if (finding.getUuid().equals(uuid)) {
 					return finding;
 				}

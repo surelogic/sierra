@@ -11,7 +11,7 @@ public class Category implements Serializable, Cacheable {
 
 	private Set<Category> parents;
 
-	private Set<FindingType> entries;
+	private Set<FindingTypeFilter> entries;
 
 	private String name;
 
@@ -37,11 +37,11 @@ public class Category implements Serializable, Cacheable {
 		this.parents = parents;
 	}
 
-	public Set<FindingType> getEntries() {
+	public Set<FindingTypeFilter> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(Set<FindingType> entries) {
+	public void setEntries(Set<FindingTypeFilter> entries) {
 		this.entries = entries;
 	}
 
@@ -76,10 +76,10 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set<FindingType> getExcludedEntries() {
-		final HashSet<FindingType> set = new HashSet<FindingType>(entries
+	public Set<FindingTypeFilter> getExcludedEntries() {
+		final HashSet<FindingTypeFilter> set = new HashSet<FindingTypeFilter>(entries
 				.size());
-		for (FindingType entry : entries) {
+		for (FindingTypeFilter entry : entries) {
 			if (entry.isFiltered()) {
 				set.add(entry);
 			}
@@ -93,15 +93,15 @@ public class Category implements Serializable, Cacheable {
 	 * 
 	 * @return
 	 */
-	public Set<FindingType> getIncludedEntries() {
-		final Set<FindingType> set = new HashSet<FindingType>();
+	public Set<FindingTypeFilter> getIncludedEntries() {
+		final Set<FindingTypeFilter> set = new HashSet<FindingTypeFilter>();
 		if (parents != null) {
 			for (Category parent : parents) {
 				set.addAll(parent.getIncludedEntries());
 			}
 		}
 		if (entries != null) {
-			for (FindingType entry : entries) {
+			for (FindingTypeFilter entry : entries) {
 				if (entry.isFiltered()) {
 					set.remove(entry);
 				} else {
@@ -112,7 +112,7 @@ public class Category implements Serializable, Cacheable {
 		return set;
 	}
 
-	public boolean parentContains(FindingType finding) {
+	public boolean parentContains(FindingTypeFilter finding) {
 		for (Category parent : getParents()) {
 			boolean contains = parent.getEntries().contains(finding);
 			if (contains) {
@@ -142,8 +142,8 @@ public class Category implements Serializable, Cacheable {
 			copy.parents = null;
 		}
 		if (entries != null) {
-			copy.entries = new HashSet<FindingType>();
-			for (FindingType entry : entries) {
+			copy.entries = new HashSet<FindingTypeFilter>();
+			for (FindingTypeFilter entry : entries) {
 				copy.entries.add(entry.copy());
 			}
 		} else {

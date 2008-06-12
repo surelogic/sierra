@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.data.FindingTypeComparator;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
@@ -63,8 +63,8 @@ public class CategoryView extends BlockPanel {
 	}
 
 	private class FindingsView extends BlockPanel {
-		private final SelectionTracker<ItemLabel<FindingType>> selectionTracker = new SelectionTracker<ItemLabel<FindingType>>();
-		private final Map<Widget, FindingType> findings = new HashMap<Widget, FindingType>();
+		private final SelectionTracker<ItemLabel<FindingTypeFilter>> selectionTracker = new SelectionTracker<ItemLabel<FindingTypeFilter>>();
+		private final Map<Widget, FindingTypeFilter> findings = new HashMap<Widget, FindingTypeFilter>();
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
@@ -77,14 +77,14 @@ public class CategoryView extends BlockPanel {
 			findings.clear();
 
 			if (cat != null) {
-				final List<FindingType> visibleFindings = new ArrayList<FindingType>();
-				for (FindingType finding : cat.getIncludedEntries()) {
+				final List<FindingTypeFilter> visibleFindings = new ArrayList<FindingTypeFilter>();
+				for (FindingTypeFilter finding : cat.getIncludedEntries()) {
 					if (!visibleFindings.contains(finding)) {
 						visibleFindings.add(finding);
 					}
 				}
 
-				Collections.sort(visibleFindings, new FindingTypeComparator());
+				Collections.sort(visibleFindings, new FindingTypeFilterComparator());
 
 				ClickListener findingListener = new ClickListener() {
 
@@ -97,8 +97,8 @@ public class CategoryView extends BlockPanel {
 
 				};
 
-				for (FindingType finding : visibleFindings) {
-					final ItemLabel<FindingType> rule = new ItemLabel<FindingType>(
+				for (FindingTypeFilter finding : visibleFindings) {
+					final ItemLabel<FindingTypeFilter> rule = new ItemLabel<FindingTypeFilter>(
 							finding.getName(), finding, selectionTracker,
 							findingListener);
 					rule.setTitle(finding.getShortMessage());
