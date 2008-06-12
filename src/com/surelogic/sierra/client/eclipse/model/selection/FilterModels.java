@@ -3,10 +3,9 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 import java.util.*;
 
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
-import com.surelogic.sierra.jdbc.settings.CategoryDO;
-
 
 public final class FilterModels extends Filter {
+	// FIX should use FINDING_ID
 	private static final String COLUMN_NAME = "SUMMARY"; // For the raw data
 	private static final String MODEL_CATEGORY_ID = "00000006-ef51-4f9c-92f6-351d214f46e7";
 	
@@ -40,32 +39,19 @@ public final class FilterModels extends Filter {
 				              BuglinkData.getInstance().getFindingTypes(MODEL_CATEGORY_ID));				
 	}
 	
-	/*
-	@Override
-	protected void deriveAllValues() {
-		synchronized (this) {
-			f_allValues.clear();
-			f_allValues.add(FINDING);
-			f_allValues.add(VERIFICATION);
-			
-			int verifications = getSummaryCountFor(FilterVerificationStatus.CONSISTENT) +
-			                    getSummaryCountFor(FilterVerificationStatus.INCONSISTENT);
-			f_counts.put(VERIFICATION, verifications);
-			f_counts.put(FINDING, f_counts.get(null));		
-		}
-	}
+	private final int MAX_TOKENS = 2;
 	
-    @Override
-    protected Iterable<String> getMappedPorousValues() {
-    	Set<String> porous = new HashSet<String>();
-    	if (f_porousValues.contains(FINDING)) {
-    		porous.add(null);
-    	}
-    	if (f_porousValues.contains(VERIFICATION)) {
-    		porous.add(FilterVerificationStatus.CONSISTENT);
-    		porous.add(FilterVerificationStatus.INCONSISTENT);
-    	}
-    	return porous;
-    }
-    */
+	@Override
+	public String getLabel(String completeMsg) {
+		StringBuilder b = new StringBuilder();
+		StringTokenizer st = new StringTokenizer(completeMsg);
+		for(int i = 0; st.hasMoreTokens() && i<MAX_TOKENS; i++) {
+			String token = st.nextToken();
+			if (i != 0) {
+				b.append(' ');
+			}
+			b.append(token);
+		}		
+		return b.toString();
+	}
 }
