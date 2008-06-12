@@ -585,7 +585,9 @@ public abstract class Filter {
 		for (ISelectionFilterFactory unusedFilter : unused) {
 			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first);
 		}
-		return b.toString();
+		String rv = b.toString();
+		//System.out.println(rv);
+		return rv;
 	}
 
   protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
