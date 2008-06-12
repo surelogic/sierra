@@ -43,10 +43,11 @@ public final class FilterSelection extends Filter {
 
 	@Override
 	protected void deriveAllValues() {
-		String[] values = new String[] { NEW, UNCHANGED, FIXED };
 		synchronized (this) {
 			f_allValues.clear();
-			f_allValues.addAll(Arrays.asList(values));
+			f_allValues.add(NEW);
+			f_allValues.add(UNCHANGED);
+			f_allValues.add(FIXED);
 		}
 	}
 

@@ -16,6 +16,7 @@ import com.surelogic.jsure.xml.AbstractXMLResultListener;
 import com.surelogic.jsure.xml.Entity;
 import com.surelogic.jsure.xml.SourceRef;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.ScanGenerator;
@@ -52,11 +53,14 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		final String name = e.getName();
 		final boolean warning;
 		final String aType;
+		AssuranceType assuranceType = null;
 
 		final boolean isResultDrop = RESULT_DROP.equals(name);
 		if (isResultDrop || PROMISE_DROP.equals(name)) {
-			final String consistent = e.getAttribute(PROVED_ATTR);
+			final String consistent = e.getAttribute(PROVED_ATTR);			
 			warning = !"true".equals(consistent);
+			assuranceType = warning ? AssuranceType.INCONSISTENT : AssuranceType.CONSISTENT;
+
 			if (isResultDrop) {
 				aType = e.getAttribute(RESULT_ATTR);
 			} else {
@@ -83,6 +87,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			}
 			builder.findingType("JSure", "1.0", aType);
 			builder.scanNumber(id);
+			builder.assurance(assuranceType);
 			// e.getAttribute(CATEGORY_ATTR));
 			builder.build();
 			return true;
