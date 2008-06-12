@@ -645,7 +645,9 @@ public final class MessageWarehouse {
 		builder.findingType(artifact.getArtifactType().getTool(), artifact
 				.getArtifactType().getVersion(), artifact.getArtifactType()
 				.getMnemonic());
-		builder.scanNumber(artifact.getScanNumber());
+		if (artifact.getScanNumber() != null) {
+			builder.scanNumber(artifact.getScanNumber());
+		}
 		builder.assurance(artifact.getAssurance());
 		readPrimarySource(builder, artifact.getPrimarySourceLocation());
 
