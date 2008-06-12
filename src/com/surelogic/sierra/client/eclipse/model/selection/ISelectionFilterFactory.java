@@ -23,4 +23,10 @@ public interface ISelectionFilterFactory extends
 	 * @return the user interface label for this filter.
 	 */
 	String getFilterLabel();
+	
+	/**
+	 * Add a where clause if the filter is unused
+	 * @return an updated value of first
+	 */
+	boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first);
 }

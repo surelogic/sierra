@@ -562,7 +562,8 @@ public abstract class Filter {
 	 */
 	String getWhereClause(boolean includeThis) {
 		final StringBuilder b = new StringBuilder();
-		boolean stateFilterNotUsed = true;
+		final Set<ISelectionFilterFactory> unused = 
+			new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
 		boolean first = true;
 		/*
 		 * For counts we don't include this, for queries on the whole selection
@@ -571,22 +572,23 @@ public abstract class Filter {
 		Filter filter = includeThis ? this : this.f_previous;
 		while (filter != null) {
 			// TODO: fragile base class :-)
-			if (filter instanceof FilterSelection)
-				stateFilterNotUsed = false;
+			unused.remove(filter.getFactory());
+			
 			if (filter.hasWhereClausePart()) {
 				first = addClausePrefix(b, first);
 				b.append(filter.getWhereClausePart());
 			}
 			filter = filter.f_previous;
 		}
-		if (stateFilterNotUsed && !(this instanceof FilterSelection)) {
-			first = addClausePrefix(b, first);
-			FilterSelection.addWhereClauseToFilterOutFixed(b);
+		unused.remove(this.getFactory());
+		
+		for (ISelectionFilterFactory unusedFilter : unused) {
+			first = unusedFilter.addWhereClauseIfUnusedFilter(b, first);
 		}
 		return b.toString();
 	}
 
-  private boolean addClausePrefix(final StringBuilder b, boolean first) {
+  protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
     if (first) {
     	b.append("where ");
     	first = false;

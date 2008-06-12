@@ -12,6 +12,13 @@ public final class FilterSelection extends Filter {
 		public String getFilterLabel() {
 			return "Status";
 		}
+		
+		@Override
+		public boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first) {
+			first = addClausePrefix(b, first);
+			addWhereClauseToFilterOutFixed(b);
+			return first;
+		}
 	};
 
 	FilterSelection(Selection selection, Filter previous) {

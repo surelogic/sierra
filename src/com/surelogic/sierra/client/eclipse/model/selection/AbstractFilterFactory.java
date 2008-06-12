@@ -24,4 +24,8 @@ public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 	public String toString() {
 		return getFilterLabel();
 	}
+	
+	public boolean addWhereClauseIfUnusedFilter(StringBuilder b, boolean first) {
+		return first;
+	}
 }
