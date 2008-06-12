@@ -155,7 +155,7 @@ public class CategoriesContent extends ContentComposite {
 				setCategory(null, false);
 			}
 		} else {
-			if (categories.getItemCount() > 0) {
+			if (!categories.isEmpty()) {
 				new CategoriesContext(categories.getItem(0)).updateContext();
 			}
 		}
