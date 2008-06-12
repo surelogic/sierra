@@ -75,9 +75,9 @@ implements IBuglinkDataObserver {
 				int count = 0;
 				for(String findingType : buglink.getFindingTypes(cat)) {
 					final FindingTypeDO def = buglink.getFindingType(findingType);
-					//final String typeId = def.getUid();
-					final String typeName = def.getName();
-					Integer inc = f_counts.get(typeName);
+					final String typeId = def.getUid();
+					//final String typeName = def.getName();
+					Integer inc = f_counts.get(typeId);
 					if (inc != null) {
 						//System.out.println(catDef.getName()+" : "+def.getName()+" - "+typeId+" = "+inc);
 						count += inc;
