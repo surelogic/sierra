@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
-import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 
 public final class FilterFindingType extends Filter {
