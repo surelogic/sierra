@@ -14,6 +14,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
+import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.TicketService;
@@ -42,13 +43,18 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 							getThreadLocalRequest().getSession()), out);
 			return Result.success(new ImageMapData(out.toString()));
 			// TODO we need to handle when the result is a string better.
-		} catch (ServletException e) {
+		} catch (final ServletException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return Result.failure(
 				"Error retrieving image map for ticket " + ticket, null);
+	}
+
+	public Result<ReportTable> getTableData(Ticket ticket) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
