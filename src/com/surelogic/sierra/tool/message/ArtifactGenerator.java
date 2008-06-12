@@ -51,7 +51,7 @@ public interface ArtifactGenerator {
 		 * @param number
 		 * @return
 		 */
-		public ArtifactBuilder scanNumber(int number);
+		public ArtifactBuilder scanNumber(Integer number);
 
 		/**
 		 * Assigns an assurance type, which indicates whether or not the

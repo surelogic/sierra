@@ -166,7 +166,7 @@ public class Artifact {
 			return this;
 		}
 
-		public Builder scanNumber(int scanNumber) {
+		public Builder scanNumber(Integer scanNumber) {
 			this.scanNumber = scanNumber;
 
 			return this;
