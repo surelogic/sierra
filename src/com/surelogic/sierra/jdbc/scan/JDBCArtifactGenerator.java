@@ -29,6 +29,7 @@ import com.surelogic.sierra.jdbc.record.SourceRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.message.Priority;
@@ -330,6 +331,11 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 
 		public ArtifactBuilder scanNumber(int number) {
 			artifact.setScanNumber(number);
+			return this;
+		}
+
+		public ArtifactBuilder assurance(AssuranceType type) {
+			artifact.setAssurance(type);
 			return this;
 		}
 

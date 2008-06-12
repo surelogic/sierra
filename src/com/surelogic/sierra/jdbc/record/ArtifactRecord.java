@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
@@ -19,6 +20,7 @@ public final class ArtifactRecord extends LongRecord {
 	private String message;
 	private SourceRecord primary;
 	private Integer scanNumber;
+	private AssuranceType assurance;
 
 	public ArtifactRecord(RecordMapper mapper) {
 		super(mapper);
@@ -84,6 +86,14 @@ public final class ArtifactRecord extends LongRecord {
 		this.scanNumber = scanNumber;
 	}
 
+	public AssuranceType getAssurance() {
+		return assurance;
+	}
+
+	public void setAssurance(AssuranceType assurance) {
+		this.assurance = assurance;
+	}
+
 	@Override
 	protected int fill(PreparedStatement st, int idx) throws SQLException {
 		st.setLong(idx++, scanId);
@@ -93,6 +103,8 @@ public final class ArtifactRecord extends LongRecord {
 		setNullableInt(idx++, st, severity == null ? null : severity.ordinal());
 		setNullableString(idx++, st, message);
 		setNullableInt(idx++, st, scanNumber);
+		setNullableString(idx++, st, assurance == null ? null : assurance
+				.flag());
 		return idx;
 	}
 

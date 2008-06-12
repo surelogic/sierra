@@ -14,7 +14,7 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class BugLinkServletContextListener implements ServletContextListener {
 
-	public static final int DELAY = 300;
+	public static final int DELAY = 60;
 	public static final TimeUnit UNIT = TimeUnit.SECONDS;
 
 	public void contextDestroyed(ServletContextEvent event) {
@@ -34,6 +34,10 @@ public class BugLinkServletContextListener implements ServletContextListener {
 						new Runnable() {
 							public void run() {
 								try {
+									SLLogger.getLogger().info(
+											"Updating scan filters and categories from "
+													+ server + " at "
+													+ new Date());
 									final SierraServerLocation location = new SierraServerLocation(
 											server, user, pass);
 									ConnectionFactory
@@ -50,10 +54,10 @@ public class BugLinkServletContextListener implements ServletContextListener {
 															ConnectionFactory
 																	.withReadOnly(SettingQueries
 																			.scanFilterRequest())));
-									SLLogger.getLogger().fine(
-											"Server scan filters and categories updated from "
-													+ server + " at "
-													+ new Date());
+								} catch (final Error e) {
+									SLLogger.getLogger().log(Level.SEVERE,
+											e.getMessage(), e);
+									throw e;
 								} catch (final Exception e) {
 									SLLogger.getLogger().log(Level.WARNING,
 											e.getMessage(), e);

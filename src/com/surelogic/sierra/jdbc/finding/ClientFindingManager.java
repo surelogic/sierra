@@ -98,10 +98,10 @@ public final class ClientFindingManager extends FindingManager {
 			st.close();
 		}
 		populatePartialScanOverview = conn
-				.prepareStatement("INSERT INTO SCAN_OVERVIEW (FINDING_ID,SCAN_ID,LINE_OF_CODE,ARTIFACT_COUNT,TOOL,CU)"
+				.prepareStatement("INSERT INTO SCAN_OVERVIEW (FINDING_ID,SCAN_ID,LINE_OF_CODE,ARTIFACT_COUNT,TOOL,CU,ASSURANCE_TYPE)"
 						+ " SELECT AFR.FINDING_ID, ?, MAX(SL.LINE_OF_CODE), COUNT(AFR.ARTIFACT_ID), "
 						+ "        CASE WHEN COUNT(DISTINCT T.ID) = 1 THEN MAX(T.NAME) ELSE '(From Multiple Tools)' END,"
-						+ "        MAX(CU.CU)"
+						+ "        MAX(CU.CU),A.ASSURANCE_TYPE"
 						+ " FROM "
 						+ tempTableName
 						+ " TF, ARTIFACT_FINDING_RELTN AFR, ARTIFACT A, SOURCE_LOCATION SL, COMPILATION_UNIT CU, ARTIFACT_TYPE ART, TOOL T"
@@ -178,7 +178,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "     L.RELATION_TYPE = O.RELATION_TYPE  AND L.SCAN_ID = ? "
 						+ " WHERE L.CHILD_FINDING_ID IS NULL");
 		populateFindingOverviewCurrentFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -203,7 +203,8 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        FC.NAME,"
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
-						+ "        SO.CU"
+						+ "        SO.CU,"
+						+ "        SO.ASSURANCE_TYPE"
 						+ " FROM"
 						+ "    "
 						+ tempTableName
@@ -220,7 +221,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
 						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
 		populateFindingOverviewFixedFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -243,6 +244,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
 						+ "        SO.CU"
+						+ "        SO.ASSURANCE_TYPE"
 						+ " FROM"
 						+ "    "
 						+ tempTableName
