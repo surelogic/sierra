@@ -18,7 +18,7 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.data.FindingTypeInfo;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
@@ -151,10 +151,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								parents.add(getOrCreateSet(parent, sets));
 							}
 							set.setParents(parents);
-							final Set<FindingType> filters = new HashSet<FindingType>();
+							final Set<FindingTypeFilter> filters = new HashSet<FindingTypeFilter>();
 							for (final CategoryEntryDO fDetail : detail
 									.getFilters()) {
-								final FindingType filter = new FindingType();
+								final FindingTypeFilter filter = new FindingTypeFilter();
 								filter.setFiltered(fDetail.isFiltered());
 								final FindingTypeDO type = types
 										.getFindingType(fDetail
@@ -234,8 +234,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					parentSet.add(parent.getUuid());
 				}
 				final Set<CategoryEntryDO> entrySet = set.getFilters();
-				final Set<FindingType> entries = c.getEntries();
-				for (final FindingType entry : entries) {
+				final Set<FindingTypeFilter> entries = c.getEntries();
+				for (final FindingTypeFilter entry : entries) {
 					entrySet.add(new CategoryEntryDO(entry.getUuid(), entry
 							.isFiltered()));
 				}
@@ -274,19 +274,37 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public Result<FindingTypeInfo> getFindingTypeInfo(final String uid) {
+	public List<FindingType> getFindingTypes() {
 		return ConnectionFactory
-				.withUserTransaction(new UserQuery<Result<FindingTypeInfo>>() {
-					public Result<FindingTypeInfo> perform(Query q, Server s,
-							User u) {
+				.withUserTransaction(new UserQuery<List<FindingType>>() {
+					public List<FindingType> perform(Query q, Server s, User u) {
+						final List<FindingType> result = new ArrayList<FindingType>();
 						final FindingTypes types = new FindingTypes(q);
-						final FindingTypeDO type = types.getFindingType(uid);
-						if (type != null) {
-							final FindingTypeInfo info = new FindingTypeInfo();
+						for (FindingTypeDO type : types.listFindingTypes()) {
+							final FindingType info = new FindingType();
 							info.setInfo(type.getInfo());
 							info.setName(type.getName());
 							info.setShortMessage(type.getShortMessage());
-							info.setUid(type.getUid());
+							info.setUuid(type.getUid());
+							result.add(info);
+						}
+						return result;
+					}
+				});
+	}
+
+	public Result<FindingType> getFindingType(final String uuid) {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<Result<FindingType>>() {
+					public Result<FindingType> perform(Query q, Server s, User u) {
+						final FindingTypes types = new FindingTypes(q);
+						final FindingTypeDO type = types.getFindingType(uuid);
+						if (type != null) {
+							final FindingType info = new FindingType();
+							info.setInfo(type.getInfo());
+							info.setName(type.getName());
+							info.setShortMessage(type.getShortMessage());
+							info.setUuid(type.getUid());
 							return Result.success("Finding Type Found", info);
 						} else {
 							return Result
