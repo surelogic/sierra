@@ -85,7 +85,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			} else {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
 			}
-			builder.findingType("JSure", "1.0", aType);
+			builder.findingType("JSure", "1.1", aType);
 			builder.scanNumber(id);
 			builder.assurance(assuranceType);
 			// e.getAttribute(CATEGORY_ATTR));
