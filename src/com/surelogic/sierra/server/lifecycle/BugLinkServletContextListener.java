@@ -14,7 +14,7 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class BugLinkServletContextListener implements ServletContextListener {
 
-	public static final int DELAY = 60;
+	public static final int DELAY = 300;
 	public static final TimeUnit UNIT = TimeUnit.SECONDS;
 
 	public void contextDestroyed(ServletContextEvent event) {
