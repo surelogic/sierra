@@ -2,12 +2,13 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.*;
 
+import com.surelogic.sierra.client.eclipse.model.BuglinkData;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+
 
 public final class FilterModels extends Filter {
-	private static final String COLUMN_NAME = "ASSURANCE_TYPE"; // For the raw data
+	private static final String COLUMN_NAME = "SUMMARY"; // For the raw data
 	private static final String MODEL_CATEGORY_ID = "00000006-ef51-4f9c-92f6-351d214f46e7";
-	private static final String VERIFICATION = "Verification Result";
-	private static final String FINDING = "Finding";
 	
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
@@ -34,6 +35,13 @@ public final class FilterModels extends Filter {
 	}
 	
 	@Override
+	protected String getMinimalWhereClausePart() {
+		return createInClause("FINDING_TYPE", 
+				              BuglinkData.getInstance().getFindingTypes(MODEL_CATEGORY_ID));				
+	}
+	
+	/*
+	@Override
 	protected void deriveAllValues() {
 		synchronized (this) {
 			f_allValues.clear();
@@ -59,4 +67,5 @@ public final class FilterModels extends Filter {
     	}
     	return porous;
     }
+    */
 }

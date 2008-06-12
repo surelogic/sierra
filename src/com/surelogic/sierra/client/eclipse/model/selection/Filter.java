@@ -569,10 +569,18 @@ public abstract class Filter {
 		 * For counts we don't include this, for queries on the whole selection
 		 * we do.
 		 */
-		Filter filter = includeThis ? this : this.f_previous;
+		Filter filter;
+		if (includeThis) {
+			filter = this;
+		} else {
+			filter = this.f_previous;			
+			first  = addMinimalWhereClausePart(b, first, this);
+		}				
 		while (filter != null) {
 			// TODO: fragile base class :-)
 			unused.remove(filter.getFactory());
+			
+			first = addMinimalWhereClausePart(b, first, filter);
 			
 			if (filter.hasWhereClausePart()) {
 				first = addClausePrefix(b, first);
@@ -590,28 +598,51 @@ public abstract class Filter {
 		return rv;
 	}
 
-  protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
-    if (first) {
-    	b.append("where ");
-    	first = false;
-    } else {
-    	b.append(" and ");
-    }
-    return first;
-  }
+	private boolean addMinimalWhereClausePart(final StringBuilder b,
+			                                  boolean first, Filter filter) {
+		final String min = filter.getMinimalWhereClausePart();
+		if (min != null) {
+			first = addClausePrefix(b, first);
+			b.append(min);
+		}
+		return first;
+	}
 
+	protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
+		if (first) {
+			b.append("where ");
+			first = false;
+		} else {
+			b.append(" and ");
+		}
+		return first;
+	}
+
+	/**
+	 * Computes the minimal where clause for this filter
+	 * 
+	 * @return null if none
+	 */
+	protected String getMinimalWhereClausePart() {
+		return null;
+	}
+  
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	private String getWhereClausePart() {
-		final StringBuilder b = new StringBuilder();
 		if (!hasWhereClausePart())
-			throw new IllegalStateException(this + " has no where clause");
-		b.append('(').append(getColumnName()).append(" in (");
+			throw new IllegalStateException(this + " has no where clause");		
+		return createInClause(getColumnName(), getMappedPorousValues());
+	}
+		
+	protected final String createInClause(String column, Iterable<String> values) {
+		final StringBuilder b = new StringBuilder();
+		b.append('(').append(column).append(" in (");
 		boolean includesNull = false;
 		boolean first = true;
 		
-		for (String value : getMappedPorousValues()) {
+		for (String value : values) {
 			if (value == null) {
 				includesNull = true;
 				continue;
@@ -633,7 +664,7 @@ public abstract class Filter {
 				b.append("-456");
 		}
 		if (includesNull) {		
-			b.append(") or ").append(getColumnName()).append(" is null)");			
+			b.append(") or ").append(column).append(" is null)");			
 		} else {
 			b.append("))");
 		}
