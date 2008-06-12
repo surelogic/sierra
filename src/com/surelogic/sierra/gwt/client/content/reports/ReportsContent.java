@@ -11,15 +11,16 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.ui.SearchBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ReportsContent extends ContentComposite {
 	private static final ReportsContent instance = new ReportsContent();
-	private final ReportsListView reportsListView = new ReportsListView();
+	private final ReportCache reports = new ReportCache();
+	private final ReportsListView reportsListView = new ReportsListView(reports);
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final ReportParametersView reportParamsView = new ReportParametersView();
 	private final ReportView reportView = new ReportView();
-	private final ReportCache reports = new ReportCache();
 
 	public static ReportsContent getInstance() {
 		return instance;
@@ -90,7 +91,6 @@ public class ReportsContent extends ContentComposite {
 
 	private void refreshContext(Context context) {
 		final String reportUuid = context.getUuid();
-		reportsListView.updateReports(reports);
 		if (LangUtil.notEmpty(reportUuid)) {
 			final Report report = reports.getItem(reportUuid);
 			if (report != null) {
@@ -104,5 +104,27 @@ public class ReportsContent extends ContentComposite {
 				Context.createWithUuid(reports.getItem(0)).submit();
 			}
 		}
+	}
+
+	private class ReportsListView extends SearchBlock<Report, ReportCache> {
+		public ReportsListView(ReportCache cache) {
+			super(cache);
+		}
+
+		@Override
+		protected boolean isMatch(Report item, String query) {
+			return item.getName().toLowerCase().contains(query.toLowerCase());
+		}
+
+		@Override
+		protected String getItemText(Report item) {
+			return item.getName();
+		}
+
+		@Override
+		protected void doItemClick(Report item) {
+			Context.createWithUuid(item).submit();
+		}
+
 	}
 }
