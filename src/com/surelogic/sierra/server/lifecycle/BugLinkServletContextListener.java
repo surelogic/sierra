@@ -22,24 +22,31 @@ public class BugLinkServletContextListener implements ServletContextListener {
 	}
 
 	public void contextInitialized(ServletContextEvent event) {
-		final String server = event.getServletContext().getInitParameter(
-				"parent-server");
+		final String host = event.getServletContext().getInitParameter(
+				"parent-host");
+		final String port = event.getServletContext().getInitParameter(
+				"parent-port");
+		final String context = event.getServletContext().getInitParameter(
+				"parent-context");
 		final String user = event.getServletContext().getInitParameter(
 				"parent-user");
 		final String pass = event.getServletContext().getInitParameter(
 				"parent-pass");
 		try {
-			if ((server != null) && !"".equals(server)) {
+			if ((host != null) && !"".equals(host)) {
 				ConnectionFactory.lookupTimerService().scheduleWithFixedDelay(
 						new Runnable() {
 							public void run() {
 								try {
 									SLLogger.getLogger().info(
 											"Updating scan filters and categories from "
-													+ server + " at "
+													+ host + " at "
 													+ new Date());
+
 									final SierraServerLocation location = new SierraServerLocation(
-											server, user, pass);
+											host, false, port == null ? 13376
+													: Integer.valueOf(port),
+											context, user, pass);
 									ConnectionFactory
 											.withTransaction(SettingQueries
 													.retrieveCategories(
@@ -66,7 +73,7 @@ public class BugLinkServletContextListener implements ServletContextListener {
 						}, DELAY, DELAY, UNIT);
 				SLLogger.getLogger().info(
 						"Buglink update scheduled for every " + DELAY + " "
-								+ UNIT + " at " + server + ".");
+								+ UNIT + " at " + host + ".");
 			} else {
 				SLLogger.getLogger().info("No parent server configured.");
 			}
