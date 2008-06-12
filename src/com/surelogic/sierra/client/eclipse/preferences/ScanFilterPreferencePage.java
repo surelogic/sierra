@@ -489,7 +489,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			}
 			b.append("</table></center>");
 		}
-		f_detailsText.setText(b.toString());
+		if (f_detailsText != null) {
+			f_detailsText.setText(b.toString());
+		}
 	}
 
 	/**
