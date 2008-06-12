@@ -19,7 +19,8 @@ public final class FilterVerificationStatus extends Filter {
 		@Override
 		public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
 				                                    StringBuilder b, boolean first) {
-			if (unused.contains(FilterResultType.FACTORY)) { // both unused
+			if (unused.contains(FilterResultType.FACTORY) &&
+		        unused.contains(FilterModels.FACTORY)) { // all unused
 				first = addClausePrefix(b, first);
 				b.append(COLUMN_NAME + " is NULL");
 			}
