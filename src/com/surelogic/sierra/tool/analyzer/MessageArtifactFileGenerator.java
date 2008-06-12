@@ -329,7 +329,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			return this;
 		}
 
-		public ArtifactBuilder scanNumber(int number) {
+		public ArtifactBuilder scanNumber(Integer number) {
 			artBuilder.scanNumber(number);
 			return this;
 		}

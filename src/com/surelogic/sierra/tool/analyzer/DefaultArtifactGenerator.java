@@ -54,7 +54,7 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 			return new DefaultSourceBuilder();
 		}
 
-		public ArtifactBuilder scanNumber(int number) {
+		public ArtifactBuilder scanNumber(Integer number) {
 			return this;
 		}
 
