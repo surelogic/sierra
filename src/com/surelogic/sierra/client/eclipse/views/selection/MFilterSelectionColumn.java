@@ -330,7 +330,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            Color oldBackground = gc.getBackground();
 	            // Draw background fill
 	            final int height = event.height-2;
-	            if (f_mouseOverLine.equals(value)) {
+	            final boolean mouseOverGraph = 
+	            	f_mouseOverLine == null ? value == null : f_mouseOverLine.equals(value);
+	            if (mouseOverGraph) {
 	              //gc.setForeground(f_barColorDark);
 	              gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 	              gc.fillRectangle(event.x, event.y, GRAPH_WIDTH, height);
@@ -364,7 +366,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 	            Point size = gc.textExtent(text);
 	            int offset = Math.max(0, (height - size.y) / 2);
 	            int rightJ = GRAPH_WIDTH - 2 - size.x;	            
-	            boolean mouseOverGraph = f_mouseOverLine.equals(value);
 	            if (mouseOverGraph || checked) {
 	              gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 	            }
@@ -513,7 +514,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 		  int i=0;
 		  for(String row : valueList) {
 			TableItem item = items[i];
-			if (!row.equals(item.getData())) {
+			
+			final boolean itemDiffers = 
+				row == null ? item.getData() != null : !row.equals(item.getData());
+			if (itemDiffers) {
 			  updateData(item, row);			  
 			}
 	        i++;

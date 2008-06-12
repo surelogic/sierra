@@ -605,9 +605,15 @@ public abstract class Filter {
 		final StringBuilder b = new StringBuilder();
 		if (!hasWhereClausePart())
 			throw new IllegalStateException(this + " has no where clause");
-		b.append(getColumnName()).append(" in (");
+		b.append('(').append(getColumnName()).append(" in (");
+		boolean includesNull = false;
 		boolean first = true;
+		
 		for (String value : getMappedPorousValues()) {
+			if (value == null) {
+				includesNull = true;
+				continue;
+			}
 			if (first) {
 				first = false;
 			} else {
@@ -624,7 +630,11 @@ public abstract class Filter {
 			else
 				b.append("-456");
 		}
-		b.append(")");
+		if (includesNull) {		
+			b.append(") or ").append(getColumnName()).append(" is null)");			
+		} else {
+			b.append("))");
+		}
 		return b.toString();
 	}
 
