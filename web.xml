@@ -230,8 +230,22 @@
 		<description>
 			Where to go to update your buglink data
 		</description>
-		<param-name>parent-server</param-name>
+		<param-name>parent-host</param-name>
 		<param-value>buglink.org</param-value>
+	</context-param>
+		<context-param>
+		<description>
+			Where to go to update your buglink data
+		</description>
+		<param-name>parent-port</param-name>
+		<param-value>13376</param-value>
+	</context-param>
+		<context-param>
+		<description>
+			Where to go to update your buglink data
+		</description>
+		<param-name>parent-context</param-name>
+		<param-value>/sl/</param-value>
 	</context-param>
 	<context-param>
 		<description>
