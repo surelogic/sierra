@@ -103,7 +103,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	}
 
 	private void persist(SLProgressMonitor monitor) {
-	  ArtifactArtifactRelation current = null;
+		ArtifactArtifactRelation current = null;
 		try {
 			monitor.subTask("Persisting comp units");
 			lookupOrInsert(compUnits.values());
@@ -118,7 +118,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			monitor.subTask("Persisting artifacts");
 			insert(artifacts);
 			for (final ArtifactArtifactRelation relation : artifactRelations) {
-			  current = relation;
+				current = relation;
 				insertArtifactNumberRelation.setLong(1, scan.getId());
 				insertArtifactNumberRelation.setInt(2, relation.parentNumber);
 				insertArtifactNumberRelation.setInt(3, relation.childNumber);
@@ -329,7 +329,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			return this;
 		}
 
-		public ArtifactBuilder scanNumber(int number) {
+		public ArtifactBuilder scanNumber(Integer number) {
 			artifact.setScanNumber(number);
 			return this;
 		}
