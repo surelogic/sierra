@@ -20,6 +20,7 @@ import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Artifact;
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.ClassMetric;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.Error;
@@ -328,6 +329,16 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 			return this;
 		}
 
+		public ArtifactBuilder scanNumber(int number) {
+			artBuilder.scanNumber(number);
+			return this;
+		}
+
+		public ArtifactBuilder assurance(AssuranceType type) {
+			artBuilder.assurance(type);
+			return this;
+		}
+
 		public SourceLocationBuilder sourceLocation() {
 			return new SourceLocationAdapter(false);
 		}
@@ -389,15 +400,11 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			public SourceLocationBuilder compilation(String compilation) {
 				sourceBuilder.compilation(compilation);
-				return null;
+				return this;
 			}
 
 		}
 
-		public ArtifactBuilder scanNumber(int number) {
-			// TODO
-			return null;
-		}
 	}
 
 }

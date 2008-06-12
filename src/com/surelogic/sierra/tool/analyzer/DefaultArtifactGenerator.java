@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.message.Priority;
@@ -54,6 +55,10 @@ public class DefaultArtifactGenerator implements ArtifactGenerator {
 		}
 
 		public ArtifactBuilder scanNumber(int number) {
+			return this;
+		}
+
+		public ArtifactBuilder assurance(AssuranceType type) {
 			return this;
 		}
 
