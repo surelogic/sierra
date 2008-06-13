@@ -37,19 +37,14 @@ import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.common.jdbc.*;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.*;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
 import com.surelogic.sierra.client.eclipse.views.IViewUpdater;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
-import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
-import com.surelogic.sierra.jdbc.finding.AuditDetail;
-import com.surelogic.sierra.jdbc.finding.FindingDetail;
-import com.surelogic.sierra.jdbc.finding.FindingStatus;
-import com.surelogic.sierra.jdbc.finding.SourceDetail;
+import com.surelogic.sierra.jdbc.finding.*;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
@@ -63,6 +58,8 @@ implements IViewUpdater {
 	private final TreeViewer[] f_viewers;
 	
 	private volatile FindingDetail f_finding;
+	private volatile FindingRelationOverview f_relatedChildren;
+	private volatile FindingRelationOverview f_relatedAncestors;
 
 	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite[] parents, TreeViewer[] viewers) {
 		super(view);
@@ -92,12 +89,41 @@ implements IViewUpdater {
 	}
 	
 	void asyncQueryAndShow(final FindingDetail detail) {
-	  f_finding = detail;
-
-	  // got details, update the view in the UI thread
-	  asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);
+		final Long findingIdObj = detail.getFindingId();
+		f_finding = detail;
+	  
+		final Job job = new DatabaseJob("Querying JSure details of finding " + findingIdObj) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Querying finding data",
+						IProgressMonitor.UNKNOWN);
+				try {
+					Connection c = Data.readOnlyConnection();
+					try {
+						Query q = new ConnectionQuery(c);
+						f_relatedChildren  = FindingRelationOverview.getOverviewOrNull(q, findingIdObj, true);
+						f_relatedAncestors = FindingRelationOverview.getOverviewOrNull(q, findingIdObj, false);
+						
+						// got details, update the view in the UI thread
+						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);							  
+					} finally {
+						if (c != null) {
+							c.close();
+						}
+					}
+					monitor.done();
+					return Status.OK_STATUS;
+				} catch (SQLException e) {
+					final int errNo = 57;
+					final String msg = I18N.err(errNo, findingIdObj);
+					return SLStatus.createErrorStatus(errNo, msg, e);
+				}
+			}
+		};
+		job.schedule();
 	}
 
+	/*
 	private final Listener f_radioListener = new Listener() {
 		public void handleEvent(Event event) {
 			final Importance current = f_finding.getImportance();
@@ -128,6 +154,7 @@ implements IViewUpdater {
 					.getPackageName(), src.getClassName(), src.getLineOfCode());
 		}
 	};
+	 */
 
 	@Override
 	public void init() {
