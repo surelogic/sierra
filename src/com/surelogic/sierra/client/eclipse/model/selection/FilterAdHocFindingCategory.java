@@ -39,10 +39,12 @@ implements IBuglinkDataObserver {
 		return "FO.FINDING_TYPE"; // For the raw data
 	}
 
+	/*
 	@Override
 	public Image getImageFor(String value) {
 		return SLImages.getImage(CommonImages.IMG_CATEGORY);
 	}
+	*/
 	
 	@Override
 	public String getLabel(String uid) {
