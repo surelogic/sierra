@@ -2,6 +2,13 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Set;
 
+import org.eclipse.swt.graphics.Image;
+
+import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.tool.message.AssuranceType;
+
 public final class FilterVerificationStatus extends Filter {
 	private static final String COLUMN_NAME = "FO.ASSURANCE_TYPE";
 	public static final String CONSISTENT = "C";
@@ -50,6 +57,15 @@ public final class FilterVerificationStatus extends Filter {
 			f_allValues.add(INCONSISTENT);
 			f_allValues.add(null);
 		}
+	}
+	
+	@Override
+	public Image getImageFor(String value) {
+		AssuranceType aType = AssuranceType.fromFlag(value);
+		if (aType == null) {
+			return SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50);
+		}
+		return Utility.getImageFor(aType);
 	}
 	
 	@Override
