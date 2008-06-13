@@ -540,7 +540,7 @@ public abstract class Filter {
 	 */
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
-		b.append(QB.get(6, getColumnName(), getWhereClause(false),
+		b.append(QB.get("FindingsSelectionView.count", getColumnName(), getWhereClause(false),
 				getColumnName()));
 		return b;
 	}

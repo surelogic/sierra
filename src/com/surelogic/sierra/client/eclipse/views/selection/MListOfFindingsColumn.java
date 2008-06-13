@@ -448,7 +448,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 */
 	public String getQuery() {
 		StringBuilder b = new StringBuilder();
-		b.append(QB.get(5, getSelection().getWhereClause()));
+		b.append(QB.get("FindingsSelectionView.show", getSelection().getWhereClause()));
 		return b.toString();
 	}
 
