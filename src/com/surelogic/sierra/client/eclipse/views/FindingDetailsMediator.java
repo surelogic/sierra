@@ -236,10 +236,6 @@ implements IViewUpdater {
 					try {
 					  FindingDetail detail = FindingDetail.getDetailOrNull(c, findingId);
 						f_finding = detail;
-						
-				    if (XUtil.useExperimental()) {
-				      JSureFindingDetailsView.findingSelected(detail, moveFocus);
-				    }
 
 						// got details, update the view in the UI thread
 						asyncUpdateContentsForUI(FindingDetailsMediator.this);
@@ -522,7 +518,7 @@ implements IViewUpdater {
 	/**
 	 * Must be invoked from the SWT thread.
 	 */
-	public void updateContentsForUI() {
+	public void updateContentsForUI() {		
 		final boolean showFinding = f_finding != null;
 
 		// Page doesn't match our state
@@ -649,6 +645,10 @@ implements IViewUpdater {
 
 		updateTabTitles();
 		f_parent.layout(true, true);
+				
+	    if (XUtil.useExperimental()) {
+	      JSureFindingDetailsView.findingSelected(f_finding, false);
+	    }
 	}
 
 	private String getFindingSynopsis() {
