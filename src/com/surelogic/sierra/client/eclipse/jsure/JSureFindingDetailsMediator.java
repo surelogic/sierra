@@ -21,6 +21,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.*;
 import com.surelogic.sierra.client.eclipse.*;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
+import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.IViewUpdater;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.*;
@@ -40,6 +41,8 @@ implements IViewUpdater {
 	private FindingRelationOverview f_relatedChildren;
 	private FindingRelationOverview f_relatedAncestors;
 	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
+	
+	private volatile FindingRelation lastSelected;
 
 	public JSureFindingDetailsMediator(final JSureFindingDetailsView view, 
 			                           Composite[] parents, Label[] labels, TreeViewer[] viewers) {
@@ -50,9 +53,36 @@ implements IViewUpdater {
 		
 		int i=0;
 		for(TreeViewer v : viewers) {
-			Provider p = new Provider(i == 0);
+			final boolean lookAtChildren = (i == 0);
+			Provider p = new Provider(lookAtChildren);
 			v.setLabelProvider(p);
 			v.setContentProvider(p);
+			v.addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					IStructuredSelection selection;
+					if (event.getSelection() instanceof IStructuredSelection) {
+						selection = (IStructuredSelection) event.getSelection();
+					} else {
+						return;
+					}
+					if (!selection.isEmpty()) {
+						lastSelected = (FindingRelation) selection.getFirstElement();
+					}
+				}
+			});
+			v.getTree().addListener(SWT.MouseDoubleClick, new Listener() {
+				public void handleEvent(Event event) {
+					final FindingRelation fr = lastSelected;
+					if (fr != null) {
+						Long findingID = lookAtChildren ? fr.getChildId() : fr.getParentId();
+						FindingDetail data = details.get(findingID);					
+						JDTUtility.tryToOpenInEditor(data.getProjectName(), 
+								data.getPackageName(), data.getClassName(), data.getLineOfCode());
+						
+						FindingDetailsView.findingSelected(findingID, false);
+					}
+				}
+			});
 			i++;
 		}
 		
