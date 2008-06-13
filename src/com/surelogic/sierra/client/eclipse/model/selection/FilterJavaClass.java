@@ -23,6 +23,6 @@ public final class FilterJavaClass extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "CLASS";
+		return "FO.CLASS";
 	}
 }

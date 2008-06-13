@@ -28,7 +28,7 @@ public final class FilterFindingCategory extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "CATEGORY";
+		return "FO.CATEGORY";
 	}
 
 	@Override

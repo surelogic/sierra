@@ -28,7 +28,7 @@ public final class FilterProject extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "PROJECT";
+		return "FO.PROJECT";
 	}
 
 	@Override

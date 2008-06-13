@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 import java.util.Set;
 
 public final class FilterVerificationStatus extends Filter {
-	private static final String COLUMN_NAME = "ASSURANCE_TYPE";
+	private static final String COLUMN_NAME = "FO.ASSURANCE_TYPE";
 	public static final String CONSISTENT = "C";
 	public static final String INCONSISTENT = "I";
 	

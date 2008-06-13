@@ -25,7 +25,7 @@ public final class FilterImportance extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "IMPORTANCE";
+		return "FO.IMPORTANCE";
 	}
 
 	public static final String CRITICAL = "Critical";

@@ -23,6 +23,6 @@ public final class FilterTool extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "TOOL";
+		return "FO.TOOL";
 	}
 }

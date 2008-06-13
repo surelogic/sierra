@@ -29,7 +29,7 @@ public final class FilterFindingType extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "FINDING_TYPE";
+		return "FO.FINDING_TYPE";
 	}
 	
 	@Override

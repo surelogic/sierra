@@ -8,7 +8,7 @@ import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 
 public final class FilterModels extends Filter {
 	// FIX should use FINDING_ID
-	private static final String COLUMN_NAME = "SUMMARY"; // For the raw data
+	private static final String COLUMN_NAME = "FO.SUMMARY"; // For the raw data
 	private static final String MODEL_CATEGORY_ID = "00000006-ef51-4f9c-92f6-351d214f46e7";
 	
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
@@ -37,7 +37,7 @@ public final class FilterModels extends Filter {
 	
 	@Override
 	protected String getMinimalWhereClausePart() {
-		return createInClause("FINDING_TYPE", 
+		return createInClause("FO.FINDING_TYPE", 
 				              BuglinkData.getInstance().getFindingTypes(MODEL_CATEGORY_ID));				
 	}
 	
