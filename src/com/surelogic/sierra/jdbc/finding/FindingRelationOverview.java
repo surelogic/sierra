@@ -5,10 +5,12 @@ import java.util.*;
 import com.surelogic.common.jdbc.*;
 
 public class FindingRelationOverview {
+	private static final FindingRelation[] emptyRelations = new FindingRelation[0];
+	
 	private final List<FindingRelation> f_relations;
 	
 	private FindingRelationOverview(List<FindingRelation> relations) {
-		f_relations = Collections.unmodifiableList(relations);
+		f_relations = relations;
 	}
 	
 	public static FindingRelationOverview getOverviewOrNull(Query q, Long findingId, boolean getChildren) {
@@ -26,8 +28,12 @@ public class FindingRelationOverview {
 		return f_relations;
 	}
 	
-	public Object[] toArray() {
-		return f_relations.toArray();
+	public FindingRelation[] toArray() {
+		return f_relations.toArray(emptyRelations);
+	}
+	
+	public void sort(Comparator<? super FindingRelation> c) {
+		Collections.sort(f_relations, c);
 	}
 	
 	public boolean isEmpty() {
