@@ -121,6 +121,13 @@ public class Report implements Serializable, Cacheable {
 			this.type = type;
 		}
 
+		public String getValue() {
+			if (values.isEmpty()) {
+				return null;
+			}
+			return values.get(0);
+		}
+
 		public List<String> getValues() {
 			return values;
 		}
