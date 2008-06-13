@@ -3,11 +3,7 @@ package com.surelogic.sierra.client.eclipse.jsure;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,7 +57,8 @@ implements IViewUpdater {
 	private FindingRelationOverview f_relatedAncestors;
 	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
 
-	public JSureFindingDetailsMediator(JSureFindingDetailsView view, Composite[] parents, TreeViewer[] viewers) {
+	public JSureFindingDetailsMediator(final JSureFindingDetailsView view, 
+			                           Composite[] parents, TreeViewer[] viewers) {
 		super(view);
 		f_parents = parents;
 		f_viewers = viewers;
@@ -73,6 +70,19 @@ implements IViewUpdater {
 			v.setContentProvider(p);
 			i++;
 		}
+		
+		view.addToActionBar(new Action("Children") {
+			@Override
+			public void run() {
+				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
+			}
+		});
+		view.addToActionBar(new Action("Parents") {
+			@Override
+			public void run() {
+				view.setDataPage(VIEW_OWN_DEPENDENCIES);
+			}
+		});
 		
 		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();
