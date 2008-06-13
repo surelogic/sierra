@@ -14,6 +14,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
@@ -29,6 +30,14 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 	public Result<Ticket> getTicket(Map<String, String> args) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
 				args, getThreadLocalRequest().getSession()).getUUID()
+				.toString());
+		log.log(Level.FINE, "Ticket " + ticket.getUUID() + " created.");
+		return Result.success(ticket);
+	}
+
+	public Result<Ticket> getTicket(Report report) {
+		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
+				report, getThreadLocalRequest().getSession()).getUUID()
 				.toString());
 		log.log(Level.FINE, "Ticket " + ticket.getUUID() + " created.");
 		return Result.success(ticket);
@@ -52,7 +61,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 				"Error retrieving image map for ticket " + ticket, null);
 	}
 
-	public Result<ReportTable> getTableData(Ticket ticket) {
+	public Result<ReportTable> getReportTable(Ticket ticket) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.gwt.client.data.Report;
 
 /**
  * This singleton class manages tickets used for chart caching within and across
@@ -42,6 +43,21 @@ public final class Attendant implements Sweepable {
 	}
 
 	/**
+	 * Gets or creates a {@link Ticket} object for the report. This ticket
+	 * object may be used throughout the lifetime of the passed session.
+	 * 
+	 * @param report
+	 *            the report to provide a ticket for.
+	 * @param session
+	 *            the session the {@link Ticket} object is associated with.
+	 * @return the {@link Ticket} object.
+	 */
+	public Ticket getTicket(Report report, HttpSession session) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
 	 * Gets or creates a {@link Ticket} object for the passed set of parameters.
 	 * This ticket object may be used throughout the lifetime of the passed
 	 * session.
@@ -54,13 +70,15 @@ public final class Attendant implements Sweepable {
 	 */
 	public Ticket getTicket(final Map<String, String> parameters,
 			final HttpSession session) {
-		if (parameters == null)
+		if (parameters == null) {
 			throw new IllegalArgumentException(I18N.err(44, "parameters"));
-		if (session == null)
+		}
+		if (session == null) {
 			throw new IllegalArgumentException(I18N.err(44, "session"));
+		}
 
 		synchronized (this) {
-			Set<Ticket> tickets = getOrCreateSessionTickets(session);
+			final Set<Ticket> tickets = getOrCreateSessionTickets(session);
 			/*
 			 * This set of tickets could have just migrated over from another
 			 * machine in a cluster. So we need to add all these tickets to this
@@ -70,7 +88,7 @@ public final class Attendant implements Sweepable {
 			/*
 			 * Do we have a ticket for this set of parameters?
 			 */
-			for (Ticket ticket : tickets) {
+			for (final Ticket ticket : tickets) {
 				if (ticket.getParameters().equals(parameters)) {
 					SLLogger.log(Level.FINE,
 							"getTicket found the ticket in the session.");
@@ -83,7 +101,7 @@ public final class Attendant implements Sweepable {
 			/*
 			 * No, check this node.
 			 */
-			for (Ticket ticket : f_nodeTickets) {
+			for (final Ticket ticket : f_nodeTickets) {
 				if (ticket.getParameters().equals(parameters)) {
 					SLLogger.log(Level.FINE,
 							"getTicket found the ticket in this node.");
@@ -117,14 +135,16 @@ public final class Attendant implements Sweepable {
 	 * @return the {@link Ticket} object, or {@code null} if none.
 	 */
 	public Ticket getTicket(final UUID uuid, final HttpSession session) {
-		if (uuid == null)
+		if (uuid == null) {
 			throw new IllegalArgumentException(I18N.err(44, "uuid"));
-		if (session == null)
+		}
+		if (session == null) {
 			throw new IllegalArgumentException(I18N.err(44, "session"));
+		}
 
 		synchronized (this) {
-			Set<Ticket> tickets = getOrCreateSessionTickets(session);
-			for (Ticket ticket : tickets) {
+			final Set<Ticket> tickets = getOrCreateSessionTickets(session);
+			for (final Ticket ticket : tickets) {
 				if (ticket.getUUID().equals(uuid)) {
 					return ticket;
 				}
@@ -172,4 +192,5 @@ public final class Attendant implements Sweepable {
 	private Attendant() {
 		// singleton
 	}
+
 }
