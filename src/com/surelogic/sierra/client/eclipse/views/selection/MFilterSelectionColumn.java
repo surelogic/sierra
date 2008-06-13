@@ -588,6 +588,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 		final String label = f_filter.getLabel(value); 
 	  item.setText(label);
 	  item.setText(0, label);
+	  
+	  final Image image = f_filter.getImageFor(value);	  
+	  item.setImage(image);
+	  
     item.setData(value);
     item.setChecked(f_filter.isPorous(value));
 	}
