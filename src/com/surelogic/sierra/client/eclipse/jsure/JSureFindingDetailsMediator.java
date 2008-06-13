@@ -293,7 +293,8 @@ implements IViewUpdater {
 		public String getText(Object element) {
 			FindingRelation fr = (FindingRelation) element;
 			FindingDetail fd  = details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
-			return fd.getSummary();
+			String pre = lookAtChildren ? "child " : "parent "; 
+			return pre + fr.getRelationType() + ' ' + fd.getSummary();
 		}
 	}
 }
