@@ -1,0 +1,45 @@
+package com.surelogic.sierra.jdbc.finding;
+
+import com.surelogic.common.jdbc.*;
+
+public class FindingRelation {
+	private final long f_parentId;
+	private final long f_childId;
+	private final long f_project;
+	private final String f_relationType;
+	private final String f_status;
+	
+	private FindingRelation(Row r) {
+		f_parentId = r.nextLong();
+		f_childId = r.nextLong();
+		f_project = r.nextLong();
+		f_relationType = r.nextString();
+		f_status = r.nextString();
+	}
+	
+	static class Handler implements RowHandler<FindingRelation> {
+		public FindingRelation handle(Row r) {
+			return new FindingRelation(r);
+		}		
+	}
+
+	public long getParentId() {
+		return f_parentId;
+	}
+
+	public long getChildId() {
+		return f_childId;
+	}
+
+	public long getProjectId() {
+		return f_project;
+	}
+
+	public String getRelationType() {
+		return f_relationType;
+	}
+
+	public String getStatus() {
+		return f_status;
+	}
+}
