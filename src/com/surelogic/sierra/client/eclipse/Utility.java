@@ -29,6 +29,9 @@ public final class Utility {
 	}
 
 	public static Image getImageFor(AssuranceType type) {
+		if (type == null) {
+			return null;
+		}
 		switch (type) {
 		case CONSISTENT:
 			return SLImages.getImage(CommonImages.IMG_PLUS);			
