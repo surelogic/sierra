@@ -11,7 +11,7 @@ import com.surelogic.sierra.jdbc.finding.FindingDetail;
 
 public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFindingDetailsMediator> {
 
-	public static final String ID = "com.surelogic.sierra.client.eclipse.views.JSureFindingDetailsView";
+	public static final String ID = "com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView";
 	
 	public JSureFindingDetailsView() {
 	  super(2);
@@ -40,6 +40,9 @@ public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFi
 		return new JSureFindingDetailsMediator(this, parents, viewers); // FIX tree);
 	}
 		
+	/**
+	 * Should be called from SWT thread
+	 */
 	public static void findingSelected(FindingDetail detail, boolean moveFocus) {
 		JSureFindingDetailsView view;
 		try {
