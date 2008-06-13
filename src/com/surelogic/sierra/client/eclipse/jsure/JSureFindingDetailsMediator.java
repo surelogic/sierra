@@ -326,7 +326,9 @@ implements IViewUpdater {
 		}		
 		
 		public Image getImage(Object element) {
-			return null;
+			FindingRelation fr = (FindingRelation) element;
+			FindingDetail fd  = getDetail(fr, lookAtChildren);
+			return Utility.getImageFor(fd.getAssuranceType());
 		}
 
 		public String getText(Object element) {
@@ -335,8 +337,12 @@ implements IViewUpdater {
 		}
 	}
 	
+	public FindingDetail getDetail(FindingRelation fr, boolean lookAtChildren) {
+		return details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
+	}
+	
 	public String getLabel(FindingRelation fr, boolean lookAtChildren) {
-		FindingDetail fd  = details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
+		FindingDetail fd  = getDetail(fr, lookAtChildren);
 		//String pre = lookAtChildren ? "child " : "parent "; 
 		//return pre + fr.getRelationType() + ' ' + fd.getSummary();
 		return fr.getRelationType() + ' ' + fd.getSummary();
