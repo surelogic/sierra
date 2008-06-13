@@ -60,6 +60,6 @@ public final class FilterVerificationStatus extends Filter {
 		if (INCONSISTENT.equals(initial)) {
 			return "Inconsistent";
 		}
-		return "N/A";
+		return "n/a";
 	}	
 }
