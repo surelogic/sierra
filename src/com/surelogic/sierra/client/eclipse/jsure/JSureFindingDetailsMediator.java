@@ -2,41 +2,24 @@ package com.surelogic.sierra.client.eclipse.jsure;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.*;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.*;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.*;
-import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
 import com.surelogic.sierra.client.eclipse.views.IViewUpdater;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
@@ -44,8 +27,8 @@ import com.surelogic.sierra.jdbc.finding.*;
 
 public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 implements IViewUpdater {
-  private static final int VIEW_DEPENDENT_ON_THIS = 0;
-  private static final int VIEW_OWN_DEPENDENCIES = 1;
+	private static final int VIEW_OWN_DEPENDENCIES = 0;
+	private static final int VIEW_DEPENDENT_ON_THIS = 1;
   
 	private final RGB f_BackgroundColorRGB;
 
@@ -73,18 +56,19 @@ implements IViewUpdater {
 			i++;
 		}
 		
-		view.addToActionBar(new Action("Children", SWT.PUSH) {
-			@Override
-			public void run() {
-				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
-			}
-		});
-		view.addToActionBar(new Action("Parents", SWT.PUSH) {
+		final Action children = new Action("Dependencies", SWT.PUSH) {
 			@Override
 			public void run() {
 				view.setDataPage(VIEW_OWN_DEPENDENCIES);
 			}
-		});
+		};
+		view.addToActionBar(children);
+		view.addToActionBar(new Action("Dependents", SWT.PUSH) {
+			@Override
+			public void run() {
+				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
+			}
+		});		
 		
 		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();
@@ -217,11 +201,11 @@ implements IViewUpdater {
 		if (!showFinding)
 			return;
 		
-		for(Label l : f_labels) {
-			l.setText(f_finding.getSummary());
-		}
-		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(f_relatedChildren);
-		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(f_relatedAncestors);
+		f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
+		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(f_relatedChildren);
+		
+		f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
+		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(f_relatedAncestors);
 		
 		/*
 		 * We have a finding so show the details about it.
