@@ -201,6 +201,8 @@ public abstract class Filter {
 						int count = rs.getInt(2);
 						f_counts.put(value, count);
 						countTotal += count;
+						
+						grabExtraCountsData(value, rs);
 					}
 				} finally {
 					rs.close();
@@ -212,6 +214,10 @@ public abstract class Filter {
 			c.close();
 		}
 		f_countTotal = countTotal;
+	}
+
+	protected void grabExtraCountsData(String value, ResultSet rs) throws SQLException {
+		// Nothing to do for now
 	}
 
 	/**
@@ -540,12 +546,22 @@ public abstract class Filter {
 	 */
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
-		b.append(QB.get("FindingsSelectionView.count", getColumnName(), getWhereClause(false),
+		final String query    = getBaseCountsQuery();		
+		b.append(QB.get(query, getColumnName(), getWhereClause(false),
 				getColumnName()));
 		return b;
 	}
 
+	protected String getBaseCountsQuery() {
+		String query = usesJoin() ? "FindingsSelectionView.countJoin" : 
+			                        "FindingsSelectionView.count";
+		return query;
+	}
+
 	public boolean usesJoin() {
+		if (f_previous != null) {
+			return f_previous.usesJoin();
+		}
 		return false;
 	}
 	
@@ -568,7 +584,7 @@ public abstract class Filter {
 		final StringBuilder b = new StringBuilder();
 		final Set<ISelectionFilterFactory> unused = 
 			new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
-		boolean first = true;
+		boolean first = !usesJoin();
 		/*
 		 * For counts we don't include this, for queries on the whole selection
 		 * we do.
