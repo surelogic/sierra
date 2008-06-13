@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FindingDetail {
@@ -185,5 +186,9 @@ public final class FindingDetail {
 			result = null;
 		}
 		return result;
+	}
+
+	public AssuranceType getAssuranceType() {
+		return overview.getAssuranceType();
 	}
 }
