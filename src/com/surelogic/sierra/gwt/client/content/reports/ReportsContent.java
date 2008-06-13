@@ -5,20 +5,11 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ContentComposite;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
+import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.ui.SearchBlock;
-import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ReportsContent extends ContentComposite {
+public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 	private static final ReportsContent instance = new ReportsContent();
-	private final ReportCache reports = new ReportCache();
-	private final ReportsListView reportsListView = new ReportsListView(reports);
-	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private final ReportParametersView reportParamsView = new ReportParametersView();
 	private final ReportView reportView = new ReportView();
 
@@ -27,24 +18,20 @@ public class ReportsContent extends ContentComposite {
 	}
 
 	private ReportsContent() {
-		super();
+		super(new ReportCache());
 		// singleton
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
+	protected void onInitialize(DockPanel rootPanel,
+			VerticalPanel selectionPanel) {
 		setCaption("Reports");
-
-		reportsListView.initialize();
-		rootPanel.add(reportsListView, DockPanel.WEST);
-		rootPanel.setCellWidth(reportsListView, "25%");
-
-		reportView.initialize();
 
 		reportParamsView.initialize();
 		reportParamsView.addReportAction("Show Table", new ClickListener() {
 
 			public void onClick(Widget sender) {
+				final VerticalPanel selectionPanel = getSelectionPanel();
 				if (selectionPanel.getWidgetIndex(reportView) == -1) {
 					selectionPanel.add(reportView);
 				}
@@ -54,6 +41,7 @@ public class ReportsContent extends ContentComposite {
 		reportParamsView.addReportAction("Show Chart", new ClickListener() {
 
 			public void onClick(Widget sender) {
+				final VerticalPanel selectionPanel = getSelectionPanel();
 				if (selectionPanel.getWidgetIndex(reportView) == -1) {
 					selectionPanel.add(reportView);
 				}
@@ -68,71 +56,22 @@ public class ReportsContent extends ContentComposite {
 			}
 		});
 
-		selectionPanel.setWidth("100%");
 		selectionPanel.add(reportParamsView);
-		rootPanel.add(selectionPanel, DockPanel.CENTER);
-		rootPanel.setCellWidth(selectionPanel, "75%");
-
-		reports.addListener(new CacheListenerAdapter<Report>() {
-
-			@Override
-			public void onRefresh(Cache<Report> cache, Throwable failure) {
-				refreshContext(ContextManager.getContext());
-			}
-
-		});
 	}
 
 	@Override
-	protected void onDeactivate() {
-		// nothing to do
+	protected void onSelectionChanged(Report item) {
+		reportParamsView.setSelection(item);
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
-		if (!isActive()) {
-			reports.refresh();
-		} else {
-			refreshContext(context);
-		}
+	protected String getItemText(Report item) {
+		return item.getTitle();
 	}
 
-	private void refreshContext(Context context) {
-		final String reportUuid = context.getUuid();
-		if (LangUtil.notEmpty(reportUuid)) {
-			final Report report = reports.getItem(reportUuid);
-			if (report != null) {
-				reportsListView.setSelection(report);
-				reportParamsView.setSelection(report);
-			} else {
-				reportParamsView.setSelection(null);
-			}
-		} else {
-			if (reports.getItemCount() > 0) {
-				Context.createWithUuid(reports.getItem(0)).submit();
-			}
-		}
+	@Override
+	protected boolean isMatch(Report item, String query) {
+		return item.getTitle().toLowerCase().contains(query.toLowerCase());
 	}
 
-	private class ReportsListView extends SearchBlock<Report, ReportCache> {
-		public ReportsListView(ReportCache cache) {
-			super(cache);
-		}
-
-		@Override
-		protected boolean isMatch(Report item, String query) {
-			return item.getTitle().toLowerCase().contains(query.toLowerCase());
-		}
-
-		@Override
-		protected String getItemText(Report item) {
-			return item.getTitle();
-		}
-
-		@Override
-		protected void doItemClick(Report item) {
-			Context.createWithUuid(item).submit();
-		}
-
-	}
 }

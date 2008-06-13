@@ -63,6 +63,18 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 		return items.isEmpty();
 	}
 
+	public final void clear() {
+		for (final CacheListener<E> listener : listeners) {
+			listener.onStartRefresh(this);
+		}
+
+		items.clear();
+
+		for (final CacheListener<E> listener : listeners) {
+			listener.onRefresh(this, null);
+		}
+	}
+
 	public final int getItemCount() {
 		return items.size();
 	}
