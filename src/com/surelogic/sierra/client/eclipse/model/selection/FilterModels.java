@@ -2,6 +2,8 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.*;
 
+import org.eclipse.swt.graphics.Image;
+
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 
 public final class FilterModels extends Filter {
@@ -53,5 +55,10 @@ public final class FilterModels extends Filter {
 			b.append(token);
 		}		
 		return b.toString();
+	}
+	
+	@Override
+	public Image getImageFor(String value) {
+		return null; // FIX to get assurance type to show an image
 	}
 }
