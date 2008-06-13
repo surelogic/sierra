@@ -50,6 +50,7 @@ implements IViewUpdater {
 	private final RGB f_BackgroundColorRGB;
 
 	private final Composite[] f_parents;
+	private final Label[] f_labels;
 	private final TreeViewer[] f_viewers;
 	
 	private volatile FindingDetail f_finding;
@@ -58,9 +59,10 @@ implements IViewUpdater {
 	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
 
 	public JSureFindingDetailsMediator(final JSureFindingDetailsView view, 
-			                           Composite[] parents, TreeViewer[] viewers) {
+			                           Composite[] parents, Label[] labels, TreeViewer[] viewers) {
 		super(view);
 		f_parents = parents;
+		f_labels  = labels;
 		f_viewers = viewers;
 		
 		int i=0;
@@ -71,13 +73,13 @@ implements IViewUpdater {
 			i++;
 		}
 		
-		view.addToActionBar(new Action("Children") {
+		view.addToActionBar(new Action("Children", SWT.PUSH) {
 			@Override
 			public void run() {
 				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
 			}
 		});
-		view.addToActionBar(new Action("Parents") {
+		view.addToActionBar(new Action("Parents", SWT.PUSH) {
 			@Override
 			public void run() {
 				view.setDataPage(VIEW_OWN_DEPENDENCIES);
@@ -215,6 +217,9 @@ implements IViewUpdater {
 		if (!showFinding)
 			return;
 		
+		for(Label l : f_labels) {
+			l.setText(f_finding.getSummary());
+		}
 		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(f_relatedChildren);
 		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(f_relatedAncestors);
 		
@@ -303,8 +308,9 @@ implements IViewUpdater {
 		public String getText(Object element) {
 			FindingRelation fr = (FindingRelation) element;
 			FindingDetail fd  = details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
-			String pre = lookAtChildren ? "child " : "parent "; 
-			return pre + fr.getRelationType() + ' ' + fd.getSummary();
+			//String pre = lookAtChildren ? "child " : "parent "; 
+			//return pre + fr.getRelationType() + ' ' + fd.getSummary();
+			return fr.getRelationType() + ' ' + fd.getSummary();
 		}
 	}
 }

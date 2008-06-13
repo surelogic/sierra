@@ -2,6 +2,8 @@ package com.surelogic.sierra.client.eclipse.jsure;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -19,13 +21,20 @@ public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFi
 	
 	@Override
 	protected JSureFindingDetailsMediator createMorePartControls(Composite[] parents) {
-	  final TreeViewer[] viewers = new TreeViewer[parents.length];
+	  final Label[] labels = new Label[parents.length];	
+	  final TreeViewer[] viewers = new TreeViewer[parents.length];	  
 	  int i = 0;
 	  
 	  for(Composite parent : parents) {
-	    final TreeViewer tree = new TreeViewer(parent, SWT.SINGLE);
-	    viewers[i] = tree;
-	    i++;
+		  parent.setLayout(new GridLayout());
+
+		  labels[i] = new Label(parent, SWT.NONE);
+		  labels[i].setText("No finding yet");
+		  labels[i].setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+
+		  viewers[i] = new TreeViewer(parent, SWT.SINGLE);
+		  viewers[i].getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		  i++;
 	    
 	    // TODO add menu items
 	    /*
@@ -37,7 +46,7 @@ public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFi
       new MenuItem(contextMenu, SWT.SEPARATOR);
 	     */    
 	  }
-		return new JSureFindingDetailsMediator(this, parents, viewers); // FIX tree);
+		return new JSureFindingDetailsMediator(this, parents, labels, viewers); // FIX tree);
 	}
 		
 	/**
