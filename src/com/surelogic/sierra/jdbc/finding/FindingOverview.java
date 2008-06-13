@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -33,6 +34,7 @@ public class FindingOverview {
 	private final String findingType;
 	private final String category;
 	private final String summary;
+	private final AssuranceType assuranceType;
 
 	private final boolean examined;
 	private final Date lastChanged;
@@ -64,6 +66,9 @@ public class FindingOverview {
 		this.category = set.getString(idx++);
 		this.tool = set.getString(idx++);
 		this.summary = set.getString(idx++);
+		
+		String aType = set.getString(idx++);
+		this.assuranceType = AssuranceType.fromFlag(aType);
 	}
 
 	public long getFindingId() {
@@ -98,6 +103,10 @@ public class FindingOverview {
 		return summary;
 	}
 
+	public AssuranceType getAssuranceType() {
+		return assuranceType;
+	}
+	
 	public boolean isExamined() {
 		return examined;
 	}
@@ -146,7 +155,11 @@ public class FindingOverview {
 	 * 
 	 */
 	public static class View {
-
+		private static final String SELECT_COLUMNS =
+			"SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,"+
+			"ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,"+
+			"TOOL,SUMMARY,ASSURANCE_TYPE";
+		
 		/**
 		 * Get the latest findings for the given class, and any inner classes.
 		 * Only findings with status New or Unchanged are returned, fixed
@@ -164,7 +177,7 @@ public class FindingOverview {
 				throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+					.prepareStatement(SELECT_COLUMNS
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ?");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
@@ -198,7 +211,7 @@ public class FindingOverview {
 				String compilation) throws SQLException {
 			List<FindingOverview> findings = new ArrayList<FindingOverview>();
 			PreparedStatement selectFindingsByClass = conn
-					.prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+					.prepareStatement(SELECT_COLUMNS
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND IMPORTANCE != 'Irrelevant'");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
@@ -249,7 +262,7 @@ public class FindingOverview {
       List<FindingOverview> findings = new ArrayList<FindingOverview>();
       
       PreparedStatement selectFindingsByClass = conn
-          .prepareStatement("SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,TOOL,SUMMARY"
+          .prepareStatement(SELECT_COLUMNS
               + " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND "+importanceClause);
       int idx = 1;
       selectFindingsByClass.setString(idx++, projectName);
