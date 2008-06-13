@@ -31,11 +31,11 @@ public final class Utility {
 	public static Image getImageFor(AssuranceType type) {
 		switch (type) {
 		case CONSISTENT:
-			return SLImages.getImage(CommonImages.IMG_PLUS);
-			
+			return SLImages.getImage(CommonImages.IMG_PLUS);			
 		case INCONSISTENT:
-		default:
 			return SLImages.getImage(CommonImages.IMG_REDX);
+		default:
+			return null;
 		}
 	}
 }
