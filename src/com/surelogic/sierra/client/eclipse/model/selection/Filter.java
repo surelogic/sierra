@@ -545,6 +545,10 @@ public abstract class Filter {
 		return b;
 	}
 
+	public boolean usesJoin() {
+		return false;
+	}
+	
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */

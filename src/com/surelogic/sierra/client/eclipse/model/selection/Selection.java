@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -45,7 +46,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterTool.FACTORY);		
 		allFilters.add(FilterVerificationStatus.FACTORY);
 		allFilters.add(FilterResultType.FACTORY);
-		allFilters.add(FilterModels.FACTORY);
+		allFilters.add(FilterModels.FACTORY);	
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
@@ -343,6 +344,18 @@ public final class Selection extends AbstractDatabaseObserver {
 		return b.toString();
 	}
 
+	public boolean usesJoin() {
+		synchronized (this) {
+			if (!f_filters.isEmpty()) {
+				final Filter last = f_filters.getLast();
+				synchronized (last) {
+					return last.usesJoin();
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Indicates if this selection allows any possible findings through it.
 	 * 
