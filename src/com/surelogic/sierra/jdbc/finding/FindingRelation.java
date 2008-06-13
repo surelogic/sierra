@@ -23,15 +23,15 @@ public class FindingRelation {
 		}		
 	}
 
-	public long getParentId() {
+	public Long getParentId() {
 		return f_parentId;
 	}
 
-	public long getChildId() {
+	public Long getChildId() {
 		return f_childId;
 	}
 
-	public long getProjectId() {
+	public Long getProjectId() {
 		return f_project;
 	}
 
