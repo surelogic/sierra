@@ -41,14 +41,14 @@ public class LatestAuditsTable extends TableSection {
 
 					public void onSuccess(List<UserOverview> result) {
 						clearStatus();
-
+						clearRows();
 						if (result.isEmpty()) {
 							setSuccessStatus("No users defined for this server.");
 						} else {
-							for (UserOverview uo : result) {
+							for (final UserOverview uo : result) {
 								addRow();
 								addColumn(uo.getUserName());
-								StringBuffer audits = new StringBuffer();
+								final StringBuffer audits = new StringBuffer();
 								if (uo.getAudits() > 0) {
 									audits.append(uo.getAudits());
 									audits.append(" on ");

@@ -94,7 +94,7 @@ public class ScanFiltersContent extends ContentComposite {
 			filterUuid = cache.getItem(0).getUuid();
 		}
 		if (filterUuid != null) {
-			for (final ScanFilter f : cache.getItems()) {
+			for (final ScanFilter f : cache) {
 				if (f.getUuid().equals(filterUuid)) {
 					scans.setSelection(f);
 					sf.setFilter(f);

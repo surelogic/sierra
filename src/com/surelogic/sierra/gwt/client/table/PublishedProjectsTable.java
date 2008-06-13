@@ -44,11 +44,11 @@ public class PublishedProjectsTable extends TableSection {
 
 					public void onSuccess(List<ProjectOverview> result) {
 						clearStatus();
-
+						clearRows();
 						if (result.isEmpty()) {
 							setSuccessStatus("No project scans have been published to this server.");
 						} else {
-							for (ProjectOverview po : result) {
+							for (final ProjectOverview po : result) {
 								addRow();
 								addColumn(po.getName());
 								addColumn(po.getLastScanDate());

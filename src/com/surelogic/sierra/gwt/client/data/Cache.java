@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -103,10 +102,6 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 			}
 		}
 		return -1;
-	}
-
-	public final List<E> getItems() {
-		return Collections.unmodifiableList(items);
 	}
 
 	public final Iterator<E> iterator() {
