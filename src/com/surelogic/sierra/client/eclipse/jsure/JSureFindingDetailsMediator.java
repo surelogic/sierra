@@ -120,7 +120,17 @@ implements IViewUpdater {
 								FindingDetail finding = FindingDetail.getDetailOrNull(c, id);
 								details.put(id, finding);
 							}
-						}
+							f_relatedChildren.sort(new Comparator<FindingRelation>() {
+								public int compare(FindingRelation o1, FindingRelation o2) {
+									return getLabel(o1, true).compareTo(getLabel(o2, true));
+								}								
+							});
+							f_relatedAncestors.sort(new Comparator<FindingRelation>() {
+								public int compare(FindingRelation o1, FindingRelation o2) {
+									return getLabel(o1, false).compareTo(getLabel(o2, false));
+								}								
+							});
+						}												
 						// got details, update the view in the UI thread
 						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);							  
 					} finally {
@@ -291,10 +301,14 @@ implements IViewUpdater {
 
 		public String getText(Object element) {
 			FindingRelation fr = (FindingRelation) element;
-			FindingDetail fd  = details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
-			//String pre = lookAtChildren ? "child " : "parent "; 
-			//return pre + fr.getRelationType() + ' ' + fd.getSummary();
-			return fr.getRelationType() + ' ' + fd.getSummary();
+			return getLabel(fr, lookAtChildren);
 		}
+	}
+	
+	public String getLabel(FindingRelation fr, boolean lookAtChildren) {
+		FindingDetail fd  = details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
+		//String pre = lookAtChildren ? "child " : "parent "; 
+		//return pre + fr.getRelationType() + ' ' + fd.getSummary();
+		return fr.getRelationType() + ' ' + fd.getSummary();
 	}
 }
