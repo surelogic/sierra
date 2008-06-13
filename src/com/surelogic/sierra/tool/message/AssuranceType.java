@@ -28,4 +28,13 @@ public enum AssuranceType {
 	public String toStringSentenceCase() {
 		return value;
 	}
+
+	public static AssuranceType fromFlag(String flag) {
+		for (final AssuranceType i : values()) {
+			if (i.flag.equals(flag)) {
+				return i;
+			}
+		}
+		return null;
+	}
 }
