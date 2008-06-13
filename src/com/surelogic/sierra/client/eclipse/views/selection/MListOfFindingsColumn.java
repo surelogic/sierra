@@ -66,6 +66,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
+import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
@@ -182,10 +183,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_findingTypeName;
 		String f_categoryName;
 		String f_toolName;
+		AssuranceType f_assuranceType;
 		int index;
 
 		@Override
 		public String toString() {
+			// FIX f_assuranceType
 			return "finding_id=" + f_findingId + " [" + f_importance
 					+ "] of type " + f_findingTypeName + " and category "
 					+ f_categoryName + " \"" + f_summary + "\" in "
@@ -282,6 +285,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 			@Override
 			Image getImage(FindingData data) {
+				if (data.f_assuranceType != null) {
+					return Utility.getImageFor(data.f_assuranceType);
+				}
 				return Utility.getImageFor(data.f_importance);
 			}
 		});
@@ -407,6 +413,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_findingTypeName = rs.getString(8);
 								data.f_categoryName = rs.getString(9);
 								data.f_toolName = rs.getString(10);
+								
+								String aType = rs.getString(11);
+								data.f_assuranceType = AssuranceType.fromFlag(aType);
 								data.index = i;
 								f_rows.add(data);
 							} else {
