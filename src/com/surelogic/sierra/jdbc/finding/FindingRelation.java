@@ -3,9 +3,9 @@ package com.surelogic.sierra.jdbc.finding;
 import com.surelogic.common.jdbc.*;
 
 public class FindingRelation {
-	private final long f_parentId;
-	private final long f_childId;
-	private final long f_project;
+	private final Long f_parentId;
+	private final Long f_childId;
+	private final Long f_project;
 	private final String f_relationType;
 	private final String f_status;
 	

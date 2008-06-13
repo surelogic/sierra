@@ -26,6 +26,10 @@ public class FindingRelationOverview {
 		return f_relations;
 	}
 	
+	public Object[] toArray() {
+		return f_relations.toArray();
+	}
+	
 	public boolean isEmpty() {
 		return f_relations.isEmpty();		
 	}
