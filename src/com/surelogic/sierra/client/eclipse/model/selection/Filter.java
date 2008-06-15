@@ -565,6 +565,10 @@ public abstract class Filter {
 		return false;
 	}
 	
+	protected String getJoinPart() {
+	  return "where FJ.FINDING_ID=FO.FINDING_ID";
+	}
+	
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
@@ -585,6 +589,10 @@ public abstract class Filter {
 		final Set<ISelectionFilterFactory> unused = 
 			new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
 		boolean first = !usesJoin();
+		if (!first) {
+		  b.append(getJoinPart());
+		}
+		
 		/*
 		 * For counts we don't include this, for queries on the whole selection
 		 * we do.
@@ -614,7 +622,7 @@ public abstract class Filter {
 			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first);
 		}
 		String rv = b.toString();
-		//System.out.println(rv);
+		System.out.println(rv);
 		return rv;
 	}
 
