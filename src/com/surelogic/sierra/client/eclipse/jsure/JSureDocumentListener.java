@@ -81,7 +81,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			final String msg = e.getAttribute(MESSAGE_ATTR);
 			builder.message(msg);
 			if (warning) {
-				builder.severity(Severity.WARNING).priority(Priority.HIGH);
+				builder.severity(Severity.ERROR).priority(Priority.HIGH);
 			} else {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
 			}
