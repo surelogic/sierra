@@ -549,6 +549,7 @@ public abstract class Filter {
 		final String query    = getBaseCountsQuery();		
 		b.append(QB.get(query, getColumnName(), getWhereClause(false),
 				getColumnName()));
+		//System.out.println(b.toString());
 		return b;
 	}
 
@@ -622,7 +623,7 @@ public abstract class Filter {
 			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first);
 		}
 		String rv = b.toString();
-		System.out.println(rv);
+		//System.out.println(rv);
 		return rv;
 	}
 
