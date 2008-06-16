@@ -2,9 +2,11 @@ package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.SearchBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -12,6 +14,8 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		extends ContentComposite {
 	private final C cache;
 	private final ListView listView;
+	private final VerticalPanel westPanel = new VerticalPanel();
+	private final ActionBlock actionBlock = new ActionBlock();
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 
 	protected ListContentComposite(C cache) {
@@ -22,9 +26,13 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 	@Override
 	protected final void onInitialize(DockPanel rootPanel) {
+		westPanel.setWidth("100%");
+
 		listView.initialize();
-		rootPanel.add(listView, DockPanel.WEST);
-		rootPanel.setCellWidth(listView, "25%");
+		westPanel.add(listView);
+
+		rootPanel.add(westPanel, DockPanel.WEST);
+		rootPanel.setCellWidth(westPanel, "25%");
 
 		selectionPanel.setWidth("100%");
 		rootPanel.add(selectionPanel, DockPanel.CENTER);
@@ -63,6 +71,13 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		return selectionPanel;
 	}
 
+	protected final void addAction(Widget actionUI) {
+		if (westPanel.getWidgetIndex(actionBlock) == -1) {
+			westPanel.insert(actionBlock, 0);
+		}
+		actionBlock.addItem(actionUI);
+	}
+
 	private void refreshContext(Context context) {
 		final String uuid = context.getUuid();
 		if (LangUtil.notEmpty(uuid)) {
@@ -81,6 +96,18 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	protected abstract String getItemText(E item);
 
 	protected abstract boolean isMatch(E item, String query);
+
+	private class ActionBlock extends BlockPanel {
+
+		@Override
+		protected void onInitialize(VerticalPanel contentPanel) {
+			// nothing to do
+		}
+
+		public void addItem(Widget w) {
+			getContentPanel().add(w);
+		}
+	}
 
 	private class ListView extends SearchBlock<E, C> {
 		public ListView(C cache) {
