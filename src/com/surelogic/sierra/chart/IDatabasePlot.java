@@ -3,9 +3,10 @@ package com.surelogic.sierra.chart;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.jfree.chart.JFreeChart;
+
+import com.surelogic.sierra.gwt.client.data.Report;
 
 /**
  * The interface for plotting all Sierra charts and graphs.
@@ -27,13 +28,12 @@ public interface IDatabasePlot {
 	 *            displaying then the width and height values passed into this
 	 *            call should be examined and changed as desired.
 	 * @param parameters
-	 *            the non-null map of the parameters to be considered when
-	 *            creating the chart.
+	 *            the report to be considered when producing the chart.
 	 * @param c
 	 *            a non-null connection to the Sierra database. This connection
 	 *            will be closed by the caller of this method.
 	 * @return the resulting chart.
 	 */
-	JFreeChart plot(PlotSize mutableSize, Map<String, String> parameters,
-			Connection c) throws SQLException, IOException;
+	JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
+			throws SQLException, IOException;
 }

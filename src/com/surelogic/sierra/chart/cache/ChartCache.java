@@ -37,6 +37,8 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.IDatabasePlot;
 import com.surelogic.sierra.chart.PlotSize;
+import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
@@ -121,7 +123,8 @@ public final class ChartCache implements Sweepable {
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
 		SLLogger.log(Level.FINE, "Creating chart files for ticket " + ticket);
-		final String type = ticket.getParameters().get("type");
+		final Report report = ticket.getReport();
+		final String type = report.getName();
 		if (type == null) {
 			throw new ServletException(I18N.err(96, ticket.toString()));
 		}
@@ -132,10 +135,9 @@ public final class ChartCache implements Sweepable {
 					throws SQLException {
 				try {
 					final PlotSize mutableSize = new PlotSize(
-							getWidthHint(ticket.getParameters()),
-							getHeightHint(ticket.getParameters()));
-					final JFreeChart chart = plotter.plot(mutableSize, ticket
-							.getParameters(), conn);
+							getWidthHint(report), getHeightHint(report));
+					final JFreeChart chart = plotter.plot(mutableSize, report,
+							conn);
 
 					setupTooltips(chart);
 					final ChartRenderingInfo info = new ChartRenderingInfo(
@@ -236,16 +238,16 @@ public final class ChartCache implements Sweepable {
 	 * Extracts the {@code width} parameter from the servlet parameters and
 	 * returns its value.
 	 * 
-	 * @param parameters
+	 * @param report
 	 *            the servlet parameters.
 	 * @return the value of the {@code width} parameter or 400 if it is not set.
 	 */
-	private int getWidthHint(Map<String, String> parameters) {
+	private int getWidthHint(Report report) {
 		int widthHint = 400;
-		final String value = parameters.get("width");
-		if (value != null) {
+		final Parameter param = report.getParameter("width");
+		if (param != null) {
 			try {
-				final int width = Integer.parseInt(value);
+				final int width = Integer.parseInt(param.getValue());
 				widthHint = width;
 			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default width
@@ -263,12 +265,12 @@ public final class ChartCache implements Sweepable {
 	 * @return the value of the {@code height} parameter or 400 if it is not
 	 *         set.
 	 */
-	private int getHeightHint(Map<String, String> parameters) {
+	private int getHeightHint(Report report) {
 		int heightHint = 400;
-		final String value = parameters.get("height");
-		if (value != null) {
+		final Parameter param = report.getParameter("height");
+		if (param != null) {
 			try {
-				final int height = Integer.parseInt(value);
+				final int height = Integer.parseInt(param.getValue());
 				heightHint = height;
 			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default height

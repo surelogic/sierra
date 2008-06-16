@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.server;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,14 +25,6 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(TicketServiceImpl.class);
-
-	public Result<Ticket> getTicket(Map<String, String> args) {
-		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
-				args, getThreadLocalRequest().getSession()).getUUID()
-				.toString());
-		log.log(Level.FINE, "Ticket " + ticket.getUUID() + " created.");
-		return Result.success(ticket);
-	}
 
 	public Result<Ticket> getTicket(Report report) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(

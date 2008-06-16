@@ -3,7 +3,6 @@ package com.surelogic.sierra.chart;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -14,14 +13,14 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.sierra.gwt.client.data.Report;
 
 public class FindingTypeCounts implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String> parameters, Connection c) throws SQLException,
-			IOException {
+	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-		final String uid = parameters.get("uid");
+		final String uid = report.getParameter("uid").getValue();
 		if (uid != null) {
 			final DefaultCategoryDataset set = new ConnectionQuery(c).prepared(
 					"Plots.FindingType.count",

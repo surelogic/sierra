@@ -1,7 +1,6 @@
 package com.surelogic.sierra.chart.cache;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -53,25 +52,8 @@ public final class Attendant implements Sweepable {
 	 * @return the {@link Ticket} object.
 	 */
 	public Ticket getTicket(Report report, HttpSession session) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * Gets or creates a {@link Ticket} object for the passed set of parameters.
-	 * This ticket object may be used throughout the lifetime of the passed
-	 * session.
-	 * 
-	 * @param parameters
-	 *            the set of parameters to provide a ticket for.
-	 * @param session
-	 *            the session the {@link Ticket} object is associated with.
-	 * @return the {@link Ticket} object.
-	 */
-	public Ticket getTicket(final Map<String, String> parameters,
-			final HttpSession session) {
-		if (parameters == null) {
-			throw new IllegalArgumentException(I18N.err(44, "parameters"));
+		if (report == null) {
+			throw new IllegalArgumentException(I18N.err(44, "report"));
 		}
 		if (session == null) {
 			throw new IllegalArgumentException(I18N.err(44, "session"));
@@ -89,7 +71,7 @@ public final class Attendant implements Sweepable {
 			 * Do we have a ticket for this set of parameters?
 			 */
 			for (final Ticket ticket : tickets) {
-				if (ticket.getParameters().equals(parameters)) {
+				if (ticket.getReport().equals(report)) {
 					SLLogger.log(Level.FINE,
 							"getTicket found the ticket in the session.");
 					/*
@@ -102,7 +84,7 @@ public final class Attendant implements Sweepable {
 			 * No, check this node.
 			 */
 			for (final Ticket ticket : f_nodeTickets) {
-				if (ticket.getParameters().equals(parameters)) {
+				if (ticket.getReport().equals(report)) {
 					SLLogger.log(Level.FINE,
 							"getTicket found the ticket in this node.");
 					/*
@@ -116,7 +98,7 @@ public final class Attendant implements Sweepable {
 			 * Double No, create the ticket.
 			 */
 			SLLogger.log(Level.FINE, "getTicket created the ticket.");
-			final Ticket ticket = new Ticket(parameters);
+			final Ticket ticket = new Ticket(report);
 			tickets.add(ticket);
 			f_nodeTickets.add(ticket);
 			return ticket;

@@ -10,11 +10,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 
 public final class ServletUtility {
 
@@ -39,24 +43,57 @@ public final class ServletUtility {
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> launderRequestParameters(
 			HttpServletRequest request) {
-		if (request == null)
+		if (request == null) {
 			throw new IllegalArgumentException(I18N.err(44, "request"));
+		}
 
 		final Map<String, String[]> parameterMap = request.getParameterMap();
 		final Map<String, String> result = new HashMap<String, String>();
-		for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+		for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
 			final String key = entry.getKey();
-			if (key != null && !"".equals(key)) {
+			if ((key != null) && !"".equals(key)) {
 				final String[] values = entry.getValue();
 				if (values.length >= 1) {
 					final String value = values[0];
-					if (value != null && !"".equals(value)) {
+					if ((value != null) && !"".equals(value)) {
 						result.put(key, value);
 					}
 				}
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Reads in the parameters from a servlet request and generates a report. In
+	 * addition to adding parameters on the request to the report, this method
+	 * also interprets {@code type} to be the type of a report, and {@code name}
+	 * to be the name of the report.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static Report launderRequestParametersAsReport(
+			HttpServletRequest request) {
+		if (request == null) {
+			throw new IllegalArgumentException(I18N.err(44, "request"));
+		}
+		final Report report = new Report();
+		for (final Object entry : request.getParameterMap().entrySet()) {
+			final Entry<String, String[]> param = (Entry<String, String[]>) entry;
+			final String key = param.getKey();
+			final String[] value = param.getValue();
+			if ("type".equals(key)) {
+				report.setName(value[0]);
+			} else if ("name".equals(key)) {
+				report.setName(value[0]);
+			} else {
+				report.getParameters().add(
+						new Parameter(key, Arrays.asList(value)));
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -78,17 +115,20 @@ public final class ServletUtility {
 	 */
 	public static void sendFileToHttpServletResponse(File file,
 			HttpServletResponse response, String mimeType) throws IOException {
-		if (file == null)
+		if (file == null) {
 			throw new IllegalArgumentException(I18N.err(44, "file"));
-		if (response == null)
+		}
+		if (response == null) {
 			throw new IllegalArgumentException(I18N.err(44, "response"));
+		}
 		if (!file.canRead()) {
 			throw new FileNotFoundException(I18N
 					.err(40, file.getAbsolutePath()));
 		}
-		if (SLLogger.isLoggable(Level.FINE))
+		if (SLLogger.isLoggable(Level.FINE)) {
 			SLLogger.log(Level.FINE, "Serving the file "
 					+ file.getAbsolutePath());
+		}
 
 		/*
 		 * Set HTTP headers.
@@ -97,7 +137,7 @@ public final class ServletUtility {
 			response.setHeader("Content-Type", mimeType);
 		}
 		response.setHeader("Content-Length", String.valueOf(file.length()));
-		SimpleDateFormat sdf = new SimpleDateFormat(
+		final SimpleDateFormat sdf = new SimpleDateFormat(
 				"EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		response.setHeader("Last-Modified", sdf.format(new Date(file
@@ -106,7 +146,7 @@ public final class ServletUtility {
 		/*
 		 * Stream the file.
 		 */
-		BufferedOutputStream out = new BufferedOutputStream(response
+		final BufferedOutputStream out = new BufferedOutputStream(response
 				.getOutputStream());
 		sendFileTo(file, out);
 		out.close();
@@ -125,8 +165,8 @@ public final class ServletUtility {
 	 */
 	public static void sendFileTo(final File file, final OutputStream out)
 			throws IOException {
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-				file));
+		final BufferedInputStream in = new BufferedInputStream(
+				new FileInputStream(file));
 		/*
 		 * Stream the file.
 		 */
@@ -157,7 +197,8 @@ public final class ServletUtility {
 	 */
 	public static void sendFileTo(final File file, final Writer out)
 			throws IOException {
-		InputStreamReader in = new InputStreamReader(new FileInputStream(file));
+		final InputStreamReader in = new InputStreamReader(new FileInputStream(
+				file));
 		/*
 		 * Stream the file.
 		 */
@@ -177,4 +218,5 @@ public final class ServletUtility {
 	private ServletUtility() {
 		// no instances
 	}
+
 }

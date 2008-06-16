@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -20,17 +19,18 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
 
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
 public final class AuditContributions implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String> parameters, Connection c) throws SQLException,
-			IOException {
+	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final PortalOverview po = PortalOverview.getInstance(c);
-		List<UserOverview> userOverviewList = po.getEnabledUserOverviews();
+		final List<UserOverview> userOverviewList = po
+				.getEnabledUserOverviews();
 		Collections.sort(userOverviewList, new Comparator<UserOverview>() {
 			public int compare(UserOverview o1, UserOverview o2) {
 				return o2.getAudits() - o1.getAudits();
@@ -39,8 +39,8 @@ public final class AuditContributions implements IDatabasePlot {
 
 		mutableSize.setHeight(35 * userOverviewList.size() + 100);
 
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for (UserOverview uo : userOverviewList) {
+		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for (final UserOverview uo : userOverviewList) {
 			dataset.setValue(uo.getAudits(), "Audits", uo.getUserName());
 			dataset.setValue(uo.getFindings(), "Findings Examined", uo
 					.getUserName());

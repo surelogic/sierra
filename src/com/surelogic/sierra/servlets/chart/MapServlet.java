@@ -22,9 +22,9 @@ public class MapServlet extends AbstractChartServlet {
 	protected void doGet(HttpServletRequest request,
 			final HttpServletResponse response) throws ServletException,
 			IOException {
-		final Map<String, String> parameters = ServletUtility
+		final Map<String, String> params = ServletUtility
 				.launderRequestParameters(request);
-		final String uuidString = parameters.get("ticket");
+		final String uuidString = params.get("ticket");
 		if (uuidString == null) {
 			throw new ServletException(I18N.err(81));
 		}

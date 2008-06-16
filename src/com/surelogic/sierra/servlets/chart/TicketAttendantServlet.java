@@ -2,7 +2,6 @@ package com.surelogic.sierra.servlets.chart;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
@@ -13,6 +12,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.cache.Attendant;
 import com.surelogic.sierra.chart.cache.ChartCache;
 import com.surelogic.sierra.chart.cache.Ticket;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.servlets.ServletUtility;
 
 public final class TicketAttendantServlet extends AbstractChartServlet {
@@ -21,9 +21,9 @@ public final class TicketAttendantServlet extends AbstractChartServlet {
 	protected void doGet(HttpServletRequest request,
 			final HttpServletResponse response) throws ServletException,
 			IOException {
-		final Map<String, String> parameters = ServletUtility
-				.launderRequestParameters(request);
-		final Ticket ticket = Attendant.getInstance().getTicket(parameters,
+		final Report report = ServletUtility
+				.launderRequestParametersAsReport(request);
+		final Ticket ticket = Attendant.getInstance().getTicket(report,
 				request.getSession());
 		final String uuid = ticket.getUUID().toString();
 		SLLogger.log(Level.FINE, "TicketAttendantServlet created a ticket "

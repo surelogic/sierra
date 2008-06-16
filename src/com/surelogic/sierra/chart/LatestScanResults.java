@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -23,13 +22,13 @@ import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.portal.PortalOverview;
 
 public final class LatestScanResults implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize,
-			Map<String, String> parameters, Connection c) throws SQLException,
-			IOException {
+	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
@@ -42,7 +41,7 @@ public final class LatestScanResults implements IDatabasePlot {
 
 		mutableSize.setHeight(25 * overview.size() + 100);
 
-		for (ProjectOverview po : overview) {
+		for (final ProjectOverview po : overview) {
 			importanceData.setValue(po.getCritical(), "Critical", po.getName());
 			importanceData.setValue(po.getHigh(), "High", po.getName());
 			importanceData.setValue(po.getMedium(), "Medium", po.getName());
@@ -65,14 +64,14 @@ public final class LatestScanResults implements IDatabasePlot {
 		bar.setSeriesOutlinePaint(3, Color.GRAY);
 
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		for (ProjectOverview po : overview) {
+		for (final ProjectOverview po : overview) {
 			totalData.setValue(po.getTotalFindings(), "Total", po.getName());
 			totalData.setValue(po.getCommentedFindings(), "Audited", po
 					.getName());
 		}
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);
-		LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+		final LineAndShapeRenderer renderer = new LineAndShapeRenderer();
 		renderer.setBaseShapesVisible(true);
 		renderer.setSeriesPaint(0, Color.BLACK);
 		renderer.setSeriesShapesFilled(0, false);
