@@ -19,4 +19,13 @@ public interface TicketService extends RemoteService {
 
 	Result<ReportTable> getReportTable(Ticket ticket);
 
+	/**
+	 * Similar to calling getTicket followed by getReportTable, except that the
+	 * ticket is not returned to the portal.
+	 * 
+	 * @param r
+	 * @return
+	 */
+	Result<ReportTable> getReportTable(Report r);
+
 }

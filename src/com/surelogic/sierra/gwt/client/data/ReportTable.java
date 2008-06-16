@@ -11,22 +11,49 @@ public class ReportTable implements Serializable {
 	 */
 	private static final long serialVersionUID = 9035444817120365740L;
 
-	private List<String> headers;
+	public enum ColumnData {
+		TEXT("cell-text"), DATE("cell-date"), NUMBER("cell-number");
 
-	private List<List<String>> data;
+		private final String css;
+
+		ColumnData(String css) {
+			this.css = css;
+		}
+
+		public String getCSS() {
+			return css;
+		}
+
+	}
+
+	private final List<String> headers = new ArrayList<String>();
+	private final List<ColumnData> columns = new ArrayList<ColumnData>();
+	private final List<List<String>> data = new ArrayList<List<String>>();
+
+	private Report report;
+
+	public ReportTable() {
+
+	}
+
+	public ReportTable(Report report) {
+		this.report = report;
+	}
+
+	public List<ColumnData> getColumns() {
+		return columns;
+	}
 
 	public List<String> getHeaders() {
-		if (headers == null) {
-			headers = new ArrayList<String>();
-		}
 		return headers;
 	}
 
 	public List<List<String>> getData() {
-		if (data == null) {
-			data = new ArrayList<List<String>>();
-		}
 		return data;
+	}
+
+	public Report getReport() {
+		return report;
 	}
 
 }

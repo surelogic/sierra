@@ -16,4 +16,7 @@ public interface TicketServiceAsync {
 	void getReportTable(Ticket ticket,
 			AsyncCallback<Result<ReportTable>> callback);
 
+	void getReportTable(Report r,
+			AsyncCallback<Result<ReportTable>> asyncCallback);
+
 }
