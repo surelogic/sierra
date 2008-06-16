@@ -221,6 +221,20 @@ public abstract class Filter {
 		// Nothing to do for now
 	}
 
+	private String f_filterExpr = null;
+	
+	String getFilterExpression() {
+	  return f_filterExpr;
+	}
+	
+	boolean setFilterExpression(String filter) {
+    if (filter != null && filter.length() > 0) {
+      f_filterExpr = filter;
+      return true;
+    }
+    return false;
+	}
+	
 	/**
 	 * May need to be overidden if the set of values includes values not able to
 	 * be determined from the filter context.
@@ -234,16 +248,16 @@ public abstract class Filter {
 	}
 
 	protected void filterAllValues() {
-	  /*
-	  Iterator<String> it = f_allValues.iterator();
-	  while (it.hasNext()) {
-	    String value = it.next();
-	    String label = getLabel(value);
-	    if (label != null && !label.contains("on")) {
-	      it.remove();
+	  if (f_filterExpr != null && f_filterExpr.length() > 0) {
+	    final Iterator<String> it = f_allValues.iterator();
+	    while (it.hasNext()) {
+	      String value = it.next();
+	      String label = getLabel(value);
+	      if (label != null && !label.contains(value)) {
+	        it.remove();
+	      }
 	    }
 	  }
-	  */
 	}
 	
 	/**

@@ -107,6 +107,10 @@ public final class SelectionPersistence {
 	private static void outputFilter(PrintWriter pw, StringBuilder b, Filter f) {
 		b.append("    <").append(FILTER);
 		Entities.addAttribute(TYPE, f.getFactory().getFilterLabel(), b);
+		String filterExpr = f.getFilterExpression();
+		if (filterExpr != null && filterExpr.length() > 0) {
+		  Entities.addAttribute(FILTER, filterExpr, b);
+		}
 		b.append(">");
 		outputBuffer(pw, b);
 		for (String p : f.getPorousValues()) {
@@ -198,6 +202,9 @@ public final class SelectionPersistence {
 						if (ff.getFilterLabel().equals(type)) {
 							found = true;
 							f_filter = f_workingSelection.construct(ff, null);
+							
+							final String filter = attributes.getValue(FILTER);
+							f_filter.setFilterExpression(filter);
 						}
 					}
 					if (!found) {
