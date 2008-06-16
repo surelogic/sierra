@@ -11,12 +11,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
@@ -24,111 +21,51 @@ import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
-import com.surelogic.sierra.gwt.client.ui.SearchBlock;
+import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
-import com.surelogic.sierra.gwt.client.ui.StyledButton;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;
 
-public class ScanFiltersContent extends ContentComposite {
-	private final ActionBlock block = new ActionBlock();
-	private final ScanFilterCache cache = new ScanFilterCache();
-	private final ScanSearchBlock scans = new ScanSearchBlock(cache);
+public class ScanFiltersContent extends
+		ListContentComposite<ScanFilter, ScanFilterCache> {
 	private final ScanFilterComposite sf = new ScanFilterComposite();
 
-	private String filterUuid;
-
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
+	protected void onInitialize(DockPanel rootPanel,
+			VerticalPanel selectionPanel) {
 		setCaption("Scan Filters");
 
-		block.initialize();
-		scans.initialize();
+		addAction(new CreateScanFilterForm());
 		sf.initialize();
-		final VerticalPanel west = new VerticalPanel();
-		west.add(block);
-		west.add(scans);
-		west.setWidth("100%");
-		rootPanel.add(west, DockPanel.WEST);
-		rootPanel.add(sf, DockPanel.EAST);
-		rootPanel.setCellWidth(west, "25%");
-		rootPanel.setCellWidth(sf, "75%");
-		cache.addListener(new CacheListenerAdapter<ScanFilter>() {
-
-			@Override
-			public void onRefresh(Cache<ScanFilter> cache, Throwable failure) {
-				checkForFilter();
-			}
-
-		});
+		selectionPanel.add(sf);
 	}
 
 	@Override
-	protected void onDeactivate() {
+	protected String getItemText(ScanFilter item) {
+		return item.getName();
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
-		if (!isActive()) {
-			cache.refresh();
-		} else {
-			filterUuid = context.getUuid();
-			checkForFilter();
-		}
+	protected boolean isMatch(ScanFilter item, String query) {
+		return item.getName().toLowerCase().contains(query.toLowerCase());
 	}
 
-	private void checkForFilter() {
-		if (LangUtil.isEmpty(filterUuid) && !cache.isEmpty()) {
-			filterUuid = cache.getItem(0).getUuid();
-		}
-		if (filterUuid != null) {
-			for (final ScanFilter f : cache) {
-				if (f.getUuid().equals(filterUuid)) {
-					scans.setSelection(f);
-					sf.setFilter(f);
-				}
-			}
-		}
-	}
-
-	private class ScanSearchBlock extends
-			SearchBlock<ScanFilter, ScanFilterCache> {
-
-		public ScanSearchBlock(ScanFilterCache cache) {
-			super(cache);
-		}
-
-		@Override
-		protected boolean isMatch(ScanFilter item, String query) {
-			return item.getName().toLowerCase().contains(query.toLowerCase());
-		}
-
-		@Override
-		protected String getItemText(ScanFilter item) {
-			return item.getName();
-		}
-
-		@Override
-		protected void doItemClick(ScanFilter item) {
-			Context.createWithUuid(item).submit();
-		}
-
+	@Override
+	protected void onSelectionChanged(ScanFilter item) {
+		sf.setFilter(item);
 	}
 
 	private class ScanFilterComposite extends BlockPanel {
-
 		private VerticalPanel panel;
 		private FilterEntries ftPanel;
 		private FilterEntries cPanel;
@@ -140,7 +77,7 @@ public class ScanFiltersContent extends ContentComposite {
 			this.panel = panel;
 			status = new StatusBox();
 			refresh();
-			cache.addListener(new CacheListenerAdapter<ScanFilter>() {
+			getCache().addListener(new CacheListenerAdapter<ScanFilter>() {
 
 				@Override
 				public void onItemUpdate(Cache<ScanFilter> cache,
@@ -163,7 +100,7 @@ public class ScanFiltersContent extends ContentComposite {
 
 									public void onSuccess(Status result) {
 										if (result.isSuccess()) {
-											cache.refresh();
+											getCache().refresh();
 											setFilter(null);
 										} else {
 											status.setStatus(result);
@@ -199,7 +136,7 @@ public class ScanFiltersContent extends ContentComposite {
 				panel.add(buttonPanel);
 				buttonPanel.add(new Button("Update", new ClickListener() {
 					public void onClick(Widget sender) {
-						cache.save(filter);
+						getCache().save(filter);
 					}
 				}));
 				status = new StatusBox();
@@ -331,92 +268,51 @@ public class ScanFiltersContent extends ContentComposite {
 		}
 	}
 
-	private class ActionBlock extends BlockPanel {
-		private final StyledButton createScanFilterButton = new StyledButton(
-				"Create a Scan Filter");
-		private final VerticalPanel scanFilterCreatePanel = new VerticalPanel();
-		private final ActionPanel scanFilterActions = new ActionPanel();
-		private final FlexTable fieldTable = new FlexTable();
-		private final TextBox categoryName = new TextBox();
-		private final Image waitImage = ImageHelper.getWaitImage(16);
+	private class CreateScanFilterForm extends FormButton {
+		private final TextBox sfName = new TextBox();
+
+		public CreateScanFilterForm() {
+			super("Create a Scan Filter", "Create");
+			getForm().addField("Name:", sfName);
+		}
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
-			createScanFilterButton.addClickListener(new ClickListener() {
-
-				public void onClick(Widget sender) {
-					toggleCreateScanFilter();
-				}
-			});
-			contentPanel.add(createScanFilterButton);
-
-			scanFilterCreatePanel.setWidth("100%");
-			fieldTable.setWidth("100%");
-			fieldTable.setText(0, 0, "Name:");
-			fieldTable.setWidget(0, 1, categoryName);
-			scanFilterCreatePanel.add(fieldTable);
-
-			scanFilterActions.addAction("Save", new ClickListener() {
-
-				public void onClick(Widget sender) {
-					createScanFilter(categoryName.getText());
-				}
-			});
-			scanFilterActions.addAction("Cancel", new ClickListener() {
-
-				public void onClick(Widget sender) {
-					toggleCreateScanFilter();
-				}
-			});
-			scanFilterCreatePanel.add(scanFilterActions);
-			scanFilterCreatePanel.setCellHorizontalAlignment(scanFilterActions,
-					HasHorizontalAlignment.ALIGN_RIGHT);
+		protected void onOpen() {
+			sfName.setText("");
 		}
 
-		private void toggleCreateScanFilter() {
-			final VerticalPanel contentPanel = getContentPanel();
-			if (contentPanel.getWidgetIndex(scanFilterCreatePanel) != -1) {
-				contentPanel.remove(scanFilterCreatePanel);
-			} else {
-				categoryName.setText("");
-				if (scanFilterCreatePanel.getWidgetIndex(scanFilterActions) == -1) {
-					scanFilterCreatePanel.add(scanFilterActions);
-				}
-				if (scanFilterCreatePanel.getWidgetIndex(waitImage) != -1) {
-					scanFilterCreatePanel.remove(waitImage);
-				}
-				final int panelIndex = contentPanel
-						.getWidgetIndex(createScanFilterButton);
-				contentPanel.insert(scanFilterCreatePanel, panelIndex + 1);
+		@Override
+		protected void doOkClick() {
+			final String name = sfName.getText();
+
+			if (LangUtil.notEmpty(name)) {
+				setWaitStatus();
+
+				ServiceHelper.getSettingsService().createScanFilter(name,
+						new AsyncCallback<ScanFilter>() {
+
+							public void onFailure(Throwable caught) {
+								clearWaitStatus();
+
+								Window.alert("Scan Filter creation failed: "
+										+ caught.getMessage());
+							}
+
+							public void onSuccess(ScanFilter result) {
+								clearWaitStatus();
+								setOpen(false);
+
+								getCache().refresh();
+								Context.createWithUuid(result).submit();
+							}
+						});
 			}
-		}
-
-		private void createScanFilter(String name) {
-			scanFilterActions.removeFromParent();
-			scanFilterCreatePanel.add(waitImage);
-
-			ServiceHelper.getSettingsService().createScanFilter(name,
-					new AsyncCallback<ScanFilter>() {
-
-						public void onFailure(Throwable caught) {
-							Window.alert("Category creation failed: "
-									+ caught.getMessage());
-							scanFilterCreatePanel.remove(waitImage);
-							scanFilterCreatePanel.add(scanFilterActions);
-						}
-
-						public void onSuccess(ScanFilter result) {
-							toggleCreateScanFilter();
-							cache.refresh();
-							Context.createWithUuid(result).submit();
-						}
-					});
 		}
 	}
 
 	// Singleton
 	private ScanFiltersContent() {
-
+		super(new ScanFilterCache());
 	}
 
 	private static final ScanFiltersContent instance = new ScanFiltersContent();
