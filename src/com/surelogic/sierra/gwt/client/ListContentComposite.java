@@ -1,11 +1,13 @@
 package com.surelogic.sierra.gwt.client;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.SearchBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -47,6 +49,20 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 				refreshContext(ContextManager.getContext());
 			}
 
+			@Override
+			public void onItemUpdate(Cache<E> cache, E item, Status status,
+					Throwable failure) {
+				cache.refresh();
+
+				if ((failure == null) && status.isSuccess()) {
+					Context.createWithUuid(item).submit();
+				} else if (!status.isSuccess()) {
+					Window.alert("Save rejected: " + status.getMessage());
+				} else if (failure != null) {
+					Window.alert("Save failed: " + failure.getMessage());
+				}
+			}
+
 		});
 	}
 
@@ -65,6 +81,10 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		} else {
 			refreshContext(context);
 		}
+	}
+
+	protected final C getCache() {
+		return cache;
 	}
 
 	protected final VerticalPanel getSelectionPanel() {
@@ -105,6 +125,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 
 		public void addItem(Widget w) {
+			w.setWidth("100%");
 			getContentPanel().add(w);
 		}
 	}
