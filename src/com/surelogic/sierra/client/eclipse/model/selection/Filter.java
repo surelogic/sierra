@@ -227,7 +227,7 @@ public abstract class Filter {
 	  return f_filterExpr;
 	}
 	
-	boolean setFilterExpression(String filter) {
+	public boolean setFilterExpression(String filter) {
     if (filter != null && filter.length() > 0) {
       f_filterExpr = filter;
       return true;
@@ -253,7 +253,7 @@ public abstract class Filter {
 	    while (it.hasNext()) {
 	      String value = it.next();
 	      String label = getLabel(value);
-	      if (label != null && !label.contains(value)) {
+	      if (label != null && !label.contains(f_filterExpr)) {
 	        it.remove();
 	      }
 	    }

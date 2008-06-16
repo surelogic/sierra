@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.*;
@@ -49,6 +50,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private Composite f_panel = null;
 	private Table f_reportContents = null;
 	private Label f_totalCount = null;
+	private Text  f_filterExpr = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
 	private TableColumn f_valueColumn = null;
@@ -378,9 +380,40 @@ public final class MFilterSelectionColumn extends MColumn implements
 	        }
 	      });	      
 	      			
-				f_porousCount = new Label(f_reportGroup, SWT.RIGHT);
+	      Composite bottomSection = new Composite(f_reportGroup, SWT.NONE);
+	      bottomSection.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
+                                    true, false));
+	      GridLayout bottomGrid = new GridLayout();
+	      bottomGrid.numColumns = 2;
+	      bottomSection.setLayout(bottomGrid);
+	      
+	      f_filterExpr  = new Text(bottomSection, SWT.NONE);
+	      f_filterExpr.addModifyListener(new ModifyListener() {
+          public void modifyText(ModifyEvent e) {
+            // Check whether the text is 'stable' in some amount of time (500 msec?)
+            final String old = f_filterExpr.getText();
+            if (old == null) {
+              return;
+            }
+            UIJob job = new UIJob("Modify filter expression to "+old) {
+              @Override
+              public IStatus runInUIThread(IProgressMonitor monitor) {        
+                String current = f_filterExpr.getText();
+                if (old.equals(current)) {
+                  f_filter.setFilterExpression(current);
+                  getSelection().refreshFilters();
+                }
+                return Status.OK_STATUS;
+              }
+            };
+            job.schedule(500);
+            
+            
+          }	        
+	      });
+				f_porousCount = new Label(bottomSection, SWT.RIGHT);
 				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
-						true, false));
+                                                 true, false));
 
 				f_menu = new Menu(f_reportGroup.getShell(), SWT.POP_UP);
 				f_menu.addListener(SWT.Show, new Listener() {
