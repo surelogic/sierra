@@ -1,23 +1,15 @@
 package com.surelogic.sierra.gwt.client.content.findingtypes;
 
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.ContentComposite;
-import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.service.Callback;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
-public final class FindingTypesContent extends ContentComposite {
+public final class FindingTypesContent extends
+		ListContentComposite<FindingType, FindingTypeCache> {
 	public static final String PARAM_FINDING = "finding";
 	private static final FindingTypesContent instance = new FindingTypesContent();
-
-	private final HTML name = new HTML();
-	private final HTML summary = new HTML();
-	private final HTML description = new HTML();
-	private final VerticalPanel chart = new VerticalPanel();
+	private final FindingTypeView findingView = new FindingTypeView();
 
 	public static FindingTypesContent getInstance() {
 		return instance;
@@ -25,66 +17,30 @@ public final class FindingTypesContent extends ContentComposite {
 
 	private FindingTypesContent() {
 		// singleton
+		super(new FindingTypeCache());
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
-		final VerticalPanel panel = new VerticalPanel();
-		panel.add(new HTML("<h3>Finding Type</h3>"));
-		panel.add(name);
-		panel.add(new HTML("<h3>Summary</h3>"));
-		panel.add(summary);
-		panel.add(new HTML("<h3>Description</h3>"));
-		panel.add(description);
-		panel.add(new HTML("<h3>Found In</h3>"));
-		panel.add(chart);
-		getRootPanel().add(panel, DockPanel.CENTER);
+	protected void onInitialize(DockPanel rootPanel,
+			VerticalPanel selectionPanel) {
+		setCaption("Finding Types");
 
+		findingView.initialize();
+		selectionPanel.add(findingView);
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
-		final String findingType = context.getParameter(PARAM_FINDING);
-		if ((findingType == null) || (findingType.length() == 0)) {
-			setEmpty();
-		} else {
-			ServiceHelper.getSettingsService().getFindingType(findingType,
-					new Callback<FindingType>() {
-
-						@Override
-						protected void onFailure(String message,
-								FindingType result) {
-							setEmpty();
-						}
-
-						@Override
-						protected void onSuccess(String message,
-								FindingType result) {
-							setFindingType(result);
-						}
-
-					});
-		}
+	protected String getItemText(FindingType item) {
+		return item.getName();
 	}
 
 	@Override
-	protected void onDeactivate() {
-		setEmpty();
+	protected boolean isMatch(FindingType item, String query) {
+		return item.getName().toLowerCase().contains(query.toLowerCase());
 	}
 
-	protected void setEmpty() {
-		name.setHTML("None");
-		summary.setHTML(null);
-		description.setHTML(null);
-		chart.clear();
+	@Override
+	protected void onSelectionChanged(FindingType item) {
+		findingView.setSelection(item);
 	}
-
-	protected void setFindingType(FindingType result) {
-		name.setHTML(result.getName());
-		summary.setHTML(result.getShortMessage());
-		description.setHTML(result.getInfo());
-		chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
-				result.getUuid()).build());
-	}
-
 }
