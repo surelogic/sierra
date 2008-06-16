@@ -43,7 +43,6 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 							UUID.fromString(ticket.getUUID()),
 							getThreadLocalRequest().getSession()), out);
 			return Result.success(new ImageMapData(out.toString()));
-			// TODO we need to handle when the result is a string better.
 		} catch (final ServletException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (final IOException e) {
@@ -66,5 +65,11 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		}
 		return Result.failure(
 				"Error retrieving image map for ticket " + ticket, null);
+	}
+
+	public Result<ReportTable> getReportTable(Report r) {
+		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(r,
+				getThreadLocalRequest().getSession()).getUUID().toString());
+		return getReportTable(ticket);
 	}
 }

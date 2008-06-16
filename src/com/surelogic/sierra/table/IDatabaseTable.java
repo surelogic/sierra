@@ -1,6 +1,7 @@
 package com.surelogic.sierra.table;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
@@ -22,7 +23,8 @@ public interface IDatabaseTable {
 	 *            a non-null connection to the Sierra database. This connection
 	 *            will be closed by the caller of this method.
 	 * @return the resulting table
+	 * @throws SQLException
 	 */
-	ReportTable generate(Report report, Connection conn);
+	ReportTable generate(Report report, Connection conn) throws SQLException;
 
 }

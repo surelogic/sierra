@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.gwt.client.service.OverviewService;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -20,21 +19,6 @@ public class OverviewServiceImpl extends SierraServiceServlet implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1399491183980140077L;
-
-	public List<UserOverview> getUserOverviews() {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<UserOverview>>() {
-
-					public List<UserOverview> perform(Connection conn,
-							Server server, User user) throws Exception {
-						conn
-								.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-						final List<UserOverview> overview = PortalOverview
-								.getInstance(conn).getEnabledUserOverviews();
-						return overview;
-					}
-				});
-	}
 
 	public List<ProjectOverview> getProjectOverviews() {
 		return ConnectionFactory
