@@ -18,11 +18,24 @@ public final class Context {
 		return ctx;
 	}
 
-	public static Context create(Context context, Map<String, String> parameters) {
-		Context ctx = new Context();
-		ctx.initContext(context);
-		ctx.initContext(parameters);
-		return ctx;
+	public static Context create(Context baseContext,
+			Map<String, String> parameters) {
+		Context newContext = new Context();
+		if (baseContext == null) {
+			newContext.initContext(ContextManager.getContext());
+		} else {
+			newContext.initContext(baseContext);
+		}
+		newContext.initContext(parameters);
+		return newContext;
+	}
+
+	public static Context create(ContentComposite content,
+			Map<String, String> parameters) {
+		Context newContext = new Context();
+		newContext.initContext(content);
+		newContext.initContext(parameters);
+		return newContext;
 	}
 
 	public static Context createWithUuid(String uuid) {
@@ -33,6 +46,17 @@ public final class Context {
 
 	public static Context createWithUuid(Cacheable item) {
 		return createWithUuid(item.getUuid());
+	}
+
+	public static Context createWithUuid(ContentComposite content, String uuid) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(PARAM_UUID, uuid);
+		return Context.create(content, params);
+	}
+
+	public static Context createWithUuid(ContentComposite content,
+			Cacheable item) {
+		return createWithUuid(content, item.getUuid());
 	}
 
 	private Context() {
@@ -142,6 +166,10 @@ public final class Context {
 	private void initContext(Context context) {
 		content = context.content;
 		parameters.putAll(context.parameters);
+	}
+
+	private void initContext(ContentComposite content) {
+		this.content = content;
 	}
 
 	private void initContext(Map<String, String> parameters) {

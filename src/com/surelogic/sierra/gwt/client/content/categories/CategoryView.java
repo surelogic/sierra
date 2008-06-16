@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
@@ -84,25 +86,28 @@ public class CategoryView extends BlockPanel {
 					}
 				}
 
-				Collections.sort(visibleFindings, new FindingTypeFilterComparator());
+				Collections.sort(visibleFindings,
+						new FindingTypeFilterComparator());
 
 				ClickListener findingListener = new ClickListener() {
 
 					public void onClick(Widget sender) {
-						// TODO view the finding that was clicked
-						// FilterEntry finding = (FilterEntry) ((ItemLabel)
-						// sender).getItem();
-						// CategoriesContext(finding).updateContext();
+						final ItemLabel<?> findingUI = (ItemLabel<?>) sender;
+						final FindingTypeFilter ftf = (FindingTypeFilter) findingUI
+								.getItem();
+						Context.createWithUuid(
+								FindingTypesContent.getInstance(),
+								ftf.getUuid()).submit();
 					}
 
 				};
 
 				for (FindingTypeFilter finding : visibleFindings) {
-					final ItemLabel<FindingTypeFilter> rule = new ItemLabel<FindingTypeFilter>(
+					final ItemLabel<FindingTypeFilter> findingUI = new ItemLabel<FindingTypeFilter>(
 							finding.getName(), finding, selectionTracker,
 							findingListener);
-					rule.setTitle(finding.getShortMessage());
-					findingTypes.add(rule);
+					findingUI.setTitle(finding.getShortMessage());
+					findingTypes.add(findingUI);
 				}
 			}
 		}

@@ -44,10 +44,10 @@ public class FindingTypeView extends BlockPanel {
 
 	private void setText(HTML textUI, String text, String emptyText) {
 		if (LangUtil.notEmpty(text)) {
-			description.setText(text);
+			description.setHTML(text);
 			description.removeStyleName("font-italic");
 		} else {
-			description.setText(emptyText);
+			description.setHTML(emptyText);
 			description.addStyleName("font-italic");
 		}
 	}
