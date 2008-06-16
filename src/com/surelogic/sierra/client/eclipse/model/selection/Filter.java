@@ -169,6 +169,7 @@ public abstract class Filter {
 			synchronized (this) {
 				queryCounts();
 				deriveAllValues();
+				filterAllValues();
 				fixupPorousValues();
 			}
 		} catch (Exception e) {
@@ -232,6 +233,19 @@ public abstract class Filter {
 		Collections.sort(f_allValues);
 	}
 
+	protected void filterAllValues() {
+	  /*
+	  Iterator<String> it = f_allValues.iterator();
+	  while (it.hasNext()) {
+	    String value = it.next();
+	    String label = getLabel(value);
+	    if (label != null && !label.contains("on")) {
+	      it.remove();
+	    }
+	  }
+	  */
+	}
+	
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
