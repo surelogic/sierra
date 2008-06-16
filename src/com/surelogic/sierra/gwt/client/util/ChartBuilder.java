@@ -1,39 +1,46 @@
 package com.surelogic.sierra.gwt.client.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Ticket;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.Chart;
 
+/**
+ * Helper class for constructing charts to be displayed in the portal.
+ * 
+ * @author nathan
+ * 
+ */
 public final class ChartBuilder {
 
-	private final Map<String, String> parameters = new HashMap<String, String>();
+	private final Report report = new Report();
 
 	private ChartBuilder(String name) {
-		parameters.put("type", name);
+		report.setName(name);
 	}
 
 	public ChartBuilder width(int width) {
-		parameters.put("width", Integer.toString(width));
+		report.getParameters().add(
+				new Parameter("width", Integer.toString(width)));
 		return this;
 	}
 
 	public ChartBuilder height(int height) {
-		parameters.put("height", Integer.toString(height));
+		report.getParameters().add(
+				new Parameter("height", Integer.toString(height)));
 		return this;
 	}
 
 	public ChartBuilder prop(String prop, String value) {
-		parameters.put(prop, value);
+		report.getParameters().add(new Parameter(prop, value));
 		return this;
 	}
 
 	public Chart build() {
 		final Chart chart = new Chart();
-		ServiceHelper.getTicketService().getTicket(parameters,
+		ServiceHelper.getTicketService().getTicket(report,
 				new Callback<Ticket>() {
 
 					@Override

@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class Report implements Serializable, Cacheable {
 	}
 
 	public Parameter getParameter(String name) {
-		for (Parameter param : parameters) {
+		for (final Parameter param : parameters) {
 			if (LangUtil.equals(param.getName(), name)) {
 				return param;
 			}
@@ -71,13 +72,13 @@ public class Report implements Serializable, Cacheable {
 	}
 
 	public Report copy() {
-		Report copy = new Report();
+		final Report copy = new Report();
 		copy.uuid = uuid;
 		copy.revision = revision;
 		copy.name = name;
 		copy.title = title;
 		copy.description = description;
-		for (Parameter param : parameters) {
+		for (final Parameter param : parameters) {
 			copy.getParameters().add(param.copy());
 		}
 
@@ -97,6 +98,37 @@ public class Report implements Serializable, Cacheable {
 
 		public Parameter() {
 			super();
+		}
+
+		public Parameter(String name) {
+			super();
+			this.name = name;
+		}
+
+		public Parameter(String name, String value) {
+			super();
+			this.name = name;
+			values.add(value);
+		}
+
+		public Parameter(String name, String value, Type type) {
+			super();
+			this.name = name;
+			values.add(value);
+			this.type = type;
+		}
+
+		public Parameter(String name, Collection<String> values) {
+			super();
+			this.name = name;
+			values.addAll(values);
+		}
+
+		public Parameter(String name, Collection<String> values, Type type) {
+			super();
+			this.name = name;
+			values.addAll(values);
+			this.type = type;
 		}
 
 		public Parameter(String name, Type type) {
@@ -133,10 +165,126 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		public Parameter copy() {
-			Parameter copy = new Parameter(name, type);
+			final Parameter copy = new Parameter(name, type);
 			copy.getValues().addAll(values);
 			return copy;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			result = prime * result
+					+ ((values == null) ? 0 : values.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Parameter other = (Parameter) obj;
+			if (name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!name.equals(other.name)) {
+				return false;
+			}
+			if (type == null) {
+				if (other.type != null) {
+					return false;
+				}
+			} else if (!type.equals(other.type)) {
+				return false;
+			}
+			if (values == null) {
+				if (other.values != null) {
+					return false;
+				}
+			} else if (!values.equals(other.values)) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((parameters == null) ? 0 : parameters.hashCode());
+		result = prime * result + (int) (revision ^ (revision >>> 32));
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Report other = (Report) obj;
+		if (description == null) {
+			if (other.description != null) {
+				return false;
+			}
+		} else if (!description.equals(other.description)) {
+			return false;
+		}
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		if (parameters == null) {
+			if (other.parameters != null) {
+				return false;
+			}
+		} else if (!parameters.equals(other.parameters)) {
+			return false;
+		}
+		if (revision != other.revision) {
+			return false;
+		}
+		if (title == null) {
+			if (other.title != null) {
+				return false;
+			}
+		} else if (!title.equals(other.title)) {
+			return false;
+		}
+		if (uuid == null) {
+			if (other.uuid != null) {
+				return false;
+			}
+		} else if (!uuid.equals(other.uuid)) {
+			return false;
+		}
+		return true;
 	}
 
 }
