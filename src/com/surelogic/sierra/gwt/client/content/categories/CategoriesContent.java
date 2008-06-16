@@ -6,9 +6,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -24,17 +21,15 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.ui.SearchBlock;
-import com.surelogic.sierra.gwt.client.ui.StyledButton;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoriesContent extends ContentComposite {
 	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryCache categories = new CategoryCache();
-	private final ActionBlock actionBlock = new ActionBlock();
+	private final FormButtonBlock actionBlock = new FormButtonBlock();
 	private final CategorySearchBlock searchBlock = new CategorySearchBlock(
 			categories);
 	private final VerticalPanel selectionPanel = new VerticalPanel();
@@ -59,6 +54,7 @@ public class CategoriesContent extends ContentComposite {
 		rootPanel.setCellWidth(westPanel, "25%");
 
 		actionBlock.initialize();
+		actionBlock.addAction(new CreateCategoryForm());
 		westPanel.add(actionBlock);
 
 		searchBlock.initialize();
@@ -208,71 +204,38 @@ public class CategoriesContent extends ContentComposite {
 		dialog.setCategories(categories, cat);
 	}
 
-	private class ActionBlock extends BlockPanel {
-		private final StyledButton createCategoryButton = new StyledButton(
-				"Create a Category");
-		private final VerticalPanel categoryCreatePanel = new VerticalPanel();
-		private final ActionPanel categoryActions = new ActionPanel();
-		private final FlexTable fieldTable = new FlexTable();
-		private final TextBox categoryName = new TextBox();
-		private final Image waitImage = ImageHelper.getWaitImage(16);
+	private class FormButtonBlock extends BlockPanel {
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
-			createCategoryButton.addClickListener(new ClickListener() {
-
-				public void onClick(Widget sender) {
-					toggleCreateCategory();
-				}
-			});
-			contentPanel.add(createCategoryButton);
-
-			categoryCreatePanel.setWidth("100%");
-			fieldTable.setWidth("100%");
-			fieldTable.setText(0, 0, "Name:");
-			categoryName.setWidth("100%");
-			fieldTable.setWidget(0, 1, categoryName);
-			categoryCreatePanel.add(fieldTable);
-
-			categoryActions.addAction("Create", new ClickListener() {
-
-				public void onClick(Widget sender) {
-					createCategory(categoryName.getText());
-				}
-			});
-			categoryActions.addAction("Cancel", new ClickListener() {
-
-				public void onClick(Widget sender) {
-					toggleCreateCategory();
-				}
-			});
-			categoryCreatePanel.add(categoryActions);
-			categoryCreatePanel.setCellHorizontalAlignment(categoryActions,
-					HasHorizontalAlignment.ALIGN_RIGHT);
+			// nothing to do
 		}
 
-		private void toggleCreateCategory() {
-			final VerticalPanel contentPanel = getContentPanel();
-			if (contentPanel.getWidgetIndex(categoryCreatePanel) != -1) {
-				contentPanel.remove(categoryCreatePanel);
-			} else {
-				categoryName.setText("");
-				if (categoryCreatePanel.getWidgetIndex(categoryActions) == -1) {
-					categoryCreatePanel.add(categoryActions);
-				}
-				if (categoryCreatePanel.getWidgetIndex(waitImage) != -1) {
-					categoryCreatePanel.remove(waitImage);
-				}
-				final int panelIndex = contentPanel
-						.getWidgetIndex(createCategoryButton);
-				contentPanel.insert(categoryCreatePanel, panelIndex + 1);
-			}
+		public void addAction(FormButton formBtn) {
+			formBtn.setWidth("100%");
+			getContentPanel().add(formBtn);
+		}
+	}
+
+	private class CreateCategoryForm extends FormButton {
+		private final TextBox categoryName = new TextBox();
+
+		public CreateCategoryForm() {
+			super("Create a Category", "Create");
+			getForm().addField("Name:", categoryName);
 		}
 
-		private void createCategory(String name) {
+		@Override
+		protected void onOpen() {
+			categoryName.setText("");
+		}
+
+		@Override
+		protected void doOkClick() {
+			final String name = categoryName.getText();
+
 			if (LangUtil.notEmpty(name)) {
-				categoryActions.removeFromParent();
-				categoryCreatePanel.add(waitImage);
+				setWaitStatus();
 
 				ServiceHelper.getSettingsService().createCategory(name,
 						new ArrayList<String>(), new ArrayList<String>(),
@@ -281,16 +244,17 @@ public class CategoriesContent extends ContentComposite {
 							@Override
 							protected void doFailure(String message,
 									String result) {
+								clearWaitStatus();
 								Window.alert("Category creation failed: "
 										+ message);
-								categoryCreatePanel.remove(waitImage);
-								categoryCreatePanel.add(categoryActions);
 							}
 
 							@Override
 							protected void doSuccess(String message,
 									String result) {
-								toggleCreateCategory();
+								clearWaitStatus();
+								setOpen(false);
+
 								categories.refresh();
 								Context.createWithUuid(result).submit();
 							}
@@ -299,6 +263,7 @@ public class CategoriesContent extends ContentComposite {
 				Window.alert("Please enter a category name");
 			}
 		}
+
 	}
 
 	private class CategorySearchBlock extends
