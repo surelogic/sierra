@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.chart.cache.Attendant;
-import com.surelogic.sierra.chart.cache.ChartCache;
-import com.surelogic.sierra.chart.cache.Ticket;
+import com.surelogic.sierra.cache.Attendant;
+import com.surelogic.sierra.cache.ChartCache;
+import com.surelogic.sierra.cache.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.servlets.ServletUtility;
 

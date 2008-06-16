@@ -1,4 +1,4 @@
-package com.surelogic.sierra.chart.cache;
+package com.surelogic.sierra.cache;
 
 import java.util.HashSet;
 import java.util.Set;

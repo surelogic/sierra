@@ -10,8 +10,9 @@ import javax.servlet.ServletException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.chart.cache.Attendant;
-import com.surelogic.sierra.chart.cache.ChartCache;
+import com.surelogic.sierra.cache.Attendant;
+import com.surelogic.sierra.cache.ChartCache;
+import com.surelogic.sierra.cache.TableCache;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
@@ -53,8 +54,17 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public Result<ReportTable> getReportTable(Ticket ticket) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Result.success(TableCache.getInstance().getReportTable(
+					Attendant.getInstance().getTicket(
+							UUID.fromString(ticket.getUUID()),
+							getThreadLocalRequest().getSession())));
+		} catch (final ServletException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (final IOException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return Result.failure(
+				"Error retrieving image map for ticket " + ticket, null);
 	}
-
 }

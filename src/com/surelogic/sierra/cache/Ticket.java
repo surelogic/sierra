@@ -1,4 +1,4 @@
-package com.surelogic.sierra.chart.cache;
+package com.surelogic.sierra.cache;
 
 import java.io.Serializable;
 import java.util.UUID;
