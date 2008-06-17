@@ -262,6 +262,13 @@ public abstract class Filter {
 	}
 
 	/**
+	 * Clears the filter expression for this filter.
+	 */
+	public void clearFilterExpression() {
+		f_filterExpression = NO_FILTER;
+	}
+
+	/**
 	 * May need to be overridden if the set of values includes values not able
 	 * to be determined from the filter context.
 	 * <p>
