@@ -115,21 +115,17 @@ public abstract class Filter {
 	protected final Map<String, Integer> f_counts = new HashMap<String, Integer>();
 
 	/*
-	private Map<String, Integer> getSummaryCounts() {
-		synchronized (this) {
-			return new HashMap<String, Integer>(f_counts);
-		}
-	}
-    */
-	
+	 * private Map<String, Integer> getSummaryCounts() { synchronized (this) {
+	 * return new HashMap<String, Integer>(f_counts); } }
+	 */
+
 	public int getSummaryCountFor(String value) {
 		Integer result = f_counts.get(value);
 		return result == null ? 0 : result.intValue();
 	}
 
 	/**
-	 * Set by {@link #queryCounts()}. Only mutated by
-	 * {@link #refresh()}.
+	 * Set by {@link #queryCounts()}. Only mutated by {@link #refresh()}.
 	 */
 	protected int f_countTotal = 0;
 
@@ -196,7 +192,7 @@ public abstract class Filter {
 									+ " filter counts query: " + query);
 				}
 				System.out.println(query);
-				
+
 				final ResultSet rs = st.executeQuery(query);
 				try {
 					while (rs.next()) {
@@ -204,7 +200,7 @@ public abstract class Filter {
 						int count = rs.getInt(2);
 						f_counts.put(value, count);
 						countTotal += count;
-						
+
 						grabExtraCountsData(value, rs);
 					}
 				} finally {
@@ -219,28 +215,55 @@ public abstract class Filter {
 		f_countTotal = countTotal;
 	}
 
-	protected void grabExtraCountsData(String value, ResultSet rs) throws SQLException {
+	protected void grabExtraCountsData(String value, ResultSet rs)
+			throws SQLException {
 		// Nothing to do for now
 	}
 
 	private static final String NO_FILTER = "<filter>";
-	private String f_filterExpr = NO_FILTER;
-	
-	public String getFilterExpression() {
-	  return f_filterExpr;
-	}
-	
-	public boolean setFilterExpression(String filter) {
-    if (filter != null) {
-      f_filterExpr = filter;
-      return true;
-    }
-    return false;
-	}
-	
+
 	/**
-	 * May need to be overidden if the set of values includes values not able to
-	 * be determined from the filter context.
+	 * A filter expression used to filter the values that are listed by this
+	 * filter.
+	 * 
+	 * @see #filterAllValues()
+	 */
+	private String f_filterExpression = NO_FILTER;
+
+	/**
+	 * Gets this filter's filter expression.
+	 * 
+	 * @return this filter's filter expression.
+	 */
+	public String getFilterExpression() {
+		return f_filterExpression;
+	}
+
+	/**
+	 * Sets the filter expression for this filter. This expression is used to
+	 * filter the values that are listed by this filter.
+	 * 
+	 * @param filter
+	 *            non-null filter string.
+	 * @return {@code true} if the filter has been changed, {@code false}
+	 *         otherwise.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if filter is {@code null}.
+	 */
+	public boolean setFilterExpression(String filter) {
+		if (filter == null)
+			throw new IllegalArgumentException("filter must be non-null");
+		if (!f_filterExpression.equals(filter)) {
+			f_filterExpression = filter;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * May need to be overridden if the set of values includes values not able
+	 * to be determined from the filter context.
 	 * <p>
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
@@ -251,19 +274,19 @@ public abstract class Filter {
 	}
 
 	protected void filterAllValues() {
-	  if (f_filterExpr != null && f_filterExpr != NO_FILTER &&
-	      f_filterExpr.length() > 0) {
-	    final Iterator<String> it = f_allValues.iterator();
-	    while (it.hasNext()) {
-	      String value = it.next();
-	      String label = getLabel(value);
-	      if (label != null && !label.contains(f_filterExpr)) {
-	        it.remove();
-	      }
-	    }
-	  }
+		if (f_filterExpression != null && f_filterExpression != NO_FILTER
+				&& f_filterExpression.length() > 0) {
+			final Iterator<String> it = f_allValues.iterator();
+			while (it.hasNext()) {
+				String value = it.next();
+				String label = getLabel(value);
+				if (label != null && !label.contains(f_filterExpression)) {
+					it.remove();
+				}
+			}
+		}
 	}
-	
+
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
@@ -574,31 +597,31 @@ public abstract class Filter {
 	}
 
 	static String getTablePrefix(boolean usesJoin) {
-		return usesJoin ? "FJ." :"FO.";
+		return usesJoin ? "FJ." : "FO.";
 	}
-	
+
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
-		final String query    = getBaseCountsQuery();		
-		final String column   = getTablePrefix(usesJoin()) + getColumnName();  
+		final String query = getBaseCountsQuery();
+		final String column = getTablePrefix(usesJoin()) + getColumnName();
 		b.append(QB.get(query, column, getWhereClause(false), column));
-		//System.out.println(b.toString());
+		// System.out.println(b.toString());
 		return b;
 	}
 
 	protected String getBaseCountsQuery() {
-		String query = usesJoin() ? "FindingsSelectionView.countJoin" : 
-			                        "FindingsSelectionView.count";
+		String query = usesJoin() ? "FindingsSelectionView.countJoin"
+				: "FindingsSelectionView.count";
 		return query;
 	}
 
 	public boolean selfUsesJoin() {
 		return false;
 	}
-	
+
 	public boolean usesJoin() {
 		if (selfUsesJoin()) {
 			return true;
@@ -608,11 +631,11 @@ public abstract class Filter {
 		}
 		return false;
 	}
-	
+
 	protected String getJoinPart() {
-	  return "where FJ.FINDING_ID=FO.FINDING_ID";
+		return "where FJ.FINDING_ID=FO.FINDING_ID";
 	}
-	
+
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
@@ -630,8 +653,8 @@ public abstract class Filter {
 	 */
 	String getWhereClause(boolean includeThis) {
 		final StringBuilder b = new StringBuilder();
-		final Set<ISelectionFilterFactory> unused = 
-			new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
+		final Set<ISelectionFilterFactory> unused = new HashSet<ISelectionFilterFactory>(
+				Selection.getAllFilters());
 		boolean first = !usesJoin();
 		if (!first) {
 			String join = getJoinPart();
@@ -643,10 +666,10 @@ public abstract class Filter {
 				}
 				filter = filter.f_previous;
 			}
-			
-		  b.append(join);
+
+			b.append(join);
 		}
-		
+
 		/*
 		 * For counts we don't include this, for queries on the whole selection
 		 * we do.
@@ -655,15 +678,15 @@ public abstract class Filter {
 		if (includeThis) {
 			filter = this;
 		} else {
-			filter = this.f_previous;			
-			first  = addMinimalWhereClausePart(b, first, this);
-		}				
+			filter = this.f_previous;
+			first = addMinimalWhereClausePart(b, first, this);
+		}
 		while (filter != null) {
 			// TODO: fragile base class :-)
 			unused.remove(filter.getFactory());
-			
+
 			first = addMinimalWhereClausePart(b, first, filter);
-			
+
 			if (filter.hasWhereClausePart()) {
 				first = addClausePrefix(b, first);
 				b.append(filter.getWhereClausePart());
@@ -671,17 +694,18 @@ public abstract class Filter {
 			filter = filter.f_previous;
 		}
 		unused.remove(this.getFactory());
-		
+
 		for (ISelectionFilterFactory unusedFilter : unused) {
-			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first, usesJoin());
+			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first,
+					usesJoin());
 		}
 		String rv = b.toString();
-		//System.out.println(rv);
+		// System.out.println(rv);
 		return rv;
 	}
 
 	private boolean addMinimalWhereClausePart(final StringBuilder b,
-			                                  boolean first, Filter filter) {
+			boolean first, Filter filter) {
 		final String min = filter.getMinimalWhereClausePart();
 		if (min != null) {
 			first = addClausePrefix(b, first);
@@ -690,7 +714,8 @@ public abstract class Filter {
 		return first;
 	}
 
-	protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
+	protected static boolean addClausePrefix(final StringBuilder b,
+			boolean first) {
 		if (first) {
 			b.append("where ");
 			first = false;
@@ -708,16 +733,16 @@ public abstract class Filter {
 	protected String getMinimalWhereClausePart() {
 		return null;
 	}
-  
+
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	private String getWhereClausePart() {
 		if (!hasWhereClausePart())
-			throw new IllegalStateException(this + " has no where clause");		
+			throw new IllegalStateException(this + " has no where clause");
 		return createInClause(getColumnName(), getMappedPorousValues());
 	}
-		
+
 	protected final String createInClause(String column, Iterable<String> values) {
 		final StringBuilder b = new StringBuilder();
 		b.append('(');
@@ -725,7 +750,7 @@ public abstract class Filter {
 		b.append(column).append(" in (");
 		boolean includesNull = false;
 		boolean first = true;
-		
+
 		for (String value : values) {
 			if (value == null) {
 				includesNull = true;
@@ -747,8 +772,8 @@ public abstract class Filter {
 			else
 				b.append("-456");
 		}
-		if (includesNull) {		
-			b.append(") or ").append(column).append(" is null)");			
+		if (includesNull) {
+			b.append(") or ").append(column).append(" is null)");
 		} else {
 			b.append("))");
 		}
@@ -761,7 +786,7 @@ public abstract class Filter {
 	protected Iterable<String> getMappedPorousValues() {
 		return f_porousValues;
 	}
-	
+
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
@@ -776,7 +801,7 @@ public abstract class Filter {
 	public String getLabel(String value) {
 		return value;
 	}
-	
+
 	public Image getImageFor(String value) {
 		return null;
 	}
