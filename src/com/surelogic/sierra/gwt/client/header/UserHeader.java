@@ -46,8 +46,8 @@ public final class UserHeader extends AuthenticatedHeader {
 		addTab("Welcome", OverviewContent.getInstance());
 		addTab("Categories", CategoriesContent.getInstance());
 		addTab("Finding Types", FindingTypesContent.getInstance());
-		addTab("Scan Filters", ScanFiltersContent.getInstance());
 		addTab("Projects", ProjectsContent.getInstance());
+		addTab("Scan Filters", ScanFiltersContent.getInstance());
 		addTab("Finding", FindingContent.getInstance());
 		addTab("Reports", ReportsContent.getInstance());
 	}
