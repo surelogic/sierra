@@ -34,16 +34,16 @@ public class UserAudits implements IDatabaseTable {
 		table.getHeaders().addAll(HEADERS);
 		table.getColumns().addAll(COLUMNS);
 		for (final UserOverview u : overviews) {
-			table.getData()
-					.add(
-							new ArrayList<String>(Arrays.asList(new String[] {
+			table.getData().add(
+					new ArrayList<String>(Arrays
+							.asList(new String[] {
 									u.getUserName(),
 									u.getAudits() > 0 ? Integer.toString(u
 											.getAudits())
 											+ " on "
 											+ Integer.toString(u.getFindings())
-											+ " findings." : "",
-									u.getLastSynch() == null ? "" : u
+											+ " findings." : "None",
+									u.getLastSynch() == null ? "-" : u
 											.getLastSynch() })));
 		}
 		return table;
