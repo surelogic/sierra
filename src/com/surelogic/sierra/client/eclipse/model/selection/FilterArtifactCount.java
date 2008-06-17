@@ -24,6 +24,6 @@ public final class FilterArtifactCount extends FilterNumberValue {
 
 	@Override
 	protected String getColumnName() {
-		return "FO.ARTIFACT_COUNT";
+		return "ARTIFACT_COUNT";
 	}
 }

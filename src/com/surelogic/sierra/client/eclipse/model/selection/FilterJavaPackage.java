@@ -28,7 +28,7 @@ public final class FilterJavaPackage extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "FO.PACKAGE";
+		return "PACKAGE";
 	}
 
 	@Override

@@ -28,8 +28,9 @@ public interface ISelectionFilterFactory extends
 	
 	/**
 	 * Add a where clause if the filter is unused
+	 * @param usesJoin 
 	 * @return an updated value of first
 	 */
 	boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
-			                             StringBuilder b, boolean first);
+			                             StringBuilder b, boolean first, boolean usesJoin);
 }

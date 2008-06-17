@@ -195,6 +195,8 @@ public abstract class Filter {
 							getFactory().getFilterLabel()
 									+ " filter counts query: " + query);
 				}
+				System.out.println(query);
+				
 				final ResultSet rs = st.executeQuery(query);
 				try {
 					while (rs.next()) {
@@ -571,14 +573,18 @@ public abstract class Filter {
 		return getFindingCountPorous() > 0;
 	}
 
+	static String getTablePrefix(boolean usesJoin) {
+		return usesJoin ? "FJ." :"FO.";
+	}
+	
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
 	 */
 	private StringBuilder getCountsQuery() {
 		final StringBuilder b = new StringBuilder();
 		final String query    = getBaseCountsQuery();		
-		b.append(QB.get(query, getColumnName(), getWhereClause(false),
-				getColumnName()));
+		final String column   = getTablePrefix(usesJoin()) + getColumnName();  
+		b.append(QB.get(query, column, getWhereClause(false), column));
 		//System.out.println(b.toString());
 		return b;
 	}
@@ -589,7 +595,14 @@ public abstract class Filter {
 		return query;
 	}
 
+	public boolean selfUsesJoin() {
+		return false;
+	}
+	
 	public boolean usesJoin() {
+		if (selfUsesJoin()) {
+			return true;
+		}
 		if (f_previous != null) {
 			return f_previous.usesJoin();
 		}
@@ -621,7 +634,17 @@ public abstract class Filter {
 			new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
 		boolean first = !usesJoin();
 		if (!first) {
-		  b.append(getJoinPart());
+			String join = getJoinPart();
+			Filter filter = this;
+			while (filter != null) {
+				if (filter.selfUsesJoin()) {
+					join = filter.getJoinPart();
+					break;
+				}
+				filter = filter.f_previous;
+			}
+			
+		  b.append(join);
 		}
 		
 		/*
@@ -650,7 +673,7 @@ public abstract class Filter {
 		unused.remove(this.getFactory());
 		
 		for (ISelectionFilterFactory unusedFilter : unused) {
-			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first);
+			first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first, usesJoin());
 		}
 		String rv = b.toString();
 		//System.out.println(rv);
@@ -697,7 +720,9 @@ public abstract class Filter {
 		
 	protected final String createInClause(String column, Iterable<String> values) {
 		final StringBuilder b = new StringBuilder();
-		b.append('(').append(column).append(" in (");
+		b.append('(');
+		b.append(getTablePrefix(usesJoin()));
+		b.append(column).append(" in (");
 		boolean includesNull = false;
 		boolean first = true;
 		

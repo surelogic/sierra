@@ -25,7 +25,7 @@ public final class FilterAudited extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "FO.AUDITED";
+		return "AUDITED";
 	}
 
 	private static final String YES = "Yes";

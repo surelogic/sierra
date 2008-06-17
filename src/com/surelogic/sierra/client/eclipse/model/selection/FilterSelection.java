@@ -15,9 +15,10 @@ public final class FilterSelection extends Filter {
 		
 		@Override
 		public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
-				                                    StringBuilder b, boolean first) {
+				                                    StringBuilder b, boolean first, 
+				                                    boolean usesJoin) {
 			first = addClausePrefix(b, first);
-			addWhereClauseToFilterOutFixed(b);
+			addWhereClauseToFilterOutFixed(b, usesJoin);
 			return first;
 		}
 	};
@@ -31,7 +32,7 @@ public final class FilterSelection extends Filter {
 		return FACTORY;
 	}
 
-	private static final String COLUMN_NAME = "FO.STATUS";
+	private static final String COLUMN_NAME = "STATUS";
 
 	@Override
 	protected String getColumnName() {
@@ -52,7 +53,13 @@ public final class FilterSelection extends Filter {
 		}
 	}
 
-	static void addWhereClauseToFilterOutFixed(StringBuilder b) {
+	static void addWhereClauseToFilterOutFixed(StringBuilder b, boolean usesJoin) {
+		if (usesJoin) {
+			b.append(getTablePrefix(true));
+			b.append(COLUMN_NAME + " != '" + FIXED + "'");
+			b.append(" AND ");
+		}
+		b.append(getTablePrefix(false));
 		b.append(COLUMN_NAME + " != '" + FIXED + "'");
 	}
 }

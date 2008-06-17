@@ -96,7 +96,7 @@ public final class FilterModels extends Filter {
 	}
 	
 	@Override
-	public boolean usesJoin() {
+	public boolean selfUsesJoin() {
 		return true;
 	}
 }

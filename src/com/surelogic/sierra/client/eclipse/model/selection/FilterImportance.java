@@ -30,7 +30,7 @@ public final class FilterImportance extends Filter {
 
 	@Override
 	protected String getColumnName() {
-		return "FO.IMPORTANCE";
+		return "IMPORTANCE";
 	}
 
 	@Override

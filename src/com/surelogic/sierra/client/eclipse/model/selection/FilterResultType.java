@@ -4,7 +4,7 @@ import java.util.*;
 
 
 public final class FilterResultType extends Filter {
-	private static final String COLUMN_NAME = "FO.ASSURANCE_TYPE"; // For the raw data
+	private static final String COLUMN_NAME = "ASSURANCE_TYPE"; // For the raw data
 	private static final String VERIFICATION = "Verification Result";
 	private static final String FINDING = "Finding";
 	

@@ -28,7 +28,8 @@ public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 	}
 	
 	public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
-			                                    StringBuilder b, boolean first) {
+			                                    StringBuilder b, boolean first,
+			                                    boolean usesJoin) {
 		return first;
 	}
 }

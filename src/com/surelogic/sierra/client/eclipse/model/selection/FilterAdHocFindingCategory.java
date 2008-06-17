@@ -36,7 +36,7 @@ implements IBuglinkDataObserver {
 
 	@Override
 	protected String getColumnName() {
-		return "FO.FINDING_TYPE"; // For the raw data
+		return "FINDING_TYPE"; // For the raw data
 	}
 
 	/*

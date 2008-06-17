@@ -10,7 +10,7 @@ import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.tool.message.AssuranceType;
 
 public final class FilterVerificationStatus extends Filter {
-	private static final String COLUMN_NAME = "FO.ASSURANCE_TYPE";
+	private static final String COLUMN_NAME = "ASSURANCE_TYPE";
 	public static final String CONSISTENT = "C";
 	public static final String INCONSISTENT = "I";
 	
@@ -25,10 +25,12 @@ public final class FilterVerificationStatus extends Filter {
 		
 		@Override
 		public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
-				                                    StringBuilder b, boolean first) {
+				                                    StringBuilder b, boolean first,
+				                                    boolean usesJoin) {
 			if (unused.contains(FilterResultType.FACTORY) &&
 		        unused.contains(FilterModels.FACTORY)) { // all unused
 				first = addClausePrefix(b, first);
+				b.append(getTablePrefix(usesJoin));
 				b.append(COLUMN_NAME + " is NULL");
 			}
 			return first;
