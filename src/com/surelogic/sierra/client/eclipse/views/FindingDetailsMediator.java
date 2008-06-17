@@ -646,9 +646,9 @@ implements IViewUpdater {
 		updateTabTitles();
 		f_parent.layout(true, true);
 				
-	    if (XUtil.useExperimental()) {
+	    //if (XUtil.useExperimental()) {
 	      JSureFindingDetailsView.findingSelected(f_finding, false);
-	    }
+	    //}
 	}
 
 	private String getFindingSynopsis() {
