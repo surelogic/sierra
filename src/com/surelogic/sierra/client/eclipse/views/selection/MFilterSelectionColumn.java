@@ -400,8 +400,9 @@ public final class MFilterSelectionColumn extends MColumn implements
               public IStatus runInUIThread(IProgressMonitor monitor) {        
                 String current = f_filterExpr.getText();
                 if (old.equals(current)) {
-                  f_filter.setFilterExpression(current);
-                  getSelection().refreshFilters();
+                  if (f_filter.setFilterExpression(current)) {
+                	  getSelection().refreshFilters();
+                  }
                 }
                 return Status.OK_STATUS;
               }

@@ -228,7 +228,7 @@ public abstract class Filter {
 	}
 	
 	public boolean setFilterExpression(String filter) {
-    if (filter != null && filter.length() > 0) {
+    if (filter != null) {
       f_filterExpr = filter;
       return true;
     }
