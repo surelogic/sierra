@@ -2,22 +2,17 @@ package com.surelogic.sierra.gwt.client.content.categories;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ItemLabel;
-import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
+import com.surelogic.sierra.gwt.client.ui.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BlockPanel {
@@ -64,19 +59,14 @@ public class CategoryView extends BlockPanel {
 		findingsView.setCategory(category);
 	}
 
-	private class FindingsView extends BlockPanel {
-		private final SelectionTracker<ItemLabel<FindingTypeFilter>> selectionTracker = new SelectionTracker<ItemLabel<FindingTypeFilter>>();
-		private final Map<Widget, FindingTypeFilter> findings = new HashMap<Widget, FindingTypeFilter>();
+	private class FindingsView extends ListBlock<FindingTypeFilter> {
 
-		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
-			setTitle("Finding Types");
+		public FindingsView() {
+			super("Finding Types");
 		}
 
 		public void setCategory(Category cat) {
-			final VerticalPanel findingTypes = getContentPanel();
-			findingTypes.clear();
-			findings.clear();
+			clear();
 
 			if (cat != null) {
 				final List<FindingTypeFilter> visibleFindings = new ArrayList<FindingTypeFilter>();
@@ -89,27 +79,25 @@ public class CategoryView extends BlockPanel {
 				Collections.sort(visibleFindings,
 						new FindingTypeFilterComparator());
 
-				ClickListener findingListener = new ClickListener() {
-
-					public void onClick(Widget sender) {
-						final ItemLabel<?> findingUI = (ItemLabel<?>) sender;
-						final FindingTypeFilter ftf = (FindingTypeFilter) findingUI
-								.getItem();
-						Context.createWithUuid(
-								FindingTypesContent.getInstance(),
-								ftf.getUuid()).submit();
-					}
-
-				};
-
 				for (FindingTypeFilter finding : visibleFindings) {
-					final ItemLabel<FindingTypeFilter> findingUI = new ItemLabel<FindingTypeFilter>(
-							finding.getName(), finding, selectionTracker,
-							findingListener);
-					findingUI.setTitle(finding.getShortMessage());
-					findingTypes.add(findingUI);
+					addItem(finding);
 				}
 			}
+		}
+
+		@Override
+		protected ContentComposite getItemContent() {
+			return FindingTypesContent.getInstance();
+		}
+
+		@Override
+		protected String getItemText(FindingTypeFilter item) {
+			return item.getName();
+		}
+
+		@Override
+		protected String getItemTooltip(FindingTypeFilter item) {
+			return item.getShortMessage();
 		}
 
 	}

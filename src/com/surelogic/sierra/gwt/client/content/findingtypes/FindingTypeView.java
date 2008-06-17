@@ -1,31 +1,31 @@
 package com.surelogic.sierra.gwt.client.content.findingtypes;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ItemLabel;
-import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
+import com.surelogic.sierra.gwt.client.ui.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingTypeView extends BlockPanel {
 	private final HTML description = new HTML();
-	private final FindingTypeList categoriesIncluding = new FindingTypeList(
-			"Categories including this finding:");
-	private final FindingTypeList categoriesExcluding = new FindingTypeList(
+	private final CategoryList categoriesIncluding = new CategoryList(
+			"Categories including this finding");
+	private final CategoryList categoriesExcluding = new CategoryList(
 			"Categories excluding this finding");
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
 		description.addStyleName("padded");
 		contentPanel.add(description);
+
+		categoriesIncluding.initialize();
 		contentPanel.add(categoriesIncluding);
+
+		categoriesExcluding.initialize();
 		contentPanel.add(categoriesExcluding);
 
 	}
@@ -55,50 +55,25 @@ public class FindingTypeView extends BlockPanel {
 		}
 	}
 
-	private class FindingTypeList extends BlockPanel {
-		private final String title;
-		private final SelectionTracker<ItemLabel<Category>> selectionTracker = new SelectionTracker<ItemLabel<Category>>();
-		final Label none = new Label("None", false);
-		private ClickListener categoryListener;
+	private class CategoryList extends ListBlock<Category> {
 
-		public FindingTypeList(String title) {
-			super();
-			this.title = title;
+		public CategoryList(String title) {
+			super(title);
 		}
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
-			setTitle(title);
-			setSubsectionStyle(true);
-
-			none.addStyleName("font-italic");
-
-			categoryListener = new ClickListener() {
-
-				public void onClick(Widget sender) {
-					final ItemLabel<?> categoryUI = (ItemLabel<?>) sender;
-					final Category cat = (Category) categoryUI.getItem();
-					Context.createWithUuid(CategoriesContent.getInstance(),
-							cat.getUuid()).submit();
-				}
-
-			};
+		protected ContentComposite getItemContent() {
+			return CategoriesContent.getInstance();
 		}
 
-		public void clear() {
-			final VerticalPanel content = getContentPanel();
-			content.clear();
-			content.add(none);
+		@Override
+		protected String getItemText(Category item) {
+			return item.getName();
 		}
 
-		public void addCategory(Category cat) {
-			final ItemLabel<Category> catUI = new ItemLabel<Category>(cat
-					.getName(), cat, selectionTracker, categoryListener);
-			catUI.setTitle(cat.getInfo());
-
-			final VerticalPanel content = getContentPanel();
-			content.remove(none);
-			content.add(catUI);
+		@Override
+		protected String getItemTooltip(Category item) {
+			return item.getInfo();
 		}
 	}
 

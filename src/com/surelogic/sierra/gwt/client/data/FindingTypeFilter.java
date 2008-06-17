@@ -2,11 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-public class FindingTypeFilter implements Serializable {
-
-	/**
-	 * 
-	 */
+public class FindingTypeFilter implements Serializable, Cacheable {
 	private static final long serialVersionUID = 47046359782973349L;
 
 	private String name;
@@ -56,6 +52,7 @@ public class FindingTypeFilter implements Serializable {
 		return copy;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -63,6 +60,7 @@ public class FindingTypeFilter implements Serializable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
