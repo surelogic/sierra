@@ -41,6 +41,10 @@ implements IViewUpdater {
 	private FindingRelationOverview f_relatedChildren;
 	private FindingRelationOverview f_relatedAncestors;
 	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
+	private final Map<Long,FindingRelationOverview> f_childOverviews = 
+		new HashMap<Long,FindingRelationOverview>();
+	private final Map<Long,FindingRelationOverview> f_ancestorOverviews = 
+		new HashMap<Long,FindingRelationOverview>();
 	
 	private volatile Object lastSelected;
 
@@ -128,6 +132,22 @@ implements IViewUpdater {
 		};
 	}
 	
+	enum Direction {
+		BOTH(true, true), AT_CHILDREN(true, false), AT_ANCESTORS(false, true);
+		
+		private final boolean atChildren, atAncestors;
+		private Direction(boolean children, boolean ancestors) {
+			atChildren = children;
+			atAncestors = ancestors;
+		}
+		boolean lookAtChildren() {
+			return atChildren;
+		}
+		boolean lookAtAncestors() {
+			return atAncestors;
+		}
+	}
+	
 	void asyncQueryAndShow(final FindingDetail detail) {
 		final Long findingIdObj = detail.getFindingId();
 		f_finding = detail;
@@ -142,30 +162,15 @@ implements IViewUpdater {
 					try {						
 						Query q = new ConnectionQuery(c);
 						synchronized (details) {
+							// FIX really only need to clear if database changes
 							details.clear();
-							details.put(findingIdObj, detail);
-							f_relatedChildren  = FindingRelationOverview.getOverviewOrNull(q, findingIdObj, true);
-							f_relatedAncestors = FindingRelationOverview.getOverviewOrNull(q, findingIdObj, false);
-							for(FindingRelation r : f_relatedChildren.getRelations()) {
-								Long id = r.getChildId();
-								FindingDetail finding = FindingDetail.getDetailOrNull(c, id);
-								details.put(id, finding);
-							}
-							for(FindingRelation r : f_relatedAncestors.getRelations()) {
-								Long id = r.getParentId();
-								FindingDetail finding = FindingDetail.getDetailOrNull(c, id);
-								details.put(id, finding);
-							}
-							f_relatedChildren.sort(new Comparator<FindingRelation>() {
-								public int compare(FindingRelation o1, FindingRelation o2) {
-									return getLabel(o1, true).compareTo(getLabel(o2, true));
-								}								
-							});
-							f_relatedAncestors.sort(new Comparator<FindingRelation>() {
-								public int compare(FindingRelation o1, FindingRelation o2) {
-									return getLabel(o1, false).compareTo(getLabel(o2, false));
-								}								
-							});
+							f_childOverviews.clear();
+							f_ancestorOverviews.clear();
+							
+							getOverviews(c, q, findingIdObj, detail, Direction.BOTH);
+							
+							f_relatedChildren  = f_childOverviews.get(findingIdObj);
+							f_relatedAncestors = f_ancestorOverviews.get(findingIdObj);						
 						}												
 						// got details, update the view in the UI thread
 						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);							  
@@ -182,42 +187,47 @@ implements IViewUpdater {
 					return SLStatus.createErrorStatus(errNo, msg, e);
 				}
 			}
+
+			private void getOverviews(final Connection c, final Query q, 
+					                  final Long rootId, FindingDetail detail, Direction d) {
+				details.put(rootId, detail);
+				if (d.lookAtChildren()) {
+					FindingRelationOverview children  = FindingRelationOverview.getOverviewOrNull(q, rootId, true);					
+					f_childOverviews.put(rootId, children);
+					for(FindingRelation r : children.getRelations()) {
+						Long id = r.getChildId();
+						getDetails(c, q, id, Direction.AT_CHILDREN);
+					}
+					children.sort(new Comparator<FindingRelation>() {
+						public int compare(FindingRelation o1, FindingRelation o2) {
+							return getLabel(o1, true).compareTo(getLabel(o2, true));
+						}								
+					});
+				}
+				if (d.lookAtAncestors()) {
+					FindingRelationOverview ancestors = FindingRelationOverview.getOverviewOrNull(q, rootId, false);
+					f_ancestorOverviews.put(rootId, ancestors);
+					for(FindingRelation r : ancestors.getRelations()) {
+						Long id = r.getParentId();
+						getDetails(c, q, id, Direction.AT_ANCESTORS);
+					}
+					ancestors.sort(new Comparator<FindingRelation>() {
+						public int compare(FindingRelation o1, FindingRelation o2) {
+							return getLabel(o1, false).compareTo(getLabel(o2, false));
+						}								
+					});		
+				}		
+			}
+
+			private void getDetails(final Connection c, final Query q, Long id, Direction d) {
+				if (!details.containsKey(id)) {
+					FindingDetail finding = FindingDetail.getDetailOrNull(c, id);
+					getOverviews(c, q, id, finding, d);
+				}
+			}
 		};
 		job.schedule();
 	}
-
-	/*
-	private final Listener f_radioListener = new Listener() {
-		public void handleEvent(Event event) {
-			final Importance current = f_finding.getImportance();
-			if (event.widget != null) {
-				if (event.widget.getData() instanceof Importance) {
-					final Importance desired = (Importance) event.widget
-							.getData();
-					if (desired != current) {
-						FindingMutationUtility.asyncChangeImportance(f_finding
-								.getFindingId(), current, desired);
-					}
-				}
-			}
-		}
-	};
-
-	private final Listener f_locationListener = new Listener() {
-		public void handleEvent(Event event) {
-			final TreeItem item = (TreeItem) event.item;
-			if (item == null) {
-				return;
-			}
-			final SourceDetail src = (SourceDetail) item.getData();
-			if (src == null)
-				return;
-
-			JDTUtility.tryToOpenInEditor(f_finding.getProjectName(), src
-					.getPackageName(), src.getClassName(), src.getLineOfCode());
-		}
-	};
-	 */
 
 	@Override
 	public void init() {
@@ -253,29 +263,6 @@ implements IViewUpdater {
 		f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
 		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(new Root(f_relatedAncestors));
 		
-		/*
-		 * We have a finding so show the details about it.
-		 */
-		/*
-		f_summaryIcon.setImage(Utility.getImageFor(f_finding.getImportance()));
-		f_summaryIcon.setToolTipText("The importance of this finding is "
-				+ f_finding.getImportance().toStringSentenceCase());
-		f_summaryText.setText(f_finding.getSummary());
-
-		for (MenuItem i : f_importanceRadioPopupMenu.getItems()) {
-			i.setSelection(f_finding.getImportance() == i.getData());
-		}
-
-		f_findingSynopsis.setText(getFindingSynopsis());
-
-		initLocationTree(f_locationTree, f_finding);
-
-		StringBuffer b = new StringBuffer();
-		HTMLPrinter.insertPageProlog(b, 0, f_BackgroundColorRGB,
-				StyleSheetHelper.getInstance().getStyleSheet());
-		String details = f_finding.getFindingTypeDetail();
-		b.append(details);
-*/		
 		for(Composite parent : f_parents) {
 			parent.layout(true, true);
 		}
@@ -329,29 +316,25 @@ implements IViewUpdater {
 		}
 
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof FindingRelationOverview) {
-				FindingRelationOverview fro = (FindingRelationOverview) parent;
-				return !fro.isEmpty();
-			}
-			// FIX if we show more of the graph
-			return false;
+			final FindingRelationOverview fro = getOverview(parent, lookAtChildren);						
+			return fro != null && !fro.isEmpty();			
 		}	
 		
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof FindingRelationOverview) {
-				FindingRelationOverview fro = (FindingRelationOverview) parent;
-				return fro.toArray();
-			}
-			// FIX if we show more of the graph
-			return emptyArray;
+			final FindingRelationOverview fro = getOverview(parent, lookAtChildren);
+			return fro != null && !fro.isEmpty() ? fro.toArray() : emptyArray;
 		}
 
 		public Object getParent(Object elt) {
 			if (elt instanceof FindingRelationOverview) {
 				return null;
-			} else {
-				return lookAtChildren ? f_relatedChildren : f_relatedAncestors;
+			} 
+			FindingRelation fr = (FindingRelation) elt;
+			Long parentId = lookAtChildren ? fr.getParentId() : fr.getChildId();
+			if (parentId == f_finding.getFindingId()) {
+				return lookAtChildren ? f_relatedChildren : f_relatedAncestors;			
 			}
+			return null;
 		}
 		
 		public Image getImage(Object elt) {
@@ -377,14 +360,28 @@ implements IViewUpdater {
 		}
 	}
 	
-	public FindingDetail getDetail(FindingRelation fr, boolean lookAtChildren) {
+	private FindingDetail getDetail(FindingRelation fr, boolean lookAtChildren) {
 		return details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
 	}
 	
-	public String getLabel(FindingRelation fr, boolean lookAtChildren) {
+	private String getLabel(FindingRelation fr, boolean lookAtChildren) {
 		FindingDetail fd = getDetail(fr, lookAtChildren);
 		//String pre = lookAtChildren ? "child " : "parent "; 
 		//return pre + fr.getRelationType() + ' ' + fd.getSummary();
 		return fr.getRelationType() + ' ' + fd.getSummary();
+	}
+
+	private FindingRelationOverview getOverview(Object parent, boolean lookAtChildren) {
+		final FindingRelationOverview fro;
+		if (parent instanceof FindingRelationOverview) {
+			fro = (FindingRelationOverview) parent;
+		} else {
+			FindingRelation fr = (FindingRelation) parent;
+			Long parentId = lookAtChildren ? fr.getParentId() : fr.getChildId();
+			Map<Long,FindingRelationOverview> overviews = 
+				lookAtChildren ? f_childOverviews : f_ancestorOverviews;
+			fro = overviews.get(parentId);
+		}
+		return fro;
 	}
 }
