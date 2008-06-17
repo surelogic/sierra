@@ -19,6 +19,12 @@ import com.surelogic.sierra.servlets.ServletUtility;
 
 public class TableServlet extends HttpServlet {
 
+	public static final String OUTPUT_FORMAT_XML = "xml";
+	public static final String OUTPUT_FORMAT_HTML = "html";
+	public static final String OUTPUT_FORMAT_JSON = "json";
+	
+	private String outputFormat = OUTPUT_FORMAT_XML;
+	
 	/**
 	 * 
 	 */
@@ -27,12 +33,65 @@ public class TableServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		final Report report = ServletUtility
-				.launderRequestParametersAsReport(req);
-		final Ticket ticket = Attendant.getInstance().getTicket(report,
-				req.getSession());
-		final ReportTable r = TableCache.getInstance().getReportTable(ticket);
+		
 		final PrintWriter pw = resp.getWriter();
+		 
+		try {
+			final Report report = ServletUtility
+					.launderRequestParametersAsReport(req);
+			final Ticket ticket = Attendant.getInstance().getTicket(report,
+					req.getSession());
+			final ReportTable r = TableCache.getInstance().getReportTable(ticket);			
+			if(OUTPUT_FORMAT_HTML.equals(outputFormat)) {
+				resp.setContentType("text/html");
+				writeHtml(pw, r);
+			}
+			else if(OUTPUT_FORMAT_JSON.equals(outputFormat)) {
+				resp.setContentType("text/plain");
+				writeJson(pw, r);
+			}
+			else {
+				resp.setContentType("text/xml");
+				pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				writeXml(pw, r);
+			}
+			pw.close();
+		}
+		catch(Exception e) {
+			throw new ServletException(e);
+		}
+		finally {
+			pw.close();
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doGet(req, resp);
+	}
+
+	private void writeXml(final PrintWriter pw, final ReportTable r) throws Exception {
+		final List<String> cols = r.getHeaders();
+		pw.write("<table>");		
+		int i=0;
+		for (final List<String> row : r.getData()) {
+			pw.append("<row id=\"row").append(Integer.toString(i++)).append("\">");
+			int j=0;
+			for (final String data : row) {
+				final String col = cols.get(j++).replaceAll("\\s", "");
+				pw.append("<").append(col).append(">").append(data).append("</").append(col).append(">");
+			}
+			pw.write("</row>");
+		}
+		pw.write("</table>");
+	}
+	
+	private void writeJson(final PrintWriter pw, final ReportTable r) throws Exception {
+		throw new Exception("writeJson() is not supported yet");
+	}
+	
+	private void writeHtml(final PrintWriter pw, final ReportTable r) throws Exception {
 		pw.write("<table>");
 		pw.write("<tr>");
 		final List<ColumnData> cols = r.getColumns();
@@ -56,11 +115,4 @@ public class TableServlet extends HttpServlet {
 		}
 		pw.write("</table>");
 	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		doGet(req, resp);
-	}
-
 }
