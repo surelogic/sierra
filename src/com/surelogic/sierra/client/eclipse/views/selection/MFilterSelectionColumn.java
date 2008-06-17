@@ -387,7 +387,10 @@ public final class MFilterSelectionColumn extends MColumn implements
 	      bottomGrid.numColumns = 2;
 	      bottomSection.setLayout(bottomGrid);
 	      
-	      f_filterExpr  = new Text(bottomSection, SWT.NONE);
+	      f_filterExpr = new Text(bottomSection, SWT.NONE);
+	      f_filterExpr.setText(f_filter.getFilterExpression());
+	      f_filterExpr.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
+	    		  true, false));
 	      f_filterExpr.addModifyListener(new ModifyListener() {
           public void modifyText(ModifyEvent e) {
             // Check whether the text is 'stable' in some amount of time (500 msec?)
