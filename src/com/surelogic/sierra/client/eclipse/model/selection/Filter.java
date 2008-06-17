@@ -220,7 +220,7 @@ public abstract class Filter {
 		// Nothing to do for now
 	}
 
-	private static final String NO_FILTER = "<filter>";
+	private static final String NO_FILTER = "Filter the list above";
 
 	/**
 	 * A filter expression used to filter the values that are listed by this
@@ -242,6 +242,9 @@ public abstract class Filter {
 	/**
 	 * Sets the filter expression for this filter. This expression is used to
 	 * filter the values that are listed by this filter.
+	 * <p>
+	 * A value of {code ""} (the empty string) cause the filter expression to be
+	 * cleared.
 	 * 
 	 * @param filter
 	 *            non-null filter string.
@@ -254,6 +257,13 @@ public abstract class Filter {
 	public boolean setFilterExpression(String filter) {
 		if (filter == null)
 			throw new IllegalArgumentException("filter must be non-null");
+		if ("".equals(filter)) {
+			if (!isFilterExpressionClear()) {
+				clearFilterExpression();
+				return true;
+			} else
+				return false;
+		}
 		if (!f_filterExpression.equals(filter)) {
 			f_filterExpression = filter;
 			return true;
@@ -266,6 +276,10 @@ public abstract class Filter {
 	 */
 	public void clearFilterExpression() {
 		f_filterExpression = NO_FILTER;
+	}
+
+	public boolean isFilterExpressionClear() {
+		return f_filterExpression == NO_FILTER;
 	}
 
 	/**

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -17,7 +18,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -440,39 +440,55 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_filterExpressionClearLabel.setLayoutData(new GridData(
 						SWT.CENTER, SWT.CENTER, false, false));
 				f_filterExpressionClearLabel.setImage(SLImages
-						.getImage(CommonImages.IMG_GRAY_X));
+						.getImage(CommonImages.IMG_GRAY_X_LIGHT));
 				f_filterExpressionClearLabel
 						.setToolTipText("Clear the current filter expression");
 				f_filterExpressionClearLabel
 						.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseDown(MouseEvent e) {
-								f_filter.clearFilterExpression();
-								f_filterExpressionText.setText(f_filter
-										.getFilterExpression());
+								if (!f_filter.isFilterExpressionClear()) {
+									f_filter.clearFilterExpression();
+									f_filterExpressionText.setText(f_filter
+											.getFilterExpression());
+									f_filterExpressionText
+											.setForeground(f_filterExpressionText
+													.getDisplay()
+													.getSystemColor(
+															SWT.COLOR_GRAY));
+									getSelection().refreshFilters();
+								}
 							}
 						});
 				f_filterExpressionClearLabel.addListener(SWT.MouseEnter,
 						new Listener() {
 							public void handleEvent(Event event) {
-								f_filterExpressionClearLabel.setImage(SLImages
-										.getImage(CommonImages.IMG_RED_X));
+								if (!f_filter.isFilterExpressionClear()) {
+									f_filterExpressionClearLabel
+											.setImage(SLImages
+													.getImage(CommonImages.IMG_GRAY_X));
+								}
 							}
 						});
 				f_filterExpressionClearLabel.addListener(SWT.MouseExit,
 						new Listener() {
 							public void handleEvent(Event event) {
-								f_filterExpressionClearLabel.setImage(SLImages
-										.getImage(CommonImages.IMG_GRAY_X));
+								f_filterExpressionClearLabel
+										.setImage(SLImages
+												.getImage(CommonImages.IMG_GRAY_X_LIGHT));
 							}
 						});
-				
+
 				f_filterExpressionText = new Text(bottomSection, SWT.NONE);
 				f_filterExpressionText.setText(f_filter.getFilterExpression());
 				f_filterExpressionText.setLayoutData(new GridData(SWT.FILL,
 						SWT.DEFAULT, true, false));
-				f_filterExpressionText.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
+				if (f_filter.isFilterExpressionClear()) {
+					f_filterExpressionText.setForeground(f_filterExpressionText
+							.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+				}
+				final ModifyListener filterExpressionModifyListener = new ModifyListener() {
+					public void modifyText(ModifyEvent unused) {
 						// Check whether the text is 'stable' in some amount of
 						// time (500 msec?)
 						final String old = f_filterExpressionText.getText();
@@ -487,6 +503,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 								String current = f_filterExpressionText
 										.getText();
 								if (old.equals(current)) {
+									System.out
+											.println("Calling setFilterExpression("
+													+ current + ")");
 									if (f_filter.setFilterExpression(current)) {
 										getSelection().refreshFilters();
 									}
@@ -495,9 +514,32 @@ public final class MFilterSelectionColumn extends MColumn implements
 							}
 						};
 						job.schedule(500);
+					}
+				};
+				f_filterExpressionText
+						.addModifyListener(filterExpressionModifyListener);
+				f_filterExpressionText.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						if (f_filter.isFilterExpressionClear()) {
+							f_filterExpressionText.setText("");
+							f_filterExpressionText.setForeground(null);
+						}
+					}
 
+					@Override
+					public void focusLost(FocusEvent e) {
+						if (f_filter.isFilterExpressionClear()) {
+							f_filterExpressionText.setText(f_filter
+									.getFilterExpression());
+							f_filterExpressionText
+									.setForeground(f_filterExpressionText
+											.getDisplay().getSystemColor(
+													SWT.COLOR_GRAY));
+						}
 					}
 				});
+
 				f_porousCount = new Label(bottomSection, SWT.RIGHT);
 				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
