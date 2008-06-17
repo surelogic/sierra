@@ -300,6 +300,9 @@ public abstract class Filter {
 			final Iterator<String> it = f_allValues.iterator();
 			while (it.hasNext()) {
 				String value = it.next();
+				// Keep all checked values shown--regardless of the filter
+				if (this.isPorous(value))
+					continue;
 				String label = getLabel(value);
 				if (label != null && !label.contains(f_filterExpression)) {
 					it.remove();
