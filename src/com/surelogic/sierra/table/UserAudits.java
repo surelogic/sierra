@@ -2,6 +2,7 @@ package com.surelogic.sierra.table;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,11 +15,11 @@ import com.surelogic.sierra.portal.PortalOverview;
 
 public class UserAudits implements IDatabaseTable {
 
-	public static final List<String> HEADERS = Arrays.asList(new String[] {
-			"User", "Audits", "Last Contribution" });
-	public static final List<ColumnData> COLUMNS = Arrays
-			.asList(new ColumnData[] { ColumnData.TEXT, ColumnData.NUMBER,
-					ColumnData.DATE });
+	public static final List<String> HEADERS = new ArrayList<String>(Arrays
+			.asList(new String[] { "User", "Audits", "Last Contribution" }));
+	public static final List<ColumnData> COLUMNS = new ArrayList<ColumnData>(
+			Arrays.asList(new ColumnData[] { ColumnData.TEXT,
+					ColumnData.NUMBER, ColumnData.DATE }));
 
 	public ReportTable generate(Report report, Connection conn)
 			throws SQLException {
@@ -35,7 +36,7 @@ public class UserAudits implements IDatabaseTable {
 		for (final UserOverview u : overviews) {
 			table.getData()
 					.add(
-							Arrays.asList(new String[] {
+							new ArrayList<String>(Arrays.asList(new String[] {
 									u.getUserName(),
 									u.getAudits() > 0 ? Integer.toString(u
 											.getAudits())
@@ -43,7 +44,7 @@ public class UserAudits implements IDatabaseTable {
 											+ Integer.toString(u.getFindings())
 											+ " findings." : "",
 									u.getLastSynch() == null ? "" : u
-											.getLastSynch() }));
+											.getLastSynch() })));
 		}
 		return table;
 	}
