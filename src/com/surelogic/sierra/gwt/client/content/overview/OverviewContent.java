@@ -16,7 +16,6 @@ import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.table.PublishedProjectsTable;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
@@ -48,9 +47,32 @@ public final class OverviewContent extends ContentComposite {
 		addDashboardSection(0, 0, 2, 1, new LatestScansChart());
 		addDashboardSection(0, 1, 1, 1, new AuditContributionsChart());
 		addAuditsTable();
-		addDashboardSection(2, 0, 1, 2, new PublishedProjectsTable());
-
+		addPublishedProjectsTable();
 		rootPanel.add(panel, DockPanel.CENTER);
+	}
+
+	private void addPublishedProjectsTable() {
+		final Report r = new Report();
+		r.setTitle("All Published Projects");
+		r.setDescription("All Published Projects");
+		r.setName("PublishedProjects");
+		ServiceHelper.getTicketService().getReportTable(r,
+				new AsyncCallback<Result<ReportTable>>() {
+
+					public void onFailure(Throwable caught) {
+						// TODO
+					}
+
+					public void onSuccess(Result<ReportTable> result) {
+						if (result.isSuccess()) {
+							addDashboardSection(2, 0, 1, 2,
+									new ReportTableSection(result.getResult()));
+						} else {
+							// TODO
+						}
+					}
+				});
+
 	}
 
 	private void addAuditsTable() {
@@ -74,7 +96,6 @@ public final class OverviewContent extends ContentComposite {
 						}
 					}
 				});
-
 	}
 
 	@Override
