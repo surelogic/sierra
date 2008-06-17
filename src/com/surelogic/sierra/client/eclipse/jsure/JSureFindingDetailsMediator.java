@@ -42,7 +42,7 @@ implements IViewUpdater {
 	private FindingRelationOverview f_relatedAncestors;
 	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
 	
-	private volatile FindingRelation lastSelected;
+	private volatile Object lastSelected;
 
 	public JSureFindingDetailsMediator(final JSureFindingDetailsView view, 
 			                           Composite[] parents, Label[] labels, TreeViewer[] viewers) {
@@ -56,7 +56,7 @@ implements IViewUpdater {
 			final boolean lookAtChildren = (i == 0);
 			Provider p = new Provider(lookAtChildren);
 			v.setLabelProvider(p);
-			v.setContentProvider(p);
+			v.setContentProvider(p);			
 			v.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection selection;
@@ -66,20 +66,26 @@ implements IViewUpdater {
 						return;
 					}
 					if (!selection.isEmpty()) {
-						lastSelected = (FindingRelation) selection.getFirstElement();
+						lastSelected = selection.getFirstElement();
 					}
 				}
 			});
 			v.getTree().addListener(SWT.MouseDoubleClick, new Listener() {
 				public void handleEvent(Event event) {
-					final FindingRelation fr = lastSelected;
-					if (fr != null) {
-						Long findingID = lookAtChildren ? fr.getChildId() : fr.getParentId();
-						FindingDetail data = details.get(findingID);					
+					final Object last = lastSelected;
+					final FindingDetail data;
+					if (last instanceof FindingRelationOverview) {						
+						final FindingRelationOverview fro = (FindingRelationOverview) last;
+						data = details.get(fro.getId());
+					} else {
+						final FindingRelation fr = (FindingRelation) lastSelected;				
+						data = getDetail(fr, lookAtChildren);	
+					}
+					if (data != null) {				
 						JDTUtility.tryToOpenInEditor(data.getProjectName(), 
 								data.getPackageName(), data.getClassName(), data.getLineOfCode());
 						
-						FindingDetailsView.findingSelected(findingID, false);
+						FindingDetailsView.findingSelected(data.getFindingId(), false);
 					}
 				}
 			});
@@ -242,10 +248,10 @@ implements IViewUpdater {
 			return;
 		
 		f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
-		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(f_relatedChildren);
+		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(new Root(f_relatedChildren));
 		
 		f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
-		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(f_relatedAncestors);
+		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(new Root(f_relatedAncestors));
 		
 		/*
 		 * We have a finding so show the details about it.
@@ -275,9 +281,18 @@ implements IViewUpdater {
 		}
 	}
 	
+	static class Root {
+		final FindingRelationOverview overview;
+		
+		Root(FindingRelationOverview o) {
+			overview = o;
+		}
+	}
+	
 	static final Object[] emptyArray = new Object[0];
 	
 	class Provider implements ILabelProvider, ITreeContentProvider {
+		final boolean includeFocus = true;
 		final boolean lookAtChildren;
 		
 		public Provider(boolean lookAtChildren) {
@@ -306,33 +321,58 @@ implements IViewUpdater {
 		}
 
 		public Object[] getElements(Object inputElement) {
-			FindingRelationOverview fro = (FindingRelationOverview) inputElement;
-			return fro.toArray();
+			Root root = (Root) inputElement;
+			if (includeFocus) {
+				return new Object[] { root.overview };
+			}
+			return root.overview.toArray();
 		}
 
-		public Object[] getChildren(Object parentElement) {
+		public boolean hasChildren(Object parent) {
+			if (parent instanceof FindingRelationOverview) {
+				FindingRelationOverview fro = (FindingRelationOverview) parent;
+				return !fro.isEmpty();
+			}
+			// FIX if we show more of the graph
+			return false;
+		}	
+		
+		public Object[] getChildren(Object parent) {
+			if (parent instanceof FindingRelationOverview) {
+				FindingRelationOverview fro = (FindingRelationOverview) parent;
+				return fro.toArray();
+			}
 			// FIX if we show more of the graph
 			return emptyArray;
 		}
 
-		public Object getParent(Object element) {
-			// FIX if we show more of the graph
-			return null;
+		public Object getParent(Object elt) {
+			if (elt instanceof FindingRelationOverview) {
+				return null;
+			} else {
+				return lookAtChildren ? f_relatedChildren : f_relatedAncestors;
+			}
 		}
-
-		public boolean hasChildren(Object element) {
-			// FIX if we show more of the graph
-			return false;
-		}		
 		
-		public Image getImage(Object element) {
-			FindingRelation fr = (FindingRelation) element;
-			FindingDetail fd  = getDetail(fr, lookAtChildren);
+		public Image getImage(Object elt) {
+			FindingDetail fd;
+			if (elt instanceof FindingRelationOverview) {
+				FindingRelationOverview fro = (FindingRelationOverview) elt;
+				fd = details.get(fro.getId());
+			} else {
+				FindingRelation fr = (FindingRelation) elt;
+				fd = getDetail(fr, lookAtChildren);
+			}
 			return Utility.getImageFor(fd.getAssuranceType());
 		}
 
-		public String getText(Object element) {
-			FindingRelation fr = (FindingRelation) element;
+		public String getText(Object elt) {
+			if (elt instanceof FindingRelationOverview) {
+				FindingRelationOverview fro = (FindingRelationOverview) elt;
+				FindingDetail fd            = details.get(fro.getId());
+				return fd.getSummary();
+			}
+			FindingRelation fr = (FindingRelation) elt;
 			return getLabel(fr, lookAtChildren);
 		}
 	}
@@ -342,7 +382,7 @@ implements IViewUpdater {
 	}
 	
 	public String getLabel(FindingRelation fr, boolean lookAtChildren) {
-		FindingDetail fd  = getDetail(fr, lookAtChildren);
+		FindingDetail fd = getDetail(fr, lookAtChildren);
 		//String pre = lookAtChildren ? "child " : "parent "; 
 		//return pre + fr.getRelationType() + ' ' + fd.getSummary();
 		return fr.getRelationType() + ' ' + fd.getSummary();
