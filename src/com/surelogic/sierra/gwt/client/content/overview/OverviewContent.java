@@ -3,7 +3,6 @@ package com.surelogic.sierra.gwt.client.content.overview;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -13,9 +12,6 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.chart.AuditContributionsChart;
 import com.surelogic.sierra.gwt.client.chart.LatestScansChart;
 import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.Result;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
@@ -56,23 +52,7 @@ public final class OverviewContent extends ContentComposite {
 		r.setTitle("All Published Projects");
 		r.setDescription("All Published Projects");
 		r.setName("PublishedProjects");
-		ServiceHelper.getTicketService().getReportTable(r,
-				new AsyncCallback<Result<ReportTable>>() {
-
-					public void onFailure(Throwable caught) {
-						// TODO
-					}
-
-					public void onSuccess(Result<ReportTable> result) {
-						if (result.isSuccess()) {
-							addDashboardSection(2, 0, 1, 2,
-									new ReportTableSection(result.getResult()));
-						} else {
-							// TODO
-						}
-					}
-				});
-
+		addDashboardSection(2, 0, 1, 2, new ReportTableSection(r));
 	}
 
 	private void addAuditsTable() {
@@ -80,22 +60,7 @@ public final class OverviewContent extends ContentComposite {
 		r.setTitle("Users");
 		r.setDescription("Latest user audits");
 		r.setName("UserAudits");
-		ServiceHelper.getTicketService().getReportTable(r,
-				new AsyncCallback<Result<ReportTable>>() {
-
-					public void onFailure(Throwable caught) {
-						// TODO
-					}
-
-					public void onSuccess(Result<ReportTable> result) {
-						if (result.isSuccess()) {
-							addDashboardSection(1, 0, 1, 1,
-									new ReportTableSection(result.getResult()));
-						} else {
-							// TODO
-						}
-					}
-				});
+		addDashboardSection(1, 0, 1, 1, new ReportTableSection(r));
 	}
 
 	@Override

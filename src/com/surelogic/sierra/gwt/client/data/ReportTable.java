@@ -26,9 +26,9 @@ public class ReportTable implements Serializable {
 
 	}
 
-	private final List<String> headers = new ArrayList<String>();
-	private final List<ColumnData> columns = new ArrayList<ColumnData>();
-	private final List<List<String>> data = new ArrayList<List<String>>();
+	private List<String> headers;
+	private List<ColumnData> columns;
+	private List<List<String>> data;
 
 	private Report report;
 
@@ -41,14 +41,23 @@ public class ReportTable implements Serializable {
 	}
 
 	public List<ColumnData> getColumns() {
+		if (columns == null) {
+			columns = new ArrayList<ColumnData>();
+		}
 		return columns;
 	}
 
 	public List<String> getHeaders() {
+		if (headers == null) {
+			headers = new ArrayList<String>();
+		}
 		return headers;
 	}
 
 	public List<List<String>> getData() {
+		if (data == null) {
+			data = new ArrayList<List<String>>();
+		}
 		return data;
 	}
 
