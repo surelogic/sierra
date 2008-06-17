@@ -161,6 +161,18 @@
 		<servlet-name>MapServlet</servlet-name>
 		<url-pattern>/chart/map</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>TableServlet</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.servlets.table.TableServlet
+		</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>TableServlet</servlet-name>
+	    <url-pattern>/table</url-pattern>
+	</servlet-mapping>
 
 	<!-- client service servlets -->
 
@@ -179,6 +191,7 @@
 		<filter-name>Security Filter</filter-name>
 		<url-pattern>/services/SierraService</url-pattern>
 		<url-pattern>/services/BugLinkService</url-pattern>
+		<url-pattern>/table</url-pattern>
 	</filter-mapping>
 
 	<servlet>
