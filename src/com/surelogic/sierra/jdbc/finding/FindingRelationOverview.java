@@ -7,9 +7,11 @@ import com.surelogic.common.jdbc.*;
 public class FindingRelationOverview {
 	private static final FindingRelation[] emptyRelations = new FindingRelation[0];
 	
+	private final Long f_findingId;
 	private final List<FindingRelation> f_relations;
 	
-	private FindingRelationOverview(List<FindingRelation> relations) {
+	private FindingRelationOverview(Long id, List<FindingRelation> relations) {
+		f_findingId = id;
 		f_relations = relations;
 	}
 	
@@ -21,8 +23,12 @@ public class FindingRelationOverview {
 		for (final FindingRelation fr : q.prepared(query, new FindingRelation.Handler()).call(findingId)) {
 			relations.add(fr);
 		}
-		return new FindingRelationOverview(relations);
+		return new FindingRelationOverview(findingId, relations);
 	}	
+	
+	public Long getId() {
+		return f_findingId;
+	}
 	
 	public Iterable<FindingRelation> getRelations() {
 		return f_relations;
