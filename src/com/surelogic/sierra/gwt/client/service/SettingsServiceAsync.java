@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -20,6 +21,8 @@ public interface SettingsServiceAsync {
 
 	void searchProjects(String query, int limit,
 			AsyncCallback<List<String>> asyncCallback);
+
+	void getProjects(AsyncCallback<List<Project>> callback);
 
 	void getCategories(AsyncCallback<List<Category>> callback);
 
