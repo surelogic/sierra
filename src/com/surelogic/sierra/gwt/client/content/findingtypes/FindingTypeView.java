@@ -4,8 +4,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -16,6 +18,7 @@ public class FindingTypeView extends BlockPanel {
 			"Categories including this finding");
 	private final CategoryList categoriesExcluding = new CategoryList(
 			"Categories excluding this finding");
+	private final ScanFilterList scanFilters = new ScanFilterList();
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -28,6 +31,8 @@ public class FindingTypeView extends BlockPanel {
 		categoriesExcluding.initialize();
 		contentPanel.add(categoriesExcluding);
 
+		scanFilters.initialize();
+		contentPanel.add(scanFilters);
 	}
 
 	public void setSelection(FindingType findingType) {
@@ -48,6 +53,7 @@ public class FindingTypeView extends BlockPanel {
 
 		categoriesIncluding.clear();
 		categoriesExcluding.clear();
+		scanFilters.clear();
 		if (findingType != null) {
 			// FIXME throws an exception right now
 			// chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
@@ -75,6 +81,39 @@ public class FindingTypeView extends BlockPanel {
 		protected String getItemTooltip(Category item) {
 			return item.getInfo();
 		}
+	}
+
+	private class ScanFilterList extends ListBlock<ScanFilter> {
+
+		public ScanFilterList() {
+			super("Scan Filters that use this finding type");
+		}
+
+		@Override
+		protected ContentComposite getItemContent() {
+			return ScanFiltersContent.getInstance();
+		}
+
+		@Override
+		protected String getItemText(ScanFilter item) {
+			return item.getName();
+		}
+
+		@Override
+		protected String getItemTooltip(ScanFilter item) {
+			StringBuffer projects = new StringBuffer("Projects: ");
+			boolean firstItem = true;
+			for (String project : item.getProjects()) {
+				if (firstItem) {
+					firstItem = false;
+				} else {
+					projects.append(", ");
+				}
+				projects.append(project);
+			}
+			return projects.toString();
+		}
+
 	}
 
 }
