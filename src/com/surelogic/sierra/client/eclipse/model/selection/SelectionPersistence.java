@@ -31,13 +31,13 @@ public final class SelectionPersistence {
 	public static final String TYPE = "type";
 	public static final String POROUS = "porous";
 	public static final String VALUE = "value";
-	
-  public static final String COLUMN = "column";
-  public static final String VISIBLE = "visible";
-  public static final String WIDTH = "width";
-  public static final String SORT = "sort";
-  public static final String INDEX = "index";
-	
+
+	public static final String COLUMN = "column";
+	public static final String VISIBLE = "visible";
+	public static final String WIDTH = "width";
+	public static final String SORT = "sort";
+	public static final String INDEX = "index";
+
 	public static void save(final SelectionManager manager, final File saveFile) {
 		save(manager, manager.getSavedSelectionNames(), saveFile);
 	}
@@ -65,14 +65,13 @@ public final class SelectionPersistence {
 	}
 
 	/**
-	 * Maintains the invariant that the buffer is cleared
-	 * after each use
+	 * Maintains the invariant that the buffer is cleared after each use
 	 */
 	private static void outputBuffer(PrintWriter pw, StringBuilder b) {
-	  pw.println(b.toString());
-	  b.setLength(0);
+		pw.println(b.toString());
+		b.setLength(0);
 	}
-	
+
 	private static void outputXMLHeader(PrintWriter pw, StringBuilder b) {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
@@ -84,24 +83,24 @@ public final class SelectionPersistence {
 		outputBuffer(pw, b);
 	}
 
-	// private static final String[] INDENTS = { "", "  ", "    ", "      " };
-	
+	// private static final String[] INDENTS = { "", " ", " ", " " };
+
 	private static void outputSelection(PrintWriter pw, StringBuilder b,
-	                                    String name, Selection s) {
+			String name, Selection s) {
 		b.append("  <").append(SELECTION);
 		Entities.addAttribute(NAME, name, b);
 		if (s.isShowingFindings())
 			Entities.addAttribute(SHOWING, "Y", b);
 		b.append(">");
-    outputBuffer(pw, b);
-    
+		outputBuffer(pw, b);
+
 		for (Filter f : s.getFilters()) {
 			outputFilter(pw, b, f);
 		}
-	  for (Column c : s.getColumns()) {
-		  outputColumn(pw, b, c);
+		for (Column c : s.getColumns()) {
+			outputColumn(pw, b, c);
 		}
-    end(pw, b, SELECTION);
+		end(pw, b, SELECTION);
 	}
 
 	private static void outputFilter(PrintWriter pw, StringBuilder b, Filter f) {
@@ -109,7 +108,7 @@ public final class SelectionPersistence {
 		Entities.addAttribute(TYPE, f.getFactory().getFilterLabel(), b);
 		String filterExpr = f.getFilterExpression();
 		if (filterExpr != null && filterExpr.length() > 0) {
-		  Entities.addAttribute(FILTER, filterExpr, b);
+			Entities.addAttribute(FILTER, filterExpr, b);
 		}
 		b.append(">");
 		outputBuffer(pw, b);
@@ -118,32 +117,32 @@ public final class SelectionPersistence {
 			b.append(POROUS);
 			Entities.addAttribute(VALUE, p, b);
 			b.append("/>");
-	    outputBuffer(pw, b);
+			outputBuffer(pw, b);
 		}
 		end(pw, b, FILTER);
 	}
-	
-  private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
-    b.append("    <").append(COLUMN);
-    Entities.addAttribute(NAME, c.getName(), b);
-    if (c.isVisible()) {
-      Entities.addAttribute(VISIBLE, "true", b);
-    }
-    Entities.addAttribute(WIDTH, c.getWidth(), b);
-    Entities.addAttribute(SORT, c.getSort().toString(), b);
-    Entities.addAttribute(INDEX, c.getIndex(), b);
-    b.append(">");
-    outputBuffer(pw, b);
-    end(pw, b, COLUMN);
-  }	
 
-  private static void end(PrintWriter pw, final StringBuilder b, String tag) {
+	private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
+		b.append("    <").append(COLUMN);
+		Entities.addAttribute(NAME, c.getName(), b);
+		if (c.isVisible()) {
+			Entities.addAttribute(VISIBLE, "true", b);
+		}
+		Entities.addAttribute(WIDTH, c.getWidth(), b);
+		Entities.addAttribute(SORT, c.getSort().toString(), b);
+		Entities.addAttribute(INDEX, c.getIndex(), b);
+		b.append(">");
+		outputBuffer(pw, b);
+		end(pw, b, COLUMN);
+	}
+
+	private static void end(PrintWriter pw, final StringBuilder b, String tag) {
 		b.append("    </").append(tag).append(">");
-    outputBuffer(pw, b);
-  }	
-	
+		outputBuffer(pw, b);
+	}
+
 	private static void outputXMLFooter(PrintWriter pw, StringBuilder b) {
-	  end(pw, b, TOP);
+		end(pw, b, TOP);
 	}
 
 	public static void load(final SelectionManager manager, final File saveFile)
@@ -202,9 +201,10 @@ public final class SelectionPersistence {
 						if (ff.getFilterLabel().equals(type)) {
 							found = true;
 							f_filter = f_workingSelection.construct(ff, null);
-							
-							final String filter = attributes.getValue(FILTER);
-							f_filter.setFilterExpression(filter);
+
+							String filter = attributes.getValue(FILTER);
+							if (filter != null)
+								f_filter.setFilterExpression(filter);
 						}
 					}
 					if (!found) {
@@ -228,18 +228,19 @@ public final class SelectionPersistence {
 					SLLogger.getLogger().log(Level.SEVERE,
 							POROUS + " found in XML but filter is null");
 				}
-      } else if (name.equals(COLUMN)) {
-        final String id = attributes.getValue(NAME);      
-        for (Column c : f_workingSelection.getColumns()) {
-          if (c.getName().equals(id)) {
-            final String viz   = attributes.getValue(VISIBLE);
-            final String width = attributes.getValue(WIDTH);
-            final String sort  = attributes.getValue(SORT);
-            final String index = attributes.getValue(INDEX);
-            c.configure(viz != null, Integer.parseInt(width), 
-                        ColumnSort.valueOf(sort), Integer.parseInt(index));
-          }
-        }
+			} else if (name.equals(COLUMN)) {
+				final String id = attributes.getValue(NAME);
+				for (Column c : f_workingSelection.getColumns()) {
+					if (c.getName().equals(id)) {
+						final String viz = attributes.getValue(VISIBLE);
+						final String width = attributes.getValue(WIDTH);
+						final String sort = attributes.getValue(SORT);
+						final String index = attributes.getValue(INDEX);
+						c.configure(viz != null, Integer.parseInt(width),
+								ColumnSort.valueOf(sort), Integer
+										.parseInt(index));
+					}
+				}
 			}
 		}
 

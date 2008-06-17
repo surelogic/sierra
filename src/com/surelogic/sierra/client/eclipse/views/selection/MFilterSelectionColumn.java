@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
@@ -9,13 +9,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -30,8 +42,11 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.*;
+import com.surelogic.common.eclipse.CascadingList;
+import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
@@ -49,7 +64,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private Composite f_panel = null;
 	private Table f_reportContents = null;
 	private Label f_totalCount = null;
-	private Text f_filterExpr = null;
+	private Text f_filterExpressionText = null;
+	private Label f_filterExpressionClearLabel = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
 	private TableColumn f_valueColumn = null;
@@ -415,19 +431,51 @@ public final class MFilterSelectionColumn extends MColumn implements
 				bottomSection.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
 				GridLayout bottomGrid = new GridLayout();
-				bottomGrid.numColumns = 2;
+				bottomGrid.numColumns = 3;
 				bottomGrid.marginHeight = bottomGrid.marginWidth = 0;
 				bottomSection.setLayout(bottomGrid);
 
-				f_filterExpr = new Text(bottomSection, SWT.SEARCH);
-				f_filterExpr.setText(f_filter.getFilterExpression());
-				f_filterExpr.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
-						true, false));
-				f_filterExpr.addModifyListener(new ModifyListener() {
+				f_filterExpressionClearLabel = new Label(bottomSection,
+						SWT.NONE);
+				f_filterExpressionClearLabel.setLayoutData(new GridData(
+						SWT.CENTER, SWT.CENTER, false, false));
+				f_filterExpressionClearLabel.setImage(SLImages
+						.getImage(CommonImages.IMG_GRAY_X));
+				f_filterExpressionClearLabel
+						.setToolTipText("Clear the current filter expression");
+				f_filterExpressionClearLabel
+						.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseDown(MouseEvent e) {
+								f_filter.clearFilterExpression();
+								f_filterExpressionText.setText(f_filter
+										.getFilterExpression());
+							}
+						});
+				f_filterExpressionClearLabel.addListener(SWT.MouseEnter,
+						new Listener() {
+							public void handleEvent(Event event) {
+								f_filterExpressionClearLabel.setImage(SLImages
+										.getImage(CommonImages.IMG_RED_X));
+							}
+						});
+				f_filterExpressionClearLabel.addListener(SWT.MouseExit,
+						new Listener() {
+							public void handleEvent(Event event) {
+								f_filterExpressionClearLabel.setImage(SLImages
+										.getImage(CommonImages.IMG_GRAY_X));
+							}
+						});
+				
+				f_filterExpressionText = new Text(bottomSection, SWT.NONE);
+				f_filterExpressionText.setText(f_filter.getFilterExpression());
+				f_filterExpressionText.setLayoutData(new GridData(SWT.FILL,
+						SWT.DEFAULT, true, false));
+				f_filterExpressionText.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						// Check whether the text is 'stable' in some amount of
 						// time (500 msec?)
-						final String old = f_filterExpr.getText();
+						final String old = f_filterExpressionText.getText();
 						if (old == null) {
 							return;
 						}
@@ -436,7 +484,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 							@Override
 							public IStatus runInUIThread(
 									IProgressMonitor monitor) {
-								String current = f_filterExpr.getText();
+								String current = f_filterExpressionText
+										.getText();
 								if (old.equals(current)) {
 									if (f_filter.setFilterExpression(current)) {
 										getSelection().refreshFilters();

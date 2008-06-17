@@ -36,7 +36,7 @@ public final class Utility {
 		case CONSISTENT:
 			return SLImages.getImage(CommonImages.IMG_PLUS);			
 		case INCONSISTENT:
-			return SLImages.getImage(CommonImages.IMG_REDX);
+			return SLImages.getImage(CommonImages.IMG_RED_X);
 		default:
 			return null;
 		}
