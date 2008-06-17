@@ -449,13 +449,17 @@ public final class MFilterSelectionColumn extends MColumn implements
 							public void mouseDown(MouseEvent e) {
 								if (!f_filter.isFilterExpressionClear()) {
 									f_filter.clearFilterExpression();
-									f_filterExpressionText.setText(f_filter
-											.getFilterExpression());
-									f_filterExpressionText
-											.setForeground(f_filterExpressionText
-													.getDisplay()
-													.getSystemColor(
-															SWT.COLOR_GRAY));
+									if (f_filterExpressionText.isFocusControl()) {
+										f_filterExpressionText.setText("");
+									} else {
+										f_filterExpressionText.setText(f_filter
+												.getFilterExpression());
+										f_filterExpressionText
+												.setForeground(f_filterExpressionText
+														.getDisplay()
+														.getSystemColor(
+																SWT.COLOR_GRAY));
+									}
 									getSelection().refreshFilters();
 								}
 							}
@@ -500,6 +504,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 							@Override
 							public IStatus runInUIThread(
 									IProgressMonitor monitor) {
+								if (f_filterExpressionText.isDisposed())
+									return Status.OK_STATUS;
+
 								String current = f_filterExpressionText
 										.getText();
 								if (old.equals(current)) {
