@@ -221,9 +221,10 @@ public abstract class Filter {
 		// Nothing to do for now
 	}
 
-	private String f_filterExpr = null;
+	private static final String NO_FILTER = "<filter>";
+	private String f_filterExpr = NO_FILTER;
 	
-	String getFilterExpression() {
+	public String getFilterExpression() {
 	  return f_filterExpr;
 	}
 	
@@ -248,7 +249,8 @@ public abstract class Filter {
 	}
 
 	protected void filterAllValues() {
-	  if (f_filterExpr != null && f_filterExpr.length() > 0) {
+	  if (f_filterExpr != null && f_filterExpr != NO_FILTER &&
+	      f_filterExpr.length() > 0) {
 	    final Iterator<String> it = f_allValues.iterator();
 	    while (it.hasNext()) {
 	      String value = it.next();
