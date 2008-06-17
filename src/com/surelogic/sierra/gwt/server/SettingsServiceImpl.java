@@ -20,11 +20,14 @@ import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
+import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
+import com.surelogic.sierra.jdbc.project.ProjectDO;
+import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.RevisionException;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -127,6 +130,23 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			}
 			return results;
 		}
+	}
+
+	public List<Project> getProjects() {
+		return ConnectionFactory
+				.withUserTransaction(new UserQuery<List<Project>>() {
+					public List<Project> perform(Query q, Server s, User u) {
+						final List<Project> result = new ArrayList<Project>();
+						final Projects projects = new Projects(q);
+						for (ProjectDO projectDO : projects.listProjects()) {
+							final Project prj = new Project();
+							prj.setUuid(projectDO.getUuid());
+							prj.setName(projectDO.getName());
+							result.add(prj);
+						}
+						return result;
+					}
+				});
 	}
 
 	public List<Category> getCategories() {
