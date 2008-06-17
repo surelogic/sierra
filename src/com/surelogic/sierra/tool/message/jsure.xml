@@ -171,8 +171,8 @@
     <id>LockAnalysis_ds_IndirectFieldAccessNotAssured</id>
     <artifact tool="JSure" mnemonic="LockAnalysis_ds_IndirectFieldAccessNotAssured"/>
     <shortMessage>TBD</shortMessage>
-    <info>Indirect Field Access Not Assured</info>
-    <name>TBD</name>
+    <info>TBD</info>
+    <name>Indirect Field Access Not Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_ReturnAssured</id>
