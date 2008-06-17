@@ -93,7 +93,7 @@ public final class ServletUtility {
 						new Parameter(key, Arrays.asList(value)));
 			}
 		}
-		return null;
+		return report;
 	}
 
 	/**
