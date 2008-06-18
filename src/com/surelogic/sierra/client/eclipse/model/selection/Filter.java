@@ -304,7 +304,9 @@ public abstract class Filter {
 				if (this.isPorous(value))
 					continue;
 				String label = getLabel(value);
-				if (label != null && !label.contains(f_filterExpression)) {
+				if (label != null
+						&& !label.toLowerCase().contains(
+								f_filterExpression.toLowerCase())) {
 					it.remove();
 				}
 			}
