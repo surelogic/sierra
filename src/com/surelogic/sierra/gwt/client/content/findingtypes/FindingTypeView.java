@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
-import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
-import com.surelogic.sierra.gwt.client.data.ScanFilter;
+import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
+import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -55,13 +55,25 @@ public class FindingTypeView extends BlockPanel {
 		categoriesExcluding.clear();
 		scanFilters.clear();
 		if (findingType != null) {
+			for (CategoryInfo catIncluding : findingType
+					.getCategoriesIncluding()) {
+				categoriesIncluding.addItem(catIncluding);
+			}
+			for (CategoryInfo catExcluding : findingType
+					.getCategoriesExcluding()) {
+				categoriesExcluding.addItem(catExcluding);
+			}
+			for (ScanFilterInfo scanIncluding : findingType
+					.getScanFiltersIncluding()) {
+				scanFilters.addItem(scanIncluding);
+			}
 			// FIXME throws an exception right now
 			// chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
 			// findingType.getUuid()).build());
 		}
 	}
 
-	private class CategoryList extends ListBlock<Category> {
+	private class CategoryList extends ListBlock<CategoryInfo> {
 
 		public CategoryList(String title) {
 			super(title);
@@ -73,17 +85,17 @@ public class FindingTypeView extends BlockPanel {
 		}
 
 		@Override
-		protected String getItemText(Category item) {
+		protected String getItemText(CategoryInfo item) {
 			return item.getName();
 		}
 
 		@Override
-		protected String getItemTooltip(Category item) {
-			return item.getInfo();
+		protected String getItemTooltip(CategoryInfo item) {
+			return item.getDescription();
 		}
 	}
 
-	private class ScanFilterList extends ListBlock<ScanFilter> {
+	private class ScanFilterList extends ListBlock<ScanFilterInfo> {
 
 		public ScanFilterList() {
 			super("Scan Filters that use this finding type");
@@ -95,23 +107,13 @@ public class FindingTypeView extends BlockPanel {
 		}
 
 		@Override
-		protected String getItemText(ScanFilter item) {
+		protected String getItemText(ScanFilterInfo item) {
 			return item.getName();
 		}
 
 		@Override
-		protected String getItemTooltip(ScanFilter item) {
-			StringBuffer projects = new StringBuffer("Projects: ");
-			boolean firstItem = true;
-			for (String project : item.getProjects()) {
-				if (firstItem) {
-					firstItem = false;
-				} else {
-					projects.append(", ");
-				}
-				projects.append(project);
-			}
-			return projects.toString();
+		protected String getItemTooltip(ScanFilterInfo item) {
+			return item.getName();
 		}
 
 	}

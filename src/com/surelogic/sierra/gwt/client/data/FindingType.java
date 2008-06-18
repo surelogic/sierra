@@ -76,7 +76,7 @@ public class FindingType implements Cacheable, Serializable {
 		return scanFiltersIncluding;
 	}
 
-	public static class ScanFilterInfo implements Serializable {
+	public static class ScanFilterInfo implements Serializable, Cacheable {
 		/**
 		 * 
 		 */
@@ -111,7 +111,7 @@ public class FindingType implements Cacheable, Serializable {
 
 	}
 
-	public static class CategoryInfo implements Serializable {
+	public static class CategoryInfo implements Serializable, Cacheable {
 
 		/**
 		 * 
