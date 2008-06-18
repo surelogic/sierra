@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
@@ -138,7 +139,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					public List<Project> perform(Query q, Server s, User u) {
 						final List<Project> result = new ArrayList<Project>();
 						final Projects projects = new Projects(q);
-						for (ProjectDO projectDO : projects.listProjects()) {
+						for (final ProjectDO projectDO : projects
+								.listProjects()) {
 							final Project prj = new Project();
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
@@ -300,13 +302,9 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					public List<FindingType> perform(Query q, Server s, User u) {
 						final List<FindingType> result = new ArrayList<FindingType>();
 						final FindingTypes types = new FindingTypes(q);
-						for (FindingTypeDO type : types.listFindingTypes()) {
-							final FindingType info = new FindingType();
-							info.setInfo(type.getInfo());
-							info.setName(type.getName());
-							info.setShortMessage(type.getShortMessage());
-							info.setUuid(type.getUid());
-							result.add(info);
+						for (final FindingTypeDO type : types
+								.listFindingTypes()) {
+							result.add(getType(type, q));
 						}
 						return result;
 					}
@@ -320,19 +318,44 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final FindingTypes types = new FindingTypes(q);
 						final FindingTypeDO type = types.getFindingType(uuid);
 						if (type != null) {
-							final FindingType info = new FindingType();
-							info.setInfo(type.getInfo());
-							info.setName(type.getName());
-							info.setShortMessage(type.getShortMessage());
-							info.setUuid(type.getUid());
-							return Result.success("Finding Type Found", info);
+							return Result.success("Finding Type Found",
+									getType(type, q));
 						} else {
 							return Result
 									.failure("No finding type found", null);
 						}
 					}
 				});
+	}
 
+	private FindingType getType(FindingTypeDO type, Query q) {
+		final FindingType info = new FindingType();
+		info.setInfo(type.getInfo());
+		info.setName(type.getName());
+		info.setShortMessage(type.getShortMessage());
+		info.setUuid(type.getUid());
+		q.prepared("FindingTypes.categoriesReferencing",
+				new RowHandler<Void>() {
+					public Void handle(Row r) {
+						final FindingType.CategoryInfo ci = new FindingType.CategoryInfo(
+								r.nextString(), r.nextString(), r.nextString());
+						if (r.nextBoolean()) {
+							info.getCategoriesExcluding().add(ci);
+						} else {
+							info.getCategoriesIncluding().add(ci);
+						}
+						return null;
+					}
+				}).call(type.getId());
+		q.prepared("FindingTypes.scanFiltersIncluding", new RowHandler<Void>() {
+			public Void handle(Row r) {
+				info.getScanFiltersIncluding().add(
+						new FindingType.ScanFilterInfo(r.nextString(), r
+								.nextString()));
+				return null;
+			}
+		}).call(type.getId());
+		return info;
 	}
 
 	public List<ScanFilter> getScanFilters() {
