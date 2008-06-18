@@ -83,6 +83,7 @@ public final class Categories {
 		rec.setUid(uid);
 		if (rec.select()) {
 			final CategoryDO set = new CategoryDO();
+			set.setId(rec.getId());
 			set.setInfo(rec.getInfo());
 			set.setName(rec.getName());
 			set.setRevision(rec.getRevision());

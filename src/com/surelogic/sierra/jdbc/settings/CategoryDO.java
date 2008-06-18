@@ -11,12 +11,21 @@ import java.util.Set;
  */
 public class CategoryDO {
 
+	private long id;
 	private String uid;
 	private String name;
 	private String info;
 	private final Set<String> parents = new HashSet<String>();
 	private final Set<CategoryEntryDO> filterEntries = new HashSet<CategoryEntryDO>();
 	private long revision;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getUid() {
 		return uid;
