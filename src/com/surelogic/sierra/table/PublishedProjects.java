@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.ReportTable.ColumnData;
 import com.surelogic.sierra.portal.PortalOverview;
 
 public class PublishedProjects implements IDatabaseTable {
