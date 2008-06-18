@@ -28,10 +28,11 @@ public class JSureFindingDetailsView extends AbstractSierraMultiPageView<JSureFi
 	  for(Composite parent : parents) {
 		  parent.setLayout(new GridLayout());
 
+		  /*
 		  labels[i] = new Label(parent, SWT.NONE);
 		  labels[i].setText("No finding yet");
 		  labels[i].setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
-
+          */
 		  viewers[i] = new TreeViewer(parent, SWT.SINGLE);
 		  viewers[i].getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		  i++;

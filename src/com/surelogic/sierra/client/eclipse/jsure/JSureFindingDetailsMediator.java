@@ -102,6 +102,7 @@ implements IViewUpdater {
 				view.setDataPage(VIEW_OWN_DEPENDENCIES);
 			}
 		};
+		children.setChecked(true);
 		view.addToActionBar(children);
 		view.addToActionBar(new Action("Dependents", SWT.PUSH) {
 			@Override
@@ -137,6 +138,7 @@ implements IViewUpdater {
 		
 		private final boolean atChildren, atAncestors;
 		private Direction(boolean children, boolean ancestors) {
+			
 			atChildren = children;
 			atAncestors = ancestors;
 		}
@@ -257,10 +259,10 @@ implements IViewUpdater {
 		if (!showFinding)
 			return;
 		
-		f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
+		//f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
 		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(new Root(f_relatedChildren));
 		
-		f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
+		//f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
 		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(new Root(f_relatedAncestors));
 		
 		for(Composite parent : f_parents) {
