@@ -130,9 +130,7 @@ public class SettingQueries {
 					}
 				}
 				if (update) {
-					for (final String uid : response.getDeletions()) {
-						sets.deleteCategory(uid);
-					}
+					sets.deleteCategories(response.getDeletions());
 				}
 				return response;
 			}

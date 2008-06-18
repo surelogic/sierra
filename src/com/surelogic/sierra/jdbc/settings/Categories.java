@@ -341,6 +341,33 @@ public final class Categories {
 	}
 
 	/**
+	 * Delete an existing category
+	 * 
+	 * @param uid
+	 * @throws SQLException
+	 */
+	public void deleteCategories(Collection<String> uids) {
+		final FilterSetRecord set = q.record(FilterSetRecord.class);
+		for (final String uid : uids) {
+			set.setUid(uid);
+			if (set.select()) {
+				if (uids.containsAll((q.prepared(
+						"FilterSets.listFilterSetChildren",
+						new StringRowHandler()).call(set.getId())))) {
+					set.delete();
+				} else {
+					throw new IllegalArgumentException(
+							"Can not delete filter set with uid " + uid
+									+ " because it has children.");
+				}
+			} else {
+				throw new IllegalArgumentException(
+						"No filter set with the uid " + uid + " exists.");
+			}
+		}
+	}
+
+	/**
 	 * Produce a {@link FilterSet} backed by the provided {@link CategoryDO} and
 	 * owned by the given server
 	 * 
@@ -349,7 +376,6 @@ public final class Categories {
 	 *            a server uid
 	 * @return
 	 */
-	// TODO Find a place for message conversion logic
 	public static FilterSet convert(CategoryDO in, String server) {
 		final FilterSet out = new FilterSet();
 		out.setName(in.getName());
