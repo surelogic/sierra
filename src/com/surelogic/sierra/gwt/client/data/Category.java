@@ -1,7 +1,9 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -20,6 +22,8 @@ public class Category implements Serializable, Cacheable {
 	private long revision;
 
 	private String info;
+
+	private List<ScanFilterInfo> scanFiltersUsing;
 
 	public String getName() {
 		return name;
@@ -69,6 +73,13 @@ public class Category implements Serializable, Cacheable {
 		this.info = info;
 	}
 
+	public List<ScanFilterInfo> getScanFiltersUsing() {
+		if (scanFiltersUsing == null) {
+			scanFiltersUsing = new ArrayList<ScanFilterInfo>();
+		}
+		return scanFiltersUsing;
+	}
+
 	/**
 	 * Returns the set of FilterEntry objects that are explicitly excluded from
 	 * this filter set, which is equivalent to the set of entries from
@@ -77,9 +88,9 @@ public class Category implements Serializable, Cacheable {
 	 * @return
 	 */
 	public Set<FindingTypeFilter> getExcludedEntries() {
-		final HashSet<FindingTypeFilter> set = new HashSet<FindingTypeFilter>(entries
-				.size());
-		for (FindingTypeFilter entry : entries) {
+		final HashSet<FindingTypeFilter> set = new HashSet<FindingTypeFilter>(
+				entries.size());
+		for (final FindingTypeFilter entry : entries) {
 			if (entry.isFiltered()) {
 				set.add(entry);
 			}
@@ -96,12 +107,12 @@ public class Category implements Serializable, Cacheable {
 	public Set<FindingTypeFilter> getIncludedEntries() {
 		final Set<FindingTypeFilter> set = new HashSet<FindingTypeFilter>();
 		if (parents != null) {
-			for (Category parent : parents) {
+			for (final Category parent : parents) {
 				set.addAll(parent.getIncludedEntries());
 			}
 		}
 		if (entries != null) {
-			for (FindingTypeFilter entry : entries) {
+			for (final FindingTypeFilter entry : entries) {
 				if (entry.isFiltered()) {
 					set.remove(entry);
 				} else {
@@ -113,12 +124,12 @@ public class Category implements Serializable, Cacheable {
 	}
 
 	public boolean parentContains(FindingTypeFilter finding) {
-		for (Category parent : getParents()) {
-			boolean contains = parent.getEntries().contains(finding);
+		for (final Category parent : getParents()) {
+			final boolean contains = parent.getEntries().contains(finding);
 			if (contains) {
 				return true;
 			}
-			boolean recursiveContains = parent.parentContains(finding);
+			final boolean recursiveContains = parent.parentContains(finding);
 			if (recursiveContains) {
 				return true;
 			}
@@ -128,14 +139,14 @@ public class Category implements Serializable, Cacheable {
 	}
 
 	public Category copy() {
-		Category copy = new Category();
+		final Category copy = new Category();
 		copy.uuid = uuid;
 		copy.revision = revision;
 		copy.name = name;
 		copy.info = info;
 		if (parents != null) {
 			copy.parents = new HashSet<Category>();
-			for (Category parent : parents) {
+			for (final Category parent : parents) {
 				copy.parents.add(parent.copy());
 			}
 		} else {
@@ -143,7 +154,7 @@ public class Category implements Serializable, Cacheable {
 		}
 		if (entries != null) {
 			copy.entries = new HashSet<FindingTypeFilter>();
-			for (FindingTypeFilter entry : entries) {
+			for (final FindingTypeFilter entry : entries) {
 				copy.entries.add(entry.copy());
 			}
 		} else {
@@ -165,10 +176,45 @@ public class Category implements Serializable, Cacheable {
 		if (this == obj) {
 			return true;
 		}
-		if (obj != null && obj instanceof Category) {
+		if ((obj != null) && (obj instanceof Category)) {
 			return LangUtil.equals(uuid, ((Category) obj).uuid);
 		}
 		return false;
+	}
+
+	public static class ScanFilterInfo implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2208099313060915788L;
+		private String uuid;
+		private String name;
+
+		public ScanFilterInfo() {
+
+		}
+
+		public ScanFilterInfo(String uuid, String name) {
+			this.uuid = uuid;
+			this.name = name;
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
 	}
 
 }
