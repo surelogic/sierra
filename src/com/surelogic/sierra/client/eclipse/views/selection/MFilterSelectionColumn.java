@@ -452,8 +452,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_searchBox.getComposite().setLayoutData(searchGridData);
 
 				f_porousCount = new Label(bottomSection, SWT.RIGHT);
-				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-						true, false));
+				final GridData porousCountGridData = new GridData(SWT.DEFAULT,
+						SWT.CENTER, false, false);
+				// Make a slight space between the search box
+				porousCountGridData.horizontalIndent = 4;
+				f_porousCount.setLayoutData(porousCountGridData);
 
 				f_menu = new Menu(f_reportGroup.getShell(), SWT.POP_UP);
 				f_menu.addListener(SWT.Show, new Listener() {
