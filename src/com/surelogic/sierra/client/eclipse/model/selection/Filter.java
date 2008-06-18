@@ -191,7 +191,7 @@ public abstract class Filter {
 							getFactory().getFilterLabel()
 									+ " filter counts query: " + query);
 				}
-				//System.out.println(query);
+				// System.out.println(query);
 
 				final ResultSet rs = st.executeQuery(query);
 				try {
@@ -220,7 +220,7 @@ public abstract class Filter {
 		// Nothing to do for now
 	}
 
-	private static final String NO_FILTER = "Filter the list above";
+	private static final String NO_FILTER = "none";
 
 	/**
 	 * A filter expression used to filter the values that are listed by this
@@ -323,7 +323,7 @@ public abstract class Filter {
 		 * If only one choice exists, go ahead and select it. Bill Scherlis had
 		 * this idea for making the filter easier to use.
 		 */
-		if (f_allValues.size() == 1)
+		if (f_allValues.size() == 1 && isFilterExpressionClear())
 			f_porousValues.addAll(f_allValues);
 		/*
 		 * Don't call notifyPorous() here, the caller of this method will do it
