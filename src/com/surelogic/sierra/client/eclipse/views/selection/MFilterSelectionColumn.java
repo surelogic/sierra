@@ -445,10 +445,11 @@ public final class MFilterSelectionColumn extends MColumn implements
 				if (!f_filter.isFilterExpressionClear()) {
 					f_searchBox.setText(f_filter.getFilterExpression());
 				}
-				final GridData searchGridData = new GridData(SWT.FILL,
+				final GridData searchGridData = new GridData(SWT.DEFAULT,
 						SWT.CENTER, true, false);
 				// Makes gray-X line up a bit better
 				searchGridData.horizontalIndent = 4;
+				searchGridData.widthHint = 130;
 				f_searchBox.getComposite().setLayoutData(searchGridData);
 
 				f_porousCount = new Label(bottomSection, SWT.RIGHT);
