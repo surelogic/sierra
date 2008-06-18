@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.table;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -62,10 +63,10 @@ public abstract class TableSection extends SectionPanel {
 
 		grid.setText(currentRow, currentColumn, text);
 
-		final String[] headerTypes = getHeaderDataTypes();
+		final ColumnData[] headerTypes = getHeaderDataTypes();
 		if (currentColumn < headerTypes.length) {
 			grid.getCellFormatter().addStyleName(currentRow, currentColumn,
-					headerTypes[currentColumn]);
+					headerTypes[currentColumn].getCSS());
 		}
 
 		currentColumn++;
@@ -77,7 +78,7 @@ public abstract class TableSection extends SectionPanel {
 
 	protected abstract String[] getHeaderTitles();
 
-	protected abstract String[] getHeaderDataTypes();
+	protected abstract ColumnData[] getHeaderDataTypes();
 
 	protected abstract void updateTable(Context context);
 
