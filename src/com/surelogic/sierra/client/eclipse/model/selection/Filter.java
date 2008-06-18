@@ -191,7 +191,7 @@ public abstract class Filter {
 							getFactory().getFilterLabel()
 									+ " filter counts query: " + query);
 				}
-				System.out.println(query);
+				//System.out.println(query);
 
 				final ResultSet rs = st.executeQuery(query);
 				try {
