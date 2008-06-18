@@ -131,14 +131,14 @@ public final class Activator extends AbstractUIPlugin {
 	}
 
 	private void popupRegistrationDialog() {
-		final UIJob dialogJob = new SLUIJob() {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				System.out.println("Put up registration dialog"); // FIX
-				return Status.OK_STATUS;
-			}
-		};
-		dialogJob.schedule();
+//		final UIJob dialogJob = new SLUIJob() {
+//			@Override
+//			public IStatus runInUIThread(IProgressMonitor monitor) {
+//				System.out.println("Put up registration dialog"); // FIX
+//				return Status.OK_STATUS;
+//			}
+//		};
+//		dialogJob.schedule();
 	}
 
 	@Override
