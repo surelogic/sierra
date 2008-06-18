@@ -9,15 +9,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -39,14 +34,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.ISearchBoxObserver;
+import com.surelogic.common.eclipse.SearchBox;
 import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
@@ -64,8 +58,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private Composite f_panel = null;
 	private Table f_reportContents = null;
 	private Label f_totalCount = null;
-	private Text f_filterExpressionText = null;
-	private Label f_filterExpressionClearLabel = null;
+	private SearchBox f_searchBox = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
 	private TableColumn f_valueColumn = null;
@@ -101,7 +94,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_reportGroup = new Group(f_panel, SWT.NONE);
 				f_reportGroup.setText(f_filter.getFactory().getFilterLabel());
 				GridLayout gridLayout = new GridLayout();
-				gridLayout.verticalSpacing = gridLayout.horizontalSpacing = 0;
+				gridLayout.verticalSpacing = gridLayout.horizontalSpacing = 3;
 				gridLayout.marginHeight = gridLayout.marginWidth = 0;
 				f_reportGroup.setLayout(gridLayout);
 
@@ -114,7 +107,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 				f_reportContents.setLayoutData(data);
 
-				// f_reportContents.setHeaderVisible(true);
 				f_valueColumn = new TableColumn(f_reportContents, SWT.BORDER);
 				f_valueColumn.setText("Value");
 				f_valueColumn.setToolTipText("");
@@ -431,124 +423,36 @@ public final class MFilterSelectionColumn extends MColumn implements
 				bottomSection.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
 						true, false));
 				GridLayout bottomGrid = new GridLayout();
-				bottomGrid.numColumns = 3;
+				bottomGrid.numColumns = 2;
 				bottomGrid.marginHeight = bottomGrid.marginWidth = 0;
 				bottomSection.setLayout(bottomGrid);
 
-				f_filterExpressionClearLabel = new Label(bottomSection,
-						SWT.NONE);
-				f_filterExpressionClearLabel.setLayoutData(new GridData(
-						SWT.CENTER, SWT.CENTER, false, false));
-				f_filterExpressionClearLabel.setImage(SLImages
-						.getImage(CommonImages.IMG_GRAY_X_LIGHT));
-				f_filterExpressionClearLabel
-						.setToolTipText("Clear the current filter expression");
-				f_filterExpressionClearLabel
-						.addMouseListener(new MouseAdapter() {
-							@Override
-							public void mouseDown(MouseEvent e) {
-								if (!f_filter.isFilterExpressionClear()) {
-									f_filter.clearFilterExpression();
-									if (f_filterExpressionText.isFocusControl()) {
-										f_filterExpressionText.setText("");
-									} else {
-										f_filterExpressionText.setText(f_filter
-												.getFilterExpression());
-										f_filterExpressionText
-												.setForeground(f_filterExpressionText
-														.getDisplay()
-														.getSystemColor(
-																SWT.COLOR_GRAY));
-									}
-									getSelection().refreshFilters();
-								}
-							}
-						});
-				f_filterExpressionClearLabel.addListener(SWT.MouseEnter,
-						new Listener() {
-							public void handleEvent(Event event) {
-								if (!f_filter.isFilterExpressionClear()) {
-									f_filterExpressionClearLabel
-											.setImage(SLImages
-													.getImage(CommonImages.IMG_GRAY_X));
-								}
-							}
-						});
-				f_filterExpressionClearLabel.addListener(SWT.MouseExit,
-						new Listener() {
-							public void handleEvent(Event event) {
-								f_filterExpressionClearLabel
-										.setImage(SLImages
-												.getImage(CommonImages.IMG_GRAY_X_LIGHT));
-							}
-						});
+				final ISearchBoxObserver observer = new ISearchBoxObserver() {
 
-				f_filterExpressionText = new Text(bottomSection, SWT.NONE);
-				f_filterExpressionText.setText(f_filter.getFilterExpression());
-				f_filterExpressionText.setLayoutData(new GridData(SWT.FILL,
-						SWT.DEFAULT, true, false));
-				if (f_filter.isFilterExpressionClear()) {
-					f_filterExpressionText.setForeground(f_filterExpressionText
-							.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-				}
-				final ModifyListener filterExpressionModifyListener = new ModifyListener() {
-					public void modifyText(ModifyEvent unused) {
-						// Check whether the text is 'stable' in some amount of
-						// time (500 msec?)
-						final String old = f_filterExpressionText.getText();
-						if (old == null) {
-							return;
-						}
-						UIJob job = new UIJob("Modify filter expression to "
-								+ old) {
-							@Override
-							public IStatus runInUIThread(
-									IProgressMonitor monitor) {
-								if (f_filterExpressionText.isDisposed())
-									return Status.OK_STATUS;
+					public void searchTextChangedTo(String text) {
+						f_filter.setFilterExpression(text);
+						getSelection().refreshFilters();
+					}
 
-								String current = f_filterExpressionText
-										.getText();
-								if (old.equals(current)) {
-									System.out
-											.println("Calling setFilterExpression("
-													+ current + ")");
-									if (f_filter.setFilterExpression(current)) {
-										getSelection().refreshFilters();
-									}
-								}
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule(500);
+					public void searchTextCleared() {
+						f_filter.clearFilterExpression();
+						getSelection().refreshFilters();
 					}
 				};
-				f_filterExpressionText
-						.addModifyListener(filterExpressionModifyListener);
-				f_filterExpressionText.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						if (f_filter.isFilterExpressionClear()) {
-							f_filterExpressionText.setText("");
-							f_filterExpressionText.setForeground(null);
-						}
-					}
-
-					@Override
-					public void focusLost(FocusEvent e) {
-						if (f_filter.isFilterExpressionClear()) {
-							f_filterExpressionText.setText(f_filter
-									.getFilterExpression());
-							f_filterExpressionText
-									.setForeground(f_filterExpressionText
-											.getDisplay().getSystemColor(
-													SWT.COLOR_GRAY));
-						}
-					}
-				});
+				f_searchBox = new SearchBox(bottomSection,
+						"filter the list above",
+						"Clear the current filter expression", observer);
+				if (!f_filter.isFilterExpressionClear()) {
+					f_searchBox.setText(f_filter.getFilterExpression());
+				}
+				final GridData searchGridData = new GridData(SWT.FILL,
+						SWT.CENTER, true, false);
+				// Makes gray-X line up a bit better
+				searchGridData.horizontalIndent = 4;
+				f_searchBox.getComposite().setLayoutData(searchGridData);
 
 				f_porousCount = new Label(bottomSection, SWT.RIGHT);
-				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
+				f_porousCount.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 						true, false));
 
 				f_menu = new Menu(f_reportGroup.getShell(), SWT.POP_UP);
