@@ -188,6 +188,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							}
 							set.setEntries(filters);
 							set.setRevision(detail.getRevision());
+							q.prepared("FilterSets.scanFiltersUsing",
+									new RowHandler<Void>() {
+										public Void handle(Row r) {
+											set
+													.getScanFiltersUsing()
+													.add(
+															new Category.ScanFilterInfo(
+																	r
+																			.nextString(),
+																	r
+																			.nextString()));
+											return null;
+										}
+									}).call(detail.getId());
 						}
 						final List<Category> values = new ArrayList<Category>(
 								sets.values());
