@@ -151,6 +151,16 @@ img {
 	padding-right: 1ex;
 }
 
+/* Paging Panel */
+.sl-PagingPanel-text {
+	font-size: small;
+}
+
+.sl-PagingPanel-button {
+	height: 16px;
+	font-size: small;
+}
+
 /* Overview tables */
 .dashboard {
 	margin: 0px;
@@ -293,11 +303,17 @@ img {
 }
 
 .sl-Button-up-disabled {
-	background-color: #DDDDDD;
+	background-color: #EEEEEE;
+	border: 2px groove #999999;
+	color: #999999;
+	cursor: default;
 }
 
 .sl-Button-down-disabled {
-	background-color: #333333;
+	background-color: #EEEEEE;
+	border: 2px groove #999999;
+	color: #999999;
+	cursor: default;
 }
 
 /* Grid panel */

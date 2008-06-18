@@ -1,10 +1,11 @@
 package com.surelogic.sierra.gwt.client.ui;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -16,11 +17,13 @@ import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.CacheListener;
 import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.ui.PagingPanel.PageListener;
 
 public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		extends BlockPanel {
+	private static final int ITEMS_PER_PAGE = 25;
 	private final T cache;
-	private final FlexTable grid = new FlexTable();
+	private final FlexTable searchGrid = new FlexTable();
 	private final TextBox searchText = new TextBox();
 	private final SearchResultsBlock results = new SearchResultsBlock();
 	private E selection;
@@ -32,15 +35,15 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		contentPanel.add(grid);
+		contentPanel.add(searchGrid);
 
-		grid.setWidth("100%");
-		grid.getColumnFormatter().setWidth(0, "25%");
-		grid.getColumnFormatter().setWidth(1, "75%");
+		searchGrid.setWidth("100%");
+		searchGrid.getColumnFormatter().setWidth(0, "25%");
+		searchGrid.getColumnFormatter().setWidth(1, "75%");
 
 		final Label searchLabel = new Label("Search");
-		grid.setWidget(0, 0, searchLabel);
-		grid.setWidget(0, 1, searchText);
+		searchGrid.setWidget(0, 0, searchLabel);
+		searchGrid.setWidget(0, 1, searchText);
 		searchText.setWidth("100%");
 
 		results.initialize();
@@ -96,14 +99,32 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 	protected abstract void doItemClick(E item);
 
 	private class SearchResultsBlock extends BlockPanel {
-
 		private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
-		private final Map<String, ItemLabel<E>> searchResultsData = new HashMap<String, ItemLabel<E>>();
+		private final List<ItemLabel<E>> searchResultsData = new ArrayList<ItemLabel<E>>();
+		private PagingPanel pagingPanel;
 		private String searchText;
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
 			setTitle(" ");
+
+			pagingPanel = new PagingPanel(new PageListener() {
+
+				public void onPageChange(PagingPanel sender, int pageIndex,
+						int pageCount) {
+					getContentPanel().clear();
+
+					final int firstItemIndex = pageIndex * ITEMS_PER_PAGE;
+					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
+							&& (itemIndex < searchResultsData.size()); itemIndex++) {
+						getContentPanel().add(searchResultsData.get(itemIndex));
+					}
+				}
+			});
+
+			final DockPanel titlePanel = getTitlePanel();
+			titlePanel.clear();
+			titlePanel.add(pagingPanel, DockPanel.CENTER);
 		}
 
 		public void search(String text) {
@@ -119,16 +140,18 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 				}
 			}
 			final String query = queryBuf.toString();
-			boolean matchFound = false;
 			for (E item : cache) {
 				if (isMatch(item, query)) {
-					addItem(item);
-					matchFound = true;
+					final ItemLabel<E> itemUI = new ItemLabel<E>(
+							getItemText(item), item, selectionTracker,
+							new SearchResultListener(item));
+					searchResultsData.add(itemUI);
 				}
 			}
-			if (!matchFound) {
+			if (searchResultsData.isEmpty()) {
 				getContentPanel().add(new HTML("No matches found."));
 			}
+
 			clearStatus();
 			setSelection(selection);
 		}
@@ -144,21 +167,32 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		}
 
 		public void setSelection(E item) {
-			if (item == null) {
+			final ItemLabel<E> itemUI = getItemUI(item);
+
+			// update the page index and count
+			if (item != null) {
+				final int itemIndex = searchResultsData.indexOf(itemUI);
+				pagingPanel.setPaging(itemIndex / ITEMS_PER_PAGE,
+						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
+			} else {
+				pagingPanel.setPageIndex(0);
+			}
+
+			// update the ui item selection
+			if (itemUI == null) {
 				selectionTracker.setSelected(null);
 			} else {
-				ItemLabel<E> itemUI = searchResultsData.get(item.getUuid());
-				if (itemUI != null) {
-					itemUI.setSelected(true);
-				}
+				itemUI.setSelected(true);
 			}
 		}
 
-		private void addItem(E item) {
-			final ItemLabel<E> itemUI = new ItemLabel<E>(getItemText(item),
-					item, selectionTracker, new SearchResultListener(item));
-			searchResultsData.put(item.getUuid(), itemUI);
-			getContentPanel().add(itemUI);
+		private ItemLabel<E> getItemUI(E item) {
+			for (ItemLabel<E> nextItem : searchResultsData) {
+				if (nextItem.getItem().equals(item)) {
+					return nextItem;
+				}
+			}
+			return null;
 		}
 
 		private class SearchResultListener implements ClickListener {

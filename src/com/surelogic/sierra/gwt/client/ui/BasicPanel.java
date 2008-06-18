@@ -146,11 +146,11 @@ public class BasicPanel extends Composite {
 		status = null;
 	}
 
-	protected final DockPanel getTitlePanel() {
+	public DockPanel getTitlePanel() {
 		return titlePanel;
 	}
 
-	protected final VerticalPanel getContentPanel() {
+	public VerticalPanel getContentPanel() {
 		return contentPanel;
 	}
 
