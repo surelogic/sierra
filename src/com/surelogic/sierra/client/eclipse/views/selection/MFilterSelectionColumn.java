@@ -443,7 +443,9 @@ public final class MFilterSelectionColumn extends MColumn implements
 						"filter the list above",
 						"Clear the current filter expression", observer);
 				if (!f_filter.isFilterExpressionClear()) {
-					f_searchBox.setText(f_filter.getFilterExpression());
+					final String filterExpression = f_filter.getFilterExpression();
+					f_searchBox.setText(filterExpression);
+					getSelection().refreshFilters();
 				}
 				final GridData searchGridData = new GridData(SWT.FILL,
 						SWT.CENTER, true, false);

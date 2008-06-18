@@ -92,9 +92,9 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Clones this filter without its data. Only the set of porous values is
-	 * remembered. {@link #refresh()} must be invoked on the clone before it can
-	 * be used.
+	 * Clones this filter without its data (except the filter expression). Only
+	 * the set of porous values is remembered. {@link #refresh()} must be
+	 * invoked on the clone before it can be used.
 	 * 
 	 * @param selection
 	 *            the selection the new filter should be within.
@@ -105,6 +105,9 @@ public abstract class Filter {
 	Filter copyNoQuery(Selection selection, Filter previous) {
 		// construct a filter of the right type
 		final Filter result = getFactory().construct(selection, previous);
+		if (!isFilterExpressionClear()) {
+			result.setFilterExpression(getFilterExpression());
+		}
 		result.f_porousValues.addAll(f_porousValues);
 		return result;
 	}

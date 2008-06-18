@@ -28,6 +28,7 @@ public final class SelectionPersistence {
 	public static final String NAME = "name";
 	public static final String SHOWING = "showing-finding-set";
 	public static final String FILTER = "filter";
+	public static final String VALUE_FILTER_EXPRESSION = "value-filter-expression";
 	public static final String TYPE = "type";
 	public static final String POROUS = "porous";
 	public static final String VALUE = "value";
@@ -106,9 +107,9 @@ public final class SelectionPersistence {
 	private static void outputFilter(PrintWriter pw, StringBuilder b, Filter f) {
 		b.append("    <").append(FILTER);
 		Entities.addAttribute(TYPE, f.getFactory().getFilterLabel(), b);
-		String filterExpr = f.getFilterExpression();
-		if (filterExpr != null && filterExpr.length() > 0) {
-			Entities.addAttribute(FILTER, filterExpr, b);
+		if (!f.isFilterExpressionClear()) {
+			Entities.addAttribute(VALUE_FILTER_EXPRESSION, f
+					.getFilterExpression(), b);
 		}
 		b.append(">");
 		outputBuffer(pw, b);
@@ -202,9 +203,11 @@ public final class SelectionPersistence {
 							found = true;
 							f_filter = f_workingSelection.construct(ff, null);
 
-							String filter = attributes.getValue(FILTER);
-							if (filter != null)
-								f_filter.setFilterExpression(filter);
+							String filterExpression = attributes
+									.getValue(VALUE_FILTER_EXPRESSION);
+							if (filterExpression != null) {
+								f_filter.setFilterExpression(filterExpression);
+							}
 						}
 					}
 					if (!found) {
