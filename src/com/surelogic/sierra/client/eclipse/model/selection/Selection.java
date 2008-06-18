@@ -1,6 +1,13 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -8,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
@@ -36,17 +42,17 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterAuditCount.FACTORY);
 		allFilters.add(FilterAudited.FACTORY);
 		allFilters.add(FilterAdHocFindingCategory.FACTORY);
-		//allFilters.add(FilterFindingCategory.FACTORY);
+		// allFilters.add(FilterFindingCategory.FACTORY);
 		allFilters.add(FilterFindingType.FACTORY);
 		allFilters.add(FilterImportance.FACTORY);
 		allFilters.add(FilterJavaClass.FACTORY);
 		allFilters.add(FilterJavaPackage.FACTORY);
 		allFilters.add(FilterProject.FACTORY);
 		allFilters.add(FilterSelection.FACTORY);
-		allFilters.add(FilterTool.FACTORY);		
+		allFilters.add(FilterTool.FACTORY);
 		allFilters.add(FilterVerificationStatus.FACTORY);
 		allFilters.add(FilterResultType.FACTORY);
-		allFilters.add(FilterModels.FACTORY);	
+		allFilters.add(FilterModels.FACTORY);
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
@@ -355,7 +361,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Indicates if this selection allows any possible findings through it.
 	 * 
