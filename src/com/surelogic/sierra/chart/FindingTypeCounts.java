@@ -20,7 +20,7 @@ public class FindingTypeCounts implements IDatabasePlot {
 	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
 			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-		final String uid = report.getParameter("uid").getValue();
+		final String uid = report.getParameter("uuid").getValue();
 		if (uid != null) {
 			final DefaultCategoryDataset set = new ConnectionQuery(c).prepared(
 					"Plots.FindingType.count",

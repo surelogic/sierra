@@ -40,11 +40,13 @@ import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.Importance;
+import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class SettingsServiceImpl extends SierraServiceServlet implements
 		SettingsService {
@@ -545,6 +547,24 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			return ImportanceView.MEDIUM;
 		}
 		throw new IllegalStateException();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<com.surelogic.sierra.gwt.client.data.Server> listServerLocations() {
+		final List<com.surelogic.sierra.gwt.client.data.Server> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.Server>();
+		for (final SierraServerLocation l : ConnectionFactory.withReadOnly(
+				ServerLocations.fetch(Collections.EMPTY_MAP)).keySet()) {
+			final com.surelogic.sierra.gwt.client.data.Server s = new com.surelogic.sierra.gwt.client.data.Server();
+			s.setContext(l.getContextPath());
+			s.setHost(l.getHost());
+			s.setLabel(l.getLabel());
+			s.setPass(l.getPass());
+			s.setPort(l.getPort());
+			s.setProtocol(com.surelogic.sierra.gwt.client.data.Server.Protocol
+					.fromValue(l.getProtocol()));
+			servers.add(s);
+		}
+		return servers;
 	}
 
 }
