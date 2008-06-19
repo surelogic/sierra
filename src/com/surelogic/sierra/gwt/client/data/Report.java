@@ -16,7 +16,7 @@ public class Report implements Serializable, Cacheable {
 	private String title;
 	private long revision;
 	private String description;
-	private final Set<Parameter> parameters = new HashSet<Parameter>();
+	private Set<Parameter> parameters;
 
 	public String getUuid() {
 		return uuid;
@@ -59,11 +59,14 @@ public class Report implements Serializable, Cacheable {
 	}
 
 	public Set<Parameter> getParameters() {
+		if (parameters == null) {
+			parameters = new HashSet<Parameter>();
+		}
 		return parameters;
 	}
 
 	public Parameter getParameter(String name) {
-		for (final Parameter param : parameters) {
+		for (final Parameter param : getParameters()) {
 			if (LangUtil.equals(param.getName(), name)) {
 				return param;
 			}
@@ -94,7 +97,7 @@ public class Report implements Serializable, Cacheable {
 
 		private String name;
 		private Type type;
-		private final List<String> values = new ArrayList<String>();
+		private List<String> values;
 
 		public Parameter() {
 			super();
@@ -108,26 +111,26 @@ public class Report implements Serializable, Cacheable {
 		public Parameter(String name, String value) {
 			super();
 			this.name = name;
-			values.add(value);
+			getValues().add(value);
 		}
 
 		public Parameter(String name, String value, Type type) {
 			super();
 			this.name = name;
-			values.add(value);
+			getValues().add(value);
 			this.type = type;
 		}
 
 		public Parameter(String name, Collection<String> values) {
 			super();
 			this.name = name;
-			values.addAll(values);
+			getValues().addAll(values);
 		}
 
 		public Parameter(String name, Collection<String> values, Type type) {
 			super();
 			this.name = name;
-			values.addAll(values);
+			getValues().addAll(values);
 			this.type = type;
 		}
 
@@ -154,13 +157,16 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		public String getValue() {
-			if (values.isEmpty()) {
+			if ((values == null) || values.isEmpty()) {
 				return null;
 			}
 			return values.get(0);
 		}
 
 		public List<String> getValues() {
+			if (values == null) {
+				values = new ArrayList<String>();
+			}
 			return values;
 		}
 
@@ -168,6 +174,12 @@ public class Report implements Serializable, Cacheable {
 			final Parameter copy = new Parameter(name, type);
 			copy.getValues().addAll(values);
 			return copy;
+		}
+
+		@Override
+		public String toString() {
+			return "{" + name + ": " + type + " = " + getValues().toString()
+					+ "}";
 		}
 
 		@Override
@@ -217,6 +229,12 @@ public class Report implements Serializable, Cacheable {
 			return true;
 		}
 
+	}
+
+	@Override
+	public String toString() {
+		return "Name: " + name + "\nTitle: " + title + "\nParameters: "
+				+ parameters;
 	}
 
 	@Override

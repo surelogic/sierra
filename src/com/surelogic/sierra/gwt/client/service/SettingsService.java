@@ -9,6 +9,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
+import com.surelogic.sierra.gwt.client.data.Server;
 import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface SettingsService extends RemoteService {
@@ -122,4 +123,11 @@ public interface SettingsService extends RemoteService {
 	Result<FindingType> getFindingType(String uuid);
 
 	Status updateScanFilter(ScanFilter f);
+
+	/**
+	 * Return a list of the servers that this server currently connects to.
+	 * 
+	 * @return
+	 */
+	List<Server> listServerLocations();
 }

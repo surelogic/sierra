@@ -10,6 +10,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
+import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingTypeView extends BlockPanel {
@@ -19,6 +20,7 @@ public class FindingTypeView extends BlockPanel {
 	private final CategoryList categoriesExcluding = new CategoryList(
 			"Categories excluding this finding");
 	private final ScanFilterList scanFilters = new ScanFilterList();
+	private final VerticalPanel chart = new VerticalPanel();
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -33,6 +35,7 @@ public class FindingTypeView extends BlockPanel {
 
 		scanFilters.initialize();
 		contentPanel.add(scanFilters);
+		contentPanel.add(chart);
 	}
 
 	public void setSelection(FindingType findingType) {
@@ -55,21 +58,21 @@ public class FindingTypeView extends BlockPanel {
 		categoriesExcluding.clear();
 		scanFilters.clear();
 		if (findingType != null) {
-			for (CategoryInfo catIncluding : findingType
+			for (final CategoryInfo catIncluding : findingType
 					.getCategoriesIncluding()) {
 				categoriesIncluding.addItem(catIncluding);
 			}
-			for (CategoryInfo catExcluding : findingType
+			for (final CategoryInfo catExcluding : findingType
 					.getCategoriesExcluding()) {
 				categoriesExcluding.addItem(catExcluding);
 			}
-			for (ScanFilterInfo scanIncluding : findingType
+			for (final ScanFilterInfo scanIncluding : findingType
 					.getScanFiltersIncluding()) {
 				scanFilters.addItem(scanIncluding);
 			}
-			// FIXME throws an exception right now
-			// chart.add(ChartBuilder.name("FindingTypeCounts").prop("uid",
-			// findingType.getUuid()).build());
+			chart.clear();
+			chart.add(ChartBuilder.name("FindingTypeCounts").height(400).width(
+					400).prop("uuid", findingType.getUuid()).build());
 		}
 	}
 
