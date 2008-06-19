@@ -79,6 +79,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 											null);
 									fm.generateOverview(project, uid,
 											timeseries);
+									// Increment the revision whenever a scan is
+									// published.
 									server.nextRevision();
 									conn.commit();
 									ScanManager.getInstance(conn).finalizeScan(
