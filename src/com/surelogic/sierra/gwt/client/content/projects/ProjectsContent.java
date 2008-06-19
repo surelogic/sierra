@@ -8,6 +8,7 @@ import com.surelogic.sierra.gwt.client.data.Project;
 public class ProjectsContent extends
 		ListContentComposite<Project, ProjectCache> {
 	private static final ProjectsContent instance = new ProjectsContent();
+	private final ProjectView projectView = new ProjectView();
 
 	public static ProjectsContent getInstance() {
 		return instance;
@@ -23,7 +24,8 @@ public class ProjectsContent extends
 			VerticalPanel selectionPanel) {
 		setCaption("Projects");
 
-		// TODO Auto-generated method stub
+		projectView.initialize();
+		selectionPanel.add(projectView);
 	}
 
 	@Override
@@ -38,7 +40,6 @@ public class ProjectsContent extends
 
 	@Override
 	protected void onSelectionChanged(Project item) {
-		// TODO Auto-generated method stub
-
+		projectView.setSelection(item);
 	}
 }
