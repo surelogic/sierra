@@ -13,12 +13,14 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
+import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BlockPanel {
 	private final VerticalPanel categoryInfo = new VerticalPanel();
 	private final Label description = new Label();
 	private final FindingsView findingsView = new FindingsView();
+	private final VerticalPanel chart = new VerticalPanel();
 	private Category category;
 
 	@Override
@@ -33,6 +35,7 @@ public class CategoryView extends BlockPanel {
 		findingsView.initialize();
 		findingsView.setSubsectionStyle(true);
 		contentPanel.add(findingsView);
+		contentPanel.add(chart);
 	}
 
 	public Category getCategory() {
@@ -57,6 +60,9 @@ public class CategoryView extends BlockPanel {
 			description.addStyleName("font-italic");
 		}
 		findingsView.setCategory(category);
+		chart.clear();
+		chart.add(ChartBuilder.name("CategoryCounts").prop("uuid",
+				category.getUuid()).build());
 	}
 
 	private class FindingsView extends ListBlock<FindingTypeFilter> {
@@ -70,7 +76,7 @@ public class CategoryView extends BlockPanel {
 
 			if (cat != null) {
 				final List<FindingTypeFilter> visibleFindings = new ArrayList<FindingTypeFilter>();
-				for (FindingTypeFilter finding : cat.getIncludedEntries()) {
+				for (final FindingTypeFilter finding : cat.getIncludedEntries()) {
 					if (!visibleFindings.contains(finding)) {
 						visibleFindings.add(finding);
 					}
@@ -79,7 +85,7 @@ public class CategoryView extends BlockPanel {
 				Collections.sort(visibleFindings,
 						new FindingTypeFilterComparator());
 
-				for (FindingTypeFilter finding : visibleFindings) {
+				for (final FindingTypeFilter finding : visibleFindings) {
 					addItem(finding);
 				}
 			}

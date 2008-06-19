@@ -71,8 +71,8 @@ public class FindingTypeView extends BlockPanel {
 				scanFilters.addItem(scanIncluding);
 			}
 			chart.clear();
-			chart.add(ChartBuilder.name("FindingTypeCounts").height(400).width(
-					400).prop("uuid", findingType.getUuid()).build());
+			chart.add(ChartBuilder.name("FindingTypeCounts").prop("uuid",
+					findingType.getUuid()).build());
 		}
 	}
 
