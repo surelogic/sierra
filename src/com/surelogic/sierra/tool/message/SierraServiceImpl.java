@@ -79,6 +79,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 											null);
 									fm.generateOverview(project, uid,
 											timeseries);
+									server.nextRevision();
 									conn.commit();
 									ScanManager.getInstance(conn).finalizeScan(
 											uid);
