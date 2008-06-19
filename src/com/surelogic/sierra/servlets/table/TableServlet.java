@@ -14,7 +14,7 @@ import com.surelogic.sierra.cache.TableCache;
 import com.surelogic.sierra.cache.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.ReportTable.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.servlets.ServletUtility;
 
 public class TableServlet extends HttpServlet {
