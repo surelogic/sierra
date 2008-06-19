@@ -52,8 +52,8 @@ public final class ServerLocations {
 	}
 
 	/**
-	 * Return a list of server locations. Any password information used in the
-	 * locations should be provided.
+	 * Return a list of server locations, and the projects that belong to them.
+	 * Any password information not stored in the database should be provided.
 	 * 
 	 * @param a
 	 *            map of passwords by keyed by {@code user@host}. May be
