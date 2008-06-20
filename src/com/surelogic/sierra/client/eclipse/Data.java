@@ -96,6 +96,7 @@ public final class Data {
 	}
 
 	public static Connection getConnection() throws SQLException {
+		//System.out.println(getConnectionURL());
 		final Connection conn = LazyPreparedStatementConnection
 				.wrap(DriverManager.getConnection(getConnectionURL()));
 		return conn;
