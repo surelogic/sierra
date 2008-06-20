@@ -11,8 +11,7 @@ import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.tool.message.AssuranceType;
 
 public final class FilterModels extends Filter {
-	// FIX should use FINDING_ID
-	private static final String COLUMN_NAME = "FO.SUMMARY"; // For the raw data
+	private static final String COLUMN_NAME = "FO.FINDING_ID"; // For the raw data
 	
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
@@ -28,7 +27,7 @@ public final class FilterModels extends Filter {
 	 * Images for just this filter. Only mutated by {@link #refresh()}.
 	 */
 	protected final Map<String,Image> f_images = new HashMap<String,Image>();
-	
+	protected final Map<String,String> f_summaries = new HashMap<String,String>();
 	
 	FilterModels(Selection selection, Filter previous) {
 		super(selection, previous);
@@ -53,7 +52,8 @@ public final class FilterModels extends Filter {
 	private final int MAX_TOKENS = 2;
 	
 	@Override
-	public String getLabel(String completeMsg) {
+	public String getLabel(String id) {
+		String completeMsg = f_summaries.get(id);
 		StringBuilder b = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(completeMsg);
 		for(int i = 0; st.hasMoreTokens() && i<MAX_TOKENS; i++) {
@@ -75,9 +75,11 @@ public final class FilterModels extends Filter {
 	protected void grabExtraCountsData(String value, ResultSet rs) throws SQLException {
 		final String aType         = rs.getString(3);
 		final String findingTypeId = rs.getString(4);
+		final String summary       = rs.getString(5);
 		final Image image          = JSureUtil.getImageFor(findingTypeId, 
 				                                           AssuranceType.fromFlag(aType));
 		f_images.put(value, image);
+		f_summaries.put(value, summary);		
 	}
 	
 	@Override
