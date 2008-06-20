@@ -150,6 +150,13 @@ implements IViewUpdater {
 		}
 	}
 	
+	private final Comparator<FindingRelation> relationComparator = 
+      new Comparator<FindingRelation>() {
+		public int compare(FindingRelation o1, FindingRelation o2) {
+			return getLabel(o1, true).compareTo(getLabel(o2, true));
+		}								
+	};
+	
 	void asyncQueryAndShow(final FindingDetail detail) {
 		final Long findingIdObj = detail.getFindingId();
 		f_finding = detail;
@@ -202,11 +209,8 @@ implements IViewUpdater {
 						//System.out.println("Details for child "+id);
 						getDetails(c, q, id, Direction.AT_CHILDREN);
 					}
-					children.sort(new Comparator<FindingRelation>() {
-						public int compare(FindingRelation o1, FindingRelation o2) {
-							return getLabel(o1, true).compareTo(getLabel(o2, true));
-						}								
-					});
+					children.filter(new Filter(true, children.getRelations()));
+					children.sort(relationComparator);
 				}
 				if (d.lookAtAncestors()) {
 					FindingRelationOverview ancestors = FindingRelationOverview.getOverviewOrNull(q, rootId, false);
@@ -215,11 +219,8 @@ implements IViewUpdater {
 						Long id = r.getParentId();
 						getDetails(c, q, id, Direction.AT_ANCESTORS);
 					}
-					ancestors.sort(new Comparator<FindingRelation>() {
-						public int compare(FindingRelation o1, FindingRelation o2) {
-							return getLabel(o1, false).compareTo(getLabel(o2, false));
-						}								
-					});		
+					ancestors.filter(new Filter(false, ancestors.getRelations()));
+					ancestors.sort(relationComparator);		
 				}		
 			}
 
@@ -233,6 +234,31 @@ implements IViewUpdater {
 		job.schedule();
 	}
 
+	static class Filter implements FindingRelationOverview.Filter {
+		final boolean lookAtChildren;
+		final Map<Long,FindingRelation> nonDeponents = new HashMap<Long,FindingRelation>();
+		
+		Filter(boolean lookAtChildren, Iterable<FindingRelation> relations) {
+			this.lookAtChildren = lookAtChildren;
+			for(FindingRelation r : relations) {
+				if (!com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r.getRelationType())) {
+					nonDeponents.put(getId(r), r);
+				}
+			}
+		}
+		private Long getId(FindingRelation r) {
+			return lookAtChildren ? r.getChildId() : r.getParentId();
+		}
+		
+		public boolean filterOut(FindingRelation r) {
+			if (com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r.getRelationType())) {
+				Long id = getId(r);
+				return nonDeponents.get(id) != null;
+			}
+			return false;
+		}		
+	}
+	
 	@Override
 	public void init() {
 		super.init();
