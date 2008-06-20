@@ -328,6 +328,8 @@ public final class Categories {
 		if (set.select()) {
 			if (q.prepared("FilterSets.listFilterSetChildren",
 					new StringRowHandler()).call(set.getId()).isEmpty()) {
+				q.prepared("FilterSets.deleteFilterSetParents").call(
+						set.getId());
 				set.delete();
 			} else {
 				throw new IllegalArgumentException(
