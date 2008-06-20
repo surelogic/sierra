@@ -4,7 +4,6 @@ import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class Utility {
@@ -26,19 +25,5 @@ public final class Utility {
 		else
 			imageName = CommonImages.IMG_ASTERISK_ORANGE_100;
 		return SLImages.getImage(imageName);
-	}
-
-	public static Image getImageFor(AssuranceType type) {
-		if (type == null) {
-			return null;
-		}
-		switch (type) {
-		case CONSISTENT:
-			return SLImages.getImage(CommonImages.IMG_PLUS);			
-		case INCONSISTENT:
-			return SLImages.getImage(CommonImages.IMG_RED_X);
-		default:
-			return null;
-		}
 	}
 }

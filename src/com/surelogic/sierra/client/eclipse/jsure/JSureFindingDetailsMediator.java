@@ -384,7 +384,7 @@ implements IViewUpdater {
 				FindingRelation fr = (FindingRelation) elt;
 				fd = getDetail(fr, lookAtChildren);
 			}
-			return Utility.getImageFor(fd.getAssuranceType());
+			return JSureUtil.getImageFor(fd.getFindingType(), fd.getAssuranceType());
 		}
 
 		public String getText(Object elt) {

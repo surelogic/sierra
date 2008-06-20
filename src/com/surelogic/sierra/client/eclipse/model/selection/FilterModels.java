@@ -6,14 +6,13 @@ import java.util.*;
 
 import org.eclipse.swt.graphics.Image;
 
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.jsure.*;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.tool.message.AssuranceType;
 
 public final class FilterModels extends Filter {
 	// FIX should use FINDING_ID
 	private static final String COLUMN_NAME = "FO.SUMMARY"; // For the raw data
-	private static final String MODEL_CATEGORY_ID = "00000006-ef51-4f9c-92f6-351d214f46e7";
 	
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
 		public Filter construct(Selection selection, Filter previous) {
@@ -26,9 +25,10 @@ public final class FilterModels extends Filter {
 	};
 
 	/**
-	 * Counts for just this filter. Only mutated by {@link #refresh()}.
+	 * Images for just this filter. Only mutated by {@link #refresh()}.
 	 */
-	protected final Map<String,AssuranceType> f_assureTypes = new HashMap<String,AssuranceType>();
+	protected final Map<String,Image> f_images = new HashMap<String,Image>();
+	
 	
 	FilterModels(Selection selection, Filter previous) {
 		super(selection, previous);
@@ -47,7 +47,7 @@ public final class FilterModels extends Filter {
 	@Override
 	protected String getMinimalWhereClausePart() {
 		return createInClause("FO.FINDING_TYPE", 
-				              BuglinkData.getInstance().getFindingTypes(MODEL_CATEGORY_ID));				
+				              BuglinkData.getInstance().getFindingTypes(JSureUtil.MODEL_CATEGORY_ID));				
 	}
 	
 	private final int MAX_TOKENS = 2;
@@ -68,15 +68,16 @@ public final class FilterModels extends Filter {
 	
 	@Override
 	public Image getImageFor(String value) {
-		AssuranceType aType = f_assureTypes.get(value);
-		return Utility.getImageFor(aType);
+		return f_images.get(value);
 	}
 	
 	@Override
 	protected void grabExtraCountsData(String value, ResultSet rs) throws SQLException {
-		final String aType = rs.getString(3);
-		f_assureTypes.put(value, AssuranceType.fromFlag(aType));
-		System.out.println(aType+" : "+value);
+		final String aType         = rs.getString(3);
+		final String findingTypeId = rs.getString(4);
+		final Image image          = JSureUtil.getImageFor(findingTypeId, 
+				                                           AssuranceType.fromFlag(aType));
+		f_images.put(value, image);
 	}
 	
 	@Override

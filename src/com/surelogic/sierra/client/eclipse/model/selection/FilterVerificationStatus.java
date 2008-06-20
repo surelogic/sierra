@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.jsure.*;
 import com.surelogic.sierra.tool.message.AssuranceType;
 
 public final class FilterVerificationStatus extends Filter {
@@ -67,7 +67,7 @@ public final class FilterVerificationStatus extends Filter {
 		if (aType == null) {
 			return SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50);
 		}
-		return Utility.getImageFor(aType);
+		return JSureUtil.getImageFor(aType);
 	}
 	
 	@Override

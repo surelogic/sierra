@@ -58,6 +58,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
+import com.surelogic.sierra.client.eclipse.jsure.*;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
@@ -180,7 +181,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_packageName;
 		int f_lineNumber;
 		String f_typeName;
-		String f_findingTypeName;
+		String f_findingTypeId;
 		String f_categoryName;
 		String f_toolName;
 		AssuranceType f_assuranceType;
@@ -190,7 +191,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public String toString() {
 			// FIX f_assuranceType
 			return "finding_id=" + f_findingId + " [" + f_importance
-					+ "] of type " + f_findingTypeName + " and category "
+					+ "] of type " + f_findingTypeId + " and category "
 					+ f_categoryName + " \"" + f_summary + "\" in "
 					+ f_projectName + " " + f_packageName + "." + f_typeName
 					+ " at line " + f_lineNumber + " from " + f_toolName;
@@ -286,7 +287,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			Image getImage(FindingData data) {
 				if (data.f_assuranceType != null) {
-					return Utility.getImageFor(data.f_assuranceType);
+					return JSureUtil.getImageFor(data.f_findingTypeId, data.f_assuranceType);
 				}
 				return Utility.getImageFor(data.f_importance);
 			}
@@ -343,7 +344,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		prototypes.add(new ColumnData("Finding Type") {
 			@Override
 			String getText(FindingData data) {
-				return data.f_findingTypeName;
+				return data.f_findingTypeId;
 			}
 		});
 		prototypes.add(new ColumnData("Finding Category") {
@@ -410,7 +411,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_packageName = rs.getString(5);
 								data.f_typeName = rs.getString(6);
 								data.f_lineNumber = rs.getInt(7);
-								data.f_findingTypeName = rs.getString(8);
+								data.f_findingTypeId = rs.getString(8);
 								data.f_categoryName = rs.getString(9);
 								data.f_toolName = rs.getString(10);
 								
@@ -1040,7 +1041,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						// Otherwise, it's all the same so far
 
-						String findingType = data.f_findingTypeName;
+						String findingType = data.f_findingTypeId;
 						if (findingTypeSoFar == null) {
 							findingTypeSoFar = findingType;
 						} else if (!findingTypeSoFar.equals(findingType)) {
@@ -1124,14 +1125,14 @@ public final class MListOfFindingsColumn extends MColumn implements
 					@Override
 					protected void handleFinding(MenuItem item, FindingData data) {
 						FindingMutationUtility.asyncFilterFindingTypeFromScans(
-								data.f_findingId, data.f_findingTypeName);
+								data.f_findingId, data.f_findingTypeId);
 					}
 
 					@Override
 					protected void handleFindings(MenuItem item,
 							FindingData data, Collection<Long> ids) {
 						FindingMutationUtility.asyncFilterFindingTypeFromScans(
-								ids, data.f_findingTypeName);
+								ids, data.f_findingTypeId);
 					}
 				});
 
