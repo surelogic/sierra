@@ -82,8 +82,8 @@ public class CategoryEditor extends BlockPanel {
 
 	public void addFindings(Set<Category> selectedCategories,
 			Set<FindingTypeFilter> excludedFindings) {
-		final Category updatedCat = category.copy();
-		findingsEditor.saveTo(updatedCat);
+		final Category updatedCat = getUpdatedCategory();
+
 		for (final Category newCat : selectedCategories) {
 			updatedCat.getParents().add(newCat.copy());
 		}

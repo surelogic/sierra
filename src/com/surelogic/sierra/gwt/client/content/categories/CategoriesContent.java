@@ -19,6 +19,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoriesContent extends
@@ -108,7 +109,7 @@ public class CategoriesContent extends
 			}
 		} else {
 			categoryView.setCategory(cat);
-			categoryView.setActionsVisible(cat != null);
+			categoryView.setActionsVisible(cat != null && cat.isLocal());
 			if (selectionPanel.getWidgetIndex(categoryView) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categoryView);
@@ -120,7 +121,7 @@ public class CategoriesContent extends
 		ServiceHelper.getSettingsService().deleteCategory(cat.getUuid(),
 				new AsyncCallback<Status>() {
 					public void onFailure(Throwable caught) {
-						// TODO
+						ExceptionUtil.handle(caught);
 					}
 
 					public void onSuccess(Status result) {
@@ -134,7 +135,7 @@ public class CategoriesContent extends
 		dialog.addPopupListener(new PopupListener() {
 
 			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-				Status s = dialog.getStatus();
+				final Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
 					categoryEditor.addFindings(dialog.getSelectedCategories(),
 							dialog.getExcludedFindings());
