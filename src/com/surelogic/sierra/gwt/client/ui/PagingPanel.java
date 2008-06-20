@@ -47,8 +47,6 @@ public class PagingPanel extends Composite {
 		});
 		nextPage.addStyleName("sl-PagingPanel-button");
 		rootPanel.add(nextPage, DockPanel.EAST);
-
-		updateState(0, 0);
 	}
 
 	public int getPageIndex() {
@@ -80,27 +78,31 @@ public class PagingPanel extends Composite {
 	}
 
 	private void updateState(int pageIndex, int pageCount) {
-		if (pageIndex == this.pageIndex && pageCount == this.pageCount) {
-			return;
-		}
-		this.pageCount = pageCount;
-		this.pageIndex = pageIndex;
 		if (pageIndex < 0) {
 			pageIndex = 0;
 		} else if (pageIndex >= pageCount) {
-			pageIndex = pageCount - 1;
+			pageIndex = pageCount > 0 ? pageCount - 1 : 0;
 		}
 
-		final StringBuffer buf = new StringBuffer("Page ");
-		buf.append(pageIndex + 1).append(" of ");
-		if (pageCount < 1) {
-			buf.append(1);
+		this.pageCount = pageCount;
+		this.pageIndex = pageIndex;
+
+		if (pageCount <= 1) {
+			setVisible(false);
 		} else {
-			buf.append(pageCount);
+			setVisible(true);
+
+			final StringBuffer buf = new StringBuffer("Page ");
+			buf.append(pageIndex + 1).append(" of ");
+			if (pageCount < 1) {
+				buf.append(1);
+			} else {
+				buf.append(pageCount);
+			}
+			pageText.setText(buf.toString());
+			nextPage.setEnabled(pageIndex < pageCount - 1);
+			previousPage.setEnabled(pageIndex > 0);
 		}
-		pageText.setText(buf.toString());
-		nextPage.setEnabled(pageIndex < pageCount - 1);
-		previousPage.setEnabled(pageIndex > 0);
 		pageListener.onPageChange(this, pageIndex, pageCount);
 	}
 
@@ -109,4 +111,5 @@ public class PagingPanel extends Composite {
 		void onPageChange(PagingPanel sender, int pageIndex, int pageCount);
 
 	}
+
 }

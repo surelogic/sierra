@@ -114,12 +114,14 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 						int pageCount) {
 					getContentPanel().clear();
 
-					final int firstItemIndex = pageIndex * ITEMS_PER_PAGE;
+					final int firstItemIndex = pagingPanel.getPageIndex()
+							* ITEMS_PER_PAGE;
 					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
 							&& (itemIndex < searchResultsData.size()); itemIndex++) {
 						getContentPanel().add(searchResultsData.get(itemIndex));
 					}
 				}
+
 			});
 
 			final DockPanel titlePanel = getTitlePanel();
@@ -140,7 +142,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 				}
 			}
 			final String query = queryBuf.toString();
-			for (E item : cache) {
+			for (final E item : cache) {
 				if (isMatch(item, query)) {
 					final ItemLabel<E> itemUI = new ItemLabel<E>(
 							getItemText(item), item, selectionTracker,
@@ -175,7 +177,8 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 				pagingPanel.setPaging(itemIndex / ITEMS_PER_PAGE,
 						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
 			} else {
-				pagingPanel.setPageIndex(0);
+				pagingPanel.setPaging(0,
+						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
 			}
 
 			// update the ui item selection
@@ -187,7 +190,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		}
 
 		private ItemLabel<E> getItemUI(E item) {
-			for (ItemLabel<E> nextItem : searchResultsData) {
+			for (final ItemLabel<E> nextItem : searchResultsData) {
 				if (nextItem.getItem().equals(item)) {
 					return nextItem;
 				}
