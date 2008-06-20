@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
@@ -159,13 +160,19 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 					public List<Category> perform(Query q, Server server,
 							User user) {
+						final String serverUID = server.getUid();
 						final Map<String, Category> sets = new HashMap<String, Category>();
 						final FindingTypes types = new FindingTypes(q);
 						final Categories fs = new Categories(q);
+						final Queryable<String> categoryServer = q.prepared(
+								"Definitions.getDefinitionServer",
+								new StringResultHandler());
 						for (final CategoryDO detail : fs.listCategories()) {
 							final Category set = getOrCreateSet(
 									detail.getUid(), sets);
 							set.setName(detail.getName());
+							set.setLocal(serverUID.equals(categoryServer
+									.call(detail.getUid())));
 							String info = StringUtils.remove(detail.getInfo(),
 									'\t');
 							info = StringUtils.replaceChars(info, '\n', ' ');
