@@ -356,6 +356,8 @@ public final class Categories {
 				if (uids.containsAll((q.prepared(
 						"FilterSets.listFilterSetChildren",
 						new StringRowHandler()).call(set.getId())))) {
+					q.prepared("FilterSets.deleteFilterSetParents").call(
+							set.getId());
 					set.delete();
 				} else {
 					throw new IllegalArgumentException(
