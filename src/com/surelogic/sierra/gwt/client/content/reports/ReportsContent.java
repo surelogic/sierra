@@ -48,11 +48,19 @@ public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 				reportView.retrieveReport(reportParamsView.getUpdatedReport());
 			}
 		});
+		reportParamsView.addReportAction("Show on Dashboard",
+				new ClickListener() {
+
+					public void onClick(Widget sender) {
+						Window.alert("TODO: Show on Dashboard");
+					}
+
+				});
 		reportParamsView.addReportAction("Export to PDF", new ClickListener() {
 
 			public void onClick(Widget sender) {
 				// TODO Auto-generated method stub
-				Window.alert("Export to PDF");
+				Window.alert("TODO: Export to PDF");
 			}
 		});
 
