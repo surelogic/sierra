@@ -16,10 +16,7 @@ import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -47,9 +44,9 @@ public final class LatestScanResults implements IDatabasePlot {
 			importanceData.setValue(po.getMedium(), "Medium", po.getName());
 			importanceData.setValue(po.getLow(), "Low", po.getName());
 		}
-		final JFreeChart chart = ChartFactory.createBarChart(
-				"Latest Scan Results", null, "# of Findings", importanceData,
-				PlotOrientation.HORIZONTAL, true, false, false);
+		final JFreeChart chart = ChartFactory.createBarChart(null, null,
+				"# of Findings", importanceData, PlotOrientation.HORIZONTAL,
+				true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
@@ -80,12 +77,6 @@ public final class LatestScanResults implements IDatabasePlot {
 		renderer.setSeriesShapesFilled(1, false);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
-
-		final TextTitle t = chart.getTitle();
-		t.setPosition(RectangleEdge.TOP);
-		t.setHorizontalAlignment(HorizontalAlignment.LEFT);
-		t.setPaint(Color.GRAY);
-
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());

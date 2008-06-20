@@ -40,9 +40,9 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 						}
 					}).call(projectName);
 		}
-		final JFreeChart chart = ChartFactory.createBarChart("Project Results",
-				null, "# of Findings", importanceData,
-				PlotOrientation.HORIZONTAL, true, false, false);
+		final JFreeChart chart = ChartFactory.createBarChart(
+				"Latest Scan Findings By Compilation", null, "# of Findings",
+				importanceData, PlotOrientation.HORIZONTAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();

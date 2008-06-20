@@ -40,9 +40,9 @@ public class ProjectFindingsChart implements IDatabasePlot {
 						}
 					}).call(projectName);
 		}
-		final JFreeChart chart = ChartFactory.createBarChart("Project Results",
-				null, "# of Findings", importanceData,
-				PlotOrientation.VERTICAL, true, false, false);
+		final JFreeChart chart = ChartFactory.createBarChart(
+				"Findings Breakdown Per Scan", null, "# of Findings",
+				importanceData, PlotOrientation.VERTICAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();

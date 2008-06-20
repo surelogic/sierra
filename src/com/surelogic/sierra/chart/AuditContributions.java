@@ -14,10 +14,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
@@ -45,9 +42,9 @@ public final class AuditContributions implements IDatabasePlot {
 			dataset.setValue(uo.getFindings(), "Findings Examined", uo
 					.getUserName());
 		}
-		final JFreeChart chart = ChartFactory.createBarChart("Contributions",
-				null, "# in the last 30 days", dataset,
-				PlotOrientation.HORIZONTAL, true, false, false);
+		final JFreeChart chart = ChartFactory.createBarChart(null, null,
+				"# of Comments", dataset, PlotOrientation.HORIZONTAL, true,
+				false, false);
 
 		final CategoryPlot plot = chart.getCategoryPlot();
 		final BarRenderer bar = (BarRenderer) plot.getRenderer();
@@ -55,11 +52,6 @@ public final class AuditContributions implements IDatabasePlot {
 		bar.setSeriesOutlinePaint(0, Color.BLACK);
 		bar.setSeriesPaint(1, Color.GRAY);
 		bar.setSeriesOutlinePaint(1, Color.GRAY);
-
-		final TextTitle t = chart.getTitle();
-		t.setPosition(RectangleEdge.TOP);
-		t.setHorizontalAlignment(HorizontalAlignment.LEFT);
-		t.setPaint(Color.GRAY);
 
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
