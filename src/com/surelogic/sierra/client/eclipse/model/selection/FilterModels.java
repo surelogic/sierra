@@ -98,13 +98,10 @@ public final class FilterModels extends Filter {
 	
 	@Override
 	protected String getJoinPart() {
-	  /*
 	  return ", FINDING_RELATION_OVERVIEW FRO where (" +
-	         "(FO.FINDING_ID = FRO.PARENT_FINDING_ID AND FRO.CHILD_FINDING_ID = FJ.FINDING_ID) OR " +
-	         "(FO.FINDING_ID = FRO.CHILD_FINDING_ID AND FRO.PARENT_FINDING_ID = FJ.FINDING_ID))";
-	  */
-	  return ", FINDING_RELATION_OVERVIEW FRO where "+ 
-	         "(FO.FINDING_ID = FRO.CHILD_FINDING_ID AND FRO.PARENT_FINDING_ID = FJ.FINDING_ID)";
+             //"(FO.FINDING_ID = FJ.FINDING_ID) OR " +
+	         //"(FO.FINDING_ID = FRO.PARENT_FINDING_ID AND FRO.CHILD_FINDING_ID = FJ.FINDING_ID) OR " +
+	         "(FO.FINDING_ID = FRO.CHILD_FINDING_ID AND FRO.PARENT_FINDING_ID = FJ.FINDING_ID))";	  
 	}
 	
 	@Override
