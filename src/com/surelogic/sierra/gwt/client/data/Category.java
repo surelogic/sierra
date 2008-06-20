@@ -25,6 +25,8 @@ public class Category implements Serializable, Cacheable {
 
 	private List<ScanFilterInfo> scanFiltersUsing;
 
+	private boolean local;
+
 	public String getName() {
 		return name;
 	}
@@ -144,6 +146,7 @@ public class Category implements Serializable, Cacheable {
 		copy.revision = revision;
 		copy.name = name;
 		copy.info = info;
+		copy.local = local;
 		if (parents != null) {
 			copy.parents = new HashSet<Category>();
 			for (final Category parent : parents) {
