@@ -75,6 +75,14 @@ public class Category implements Serializable, Cacheable {
 		this.info = info;
 	}
 
+	public boolean isLocal() {
+		return local;
+	}
+
+	public void setLocal(boolean local) {
+		this.local = local;
+	}
+
 	public List<ScanFilterInfo> getScanFiltersUsing() {
 		if (scanFiltersUsing == null) {
 			scanFiltersUsing = new ArrayList<ScanFilterInfo>();
