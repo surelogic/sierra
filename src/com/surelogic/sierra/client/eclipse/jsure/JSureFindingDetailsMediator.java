@@ -192,12 +192,14 @@ implements IViewUpdater {
 
 			private void getOverviews(final Connection c, final Query q, 
 					                  final Long rootId, FindingDetail detail, Direction d) {
+				//System.out.println(d+" : "+rootId);
 				details.put(rootId, detail);
 				if (d.lookAtChildren()) {
 					FindingRelationOverview children  = FindingRelationOverview.getOverviewOrNull(q, rootId, true);					
 					f_childOverviews.put(rootId, children);
 					for(FindingRelation r : children.getRelations()) {
 						Long id = r.getChildId();
+						//System.out.println("Details for child "+id);
 						getDetails(c, q, id, Direction.AT_CHILDREN);
 					}
 					children.sort(new Comparator<FindingRelation>() {
@@ -379,7 +381,7 @@ implements IViewUpdater {
 			fro = (FindingRelationOverview) parent;
 		} else {
 			FindingRelation fr = (FindingRelation) parent;
-			Long parentId = lookAtChildren ? fr.getParentId() : fr.getChildId();
+			Long parentId = lookAtChildren ? fr.getChildId() : fr.getParentId();
 			Map<Long,FindingRelationOverview> overviews = 
 				lookAtChildren ? f_childOverviews : f_ancestorOverviews;
 			fro = overviews.get(parentId);
