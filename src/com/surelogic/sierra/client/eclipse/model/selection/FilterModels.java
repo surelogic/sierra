@@ -67,6 +67,15 @@ public final class FilterModels extends Filter {
 	}
 	
 	@Override
+	protected void sortAllValues() {
+		Collections.sort(f_allValues, new Comparator<String>() {
+			public int compare(String id1, String id2) {
+				return f_summaries.get(id1).compareTo(f_summaries.get(id2));
+			}
+		});
+	}
+	
+	@Override
 	public Image getImageFor(String value) {
 		return f_images.get(value);
 	}

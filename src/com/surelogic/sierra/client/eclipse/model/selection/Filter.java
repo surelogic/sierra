@@ -294,6 +294,10 @@ public abstract class Filter {
 	protected void deriveAllValues() throws Exception {
 		f_allValues.clear();
 		f_allValues.addAll(f_counts.keySet());
+		sortAllValues();
+	}
+
+	protected void sortAllValues() {
 		Collections.sort(f_allValues);
 	}
 
