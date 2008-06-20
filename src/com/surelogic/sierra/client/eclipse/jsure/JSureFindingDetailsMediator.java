@@ -31,10 +31,10 @@ implements IViewUpdater {
 	private static final int VIEW_OWN_DEPENDENCIES = 0;
 	private static final int VIEW_DEPENDENT_ON_THIS = 1;
   
-	private final RGB f_BackgroundColorRGB;
+	//private final RGB f_BackgroundColorRGB;
 
 	private final Composite[] f_parents;
-	private final Label[] f_labels;
+	//private final Label[] f_labels;
 	private final TreeViewer[] f_viewers;
 	
 	private volatile FindingDetail f_finding;
@@ -52,7 +52,7 @@ implements IViewUpdater {
 			                           Composite[] parents, Label[] labels, TreeViewer[] viewers) {
 		super(view);
 		f_parents = parents;
-		f_labels  = labels;
+		//f_labels  = labels;
 		f_viewers = viewers;
 		
 		int i=0;
@@ -110,9 +110,10 @@ implements IViewUpdater {
 				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
 			}
 		});		
-		
+		/*
 		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND).getRGB();
+		*/
 	}
 
 	public String getHelpId() {
@@ -150,12 +151,19 @@ implements IViewUpdater {
 		}
 	}
 	
-	private final Comparator<FindingRelation> relationComparator = 
-      new Comparator<FindingRelation>() {
+	class RelationComparator implements Comparator<FindingRelation> {
+		final boolean lookAtChildren;
+		RelationComparator(boolean atChildren) {
+			lookAtChildren = atChildren;
+		}
+		
 		public int compare(FindingRelation o1, FindingRelation o2) {
-			return getLabel(o1, true).compareTo(getLabel(o2, true));
+			return getLabel(o1, lookAtChildren).compareTo(getLabel(o2, lookAtChildren));
 		}								
-	};
+	}
+	
+	final RelationComparator childComparator = new RelationComparator(true);
+	final RelationComparator ancestorComparator = new RelationComparator(false);
 	
 	void asyncQueryAndShow(final FindingDetail detail) {
 		final Long findingIdObj = detail.getFindingId();
@@ -210,7 +218,7 @@ implements IViewUpdater {
 						getDetails(c, q, id, Direction.AT_CHILDREN);
 					}
 					children.filter(new Filter(true, children.getRelations()));
-					children.sort(relationComparator);
+					children.sort(childComparator);
 				}
 				if (d.lookAtAncestors()) {
 					FindingRelationOverview ancestors = FindingRelationOverview.getOverviewOrNull(q, rootId, false);
@@ -220,7 +228,7 @@ implements IViewUpdater {
 						getDetails(c, q, id, Direction.AT_ANCESTORS);
 					}
 					ancestors.filter(new Filter(false, ancestors.getRelations()));
-					ancestors.sort(relationComparator);		
+					ancestors.sort(ancestorComparator);		
 				}		
 			}
 
