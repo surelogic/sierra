@@ -45,4 +45,18 @@ public class FindingRelationOverview {
 	public boolean isEmpty() {
 		return f_relations.isEmpty();		
 	}
+	
+	public void filter(Filter f) {
+		Iterator<FindingRelation> it = f_relations.iterator();
+		while (it.hasNext()) {
+			FindingRelation r = it.next();
+			if (f.filterOut(r)) {
+				it.remove();
+			}
+		}
+	}
+	
+	public interface Filter {
+		boolean filterOut(FindingRelation r);
+	}
 }
