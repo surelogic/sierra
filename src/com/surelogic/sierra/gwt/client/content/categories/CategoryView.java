@@ -25,8 +25,6 @@ public class CategoryView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Category");
-
 		categoryInfo.setWidth("100%");
 		categoryInfo.addStyleName("padded");
 		categoryInfo.add(description);

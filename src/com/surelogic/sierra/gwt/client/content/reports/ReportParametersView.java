@@ -30,8 +30,6 @@ public class ReportParametersView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Report Parameters");
-
 		description.addStyleName("padded");
 		contentPanel.add(description);
 
@@ -67,7 +65,7 @@ public class ReportParametersView extends BlockPanel {
 		paramUIMap.clear();
 
 		int rowIndex = 0;
-		for (Report.Parameter param : report.getParameters()) {
+		for (final Report.Parameter param : report.getParameters()) {
 			parametersTable.setText(rowIndex, 0, param.getName() + ":");
 			parametersTable.getCellFormatter().setVerticalAlignment(rowIndex,
 					0, HasVerticalAlignment.ALIGN_TOP);
@@ -87,7 +85,7 @@ public class ReportParametersView extends BlockPanel {
 	public Report getUpdatedReport() {
 		final Report report = selection.copy();
 
-		for (Map.Entry<Report.Parameter, Widget> paramEntry : paramUIMap
+		for (final Map.Entry<Report.Parameter, Widget> paramEntry : paramUIMap
 				.entrySet()) {
 			final Parameter reportParam = report.getParameter(paramEntry
 					.getKey().getName());
@@ -125,7 +123,7 @@ public class ReportParametersView extends BlockPanel {
 								lb.addItem("No Projects");
 							} else {
 								lb.setEnabled(true);
-								for (String project : result) {
+								for (final String project : result) {
 									lb.addItem(project);
 								}
 							}
@@ -137,18 +135,18 @@ public class ReportParametersView extends BlockPanel {
 					"Irrelevant");
 		}
 
-		TextBox tb = new TextBox();
+		final TextBox tb = new TextBox();
 		tb.setWidth("100%");
 		return tb;
 	}
 
 	private ListBox createListBox(int visibleItemCount, String width,
 			String... items) {
-		ListBox lb = new ListBox(true);
+		final ListBox lb = new ListBox(true);
 		lb.setWidth(width);
 		lb.setVisibleItemCount(visibleItemCount);
 		if (items != null) {
-			for (String item : items) {
+			for (final String item : items) {
 				lb.addItem(item);
 			}
 		}

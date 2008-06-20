@@ -12,23 +12,23 @@ public class ReportView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Report");
-
+		// nothing to do
 	}
 
 	public void retrieveReport(Report selection) {
 		setWaitStatus();
 
-		StringBuffer str = new StringBuffer(selection.getName()).append(" ");
+		final StringBuffer str = new StringBuffer(selection.getName())
+				.append(" ");
 		str.append(" \"").append(selection.getTitle()).append("\" (");
-		for (Parameter param : selection.getParameters()) {
+		for (final Parameter param : selection.getParameters()) {
 			str.append(param.getName()).append("=");
-			List<String> values = param.getValues();
+			final List<String> values = param.getValues();
 			if (values.size() == 1) {
 				str.append(values.get(0));
 			} else if (values.size() > 1) {
 				str.append("[");
-				for (String value : values) {
+				for (final String value : values) {
 					str.append(value).append(",");
 				}
 				str.append("]");

@@ -11,7 +11,6 @@ public class ProjectView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Project");
 		contentPanel.add(chart);
 	}
 

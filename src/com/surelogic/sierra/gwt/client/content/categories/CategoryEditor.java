@@ -30,8 +30,6 @@ public class CategoryEditor extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Category");
-
 		categoryInfo.setWidth("100%");
 
 		categoryInfo.setText(0, 0, "Name:");
@@ -86,11 +84,11 @@ public class CategoryEditor extends BlockPanel {
 			Set<FindingTypeFilter> excludedFindings) {
 		final Category updatedCat = category.copy();
 		findingsEditor.saveTo(updatedCat);
-		for (Category newCat : selectedCategories) {
+		for (final Category newCat : selectedCategories) {
 			updatedCat.getParents().add(newCat.copy());
 		}
-		for (FindingTypeFilter excludedFinding : excludedFindings) {
-			FindingTypeFilter newEntry = excludedFinding.copy();
+		for (final FindingTypeFilter excludedFinding : excludedFindings) {
+			final FindingTypeFilter newEntry = excludedFinding.copy();
 			newEntry.setFiltered(true);
 			updatedCat.getEntries().add(newEntry);
 		}
@@ -125,7 +123,7 @@ public class CategoryEditor extends BlockPanel {
 			final FindingTypeFilterComparator filterComparator = new FindingTypeFilterComparator();
 			Collections.sort(catFindings, filterComparator);
 
-			for (FindingTypeFilter finding : catFindings) {
+			for (final FindingTypeFilter finding : catFindings) {
 				if (!category.parentContains(finding)) {
 					contentPanel.add(createFindingUI(finding, finding
 							.isFiltered()));
@@ -134,11 +132,12 @@ public class CategoryEditor extends BlockPanel {
 
 			// add findings that belong to the parent categories of the selected
 			// category
-			final Set<FindingTypeFilter> excluded = category.getExcludedEntries();
-			List<Category> sortedParents = new ArrayList<Category>(category
-					.getParents());
+			final Set<FindingTypeFilter> excluded = category
+					.getExcludedEntries();
+			final List<Category> sortedParents = new ArrayList<Category>(
+					category.getParents());
 			Collections.sort(sortedParents, new CategoryComparator());
-			for (Category parent : sortedParents) {
+			for (final Category parent : sortedParents) {
 				parentCategories.add(parent);
 
 				final DisclosurePanel parentPanel = new DisclosurePanel(
@@ -151,15 +150,15 @@ public class CategoryEditor extends BlockPanel {
 				final List<FindingTypeFilter> parentFindings = new ArrayList<FindingTypeFilter>(
 						parent.getIncludedEntries());
 				Collections.sort(parentFindings, filterComparator);
-				for (FindingTypeFilter finding : parentFindings) {
+				for (final FindingTypeFilter finding : parentFindings) {
 					findingsPanel.add(createFindingUI(finding, excluded
 							.contains(finding)));
 				}
 			}
 		}
 
-		private ItemCheckBox<FindingTypeFilter> createFindingUI(FindingTypeFilter finding,
-				boolean filtered) {
+		private ItemCheckBox<FindingTypeFilter> createFindingUI(
+				FindingTypeFilter finding, boolean filtered) {
 			final ItemCheckBox<FindingTypeFilter> findingUI = new ItemCheckBox<FindingTypeFilter>(
 					finding.getName(), finding);
 			findingUI.setTitle(finding.getShortMessage());
@@ -173,20 +172,20 @@ public class CategoryEditor extends BlockPanel {
 			// clone the parent categories from the UI into the target
 			final Set<Category> targetParents = target.getParents();
 			targetParents.clear();
-			for (Category parentCat : parentCategories) {
+			for (final Category parentCat : parentCategories) {
 				targetParents.add(parentCat.copy());
 			}
 
 			// clone the selected category's entries
 			final Set<FindingTypeFilter> targetFindings = target.getEntries();
 			targetFindings.clear();
-			for (FindingTypeFilter catFinding : category.getEntries()) {
+			for (final FindingTypeFilter catFinding : category.getEntries()) {
 				targetFindings.add(catFinding.copy());
 			}
 
 			// copy settings or clone the filter entries to the target
 			final Set<FindingTypeFilter> targetEntries = target.getEntries();
-			for (Map.Entry<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findingEntry : findings
+			for (final Map.Entry<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findingEntry : findings
 					.entrySet()) {
 				if (!findingEntry.getValue().isChecked()) {
 					final FindingTypeFilter uiFinding = findingEntry.getKey();
@@ -201,9 +200,9 @@ public class CategoryEditor extends BlockPanel {
 			}
 		}
 
-		private FindingTypeFilter findEntry(Set<FindingTypeFilter> targetEntries,
-				String uuid) {
-			for (FindingTypeFilter finding : targetEntries) {
+		private FindingTypeFilter findEntry(
+				Set<FindingTypeFilter> targetEntries, String uuid) {
+			for (final FindingTypeFilter finding : targetEntries) {
 				if (finding.getUuid().equals(uuid)) {
 					return finding;
 				}

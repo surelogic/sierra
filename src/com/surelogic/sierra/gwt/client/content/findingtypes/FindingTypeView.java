@@ -24,8 +24,6 @@ public class FindingTypeView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		setTitle("Finding Type");
-
 		description.addStyleName("padded");
 		contentPanel.add(description);
 

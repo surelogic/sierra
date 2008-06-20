@@ -115,7 +115,7 @@ public class ScanFiltersContent extends
 		private void refresh() {
 			panel.clear();
 			if (filter != null) {
-				setTitle(filter.getName());
+				setSummary(filter.getName());
 				panel
 						.add(new Label(
 								"A scan filter specifies the finding types that are included when a scan is loaded into the system.  You can add finding types individually, or you can add all of the finding types in a category at once. You can also set the importance that a particular finding type or category has."));
