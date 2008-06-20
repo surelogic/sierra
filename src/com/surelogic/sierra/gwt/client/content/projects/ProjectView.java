@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.projects;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
@@ -8,7 +7,7 @@ import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class ProjectView extends BlockPanel {
 
-	private final HorizontalPanel chart = new HorizontalPanel();
+	private final VerticalPanel chart = new VerticalPanel();
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -22,10 +21,10 @@ public class ProjectView extends BlockPanel {
 		} else {
 			setSummary(project.getName());
 			chart.clear();
-			chart.add(ChartBuilder.name("ProjectFindingsChart").prop(
-					"projectName", project.getName()).build());
-			chart.add(ChartBuilder.name("ProjectCompilationsChart").prop(
-					"projectName", project.getName()).build());
+			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
+					.prop("projectName", project.getName()).build());
+			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
+					.prop("projectName", project.getName()).build());
 		}
 
 	}
