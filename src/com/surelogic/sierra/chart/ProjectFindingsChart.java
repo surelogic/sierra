@@ -42,7 +42,7 @@ public class ProjectFindingsChart implements IDatabasePlot {
 		}
 		final JFreeChart chart = ChartFactory.createBarChart("Project Results",
 				null, "# of Findings", importanceData,
-				PlotOrientation.HORIZONTAL, true, false, false);
+				PlotOrientation.VERTICAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
