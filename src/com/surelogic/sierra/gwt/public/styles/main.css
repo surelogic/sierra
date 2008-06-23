@@ -406,6 +406,7 @@ img {
 
 .gwt-DialogBox .Caption {
 	border: 2px groove #666699;
+	background-color: #DDDDFF;
 	padding: 3px;
 	margin-bottom: 2px;
 	font-weight: bold;

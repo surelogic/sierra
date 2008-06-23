@@ -14,6 +14,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 public abstract class FormDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final FlexTable contentTable = new FlexTable();
+	private final HorizontalPanel buttonPanel = new HorizontalPanel();
 	private final Label errorMessage = new Label("");
 	private boolean initialized;
 	private Status status;
@@ -28,7 +29,6 @@ public abstract class FormDialog extends DialogBox {
 		contentTable.setWidth("100%");
 		rootPanel.add(contentTable);
 
-		final HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setWidth("100%");
 		buttonPanel.addStyleName("sl-FormDialog-buttonpanel");
 
@@ -52,7 +52,8 @@ public abstract class FormDialog extends DialogBox {
 		buttonPanel.add(rightButtons);
 		buttonPanel.setCellHorizontalAlignment(rightButtons,
 				HorizontalPanel.ALIGN_RIGHT);
-
+		buttonPanel.setCellVerticalAlignment(rightButtons,
+				HorizontalPanel.ALIGN_MIDDLE);
 		rootPanel.add(buttonPanel);
 		setWidget(rootPanel);
 	}
