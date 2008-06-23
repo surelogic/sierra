@@ -17,7 +17,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -32,12 +31,12 @@ import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingTypesByProject implements IDatabasePlot {
+public class FindingsByProject implements IDatabasePlot {
 
 	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
 			throws SQLException, IOException {
-		final Parameter projectParam = report.getParameter("projects");
-		final Parameter impParam = report.getParameter("importances");
+		final Parameter projectParam = report.getParameter("Projects");
+		final Parameter impParam = report.getParameter("Importance");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		if (projectParam != null) {
@@ -94,26 +93,13 @@ public class FindingTypesByProject implements IDatabasePlot {
 				"Findings Breakdown Per Scan", null, "# of Findings",
 				importanceData, PlotOrientation.HORIZONTAL, true, false, false);
 
-		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
-				.getRenderer();
-
-		bar.setSeriesPaint(0, Color.GRAY);
-		bar.setSeriesOutlinePaint(0, Color.GRAY);
-		final Color brown = new Color(99, 66, 0);
-		bar.setSeriesPaint(1, brown);
-		bar.setSeriesOutlinePaint(1, brown);
-		bar.setSeriesPaint(2, Color.BLACK);
-		bar.setSeriesOutlinePaint(2, Color.BLACK);
-		bar.setSeriesPaint(3, Color.RED);
-		bar.setSeriesOutlinePaint(3, Color.RED);
-
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setDataset(1, totalData);
 		final LineAndShapeRenderer renderer = new LineAndShapeRenderer();
 		renderer.setBaseShapesVisible(true);
-		renderer.setSeriesLinesVisible(0, true);
+		renderer.setSeriesLinesVisible(0, false);
 		renderer.setSeriesPaint(0, Color.BLACK);
-		renderer.setSeriesShapesFilled(0, false);
+		renderer.setSeriesShapesFilled(0, true);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 
