@@ -52,15 +52,19 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 		}
 		if (selectedFilename != null) {
 			File runDocument = new File(selectedFilename);
-			if (runDocument.canRead()) {
-				final String name = runDocument.getName();
-				final int last    = name.length() - ".sea.xml".length();
-				final String proj = name.substring(0, last);				
-				final ImportJSureDocumentJob job = 
-					new ImportJSureDocumentJob(proj, runDocument);
-				job.setUser(true);
-				job.schedule();
-			}
+			asyncImportJSureDocument(runDocument);
+		}
+	}
+
+	public static void asyncImportJSureDocument(File runDocument) {
+		if (runDocument.canRead()) {
+			final String name = runDocument.getName();
+			final int last    = name.length() - ".sea.xml".length();
+			final String proj = name.substring(0, last);				
+			final ImportJSureDocumentJob job = 
+				new ImportJSureDocumentJob(proj, runDocument);
+			job.setUser(true);
+			job.schedule();
 		}
 	}
 
