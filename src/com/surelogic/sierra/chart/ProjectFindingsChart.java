@@ -25,6 +25,7 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 
 public class ProjectFindingsChart implements IDatabasePlot {
 
@@ -33,25 +34,29 @@ public class ProjectFindingsChart implements IDatabasePlot {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		final String projectName = report.getParameter("projectName")
-				.getValue();
-		if (projectName != null) {
-			final Map<String, Integer> totals = new TreeMap<String, Integer>();
-			new ConnectionQuery(c).prepared("Plots.Project.scanFindings",
-					new RowHandler<Void>() {
-						public Void handle(Row r) {
-							final int count = r.nextInt();
-							final String importance = r.nextString();
-							final String time = r.nextString();
-							importanceData.setValue(count, importance, time);
-							final Integer total = totals.get(time);
-							totals.put(time, (total == null ? 0 : total)
-									+ count);
-							return null;
-						}
-					}).call(projectName);
-			for (final Entry<String, Integer> entry : totals.entrySet()) {
-				totalData.setValue(entry.getValue(), "Total", entry.getKey());
+		final Parameter projectParam = report.getParameter("projectName");
+		if (projectParam != null) {
+			final String projectName = projectParam.getValue();
+			if (projectName != null) {
+				final Map<String, Integer> totals = new TreeMap<String, Integer>();
+				new ConnectionQuery(c).prepared("Plots.Project.scanFindings",
+						new RowHandler<Void>() {
+							public Void handle(Row r) {
+								final int count = r.nextInt();
+								final String importance = r.nextString();
+								final String time = r.nextString();
+								importanceData
+										.setValue(count, importance, time);
+								final Integer total = totals.get(time);
+								totals.put(time, (total == null ? 0 : total)
+										+ count);
+								return null;
+							}
+						}).call(projectName);
+				for (final Entry<String, Integer> entry : totals.entrySet()) {
+					totalData.setValue(entry.getValue(), "Total", entry
+							.getKey());
+				}
 			}
 		}
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
