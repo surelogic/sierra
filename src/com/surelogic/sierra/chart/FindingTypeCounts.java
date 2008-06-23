@@ -35,6 +35,7 @@ public class FindingTypeCounts implements IDatabasePlot {
 							return set;
 						}
 					}).call(uid);
+			mutableSize.setHeight(25 * set.getColumnCount() + 100);
 			final JFreeChart chart = ChartFactory.createBarChart("Frequency",
 					null, "# in the latest scan", set,
 					PlotOrientation.HORIZONTAL, true, false, false);
