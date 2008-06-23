@@ -92,7 +92,7 @@ public class Report implements Serializable, Cacheable {
 		private static final long serialVersionUID = 3854024638284271950L;
 
 		public enum Type {
-			TEXT, PRIORITY, PROJECTS
+			TEXT, IMPORTANCE, PROJECTS
 		};
 
 		private String name;

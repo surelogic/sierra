@@ -25,12 +25,12 @@ public class ReportCache extends Cache<Report> {
 	private Report findingsByProject() {
 		final Report report = new Report();
 		report.setUuid("Temp1");
-		report.setName("FindingTypesByProject");
+		report.setName("FindingsByProject");
 		report.setTitle("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
 		final Set<Parameter> params = report.getParameters();
 		params.add(new Parameter("Projects", Type.PROJECTS));
-		params.add(new Parameter("Priority", Type.PRIORITY));
+		params.add(new Parameter("Importance", Type.IMPORTANCE));
 		return report;
 	}
 

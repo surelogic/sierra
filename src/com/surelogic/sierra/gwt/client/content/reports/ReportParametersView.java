@@ -42,7 +42,7 @@ public class ReportParametersView extends BlockPanel {
 	}
 
 	public void setSelection(Report report) {
-		this.selection = report;
+		selection = report;
 
 		if (report != null) {
 			setSummary(report.getTitle());
@@ -130,7 +130,7 @@ public class ReportParametersView extends BlockPanel {
 						}
 					});
 			return lb;
-		} else if (param.getType() == Parameter.Type.PRIORITY) {
+		} else if (param.getType() == Parameter.Type.IMPORTANCE) {
 			return createListBox(5, "50%", "Critical", "High", "Medium", "Low",
 					"Irrelevant");
 		}

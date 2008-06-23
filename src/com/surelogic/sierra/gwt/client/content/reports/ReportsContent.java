@@ -26,7 +26,7 @@ public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 	protected void onInitialize(DockPanel rootPanel,
 			VerticalPanel selectionPanel) {
 		setCaption("Reports");
-
+		reportView.initialize();
 		reportParamsView.initialize();
 		reportParamsView.addReportAction("Show Table", new ClickListener() {
 
@@ -65,6 +65,7 @@ public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 		});
 
 		selectionPanel.add(reportParamsView);
+		selectionPanel.add(reportView);
 	}
 
 	@Override
