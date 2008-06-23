@@ -16,19 +16,19 @@ public class ReportCache extends Cache<Report> {
 	@Override
 	protected void doRefreshCall(AsyncCallback<List<Report>> callback) {
 		// TODO load real reports
-		List<Report> tempReports = new ArrayList<Report>();
+		final List<Report> tempReports = new ArrayList<Report>();
 		tempReports.add(findingsByProject());
 
 		callback.onSuccess(tempReports);
 	}
 
 	private Report findingsByProject() {
-		Report report = new Report();
+		final Report report = new Report();
 		report.setUuid("Temp1");
-		report.setName("FindingsByProject");
+		report.setName("FindingTypesByProject");
 		report.setTitle("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
-		Set<Parameter> params = report.getParameters();
+		final Set<Parameter> params = report.getParameters();
 		params.add(new Parameter("Projects", Type.PROJECTS));
 		params.add(new Parameter("Priority", Type.PRIORITY));
 		return report;
