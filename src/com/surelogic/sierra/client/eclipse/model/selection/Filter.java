@@ -641,7 +641,7 @@ public abstract class Filter {
 		final String query = getBaseCountsQuery();
 		final String column = getTablePrefix(usesJoin()) + getColumnName();
 		b.append(QB.get(query, column, getWhereClause(false), column));
-		// System.out.println(b.toString());
+	    // System.out.println("Counts: "+b.toString());
 		return b;
 	}
 
@@ -777,6 +777,10 @@ public abstract class Filter {
 	}
 
 	protected final String createInClause(String column, Iterable<String> values) {
+		return createInClause(f_quote, column, values);
+	}
+	
+	protected final String createInClause(boolean quote, String column, Iterable<String> values) {
 		final StringBuilder b = new StringBuilder();
 		b.append('(');
 		b.append(getTablePrefix(usesJoin()));
@@ -794,13 +798,13 @@ public abstract class Filter {
 			} else {
 				b.append(",");
 			}
-			addValueTo(b, value);
+			addValueTo(quote, b, value);
 		}
 		if (first) {
 			/*
 			 * Hack to avoid problems with empty query
 			 */
-			if (f_quote)
+			if (quote)
 				b.append("'xyzzy'");
 			else
 				b.append("-456");
@@ -822,9 +826,9 @@ public abstract class Filter {
 
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
-	 */
-	private void addValueTo(StringBuilder b, String dbValue) {
-		if (f_quote) {
+	 */		
+	private static void addValueTo(boolean quote, StringBuilder b, String dbValue) {
+		if (quote) {
 			b.append("'").append(JDBCUtils.escapeString(dbValue)).append("'");
 		} else {
 			b.append(dbValue);

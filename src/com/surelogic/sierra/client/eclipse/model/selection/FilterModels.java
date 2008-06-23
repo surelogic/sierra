@@ -31,6 +31,7 @@ public final class FilterModels extends Filter {
 	
 	FilterModels(Selection selection, Filter previous) {
 		super(selection, previous);
+		f_quote = false;
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public final class FilterModels extends Filter {
 	
 	@Override
 	protected String getMinimalWhereClausePart() {
-		return createInClause("FO.FINDING_TYPE", 
+		return createInClause(true, "FO.FINDING_TYPE", 
 				              BuglinkData.getInstance().getFindingTypes(JSureUtil.MODEL_CATEGORY_ID));				
 	}
 	
@@ -96,12 +97,21 @@ public final class FilterModels extends Filter {
 		return "FindingsSelectionView.countModels";
 	}
 	
+	static final String nestedTables = "from FINDING_RELATION_OVERVIEW FRO where";
+	
 	@Override
-	protected String getJoinPart() {
+	protected String getJoinPart() {		
+		return "where (FJ.FINDING_ID in (" +
+		         "(select FRO.PARENT_FINDING_ID "+nestedTables+" FRO.CHILD_FINDING_ID = FO.FINDING_ID)" +
+		         " union all " +
+		         "(select FRO.CHILD_FINDING_ID "+nestedTables+" FRO.PARENT_FINDING_ID = FO.FINDING_ID)" +
+		         ") or FO.FINDING_ID = FJ.FINDING_ID)";		
+	  /*
 	  return ", FINDING_RELATION_OVERVIEW FRO where (" +
              //"(FO.FINDING_ID = FJ.FINDING_ID) OR " +
 	         //"(FO.FINDING_ID = FRO.PARENT_FINDING_ID AND FRO.CHILD_FINDING_ID = FJ.FINDING_ID) OR " +
 	         "(FO.FINDING_ID = FRO.CHILD_FINDING_ID AND FRO.PARENT_FINDING_ID = FJ.FINDING_ID))";	  
+	  */
 	}
 	
 	@Override
