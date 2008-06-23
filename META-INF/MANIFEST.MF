@@ -30,3 +30,4 @@ Require-Bundle: org.eclipse.ui,
  com.surelogic.jsure.message
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
+Export-Package: com.surelogic.sierra.client.eclipse.jsure
