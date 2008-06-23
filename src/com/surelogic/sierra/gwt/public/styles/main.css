@@ -388,20 +388,28 @@ img {
 	padding: 1px;
 }
 
+/* SL FormDialog */
+.sl-FormDialog-buttonpanel {
+	border-top: 1px solid #000000;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+	padding-top: 2px;
+}
+	
 /* GWT Component Styling */ /* DialogBox Styling */
 .gwt-DialogBox {
-	border: 2px outset;
+	border: 3px groove #666699;
 	background-color: white;
+	padding: 3px;
 }
 
 .gwt-DialogBox .Caption {
-	border: 2px inset;
-	background-color: #005495;
+	border: 2px groove #666699;
 	padding: 3px;
-	margin: 2px;
-	font-size: large;
+	margin-bottom: 2px;
 	font-weight: bold;
-	color: white;
+	text-align: center;
 	cursor: default;
 }
 

@@ -20,6 +20,7 @@ public abstract class FormDialog extends DialogBox {
 
 	public FormDialog() {
 		super();
+		rootPanel.setWidth("100%");
 
 		errorMessage.setWidth("100%");
 		errorMessage.addStyleName("error");
@@ -28,6 +29,10 @@ public abstract class FormDialog extends DialogBox {
 		rootPanel.add(contentTable);
 
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
+		buttonPanel.setWidth("100%");
+		buttonPanel.addStyleName("sl-FormDialog-buttonpanel");
+
+		final HorizontalPanel rightButtons = new HorizontalPanel();
 		final Button ok = new Button("Ok");
 		ok.addClickListener(new ClickListener() {
 
@@ -35,7 +40,7 @@ public abstract class FormDialog extends DialogBox {
 				doOkClick();
 			}
 		});
-		buttonPanel.add(ok);
+		rightButtons.add(ok);
 		final Button cancel = new Button("Cancel");
 		cancel.addClickListener(new ClickListener() {
 
@@ -43,11 +48,12 @@ public abstract class FormDialog extends DialogBox {
 				hide();
 			}
 		});
-		buttonPanel.add(cancel);
+		rightButtons.add(cancel);
+		buttonPanel.add(rightButtons);
+		buttonPanel.setCellHorizontalAlignment(rightButtons,
+				HorizontalPanel.ALIGN_RIGHT);
 
 		rootPanel.add(buttonPanel);
-		rootPanel.setCellHorizontalAlignment(buttonPanel,
-				VerticalPanel.ALIGN_RIGHT);
 		setWidget(rootPanel);
 	}
 
@@ -60,7 +66,7 @@ public abstract class FormDialog extends DialogBox {
 
 		super.show();
 
-		HasFocus w = getInitialFocus();
+		final HasFocus w = getInitialFocus();
 		if (w != null) {
 			w.setFocus(true);
 		}
