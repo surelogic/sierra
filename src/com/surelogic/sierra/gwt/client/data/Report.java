@@ -81,7 +81,7 @@ public class Report implements Serializable, Cacheable {
 		copy.name = name;
 		copy.title = title;
 		copy.description = description;
-		for (final Parameter param : parameters) {
+		for (final Parameter param : getParameters()) {
 			copy.getParameters().add(param.copy());
 		}
 
