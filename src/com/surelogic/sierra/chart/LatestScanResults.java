@@ -70,11 +70,13 @@ public final class LatestScanResults implements IDatabasePlot {
 		plot.setDataset(1, totalData);
 		final LineAndShapeRenderer renderer = new LineAndShapeRenderer();
 		renderer.setBaseShapesVisible(true);
+		renderer.setSeriesLinesVisible(0, false);
 		renderer.setSeriesPaint(0, Color.BLACK);
-		renderer.setSeriesShapesFilled(0, false);
+		renderer.setSeriesShapesFilled(0, true);
 		final Color DARK_GREEN = new Color(0, 100, 0);
+		renderer.setSeriesLinesVisible(1, false);
 		renderer.setSeriesPaint(1, DARK_GREEN);
-		renderer.setSeriesShapesFilled(1, false);
+		renderer.setSeriesShapesFilled(1, true);
 		plot.setRenderer(1, renderer);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		chart.setBackgroundPaint(null);
