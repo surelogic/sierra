@@ -172,7 +172,7 @@ public class Report implements Serializable, Cacheable {
 
 		public Parameter copy() {
 			final Parameter copy = new Parameter(name, type);
-			copy.getValues().addAll(values);
+			copy.getValues().addAll(getValues());
 			return copy;
 		}
 
