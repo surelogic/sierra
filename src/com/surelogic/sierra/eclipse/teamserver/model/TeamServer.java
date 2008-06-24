@@ -25,6 +25,8 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServer {
+	
+	private static final Logger LOG = SLLogger.getLogger();
 
 	private static final String LOCALHOST = "localhost";
 
@@ -55,13 +57,13 @@ public final class TeamServer {
 		if (port <= 0) {
 			final String msg = I18N.err(77, port);
 			final IllegalArgumentException e = new IllegalArgumentException(msg);
-			SLLogger.log(Level.SEVERE, msg, e);
+			LOG.log(Level.SEVERE, msg, e);
 			throw e;
 		}
 		if (f_isRunning) {
 			final String msg = I18N.err(78);
 			final IllegalStateException e = new IllegalStateException(msg);
-			SLLogger.log(Level.SEVERE, msg, e);
+			LOG.log(Level.SEVERE, msg, e);
 			throw e;
 		}
 		f_port.set(port);
@@ -388,7 +390,7 @@ public final class TeamServer {
 			/*
 			 * It is unexpected that the process is null.
 			 */
-			SLLogger.log(Level.SEVERE, I18N.err(93));
+			LOG.log(Level.SEVERE, I18N.err(93));
 		}
 		return result;
 	}
@@ -403,7 +405,7 @@ public final class TeamServer {
 				}
 			}
 		} catch (IOException e) {
-			SLLogger.log(Level.SEVERE, I18N.err(40,
+			LOG.log(Level.SEVERE, I18N.err(40,
 					"process stream after local team server startup failure"));
 		}
 	}
@@ -438,7 +440,7 @@ public final class TeamServer {
 	private File launderToFile(final String pathfile) {
 		final File file = new File(pathfile);
 		if (!file.exists()) {
-			SLLogger.log(Level.SEVERE, I18N.err(74, pathfile));
+			LOG.log(Level.SEVERE, I18N.err(74, pathfile));
 		}
 		return file;
 	}
