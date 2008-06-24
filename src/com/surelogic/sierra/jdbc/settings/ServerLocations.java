@@ -88,12 +88,16 @@ public final class ServerLocations {
 											final String contextPath = r
 													.nextString();
 											final String user = r.nextString();
+											String password = passMap.get(user
+													+ "@" + host);
+											if (password == null) {
+												password = r.nextString();
+											}
 											final SierraServerLocation loc = new SierraServerLocation(
 													label, host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													passMap.get(user + "@"
-															+ host));
+													password);
 											map.put(loc, projects.call(id));
 										}
 										return map;
