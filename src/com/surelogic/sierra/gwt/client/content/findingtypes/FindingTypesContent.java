@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class FindingTypesContent extends
 		ListContentComposite<FindingType, FindingTypeCache> {
@@ -36,7 +37,7 @@ public final class FindingTypesContent extends
 
 	@Override
 	protected boolean isMatch(FindingType item, String query) {
-		return item.getName().toLowerCase().contains(query.toLowerCase());
+		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
 	@Override

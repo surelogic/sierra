@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Server;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ServerManagementContent extends
 		ListContentComposite<Server, ServerCache> {
@@ -35,7 +36,7 @@ public class ServerManagementContent extends
 
 	@Override
 	protected boolean isMatch(Server item, String query) {
-		return item.getLabel().toLowerCase().contains(query.toLowerCase());
+		return LangUtil.containsIgnoreCase(item.getLabel(), query);
 	}
 
 	@Override

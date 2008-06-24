@@ -25,6 +25,13 @@ public final class LangUtil {
 		return s1 != null && s1.equalsIgnoreCase(s2);
 	}
 
+	public static boolean containsIgnoreCase(String str, String part) {
+		if (str == null || part == null) {
+			return false;
+		}
+		return str.toLowerCase().contains(part.toLowerCase());
+	}
+
 	public static boolean isEmpty(String value) {
 		return value == null ? true : value.equals("");
 	}

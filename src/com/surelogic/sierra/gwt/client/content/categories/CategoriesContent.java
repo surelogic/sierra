@@ -90,7 +90,7 @@ public class CategoriesContent extends
 
 	@Override
 	protected boolean isMatch(Category item, String query) {
-		return item.getName().toLowerCase().contains(query.toLowerCase());
+		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
 	@Override
