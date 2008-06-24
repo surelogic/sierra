@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 	private static final ReportsContent instance = new ReportsContent();
@@ -80,7 +81,7 @@ public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 
 	@Override
 	protected boolean isMatch(Report item, String query) {
-		return item.getTitle().toLowerCase().contains(query.toLowerCase());
+		return LangUtil.containsIgnoreCase(item.getTitle(), query);
 	}
 
 }
