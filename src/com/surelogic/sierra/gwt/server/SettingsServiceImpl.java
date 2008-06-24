@@ -26,6 +26,7 @@ import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
+import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
@@ -557,18 +558,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<com.surelogic.sierra.gwt.client.data.Server> listServerLocations() {
-		final List<com.surelogic.sierra.gwt.client.data.Server> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.Server>();
+	public List<ServerLocation> listServerLocations() {
+		final List<ServerLocation> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.ServerLocation>();
 		for (final SierraServerLocation l : ConnectionFactory.withReadOnly(
 				ServerLocations.fetch(Collections.EMPTY_MAP)).keySet()) {
-			final com.surelogic.sierra.gwt.client.data.Server s = new com.surelogic.sierra.gwt.client.data.Server();
+			final ServerLocation s = new ServerLocation();
 			s.setContext(l.getContextPath());
 			s.setHost(l.getHost());
 			s.setLabel(l.getLabel());
 			s.setPass(l.getPass());
 			s.setPort(l.getPort());
-			s.setProtocol(com.surelogic.sierra.gwt.client.data.Server.Protocol
-					.fromValue(l.getProtocol()));
+			s
+					.setProtocol(com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol
+							.fromValue(l.getProtocol()));
+			s.setUser(l.getUser());
 			servers.add(s);
 		}
 		return servers;
