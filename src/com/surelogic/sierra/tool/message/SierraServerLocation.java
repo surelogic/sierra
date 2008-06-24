@@ -42,12 +42,12 @@ public class SierraServerLocation {
 		URL url;
 		try {
 			url = new URL(server);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			url = null;
 		}
 		if (url != null) {
 			f_port = url.getPort();
-			if (url.getPath() == null || "".equals(url.getPath())) {
+			if ((url.getPath() == null) || "".equals(url.getPath())) {
 				f_contextPath = "/";
 			} else {
 				f_contextPath = url.getPath();
@@ -55,12 +55,12 @@ public class SierraServerLocation {
 			f_host = url.getHost();
 			f_secure = "https".equals(url.getProtocol());
 		} else {
-		    /*
+			/*
 			 * TODO: fix this to set the protocol properly
 			 */
-			String[] strArr = server.split(":");
+			final String[] strArr = server.split(":");
 			if (strArr.length > 1) {
-				String strPort = strArr[1];
+				final String strPort = strArr[1];
 				f_port = Integer.parseInt(strPort);
 			} else {
 				f_port = DEFAULT_PORT;
@@ -93,7 +93,7 @@ public class SierraServerLocation {
 	public int getPort() {
 		return f_port;
 	}
-	
+
 	public String getContextPath() {
 		return f_contextPath;
 	}
@@ -120,7 +120,7 @@ public class SierraServerLocation {
 		try {
 			return new URL((f_secure ? "https://" : "http://") + host
 					+ f_contextPath + "services/" + serviceName);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -130,9 +130,12 @@ public class SierraServerLocation {
 		final StringBuilder b = new StringBuilder();
 		b.append("'").append(getLabel()).append("' is ");
 		b.append(getProtocol()).append("://");
-		b.append(getHost()).append(":").append(getPort());
+		b.append(getHost()).append(":").append(getPort()).append(
+				getContextPath());
 		b.append("/user=\"").append(getUser()).append("\" ");
-		b.append(" password=\"").append(getPass()).append("\"");
+		b.append(" password=\"").append(
+				getPass() == null ? "" : getPass().replaceAll(".", "*"))
+				.append("\"");
 
 		return b.toString();
 	}
