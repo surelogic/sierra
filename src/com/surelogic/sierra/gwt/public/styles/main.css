@@ -37,6 +37,10 @@ img {
 	font-style: italic;
 }
 
+.font-gray {
+	color: #999999;
+}
+
 .logo {
 	padding: 4px;
 }

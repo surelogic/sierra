@@ -22,6 +22,7 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingSelectionDialog extends FormDialog {
 	private final Tree categoryTree = new Tree();
@@ -162,8 +163,30 @@ public class FindingSelectionDialog extends FormDialog {
 	}
 
 	private void search(String query) {
-		// TODO filter current categories
+		for (int i = 0; i < categoryTree.getItemCount(); i++) {
+			updateSearchState(categoryTree.getItem(i), query);
+		}
+	}
 
+	private boolean updateSearchState(TreeItem item, String query) {
+		final boolean itemMatch = "".equals(query)
+				|| LangUtil.containsIgnoreCase(item.getText(), query);
+
+		boolean childContains = false;
+		for (int i = 0; i < item.getChildCount(); i++) {
+			if (updateSearchState(item.getChild(i), query)) {
+				childContains = true;
+			}
+		}
+
+		item.setVisible(itemMatch || childContains);
+		item.setState(childContains);
+		if (item.getChildCount() > 0 && childContains && !itemMatch) {
+			item.getWidget().addStyleName("font-gray");
+		} else {
+			item.getWidget().removeStyleName("font-gray");
+		}
+		return itemMatch || childContains;
 	}
 
 	private class CategoryCheckListener implements ClickListener {
