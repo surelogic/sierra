@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 public class ServerManagementContent extends
 		ListContentComposite<ServerLocation, ServerCache> {
 	private static final ServerManagementContent instance = new ServerManagementContent();
-	private final ServerView serverView = new ServerView();
+	private final ServerLocationView serverView = new ServerLocationView();
 
 	public static ServerManagementContent getInstance() {
 		return instance;

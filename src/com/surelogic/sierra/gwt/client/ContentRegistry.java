@@ -12,6 +12,7 @@ import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
 import com.surelogic.sierra.gwt.client.content.reports.ReportsContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.content.servermgmt.ServerManagementContent;
 import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
 import com.surelogic.sierra.gwt.client.content.usermgmt.UserManagementContent;
 import com.surelogic.sierra.gwt.client.header.AdminHeader;
@@ -41,10 +42,12 @@ public class ContentRegistry {
 		register("settings", SettingsContent.getInstance(), adminHeader);
 		register("usermanagement", UserManagementContent.getInstance(),
 				adminHeader);
+		register("servermanagement", ServerManagementContent.getInstance(),
+				adminHeader);
 	}
 
 	public static ContentComposite getContent(String contentName) {
-		for (Map.Entry<ContentComposite, ContentEntry> mapEntry : contentMap
+		for (final Map.Entry<ContentComposite, ContentEntry> mapEntry : contentMap
 				.entrySet()) {
 			final ContentEntry contentEntry = mapEntry.getValue();
 			if (contentEntry.getName().equals(contentName)) {

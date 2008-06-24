@@ -218,48 +218,4 @@
 		<url-pattern>/services/BugLinkService</url-pattern>
 	</servlet-mapping>
 
-	<!-- Configure the server -->
-	<context-param>
-		<description>
-			Determines whether or not team server capabilities are
-			turned on.
-		</description>
-		<param-name>teamserver</param-name>
-		<param-value>on</param-value>
-	</context-param>
-	<context-param>
-		<description>
-			Where to go to update your buglink data
-		</description>
-		<param-name>parent-host</param-name>
-		<param-value>buglink.org</param-value>
-	</context-param>
-		<context-param>
-		<description>
-			Where to go to update your buglink data
-		</description>
-		<param-name>parent-port</param-name>
-		<param-value>13376</param-value>
-	</context-param>
-		<context-param>
-		<description>
-			Where to go to update your buglink data
-		</description>
-		<param-name>parent-context</param-name>
-		<param-value>/sl/</param-value>
-	</context-param>
-	<context-param>
-		<description>
-			The user used to update buglink data
-		</description>
-		<param-name>parent-user</param-name>
-		<param-value>buglink-user</param-value>
-	</context-param>
-	<context-param>
-		<description>
-			The password used to update buglink data
-		</description>
-		<param-name>parent-pass</param-name>
-		<param-value>bl!uzer</param-value>
-	</context-param>
 </web-app>
