@@ -1,5 +1,8 @@
 package com.surelogic.sierra.gwt.client.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -11,6 +14,7 @@ import com.surelogic.sierra.gwt.client.data.Cacheable;
 public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;
 	private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
+	private final List<E> items = new ArrayList<E>();
 	final Label none = new Label("None", false);
 	private ClickListener clickListener;
 
@@ -40,10 +44,19 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 
 	protected abstract ContentComposite getItemContent();
 
+	public int getItemCount() {
+		return items.size();
+	}
+
+	public E getItem(int index) {
+		return items.get(index);
+	}
+
 	public void clear() {
 		final VerticalPanel content = getContentPanel();
 		content.clear();
 		content.add(none);
+		items.clear();
 	}
 
 	public void addItem(E item) {
@@ -53,6 +66,7 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 		final VerticalPanel content = getContentPanel();
 		content.remove(none);
 		content.add(itemUI);
+		items.add(item);
 	}
 
 	protected abstract String getItemText(E item);

@@ -1,9 +1,15 @@
 package com.surelogic.sierra.gwt.client.content.findingtypes;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
+import com.surelogic.sierra.gwt.client.content.categories.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class FindingTypesContent extends
@@ -27,6 +33,13 @@ public final class FindingTypesContent extends
 		setCaption("Finding Types");
 
 		findingView.initialize();
+		findingView.addCategoriesIncludingAction("Add Category",
+				new ClickListener() {
+
+					public void onClick(Widget sender) {
+						promptForCategories();
+					}
+				});
 		selectionPanel.add(findingView);
 	}
 
@@ -43,5 +56,26 @@ public final class FindingTypesContent extends
 	@Override
 	protected void onSelectionChanged(FindingType item) {
 		findingView.setSelection(item);
+	}
+
+	private void promptForCategories() {
+		final CategorySelectionDialog dialog = new CategorySelectionDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					// TODO get the categories, and this finding type to them,
+					// and save them
+
+					getCache().refresh();
+				}
+			}
+
+		});
+		dialog.center();
+		// TODO need to get the CategoryCache singleton instance
+		dialog.setCategories(new CategoryCache(), findingView
+				.getCategoriesIncludingIds());
 	}
 }

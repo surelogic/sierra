@@ -15,6 +15,7 @@ public abstract class FormDialog extends DialogBox {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final FlexTable contentTable = new FlexTable();
 	private final HorizontalPanel buttonPanel = new HorizontalPanel();
+	private final Button okButton = new Button("Ok");
 	private final Label errorMessage = new Label("");
 	private boolean initialized;
 	private Status status;
@@ -33,14 +34,14 @@ public abstract class FormDialog extends DialogBox {
 		buttonPanel.addStyleName("sl-FormDialog-buttonpanel");
 
 		final HorizontalPanel rightButtons = new HorizontalPanel();
-		final Button ok = new Button("Ok");
-		ok.addClickListener(new ClickListener() {
+
+		okButton.addClickListener(new ClickListener() {
 
 			public void onClick(Widget sender) {
 				doOkClick();
 			}
 		});
-		rightButtons.add(ok);
+		rightButtons.add(okButton);
 		final Button cancel = new Button("Cancel");
 		cancel.addClickListener(new ClickListener() {
 
@@ -89,6 +90,10 @@ public abstract class FormDialog extends DialogBox {
 		final int nextRowIndex = contentTable.getRowCount();
 		contentTable.setWidget(nextRowIndex, 0, inputTitle);
 		contentTable.setWidget(nextRowIndex, 1, inputUI);
+	}
+
+	protected final void setOkEnabled(boolean enabled) {
+		okButton.setEnabled(enabled);
 	}
 
 	protected final void setErrorMessage(String text) {

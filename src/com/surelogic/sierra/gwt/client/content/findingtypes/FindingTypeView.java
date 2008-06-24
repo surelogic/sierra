@@ -1,5 +1,9 @@
 package com.surelogic.sierra.gwt.client.content.findingtypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
@@ -74,6 +78,19 @@ public class FindingTypeView extends BlockPanel {
 			chart.add(ChartBuilder.name("FindingTypeCounts").prop("uuid",
 					findingType.getUuid()).build());
 		}
+	}
+
+	public void addCategoriesIncludingAction(String text,
+			ClickListener clickListener) {
+		categoriesIncluding.addAction(text, clickListener);
+	}
+
+	public List<String> getCategoriesIncludingIds() {
+		final List<String> categoryIds = new ArrayList<String>();
+		for (int i = 0; i < categoriesIncluding.getItemCount(); i++) {
+			categoryIds.add(categoriesIncluding.getItem(i).getUuid());
+		}
+		return categoryIds;
 	}
 
 	private class CategoryList extends ListBlock<CategoryInfo> {
