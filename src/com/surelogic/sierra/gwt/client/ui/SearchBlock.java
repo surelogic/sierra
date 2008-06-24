@@ -13,10 +13,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.data.Cache;
-import com.surelogic.sierra.gwt.client.data.CacheListener;
-import com.surelogic.sierra.gwt.client.data.Cacheable;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.PagingPanel.PageListener;
 
 public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>

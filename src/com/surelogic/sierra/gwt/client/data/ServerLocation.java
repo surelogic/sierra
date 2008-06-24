@@ -2,6 +2,8 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
+
 public class ServerLocation implements Cacheable, Serializable {
 
 	/**

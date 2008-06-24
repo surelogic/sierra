@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
+
 public class FindingType implements Cacheable, Serializable {
 	private static final long serialVersionUID = 1766277814214421247L;
 

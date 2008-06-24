@@ -1,11 +1,10 @@
-package com.surelogic.sierra.gwt.client.content.reports;
+package com.surelogic.sierra.gwt.client.data.cache;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.surelogic.sierra.gwt.client.data.Cache;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;

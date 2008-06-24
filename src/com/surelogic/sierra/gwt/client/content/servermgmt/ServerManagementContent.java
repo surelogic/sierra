@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
+import com.surelogic.sierra.gwt.client.data.cache.ServerCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ServerManagementContent extends

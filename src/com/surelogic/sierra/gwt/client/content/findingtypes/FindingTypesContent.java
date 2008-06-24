@@ -7,9 +7,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
-import com.surelogic.sierra.gwt.client.content.categories.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
+import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class FindingTypesContent extends

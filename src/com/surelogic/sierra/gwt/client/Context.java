@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.surelogic.sierra.gwt.client.data.Cacheable;
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public final class Context {

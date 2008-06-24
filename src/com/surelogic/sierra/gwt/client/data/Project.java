@@ -2,6 +2,8 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
+
 public class Project implements Serializable, Cacheable {
 	private static final long serialVersionUID = -6729902565459490855L;
 
