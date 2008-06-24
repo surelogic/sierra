@@ -89,11 +89,14 @@ public class BootUpServletContextListener implements ServletContextListener {
 		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
 		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
 		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
-		SLLogger.log(Level.INFO, contextName + " logging " + toString
-				+ "initialized : Java runtime: maxMemory=" + maxMemoryMB
-				+ " MB; totalMemory=" + totalMemoryMB + " MB; freeMemory="
-				+ freeMemoryMB + " MB; availableProcessors="
-				+ rt.availableProcessors());
+		SLLogger.getLogger().log(
+				Level.INFO,
+				contextName + " logging " + toString
+						+ "initialized : Java runtime: maxMemory="
+						+ maxMemoryMB + " MB; totalMemory=" + totalMemoryMB
+						+ " MB; freeMemory=" + freeMemoryMB
+						+ " MB; availableProcessors="
+						+ rt.availableProcessors());
 	}
 
 	private void bootDatabase() {
@@ -107,15 +110,18 @@ public class BootUpServletContextListener implements ServletContextListener {
 				return null;
 			}
 		});
-		SLLogger.log(Level.INFO, "Derby booted with derby.storage.pageSize="
-				+ System.getProperty("derby.storage.pageSize")
-				+ " and derby.storage.pageCacheSize="
-				+ System.getProperty("derby.storage.pageCacheSize") + ".");
+		SLLogger.getLogger().log(
+				Level.INFO,
+				"Derby booted with derby.storage.pageSize="
+						+ System.getProperty("derby.storage.pageSize")
+						+ " and derby.storage.pageCacheSize="
+						+ System.getProperty("derby.storage.pageCacheSize")
+						+ ".");
 	}
 
 	private void clearCache() {
 		final String cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
 		FileUtility.deleteDirectoryAndContents(new File(cacheDir));
-		SLLogger.log(Level.INFO, "Cache cleared from " + cacheDir);
+		SLLogger.getLogger().log(Level.INFO, "Cache cleared from " + cacheDir);
 	}
 }
