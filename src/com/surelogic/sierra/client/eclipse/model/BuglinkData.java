@@ -14,7 +14,7 @@ import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 
 /**
- * A singleton that tracks the BugLink data in the client database 
+ * A singleton that tracks the BugLink data in the client database
  * <p>
  * The class allows observers to changes to the BugLink data
  */
@@ -31,51 +31,52 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	}
 
 	/**
-	 * Needs to synchronize on this
-	 * Key: uid of the category
+	 * Needs to synchronize on this Key: uid of the category
 	 */
-	private Map<String,Set<String>> f_categories;
+	private Map<String, Set<String>> f_categories;
 	/**
 	 * Key: uid of the category
 	 */
-	private Map<String,CategoryDO> f_categoryDefs;
+	private Map<String, CategoryDO> f_categoryDefs;
 	/**
 	 * Key: name of the finding type
 	 */
-	private Map<String,FindingTypeDO> f_findingTypes;
-	
+	private Map<String, FindingTypeDO> f_findingTypes;
+
 	private BuglinkData() {
 		// singleton
 	}
 
 	@Override
 	protected void notifyObserver(IBuglinkDataObserver o) {
-		o.notify(this);		
+		o.notify(this);
 	}
-	
+
 	public void refresh() {
-		Map<String,FindingTypeDO> findingTypes = new HashMap<String,FindingTypeDO>();
-		Map<String,CategoryDO> categoryDefs = new HashMap<String,CategoryDO>();
-		Map<String,Set<String>> categories = new HashMap<String,Set<String>>();
+		Map<String, FindingTypeDO> findingTypes = new HashMap<String, FindingTypeDO>();
+		Map<String, CategoryDO> categoryDefs = new HashMap<String, CategoryDO>();
+		Map<String, Set<String>> categories = new HashMap<String, Set<String>>();
 		try {
 			Connection conn = Data.readOnlyConnection();
 			try {
 				ConnectionQuery q = new ConnectionQuery(conn);
 				FindingTypes ft = new FindingTypes(q);
 				List<FindingTypeDO> ftypes = ft.listFindingTypes();
-				for(FindingTypeDO ftype : ftypes) {
+				for (FindingTypeDO ftype : ftypes) {
 					findingTypes.put(ftype.getUid(), ftype);
 				}
 
-				List<CategoryDO> raw = Data.withReadOnly(SettingQueries.getLocalCategories());
+				List<CategoryDO> raw = Data.withReadOnly(SettingQueries
+						.getLocalCategories());
 				// Key: uid of the category
-				Map<String,CategoryDO> rawCategories = new HashMap<String, CategoryDO>(raw.size());
+				Map<String, CategoryDO> rawCategories = new HashMap<String, CategoryDO>(
+						raw.size());
 
-				for(CategoryDO c : raw) {
+				for (CategoryDO c : raw) {
 					rawCategories.put(c.getUid(), c);
 					categoryDefs.put(c.getUid(), c);
 				}
-				for(CategoryDO c : raw) {
+				for (CategoryDO c : raw) {
 					String cat = c.getUid();
 					computeCategory(categories, rawCategories, cat);
 				}
@@ -94,47 +95,46 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 			if (notify)
 				notifyObservers();
 		} catch (SQLException e) {
-			SLLogger.log(Level.SEVERE, "Unable to read the Buglink data from the database", e);
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Unable to read the Buglink data from the database", e);
 		}
 	}
-	
+
 	/**
 	 * Computes the finding types in each category
 	 */
-	private static Set<String> computeCategory(Map<String,Set<String>> categories,
-			                                   Map<String,CategoryDO> rawCategories, String uid) {
+	private static Set<String> computeCategory(
+			Map<String, Set<String>> categories,
+			Map<String, CategoryDO> rawCategories, String uid) {
 		Set<String> categoryTypes = categories.get(uid);
 		if (categoryTypes == null) {
-		    // Compute which finding types are in the category
+			// Compute which finding types are in the category
 			CategoryDO defn = rawCategories.get(uid);
 			if (defn == null) {
-				SLLogger.getLogger().severe("No category def'n for "+uid);
+				SLLogger.getLogger().severe("No category def'n for " + uid);
 				return Collections.emptySet();
 			}
-			categoryTypes = new HashSet<String>();			
-			for(String parent : defn.getParents()) {
-				//categoryTypes.addAll(computeCategory(categories, rawCategories, parent));
-				for(String type : computeCategory(categories, rawCategories, parent)) {
+			categoryTypes = new HashSet<String>();
+			for (String parent : defn.getParents()) {
+				// categoryTypes.addAll(computeCategory(categories,
+				// rawCategories, parent));
+				for (String type : computeCategory(categories, rawCategories,
+						parent)) {
 					boolean added = categoryTypes.add(type);
 					/*
-					if (!added) {
-						System.out.println();
-					} else {
-						System.out.println(type);
-					}
-					*/
+					 * if (!added) { System.out.println(); } else {
+					 * System.out.println(type); }
+					 */
 				}
 			}
-			for(CategoryEntryDO filter : defn.getFilters()) {				
+			for (CategoryEntryDO filter : defn.getFilters()) {
 				if (filter.isFiltered()) {
 					categoryTypes.remove(filter.getFindingType());
 				} else {
 					boolean added = categoryTypes.add(filter.getFindingType());
 					/*
-					if (!added) {
-						System.out.println();
-					}
-					*/
+					 * if (!added) { System.out.println(); }
+					 */
 				}
 			}
 			categories.put(uid, categoryTypes);
@@ -156,22 +156,25 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 		return f_categoryDefs.keySet();
 	}
 
-	/**	 
-	 * @param name Uid of the category	
+	/**
+	 * @param name
+	 *            Uid of the category
 	 */
 	public synchronized Collection<String> getFindingTypes(String uid) {
 		return f_categories.get(uid);
 	}
 
-	/**	 
-	 * @param name Uid of the category	
+	/**
+	 * @param name
+	 *            Uid of the category
 	 */
 	public synchronized CategoryDO getCategoryDef(String uid) {
 		return f_categoryDefs.get(uid);
 	}
-	
+
 	/**
-	 * @param findingType Name of the finding type
+	 * @param findingType
+	 *            Name of the finding type
 	 */
 	public synchronized FindingTypeDO getFindingType(String findingType) {
 		return f_findingTypes.get(findingType);
@@ -179,20 +182,14 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 
 	/*
 	 * Track changes to the database that can mutate the set of projects.
-	 */	
+	 */
 	@Override
 	public void changed() {
 		refresh();
 	}
-    /*
-	@Override
-	public void projectDeleted() {
-		refresh();
-	}
-
-	@Override
-	public void scanLoaded() {
-		refresh();
-	}
-    */
+	/*
+	 * @Override public void projectDeleted() { refresh(); }
+	 * 
+	 * @Override public void scanLoaded() { refresh(); }
+	 */
 }

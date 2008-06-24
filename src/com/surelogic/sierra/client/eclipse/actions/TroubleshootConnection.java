@@ -29,11 +29,10 @@ public abstract class TroubleshootConnection {
 	 *            the project name, or <code>null</code> if no project or it
 	 *            is unknown.
 	 */
-	protected TroubleshootConnection(final ServerFailureReport method, 
-			                         final SierraServer server,
-			                         final String projectName) {
+	protected TroubleshootConnection(final ServerFailureReport method,
+			final SierraServer server, final String projectName) {
 		f_method = method;
-		
+
 		if (server == null)
 			throw new IllegalStateException("server must be non-null");
 		f_server = server;
@@ -46,11 +45,11 @@ public abstract class TroubleshootConnection {
 	public final SierraServer getServer() {
 		return f_server;
 	}
-	
+
 	public final String getProjectName() {
 		return f_projectName;
 	}
-	
+
 	private boolean f_retry = true;
 
 	protected void setRetry(boolean retry) {
@@ -87,11 +86,11 @@ public abstract class TroubleshootConnection {
 			showDialog();
 			break;
 		case IGNORE:
-			SLLogger.log(Level.WARNING, f_status.getMessage(),
-					     f_status.getException());
+			SLLogger.getLogger().log(Level.WARNING, f_status.getMessage(),
+					f_status.getException());
 			setRetry(false);
 		}
-		
+
 		if (failServer()) {
 			f_server.encounteredProblem();
 			SierraServerManager.getInstance().notifyObservers();
@@ -110,15 +109,16 @@ public abstract class TroubleshootConnection {
 	}
 
 	private void showBalloon() {
-		SLLogger.log(Level.WARNING, f_status.getMessage(),
-			         f_status.getException());
-		BalloonUtility.showMessage(getLabel(), f_status.getMessage());		
+		SLLogger.getLogger().log(Level.WARNING, f_status.getMessage(),
+				f_status.getException());
+		BalloonUtility.showMessage(getLabel(), f_status.getMessage());
 	}
 
 	protected abstract IStatus createStatus();
+
 	protected abstract String getLabel();
-	
-	/**	
+
+	/**
 	 * @return true if the server should be considered failed
 	 */
 	public boolean failServer() {

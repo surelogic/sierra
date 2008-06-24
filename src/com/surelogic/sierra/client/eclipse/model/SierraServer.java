@@ -46,12 +46,12 @@ public final class SierraServer {
 		return true;
 	}
 
-  private void setLabel_internal(String label) {
-    // overwrite semantics, i.e., no check if the new name is in use
+	private void setLabel_internal(String label) {
+		// overwrite semantics, i.e., no check if the new name is in use
 		f_manager.f_labelToServer.remove(f_label);
 		f_label = label;
 		f_manager.f_labelToServer.put(f_label, this);
-  }
+	}
 
 	private boolean f_secure = false;
 
@@ -202,19 +202,18 @@ public final class SierraServer {
 	}
 
 	/**
-	 * @param serverReply 
+	 * @param serverReply
 	 * @return true if changed
 	 */
-	public synchronized boolean setServer(SierraServerLocation loc, 
-			                              ServerInfoReply serverReply) {
+	public synchronized boolean setServer(SierraServerLocation loc,
+			ServerInfoReply serverReply) {
 		final boolean changedInfo = !gotServerInfo && serverReply != null;
 		final boolean changed = differs(f_label, loc.getLabel())
 				|| differs(f_host, loc.getHost())
 				|| (f_secure != loc.isSecure()) || (f_port != loc.getPort())
 				|| differs(f_contextPath, loc.getContextPath())
 				|| differs(f_user, loc.getUser())
-				|| differs(f_password, loc.getPass())
-		        || changedInfo;
+				|| differs(f_password, loc.getPass()) || changedInfo;
 		setLabel_internal(loc.getLabel());
 		f_host = loc.getHost();
 		f_secure = loc.isSecure();
@@ -267,14 +266,15 @@ public final class SierraServer {
 			return true;
 		}
 		try {
-			final ServerInfoService sis = ServerInfoServiceClient.create(getServer());
+			final ServerInfoService sis = ServerInfoServiceClient
+					.create(getServer());
 			final ServerInfoReply reply = sis
 					.getServerInfo(new ServerInfoRequest());
 			updateServerInfo(reply);
 		} catch (final Exception e) {
-			SLLogger.log(Level.WARNING, "Exception while updating server info",
-					e);	
-			encounteredProblem();			
+			SLLogger.getLogger().log(Level.WARNING,
+					"Exception while updating server info", e);
+			encounteredProblem();
 		}
 		return gotServerInfo;
 	}
@@ -289,9 +289,9 @@ public final class SierraServer {
 	}
 
 	public synchronized boolean gotServerInfo() {
-	  return gotServerInfo;
+		return gotServerInfo;
 	}
-	
+
 	public synchronized boolean isBugLink() {
 		return isBugLink;
 	}
@@ -300,9 +300,9 @@ public final class SierraServer {
 		return isTeamServer;
 	}
 
-  synchronized void setServerType(boolean team, boolean bug) {
-    isTeamServer = team;
-    isBugLink = bug;
-    gotServerInfo = true;
-  }
+	synchronized void setServerType(boolean team, boolean bug) {
+		isTeamServer = team;
+		isBugLink = bug;
+		gotServerInfo = true;
+	}
 }
