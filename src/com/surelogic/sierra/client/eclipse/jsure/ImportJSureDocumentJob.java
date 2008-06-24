@@ -21,22 +21,23 @@ import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.*;
 
 public class ImportJSureDocumentJob extends DatabaseJob {
-	private static final Logger log = 
-		SLLogger.getLoggerFor(ImportJSureDocumentJob.class);
-	
+	private static final Logger log = SLLogger
+			.getLoggerFor(ImportJSureDocumentJob.class);
+
 	final String project;
 	final File location;
 
 	public ImportJSureDocumentJob(String p, File loc) {
-		super("Loading JSure document for "+ p + " from "+loc);
+		super("Importing JSure document for " + p + " to Sierra");
 		project = p;
 		location = loc;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(
-				monitor);
+		monitor.beginTask("Importing " + location + "...",
+				IProgressMonitor.UNKNOWN);
+		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
 		try {
 			loadScanDocument(wrapper);
 		} catch (IllegalStateException e) {
@@ -56,43 +57,49 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 		}
 	}
 
-	private static final List<String> tools = Collections.singletonList("JSure");
-	
+	private static final List<String> tools = Collections
+			.singletonList("JSure");
+
 	private void loadScanDocument(final SLProgressMonitor wrapper) {
 		final ScanDocumentUtility.Parser parser = new ScanDocumentUtility.Parser() {
-			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
-				                Set<Long> findingIds, SLProgressMonitor mon) {
-				final ScanGenerator generator = 
-					sMan.getPartialScanGenerator(project, filter, tools, findingIds);				
+			public String parse(File scanDocument, ScanManager sMan,
+					FindingFilter filter, Set<Long> findingIds,
+					SLProgressMonitor mon) {
+				final ScanGenerator generator = sMan.getPartialScanGenerator(
+						project, filter, tools, findingIds);
 				/*
-				 builder.javaVendor(config.getJavaVendor());
-		         builder.javaVersion(config.getJavaVersion());
-		         builder.project(config.getProject());
-		         builder.timeseries(config.getTimeseries());
+				 * builder.javaVendor(config.getJavaVendor());
+				 * builder.javaVersion(config.getJavaVersion());
+				 * builder.project(config.getProject());
+				 * builder.timeseries(config.getTimeseries());
 				 */
-				final JSureDocumentListener l = new JSureDocumentListener(generator, mon);
+				final JSureDocumentListener l = new JSureDocumentListener(
+						generator, mon);
 				try {
-					JSureXMLReader.readSnapshot(scanDocument, l); 
-				} catch(Exception e) {
+					JSureXMLReader.readSnapshot(scanDocument, l);
+				} catch (Exception e) {
 					ArtifactGenerator aGenerator = l.getArtifactGenerator();
 					if (aGenerator != null) {
 						aGenerator.rollback();
 					}
-					log.log(Level.SEVERE, "Exception while reading snapshot", e);
+					log
+							.log(Level.SEVERE,
+									"Exception while reading snapshot", e);
 				}
 				return generator.finished();
 			}
+
 			public void updateOverview(ClientFindingManager fm, String uid,
 					FindingFilter filter, Set<Long> findingIds,
 					SLProgressMonitor monitor) {
-				fm.updateScanFindings(project, uid, tools, filter, findingIds, monitor);
+				fm.updateScanFindings(project, uid, tools, filter, findingIds,
+						monitor);
 			}
 		};
-		ScanDocumentUtility.loadPartialScanDocument(location, wrapper, 
-				      project, parser);
+		ScanDocumentUtility.loadPartialScanDocument(location, wrapper, project,
+				parser);
 		/*
-		// Delete partial scan when done
-		location.delete();
-		*/
+		 * // Delete partial scan when done location.delete();
+		 */
 	}
 }
