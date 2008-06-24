@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,6 +24,8 @@ import com.surelogic.sierra.gwt.client.data.Report;
  * requires a lock on {@code this}.
  */
 public final class Attendant implements Sweepable {
+
+	static private final Logger LOG = SLLogger.getLogger();
 
 	/**
 	 * The set of tickets cached on this node. This is intended to allow sharing
@@ -72,7 +75,7 @@ public final class Attendant implements Sweepable {
 			 */
 			for (final Ticket ticket : tickets) {
 				if (ticket.getReport().equals(report)) {
-					SLLogger.log(Level.FINE,
+					LOG.log(Level.FINE,
 							"getTicket found the ticket in the session.");
 					/*
 					 * Yes, return the ticket.
@@ -85,7 +88,7 @@ public final class Attendant implements Sweepable {
 			 */
 			for (final Ticket ticket : f_nodeTickets) {
 				if (ticket.getReport().equals(report)) {
-					SLLogger.log(Level.FINE,
+					LOG.log(Level.FINE,
 							"getTicket found the ticket in this node.");
 					/*
 					 * Yes, add the ticket to the session and return the ticket.
@@ -97,7 +100,7 @@ public final class Attendant implements Sweepable {
 			/*
 			 * Double No, create the ticket.
 			 */
-			SLLogger.log(Level.FINE, "getTicket created the ticket.");
+			LOG.log(Level.FINE, "getTicket created the ticket.");
 			final Ticket ticket = new Ticket(report);
 			tickets.add(ticket);
 			f_nodeTickets.add(ticket);

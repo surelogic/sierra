@@ -32,7 +32,7 @@ public class PNGServlet extends AbstractChartServlet {
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
 		// TODO ticket could be null!
-		SLLogger.log(Level.FINE, "PNGServlet called for " + ticket);
+		SLLogger.getLogger().log(Level.FINE, "PNGServlet called for " + ticket);
 		ChartCache.getInstance().sendPng(ticket, response);
 	}
 

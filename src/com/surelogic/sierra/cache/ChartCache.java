@@ -122,7 +122,7 @@ public final class ChartCache implements Sweepable {
 	}
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
-		SLLogger.log(Level.FINE, "Creating chart files for ticket " + ticket);
+		SLLogger.getLogger().log(Level.FINE, "Creating chart files for ticket " + ticket);
 		final Report report = ticket.getReport();
 		final String type = report.getName();
 		if (type == null) {

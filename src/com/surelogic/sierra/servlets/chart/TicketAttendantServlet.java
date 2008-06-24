@@ -26,8 +26,8 @@ public final class TicketAttendantServlet extends AbstractChartServlet {
 		final Ticket ticket = Attendant.getInstance().getTicket(report,
 				request.getSession());
 		final String uuid = ticket.getUUID().toString();
-		SLLogger.log(Level.FINE, "TicketAttendantServlet created a ticket "
-				+ ticket);
+		SLLogger.getLogger().log(Level.FINE,
+				"TicketAttendantServlet created a ticket " + ticket);
 
 		final PrintWriter out = response.getWriter();
 		out

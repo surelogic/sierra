@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,9 +126,9 @@ public final class ServletUtility {
 			throw new FileNotFoundException(I18N
 					.err(40, file.getAbsolutePath()));
 		}
-		if (SLLogger.isLoggable(Level.FINE)) {
-			SLLogger.log(Level.FINE, "Serving the file "
-					+ file.getAbsolutePath());
+		final Logger log = SLLogger.getLogger();
+		if (log.isLoggable(Level.FINE)) {
+			log.log(Level.FINE, "Serving the file " + file.getAbsolutePath());
 		}
 
 		/*

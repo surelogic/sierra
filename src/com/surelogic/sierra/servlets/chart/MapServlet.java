@@ -32,7 +32,7 @@ public class MapServlet extends AbstractChartServlet {
 		final Ticket ticket = Attendant.getInstance().getTicket(uuid,
 				request.getSession());
 		// TODO ticket could be null!
-		SLLogger.log(Level.FINE, "MAPServlet called for " + ticket);
+		SLLogger.getLogger().log(Level.FINE, "MAPServlet called for " + ticket);
 		ChartCache.getInstance().sendMap(ticket, response);
 	}
 
