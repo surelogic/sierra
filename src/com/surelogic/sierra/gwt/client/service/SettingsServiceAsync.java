@@ -9,7 +9,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
-import com.surelogic.sierra.gwt.client.data.Server;
+import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface SettingsServiceAsync {
@@ -46,5 +46,5 @@ public interface SettingsServiceAsync {
 
 	void deleteScanFilter(String uuid, AsyncCallback<Status> callback);
 
-	void listServerLocations(AsyncCallback<List<Server>> callback);
+	void listServerLocations(AsyncCallback<List<ServerLocation>> callback);
 }

@@ -3,11 +3,11 @@ package com.surelogic.sierra.gwt.client.content.servermgmt;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
-import com.surelogic.sierra.gwt.client.data.Server;
+import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ServerManagementContent extends
-		ListContentComposite<Server, ServerCache> {
+		ListContentComposite<ServerLocation, ServerCache> {
 	private static final ServerManagementContent instance = new ServerManagementContent();
 	private final ServerView serverView = new ServerView();
 
@@ -30,17 +30,17 @@ public class ServerManagementContent extends
 	}
 
 	@Override
-	protected String getItemText(Server item) {
+	protected String getItemText(ServerLocation item) {
 		return item.getLabel();
 	}
 
 	@Override
-	protected boolean isMatch(Server item, String query) {
+	protected boolean isMatch(ServerLocation item, String query) {
 		return LangUtil.containsIgnoreCase(item.getLabel(), query);
 	}
 
 	@Override
-	protected void onSelectionChanged(Server item) {
+	protected void onSelectionChanged(ServerLocation item) {
 		serverView.setSelection(item);
 	}
 

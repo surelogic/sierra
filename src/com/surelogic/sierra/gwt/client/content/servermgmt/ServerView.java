@@ -1,22 +1,60 @@
 package com.surelogic.sierra.gwt.client.content.servermgmt;
 
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.data.Server;
+import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ServerView extends BlockPanel {
 
-	private final VerticalPanel panel = new VerticalPanel();;
+	private VerticalPanel panel;
+
+	private HTML context;
+	private HTML host;
+	private HTML label;
+	private HTML pass;
+	private HTML port;
+	private HTML protocol;
+	private HTML user;
+	private HTML uuid;
+	private ServerLocation item;
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		contentPanel.add(panel);
+		panel = contentPanel;
+		label = UI.h3("");
+
+		addAction("Edit", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		addAction("Delete", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
-	public void setSelection(Server item) {
+	public void setSelection(ServerLocation item) {
 		panel.clear();
-		UI.h3("Server");
+		panel.add(UI.h3(item.getLabel()));
+		item.getContext();
+		item.getHost();
+		item.getLabel();
+		item.getPass();
+		item.getPort();
+		item.getProtocol();
+		item.getUser();
+		item.getUuid();
+
 	}
 
 }

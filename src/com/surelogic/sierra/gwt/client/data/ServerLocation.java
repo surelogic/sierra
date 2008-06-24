@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
-public class Server implements Cacheable, Serializable {
+public class ServerLocation implements Cacheable, Serializable {
 
 	/**
 	 * 
@@ -33,11 +33,11 @@ public class Server implements Cacheable, Serializable {
 	private String user;
 	private String pass;
 
-	public Server() {
+	public ServerLocation() {
 
 	}
 
-	public Server(String label, Protocol protocol, String host, int port,
+	public ServerLocation(String label, Protocol protocol, String host, int port,
 			String context, String user, String pass) {
 		this.label = label;
 		this.protocol = protocol;
