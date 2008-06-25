@@ -30,6 +30,10 @@ import com.surelogic.common.logging.SLLogger;
  */
 public abstract class SRPCServlet extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8346489105355886552L;
 	protected final Logger log = SLLogger.getLoggerFor(this.getClass());
 
 	@Override
