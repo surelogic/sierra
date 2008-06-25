@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
-import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.SearchBlock;
@@ -19,6 +19,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private final VerticalPanel westPanel = new VerticalPanel();
 	private final ActionBlock actionBlock = new ActionBlock();
 	private final VerticalPanel selectionPanel = new VerticalPanel();
+	private CacheListener<E> cacheListener;
 
 	protected ListContentComposite(C cache) {
 		super();
@@ -42,14 +43,19 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 		onInitialize(rootPanel, selectionPanel);
 
-		cache.addListener(new CacheListenerAdapter<E>() {
+		cacheListener = new CacheListener<E>() {
 
-			@Override
+			public void onStartRefresh(Cache<E> cache) {
+				listView.clear();
+				listView.setWaitStatus();
+			}
+
 			public void onRefresh(Cache<E> cache, Throwable failure) {
+				listView.clearStatus();
+				listView.refresh();
 				refreshContext(ContextManager.getContext());
 			}
 
-			@Override
 			public void onItemUpdate(Cache<E> cache, E item, Status status,
 					Throwable failure) {
 				cache.refresh();
@@ -63,7 +69,8 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 				}
 			}
 
-		});
+		};
+
 	}
 
 	protected abstract void onInitialize(DockPanel rootPanel,
@@ -71,12 +78,13 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 	@Override
 	protected void onDeactivate() {
-		cache.clear();
+		cache.removeListener(cacheListener);
 	}
 
 	@Override
 	protected void onUpdate(Context context) {
 		if (!isActive()) {
+			cache.addListener(cacheListener);
 			cache.refresh();
 		} else {
 			refreshContext(context);

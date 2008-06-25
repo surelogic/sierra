@@ -1,8 +1,10 @@
 package com.surelogic.sierra.gwt.client.data.cache;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -11,7 +13,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 	private final List<E> items = new ArrayList<E>();
-	private final List<CacheListener<E>> listeners = new ArrayList<CacheListener<E>>();
+	private final Set<CacheListener<E>> listeners = new HashSet<CacheListener<E>>();
 
 	public final void refresh() {
 		for (final CacheListener<E> listener : listeners) {

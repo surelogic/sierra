@@ -27,6 +27,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -40,6 +41,7 @@ import com.surelogic.sierra.gwt.client.util.UI;
 public class ScanFiltersContent extends
 		ListContentComposite<ScanFilter, ScanFilterCache> {
 	private final ScanFilterComposite sf = new ScanFilterComposite();
+	private CacheListener<ScanFilter> cacheListener;
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel,
@@ -49,6 +51,31 @@ public class ScanFiltersContent extends
 		addAction(new CreateScanFilterForm());
 		sf.initialize();
 		selectionPanel.add(sf);
+
+		cacheListener = new CacheListenerAdapter<ScanFilter>() {
+
+			@Override
+			public void onItemUpdate(Cache<ScanFilter> cache, ScanFilter item,
+					Status status, Throwable failure) {
+				sf.setStatus(status);
+			}
+		};
+	}
+
+	@Override
+	protected void onUpdate(Context context) {
+		if (!isActive()) {
+			getCache().addListener(cacheListener);
+		}
+
+		super.onUpdate(context);
+	}
+
+	@Override
+	protected void onDeactivate() {
+		getCache().removeListener(cacheListener);
+
+		super.onDeactivate();
 	}
 
 	@Override
@@ -78,15 +105,7 @@ public class ScanFiltersContent extends
 			this.panel = panel;
 			status = new StatusBox();
 			refresh();
-			getCache().addListener(new CacheListenerAdapter<ScanFilter>() {
 
-				@Override
-				public void onItemUpdate(Cache<ScanFilter> cache,
-						ScanFilter item, Status status, Throwable failure) {
-					cache.refresh();
-					ScanFilterComposite.this.status.setStatus(status);
-				}
-			});
 			addAction("Delete", new ClickListener() {
 
 				public void onClick(Widget sender) {
@@ -208,6 +227,10 @@ public class ScanFiltersContent extends
 		public void setFilter(ScanFilter filter) {
 			this.filter = filter;
 			refresh();
+		}
+
+		public void setStatus(Status s) {
+			this.status.setStatus(s);
 		}
 
 	}

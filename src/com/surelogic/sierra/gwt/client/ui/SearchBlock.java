@@ -13,9 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
-import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.PagingPanel.PageListener;
 
@@ -62,29 +60,15 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			}
 		});
 
-		cache.addListener(new CacheListener<E>() {
-
-			public void onStartRefresh(Cache<E> cache) {
-				results.clearResults();
-				results.setWaitStatus();
-			}
-
-			public void onItemUpdate(Cache<E> cache, E item, Status status,
-					Throwable failure) {
-				results.search(searchText.getText());
-				results.setSelection(selection);
-			}
-
-			public void onRefresh(Cache<E> cache, Throwable failure) {
-				results.search(searchText.getText());
-				results.setSelection(selection);
-			}
-
-		});
 	}
 
 	public void clear() {
 		results.clearResults();
+	}
+
+	public void refresh() {
+		results.search(searchText.getText());
+		results.setSelection(selection);
 	}
 
 	public void setSelection(E item) {

@@ -76,7 +76,7 @@ public final class FindingTypesContent extends
 		});
 		dialog.center();
 		// TODO need to get the CategoryCache singleton instance
-		dialog.setCategories(new CategoryCache(), findingView
+		dialog.setCategories(CategoryCache.getInstance(), findingView
 				.getCategoriesIncludingIds());
 	}
 }

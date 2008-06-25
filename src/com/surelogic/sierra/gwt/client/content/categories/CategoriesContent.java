@@ -34,7 +34,7 @@ public class CategoriesContent extends
 	}
 
 	private CategoriesContent() {
-		super(new CategoryCache());
+		super(CategoryCache.getInstance());
 		// singleton
 	}
 
