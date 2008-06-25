@@ -25,6 +25,7 @@ public class FindingTypeView extends BlockPanel {
 			"Categories excluding this finding");
 	private final ScanFilterList scanFilters = new ScanFilterList();
 	private final VerticalPanel chart = new VerticalPanel();
+	private FindingType selection;
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -42,7 +43,13 @@ public class FindingTypeView extends BlockPanel {
 		contentPanel.add(chart);
 	}
 
+	public FindingType getSelection() {
+		return selection;
+	}
+
 	public void setSelection(FindingType findingType) {
+		selection = findingType;
+
 		if (findingType != null) {
 			setSummary(findingType.getName());
 			final String info = findingType.getInfo();
