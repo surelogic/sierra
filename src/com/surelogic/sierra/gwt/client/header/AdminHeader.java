@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client.header;
 
+import com.surelogic.sierra.gwt.client.content.servermgmt.ServerManagementContent;
 import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
 import com.surelogic.sierra.gwt.client.content.usermgmt.UserManagementContent;
 
@@ -14,12 +15,15 @@ public final class AdminHeader extends AuthenticatedHeader {
 		super();
 	}
 
+	@Override
 	protected void addUtilities() {
 		// do nothing for now
 	}
 
+	@Override
 	protected void addTabs() {
 		addTab("Settings", SettingsContent.getInstance());
 		addTab("Users", UserManagementContent.getInstance());
+		addTab("Servers", ServerManagementContent.getInstance());
 	}
 }
