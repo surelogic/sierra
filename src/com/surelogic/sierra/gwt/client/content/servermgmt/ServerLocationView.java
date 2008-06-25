@@ -1,34 +1,26 @@
 package com.surelogic.sierra.gwt.client.content.servermgmt;
 
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ServerLocationView extends BlockPanel {
 
-	private VerticalPanel panel;
-
-	private HTML context;
-	private HTML host;
-	private HTML label;
-	private HTML pass;
-	private HTML port;
-	private HTML protocol;
-	private HTML user;
+	private Grid g;
 	private ServerLocation item;
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		panel = contentPanel;
-		contentPanel.add(context = new HTML());
-		contentPanel.add(host = new HTML());
-		contentPanel.add(label = UI.h3(""));
-		contentPanel.add(pass = new HTML());
-		contentPanel.add(port = new HTML());
-		contentPanel.add(protocol = new HTML());
-		contentPanel.add(user = new HTML());
+		g = new Grid(7, 2);
+		g.setText(0, 0, "Label");
+		g.setText(1, 0, "Host");
+		g.setText(2, 0, "Port");
+		g.setText(3, 0, "Context");
+		g.setText(4, 0, "Protocol");
+		g.setText(5, 0, "User");
+		g.setText(6, 0, "Password");
+		contentPanel.add(g);
 	}
 
 	public ServerLocation getSelection() {
@@ -36,15 +28,14 @@ public class ServerLocationView extends BlockPanel {
 	}
 
 	public void setSelection(ServerLocation item) {
-		panel.clear();
-		panel.add(UI.h3(item.getLabel()));
-		context.setText(item.getContext());
-		host.setText(item.getHost());
-		label.setText(item.getLabel());
-		pass.setText(item.getPass() == null ? "" : item.getPass().replaceAll(
-				".", "*"));
-		port.setText(Integer.toString(item.getPort()));
-		protocol.setText(item.getProtocol().toString());
-		user.setText(item.getUser());
+		this.item = item.copy(item);
+		g.setText(0, 1, item.getLabel());
+		g.setText(1, 1, item.getHost());
+		g.setText(2, 1, Integer.toString(item.getPort()));
+		g.setText(3, 1, item.getContext());
+		g.setText(4, 1, item.getProtocol().toString());
+		g.setText(5, 1, item.getUser());
+		g.setText(6, 1, item.getPass() == null ? "" : item.getPass()
+				.replaceAll(".", "*"));
 	}
 }

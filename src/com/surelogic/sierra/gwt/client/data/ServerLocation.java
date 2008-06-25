@@ -39,8 +39,8 @@ public class ServerLocation implements Cacheable, Serializable {
 
 	}
 
-	public ServerLocation(String label, Protocol protocol, String host, int port,
-			String context, String user, String pass) {
+	public ServerLocation(String label, Protocol protocol, String host,
+			int port, String context, String user, String pass) {
 		this.label = label;
 		this.protocol = protocol;
 		this.host = host;
@@ -109,6 +109,18 @@ public class ServerLocation implements Cacheable, Serializable {
 	public String getUuid() {
 		// FIXME is this unique?
 		return label;
+	}
+
+	public ServerLocation copy(ServerLocation orig) {
+		final ServerLocation l = new ServerLocation();
+		l.context = orig.context;
+		l.host = orig.host;
+		l.label = orig.label;
+		l.pass = orig.pass;
+		l.port = orig.port;
+		l.protocol = orig.protocol;
+		l.user = orig.user;
+		return l;
 	}
 
 }
