@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -75,8 +74,6 @@ public final class FindingTypesContent extends
 
 		});
 		dialog.center();
-		// TODO need to get the CategoryCache singleton instance
-		dialog.setCategories(CategoryCache.getInstance(), findingView
-				.getCategoriesIncludingIds());
+		dialog.setCategories(findingView.getCategoriesIncludingIds());
 	}
 }

@@ -33,10 +33,9 @@ public class CategorySelectionDialog extends FormDialog {
 		return categoryTree;
 	}
 
-	public void setCategories(CategoryCache categoryCache,
-			List<String> excludeCategoryIds) {
+	public void setCategories(List<String> excludeCategoryIds) {
 		categoryTree.clear();
-		for (final Category cat : categoryCache) {
+		for (final Category cat : CategoryCache.getInstance()) {
 			if (cat.isLocal() && !excludeCategoryIds.contains(cat.getUuid())) {
 				final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(
 						cat.getName(), cat);
