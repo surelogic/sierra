@@ -6,58 +6,86 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class CategorySelectionDialog extends FormDialog {
-	private final Tree categoryTree = new Tree();
+	private final VerticalPanel categoryPanel = new VerticalPanel();
 
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
 		setText("Select Categories");
 		setWidth("500px");
 
-		categoryTree.setWidth("100%");
-		categoryTree.setHeight("425px");
+		categoryPanel.setWidth("100%");
 
-		contentTable.setWidget(0, 0, categoryTree);
+		final ScrollPanel categoryScroller = new ScrollPanel(categoryPanel);
+		categoryScroller.setWidth("100%");
+		categoryScroller.setAlwaysShowScrollBars(true);
+		categoryScroller.setHeight("425px");
+
+		contentTable.setWidget(0, 0, categoryScroller);
 	}
 
 	@Override
 	protected HasFocus getInitialFocus() {
-		return categoryTree;
+		return null;
 	}
 
-	public void setCategories(List<String> excludeCategoryIds) {
-		categoryTree.clear();
-		for (final Category cat : CategoryCache.getInstance()) {
-			if (cat.isLocal() && !excludeCategoryIds.contains(cat.getUuid())) {
-				final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(
-						cat.getName(), cat);
-				categoryTree.addItem(catCheck);
-			}
-		}
+	public void setCategories(final List<String> excludeCategoryIds) {
+		final CategoryCache categories = CategoryCache.getInstance();
 
-		if (categoryTree.getItemCount() == 0) {
-			final TreeItem item = categoryTree.addItem("No categories to add");
-			item.addStyleName("font-italic");
-			setOkEnabled(false);
-		} else {
-			setOkEnabled(true);
-		}
+		final CacheListener<Category> cacheListener = new CacheListenerAdapter<Category>() {
+			@Override
+			public void onStartRefresh(Cache<Category> cache) {
+				categoryPanel.add(ImageHelper.getWaitImage(16));
+			}
+
+			@Override
+			public void onRefresh(Cache<Category> cache, Throwable failure) {
+				categories.removeListener(this);
+
+				categoryPanel.clear();
+				for (final Category cat : categories) {
+					if (cat.isLocal()
+							&& !excludeCategoryIds.contains(cat.getUuid())) {
+						final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(
+								cat.getName(), cat);
+						categoryPanel.add(catCheck);
+					}
+				}
+
+				if (categoryPanel.getWidgetCount() == 0) {
+					final Label noItems = new Label("No categories to add");
+					noItems.addStyleName("font-italic");
+					categoryPanel.add(noItems);
+					setOkEnabled(false);
+				} else {
+					setOkEnabled(true);
+				}
+			}
+
+		};
+
+		categories.addListener(cacheListener);
+		categories.refresh();
 	}
 
 	public Set<Category> getSelectedCategories() {
 		final Set<Category> cats = new HashSet<Category>();
-		for (int catIndex = 0; catIndex < categoryTree.getItemCount(); catIndex++) {
-			final TreeItem catItem = categoryTree.getItem(catIndex);
-			final ItemCheckBox<?> catCheck = (ItemCheckBox<?>) catItem
-					.getWidget();
+		for (int catIndex = 0; catIndex < categoryPanel.getWidgetCount(); catIndex++) {
+			final ItemCheckBox<?> catCheck = (ItemCheckBox<?>) categoryPanel
+					.getWidget(catIndex);
 			if (catCheck.isChecked()) {
 				cats.add((Category) catCheck.getItem());
 			}
