@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public abstract class AbstractChartServlet extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9223019007759236679L;
+
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {

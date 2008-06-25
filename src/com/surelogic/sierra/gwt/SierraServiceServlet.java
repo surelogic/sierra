@@ -24,6 +24,11 @@ import com.surelogic.sierra.jdbc.user.User;
  */
 public abstract class SierraServiceServlet extends RemoteServiceServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8344642534580373672L;
+
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
