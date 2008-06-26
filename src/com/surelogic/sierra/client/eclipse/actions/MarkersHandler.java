@@ -127,7 +127,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		// not in focus when the eclipse was closed
 
 		partService.addPartListener(f_listener);
-		LOG.fine("Marker listener added for Sierra");
+		if (LOG.isLoggable(Level.FINE))
+			LOG.fine("Marker listener added for Sierra");
 
 		final IWorkbenchPartReference ref = partService
 				.getActivePartReference();
@@ -210,7 +211,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 							f_selectedFile = null;
 							return;
 						}
-						
+
 						try {
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();

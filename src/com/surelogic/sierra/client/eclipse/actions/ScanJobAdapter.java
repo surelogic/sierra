@@ -50,9 +50,9 @@ class ScanJobAdapter extends JobChangeAdapter {
 
 	@Override
 	public void done(IJobChangeEvent event) {
-		final boolean debug = LOG.isLoggable(Level.FINE);
+		final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
 		if (event.getResult().equals(Status.OK_STATUS)) {
-			if (debug) {
+			if (fineIsLoggable) {
 				LOG.fine("Completed " + scan + " for " + f_scanName);
 			}
 			if (PreferenceConstants.showBalloonNotifications())
@@ -60,7 +60,7 @@ class ScanJobAdapter extends JobChangeAdapter {
 						+ f_scanName, "You may now examine the results.");
 
 		} else if (event.getResult().equals(Status.CANCEL_STATUS)) {
-			if (debug) {
+			if (fineIsLoggable) {
 				LOG.fine("Canceled " + scan + " on " + f_scanName);
 			}
 		} else {

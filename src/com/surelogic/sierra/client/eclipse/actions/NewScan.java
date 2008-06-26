@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
@@ -32,7 +33,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	@Override
 	boolean startScanJob(Collection<IJavaProject> selectedProjects) {
 		boolean started = false;
-		LOG.fine("Starting new scan jobs");
+		if (LOG.isLoggable(Level.FINE))
+			LOG.fine("Starting new scan jobs");
 
 		List<Config> configs = new ArrayList<Config>();
 		for (final IJavaProject p : selectedProjects) {
@@ -60,7 +62,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = getScanDocumentFile(config.getProject());
+					File newScanDocument = getScanDocumentFile(config
+							.getProject());
 					/*
 					 * This approach assures that the scan document generation
 					 * will not crash. The tool will simply override the
@@ -84,9 +87,9 @@ public class NewScan extends AbstractScan<IJavaProject> {
 		}
 		return started;
 	}
-	
+
 	public static File getScanDocumentFile(String project) {
-		return new File(FileUtility.getSierraDataDirectory() + File.separator + 
-				        project	+ SierraToolConstants.PARSED_FILE_SUFFIX);
+		return new File(FileUtility.getSierraDataDirectory() + File.separator
+				+ project + SierraToolConstants.PARSED_FILE_SUFFIX);
 	}
 }
