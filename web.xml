@@ -217,5 +217,14 @@
 		<servlet-name>BugLink Service</servlet-name>
 		<url-pattern>/services/BugLinkService</url-pattern>
 	</servlet-mapping>
-
+	
+	<!-- Configure the server -->
+	<context-param>
+		<description>
+			Determines whether or not team server capabilities are
+			turned on.
+		</description>
+		<param-name>teamserver</param-name>
+		<param-value>on</param-value>
+	</context-param>
 </web-app>
