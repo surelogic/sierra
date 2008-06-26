@@ -575,7 +575,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public List<ServerLocation> listServerLocations() {
 		final List<ServerLocation> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.ServerLocation>();
 		for (final SierraServerLocation l : ConnectionFactory.withReadOnly(
-				ServerLocations.fetch(Collections.EMPTY_MAP)).keySet()) {
+				ServerLocations.fetchQuery(Collections.EMPTY_MAP)).keySet()) {
 			final ServerLocation s = new ServerLocation();
 			s.setContext(l.getContextPath());
 			s.setHost(l.getHost());
@@ -594,7 +594,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 			public Status perform(final Query q) {
 				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
-						.fetch(null).perform(q);
+						.fetchQuery(null).perform(q);
 				SierraServerLocation loc = null;
 				for (final SierraServerLocation l : servers.keySet()) {
 					if (l.getLabel().equals(label)) {
@@ -605,6 +605,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				if (loc != null) {
 					servers.remove(loc);
 				}
+				ServerLocations.saveQuery(servers).doPerform(q);
 				return Status.success(label + " deleted.");
 			}
 		});
@@ -615,10 +616,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 			public Status perform(final Query q) {
 				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
-						.fetch(null).perform(q);
-				if (loc.getLabel() == null) {
-					throw new IllegalArgumentException();
-				}
+						.fetchQuery(null).perform(q);
 				final SierraServerLocation l = new SierraServerLocation(loc
 						.getLabel(), loc.getHost(),
 						loc.getProtocol() == Protocol.HTTPS, loc.getPort(), loc
@@ -627,8 +625,9 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				if (projects == null) {
 					projects = Collections.emptyList();
 				}
+				servers.remove(l);
 				servers.put(l, projects);
-				ServerLocations.save(servers);
+				ServerLocations.saveQuery(servers).doPerform(q);
 				return Status.success(loc.getLabel() + " updated.");
 			}
 		});
