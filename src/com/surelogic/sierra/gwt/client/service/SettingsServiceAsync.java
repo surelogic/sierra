@@ -47,4 +47,9 @@ public interface SettingsServiceAsync {
 	void deleteScanFilter(String uuid, AsyncCallback<Status> callback);
 
 	void listServerLocations(AsyncCallback<List<ServerLocation>> callback);
+
+	void deleteServerLocation(String uuid, AsyncCallback<Status> asyncCallback);
+
+	void saveServerLocation(ServerLocation loc, AsyncCallback<Status> callback);
+
 }

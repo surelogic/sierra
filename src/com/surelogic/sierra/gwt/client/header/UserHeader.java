@@ -31,10 +31,12 @@ public final class UserHeader extends AuthenticatedHeader {
 	protected void addUtilities() {
 		manageSite = addUtilityItem("Manage Site", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				final String url = ContentRegistry
 						.getContentUrl(SettingsContent.getInstance());
-				Window.open(url.toString(), null, null);
+				Window
+						.open(url.toString(), null,
+								"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 			}
 		});
 		manageSiteSeparator = addUtilitySeparator();
@@ -52,7 +54,7 @@ public final class UserHeader extends AuthenticatedHeader {
 	}
 
 	@Override
-	protected void onUpdateUser(UserAccount user) {
+	protected void onUpdateUser(final UserAccount user) {
 		super.onUpdateUser(user);
 
 		if (user != null) {

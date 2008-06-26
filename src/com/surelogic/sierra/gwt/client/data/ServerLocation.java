@@ -14,7 +14,7 @@ public class ServerLocation implements Cacheable, Serializable {
 	public enum Protocol {
 		HTTP, HTTPS;
 
-		public static Protocol fromValue(String protocol) {
+		public static Protocol fromValue(final String protocol) {
 			if (protocol == null) {
 				return null;
 			} else if (protocol.equalsIgnoreCase(HTTP.name())) {
@@ -36,11 +36,24 @@ public class ServerLocation implements Cacheable, Serializable {
 	private String pass;
 
 	public ServerLocation() {
-
+		port = 13376;
+		protocol = Protocol.HTTP;
 	}
 
-	public ServerLocation(String label, Protocol protocol, String host,
-			int port, String context, String user, String pass) {
+	/**
+	 * Create a server location with the given label. Other properties will be
+	 * initialized to their default values.
+	 * 
+	 * @param label
+	 */
+	public ServerLocation(final String label) {
+		port = 13376;
+		protocol = Protocol.HTTP;
+	}
+
+	public ServerLocation(final String label, final Protocol protocol,
+			final String host, final int port, final String context,
+			final String user, final String pass) {
 		this.label = label;
 		this.protocol = protocol;
 		this.host = host;
@@ -54,7 +67,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(final String label) {
 		this.label = label;
 	}
 
@@ -62,7 +75,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return protocol;
 	}
 
-	public void setProtocol(Protocol protocol) {
+	public void setProtocol(final Protocol protocol) {
 		this.protocol = protocol;
 	}
 
@@ -70,7 +83,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return host;
 	}
 
-	public void setHost(String host) {
+	public void setHost(final String host) {
 		this.host = host;
 	}
 
@@ -78,7 +91,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(final int port) {
 		this.port = port;
 	}
 
@@ -86,7 +99,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return context;
 	}
 
-	public void setContext(String context) {
+	public void setContext(final String context) {
 		this.context = context;
 	}
 
@@ -94,7 +107,7 @@ public class ServerLocation implements Cacheable, Serializable {
 		return user;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		this.user = user;
 	}
 
@@ -102,16 +115,15 @@ public class ServerLocation implements Cacheable, Serializable {
 		return pass;
 	}
 
-	public void setPass(String pass) {
+	public void setPass(final String pass) {
 		this.pass = pass;
 	}
 
 	public String getUuid() {
-		// FIXME is this unique?
 		return label;
 	}
 
-	public ServerLocation copy(ServerLocation orig) {
+	public ServerLocation copy(final ServerLocation orig) {
 		final ServerLocation l = new ServerLocation();
 		l.context = orig.context;
 		l.host = orig.host;

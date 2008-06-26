@@ -130,4 +130,20 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	List<ServerLocation> listServerLocations();
+
+	/**
+	 * Delete the server location corresponding to this label.
+	 * 
+	 * @return
+	 */
+	Status deleteServerLocation(String label);
+
+	/**
+	 * Update a new server location with the given information. The label must
+	 * be non-null and unique.
+	 * 
+	 * @param loc
+	 * @return
+	 */
+	Status saveServerLocation(ServerLocation loc);
 }

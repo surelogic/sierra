@@ -8,11 +8,13 @@ import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 public abstract class ChartSection extends SectionPanel {
 	private Chart chart;
 
-	protected void onInitialize(VerticalPanel contentPanel) {
+	@Override
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		// nothing to do
 	}
 
-	protected void onUpdate(Context context) {
+	@Override
+	protected void onUpdate(final Context context) {
 		final VerticalPanel content = getContentPanel();
 		if (chart != null) {
 			content.remove(chart);
@@ -22,6 +24,7 @@ public abstract class ChartSection extends SectionPanel {
 		content.setCellHorizontalAlignment(chart, VerticalPanel.ALIGN_CENTER);
 	}
 
+	@Override
 	protected void onDeactivate() {
 		if (chart != null) {
 			getContentPanel().remove(chart);
