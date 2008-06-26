@@ -31,7 +31,7 @@ public class BugLinkServletContextListener implements ServletContextListener {
 							try {
 								final Set<SierraServerLocation> locations = ConnectionFactory
 										.withReadOnly(
-												ServerLocations.fetch(null))
+												ServerLocations.fetchQuery(null))
 										.keySet();
 								SLLogger.getLogger().info(
 										"Updating scan filters and categories from "

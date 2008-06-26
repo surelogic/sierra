@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.DBQueryNoResult;
 import com.surelogic.common.jdbc.LongIdHandler;
+import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Result;
@@ -26,11 +27,11 @@ public final class ServerLocations {
 	 *            a map of server locations, and the projects connected to them
 	 * @return
 	 */
-	public static DBQueryNoResult save(
+	public static DBQueryNoResult saveQuery(
 			final Map<SierraServerLocation, Collection<String>> locations) {
 		return new DBQueryNoResult() {
 			@Override
-			public void doPerform(Query q) {
+			public void doPerform(final Query q) {
 				q.statement("ServerLocations.deleteLocations").call();
 				q.statement("ServerLocations.deleteProjects").call();
 				final Queryable<Void> insertServerProject = q
@@ -40,9 +41,17 @@ public final class ServerLocations {
 				for (final Entry<SierraServerLocation, Collection<String>> locEntry : locations
 						.entrySet()) {
 					final SierraServerLocation l = locEntry.getKey();
+					if (l.getLabel() == null) {
+						throw new IllegalArgumentException();
+					}
 					final long id = insertLocation.call(l.getLabel(), l
-							.getProtocol(), l.getHost(), l.getPort(), l
-							.getContextPath(), l.getUser());
+							.getProtocol(), l.getHost() == null ? Nulls.STRING
+							: l.getHost(), l.getPort(),
+							l.getContextPath() == null ? Nulls.STRING : l
+									.getContextPath(),
+							l.getUser() == null ? Nulls.STRING : l.getUser(), l
+									.getPass() == null ? Nulls.STRING : l
+									.getPass());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(id, project);
 					}
@@ -56,17 +65,18 @@ public final class ServerLocations {
 	 * Any password information not stored in the database should be provided.
 	 * 
 	 * @param a
-	 *            map of passwords by keyed by {@code user@host}. May be
-	 *            {@code null}
+	 *            map of passwords by keyed by {@code user@host}. May be {@code
+	 *            null}
 	 * @return
 	 */
-	public static DBQuery<Map<SierraServerLocation, Collection<String>>> fetch(
-			Map<String, String> passwords) {
+	public static DBQuery<Map<SierraServerLocation, Collection<String>>> fetchQuery(
+			final Map<String, String> passwords) {
 		final Map<String, String> empty = Collections.emptyMap();
 		final Map<String, String> passMap = passwords == null ? empty
 				: passwords;
 		return new DBQuery<Map<SierraServerLocation, Collection<String>>>() {
-			public Map<SierraServerLocation, Collection<String>> perform(Query q) {
+			public Map<SierraServerLocation, Collection<String>> perform(
+					final Query q) {
 				final Queryable<List<String>> projects = q.prepared(
 						"ServerLocations.listServerProjects",
 						new StringRowHandler());
@@ -75,9 +85,10 @@ public final class ServerLocations {
 								"ServerLocations.listLocations",
 								new ResultHandler<Map<SierraServerLocation, Collection<String>>>() {
 									public Map<SierraServerLocation, Collection<String>> handle(
-											Result result) {
+											final Result result) {
 										final Map<SierraServerLocation, Collection<String>> map = new HashMap<SierraServerLocation, Collection<String>>();
-										// ID,LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER
+										// ID,LABEL,PROTOCOL,HOST,PORT,
+										// CONTEXT_PATH,SERVER_USER
 										for (final Row r : result) {
 											final long id = r.nextLong();
 											final String label = r.nextString();
