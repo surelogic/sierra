@@ -81,7 +81,7 @@ public final class SierraServerPersistence {
 							.getPassword());
 				}
 			}
-			Data.withTransaction(ServerLocations.save(locMap));
+			Data.withTransaction(ServerLocations.saveQuery(locMap));
 			if (map != null) {
 				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
 			}
@@ -176,7 +176,7 @@ public final class SierraServerPersistence {
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
 			for (final Entry<SierraServerLocation, Collection<String>> locEntry : Data
-					.withReadOnly(ServerLocations.fetch(passwords)).entrySet()) {
+					.withReadOnly(ServerLocations.fetchQuery(passwords)).entrySet()) {
 				final SierraServerLocation loc = locEntry.getKey();
 				final SierraServer s = manager.getOrCreate(loc.getLabel());
 				s.setContextPath(loc.getContextPath());
