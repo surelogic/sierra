@@ -13,14 +13,14 @@ public final class Context {
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
 	public static Context create(String context) {
-		Context ctx = new Context();
+		final Context ctx = new Context();
 		ctx.initContext(context);
 		return ctx;
 	}
 
 	public static Context create(Context baseContext,
 			Map<String, String> parameters) {
-		Context newContext = new Context();
+		final Context newContext = new Context();
 		if (baseContext == null) {
 			newContext.initContext(ContextManager.getContext());
 		} else {
@@ -32,14 +32,14 @@ public final class Context {
 
 	public static Context create(ContentComposite content,
 			Map<String, String> parameters) {
-		Context newContext = new Context();
+		final Context newContext = new Context();
 		newContext.initContext(content);
 		newContext.initContext(parameters);
 		return newContext;
 	}
 
 	public static Context createWithUuid(String uuid) {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put(PARAM_UUID, uuid);
 		return Context.create(ContextManager.getContext(), params);
 	}
@@ -49,7 +49,7 @@ public final class Context {
 	}
 
 	public static Context createWithUuid(ContentComposite content, String uuid) {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put(PARAM_UUID, uuid);
 		return Context.create(content, params);
 	}
@@ -86,10 +86,11 @@ public final class Context {
 			buf.append(ContentRegistry.getContentName(content));
 		}
 		if (!parameters.isEmpty()) {
-			for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+			for (final Map.Entry<String, String> parameter : parameters
+					.entrySet()) {
 				buf.append('/');
 				buf.append(parameter.getKey());
-				String paramValue = parameter.getValue();
+				final String paramValue = parameter.getValue();
 				if (paramValue != null) {
 					buf.append('=');
 					buf.append(paramValue);
@@ -108,7 +109,7 @@ public final class Context {
 			return true;
 		}
 		if (obj instanceof Context) {
-			Context objCtx = (Context) obj;
+			final Context objCtx = (Context) obj;
 			return objCtx.content == this.content
 					&& LangUtil.equals(objCtx.parameters, this.parameters);
 		}
@@ -134,7 +135,7 @@ public final class Context {
 
 		String contentName;
 		if (context != null && (context.length() != 0)) {
-			int split = context.indexOf('/');
+			final int split = context.indexOf('/');
 			String argString;
 			if (split != -1) {
 				contentName = context.substring(0, split).toLowerCase();
@@ -145,9 +146,9 @@ public final class Context {
 			}
 
 			if (argString != null && argString.length() != 0) {
-				String[] argArray = argString.split("/");
+				final String[] argArray = argString.split("/");
 				for (int i = 0; i < argArray.length; i++) {
-					String[] argPair = argArray[i].split("\\=");
+					final String[] argPair = argArray[i].split("\\=");
 					if (argPair.length < 2) {
 						parameters.put(argPair[0], null);
 					} else {
@@ -173,7 +174,9 @@ public final class Context {
 	}
 
 	private void initContext(Map<String, String> parameters) {
-		this.parameters.putAll(parameters);
+		if (parameters != null) {
+			this.parameters.putAll(parameters);
+		}
 	}
 
 }
