@@ -126,6 +126,7 @@ public class ServerManagementContent extends
 
 							public void onSuccess(final Status result) {
 								statusBox.setStatus(result);
+								getCache().refresh();
 							}
 						});
 			}

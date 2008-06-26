@@ -47,6 +47,7 @@ public class ServerLocation implements Cacheable, Serializable {
 	 * @param label
 	 */
 	public ServerLocation(final String label) {
+		this.label = label;
 		port = 13376;
 		protocol = Protocol.HTTP;
 	}
