@@ -37,16 +37,16 @@ public class ToolUtil {
   }
   
   public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {    
-    final boolean debug = LOG.isLoggable(Level.FINE);
+    final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
     final ITool t = ToolUtil.create(config, runRemotely);                           
     
-    if (debug) {
+    if (fineIsLoggable) {
       LOG.fine("Excluded: "+config.getExcludedToolsList());
       LOG.fine("Java version: "+config.getJavaVersion());
       LOG.fine("Rules file: "+config.getPmdRulesFile());
     }
     IToolInstance ti = t.create(config, mon);     
-    if (debug) {
+    if (fineIsLoggable) {
       LOG.fine("Created "+ti.getClass().getSimpleName());
     }
     ti.run();
