@@ -34,7 +34,7 @@ public final class Categories {
 
 	Query q;
 
-	public Categories(Query q) {
+	public Categories(final Query q) {
 		this.q = q;
 	}
 
@@ -45,7 +45,7 @@ public final class Categories {
 	 *            a server uid. May not be null.
 	 * @return
 	 */
-	public List<CategoryDO> listServerCategories(String server) {
+	public List<CategoryDO> listServerCategories(final String server) {
 		if (server == null) {
 			throw new IllegalArgumentException("server may not be null");
 		}
@@ -91,7 +91,7 @@ public final class Categories {
 			set.getFilters().addAll(
 					q.prepared("FilterSets.listFilterSetFilters",
 							new RowHandler<CategoryEntryDO>() {
-								public CategoryEntryDO handle(Row r) {
+								public CategoryEntryDO handle(final Row r) {
 									return new CategoryEntryDO(r.nextString(),
 											"Y".equals(r.nextString()));
 								}
@@ -113,7 +113,7 @@ public final class Categories {
 	 * @return a CategoryGraph if the category exists <code>null</code>
 	 *         otherwise
 	 */
-	public CategoryGraph getCategoryGraph(String uid) {
+	public CategoryGraph getCategoryGraph(final String uid) {
 		final CategoryDO cat = getCategory(uid);
 		if (cat != null) {
 			final Map<String, CategoryDO> map = new HashMap<String, CategoryDO>();
@@ -132,7 +132,7 @@ public final class Categories {
 	 * @return an in-order list of CategoryGraph objects. References may be
 	 *         <code>null</code> if a category does not exist.
 	 */
-	public List<CategoryGraph> getCategoryGraphs(List<String> uids) {
+	public List<CategoryGraph> getCategoryGraphs(final List<String> uids) {
 		final Map<String, CategoryDO> map = new HashMap<String, CategoryDO>();
 		final List<CategoryGraph> graphs = new ArrayList<CategoryGraph>(uids
 				.size());
@@ -151,7 +151,8 @@ public final class Categories {
 	/*
 	 * Add this category and all of its dependencies to the map
 	 */
-	private void graphHelper(Map<String, CategoryDO> map, CategoryDO cat) {
+	private void graphHelper(final Map<String, CategoryDO> map,
+			final CategoryDO cat) {
 		map.put(cat.getUid(), cat);
 		for (final String uid : cat.getParents()) {
 			if (map.get(uid) == null) {
@@ -169,8 +170,8 @@ public final class Categories {
 	 * @param revision
 	 * @return the uid of this filter set
 	 */
-	public CategoryDO createCategory(String name, String description,
-			long revision) {
+	public CategoryDO createCategory(final String name,
+			final String description, final long revision) {
 		if ((name == null) || (name.length() == 0) || (name.length() > 2000)) {
 			throw new IllegalArgumentException(name + " is not a valid name");
 		}
@@ -189,7 +190,7 @@ public final class Categories {
 	 * 
 	 * @param set
 	 */
-	public void writeCategory(CategoryDO set) {
+	public void writeCategory(final CategoryDO set) {
 		/*
 		 * Essentially the same as update, but w/o a revision check or failure
 		 * if it doesn't exist.
@@ -244,7 +245,7 @@ public final class Categories {
 	 * @throws IllegalArgumentException
 	 *             if the filter set would in fact create a cyclic graph.
 	 */
-	public CategoryDO updateCategory(CategoryDO set, long revision) {
+	public CategoryDO updateCategory(final CategoryDO set, final long revision) {
 		final FilterSetRecord rec = q.record(FilterSetRecord.class);
 		rec.setUid(set.getUid());
 		if (rec.select()) {
@@ -303,8 +304,8 @@ public final class Categories {
 	 *            the filter set uid
 	 * @throws IllegalArgumentException
 	 */
-	private void checkCyclicDependences(Collection<String> uids,
-			String filterSetUid) {
+	private void checkCyclicDependences(final Collection<String> uids,
+			final String filterSetUid) {
 		for (final String uid : uids) {
 			if (!uid.equals(filterSetUid)) {
 				checkCyclicDependences(q.prepared("FilterSets.findParents",
@@ -322,7 +323,7 @@ public final class Categories {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteCategory(String uid) {
+	public void deleteCategory(final String uid) {
 		final FilterSetRecord set = q.record(FilterSetRecord.class);
 		set.setUid(uid);
 		if (set.select()) {
@@ -348,10 +349,11 @@ public final class Categories {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteCategories(Collection<String> uids) {
+	public void deleteCategories(final Collection<String> uids) {
 		final FilterSetRecord set = q.record(FilterSetRecord.class);
 		for (final String uid : uids) {
 			set.setUid(uid);
+			// Delete the category if it exists. Otherwise, don't worry about it
 			if (set.select()) {
 				if (uids.containsAll((q.prepared(
 						"FilterSets.listFilterSetChildren",
@@ -364,9 +366,6 @@ public final class Categories {
 							"Can not delete filter set with uid " + uid
 									+ " because it has children.");
 				}
-			} else {
-				throw new IllegalArgumentException(
-						"No filter set with the uid " + uid + " exists.");
 			}
 		}
 	}
@@ -380,7 +379,7 @@ public final class Categories {
 	 *            a server uid
 	 * @return
 	 */
-	public static FilterSet convert(CategoryDO in, String server) {
+	public static FilterSet convert(final CategoryDO in, final String server) {
 		final FilterSet out = new FilterSet();
 		out.setName(in.getName());
 		out.setOwner(server);
@@ -404,7 +403,7 @@ public final class Categories {
 	 * @param in
 	 * @return
 	 */
-	public static CategoryDO convertDO(FilterSet in) {
+	public static CategoryDO convertDO(final FilterSet in) {
 		final CategoryDO out = new CategoryDO();
 		out.setInfo(in.getInfo());
 		out.setName(in.getName());
