@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.ResultHandler;
@@ -28,6 +30,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.project.Projects;
@@ -62,7 +65,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final int limit) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserQuery<Map<String, String>>() {
-					public Map<String, String> perform(Query q, Server s, User u) {
+					public Map<String, String> perform(final Query q,
+							final Server s, final User u) {
 						return q.prepared("FilterSets.query",
 								new QueryHandler(limit)).call(
 								query.replace("*", "%").concat("%"));
@@ -74,7 +78,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final int limit) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserQuery<Map<String, String>>() {
-					public Map<String, String> perform(Query q, Server s, User u) {
+					public Map<String, String> perform(final Query q,
+							final Server s, final User u) {
 						return q.prepared("FindingTypes.query",
 								new QueryHandler(limit)).call(
 								query.replace('*', '%').concat("%"));
@@ -85,11 +90,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public List<String> searchProjects(final String query, final int limit) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserQuery<List<String>>() {
-					public List<String> perform(Query q, Server s, User u) {
+					public List<String> perform(final Query q, final Server s,
+							final User u) {
 						return q.prepared("Projects.query",
 								new ResultHandler<List<String>>() {
 									public List<String> handle(
-											com.surelogic.common.jdbc.Result r) {
+											final com.surelogic.common.jdbc.Result r) {
 										final List<String> result = new ArrayList<String>();
 										final int count = 0;
 										for (final Row row : r) {
@@ -119,11 +125,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			ResultHandler<Map<String, String>> {
 		private final int limit;
 
-		QueryHandler(int limit) {
+		QueryHandler(final int limit) {
 			this.limit = limit;
 		}
 
-		public Map<String, String> handle(com.surelogic.common.jdbc.Result r) {
+		public Map<String, String> handle(
+				final com.surelogic.common.jdbc.Result r) {
 			final Map<String, String> results = new HashMap<String, String>();
 			int count = 0;
 			for (final Row row : r) {
@@ -140,7 +147,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public List<Project> getProjects() {
 		return ConnectionFactory
 				.withUserTransaction(new UserQuery<List<Project>>() {
-					public List<Project> perform(Query q, Server s, User u) {
+					public List<Project> perform(final Query q, final Server s,
+							final User u) {
 						final List<Project> result = new ArrayList<Project>();
 						final Projects projects = new Projects(q);
 						for (final ProjectDO projectDO : projects
@@ -159,8 +167,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return ConnectionFactory
 				.withUserReadOnly(new UserQuery<List<Category>>() {
 
-					public List<Category> perform(Query q, Server server,
-							User user) {
+					public List<Category> perform(final Query q,
+							final Server server, final User user) {
 						final String serverUID = server.getUid();
 						final Map<String, Category> sets = new HashMap<String, Category>();
 						final FindingTypes types = new FindingTypes(q);
@@ -200,7 +208,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							set.setRevision(detail.getRevision());
 							q.prepared("FilterSets.scanFiltersUsing",
 									new RowHandler<Void>() {
-										public Void handle(Row r) {
+										public Void handle(final Row r) {
 											set
 													.getScanFiltersUsing()
 													.add(
@@ -221,8 +229,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	private static Category getOrCreateSet(String uid,
-			Map<String, Category> sets) {
+	private static Category getOrCreateSet(final String uid,
+			final Map<String, Category> sets) {
 		Category set = sets.get(uid);
 		if (set == null) {
 			set = new Category();
@@ -236,7 +244,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final List<String> entries, final List<String> parents) {
 		return ConnectionFactory
 				.withUserTransaction(new UserQuery<Result<String>>() {
-					public Result<String> perform(Query q, Server s, User u) {
+					public Result<String> perform(final Query q,
+							final Server s, final User u) {
 						final Categories sets = new Categories(q);
 						final long revision = s.nextRevision();
 						final CategoryDO set = sets.createCategory(name, null,
@@ -260,7 +269,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	// TODO do this w/o passing back and forth the whole graph
 	public Status updateCategory(final Category c) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(Query q, Server s, User u) {
+			public Status perform(final Query q, final Server s, final User u) {
 				if (!s.getUid().equals(
 						q.prepared("Definitions.getDefinitionServer",
 								new StringResultHandler()).call(c.getUuid()))) {
@@ -299,7 +308,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	public Status deleteCategory(final String uuid) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(Query q, Server s, User u) {
+			public Status perform(final Query q, final Server s, final User u) {
 				final Categories cats = new Categories(q);
 				final String server = s.getUid();
 				if (server.equals(q.prepared("Definitions.getDefinitionServer",
@@ -323,7 +332,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public List<FindingType> getFindingTypes() {
 		return ConnectionFactory
 				.withUserTransaction(new UserQuery<List<FindingType>>() {
-					public List<FindingType> perform(Query q, Server s, User u) {
+					public List<FindingType> perform(final Query q,
+							final Server s, final User u) {
 						final List<FindingType> result = new ArrayList<FindingType>();
 						final FindingTypes types = new FindingTypes(q);
 						for (final FindingTypeDO type : types
@@ -338,7 +348,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public Result<FindingType> getFindingType(final String uuid) {
 		return ConnectionFactory
 				.withUserTransaction(new UserQuery<Result<FindingType>>() {
-					public Result<FindingType> perform(Query q, Server s, User u) {
+					public Result<FindingType> perform(final Query q,
+							final Server s, final User u) {
 						final FindingTypes types = new FindingTypes(q);
 						final FindingTypeDO type = types.getFindingType(uuid);
 						if (type != null) {
@@ -352,7 +363,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	private FindingType getType(FindingTypeDO type, Query q) {
+	private FindingType getType(final FindingTypeDO type, final Query q) {
 		final FindingType info = new FindingType();
 		info.setInfo(type.getInfo());
 		info.setName(type.getName());
@@ -360,7 +371,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		info.setUuid(type.getUid());
 		q.prepared("FindingTypes.categoriesReferencing",
 				new RowHandler<Void>() {
-					public Void handle(Row r) {
+					public Void handle(final Row r) {
 						final FindingType.CategoryInfo ci = new FindingType.CategoryInfo(
 								r.nextString(), r.nextString(), r.nextString());
 						if (r.nextBoolean()) {
@@ -372,7 +383,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					}
 				}).call(type.getId());
 		q.prepared("FindingTypes.scanFiltersIncluding", new RowHandler<Void>() {
-			public Void handle(Row r) {
+			public Void handle(final Row r) {
 				info.getScanFiltersIncluding().add(
 						new FindingType.ScanFilterInfo(r.nextString(), r
 								.nextString()));
@@ -386,7 +397,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return ConnectionFactory
 				.withReadOnly(new ServerQuery<List<ScanFilter>>() {
 
-					public List<ScanFilter> perform(Query q, Server s) {
+					public List<ScanFilter> perform(final Query q,
+							final Server s) {
 						final FindingTypes ft = new FindingTypes(q);
 						final Categories fs = new Categories(q);
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
@@ -399,8 +411,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	protected ScanFilter getFilter(ScanFilterDO fDO, FindingTypes ft,
-			Categories cs) {
+	protected ScanFilter getFilter(final ScanFilterDO fDO,
+			final FindingTypes ft, final Categories cs) {
 		final ScanFilter f = new ScanFilter();
 		f.setName(fDO.getName());
 		f.setRevision(fDO.getRevision());
@@ -434,7 +446,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public ScanFilter createScanFilter(final String name) {
 		return ConnectionFactory
 				.withUserTransaction(new UserQuery<ScanFilter>() {
-					public ScanFilter perform(Query q, Server s, User u) {
+					public ScanFilter perform(final Query q, final Server s,
+							final User u) {
 						final ScanFilters filters = new ScanFilters(q);
 						final ScanFilter f = getFilter(filters
 								.createScanFilter(name, s.nextRevision()),
@@ -446,7 +459,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public Status updateScanFilter(ScanFilter f) {
+	public Status updateScanFilter(final ScanFilter f) {
 		final ScanFilterDO fDO = new ScanFilterDO();
 		fDO.setName(f.getName());
 		fDO.setRevision(f.getRevision());
@@ -468,7 +481,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		}
 		fDO.getProjects().addAll(f.getProjects());
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(Query q, Server s, User u) {
+			public Status perform(final Query q, final Server s, final User u) {
 				if (!s.getUid().equals(
 						q.prepared("Definitions.getDefinitionServer",
 								new StringResultHandler()).call(fDO.getUid()))) {
@@ -490,10 +503,11 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	public Status deleteScanFilter(final String uuid) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(Query q, Server s, User u) {
+			public Status perform(final Query q, final Server s, final User u) {
 				return ConnectionFactory
 						.withUserTransaction(new UserQuery<Status>() {
-							public Status perform(Query q, Server s, User u) {
+							public Status perform(final Query q,
+									final Server s, final User u) {
 								final ScanFilters filters = new ScanFilters(q);
 								final String server = s.getUid();
 								if (server.equals(q.prepared(
@@ -520,7 +534,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	private static Importance importance(ImportanceView i) {
+	private static Importance importance(final ImportanceView i) {
 		if (i == null) {
 			return null;
 		}
@@ -538,7 +552,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		throw new IllegalStateException();
 	}
 
-	private static ImportanceView view(Importance i) {
+	private static ImportanceView view(final Importance i) {
 		if (i == null) {
 			return null;
 		}
@@ -568,13 +582,57 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			s.setLabel(l.getLabel());
 			s.setPass(l.getPass());
 			s.setPort(l.getPort());
-			s
-					.setProtocol(com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol
-							.fromValue(l.getProtocol()));
+			s.setProtocol(ServerLocation.Protocol.fromValue(l.getProtocol()));
 			s.setUser(l.getUser());
 			servers.add(s);
 		}
 		return servers;
+	}
+
+	public Status deleteServerLocation(final String label) {
+		return ConnectionFactory.withTransaction(new DBQuery<Status>() {
+
+			public Status perform(final Query q) {
+				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+						.fetch(null).perform(q);
+				SierraServerLocation loc = null;
+				for (final SierraServerLocation l : servers.keySet()) {
+					if (l.getLabel().equals(label)) {
+						loc = l;
+						break;
+					}
+				}
+				if (loc != null) {
+					servers.remove(loc);
+				}
+				return Status.success(label + " deleted.");
+			}
+		});
+	}
+
+	public Status saveServerLocation(final ServerLocation loc) {
+		return ConnectionFactory.withTransaction(new DBQuery<Status>() {
+
+			public Status perform(final Query q) {
+				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+						.fetch(null).perform(q);
+				if (loc.getLabel() == null) {
+					throw new IllegalArgumentException();
+				}
+				final SierraServerLocation l = new SierraServerLocation(loc
+						.getLabel(), loc.getHost(),
+						loc.getProtocol() == Protocol.HTTPS, loc.getPort(), loc
+								.getContext(), loc.getUser(), loc.getPass());
+				Collection<String> projects = servers.get(l);
+				if (projects == null) {
+					projects = Collections.emptyList();
+				}
+				servers.put(l, projects);
+				ServerLocations.save(servers);
+				return Status.success(loc.getLabel() + " updated.");
+			}
+		});
+
 	}
 
 }
