@@ -22,13 +22,15 @@ public class SierraServerLocation {
 	private final String f_user;
 	private final String f_password;
 
-	public SierraServerLocation(String host, boolean secure, int port,
-			String contextPath, String user, String password) {
+	public SierraServerLocation(final String host, final boolean secure,
+			final int port, final String contextPath, final String user,
+			final String password) {
 		this(UNLABELED_SERVER, host, secure, port, contextPath, user, password);
 	}
 
-	public SierraServerLocation(String label, String host, boolean secure,
-			int port, String contextPath, String user, String pass) {
+	public SierraServerLocation(final String label, final String host,
+			final boolean secure, final int port, final String contextPath,
+			final String user, final String pass) {
 		f_host = host;
 		f_secure = secure;
 		f_port = port;
@@ -38,7 +40,8 @@ public class SierraServerLocation {
 		f_contextPath = contextPath;
 	}
 
-	public SierraServerLocation(String server, String user, String pass) {
+	public SierraServerLocation(final String server, final String user,
+			final String pass) {
 		URL url;
 		try {
 			url = new URL(server);
@@ -114,7 +117,7 @@ public class SierraServerLocation {
 	 * @param serviceName
 	 * @return
 	 */
-	public URL createServiceUrl(String serviceName) {
+	public URL createServiceUrl(final String serviceName) {
 		final String host = getHost() + ":" + getPort();
 
 		try {
@@ -123,6 +126,36 @@ public class SierraServerLocation {
 		} catch (final MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((f_label == null) ? 0 : f_label.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final SierraServerLocation other = (SierraServerLocation) obj;
+		if (f_label == null) {
+			if (other.f_label != null) {
+				return false;
+			}
+		} else if (!f_label.equals(other.f_label)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
