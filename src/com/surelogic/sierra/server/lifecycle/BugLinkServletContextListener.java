@@ -38,20 +38,22 @@ public class BugLinkServletContextListener implements ServletContextListener {
 												+ locations + " at "
 												+ new Date());
 								for (final SierraServerLocation location : locations) {
-									ConnectionFactory
-											.withTransaction(SettingQueries
-													.retrieveCategories(
-															location,
-															ConnectionFactory
-																	.withReadOnly(SettingQueries
-																			.categoryRequest())));
-									ConnectionFactory
-											.withTransaction(SettingQueries
-													.retrieveScanFilters(
-															location,
-															ConnectionFactory
-																	.withReadOnly(SettingQueries
-																			.scanFilterRequest())));
+									if (location.getHost() != null) {
+										ConnectionFactory
+												.withTransaction(SettingQueries
+														.retrieveCategories(
+																location,
+																ConnectionFactory
+																		.withReadOnly(SettingQueries
+																				.categoryRequest())));
+										ConnectionFactory
+												.withTransaction(SettingQueries
+														.retrieveScanFilters(
+																location,
+																ConnectionFactory
+																		.withReadOnly(SettingQueries
+																				.scanFilterRequest())));
+									}
 								}
 							} catch (final Error e) {
 								SLLogger.getLogger().log(Level.SEVERE,
