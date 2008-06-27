@@ -678,7 +678,7 @@ public abstract class Filter {
 		 * porous. This should make the query faster than listing everything
 		 * explicitly.
 		 */
-		return !f_porousValues.containsAll(f_allValues);
+		return !isFilterExpressionClear() || !f_porousValues.containsAll(f_allValues);
 	}
 
 	/**
