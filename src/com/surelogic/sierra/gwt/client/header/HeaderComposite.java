@@ -1,20 +1,18 @@
 package com.surelogic.sierra.gwt.client.header;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabBar;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
@@ -28,8 +26,10 @@ public abstract class HeaderComposite extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final HorizontalPanel headerRow = new HorizontalPanel();
 	private final HorizontalPanel utilityRow = new HorizontalPanel();
-	private final TabBar mainBar = new TabBar();
-	private final List<ContentComposite> tabContent = new ArrayList<ContentComposite>();
+	private final HorizontalPanel tabStylingPanel = new HorizontalPanel();
+	private final HorizontalPanel tabPanel = new HorizontalPanel();
+	private final Map<ContentComposite, Hyperlink> tabContent = new HashMap<ContentComposite, Hyperlink>();
+	private Hyperlink currentTab;
 	private boolean uiCreated;
 
 	public HeaderComposite() {
@@ -47,25 +47,27 @@ public abstract class HeaderComposite extends Composite {
 				HorizontalPanel.ALIGN_MIDDLE);
 		rootPanel.add(headerRow);
 
+		tabStylingPanel.addStyleName("header-tab-panel");
+
+		final HTML tabLeft = new HTML("&nbsp;", true);
+		tabLeft.addStyleName("header-tab-left");
+		tabLeft.setHeight("100%");
+		tabStylingPanel.add(tabLeft);
+		tabStylingPanel.setCellHeight(tabLeft, "100%");
+
+		tabStylingPanel.add(tabPanel);
+
+		final HTML tabRight = new HTML("&nbsp;", true);
+		tabRight.addStyleName("header-tab-right");
+		tabRight.setHeight("100%");
+		tabStylingPanel.add(tabRight);
+		tabStylingPanel.setCellHeight(tabRight, "100%");
+		tabStylingPanel.setCellHorizontalAlignment(tabRight,
+				HorizontalPanel.ALIGN_LEFT);
+
+		tabStylingPanel.add(new HTML("&nbsp;", true));
+
 		utilityRow.addStyleName(PRIMARY_STYLE);
-
-		mainBar.setWidth("100%");
-		mainBar.addTabListener(new TabListener() {
-
-			public boolean onBeforeTabSelected(SourcesTabEvents sender,
-					int tabIndex) {
-				return true;
-			}
-
-			public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-				if (tabIndex >= 0 && tabIndex < tabContent.size()) {
-					ContentComposite content = tabContent.get(tabIndex);
-					if (!ContextManager.isContent(content)) {
-						ContextManager.setContent(content);
-					}
-				}
-			}
-		});
 	}
 
 	public final void activate(Context context, UserAccount user) {
@@ -82,18 +84,30 @@ public abstract class HeaderComposite extends Composite {
 	}
 
 	public final void updateContext(Context context) {
-		if (rootPanel.getWidgetIndex(mainBar) != -1) {
-			int newIndex;
-			if (context != null && context.getContent() != null) {
-				newIndex = tabContent.indexOf(context.getContent());
+		if (rootPanel.getWidgetIndex(tabStylingPanel) != -1) {
+			Hyperlink newLink;
+			if (context != null) {
+				newLink = tabContent.get(context.getContent());
 			} else {
-				newIndex = 0;
+				newLink = null;
 			}
-			if (newIndex != mainBar.getSelectedTab()) {
-				mainBar.selectTab(newIndex);
+			if (newLink == null) {
+				newLink = (Hyperlink) tabPanel.getWidget(0);
 			}
+			selectTab(newLink);
 		}
 		onUpdateContext(context);
+	}
+
+	private void selectTab(Hyperlink newLink) {
+		if (currentTab == newLink) {
+			return;
+		}
+		if (currentTab != null) {
+			currentTab.removeStyleName("header-tab-selected");
+		}
+		currentTab = newLink;
+		currentTab.addStyleName("header-tab-selected");
 	}
 
 	public final void deactivate() {
@@ -131,25 +145,37 @@ public abstract class HeaderComposite extends Composite {
 		}
 	}
 
-	protected final void addTab(String title, ContentComposite content) {
+	protected final void addTab(String title, String tabStyleName,
+			ContentComposite content) {
 		showTabs();
-		if (tabContent.indexOf(content) == -1) {
-			tabContent.add(content);
-			mainBar.addTab(title);
+		if (tabContent.get(content) == null) {
+			final String contentUrl = Context.create(content, null).toString();
+			final Hyperlink contentLink = new Hyperlink(title, contentUrl);
+			contentLink.addStyleName("header-tab");
+			contentLink.addStyleName("header-tab-" + tabStyleName);
+			tabContent.put(content, contentLink);
+			tabPanel.add(contentLink);
 		}
 	}
 
+	protected final void addTabSpacer() {
+		final HTML spacer = new HTML("&nbsp;", true);
+		spacer.addStyleName("header-tab-spacer");
+		spacer.setHeight("100%");
+		tabPanel.add(spacer);
+	}
+
 	protected final void removeTab(ContentComposite content) {
-		int tabIndex = tabContent.indexOf(content);
-		if (tabIndex != -1) {
-			tabContent.remove(tabIndex);
-			mainBar.removeTab(tabIndex);
+		final Hyperlink contentLink = tabContent.get(content);
+		if (contentLink != null) {
+			tabContent.remove(content);
+			tabPanel.remove(contentLink);
 		}
 	}
 
 	protected final void showTabs() {
-		if (rootPanel.getWidgetIndex(mainBar) == -1) {
-			rootPanel.add(mainBar);
+		if (rootPanel.getWidgetIndex(tabStylingPanel) == -1) {
+			rootPanel.add(tabStylingPanel);
 		}
 	}
 

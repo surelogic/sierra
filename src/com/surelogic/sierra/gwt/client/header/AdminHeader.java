@@ -22,8 +22,8 @@ public final class AdminHeader extends AuthenticatedHeader {
 
 	@Override
 	protected void addTabs() {
-		addTab("Settings", SettingsContent.getInstance());
-		addTab("Users", UserManagementContent.getInstance());
-		addTab("Servers", ServerManagementContent.getInstance());
+		addTab("Settings", "admin", SettingsContent.getInstance());
+		addTab("Users", "admin", UserManagementContent.getInstance());
+		addTab("Servers", "admin", ServerManagementContent.getInstance());
 	}
 }
