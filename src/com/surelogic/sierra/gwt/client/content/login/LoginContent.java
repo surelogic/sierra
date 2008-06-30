@@ -48,11 +48,6 @@ public final class LoginContent extends ContentComposite {
 		return instance;
 	}
 
-	public static final LoginContent getInstance(String errorText) {
-		instance.errorMessage.setText(errorText);
-		return instance;
-	}
-
 	private LoginContent() {
 		// singleton
 	}
@@ -92,6 +87,7 @@ public final class LoginContent extends ContentComposite {
 		ContextManager.login(usernameText, passwordText);
 	}
 
+	@Override
 	protected void onInitialize(DockPanel rootPanel) {
 		// TODO redo style bindings to standard naming scheme
 		loginPanel.addStyleName("login-panel");
@@ -143,6 +139,7 @@ public final class LoginContent extends ContentComposite {
 		});
 
 		final KeyboardListenerAdapter keyboardListener = new KeyboardListenerAdapter() {
+			@Override
 			public void onKeyUp(final Widget sender, final char keyCode,
 					final int modifiers) {
 				updateLoginEnabled();
@@ -173,6 +170,7 @@ public final class LoginContent extends ContentComposite {
 		rootPanel.add(loginPanel, DockPanel.CENTER);
 	}
 
+	@Override
 	protected void onUpdate(Context context) {
 		// TODO accept an error message param in the context?
 		resetLoginAttempt();
@@ -183,6 +181,7 @@ public final class LoginContent extends ContentComposite {
 		}
 	}
 
+	@Override
 	protected void onDeactivate() {
 		// nothing to do
 	}
