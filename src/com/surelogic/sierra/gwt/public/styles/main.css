@@ -59,14 +59,11 @@ img {
 }
 
 .header-tab-left {
-	background-image:url(../images/tab-first-gradient.png);
-	background-repeat: repeat-y;
+	border-right: 1px solid #000000;
 }
 	
 .header-tab-right {
-	background-image:url(../images/tab-rest-gradient.png);
-	background-repeat: repeat-y;
-	width: 200px;
+	border-left: 1px solid #000000;
 }
 
 .header-tab {
@@ -95,7 +92,7 @@ img {
 }
 
 .header-tab-welcome {
-	border-left: solid 1px #000000;
+	border-left: solid 1px #001166;
 	border-right: solid 1px #001166;
 	border-top: solid 2px #000000;
 }
@@ -114,7 +111,7 @@ img {
 
 .header-tab-reports {
 	border-left: solid 1px #001166;
-	border-right: solid 1px #000000;
+	border-right: solid 1px #001166;
 	border-top: solid 2px #000000;
 }
 
