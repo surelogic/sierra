@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -33,13 +34,14 @@ public final class ContextManager {
 	}
 
 	public static void login(String username, String password) {
-		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
+		final SessionServiceAsync sessionService = ServiceHelper
+				.getSessionService();
 		sessionService.login(username, password, new Callback<UserAccount>() {
 
 			@Override
 			public void onFailure(String message, UserAccount result) {
 				userAccount = null;
-				for (UserListener listener : userListeners) {
+				for (final UserListener listener : userListeners) {
 					listener.onLoginFailure(message);
 				}
 				refreshContext();
@@ -48,7 +50,7 @@ public final class ContextManager {
 			@Override
 			public void onSuccess(String message, UserAccount result) {
 				userAccount = result;
-				for (UserListener listener : userListeners) {
+				for (final UserListener listener : userListeners) {
 					listener.onLogin(userAccount);
 				}
 				refreshContext();
@@ -58,7 +60,7 @@ public final class ContextManager {
 
 	public static void updateUser(UserAccount user) {
 		userAccount = user;
-		for (UserListener listener : userListeners) {
+		for (final UserListener listener : userListeners) {
 			listener.onUpdate(userAccount);
 		}
 		refreshContext();
@@ -72,10 +74,10 @@ public final class ContextManager {
 			protected void onException(Throwable caught) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (UserListener listener : userListeners) {
+				for (final UserListener listener : userListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				refreshContext();
+				setContent(LoginContent.getInstance());
 			}
 
 			@Override
@@ -83,20 +85,20 @@ public final class ContextManager {
 				if (errorMessage != null && !errorMessage.equals("")) {
 					message += " (" + errorMessage + ")";
 				}
-				for (UserListener listener : userListeners) {
+				for (final UserListener listener : userListeners) {
 					listener.onLogout(userAccount, message);
 				}
-				refreshContext();
+				setContent(LoginContent.getInstance());
 			}
 
 			@Override
 			protected void onSuccess(String message, String result) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (UserListener listener : userListeners) {
+				for (final UserListener listener : userListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				refreshContext();
+				setContent(LoginContent.getInstance());
 			}
 
 		});
@@ -111,7 +113,7 @@ public final class ContextManager {
 	}
 
 	public static boolean isContext(String context) {
-		Context ctx = Context.create(context);
+		final Context ctx = Context.create(context);
 		return ctx.equals(getContext());
 	}
 
@@ -155,7 +157,7 @@ public final class ContextManager {
 
 	private static void notifyContextListeners() {
 		final Context context = getContext();
-		for (ContextListener listener : contextListeners) {
+		for (final ContextListener listener : contextListeners) {
 			listener.onChange(context);
 		}
 	}
