@@ -10,11 +10,11 @@ public class ProjectView extends BlockPanel {
 	private final VerticalPanel chart = new VerticalPanel();
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(chart);
 	}
 
-	public void setSelection(Project project) {
+	public void setSelection(final Project project) {
 		if (project == null) {
 			setSummary("Select a project");
 		} else {
@@ -24,6 +24,7 @@ public class ProjectView extends BlockPanel {
 					.prop("projectName", project.getName()).build());
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
+
 		}
 
 	}
