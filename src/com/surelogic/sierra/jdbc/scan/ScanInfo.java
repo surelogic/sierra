@@ -2,24 +2,29 @@ package com.surelogic.sierra.jdbc.scan;
 
 import java.util.Date;
 
-import com.surelogic.sierra.jdbc.record.ScanRecord;
-
 public final class ScanInfo {
 
+	private final String uid;
+	private final String user;
+	private final String project;
 	private final String javaVendor;
 	private final String javaVersion;
 	private final ScanStatus status;
 	private final Date scanTime;
-	private final String uid;
 	private final boolean isPartial;
 
-	ScanInfo(ScanRecord record) {
-		this.isPartial = record.isPartial();
-		this.javaVendor = record.getJavaVendor();
-		this.javaVersion = record.getJavaVersion();
-		this.scanTime = record.getTimestamp();
-		this.status = record.getStatus();
-		this.uid = record.getUid();
+	ScanInfo(final String uid, final String user, final String project,
+			final String javaVendor, final String javaVersion,
+			final ScanStatus status, final Date scanTime,
+			final boolean isPartial) {
+		this.uid = uid;
+		this.user = user;
+		this.project = project;
+		this.javaVendor = javaVendor;
+		this.javaVersion = javaVersion;
+		this.status = status;
+		this.scanTime = scanTime;
+		this.isPartial = isPartial;
 	}
 
 	public String getJavaVendor() {
@@ -44,6 +49,14 @@ public final class ScanInfo {
 
 	public boolean isPartial() {
 		return isPartial;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getProject() {
+		return project;
 	}
 
 }

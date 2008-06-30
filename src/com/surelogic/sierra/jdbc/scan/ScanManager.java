@@ -50,7 +50,7 @@ public final class ScanManager {
 	private final PreparedStatement deleteArtifactRelation;
 	private final PreparedStatement updateArtifactRelationScan;
 
-	private ScanManager(Connection conn) throws SQLException {
+	private ScanManager(final Connection conn) throws SQLException {
 		this.conn = conn;
 		factory = ScanRecordFactory.getInstance(conn);
 
@@ -157,50 +157,11 @@ public final class ScanManager {
 				.prepareStatement("UPDATE SCAN_FINDING_RELATION_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND (PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?)");
 	}
 
-	public ScanGenerator getScanGenerator(FindingFilter filter) {
+	public ScanGenerator getScanGenerator(final FindingFilter filter) {
 		return new JDBCScanGenerator(conn, factory, this, filter);
 	}
 
-	/**
-	 * Returns information about the latest scan of this project, or
-	 * <code>null</code> if there are no scans for this project.
-	 * 
-	 * @param projectName
-	 * @return
-	 * @throws SQLException
-	 */
-	public ScanInfo getLatestScanInfo(String projectName) throws SQLException {
-		getLatestScanByProject.setString(1, projectName);
-		final ResultSet set = getLatestScanByProject.executeQuery();
-		try {
-			if (set.next()) {
-				return getScanInfo(set.getString(1));
-			} else {
-				return null;
-			}
-		} finally {
-			set.close();
-		}
-	}
-
-	/**
-	 * Return information about the specified scan, or <code>null</code> if no
-	 * scan with this uid exists.
-	 * 
-	 * @param scanUid
-	 * @return
-	 */
-	public ScanInfo getScanInfo(String scanUid) throws SQLException {
-		final ScanRecord record = factory.newScan();
-		record.setUid(scanUid);
-		if (record.select()) {
-			return new ScanInfo(record);
-		} else {
-			return null;
-		}
-	}
-
-	public void finalizeScan(String scanUid) throws SQLException {
+	public void finalizeScan(final String scanUid) throws SQLException {
 		final ScanRecord record = factory.newScan();
 		record.setUid(scanUid);
 		if (record.select()) {
@@ -212,8 +173,8 @@ public final class ScanManager {
 		}
 	}
 
-	public void deleteScans(Collection<String> uids, SLProgressMonitor monitor)
-			throws SQLException {
+	public void deleteScans(final Collection<String> uids,
+			final SLProgressMonitor monitor) throws SQLException {
 		for (final String uid : uids) {
 			if (monitor != null) {
 				if (monitor.isCanceled()) {
@@ -248,7 +209,7 @@ public final class ScanManager {
 		work(monitor);
 	}
 
-	private static void work(SLProgressMonitor monitor) {
+	private static void work(final SLProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.worked(1);
 		}
@@ -261,13 +222,13 @@ public final class ScanManager {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteScan(String uid, SLProgressMonitor monitor)
+	public void deleteScan(final String uid, final SLProgressMonitor monitor)
 			throws SQLException {
 		deleteScans(Collections.singleton(uid), monitor);
 	}
 
-	public void deleteOldestScan(String projectName, SLProgressMonitor monitor)
-			throws SQLException {
+	public void deleteOldestScan(final String projectName,
+			final SLProgressMonitor monitor) throws SQLException {
 		monitor.subTask("Deleting oldest scan");
 		getOldestScanByProject.setString(1, projectName);
 		final ResultSet set = getOldestScanByProject.executeQuery();
@@ -280,12 +241,14 @@ public final class ScanManager {
 		}
 	}
 
-	public static ScanManager getInstance(Connection conn) throws SQLException {
+	public static ScanManager getInstance(final Connection conn)
+			throws SQLException {
 		return new ScanManager(conn);
 	}
 
-	public ScanGenerator getPartialScanGenerator(String projectName,
-			FindingFilter filter, List<String> tools, Set<Long> findingIds) {
+	public ScanGenerator getPartialScanGenerator(final String projectName,
+			final FindingFilter filter, final List<String> tools,
+			final Set<Long> findingIds) {
 		try {
 			String oldestScan = null;
 			String latestScan = null;
@@ -455,9 +418,10 @@ public final class ScanManager {
 	 *            scan persistence will be added to this set.
 	 * @return
 	 */
-	public ScanGenerator getPartialScanGenerator(String projectName,
-			FindingFilter filter, Map<String, List<String>> compilations,
-			Set<Long> findingIds) {
+	public ScanGenerator getPartialScanGenerator(final String projectName,
+			final FindingFilter filter,
+			final Map<String, List<String>> compilations,
+			final Set<Long> findingIds) {
 		try {
 			String oldestScan = null;
 			String latestScan = null;
