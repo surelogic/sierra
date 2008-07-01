@@ -147,11 +147,6 @@ public class ScanFiltersContent extends
 				ftPanel = new FilterEntries(filter.getTypes());
 				panel.add(addFindingTypeBox());
 				panel.add(ftPanel);
-				panel.add(UI.h3("Projects"));
-				panel.add(addProjectBox());
-				for (final String project : filter.getProjects()) {
-					panel.add(new Label(project));
-				}
 				final HorizontalPanel buttonPanel = new HorizontalPanel();
 				panel.add(buttonPanel);
 				buttonPanel.add(new Button("Update", new ClickListener() {
@@ -198,29 +193,6 @@ public class ScanFiltersContent extends
 				}
 			});
 			panel.add(box);
-			return panel;
-		}
-
-		private Widget addProjectBox() {
-			final VerticalPanel panel = new VerticalPanel();
-			panel
-					.add(new Label(
-							"Begin typing to search for a category to add to this scan filter.  Use * to match any text."));
-			final HorizontalPanel hPanel = new HorizontalPanel();
-			final SuggestBox box = new SuggestBox(new ProjectSuggestOracle());
-			final Button projectButton = new Button("Add Project",
-					new ClickListener() {
-						public void onClick(Widget sender) {
-							String project = box.getText();
-							if ((project != null) && (project.length() > 0)) {
-								filter.getProjects().add(project);
-								refresh();
-							}
-						}
-					});
-			hPanel.add(box);
-			hPanel.add(projectButton);
-			panel.add(hPanel);
 			return panel;
 		}
 

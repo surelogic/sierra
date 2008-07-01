@@ -48,9 +48,9 @@ public final class UserHeader extends AuthenticatedHeader {
 		addTabSpacer();
 		addTab("Categories", "buglink", CategoriesContent.getInstance());
 		addTab("Finding Types", "buglink", FindingTypesContent.getInstance());
+		addTab("Scan Filters", "buglink", ScanFiltersContent.getInstance());
 		addTabSpacer();
 		addTab("Projects", "team", ProjectsContent.getInstance());
-		addTab("Scan Filters", "team", ScanFiltersContent.getInstance());
 		addTabSpacer();
 		addTab("Reports", "reports", ReportsContent.getInstance());
 	}
