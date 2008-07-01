@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="ANT_HOME/ant.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-tool"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
@@ -10,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-fb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-metrics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-pmd"/>
+	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
