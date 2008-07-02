@@ -8,14 +8,19 @@ import java.util.List;
 import java.util.UUID;
 
 import com.surelogic.common.jdbc.QB;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.service.FindingService;
+import com.surelogic.sierra.jdbc.scan.ScanInfo;
+import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.UserQuery;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
@@ -31,32 +36,34 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = -5522046767503450943L;
 
 	public Result<FindingOverview> getFinding(final String key) {
-		if (key == null || "".equals(key)) {
+		if ((key == null) || "".equals(key)) {
 			return Result.failure("No key specified", null);
 		}
 		return ConnectionFactory
 				.withUserReadOnly(new UserTransaction<Result<FindingOverview>>() {
 
-					public Result<FindingOverview> perform(Connection conn,
-							Server server, User user) throws Exception {
+					public Result<FindingOverview> perform(
+							final Connection conn, final Server server,
+							final User user) throws Exception {
 						PreparedStatement st;
 						try {
 							final long id = Long.parseLong(key);
 							st = conn.prepareStatement(QB
 									.get("portal.finding.byId"));
 							st.setLong(1, id);
-						} catch (NumberFormatException e) {
+						} catch (final NumberFormatException e) {
 							// Try for a uuid
 							try {
 								UUID.fromString(key);
 								st = conn.prepareStatement(QB
 										.get("portal.finding.byUuid"));
-							} catch (IllegalArgumentException ex) {
+							} catch (final IllegalArgumentException ex) {
 								return Result.failure(
 										"Unparseable key: " + key, null);
 							}
 						}
-						// F.ID,F.IMPORTANCE,F.SUMMARY,FT.NAME,FC.NAME,P.NAME,LM.PACKAGE_NAME,LM.CLASS_NAME
+						//F.ID,F.IMPORTANCE,F.SUMMARY,FT.NAME,FC.NAME,P.NAME,LM.
+						// PACKAGE_NAME,LM.CLASS_NAME
 						final ResultSet set = st.executeQuery();
 						try {
 							if (set.next()) {
@@ -71,7 +78,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 								f.setProject(set.getString(idx++));
 								f.setPackageName(set.getString(idx++));
 								f.setClassName(set.getString(idx++));
-								PreparedStatement auditSt = conn
+								final PreparedStatement auditSt = conn
 										.prepareStatement(QB
 												.get("portal.finding.auditsById"));
 								auditSt.setLong(1, id);
@@ -82,7 +89,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 								try {
 									// EVENT, VALUE, DATE_TIME, USER_NAME
 									while (auditSet.next()) {
-										AuditOverview audit = new AuditOverview();
+										final AuditOverview audit = new AuditOverview();
 										int auditIdx = 1;
 										final String event = auditSet
 												.getString(auditIdx++);
@@ -133,6 +140,27 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 						}
 					}
 				});
+	}
+
+	public List<Scan> getScans(final String project) {
+		return ConnectionFactory.withUserReadOnly(new UserQuery<List<Scan>>() {
+			public List<Scan> perform(final Query query, final Server server,
+					final User user) {
+				final List<Scan> scans = new ArrayList<Scan>();
+				for (final ScanInfo info : new Scans(query)
+						.getScanInfo(project)) {
+					final Scan s = new Scan();
+					s.setJavaVendor(info.getJavaVendor());
+					s.setJavaVersion(info.getJavaVersion());
+					s.setProject(info.getProject());
+					s.setScanTime(Dates.format(info.getScanTime()));
+					s.setUser(info.getUser());
+					s.setUuid(info.getUid());
+					scans.add(s);
+				}
+				return scans;
+			}
+		});
 	}
 
 }
