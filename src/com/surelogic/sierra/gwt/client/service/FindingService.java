@@ -1,11 +1,15 @@
 package com.surelogic.sierra.gwt.client.service;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.data.Scan;
 
 public interface FindingService extends RemoteService {
 
 	Result<FindingOverview> getFinding(String id);
 
+	List<Scan> getScans(String project);
 }

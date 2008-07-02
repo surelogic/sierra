@@ -3,6 +3,5 @@
 	<classpathentry excluding="com/surelogic/sierra/gwt/public/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/gwt/gwt-user.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

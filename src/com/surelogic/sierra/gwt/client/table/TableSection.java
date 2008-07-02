@@ -13,7 +13,8 @@ public abstract class TableSection extends SectionPanel {
 	private int currentRow = 0;
 	private int currentColumn = 0;
 
-	protected final void onInitialize(VerticalPanel contentPanel) {
+	@Override
+	protected final void onInitialize(final VerticalPanel contentPanel) {
 		grid.setWidth("100%");
 		grid.addStyleName(PRIMARY_STYLE);
 
@@ -25,10 +26,12 @@ public abstract class TableSection extends SectionPanel {
 		grid.getRowFormatter().setStyleName(0, PRIMARY_STYLE + "-header");
 	}
 
-	protected final void onUpdate(Context context) {
+	@Override
+	protected final void onUpdate(final Context context) {
 		updateTable(context);
 	}
 
+	@Override
 	protected final void onDeactivate() {
 		clearRows();
 	}
@@ -56,7 +59,7 @@ public abstract class TableSection extends SectionPanel {
 				.addStyleName(currentRow, PRIMARY_STYLE + "-data");
 	}
 
-	protected void addColumn(String text) {
+	protected void addColumn(final String text) {
 		if (currentRow == 0) {
 			addRow();
 		}
@@ -72,7 +75,7 @@ public abstract class TableSection extends SectionPanel {
 		currentColumn++;
 	}
 
-	protected void addColumn(int value) {
+	protected void addColumn(final int value) {
 		addColumn(LangUtil.emptyZeroString(value));
 	}
 

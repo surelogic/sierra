@@ -17,15 +17,15 @@ public class ReportTableSection extends SectionPanel {
 
 	private Report report;
 
-	public ReportTableSection(Report r) {
+	public ReportTableSection(final Report r) {
 		setReport(r);
 	}
 
 	public ReportTableSection() {
-
+		// Do nothing
 	}
 
-	public void setReport(Report r) {
+	public void setReport(final Report r) {
 		report = r;
 		if (r != null) {
 			setTitle(report.getTitle());
@@ -38,11 +38,11 @@ public class ReportTableSection extends SectionPanel {
 		ServiceHelper.getTicketService().getReportTable(report,
 				new AsyncCallback<Result<ReportTable>>() {
 
-					public void onFailure(Throwable caught) {
-
+					public void onFailure(final Throwable caught) {
+						// FIXME
 					}
 
-					public void onSuccess(Result<ReportTable> result) {
+					public void onSuccess(final Result<ReportTable> result) {
 						if (result.isSuccess()) {
 							final ReportTable table = result.getResult();
 							final List<String> headerTitles = table
@@ -79,18 +79,21 @@ public class ReportTableSection extends SectionPanel {
 	private int currentRow = 0;
 	private int currentColumn = 0;
 
-	protected final void onInitialize(VerticalPanel contentPanel) {
+	@Override
+	protected final void onInitialize(final VerticalPanel contentPanel) {
 		grid.setWidth("100%");
 		grid.addStyleName(PRIMARY_STYLE);
 
 	}
 
-	protected final void onUpdate(Context context) {
+	@Override
+	protected final void onUpdate(final Context context) {
 		if (report != null) {
 			getReportData();
 		}
 	}
 
+	@Override
 	protected final void onDeactivate() {
 		clearRows();
 	}
@@ -118,7 +121,7 @@ public class ReportTableSection extends SectionPanel {
 				.addStyleName(currentRow, PRIMARY_STYLE + "-data");
 	}
 
-	protected void addColumn(String text, ColumnData type) {
+	protected void addColumn(final String text, final ColumnData type) {
 		if (currentRow == 0) {
 			addRow();
 		}
