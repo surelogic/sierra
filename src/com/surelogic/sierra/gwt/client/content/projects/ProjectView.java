@@ -35,6 +35,9 @@ public class ProjectView extends BlockPanel {
 					.prop("projectName", project.getName()).build());
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
+
+			// TODO find the scan filters by looping through ScanFilterCache
+			// make sure ScanFilterCache is populated
 		}
 		scans.update(ContextManager.getContext());
 	}
