@@ -15,7 +15,7 @@ public final class ScanInfo {
 
 	ScanInfo(final String uid, final String user, final String project,
 			final String javaVendor, final String javaVersion,
-			final ScanStatus status, final Date scanTime,
+			final Date scanTime, final ScanStatus status,
 			final boolean isPartial) {
 		this.uid = uid;
 		this.user = user;

@@ -52,8 +52,8 @@ public final class Scans {
 
 		public ScanInfo handle(final Row r) {
 			return new ScanInfo(r.nextString(), r.nextString(), r.nextString(),
-					r.nextString(), r.nextString(), ScanStatus.valueOf(r
-							.nextString()), r.nextDate(), r.nextBoolean());
+					r.nextString(), r.nextString(), r.nextDate(), ScanStatus
+							.valueOf(r.nextString()), r.nextBoolean());
 		}
 
 	}

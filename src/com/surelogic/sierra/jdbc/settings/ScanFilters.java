@@ -38,15 +38,15 @@ public class ScanFilters {
 
 	private final Query q;
 
-	public ScanFilters(Query q) {
+	public ScanFilters(final Query q) {
 		this.q = q;
 	}
 
-	public ScanFilters(Connection conn) {
+	public ScanFilters(final Connection conn) {
 		q = new ConnectionQuery(conn);
 	}
 
-	public List<ScanFilterDO> listServerScanFilters(String server) {
+	public List<ScanFilterDO> listServerScanFilters(final String server) {
 		final List<ScanFilterDO> list = new ArrayList<ScanFilterDO>();
 		for (final String s : q.prepared("ScanFilters.listServerScanFilters",
 				new StringRowHandler()).call(server)) {
@@ -76,7 +76,7 @@ public class ScanFilters {
 	 * @param revision
 	 * @return the newly created scan filter
 	 */
-	public ScanFilterDO createScanFilter(String name, long revision) {
+	public ScanFilterDO createScanFilter(final String name, final long revision) {
 		if ((name == null) || (name.length() == 0) || (name.length() > 255)) {
 			throw new IllegalArgumentException(name
 					+ " is not a valid scan filter name.");
@@ -102,7 +102,8 @@ public class ScanFilters {
 	 *             if the revision in the database does not match the expected
 	 *             revision
 	 */
-	public ScanFilterDO updateScanFilter(ScanFilterDO settings, long revision) {
+	public ScanFilterDO updateScanFilter(final ScanFilterDO settings,
+			final long revision) {
 		final ScanFilterRecord settingsRec = q.record(ScanFilterRecord.class);
 		settingsRec.setUid(settings.getUid());
 		if (settingsRec.select()) {
@@ -155,7 +156,7 @@ public class ScanFilters {
 	 * 
 	 * @param settings
 	 */
-	public void writeScanFilter(ScanFilterDO settings) {
+	public void writeScanFilter(final ScanFilterDO settings) {
 		final ScanFilterRecord settingsRec = q.record(ScanFilterRecord.class);
 		settingsRec.setUid(settings.getUid());
 		if (settingsRec.select()) {
@@ -201,7 +202,7 @@ public class ScanFilters {
 	 * @param uid
 	 * @throws SQLException
 	 */
-	public void deleteScanFilter(String uid) {
+	public void deleteScanFilter(final String uid) {
 		final ScanFilterRecord set = q.record(ScanFilterRecord.class);
 		set.setUid(uid);
 		if (set.select()) {
@@ -218,7 +219,7 @@ public class ScanFilters {
 	 * @param uid
 	 * @return
 	 */
-	public ScanFilterDO getScanFilter(String uid) {
+	public ScanFilterDO getScanFilter(final String uid) {
 		final ScanFilterRecord settingsRec = q.record(ScanFilterRecord.class);
 		settingsRec.setUid(uid);
 		if (settingsRec.select()) {
@@ -247,7 +248,7 @@ public class ScanFilters {
 	 * @param project
 	 * @return
 	 */
-	public ScanFilterDO getScanFilterByProject(String project) {
+	public ScanFilterDO getScanFilterByProject(final String project) {
 		if (project == null) {
 			throw new IllegalArgumentException("Project may not be null.");
 		}
@@ -259,7 +260,7 @@ public class ScanFilters {
 	private static class FilterSetHandler implements
 			RowHandler<CategoryFilterDO> {
 
-		public CategoryFilterDO handle(Row r) {
+		public CategoryFilterDO handle(final Row r) {
 			return new CategoryFilterDO(r.nextString(), toImportance(r
 					.nullableInt()));
 		}
@@ -267,17 +268,17 @@ public class ScanFilters {
 
 	private static class FilterHandler implements RowHandler<TypeFilterDO> {
 
-		public TypeFilterDO handle(Row r) {
+		public TypeFilterDO handle(final Row r) {
 			return new TypeFilterDO(r.nextString(), toImportance(r
 					.nullableInt()), r.nextBoolean());
 		}
 	}
 
-	private static Importance toImportance(Integer imp) {
+	private static Importance toImportance(final Integer imp) {
 		return imp == null ? null : Importance.values()[imp];
 	}
 
-	public static ScanFilterDO convertDO(ScanFilter message) {
+	public static ScanFilterDO convertDO(final ScanFilter message) {
 		final ScanFilterDO filter = new ScanFilterDO();
 		filter.setName(message.getName());
 		filter.setUid(message.getUid());
@@ -291,11 +292,10 @@ public class ScanFilters {
 			tSet.add(new TypeFilterDO(t.getUid(), t.getImportance(), t
 					.isFiltered()));
 		}
-		filter.getProjects().addAll(message.getProject());
 		return filter;
 	}
 
-	public static ScanFilter convert(ScanFilterDO data, String owner) {
+	public static ScanFilter convert(final ScanFilterDO data, final String owner) {
 		final ScanFilter filter = new ScanFilter();
 		filter.setName(data.getName());
 		filter.setUid(data.getUid());
@@ -316,7 +316,6 @@ public class ScanFilters {
 			tf.setFiltered(t.isFiltered());
 			tSet.add(tf);
 		}
-		filter.getProject().addAll(data.getProjects());
 		return filter;
 	}
 }

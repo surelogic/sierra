@@ -4,5 +4,5 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.jdbc.user.User;
 
 public interface UserQuery<T> {
-	T perform(Query q, Server s, User u);
+	T perform(Query query, Server server, User user);
 }
