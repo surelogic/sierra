@@ -308,7 +308,7 @@ public class ScanFiltersContent extends
 
 	// Singleton
 	private ScanFiltersContent() {
-		super(new ScanFilterCache());
+		super(ScanFilterCache.getInstance());
 	}
 
 	private static final ScanFiltersContent instance = new ScanFiltersContent();

@@ -9,6 +9,17 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 public class ScanFilterCache extends Cache<ScanFilter> {
 
+	private static final ScanFilterCache instance = new ScanFilterCache();
+
+	public static ScanFilterCache getInstance() {
+		return instance;
+	}
+
+	private ScanFilterCache() {
+		super();
+		// singleton
+	}
+
 	@Override
 	protected void doRefreshCall(AsyncCallback<List<ScanFilter>> callback) {
 		ServiceHelper.getSettingsService().getScanFilters(callback);
