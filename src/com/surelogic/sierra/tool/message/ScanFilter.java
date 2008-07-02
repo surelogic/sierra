@@ -25,13 +25,12 @@ public class ScanFilter {
 	protected String owner;
 	protected List<TypeFilter> typeFilter;
 	protected List<CategoryFilter> categoryFilter;
-	protected List<String> project;
 
 	public long getRevision() {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -39,7 +38,7 @@ public class ScanFilter {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -47,7 +46,7 @@ public class ScanFilter {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
 	}
 
@@ -65,18 +64,11 @@ public class ScanFilter {
 		return categoryFilter;
 	}
 
-	public List<String> getProject() {
-		if (project == null) {
-			project = new ArrayList<String>();
-		}
-		return project;
-	}
-
 	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String server) {
+	public void setOwner(final String server) {
 		owner = server;
 	}
 

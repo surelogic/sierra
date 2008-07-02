@@ -15,6 +15,8 @@ public class SyncResponse {
 
 	private List<SyncTrailResponse> trails;
 
+	private String scanFilter;
+
 	private long commitRevision;
 
 	public List<SyncTrailResponse> getTrails() {
@@ -24,7 +26,7 @@ public class SyncResponse {
 		return trails;
 	}
 
-	public void setTrails(List<SyncTrailResponse> trails) {
+	public void setTrails(final List<SyncTrailResponse> trails) {
 		this.trails = trails;
 	}
 
@@ -32,8 +34,16 @@ public class SyncResponse {
 		return commitRevision;
 	}
 
-	public void setCommitRevision(long commitRevision) {
+	public void setCommitRevision(final long commitRevision) {
 		this.commitRevision = commitRevision;
+	}
+
+	public String getScanFilter() {
+		return scanFilter;
+	}
+
+	public void setScanFilter(final String scanFilter) {
+		this.scanFilter = scanFilter;
 	}
 
 }
