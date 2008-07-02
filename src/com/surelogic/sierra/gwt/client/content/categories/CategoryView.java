@@ -58,9 +58,12 @@ public class CategoryView extends BlockPanel {
 			description.addStyleName("font-italic");
 		}
 		findingsView.setCategory(category);
+
 		chart.clear();
-		chart.add(ChartBuilder.name("CategoryCounts").prop("uuid",
-				category.getUuid()).build());
+		if (category != null) {
+			chart.add(ChartBuilder.name("CategoryCounts").prop("uuid",
+					category.getUuid()).build());
+		}
 	}
 
 	private class FindingsView extends ListBlock<FindingTypeFilter> {
