@@ -6,38 +6,62 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Scan;
+import com.surelogic.sierra.gwt.client.data.ScanFilter;
+import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class ProjectView extends BlockPanel {
-
 	private final VerticalPanel chart = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
+	private final VerticalPanel scanFilters = new VerticalPanel();
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(chart);
 		contentPanel.add(scans);
+
+		scanFilters.setWidth("100%");
+		contentPanel.add(scanFilters);
 	}
 
 	public void setSelection(final Project project) {
 		if (project == null) {
 			setSummary("Select a project");
 		} else {
-			setSummary(project.getName());
+			final String projectName = project.getName();
+			setSummary(projectName);
 			chart.clear();
 			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
 					.prop("projectName", project.getName()).build());
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
 
-			// TODO find the scan filters by looping through ScanFilterCache
-			// make sure ScanFilterCache is populated
+			scanFilters.clear();
+			boolean filterMatch = false;
+			for (final ScanFilter scanFilter : ScanFilterCache.getInstance()) {
+				if (scanFilter.getProjects().contains(projectName)) {
+					final ContentLink sfLink = new ContentLink(scanFilter
+							.getName(), ScanFiltersContent.getInstance(),
+							scanFilter.getUuid());
+					scanFilters.add(sfLink);
+					filterMatch = true;
+				}
+			}
+			if (!filterMatch) {
+				final ScanFilter global = ScanFilterCache.getInstance()
+						.getGlobalFilter();
+				final ContentLink sfLink = new ContentLink(global.getName(),
+						ScanFiltersContent.getInstance(), global.getUuid());
+				scanFilters.add(sfLink);
+			}
 		}
 		scans.update(ContextManager.getContext());
 	}
@@ -72,7 +96,7 @@ public class ProjectView extends BlockPanel {
 								scans = result;
 								setSuccessStatus(null);
 								clearRows();
-								for (final Scan s : result) {
+								for (final Scan s : scans) {
 									addRow();
 									addColumn(s.getScanTime());
 									addColumn(s.getUser());

@@ -20,6 +20,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private final ActionBlock actionBlock = new ActionBlock();
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private CacheListener<E> cacheListener;
+	private E selection;
 
 	protected ListContentComposite(C cache) {
 		super();
@@ -95,6 +96,10 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		return cache;
 	}
 
+	protected final E getSelection() {
+		return selection;
+	}
+
 	protected final VerticalPanel getSelectionPanel() {
 		return selectionPanel;
 	}
@@ -109,11 +114,11 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private void refreshContext(Context context) {
 		final String uuid = context.getUuid();
 		if (LangUtil.notEmpty(uuid)) {
-			final E item = cache.getItem(uuid);
-			if (item != null) {
-				listView.setSelection(item);
+			selection = cache.getItem(uuid);
+			if (selection != null) {
+				listView.setSelection(selection);
 			}
-			onSelectionChanged(item);
+			onSelectionChanged(selection);
 		} else if (cache.getItemCount() > 0) {
 			Context.createWithUuid(cache.getItem(0)).submit();
 		}

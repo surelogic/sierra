@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.data.cache;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -12,10 +13,24 @@ import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class Cache<E extends Cacheable> implements Iterable<E> {
+	public static final long REFRESH_DELAY = 30 * 1000;
+
 	private final List<E> items = new ArrayList<E>();
 	private final Set<CacheListener<E>> listeners = new HashSet<CacheListener<E>>();
+	private long lastRefresh;
 
 	public final void refresh() {
+		refresh(true);
+	}
+
+	public final void refresh(boolean force) {
+		final long currentTime = new Date().getTime();
+		if (!force && (lastRefresh + REFRESH_DELAY <= currentTime)) {
+			return;
+		}
+
+		lastRefresh = currentTime;
+
 		for (final CacheListener<E> listener : listeners) {
 			listener.onStartRefresh(this);
 		}

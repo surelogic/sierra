@@ -2,15 +2,23 @@ package com.surelogic.sierra.gwt.client.content.projects;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Project;
+import com.surelogic.sierra.gwt.client.data.ScanFilter;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
+import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ProjectsContent extends
 		ListContentComposite<Project, ProjectCache> {
 	private static final ProjectsContent instance = new ProjectsContent();
 	private final ProjectView projectView = new ProjectView();
+	private CacheListener<ScanFilter> scanFilterListener;
 
 	public static ProjectsContent getInstance() {
 		return instance;
@@ -28,6 +36,36 @@ public class ProjectsContent extends
 
 		projectView.initialize();
 		selectionPanel.add(projectView);
+
+		scanFilterListener = new CacheListenerAdapter<ScanFilter>() {
+
+			@Override
+			public void onRefresh(Cache<ScanFilter> cache, Throwable failure) {
+				updateSelection(getSelection());
+			}
+
+			@Override
+			public void onItemUpdate(Cache<ScanFilter> cache, ScanFilter item,
+					Status status, Throwable failure) {
+				updateSelection(getSelection());
+			}
+
+		};
+	}
+
+	@Override
+	protected void onUpdate(Context context) {
+		if (!isActive()) {
+			ScanFilterCache.getInstance().addListener(scanFilterListener);
+		}
+		super.onUpdate(context);
+	}
+
+	@Override
+	protected void onDeactivate() {
+		ScanFilterCache.getInstance().removeListener(scanFilterListener);
+
+		super.onDeactivate();
 	}
 
 	@Override
@@ -42,6 +80,12 @@ public class ProjectsContent extends
 
 	@Override
 	protected void onSelectionChanged(Project item) {
+		ScanFilterCache.getInstance().refresh(false);
+
+		updateSelection(item);
+	}
+
+	private void updateSelection(Project item) {
 		projectView.setSelection(item);
 	}
 }

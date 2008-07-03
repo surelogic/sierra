@@ -20,6 +20,15 @@ public class ScanFilterCache extends Cache<ScanFilter> {
 		// singleton
 	}
 
+	public ScanFilter getGlobalFilter() {
+		for (final ScanFilter filter : this) {
+			if ("GLOBAL".equals(filter.getName())) {
+				return filter;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	protected void doRefreshCall(AsyncCallback<List<ScanFilter>> callback) {
 		ServiceHelper.getSettingsService().getScanFilters(callback);
