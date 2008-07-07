@@ -10,6 +10,7 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CompareProjectScans implements IDatabasePlot {
 
@@ -21,8 +22,7 @@ public class CompareProjectScans implements IDatabasePlot {
 			final Query q = new ConnectionQuery(c);
 			final String firstStr = first.getValue();
 			final String secondStr = second.getValue();
-			if ((firstStr != null) && !firstStr.isEmpty()
-					&& (secondStr != null) && !secondStr.isEmpty()) {
+			if (LangUtil.notEmpty(firstStr) && LangUtil.notEmpty(secondStr)) {
 				q.prepared("Plots.Project.compareScans").call(firstStr,
 						secondStr);
 			}
