@@ -22,7 +22,7 @@ public class ScanFilterCache extends Cache<ScanFilter> {
 
 	public ScanFilter getGlobalFilter() {
 		for (final ScanFilter filter : this) {
-			if ("GLOBAL".equals(filter.getName())) {
+			if ("GLOBAL".equals(filter.getUuid())) {
 				return filter;
 			}
 		}
