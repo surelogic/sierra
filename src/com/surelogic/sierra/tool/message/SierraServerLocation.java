@@ -51,7 +51,7 @@ public class SierraServerLocation {
 		if (url != null) {
 			f_port = url.getPort();
 			if ((url.getPath() == null) || "".equals(url.getPath())) {
-				f_contextPath = "/";
+				f_contextPath = "/sl/";
 			} else {
 				f_contextPath = url.getPath();
 			}
