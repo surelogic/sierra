@@ -153,7 +153,8 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 					s.setJavaVendor(info.getJavaVendor());
 					s.setJavaVersion(info.getJavaVersion());
 					s.setProject(info.getProject());
-					s.setScanTime(Dates.format(info.getScanTime()));
+					s.setScanTime(info.getScanTime());
+					s.setScanTimeDisplay(Dates.format(info.getScanTime()));
 					s.setUser(info.getUser());
 					s.setUuid(info.getUid());
 					scans.add(s);
