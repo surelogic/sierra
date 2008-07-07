@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Scan implements Serializable {
 
@@ -14,7 +15,8 @@ public class Scan implements Serializable {
 	private String project;
 	private String javaVendor;
 	private String javaVersion;
-	private String scanTime;
+	private String scanTimeDisplay;
+	private Date scanTime;
 
 	public String getUuid() {
 		return uuid;
@@ -56,11 +58,19 @@ public class Scan implements Serializable {
 		this.javaVersion = javaVersion;
 	}
 
-	public String getScanTime() {
+	public String getScanTimeDisplay() {
+		return scanTimeDisplay;
+	}
+
+	public void setScanTimeDisplay(final String scanTimeDisplay) {
+		this.scanTimeDisplay = scanTimeDisplay;
+	}
+
+	public Date getScanTime() {
 		return scanTime;
 	}
 
-	public void setScanTime(final String scanTime) {
+	public void setScanTime(final Date scanTime) {
 		this.scanTime = scanTime;
 	}
 

@@ -1,9 +1,18 @@
 package com.surelogic.sierra.gwt.client.content.projects;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
@@ -20,6 +29,7 @@ import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class ProjectView extends BlockPanel {
 	private final VerticalPanel chart = new VerticalPanel();
+	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
 	private final VerticalPanel scanFilters = new VerticalPanel();
 
@@ -38,6 +48,7 @@ public class ProjectView extends BlockPanel {
 		} else {
 			final String projectName = project.getName();
 			setSummary(projectName);
+			diff.clear();
 			chart.clear();
 			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
 					.prop("projectName", project.getName()).build());
@@ -66,19 +77,44 @@ public class ProjectView extends BlockPanel {
 		scans.update(ContextManager.getContext());
 	}
 
-	private static class ProjectTableSection extends TableSection {
+	private class ProjectTableSection extends TableSection {
 
-		private List<Scan> scans;
+		private Map<Scan, CheckBox> scans;
+
+		ProjectTableSection() {
+			setTitle("Scans");
+			addAction("Compare", new ClickListener() {
+				public void onClick(final Widget sender) {
+					final List<Scan> toCompare = new ArrayList<Scan>();
+					if (scans != null) {
+						for (final Entry<Scan, CheckBox> entry : scans
+								.entrySet()) {
+							toCompare.add(entry.getKey());
+						}
+					}
+					Collections.sort(toCompare, new Comparator<Scan>() {
+						public int compare(final Scan o1, final Scan o2) {
+							return o1.getScanTime().compareTo(o2.getScanTime());
+						}
+					});
+					if (scans.size() == 2) {
+						diff.add(ChartBuilder.name("CompareProjectScans").prop(
+								"first", toCompare.get(0).getUuid()).prop(
+								"second", toCompare.get(1).getUuid()).build());
+					}
+				}
+			});
+		}
 
 		@Override
 		protected ColumnData[] getHeaderDataTypes() {
 			return new ColumnData[] { ColumnData.DATE, ColumnData.TEXT,
-					ColumnData.TEXT, ColumnData.TEXT };
+					ColumnData.TEXT, ColumnData.TEXT, ColumnData.WIDGET };
 		}
 
 		@Override
 		protected String[] getHeaderTitles() {
-			return new String[] { "Time", "User", "Vendor", "Version" };
+			return new String[] { "Time", "User", "Vendor", "Version", "" };
 		}
 
 		@Override
@@ -93,15 +129,18 @@ public class ProjectView extends BlockPanel {
 							}
 
 							public void onSuccess(final List<Scan> result) {
-								scans = result;
+								scans = new HashMap<Scan, CheckBox>();
 								setSuccessStatus(null);
 								clearRows();
-								for (final Scan s : scans) {
+								for (final Scan s : result) {
 									addRow();
-									addColumn(s.getScanTime());
+									addColumn(s.getScanTimeDisplay());
 									addColumn(s.getUser());
 									addColumn(s.getJavaVendor());
 									addColumn(s.getJavaVersion());
+									final CheckBox box = new CheckBox();
+									scans.put(s, box);
+									addColumn(box);
 								}
 							}
 						});

@@ -297,6 +297,10 @@ img {
 	text-align: center;
 }
 
+.cell-widget {
+	text-align: center;
+}
+
 /* Settings Page */
 .settings-info-text {
 	font-size: smaller;
