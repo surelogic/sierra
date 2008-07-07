@@ -55,9 +55,10 @@ public class ProjectView extends BlockPanel {
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
 
+			final ScanFilterCache sfCache = ScanFilterCache.getInstance();
 			scanFilters.clear();
 			boolean filterMatch = false;
-			for (final ScanFilter scanFilter : ScanFilterCache.getInstance()) {
+			for (final ScanFilter scanFilter : sfCache) {
 				if (scanFilter.getProjects().contains(projectName)) {
 					final ContentLink sfLink = new ContentLink(scanFilter
 							.getName(), ScanFiltersContent.getInstance(),
@@ -67,11 +68,13 @@ public class ProjectView extends BlockPanel {
 				}
 			}
 			if (!filterMatch) {
-				final ScanFilter global = ScanFilterCache.getInstance()
-						.getGlobalFilter();
-				final ContentLink sfLink = new ContentLink(global.getName(),
-						ScanFiltersContent.getInstance(), global.getUuid());
-				scanFilters.add(sfLink);
+				final ScanFilter global = sfCache.getGlobalFilter();
+				if (global != null) {
+					final ContentLink sfLink = new ContentLink(
+							global.getName(), ScanFiltersContent.getInstance(),
+							global.getUuid());
+					scanFilters.add(sfLink);
+				}
 			}
 		}
 		scans.update(ContextManager.getContext());
