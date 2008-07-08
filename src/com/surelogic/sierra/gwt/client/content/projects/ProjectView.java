@@ -25,20 +25,22 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
+import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ProjectView extends BlockPanel {
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
-	private final VerticalPanel scanFilters = new VerticalPanel();
+	private final ScanFiltersSection scanFilters = new ScanFiltersSection();
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(chart);
 		contentPanel.add(scans);
 
-		scanFilters.setWidth("100%");
+		scanFilters.initialize();
 		contentPanel.add(scanFilters);
 	}
 
@@ -60,20 +62,22 @@ public class ProjectView extends BlockPanel {
 			boolean filterMatch = false;
 			for (final ScanFilter scanFilter : sfCache) {
 				if (scanFilter.getProjects().contains(projectName)) {
-					final ContentLink sfLink = new ContentLink(scanFilter
-							.getName(), ScanFiltersContent.getInstance(),
-							scanFilter.getUuid());
-					scanFilters.add(sfLink);
+					String filterName = scanFilter.getName();
+					if (LangUtil.isEmpty(filterName)) {
+						filterName = "Global";
+					}
+					scanFilters.addScanFilter(scanFilter);
 					filterMatch = true;
 				}
 			}
 			if (!filterMatch) {
 				final ScanFilter global = sfCache.getGlobalFilter();
 				if (global != null) {
-					final ContentLink sfLink = new ContentLink(
-							global.getName(), ScanFiltersContent.getInstance(),
-							global.getUuid());
-					scanFilters.add(sfLink);
+					scanFilters.addScanFilter(global);
+				} else if (sfCache.getItemCount() == 0) {
+					scanFilters.loadingScanFilters();
+				} else {
+					scanFilters.noScanFilters();
 				}
 			}
 		}
@@ -150,5 +154,35 @@ public class ProjectView extends BlockPanel {
 			}
 		}
 
+	}
+
+	private static class ScanFiltersSection extends BlockPanel {
+
+		@Override
+		protected void onInitialize(VerticalPanel contentPanel) {
+			setTitle("Scan Filters");
+			setSubsectionStyle(true);
+		}
+
+		public void clear() {
+			getContentPanel().clear();
+		}
+
+		public void addScanFilter(ScanFilter sf) {
+			final ContentLink sfLink = new ContentLink(sf.getName(),
+					ScanFiltersContent.getInstance(), sf.getUuid());
+			getContentPanel().add(sfLink);
+		}
+
+		public void loadingScanFilters() {
+			clear();
+			getContentPanel()
+					.add(new ItalicLabel("Retrieving Scan Filters..."));
+		}
+
+		public void noScanFilters() {
+			clear();
+			getContentPanel().add(new ItalicLabel("No Scan Filters"));
+		}
 	}
 }
