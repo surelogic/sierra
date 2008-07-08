@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
@@ -16,6 +15,7 @@ import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
+import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
@@ -66,9 +66,7 @@ public class CategorySelectionDialog extends FormDialog {
 				}
 
 				if (categoryPanel.getWidgetCount() == 0) {
-					final Label noItems = new Label("No categories to add");
-					noItems.addStyleName("font-italic");
-					categoryPanel.add(noItems);
+					categoryPanel.add(new ItalicLabel("No categories to add"));
 					setOkEnabled(false);
 				} else {
 					setOkEnabled(true);
