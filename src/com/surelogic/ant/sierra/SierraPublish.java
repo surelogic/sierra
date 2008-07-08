@@ -19,12 +19,17 @@ public class SierraPublish extends Task {
 	 * Ant Task Attributes
 	 **************************************************************************/
 
-	// URL used to send the scan document will be sent to this server
-	private String server = null;
-
 	private String user;
 
 	private String password;
+	
+	private String host;
+	
+	private boolean secure = false;
+	
+	private int port = 13376;
+	
+	private String contextPath = "/sl/";	
 
 	private final List<String> timeseries = new ArrayList<String>();
 	
@@ -33,11 +38,11 @@ public class SierraPublish extends Task {
 	private static boolean notEmpty(String s) {
 		return s != null && !"".equals(s);
 	}
-	
+
 	@Override
     public void execute() throws BuildException
     {
-		if (notEmpty(getServer()) && notEmpty(getUser()) && getPassword() != null) {
+		if (notEmpty(getHost()) && notEmpty(getContextPath()) && notEmpty(getUser()) && getPassword() != null) {
 			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
 				long start = System.currentTimeMillis();
@@ -48,7 +53,10 @@ public class SierraPublish extends Task {
 			} 
 		}
 		StringBuilder sb = new StringBuilder("Bad argument to SierraPublish\n");
-		sb.append("server = '").append(getServer()).append("'\n");
+		sb.append("host = '").append(getHost()).append("'\n");
+		sb.append("port = '").append(getPort()).append("'\n");
+		sb.append("ctxPath = '").append(getContextPath()).append("'\n");
+		sb.append("secure = '").append(isSecure()).append("'\n");
 		sb.append("user = '").append(getUser()).append("'\n");
 		sb.append("timeSeries = '");
 		boolean first = true;
@@ -74,7 +82,7 @@ public class SierraPublish extends Task {
 	 * @param config
 	 */
 	private void uploadRunDocument(final File scanDoc) {
-		log("Uploading the Run document to " + getServer()
+		log("Uploading the Run document to " + getHost()
 				+ "...", org.apache.tools.ant.Project.MSG_INFO);
 		MessageWarehouse warehouse = MessageWarehouse.getInstance();
 		Scan run;
@@ -82,7 +90,7 @@ public class SierraPublish extends Task {
 			run = warehouse.fetchScan(scanDoc, true);
 
 			SierraServerLocation location = 
-				new SierraServerLocation(getServer(), getUser(), getPassword());
+				new SierraServerLocation(getHost(), isSecure(), getPort(), getContextPath(), getUser(), getPassword());
 
 			SierraService ts = SierraServiceClient.create(location);
 
@@ -122,13 +130,6 @@ public class SierraPublish extends Task {
 	 * Getters and Setters for attributes
 	 **************************************************************************/
 
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	public String getServer() {
-		return server;
-	}
 
 	public String getUser() {
 		return user;
@@ -144,6 +145,38 @@ public class SierraPublish extends Task {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public boolean isSecure() {
+		return secure;
+	}
+
+	public void setSecure(boolean secure) {
+		this.secure = secure;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 	/**
