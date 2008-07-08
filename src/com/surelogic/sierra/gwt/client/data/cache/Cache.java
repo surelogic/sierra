@@ -25,7 +25,7 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 
 	public final void refresh(boolean force) {
 		final long currentTime = new Date().getTime();
-		if (!force && (lastRefresh + REFRESH_DELAY <= currentTime)) {
+		if (!force && (lastRefresh + REFRESH_DELAY > currentTime)) {
 			return;
 		}
 
