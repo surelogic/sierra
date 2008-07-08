@@ -451,7 +451,7 @@ JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.home=$JETTY_HOME -Djava.io.tmpdir=$TMP"
 JETTY_START=$JETTY_HOME/start.jar
 [ ! -f $JETTY_START ] && JETTY_START=$JETTY_HOME/lib/start.jar
 
-RUN_ARGS="$JAVA_OPTIONS -jar $JETTY_START $JETTY_ARGS $CONFIGS"
+RUN_ARGS="$JAVA_OPTIONS -Xms64M -Xmx256M -jar $JETTY_START $JETTY_ARGS $CONFIGS"
 RUN_CMD="$JAVA $RUN_ARGS"
 
 #####################################################
