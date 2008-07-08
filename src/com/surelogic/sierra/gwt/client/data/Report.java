@@ -23,7 +23,7 @@ public class Report implements Serializable, Cacheable {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
+	public void setUuid(final String uuid) {
 		this.uuid = uuid;
 	}
 
@@ -31,7 +31,7 @@ public class Report implements Serializable, Cacheable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -39,7 +39,7 @@ public class Report implements Serializable, Cacheable {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -47,7 +47,7 @@ public class Report implements Serializable, Cacheable {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -55,7 +55,7 @@ public class Report implements Serializable, Cacheable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -66,7 +66,7 @@ public class Report implements Serializable, Cacheable {
 		return parameters;
 	}
 
-	public Parameter getParameter(String name) {
+	public Parameter getParameter(final String name) {
 		for (final Parameter param : getParameters()) {
 			if (LangUtil.equals(param.getName(), name)) {
 				return param;
@@ -94,7 +94,7 @@ public class Report implements Serializable, Cacheable {
 
 		public enum Type {
 			TEXT, IMPORTANCE, PROJECTS
-		};
+		}
 
 		private String name;
 		private Type type;
@@ -104,38 +104,39 @@ public class Report implements Serializable, Cacheable {
 			super();
 		}
 
-		public Parameter(String name) {
+		public Parameter(final String name) {
 			super();
 			this.name = name;
 		}
 
-		public Parameter(String name, String value) {
+		public Parameter(final String name, final String value) {
 			super();
 			this.name = name;
 			getValues().add(value);
 		}
 
-		public Parameter(String name, String value, Type type) {
+		public Parameter(final String name, final String value, final Type type) {
 			super();
 			this.name = name;
 			getValues().add(value);
 			this.type = type;
 		}
 
-		public Parameter(String name, Collection<String> values) {
+		public Parameter(final String name, final Collection<String> values) {
 			super();
 			this.name = name;
 			getValues().addAll(values);
 		}
 
-		public Parameter(String name, Collection<String> values, Type type) {
+		public Parameter(final String name, final Collection<String> values,
+				final Type type) {
 			super();
 			this.name = name;
 			getValues().addAll(values);
 			this.type = type;
 		}
 
-		public Parameter(String name, Type type) {
+		public Parameter(final String name, final Type type) {
 			super();
 			this.name = name;
 			this.type = type;
@@ -145,7 +146,7 @@ public class Report implements Serializable, Cacheable {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
@@ -153,7 +154,7 @@ public class Report implements Serializable, Cacheable {
 			return type;
 		}
 
-		public void setType(Type type) {
+		public void setType(final Type type) {
 			this.type = type;
 		}
 
@@ -195,7 +196,7 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj) {
 				return true;
 			}
@@ -254,7 +255,7 @@ public class Report implements Serializable, Cacheable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}

@@ -18,18 +18,24 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Project;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
+import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ProjectView extends BlockPanel {
+	private final StatusBox box = new StatusBox();
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
@@ -39,8 +45,10 @@ public class ProjectView extends BlockPanel {
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(chart);
 		contentPanel.add(scans);
-
+		contentPanel.add(diff);
+		contentPanel.add(box);
 		scanFilters.initialize();
+
 		contentPanel.add(scanFilters);
 	}
 
@@ -96,7 +104,9 @@ public class ProjectView extends BlockPanel {
 					if (scans != null) {
 						for (final Entry<Scan, CheckBox> entry : scans
 								.entrySet()) {
-							toCompare.add(entry.getKey());
+							if (entry.getValue().isChecked()) {
+								toCompare.add(entry.getKey());
+							}
 						}
 					}
 					Collections.sort(toCompare, new Comparator<Scan>() {
@@ -104,10 +114,22 @@ public class ProjectView extends BlockPanel {
 							return o1.getScanTime().compareTo(o2.getScanTime());
 						}
 					});
-					if (scans.size() == 2) {
-						diff.add(ChartBuilder.name("CompareProjectScans").prop(
-								"first", toCompare.get(0).getUuid()).prop(
-								"second", toCompare.get(1).getUuid()).build());
+					if (toCompare.size() == 2) {
+						final Report r = new Report();
+						r.setName("CompareProjectScans");
+						r.setTitle("Scan comparison");
+						r.getParameters().add(
+								new Parameter("first", toCompare.get(0)
+										.getUuid()));
+						r.getParameters().add(
+								new Parameter("second", toCompare.get(0)
+										.getUuid()));
+						diff.clear();
+						diff.add(new ReportTableSection(r));
+					} else {
+						box.setStatus(Status.failure("You have selected "
+								+ toCompare.size()
+								+ " scans.  You should select only two."));
 					}
 				}
 			});
@@ -159,7 +181,7 @@ public class ProjectView extends BlockPanel {
 	private static class ScanFiltersSection extends BlockPanel {
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			setTitle("Scan Filters");
 			setSubsectionStyle(true);
 		}
@@ -168,7 +190,7 @@ public class ProjectView extends BlockPanel {
 			getContentPanel().clear();
 		}
 
-		public void addScanFilter(ScanFilter sf) {
+		public void addScanFilter(final ScanFilter sf) {
 			final ContentLink sfLink = new ContentLink(sf.getName(),
 					ScanFiltersContent.getInstance(), sf.getUuid());
 			getContentPanel().add(sfLink);
