@@ -41,8 +41,8 @@ class JDBCScanGenerator implements ScanGenerator {
 	private final Set<String> timeseries;
 	private ScanRecord scan;
 
-	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, FindingFilter filter) {
+	JDBCScanGenerator(final Connection conn, final ScanRecordFactory factory,
+			final ScanManager manager, final FindingFilter filter) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
@@ -51,8 +51,9 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.filter = filter;
 	}
 
-	JDBCScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, FindingFilter filter, boolean partial) {
+	JDBCScanGenerator(final Connection conn, final ScanRecordFactory factory,
+			final ScanManager manager, final FindingFilter filter,
+			final boolean partial) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
@@ -85,8 +86,8 @@ class JDBCScanGenerator implements ScanGenerator {
 				scan.setUserId(ClientUser.getUser(user, conn).getId());
 			}
 			if (scan.select()) {
-				manager.deleteScan(uid, null);
-				conn.commit();
+				throw new IllegalArgumentException("Scan with uid " + uid
+						+ " already exists.");
 			}
 			scan.insert();
 			for (final String name : timeseries) {
@@ -121,34 +122,34 @@ class JDBCScanGenerator implements ScanGenerator {
 		}
 	}
 
-	public ScanGenerator uid(String uid) {
+	public ScanGenerator uid(final String uid) {
 		this.uid = uid;
 		return this;
 	}
 
-	public ScanGenerator javaVendor(String vendor) {
+	public ScanGenerator javaVendor(final String vendor) {
 		javaVendor = vendor;
 		return this;
 	}
 
-	public ScanGenerator javaVersion(String version) {
+	public ScanGenerator javaVersion(final String version) {
 		javaVersion = version;
 		return this;
 	}
 
-	public ScanGenerator project(String projectName) {
+	public ScanGenerator project(final String projectName) {
 		this.projectName = projectName;
 		return this;
 	}
 
-	public ScanGenerator timeseries(Collection<String> timeseries) {
+	public ScanGenerator timeseries(final Collection<String> timeseries) {
 		if ((timeseries != null) && !timeseries.isEmpty()) {
 			this.timeseries.addAll(timeseries);
 		}
 		return this;
 	}
 
-	public ScanGenerator user(String user) {
+	public ScanGenerator user(final String user) {
 		this.user = user;
 		return this;
 	}
