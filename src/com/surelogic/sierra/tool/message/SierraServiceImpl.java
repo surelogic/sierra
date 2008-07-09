@@ -20,7 +20,9 @@ import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
+import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
+import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -55,53 +57,60 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		}
 		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
 
-			public Void perform(Connection conn, Server server, User user)
-					throws SQLException {
+			public Void perform(final Connection conn, final Server server,
+					final User user) throws SQLException {
 				final String uid = scan.getUid();
-				final String project = scan.getConfig().getProject();
-				final ScanManager manager = ScanManager.getInstance(conn);
-				final FindingFilter filter = SettingQueries
-						.scanFilterForProject(project).perform(
-								new ConnectionQuery(conn));
-				final ScanGenerator generator = manager
-						.getScanGenerator(filter);
-				generator.timeseries(timeseries).user(user.getName());
-				MessageWarehouse.readScan(scan, generator);
-				ConnectionFactory
-						.delayUserTransaction(new UserTransaction<Void>() {
+				final ScanRecord s = ScanRecordFactory.getInstance(conn)
+						.newScan();
+				s.setUid(uid);
+				if (!s.select()) {
+					final String project = scan.getConfig().getProject();
+					final ScanManager manager = ScanManager.getInstance(conn);
+					final FindingFilter filter = SettingQueries
+							.scanFilterForProject(project).perform(
+									new ConnectionQuery(conn));
+					final ScanGenerator generator = manager
+							.getScanGenerator(filter);
+					generator.timeseries(timeseries).user(user.getName());
+					MessageWarehouse.readScan(scan, generator);
+					ConnectionFactory
+							.delayUserTransaction(new UserTransaction<Void>() {
 
-							public Void perform(Connection conn, Server server,
-									User user) throws SQLException {
-								final ServerFindingManager fm = ServerFindingManager
-										.getInstance(conn);
-								try {
-									fm.generateFindings(project, uid, filter,
-											null);
-									fm.generateOverview(project, uid,
-											timeseries);
-									// Increment the revision whenever a scan is
-									// published.
-									server.nextRevision();
-									conn.commit();
-									ScanManager.getInstance(conn).finalizeScan(
-											uid);
-									log.info("Scan " + uid + " finalized");
-								} catch (final RuntimeException e) {
-									handleScanException(conn, uid);
-									throw e;
-								} catch (final SQLException e) {
-									handleScanException(conn, uid);
-									throw e;
+								public Void perform(final Connection conn,
+										final Server server, final User user)
+										throws SQLException {
+									final ServerFindingManager fm = ServerFindingManager
+											.getInstance(conn);
+									try {
+										fm.generateFindings(project, uid,
+												filter, null);
+										fm.generateOverview(project, uid,
+												timeseries);
+										// Increment the revision whenever a
+										// scan is
+										// published.
+										server.nextRevision();
+										conn.commit();
+										ScanManager.getInstance(conn)
+												.finalizeScan(uid);
+										log.info("Scan " + uid + " finalized");
+									} catch (final RuntimeException e) {
+										handleScanException(conn, uid);
+										throw e;
+									} catch (final SQLException e) {
+										handleScanException(conn, uid);
+										throw e;
+									}
+									return null;
 								}
-								return null;
-							}
-						});
+							});
+				}
 				return null;
 			}
 		});
 	}
 
-	private void handleScanException(Connection conn, String uid) {
+	private void handleScanException(final Connection conn, final String uid) {
 		try {
 			conn.rollback();
 			ScanManager.getInstance(conn).deleteScan(uid,
@@ -115,12 +124,13 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		}
 	}
 
-	public Timeseries getTimeseries(TimeseriesRequest request) {
+	public Timeseries getTimeseries(final TimeseriesRequest request) {
 		return ConnectionFactory
 				.withUserReadOnly(new UserTransaction<Timeseries>() {
 
-					public Timeseries perform(Connection conn, Server server,
-							User user) throws SQLException {
+					public Timeseries perform(final Connection conn,
+							final Server server, final User user)
+							throws SQLException {
 						final Timeseries q = new Timeseries();
 						q.setTimeseries(TimeseriesManager.getInstance(conn)
 								.getAllTimeseriesNames());
@@ -129,14 +139,14 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
-	public SyncResponse synchronizeProject(SyncRequest request)
+	public SyncResponse synchronizeProject(final SyncRequest request)
 			throws ServerMismatchException {
 		final String serverUid = request.getServer();
 		final String project = request.getProject();
 		final List<SyncTrailRequest> trails = request.getTrails();
 		final UserTransaction<Long> commitChanges = new UserTransaction<Long>() {
-			public Long perform(Connection conn, Server server, User user)
-					throws Exception {
+			public Long perform(final Connection conn, final Server server,
+					final User user) throws Exception {
 				final ProjectRecord projectRecord = ProjectRecordFactory
 						.getInstance(conn).newProject();
 				projectRecord.setName(project);
@@ -148,7 +158,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 				final List<Merge> merges = new ArrayList<Merge>(trails.size());
 				final List<AuditTrail> audits = new ArrayList<AuditTrail>(
 						trails.size());
-				for (SyncTrailRequest trail : trails) {
+				for (final SyncTrailRequest trail : trails) {
 					final AuditTrail audit = new AuditTrail();
 					audit.setAudits(trail.getAudits());
 					audits.add(audit);
@@ -159,7 +169,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 				final List<String> uids = man.mergeAuditTrails(projectId,
 						revision, merges);
 				final Iterator<AuditTrail> auditIter = audits.iterator();
-				for (String uid : uids) {
+				for (final String uid : uids) {
 					auditIter.next().setFinding(uid);
 				}
 				man
@@ -171,8 +181,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		final long revision = request.getRevision();
 		final UserTransaction<SyncResponse> readChanges = new UserTransaction<SyncResponse>() {
 
-			public SyncResponse perform(Connection conn, Server server,
-					User user) throws Exception {
+			public SyncResponse perform(final Connection conn,
+					final Server server, final User user) throws Exception {
 				return ServerFindingManager.getInstance(conn).getAuditUpdates(
 						project, revision);
 
@@ -180,8 +190,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		};
 		final String localUid = ConnectionFactory
 				.withReadOnly(new ServerTransaction<String>() {
-					public String perform(Connection conn, Server server)
-							throws Exception {
+					public String perform(final Connection conn,
+							final Server server) throws Exception {
 						return server.getUid();
 					}
 				});
@@ -194,8 +204,9 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 			return ConnectionFactory
 					.withUserTransaction(new UserTransaction<SyncResponse>() {
 
-						public SyncResponse perform(Connection conn,
-								Server server, User user) throws Exception {
+						public SyncResponse perform(final Connection conn,
+								final Server server, final User user)
+								throws Exception {
 							final SyncResponse response = readChanges.perform(
 									conn, server, user);
 							response.setCommitRevision(commitChanges.perform(
@@ -207,8 +218,9 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 			return ConnectionFactory
 					.withUserReadOnly(new UserTransaction<SyncResponse>() {
 
-						public SyncResponse perform(Connection conn,
-								Server server, User user) throws Exception {
+						public SyncResponse perform(final Connection conn,
+								final Server server, final User user)
+								throws Exception {
 							return readChanges.perform(conn, server, user);
 						}
 					});
@@ -216,8 +228,9 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	}
 
 	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void service(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
 		synchronized (this) {
 			if (on) {
 				super.service(req, resp);
@@ -229,7 +242,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	}
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
+	public void init(final ServletConfig config) throws ServletException {
 		super.init(config);
 		synchronized (this) {
 			on = "on".equals(config.getServletContext().getInitParameter(
