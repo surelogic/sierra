@@ -114,22 +114,24 @@ public class ProjectView extends BlockPanel {
 							return o1.getScanTime().compareTo(o2.getScanTime());
 						}
 					});
-					if (toCompare.size() == 2) {
+					if (toCompare.size() >= 2) {
+						final List<String> scans = new ArrayList<String>(
+								toCompare.size());
+						for (final Scan s : toCompare) {
+							scans.add(s.getUuid());
+						}
 						final Report r = new Report();
 						r.setName("CompareProjectScans");
 						r.setTitle("Scan comparison");
-						r.getParameters().add(
-								new Parameter("first", toCompare.get(0)
-										.getUuid()));
-						r.getParameters().add(
-								new Parameter("second", toCompare.get(0)
-										.getUuid()));
+						r.getParameters().add(new Parameter("scans", scans));
 						diff.clear();
+						diff.add(ChartBuilder.name("CompareProjectScans").prop(
+								"scans", scans).build());
 						diff.add(new ReportTableSection(r));
 					} else {
 						box.setStatus(Status.failure("You have selected "
 								+ toCompare.size()
-								+ " scans.  You should select only two."));
+								+ " scans.  You should select at least two."));
 					}
 				}
 			});
