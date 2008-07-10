@@ -6,6 +6,9 @@
 //
 package com.surelogic.sierra.tool.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlEnum;
 
 /**
@@ -37,7 +40,7 @@ public enum Importance {
 	private final String value = toString().substring(0, 1)
 			+ toString().toLowerCase().substring(1);
 
-	public static Importance fromValue(String v) {
+	public static Importance fromValue(final String v) {
 		for (final Importance i : values()) {
 			if (i.value.equals(v)) {
 				return i;
@@ -50,4 +53,17 @@ public enum Importance {
 	public String toStringSentenceCase() {
 		return value;
 	}
+
+	private static Importance[] standardValues = new Importance[] { LOW,
+			MEDIUM, HIGH, CRITICAL };
+
+	public static List<Importance> standardValues() {
+		final List<Importance> imps = new ArrayList<Importance>(
+				standardValues.length);
+		for (final Importance i : standardValues) {
+			imps.add(i);
+		}
+		return imps;
+	}
+
 }
