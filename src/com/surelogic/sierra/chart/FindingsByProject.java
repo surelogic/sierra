@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,8 +32,8 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsByProject implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize, final Report report,
+			final Connection c) throws SQLException, IOException {
 		final Parameter projectParam = report.getParameter("Projects");
 		final Parameter impParam = report.getParameter("Importance");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
@@ -53,7 +52,7 @@ public class FindingsByProject implements IDatabasePlot {
 				// they are not specified
 				List<Importance> importances;
 				if ((impParam == null) || impParam.getValues().isEmpty()) {
-					importances = Arrays.asList(Importance.values());
+					importances = Importance.standardValues();
 				} else {
 					importances = new ArrayList<Importance>();
 					for (final String imp : impParam.getValues()) {
@@ -70,7 +69,7 @@ public class FindingsByProject implements IDatabasePlot {
 				new ConnectionQuery(c).statement(
 						"Plots.Project.scanFindingsByProjectAndImportance",
 						new RowHandler<Void>() {
-							public Void handle(Row r) {
+							public Void handle(final Row r) {
 								final int count = r.nextInt();
 								final String importance = r.nextString();
 								final String time = r.nextString();
