@@ -161,7 +161,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
 							String sfUuid = projectDO.getScanFilter();
-							if (sfUuid != null) {
+							if (sfUuid == null) {
 								sfUuid = SettingQueries.GLOBAL_UUID;
 							}
 							prj.setScanFilter(getFilter(filters
@@ -642,7 +642,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	}
 
-	public Status saveProjectFilter(final String project, final String scanFilter) {
+	public Status saveProjectFilter(final String project,
+			final String scanFilter) {
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(final Query query, final Server server,
 					final User user) {
