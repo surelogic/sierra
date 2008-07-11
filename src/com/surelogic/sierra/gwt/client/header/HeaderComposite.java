@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
+import com.surelogic.sierra.gwt.client.ContentRegistry;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.util.ImageHelper;
@@ -145,12 +146,12 @@ public abstract class HeaderComposite extends Composite {
 		}
 	}
 
-	protected final void addTab(String title, String tabStyleName,
-			ContentComposite content) {
+	protected final void addTab(ContentComposite content, String tabStyleName) {
 		showTabs();
 		if (tabContent.get(content) == null) {
 			final String contentUrl = Context.create(content, null).toString();
-			final Hyperlink contentLink = new Hyperlink(title, contentUrl);
+			final Hyperlink contentLink = new Hyperlink(ContentRegistry
+					.getContentTitle(content), contentUrl);
 			contentLink.addStyleName("header-tab");
 			contentLink.addStyleName("header-tab-" + tabStyleName);
 			tabContent.put(content, contentLink);

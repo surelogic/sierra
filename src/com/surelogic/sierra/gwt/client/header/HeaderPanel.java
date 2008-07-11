@@ -1,12 +1,13 @@
 package com.surelogic.sierra.gwt.client.header;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.ContentRegistry;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextListener;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.UserListener;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
@@ -59,6 +60,9 @@ public final class HeaderPanel extends Composite {
 	private void updateHeader() {
 		final UserAccount user = ContextManager.getUser();
 		final Context context = ContextManager.getContext();
+
+		Window.setTitle("Sierra Portal - "
+				+ ContentRegistry.getContentTitle(context.getContent()));
 
 		HeaderComposite newHeader = null;
 		if (user == null) {

@@ -40,6 +40,7 @@ public class ProjectView extends BlockPanel {
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
 	private final ScanFiltersSection scanFilters = new ScanFiltersSection();
+	private Project selection;
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
@@ -47,12 +48,18 @@ public class ProjectView extends BlockPanel {
 		contentPanel.add(scans);
 		contentPanel.add(diff);
 		contentPanel.add(box);
+
 		scanFilters.initialize();
 
 		contentPanel.add(scanFilters);
 	}
 
+	public Project getSelection() {
+		return selection;
+	}
+
 	public void setSelection(final Project project) {
+		selection = project;
 		if (project == null) {
 			setSummary("Select a project");
 		} else {
@@ -90,6 +97,14 @@ public class ProjectView extends BlockPanel {
 			}
 		}
 		scans.update(ContextManager.getContext());
+	}
+
+	public String getScanFilter() {
+		return selection == null ? null : selection.getScanFilter();
+	}
+
+	public void addScanFilterAction(String title, ClickListener action) {
+		scanFilters.addAction(title, action);
 	}
 
 	private class ProjectTableSection extends TableSection {

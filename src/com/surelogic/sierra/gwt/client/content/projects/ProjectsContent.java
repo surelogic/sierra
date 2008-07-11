@@ -1,7 +1,11 @@
 package com.surelogic.sierra.gwt.client.content.projects;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Project;
@@ -35,6 +39,13 @@ public class ProjectsContent extends
 		setCaption("Projects");
 
 		projectView.initialize();
+		projectView.addScanFilterAction("Change Scan Filter",
+				new ClickListener() {
+
+					public void onClick(Widget sender) {
+						promptForScanFilter();
+					}
+				});
 		selectionPanel.add(projectView);
 
 		scanFilterListener = new CacheListenerAdapter<ScanFilter>() {
@@ -87,5 +98,24 @@ public class ProjectsContent extends
 
 	private void updateSelection(Project item) {
 		projectView.setSelection(item);
+	}
+
+	private void promptForScanFilter() {
+		final ScanFilterDialog dialog = new ScanFilterDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					final Project project = projectView.getSelection();
+					project.setScanFilter(dialog.getSelectedFilter());
+					getCache().save(project);
+					getCache().refresh();
+				}
+			}
+
+		});
+		dialog.center();
+		dialog.setScanFilter(projectView.getScanFilter());
 	}
 }
