@@ -16,6 +16,7 @@ public class ProjectCache extends Cache<Project> {
 
 	@Override
 	protected void doSaveCall(Project item, AsyncCallback<Status> callback) {
-		callback.onSuccess(Status.failure("Not implemented"));
+		ServiceHelper.getSettingsService().saveProjectFilter(item.getUuid(),
+				item.getScanFilter().getUuid(), callback);
 	}
 }
