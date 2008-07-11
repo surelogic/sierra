@@ -24,13 +24,11 @@ public class ScanFilter implements Serializable, Cacheable {
 
 	private Set<ScanFilterEntry> types;
 
-	private Set<String> projects;
-
 	public String getUuid() {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
+	public void setUuid(final String uuid) {
 		this.uuid = uuid;
 	}
 
@@ -38,7 +36,7 @@ public class ScanFilter implements Serializable, Cacheable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -46,15 +44,8 @@ public class ScanFilter implements Serializable, Cacheable {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
-	}
-
-	public Set<String> getProjects() {
-		if (projects == null) {
-			projects = new HashSet<String>();
-		}
-		return projects;
 	}
 
 	/**
@@ -87,16 +78,12 @@ public class ScanFilter implements Serializable, Cacheable {
 		copy.name = name;
 		copy.revision = revision;
 		copy.categories = new HashSet<ScanFilterEntry>(getCategories().size());
-		for (ScanFilterEntry entry : getCategories()) {
+		for (final ScanFilterEntry entry : getCategories()) {
 			copy.categories.add(entry);
 		}
 		copy.types = new HashSet<ScanFilterEntry>(getTypes().size());
-		for (ScanFilterEntry entry : getTypes()) {
+		for (final ScanFilterEntry entry : getTypes()) {
 			copy.types.add(entry);
-		}
-		copy.projects = new HashSet<String>(getProjects().size());
-		for (String project : getProjects()) {
-			copy.projects.add(project);
 		}
 		return copy;
 	}
@@ -110,11 +97,11 @@ public class ScanFilter implements Serializable, Cacheable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj != null && obj instanceof ScanFilter) {
+		if ((obj != null) && (obj instanceof ScanFilter)) {
 			return LangUtil.equals(uuid, ((ScanFilter) obj).uuid);
 		}
 		return false;

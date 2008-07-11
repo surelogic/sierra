@@ -11,11 +11,13 @@ import java.util.Map.Entry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -103,7 +105,8 @@ public class ProjectView extends BlockPanel {
 		return selection == null ? null : selection.getScanFilter();
 	}
 
-	public void addScanFilterAction(String title, ClickListener action) {
+	public void addScanFilterAction(final String title,
+			final ClickListener action) {
 		scanFilters.addAction(title, action);
 	}
 
@@ -180,7 +183,13 @@ public class ProjectView extends BlockPanel {
 								clearRows();
 								for (final Scan s : result) {
 									addRow();
-									addColumn(s.getScanTimeDisplay());
+									final Context scanCtx = Context
+											.createWithUuid(ScanContent
+													.getInstance(), s.getUuid());
+									final Hyperlink h = new Hyperlink(s
+											.getScanTimeDisplay(), scanCtx
+											.toString());
+									addColumn(h);
 									addColumn(s.getUser());
 									addColumn(s.getJavaVendor());
 									addColumn(s.getJavaVersion());

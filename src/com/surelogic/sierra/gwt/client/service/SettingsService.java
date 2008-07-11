@@ -53,6 +53,17 @@ public interface SettingsService extends RemoteService {
 	List<Project> getProjects();
 
 	/**
+	 * Save the given project and its associated scan filter.
+	 * 
+	 * @param project
+	 *            the project's name
+	 * @param scanFilter
+	 *            a scan filter uuid
+	 * @return
+	 */
+	Status saveProjectFilter(String project, String scanFilter);
+
+	/**
 	 * 
 	 * 
 	 */

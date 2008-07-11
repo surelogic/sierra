@@ -25,6 +25,9 @@ public interface SettingsServiceAsync {
 
 	void getProjects(AsyncCallback<List<Project>> callback);
 
+	void saveProjectFilter(String project, String scanFilter,
+			AsyncCallback<Status> callback);
+
 	void getCategories(AsyncCallback<List<Category>> callback);
 
 	void createCategory(String name, List<String> entries,

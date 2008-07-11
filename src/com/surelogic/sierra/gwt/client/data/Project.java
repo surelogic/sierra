@@ -11,7 +11,7 @@ public class Project implements Serializable, Cacheable {
 
 	private String name;
 
-	private String scanFilter;
+	private ScanFilter scanFilter;
 
 	public String getUuid() {
 		return uuid;
@@ -29,11 +29,11 @@ public class Project implements Serializable, Cacheable {
 		this.name = name;
 	}
 
-	public String getScanFilter() {
+	public ScanFilter getScanFilter() {
 		return scanFilter;
 	}
 
-	public void setScanFilter(final String scanFilter) {
+	public void setScanFilter(final ScanFilter scanFilter) {
 		this.scanFilter = scanFilter;
 	}
 
