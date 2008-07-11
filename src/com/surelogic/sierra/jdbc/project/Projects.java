@@ -8,7 +8,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 
-public class Projects {
+public final class Projects {
 
 	private final Query q;
 
@@ -31,6 +31,12 @@ public class Projects {
 				return project;
 			}
 		}).call();
+	}
+
+	public void updateProjectFilter(final String project,
+			final String scanFilterUuid) {
+		q.prepared("Projects.deleteScanFilter").call(project);
+		q.prepared("Projects.insertScanFilter").call(project, scanFilterUuid);
 	}
 
 }

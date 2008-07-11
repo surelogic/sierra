@@ -21,13 +21,11 @@ public class ScanFilterDO {
 
 	private final Set<TypeFilterDO> filterTypes = new HashSet<TypeFilterDO>();
 
-	private final Set<String> projects = new HashSet<String>();
-
 	public String getUid() {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
 	}
 
@@ -35,7 +33,7 @@ public class ScanFilterDO {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -43,7 +41,7 @@ public class ScanFilterDO {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -53,10 +51,6 @@ public class ScanFilterDO {
 
 	public Set<TypeFilterDO> getFilterTypes() {
 		return filterTypes;
-	}
-
-	public Set<String> getProjects() {
-		return projects;
 	}
 
 }

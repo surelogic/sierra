@@ -119,14 +119,6 @@ public class ScanFilters {
 						.prepared("ScanFilters.insertTypeFilter");
 				final Queryable<Void> insertCategoryFilter = q
 						.prepared("ScanFilters.insertCategoryFilter");
-				final Queryable<Void> deleteProjectRelation = q
-						.prepared("ScanFilters.deleteProjectRelation");
-				final Queryable<Void> insertProject = q
-						.prepared("ScanFilters.insertProject");
-				for (final String project : settings.getProjects()) {
-					deleteProjectRelation.call(project);
-					insertProject.call(settingsRec.getId(), project);
-				}
 				for (final CategoryFilterDO cat : settings.getCategories()) {
 					insertCategoryFilter.call(settingsRec.getId(),
 							cat.getUid(),
@@ -176,14 +168,6 @@ public class ScanFilters {
 				.prepared("ScanFilters.insertTypeFilter");
 		final Queryable<Void> insertCategoryFilter = q
 				.prepared("ScanFilters.insertCategoryFilter");
-		final Queryable<Void> deleteProjectRelation = q
-				.prepared("ScanFilters.deleteProjectRelation");
-		final Queryable<Void> insertProject = q
-				.prepared("ScanFilters.insertProject");
-		for (final String project : settings.getProjects()) {
-			deleteProjectRelation.call(project);
-			insertProject.call(settingsRec.getId(), project);
-		}
 		for (final CategoryFilterDO cat : settings.getCategories()) {
 			insertCategoryFilter.call(settingsRec.getId(), cat.getUid(), cat
 					.getImportance() == null ? Nulls.STRING : cat
@@ -227,9 +211,6 @@ public class ScanFilters {
 			settings.setUid(settingsRec.getUid());
 			settings.setName(settingsRec.getName());
 			settings.setRevision(settingsRec.getRevision());
-			settings.getProjects().addAll(
-					q.prepared("ScanFilters.listProjects",
-							new StringRowHandler()).call(uid));
 			settings.getCategories().addAll(
 					q.prepared("ScanFilters.listFilterSets",
 							new FilterSetHandler()).call(uid));
