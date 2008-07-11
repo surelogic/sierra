@@ -156,6 +156,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							final Project prj = new Project();
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
+							prj.setScanFilter(projectDO.getScanFilter());
 							result.add(prj);
 						}
 						return result;
