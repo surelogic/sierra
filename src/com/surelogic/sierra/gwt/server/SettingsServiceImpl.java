@@ -46,6 +46,7 @@ import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
@@ -151,12 +152,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							final User u) {
 						final List<Project> result = new ArrayList<Project>();
 						final Projects projects = new Projects(q);
+						final ScanFilters filters = new ScanFilters(q);
+						final FindingTypes types = new FindingTypes(q);
+						final Categories cats = new Categories(q);
 						for (final ProjectDO projectDO : projects
 								.listProjects()) {
 							final Project prj = new Project();
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
-							prj.setScanFilter(projectDO.getScanFilter());
+							String sfUuid = projectDO.getScanFilter();
+							if (sfUuid != null) {
+								sfUuid = SettingQueries.GLOBAL_UUID;
+							}
+							prj.setScanFilter(getFilter(filters
+									.getScanFilter(sfUuid), types, cats));
 							result.add(prj);
 						}
 						return result;
@@ -440,7 +449,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			e.setUid(tDO.getUid());
 			filters.add(e);
 		}
-		f.getProjects().addAll(fDO.getProjects());
 		return f;
 	}
 
@@ -480,7 +488,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			t.setFindingType(e.getUid());
 			types.add(t);
 		}
-		fDO.getProjects().addAll(f.getProjects());
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
 			public Status perform(final Query q, final Server s, final User u) {
 				if (!s.getUid().equals(
@@ -630,6 +637,17 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				servers.put(l, projects);
 				ServerLocations.saveQuery(servers).doPerform(q);
 				return Status.success(loc.getLabel() + " updated.");
+			}
+		});
+
+	}
+
+	public Status saveProjectFilter(final String project, final String scanFilter) {
+		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
+			public Status perform(final Query query, final Server server,
+					final User user) {
+				new Projects(query).updateProjectFilter(project, scanFilter);
+				return Status.success();
 			}
 		});
 
