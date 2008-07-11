@@ -8,6 +8,16 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 public class ProjectCache extends Cache<Project> {
+	private static final ProjectCache instance = new ProjectCache();
+
+	public static ProjectCache getInstance() {
+		return instance;
+	}
+
+	private ProjectCache() {
+		super();
+		// singleton
+	};
 
 	@Override
 	protected void doRefreshCall(AsyncCallback<List<Project>> callback) {

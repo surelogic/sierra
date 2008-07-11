@@ -11,7 +11,13 @@ import java.util.Map.Entry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -25,12 +31,13 @@ import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
-import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
@@ -39,7 +46,8 @@ public class ProjectView extends BlockPanel {
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
-	private final ScanFiltersSection scanFilters = new ScanFiltersSection();
+	private final FlexTable scanFilterTable = new FlexTable();
+	private final HorizontalPanel scanFilterField = new HorizontalPanel();
 	private Project selection;
 
 	@Override
@@ -49,9 +57,21 @@ public class ProjectView extends BlockPanel {
 		contentPanel.add(diff);
 		contentPanel.add(box);
 
-		scanFilters.initialize();
+		scanFilterTable.setWidth("50%");
+		scanFilterTable.setWidget(0, 0, scanFilterField);
+		scanFilterField.add(new Label("Scan Filter:"));
+		final Label changeScanFilter = new ClickLabel("Change Scan Filter",
+				new ClickListener() {
 
-		contentPanel.add(scanFilters);
+					public void onClick(Widget sender) {
+						promptForScanFilter();
+					}
+				});
+		scanFilterTable.setWidget(0, 1, changeScanFilter);
+		scanFilterTable.getCellFormatter().setHorizontalAlignment(0, 1,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+
+		contentPanel.add(scanFilterTable);
 	}
 
 	public Project getSelection() {
@@ -65,6 +85,7 @@ public class ProjectView extends BlockPanel {
 		} else {
 			final String projectName = project.getName();
 			setSummary(projectName);
+
 			diff.clear();
 			chart.clear();
 			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
@@ -72,15 +93,36 @@ public class ProjectView extends BlockPanel {
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
 
-			scanFilters.clear();
-			scanFilters.addScanFilter(project.getScanFilter());
+			final ScanFilter sf = project.getScanFilter();
+			final ContentLink sfLink = new ContentLink(sf.getName(),
+					ScanFiltersContent.getInstance(), sf.getUuid());
+			sfLink.setWidth("100%");
+			if (scanFilterField.getWidgetCount() > 1) {
+				scanFilterField.remove(1);
+			}
+			scanFilterField.add(sfLink);
 		}
 		scans.update(ContextManager.getContext());
 	}
 
-	public void addScanFilterAction(final String title,
-			final ClickListener action) {
-		scanFilters.addAction(title, action);
+	private void promptForScanFilter() {
+		if (selection != null) {
+			final ScanFilterDialog dialog = new ScanFilterDialog();
+			dialog.addPopupListener(new PopupListener() {
+
+				public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+					final Status s = dialog.getStatus();
+					if (s != null && s.isSuccess()) {
+						selection.setScanFilter(dialog.getSelectedFilter());
+						ProjectCache.getInstance().save(selection);
+						ProjectCache.getInstance().refresh();
+					}
+				}
+
+			});
+			dialog.center();
+			dialog.setScanFilter(selection.getScanFilter());
+		}
 	}
 
 	private class ProjectTableSection extends TableSection {
@@ -177,33 +219,4 @@ public class ProjectView extends BlockPanel {
 
 	}
 
-	private static class ScanFiltersSection extends BlockPanel {
-
-		@Override
-		protected void onInitialize(final VerticalPanel contentPanel) {
-			setTitle("Scan Filters");
-			setSubsectionStyle(true);
-		}
-
-		public void clear() {
-			getContentPanel().clear();
-		}
-
-		public void addScanFilter(final ScanFilter sf) {
-			final ContentLink sfLink = new ContentLink(sf.getName(),
-					ScanFiltersContent.getInstance(), sf.getUuid());
-			getContentPanel().add(sfLink);
-		}
-
-		public void loadingScanFilters() {
-			clear();
-			getContentPanel()
-					.add(new ItalicLabel("Retrieving Scan Filters..."));
-		}
-
-		public void noScanFilters() {
-			clear();
-			getContentPanel().add(new ItalicLabel("No Scan Filters"));
-		}
-	}
 }
