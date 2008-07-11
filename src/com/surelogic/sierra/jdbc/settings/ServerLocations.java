@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.DBQueryNoResult;
+import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
@@ -27,9 +27,9 @@ public final class ServerLocations {
 	 *            a map of server locations, and the projects connected to them
 	 * @return
 	 */
-	public static DBQueryNoResult saveQuery(
+	public static NullDBQuery saveQuery(
 			final Map<SierraServerLocation, Collection<String>> locations) {
-		return new DBQueryNoResult() {
+		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
 				q.statement("ServerLocations.deleteLocations").call();

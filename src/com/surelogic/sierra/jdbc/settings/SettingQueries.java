@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.DBQueryNoResult;
+import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.logging.SLLogger;
@@ -274,9 +274,9 @@ public class SettingQueries {
 	 *            a list of finding type identifiers to include in scans
 	 * @return
 	 */
-	public static DBQueryNoResult updateGlobalFilterSet(
+	public static NullDBQuery updateGlobalFilterSet(
 			final Collection<String> uids) {
-		return new DBQueryNoResult() {
+		return new NullDBQuery() {
 			@Override
 			public void doPerform(Query q) {
 				final ScanFilters s = new ScanFilters(q);
