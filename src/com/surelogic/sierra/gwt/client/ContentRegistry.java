@@ -12,6 +12,7 @@ import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
 import com.surelogic.sierra.gwt.client.content.reports.ReportsContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
+import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.content.servermgmt.ServerManagementContent;
 import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
 import com.surelogic.sierra.gwt.client.content.usermgmt.UserManagementContent;
@@ -35,6 +36,7 @@ public class ContentRegistry {
 		register("categories", CategoriesContent.getInstance(), userHeader);
 		register("finding", FindingContent.getInstance(), userHeader);
 		register("projects", ProjectsContent.getInstance(), userHeader);
+		register("scans", ScanContent.getInstance(), userHeader);
 		register("scanfilters", ScanFiltersContent.getInstance(), userHeader);
 		register("findingtype", FindingTypesContent.getInstance(), userHeader);
 		register("reports", ReportsContent.getInstance(), userHeader);
@@ -46,7 +48,7 @@ public class ContentRegistry {
 				adminHeader);
 	}
 
-	public static ContentComposite getContent(String contentName) {
+	public static ContentComposite getContent(final String contentName) {
 		for (final Map.Entry<ContentComposite, ContentEntry> mapEntry : contentMap
 				.entrySet()) {
 			final ContentEntry contentEntry = mapEntry.getValue();
@@ -57,24 +59,25 @@ public class ContentRegistry {
 		return null;
 	}
 
-	public static String getContentName(ContentComposite content) {
+	public static String getContentName(final ContentComposite content) {
 		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getName() : null;
 	}
 
-	public static HeaderComposite getContentHeader(ContentComposite content) {
+	public static HeaderComposite getContentHeader(
+			final ContentComposite content) {
 		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getHeader() : null;
 	}
 
-	public static String getContentUrl(ContentComposite content) {
+	public static String getContentUrl(final ContentComposite content) {
 		final StringBuffer url = new StringBuffer(GWT.getHostPageBaseURL());
 		url.append('#').append(getContentName(content));
 		return url.toString();
 	}
 
-	private static void register(String contentName, ContentComposite content,
-			HeaderComposite header) {
+	private static void register(final String contentName,
+			final ContentComposite content, final HeaderComposite header) {
 		contentMap.put(content, new ContentEntry(contentName, header));
 	}
 
@@ -82,7 +85,7 @@ public class ContentRegistry {
 		private final String name;
 		private final HeaderComposite header;
 
-		public ContentEntry(String name, HeaderComposite header) {
+		public ContentEntry(final String name, final HeaderComposite header) {
 			super();
 			this.name = name;
 			this.header = header;

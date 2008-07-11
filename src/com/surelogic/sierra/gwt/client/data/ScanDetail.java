@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScanDetail implements Serializable {
@@ -15,9 +16,11 @@ public class ScanDetail implements Serializable {
 
 	private String findings;
 
+	private String density;
+
 	private String tools;
 
-	private Map<String, String> compilations;
+	private Map<String, List<String>> compilations;
 
 	public String getLinesOfCode() {
 		return linesOfCode;
@@ -43,11 +46,19 @@ public class ScanDetail implements Serializable {
 		this.tools = tools;
 	}
 
-	public Map<String, String> getCompilations() {
+	public Map<String, List<String>> getCompilations() {
 		if (compilations == null) {
-			compilations = new HashMap<String, String>();
+			compilations = new HashMap<String, List<String>>();
 		}
 		return compilations;
+	}
+
+	public String getDensity() {
+		return density;
+	}
+
+	public void setDensity(final String density) {
+		this.density = density;
 	}
 
 }

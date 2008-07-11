@@ -21,4 +21,13 @@ public class ScanContent extends ContentComposite {
 		final String uuid = context.getUuid();
 	}
 
+	private ScanContent() {
+		// Do nothing
+	}
+
+	private static final ScanContent INSTANCE = new ScanContent();
+
+	public static ScanContent getInstance() {
+		return INSTANCE;
+	}
 }
