@@ -29,26 +29,33 @@ public class ContentRegistry {
 	}
 
 	public static void initialize() {
-		register("login", LoginContent.getInstance(), GuestHeader.getInstance());
+		register("login", "Login", LoginContent.getInstance(), GuestHeader
+				.getInstance());
 
 		final UserHeader userHeader = UserHeader.getInstance();
-		register("overview", OverviewContent.getInstance(), userHeader);
-		register("categories", CategoriesContent.getInstance(), userHeader);
-		register("finding", FindingContent.getInstance(), userHeader);
-		register("projects", ProjectsContent.getInstance(), userHeader);
-		register("scans", ScanContent.getInstance(), userHeader);
-		register("scanfilters", ScanFiltersContent.getInstance(), userHeader);
-		register("findingtype", FindingTypesContent.getInstance(), userHeader);
-		register("reports", ReportsContent.getInstance(), userHeader);
+		register("overview", "Welcome", OverviewContent.getInstance(),
+				userHeader);
+		register("categories", "Categories", CategoriesContent.getInstance(),
+				userHeader);
+		register("finding", "Finding", FindingContent.getInstance(), userHeader);
+		register("projects", "Projects", ProjectsContent.getInstance(),
+				userHeader);
+		register("scans", "Scans", ScanContent.getInstance(), userHeader);
+		register("scanfilters", "Scan Filters", ScanFiltersContent
+				.getInstance(), userHeader);
+		register("findingtype", "Finding Types", FindingTypesContent
+				.getInstance(), userHeader);
+		register("reports", "Reports", ReportsContent.getInstance(), userHeader);
 		final AdminHeader adminHeader = AdminHeader.getInstance();
-		register("settings", SettingsContent.getInstance(), adminHeader);
-		register("usermanagement", UserManagementContent.getInstance(),
+		register("settings", "Settings", SettingsContent.getInstance(),
 				adminHeader);
-		register("servermanagement", ServerManagementContent.getInstance(),
-				adminHeader);
+		register("usermanagement", "Users",
+				UserManagementContent.getInstance(), adminHeader);
+		register("servermanagement", "Servers", ServerManagementContent
+				.getInstance(), adminHeader);
 	}
 
-	public static ContentComposite getContent(final String contentName) {
+	public static ContentComposite getContent(String contentName) {
 		for (final Map.Entry<ContentComposite, ContentEntry> mapEntry : contentMap
 				.entrySet()) {
 			final ContentEntry contentEntry = mapEntry.getValue();
@@ -59,40 +66,51 @@ public class ContentRegistry {
 		return null;
 	}
 
-	public static String getContentName(final ContentComposite content) {
+	public static String getContentName(ContentComposite content) {
 		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getName() : null;
 	}
 
-	public static HeaderComposite getContentHeader(
-			final ContentComposite content) {
+	public static String getContentTitle(ContentComposite content) {
+		final ContentEntry entry = contentMap.get(content);
+		return entry != null ? entry.getTitle() : null;
+	}
+
+	public static HeaderComposite getContentHeader(ContentComposite content) {
 		final ContentEntry entry = contentMap.get(content);
 		return entry != null ? entry.getHeader() : null;
 	}
 
-	public static String getContentUrl(final ContentComposite content) {
+	public static String getContentUrl(ContentComposite content) {
 		final StringBuffer url = new StringBuffer(GWT.getHostPageBaseURL());
 		url.append('#').append(getContentName(content));
 		return url.toString();
 	}
 
-	private static void register(final String contentName,
-			final ContentComposite content, final HeaderComposite header) {
-		contentMap.put(content, new ContentEntry(contentName, header));
+	private static void register(String contentName, String contentTitle,
+			ContentComposite content, HeaderComposite header) {
+		contentMap.put(content, new ContentEntry(contentName, contentTitle,
+				header));
 	}
 
 	private static class ContentEntry {
 		private final String name;
+		private final String title;
 		private final HeaderComposite header;
 
-		public ContentEntry(final String name, final HeaderComposite header) {
+		public ContentEntry(String name, String title, HeaderComposite header) {
 			super();
 			this.name = name;
+			this.title = title;
 			this.header = header;
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public String getTitle() {
+			return title;
 		}
 
 		public HeaderComposite getHeader() {
