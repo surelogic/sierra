@@ -5,16 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Row;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Scan;
+import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.service.FindingService;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
@@ -164,4 +168,32 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
+	public ScanDetail getScanDetail(final String uuid) {
+		return ConnectionFactory.withUserReadOnly(new UserQuery<ScanDetail>() {
+			public ScanDetail perform(final Query query, final Server server,
+					final User user) {
+				if ((uuid != null) && !(uuid.length() == 0)) {
+					final ScanDetail d = new ScanDetail();
+					final Map<String, List<String>> compilations = d
+							.getCompilations();
+					query.prepared("Scans.scanDetail", new NullRowHandler() {
+						@Override
+						protected void doHandle(final Row r) {
+							final String pakkage = r.nextString();
+							final String clazz = r.nextString();
+							List<String> clazzes = compilations.get(pakkage);
+							if (clazzes == null) {
+								clazzes = new ArrayList<String>();
+								compilations.put(pakkage, clazzes);
+							}
+							clazzes.add(clazz);
+						}
+					}).call(uuid);
+					return d;
+				}
+				return null;
+			}
+		});
+
+	}
 }
