@@ -44,7 +44,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.DBQueryNoResult;
+import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
@@ -295,7 +295,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private IStatus queryTableContents() {
 		f_artifactList.clear();
 		try {
-			Data.withReadOnly(new DBQueryNoResult() {
+			Data.withReadOnly(new NullDBQuery() {
 				@Override
 				public void doPerform(Query q) {
 					f_artifactList.addAll(q.statement("query.00002",

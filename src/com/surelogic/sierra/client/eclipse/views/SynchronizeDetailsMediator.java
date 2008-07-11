@@ -24,7 +24,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLStatus;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.DBTransactionNoResult;
+import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
@@ -73,7 +73,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
-		Data.withReadOnly(new DBTransactionNoResult() {
+		Data.withReadOnly(new NullDBTransaction() {
 			@Override
 			public void doPerform(Connection conn) throws Exception {
 				SynchDetail sd = SynchDetail.getSyncDetail(conn, so);
