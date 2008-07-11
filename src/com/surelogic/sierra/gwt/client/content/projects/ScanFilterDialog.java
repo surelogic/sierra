@@ -40,7 +40,7 @@ public class ScanFilterDialog extends FormDialog {
 		return null;
 	}
 
-	public void setScanFilter(final String selectedFilterUuid) {
+	public void setScanFilter(final ScanFilter selectedFilter) {
 		final ScanFilterCache scanFilters = ScanFilterCache.getInstance();
 
 		final CacheListener<ScanFilter> cacheListener = new CacheListenerAdapter<ScanFilter>() {
@@ -58,8 +58,7 @@ public class ScanFilterDialog extends FormDialog {
 					final ItemLabel<ScanFilter> filterCheck = new ItemLabel<ScanFilter>(
 							filter.getName(), filter, selectionTracker, null);
 					scanFilterPanel.add(filterCheck);
-					filterCheck.setSelected(filter.getUuid().equals(
-							selectedFilterUuid));
+					filterCheck.setSelected(filter.equals(selectedFilter));
 				}
 
 				if (scanFilterPanel.getWidgetCount() == 0) {
@@ -77,9 +76,9 @@ public class ScanFilterDialog extends FormDialog {
 		scanFilters.refresh();
 	}
 
-	public String getSelectedFilter() {
+	public ScanFilter getSelectedFilter() {
 		final ItemLabel<ScanFilter> selection = selectionTracker.getSelected();
-		return selection == null ? null : selection.getItem().getUuid();
+		return selection == null ? null : selection.getItem();
 	}
 
 	@Override

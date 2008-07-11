@@ -101,21 +101,23 @@ public class ProjectsContent extends
 	}
 
 	private void promptForScanFilter() {
-		final ScanFilterDialog dialog = new ScanFilterDialog();
-		dialog.addPopupListener(new PopupListener() {
+		final Project project = projectView.getSelection();
+		if (project != null) {
+			final ScanFilterDialog dialog = new ScanFilterDialog();
+			dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-				final Status s = dialog.getStatus();
-				if (s != null && s.isSuccess()) {
-					final Project project = projectView.getSelection();
-					project.setScanFilter(dialog.getSelectedFilter());
-					getCache().save(project);
-					getCache().refresh();
+				public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+					final Status s = dialog.getStatus();
+					if (s != null && s.isSuccess()) {
+						project.setScanFilter(dialog.getSelectedFilter());
+						getCache().save(project);
+						getCache().refresh();
+					}
 				}
-			}
 
-		});
-		dialog.center();
-		dialog.setScanFilter(projectView.getScanFilter());
+			});
+			dialog.center();
+			dialog.setScanFilter(project.getScanFilter());
+		}
 	}
 }

@@ -25,7 +25,6 @@ import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
-import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.table.TableSection;
@@ -34,7 +33,6 @@ import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
-import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ProjectView extends BlockPanel {
 	private final StatusBox box = new StatusBox();
@@ -74,35 +72,10 @@ public class ProjectView extends BlockPanel {
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
 					.prop("projectName", project.getName()).build());
 
-			final ScanFilterCache sfCache = ScanFilterCache.getInstance();
 			scanFilters.clear();
-			boolean filterMatch = false;
-			for (final ScanFilter scanFilter : sfCache) {
-				if (scanFilter.getProjects().contains(projectName)) {
-					String filterName = scanFilter.getName();
-					if (LangUtil.isEmpty(filterName)) {
-						filterName = "Global";
-					}
-					scanFilters.addScanFilter(scanFilter);
-					filterMatch = true;
-				}
-			}
-			if (!filterMatch) {
-				final ScanFilter global = sfCache.getGlobalFilter();
-				if (global != null) {
-					scanFilters.addScanFilter(global);
-				} else if (sfCache.getItemCount() == 0) {
-					scanFilters.loadingScanFilters();
-				} else {
-					scanFilters.noScanFilters();
-				}
-			}
+			scanFilters.addScanFilter(project.getScanFilter());
 		}
 		scans.update(ContextManager.getContext());
-	}
-
-	public String getScanFilter() {
-		return selection == null ? null : selection.getScanFilter();
 	}
 
 	public void addScanFilterAction(final String title,
