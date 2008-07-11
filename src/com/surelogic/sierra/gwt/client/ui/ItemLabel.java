@@ -29,7 +29,9 @@ public class ItemLabel<T> extends Label {
 
 			public void onClick(Widget sender) {
 				setSelected(true);
-				listener.onClick(sender);
+				if (listener != null) {
+					listener.onClick(sender);
+				}
 			}
 		});
 
@@ -80,7 +82,7 @@ public class ItemLabel<T> extends Label {
 		if (selectionTracker != null) {
 			if (selected) {
 				if (!LangUtil.equals(this, selectionTracker.getSelected())) {
-					ItemLabel<T> lastSelection = selectionTracker
+					final ItemLabel<T> lastSelection = selectionTracker
 							.setSelected(this);
 					if (lastSelection != null) {
 						lastSelection.setSelected(false);
