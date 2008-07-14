@@ -70,7 +70,8 @@ public class ScanContent extends ContentComposite {
 						public void onSuccess(final ScanDetail result) {
 							setTitle(uuid);
 							final ListBox lb = new ListBox();
-							final ImportanceChoice imp = new ImportanceChoice();
+							final ImportanceChoice imp = new ImportanceChoice(
+									true);
 							lb.setMultipleSelect(true);
 							for (final String pakkage : result
 									.getCompilations().keySet()) {

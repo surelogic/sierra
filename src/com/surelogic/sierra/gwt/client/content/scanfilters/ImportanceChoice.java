@@ -20,6 +20,7 @@ public class ImportanceChoice extends ListBox {
 			addItem(arr[i].getName());
 		}
 		setMultipleSelect(allowMultiples);
+		setSelectedIndex(0);
 	}
 
 	/**
