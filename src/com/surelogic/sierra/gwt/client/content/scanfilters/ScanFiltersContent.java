@@ -34,6 +34,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
+import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.gwt.client.util.UI;

@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.content.scanfilters;
+package com.surelogic.sierra.gwt.client.ui;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -6,10 +6,10 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.content.scanfilters.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
