@@ -12,6 +12,8 @@ public class ScanDetail implements Serializable {
 	 */
 	private static final long serialVersionUID = -2323420123555798331L;
 
+	private String date;
+
 	private String linesOfCode;
 
 	private String findings;
@@ -44,6 +46,14 @@ public class ScanDetail implements Serializable {
 
 	public void setTools(final String tools) {
 		this.tools = tools;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(final String date) {
+		this.date = date;
 	}
 
 	public Map<String, List<String>> getCompilations() {
