@@ -176,19 +176,21 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 					final ScanDetail d = new ScanDetail();
 					final Map<String, List<String>> compilations = d
 							.getCompilations();
-					query.prepared("Scans.scanDetail", new NullRowHandler() {
-						@Override
-						protected void doHandle(final Row r) {
-							final String pakkage = r.nextString();
-							final String clazz = r.nextString();
-							List<String> clazzes = compilations.get(pakkage);
-							if (clazzes == null) {
-								clazzes = new ArrayList<String>();
-								compilations.put(pakkage, clazzes);
-							}
-							clazzes.add(clazz);
-						}
-					}).call(uuid);
+					query.prepared("Scans.scanCompilations",
+							new NullRowHandler() {
+								@Override
+								protected void doHandle(final Row r) {
+									final String pakkage = r.nextString();
+									final String clazz = r.nextString();
+									List<String> clazzes = compilations
+											.get(pakkage);
+									if (clazzes == null) {
+										clazzes = new ArrayList<String>();
+										compilations.put(pakkage, clazzes);
+									}
+									clazzes.add(clazz);
+								}
+							}).call(uuid);
 					return d;
 				}
 				return null;
