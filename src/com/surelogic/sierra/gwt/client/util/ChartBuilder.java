@@ -1,5 +1,7 @@
 package com.surelogic.sierra.gwt.client.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -40,8 +42,10 @@ public final class ChartBuilder {
 		return this;
 	}
 
-	public ChartBuilder prop(final String prop, final List<String> values) {
-		report.getParameters().add(new Parameter(prop, values));
+	public ChartBuilder prop(final String prop, final Collection<String> values) {
+		final List<String> list = new ArrayList<String>();
+		list.addAll(values);
+		report.getParameters().add(new Parameter(prop, list));
 		return this;
 	}
 

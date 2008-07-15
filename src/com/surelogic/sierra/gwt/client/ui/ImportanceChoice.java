@@ -13,13 +13,12 @@ public class ImportanceChoice extends ListBox {
 	}
 
 	public ImportanceChoice(final boolean allowMultiples) {
-		super();
+		super(allowMultiples);
 		addItem("Default");
 		final ImportanceView[] arr = ImportanceView.values();
 		for (int i = 0; i < arr.length; i++) {
 			addItem(arr[i].getName());
 		}
-		setMultipleSelect(allowMultiples);
 		setSelectedIndex(0);
 	}
 
@@ -31,7 +30,7 @@ public class ImportanceChoice extends ListBox {
 	 */
 	public Set<ImportanceView> getSelectedImportances() {
 		final Set<ImportanceView> selected = new HashSet<ImportanceView>();
-		if (isItemSelected(1)) {
+		if (isItemSelected(0)) {
 			selected.addAll(ImportanceView.standardValues());
 		}
 		for (int i = 1; i <= ImportanceView.values().length; i++) {

@@ -1,17 +1,29 @@
 package com.surelogic.sierra.gwt.client.content.scans;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.data.ImportanceView;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
+import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class ScanContent extends ContentComposite {
 
@@ -35,18 +47,23 @@ public class ScanContent extends ContentComposite {
 
 	private static class ScanView extends SectionPanel {
 
-		private VerticalPanel panel;
+		private VerticalPanel optionsPanel;
+		private VerticalPanel chartPanel;
 
 		@Override
 		protected void onDeactivate() {
 			setTitle("No Scan Selected");
-			panel.clear();
+			optionsPanel.clear();
 		}
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {
 			setTitle("No Scan Selected");
-			panel = new VerticalPanel();
+			optionsPanel = new VerticalPanel();
+			chartPanel = new VerticalPanel();
+			final HorizontalPanel panel = new HorizontalPanel();
+			panel.add(optionsPanel);
+			panel.add(chartPanel);
 			contentPanel.add(panel);
 		}
 
@@ -59,26 +76,59 @@ public class ScanContent extends ContentComposite {
 		}
 
 		private void setScan(final String uuid) {
-			panel.clear();
+			optionsPanel.clear();
+			chartPanel.clear();
 			ServiceHelper.getFindingService().getScanDetail(uuid,
 					new AsyncCallback<ScanDetail>() {
 						public void onFailure(final Throwable caught) {
-							panel.add(new StatusBox(Status.failure(caught
-									.getMessage())));
+							optionsPanel.add(new StatusBox(Status
+									.failure(caught.getMessage())));
 						}
 
 						public void onSuccess(final ScanDetail result) {
 							setTitle(uuid);
-							final ListBox lb = new ListBox();
+							final PackageChoice pak = new PackageChoice(result
+									.getCompilations().keySet(), true);
 							final ImportanceChoice imp = new ImportanceChoice(
 									true);
-							lb.setMultipleSelect(true);
-							for (final String pakkage : result
-									.getCompilations().keySet()) {
-								lb.addItem(pakkage);
-							}
-							panel.add(lb);
-							panel.add(imp);
+							optionsPanel.add(pak);
+							optionsPanel.add(imp);
+							optionsPanel.add(new Button("Show",
+									new ClickListener() {
+										public void onClick(final Widget sender) {
+											chartPanel.clear();
+											final List<String> importances = new ArrayList<String>();
+											for (final ImportanceView i : imp
+													.getSelectedImportances()) {
+												importances.add(i.getName());
+											}
+											final Set<String> packages = pak
+													.getSelectedPackages();
+											chartPanel.add(ChartBuilder.name(
+													"ScanImportances").width(
+													800).prop("scan", uuid)
+													.prop("importance",
+															importances)
+													.prop("package", packages)
+													.build());
+											final Report report = new Report();
+											report.setName("ScanFindings");
+											report.getParameters()
+													.add(
+															new Parameter(
+																	"scan",
+																	uuid));
+											report.getParameters().add(
+													new Parameter("importance",
+															importances));
+											report.getParameters().add(
+													new Parameter("package",
+															packages));
+											chartPanel
+													.add(new ReportTableSection(
+															report));
+										}
+									}));
 						}
 					});
 		}
