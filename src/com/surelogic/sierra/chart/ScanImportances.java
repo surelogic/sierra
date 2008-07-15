@@ -30,27 +30,19 @@ import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class CompareProjectScans implements IDatabasePlot {
+public class ScanImportances implements IDatabasePlot {
 
 	public JFreeChart plot(final PlotSize mutableSize, final Report report,
 			final Connection c) throws SQLException, IOException {
-		final Parameter scanParam = report.getParameter("scans");
+		final Parameter scanParam = report.getParameter("scan");
 		final Parameter impParam = report.getParameter("importance");
+		final Parameter packageParam = report.getParameter("package");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		if (scanParam != null) {
-			final List<String> projects = scanParam.getValues();
-			if (!projects.isEmpty()) {
-				final StringBuilder scanStr = new StringBuilder();
-				for (final String p : projects) {
-					scanStr.append("'");
-					scanStr.append(JDBCUtils.escapeString(p));
-					scanStr.append("',");
-				}
-				scanStr.setLength(scanStr.length() - 1);
-				// Extract the importances we want, or return all of them if
-				// they are not specified
-				List<Importance> importances;
+			final String scan = scanParam.getValue();
+			if ((scan != null) && !(scan.length() == 0)) {
+				final List<Importance> importances;
 				if ((impParam == null) || impParam.getValues().isEmpty()) {
 					importances = Importance.standardValues();
 				} else {
@@ -65,31 +57,45 @@ public class CompareProjectScans implements IDatabasePlot {
 					impStr.append(",");
 				}
 				impStr.setLength(impStr.length() - 1);
-				final Map<String, Integer> totals = new TreeMap<String, Integer>();
-				new ConnectionQuery(c).statement(
-						"Plots.Project.scanImportances",
-						new RowHandler<Void>() {
-							public Void handle(final Row r) {
-								final int count = r.nextInt();
-								final String importance = r.nextString();
-								final String time = r.nextString();
-								importanceData
-										.setValue(count, importance, time);
-								final Integer total = totals.get(time);
-								totals.put(time, (total == null ? 0 : total)
-										+ count);
-								return null;
-							}
-						}).call(scanStr.toString(), impStr.toString());
-				for (final Entry<String, Integer> entry : totals.entrySet()) {
-					totalData.setValue(entry.getValue(), "Total", entry
-							.getKey());
+				if ((packageParam != null)
+						&& !packageParam.getValues().isEmpty()) {
+					final StringBuilder packageStr = new StringBuilder();
+					for (final String pakkage : packageParam.getValues()) {
+						packageStr.append("'");
+						packageStr.append(JDBCUtils.escapeString(pakkage));
+						packageStr.append("'");
+						packageStr.append(",");
+					}
+					packageStr.setLength(packageStr.length() - 1);
+					final Map<String, Integer> totals = new TreeMap<String, Integer>();
+					new ConnectionQuery(c).statement(
+							"Plots.Scan.packageImportances",
+							new RowHandler<Void>() {
+								public Void handle(final Row r) {
+									final int count = r.nextInt();
+									final String importance = r.nextString();
+									final String time = r.nextString();
+									importanceData.setValue(count, importance,
+											time);
+									final Integer total = totals.get(time);
+									totals
+											.put(time, (total == null ? 0
+													: total)
+													+ count);
+									return null;
+								}
+							}).call(JDBCUtils.escapeString(scan),
+							packageStr.toString(), impStr.toString());
+					for (final Entry<String, Integer> entry : totals.entrySet()) {
+						totalData.setValue(entry.getValue(), "Total", entry
+								.getKey());
+					}
 				}
 			}
 		}
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Findings Breakdown Per Scan", null, "# of Findings",
+				"Finding Importances Per Package", null, "# of Findings",
 				importanceData, PlotOrientation.HORIZONTAL, true, false, false);
 
 		final CategoryPlot plot = chart.getCategoryPlot();
@@ -112,5 +118,4 @@ public class CompareProjectScans implements IDatabasePlot {
 				NumberAxis.createIntegerTickUnits());
 		return chart;
 	}
-
 }
