@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.content;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,6 +3,8 @@ package com.surelogic.sierra.gwt.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 

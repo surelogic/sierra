@@ -1,8 +1,8 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.surelogic.sierra.gwt.client.ContentComposite;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.content.ContentComposite;
 
 public class ContentLink extends Hyperlink {
 

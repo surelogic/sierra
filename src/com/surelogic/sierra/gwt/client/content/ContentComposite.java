@@ -1,9 +1,12 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.content;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.Lifecycle;
 import com.surelogic.sierra.gwt.client.util.UI;
 
 public abstract class ContentComposite extends Composite implements Lifecycle {

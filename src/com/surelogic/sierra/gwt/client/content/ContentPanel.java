@@ -1,8 +1,11 @@
-package com.surelogic.sierra.gwt.client;
+package com.surelogic.sierra.gwt.client.content;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextListener;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 
