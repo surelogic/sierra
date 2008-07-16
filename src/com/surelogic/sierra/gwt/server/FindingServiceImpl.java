@@ -3,7 +3,9 @@ package com.surelogic.sierra.gwt.server;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +14,7 @@ import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
@@ -176,6 +179,47 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 					final ScanDetail d = new ScanDetail();
 					final Map<String, List<String>> compilations = d
 							.getCompilations();
+					final NullRowHandler detailHandler = new NullRowHandler() {
+						@Override
+						protected void doHandle(final Row r) {
+							final Date time = r.nextDate();
+							final String project = r.nextString();
+							final int findingCount = r.nextInt();
+							query.prepared("Scans.scanMetricDetails",
+									SingleRowHandler.from(new NullRowHandler() {
+										@Override
+										protected void doHandle(final Row r) {
+											final int packageCount = r
+													.nextInt();
+											final int classCount = r.nextInt();
+											final int lineCount = r.nextInt();
+											d.setClasses(Integer
+													.toString(classCount)
+													+ " classes");
+											d.setDate(Dates.format(time));
+											final double density = 1000
+													* (double) findingCount
+													/ lineCount;
+											d.setDensity(NumberFormat
+													.getInstance().format(
+															density)
+													+ " findings/kLoC");
+											d.setFindings(Integer
+													.toString(findingCount)
+													+ " findings");
+											d.setLinesOfCode(Integer
+													.toString(lineCount)
+													+ " lines of code");
+											d.setPackages(Integer
+													.toString(packageCount)
+													+ " packages");
+											d.setProject(project);
+										}
+									})).call(uuid);
+						}
+					};
+					query.prepared("Scans.scanFindingDetails",
+							SingleRowHandler.from(detailHandler)).call(uuid);
 					query.prepared("Scans.scanCompilations",
 							new NullRowHandler() {
 								@Override
@@ -196,6 +240,5 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 				return null;
 			}
 		});
-
 	}
 }
