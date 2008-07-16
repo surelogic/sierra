@@ -61,8 +61,13 @@ public final class HeaderPanel extends Composite {
 		final UserAccount user = ContextManager.getUser();
 		final Context context = ContextManager.getContext();
 
-		Window.setTitle("Sierra Portal - "
-				+ ContentRegistry.getContentTitle(context.getContent()));
+		final StringBuilder windowTitle = new StringBuilder("Sierra Portal");
+		final String contentTitle = ContentRegistry.getContentTitle(context
+				.getContent());
+		if (contentTitle != null) {
+			windowTitle.append(" - ").append(contentTitle);
+		}
+		Window.setTitle(windowTitle.toString());
 
 		HeaderComposite newHeader = null;
 		if (user == null) {
