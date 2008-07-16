@@ -79,11 +79,11 @@ public class ScanFilter implements Serializable, Cacheable {
 		copy.revision = revision;
 		copy.categories = new HashSet<ScanFilterEntry>(getCategories().size());
 		for (final ScanFilterEntry entry : getCategories()) {
-			copy.categories.add(entry);
+			copy.categories.add(entry.copy());
 		}
 		copy.types = new HashSet<ScanFilterEntry>(getTypes().size());
 		for (final ScanFilterEntry entry : getTypes()) {
-			copy.types.add(entry);
+			copy.types.add(entry.copy());
 		}
 		return copy;
 	}
