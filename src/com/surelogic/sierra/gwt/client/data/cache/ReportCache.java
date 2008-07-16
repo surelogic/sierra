@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.data.cache;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -13,7 +12,7 @@ import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
 public class ReportCache extends Cache<Report> {
 
 	@Override
-	protected void doRefreshCall(AsyncCallback<List<Report>> callback) {
+	protected void doRefreshCall(final AsyncCallback<List<Report>> callback) {
 		// TODO load real reports
 		final List<Report> tempReports = new ArrayList<Report>();
 		tempReports.add(findingsByProject());
@@ -27,14 +26,15 @@ public class ReportCache extends Cache<Report> {
 		report.setName("FindingsByProject");
 		report.setTitle("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
-		final Set<Parameter> params = report.getParameters();
+		final List<Parameter> params = report.getParameters();
 		params.add(new Parameter("Projects", Type.PROJECTS));
 		params.add(new Parameter("Importance", Type.IMPORTANCE));
 		return report;
 	}
 
 	@Override
-	protected void doSaveCall(Report item, AsyncCallback<Status> callback) {
+	protected void doSaveCall(final Report item,
+			final AsyncCallback<Status> callback) {
 		callback.onFailure(new Exception("Not implemented"));
 
 		// TODO no save implemented

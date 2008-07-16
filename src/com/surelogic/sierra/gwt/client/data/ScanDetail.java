@@ -12,6 +12,8 @@ public class ScanDetail implements Serializable {
 	 */
 	private static final long serialVersionUID = -2323420123555798331L;
 
+	private String project;
+
 	private String date;
 
 	private String linesOfCode;
@@ -21,6 +23,9 @@ public class ScanDetail implements Serializable {
 	private String density;
 
 	private String tools;
+
+	private String packages;
+	private String classes;
 
 	private Map<String, List<String>> compilations;
 
@@ -69,6 +74,30 @@ public class ScanDetail implements Serializable {
 
 	public void setDensity(final String density) {
 		this.density = density;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public void setProject(final String project) {
+		this.project = project;
+	}
+
+	public String getPackages() {
+		return packages;
+	}
+
+	public void setPackages(final String packages) {
+		this.packages = packages;
+	}
+
+	public String getClasses() {
+		return classes;
+	}
+
+	public void setClasses(final String classes) {
+		this.classes = classes;
 	}
 
 }

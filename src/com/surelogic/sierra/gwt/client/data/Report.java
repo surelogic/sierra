@@ -3,9 +3,7 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -17,7 +15,7 @@ public class Report implements Serializable, Cacheable {
 	private String title;
 	private long revision;
 	private String description;
-	private Set<Parameter> parameters;
+	private List<Parameter> parameters;
 
 	public String getUuid() {
 		return uuid;
@@ -59,9 +57,9 @@ public class Report implements Serializable, Cacheable {
 		this.description = description;
 	}
 
-	public Set<Parameter> getParameters() {
+	public List<Parameter> getParameters() {
 		if (parameters == null) {
-			parameters = new HashSet<Parameter>();
+			parameters = new ArrayList<Parameter>();
 		}
 		return parameters;
 	}

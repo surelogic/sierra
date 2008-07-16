@@ -18,60 +18,12 @@ public class ReportTableSection extends SectionPanel {
 	private Report report;
 
 	public ReportTableSection(final Report r) {
+		super();
 		setReport(r);
 	}
 
 	public ReportTableSection() {
-		// Do nothing
-	}
-
-	public void setReport(final Report r) {
-		report = r;
-		if (r != null) {
-			setTitle(report.getTitle());
-			setSummary(report.getDescription());
-			getReportData();
-		}
-	}
-
-	private void getReportData() {
-		ServiceHelper.getTicketService().getReportTable(report,
-				new AsyncCallback<Result<ReportTable>>() {
-
-					public void onFailure(final Throwable caught) {
-						// FIXME
-					}
-
-					public void onSuccess(final Result<ReportTable> result) {
-						if (result.isSuccess()) {
-							final ReportTable table = result.getResult();
-							final List<String> headerTitles = table
-									.getHeaders();
-							final List<ColumnData> columnType = table
-									.getColumns();
-							for (int i = 0; i < headerTitles.size(); i++) {
-								grid.setText(0, i, headerTitles.get(i));
-							}
-
-							grid.getRowFormatter().setStyleName(0,
-									PRIMARY_STYLE + "-header");
-							final List<List<String>> rows = table.getData();
-							if (rows.isEmpty()) {
-								setSuccessStatus("No information to display");
-							} else {
-								clearRows();
-								for (final List<String> row : rows) {
-									addRow();
-									int i = 0;
-									for (final String col : row) {
-										addColumn(col, columnType.get(i++));
-									}
-								}
-							}
-						}
-
-					}
-				});
+		super();
 	}
 
 	private static final String PRIMARY_STYLE = "sl-TableSection";
@@ -136,4 +88,52 @@ public class ReportTableSection extends SectionPanel {
 		currentColumn++;
 	}
 
+	public void setReport(final Report r) {
+		report = r;
+		if (r != null) {
+			setTitle(report.getTitle());
+			setSummary(report.getDescription());
+			getReportData();
+		}
+	}
+
+	private void getReportData() {
+		ServiceHelper.getTicketService().getReportTable(report,
+				new AsyncCallback<Result<ReportTable>>() {
+
+					public void onFailure(final Throwable caught) {
+						// FIXME
+					}
+
+					public void onSuccess(final Result<ReportTable> result) {
+						if (result.isSuccess()) {
+							final ReportTable table = result.getResult();
+							final List<String> headerTitles = table
+									.getHeaders();
+							final List<ColumnData> columnType = table
+									.getColumns();
+							for (int i = 0; i < headerTitles.size(); i++) {
+								grid.setText(0, i, headerTitles.get(i));
+							}
+
+							grid.getRowFormatter().setStyleName(0,
+									PRIMARY_STYLE + "-header");
+							final List<List<String>> rows = table.getData();
+							if (rows.isEmpty()) {
+								setSuccessStatus("No information to display");
+							} else {
+								clearRows();
+								for (final List<String> row : rows) {
+									addRow();
+									int i = 0;
+									for (final String col : row) {
+										addColumn(col, columnType.get(i++));
+									}
+								}
+							}
+						}
+
+					}
+				});
+	}
 }

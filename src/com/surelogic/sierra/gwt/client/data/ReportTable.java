@@ -18,10 +18,10 @@ public class ReportTable implements Serializable {
 	private Report report;
 
 	public ReportTable() {
-
+		// Do nothing
 	}
 
-	public ReportTable(Report report) {
+	public ReportTable(final Report report) {
 		this.report = report;
 	}
 

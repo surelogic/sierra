@@ -24,6 +24,7 @@ import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
+import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanContent extends ContentComposite {
 
@@ -49,6 +50,7 @@ public class ScanContent extends ContentComposite {
 
 		private VerticalPanel optionsPanel;
 		private VerticalPanel chartPanel;
+		private VerticalPanel detailPanel;
 
 		@Override
 		protected void onDeactivate() {
@@ -61,9 +63,13 @@ public class ScanContent extends ContentComposite {
 			setTitle("No Scan Selected");
 			optionsPanel = new VerticalPanel();
 			chartPanel = new VerticalPanel();
+			detailPanel = new VerticalPanel();
 			final HorizontalPanel panel = new HorizontalPanel();
 			panel.add(optionsPanel);
-			panel.add(chartPanel);
+			final VerticalPanel vPanel = new VerticalPanel();
+			vPanel.add(detailPanel);
+			vPanel.add(chartPanel);
+			panel.add(vPanel);
 			contentPanel.add(panel);
 		}
 
@@ -78,6 +84,7 @@ public class ScanContent extends ContentComposite {
 		private void setScan(final String uuid) {
 			optionsPanel.clear();
 			chartPanel.clear();
+			detailPanel.clear();
 			ServiceHelper.getFindingService().getScanDetail(uuid,
 					new AsyncCallback<ScanDetail>() {
 						public void onFailure(final Throwable caught) {
@@ -86,7 +93,13 @@ public class ScanContent extends ContentComposite {
 						}
 
 						public void onSuccess(final ScanDetail result) {
-							setTitle(uuid);
+							setTitle(result.getProject() + " - "
+									+ result.getDate());
+							detailPanel.add(UI.p(result.getClasses()));
+							detailPanel.add(UI.p(result.getPackages()));
+							detailPanel.add(UI.p(result.getFindings()));
+							detailPanel.add(UI.p(result.getLinesOfCode()));
+							detailPanel.add(UI.p(result.getDensity()));
 							final PackageChoice pak = new PackageChoice(result
 									.getCompilations().keySet(), true);
 							final ImportanceChoice imp = new ImportanceChoice(
