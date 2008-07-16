@@ -9,9 +9,11 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -83,18 +85,23 @@ public class ScanFilterView extends BlockPanel {
 
 		@Override
 		protected void onInitialize(VerticalPanel contentPanel) {
+			final CellFormatter cf = filterGrid.getCellFormatter();
 			filterGrid.setWidth("100%");
 			filterGrid.setText(0, 0, "Name");
-			filterGrid.getCellFormatter().addStyleName(0, 0,
-					"scan-filter-entry-title");
+			cf.addStyleName(0, 0, "scan-filter-entry-title");
 			filterGrid.getColumnFormatter().setWidth(0, "65%");
 
 			filterGrid.setText(0, 1, "Importance");
-			filterGrid.getCellFormatter().addStyleName(0, 1,
-					"scan-filter-entry-title");
+			cf.addStyleName(0, 1, "scan-filter-entry-title");
+			cf
+					.setHorizontalAlignment(0, 1,
+							HasHorizontalAlignment.ALIGN_CENTER);
 			filterGrid.getColumnFormatter().setWidth(1, "20%");
 
 			filterGrid.setText(0, 2, "");
+			cf
+					.setHorizontalAlignment(0, 2,
+							HasHorizontalAlignment.ALIGN_CENTER);
 			filterGrid.getColumnFormatter().setWidth(2, "15%");
 
 			contentPanel.add(filterGrid);
@@ -138,8 +145,12 @@ public class ScanFilterView extends BlockPanel {
 					filterGrid.removeRow(rowIndex);
 				}
 			});
+			remove.setHorizontalAlignment(Label.ALIGN_CENTER);
+
 			filterGrid.setWidget(rowIndex, 0, h);
 			filterGrid.setWidget(rowIndex, 1, box);
+			filterGrid.getCellFormatter().setHorizontalAlignment(rowIndex, 1,
+					HasHorizontalAlignment.ALIGN_CENTER);
 			filterGrid.setWidget(rowIndex, 2, remove);
 		}
 	}
