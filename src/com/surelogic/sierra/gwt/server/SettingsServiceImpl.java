@@ -435,7 +435,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final CategoryDO catDO = cs.getCategory(c.getUid());
 			e.setName(catDO.getName());
 			e.setShortMessage(catDO.getInfo());
-			e.setUid(c.getUid());
+			e.setUuid(c.getUid());
 			filters.add(e);
 		}
 		filters = f.getTypes();
@@ -446,7 +446,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final FindingTypeDO tDO = ft.getFindingType(t.getFindingType());
 			e.setName(tDO.getName());
 			e.setShortMessage(tDO.getShortMessage());
-			e.setUid(tDO.getUid());
+			e.setUuid(tDO.getUid());
 			filters.add(e);
 		}
 		return f;
@@ -478,14 +478,14 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		for (final ScanFilterEntry e : f.getCategories()) {
 			final CategoryFilterDO c = new CategoryFilterDO();
 			c.setImportance(importance(e.getImportance()));
-			c.setUid(e.getUid());
+			c.setUid(e.getUuid());
 			cats.add(c);
 		}
 		for (final ScanFilterEntry e : f.getTypes()) {
 			final TypeFilterDO t = new TypeFilterDO();
 			t.setImportance(importance(e.getImportance()));
 			t.setFiltered(false);
-			t.setFindingType(e.getUid());
+			t.setFindingType(e.getUuid());
 			types.add(t);
 		}
 		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
