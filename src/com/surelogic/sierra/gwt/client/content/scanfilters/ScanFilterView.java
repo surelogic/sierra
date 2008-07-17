@@ -18,6 +18,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
+import com.surelogic.sierra.gwt.client.util.UI;
 
 public class ScanFilterView extends BlockPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();
@@ -40,8 +41,6 @@ public class ScanFilterView extends BlockPanel {
 		if (selection != null) {
 			setSummary(selection.getName());
 
-			final Map<ImportanceView, FilterBlock> blocksByImportance = new HashMap<ImportanceView, FilterBlock>();
-
 			final Comparator<ScanFilterEntry> filterCompare = new Comparator<ScanFilterEntry>() {
 
 				public int compare(ScanFilterEntry o1, ScanFilterEntry o2) {
@@ -49,37 +48,38 @@ public class ScanFilterView extends BlockPanel {
 							o2.getName().toLowerCase());
 				}
 			};
+
+			final Map<ImportanceView, FilterBlock> categoryImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
 			final List<ScanFilterEntry> sortedCategories = new ArrayList<ScanFilterEntry>(
 					filter.getCategories());
 			Collections.sort(sortedCategories, filterCompare);
 			for (final ScanFilterEntry category : sortedCategories) {
 				final FilterBlock filterList = getFilterBlock(
-						blocksByImportance, category.getImportance());
+						categoryImportanceBlocks, category.getImportance(),
+						true);
 				filterList.addFilterEntry(category);
 			}
 
+			final Map<ImportanceView, FilterBlock> findingImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
 			final List<ScanFilterEntry> sortedFindings = new ArrayList<ScanFilterEntry>(
 					filter.getTypes());
 			Collections.sort(sortedFindings, filterCompare);
 			for (final ScanFilterEntry category : sortedFindings) {
 				final FilterBlock filterList = getFilterBlock(
-						blocksByImportance, category.getImportance());
+						findingImportanceBlocks, category.getImportance(),
+						false);
 				filterList.addFilterEntry(category);
 			}
 
 			final ImportanceView[] importances = ImportanceView.values();
 
 			for (int i = importances.length - 1; i >= 0; i--) {
-				final FilterBlock block = blocksByImportance
-						.get(importances[i]);
-				if (block != null) {
-					importanceBlocks.add(block);
-				}
+				addBlocks(importances[i], categoryImportanceBlocks,
+						findingImportanceBlocks);
+
 			}
-			final FilterBlock defaultBlock = blocksByImportance.get(null);
-			if (defaultBlock != null) {
-				importanceBlocks.add(defaultBlock);
-			}
+			addBlocks(null, categoryImportanceBlocks, findingImportanceBlocks);
+
 			if (importanceBlocks.getWidgetCount() == 0) {
 				importanceBlocks.add(new ItalicLabel("None"));
 			}
@@ -88,14 +88,31 @@ public class ScanFilterView extends BlockPanel {
 		}
 	}
 
-	private FilterBlock getFilterBlock(
-			Map<ImportanceView, FilterBlock> blocksByImportance,
-			ImportanceView importance) {
-		FilterBlock block = blocksByImportance.get(importance);
-		if (block == null) {
+	private void addBlocks(ImportanceView importance,
+			Map<ImportanceView, FilterBlock> categoryBlocks,
+			Map<ImportanceView, FilterBlock> findingBlocks) {
+		final FilterBlock categoryBlock = categoryBlocks.get(importance);
+		final FilterBlock findingBlock = findingBlocks.get(importance);
+		if (categoryBlock != null || findingBlock != null) {
 			final String importanceTitle = importance == null ? "Default"
 					: importance.getName();
-			block = new FilterBlock(importanceTitle);
+			importanceBlocks.add(UI.h3(importanceTitle + " Priority"));
+		}
+		if (categoryBlock != null) {
+			importanceBlocks.add(categoryBlock);
+		}
+
+		if (findingBlock != null) {
+			importanceBlocks.add(findingBlock);
+		}
+	}
+
+	private FilterBlock getFilterBlock(
+			Map<ImportanceView, FilterBlock> blocksByImportance,
+			ImportanceView importance, boolean isCategory) {
+		FilterBlock block = blocksByImportance.get(importance);
+		if (block == null) {
+			block = new FilterBlock(isCategory);
 			block.initialize();
 			blocksByImportance.put(importance, block);
 		}
@@ -108,10 +125,9 @@ public class ScanFilterView extends BlockPanel {
 		private final VerticalPanel findingsLeft = new VerticalPanel();
 		private final VerticalPanel findingsRight = new VerticalPanel();
 
-		public FilterBlock(String priorityName) {
+		public FilterBlock(boolean categories) {
 			super();
-			setTitle("Priority");
-			setSummary(priorityName);
+			setTitle(categories ? "Categories" : "Findings");
 			setSubsectionStyle(true);
 		}
 
