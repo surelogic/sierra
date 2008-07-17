@@ -36,7 +36,7 @@ import org.eclipse.ui.progress.UIJob;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
@@ -392,7 +392,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final int errNo = 94;
 				final String msg = I18N.err(errNo, exitValue, consoleMsg);
-				final IStatus reason = SLStatus.createWarningStatus(errNo, msg);
+				final IStatus reason = SLStatusUtility.createWarningStatus(errNo, msg);
 				ErrorDialogUtility.open(null, "Startup Failure", reason);
 				return Status.OK_STATUS;
 			}
