@@ -16,6 +16,7 @@ public class ArtifactOverview implements Serializable {
 	private String tool;
 	private String type;
 	private String summary;
+	private String time;
 
 	// TODO do we want package, class, loc, etc? Probably.
 
@@ -23,7 +24,7 @@ public class ArtifactOverview implements Serializable {
 		return tool;
 	}
 
-	public void setTool(String tool) {
+	public void setTool(final String tool) {
 		this.tool = tool;
 	}
 
@@ -31,7 +32,7 @@ public class ArtifactOverview implements Serializable {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(final String type) {
 		this.type = type;
 	}
 
@@ -39,8 +40,16 @@ public class ArtifactOverview implements Serializable {
 		return summary;
 	}
 
-	public void setSummary(String summary) {
+	public void setSummary(final String summary) {
 		this.summary = summary;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(final String time) {
+		this.time = time;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
@@ -53,6 +54,7 @@ public final class UserHeader extends AuthenticatedHeader {
 		addTabSpacer();
 		addTab(ProjectsContent.getInstance(), "team");
 		addTab(ScanContent.getInstance(), "team");
+		addTab(FindingContent.getInstance(), "team");
 		addTabSpacer();
 		addTab(ReportsContent.getInstance(), "reports");
 	}
