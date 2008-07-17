@@ -109,7 +109,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void updateContents() throws Exception {
-		Data.withReadOnly(new NullDBTransaction() {
+		Data.getInstance().withReadOnly(new NullDBTransaction() {
 			@Override
 			public void doPerform(Connection conn) throws Exception {
 				final List<SynchOverview> synchList = SynchOverview

@@ -253,7 +253,7 @@ implements IViewUpdater {
 				monitor.beginTask("Querying finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
-					Connection c = Data.readOnlyConnection();
+					Connection c = Data.getInstance().readOnlyConnection();
 					try {
 					  FindingDetail detail = FindingDetail.getDetailOrNull(c, findingId);
 						f_finding = detail;

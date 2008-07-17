@@ -40,7 +40,7 @@ public abstract class ExportFindingSetJob extends DatabaseJob {
 		final String query = f_listOfFindingsQuery;
 		try {
 			openOutput();
-			final Connection c = Data.readOnlyConnection();
+			final Connection c = Data.getInstance().readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {

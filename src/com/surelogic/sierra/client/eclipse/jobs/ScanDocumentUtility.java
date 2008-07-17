@@ -92,7 +92,7 @@ public final class ScanDocumentUtility {
 		}
 		Throwable exc = null;
 		try {
-			final Connection conn = Data.transactionConnection();
+			final Connection conn = Data.getInstance().transactionConnection();
 			try {
 				final ScanManager sMan = ScanManager.getInstance(conn);
 				final Set<Long> findingIds = new HashSet<Long>();
@@ -162,7 +162,7 @@ public final class ScanDocumentUtility {
 		monitor.beginTask("Load scan document", 100);
 		Throwable exc = null;
 		try {
-			final Connection conn = Data.transactionConnection();
+			final Connection conn = Data.getInstance().transactionConnection();
 			try {
 				final ScanManager sMan = ScanManager.getInstance(conn);
 				if (projectName != null) {

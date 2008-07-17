@@ -21,11 +21,11 @@ import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
-import com.surelogic.sierra.jdbc.server.TransactionException;
 
 /**
  * Scan the changes in the selected projects
@@ -52,7 +52,7 @@ public class ScanChangedProjectsAction extends
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask(getName(), projects.size() + 1);
 				try {
-					Data.withReadOnly(new DBQuery<Void>() {
+					Data.getInstance().withReadOnly(new DBQuery<Void>() {
 						public Void perform(final Query q) {
 							final Map<IJavaProject, Date> times = new HashMap<IJavaProject, Date>(
 									projects.size());

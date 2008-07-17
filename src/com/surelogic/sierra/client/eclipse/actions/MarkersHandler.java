@@ -458,7 +458,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				Connection conn = Data.readOnlyConnection();
+				Connection conn = Data.getInstance().readOnlyConnection();
 				try {
 					long start = !debug ? 0 : System.currentTimeMillis();
 					Importance level = PreferenceConstants

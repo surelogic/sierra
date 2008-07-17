@@ -61,7 +61,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		slMonitor.beginTask(getName(), 6);
 		IStatus status = null;
 		try {
-			final Connection conn = Data.transactionConnection();
+			final Connection conn = Data.getInstance().transactionConnection();
 			try {
 				status = synchronize(conn, slMonitor);
 			} catch (final Throwable e) {

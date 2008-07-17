@@ -49,11 +49,11 @@ import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
-import com.surelogic.sierra.jdbc.server.TransactionException;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 
 public class ScanFilterPreferencePage extends PreferencePage implements
@@ -295,7 +295,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private IStatus queryTableContents() {
 		f_artifactList.clear();
 		try {
-			Data.withReadOnly(new NullDBQuery() {
+			Data.getInstance().withReadOnly(new NullDBQuery() {
 				@Override
 				public void doPerform(Query q) {
 					f_artifactList.addAll(q.statement("query.00002",
@@ -338,7 +338,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private IStatus queryFindingTypeHTMLDescriptionOf(
 			final String findingTypeUUID) {
 		try {
-			final Connection c = Data.readOnlyConnection();
+			final Connection c = Data.getInstance().readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {
@@ -499,7 +499,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 */
 	private IStatus updateSettings(List<String> filterUUIDList) {
 		try {
-			Data.withTransaction(SettingQueries
+			Data.getInstance().withTransaction(SettingQueries
 					.updateGlobalFilterSet(filterUUIDList));
 		} catch (final TransactionException e) {
 			final int errNo = 56;

@@ -73,7 +73,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
-		Data.withReadOnly(new NullDBTransaction() {
+		Data.getInstance().withReadOnly(new NullDBTransaction() {
 			@Override
 			public void doPerform(Connection conn) throws Exception {
 				SynchDetail sd = SynchDetail.getSyncDetail(conn, so);

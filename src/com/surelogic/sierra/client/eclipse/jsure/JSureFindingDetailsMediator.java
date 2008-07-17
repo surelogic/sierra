@@ -175,7 +175,7 @@ implements IViewUpdater {
 				monitor.beginTask("Querying finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
-					Connection c = Data.readOnlyConnection();
+					Connection c = Data.getInstance().readOnlyConnection();
 					try {						
 						Query q = new ConnectionQuery(c);
 						synchronized (details) {

@@ -1135,7 +1135,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void updateServerInfo() throws Exception {
-		final Connection c = Data.transactionConnection();
+		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
 		try {
 			final ClientProjectManager cpm = ClientProjectManager
@@ -1297,7 +1297,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void updateContents() throws Exception {
-		final Connection c = Data.transactionConnection();
+		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
 		try {
 			final ClientProjectManager cpm = ClientProjectManager

@@ -21,10 +21,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.adhoc.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.server.TransactionException;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -81,7 +81,8 @@ public final class SierraServerPersistence {
 							.getPassword());
 				}
 			}
-			Data.withTransaction(ServerLocations.saveQuery(locMap));
+			Data.getInstance().withTransaction(
+					ServerLocations.saveQuery(locMap));
 			if (map != null) {
 				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
 			}
@@ -94,7 +95,7 @@ public final class SierraServerPersistence {
 	}
 
 	public static void export(final SierraServerManager manager,
-			List<SierraServer> serversToExport, final File file) {
+			final List<SierraServer> serversToExport, final File file) {
 		try {
 			final PrintWriter pw = new PrintWriter(new FileWriter(file));
 			outputXMLHeader(pw);
@@ -110,7 +111,7 @@ public final class SierraServerPersistence {
 		}
 	}
 
-	private static void outputXMLHeader(PrintWriter pw) {
+	private static void outputXMLHeader(final PrintWriter pw) {
 		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
 				+ "' standalone='yes'?>");
 		final StringBuilder b = new StringBuilder();
@@ -120,8 +121,9 @@ public final class SierraServerPersistence {
 		pw.println(b.toString());
 	}
 
-	private static void outputServer(PrintWriter pw, SierraServer server,
-			List<String> connectedProjectNames, boolean save) {
+	private static void outputServer(final PrintWriter pw,
+			final SierraServer server,
+			final List<String> connectedProjectNames, final boolean save) {
 		final StringBuilder b = new StringBuilder();
 		b.append("  <").append(SERVER);
 		Entities.addAttribute(LABEL, server.getLabel(), b);
@@ -166,7 +168,7 @@ public final class SierraServerPersistence {
 		pw.println(b.toString());
 	}
 
-	private static void outputXMLFooter(PrintWriter pw) {
+	private static void outputXMLFooter(final PrintWriter pw) {
 		pw.println("</" + TEAM_SERVERS + ">");
 	}
 
@@ -176,7 +178,8 @@ public final class SierraServerPersistence {
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
 			for (final Entry<SierraServerLocation, Collection<String>> locEntry : Data
-					.withReadOnly(ServerLocations.fetchQuery(passwords)).entrySet()) {
+					.getInstance().withReadOnly(
+							ServerLocations.fetchQuery(passwords)).entrySet()) {
 				final SierraServerLocation loc = locEntry.getKey();
 				final SierraServer s = manager.getOrCreate(loc.getLabel());
 				s.setContextPath(loc.getContextPath());
@@ -206,7 +209,7 @@ public final class SierraServerPersistence {
 		private final Map<String, String> f_map;
 
 		@SuppressWarnings("unchecked")
-		SaveFileReader(SierraServerManager manager) {
+		SaveFileReader(final SierraServerManager manager) {
 			f_manager = manager;
 			f_map = Platform.getAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
 		}
@@ -214,8 +217,9 @@ public final class SierraServerPersistence {
 		private SierraServer f_server = null;
 
 		@Override
-		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {
+		public void startElement(final String uri, final String localName,
+				final String name, final Attributes attributes)
+				throws SAXException {
 			if (name.equals(SERVER)) {
 				final String label = attributes.getValue(LABEL);
 				final boolean isFocus = attributes.getValue(IS_FOCUS) != null;
@@ -276,8 +280,8 @@ public final class SierraServerPersistence {
 		}
 
 		@Override
-		public void endElement(String uri, String localName, String name)
-				throws SAXException {
+		public void endElement(final String uri, final String localName,
+				final String name) throws SAXException {
 			if (name.equals(SERVER)) {
 				f_server = null;
 			}

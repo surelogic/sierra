@@ -130,7 +130,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 	public void refresh() {
 		List<String> projectNames = new ArrayList<String>();
 		try {
-			final Connection c = Data.readOnlyConnection();
+			final Connection c = Data.getInstance().readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {

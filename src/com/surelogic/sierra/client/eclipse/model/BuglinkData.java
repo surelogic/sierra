@@ -57,7 +57,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 		Map<String, CategoryDO> categoryDefs = new HashMap<String, CategoryDO>();
 		Map<String, Set<String>> categories = new HashMap<String, Set<String>>();
 		try {
-			Connection conn = Data.readOnlyConnection();
+			Connection conn = Data.getInstance().readOnlyConnection();
 			try {
 				ConnectionQuery q = new ConnectionQuery(conn);
 				FindingTypes ft = new FindingTypes(q);
@@ -66,7 +66,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 					findingTypes.put(ftype.getUid(), ftype);
 				}
 
-				List<CategoryDO> raw = Data.withReadOnly(SettingQueries
+				List<CategoryDO> raw = Data.getInstance().withReadOnly(SettingQueries
 						.getLocalCategories());
 				// Key: uid of the category
 				Map<String, CategoryDO> rawCategories = new HashMap<String, CategoryDO>(

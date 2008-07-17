@@ -111,7 +111,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			/*
 			 * Delete the data in the database about these projects.
 			 */
-			final Connection conn = Data.transactionConnection();
+			final Connection conn = Data.getInstance().transactionConnection();
 			final ClientProjectManager manager = ClientProjectManager
 					.getInstance(conn);
 			try {

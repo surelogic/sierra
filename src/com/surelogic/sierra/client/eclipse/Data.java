@@ -1,251 +1,54 @@
 package com.surelogic.sierra.client.eclipse;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.eclipse.core.runtime.IPath;
 
-import com.surelogic.common.FileUtility;
-import com.surelogic.common.derby.Derby;
-import com.surelogic.common.jdbc.ConnectionQuery;
-import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.DBTransaction;
-import com.surelogic.common.jdbc.LazyPreparedStatementConnection;
-import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.derby.DerbyConnection;
+import com.surelogic.common.jdbc.SchemaData;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.jdbc.server.TransactionException;
-import com.surelogic.sierra.schema.SierraSchemaUtility;
+import com.surelogic.sierra.schema.SierraSchemaData;
 
-public final class Data {
+public final class Data extends DerbyConnection {
 
-	private Data() {
-		// no instances
-	}
+	public static final String SCHEMA_PACKAGE = "com.surelogic.sierra.schema";
 
 	private static final String SCHEMA_NAME = "SIERRA";
 	private static final String DATABASE_DIR = "db";
-	private static final String JDBC_PRE = "jdbc:derby:";
-	private static final String JDBC_POST = ";user=" + SCHEMA_NAME;
 
-	private static final Logger log = SLLogger.getLoggerFor(Data.class);
-
-	public static void bootAndCheckSchema() throws Exception {
-
-		if (PreferenceConstants.deleteDatabaseOnStartup()) {
-			/*
-			 * Delete the database
-			 */
-			try {
-				final File dbDir = new File(getDatabaseLocation());
-				if (dbDir.exists()) {
-					if (FileUtility.deleteDirectoryAndContents(dbDir)) {
-						SLLogger.getLogger().info(
-								"Database deleted at startup : "
-										+ getDatabaseLocation());
-					} else {
-						SLLogger.getLogger().log(
-								Level.SEVERE,
-								"Unable to delete database at startup : "
-										+ getDatabaseLocation());
-					}
-				}
-			} finally {
-				PreferenceConstants.setDeleteDatabaseOnStartup(false);
-			}
-		}
-
-		Derby.bootEmbedded();
-
-		final String connectionURL = getConnectionURL() + ";create=true";
-		final Connection c = DriverManager.getConnection(connectionURL);
-		Exception e = null;
-		try {
-			c.setAutoCommit(false);
-			SierraSchemaUtility.checkAndUpdate(c, false);
-			c.commit();
-		} catch (final Exception exc) {
-			e = exc;
-		} finally {
-			try {
-				c.close();
-			} catch (final Exception exc) {
-				if (e == null) {
-					e = exc;
-				}
-			}
-		}
-		if (e != null) {
-			throw e;
-		}
+	@Override
+	protected boolean deleteDatabaseOnStartup() {
+		return PreferenceConstants.deleteDatabaseOnStartup();
 	}
 
-	public static Connection readOnlyConnection() throws SQLException {
-		final Connection conn = getConnection();
-		conn.setReadOnly(true);
-		return conn;
+	@Override
+	protected void setDeleteDatabaseOnStartup(final boolean bool) {
+		PreferenceConstants.setDeleteDatabaseOnStartup(bool);
 	}
 
-	public static Connection transactionConnection() throws SQLException {
-		final Connection conn = getConnection();
-		conn.setAutoCommit(false);
-		return conn;
-	}
-
-	public static Connection getConnection() throws SQLException {
-		//System.out.println(getConnectionURL());
-		final Connection conn = LazyPreparedStatementConnection
-				.wrap(DriverManager.getConnection(getConnectionURL()));
-		return conn;
-	}
-
-	/**
-	 * Perform a query in read-only mode
-	 * 
-	 * @param <T>
-	 * @param action
-	 * @return
-	 * @throws TransactionException
-	 *             if an exception occurs.
-	 */
-	public static <T> T withReadOnly(DBQuery<T> action) {
-		try {
-			return with(readOnlyConnection(), action, true);
-		} catch (final SQLException e) {
-			throw new TransactionException("Could not establish connection.", e);
-		}
-	}
-
-	/**
-	 * Perform a query in read-only mode
-	 * 
-	 * @param <T>
-	 * @param action
-	 * @return
-	 * @throws TransactionException
-	 *             if an exception occurs.
-	 */
-	public static <T> T withReadOnly(DBTransaction<T> action) {
-		try {
-			return with(readOnlyConnection(), action, true);
-		} catch (final SQLException e) {
-			throw new TransactionException("Could not establish connection.", e);
-		}
-	}
-
-	/**
-	 * Perform a query transaction
-	 * 
-	 * @param <T>
-	 * @param action
-	 * @return
-	 * @throws TransactionException
-	 *             if an exception occurs.
-	 */
-	public static <T> T withTransaction(DBQuery<T> action) {
-		try {
-			return with(transactionConnection(), action, false);
-		} catch (final SQLException e) {
-			throw new TransactionException("Could not establish connection.", e);
-		}
-	}
-
-	/**
-	 * Perform a query transaction.
-	 * 
-	 * @param <T>
-	 * @param action
-	 * @return
-	 * @throws TransactionException
-	 *             if an exception occurs.
-	 */
-	public static <T> T withTransaction(DBTransaction<T> action) {
-		try {
-			return with(transactionConnection(), action, false);
-		} catch (final SQLException e) {
-			throw new TransactionException("Could not establish connection.", e);
-		}
-	}
-
-	private static <T> T with(Connection conn, DBTransaction<T> t,
-			boolean readOnly) {
-		Exception exc = null;
-		T val = null;
-		try {
-			val = t.perform(conn);
-			if (!readOnly) {
-				conn.commit();
-			}
-		} catch (final Exception exc0) {
-			exc = exc0;
-			if (!readOnly) {
-				try {
-					conn.rollback();
-				} catch (final SQLException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
-			}
-		} finally {
-			try {
-				conn.close();
-			} catch (final SQLException e) {
-				if (exc == null) {
-					exc = new TransactionException(e);
-				} else {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
-			}
-		}
-		if (exc != null) {
-			throw new TransactionException(exc);
-		}
-		return val;
-	}
-
-	private static <T> T with(Connection conn, DBQuery<T> t, boolean readOnly) {
-		Exception exc = null;
-		T val = null;
-		try {
-			val = t.perform(new ConnectionQuery(conn));
-			if (!readOnly) {
-				conn.commit();
-			}
-		} catch (final Exception exc0) {
-			exc = exc0;
-			if (!readOnly) {
-				try {
-					conn.rollback();
-				} catch (final SQLException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
-			}
-		} finally {
-			try {
-				conn.close();
-			} catch (final SQLException e) {
-				if (exc == null) {
-					exc = new TransactionException(e);
-				} else {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
-			}
-		}
-		if (exc != null) {
-			throw new TransactionException(exc);
-		}
-		return val;
-	}
-
-	private static String getConnectionURL() {
-		return JDBC_PRE + getDatabaseLocation() + JDBC_POST;
-	}
-
-	private static String getDatabaseLocation() {
+	@Override
+	protected String getDatabaseLocation() {
 		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return pluginState.toOSString() + System.getProperty("file.separator")
 				+ DATABASE_DIR;
 	}
+
+	@Override
+	protected String getSchemaName() {
+		return SCHEMA_NAME;
+	}
+
+	private static final Data data = new Data();
+
+	private Data() {
+		// Singleton
+	}
+
+	public static Data getInstance() {
+		return data;
+	}
+
+	@Override
+	protected SchemaData getSchemaLoader() {
+		return new SierraSchemaData();
+	}
+
 }

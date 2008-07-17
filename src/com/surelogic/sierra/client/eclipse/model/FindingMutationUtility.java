@@ -34,7 +34,7 @@ public final class FindingMutationUtility {
 					.beginTask("Updating finding data",
 							IProgressMonitor.UNKNOWN);
 			try {
-				Connection c = Data.transactionConnection();
+				Connection c = Data.getInstance().transactionConnection();
 				Exception exc = null;
 				try {
 					ClientFindingManager manager = ClientFindingManager

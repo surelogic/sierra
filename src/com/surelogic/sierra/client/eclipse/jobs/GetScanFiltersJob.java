@@ -56,10 +56,10 @@ public class GetScanFiltersJob extends DatabaseJob {
 			throws SQLException {
 		try {
 			final DBQuery<?> query = SettingQueries.retrieveScanFilters(
-					f_server.getServer(), Data.withReadOnly(SettingQueries
+					f_server.getServer(), Data.getInstance().withReadOnly(SettingQueries
 							.scanFilterRequest()));
 			f_server.markAsConnected();
-			Data.withTransaction(query);
+			Data.getInstance().withTransaction(query);
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {

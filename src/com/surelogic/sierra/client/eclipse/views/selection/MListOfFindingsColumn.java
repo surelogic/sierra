@@ -383,7 +383,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	public void refreshData() {
 		final String query = getQuery();
 		try {
-			final Connection c = Data.readOnlyConnection();
+			final Connection c = Data.getInstance().readOnlyConnection();
 			try {
 				final Statement st = c.createStatement();
 				try {

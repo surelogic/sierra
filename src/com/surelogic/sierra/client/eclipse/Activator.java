@@ -56,7 +56,7 @@ public final class Activator extends AbstractUIPlugin {
 	}
 
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 
 		/*
@@ -69,7 +69,7 @@ public final class Activator extends AbstractUIPlugin {
 			System.setProperty("derby.storage.pageSize", "8192");
 			System.setProperty("derby.storage.pageCacheSize", "5000");
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
-			Data.bootAndCheckSchema();
+			Data.getInstance().bootAndCheckSchema();
 			// load up persisted sierra servers
 			SierraServerManager.getInstance().load();
 			// load up persisted sierra selections
@@ -101,7 +101,7 @@ public final class Activator extends AbstractUIPlugin {
 			ErrorDialogUtility.open(null, null, reason);
 			final UIJob restartEclipseJob = new SLUIJob() {
 				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
+				public IStatus runInUIThread(final IProgressMonitor monitor) {
 					PlatformUI.getWorkbench().restart();
 					return Status.OK_STATUS;
 				}
@@ -131,18 +131,18 @@ public final class Activator extends AbstractUIPlugin {
 	}
 
 	private void popupRegistrationDialog() {
-//		final UIJob dialogJob = new SLUIJob() {
-//			@Override
-//			public IStatus runInUIThread(IProgressMonitor monitor) {
-//				System.out.println("Put up registration dialog"); // FIX
-//				return Status.OK_STATUS;
-//			}
-//		};
-//		dialogJob.schedule();
+		// final UIJob dialogJob = new SLUIJob() {
+		// @Override
+		// public IStatus runInUIThread(IProgressMonitor monitor) {
+		// System.out.println("Put up registration dialog"); // FIX
+		// return Status.OK_STATUS;
+		// }
+		// };
+		// dialogJob.schedule();
 	}
 
 	@Override
-	public void stop(BundleContext context) throws Exception {
+	public void stop(final BundleContext context) throws Exception {
 		try {
 			if (f_databaseInSync.get()) {
 				SierraServerManager.getInstance().save();

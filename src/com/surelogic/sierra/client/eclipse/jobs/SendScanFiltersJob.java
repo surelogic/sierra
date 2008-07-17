@@ -43,7 +43,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 		slMonitor.beginTask(msg, 5);
 		IStatus status = null;
 		try {
-			final Connection conn = Data.readOnlyConnection();
+			final Connection conn = Data.getInstance().readOnlyConnection();
 			try {
 				status = sendResultFilters(conn, slMonitor);
 			} catch (final Throwable e) {
