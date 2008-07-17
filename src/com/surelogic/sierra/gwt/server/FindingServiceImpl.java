@@ -1,8 +1,5 @@
 package com.surelogic.sierra.gwt.server;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,9 +8,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.surelogic.common.jdbc.NullRowHandler;
-import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
@@ -28,7 +25,6 @@ import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserQuery;
-import com.surelogic.sierra.jdbc.server.UserTransaction;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
@@ -47,106 +43,85 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 			return Result.failure("No key specified", null);
 		}
 		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<Result<FindingOverview>>() {
+				.withUserReadOnly(new UserQuery<Result<FindingOverview>>() {
 
-					public Result<FindingOverview> perform(
-							final Connection conn, final Server server,
-							final User user) throws Exception {
-						PreparedStatement st;
+					public Result<FindingOverview> perform(final Query query,
+							final Server server, final User user) {
 						try {
+							// Is it a long
 							final long id = Long.parseLong(key);
-							st = conn.prepareStatement(QB
-									.get("portal.finding.byId"));
-							st.setLong(1, id);
+							return query.prepared(
+									"portal.finding.byId",
+									SingleRowHandler
+											.from(new FindingOverviewHandler(
+													query))).call(id);
 						} catch (final NumberFormatException e) {
-							// Try for a uuid
-							try {
-								UUID.fromString(key);
-								st = conn.prepareStatement(QB
-										.get("portal.finding.byUuid"));
-							} catch (final IllegalArgumentException ex) {
-								return Result.failure(
-										"Unparseable key: " + key, null);
-							}
-						}
-						//F.ID,F.IMPORTANCE,F.SUMMARY,FT.NAME,FC.NAME,P.NAME,LM.
-						// PACKAGE_NAME,LM.CLASS_NAME
-						final ResultSet set = st.executeQuery();
-						try {
-							if (set.next()) {
-								int idx = 1;
-								final FindingOverview f = new FindingOverview();
-								final long id = set.getLong(idx++);
-								f.setImportance(Importance.values()[set
-										.getInt(idx++)].toStringSentenceCase());
-								f.setSummary(set.getString(idx++));
-								f.setFindingType(set.getString(idx++));
-								f.setCategory(set.getString(idx++));
-								f.setProject(set.getString(idx++));
-								f.setPackageName(set.getString(idx++));
-								f.setClassName(set.getString(idx++));
-								final PreparedStatement auditSt = conn
-										.prepareStatement(QB
-												.get("portal.finding.auditsById"));
-								auditSt.setLong(1, id);
-								final ResultSet auditSet = auditSt
-										.executeQuery();
-								final List<AuditOverview> audits = new ArrayList<AuditOverview>();
-								f.setAudits(audits);
-								try {
-									// EVENT, VALUE, DATE_TIME, USER_NAME
-									while (auditSet.next()) {
-										final AuditOverview audit = new AuditOverview();
-										int auditIdx = 1;
-										final String event = auditSet
-												.getString(auditIdx++);
-										final String value = auditSet
-												.getString(auditIdx++);
-										switch (AuditEvent.valueOf(event)) {
-										case COMMENT:
-											audit.setText(value);
-											break;
-										case IMPORTANCE:
-											audit
-													.setText("Importance changed to "
-															+ Importance
-																	.fromValue(
-																			value)
-																	.toStringSentenceCase()
-															+ ".");
-											break;
-										case READ:
-											audit.setText("Finding examined.");
-											break;
-										case SUMMARY:
-											audit
-													.setText("Changed summary to \""
-															+ value + "\"");
-											break;
-										default:
-											break;
-										}
-										audit.setTime(Dates.format(auditSet
-												.getTimestamp(auditIdx++)));
-										audit.setUser(auditSet
-												.getString(auditIdx++));
-										audits.add(audit);
-									}
-								} finally {
-									auditSet.close();
-								}
-								final List<ArtifactOverview> artifacts = new ArrayList<ArtifactOverview>();
-								f.setArtifacts(artifacts);
-								return Result.success(f);
-							} else {
-								return Result.failure("No finding with id "
-										+ key + " exists.", null);
-							}
-						} finally {
-							set.close();
+							// Try it as a uuid now
+							UUID.fromString(key);
+							return query.prepared(
+									"portal.finding.byUuid",
+									SingleRowHandler
+											.from(new FindingOverviewHandler(
+													query))).call(key);
 						}
 					}
 				});
+	}
+
+	private static class FindingOverviewHandler implements
+			RowHandler<Result<FindingOverview>> {
+		private final Query query;
+
+		FindingOverviewHandler(final Query q) {
+			query = q;
+		}
+
+		public Result<FindingOverview> handle(final Row r) {
+			final FindingOverview f = new FindingOverview();
+			final long id = r.nextLong();
+			f.setImportance(Importance.values()[r.nextInt()]
+					.toStringSentenceCase());
+			f.setSummary(r.nextString());
+			f.setFindingType(r.nextString());
+			f.setCategory(r.nextString());
+			f.setProject(r.nextString());
+			f.setPackageName(r.nextString());
+			f.setClassName(r.nextString());
+			f.setAudits(query.prepared("portal.finding.auditsById",
+					new RowHandler<AuditOverview>() {
+						public AuditOverview handle(final Row r) {
+							final AuditOverview audit = new AuditOverview();
+							final String event = r.nextString();
+							final String value = r.nextString();
+							switch (AuditEvent.valueOf(event)) {
+							case COMMENT:
+								audit.setText(value);
+								break;
+							case IMPORTANCE:
+								audit.setText("Importance changed to "
+										+ Importance.fromValue(value)
+												.toStringSentenceCase() + ".");
+								break;
+							case READ:
+								audit.setText("Finding examined.");
+								break;
+							case SUMMARY:
+								audit.setText("Changed summary to \"" + value
+										+ "\"");
+								break;
+							default:
+								break;
+							}
+							audit.setTime(Dates.format(r.nextDate()));
+							audit.setUser(r.nextString());
+							return audit;
+						}
+					}).call(id));
+			final List<ArtifactOverview> artifacts = new ArrayList<ArtifactOverview>();
+			f.setArtifacts(artifacts);
+			return Result.success(f);
+		}
+
 	}
 
 	public List<Scan> getScans(final String project) {
