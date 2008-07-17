@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.NullDBTransaction;
@@ -99,7 +99,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 				} catch (Exception e) {
 					final int errNo = 58;
 					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
+					return SLStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;

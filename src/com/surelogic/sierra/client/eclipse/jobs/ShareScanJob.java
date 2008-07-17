@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
@@ -135,7 +135,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final String msg = I18N.err(errNo, scanVersion, f_projectName,
 					f_server);
 			// SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			IStatus s = SLStatus.createErrorStatus(errNo, msg);
+			IStatus s = SLStatusUtility.createErrorStatus(errNo, msg);
 			showErrorDialog(msg, e, "Error while publishing run", s);
 			return s;
 		}

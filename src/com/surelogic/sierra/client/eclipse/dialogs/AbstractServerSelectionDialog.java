@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
@@ -118,7 +118,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		if (f_server == null) {
 			final int errNo = 18;
 			final String msg = I18N.err(errNo);
-			final IStatus reason = SLStatus.createErrorStatus(errNo, msg);
+			final IStatus reason = SLStatusUtility.createErrorStatus(errNo, msg);
 			ErrorDialogUtility.open(getParentShell(),
 					"Sierra Team Server must be non-null", reason);
 			return false;

@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
@@ -32,7 +32,7 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 			final String msg = I18N.err(errNo, projectName, server.getLabel(),
 					projectName, sierraDataDirectory, File.separator,
 					projectName, projectName);
-			final IStatus reason = SLStatus.createErrorStatus(errNo, msg);
+			final IStatus reason = SLStatusUtility.createErrorStatus(errNo, msg);
 			ErrorDialogUtility.open(shell, "No Scan Exists", reason);
 		}
 	}

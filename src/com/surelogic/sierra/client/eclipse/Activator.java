@@ -14,7 +14,7 @@ import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
@@ -62,7 +62,7 @@ public final class Activator extends AbstractUIPlugin {
 		/*
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
-		SLStatus.touch();
+		SLStatusUtility.touch();
 
 		try {
 			// startup the database and ensure its schema is up to date
@@ -97,7 +97,7 @@ public final class Activator extends AbstractUIPlugin {
 			final int errNo = 37;
 			final String msg = I18N.err(errNo, e.getSchemaVersion(), e
 					.getCodeVersion());
-			final IStatus reason = SLStatus.createWarningStatus(errNo, msg, e);
+			final IStatus reason = SLStatusUtility.createWarningStatus(errNo, msg, e);
 			ErrorDialogUtility.open(null, null, reason);
 			final UIJob restartEclipseJob = new SLUIJob() {
 				@Override

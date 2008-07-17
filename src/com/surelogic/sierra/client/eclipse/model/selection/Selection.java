@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -423,7 +423,7 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
+					return SLStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -447,7 +447,7 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
+					return SLStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -493,7 +493,7 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLStatus.createErrorStatus(errNo, msg, e);
+					return SLStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 
 				return Status.OK_STATUS;

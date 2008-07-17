@@ -22,7 +22,7 @@ import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -162,7 +162,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					final IStatus reason = SLStatus.createErrorStatus(
+					final IStatus reason = SLStatusUtility.createErrorStatus(
 							f_jobFailureCode, f_jobFailureMsg);
 					ErrorDialogUtility.open(null, null, reason);
 					return Status.OK_STATUS;

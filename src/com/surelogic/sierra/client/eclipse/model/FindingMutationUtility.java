@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -57,7 +57,7 @@ public final class FindingMutationUtility {
 			} catch (Exception e) {
 				final int errNo = 52;
 				final String msg = I18N.err(errNo, getName());
-				return SLStatus.createErrorStatus(errNo, msg, e);
+				return SLStatusUtility.createErrorStatus(errNo, msg, e);
 			}
 			monitor.done();
 			return Status.OK_STATUS;

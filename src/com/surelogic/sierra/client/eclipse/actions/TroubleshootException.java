@@ -1,7 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.core.runtime.IStatus;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
@@ -31,9 +31,9 @@ public final class TroubleshootException extends TroubleshootConnection {
 				                    f_ex.getMessage());
 		final IStatus reason;
 		if (f_isSevere) {
-			reason = SLStatus.createErrorStatus(errNo, msg, f_ex);
+			reason = SLStatusUtility.createErrorStatus(errNo, msg, f_ex);
 		} else {
-			reason = SLStatus.createWarningStatus(errNo, msg, f_ex);		
+			reason = SLStatusUtility.createWarningStatus(errNo, msg, f_ex);		
 		}			
 		/*
 		 * We just want the job to fail.

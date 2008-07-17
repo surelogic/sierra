@@ -20,7 +20,7 @@ import com.surelogic.common.eclipse.RadioArrowMenu;
 import com.surelogic.common.eclipse.RadioArrowMenu.IRadioMenuObserver;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -182,7 +182,7 @@ public final class MRadioMenuColumn extends MColumn implements
 					final int errNo = 27;
 					final String msg = I18N.err(errNo, filter.getFactory()
 							.getFilterLabel());
-					final IStatus reason = SLStatus.createErrorStatus(errNo,
+					final IStatus reason = SLStatusUtility.createErrorStatus(errNo,
 							msg, e);
 					ErrorDialogUtility.open(null, "Selection Error", reason);
 					return Status.OK_STATUS;

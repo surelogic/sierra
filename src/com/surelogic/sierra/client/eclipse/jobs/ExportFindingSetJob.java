@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatus;
+import com.surelogic.common.eclipse.logging.SLStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -80,7 +80,7 @@ public abstract class ExportFindingSetJob extends DatabaseJob {
 		} catch (Exception e) {
 			final int errNo = 47;
 			final String msg = I18N.err(errNo, f_file.getName());
-			return SLStatus.createErrorStatus(errNo, msg, e);
+			return SLStatusUtility.createErrorStatus(errNo, msg, e);
 		}
 		monitor.done();
 		return Status.OK_STATUS;
