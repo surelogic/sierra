@@ -1,6 +1,5 @@
 package com.surelogic.sierra.jdbc.server;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,9 +24,11 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.jdbc.StatementException;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.schema.SierraSchemaUtility;
+import com.surelogic.sierra.schema.SierraSchemaData;
 
 /**
  * Server represents the global database server state, including server uid and
@@ -43,15 +44,15 @@ public class Server {
 	private final Connection conn;
 	private final boolean readOnly;
 
-	Server(Connection conn, boolean readOnly) {
+	Server(final Connection conn, final boolean readOnly) {
 		this.conn = conn;
 		this.readOnly = readOnly;
 	}
 
 	/**
 	 * Returns the current schema version of this server. Possible values
-	 * consist of <code>None</code>, <code>Error</code>, and the natural
-	 * numbers including 0.
+	 * consist of <code>None</code>, <code>Error</code>, and the natural numbers
+	 * including 0.
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -84,7 +85,7 @@ public class Server {
 	 * @return
 	 */
 	public String getAvailableSchemaVersion() {
-		return Integer.toString(SierraSchemaUtility.schemaVersion);
+		return Integer.toString(new SierraSchemaData().getVersion());
 	}
 
 	/**
@@ -94,11 +95,7 @@ public class Server {
 	 * @throws FutureDatabaseException
 	 */
 	public void updateSchema() throws SQLException, FutureDatabaseException {
-		try {
-			SierraSchemaUtility.checkAndUpdate(conn, true);
-		} catch (final IOException e) {
-			throw new IllegalStateException(e);
-		}
+		SchemaUtility.checkAndUpdate(conn, new SierraSchemaData(), true);
 	}
 
 	/**
@@ -144,7 +141,8 @@ public class Server {
 	 * @throws SQLException
 	 * 
 	 */
-	public void notifyAdmin(String subject, String message) throws SQLException {
+	public void notifyAdmin(final String subject, final String message)
+			throws SQLException {
 		final Notification n = getNotification();
 		if (n != null) {
 			final String to = n.getToEmail();
@@ -242,7 +240,8 @@ public class Server {
 		}
 	}
 
-	public void setNotification(Notification notification) throws SQLException {
+	public void setNotification(final Notification notification)
+			throws SQLException {
 		final Statement st = conn.createStatement();
 		try {
 			st.execute("DELETE FROM NOTIFICATION");
@@ -260,7 +259,7 @@ public class Server {
 		}
 	}
 
-	private static String escapedTuple(Object[] values) {
+	private static String escapedTuple(final Object[] values) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		sb.append(getLiteral(values[0]));
@@ -272,7 +271,7 @@ public class Server {
 		return sb.toString();
 	}
 
-	private static String getLiteral(Object value) {
+	private static String getLiteral(final Object value) {
 		if (value == null) {
 			return "NULL";
 		} else if (value instanceof String) {

@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
 
@@ -82,7 +83,8 @@ public final class ConnectionFactory {
 	 * @return
 	 */
 	public static void scheduleTransactionWithFixedDelay(
-			final ServerQuery<?> t, long initialDelay, long delay, TimeUnit unit) {
+			final ServerQuery<?> t, final long initialDelay, final long delay,
+			final TimeUnit unit) {
 		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
 			public void run() {
 				try {
@@ -103,8 +105,8 @@ public final class ConnectionFactory {
 	 * @return
 	 */
 	public static void scheduleTransactionWithFixedDelay(
-			final ServerTransaction<?> t, long initialDelay, long delay,
-			TimeUnit unit) {
+			final ServerTransaction<?> t, final long initialDelay,
+			final long delay, final TimeUnit unit) {
 		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
 			public void run() {
 				try {
@@ -259,7 +261,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(DBQuery<T> t) {
+	public static <T> T withTransaction(final DBQuery<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -274,7 +276,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(ServerQuery<T> t) {
+	public static <T> T withTransaction(final ServerQuery<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -289,7 +291,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(ServerTransaction<T> t) {
+	public static <T> T withTransaction(final ServerTransaction<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -305,7 +307,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadUncommitted(ServerQuery<T> t) {
+	public static <T> T withReadUncommitted(final ServerQuery<T> t) {
 		try {
 			return with(readUncommitted(), t);
 		} catch (final SQLException e) {
@@ -321,7 +323,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadUncommitted(ServerTransaction<T> t) {
+	public static <T> T withReadUncommitted(final ServerTransaction<T> t) {
 		try {
 			return with(readUncommitted(), t);
 		} catch (final SQLException e) {
@@ -336,7 +338,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(DBQuery<T> t) {
+	public static <T> T withReadOnly(final DBQuery<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -351,7 +353,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(ServerQuery<T> t) {
+	public static <T> T withReadOnly(final ServerQuery<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -366,7 +368,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(ServerTransaction<T> t) {
+	public static <T> T withReadOnly(final ServerTransaction<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -381,7 +383,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserTransaction(UserQuery<T> t) {
+	public static <T> T withUserTransaction(final UserQuery<T> t) {
 		try {
 			return withUser(userTransaction(), t);
 		} catch (final SQLException e) {
@@ -396,7 +398,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserTransaction(UserTransaction<T> t) {
+	public static <T> T withUserTransaction(final UserTransaction<T> t) {
 		try {
 			return withUser(userTransaction(), t);
 		} catch (final SQLException e) {
@@ -411,7 +413,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserReadOnly(UserQuery<T> t) {
+	public static <T> T withUserReadOnly(final UserQuery<T> t) {
 		try {
 			return withUser(userReadOnly(), t);
 		} catch (final SQLException e) {
@@ -426,7 +428,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserReadOnly(UserTransaction<T> t) {
+	public static <T> T withUserReadOnly(final UserTransaction<T> t) {
 		try {
 			return withUser(userReadOnly(), t);
 		} catch (final SQLException e) {
@@ -434,7 +436,8 @@ public final class ConnectionFactory {
 		}
 	}
 
-	private static <T> T withUser(UserConnection server, UserQuery<T> t) {
+	private static <T> T withUser(final UserConnection server,
+			final UserQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -454,7 +457,8 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T withUser(UserConnection server, UserTransaction<T> t) {
+	private static <T> T withUser(final UserConnection server,
+			final UserTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -474,7 +478,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(ServerConnection server, DBQuery<T> t) {
+	private static <T> T with(final ServerConnection server, final DBQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -494,7 +498,8 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(ServerConnection server, ServerQuery<T> t) {
+	private static <T> T with(final ServerConnection server,
+			final ServerQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -514,7 +519,8 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(ServerConnection server, ServerTransaction<T> t) {
+	private static <T> T with(final ServerConnection server,
+			final ServerTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
