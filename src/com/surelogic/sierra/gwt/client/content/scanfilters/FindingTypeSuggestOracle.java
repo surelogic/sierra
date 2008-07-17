@@ -69,7 +69,7 @@ public class FindingTypeSuggestOracle extends SuggestOracle {
 
 		public ScanFilterEntry getEntry() {
 			final ScanFilterEntry e = new ScanFilterEntry();
-			e.setUid(uuid);
+			e.setUuid(uuid);
 			e.setName(display);
 			e.setCategory(false);
 			return e;

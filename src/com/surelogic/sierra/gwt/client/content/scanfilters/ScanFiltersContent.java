@@ -11,18 +11,15 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.data.cache.Cache;
-import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
-import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
+import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
 		ListContentComposite<ScanFilter, ScanFilterCache> {
 	private final ScanFilterView sf = new ScanFilterView();
-	private CacheListener<ScanFilter> cacheListener;
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel,
@@ -41,48 +38,17 @@ public class ScanFiltersContent extends
 							filter.getUuid(), new AsyncCallback<Status>() {
 
 								public void onFailure(Throwable caught) {
-									sf.setStatus(Status.failure(caught
-											.getMessage()));
+									ExceptionUtil.handle(caught);
 								}
 
 								public void onSuccess(Status result) {
-									if (result.isSuccess()) {
-										getCache().refresh();
-										sf.setSelection(null);
-									} else {
-										sf.setStatus(result);
-									}
+									getCache().refresh();
 								}
 							});
 				}
 			}
 		});
 		selectionPanel.add(sf);
-
-		cacheListener = new CacheListenerAdapter<ScanFilter>() {
-
-			@Override
-			public void onItemUpdate(Cache<ScanFilter> cache, ScanFilter item,
-					Status status, Throwable failure) {
-				sf.setStatus(status);
-			}
-		};
-	}
-
-	@Override
-	protected void onUpdate(Context context) {
-		if (!isActive()) {
-			getCache().addListener(cacheListener);
-		}
-
-		super.onUpdate(context);
-	}
-
-	@Override
-	protected void onDeactivate() {
-		getCache().removeListener(cacheListener);
-
-		super.onDeactivate();
 	}
 
 	@Override
