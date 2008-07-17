@@ -2,24 +2,25 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ScanFilterEntry implements Serializable,
+public class ScanFilterEntry implements Serializable, Cacheable,
 		Comparable<ScanFilterEntry> {
 	private static final long serialVersionUID = 6408580757889309477L;
 
-	private String uid;
+	private String uuid;
 	private String name;
 	private String shortMessage;
 	private ImportanceView importance;
 	private boolean category;
 
-	public String getUid() {
-		return uid;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
@@ -58,7 +59,7 @@ public class ScanFilterEntry implements Serializable,
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		return result;
 	}
 
@@ -68,7 +69,7 @@ public class ScanFilterEntry implements Serializable,
 			return true;
 		}
 		if (obj != null && obj instanceof ScanFilterEntry) {
-			return LangUtil.equals(uid, ((ScanFilterEntry) obj).uid);
+			return LangUtil.equals(uuid, ((ScanFilterEntry) obj).uuid);
 		}
 		return false;
 	}
@@ -79,7 +80,7 @@ public class ScanFilterEntry implements Serializable,
 		e.importance = importance;
 		e.name = name;
 		e.shortMessage = shortMessage;
-		e.uid = uid;
+		e.uuid = uuid;
 		return e;
 	}
 
