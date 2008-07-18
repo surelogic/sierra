@@ -31,7 +31,7 @@ public class ScanFindings implements IDatabaseTable {
 						"Last Changed", "Importance", "Artifacts", "Comments",
 						"Summary" }));
 		table.getColumns().addAll(
-				Arrays.asList(new ColumnData[] { ColumnData.NUMBER,
+				Arrays.asList(new ColumnData[] { ColumnData.LINK,
 						ColumnData.TEXT, ColumnData.TEXT, ColumnData.NUMBER,
 						ColumnData.TEXT, ColumnData.TEXT, ColumnData.TEXT,
 						ColumnData.DATE, ColumnData.TEXT, ColumnData.NUMBER,
@@ -78,7 +78,11 @@ public class ScanFindings implements IDatabaseTable {
 										}
 										final List<String> tableRow = new ArrayList<String>(
 												14);
-										for (int i = 0; i < 7; i++) {
+										final String id = row.nextString();
+										tableRow.add(id);
+										table.getLinks().add(
+												"finding/finding=" + id);
+										for (int i = 0; i < 6; i++) {
 											tableRow.add(row.nextString());
 										}
 										tableRow.add(Dates.format(row
