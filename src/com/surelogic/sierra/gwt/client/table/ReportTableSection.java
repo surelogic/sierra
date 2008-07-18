@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
@@ -16,6 +17,7 @@ import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 public class ReportTableSection extends SectionPanel {
 
 	private Report report;
+	private ReportTable table;
 
 	public ReportTableSection(final Report r) {
 		super();
@@ -78,8 +80,12 @@ public class ReportTableSection extends SectionPanel {
 			addRow();
 		}
 
-		grid.setText(currentRow, currentColumn, text);
-
+		if (type == ColumnData.LINK) {
+			grid.setWidget(currentRow, currentColumn, new Hyperlink(text, table
+					.getLinks().get(currentRow)));
+		} else {
+			grid.setText(currentRow, currentColumn, text);
+		}
 		if (type != null) {
 			grid.getCellFormatter().addStyleName(currentRow, currentColumn,
 					type.getCSS());
@@ -107,7 +113,7 @@ public class ReportTableSection extends SectionPanel {
 
 					public void onSuccess(final Result<ReportTable> result) {
 						if (result.isSuccess()) {
-							final ReportTable table = result.getResult();
+							table = result.getResult();
 							final List<String> headerTitles = table
 									.getHeaders();
 							final List<ColumnData> columnType = table

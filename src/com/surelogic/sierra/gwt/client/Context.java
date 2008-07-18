@@ -14,14 +14,14 @@ public final class Context {
 	private ContentComposite content;
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
-	public static Context create(String context) {
+	public static Context create(final String context) {
 		final Context ctx = new Context();
 		ctx.initContext(context);
 		return ctx;
 	}
 
-	public static Context create(Context baseContext,
-			Map<String, String> parameters) {
+	public static Context create(final Context baseContext,
+			final Map<String, String> parameters) {
 		final Context newContext = new Context();
 		if (baseContext == null) {
 			newContext.initContext(ContextManager.getContext());
@@ -32,32 +32,33 @@ public final class Context {
 		return newContext;
 	}
 
-	public static Context create(ContentComposite content,
-			Map<String, String> parameters) {
+	public static Context create(final ContentComposite content,
+			final Map<String, String> parameters) {
 		final Context newContext = new Context();
 		newContext.initContext(content);
 		newContext.initContext(parameters);
 		return newContext;
 	}
 
-	public static Context createWithUuid(String uuid) {
+	public static Context createWithUuid(final String uuid) {
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put(PARAM_UUID, uuid);
 		return Context.create(ContextManager.getContext(), params);
 	}
 
-	public static Context createWithUuid(Cacheable item) {
+	public static Context createWithUuid(final Cacheable item) {
 		return createWithUuid(item.getUuid());
 	}
 
-	public static Context createWithUuid(ContentComposite content, String uuid) {
+	public static Context createWithUuid(final ContentComposite content,
+			final String uuid) {
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put(PARAM_UUID, uuid);
 		return Context.create(content, params);
 	}
 
-	public static Context createWithUuid(ContentComposite content,
-			Cacheable item) {
+	public static Context createWithUuid(final ContentComposite content,
+			final Cacheable item) {
 		return createWithUuid(content, item.getUuid());
 	}
 
@@ -77,7 +78,7 @@ public final class Context {
 		return getParameter(PARAM_UUID);
 	}
 
-	public String getParameter(String name) {
+	public String getParameter(final String name) {
 		return parameters.get(name);
 	}
 
@@ -103,7 +104,7 @@ public final class Context {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -112,8 +113,8 @@ public final class Context {
 		}
 		if (obj instanceof Context) {
 			final Context objCtx = (Context) obj;
-			return objCtx.content == this.content
-					&& LangUtil.equals(objCtx.parameters, this.parameters);
+			return (objCtx.content == content)
+					&& LangUtil.equals(objCtx.parameters, parameters);
 		}
 		return false;
 	}
@@ -131,12 +132,12 @@ public final class Context {
 		return hash;
 	}
 
-	private void initContext(String context) {
+	private void initContext(final String context) {
 		content = null;
 		parameters.clear();
 
 		String contentName;
-		if (context != null && (context.length() != 0)) {
+		if ((context != null) && (context.length() != 0)) {
 			final int split = context.indexOf('/');
 			String argString;
 			if (split != -1) {
@@ -147,7 +148,7 @@ public final class Context {
 				argString = null;
 			}
 
-			if (argString != null && argString.length() != 0) {
+			if ((argString != null) && (argString.length() != 0)) {
 				final String[] argArray = argString.split("/");
 				for (int i = 0; i < argArray.length; i++) {
 					final String[] argPair = argArray[i].split("\\=");
@@ -166,16 +167,16 @@ public final class Context {
 		}
 	}
 
-	private void initContext(Context context) {
+	private void initContext(final Context context) {
 		content = context.content;
 		parameters.putAll(context.parameters);
 	}
 
-	private void initContext(ContentComposite content) {
+	private void initContext(final ContentComposite content) {
 		this.content = content;
 	}
 
-	private void initContext(Map<String, String> parameters) {
+	private void initContext(final Map<String, String> parameters) {
 		if (parameters != null) {
 			this.parameters.putAll(parameters);
 		}

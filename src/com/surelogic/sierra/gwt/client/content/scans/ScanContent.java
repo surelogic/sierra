@@ -52,6 +52,10 @@ public class ScanContent extends ContentComposite {
 		private VerticalPanel chartPanel;
 		private VerticalPanel detailPanel;
 
+		private ImportanceChoice imp;
+		private PackageChoice pak;
+		private String uuid;
+
 		@Override
 		protected void onDeactivate() {
 			setTitle("No Scan Selected");
@@ -82,6 +86,7 @@ public class ScanContent extends ContentComposite {
 		}
 
 		private void setScan(final String uuid) {
+			this.uuid = uuid;
 			optionsPanel.clear();
 			chartPanel.clear();
 			detailPanel.clear();
@@ -100,50 +105,39 @@ public class ScanContent extends ContentComposite {
 							detailPanel.add(UI.p(result.getFindings()));
 							detailPanel.add(UI.p(result.getLinesOfCode()));
 							detailPanel.add(UI.p(result.getDensity()));
-							final PackageChoice pak = new PackageChoice(result
-									.getCompilations().keySet(), true);
-							final ImportanceChoice imp = new ImportanceChoice(
-									true);
+							pak = new PackageChoice(result.getCompilations()
+									.keySet(), true);
+							imp = new ImportanceChoice(true);
 							optionsPanel.add(pak);
 							optionsPanel.add(imp);
 							optionsPanel.add(new Button("Show",
 									new ClickListener() {
 										public void onClick(final Widget sender) {
-											chartPanel.clear();
-											final List<String> importances = new ArrayList<String>();
-											for (final ImportanceView i : imp
-													.getSelectedImportances()) {
-												importances.add(i.getName());
-											}
-											final Set<String> packages = pak
-													.getSelectedPackages();
-											chartPanel.add(ChartBuilder.name(
-													"ScanImportances").width(
-													800).prop("scan", uuid)
-													.prop("importance",
-															importances)
-													.prop("package", packages)
-													.build());
-											final Report report = new Report();
-											report.setName("ScanFindings");
-											report.getParameters()
-													.add(
-															new Parameter(
-																	"scan",
-																	uuid));
-											report.getParameters().add(
-													new Parameter("importance",
-															importances));
-											report.getParameters().add(
-													new Parameter("package",
-															packages));
-											chartPanel
-													.add(new ReportTableSection(
-															report));
+											showFindings();
 										}
 									}));
+							showFindings();
 						}
 					});
+		}
+
+		private void showFindings() {
+			chartPanel.clear();
+			final List<String> importances = new ArrayList<String>();
+			for (final ImportanceView i : imp.getSelectedImportances()) {
+				importances.add(i.getName());
+			}
+			final Set<String> packages = pak.getSelectedPackages();
+			chartPanel.add(ChartBuilder.name("ScanImportances").width(800)
+					.prop("scan", uuid).prop("importance", importances).prop(
+							"package", packages).build());
+			final Report report = new Report();
+			report.setName("ScanFindings");
+			report.getParameters().add(new Parameter("scan", uuid));
+			report.getParameters()
+					.add(new Parameter("importance", importances));
+			report.getParameters().add(new Parameter("package", packages));
+			chartPanel.add(new ReportTableSection(report));
 		}
 	}
 
