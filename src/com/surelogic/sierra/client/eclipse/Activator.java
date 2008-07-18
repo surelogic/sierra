@@ -66,8 +66,6 @@ public final class Activator extends AbstractUIPlugin {
 
 		try {
 			// startup the database and ensure its schema is up to date
-			System.setProperty("derby.storage.pageSize", "8192");
-			System.setProperty("derby.storage.pageCacheSize", "5000");
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			Data.getInstance().bootAndCheckSchema();
 			// load up persisted sierra servers
@@ -97,7 +95,8 @@ public final class Activator extends AbstractUIPlugin {
 			final int errNo = 37;
 			final String msg = I18N.err(errNo, e.getSchemaVersion(), e
 					.getCodeVersion());
-			final IStatus reason = SLStatusUtility.createWarningStatus(errNo, msg, e);
+			final IStatus reason = SLStatusUtility.createWarningStatus(errNo,
+					msg, e);
 			ErrorDialogUtility.open(null, null, reason);
 			final UIJob restartEclipseJob = new SLUIJob() {
 				@Override
