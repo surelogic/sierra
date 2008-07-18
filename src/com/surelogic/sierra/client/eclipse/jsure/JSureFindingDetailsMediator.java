@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.*;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.*;
 import com.surelogic.sierra.client.eclipse.*;
@@ -201,7 +201,7 @@ implements IViewUpdater {
 				} catch (SQLException e) {
 					final int errNo = 57;
 					final String msg = I18N.err(errNo, findingIdObj);
-					return SLStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 			}
 

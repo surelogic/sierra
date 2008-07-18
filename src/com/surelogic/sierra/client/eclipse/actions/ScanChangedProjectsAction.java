@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
@@ -102,7 +102,7 @@ public class ScanChangedProjectsAction extends
 				} catch (final TransactionException e) {
 					final int errNo = 46;
 					final String msg = I18N.err(errNo, getName());
-					return SLStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 				}
 				return Status.OK_STATUS;
 			}

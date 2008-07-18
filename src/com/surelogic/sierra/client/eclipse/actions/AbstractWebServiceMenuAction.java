@@ -10,7 +10,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -59,7 +59,7 @@ public abstract class AbstractWebServiceMenuAction extends
 				if (manager.isEmpty()) {
 					final int errNo = 17;
 					final String msg = I18N.err(errNo);
-					final IStatus reason = SLStatusUtility.createErrorStatus(17, msg);
+					final IStatus reason = SLEclipseStatusUtility.createErrorStatus(17, msg);
 					ErrorDialogUtility.open(shell, "No Sierra Servers", reason);
 					ViewUtility.showView(SierraServersView.ID);
 					ServerLocationDialog.newServer(shell);

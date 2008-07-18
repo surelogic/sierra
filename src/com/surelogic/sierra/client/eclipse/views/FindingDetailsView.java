@@ -33,7 +33,7 @@ import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Importance;
@@ -149,7 +149,7 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		} catch (SWTError e) {
 			final int errNo = 26;
 			final String msg = I18N.err(errNo);
-			final IStatus reason = SLStatusUtility.createErrorStatus(errNo, msg, e);
+			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 			ErrorDialogUtility.open(null, "Browser Failure", reason);
 		}
 		synopsisSash.setWeights(new int[] { 50, 50 });

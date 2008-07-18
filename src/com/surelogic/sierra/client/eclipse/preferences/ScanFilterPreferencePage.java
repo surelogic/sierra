@@ -42,7 +42,7 @@ import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.QB;
@@ -260,7 +260,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		} catch (final SWTError e) {
 			final int errNo = 26;
 			final String msg = I18N.err(errNo);
-			final IStatus reason = SLStatusUtility.createErrorStatus(errNo, msg, e);
+			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 			ErrorDialogUtility.open(null, "Browser Failure", reason);
 		}
 		clearHTMLDescription();
@@ -319,7 +319,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		} catch (final TransactionException e) {
 			final int errNo = 54;
 			final String msg = I18N.err(errNo);
-			return SLStatusUtility.createErrorStatus(errNo, msg, e);
+			return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 		}
 		final UIJob job = new SLUIJob() {
 			@Override
@@ -385,7 +385,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		} catch (final SQLException e) {
 			final int errNo = 55;
 			final String msg = I18N.err(errNo);
-			return SLStatusUtility.createErrorStatus(errNo, msg, e);
+			return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 		}
 		return Status.OK_STATUS;
 	}
@@ -504,7 +504,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		} catch (final TransactionException e) {
 			final int errNo = 56;
 			final String msg = I18N.err(errNo);
-			return SLStatusUtility.createErrorStatus(errNo, msg, e);
+			return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
 		}
 		return Status.OK_STATUS;
 	}

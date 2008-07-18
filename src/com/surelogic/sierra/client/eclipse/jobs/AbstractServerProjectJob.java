@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.*;
@@ -52,7 +52,7 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
 
 	protected final IStatus createWarningStatus(final int errNo, Throwable t) {
 		final String msg = I18N.err(errNo, f_projectName, f_server);
-		final IStatus s = SLStatusUtility.createWarningStatus(errNo, msg, t);
+		final IStatus s = SLEclipseStatusUtility.createWarningStatus(errNo, msg, t);
 		final String title = "Problem while " + getName();
 		showErrorDialog(msg, t, title, s);
 		return s;
@@ -60,7 +60,7 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
 
 	protected final IStatus createErrorStatus(final int errNo, Throwable t) {
 		final String msg = I18N.err(errNo, f_projectName, f_server);
-		final IStatus s = SLStatusUtility.createErrorStatus(errNo, msg, t);
+		final IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo, msg, t);
 		final String title = "Error while " + getName();
 		showErrorDialog(msg, t, title, s);
 		return s;

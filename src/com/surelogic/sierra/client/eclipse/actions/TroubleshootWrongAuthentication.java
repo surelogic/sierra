@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
@@ -26,7 +26,7 @@ public final class TroubleshootWrongAuthentication extends
 	}
 	@Override
 	protected IStatus createStatus() {
-		return SLStatusUtility.createInfoStatus("Unable to authenicate to "+
+		return SLEclipseStatusUtility.createInfoStatus("Unable to authenicate to "+
 				                         f_server.getLabel());
 	}
 	

@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.logging.SLLogger;
@@ -47,7 +47,7 @@ public final class GetCategoriesJob extends DatabaseJob {
 		} catch (final Throwable e) {
 			final int errNo = 48;
 			final String errMsg = I18N.err(errNo, f_server);
-			status = SLStatusUtility.createWarningStatus(errNo, errMsg, e);
+			status = SLEclipseStatusUtility.createWarningStatus(errNo, errMsg, e);
 		}
 		return status;
 	}

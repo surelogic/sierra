@@ -30,7 +30,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -104,7 +104,7 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							final int errNo = 19;
 							final String msg = I18N.err(errNo, file.getName());
-							final IStatus reason = SLStatusUtility.createErrorStatus(
+							final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
 									errNo, msg);
 							ErrorDialogUtility.open(null, "Not in Classpath",
 									reason);

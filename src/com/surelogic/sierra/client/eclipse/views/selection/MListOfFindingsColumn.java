@@ -50,7 +50,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLStatusUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.QB;
@@ -156,7 +156,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 							} catch (Exception e) {
 								final int errNo = 60;
 								final String msg = I18N.err(errNo);
-								return SLStatusUtility
+								return SLEclipseStatusUtility
 										.createErrorStatus(errNo, msg, e);
 							} finally {
 								initOfNextColumnComplete();
