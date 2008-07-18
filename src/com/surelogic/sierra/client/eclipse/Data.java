@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.common.derby.DerbyConnection;
@@ -12,7 +14,6 @@ public final class Data extends DerbyConnection {
 	public static final String SCHEMA_PACKAGE = "com.surelogic.sierra.schema";
 
 	private static final String SCHEMA_NAME = "SIERRA";
-	private static final String DATABASE_DIR = "db";
 
 	@Override
 	protected boolean deleteDatabaseOnStartup() {
@@ -27,8 +28,8 @@ public final class Data extends DerbyConnection {
 	@Override
 	protected String getDatabaseLocation() {
 		final IPath pluginState = Activator.getDefault().getStateLocation();
-		return pluginState.toOSString() + System.getProperty("file.separator")
-				+ DATABASE_DIR;
+		return pluginState.toOSString() + File.separator
+				+ DATABASE_PATH_FRAGMENT;
 	}
 
 	@Override
