@@ -81,7 +81,8 @@ public class ScanFilterView extends BlockPanel {
 			addBlocks(null, categoryImportanceBlocks, findingImportanceBlocks);
 
 			if (importanceBlocks.getWidgetCount() == 0) {
-				importanceBlocks.add(new ItalicLabel("None"));
+				importanceBlocks.add(new ItalicLabel(
+						"No categories or findings in this Scan Filter."));
 			}
 		} else {
 			setSummary("Select a Scan Filter");

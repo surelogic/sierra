@@ -61,6 +61,11 @@ public class ScanFilterEditor extends BlockPanel {
 		}
 	}
 
+	public ScanFilter getUpdatedScanFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public void setStatus(Status s) {
 		this.status.setStatus(s);
 	}
@@ -145,4 +150,5 @@ public class ScanFilterEditor extends BlockPanel {
 			filterGrid.setWidget(rowIndex, 2, remove);
 		}
 	}
+
 }

@@ -19,7 +19,8 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
 		ListContentComposite<ScanFilter, ScanFilterCache> {
-	private final ScanFilterView sf = new ScanFilterView();
+	private final ScanFilterView viewer = new ScanFilterView();
+	private final ScanFilterEditor editor = new ScanFilterEditor();
 
 	@Override
 	protected void onInitialize(DockPanel rootPanel,
@@ -28,27 +29,36 @@ public class ScanFiltersContent extends
 
 		addAction(new CreateScanFilterForm());
 
-		sf.initialize();
-		sf.addAction("Delete", new ClickListener() {
+		viewer.initialize();
+		viewer.addAction("Edit", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				final ScanFilter filter = sf.getSelection();
-				if (filter != null) {
-					ServiceHelper.getSettingsService().deleteScanFilter(
-							filter.getUuid(), new AsyncCallback<Status>() {
-
-								public void onFailure(Throwable caught) {
-									ExceptionUtil.handle(caught);
-								}
-
-								public void onSuccess(Status result) {
-									getCache().refresh();
-								}
-							});
-				}
+				setScanFilter(viewer.getSelection(), true);
 			}
 		});
-		selectionPanel.add(sf);
+		viewer.addAction("Delete", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				deleteScanFilter(viewer.getSelection());
+			}
+		});
+		selectionPanel.add(viewer);
+
+		editor.initialize();
+		final ScanFilterCache cache = getCache();
+		editor.addAction("Save", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				cache.save(editor.getUpdatedScanFilter());
+			}
+
+		});
+		editor.addAction("Cancel", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				setScanFilter(editor.getSelection(), false);
+			}
+		});
 	}
 
 	@Override
@@ -63,7 +73,42 @@ public class ScanFiltersContent extends
 
 	@Override
 	protected void onSelectionChanged(ScanFilter item) {
-		sf.setSelection(item);
+		setScanFilter(item, false);
+	}
+
+	private void setScanFilter(ScanFilter filter, boolean edit) {
+		final VerticalPanel selectionPanel = getSelectionPanel();
+		if (edit && filter != null) {
+			editor.setSelection(filter);
+			editor.setActionsVisible(true);
+			if (selectionPanel.getWidgetIndex(editor) == -1) {
+				selectionPanel.clear();
+				selectionPanel.add(editor);
+			}
+		} else {
+			viewer.setSelection(filter);
+			viewer.setActionsVisible(filter != null);
+			if (selectionPanel.getWidgetIndex(viewer) == -1) {
+				selectionPanel.clear();
+				selectionPanel.add(viewer);
+			}
+		}
+	}
+
+	private void deleteScanFilter(ScanFilter filter) {
+		if (filter != null) {
+			ServiceHelper.getSettingsService().deleteScanFilter(
+					filter.getUuid(), new AsyncCallback<Status>() {
+
+						public void onFailure(Throwable caught) {
+							ExceptionUtil.handle(caught);
+						}
+
+						public void onSuccess(Status result) {
+							getCache().refresh();
+						}
+					});
+		}
 	}
 
 	private class CreateScanFilterForm extends FormButton {
