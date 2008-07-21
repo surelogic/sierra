@@ -117,8 +117,17 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 							return audit;
 						}
 					}).call(id));
-			final List<ArtifactOverview> artifacts = new ArrayList<ArtifactOverview>();
-			f.setArtifacts(artifacts);
+			f.setArtifacts(query.prepared("portal.finding.artifactsById",
+					new RowHandler<ArtifactOverview>() {
+						public ArtifactOverview handle(final Row r) {
+							final ArtifactOverview ao = new ArtifactOverview();
+							ao.setTime(Dates.format(r.nextDate()));
+							ao.setTool(r.nextString());
+							ao.setType(r.nextString());
+							ao.setSummary(r.nextString());
+							return ao;
+						}
+					}).call(id));
 			return Result.success(f);
 		}
 
