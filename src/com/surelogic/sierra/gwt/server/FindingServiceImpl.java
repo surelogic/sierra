@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.server;
 
+import java.sql.Connection;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
@@ -16,6 +18,7 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
+import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
@@ -224,5 +227,23 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 				return null;
 			}
 		});
+	}
+
+	public Result<FindingOverview> changeImportance(final String id,
+			final ImportanceView view) {
+		ConnectionFactory.withTransaction(new NullDBTransaction() {
+
+			@Override
+			public void doPerform(final Connection conn) throws Exception {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		return null;
+	}
+
+	public Result<FindingOverview> comment(final String id, final String comment) {
+
+		return null;
 	}
 }
