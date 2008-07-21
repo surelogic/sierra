@@ -25,6 +25,8 @@ public final class FindingContent extends ContentComposite {
 
 	private final VerticalPanel audits = new VerticalPanel();
 
+	private final VerticalPanel auditBox = new VerticalPanel();
+
 	private final VerticalPanel artifacts = new VerticalPanel();
 
 	public static FindingContent getInstance() {
@@ -48,6 +50,7 @@ public final class FindingContent extends ContentComposite {
 		panel.add(artifacts);
 		panel.add(UI.h3("Audits"));
 		panel.add(audits);
+		panel.add(auditBox);
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
@@ -87,6 +90,7 @@ public final class FindingContent extends ContentComposite {
 		description.setText("");
 		audits.clear();
 		artifacts.clear();
+		auditBox.clear();
 	}
 
 	private void setEmpty() {
