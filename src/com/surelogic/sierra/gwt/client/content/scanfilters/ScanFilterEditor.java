@@ -35,9 +35,23 @@ public class ScanFilterEditor extends BlockPanel {
 	@Override
 	protected void onInitialize(VerticalPanel panel) {
 		categoryFilters.initialize();
+		categoryFilters.addAction("Add Category", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		panel.add(categoryFilters);
 
 		findingFilters.initialize();
+		findingFilters.addAction("Add Finding", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		panel.add(findingFilters);
 
 		status = new StatusBox();
