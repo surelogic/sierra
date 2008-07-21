@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
@@ -276,6 +277,21 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
+	public static <T> T withTransaction(final DBTransaction<T> t) {
+		try {
+			return with(transaction(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
 	public static <T> T withTransaction(final ServerQuery<T> t) {
 		try {
 			return with(transaction(), t);
@@ -479,6 +495,27 @@ public final class ConnectionFactory {
 	}
 
 	private static <T> T with(final ServerConnection server, final DBQuery<T> t) {
+		RuntimeException exc = null;
+		try {
+			return server.perform(t);
+		} catch (final RuntimeException exc0) {
+			exc = exc0;
+		} finally {
+			try {
+				server.finished();
+			} catch (final SQLException e) {
+				if (exc == null) {
+					exc = new TransactionException(e);
+				} else {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+		}
+		throw exc;
+	}
+
+	private static <T> T with(final ServerConnection server,
+			final DBTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);

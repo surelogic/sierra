@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.common.jdbc.LazyPreparedStatementConnection;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
@@ -23,7 +24,7 @@ public class ServerConnection {
 	protected final boolean readOnly;
 	protected final Server server;
 
-	public ServerConnection(Connection conn, boolean readOnly)
+	public ServerConnection(final Connection conn, final boolean readOnly)
 			throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(conn);
 		this.conn
@@ -36,8 +37,8 @@ public class ServerConnection {
 		server = new Server(conn, readOnly);
 	}
 
-	public ServerConnection(Connection conn, boolean readOnly,
-			int isolationLevel) throws SQLException {
+	public ServerConnection(final Connection conn, final boolean readOnly,
+			final int isolationLevel) throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(conn);
 		this.conn.setTransactionIsolation(isolationLevel);
 		this.conn.setReadOnly(readOnly);
@@ -80,7 +81,7 @@ public class ServerConnection {
 	 * @param t
 	 * @return
 	 */
-	public <T> T perform(DBQuery<T> t) {
+	public <T> T perform(final DBQuery<T> t) {
 		try {
 			final T val = t.perform(new ConnectionQuery(conn));
 			if (!readOnly) {
@@ -111,7 +112,38 @@ public class ServerConnection {
 	 * @param t
 	 * @return
 	 */
-	public <T> T perform(ServerQuery<T> t) {
+	public <T> T perform(final DBTransaction<T> t) {
+		try {
+			final T val = t.perform(conn);
+			if (!readOnly) {
+				conn.commit();
+			}
+			return val;
+		} catch (final Exception e) {
+			if (!readOnly) {
+				try {
+					conn.rollback();
+				} catch (final SQLException e1) {
+					log.log(Level.WARNING, e1.getMessage(), e1);
+				}
+			}
+			exceptionNotify("Server", e.getMessage(), e);
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Perform the specified query transaction. If an exception occurs while
+	 * executing this method, the server notifies the administrator of an error.
+	 * In addition, the transaction is rolled back.
+	 * 
+	 * @throws TransactionException
+	 *             when an error occurs while executing the transaction
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public <T> T perform(final ServerQuery<T> t) {
 		try {
 			final T val = t.perform(new ConnectionQuery(conn), server);
 			if (!readOnly) {
@@ -142,7 +174,7 @@ public class ServerConnection {
 	 * @param t
 	 * @return
 	 */
-	public <T> T perform(ServerTransaction<T> t) {
+	public <T> T perform(final ServerTransaction<T> t) {
 		try {
 			final T val = t.perform(conn, server);
 			if (!readOnly) {
@@ -166,7 +198,8 @@ public class ServerConnection {
 	 * Send mail to the listed admin email that an exception has occurred while
 	 * processing a transaction.
 	 */
-	protected void exceptionNotify(String userName, String message, Throwable t) {
+	protected void exceptionNotify(final String userName, final String message,
+			final Throwable t) {
 		log.log(Level.SEVERE, message, t);
 		try {
 			final StringWriter s = new StringWriter();
