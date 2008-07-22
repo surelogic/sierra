@@ -2,9 +2,9 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.widgets.Listener;
 
-public interface IViewMediator {
+import com.surelogic.common.ILifecycle;
 
-	void init();
+public interface IViewMediator extends ILifecycle {
 
 	/**
 	 * Gets the identifier to query from the SureLogic I18N that will be used to
@@ -32,6 +32,4 @@ public interface IViewMediator {
 	String getHelpId();
 
 	void setFocus();
-
-	void dispose();
 }

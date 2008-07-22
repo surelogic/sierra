@@ -136,11 +136,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			.emptyMap();
 
 	/**
-	 * This should only be changed in the UI thread
-	 */
-	private final LocalStatus localStatus = new LocalStatus();
-
-	/**
 	 * A map from a project to the server response
 	 * 
 	 * Protected by itself This should only be accessed in a database job
@@ -648,17 +643,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(
 							final SelectionChangedEvent event) {
-						if (event.getSelection().isEmpty()) {
-							return; // FIX
-						}
-						IStructuredSelection selection;
-						if (event.getSelection() instanceof IStructuredSelection) {
-							selection = (IStructuredSelection) event
-									.getSelection();
-						} else {
-							return;
-						}
-
 						final List<SierraServer> servers = collectServers();
 						final boolean onlyServer = servers.size() == 1;
 						if (onlyServer) {
@@ -667,14 +651,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 								f_manager.setFocus(servers.get(0));
 							}
 						}
-						/*
-						 * //System.out.println("onlyTeamServer=" +
-						 * onlyTeamServer);
-						 * f_serverConnectItem.setEnabled(onlyTeamServer);
-						 * f_duplicateServerAction.setEnabled(onlyServer);
-						 * f_deleteServerAction.setEnabled(onlyServer);
-						 * f_openInBrowserAction.setEnabled(onlyServer);
-						 */
 					}
 				});
 
@@ -1078,7 +1054,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					} catch (final Exception e) {
 						final int errNo = 58; // FIX
 						final String msg = I18N.err(errNo);
-						return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+						return SLEclipseStatusUtility.createErrorStatus(errNo,
+								msg, e);
 					}
 					monitor.done();
 					return Status.OK_STATUS;
@@ -1125,7 +1102,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				} catch (final Exception e) {
 					final int errNo = 58; // FIX
 					final String msg = I18N.err(errNo);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;
