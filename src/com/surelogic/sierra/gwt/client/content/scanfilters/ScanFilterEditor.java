@@ -18,7 +18,6 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
@@ -150,12 +149,13 @@ public class ScanFilterEditor extends BlockPanel {
 				}
 			});
 			final int rowIndex = filterGrid.getRowCount();
-			final Label remove = new ClickLabel("remove", new ClickListener() {
-				public void onClick(Widget sender) {
-					filters.remove(filter);
-					filterGrid.removeRow(rowIndex);
-				}
-			});
+			final Label remove = LabelHelper.clickable(new Label("remove"),
+					new ClickListener() {
+						public void onClick(Widget sender) {
+							filters.remove(filter);
+							filterGrid.removeRow(rowIndex);
+						}
+					});
 			remove.setHorizontalAlignment(Label.ALIGN_CENTER);
 
 			filterGrid.setWidget(rowIndex, 0, h);

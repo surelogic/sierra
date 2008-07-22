@@ -99,7 +99,7 @@ public class BasicPanel extends Composite {
 	}
 
 	public final void addAction(String text, ClickListener clickListener) {
-		addAction(new ClickLabel(text, clickListener));
+		addAction(LabelHelper.clickable(new Label(text), clickListener));
 	}
 
 	public final void removeAction(Widget w) {

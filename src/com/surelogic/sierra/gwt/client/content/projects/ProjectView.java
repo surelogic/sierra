@@ -37,8 +37,8 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ProjectView extends BlockPanel {
@@ -60,13 +60,13 @@ public class ProjectView extends BlockPanel {
 		scanFilterTable.setWidth("50%");
 		scanFilterTable.setWidget(0, 0, scanFilterField);
 		scanFilterField.add(new Label("Scan Filter:"));
-		final Label changeScanFilter = new ClickLabel("Change Scan Filter",
-				new ClickListener() {
+		final Label changeScanFilter = LabelHelper.clickable(new Label(
+				"Change Scan Filter"), new ClickListener() {
 
-					public void onClick(Widget sender) {
-						promptForScanFilter();
-					}
-				});
+			public void onClick(Widget sender) {
+				promptForScanFilter();
+			}
+		});
 		scanFilterTable.setWidget(0, 1, changeScanFilter);
 		scanFilterTable.getCellFormatter().setHorizontalAlignment(0, 1,
 				HasHorizontalAlignment.ALIGN_RIGHT);
