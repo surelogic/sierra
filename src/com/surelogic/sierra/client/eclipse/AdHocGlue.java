@@ -9,17 +9,18 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IPath;
 
-import com.surelogic.adhoc.AbstractAdHocGlue;
+import com.surelogic.adhoc.IAdHoc;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class AdHocGlue extends AbstractAdHocGlue {
-	private static final ExecutorService exec = 
-        Executors.newSingleThreadExecutor();
-	
+public final class AdHocGlue implements IAdHoc {
+
+	private static final ExecutorService exec = Executors
+			.newSingleThreadExecutor();
+
 	public Executor getExecutor() {
 		return exec;
 	}
-	
+
 	public Connection getConnection() throws SQLException {
 		return Data.getInstance().getConnection();
 	}
