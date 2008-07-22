@@ -1,10 +1,7 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.grid;
 
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.TextBox;
-import com.surelogic.sierra.gwt.client.ui.grid.InplaceEditor;
-import com.surelogic.sierra.gwt.client.ui.grid.InplaceEditorFactory;
-import com.surelogic.sierra.gwt.client.ui.grid.SelectableGrid;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class TextBoxEditor extends InplaceEditor {
