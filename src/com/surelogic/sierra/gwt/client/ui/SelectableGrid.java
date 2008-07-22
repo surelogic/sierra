@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 // TODO add row selection highlighting and tracking of currently selected row
 // TODO don't trigger inplace editors until after a row selection has occurred

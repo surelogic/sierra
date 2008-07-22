@@ -23,7 +23,7 @@ import com.surelogic.sierra.gwt.client.UserListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 public final class LoginContent extends ContentComposite {
 	private static final LoginContent instance = new LoginContent();

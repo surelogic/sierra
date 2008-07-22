@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
@@ -14,7 +15,6 @@ import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
-import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingTypeView extends BlockPanel {

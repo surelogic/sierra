@@ -15,7 +15,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 //TODO using a TabBar mucks up the context change handling code
 //Change the TabBar to our own setup so we can change the tab style without 

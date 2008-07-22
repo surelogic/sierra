@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Lifecycle;
-import com.surelogic.sierra.gwt.client.util.HtmlHelper;
+import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
 public abstract class ContentComposite extends Composite implements Lifecycle {
 	private final DockPanel rootPanel = new DockPanel();

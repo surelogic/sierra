@@ -11,10 +11,10 @@ import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class ScanFilterDialog extends FormDialog {
 	private final VerticalPanel scanFilterPanel = new VerticalPanel();

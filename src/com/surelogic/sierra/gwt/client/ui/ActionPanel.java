@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class ActionPanel extends Composite {
 	private static final String STYLE = "sl-ActionPanel";

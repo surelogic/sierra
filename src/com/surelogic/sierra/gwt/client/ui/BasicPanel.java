@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
 
 public class BasicPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Section";

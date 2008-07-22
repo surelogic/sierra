@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -20,11 +21,10 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
+import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
-import com.surelogic.sierra.gwt.client.util.ChartBuilder;
-import com.surelogic.sierra.gwt.client.util.HtmlHelper;
 
 public class ScanContent extends ContentComposite {
 

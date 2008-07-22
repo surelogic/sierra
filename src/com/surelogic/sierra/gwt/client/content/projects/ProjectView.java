@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
@@ -39,7 +40,6 @@ import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
-import com.surelogic.sierra.gwt.client.util.ChartBuilder;
 
 public class ProjectView extends BlockPanel {
 	private final StatusBox box = new StatusBox();

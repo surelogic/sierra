@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.HtmlHelper;
+import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";

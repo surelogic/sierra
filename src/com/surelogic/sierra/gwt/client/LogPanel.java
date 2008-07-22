@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.util.ImageHelper;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 public class LogPanel extends Composite {
 	private static final String PRIMARY_STYLE = "log-panel";
