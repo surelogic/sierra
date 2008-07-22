@@ -20,7 +20,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ClickLabel;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
-import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ScanFilterEditor extends BlockPanel {
@@ -122,7 +122,8 @@ public class ScanFilterEditor extends BlockPanel {
 				filterGrid.removeRow(1);
 			}
 			if (filters == null || filters.size() == 0) {
-				filterGrid.setWidget(1, 0, new ItalicLabel("None"));
+				filterGrid.setWidget(1, 0, LabelHelper
+						.italics(new Label("None")));
 				filterGrid.setText(1, 1, "");
 				filterGrid.setText(1, 2, "");
 			} else {

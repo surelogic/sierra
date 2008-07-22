@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
@@ -18,7 +19,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
-import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 
 public class ScanFilterView extends BlockPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();
@@ -81,8 +82,8 @@ public class ScanFilterView extends BlockPanel {
 			addBlocks(null, categoryImportanceBlocks, findingImportanceBlocks);
 
 			if (importanceBlocks.getWidgetCount() == 0) {
-				importanceBlocks.add(new ItalicLabel(
-						"No categories or findings in this Scan Filter."));
+				importanceBlocks.add(LabelHelper.italics(new Label(
+						"No categories or findings in this Scan Filter.")));
 			}
 		} else {
 			setSummary("Select a Scan Filter");

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -14,7 +15,7 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;
 	private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
 	private final List<E> items = new ArrayList<E>();
-	private final ItalicLabel none = new ItalicLabel("None", false);
+	private final Label none = LabelHelper.italics(new Label("None", false));
 	private ClickListener clickListener;
 
 	public ListBlock(String title) {

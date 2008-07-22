@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.content.projects;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
@@ -12,8 +13,8 @@ import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
-import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
 import com.surelogic.sierra.gwt.client.ui.ItemLabel;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 
 public class ScanFilterDialog extends FormDialog {
@@ -62,8 +63,8 @@ public class ScanFilterDialog extends FormDialog {
 				}
 
 				if (scanFilterPanel.getWidgetCount() == 0) {
-					scanFilterPanel.add(new ItalicLabel(
-							"No scan filters to add"));
+					scanFilterPanel.add(LabelHelper.italics(new Label(
+							"No scan filters to add")));
 					setOkEnabled(false);
 				} else {
 					setOkEnabled(true);
