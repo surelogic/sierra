@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
-import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.Callback;
@@ -79,7 +78,7 @@ public final class ContextManager {
 				for (final UserListener listener : userListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				setContent(LoginContent.getInstance());
+				Context.create(LoginContent.getInstance(), null).submit();
 			}
 
 			@Override
@@ -90,7 +89,7 @@ public final class ContextManager {
 				for (final UserListener listener : userListeners) {
 					listener.onLogout(userAccount, message);
 				}
-				setContent(LoginContent.getInstance());
+				Context.create(LoginContent.getInstance(), null).submit();
 			}
 
 			@Override
@@ -100,7 +99,7 @@ public final class ContextManager {
 				for (final UserListener listener : userListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				setContent(LoginContent.getInstance());
+				Context.create(LoginContent.getInstance(), null).submit();
 			}
 
 		});
@@ -127,15 +126,8 @@ public final class ContextManager {
 		return Context.create(History.getToken());
 	}
 
-	public static void setContent(ContentComposite content) {
-		setContext(ContentRegistry.getContentName(content));
-	}
-
 	public static void setContext(Context context) {
-		setContext(context.toString());
-	}
-
-	public static void setContext(String token) {
+		final String token = context.toString();
 		// Note: newItem calls onHistoryChanged, which calls
 		// notifyContextListeners only if the token changes
 		if (!isContext(token)) {

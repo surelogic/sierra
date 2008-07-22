@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Lifecycle;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
@@ -24,7 +23,7 @@ public abstract class ContentComposite extends Composite implements Lifecycle {
 	}
 
 	public final void show() {
-		ContextManager.setContent(this);
+		Context.create(this, null).submit();
 	}
 
 	public final void update(Context context) {
