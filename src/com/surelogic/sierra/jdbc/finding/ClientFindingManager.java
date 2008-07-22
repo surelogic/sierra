@@ -70,7 +70,7 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement updateLocalAudits;
 	private final PreparedStatement selectFindingFindingType;
 
-	private ClientFindingManager(Connection conn) throws SQLException {
+	private ClientFindingManager(final Connection conn) throws SQLException {
 		super(conn);
 		final Statement st = conn.createStatement();
 		String tempTableName;
@@ -327,7 +327,8 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param comment
 	 * @throws SQLException
 	 */
-	public void comment(long findingId, String comment) throws SQLException {
+	public void comment(final long findingId, final String comment)
+			throws SQLException {
 		checkFinding(findingId);
 		final Timestamp now = JDBCUtils.now();
 		comment(null, findingId, comment, now, null);
@@ -346,7 +347,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param importance
 	 * @throws SQLException
 	 */
-	public void setImportance(long findingId, Importance importance)
+	public void setImportance(final long findingId, final Importance importance)
 			throws SQLException {
 		checkFinding(findingId);
 		final Timestamp now = JDBCUtils.now();
@@ -360,8 +361,8 @@ public final class ClientFindingManager extends FindingManager {
 		updateFindingOverviewImportance.execute();
 	}
 
-	public void setImportance(Collection<Long> findingIds,
-			Importance importance, SLProgressMonitor monitor)
+	public void setImportance(final Collection<Long> findingIds,
+			final Importance importance, final SLProgressMonitor monitor)
 			throws SQLException {
 		monitor.beginTask("Updating finding data", findingIds.size());
 		final Timestamp now = JDBCUtils.now();
@@ -387,7 +388,7 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param summary
 	 * @throws SQLException
 	 */
-	public void changeSummary(long findingId, String summary)
+	public void changeSummary(final long findingId, final String summary)
 			throws SQLException {
 		checkFinding(findingId);
 		final Timestamp now = JDBCUtils.now();
@@ -409,8 +410,8 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param monitor
 	 * @throws SQLException
 	 */
-	public void generateOverview(String projectName, String scan,
-			SLProgressMonitor monitor) throws SQLException {
+	public void generateOverview(final String projectName, final String scan,
+			final SLProgressMonitor monitor) throws SQLException {
 		monitor.subTask("Generating overview");
 
 		final ProjectRecord p = ProjectRecordFactory.getInstance(conn)
@@ -520,8 +521,8 @@ public final class ClientFindingManager extends FindingManager {
 	}
 
 	@Override
-	public void deleteFindings(String projectName, SLProgressMonitor monitor)
-			throws SQLException {
+	public void deleteFindings(final String projectName,
+			final SLProgressMonitor monitor) throws SQLException {
 		final ProjectRecord pRec = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		pRec.setName(projectName);
@@ -547,9 +548,9 @@ public final class ClientFindingManager extends FindingManager {
 	 *            before the scan was altered
 	 * @param monitor
 	 */
-	public void updateScanFindings(String projectName, String uid,
-			List<String> tools, FindingFilter filter,
-			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
+	public void updateScanFindings(final String projectName, final String uid,
+			final List<String> tools, final FindingFilter filter,
+			final Set<Long> previousFindingIds, final SLProgressMonitor monitor) {
 		final Set<Long> scanFindingIds = new HashSet<Long>();
 		try {
 			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
@@ -628,9 +629,10 @@ public final class ClientFindingManager extends FindingManager {
 	 *            before the scan was altered
 	 * @param monitor
 	 */
-	public void updateScanFindings(String projectName, String uid,
-			Map<String, List<String>> compilations, FindingFilter filter,
-			Set<Long> previousFindingIds, SLProgressMonitor monitor) {
+	public void updateScanFindings(final String projectName, final String uid,
+			final Map<String, List<String>> compilations,
+			final FindingFilter filter, final Set<Long> previousFindingIds,
+			final SLProgressMonitor monitor) {
 		final Set<Long> scanFindingIds = new HashSet<Long>();
 		try {
 			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
@@ -702,8 +704,8 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	private void generatePartialScanOverview(long scanId, Set<Long> findingIds)
-			throws SQLException {
+	private void generatePartialScanOverview(final long scanId,
+			final Set<Long> findingIds) throws SQLException {
 		for (final long id : findingIds) {
 			insertTempId.setLong(1, id);
 			insertTempId.execute();
@@ -727,8 +729,8 @@ public final class ClientFindingManager extends FindingManager {
 	 * 
 	 * @param findingIds
 	 */
-	private void regenerateFindingsOverview(String projectName,
-			Set<Long> findingIds, SLProgressMonitor monitor)
+	private void regenerateFindingsOverview(final String projectName,
+			final Set<Long> findingIds, final SLProgressMonitor monitor)
 			throws SQLException {
 		int count = 0;
 		for (final long id : findingIds) {
@@ -820,8 +822,8 @@ public final class ClientFindingManager extends FindingManager {
 		abstract void handle(ResultSet audits) throws SQLException;
 	}
 
-	private <T> void processNewLocalAudits(String projectName,
-			AuditHandler<T> handler) throws SQLException {
+	private <T> void processNewLocalAudits(final String projectName,
+			final AuditHandler<T> handler) throws SQLException {
 		final ProjectRecord rec = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		rec.setName(projectName);
@@ -839,23 +841,24 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	public List<FindingAudits> getNewLocalAudits(String projectName)
+	public List<FindingAudits> getNewLocalAudits(final String projectName)
 			throws SQLException {
 		final AuditHandler<FindingAudits> handler = new AuditHandler<FindingAudits>() {
-			void handle(ResultSet set) throws SQLException {
+			@Override
+			void handle(final ResultSet set) throws SQLException {
 				long oldId = -1;
 				List<Audit> audits = null;
 				while (set.next()) {
 					int idx = 1;
-					long newId = set.getLong(idx++);
+					final long newId = set.getLong(idx++);
 					if (newId != oldId) {
 						oldId = newId;
 						audits = new ArrayList<Audit>();
 						results.add(new FindingAudits(newId, audits));
 					}
-					Audit a = new Audit(set.getTimestamp(idx++), AuditEvent
-							.valueOf(set.getString(idx++)), set
-							.getString(idx++));
+					final Audit a = new Audit(set.getTimestamp(idx++),
+							AuditEvent.valueOf(set.getString(idx++)), set
+									.getString(idx++));
 					audits.add(a);
 				}
 			}
@@ -864,10 +867,12 @@ public final class ClientFindingManager extends FindingManager {
 		return handler.results;
 	}
 
-	public List<SyncTrailRequest> getNewLocalAuditTrails(String projectName,
-			SLProgressMonitor monitor) throws SQLException {
+	public List<SyncTrailRequest> getNewLocalAuditTrails(
+			final String projectName, final SLProgressMonitor monitor)
+			throws SQLException {
 		final AuditHandler<SyncTrailRequest> handler = new AuditHandler<SyncTrailRequest>() {
-			void handle(ResultSet audits) throws SQLException {
+			@Override
+			void handle(final ResultSet audits) throws SQLException {
 				getSyncTrailRequests(results, audits);
 			}
 		};
@@ -879,8 +884,8 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param set
 	 *            The set of local audits
 	 */
-	private void getSyncTrailRequests(List<SyncTrailRequest> trails,
-			ResultSet set) throws SQLException {
+	private void getSyncTrailRequests(final List<SyncTrailRequest> trails,
+			final ResultSet set) throws SQLException {
 		long oldId = -1;
 		List<Audit> audits = null;
 		while (set.next()) {
@@ -918,9 +923,9 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	public void updateLocalFindings(String projectName,
-			List<SyncTrailResponse> trails, SLProgressMonitor monitor)
-			throws SQLException {
+	public void updateLocalFindings(final String projectName,
+			final List<SyncTrailResponse> trails,
+			final SLProgressMonitor monitor) throws SQLException {
 		final ProjectRecord project = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		project.setName(projectName);
@@ -1001,8 +1006,8 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param monitor
 	 * @throws SQLException
 	 */
-	public void filterFindingTypeFromScans(long findingId,
-			SLProgressMonitor monitor) throws SQLException {
+	public void filterFindingTypeFromScans(final long findingId,
+			final SLProgressMonitor monitor) throws SQLException {
 		selectFindingFindingType.setLong(1, findingId);
 		final ResultSet set = selectFindingFindingType.executeQuery();
 		try {
@@ -1034,20 +1039,21 @@ public final class ClientFindingManager extends FindingManager {
 	 * @param findingId
 	 * @throws SQLException
 	 */
-	private void checkFinding(long findingId) throws SQLException {
+	private void checkFinding(final long findingId) throws SQLException {
 		if (getFinding(findingId) == null) {
 			throw new IllegalArgumentException(findingId
 					+ " is not a valid finding id.");
 		}
 	}
 
-	public static ClientFindingManager getInstance(Connection conn)
+	public static ClientFindingManager getInstance(final Connection conn)
 			throws SQLException {
 		return new ClientFindingManager(conn);
 	}
 
-	public void updateLocalAuditRevision(String projectName, String user,
-			long commitRevision, SLProgressMonitor monitor) throws SQLException {
+	public void updateLocalAuditRevision(final String projectName,
+			final String user, final long commitRevision,
+			final SLProgressMonitor monitor) throws SQLException {
 		final long userId = getUserId(user);
 		updateLocalAudits.setLong(1, commitRevision);
 		updateLocalAudits.setLong(2, userId);

@@ -59,7 +59,7 @@ public class FindingManager {
 
 	private final PreparedStatement scanArtifacts;
 
-	protected FindingManager(Connection conn) throws SQLException {
+	protected FindingManager(final Connection conn) throws SQLException {
 		this.conn = conn;
 		factory = FindingRecordFactory.getInstance(conn);
 		ftManager = FindingTypeManager.getInstance(conn);
@@ -129,8 +129,8 @@ public class FindingManager {
 	 * 
 	 * @param uid
 	 */
-	public void generateFindings(String projectName, String uid,
-			FindingFilter filter, SLProgressMonitor monitor) {
+	public void generateFindings(final String projectName, final String uid,
+			final FindingFilter filter, final SLProgressMonitor monitor) {
 		try {
 			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
 					.newScan();
@@ -179,13 +179,12 @@ public class FindingManager {
 		}
 	}
 
-	protected Long getFindingId(FindingFilter filter, Long projectId,
-			ArtifactResult art) throws SQLException {
+	protected Long getFindingId(final FindingFilter filter,
+			final Long projectId, final ArtifactResult art) throws SQLException {
 		Long findingId;
 		if (!art.m.select()) {
-			// We don't have a match, so we need to produce an
-			// entirely
-			// new finding
+			// We don't have a match, so we need to produce an entirely new
+			// finding
 			final MatchRecord m = art.m;
 			final Importance importance = filter.calculateImportance(art.m
 					.getId().getFindingTypeId(), art.p, art.s);
@@ -203,7 +202,7 @@ public class FindingManager {
 		return findingId;
 	}
 
-	protected ArtifactResult createArtifactResult(ResultSet result)
+	protected ArtifactResult createArtifactResult(final ResultSet result)
 			throws SQLException {
 		final ArtifactResult art = new ArtifactResult();
 		int idx = 1;
@@ -230,8 +229,8 @@ public class FindingManager {
 	 * @param monitor
 	 * @throws SQLException
 	 */
-	public void deleteFindings(String projectName, SLProgressMonitor monitor)
-			throws SQLException {
+	public void deleteFindings(final String projectName,
+			final SLProgressMonitor monitor) throws SQLException {
 
 		if (monitor != null) {
 			monitor.subTask("Deleting matches for project " + projectName);
@@ -257,7 +256,8 @@ public class FindingManager {
 		}
 	}
 
-	public long getLatestAuditRevision(String projectName) throws SQLException {
+	public long getLatestAuditRevision(final String projectName)
+			throws SQLException {
 		latestAuditRevision.setString(1, projectName);
 		final ResultSet set = latestAuditRevision.executeQuery();
 		try {
@@ -271,14 +271,15 @@ public class FindingManager {
 		}
 	}
 
-	protected void comment(Long userId, Long findingId, String comment,
-			Date time, Long revision) throws SQLException {
+	protected void comment(final Long userId, final Long findingId,
+			final String comment, final Date time, final Long revision)
+			throws SQLException {
 		newAudit(userId, findingId, comment, AuditEvent.COMMENT, time, revision);
 		touchFinding(findingId, time);
 	}
 
-	protected void setImportance(Long userId, Long findingId,
-			Importance importance, Date time, Long revision)
+	protected void setImportance(final Long userId, final Long findingId,
+			final Importance importance, final Date time, final Long revision)
 			throws SQLException {
 		newAudit(userId, findingId, importance.toString(),
 				AuditEvent.IMPORTANCE, time, revision);
@@ -289,14 +290,15 @@ public class FindingManager {
 		touchFinding(findingId, time);
 	}
 
-	protected void markAsRead(Long userId, Long findingId, Date time,
-			Long revision) throws SQLException {
+	protected void markAsRead(final Long userId, final Long findingId,
+			final Date time, final Long revision) throws SQLException {
 		newAudit(userId, findingId, null, AuditEvent.READ, time, revision);
 		touchFinding(findingId, time);
 	}
 
-	protected void changeSummary(Long userId, Long findingId, String summary,
-			Date time, Long revision) throws SQLException {
+	protected void changeSummary(final Long userId, final Long findingId,
+			final String summary, final Date time, final Long revision)
+			throws SQLException {
 		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision);
 		updateFindingSummary.setString(1, summary);
 		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
@@ -305,7 +307,7 @@ public class FindingManager {
 		touchFinding(findingId, time);
 	}
 
-	protected void populateScanOverview(Long scanId) throws SQLException {
+	protected void populateScanOverview(final Long scanId) throws SQLException {
 		deleteScanOverview.setLong(1, scanId);
 		deleteScanOverview.execute();
 		populateScanOverview.setLong(1, scanId);
@@ -315,15 +317,17 @@ public class FindingManager {
 		populateScanRelationOverview.execute();
 	}
 
-	private void touchFinding(Long findingId, Date time) throws SQLException {
+	private void touchFinding(final Long findingId, final Date time)
+			throws SQLException {
 		touchFinding.setTimestamp(1, new Timestamp(time.getTime()));
 		touchFinding.setTimestamp(2, new Timestamp(time.getTime()));
 		touchFinding.setLong(3, findingId);
 		touchFinding.execute();
 	}
 
-	private void newAudit(Long userId, Long findingId, String value,
-			AuditEvent event, Date time, Long revision) throws SQLException {
+	private void newAudit(final Long userId, final Long findingId,
+			final String value, final AuditEvent event, final Date time,
+			final Long revision) throws SQLException {
 		final AuditRecord record = factory.newAudit();
 		record.setUserId(userId);
 		record.setTimestamp(time);
@@ -343,7 +347,8 @@ public class FindingManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	protected FindingRecord getFinding(long findingId) throws SQLException {
+	protected FindingRecord getFinding(final long findingId)
+			throws SQLException {
 		final FindingRecord record = factory.newFinding();
 		selectFindingById.setLong(1, findingId);
 		final ResultSet set = selectFindingById.executeQuery();
@@ -372,8 +377,8 @@ public class FindingManager {
 	 * @param revision
 	 * @throws SQLException
 	 */
-	protected void obsolete(Long obsolete, Long finding, Long revision)
-			throws SQLException {
+	protected void obsolete(final Long obsolete, final Long finding,
+			final Long revision) throws SQLException {
 		obsoleteArtifacts.setLong(1, finding);
 		obsoleteArtifacts.setLong(2, obsolete);
 		obsoleteArtifacts.execute();
@@ -399,7 +404,8 @@ public class FindingManager {
 	 * @param deleted
 	 * @param finding
 	 */
-	protected void delete(long deleted, long finding) throws SQLException {
+	protected void delete(final long deleted, final long finding)
+			throws SQLException {
 		final FindingRecord fRec = getFinding(deleted);
 		obsoleteArtifacts.setLong(1, finding);
 		obsoleteArtifacts.setLong(2, deleted);
@@ -416,16 +422,17 @@ public class FindingManager {
 		fRec.delete();
 	}
 
-	protected void sqlError(SQLException e) {
+	protected void sqlError(final SQLException e) {
 		throw new FindingGenerationException(e);
 	}
 
 	// FIXME Evil code!
-	protected long getUserId(String user) throws SQLException {
+	protected long getUserId(final String user) throws SQLException {
 		return ClientUser.getUser(user, conn).getId();
 	}
 
-	protected void fillKey(MatchRecord.PK pk, Match match) throws SQLException {
+	protected void fillKey(final MatchRecord.PK pk, final Match match)
+			throws SQLException {
 		pk.setClassName(match.getClassName());
 		pk.setPackageName(match.getPackageName());
 		pk.setHash(match.getHash());
@@ -441,7 +448,7 @@ public class FindingManager {
 		MatchRecord m;
 	}
 
-	public static FindingManager getInstance(Connection conn)
+	public static FindingManager getInstance(final Connection conn)
 			throws SQLException {
 		return new FindingManager(conn);
 	}

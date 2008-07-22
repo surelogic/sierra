@@ -23,6 +23,7 @@ import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 import com.surelogic.sierra.jdbc.scan.ScanRecordFactory;
 import com.surelogic.sierra.jdbc.timeseries.TimeseriesRecordFactory;
+import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.AuditTrail;
@@ -48,7 +49,7 @@ public final class ServerFindingManager extends FindingManager {
 	private final PreparedStatement insertCommitRecord;
 	private final PreparedStatement selectMergeInfo;
 
-	private ServerFindingManager(Connection conn) throws SQLException {
+	private ServerFindingManager(final Connection conn) throws SQLException {
 		super(conn);
 		if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 			findingDifferenceCount = conn
@@ -126,21 +127,23 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   WHERE F.ID = ? AND LM.FINDING_ID = F.ID AND FT.ID = LM.FINDING_TYPE_ID");
 	}
 
-	public void generateOverview(String projectName, String scanUid,
-			Set<String> timeseries) throws SQLException {
-		ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
+	public void generateOverview(final String projectName,
+			final String scanUid, final Set<String> timeseries)
+			throws SQLException {
+		final ProjectRecord projectRec = ProjectRecordFactory.getInstance(conn)
 				.newProject();
 		projectRec.setName(projectName);
 		if (projectRec.select()) {
-			ScanRecord scan = ScanRecordFactory.getInstance(conn).newScan();
+			final ScanRecord scan = ScanRecordFactory.getInstance(conn)
+					.newScan();
 			scan.setUid(scanUid);
 			if (scan.select()) {
-				List<TimeseriesRecord> timeseriesRecs = new ArrayList<TimeseriesRecord>(
+				final List<TimeseriesRecord> timeseriesRecs = new ArrayList<TimeseriesRecord>(
 						timeseries.size());
-				TimeseriesRecordFactory qFac = TimeseriesRecordFactory
+				final TimeseriesRecordFactory qFac = TimeseriesRecordFactory
 						.getInstance(conn);
-				for (String q : timeseries) {
-					TimeseriesRecord qRec = qFac.newTimeseries();
+				for (final String q : timeseries) {
+					final TimeseriesRecord qRec = qFac.newTimeseries();
 					qRec.setName(q);
 					if (qRec.select()) {
 						timeseriesRecs.add(qRec);
@@ -173,12 +176,13 @@ public final class ServerFindingManager extends FindingManager {
 	 * @return the in-order list of uids that the audits were applied to.
 	 * @throws SQLException
 	 */
-	public List<String> commitAuditTrails(long projectId, Long userId,
-			Long revision, List<AuditTrail> trails) throws SQLException {
-		List<String> uids = new ArrayList<String>(trails.size());
-		for (AuditTrail trail : trails) {
-			FindingRecord findingRecord = factory.newFinding();
-			String finding = trail.getFinding();
+	public List<String> commitAuditTrails(final long projectId,
+			final Long userId, final Long revision,
+			final List<AuditTrail> trails) throws SQLException {
+		final List<String> uids = new ArrayList<String>(trails.size());
+		for (final AuditTrail trail : trails) {
+			final FindingRecord findingRecord = factory.newFinding();
+			final String finding = trail.getFinding();
 			findingRecord.setUid(finding);
 			if (findingRecord.select()) {
 				Long findingId = findingRecord.getId();
@@ -188,7 +192,7 @@ public final class ServerFindingManager extends FindingManager {
 					findingRecord.select();
 					findingId = findingRecord.getId();
 				}
-				for (Audit audit : trail.getAudits()) {
+				for (final Audit audit : trail.getAudits()) {
 					final String value = audit.getValue();
 					final Date time = audit.getTimestamp();
 					switch (audit.getEvent()) {
@@ -226,10 +230,10 @@ public final class ServerFindingManager extends FindingManager {
 	 * @return an in-order list of finding uids
 	 * @throws SQLException
 	 */
-	public List<String> mergeAuditTrails(long projectId, final Long revision,
-			List<Merge> merges) throws SQLException {
+	public List<String> mergeAuditTrails(final long projectId,
+			final Long revision, final List<Merge> merges) throws SQLException {
 		final List<String> trails = new ArrayList<String>(merges.size());
-		for (Merge merge : merges) {
+		for (final Merge merge : merges) {
 			final Match match = merge.getMatch();
 			final MatchRecord.PK matchId = new MatchRecord.PK();
 			final Long findingTypeId = ftManager.getFindingTypeId(match
@@ -249,7 +253,7 @@ public final class ServerFindingManager extends FindingManager {
 			String uuid;
 			if (!matchRecord.select()) {
 				// We do not have a finding. We will create one.
-				FindingRecord findingRecord = factory.newFinding();
+				final FindingRecord findingRecord = factory.newFinding();
 				uuid = UUID.randomUUID().toString();
 				findingRecord.setUid(uuid);
 				findingRecord.setProjectId(projectId);
@@ -286,22 +290,22 @@ public final class ServerFindingManager extends FindingManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<TrailObsoletion> getObsoletedTrails(String project,
-			Long revision) throws SQLException {
-		List<TrailObsoletion> trails = new ArrayList<TrailObsoletion>();
+	public List<TrailObsoletion> getObsoletedTrails(final String project,
+			final Long revision) throws SQLException {
+		final List<TrailObsoletion> trails = new ArrayList<TrailObsoletion>();
 
-		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
-				.newProject();
+		final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
+				conn).newProject();
 		projectRecord.setName(project);
 		if (projectRecord.select()) {
 			int idx = 1;
 			selectObsoletedTrails.setLong(idx++, projectRecord.getId());
 			selectObsoletedTrails.setLong(idx++, revision);
-			ResultSet set = selectObsoletedTrails.executeQuery();
+			final ResultSet set = selectObsoletedTrails.executeQuery();
 			try {
 				while (set.next()) {
 					idx = 1;
-					TrailObsoletion o = new TrailObsoletion();
+					final TrailObsoletion o = new TrailObsoletion();
 					o.setObsoletedTrail(set.getString(idx++));
 					o.setRevision(set.getLong(idx++));
 					o.setTrail(set.getString(idx++));
@@ -314,18 +318,18 @@ public final class ServerFindingManager extends FindingManager {
 		return trails;
 	}
 
-	public SyncResponse getAuditUpdates(String project, long revision)
-			throws SQLException {
+	public SyncResponse getAuditUpdates(final String project,
+			final long revision) throws SQLException {
 		final SyncResponse response = new SyncResponse();
-		List<SyncTrailResponse> trails = response.getTrails();
-		ProjectRecord projectRecord = ProjectRecordFactory.getInstance(conn)
-				.newProject();
+		final List<SyncTrailResponse> trails = response.getTrails();
+		final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
+				conn).newProject();
 		projectRecord.setName(project);
 		if (projectRecord.select()) {
 			int idx = 1;
 			selectNewAudits.setLong(idx++, projectRecord.getId());
 			selectNewAudits.setLong(idx++, revision);
-			ResultSet set = selectNewAudits.executeQuery();
+			final ResultSet set = selectNewAudits.executeQuery();
 			long findingId = -1;
 			List<Audit> audits = null;
 			try {
@@ -336,7 +340,8 @@ public final class ServerFindingManager extends FindingManager {
 						findingId = nextId;
 						final SyncTrailResponse trail = new SyncTrailResponse();
 						selectMergeInfo.setLong(1, findingId);
-						ResultSet mergeSet = selectMergeInfo.executeQuery();
+						final ResultSet mergeSet = selectMergeInfo
+								.executeQuery();
 						final Merge merge = new Merge();
 						final Match match = new Match();
 						merge.setMatch(match);
@@ -390,8 +395,8 @@ public final class ServerFindingManager extends FindingManager {
 	 * @param project
 	 * @throws SQLException
 	 */
-	private void populateScanSummary(ScanRecord scan,
-			TimeseriesRecord timeseries, ProjectRecord project)
+	private void populateScanSummary(final ScanRecord scan,
+			final TimeseriesRecord timeseries, final ProjectRecord project)
 			throws SQLException {
 		int idx = 1;
 		// Add scan summary information
@@ -436,18 +441,19 @@ public final class ServerFindingManager extends FindingManager {
 	 * @param projectId
 	 * @throws SQLException
 	 */
-	public void refreshScanSummary(Long scanId, Long timeseriesId,
-			Long projectId) throws SQLException {
-		ScanSummaryRecord summary = new ScanSummaryRecord(scanSummaryMapper);
+	public void refreshScanSummary(final Long scanId, final Long timeseriesId,
+			final Long projectId) throws SQLException {
+		final ScanSummaryRecord summary = new ScanSummaryRecord(
+				scanSummaryMapper);
 		summary.setId(new ScanSummaryRecord.PK(scanId, timeseriesId));
-		boolean summaryExists = summary.select();
+		final boolean summaryExists = summary.select();
 		int idx = 1;
 		selectPreviousScan.setLong(idx++, timeseriesId);
 		selectPreviousScan.setLong(idx++, projectId);
 		selectPreviousScan.setLong(idx++, timeseriesId);
 		selectPreviousScan.setLong(idx++, projectId);
 		selectPreviousScan.setLong(idx++, scanId);
-		ResultSet set = selectPreviousScan.executeQuery();
+		final ResultSet set = selectPreviousScan.executeQuery();
 		try {
 			if (set.next()) {
 				final long previousScanId = set.getLong(1);
@@ -488,10 +494,10 @@ public final class ServerFindingManager extends FindingManager {
 				}
 			} else {
 				findingCount.setLong(1, scanId);
-				ResultSet count = findingCount.executeQuery();
+				final ResultSet count = findingCount.executeQuery();
 				try {
 					count.next();
-					Long findings = count.getLong(1);
+					final Long findings = count.getLong(1);
 					summary.setUnchangedFindings(0L);
 					summary.setNewFindings(findings);
 					summary.setFixedFindings(0L);
@@ -529,7 +535,43 @@ public final class ServerFindingManager extends FindingManager {
 		}
 	}
 
-	public static ServerFindingManager getInstance(Connection conn)
+	/**
+	 * Comment on a finding.
+	 * 
+	 * @param findingId
+	 * @param user
+	 * @param comment
+	 */
+	public void comment(final long findingId, final User user,
+			final long revision, final String comment) throws SQLException {
+		comment(user.getId(), findingId, comment, new Date(), revision);
+	}
+
+	/**
+	 * Mark the finding as read.
+	 * 
+	 * @param findingId
+	 * @param user
+	 */
+	public void markAsRead(final long findingId, final User user,
+			final long revision) throws SQLException {
+		markAsRead(user.getId(), findingId, new Date(), revision);
+	}
+
+	/**
+	 * Change the importance of a finding
+	 * 
+	 * @param findingId
+	 * @param user
+	 * @param importance
+	 */
+	public void setImportance(final long findingId, final User user,
+			final long revision, final Importance importance)
+			throws SQLException {
+		setImportance(user.getId(), findingId, importance, new Date(), revision);
+	}
+
+	public static ServerFindingManager getInstance(final Connection conn)
 			throws SQLException {
 		return new ServerFindingManager(conn);
 	}
