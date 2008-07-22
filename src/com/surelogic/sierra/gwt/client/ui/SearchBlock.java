@@ -111,6 +111,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			final DockPanel titlePanel = getTitlePanel();
 			titlePanel.clear();
 			titlePanel.add(pagingPanel, DockPanel.CENTER);
+			pagingPanel.setVisible(false);
 		}
 
 		public void search(String text) {

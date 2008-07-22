@@ -13,8 +13,8 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
-import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
@@ -99,13 +99,9 @@ public class ScanFiltersContent extends
 	private void deleteScanFilter(ScanFilter filter) {
 		if (filter != null) {
 			ServiceHelper.getSettingsService().deleteScanFilter(
-					filter.getUuid(), new AsyncCallback<Status>() {
+					filter.getUuid(), new StatusCallback() {
 
-						public void onFailure(Throwable caught) {
-							ExceptionUtil.handle(caught);
-						}
-
-						public void onSuccess(Status result) {
+						protected void doStatus(Status result) {
 							getCache().refresh();
 						}
 					});

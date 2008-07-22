@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.table;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -10,7 +9,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.Result;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
@@ -105,36 +104,36 @@ public class ReportTableSection extends SectionPanel {
 
 	private void getReportData() {
 		ServiceHelper.getTicketService().getReportTable(report,
-				new AsyncCallback<Result<ReportTable>>() {
+				new ResultCallback<ReportTable>() {
 
-					public void onFailure(final Throwable caught) {
-						// FIXME
+					@Override
+					protected void doFailure(String message, ReportTable result) {
+						setErrorStatus(message);
 					}
 
-					public void onSuccess(final Result<ReportTable> result) {
-						if (result.isSuccess()) {
-							table = result.getResult();
-							final List<String> headerTitles = table
-									.getHeaders();
-							final List<ColumnData> columnType = table
-									.getColumns();
-							for (int i = 0; i < headerTitles.size(); i++) {
-								grid.setText(0, i, headerTitles.get(i));
-							}
+					@Override
+					protected void doSuccess(String message,
+							final ReportTable result) {
 
-							grid.getRowFormatter().setStyleName(0,
-									PRIMARY_STYLE + "-header");
-							final List<List<String>> rows = table.getData();
-							if (rows.isEmpty()) {
-								setSuccessStatus("No information to display");
-							} else {
-								clearRows();
-								for (final List<String> row : rows) {
-									addRow();
-									int i = 0;
-									for (final String col : row) {
-										addColumn(col, columnType.get(i++));
-									}
+						table = result;
+						final List<String> headerTitles = table.getHeaders();
+						final List<ColumnData> columnType = table.getColumns();
+						for (int i = 0; i < headerTitles.size(); i++) {
+							grid.setText(0, i, headerTitles.get(i));
+						}
+
+						grid.getRowFormatter().setStyleName(0,
+								PRIMARY_STYLE + "-header");
+						final List<List<String>> rows = table.getData();
+						if (rows.isEmpty()) {
+							setSuccessStatus("No information to display");
+						} else {
+							clearRows();
+							for (final List<String> row : rows) {
+								addRow();
+								int i = 0;
+								for (final String col : row) {
+									addColumn(col, columnType.get(i++));
 								}
 							}
 						}

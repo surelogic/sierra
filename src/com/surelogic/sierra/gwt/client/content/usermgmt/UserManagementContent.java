@@ -15,9 +15,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
-import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
@@ -142,7 +142,7 @@ public final class UserManagementContent extends ContentComposite {
 							usersGrid.setStatus("info", "No users found");
 						} else {
 							usersGrid.clearStatus();
-							for (UserAccount user : result) {
+							for (final UserAccount user : result) {
 								// need to convert the service return to
 								// UserAccount
 								if (user.isActive() || showDisabled) {
@@ -175,7 +175,7 @@ public final class UserManagementContent extends ContentComposite {
 	}
 
 	private HTML createPasswordChanger(final int row, final UserAccount user) {
-		HTML html = new HTML("Change");
+		final HTML html = new HTML("Change");
 		html.setStyleName("clickable");
 		html.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
@@ -199,19 +199,22 @@ public final class UserManagementContent extends ContentComposite {
 				user.setActive(ENABLED.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
-						new AsyncCallback<Result<UserAccount>>() {
+						new ResultCallback<UserAccount>() {
 
-							public void onFailure(Throwable caught) {
+							@Override
+							protected void doFailure(String message,
+									UserAccount result) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
-												+ user.getUserName()
-												+ ". (Server may be down)");
+												+ user.getUserName() + ": "
+												+ message);
 							}
 
-							public void onSuccess(Result<UserAccount> result) {
-								updateRow(row, result.getResult(),
-										ContextManager.getUser());
-								status.setStatus(Status.fromResult(result));
+							@Override
+							protected void doSuccess(String message,
+									UserAccount result) {
+								updateRow(row, result, ContextManager.getUser());
+								status.setStatus(Status.success(message));
 							}
 						});
 			}
@@ -230,19 +233,22 @@ public final class UserManagementContent extends ContentComposite {
 				user.setAdministrator(ADMIN.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
-						new AsyncCallback<Result<UserAccount>>() {
+						new ResultCallback<UserAccount>() {
 
-							public void onFailure(Throwable caught) {
+							@Override
+							protected void doFailure(String message,
+									UserAccount result) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
-												+ user.getUserName()
-												+ ". (Server may be down)");
+												+ user.getUserName() + ": "
+												+ message);
 							}
 
-							public void onSuccess(Result<UserAccount> result) {
-								updateRow(row, result.getResult(),
-										ContextManager.getUser());
-								status.setStatus(Status.fromResult(result));
+							@Override
+							protected void doSuccess(String message,
+									UserAccount result) {
+								updateRow(row, result, ContextManager.getUser());
+								status.setStatus(Status.success(message));
 							}
 						});
 
@@ -271,27 +277,27 @@ public final class UserManagementContent extends ContentComposite {
 		if (account != null) {
 			account.setUserName(newValue);
 			ServiceHelper.getManageUserService().updateUser(account,
-					new AsyncCallback<Result<UserAccount>>() {
+					new ResultCallback<UserAccount>() {
 
-						public void onFailure(Throwable caught) {
-							ExceptionUtil.log(caught);
-
-							// TODO all error handling needs a cleaning pass
-							usersGrid
-									.setStatus("error",
-											"Unable to change user name. (Server may be down)");
+						@Override
+						protected void doFailure(String message,
+								UserAccount result) {
+							usersGrid.setStatus("error",
+									"Unable to change user name: " + message);
+							updateRow(row, result, ContextManager.getUser());
+							status.setStatus(Status.failure(message));
 						}
 
-						public void onSuccess(Result<UserAccount> result) {
-							final UserAccount user = result.getResult();
+						@Override
+						protected void doSuccess(String message,
+								UserAccount result) {
 							final UserAccount current = ContextManager
 									.getUser();
-							if (result.isSuccess()
-									&& (user.getId() == current.getId())) {
-								ContextManager.updateUser(user);
+							if (result.getId() == current.getId()) {
+								ContextManager.updateUser(result);
 							}
-							updateRow(row, user, ContextManager.getUser());
-							status.setStatus(Status.fromResult(result));
+							updateRow(row, result, ContextManager.getUser());
+							status.setStatus(Status.success(message));
 
 						}
 					});

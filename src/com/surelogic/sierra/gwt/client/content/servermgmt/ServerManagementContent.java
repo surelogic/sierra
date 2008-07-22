@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.servermgmt;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.PopupListener;
@@ -13,6 +12,7 @@ import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ServerLocationCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -63,15 +63,10 @@ public class ServerManagementContent extends
 										text);
 								ServiceHelper.getSettingsService()
 										.saveServerLocation(l,
-												new AsyncCallback<Status>() {
+												new StatusCallback() {
 
-													public void onFailure(
-															final Throwable caught) {
-														// TODO Auto-generated
-														// method stub
-													}
-
-													public void onSuccess(
+													@Override
+													public void doStatus(
 															final Status result) {
 														getCache().refresh();
 														Context.createWithUuid(
@@ -118,13 +113,10 @@ public class ServerManagementContent extends
 			public void onClick(final Widget sender) {
 				final ServerLocation loc = serverView.getSelection();
 				ServiceHelper.getSettingsService().deleteServerLocation(
-						loc.getUuid(), new AsyncCallback<Status>() {
+						loc.getUuid(), new StatusCallback() {
 
-							public void onFailure(final Throwable caught) {
-								// TODO
-							}
-
-							public void onSuccess(final Status result) {
+							@Override
+							public void doStatus(final Status result) {
 								statusBox.setStatus(result);
 								getCache().refresh();
 								Context.create(ServerManagementContent.this,

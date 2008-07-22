@@ -3,14 +3,13 @@ package com.surelogic.sierra.gwt.client.content.reports;
 import java.util.List;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.chart.Chart;
 import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 
@@ -27,20 +26,18 @@ public class ReportView extends BlockPanel {
 		report.clear();
 		// retrieve and display the report
 		ServiceHelper.getTicketService().getTicket(selection,
-				new AsyncCallback<Result<Ticket>>() {
+				new ResultCallback<Ticket>() {
 
-					public void onFailure(Throwable caught) {
-						report.add(new Label(caught.toString()));
+					@Override
+					protected void doFailure(String message, Ticket result) {
+						report.add(new Label(message));
 					}
 
-					public void onSuccess(Result<Ticket> result) {
-						if (result.isSuccess()) {
-							final Chart chart = new Chart();
-							chart.setChartTicket(result.getResult());
-							report.add(chart);
-						} else {
-							report.add(new Label(result.getMessage()));
-						}
+					@Override
+					protected void doSuccess(String message, Ticket result) {
+						final Chart chart = new Chart();
+						chart.setChartTicket(result);
+						report.add(chart);
 					}
 				});
 		final StringBuffer str = new StringBuffer(selection.getName())

@@ -3,7 +3,6 @@ package com.surelogic.sierra.gwt.client.content.categories;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.PopupListener;
@@ -19,8 +18,8 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
-import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoriesContent extends
@@ -120,12 +119,10 @@ public class CategoriesContent extends
 
 	private void deleteCategory(Category cat) {
 		ServiceHelper.getSettingsService().deleteCategory(cat.getUuid(),
-				new AsyncCallback<Status>() {
-					public void onFailure(Throwable caught) {
-						ExceptionUtil.handle(caught);
-					}
+				new StatusCallback() {
 
-					public void onSuccess(Status result) {
+					@Override
+					protected void doStatus(Status result) {
 						getCache().refresh();
 					}
 				});
