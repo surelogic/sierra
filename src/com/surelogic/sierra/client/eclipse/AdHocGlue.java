@@ -9,10 +9,10 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IPath;
 
-import com.surelogic.adhoc.IAdHoc;
+import com.surelogic.adhoc.AbstractAdHoc;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class AdHocGlue implements IAdHoc {
+public final class AdHocGlue extends AbstractAdHoc {
 
 	private static final ExecutorService exec = Executors
 			.newSingleThreadExecutor();
