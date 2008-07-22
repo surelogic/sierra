@@ -7,6 +7,7 @@ public abstract class StandardCallback<T> implements AsyncCallback<T> {
 
 	public final void onFailure(Throwable caught) {
 		ExceptionUtil.handle(caught);
+		doException(caught);
 	}
 
 	public final void onSuccess(T result) {
@@ -14,5 +15,9 @@ public abstract class StandardCallback<T> implements AsyncCallback<T> {
 	}
 
 	protected abstract void doSuccess(T result);
+
+	protected void doException(Throwable cause) {
+		// override for extra exception handling
+	}
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 /**
@@ -51,16 +51,16 @@ public final class ChartBuilder {
 	public Chart build() {
 		final Chart chart = new Chart();
 		ServiceHelper.getTicketService().getTicket(report,
-				new Callback<Ticket>() {
+				new ResultCallback<Ticket>() {
 
 					@Override
-					protected void onFailure(final String message,
+					protected void doFailure(final String message,
 							final Ticket result) {
 						// TODO
 					}
 
 					@Override
-					protected void onSuccess(final String message,
+					protected void doSuccess(final String message,
 							final Ticket result) {
 						chart.setChartTicket(result);
 					}

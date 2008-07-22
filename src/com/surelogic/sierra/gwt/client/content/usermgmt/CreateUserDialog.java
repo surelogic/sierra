@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 
@@ -48,21 +48,21 @@ public class CreateUserDialog extends FormDialog {
 			account.setAdministrator(isAdmin.isChecked());
 			account.setUserName(userText);
 			ServiceHelper.getManageUserService().createUser(account, passText,
-					new Callback<String>() {
+					new ResultCallback<String>() {
 
 						@Override
-						protected void onException(Throwable caught) {
-							setErrorMessage("Unable to create user. (Server may be down)");
+						protected void doException(Throwable caught) {
+							hide();
 						}
 
 						@Override
-						protected void onFailure(String message, String result) {
+						protected void doFailure(String message, String result) {
 							setStatus(Status.failure(message));
 							hide();
 						}
 
 						@Override
-						protected void onSuccess(String message, String result) {
+						protected void doSuccess(String message, String result) {
 							setStatus(Status.success(message));
 							hide();
 						}

@@ -8,7 +8,7 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
@@ -61,16 +61,16 @@ public final class FindingContent extends ContentComposite {
 			setEmpty();
 		} else {
 			ServiceHelper.getFindingService().getFinding(findingType,
-					new Callback<FindingOverview>() {
+					new ResultCallback<FindingOverview>() {
 
 						@Override
-						protected void onFailure(final String message,
+						protected void doFailure(final String message,
 								final FindingOverview result) {
 							setEmpty();
 						}
 
 						@Override
-						protected void onSuccess(final String message,
+						protected void doSuccess(final String message,
 								final FindingOverview result) {
 							setFinding(result);
 						}

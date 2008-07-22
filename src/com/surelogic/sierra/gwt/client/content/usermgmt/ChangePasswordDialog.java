@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 
@@ -20,7 +20,7 @@ public class ChangePasswordDialog extends FormDialog {
 	public void setUserAccount(UserAccount user) {
 		this.user = user;
 
-		StringBuffer pwdTitle = new StringBuffer("New Password");
+		final StringBuffer pwdTitle = new StringBuffer("New Password");
 		if (!ContextManager.getUser().getUserName().equals(user.getUserName())) {
 			pwdTitle.append(" for ").append(user.getUserName());
 		}
@@ -56,16 +56,16 @@ public class ChangePasswordDialog extends FormDialog {
 			ServiceHelper.getManageUserService().changeUserPassword(
 					user.getUserName(), currentPassText, passText,
 
-					new Callback<String>() {
+					new ResultCallback<String>() {
 
 						@Override
-						protected void onFailure(String message, String result) {
+						protected void doFailure(String message, String result) {
 							setErrorMessage("Unable to change password: "
 									+ message);
 						}
 
 						@Override
-						protected void onSuccess(String message, String result) {
+						protected void doSuccess(String message, String result) {
 							hide();
 						}
 					});

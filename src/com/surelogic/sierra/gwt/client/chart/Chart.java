@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
 import com.surelogic.sierra.gwt.client.data.Ticket;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
@@ -27,16 +27,16 @@ public class Chart extends Composite {
 			rootPanel.add(new Label("No Chart Available"));
 		} else {
 			ServiceHelper.getTicketService().getImageMap(ticket,
-					new Callback<ImageMapData>() {
+					new ResultCallback<ImageMapData>() {
 
 						@Override
-						protected void onFailure(String message,
+						protected void doFailure(String message,
 								ImageMapData result) {
 							loadFailed(message);
 						}
 
 						@Override
-						protected void onSuccess(String message,
+						protected void doSuccess(String message,
 								ImageMapData result) {
 							loadChart(ticket, result);
 						}

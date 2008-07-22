@@ -8,7 +8,7 @@ import com.google.gwt.user.client.HistoryListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
@@ -37,26 +37,27 @@ public final class ContextManager {
 	public static void login(String username, String password) {
 		final SessionServiceAsync sessionService = ServiceHelper
 				.getSessionService();
-		sessionService.login(username, password, new Callback<UserAccount>() {
+		sessionService.login(username, password,
+				new ResultCallback<UserAccount>() {
 
-			@Override
-			public void onFailure(String message, UserAccount result) {
-				userAccount = null;
-				for (final UserListener listener : userListeners) {
-					listener.onLoginFailure(message);
-				}
-				refreshContext();
-			}
+					@Override
+					public void doFailure(String message, UserAccount result) {
+						userAccount = null;
+						for (final UserListener listener : userListeners) {
+							listener.onLoginFailure(message);
+						}
+						refreshContext();
+					}
 
-			@Override
-			public void onSuccess(String message, UserAccount result) {
-				userAccount = result;
-				for (final UserListener listener : userListeners) {
-					listener.onLogin(userAccount);
-				}
-				refreshContext();
-			}
-		});
+					@Override
+					public void doSuccess(String message, UserAccount result) {
+						userAccount = result;
+						for (final UserListener listener : userListeners) {
+							listener.onLogin(userAccount);
+						}
+						refreshContext();
+					}
+				});
 	}
 
 	public static void updateUser(UserAccount user) {
@@ -69,20 +70,21 @@ public final class ContextManager {
 
 	public static void logout(final String errorMessage) {
 		final SessionServiceAsync svc = ServiceHelper.getSessionService();
-		svc.logout(new Callback<String>() {
+		svc.logout(new ResultCallback<String>() {
 
 			@Override
-			protected void onException(Throwable caught) {
+			protected void doException(Throwable caught) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
 				for (final UserListener listener : userListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				Context.create(LoginContent.getInstance(), null).submit();
+				// TODO should be heading to login page from parent code, test
+				// Context.create(LoginContent.getInstance(), null).submit();
 			}
 
 			@Override
-			protected void onFailure(String message, String result) {
+			protected void doFailure(String message, String result) {
 				if (errorMessage != null && !errorMessage.equals("")) {
 					message += " (" + errorMessage + ")";
 				}
@@ -93,7 +95,7 @@ public final class ContextManager {
 			}
 
 			@Override
-			protected void onSuccess(String message, String result) {
+			protected void doSuccess(String message, String result) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
 				for (final UserListener listener : userListeners) {

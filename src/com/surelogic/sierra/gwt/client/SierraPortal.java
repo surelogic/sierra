@@ -6,7 +6,7 @@ import com.surelogic.sierra.gwt.client.content.ContentPanel;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.header.HeaderPanel;
-import com.surelogic.sierra.gwt.client.service.Callback;
+import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 
@@ -33,14 +33,15 @@ public class SierraPortal implements EntryPoint {
 		RootPanel.get("log-pane").add(log);
 
 		// see if the user has an established session, or needs to log in
-		SessionServiceAsync sessionService = ServiceHelper.getSessionService();
-		sessionService.getUserAccount(new Callback<UserAccount>() {
+		final SessionServiceAsync sessionService = ServiceHelper
+				.getSessionService();
+		sessionService.getUserAccount(new ResultCallback<UserAccount>() {
 
-			protected void onFailure(String message, UserAccount result) {
+			protected void doFailure(String message, UserAccount result) {
 				ContextManager.refreshContext();
 			}
 
-			protected void onSuccess(String message, UserAccount result) {
+			protected void doSuccess(String message, UserAccount result) {
 				ContextManager.updateUser(result);
 			}
 		});
