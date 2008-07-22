@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
@@ -23,9 +22,11 @@ import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.service.FindingService;
+import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
+import com.surelogic.sierra.jdbc.server.NullUserTransaction;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserQuery;
 import com.surelogic.sierra.jdbc.user.User;
@@ -82,8 +83,8 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 		public Result<FindingOverview> handle(final Row r) {
 			final FindingOverview f = new FindingOverview();
 			final long id = r.nextLong();
-			f.setImportance(Importance.values()[r.nextInt()]
-					.toStringSentenceCase());
+			f.setFindingId(id);
+			f.setImportance(ImportanceView.values()[r.nextInt()]);
 			f.setSummary(r.nextString());
 			f.setFindingType(r.nextString());
 			f.setCategory(r.nextString());
@@ -229,21 +230,30 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	public Result<FindingOverview> changeImportance(final String id,
+	public Result<FindingOverview> changeImportance(final long findingId,
 			final ImportanceView view) {
-		ConnectionFactory.withTransaction(new NullDBTransaction() {
-
+		ConnectionFactory.withUserTransaction(new NullUserTransaction() {
 			@Override
-			public void doPerform(final Connection conn) throws Exception {
-				// TODO Auto-generated method stub
-
+			public void doPerform(final Connection conn, final Server server,
+					final User user) throws Exception {
+				ServerFindingManager.getInstance(conn).setImportance(findingId,
+						user, server.nextRevision(),
+						Importance.values()[view.ordinal()]);
 			}
 		});
-		return null;
+		return getFinding(Long.toString(findingId));
 	}
 
-	public Result<FindingOverview> comment(final String id, final String comment) {
-
-		return null;
+	public Result<FindingOverview> comment(final long findingId,
+			final String comment) {
+		ConnectionFactory.withUserTransaction(new NullUserTransaction() {
+			@Override
+			public void doPerform(final Connection conn, final Server server,
+					final User user) throws Exception {
+				ServerFindingManager.getInstance(conn).comment(findingId, user,
+						server.nextRevision(), comment);
+			}
+		});
+		return getFinding(Long.toString(findingId));
 	}
 }
