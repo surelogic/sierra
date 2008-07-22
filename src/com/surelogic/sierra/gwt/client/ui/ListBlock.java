@@ -59,7 +59,8 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 
 	public void addItem(E item) {
 		final ItemLabel<E> itemUI = new ItemLabel<E>(getItemText(item), item,
-				selectionTracker, clickListener);
+				clickListener);
+		itemUI.setSelectionTracker(selectionTracker);
 		itemUI.setTitle(getItemTooltip(item));
 		final VerticalPanel content = getContentPanel();
 		content.remove(none);

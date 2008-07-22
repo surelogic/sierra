@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.ui;
 
 import com.google.gwt.user.client.ui.CheckBox;
 
-public class ItemCheckBox<T> extends CheckBox {
+public class ItemCheckBox<T> extends CheckBox implements HasItem<T> {
 	private T item;
 
 	public ItemCheckBox(T item) {

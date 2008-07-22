@@ -129,8 +129,9 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			for (final E item : cache) {
 				if (isMatch(item, query)) {
 					final ItemLabel<E> itemUI = new ItemLabel<E>(
-							getItemText(item), item, selectionTracker,
-							new SearchResultListener(item));
+							getItemText(item), item, new SearchResultListener(
+									item));
+					itemUI.setSelectionTracker(selectionTracker);
 					searchResultsData.add(itemUI);
 				}
 			}

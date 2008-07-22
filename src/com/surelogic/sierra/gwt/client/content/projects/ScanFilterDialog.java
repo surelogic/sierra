@@ -57,7 +57,8 @@ public class ScanFilterDialog extends FormDialog {
 				scanFilterPanel.clear();
 				for (final ScanFilter filter : scanFilters) {
 					final ItemLabel<ScanFilter> filterCheck = new ItemLabel<ScanFilter>(
-							filter.getName(), filter, selectionTracker, null);
+							filter.getName(), filter, null);
+					filterCheck.setSelectionTracker(selectionTracker);
 					scanFilterPanel.add(filterCheck);
 					filterCheck.setSelected(filter.equals(selectedFilter));
 				}
