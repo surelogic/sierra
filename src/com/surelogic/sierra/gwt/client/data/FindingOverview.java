@@ -12,10 +12,12 @@ import java.util.List;
 public class FindingOverview implements Serializable {
 	private static final long serialVersionUID = -6080219515417976528L;
 
+	private long findingId;
+
 	private String findingType;
 	private String category;
 	private String summary;
-	private String importance;
+	private ImportanceView importance;
 
 	private String project;
 	private String packageName;
@@ -35,11 +37,19 @@ public class FindingOverview implements Serializable {
 		// Do nothing
 	}
 
+	public long getFindingId() {
+		return findingId;
+	}
+
+	public void setFindingId(final long findingId) {
+		this.findingId = findingId;
+	}
+
 	public String getFindingType() {
 		return findingType;
 	}
 
-	public void setFindingType(String findingType) {
+	public void setFindingType(final String findingType) {
 		this.findingType = findingType;
 	}
 
@@ -47,7 +57,7 @@ public class FindingOverview implements Serializable {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -55,15 +65,15 @@ public class FindingOverview implements Serializable {
 		return summary;
 	}
 
-	public void setSummary(String summary) {
+	public void setSummary(final String summary) {
 		this.summary = summary;
 	}
 
-	public String getImportance() {
+	public ImportanceView getImportance() {
 		return importance;
 	}
 
-	public void setImportance(String importance) {
+	public void setImportance(final ImportanceView importance) {
 		this.importance = importance;
 	}
 
@@ -71,7 +81,7 @@ public class FindingOverview implements Serializable {
 		return project;
 	}
 
-	public void setProject(String project) {
+	public void setProject(final String project) {
 		this.project = project;
 	}
 
@@ -79,7 +89,7 @@ public class FindingOverview implements Serializable {
 		return packageName;
 	}
 
-	public void setPackageName(String packageName) {
+	public void setPackageName(final String packageName) {
 		this.packageName = packageName;
 	}
 
@@ -87,7 +97,7 @@ public class FindingOverview implements Serializable {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -95,7 +105,7 @@ public class FindingOverview implements Serializable {
 		return audits;
 	}
 
-	public void setAudits(List<AuditOverview> audits) {
+	public void setAudits(final List<AuditOverview> audits) {
 		this.audits = audits;
 	}
 
@@ -103,7 +113,7 @@ public class FindingOverview implements Serializable {
 		return artifacts;
 	}
 
-	public void setArtifacts(List<ArtifactOverview> artifacts) {
+	public void setArtifacts(final List<ArtifactOverview> artifacts) {
 		this.artifacts = artifacts;
 	}
 

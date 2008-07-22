@@ -16,9 +16,9 @@ public interface FindingServiceAsync {
 
 	void getScanDetail(String uuid, AsyncCallback<ScanDetail> callback);
 
-	void comment(String id, String comment,
+	void comment(long id, String comment,
 			AsyncCallback<Result<FindingOverview>> callback);
 
-	void changeImportance(String id, ImportanceView view,
+	void changeImportance(long id, ImportanceView view,
 			AsyncCallback<Result<FindingOverview>> callback);
 }

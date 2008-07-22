@@ -13,9 +13,9 @@ public interface FindingService extends RemoteService {
 
 	Result<FindingOverview> getFinding(String id);
 
-	Result<FindingOverview> comment(String id, String comment);
+	Result<FindingOverview> comment(long id, String comment);
 
-	Result<FindingOverview> changeImportance(String id, ImportanceView view);
+	Result<FindingOverview> changeImportance(long id, ImportanceView view);
 
 	List<Scan> getScans(String project);
 

@@ -1,16 +1,25 @@
 package com.surelogic.sierra.gwt.client.content.finding;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
+import com.surelogic.sierra.gwt.client.data.ImportanceView;
+import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
+import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
@@ -46,11 +55,11 @@ public final class FindingContent extends ContentComposite {
 		panel.add(location);
 		panel.add(HtmlHelper.h3("Description"));
 		panel.add(description);
-		panel.add(HtmlHelper.h3("Artifacts"));
-		panel.add(artifacts);
 		panel.add(HtmlHelper.h3("Audits"));
 		panel.add(audits);
 		panel.add(auditBox);
+		panel.add(HtmlHelper.h3("Artifacts"));
+		panel.add(artifacts);
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
 
@@ -139,5 +148,40 @@ public final class FindingContent extends ContentComposite {
 		synopsis.setHTML(s);
 		location.setHTML(f.getPackageName() + "." + f.getClassName());
 		description.setHTML(f.getSummary());
+		final ImportanceChoice importanceChoice = new ImportanceChoice();
+		final AsyncCallback<Result<FindingOverview>> callback = new AsyncCallback<Result<FindingOverview>>() {
+			public void onFailure(final Throwable caught) {
+				// TODO
+			}
+
+			public void onSuccess(final Result<FindingOverview> result) {
+				if (result.isSuccess()) {
+					setFinding(result.getResult());
+				}
+			}
+		};
+		importanceChoice.addChangeListener(new ChangeListener() {
+			public void onChange(final Widget sender) {
+				final ImportanceView selectedImportance = importanceChoice
+						.getSelectedImportance();
+				if (selectedImportance != f.getImportance()) {
+					ServiceHelper.getFindingService().changeImportance(
+							f.getFindingId(), selectedImportance, callback);
+				}
+			}
+		});
+		final TextBox commentBox = new TextBox();
+		final Button comment = new Button("Comment");
+		comment.addClickListener(new ClickListener() {
+			public void onClick(final Widget sender) {
+				if (commentBox.getText().length() > 0) {
+					ServiceHelper.getFindingService().comment(f.getFindingId(),
+							commentBox.getText(), callback);
+				}
+			}
+		});
+		auditBox.add(importanceChoice);
+		auditBox.add(commentBox);
+		auditBox.add(comment);
 	}
 }
