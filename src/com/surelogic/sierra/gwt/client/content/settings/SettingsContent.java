@@ -22,6 +22,7 @@ import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public final class SettingsContent extends ContentComposite {
@@ -97,7 +98,7 @@ public final class SettingsContent extends ContentComposite {
 				.add(new HTML(
 						"<h3>Administration Email</h3><span class=\"settings-info-text\">The below settings configure this team server to send email about any problems it encounters to a designated administrator.</span>"));
 		panel.add(at);
-		HorizontalPanel hp = new HorizontalPanel();
+		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(updateEmailButton);
 		hp.add(testEmailButton);
 		panel.add(hp);
@@ -108,17 +109,13 @@ public final class SettingsContent extends ContentComposite {
 
 	@Override
 	protected void onUpdate(Context context) {
-		final AsyncCallback<ServerInfo> updateServerInfo = new AsyncCallback<ServerInfo>() {
-			public void onSuccess(ServerInfo result) {
+		final AsyncCallback<ServerInfo> updateServerInfo = new StandardCallback<ServerInfo>() {
+			@Override
+			protected void doSuccess(ServerInfo result) {
 				updateInfo(result);
 				status.setStatus(new Status(true, "Information updated."));
 			}
 
-			public void onFailure(Throwable caught) {
-				status.setStatus(new Status(false,
-						"Unable to save settings. (Server may be down)"));
-				// TODO do some UI stuff to show failure
-			}
 		};
 
 		final ManageServerServiceAsync msService = ServiceHelper
@@ -142,21 +139,17 @@ public final class SettingsContent extends ContentComposite {
 						getString(smtpUserTextBox), getString(smtpPassTextBox),
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
-				msService.setEmail(email, new AsyncCallback<ServerInfo>() {
-					public void onSuccess(ServerInfo result) {
+				msService.setEmail(email, new StandardCallback<ServerInfo>() {
+					@Override
+					protected void doSuccess(ServerInfo result) {
 
-						msService.testAdminEmail(new AsyncCallback<Void>() {
-							public void onSuccess(Void result) {
+						msService.testAdminEmail(new StandardCallback<Void>() {
+							@Override
+							protected void doSuccess(Void result) {
 								status.setStatus(Status
 										.success("Test email sent."));
 							}
 
-							public void onFailure(Throwable caught) {
-								status
-										.setStatus(Status
-												.failure("Unable to test admin email. (Server may be down)"));
-								// TODO do some UI stuff to show failure
-							}
 						});
 						status
 								.setStatus(new Status(
@@ -164,27 +157,16 @@ public final class SettingsContent extends ContentComposite {
 										"If notification is set up correctly, you should receive an email at the given address."));
 					}
 
-					public void onFailure(Throwable caught) {
-						status
-								.setStatus(new Status(false,
-										"Unable to save email settings. (Server may be down)"));
-						// TODO do some UI stuff to show failure
-					}
 				});
 			}
 		});
-		msService.getServerInfo(new AsyncCallback<ServerInfo>() {
+		msService.getServerInfo(new StandardCallback<ServerInfo>() {
 
-			public void onSuccess(ServerInfo result) {
+			@Override
+			protected void doSuccess(ServerInfo result) {
 				updateInfo(result);
 			}
 
-			public void onFailure(Throwable caught) {
-				status
-						.setStatus(new Status(false,
-								"Unable to retrieve server information. (Server may be down)"));
-				// TODO do some UI stuff to show failure
-			}
 		});
 	}
 
@@ -194,7 +176,7 @@ public final class SettingsContent extends ContentComposite {
 	}
 
 	private Label createLabel(String text) {
-		Label label = new Label(text);
+		final Label label = new Label(text);
 		label.addStyleName(".settings-label-text");
 		return label;
 	}
@@ -203,7 +185,7 @@ public final class SettingsContent extends ContentComposite {
 		currentVersion.setHTML(info.getCurrentVersion());
 		availableVersion.setHTML(info.getAvailableVersion());
 		productVersion.setHTML(info.getProductVersion());
-		EmailInfo email = info.getEmail();
+		final EmailInfo email = info.getEmail();
 		adminEmailTextBox.setText(email.getAdminEmail());
 		serverEmailTextBox.setText(email.getServerEmail());
 		smtpHostTextBox.setText(email.getHost());

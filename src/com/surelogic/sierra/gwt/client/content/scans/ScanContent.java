@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -17,14 +16,13 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StandardCallback;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
-import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ScanContent extends ContentComposite {
 
@@ -91,19 +89,16 @@ public class ScanContent extends ContentComposite {
 			chartPanel.clear();
 			detailPanel.clear();
 			ServiceHelper.getFindingService().getScanDetail(uuid,
-					new AsyncCallback<ScanDetail>() {
-						public void onFailure(final Throwable caught) {
-							optionsPanel.add(new StatusBox(Status
-									.failure(caught.getMessage())));
-						}
+					new StandardCallback<ScanDetail>() {
 
-						public void onSuccess(final ScanDetail result) {
+						protected void doSuccess(final ScanDetail result) {
 							setTitle(result.getProject() + " - "
 									+ result.getDate());
 							detailPanel.add(HtmlHelper.p(result.getClasses()));
 							detailPanel.add(HtmlHelper.p(result.getPackages()));
 							detailPanel.add(HtmlHelper.p(result.getFindings()));
-							detailPanel.add(HtmlHelper.p(result.getLinesOfCode()));
+							detailPanel.add(HtmlHelper.p(result
+									.getLinesOfCode()));
 							detailPanel.add(HtmlHelper.p(result.getDensity()));
 							pak = new PackageChoice(result.getCompilations()
 									.keySet(), true);

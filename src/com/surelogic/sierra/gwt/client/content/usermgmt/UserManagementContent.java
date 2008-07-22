@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.content.usermgmt;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -19,13 +18,13 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.grid.SelectableGrid;
 import com.surelogic.sierra.gwt.client.ui.grid.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.grid.TextBoxEditor;
-import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public final class UserManagementContent extends ContentComposite {
 
@@ -123,17 +122,9 @@ public final class UserManagementContent extends ContentComposite {
 
 	private void refreshUsers() {
 		ServiceHelper.getManageUserService().getUsers(
-				new AsyncCallback<List<UserAccount>>() {
+				new StandardCallback<List<UserAccount>>() {
 
-					public void onFailure(Throwable caught) {
-						ExceptionUtil.log(caught);
-
-						usersGrid
-								.setStatus("error",
-										"Unable to retrieve user list. (Server may be down)");
-					}
-
-					public void onSuccess(List<UserAccount> result) {
+					protected void doSuccess(List<UserAccount> result) {
 						final UserAccount currentUser = ContextManager
 								.getUser();
 

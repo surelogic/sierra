@@ -1,7 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.scanfilters;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -13,6 +11,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StandardCallback;
 import com.surelogic.sierra.gwt.client.service.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -101,6 +100,7 @@ public class ScanFiltersContent extends
 			ServiceHelper.getSettingsService().deleteScanFilter(
 					filter.getUuid(), new StatusCallback() {
 
+						@Override
 						protected void doStatus(Status result) {
 							getCache().refresh();
 						}
@@ -129,16 +129,9 @@ public class ScanFiltersContent extends
 				setWaitStatus();
 
 				ServiceHelper.getSettingsService().createScanFilter(name,
-						new AsyncCallback<ScanFilter>() {
+						new StandardCallback<ScanFilter>() {
 
-							public void onFailure(Throwable caught) {
-								clearWaitStatus();
-
-								Window.alert("Scan Filter creation failed: "
-										+ caught.getMessage());
-							}
-
-							public void onSuccess(ScanFilter result) {
+							protected void doSuccess(ScanFilter result) {
 								clearWaitStatus();
 								setOpen(false);
 

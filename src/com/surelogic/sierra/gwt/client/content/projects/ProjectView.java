@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -34,6 +33,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.StandardCallback;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.table.TableSection;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
@@ -187,12 +187,10 @@ public class ProjectView extends BlockPanel {
 			setWaitStatus();
 			if (context.getUuid() != null) {
 				ServiceHelper.getFindingService().getScans(context.getUuid(),
-						new AsyncCallback<List<Scan>>() {
-							public void onFailure(final Throwable caught) {
-								setErrorStatus(caught.getMessage());
-							}
+						new StandardCallback<List<Scan>>() {
 
-							public void onSuccess(final List<Scan> result) {
+							@Override
+							protected void doSuccess(final List<Scan> result) {
 								scans = new HashMap<Scan, CheckBox>();
 								setSuccessStatus(null);
 								clearRows();
