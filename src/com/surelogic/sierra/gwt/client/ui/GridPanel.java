@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.ui.grid.SelectableGrid;
 
 public class GridPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-GridPanel";

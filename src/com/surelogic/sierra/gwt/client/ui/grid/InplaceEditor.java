@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.grid;
 
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;

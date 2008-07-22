@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.chart;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
@@ -10,6 +10,7 @@ import com.surelogic.sierra.gwt.client.data.ImageMapData;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 public class Chart extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();

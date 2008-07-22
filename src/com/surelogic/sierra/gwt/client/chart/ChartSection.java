@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.chart;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ui.Chart;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public abstract class ChartSection extends SectionPanel {

@@ -9,7 +9,6 @@ import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.ui.Chart;
 
 /**
  * Helper class for constructing charts to be displayed in the portal.

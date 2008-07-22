@@ -1,7 +1,6 @@
 package com.surelogic.sierra.gwt.client.chart;
 
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ui.Chart;
 
 public class AuditContributionsChart extends ChartSection {
 

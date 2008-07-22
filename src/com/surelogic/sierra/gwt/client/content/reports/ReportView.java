@@ -6,13 +6,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.surelogic.sierra.gwt.client.chart.Chart;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.Chart;
 
 public class ReportView extends BlockPanel {
 

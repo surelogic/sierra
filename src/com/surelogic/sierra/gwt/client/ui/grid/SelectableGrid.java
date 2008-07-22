@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.grid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 // TODO add row selection highlighting and tracking of currently selected row
 // TODO don't trigger inplace editors until after a row selection has occurred
