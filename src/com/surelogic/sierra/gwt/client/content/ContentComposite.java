@@ -2,12 +2,12 @@ package com.surelogic.sierra.gwt.client.content;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Lifecycle;
-import com.surelogic.sierra.gwt.client.util.UI;
+import com.surelogic.sierra.gwt.client.util.HtmlHelper;
 
 public abstract class ContentComposite extends Composite implements Lifecycle {
 	private final DockPanel rootPanel = new DockPanel();
@@ -42,11 +42,11 @@ public abstract class ContentComposite extends Composite implements Lifecycle {
 		onDeactivate();
 	}
 
-	public boolean isInitialized() {
+	public final boolean isInitialized() {
 		return initialized;
 	}
 
-	public boolean isActive() {
+	public final boolean isActive() {
 		return active;
 	}
 
@@ -59,7 +59,7 @@ public abstract class ContentComposite extends Composite implements Lifecycle {
 	}
 
 	protected final void setCaption(String text) {
-		final Label title = UI.h2(text);
+		final HTML title = HtmlHelper.h2(text);
 		titlePanel.add(title);
 		titlePanel
 				.setCellHorizontalAlignment(title, HorizontalPanel.ALIGN_LEFT);

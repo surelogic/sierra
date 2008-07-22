@@ -8,7 +8,11 @@ import com.google.gwt.user.client.ui.HTML;
  * @author nathan
  * 
  */
-public class UI {
+public final class HtmlHelper {
+
+	private HtmlHelper() {
+		// singleton
+	}
 
 	public static HTML h1(String text) {
 		return new HTML("<h1>" + text + "</h1>");

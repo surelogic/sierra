@@ -24,7 +24,7 @@ import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.ChartBuilder;
-import com.surelogic.sierra.gwt.client.util.UI;
+import com.surelogic.sierra.gwt.client.util.HtmlHelper;
 
 public class ScanContent extends ContentComposite {
 
@@ -100,11 +100,11 @@ public class ScanContent extends ContentComposite {
 						public void onSuccess(final ScanDetail result) {
 							setTitle(result.getProject() + " - "
 									+ result.getDate());
-							detailPanel.add(UI.p(result.getClasses()));
-							detailPanel.add(UI.p(result.getPackages()));
-							detailPanel.add(UI.p(result.getFindings()));
-							detailPanel.add(UI.p(result.getLinesOfCode()));
-							detailPanel.add(UI.p(result.getDensity()));
+							detailPanel.add(HtmlHelper.p(result.getClasses()));
+							detailPanel.add(HtmlHelper.p(result.getPackages()));
+							detailPanel.add(HtmlHelper.p(result.getFindings()));
+							detailPanel.add(HtmlHelper.p(result.getLinesOfCode()));
+							detailPanel.add(HtmlHelper.p(result.getDensity()));
 							pak = new PackageChoice(result.getCompilations()
 									.keySet(), true);
 							imp = new ImportanceChoice(true);

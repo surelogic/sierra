@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.service.Callback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.util.UI;
+import com.surelogic.sierra.gwt.client.util.HtmlHelper;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
@@ -40,15 +40,15 @@ public final class FindingContent extends ContentComposite {
 	@Override
 	protected void onInitialize(final DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		panel.add(UI.h3("Synopsis"));
+		panel.add(HtmlHelper.h3("Synopsis"));
 		panel.add(synopsis);
-		panel.add(UI.h3("Location"));
+		panel.add(HtmlHelper.h3("Location"));
 		panel.add(location);
-		panel.add(UI.h3("Description"));
+		panel.add(HtmlHelper.h3("Description"));
 		panel.add(description);
-		panel.add(UI.h3("Artifacts"));
+		panel.add(HtmlHelper.h3("Artifacts"));
 		panel.add(artifacts);
-		panel.add(UI.h3("Audits"));
+		panel.add(HtmlHelper.h3("Audits"));
 		panel.add(audits);
 		panel.add(auditBox);
 		getRootPanel().add(panel, DockPanel.CENTER);
@@ -103,7 +103,7 @@ public final class FindingContent extends ContentComposite {
 		String firstReported = null;
 		String firstReportedBy = null;
 		if (f.getAudits().isEmpty()) {
-			audits.add(UI.p("No comments"));
+			audits.add(HtmlHelper.p("No comments"));
 		} else {
 			for (final AuditOverview audit : f.getAudits()) {
 				if (firstReported == null) {

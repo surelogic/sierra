@@ -18,7 +18,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.ItalicLabel;
-import com.surelogic.sierra.gwt.client.util.UI;
+import com.surelogic.sierra.gwt.client.util.HtmlHelper;
 
 public class ScanFilterView extends BlockPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();
@@ -97,7 +97,7 @@ public class ScanFilterView extends BlockPanel {
 		if (categoryBlock != null || findingBlock != null) {
 			final String importanceTitle = importance == null ? "Default"
 					: importance.getName();
-			importanceBlocks.add(UI.h3(importanceTitle + " Priority"));
+			importanceBlocks.add(HtmlHelper.h3(importanceTitle + " Priority"));
 		}
 		if (categoryBlock != null) {
 			importanceBlocks.add(categoryBlock);
