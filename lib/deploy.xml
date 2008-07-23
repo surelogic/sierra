@@ -22,6 +22,7 @@
 		<copy file="../sierra-message/srpc/commons-logging-1.1.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>			
 		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar" basedir="../sierra-jdbc-server/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
 		<path id="gwt.class.path">
@@ -88,6 +89,7 @@
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/jfreechart-1.0.9.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc-server.jar" />
 		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />
 		<!-- sierra-services.war is obsolete after Jan 31 -->
 		<delete quiet="true" file="../jetty/webapps/sierra-services.war" />
