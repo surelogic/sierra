@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc-server"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
