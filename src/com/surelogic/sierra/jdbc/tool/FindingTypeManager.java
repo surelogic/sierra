@@ -24,32 +24,11 @@ import com.surelogic.sierra.tool.message.Category;
 import com.surelogic.sierra.tool.message.FindingType;
 import com.surelogic.sierra.tool.message.FindingTypeFilter;
 import com.surelogic.sierra.tool.message.FindingTypes;
-import com.surelogic.sierra.tool.message.Importance;
-import com.surelogic.sierra.tool.message.Priority;
-import com.surelogic.sierra.tool.message.Severity;
 
 public final class FindingTypeManager {
 
 	private static final Logger log = SLLogger
 			.getLoggerFor(FindingTypeManager.class);
-
-	private static final FindingFilter EMPTY_FILTER = new FindingFilter() {
-
-		public boolean accept(Long artifactTypeId) {
-			return true;
-		}
-
-		public Importance calculateImportance(Long findingTypeId,
-				Priority priority, Severity severity) {
-			int val = ((int) (((float) (severity.ordinal() + priority.ordinal())) / 2));
-			if (val > 3) {
-				val = 3;
-			} else if (val < 1) {
-				val = 1;
-			}
-			return Importance.values()[val];
-		}
-	};
 
 	private final PreparedStatement listCategoryFindingTypes;
 	private final PreparedStatement selectArtifactTypesByFindingTypeId;
@@ -60,10 +39,8 @@ public final class FindingTypeManager {
 	private final PreparedStatement checkUnassignedArtifactTypes;
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
-	private final Connection conn;
 
 	private FindingTypeManager(Connection conn) throws SQLException {
-		this.conn = conn;
 		selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		selectArtifactTypesByFindingTypeId = conn
