@@ -120,6 +120,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 				// rawCategories, parent));
 				for (String type : computeCategory(categories, rawCategories,
 						parent)) {
+					@SuppressWarnings("unused")
 					boolean added = categoryTypes.add(type);
 					/*
 					 * if (!added) { System.out.println(); } else {
@@ -131,6 +132,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 				if (filter.isFiltered()) {
 					categoryTypes.remove(filter.getFindingType());
 				} else {
+					@SuppressWarnings("unused")
 					boolean added = categoryTypes.add(filter.getFindingType());
 					/*
 					 * if (!added) { System.out.println(); }
