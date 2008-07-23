@@ -16,9 +16,9 @@ import com.surelogic.sierra.gwt.client.content.categories.CategoryEditor.Finding
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.StatusCallback;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 

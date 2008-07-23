@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client.content.servermgmt;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextBox;
-import com.surelogic.sierra.gwt.client.ui.FormDialog;
+import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 
 public class CreateServerDialog extends FormDialog {
 

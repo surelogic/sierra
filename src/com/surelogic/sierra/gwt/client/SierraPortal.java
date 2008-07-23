@@ -6,9 +6,9 @@ import com.surelogic.sierra.gwt.client.content.ContentPanel;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.header.HeaderPanel;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
 /**
  * The Sierra Portal GWT Entry point

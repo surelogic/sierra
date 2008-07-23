@@ -9,8 +9,8 @@ import com.surelogic.sierra.gwt.client.chart.Chart;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 
 public class ReportView extends BlockPanel {

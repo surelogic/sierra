@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.service;
+package com.surelogic.sierra.gwt.client.service.callback;
 
 import com.surelogic.sierra.gwt.client.data.Result;
 

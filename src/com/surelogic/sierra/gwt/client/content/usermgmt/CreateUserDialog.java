@@ -7,9 +7,9 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.ui.FormDialog;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
+import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 
 public class CreateUserDialog extends FormDialog {
 	private final TextBox userName = new TextBox();

@@ -22,7 +22,7 @@ import com.surelogic.sierra.gwt.client.data.ServerInfo;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.StandardCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public final class SettingsContent extends ContentComposite {

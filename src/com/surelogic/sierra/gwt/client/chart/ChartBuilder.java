@@ -7,8 +7,8 @@ import java.util.List;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
 /**
  * Helper class for constructing charts to be displayed in the portal.

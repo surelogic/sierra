@@ -11,8 +11,8 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.StandardCallback;
-import com.surelogic.sierra.gwt.client.service.StatusCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 

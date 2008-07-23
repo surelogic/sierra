@@ -8,9 +8,9 @@ import com.google.gwt.user.client.HistoryListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
+import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
 public final class ContextManager {
 
